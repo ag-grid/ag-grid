@@ -1,6 +1,6 @@
 import type { Framework } from '@ag-grid-types';
 import { DEV_LICENSE_DATA } from '@ag-website-shared/components/license-pricing/licenseData';
-import { YOUTUBE_LICENSE_PRICING_URL } from '@ag-website-shared/constants';
+import { YOUTUBE_LICENSE_PRICING_URL, ZENDESK_URL } from '@ag-website-shared/constants';
 import chartsFeaturesData from '@ag-website-shared/content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '@ag-website-shared/content/license-features/gridFeaturesMatrix.json';
 import { resolveSharedUrl } from '@ag-website-shared/utils/resolveSharedUrl';
@@ -12,8 +12,6 @@ import { toAbsoluteUrl } from '../markdoc/toAbsoluteUrl';
 // The page is framework-agnostic; resolve its framework-prefixed doc links against a
 // single framework, matching AGENTS.md.ts / llms.txt.ts.
 const FRAMEWORK: Framework = 'javascript';
-
-const ZENDESK_URL = 'https://ag-grid.zendesk.com/hc/en-us';
 
 // Feature-matrix JSON shapes (see gridFeaturesMatrix.json / chartsFeaturesMatrix.json).
 type FeatureValue = boolean | { value: boolean; detail?: string };

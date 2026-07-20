@@ -66,3 +66,6 @@ export const FIGMA_DESIGN_SYSTEM_URL = 'https://www.figma.com/community/file/136
 
 // YouTube
 export const YOUTUBE_LICENSE_PRICING_URL = 'https://www.youtube.com/watch?v=VPr__OKxH50';
+
+// Zendesk
+export const ZENDESK_URL = 'https://ag-grid.zendesk.com/hc/en-us';

@@ -1,6 +1,6 @@
 import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { YOUTUBE_LICENSE_PRICING_URL } from '@ag-website-shared/constants';
+import { YOUTUBE_LICENSE_PRICING_URL, ZENDESK_URL } from '@ag-website-shared/constants';
 import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-active.svg?react';
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
 import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-active.svg?react';
@@ -272,9 +272,10 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                     <p>
                                         <b>Engineering support</b>
                                         <br />
-                                        Get direct assistance from our developers via{' '}
-                                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a> throughout your
-                                        trial.
+                                        Get direct assistance from our developers via <a href={ZENDESK_URL}>
+                                            Zendesk
+                                        </a>{' '}
+                                        throughout your trial.
                                     </p>
                                 </div>
                             </div>
