@@ -227,4 +227,101 @@ describe('Editable header name', () => {
 
         expect(input.value).toBe('Renamed');
     });
+
+    test('a column header name edit is saved to grid state', async () => {
+        const { api } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
+        await asyncSetTimeout(1);
+
+        expect(api.getState().columnHeaderName?.columnHeaderNames).toEqual([
+            { colId: 'athlete', headerName: 'Renamed' },
+        ]);
+    });
+
+    test('a reset preserves the edited header name (treated as data, not layout)', async () => {
+        const { api } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
+        await asyncSetTimeout(1);
+
+        api.resetColumnState();
+        await asyncSetTimeout(1);
+
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+    });
+});
+
+describe('Editable group header name', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [AllEnterpriseModule],
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+        vi.resetAllMocks();
+        vi.clearAllMocks();
+    });
+
+    const rowData = [{ athlete: 'Michael Phelps', age: 23 }];
+
+    const groupDefs = (extra: Record<string, any> = {}) => [
+        {
+            groupId: 'athleteGroup',
+            headerName: 'Group',
+            headerNameEditable: true,
+            children: [{ field: 'athlete' }, { field: 'age' }],
+            ...extra,
+        },
+    ];
+
+    test('a group header name from grid state overrides the colGroupDef name', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: groupDefs(),
+            rowData,
+            initialState: {
+                columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
+            },
+        });
+        await asyncSetTimeout(1);
+
+        const columnGroup = api.getColumnGroup('athleteGroup')!;
+        expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
+    });
+
+    test('a group header name round-trips through grid state', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: groupDefs(),
+            rowData,
+            initialState: {
+                columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
+            },
+        });
+        await asyncSetTimeout(1);
+
+        expect(api.getState().columnGroup?.headerNames).toEqual([{ groupId: 'athleteGroup', headerName: 'Renamed' }]);
+    });
+
+    test('an edited group name wins over the group headerValueGetter', async () => {
+        let getterCalls = 0;
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: groupDefs({
+                headerValueGetter: () => {
+                    getterCalls++;
+                    return 'From Getter';
+                },
+            }),
+            rowData,
+            initialState: {
+                columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
+            },
+        });
+        await asyncSetTimeout(1);
+
+        const columnGroup = api.getColumnGroup('athleteGroup')!;
+        const callsBefore = getterCalls;
+        expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
+        expect(getterCalls).toBe(callsBefore);
+    });
 });

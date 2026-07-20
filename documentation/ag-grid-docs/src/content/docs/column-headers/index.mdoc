@@ -39,7 +39,7 @@ See the [Column Tool Panel Example](./tool-panel-columns/#columns-tool-panel-exa
 
 ## Editable Header Name {% enterpriseIcon /%}
 
-Set `headerNameEditable: true` on a `ColDef` to let users rename that column's header from the UI. This is an AG Grid Enterprise feature.
+Set `headerNameEditable: true` on a `ColDef` (or a `ColGroupDef`) to let users rename that column or column group header from the UI. This is an AG Grid Enterprise feature.
 
 {% apiDocumentation source="column-properties/properties.json" section="header" names=["headerNameEditable"] /%}
 
@@ -48,7 +48,9 @@ Editable columns can be renamed via:
 - The **Edit Column Name** item in the [Column Menu](./column-menu/).
 - Right-clicking the column in the [Columns Tool Panel](./tool-panel-columns/) and choosing **Edit Column Name**.
 
-Both open the same editor. Press `Enter` to commit or `Escape` to cancel; clearing the value reverts the header to its `headerName` (or field-derived) default. Edited names are persisted as part of [Column State](./column-state/), so they survive save and restore.
+Editable column groups can be renamed via the **Edit Column Name** item in the group header right-click menu or the Columns Tool Panel context menu.
+
+Both open the same editor. Press `Enter` to commit or `Escape` to cancel; clearing the value reverts the header to its `headerName` (or field-derived) default. Edited column names are persisted as part of [Column State](./column-state/) and [Grid State](./grid-state/); edited group names are persisted as part of Grid State. Both survive save and restore.
 
 {% note %}
 An edited name takes priority over any `headerValueGetter` on the column. Once the user has provided a custom header name, the `headerValueGetter` is no longer called for that column.

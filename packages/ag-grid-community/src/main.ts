@@ -635,6 +635,7 @@ export type {
     CellSelectionCellState,
     CellSelectionState,
     ColumnGroupState,
+    ColumnHeaderNameState,
     ColumnOrderState,
     ColumnPinningState,
     ColumnSizeState,
