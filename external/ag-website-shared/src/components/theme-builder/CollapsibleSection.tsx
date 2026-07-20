@@ -73,7 +73,7 @@ const SectionContent = styled('div')`
     padding-right: 10px;
 `;
 
-const OpenCloseChevron = styled(ChevronDown)<{ isOpen: boolean }>`
+const OpenCloseChevron = styled(ChevronDown, { shouldForwardProp: (prop) => prop !== 'isOpen' })<{ isOpen: boolean }>`
     opacity: 0.6;
     transition: transform 300ms cubic-bezier(0.87, 0, 0.13, 1);
     transform: ${(props) => (props.isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
