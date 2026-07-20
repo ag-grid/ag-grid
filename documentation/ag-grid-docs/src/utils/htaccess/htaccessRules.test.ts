@@ -447,8 +447,8 @@ describe('htaccessRules', () => {
     describe('SE-80: Accept: text/markdown content negotiation', () => {
         const negotiationRules = [
             'RewriteCond %{HTTP_ACCEPT} text/markdown',
-            // Captures a docs path or the license-pricing page, reused (%1) in the -f test and rewrite target.
-            'RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing)/?$',
+            // Captures a docs path or a top-level md page, reused (%1) in the -f test and rewrite target.
+            'RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline)/?$',
             'RewriteCond %{DOCUMENT_ROOT}/%1.md -f',
             'RewriteRule ^ /%1.md [L]',
         ];
@@ -479,16 +479,16 @@ describe('htaccessRules', () => {
         it('adds Vary: Accept for negotiated paths (both envs) so shared caches key on the negotiated representation', () => {
             for (const content of [productionContent, stagingContent]) {
                 expect(content).toContain(
-                    '<If "%{REQUEST_URI} =~ m#^/((react|angular|vue|javascript)-data-grid/|license-pricing/?$)#">'
+                    '<If "%{REQUEST_URI} =~ m#^/((react|angular|vue|javascript)-data-grid/|(license-pricing|changelog|pipeline)/?$)#">'
                 );
                 expect(content).toContain('Header append Vary Accept');
             }
         });
 
-        it('negotiates the top-level license-pricing page to license-pricing.md', () => {
-            // %1 captures `license-pricing`, so the -f guard and rewrite target resolve to /license-pricing.md.
+        it('negotiates the top-level license-pricing, changelog and pipeline pages to their .md', () => {
+            // %1 captures each page name, so the -f guard and rewrite target resolve to /<page>.md.
             for (const content of [productionContent, stagingContent]) {
-                expect(content).toContain('|license-pricing)/?$');
+                expect(content).toContain('|license-pricing|changelog|pipeline)/?$');
             }
         });
 

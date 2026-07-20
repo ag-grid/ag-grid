@@ -10,7 +10,7 @@ const DOCS_PAGE_PATH = new RegExp(`/(?:${FRAMEWORKS.join('|')})-data-grid/[^/.]+
 
 // Top-level (non-docs) pages that also ship a `.md` twin. Kept in sync with the
 // same page list in the SE-80 htaccess negotiation rule (see htaccessRules.ts).
-const TOP_LEVEL_MD_PATH = /^\/(?:license-pricing)\/?$/;
+const TOP_LEVEL_MD_PATH = /^\/(?:license-pricing|changelog|pipeline)\/?$/;
 
 // A client (typically an AI agent) asks for the markdown variant by sending
 // `Accept: text/markdown`. Browsers never send this, so HTML stays the default.
