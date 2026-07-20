@@ -239,7 +239,53 @@ describe('Editable header name', () => {
         ]);
     });
 
-    test('a reset preserves the edited header name (treated as data, not layout)', async () => {
+    test('an edited column header name is restored from initialState', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'athlete', headerNameEditable: true }],
+            rowData,
+            initialState: {
+                columnHeaderName: { columnHeaderNames: [{ colId: 'athlete', headerName: 'Renamed' }] },
+            },
+        });
+        await asyncSetTimeout(1);
+
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+    });
+
+    test('a saved grid state with an edited column header name round-trips through api.setState', async () => {
+        const { api } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
+        await asyncSetTimeout(1);
+        const savedState = api.getState();
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: null }] });
+        await asyncSetTimeout(1);
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
+
+        api.setState(savedState);
+        await asyncSetTimeout(1);
+
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+    });
+
+    test('applying a grid state without columnHeaderName clears a previously-edited name', async () => {
+        const { api } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
+        await asyncSetTimeout(1);
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+
+        api.setState({});
+        await asyncSetTimeout(1);
+
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
+    });
+
+    test('a reset clears the edited header name, reverting to the colDef value', async () => {
         const { api } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const column = api.getColumn('athlete') as unknown as AgColumn;
 
@@ -249,7 +295,7 @@ describe('Editable header name', () => {
         api.resetColumnState();
         await asyncSetTimeout(1);
 
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
     });
 
     test('committing whitespace around the name preserves it verbatim (input is not trimmed)', async () => {
@@ -415,7 +461,32 @@ describe('Editable group header name', () => {
         expect(api.getState().columnGroup?.headerNames).toEqual([{ groupId: 'athleteGroup', headerName: 'Renamed' }]);
     });
 
-    test('a reset preserves the edited group header name', async () => {
+    test('a saved grid state with an edited group header name round-trips through api.setState', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: groupDefs(),
+            rowData,
+            initialState: {
+                columnGroup: {
+                    openColumnGroupIds: [],
+                    headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
+                },
+            },
+        });
+        await asyncSetTimeout(1);
+        const savedState = api.getState();
+
+        api.resetColumnState();
+        await asyncSetTimeout(1);
+        const columnGroup = api.getColumnGroup('athleteGroup')!;
+        expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Group');
+
+        api.setState(savedState);
+        await asyncSetTimeout(1);
+
+        expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Renamed');
+    });
+
+    test('a reset clears the edited group header name, reverting to the colGroupDef value', async () => {
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: groupDefs(),
             rowData,
@@ -432,7 +503,7 @@ describe('Editable group header name', () => {
         await asyncSetTimeout(1);
 
         const columnGroup = api.getColumnGroup('athleteGroup')!;
-        expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
+        expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Group');
     });
 
     test('an edited group name wins over the group headerValueGetter', async () => {
