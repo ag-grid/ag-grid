@@ -15,8 +15,8 @@ test.agExample(import.meta, () => {
         await findInput(page).fill('Swimming');
 
         await expect(page.locator('mark.ag-find-match').first()).toBeVisible();
-        // Before navigating there is no active match, so the display starts at 0/total.
-        await expect(activeMatchNum(page)).toContainText('0/');
+        // Before navigating there is no active match, so the display starts at 0/total (anchored).
+        await expect(activeMatchNum(page)).toHaveText(/^\s*0\/\d+\s*$/);
         await expect(page.locator('mark.ag-find-active-match')).toHaveCount(0);
     });
 
@@ -27,14 +27,14 @@ test.agExample(import.meta, () => {
         await expect(page.locator('mark.ag-find-match').first()).toBeVisible();
 
         await page.getByRole('button', { name: 'Next', exact: true }).click();
-        await expect(activeMatchNum(page)).toContainText('1/');
+        await expect(activeMatchNum(page)).toHaveText(/^\s*1\/\d+\s*$/);
         await expect(page.locator('mark.ag-find-active-match')).toHaveCount(1);
 
         await page.getByRole('button', { name: 'Next', exact: true }).click();
-        await expect(activeMatchNum(page)).toContainText('2/');
+        await expect(activeMatchNum(page)).toHaveText(/^\s*2\/\d+\s*$/);
 
         await page.getByRole('button', { name: 'Previous', exact: true }).click();
-        await expect(activeMatchNum(page)).toContainText('1/');
+        await expect(activeMatchNum(page)).toHaveText(/^\s*1\/\d+\s*$/);
     });
 
     test.eachFramework('Go To jumps directly to a match number', async ({ page }) => {
@@ -46,7 +46,7 @@ test.agExample(import.meta, () => {
         await page.locator('#find-goto').fill('3');
         await page.getByRole('button', { name: 'Go To', exact: true }).click();
 
-        await expect(activeMatchNum(page)).toContainText('3/');
+        await expect(activeMatchNum(page)).toHaveText(/^\s*3\/\d+\s*$/);
         await expect(page.locator('mark.ag-find-active-match')).toHaveCount(1);
     });
 });

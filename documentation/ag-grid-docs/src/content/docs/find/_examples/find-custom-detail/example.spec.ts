@@ -32,11 +32,11 @@ test.agExample(import.meta, () => {
         await expect(matchCount(page)).not.toHaveText('0/0');
 
         await findInput(page).press('Enter');
-        await expect(matchCount(page)).toContainText('1/');
+        await expect(matchCount(page)).toHaveText(/^\s*1\/\d+\s*$/);
         await expect(page.locator('mark.ag-find-active-match')).toHaveCount(1);
 
         await findButtons(page).nth(1).click();
-        await expect(matchCount(page)).toContainText('2/');
+        await expect(matchCount(page)).toHaveText(/^\s*2\/\d+\s*$/);
         await expect(page.locator('mark.ag-find-active-match')).toHaveCount(1);
     });
 });

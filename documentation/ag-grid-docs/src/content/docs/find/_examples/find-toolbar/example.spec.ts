@@ -15,9 +15,9 @@ test.agExample(import.meta, () => {
 
         await findInput(page).fill('Michael');
 
-        // Matched text is wrapped in mark.ag-find-match; the count label shows total matches.
+        // Matched text is wrapped in mark.ag-find-match; before navigating the active index is 0.
         await expect(page.locator('mark.ag-find-match').first()).toBeVisible();
-        await expect(matchCount(page)).toContainText('/');
+        await expect(matchCount(page)).toHaveText(/^\s*0\/\d+\s*$/);
         // No match is active until the user navigates.
         await expect(page.locator('mark.ag-find-active-match')).toHaveCount(0);
     });
@@ -28,18 +28,18 @@ test.agExample(import.meta, () => {
         await findInput(page).fill('Michael');
         await expect(page.locator('mark.ag-find-match').first()).toBeVisible();
 
-        // First navigation activates match 1.
+        // First navigation activates match 1 (anchored so "11/", "21/" etc. cannot pass).
         await findInput(page).press('Enter');
-        await expect(matchCount(page)).toContainText('1/');
+        await expect(matchCount(page)).toHaveText(/^\s*1\/\d+\s*$/);
         await expect(page.locator('mark.ag-find-active-match')).toHaveCount(1);
 
         // Next advances to match 2.
         await findButtons(page).nth(1).click();
-        await expect(matchCount(page)).toContainText('2/');
+        await expect(matchCount(page)).toHaveText(/^\s*2\/\d+\s*$/);
         await expect(page.locator('mark.ag-find-active-match')).toHaveCount(1);
 
         // Previous returns to match 1.
         await findButtons(page).nth(0).click();
-        await expect(matchCount(page)).toContainText('1/');
+        await expect(matchCount(page)).toHaveText(/^\s*1\/\d+\s*$/);
     });
 });
