@@ -839,10 +839,7 @@ describe('Auto Group Column Order', () => {
 
             expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
             // both auto cols are pinned left; the new one seats after the existing one, not ahead of it
-            expect(getColumnOrder(gridApi, 'left')).toEqual([
-                `${GROUP_AUTO_COLUMN_ID}-a`,
-                `${GROUP_AUTO_COLUMN_ID}-b`,
-            ]);
+            expect(getColumnOrder(gridApi, 'left')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`, `${GROUP_AUTO_COLUMN_ID}-b`]);
         });
 
         test('orders row group column(s) by rowGroupIndex (lowest first) when enableRtl=true', async () => {
