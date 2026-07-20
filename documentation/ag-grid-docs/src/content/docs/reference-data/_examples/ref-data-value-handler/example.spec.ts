@@ -15,52 +15,52 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('0', 'interiorColour')).toContainText('Burlywood');
     });
 
-    test.eachFramework('price valueGetter/formatter and the chained taxes getter compute values', async ({
-        agIdFor,
-        page,
-    }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
+    test.eachFramework(
+        'price valueGetter/formatter and the chained taxes getter compute values',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
 
-        await expect(agIdFor.cell('0', 'retailPrice')).toContainText('£35,000');
-        await expect(agIdFor.cell('0', '0')).toContainText('£42,000');
-    });
+            await expect(agIdFor.cell('0', 'retailPrice')).toContainText('£35,000');
+            await expect(agIdFor.cell('0', '0')).toContainText('£42,000');
+        }
+    );
 
-    test.eachFramework('retail price valueSetter round-trips and re-drives the chained getter', async ({
-        agIdFor,
-        page,
-    }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
+    test.eachFramework(
+        'retail price valueSetter round-trips and re-drives the chained getter',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
 
-        const priceCell = agIdFor.cell('0', 'retailPrice');
-        await priceCell.dblclick();
-        const editor = priceCell.locator('input');
-        await expect(editor).toBeVisible();
-        await editor.fill('50000');
-        await page.keyboard.press('Enter');
-        await expect(editor).toHaveCount(0);
+            const priceCell = agIdFor.cell('0', 'retailPrice');
+            await priceCell.dblclick();
+            const editor = priceCell.locator('input');
+            await expect(editor).toBeVisible();
+            await editor.fill('50000');
+            await page.keyboard.press('Enter');
+            await expect(editor).toHaveCount(0);
 
-        await expect(priceCell).toContainText('£50,000');
-        await expect(agIdFor.cell('0', '0')).toContainText('£60,000');
-    });
+            await expect(priceCell).toContainText('£50,000');
+            await expect(agIdFor.cell('0', '0')).toContainText('£60,000');
+        }
+    );
 
-    test.eachFramework('text editor with useFormatter edits by name and the valueParser stores the code', async ({
-        agIdFor,
-        page,
-    }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
+    test.eachFramework(
+        'text editor with useFormatter edits by name and the valueParser stores the code',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
 
-        const interiorCell = agIdFor.cell('0', 'interiorColour');
-        await interiorCell.dblclick();
-        const editor = interiorCell.locator('input');
-        await expect(editor).toBeVisible();
-        // useFormatter shows the name for editing; entering the name 'Cadet Blue' is parsed to 'cb'.
-        await editor.fill('Cadet Blue');
-        await page.keyboard.press('Enter');
-        await expect(editor).toHaveCount(0);
+            const interiorCell = agIdFor.cell('0', 'interiorColour');
+            await interiorCell.dblclick();
+            const editor = interiorCell.locator('input');
+            await expect(editor).toBeVisible();
+            // useFormatter shows the name for editing; entering the name 'Cadet Blue' is parsed to 'cb'.
+            await editor.fill('Cadet Blue');
+            await page.keyboard.press('Enter');
+            await expect(editor).toHaveCount(0);
 
-        await expect(interiorCell).toContainText('Cadet Blue');
-    });
+            await expect(interiorCell).toContainText('Cadet Blue');
+        }
+    );
 });

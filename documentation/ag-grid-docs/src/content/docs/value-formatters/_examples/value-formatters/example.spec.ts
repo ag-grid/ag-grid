@@ -13,17 +13,17 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('1', 'a')).toContainText('368');
     });
 
-    test.eachFramework('currency valueFormatter prefixes with a pound sign and groups digits', async ({
-        agIdFor,
-        page,
-    }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
+    test.eachFramework(
+        'currency valueFormatter prefixes with a pound sign and groups digits',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
 
-        await expect(agIdFor.cell('0', 'a_1')).toContainText('£6,912');
-        await expect(agIdFor.cell('1', 'a_1')).toContainText('£368');
-        await expect(agIdFor.cell('2', 'a_1')).toContainText('£3,824');
-    });
+            await expect(agIdFor.cell('0', 'a_1')).toContainText('£6,912');
+            await expect(agIdFor.cell('1', 'a_1')).toContainText('£368');
+            await expect(agIdFor.cell('2', 'a_1')).toContainText('£3,824');
+        }
+    );
 
     test.eachFramework('brackets valueFormatter wraps the value in parentheses', async ({ agIdFor, page }) => {
         await ensureGridReady(page);

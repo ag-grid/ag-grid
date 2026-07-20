@@ -30,27 +30,28 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('0', '0')).toContainText('22,000');
     });
 
-    test.eachFramework('refresh alone keeps the cache; invalidating first re-runs the value getter', async ({
-        page,
-    }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
+    test.eachFramework(
+        'refresh alone keeps the cache; invalidating first re-runs the value getter',
+        async ({ page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
 
-        const logs: string[] = [];
-        const handler = (msg: { text: () => string }) => logs.push(msg.text());
-        page.on('console', handler);
+            const logs: string[] = [];
+            const handler = (msg: { text: () => string }) => logs.push(msg.text());
+            page.on('console', handler);
 
-        // Refresh Cells alone uses the cache: the value getter is not executed again.
-        await page.getByRole('button', { name: 'Refresh Cells' }).click();
-        await waitForRowAnimations(page);
-        expect(logs.some((l) => l.includes('Total Value Getter'))).toBe(false);
+            // Refresh Cells alone uses the cache: the value getter is not executed again.
+            await page.getByRole('button', { name: 'Refresh Cells' }).click();
+            await waitForRowAnimations(page);
+            expect(logs.some((l) => l.includes('Total Value Getter'))).toBe(false);
 
-        // Invalidate the cache, then refresh: now the value getter must run again.
-        await page.getByRole('button', { name: 'Invalidate Value Cache' }).click();
-        await page.getByRole('button', { name: 'Refresh Cells' }).click();
-        await expect(() => {
-            expect(logs.some((l) => l.includes('Total Value Getter'))).toBe(true);
-        }).toPass();
-        page.off('console', handler);
-    });
+            // Invalidate the cache, then refresh: now the value getter must run again.
+            await page.getByRole('button', { name: 'Invalidate Value Cache' }).click();
+            await page.getByRole('button', { name: 'Refresh Cells' }).click();
+            await expect(() => {
+                expect(logs.some((l) => l.includes('Total Value Getter'))).toBe(true);
+            }).toPass();
+            page.off('console', handler);
+        }
+    );
 });
