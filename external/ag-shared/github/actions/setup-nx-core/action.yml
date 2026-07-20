@@ -209,6 +209,28 @@ runs:
               restore-keys: cache-nx-v20-${{ inputs.nx_cache_hash }}-
               # fail-on-cache-miss: true
 
+        # Persist yarn's global download cache (the fetched tarballs), keyed like node_modules
+        # but with a loose restore-keys fallback so it survives a dependency bump: the yarn cache
+        # is additive, so an older cache still holds almost every tarball and a bump only fetches
+        # the diff. This decouples "node_modules layout is stale" (needs a reinstall) from "must
+        # hit the network" (the flaky registry): a reinstall on a node_modules miss resolves from
+        # this cache offline instead of re-downloading everything from the registry.
+        - name: Cache yarn download cache
+          if: inputs.cache_mode == 'rw'
+          uses: actions/cache@v4
+          with:
+              path: ~/.cache/yarn
+              key: yarn-cache-${{ runner.os }}-${{ inputs.node_modules_hash }}
+              restore-keys: yarn-cache-${{ runner.os }}-
+
+        - name: Restore yarn download cache
+          if: inputs.cache_mode == 'ro'
+          uses: actions/cache/restore@v4
+          with:
+              path: ~/.cache/yarn
+              key: yarn-cache-${{ runner.os }}-${{ inputs.node_modules_hash }}
+              restore-keys: yarn-cache-${{ runner.os }}-
+
         - name: Setup Node.js
           id: setup_node
           uses: actions/setup-node@v4
@@ -239,12 +261,12 @@ runs:
                 if [[ -n "${NODE_MODULES_PATHS//[[:space:]]/}" ]] ; then
                   rm -rf ${NODE_MODULES_PATHS}
                 fi
-                yarn install --ci
+                yarn install --ci --prefer-offline --network-retries 5
                 yarn check --integrity
               elif (yarn check --integrity) ; then
                 yarn postinstall
               else
-                yarn install --ci
+                yarn install --ci --prefer-offline --network-retries 5
 
                 # Ensure that the integrity check passes after install to avoid
                 # cache polution with entries that will fail future integrity checks.
@@ -256,7 +278,7 @@ runs:
           id: yarn_install_fast
           shell: bash
           run: |
-              yarn check --integrity || yarn install --ci
+              yarn check --integrity || yarn install --ci --prefer-offline --network-retries 5
 
         - name: yarn install (skipping postinstall)
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall == 'no-install' && steps.cache_ro.outputs.cache-hit != 'false'
