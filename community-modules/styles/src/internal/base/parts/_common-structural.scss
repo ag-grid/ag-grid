@@ -1343,8 +1343,9 @@
         // grid-managed popups must sit above overlays and row content.
         z-index: 5;
         top: 0;
-        // never let a popup grow wider than the viewport (e.g. long unbroken content).
-        max-width: 100vw;
+        // never let a popup grow wider than the viewport (100% exactly matches viewport for
+        // body popupParent, 100vw-30px leaves room for scrollbars when popupParent is narrower)
+        max-width: min(100%, calc(100vw - 30px));
     }
 
     .ag-popup-editor {
