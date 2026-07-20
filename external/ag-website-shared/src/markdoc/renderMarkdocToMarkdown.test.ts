@@ -202,6 +202,22 @@ describe('renderMarkdocToMarkdown', () => {
         expect(renderApiTable).toHaveBeenCalledTimes(2);
     });
 
+    it('resolves variable/function attributes before handing off to renderApiTable', async () => {
+        const renderApiTable = vi.fn(() => 'TABLE');
+        await render('{% apiDocumentation source=$apiSource /%}', {
+            resolvers: { renderApiTable },
+            markdocConfig: {
+                ...markdocConfig,
+                variables: { ...markdocConfig.variables, apiSource: 'grid-options/properties' },
+            },
+        });
+
+        // The `$apiSource` variable must arrive resolved to its value, not as a Markdoc AST node.
+        expect(renderApiTable).toHaveBeenCalledWith(
+            expect.objectContaining({ attributes: { source: 'grid-options/properties' } })
+        );
+    });
+
     it('drops hard-dropped tags without leaving blank-line gaps', async () => {
         const body = ['Before.', '', '{% oneTrustCookies /%}', '', '{% oneTrustCookies /%}', '', 'After.'].join('\n');
         const output = await render(body);
@@ -279,6 +295,19 @@ describe('renderMarkdocToMarkdown', () => {
         };
         const output = await render('{% partial file="_partial.mdoc" /%}', { resolvers });
         expect(output).toContain('Partial **content**.');
+    });
+
+    it('resolves image tags inside a partial through resolveImageSrc', async () => {
+        const resolvers: MarkdownResolvers = {
+            readPartial: ({ file }) =>
+                file === '_diagram.mdoc' ? '{% image imagePath="resources/diagram.svg" alt="Diagram" /%}' : null,
+            resolveImageSrc: async ({ imagePath, pageName }) => `https://example.test/${pageName}/${imagePath}?hashed`,
+        };
+        const output = await render('{% partial file="_diagram.mdoc" /%}', {
+            resolvers,
+            pageName: 'supported-browsers',
+        });
+        expect(output).toContain('![Diagram](https://example.test/supported-browsers/resources/diagram.svg?hashed)');
     });
 
     it('preserves blank lines inside fenced code (normalisation is fence-aware)', async () => {

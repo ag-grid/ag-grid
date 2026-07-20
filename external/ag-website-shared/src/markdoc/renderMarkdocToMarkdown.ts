@@ -592,7 +592,7 @@ async function renderNumberHeading(node: Node, ctx: RenderContext): Promise<stri
 const IMAGE_TAGS = new Set(['image', 'imageCaption', 'gif']);
 
 function imageCacheKey(pageName: string, imagePath: string): string {
-    return `${pageName} ${imagePath}`;
+    return `${pageName} ${imagePath}`;
 }
 
 /**
@@ -721,7 +721,9 @@ async function renderApi(node: Node, ctx: RenderContext, kind: 'api' | 'interfac
         return '';
     }
     const output = await ctx.resolvers.renderApiTable({
-        attributes: node.attributes ?? {},
+        // Resolve variable/function attributes (e.g. `source=$foo`) before handing off,
+        // matching `renderDelegatedTag` — the resolver expects plain values, not AST nodes.
+        attributes: resolveAttributes(node.attributes ?? {}, ctx),
         framework: ctx.framework,
         kind,
     });
@@ -738,6 +740,9 @@ async function renderPartial(node: Node, ctx: RenderContext): Promise<string> {
         return '';
     }
     const partialAst = Markdoc.parse(contents);
+    // The partial is a separate AST, so its image tags weren't seen by the top-level
+    // prefetch pass — resolve their `src`s into the shared cache before rendering.
+    await prefetchImageSrcs(partialAst.children, ctx);
     return renderBlocks(partialAst.children, ctx);
 }
 
