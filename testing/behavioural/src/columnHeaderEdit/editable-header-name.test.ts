@@ -132,7 +132,7 @@ describe('Editable header name', () => {
                 headerNameEditable: true,
                 headerValueGetter: (p) => {
                     locations.push(p.location);
-                    return p.headerNameOverride ?? 'Athlete (custom)';
+                    return 'Athlete (custom)';
                 },
             },
         ]);
@@ -141,6 +141,32 @@ describe('Editable header name', () => {
 
         expect(input.value).toBe('Athlete (custom)');
         expect(locations).toContain('header');
+    });
+
+    test('an edited name wins over the headerValueGetter, which is no longer called', async () => {
+        let getterCalls = 0;
+        const { api, gridDiv, toolPanel } = await createGrid([
+            {
+                field: 'athlete',
+                headerNameEditable: true,
+                headerValueGetter: () => {
+                    getterCalls++;
+                    return 'From Getter';
+                },
+            },
+        ]);
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+
+        const input = await openEditor(toolPanel, gridDiv, 'From Getter');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Renamed');
+        pressEnter(input);
+        await asyncSetTimeout(1);
+
+        const callsAfterCommit = getterCalls;
+        // Resolving the display name again must return the override without consulting the getter.
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+        expect(getterCalls).toBe(callsAfterCommit);
     });
 
     test('committing an unchanged name dispatches no headerNameOverrideChanged event', async () => {
