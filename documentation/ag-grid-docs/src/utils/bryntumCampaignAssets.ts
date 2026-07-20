@@ -6,7 +6,7 @@ const BRYNTUM_ROOT = 'https://bryntum.com';
 // Tracking parameter appended to outbound links from the Bryntum campaign
 // pages, so Bryntum can attribute traffic back to the AG Grid landing page.
 const BRYNTUM_UTM_KEY = 'aw';
-const BRYNTUM_UTM_VALUE = 'ag-ag-grid';
+const BRYNTUM_UTM_VALUE = 'ag-grid';
 const BRYNTUM_UTM = `${BRYNTUM_UTM_KEY}=${BRYNTUM_UTM_VALUE}`;
 const BRYNTUM_HOST_RE = /^https?:\/\/(?:www\.)?bryntum\.com\b/i;
 
