@@ -1,11 +1,32 @@
-import { clickAllButtons, ensureGridReady, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page }) => {
-        // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
+    test.eachFramework('selectable rows (year < 2007) can be multi-selected', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
-        await waitForGridContent(page);
-        await clickAllButtons(page);
-        // END PLACEHOLDER
+
+        // Rows 6 (2004) and 7 (2000) are both selectable.
+        await agIdFor.selectionColumnCheckbox('6').first().click();
+        await agIdFor.selectionColumnCheckbox('7').first().click();
+        await expect(agIdFor.rowNode('6')).toHaveClass(/ag-row-selected/);
+        await expect(agIdFor.rowNode('7')).toHaveClass(/ag-row-selected/);
+    });
+
+    test.eachFramework('non-selectable rows hide their checkbox when hideDisabledCheckboxes is on', async ({
+        agIdFor,
+        page,
+    }) => {
+        await ensureGridReady(page);
+
+        // Row 0 is 2008 — not selectable; its disabled checkbox is hidden by default.
+        await expect(agIdFor.cell('0', 'year')).toContainText('2008');
+        await expect(agIdFor.selectionColumnCheckbox('0')).toHaveCount(0);
+    });
+
+    test.eachFramework('toggling hideDisabledCheckboxes off reveals the disabled checkbox', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+
+        await expect(agIdFor.selectionColumnCheckbox('0')).toHaveCount(0);
+        await page.locator('#toggle-hide-checkbox').uncheck();
+        await expect(agIdFor.selectionColumnCheckbox('0').first()).toBeVisible();
     });
 });
