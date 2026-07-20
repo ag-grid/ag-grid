@@ -310,7 +310,9 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         } else {
             const menuItems = (this.beans.colMenuFactory as ColumnMenuFactory).getMenuItems(column, columnGroup);
             return menuItems.length
-                ? this.createBean(new ColumnContextMenu(menuItems, column, columnGroup, restoreFocusParams, eventSource))
+                ? this.createBean(
+                      new ColumnContextMenu(menuItems, column, columnGroup, restoreFocusParams, eventSource)
+                  )
                 : undefined;
         }
     }

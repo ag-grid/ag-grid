@@ -387,7 +387,10 @@ describe('Editable group header name', () => {
             columnDefs: groupDefs(),
             rowData,
             initialState: {
-                columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
+                columnGroup: {
+                    openColumnGroupIds: [],
+                    headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
+                },
             },
         });
         await asyncSetTimeout(1);
@@ -401,7 +404,10 @@ describe('Editable group header name', () => {
             columnDefs: groupDefs(),
             rowData,
             initialState: {
-                columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
+                columnGroup: {
+                    openColumnGroupIds: [],
+                    headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
+                },
             },
         });
         await asyncSetTimeout(1);
@@ -414,7 +420,10 @@ describe('Editable group header name', () => {
             columnDefs: groupDefs(),
             rowData,
             initialState: {
-                columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
+                columnGroup: {
+                    openColumnGroupIds: [],
+                    headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
+                },
             },
         });
         await asyncSetTimeout(1);
@@ -437,7 +446,10 @@ describe('Editable group header name', () => {
             }),
             rowData,
             initialState: {
-                columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
+                columnGroup: {
+                    openColumnGroupIds: [],
+                    headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
+                },
             },
         });
         await asyncSetTimeout(1);
