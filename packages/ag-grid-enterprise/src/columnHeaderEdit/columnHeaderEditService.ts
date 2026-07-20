@@ -81,9 +81,8 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
             new ColumnHeaderEditPopup({
                 initialValue,
                 onClosed: (committed, value) => {
-                    if (committed && value.trim() !== initialValue.trim()) {
-                        const trimmed = value.trim();
-                        this.applyHeaderName(target, trimmed.length ? trimmed : null);
+                    if (committed && value !== initialValue) {
+                        this.applyHeaderName(target, value.length ? value : null);
                     }
                     this.destroyActivePopup();
                 },
