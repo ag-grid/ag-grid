@@ -82,7 +82,7 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
                 initialValue,
                 onClosed: (committed, value) => {
                     if (committed && value !== initialValue) {
-                        this.applyHeaderName(target, value.length ? value : null);
+                        this.applyHeaderName(target, value);
                     }
                     this.destroyActivePopup();
                 },

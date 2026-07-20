@@ -267,21 +267,17 @@ describe('Editable header name', () => {
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('  Athlete  ');
     });
 
-    test('committing an empty name reverts to the colDef header name', async () => {
+    test('committing an empty name sets an empty header name (empty names are allowed)', async () => {
         const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const column = api.getColumn('athlete') as unknown as AgColumn;
 
-        // Establish an override first, then clear it out via the editor.
-        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
-        await asyncSetTimeout(1);
-
-        const input = await openEditor(toolPanel, gridDiv, 'Renamed');
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
         await userEvent.clear(input);
         pressEnter(input);
         await asyncSetTimeout(1);
 
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
-        expect(api.getState().columnHeaderName).toBeUndefined();
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('');
+        expect(api.getState().columnHeaderName?.columnHeaderNames).toEqual([{ colId: 'athlete', headerName: '' }]);
     });
 
     test('applying a null header name via column state reverts to the colDef name', async () => {
