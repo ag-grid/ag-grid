@@ -14,12 +14,6 @@ const AI_API_TOKEN_REGEX = /(const AI_API_TOKEN\s*=\s*)(['"`])[^'"`]+\2/g;
  * Strip the harness code the example generator injects (integrated theme switcher,
  * console logging, teardown, test-id setup) from the main files, and redact AI API
  * tokens across all files. Mutates `files` in place.
- *
- * Extracted from CodeViewer so it can be reused wherever example source is surfaced
- * to a human or an LLM — the on-page code viewer, the "open in CodeSandbox/Plunkr"
- * exports, and the markdown (`.md`) docs pages — without pulling in the React
- * component (this module is React- and SCSS-free, so it is safe to import at build
- * time in the markdown serializer).
  */
 export function stripOutExampleGeneratorCode(files: FileContents) {
     MAIN_FILES.forEach((mainFile) => {

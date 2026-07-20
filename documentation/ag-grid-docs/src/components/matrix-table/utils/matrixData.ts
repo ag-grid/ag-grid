@@ -1,8 +1,3 @@
-// Pure data-shaping helpers for the feature matrix, extracted from MatrixTable.tsx
-// so they can be reused outside React — notably by the markdown serializer's
-// `matrixTable` renderer, which must run at build time without importing the
-// component (React/SCSS). MatrixTable.tsx imports these; keep behaviour identical.
-
 export type MatrixColumns = Record<string, string>;
 export type MatrixDatum = Record<string, any>;
 export type MatrixCellRenderer = 'tickCross' | 'featuresTickCross' | 'group';

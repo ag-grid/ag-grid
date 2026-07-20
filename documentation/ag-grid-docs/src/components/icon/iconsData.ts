@@ -1,7 +1,3 @@
-// The theme-icon names and themes shown by the IconsPanel, extracted so the
-// markdown serializer's `iconsPanel` renderer can list them at build time without
-// importing the React component. IconsPanel.tsx imports these.
-
 export type IconTheme = 'quartz' | 'balham' | 'material' | 'alpine';
 
 export const ICON_THEMES: IconTheme[] = ['quartz', 'balham', 'material', 'alpine'];
