@@ -2714,6 +2714,12 @@ AddType application/x-gzip .gz .tgz
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
+# SE-81: agent-useful Link response header. Gives AI agents a machine-readable pointer
+# to the key resources without parsing the page first: rel=describedby -> /llms.txt,
+# rel=sitemap -> the sitemap index, and rel=related -> the MCP server docs. Single-token
+# rel values are unquoted per RFC 8288, which keeps the directive free of escaped quotes.
+Header always set Link "</llms.txt>; rel=describedby, </sitemap-index.xml>; rel=sitemap, <https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related"
+
 # Content-Security-Policy — enforced, path-scoped (the report-only validation window
 # for removing 'unsafe-eval' from the main-site policy is complete). The block unsets
 # the inherited headers (incl. the legacy wildcard CSP on the vhost) and sets this

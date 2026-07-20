@@ -90,6 +90,17 @@ describe('htaccessRules', () => {
         });
     });
 
+    describe('SE-81: agent-useful Link header', () => {
+        it('should include a Link header pointing at llms.txt, the sitemap index and the MCP server', () => {
+            expect(productionContent).toContain('Header always set Link');
+            expect(productionContent).toContain('</llms.txt>; rel=describedby');
+            expect(productionContent).toContain('</sitemap-index.xml>; rel=sitemap');
+            expect(productionContent).toContain(
+                '<https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related'
+            );
+        });
+    });
+
     describe('AG-17152: /charts/ framework overview redirects', () => {
         const chartsFrameworkRedirects = [
             { from: '^/javascript-charts', to: 'charts/javascript/quick-start/' },

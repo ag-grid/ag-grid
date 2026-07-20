@@ -237,6 +237,12 @@ ${getModRewriteRules()}
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
+# SE-81: agent-useful Link response header. Gives AI agents a machine-readable pointer
+# to the key resources without parsing the page first: rel=describedby -> /llms.txt,
+# rel=sitemap -> the sitemap index, and rel=related -> the MCP server docs. Single-token
+# rel values are unquoted per RFC 8288, which keeps the directive free of escaped quotes.
+Header always set Link "</llms.txt>; rel=describedby, </sitemap-index.xml>; rel=sitemap, <https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related"
+
 ${getProductionCspContent()}
 
 # CORS settings — use 'set' (not 'add') so any value inherited from the server vhost is
