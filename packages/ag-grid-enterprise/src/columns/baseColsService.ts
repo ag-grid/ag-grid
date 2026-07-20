@@ -148,33 +148,38 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     /** React to a `this.columns` order/content change; `rowGroupColsSvc` stamps `rowGroupActiveIndex`. Default no-op. */
     protected onColumnsChanged(): void {}
 
-    /** Stage cols differing in membership or position between `before` and `after` (removed/moved/added) and
-     *  mark a reindex; returns whether any differed, so the caller can skip an unchanged apply. Records straight
-     *  into `pendingChanged` — no intermediate array — leaving it untouched (and null) when nothing changed. */
-    private stageChangedColsBetween(before: AgColumn[], after: AgColumn[]): boolean {
+    /** Diff `before`→`after`, staging every changed col straight into `pendingChanged` (no intermediate array,
+     *  left null when nothing changed): `'none'` identical, `'reorder'` same set moved, `'membership'` added/removed. */
+    private stageChangedColsBetween(before: AgColumn[], after: AgColumn[]): 'none' | 'membership' | 'reorder' {
         const afterIndex = _indexMap(after);
         const beforeSet = before.length > 0 ? new Set(before) : null;
         let pending: Set<AgColumn> | null = null;
+        let membership = false;
         for (let i = 0, len = before.length; i < len; ++i) {
             const col = before[i];
             const newIndex = afterIndex.get(col);
-            if (newIndex === undefined || newIndex !== i) {
-                pending ??= this.pendingColChangeSet(); // removed or moved
+            if (newIndex === undefined) {
+                membership = true; // removed
+                pending ??= this.pendingColChangeSet();
+                pending.add(col);
+            } else if (newIndex !== i) {
+                pending ??= this.pendingColChangeSet(); // moved
                 pending.add(col);
             }
         }
         for (let i = 0, len = after.length; i < len; ++i) {
             const col = after[i];
             if (!beforeSet?.has(col)) {
-                pending ??= this.pendingColChangeSet(); // added
+                membership = true; // added
+                pending ??= this.pendingColChangeSet();
                 pending.add(col);
             }
         }
         if (pending === null) {
-            return false;
+            return 'none';
         }
         this.reindexPending = true;
-        return true;
+        return membership ? 'membership' : 'reorder';
     }
 
     public setColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void {
@@ -197,11 +202,12 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         // Provided keys, hierarchy virtuals expanded before each source.
         const orderedSet = this.expandActiveCols(newCols);
         const orderedArr = Array.from(orderedSet);
-        if (!this.stageChangedColsBetween(before, orderedArr)) {
+        const change = this.stageChangedColsBetween(before, orderedArr);
+        if (change === 'none') {
             return; // identical membership + order — nothing to refresh or dispatch
         }
         this.applyActiveCols(before, orderedSet, orderedArr, source, true);
-        colModel.flushColChanges(source, true); // membership change → refresh; defers when batched
+        colModel.flushColChanges(source, change); // animated refresh; defers when batched
     }
 
     /** Seat a col into `res`; base adds just the col, `OrderedColsService` seats its virtuals first. */
@@ -313,7 +319,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         }
 
         this.stageColChanges(updatedCols);
-        colModel.flushColChanges(src, true); // membership change → refresh; defers when batched
+        colModel.flushColChanges(src, 'membership'); // add/remove → animated refresh; defers when batched
     }
 
     /** Bucket one primary col for the pass; no-op if not in this role. `colIsNew` ⇒ `initial*` props apply. */

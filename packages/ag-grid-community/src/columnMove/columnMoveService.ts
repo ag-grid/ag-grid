@@ -47,30 +47,32 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         }
 
         colAnimation?.start();
-        // we want to pull all the columns out first and put them into an ordered list
-        const movedColumns: AgColumn[] = [];
-        for (let i = 0, len = columnsToMoveKeys.length; i < len; ++i) {
-            const col = colModel.getCol(columnsToMoveKeys[i]);
-            if (col) {
-                movedColumns.push(col);
+        try {
+            // we want to pull all the columns out first and put them into an ordered list
+            const movedColumns: AgColumn[] = [];
+            for (let i = 0, len = columnsToMoveKeys.length; i < len; ++i) {
+                const col = colModel.getCol(columnsToMoveKeys[i]);
+                if (col) {
+                    movedColumns.push(col);
+                }
             }
-        }
 
-        if (this.doesMovePassRules(movedColumns, toIndex)) {
-            _moveInArray(colModel.colsList, movedColumns, toIndex);
-            colModel.markColsListIndexDirty();
-            visibleCols.refresh(source, false);
-            this.eventSvc.dispatchEvent({
-                type: 'columnMoved',
-                columns: movedColumns,
-                column: movedColumns.length === 1 ? movedColumns[0] : null,
-                toIndex,
-                finished,
-                source,
-            });
+            if (this.doesMovePassRules(movedColumns, toIndex)) {
+                _moveInArray(colModel.colsList, movedColumns, toIndex);
+                colModel.markColsListIndexDirty();
+                visibleCols.refresh(source, false);
+                this.eventSvc.dispatchEvent({
+                    type: 'columnMoved',
+                    columns: movedColumns,
+                    column: movedColumns.length === 1 ? movedColumns[0] : null,
+                    toIndex,
+                    finished,
+                    source,
+                });
+            }
+        } finally {
+            colAnimation?.finish();
         }
-
-        colAnimation?.finish();
     }
 
     private doesMovePassRules(columnsToMove: AgColumn[], toIndex: number): boolean {
