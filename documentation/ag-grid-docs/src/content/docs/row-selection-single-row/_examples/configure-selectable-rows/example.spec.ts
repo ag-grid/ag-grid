@@ -28,6 +28,15 @@ test.agExample(import.meta, () => {
 
         // Uncheck the control so disabled checkboxes are shown rather than hidden.
         await page.locator('#toggle-hide-checkbox').uncheck();
-        await expect(agIdFor.selectionColumnCheckbox('0').first()).toBeVisible();
+
+        // The revealed checkbox is present but disabled, not merely visible.
+        const checkbox = agIdFor.selectionColumnCheckbox('0').first();
+        await expect(checkbox).toBeVisible();
+        await expect(checkbox.locator('.ag-checkbox-input-wrapper').first()).toHaveClass(/ag-disabled/);
+        await expect(checkbox.locator('input').first()).toBeDisabled();
+
+        // Force-clicking the disabled checkbox cannot select the non-selectable row.
+        await checkbox.click({ force: true });
+        await expect(agIdFor.rowNode('0')).not.toHaveClass(/ag-row-selected/);
     });
 });

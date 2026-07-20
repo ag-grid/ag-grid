@@ -28,10 +28,16 @@ test.agExample(import.meta, () => {
     test.eachFramework('the header checkbox selects every row', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
 
-        const headerCheckbox = page.locator('.ag-header-select-all .ag-checkbox-input').first();
-        await headerCheckbox.click();
+        const headerWrapper = page.locator('.ag-header-select-all .ag-checkbox-input-wrapper').first();
+        await page.locator('.ag-header-select-all .ag-checkbox-input').first().click();
 
-        // Every rendered row becomes selected.
+        // The header checkbox reports the fully-checked (not indeterminate) state, which is
+        // derived from the whole selection model — this proves every row is selected, including
+        // any that are virtualised off-screen, not just the rendered ones.
+        await expect(headerWrapper).toHaveClass(/ag-checked/);
+        await expect(headerWrapper).not.toHaveClass(/ag-indeterminate/);
+
+        // Every rendered row is also visibly selected.
         const rows = page.locator('.ag-center-cols-container .ag-row');
         const total = await rows.count();
         expect(total).toBeGreaterThan(0);
