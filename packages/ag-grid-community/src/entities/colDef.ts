@@ -260,18 +260,24 @@ type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends
  */
 export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedFieldPaths<TData, TValue, []> : never;
 
-/**
- * Returns a union of all possible paths to nested fields in `TData`.
- */
-export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> = {
+type OwnFieldPaths<TData, TValue> = {
+    [TKey in StringOrNumKeys<TData>]: TData[TKey] extends TValue ? `${TKey}` : never;
+}[StringOrNumKeys<TData>];
+
+type NestedOnlyPaths<TData, TValue, TDepth extends any[]> = {
     [TKey in StringOrNumKeys<TData>]: TData[TKey] extends ((...args: any[]) => any) | undefined
         ? never // ignore functions
         : TData[TKey] extends any[] | undefined
-          ? (TData[TKey] extends TValue ? `${TKey}` : never) | `${TKey}.${number}` // arrays support index access
-          :
-                | (TData[TKey] extends TValue ? `${TKey}` : never)
-                | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
+          ? `${TKey}.${number}` // arrays support index access
+          : NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
 }[StringOrNumKeys<TData>];
+
+/**
+ * Returns a union of all possible paths to nested fields in `TData`.
+ */
+export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> =
+    | OwnFieldPaths<TData, TValue>
+    | NestedOnlyPaths<TData, TValue, TDepth>;
 
 export type SortComparatorFn<TData = any, TValue = any> = (
     valueA: TValue | null | undefined,

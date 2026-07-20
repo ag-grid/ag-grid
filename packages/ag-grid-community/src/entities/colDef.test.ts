@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-dead-store */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { ColDef, ColGroupDef } from './colDef';
+import type { ColDef, ColGroupDef, NestedFieldPaths } from './colDef';
 
 describe('ColDef.field Types', () => {
     test('string with no generic', () => {
@@ -206,5 +206,96 @@ describe('ColDef.field Types', () => {
             { field: 'child.child.b' },
             { field: 'child.child.a' },
         ];
+    });
+
+    test('Generic-typed property is selectable in a generic context', () => {
+        interface Row<T> {
+            id: number;
+            e: T;
+        }
+        function makeColDefs<T>(): ColDef<Row<T>>[] {
+            return [
+                { field: 'id' },
+                { field: 'e' },
+                // @ts-expect-error - non existent field must still be rejected in a generic context
+                { field: 'nonExistent' },
+            ];
+        }
+        makeColDefs();
+    });
+
+    test('Optional properties resolve', () => {
+        interface RowData {
+            a?: number;
+            b?: { c: string };
+        }
+        const t: ColDef<RowData>[] = [
+            { field: 'a' },
+            { field: 'b' },
+            { field: 'b.c' },
+            // @ts-expect-error - non existent field
+            { field: 'd' },
+        ];
+    });
+
+    test('Function-typed fields are selectable (widening trade-off)', () => {
+        interface RowData {
+            a: number;
+            getName: () => string;
+        }
+        const t: ColDef<RowData>[] = [{ field: 'a' }, { field: 'getName' }];
+    });
+
+    test('OLD field-path union is a subset of the current one (guards against narrowing)', () => {
+        // Frozen baseline: the field-path union computed as a single mapped type
+        // (own keys and nested paths together). Every path it accepts must stay
+        // assignable to the exported NestedFieldPaths, so the union can only widen.
+        // The production internal helpers are not exported, hence the local copy.
+        type OldStringOrNumKeys<TObj> = keyof TObj & (string | number);
+        type OldNestedPath<
+            TValue,
+            Prefix extends string,
+            TValueNestedChild,
+            TDepth extends any[],
+        > = TValue extends object
+            ? `${Prefix}.${TDepth['length'] extends 5 ? any : OldNestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
+            : never;
+        type OldNestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> = {
+            [TKey in OldStringOrNumKeys<TData>]: TData[TKey] extends ((...args: any[]) => any) | undefined
+                ? never
+                : TData[TKey] extends any[] | undefined
+                  ? (TData[TKey] extends TValue ? `${TKey}` : never) | `${TKey}.${number}`
+                  :
+                        | (TData[TKey] extends TValue ? `${TKey}` : never)
+                        | OldNestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
+        }[OldStringOrNumKeys<TData>];
+
+        type Extends<A, B> = [A] extends [B] ? true : false;
+
+        interface Plain {
+            a: number;
+            b: string;
+        }
+        interface Nested {
+            a: number;
+            b: { c: string };
+        }
+        interface WithArray {
+            list: number[];
+        }
+        interface Optionals {
+            a?: number;
+            b?: { c: string };
+        }
+        type Unions = { a: number } | { b: string } | { a: number; c: boolean };
+
+        const _superset: [
+            Extends<OldNestedFieldPaths<Plain>, NestedFieldPaths<Plain>>,
+            Extends<OldNestedFieldPaths<Plain, number>, NestedFieldPaths<Plain, number>>,
+            Extends<OldNestedFieldPaths<Nested>, NestedFieldPaths<Nested>>,
+            Extends<OldNestedFieldPaths<WithArray>, NestedFieldPaths<WithArray>>,
+            Extends<OldNestedFieldPaths<Optionals>, NestedFieldPaths<Optionals>>,
+            Extends<OldNestedFieldPaths<Unions>, NestedFieldPaths<Unions>>,
+        ] = [true, true, true, true, true, true];
     });
 });
