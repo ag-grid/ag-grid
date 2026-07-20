@@ -6,7 +6,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
 
         // gold column has 2 twos, silver column has 6 twos => 8
-        await expect(agIdFor.cell('r8', 'c2').first()).toContainText('8');
+        await expect(agIdFor.cell('r8', 'c2').first()).toHaveText('8');
     });
 
     // Editing a cell in the range to the criteria value increments the count.
@@ -22,6 +22,6 @@ test.agExample(import.meta, () => {
         await expect(editor).toHaveCount(0);
 
         // One more cell now equals 2 => 9
-        await expect(agIdFor.cell('r8', 'c2').first()).toContainText('9');
+        await expect(agIdFor.cell('r8', 'c2').first()).toHaveText('9');
     });
 });

@@ -6,11 +6,11 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
 
         // Row 1: gold 1 + silver 1 = 2
-        await expect(agIdFor.cell('1', 'c2').first()).toContainText('2');
+        await expect(agIdFor.cell('1', 'c2').first()).toHaveText('2');
         // Row 5: gold 2 + silver 13 = 15
-        await expect(agIdFor.cell('5', 'c2').first()).toContainText('15');
+        await expect(agIdFor.cell('5', 'c2').first()).toHaveText('15');
         // Row 8: SUM(A1:B8) = 17 gold + 34 silver = 51, plus B1 (1) = 52
-        await expect(agIdFor.cell('8', 'c2').first()).toContainText('52');
+        await expect(agIdFor.cell('8', 'c2').first()).toHaveText('52');
     });
 
     // Editing a value in the summed range recomputes the custom-function cell.
@@ -26,6 +26,6 @@ test.agExample(import.meta, () => {
         await expect(editor).toHaveCount(0);
 
         // Row 1: gold 10 + silver 1 = 11
-        await expect(agIdFor.cell('1', 'c2').first()).toContainText('11');
+        await expect(agIdFor.cell('1', 'c2').first()).toHaveText('11');
     });
 });

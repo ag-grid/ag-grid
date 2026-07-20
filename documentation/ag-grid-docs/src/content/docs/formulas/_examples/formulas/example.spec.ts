@@ -6,14 +6,14 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
 
         // Apples: 1.25 * 4 = 5.00, tax 0.50, total 5.50
-        await expect(agIdFor.cell('1', 'subtotal').first()).toContainText('$ 5.00');
-        await expect(agIdFor.cell('1', 'tax').first()).toContainText('$ 0.50');
-        await expect(agIdFor.cell('1', 'total').first()).toContainText('$ 5.50');
+        await expect(agIdFor.cell('1', 'subtotal').first()).toHaveText('$ 5.00');
+        await expect(agIdFor.cell('1', 'tax').first()).toHaveText('$ 0.50');
+        await expect(agIdFor.cell('1', 'total').first()).toHaveText('$ 5.50');
 
         // Oranges: 0.80 * 6 = 4.80, tax 0.48, total 5.28
-        await expect(agIdFor.cell('2', 'subtotal').first()).toContainText('$ 4.80');
-        await expect(agIdFor.cell('2', 'tax').first()).toContainText('$ 0.48');
-        await expect(agIdFor.cell('2', 'total').first()).toContainText('$ 5.28');
+        await expect(agIdFor.cell('2', 'subtotal').first()).toHaveText('$ 4.80');
+        await expect(agIdFor.cell('2', 'tax').first()).toHaveText('$ 0.48');
+        await expect(agIdFor.cell('2', 'total').first()).toHaveText('$ 5.28');
     });
 
     // Editing a referenced cell recomputes the dependent formula cells.
@@ -29,8 +29,8 @@ test.agExample(import.meta, () => {
         await expect(editor).toHaveCount(0);
 
         // Apples: 1.25 * 10 = 12.50, tax 1.25, total 13.75
-        await expect(agIdFor.cell('1', 'subtotal').first()).toContainText('$ 12.50');
-        await expect(agIdFor.cell('1', 'tax').first()).toContainText('$ 1.25');
-        await expect(agIdFor.cell('1', 'total').first()).toContainText('$ 13.75');
+        await expect(agIdFor.cell('1', 'subtotal').first()).toHaveText('$ 12.50');
+        await expect(agIdFor.cell('1', 'tax').first()).toHaveText('$ 1.25');
+        await expect(agIdFor.cell('1', 'total').first()).toHaveText('$ 13.75');
     });
 });

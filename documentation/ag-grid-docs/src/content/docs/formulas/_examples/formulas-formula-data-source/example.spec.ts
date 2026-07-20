@@ -6,11 +6,11 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
 
         // Apples: 1.2 * 5 = 6.00
-        await expect(agIdFor.cell('a_01', 'total').first()).toContainText('$ 6.00');
+        await expect(agIdFor.cell('a_01', 'total').first()).toHaveText('$ 6.00');
         // Oranges: 0.8 * 8 = 6.40
-        await expect(agIdFor.cell('o_02', 'total').first()).toContainText('$ 6.40');
+        await expect(agIdFor.cell('o_02', 'total').first()).toHaveText('$ 6.40');
         // Bananas: 1.6 * 1 = 1.60
-        await expect(agIdFor.cell('b_03', 'total').first()).toContainText('$ 1.60');
+        await expect(agIdFor.cell('b_03', 'total').first()).toHaveText('$ 1.60');
     });
 
     // Editing a referenced cell invalidates the cached formula and recomputes the total.
@@ -26,7 +26,7 @@ test.agExample(import.meta, () => {
         await expect(editor).toHaveCount(0);
 
         // Apples: 2 * 5 = 10.00
-        await expect(agIdFor.cell('a_01', 'price').first()).toContainText('$ 2.00');
-        await expect(agIdFor.cell('a_01', 'total').first()).toContainText('$ 10.00');
+        await expect(agIdFor.cell('a_01', 'price').first()).toHaveText('$ 2.00');
+        await expect(agIdFor.cell('a_01', 'total').first()).toHaveText('$ 10.00');
     });
 });
