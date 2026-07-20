@@ -824,7 +824,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
         pivotSort: resolveInitialPivotSort(colDef),
         aggFunc: colDef.aggFunc ?? colDef.initialAggFunc ?? null,
         showValuesAs: beans.showValuesAsSvc?.colDefSelection(colDef) ?? null,
-        headerName: null,
+        // headerName is intentionally omitted: edited names are data, not layout, so a reset preserves them.
     };
 }
 

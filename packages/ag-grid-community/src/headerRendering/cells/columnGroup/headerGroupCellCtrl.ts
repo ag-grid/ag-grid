@@ -319,8 +319,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean.addManagedListeners(providedColGroup, {
             expandedChanged: listener,
             expandableChanged: listener,
-            headerNameOverrideChanged: this.refreshDisplayName.bind(this),
         });
+        // Group header names are keyed by groupId in a shared store, so refresh on the grid-level event
+        // rather than a per-instance one.
+        compBean.addManagedEventListeners({ columnHeaderNameChanged: this.refreshDisplayName.bind(this) });
     }
 
     private refreshDisplayName(): void {

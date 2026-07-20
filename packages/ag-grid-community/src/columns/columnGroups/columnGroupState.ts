@@ -9,10 +9,11 @@ export const _getColGroupState = (
     // Include padding groups (all built groups, not just real ones) so saved state round-trips identically.
     const allGroups = beans.colModel.colsAllGroups;
     const len = allGroups.length;
+    const overrides = beans.colModel.groupHeaderNameOverrides;
     const result = new Array<{ groupId: string; open: boolean; headerName: string | null }>(len);
     for (let i = 0; i < len; ++i) {
         const group = allGroups[i];
-        result[i] = { groupId: group.groupId, open: group.expanded, headerName: group.headerNameOverride };
+        result[i] = { groupId: group.groupId, open: group.expanded, headerName: overrides.get(group.groupId) ?? null };
     }
     return result;
 };
@@ -41,6 +42,7 @@ export const _setColGroupState = (
 
     colAnimation?.start();
 
+    const overrides = colModel.groupHeaderNameOverrides;
     let impactedGroups: AgProvidedColumnGroup[] | null = null;
     let headerNameChanged = false;
     for (let i = 0; i < stateLen; ++i) {
@@ -53,8 +55,18 @@ export const _setColGroupState = (
             impactedGroups ??= [];
             impactedGroups.push(group);
         }
-        if ('headerName' in stateItem && group.setHeaderNameOverride(stateItem.headerName ?? null)) {
-            headerNameChanged = true;
+        if ('headerName' in stateItem) {
+            const groupId = stateItem.groupId;
+            const headerName = stateItem.headerName ?? null;
+            const current = overrides.get(groupId) ?? null;
+            if (current !== headerName) {
+                if (headerName == null) {
+                    overrides.delete(groupId);
+                } else {
+                    overrides.set(groupId, headerName);
+                }
+                headerNameChanged = true;
+            }
         }
     }
 

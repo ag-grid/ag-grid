@@ -33,9 +33,18 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
 
     private applyHeaderName(target: EditTarget, headerName: string | null): void {
         if (isProvidedColumnGroup(target)) {
-            if (target.setHeaderNameOverride(headerName)) {
-                this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged' });
+            const overrides = this.beans.colModel.groupHeaderNameOverrides;
+            const { groupId } = target;
+            const current = overrides.get(groupId) ?? null;
+            if (current === headerName) {
+                return;
             }
+            if (headerName == null) {
+                overrides.delete(groupId);
+            } else {
+                overrides.set(groupId, headerName);
+            }
+            this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged' });
         } else {
             target.setHeaderNameOverride(headerName, 'uiColumnHeaderEdit');
         }
@@ -83,12 +92,13 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
         this.activePopup = popup;
 
         // Keep the editor in sync if the target's name changes underneath it (e.g. a programmatic rename).
-        this.removePopupColListener = this.addManagedListeners(target, {
-            headerNameOverrideChanged: () => {
-                initialValue = this.getEditableHeaderName(target);
-                popup.setValue(initialValue);
-            },
-        })[0];
+        const onNameChanged = () => {
+            initialValue = this.getEditableHeaderName(target);
+            popup.setValue(initialValue);
+        };
+        this.removePopupColListener = isProvidedColumnGroup(target)
+            ? this.addManagedEventListeners({ columnHeaderNameChanged: onNameChanged })[0]
+            : this.addManagedListeners(target, { headerNameOverrideChanged: onNameChanged })[0];
     }
 
     private destroyActivePopup(): void {

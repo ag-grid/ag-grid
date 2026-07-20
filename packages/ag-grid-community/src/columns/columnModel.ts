@@ -61,6 +61,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
     /** Every displayed group — padding groups carry `displayInstances` */
     public colsAllGroups: AgProvidedColumnGroup[] = [];
 
+    /**
+     * User-edited group header names keyed by `groupId` — the single source of truth shared by every
+     * provided-group instance (header, columns tool panel, column chooser). Persisted in grid state.
+     */
+    public groupHeaderNameOverrides: Map<string, string> = new Map();
+
     /** Lazy fallback for ColDef-shaped keys not in `colsById`: by-ref (merged + user colDef) plus
      *  `field` when distinct from colId (first-write-wins). */
     private cachedColsByDef: Map<ColKey, AgColumn> | null = null;
