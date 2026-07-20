@@ -652,6 +652,25 @@ describe('Pagination Events', () => {
             `);
         });
 
+        test('goToLastPage on the last page fires no redundant event', async () => {
+            const api = createGrid(gridsManager);
+
+            api.paginationGoToLastPage();
+            await asyncSetTimeout(0);
+            expect(api.paginationGetCurrentPage()).toBe(4);
+
+            const events: PaginationChangedEvent[] = [];
+            api.addEventListener('paginationChanged', (e) => events.push(e));
+
+            // 50 rows / pageSize 10 is an exact multiple: targeting the last page from the row
+            // count asks for out-of-range page 5 and re-fires; totalPages-1 keeps it a no-op.
+            api.paginationGoToLastPage();
+            await asyncSetTimeout(0);
+
+            expect(events).toHaveLength(0);
+            expect(api.paginationGetCurrentPage()).toBe(4);
+        });
+
         test('goToPage with same page does not fire event', async () => {
             const api = createGrid(gridsManager);
             await new GridColumns(api, `goToPage with same page does not fire event setup`).checkColumns(`

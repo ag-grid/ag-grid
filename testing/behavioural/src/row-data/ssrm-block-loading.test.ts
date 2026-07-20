@@ -1,5 +1,7 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridOptions, IServerSideGetRowsRequest } from 'ag-grid-community';
-import { ScrollApiModule } from 'ag-grid-community';
+import { PaginationModule, ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
@@ -22,7 +24,7 @@ import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
  */
 describe('SSRM block loading', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelApiModule, ScrollApiModule, ServerSideRowModelModule],
+        modules: [ServerSideRowModelApiModule, ScrollApiModule, ServerSideRowModelModule, PaginationModule],
     });
 
     afterEach(() => {
@@ -186,5 +188,45 @@ describe('SSRM block loading', () => {
             ├── LEAF id:1 id:1 value:"Row 1"
             └── LEAF id:2 id:2 value:"Row 2"
         `);
+    });
+
+    // Regression (v33.0.0): with pagination + paginateChildRows, jumping to the last page
+    // computed the page bounds from the pre-clamp page index, leaving the viewport stuck at
+    // the top so lazyBlockLoadingService never requested the final (unloaded) block.
+    test('jumping to the last page fetches the final block with paginateChildRows', async () => {
+        const totalRows = 3500;
+        const rowData = Array.from({ length: totalRows }, (_, i) => ({ id: i, value: `Row ${i}` }));
+        const requests: number[] = [];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            pagination: true,
+            paginationPageSize: 100,
+            cacheBlockSize: 500,
+            paginateChildRows: true,
+            getRowId: (params) => String(params.data.id),
+            serverSideDatasource: {
+                getRows: (params) => {
+                    requests.push(params.request.startRow!);
+                    const slice = rowData.slice(params.request.startRow, params.request.endRow);
+                    params.success({ rowData: slice, rowCount: totalRows });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+
+        api.paginationGoToLastPage();
+
+        // 3500 rows / 100 per page => 35 pages (0..34). The last page shows rows 3400..3499.
+        // The page index and the displayed viewport must both land on the last page; the bug
+        // clamped the index to 34 but computed the bounds from the unclamped index (35).
+        expect(api.paginationGetCurrentPage()).toBe(34);
+        expect(api.getFirstDisplayedRowIndex()).toBe(3400);
+
+        // With the viewport on the last page, its block (start 3000, cacheBlockSize 500) is requested.
+        await waitFor(() => expect(requests).toContain(3000));
     });
 });
