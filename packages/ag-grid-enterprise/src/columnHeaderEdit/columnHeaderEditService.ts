@@ -44,7 +44,7 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
             } else {
                 overrides.set(groupId, headerName);
             }
-            this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged' });
+            this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged', groupId });
         } else {
             target.setHeaderNameOverride(headerName, 'uiColumnHeaderEdit');
         }
@@ -96,9 +96,20 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
             initialValue = this.getEditableHeaderName(target);
             popup.setValue(initialValue);
         };
-        this.removePopupColListener = isProvidedColumnGroup(target)
-            ? this.addManagedEventListeners({ columnHeaderNameChanged: onNameChanged })[0]
-            : this.addManagedListeners(target, { headerNameOverrideChanged: onNameChanged })[0];
+        if (isProvidedColumnGroup(target)) {
+            const { groupId } = target;
+            this.removePopupColListener = this.addManagedEventListeners({
+                columnHeaderNameChanged: (event) => {
+                    if (!event.groupId || event.groupId === groupId) {
+                        onNameChanged();
+                    }
+                },
+            })[0];
+        } else {
+            this.removePopupColListener = this.addManagedListeners(target, {
+                headerNameOverrideChanged: onNameChanged,
+            })[0];
+        }
     }
 
     private destroyActivePopup(): void {

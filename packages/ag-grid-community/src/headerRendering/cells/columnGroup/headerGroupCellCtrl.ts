@@ -321,8 +321,15 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             expandableChanged: listener,
         });
         // Group header names are keyed by groupId in a shared store, so refresh on the grid-level event
-        // rather than a per-instance one.
-        compBean.addManagedEventListeners({ columnHeaderNameChanged: this.refreshDisplayName.bind(this) });
+        // rather than a per-instance one. A missing groupId means a bulk change, so refresh unconditionally.
+        const groupId = providedColGroup.groupId;
+        compBean.addManagedEventListeners({
+            columnHeaderNameChanged: (event) => {
+                if (!event.groupId || event.groupId === groupId) {
+                    this.refreshDisplayName();
+                }
+            },
+        });
     }
 
     private refreshDisplayName(): void {

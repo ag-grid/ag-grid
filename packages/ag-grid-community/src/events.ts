@@ -191,7 +191,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
         showRowGroupColsSetChanged: AgEvent<'showRowGroupColsSetChanged'>;
         rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
-        columnHeaderNameChanged: AgEvent<'columnHeaderNameChanged'>;
+        columnHeaderNameChanged: ColumnHeaderNameChangedEvent;
     }
 >;
 
@@ -951,6 +951,13 @@ export interface StickyTopOffsetChangedEvent extends AgEvent<'stickyTopOffsetCha
 
 export interface StickyBottomOffsetChangedEvent extends AgEvent<'stickyBottomOffsetChanged'> {
     offset: number;
+}
+
+export interface ColumnHeaderNameChangedEvent extends AgEvent<'columnHeaderNameChanged'> {
+    /** Set when a single column's header name changed. Listeners can ignore other columns. */
+    colId?: string;
+    /** Set when a single provided column group's header name changed. Listeners can ignore other groups. */
+    groupId?: string;
 }
 
 export interface CommonCellFocusParams {

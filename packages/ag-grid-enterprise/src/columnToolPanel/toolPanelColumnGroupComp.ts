@@ -4,6 +4,7 @@ import type {
     AgColumn,
     AgProvidedColumnGroup,
     ColumnEventType,
+    ColumnHeaderNameChangedEvent,
     DragItem,
     ElementParams,
     GridCheckbox,
@@ -337,7 +338,11 @@ export class ToolPanelColumnGroupComp extends Component {
         selectAllChildren(this.beans, this.modelItem.children, nextState, this.eventType, this.params);
     }
 
-    private onHeaderNameChanged(): void {
+    private onHeaderNameChanged(event: ColumnHeaderNameChangedEvent): void {
+        // A missing groupId means a bulk change, so refresh unconditionally.
+        if (event.groupId && event.groupId !== this.columnGroup.groupId) {
+            return;
+        }
         this.displayName = this.beans.colNames.getDisplayNameForProvidedColumnGroup(
             null,
             this.columnGroup,
