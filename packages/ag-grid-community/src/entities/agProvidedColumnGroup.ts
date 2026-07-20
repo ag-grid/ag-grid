@@ -11,7 +11,7 @@ export function isProvidedColumnGroup(
     return col instanceof AgProvidedColumnGroup;
 }
 
-export type AgProvidedColumnGroupEvent = 'expandedChanged' | 'expandableChanged';
+export type AgProvidedColumnGroupEvent = 'expandedChanged' | 'expandableChanged' | 'headerNameOverrideChanged';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> implements ProvidedColumnGroup {
     public readonly isColumn = false as const;
@@ -22,6 +22,9 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
     public expandable = false;
 
     public expanded: boolean = false;
+
+    /** User-edited header name that takes precedence over `colGroupDef.headerName`. Persisted in grid state. */
+    public headerNameOverride: string | null = null;
 
     /** Most recent build token that claimed this group — detects "already used in this refresh". */
     public buildToken: number = 0;
@@ -79,6 +82,16 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         }
         this.expanded = expanded;
         this.dispatchLocalEvent({ type: 'expandedChanged' });
+        return true;
+    }
+
+    /** Override the displayed group header name. Pass `null` to revert to the `colGroupDef` value. */
+    public setHeaderNameOverride(headerName: string | null): boolean {
+        if (this.headerNameOverride === headerName) {
+            return false;
+        }
+        this.headerNameOverride = headerName;
+        this.dispatchLocalEvent({ type: 'headerNameOverrideChanged' });
         return true;
     }
 

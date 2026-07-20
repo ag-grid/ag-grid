@@ -54,7 +54,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         providedColumnGroup: AgProvidedColumnGroup | null,
         location: HeaderLocation
     ): string | null {
-        const headerNameOverride = column?.headerNameOverride ?? null;
+        const headerNameOverride = column?.headerNameOverride ?? providedColumnGroup?.headerNameOverride ?? null;
 
         // A UI-edited name wins outright: the header value getter is not consulted once the user has renamed.
         if (headerNameOverride != null) {

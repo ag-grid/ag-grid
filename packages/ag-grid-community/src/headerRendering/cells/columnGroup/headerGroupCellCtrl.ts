@@ -319,7 +319,14 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean.addManagedListeners(providedColGroup, {
             expandedChanged: listener,
             expandableChanged: listener,
+            headerNameOverrideChanged: this.refreshDisplayName.bind(this),
         });
+    }
+
+    private refreshDisplayName(): void {
+        this.displayName = this.beans.colNames.getDisplayNameForColumnGroup(this.column, 'header');
+        this.setupUserComp();
+        this.refreshAnnouncement();
     }
 
     private refreshExpanded(): void {

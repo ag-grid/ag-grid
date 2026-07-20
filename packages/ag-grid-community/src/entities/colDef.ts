@@ -140,6 +140,14 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     suppressStickyLabel?: boolean;
 
     /**
+     * Set to `true` to allow the user to edit this column group's header name from the UI.
+     * The edited value is persisted as part of grid state.
+     * @default false
+     * @agModule `ColumnHeaderEditModule`
+     */
+    headerNameEditable?: boolean;
+
+    /**
      * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
      * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/column-headers/#header-group-components) for framework specific implementation details.
      */
