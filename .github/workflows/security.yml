@@ -102,7 +102,7 @@ jobs:
                   snyk_file: ${{ env.SNYK_FILE }}
 
             - name: Publish CTRF Report
-              uses: ctrf-io/github-test-reporter@v1
+              uses: ctrf-io/github-test-reporter@e500b992f936420eb633c91644cf10d4d71df700 # v1.1.0
               if: always()
               with:
                 report-path: '${{ env.OUTPUT_DIR }}${{ env.REPORT_FILE }}'
