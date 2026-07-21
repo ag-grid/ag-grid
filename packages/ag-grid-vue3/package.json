@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-vue3",
   "description": "AG Grid Vue 3 Component",
-  "version": "36.0.2-beta.20260720.1757",
+  "version": "36.0.2-beta.20260721.1455",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "files": [
@@ -44,7 +44,7 @@
     "build-only:watch": "vite build --watch"
   },
   "dependencies": {
-    "ag-grid-community": "36.0.2-beta.20260720.1757"
+    "ag-grid-community": "36.0.2-beta.20260721.1455"
   },
   "devDependencies": {
     "vue": "^3.5.32",
