@@ -247,8 +247,10 @@ export type ToolPanelClass<TData = any, TValue = any, TContext = any> =
     | string[]
     | ((params: ToolPanelClassParams<TData, TValue, TContext>) => string | string[] | undefined);
 
-type StringOrNumKeys<TObj> = keyof TObj & (string | number);
-type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = TValue extends object
+/** @knipIgnore Used in tests */
+export type StringOrNumKeys<TObj> = keyof TObj & (string | number);
+/** @knipIgnore Used in tests */
+export type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = TValue extends object
     ? `${Prefix}.${TDepth['length'] extends 5 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
     : never;
 

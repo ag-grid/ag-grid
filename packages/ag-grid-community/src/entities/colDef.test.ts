@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-dead-store */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { ColDef, ColGroupDef, NestedFieldPaths } from './colDef';
+import type { ColDef, ColGroupDef, NestedFieldPaths, NestedPath, StringOrNumKeys } from './colDef';
 
 describe('ColDef.field Types', () => {
     test('string with no generic', () => {
@@ -247,55 +247,45 @@ describe('ColDef.field Types', () => {
     });
 
     test('OLD field-path union is a subset of the current one (guards against narrowing)', () => {
-        // Frozen baseline: the field-path union computed as a single mapped type
-        // (own keys and nested paths together). Every path it accepts must stay
-        // assignable to the exported NestedFieldPaths, so the union can only widen.
-        // The production internal helpers are not exported, hence the local copy.
-        type OldStringOrNumKeys<TObj> = keyof TObj & (string | number);
-        type OldNestedPath<
-            TValue,
-            Prefix extends string,
-            TValueNestedChild,
-            TDepth extends any[],
-        > = TValue extends object
-            ? `${Prefix}.${TDepth['length'] extends 5 ? any : OldNestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
-            : never;
+        // Frozen baseline: the field-path union as a single mapped type (own keys and
+        // nested paths emitted together), the form before the own/nested split. Every
+        // path it accepts must stay assignable to the exported NestedFieldPaths, so the
+        // union can only widen. Reuses the production StringOrNumKeys / NestedPath
+        // helpers, so the only type duplicated locally is the one under change.
         type OldNestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> = {
-            [TKey in OldStringOrNumKeys<TData>]: TData[TKey] extends ((...args: any[]) => any) | undefined
+            [TKey in StringOrNumKeys<TData>]: TData[TKey] extends ((...args: any[]) => any) | undefined
                 ? never
                 : TData[TKey] extends any[] | undefined
                   ? (TData[TKey] extends TValue ? `${TKey}` : never) | `${TKey}.${number}`
                   :
                         | (TData[TKey] extends TValue ? `${TKey}` : never)
-                        | OldNestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
-        }[OldStringOrNumKeys<TData>];
+                        | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
+        }[StringOrNumKeys<TData>];
 
         type Extends<A, B> = [A] extends [B] ? true : false;
 
-        interface Plain {
-            a: number;
-            b: string;
+        interface AllBaseTypes {
+            num: number;
+            str: string;
+            bool: boolean;
+            date: Date;
+            nul: null;
+            optional?: number;
+            maybe: string | undefined;
+            primitiveArray: number[];
+            objectArray: { x: number }[];
+            nested: { c: string; deep: { d: boolean } };
+            optionalNested?: { c: string };
+            fn: () => string;
+            unionValue: number | string;
         }
-        interface Nested {
-            a: number;
-            b: { c: string };
-        }
-        interface WithArray {
-            list: number[];
-        }
-        interface Optionals {
-            a?: number;
-            b?: { c: string };
-        }
-        type Unions = { a: number } | { b: string } | { a: number; c: boolean };
+        type UnionData = { a: number } | { b: string } | { a: number; c: boolean };
 
         const _superset: [
-            Extends<OldNestedFieldPaths<Plain>, NestedFieldPaths<Plain>>,
-            Extends<OldNestedFieldPaths<Plain, number>, NestedFieldPaths<Plain, number>>,
-            Extends<OldNestedFieldPaths<Nested>, NestedFieldPaths<Nested>>,
-            Extends<OldNestedFieldPaths<WithArray>, NestedFieldPaths<WithArray>>,
-            Extends<OldNestedFieldPaths<Optionals>, NestedFieldPaths<Optionals>>,
-            Extends<OldNestedFieldPaths<Unions>, NestedFieldPaths<Unions>>,
-        ] = [true, true, true, true, true, true];
+            Extends<OldNestedFieldPaths<AllBaseTypes>, NestedFieldPaths<AllBaseTypes>>,
+            Extends<OldNestedFieldPaths<AllBaseTypes, number>, NestedFieldPaths<AllBaseTypes, number>>,
+            Extends<OldNestedFieldPaths<AllBaseTypes, string>, NestedFieldPaths<AllBaseTypes, string>>,
+            Extends<OldNestedFieldPaths<UnionData>, NestedFieldPaths<UnionData>>,
+        ] = [true, true, true, true];
     });
 });
