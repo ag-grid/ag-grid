@@ -48,14 +48,14 @@ function formatNumber(params: ValueFormatterParams) {
                     name="valueCache"
                     [checked]="valueCacheOn"
                     (change)="onValueCache(true)"
-                />On
+                /><label for="valueCacheOn">On</label>
                 <input
                     type="radio"
                     id="valueCacheOff"
                     name="valueCache"
                     [checked]="!valueCacheOn"
                     (change)="onValueCache(false)"
-                />Off
+                /><label for="valueCacheOff">Off</label>
             </div>
             @if (isVisible) {
                 <ag-grid-angular

@@ -40,8 +40,8 @@ const VueExample = defineComponent({
             <div class="example-wrapper">
                 <div class="example-header">
                     Value Cache:
-                    <input type="radio" id="valueCacheOn" name="valueCache" :checked="valueCacheOn" @change="onValueCache(true)">On
-                    <input type="radio" id="valueCacheOff" name="valueCache" :checked="!valueCacheOn" @change="onValueCache(false)">Off
+                    <input type="radio" id="valueCacheOn" name="valueCache" :checked="valueCacheOn" @change="onValueCache(true)"><label for="valueCacheOn">On</label>
+                    <input type="radio" id="valueCacheOff" name="valueCache" :checked="!valueCacheOn" @change="onValueCache(false)"><label for="valueCacheOff">Off</label>
                 </div>
                 <ag-grid-vue
                     v-if="isVisible"

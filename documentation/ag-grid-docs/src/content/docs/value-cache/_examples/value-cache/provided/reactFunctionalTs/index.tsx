@@ -104,7 +104,7 @@ const GridExample = () => {
                             checked={valueCacheOn}
                             onChange={() => onValueCache(true)}
                         />
-                        On
+                        <label htmlFor="valueCacheOn">On</label>
                         <input
                             type="radio"
                             id="valueCacheOff"
@@ -112,7 +112,7 @@ const GridExample = () => {
                             checked={!valueCacheOn}
                             onChange={() => onValueCache(false)}
                         />
-                        Off
+                        <label htmlFor="valueCacheOff">Off</label>
                     </div>
                     <div style={gridStyle}>
                         <AgGridReact
