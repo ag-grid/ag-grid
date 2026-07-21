@@ -131,8 +131,11 @@ export function getColumnWidths(
 
     for (let i = 0; i < columnCount; i++) {
         const column = columnsToExport[i] ?? null;
+        const defaultWidth: PdfColumnWidth = column?.colKind === 'row-number' ? 'auto' : 'grid';
         const requestedWidth =
-            typeof columnWidth === 'function' ? (columnWidth({ column, index: i }) ?? 'auto') : (columnWidth ?? 'auto');
+            typeof columnWidth === 'function'
+                ? (columnWidth({ column, index: i }) ?? defaultWidth)
+                : (columnWidth ?? defaultWidth);
         const gridWidth = gridWidths[i];
         const autoWidth = resolveFiniteNumber(autoWidths[i], gridWidth, Number.EPSILON);
         baseWidths.push(resolveColumnWidth(requestedWidth, gridWidth, autoWidth));

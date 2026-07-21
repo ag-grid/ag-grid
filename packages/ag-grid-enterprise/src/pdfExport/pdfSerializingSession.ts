@@ -180,8 +180,9 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                     row.cells.push({ value: '', elementType: 'cell', sourceColumn: column });
                     return;
                 }
-                const groupLevel = Math.max(activeNode.level ?? 0, 0);
-                const isRowGroupCell = this.isRowGroupCell(column, activeNode, index);
+                const groupLevel = Math.max(activeNode.uiLevel ?? activeNode.level ?? 0, 0);
+                const isFullWidthGroup = this.isFullWidthGroupCell(activeNode, index);
+                const isRowGroupCell = this.isRowGroupCell(column, activeNode, isFullWidthGroup);
                 if (!row.sourceNode) {
                     row.sourceNode = activeNode;
                     row.rowPinned = activeNode.rowPinned;
@@ -202,14 +203,14 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
 
                 const automaticCellStyle = this.resolveCellPdfStyle(column, activeNode, rowIndex);
 
-                const rowCellValue = this.extractRowCellValue({
+                const rowCellValue = this.extractPdfRowCellValue(
                     column,
-                    node: activeNode,
-                    currentColumnIndex: index,
-                    accumulatedRowIndex: rowIndex,
-                    type: 'pdf',
-                    useRawFormula: false,
-                });
+                    activeNode,
+                    index,
+                    rowIndex,
+                    isRowGroupCell,
+                    isFullWidthGroup
+                );
 
                 const value = String(rowCellValue.valueFormatted ?? rowCellValue.value ?? '');
                 const style = mergePdfCellStyles(
@@ -253,7 +254,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
             cells: [],
             sourceNode,
             rowPinned: sourceNode?.rowPinned,
-            groupLevel: sourceNode ? Math.max(sourceNode.level ?? 0, 0) : undefined,
+            groupLevel: sourceNode ? Math.max(sourceNode.uiLevel ?? sourceNode.level ?? 0, 0) : undefined,
         };
         this.rows.push(row);
         return row;
@@ -274,6 +275,36 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
         });
 
         return mapCssStylesToPdfStyle([rowStyle, rowStyleResult], this.config.resolveColor);
+    }
+
+    private extractPdfRowCellValue(
+        column: AgColumn,
+        node: RowNode,
+        currentColumnIndex: number,
+        accumulatedRowIndex: number,
+        isRowGroupCell: boolean,
+        isFullWidthGroup: boolean
+    ): { value: unknown; valueFormatted?: string | null } {
+        if (isRowGroupCell && !this.processCellCallback && !this.processRowGroupCallback) {
+            const { value, valueFormatted } = this.valueSvc.getValueForDisplay({
+                column: isFullWidthGroup ? undefined : column,
+                node,
+                includeValueFormatted: true,
+                exporting: true,
+                from: this.valueFrom,
+                transformValues: this.transformValues,
+            });
+            return { value: value ?? '', valueFormatted };
+        }
+
+        return this.extractRowCellValue({
+            column,
+            node,
+            currentColumnIndex,
+            accumulatedRowIndex,
+            type: 'pdf',
+            useRawFormula: false,
+        });
     }
 
     private resolveCellPdfStyle(
@@ -374,14 +405,16 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
         return resolvePdfCellStyleColors(style, this.config.resolveColor);
     }
 
-    private isRowGroupCell(column: AgColumn, node: RowNode, currentColumnIndex: number): boolean {
-        const isFullWidthGroup =
-            currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.pivotMode);
+    private isRowGroupCell(column: AgColumn, node: RowNode, isFullWidthGroup: boolean): boolean {
         if (!(this.gos.get('treeData') || node.group)) {
             return false;
         }
 
         return column.isRowGroupDisplayed(node.rowGroupColumn?.getColId() ?? '') || isFullWidthGroup;
+    }
+
+    private isFullWidthGroupCell(node: RowNode, currentColumnIndex: number): boolean {
+        return currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.pivotMode);
     }
 
     private shouldSkipStyleCallbacks(): boolean {

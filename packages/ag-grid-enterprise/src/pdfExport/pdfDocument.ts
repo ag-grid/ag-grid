@@ -40,6 +40,7 @@ const DEFAULTS = {
     cellPadding: 4,
     repeatHeader: true,
     drawCellBorders: true,
+    rowGroupIndentSize: 12,
 };
 
 export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], params: PdfExportParams): string {
@@ -56,6 +57,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     const repeatHeader = params.repeatHeader ?? DEFAULTS.repeatHeader;
     const drawCellBorders = params.drawCellBorders ?? DEFAULTS.drawCellBorders;
     const wrapText = params.wrapText ?? false;
+    const rowGroupIndentSize = resolveFiniteNumber(params.rowGroupIndentSize, DEFAULTS.rowGroupIndentSize);
 
     const bodyFont = normalisePdfFontFamily(params.fontFamily);
     const headerFont = normalisePdfFontFamily(params.headerFontFamily, FONT_BOLD_MAP[bodyFont]);
@@ -81,6 +83,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         rowHeight: resolveOptionalFiniteNumber(params.rowHeight, Number.EPSILON),
         headerRowHeight: resolveOptionalFiniteNumber(params.headerRowHeight, Number.EPSILON),
         wrapText,
+        rowGroupIndentSize,
     };
     const autoWidths = getAutoColumnWidths(rows, sizingLayout, bodyFont, headerFont, styleColors);
     const columnWidths = getColumnWidths(columnsToExport, columnCount, availableWidth, params.columnWidth, autoWidths);

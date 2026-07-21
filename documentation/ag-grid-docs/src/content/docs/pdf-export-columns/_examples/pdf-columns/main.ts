@@ -1,0 +1,83 @@
+import type { GridApi, GridOptions, PdfExportParams } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
+import { PdfExportModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, PdfExportModule]);
+
+interface ProductData {
+    sku: string;
+    product: string;
+    description: string;
+    units: number;
+    unitPrice: number;
+}
+
+const rowData: ProductData[] = [
+    {
+        sku: 'KB-104',
+        product: 'Mechanical Keyboard',
+        description: 'Low-profile wireless keyboard with hot-swappable switches and multi-device pairing.',
+        units: 128,
+        unitPrice: 149.5,
+    },
+    {
+        sku: 'DS-220',
+        product: 'USB-C Dock',
+        description: 'Twelve-port desktop dock supporting dual displays, Ethernet, audio, and power delivery.',
+        units: 76,
+        unitPrice: 219,
+    },
+    {
+        sku: 'MN-340',
+        product: 'Studio Monitor',
+        description: 'Colour-accurate 27-inch display intended for design, photography, and video workflows.',
+        units: 42,
+        unitPrice: 689,
+    },
+];
+
+let gridApi: GridApi<ProductData>;
+
+const gridOptions: GridOptions<ProductData> = {
+    columnDefs: [
+        { field: 'sku', width: 100 },
+        { field: 'product', width: 180 },
+        { field: 'description', minWidth: 260, wrapText: true, wrapHeaderText: true },
+        { field: 'units', width: 100 },
+        { field: 'unitPrice', headerName: 'Unit Price', width: 120, valueFormatter: (p) => `$${p.value}` },
+    ],
+    defaultColDef: { resizable: true },
+    rowData,
+};
+
+function onBtExport() {
+    const widthMode = document.querySelector<HTMLSelectElement>('#widthMode')!.value;
+    const wrapText = document.querySelector<HTMLInputElement>('#wrapText')!.checked;
+    const params: PdfExportParams = { wrapText };
+
+    if (widthMode === 'custom') {
+        params.columnWidth = ({ column }) => {
+            const columnId = column?.getColId();
+            if (columnId === 'description') {
+                return 220;
+            }
+            if (columnId === 'sku' || columnId === 'units') {
+                return 70;
+            }
+            return 'auto';
+        };
+    } else {
+        params.columnWidth = widthMode === 'grid' ? 'grid' : 'auto';
+    }
+
+    gridApi.exportDataAsPdf(params);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
+});

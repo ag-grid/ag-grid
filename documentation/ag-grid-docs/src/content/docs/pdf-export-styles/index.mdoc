@@ -1,0 +1,39 @@
+---
+title: "PDF Export - Styles"
+enterprise: true
+---
+
+PDF export uses colours from the active grid theme by default. Use `pdfStyles` to override the document, row, header, and border colours.
+
+{% gridExampleRunner title="PDF Styling" name="pdf-styling" exampleHeight=520 /%}
+
+## Automatic Row and Cell Styles
+
+PDF export resolves the same style hooks used by the grid:
+
+1. `rowStyle` / `getRowStyle` is applied to the exported row.
+1. `colDef.cellStyle` is applied to each exported cell.
+1. `colDef.headerStyle` is applied to exported header cells.
+1. Cell styles override row styles for the same cell.
+
+{% gridExampleRunner title="Rows and Cells" name="pdf-rows-and-cells" exampleHeight=520 /%}
+
+Set `skipStyleCallbacks=true` to skip these grid styles and use only theme defaults, `pdfStyles`, and PDF-specific overrides.
+
+## PDF-Specific Styles
+
+Use `currentElementStyleCallback` to style exported elements without changing their grid styles. The callback receives `type: 'row' | 'cell' | 'rowgroup' | 'header' | 'groupheader'`.
+
+Styles returned by `currentElementStyleCallback` take precedence over automatic styles:
+
+1. `row` overrides `rowStyle` / `getRowStyle`.
+1. `cell` and `rowgroup` override row styles and `colDef.cellStyle`.
+1. `header` and `groupheader` override `colDef.headerStyle`.
+
+If `skipStyleCallbacks=true`, automatic grid styles are skipped, but `currentElementStyleCallback` still runs.
+
+{% gridExampleRunner title="Rows and Cells Override" name="pdf-rows-and-cells-override" exampleHeight=520 /%}
+
+## Next Up
+
+Continue to the next section: [Extra Content](./pdf-export-extra-content/).

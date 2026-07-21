@@ -186,6 +186,35 @@ describe('PdfSerializingSession', () => {
         });
     });
 
+    it('exports the current group label without concatenating ancestor values', () => {
+        const column = createColumn('Group', 1);
+        (column as any).isRowGroupDisplayed = () => true;
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {
+                getValueForDisplay: () => ({ value: 'Current group', valueFormatted: 'Current group' }),
+            },
+            gos: createGridOptionsService(),
+        } as any);
+        const rowGroupColumn = { colId: 'group', getColId: () => 'group' };
+        const node = {
+            data: {},
+            group: true,
+            level: 3,
+            uiLevel: 2,
+            rowGroupColumn,
+            rowIndex: 0,
+        } as unknown as RowNode;
+
+        session.prepare([column]);
+        session.onNewBodyRow(node).onColumn(column, 0, node);
+
+        const cell = getRows(session)[0].cells[0];
+        expect(cell).toMatchObject({ value: 'Current group', elementType: 'rowgroup', groupLevel: 2 });
+        expect(cell.value).not.toContain('->');
+    });
+
     it('retains source columns and element types for exported headers', () => {
         const session = createSession();
         const column = createColumn('A', 1);

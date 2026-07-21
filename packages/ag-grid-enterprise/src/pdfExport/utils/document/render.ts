@@ -5,6 +5,7 @@ import { resolvePdfFontFamily } from '../fonts';
 import type { PdfRgb, PdfRowStyles, PdfStyleColors } from '../pdfColor';
 import { formatColor, getRowStyles, resolveOptionalColor } from '../pdfColor';
 import { mergePdfCellStyles } from '../styles';
+import { getBase14BaselineOffset } from './fontMetrics';
 import type { ResolvedMargin, ResolvedPageSize } from './layout';
 import { getSpanWidth, isHeaderRowType } from './layout';
 import { resolveFiniteNumber } from './numbers';
@@ -51,6 +52,7 @@ export type LayoutOptions = {
     rowHeight?: number;
     headerRowHeight?: number;
     wrapText?: boolean;
+    rowGroupIndentSize?: number;
 };
 
 const MIN_AUTO_COLUMN_WIDTH = 24;
@@ -333,7 +335,7 @@ export function createRowRenderData(
     const hasRowStyle = !!row.style;
     let hasCellStyles = false;
     for (const cell of row.cells) {
-        if (cell.style) {
+        if (cell.style || cell.elementType === 'rowgroup') {
             hasCellStyles = true;
             break;
         }
@@ -352,9 +354,18 @@ export function createRowRenderData(
         for (const cell of row.cells) {
             // row style acts as a base layer and per-cell style overrides specific keys.
             const style = mergePdfCellStyles(row.style, cell.style);
-            cellStyles.push(
-                resolveTableCellStyle(style, layout, baseFontFamily, rowStyles, styleColors, defaultFontSize)
+            const resolvedStyle = resolveTableCellStyle(
+                style,
+                layout,
+                baseFontFamily,
+                rowStyles,
+                styleColors,
+                defaultFontSize
             );
+            if (cell.elementType === 'rowgroup' && cell.groupLevel) {
+                resolvedStyle.padding.left += cell.groupLevel * (layout.rowGroupIndentSize ?? 0);
+            }
+            cellStyles.push(resolvedStyle);
         }
     }
     const defaultRowHeight = getRowHeight(row.type, layout);
@@ -511,7 +522,7 @@ function renderCellText(
     pageParts.push('BT');
     pageParts.push(`${formatColor(cellStyle.textColor)} rg`);
     pageParts.push(`/${fontKey} ${fmt(cellStyle.fontSize)} Tf`);
-    let textY = rowTop - padding.top - cellStyle.fontSize;
+    let textY = rowTop - padding.top - getBase14BaselineOffset(cellStyle.fontSize, cellStyle.fontFamily);
     for (const line of lines) {
         const textX = getTextX(line, x, cellWidth, cellStyle);
         pageParts.push(`1 0 0 1 ${fmt(textX)} ${fmt(textY)} Tm (${escapePdfString(line)}) Tj`);

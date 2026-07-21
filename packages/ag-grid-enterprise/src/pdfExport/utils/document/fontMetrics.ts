@@ -5,6 +5,15 @@ const LAST_PRINTABLE_ASCII = 126;
 const DEFAULT_GLYPH_WIDTH = 500;
 const COURIER_GLYPH_WIDTH = 600;
 
+const FONT_VERTICAL_METRICS: Record<PdfFontFamily, { ascent: number; descent: number }> = {
+    Helvetica: { ascent: 718, descent: 207 },
+    'Helvetica-Bold': { ascent: 718, descent: 207 },
+    'Times-Roman': { ascent: 683, descent: 217 },
+    'Times-Bold': { ascent: 683, descent: 217 },
+    Courier: { ascent: 629, descent: 157 },
+    'Courier-Bold': { ascent: 629, descent: 157 },
+};
+
 // widths are the Base-14 AFM advance widths for printable ASCII glyphs, in 1/1000 em units.
 const HELVETICA_WIDTHS = [
     278, 278, 355, 556, 556, 889, 667, 191, 333, 333, 389, 584, 278, 333, 278, 278, 556, 556, 556, 556, 556, 556, 556,
@@ -71,6 +80,17 @@ export function getBase14GlyphWidth(char: string, fontFamily: PdfFontFamily): nu
     }
 
     return DEFAULT_GLYPH_WIDTH;
+}
+
+/**
+ * Calculate the distance from the top of a line box to its text baseline.
+ * @param fontSize - Font size and line-box height in points.
+ * @param fontFamily - Active Base-14 font family.
+ * @returns Baseline offset in points.
+ */
+export function getBase14BaselineOffset(fontSize: number, fontFamily: PdfFontFamily): number {
+    const metrics = FONT_VERTICAL_METRICS[fontFamily];
+    return (metrics.ascent / (metrics.ascent + metrics.descent)) * fontSize;
 }
 
 function getFontWidths(fontFamily: PdfFontFamily): number[] {

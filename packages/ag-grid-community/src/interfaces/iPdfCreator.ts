@@ -258,7 +258,8 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      * Controls exported column widths. Use `auto` to size from exported content, `grid` to use the
      * current grid width, a number for a width in points, or a callback for per-column control.
      * Widths are proportionally reduced when their total exceeds the printable page width.
-     * @default 'auto'
+     * By default, current grid widths are used except for the Row Numbers column, which is sized
+     * from its exported content.
      */
     columnWidth?: PdfColumnWidth | PdfColumnWidthCallback;
     /**
@@ -267,6 +268,11 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      * @default false
      */
     wrapText?: boolean;
+    /**
+     * Horizontal indentation in points for each row-group level.
+     * @default 12
+     */
+    rowGroupIndentSize?: number;
     /**
      * Height of body rows in points. If omitted, calculated from font size and padding.
      */

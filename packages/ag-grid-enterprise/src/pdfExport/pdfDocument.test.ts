@@ -7,7 +7,8 @@ import type { LayoutOptions } from './utils/document/render';
 import { createRowRenderData, getAutoColumnWidths } from './utils/document/render';
 import { resolvePdfStyleColors } from './utils/pdfColor';
 
-const stubColumn = (width: number): AgColumn => ({ getActualWidth: () => width }) as any;
+const stubColumn = (width: number, colKind: AgColumn['colKind'] = 'user'): AgColumn =>
+    ({ getActualWidth: () => width, colKind }) as any;
 
 const createRows = (): PdfRow[] => [
     { type: 'HEADER', cells: [{ value: 'Header' }] },
@@ -28,10 +29,23 @@ describe('createPdfDocument', () => {
         expect(resolvePageSize({ width: 500, height: 1000 }, 'landscape')).toEqual({ width: 1000, height: 500 });
     });
 
-    it('uses intrinsic column widths without stretching them to fill the page', () => {
+    it('uses current grid column widths by default', () => {
         const columns = [stubColumn(120), stubColumn(180)];
 
-        expect(getColumnWidths(columns, 2, 500, undefined, [40, 80])).toEqual([40, 80]);
+        expect(getColumnWidths(columns, 2, 500, undefined, [40, 80])).toEqual([120, 180]);
+    });
+
+    it('uses the intrinsic width of the Row Numbers column by default', () => {
+        const columns = [stubColumn(60, 'row-number'), stubColumn(180)];
+
+        expect(getColumnWidths(columns, 2, 500, undefined, [24, 80])).toEqual([24, 180]);
+        expect(getColumnWidths(columns, 2, 500, 'grid', [24, 80])).toEqual([60, 180]);
+    });
+
+    it('uses intrinsic column widths without stretching them to fill the page when requested', () => {
+        const columns = [stubColumn(120), stubColumn(180)];
+
+        expect(getColumnWidths(columns, 2, 500, 'auto', [40, 80])).toEqual([40, 80]);
     });
 
     it('scales column widths down proportionally when they exceed the page', () => {
@@ -45,6 +59,9 @@ describe('createPdfDocument', () => {
 
         expect(getColumnWidths(columns, 2, 500, 75, [40, 80])).toEqual([75, 75]);
         expect(getColumnWidths(columns, 2, 500, ({ index }) => (index === 0 ? 60 : 'grid'), [40, 80])).toEqual([
+            60, 180,
+        ]);
+        expect(getColumnWidths(columns, 2, 500, ({ index }) => (index === 0 ? 60 : undefined), [40, 80])).toEqual([
             60, 180,
         ]);
     });
@@ -86,12 +103,16 @@ describe('createPdfDocument', () => {
         expect(pdf).toContain('/Type /Page');
     });
 
-    it('clips rendered text to the cell content box', () => {
-        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {});
+    it('clips rendered text horizontally without clipping descenders', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], { columnWidth: 100 });
 
         expect(pdf).toContain(' re W n');
         expect(pdf).toContain('q\n');
         expect(pdf).toContain('\nQ');
+        expect(pdf).toContain('40 544.28 92 11 re W n');
+        expect(pdf).toContain('1 0 0 1 40 546.74 Tm (Header) Tj');
+        expect(pdf).toContain('40 526.28 92 10 re W n');
+        expect(pdf).toContain('1 0 0 1 40 528.52 Tm (Value) Tj');
     });
 
     it('preserves wrapped lines and grows the row to fit them', () => {
@@ -339,6 +360,34 @@ describe('createPdfDocument', () => {
         );
 
         expect(rowRenderData.rowHeight).toBe(60);
+    });
+
+    it('indents row-group cells using their displayed group level', () => {
+        const row: PdfRow = {
+            type: 'BODY',
+            cells: [{ value: 'Nested group', elementType: 'rowgroup', groupLevel: 2 }],
+        };
+        const layout: LayoutOptions = {
+            columnCount: 1,
+            columnWidths: [200],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+            rowGroupIndentSize: 12,
+        };
+
+        const rowRenderData = createRowRenderData(
+            row,
+            layout,
+            'Helvetica',
+            'Helvetica-Bold',
+            resolvePdfStyleColors(),
+            0
+        );
+
+        expect(rowRenderData.cellStyles[0].padding.left).toBe(28);
     });
 
     it('treats alpha-zero cell colours as transparent', () => {
