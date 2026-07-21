@@ -142,6 +142,7 @@ jobs:
       build_type: ${{ steps.setup.outputs.type }}
       snapshot_branch: ${{ steps.snapshot-prepare.outputs.branch }}
       test_count: ${{ steps.matrix.outputs.test_count }}
+      unit_projects: ${{ steps.matrix.outputs.unit_projects }}
       test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
       e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
       e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
@@ -171,15 +172,32 @@ jobs:
       - name: Calculate Matrix
         id: matrix
         run: |
-          # Unit-test shards are a static matrix in the `test` job (shard 0 + 3 behavioural
-          # shards); here we only emit test_count so that job can skip when nothing is affected.
+          # The `test` job splits work into two disjoint halves so nothing runs twice:
+          #   - shard 0: everything that can't be file-sharded — type-check (build:test), the node-env
+          #     tooling `test` projects, pack:verify, assertNoDebugger.
+          #   - shards 1..3: the Vitest workspace unit projects (ag-stack, ag-grid-community,
+          #     ag-grid-enterprise, locale, behavioural), split by file via `vitest --shard`.
+          # Emit test_count so the job can skip when nothing is affected, and unit_projects (the
+          # --project flags for the affected unit projects) for the sharded run.
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
             count=10
+            affected="ag-grid-community ag-grid-enterprise ag-stack @ag-grid-community/locale ag-behavioural-testing"
           else
-            count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
+            affected="$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | tr '\n' ' ')"
+            count=$(echo $affected | wc -w)
           fi
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Affected test project count: ${count}"
+
+          # Map affected nx projects → Vitest --project flags (the workspace unit projects only).
+          unit_projects=""
+          case " $affected " in *" ag-stack "*) unit_projects="$unit_projects --project=ag-stack";; esac
+          case " $affected " in *" ag-grid-community "*) unit_projects="$unit_projects --project=ag-grid-community";; esac
+          case " $affected " in *" ag-grid-enterprise "*) unit_projects="$unit_projects --project=ag-grid-enterprise";; esac
+          case " $affected " in *" @ag-grid-community/locale "*) unit_projects="$unit_projects --project=locale";; esac
+          case " $affected " in *" ag-behavioural-testing "*) unit_projects="$unit_projects --project=behavioural";; esac
+          echo "unit_projects=${unit_projects# }" >> $GITHUB_OUTPUT
+          echo "Affected unit vitest projects: ${unit_projects:-<none>}"
 
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
             e2e_count=10
@@ -204,10 +222,10 @@ jobs:
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
       needs.init.outputs.test_count > 0
     strategy:
-      # Static matrix: shard 0 runs every affected test project not tagged `sharding`
-      # (the bulk — each too small to split); shards 1-3 split the one `sharding`-tagged
-      # project (ag-behavioural-testing) via Vitest --shard. behavioural is the only
-      # suite large enough to benefit, so the shard count is fixed rather than computed.
+      # Static matrix, two disjoint halves so no test runs twice: shards 1-3 run the Vitest workspace unit
+      # projects (ag-stack, ag-grid-community, ag-grid-enterprise, locale, behavioural) split by file via
+      # `vitest --shard`; shard 0 does everything that can't be file-sharded — type-check (build:test), the
+      # node-env tooling `test` projects via Nx, pack:verify, assertNoDebugger.
       matrix:
         shard: [0, 1, 2, 3]
       fail-fast: false
@@ -237,17 +255,29 @@ jobs:
           yarn_postinstall: no-install
           cache_mode: ro
 
-      - name: nx test
-        if: matrix.shard != 0
+      - name: Unit tests (Vitest workspace, sharded)
+        # Runs the affected Vitest workspace unit projects (ag-stack/community/enterprise/locale/behavioural)
+        # directly via Vitest --shard — the only place these run. CI=true (set by Actions) makes the root
+        # config emit reports/workspace.xml for this shard.
+        if: matrix.shard != 0 && needs.init.outputs.unit_projects != ''
         id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test
-          -c=staging --exclude '*,!tag:sharding' --shard=${{
-          matrix.shard }}/$((${{ strategy.job-total }} - 1))
-      - name: nx test (non-sharded)
+        run: npx vitest run ${{ needs.init.outputs.unit_projects }}
+          --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+      - name: Type-check test files
+        # `build:test` (tsc --noEmit on tsconfig.spec) was previously pulled in as the nx `test` target's
+        # dependency; run it explicitly now that the shards above run Vitest directly instead of via Nx.
         if: matrix.shard == 0
-        id: test-no-shard
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c
-          staging --exclude tag:sharding --exclude all
+        id: build-test
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t build:test -c staging --exclude all
+      - name: nx test (node-env tooling projects)
+        # The affected `test` targets that are NOT Vitest workspace unit projects — docs, ag-website-shared,
+        # typedoc-links, generate-example-files, etc. The five unit projects already run (sharded) on shards
+        # 1-3, so they are excluded here to avoid running them twice: behavioural via its `sharding` tag, the
+        # other four by name. Keep this exclude list in sync with the `unit_projects` mapping in `init`.
+        if: matrix.shard == 0
+        id: test-tooling
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c staging
+          --exclude 'tag:sharding,ag-stack,ag-grid-community,ag-grid-enterprise,@ag-grid-community/locale,all'
       - name: nx pack:verify
         if: matrix.shard == 0
         id: pack-verify
@@ -259,9 +289,8 @@ jobs:
         run: |
           ./scripts/assertNoDebugger.sh
       - name: Persist test results
-        # All shards upload: shard 0 now runs the package unit tests (community/enterprise
-        # etc.) that emit JUnit XML, while shards 1-3 run the behavioural suite. The artifact
-        # name is keyed by shard, so there is no collision.
+        # Shards 1-3 emit reports/workspace.xml (a subset each); shard 0 emits the tooling projects' JUnit
+        # XMLs. Artifact names are keyed by shard; the report job merges by basename across shard artifacts.
         if: always()
         uses: actions/upload-artifact@v4
         with:

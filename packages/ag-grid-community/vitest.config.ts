@@ -1,23 +1,12 @@
+import path from 'path';
 import { defineConfig } from 'vitest/config';
 
-process.env.TZ = 'UTC';
+import { packageSourceAliases, unitProjectTestConfig } from '../../vitest.shared';
 
-const reporters: string[] = ['default'];
-if (process.env.CI != null) {
-    reporters.push('junit');
-}
-
-export default defineConfig({
-    test: {
-        globals: true,
-        environment: 'jsdom',
-        include: ['src/**/*.test.ts'],
-        exclude: ['**/node_modules/**', '**/dist/**'],
-        css: false,
-        watch: false,
-        reporters,
-        outputFile: {
-            junit: '../../reports/ag-grid-community.xml',
-        },
-    },
-});
+export default defineConfig(async () => ({
+    resolve: { alias: await packageSourceAliases(path.resolve(__dirname, '..')) },
+    test: unitProjectTestConfig({
+        name: 'ag-grid-community',
+        junitFile: '../../reports/ag-grid-community.xml',
+    }),
+}));

@@ -1,9 +1,11 @@
 import { defineConfig } from 'vitest/config';
 
+import { unitProjectTestConfig } from '../../vitest.shared';
+
 export default defineConfig({
-    test: {
-        globals: true,
-        include: ['src/**/*.test.ts'],
-        watch: false,
-    },
+    test: unitProjectTestConfig({
+        name: 'locale',
+        junitFile: '../../reports/locale.xml',
+        environment: 'node',
+    }),
 });
