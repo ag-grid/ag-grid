@@ -28,6 +28,18 @@ Search `testing/behavioural` for an existing harness before assuming a behaviour
 
 Behavioural tests are a separate nx project — `yarn nx test <package>` does **not** run them. Use `./behave.sh` or the affected gate (`yarn nx affected -t test`).
 
+## Regression Tests: Cover Every Reproduction Path
+
+A bug rarely has one trigger. The same broken behaviour is usually reachable through several entry points — a programmatic API call, `applyColumnState`, a panel drag, a tool-panel drop — that run **different code paths** to the same end state. A fix that only patches the path in the ticket's first repro step can leave the others broken.
+
+When writing regression tests for a bug fix:
+
+- **Enumerate the reproduction paths named in the ticket, and add a test for each.** If the ticket says the bug reproduces via `addRowGroupColumns`, the Row Group Panel, and the Columns tool-panel drop zone, that is three tests, not one. Interactive entry points count — drive them with the real harness (`DragEventDispatcher` for header/panel drags) rather than skipping them because they're awkward to set up.
+- **Test the plural case, not just N=1.** If the fix reorders, inserts, or buckets a *list* of things, cover adding two or three, not only one. Single-item cases often pass by coincidence (no reordering needed) while the multi-item case is where the logic actually bites.
+- **Assert the observable end state for every path**, e.g. `getColumnOrder(...)`, not just that the operation didn't throw.
+
+Before finishing, re-read the ticket's "Steps to reproduce" and confirm each distinct trigger has a corresponding test. A fix verified through only one of several documented triggers is not fully verified.
+
 ## Test Structure
 
 ### Directory Layout
