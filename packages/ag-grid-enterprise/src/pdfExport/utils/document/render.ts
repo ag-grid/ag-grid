@@ -8,7 +8,7 @@ import { mergePdfCellStyles } from '../styles';
 import type { ResolvedMargin, ResolvedPageSize } from './layout';
 import { getSpanWidth, isHeaderRowType } from './layout';
 import { resolveFiniteNumber } from './numbers';
-import { escapePdfString, estimateTextWidth, fmt, normaliseText, truncateText } from './text';
+import { escapePdfString, estimateTextWidth, fmt, normaliseText, truncateText, wrapText } from './text';
 
 const DEFAULT_TITLE_MARGIN: ResolvedMargin = { top: 0, right: 0, bottom: 8, left: 0 };
 const DEFAULT_TITLE_PADDING: ResolvedMargin = { top: 6, right: 6, bottom: 6, left: 6 };
@@ -26,6 +26,7 @@ type ResolvedCellStyle = {
     backgroundColor?: PdfRgb;
     borderColor?: PdfRgb;
     borderWidth: number;
+    wrapText: boolean;
 };
 
 type ResolvedDocumentTitle = {
@@ -49,7 +50,10 @@ export type LayoutOptions = {
     cellPadding: number;
     rowHeight?: number;
     headerRowHeight?: number;
+    wrapText?: boolean;
 };
+
+const MIN_AUTO_COLUMN_WIDTH = 24;
 
 /**
  * Resolve document title text and style into render-ready values.
@@ -124,14 +128,13 @@ export function renderDocumentTitle(
     }
 
     const innerWidth = Math.max(boxWidth - style.padding.left - style.padding.right, 0);
-    const text = truncateText(title, innerWidth, style.fontSize, style.fontFamily);
-    if (!text) {
+    const lines = getTextLines(title, innerWidth, style);
+    if (!lines.length) {
         return cursorY;
     }
 
-    const textWidth = estimateTextWidth(text, style.fontSize, style.fontFamily);
     const boxTop = cursorY - style.margin.top;
-    const boxHeight = style.fontSize + style.padding.top + style.padding.bottom;
+    const boxHeight = lines.length * style.fontSize + style.padding.top + style.padding.bottom;
     const boxBottom = boxTop - boxHeight;
     const boxX = layout.margin.left + style.margin.left;
 
@@ -147,23 +150,15 @@ export function renderDocumentTitle(
         pageParts.push('0.5 w');
     }
 
-    const minX = boxX + style.padding.left;
-    const maxX = boxX + boxWidth - style.padding.right - textWidth;
-    const textX = resolveTextX(
-        boxX + style.padding.left,
-        Math.max(boxWidth - style.padding.left - style.padding.right, 0),
-        textWidth,
-        style.alignment,
-        minX,
-        maxX
-    );
-
-    const textY = boxTop - style.padding.top - style.fontSize;
-
     pageParts.push(`${formatColor(style.textColor)} rg`);
     pageParts.push('BT');
     pageParts.push(`/${fontKey} ${fmt(style.fontSize)} Tf`);
-    pageParts.push(`1 0 0 1 ${fmt(textX)} ${fmt(textY)} Tm (${escapePdfString(text)}) Tj`);
+    let textY = boxTop - style.padding.top - style.fontSize;
+    for (const line of lines) {
+        const textX = getTextX(line, boxX, boxWidth, style);
+        pageParts.push(`1 0 0 1 ${fmt(textX)} ${fmt(textY)} Tm (${escapePdfString(line)}) Tj`);
+        textY -= style.fontSize;
+    }
     pageParts.push('ET');
 
     return boxBottom - style.margin.bottom;
@@ -343,8 +338,6 @@ export function createRowRenderData(
             break;
         }
     }
-    const hasPerCellStyle = hasRowStyle || hasCellStyles;
-
     const defaultCellStyle = resolveTableCellStyle(
         hasRowStyle ? row.style : undefined,
         layout,
@@ -365,16 +358,72 @@ export function createRowRenderData(
         }
     }
     const defaultRowHeight = getRowHeight(row.type, layout);
-
-    const rowHeight = hasPerCellStyle
-        ? getCustomRowHeight(cellStyles.length ? cellStyles : [defaultCellStyle], defaultRowHeight)
-        : defaultRowHeight;
+    const rowHeight = getContentRowHeight(row, layout, defaultCellStyle, cellStyles, defaultRowHeight);
 
     return {
         defaultCellStyle,
         cellStyles,
         rowHeight,
     };
+}
+
+/**
+ * Measure exported text and padding to obtain intrinsic column widths.
+ * @param rows - Serialised table rows.
+ * @param layout - Base layout and typography options.
+ * @param bodyFont - Default body font family.
+ * @param headerFont - Default header font family.
+ * @param styleColors - Resolved document colours.
+ * @returns Intrinsic widths in points.
+ */
+export function getAutoColumnWidths(
+    rows: PdfRow[],
+    layout: LayoutOptions,
+    bodyFont: PdfFontFamily,
+    headerFont: PdfFontFamily,
+    styleColors: PdfStyleColors
+): number[] {
+    const widths: number[] = [];
+    for (let i = 0; i < layout.columnCount; i++) {
+        widths.push(MIN_AUTO_COLUMN_WIDTH);
+    }
+
+    let bodyRowIndex = 0;
+    for (const row of rows) {
+        if (row.type === 'CUSTOM') {
+            continue;
+        }
+
+        const rowData = createRowRenderData(row, layout, bodyFont, headerFont, styleColors, bodyRowIndex);
+        let columnIndex = 0;
+        let cellIndex = 0;
+        for (const cell of row.cells) {
+            const span = Math.min((cell.mergeAcross ?? 0) + 1, layout.columnCount - columnIndex);
+            if (span <= 0) {
+                break;
+            }
+
+            const style = rowData.cellStyles[cellIndex] ?? rowData.defaultCellStyle;
+            const textWidth = getIntrinsicTextWidth(cell.value, style);
+            const requiredWidth = textWidth + style.padding.left + style.padding.right;
+            const currentWidth = getSpanWidth(widths, columnIndex, span);
+            if (requiredWidth > currentWidth) {
+                const additionalWidth = (requiredWidth - currentWidth) / span;
+                for (let i = columnIndex; i < columnIndex + span; i++) {
+                    widths[i] += additionalWidth;
+                }
+            }
+
+            columnIndex += span;
+            cellIndex += 1;
+        }
+
+        if (row.type === 'BODY') {
+            bodyRowIndex += 1;
+        }
+    }
+
+    return widths;
 }
 
 /**
@@ -448,30 +497,10 @@ function renderCellText(
         return;
     }
 
-    const text = truncateText(
-        normaliseText(rawCellValue),
-        textWidthAvailable,
-        cellStyle.fontSize,
-        cellStyle.fontFamily
-    );
-
-    if (!text) {
+    const lines = getTextLines(rawCellValue, textWidthAvailable, cellStyle);
+    if (!lines.length) {
         return;
     }
-
-    const textWidth = estimateTextWidth(text, cellStyle.fontSize, cellStyle.fontFamily);
-    const minX = x + padding.left;
-    const maxX = x + cellWidth - padding.right - textWidth;
-    const textX = resolveTextX(
-        x + padding.left,
-        Math.max(cellWidth - padding.left - padding.right, 0),
-        textWidth,
-        cellStyle.alignment,
-        minX,
-        maxX
-    );
-
-    const textY = rowTop - padding.top - cellStyle.fontSize;
     const fontKey = fontKeyByFamily.get(cellStyle.fontFamily) ?? defaultFontKey;
 
     // constrain text operators to the cell content box even if malformed runtime styles escape measurement guards.
@@ -482,7 +511,12 @@ function renderCellText(
     pageParts.push('BT');
     pageParts.push(`${formatColor(cellStyle.textColor)} rg`);
     pageParts.push(`/${fontKey} ${fmt(cellStyle.fontSize)} Tf`);
-    pageParts.push(`1 0 0 1 ${fmt(textX)} ${fmt(textY)} Tm (${escapePdfString(text)}) Tj`);
+    let textY = rowTop - padding.top - cellStyle.fontSize;
+    for (const line of lines) {
+        const textX = getTextX(line, x, cellWidth, cellStyle);
+        pageParts.push(`1 0 0 1 ${fmt(textX)} ${fmt(textY)} Tm (${escapePdfString(line)}) Tj`);
+        textY -= cellStyle.fontSize;
+    }
     pageParts.push('ET');
     pageParts.push('Q');
 }
@@ -507,12 +541,31 @@ function getRowHeight(rowType: PdfRowType, layout: LayoutOptions): number {
  * @param defaultHeight - Default row height for the row type.
  * @returns Calculated row height in points.
  */
-function getCustomRowHeight(cellStyles: ResolvedCellStyle[], defaultHeight: number): number {
+function getContentRowHeight(
+    row: PdfRow,
+    layout: LayoutOptions,
+    defaultCellStyle: ResolvedCellStyle,
+    cellStyles: ResolvedCellStyle[],
+    defaultHeight: number
+): number {
     let maxHeight = defaultHeight;
+    let columnIndex = 0;
+    let cellIndex = 0;
 
-    for (const cellStyle of cellStyles) {
-        const height = cellStyle.fontSize + cellStyle.padding.top + cellStyle.padding.bottom;
+    for (const cell of row.cells) {
+        const cellStyle = cellStyles[cellIndex] ?? defaultCellStyle;
+        const span = Math.min((cell.mergeAcross ?? 0) + 1, layout.columnCount - columnIndex);
+        if (span <= 0) {
+            break;
+        }
+
+        const cellWidth = getSpanWidth(layout.columnWidths, columnIndex, span);
+        const textWidth = Math.max(cellWidth - cellStyle.padding.left - cellStyle.padding.right, 0);
+        const lineCount = cellStyle.wrapText ? Math.max(getTextLines(cell.value, textWidth, cellStyle).length, 1) : 1;
+        const height = lineCount * cellStyle.fontSize + cellStyle.padding.top + cellStyle.padding.bottom;
         maxHeight = Math.max(maxHeight, height);
+        columnIndex += span;
+        cellIndex += 1;
     }
 
     return maxHeight;
@@ -558,6 +611,7 @@ function resolveTitleStyle(
         backgroundColor,
         borderColor,
         borderWidth,
+        wrapText: style?.wrapText ?? false,
     };
 }
 
@@ -606,7 +660,67 @@ function resolveTableCellStyle(
         backgroundColor,
         borderColor,
         borderWidth,
+        wrapText: style?.wrapText ?? layout.wrapText ?? false,
     };
+}
+
+/**
+ * Resolve renderable lines for a cell or title.
+ * @param value - Raw text value.
+ * @param availableWidth - Available text width.
+ * @param style - Resolved text style.
+ * @returns Wrapped or truncated lines.
+ */
+function getTextLines(value: string, availableWidth: number, style: ResolvedCellStyle): string[] {
+    if (style.wrapText) {
+        return wrapText(normaliseText(value, true), availableWidth, style.fontSize, style.fontFamily);
+    }
+
+    const text = truncateText(normaliseText(value), availableWidth, style.fontSize, style.fontFamily);
+    return text ? [text] : [];
+}
+
+/**
+ * Measure the longest explicit line of a cell value.
+ * @param value - Raw cell value.
+ * @param style - Resolved cell style.
+ * @returns Intrinsic text width in points.
+ */
+function getIntrinsicTextWidth(value: string, style: ResolvedCellStyle): number {
+    if (!style.wrapText) {
+        return estimateTextWidth(normaliseText(value), style.fontSize, style.fontFamily);
+    }
+
+    const lines = normaliseText(value, true).split('\n');
+    let width = 0;
+
+    for (const line of lines) {
+        width = Math.max(width, estimateTextWidth(line, style.fontSize, style.fontFamily));
+    }
+
+    return width;
+}
+
+/**
+ * Resolve horizontal text placement for one line.
+ * @param text - Text line.
+ * @param boxX - Left edge of the containing box.
+ * @param boxWidth - Width of the containing box.
+ * @param style - Resolved text style.
+ * @returns Text x-position.
+ */
+function getTextX(text: string, boxX: number, boxWidth: number, style: ResolvedCellStyle): number {
+    const textWidth = estimateTextWidth(text, style.fontSize, style.fontFamily);
+    const minX = boxX + style.padding.left;
+    const maxX = boxX + boxWidth - style.padding.right - textWidth;
+    return resolveTextX(
+        minX,
+        Math.max(boxWidth - style.padding.left - style.padding.right, 0),
+        textWidth,
+        style.alignment,
+        minX,
+        maxX
+    );
 }
 
 /**

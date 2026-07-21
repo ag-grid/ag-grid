@@ -2,9 +2,9 @@ import type { AgColumn, PdfExportParams } from 'ag-grid-community';
 
 import { createPdfDocument } from './pdfDocument';
 import type { PdfRow } from './pdfSerializingSession';
-import { resolvePageSize } from './utils/document/layout';
+import { getColumnWidths, resolvePageSize } from './utils/document/layout';
 import type { LayoutOptions } from './utils/document/render';
-import { createRowRenderData } from './utils/document/render';
+import { createRowRenderData, getAutoColumnWidths } from './utils/document/render';
 import { resolvePdfStyleColors } from './utils/pdfColor';
 
 const stubColumn = (width: number): AgColumn => ({ getActualWidth: () => width }) as any;
@@ -26,6 +26,48 @@ describe('createPdfDocument', () => {
         expect(resolvePageSize({ width: 1000, height: 500 }, undefined)).toEqual({ width: 1000, height: 500 });
         expect(resolvePageSize({ width: 1000, height: 500 }, 'portrait')).toEqual({ width: 500, height: 1000 });
         expect(resolvePageSize({ width: 500, height: 1000 }, 'landscape')).toEqual({ width: 1000, height: 500 });
+    });
+
+    it('uses intrinsic column widths without stretching them to fill the page', () => {
+        const columns = [stubColumn(120), stubColumn(180)];
+
+        expect(getColumnWidths(columns, 2, 500, undefined, [40, 80])).toEqual([40, 80]);
+    });
+
+    it('scales column widths down proportionally when they exceed the page', () => {
+        const columns = [stubColumn(120), stubColumn(180)];
+
+        expect(getColumnWidths(columns, 2, 200, 'auto', [100, 300])).toEqual([50, 150]);
+    });
+
+    it('supports fixed and per-column export widths', () => {
+        const columns = [stubColumn(120), stubColumn(180)];
+
+        expect(getColumnWidths(columns, 2, 500, 75, [40, 80])).toEqual([75, 75]);
+        expect(getColumnWidths(columns, 2, 500, ({ index }) => (index === 0 ? 60 : 'grid'), [40, 80])).toEqual([
+            60, 180,
+        ]);
+    });
+
+    it('keeps short row-number content narrow when auto-sizing columns', () => {
+        const rows: PdfRow[] = [
+            { type: 'HEADER', cells: [{ value: '#' }, { value: 'Description' }] },
+            { type: 'BODY', cells: [{ value: '1' }, { value: 'A longer exported value' }] },
+        ];
+        const layout: LayoutOptions = {
+            columnCount: 2,
+            columnWidths: [60, 200],
+            margin: { top: 36, right: 36, bottom: 36, left: 36 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+        };
+
+        const widths = getAutoColumnWidths(rows, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors());
+
+        expect(widths[0]).toBe(24);
+        expect(widths[1]).toBeGreaterThan(widths[0]);
     });
 
     it('builds a valid PDF envelope', () => {
@@ -50,6 +92,31 @@ describe('createPdfDocument', () => {
         expect(pdf).toContain(' re W n');
         expect(pdf).toContain('q\n');
         expect(pdf).toContain('\nQ');
+    });
+
+    it('preserves wrapped lines and grows the row to fit them', () => {
+        const rows: PdfRow[] = [
+            {
+                type: 'BODY',
+                cells: [{ value: 'First line\nSecond line' }],
+            },
+        ];
+        const pdf = createPdfDocument(rows, [stubColumn(100)], { columnWidth: 100, wrapText: true });
+        const layout: LayoutOptions = {
+            columnCount: 1,
+            columnWidths: [100],
+            margin: { top: 36, right: 36, bottom: 36, left: 36 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+            wrapText: true,
+        };
+        const rowData = createRowRenderData(rows[0], layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
+
+        expect(pdf).toContain('(First line) Tj');
+        expect(pdf).toContain('(Second line) Tj');
+        expect(rowData.rowHeight).toBe(28);
     });
 
     it('includes PDF metadata title when documentTitle is set', () => {

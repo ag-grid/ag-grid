@@ -1,4 +1,4 @@
-import { estimateTextWidth, fmt, truncateText } from './text';
+import { estimateTextWidth, fmt, truncateText, wrapText } from './text';
 
 describe('PDF text utilities', () => {
     it('measures proportional Base-14 glyph widths', () => {
@@ -15,6 +15,15 @@ describe('PDF text utilities', () => {
 
         expect(wide).toBe('WW...');
         expect(narrow).toBe('iiiiiiiiii');
+    });
+
+    it('wraps words and preserves explicit line breaks', () => {
+        expect(wrapText('alpha beta', 30, 10, 'Helvetica')).toEqual(['alpha', 'beta']);
+        expect(wrapText('alpha\nbeta', 100, 10, 'Helvetica')).toEqual(['alpha', 'beta']);
+    });
+
+    it('splits words that are wider than a line', () => {
+        expect(wrapText('WWWW', 20, 10, 'Helvetica')).toEqual(['WW', 'WW']);
     });
 
     it('never formats non-finite PDF numeric tokens', () => {

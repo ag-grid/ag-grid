@@ -35,18 +35,83 @@ const WIN_ANSI_CODEPOINT_MAP = new Map<number, number>([
 /**
  * Replace non-WinAnsi characters and normalise new lines for PDF text streams.
  * @param value - Source text.
+ * @param preserveLineBreaks - Whether normalised line breaks should be retained.
  * @returns WinAnsi-safe text.
  */
-export function normaliseText(value: string): string {
-    const trimmed = value.replace(/\r\n?|\n/g, ' ');
+export function normaliseText(value: string, preserveLineBreaks = false): string {
+    const normalisedLineBreaks = value.replace(/\r\n?/g, '\n');
+    const source = preserveLineBreaks ? normalisedLineBreaks : normalisedLineBreaks.replace(/\n/g, ' ');
     let output = '';
 
-    for (const char of trimmed) {
+    for (const char of source) {
+        if (char === '\n') {
+            output += char;
+            continue;
+        }
+
         const codePoint = char.codePointAt(0) ?? 0;
         output += toWinAnsiByte(codePoint) == null ? '?' : char;
     }
 
     return output;
+}
+
+/**
+ * Wrap text to a width budget while preserving explicit line breaks.
+ * Words are kept intact where possible and oversized words are split by character.
+ * @param text - Normalised source text.
+ * @param maxWidth - Maximum width of each line in points.
+ * @param fontSize - Font size in points.
+ * @param fontFamily - Active font family.
+ * @returns Wrapped text lines.
+ */
+export function wrapText(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string[] {
+    if (!text || !Number.isFinite(maxWidth) || maxWidth <= 0 || !Number.isFinite(fontSize) || fontSize <= 0) {
+        return [];
+    }
+
+    const lines: string[] = [];
+    const paragraphs = text.split('\n');
+
+    for (const paragraph of paragraphs) {
+        if (!paragraph.trim()) {
+            lines.push('');
+            continue;
+        }
+
+        const words = paragraph.trim().split(/\s+/);
+        let currentLine = '';
+        let currentLineWidth = 0;
+        const spaceWidth = estimateTextWidth(' ', fontSize, fontFamily);
+
+        for (const word of words) {
+            const wordWidth = estimateTextWidth(word, fontSize, fontFamily);
+            const candidateWidth = currentLine ? currentLineWidth + spaceWidth + wordWidth : wordWidth;
+            if (candidateWidth <= maxWidth) {
+                currentLine = currentLine ? `${currentLine} ${word}` : word;
+                currentLineWidth = candidateWidth;
+                continue;
+            }
+
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+
+            const wordParts = splitWordToWidth(word, maxWidth, fontSize, fontFamily);
+            const lastPartIndex = wordParts.length - 1;
+            for (let i = 0; i < lastPartIndex; i++) {
+                lines.push(wordParts[i]);
+            }
+            currentLine = wordParts[lastPartIndex] ?? '';
+            currentLineWidth = estimateTextWidth(currentLine, fontSize, fontFamily);
+        }
+
+        if (currentLine) {
+            lines.push(currentLine);
+        }
+    }
+
+    return lines;
 }
 
 /**
@@ -166,4 +231,36 @@ function toWinAnsiByte(codePoint: number): number | undefined {
     }
 
     return WIN_ANSI_CODEPOINT_MAP.get(codePoint);
+}
+
+/**
+ * Split one word into the widest character chunks that fit a line.
+ * @param word - Word to split.
+ * @param maxWidth - Maximum width of each chunk.
+ * @param fontSize - Font size in points.
+ * @param fontFamily - Active font family.
+ * @returns One or more chunks containing every source character.
+ */
+function splitWordToWidth(word: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string[] {
+    const parts: string[] = [];
+    let part = '';
+    let partWidth = 0;
+
+    for (const char of word) {
+        const charWidth = estimateTextWidth(char, fontSize, fontFamily);
+        if (part && partWidth + charWidth > maxWidth) {
+            parts.push(part);
+            part = '';
+            partWidth = 0;
+        }
+
+        part += char;
+        partWidth += charWidth;
+    }
+
+    if (part) {
+        parts.push(part);
+    }
+
+    return parts;
 }

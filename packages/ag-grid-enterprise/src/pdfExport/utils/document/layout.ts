@@ -1,4 +1,12 @@
-import type { AgColumn, PdfExportParams, PdfFontFamily, PdfPageOrientation, PdfPageSize } from 'ag-grid-community';
+import type {
+    AgColumn,
+    PdfColumnWidth,
+    PdfColumnWidthCallback,
+    PdfExportParams,
+    PdfFontFamily,
+    PdfPageOrientation,
+    PdfPageSize,
+} from 'ag-grid-community';
 
 import type { PdfRow, PdfRowType } from '../../pdfSerializingSession';
 import { normalisePdfFontFamily, resolvePdfFontFamily } from '../fonts';
@@ -98,33 +106,36 @@ export function getMaxColumnCount(rows: PdfRow[]): number {
 }
 
 /**
- * Scale grid column widths to fit the available page width.
+ * Resolve exported column widths and scale them down to the available page width when necessary.
  * @param columnsToExport - Exported columns in render order.
  * @param columnCount - Total rendered column count, including merged cells.
  * @param availableWidth - Horizontal space available for the table.
+ * @param columnWidth - Global or per-column width configuration.
+ * @param autoWidths - Widths measured from exported content.
  * @returns Width of each rendered column in points.
  */
-export function getColumnWidths(columnsToExport: AgColumn[], columnCount: number, availableWidth: number): number[] {
+export function getColumnWidths(
+    columnsToExport: AgColumn[],
+    columnCount: number,
+    availableWidth: number,
+    columnWidth: PdfColumnWidth | PdfColumnWidthCallback | undefined,
+    autoWidths: number[]
+): number[] {
     if (!columnCount) {
         return [];
     }
 
     const resolvedAvailableWidth = resolveFiniteNumber(availableWidth, 0);
     const baseWidths: number[] = [];
-    let totalColumnWidth = 0;
-
-    for (const column of columnsToExport) {
-        totalColumnWidth += resolveFiniteNumber(column.getActualWidth(), 100, Number.EPSILON);
-    }
-
-    const defaultWidth = columnsToExport.length ? totalColumnWidth / columnsToExport.length : 100;
+    const gridWidths = getGridColumnWidths(columnsToExport, columnCount);
 
     for (let i = 0; i < columnCount; i++) {
-        if (i < columnsToExport.length) {
-            baseWidths.push(resolveFiniteNumber(columnsToExport[i].getActualWidth(), defaultWidth, Number.EPSILON));
-        } else {
-            baseWidths.push(defaultWidth);
-        }
+        const column = columnsToExport[i] ?? null;
+        const requestedWidth =
+            typeof columnWidth === 'function' ? (columnWidth({ column, index: i }) ?? 'auto') : (columnWidth ?? 'auto');
+        const gridWidth = gridWidths[i];
+        const autoWidth = resolveFiniteNumber(autoWidths[i], gridWidth, Number.EPSILON);
+        baseWidths.push(resolveColumnWidth(requestedWidth, gridWidth, autoWidth));
     }
 
     let totalWidth = 0;
@@ -133,18 +144,15 @@ export function getColumnWidths(columnsToExport: AgColumn[], columnCount: number
         totalWidth += width;
     }
 
-    if (!totalWidth || !resolvedAvailableWidth) {
-        const fallbackWidths: number[] = [];
-        const fallbackWidth = resolvedAvailableWidth / columnCount;
-
-        while (fallbackWidths.length < columnCount) {
-            fallbackWidths.push(fallbackWidth);
+    if (!resolvedAvailableWidth) {
+        const zeroWidths: number[] = [];
+        for (let i = 0; i < columnCount; i++) {
+            zeroWidths.push(0);
         }
-
-        return fallbackWidths;
+        return zeroWidths;
     }
 
-    const scale = resolvedAvailableWidth / totalWidth;
+    const scale = totalWidth > resolvedAvailableWidth ? resolvedAvailableWidth / totalWidth : 1;
     const scaledWidths: number[] = [];
 
     for (const width of baseWidths) {
@@ -152,6 +160,42 @@ export function getColumnWidths(columnsToExport: AgColumn[], columnCount: number
     }
 
     return scaledWidths;
+}
+
+/**
+ * Read current grid widths without scaling them to the page.
+ * @param columnsToExport - Exported columns in render order.
+ * @param columnCount - Number of rendered columns.
+ * @returns Unscaled grid widths.
+ */
+export function getGridColumnWidths(columnsToExport: AgColumn[], columnCount: number): number[] {
+    const widths: number[] = [];
+
+    for (let i = 0; i < columnCount; i++) {
+        const column = columnsToExport[i];
+        widths.push(column ? resolveFiniteNumber(column.getActualWidth(), 100, Number.EPSILON) : 100);
+    }
+
+    return widths;
+}
+
+/**
+ * Resolve one configured column width.
+ * @param requestedWidth - Requested fixed or automatic width mode.
+ * @param gridWidth - Current grid column width.
+ * @param autoWidth - Width measured from exported content.
+ * @returns Width in points.
+ */
+function resolveColumnWidth(requestedWidth: PdfColumnWidth, gridWidth: number, autoWidth: number): number {
+    if (requestedWidth === 'grid') {
+        return gridWidth;
+    }
+
+    if (requestedWidth === 'auto') {
+        return autoWidth;
+    }
+
+    return resolveFiniteNumber(requestedWidth, autoWidth, Number.EPSILON);
 }
 
 /**

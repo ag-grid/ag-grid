@@ -49,13 +49,49 @@ In the following example reorder some columns and apply some filter and sort ope
 
 {% note %}
 
-1. Column widths are scaled to fit the available page width based on the column sizes in the grid.
+1. Columns are sized from their exported content by default. If their combined width exceeds the printable page width, they are scaled down proportionally.
 
 1. Header rows repeat on each page by default. Set `repeatHeader=false` to disable this behaviour.
 
 1. PDF export uses built-in fonts and supports WinAnsi (Latin-1) characters. Characters outside WinAnsi are replaced with `?`.
 
 {% /note %}
+
+## Column Sizing and Text Wrapping
+
+By default, PDF export sizes each column from its exported header and cell values. Use `columnWidth` to choose a different strategy:
+
+- `'auto'` sizes columns from exported content.
+- `'grid'` uses the current grid column widths.
+- A number sets every column to that width in points.
+- A callback can return any of these values for each exported column.
+
+Column widths are proportionally reduced when their total exceeds the printable page width. Smaller tables are not stretched to fill the page.
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    columnWidth: ({ column }) => {
+        if (column?.getColId() === 'description') {
+            return 180;
+        }
+
+        return 'auto';
+    },
+});
+```
+
+Cell values remain on one line by default. Set `wrapText=true` to wrap all table cells and automatically increase row heights. Existing `colDef.wrapText` and `colDef.wrapHeaderText` settings are also respected by automatic PDF styling. For PDF-specific control, return `wrapText` from `currentElementStyleCallback` or set it on a custom `PdfCell.style`.
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    wrapText: true,
+    currentElementStyleCallback: (params) => {
+        if (params.type === 'cell' && params.column?.getUniqueId() === 'price') {
+            return { wrapText: false };
+        }
+    },
+});
+```
 
 ## PDF Styling
 

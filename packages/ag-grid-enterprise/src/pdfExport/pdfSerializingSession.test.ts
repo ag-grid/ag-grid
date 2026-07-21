@@ -14,12 +14,14 @@ import { PdfSerializingSession } from './pdfSerializingSession';
 const createColumn = (
     value: string,
     colSpan: number,
-    cellStyle?: (params: CellClassParams) => CellStyle | null | undefined
+    cellStyle?: (params: CellClassParams) => CellStyle | null | undefined,
+    wrapText?: boolean,
+    wrapHeaderText?: boolean
 ): AgColumn =>
     ({
         __value: value,
         getColSpan: () => colSpan,
-        getColDef: () => ({ cellStyle }),
+        getColDef: () => ({ cellStyle, wrapText, wrapHeaderText }),
         isRowGroupDisplayed: () => false,
     }) as any;
 
@@ -204,5 +206,41 @@ describe('PdfSerializingSession', () => {
             elementType: 'header',
             sourceColumn: column,
         });
+    });
+
+    it('maps column and header wrapping into automatic PDF styles', () => {
+        const column = createColumn('Value', 1, undefined, true, false);
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: { getDisplayNameForColumn: () => 'Header' },
+            valueSvc: {
+                getValueForDisplay: () => ({ value: 'Value' }),
+            },
+            gos: createGridOptionsService(),
+        } as any);
+        const node = { data: {}, group: false, level: 0, rowIndex: 0 } as RowNode;
+
+        session.prepare([column]);
+        session.onNewHeaderRow().onColumn(column, 0);
+        session.onNewBodyRow(node).onColumn(column, 0, node);
+
+        const rows = getRows(session);
+        expect(rows[0].cells[0].style).toMatchObject({ wrapText: false });
+        expect(rows[1].cells[0].style).toMatchObject({ wrapText: true });
+    });
+
+    it('skips column wrapping styles when automatic style resolution is disabled', () => {
+        const session = createSession();
+        const column = createColumn('Value', 1, undefined, true, true);
+        const node = { data: {}, group: false, level: 0, rowIndex: 0 } as RowNode;
+        (session as any).extractHeaderValue = () => 'Header';
+
+        session.prepare([column]);
+        session.onNewHeaderRow().onColumn(column, 0);
+        session.onNewBodyRow(node).onColumn(column, 0, node);
+
+        const rows = getRows(session);
+        expect(rows[0].cells[0].style).toBeUndefined();
+        expect(rows[1].cells[0].style).toBeUndefined();
     });
 });

@@ -32,6 +32,17 @@ export type PdfTextAlignment = 'left' | 'center' | 'right';
 
 export type PdfFontWeight = 'normal' | 'bold';
 
+export type PdfColumnWidth = number | 'auto' | 'grid';
+
+export interface PdfColumnWidthCallbackParams {
+    /** Column being exported, or `null` for columns created by custom content. */
+    column: Column | null;
+    /** Zero-based exported column index. */
+    index: number;
+}
+
+export type PdfColumnWidthCallback = (params: PdfColumnWidthCallbackParams) => PdfColumnWidth | null | undefined;
+
 export interface PdfCellStyle {
     /**
      * Font size in points.
@@ -75,6 +86,10 @@ export interface PdfCellStyle {
      * Horizontal alignment for the cell text.
      */
     alignment?: PdfTextAlignment;
+    /**
+     * Whether text should wrap onto multiple lines. Wrapped content increases the row height as required.
+     */
+    wrapText?: boolean;
 }
 
 export interface PdfCellData {
@@ -239,6 +254,19 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      * @default 4
      */
     cellPadding?: number;
+    /**
+     * Controls exported column widths. Use `auto` to size from exported content, `grid` to use the
+     * current grid width, a number for a width in points, or a callback for per-column control.
+     * Widths are proportionally reduced when their total exceeds the printable page width.
+     * @default 'auto'
+     */
+    columnWidth?: PdfColumnWidth | PdfColumnWidthCallback;
+    /**
+     * Whether table cell text should wrap onto multiple lines. This can be overridden for individual
+     * rows or cells with `PdfCellStyle.wrapText`.
+     * @default false
+     */
+    wrapText?: boolean;
     /**
      * Height of body rows in points. If omitted, calculated from font size and padding.
      */

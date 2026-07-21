@@ -4,6 +4,7 @@ import type { PdfRow } from './pdfSerializingSession';
 import {
     createFontKeyMap,
     getColumnWidths,
+    getGridColumnWidths,
     getMaxColumnCount,
     getRepeatableHeaderRows,
     resolveMargin,
@@ -13,6 +14,7 @@ import { resolveFiniteNumber, resolveOptionalFiniteNumber } from './utils/docume
 import type { LayoutOptions } from './utils/document/render';
 import {
     createRowRenderData,
+    getAutoColumnWidths,
     renderDocumentTitle,
     renderRow,
     renderRows,
@@ -47,30 +49,30 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
 
     const columnCount = columnsToExport.length || Math.max(getMaxColumnCount(rows), 1);
     const availableWidth = Math.max(pageSize.width - margin.left - margin.right, 0);
-    const columnWidths = getColumnWidths(columnsToExport, columnCount, availableWidth);
 
     const fontSize = resolveFiniteNumber(params.fontSize, DEFAULTS.fontSize, Number.EPSILON);
     const headerFontSize = resolveFiniteNumber(params.headerFontSize, DEFAULTS.headerFontSize, Number.EPSILON);
     const cellPadding = resolveFiniteNumber(params.cellPadding, DEFAULTS.cellPadding);
     const repeatHeader = params.repeatHeader ?? DEFAULTS.repeatHeader;
     const drawCellBorders = params.drawCellBorders ?? DEFAULTS.drawCellBorders;
+    const wrapText = params.wrapText ?? false;
 
     const bodyFont = normalisePdfFontFamily(params.fontFamily);
     const headerFont = normalisePdfFontFamily(params.headerFontFamily, FONT_BOLD_MAP[bodyFont]);
     const titleData = params.documentTitle
         ? resolveDocumentTitle(params.documentTitle, params, styleColors, headerFont, DEFAULTS.headerFontSize)
         : undefined;
-    const documentTitle = titleData?.text ? normaliseText(titleData.text) : '';
     const titleStyle = titleData?.style;
+    const documentTitle = titleData?.text ? normaliseText(titleData.text, titleStyle?.wrapText) : '';
 
     const fontKeyByFamily = createFontKeyMap(bodyFont, headerFont, titleStyle?.fontFamily, rows);
     const titleFontKey = titleStyle ? fontKeyByFamily.get(titleStyle.fontFamily) : undefined;
 
     const headerRows = repeatHeader ? getRepeatableHeaderRows(rows) : [];
 
-    const layout: LayoutOptions = {
+    const sizingLayout: LayoutOptions = {
         columnCount,
-        columnWidths,
+        columnWidths: getGridColumnWidths(columnsToExport, columnCount),
         margin,
         drawCellBorders,
         fontSize,
@@ -78,7 +80,11 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         cellPadding,
         rowHeight: resolveOptionalFiniteNumber(params.rowHeight, Number.EPSILON),
         headerRowHeight: resolveOptionalFiniteNumber(params.headerRowHeight, Number.EPSILON),
+        wrapText,
     };
+    const autoWidths = getAutoColumnWidths(rows, sizingLayout, bodyFont, headerFont, styleColors);
+    const columnWidths = getColumnWidths(columnsToExport, columnCount, availableWidth, params.columnWidth, autoWidths);
+    const layout: LayoutOptions = { ...sizingLayout, columnWidths };
 
     const pageContentHeight = Math.max(pageSize.height - margin.top - margin.bottom, 0);
     const getRowsHeight = (rowsToMeasure: PdfRow[]): number => {

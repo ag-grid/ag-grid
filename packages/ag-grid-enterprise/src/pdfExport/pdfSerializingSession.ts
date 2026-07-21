@@ -287,7 +287,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
 
         const colDef = column.getColDef();
         const cellStyle = colDef.cellStyle;
-        if (!cellStyle) {
+        if (!cellStyle && colDef.wrapText == null) {
             return undefined;
         }
 
@@ -308,16 +308,22 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
             resolvedCellStyle = cellStyle;
         }
 
-        return mapCssStylesToPdfStyle([resolvedCellStyle], this.config.resolveColor);
+        const wrapStyle = colDef.wrapText == null ? undefined : { wrapText: colDef.wrapText };
+        return mergePdfCellStyles(mapCssStylesToPdfStyle([resolvedCellStyle], this.config.resolveColor), wrapStyle);
     }
 
     private resolveColumnHeaderPdfStyle(column: AgColumn): PdfCellStyle | undefined {
         const colDef = column.getColDef();
-        return this.resolveHeaderPdfStyle(colDef.headerStyle, {
-            colDef,
-            column,
-            floatingFilter: false,
-        });
+        return mergePdfCellStyles(
+            this.resolveHeaderPdfStyle(colDef.headerStyle, {
+                colDef,
+                column,
+                floatingFilter: false,
+            }),
+            this.shouldSkipStyleCallbacks() || colDef.wrapHeaderText == null
+                ? undefined
+                : { wrapText: colDef.wrapHeaderText }
+        );
     }
 
     private resolveColumnGroupHeaderPdfStyle(columnGroup: AgColumnGroup): PdfCellStyle | undefined {
@@ -326,11 +332,16 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
             return undefined;
         }
 
-        return this.resolveHeaderPdfStyle(colGroupDef.headerStyle, {
-            colDef: colGroupDef,
-            columnGroup,
-            floatingFilter: false,
-        });
+        return mergePdfCellStyles(
+            this.resolveHeaderPdfStyle(colGroupDef.headerStyle, {
+                colDef: colGroupDef,
+                columnGroup,
+                floatingFilter: false,
+            }),
+            this.shouldSkipStyleCallbacks() || colGroupDef.wrapHeaderText == null
+                ? undefined
+                : { wrapText: colGroupDef.wrapHeaderText }
+        );
     }
 
     private resolveHeaderPdfStyle(
