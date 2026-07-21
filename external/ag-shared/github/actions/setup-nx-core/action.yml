@@ -177,10 +177,14 @@ runs:
               # For releases add release branch to key, otherwise take any latest cache if failed to find it for current yarn.lock
               # fail-on-cache-miss: true
 
-        - name: Cache node_modules
+        - name: Restore node_modules
+          # Restore only; saved by the explicit "Save node_modules" step after yarn install.
+          # actions/cache@v4's post-save hook cannot be used: expression contexts are lost
+          # in post steps of nested composite actions (actions/runner#2009), so its `path`
+          # resolves empty and the save is silently skipped.
           if: inputs.cache_mode == 'rw'
           id: cache_rw
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
               path: ${{ inputs.node_modules_paths }}
               key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, inputs.node_modules_hash) || inputs.node_modules_hash }}
@@ -188,6 +192,8 @@ runs:
               # For releases add release branch to key, otherwise take any latest cache if failed to find it for current yarn.lock
 
         - name: Cache Nx
+          # Post-save works here only because `path` is a literal (see "Restore node_modules");
+          # do not parameterise it via inputs.
           if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false'
           uses: actions/cache@v4
           with:
@@ -239,12 +245,12 @@ runs:
                 if [[ -n "${NODE_MODULES_PATHS//[[:space:]]/}" ]] ; then
                   rm -rf ${NODE_MODULES_PATHS}
                 fi
-                yarn install --ci
+                yarn install --ci --prefer-offline
                 yarn check --integrity
               elif (yarn check --integrity) ; then
                 yarn postinstall
               else
-                yarn install --ci
+                yarn install --ci --prefer-offline
 
                 # Ensure that the integrity check passes after install to avoid
                 # cache polution with entries that will fail future integrity checks.
@@ -256,7 +262,7 @@ runs:
           id: yarn_install_fast
           shell: bash
           run: |
-              yarn check --integrity || yarn install --ci
+              yarn check --integrity || yarn install --ci --prefer-offline
 
         - name: yarn install (skipping postinstall)
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall == 'no-install' && steps.cache_ro.outputs.cache-hit != 'false'
@@ -264,3 +270,13 @@ runs:
           shell: bash
           run: |
               yarn check --integrity
+
+        - name: Save node_modules
+          # Explicit save of the freshly installed tree (see "Restore node_modules" for
+          # why the post-save hook cannot be used). Skipped on an exact restore — the
+          # cache already exists under this key.
+          if: inputs.cache_mode == 'rw' && steps.cache_rw.outputs.cache-hit != 'true'
+          uses: actions/cache/save@v4
+          with:
+              path: ${{ inputs.node_modules_paths }}
+              key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, inputs.node_modules_hash) || inputs.node_modules_hash }}

@@ -861,11 +861,6 @@
         z-index: 1;
     }
 
-    .ag-row-dragging {
-        // dragged rows must float above inline editors.
-        z-index: 2;
-    }
-
     .ag-stub-cell {
         display: flex;
         align-items: center;

@@ -677,7 +677,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         // Get the focussed cell so we can ensure it remains focussed after the move
         if (cellCtrl) {
-            cellCtrl.focusCell();
+            cellCtrl.focusCell({
+                forceBrowserFocus: true,
+                preventScrollOnBrowserFocus: true,
+            });
         } else {
             focusSvc.clearFocusedCell();
         }
