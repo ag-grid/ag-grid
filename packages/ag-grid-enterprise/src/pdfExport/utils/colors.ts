@@ -1,6 +1,5 @@
 import type { PdfCellStyle } from 'ag-grid-community';
 
-import { isTransparentColorValue } from './pdfColor';
 import type { StyleValueMap } from './styleValues';
 import { readStyleString } from './styleValues';
 
@@ -116,5 +115,3 @@ export function resolvePdfCellStyleColors(
 
     return result;
 }
-
-export { isTransparentColorValue };

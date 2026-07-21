@@ -14,6 +14,10 @@ describe('PDF colours', () => {
         );
     });
 
+    it('blends translucent colours against white when no background colour is available', () => {
+        expect(resolveOptionalColor('rgba(0, 0, 0, 0.5)', undefined)).toEqual({ r: 128, g: 128, b: 128 });
+    });
+
     it('blends transparent theme header colours over the page background', () => {
         const colors = resolvePdfStyleColors({
             backgroundColor: '#ffffff',

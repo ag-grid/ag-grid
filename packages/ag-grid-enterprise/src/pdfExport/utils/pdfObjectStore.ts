@@ -46,6 +46,8 @@ class PdfObjectStore {
      * @returns Complete PDF document string.
      */
     public build(rootId: number, infoId?: number): string {
+        // object bodies are ASCII-only (escapePdfString octal-escapes anything above 0x7e),
+        // so string length equals byte length for xref offsets. This invariant is load-bearing.
         let body = '%PDF-1.4\n';
         const offsets: number[] = [0];
         const objects = this.objects;
@@ -106,6 +108,7 @@ export function buildPdf(
 
     for (const content of pages) {
         // each page has its own content stream object and page object.
+        // content is ASCII-only, so string length equals the byte length required by /Length.
         const contentStream = `<< /Length ${content.length} >>\nstream\n${content}\nendstream`;
         const contentId = store.add(contentStream);
         const pageObject = `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)}] /Resources << /Font ${fontResources} >> /Contents ${contentId} 0 R >>`;

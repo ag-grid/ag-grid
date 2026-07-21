@@ -2,6 +2,7 @@ import type { AgColumn, PdfExportParams, PdfFontFamily } from 'ag-grid-community
 
 import type { PdfRow } from './pdfSerializingSession';
 import {
+    columnNeedsAutoWidth,
     createFontKeyMap,
     getColumnWidths,
     getGridColumnWidths,
@@ -9,10 +10,12 @@ import {
     getRepeatableHeaderRows,
     resolveMargin,
     resolvePageSize,
+    resolveRequestedColumnWidths,
 } from './utils/document/layout';
 import type { LayoutOptions, MeasuredRow, RowFragmentState } from './utils/document/measurement';
 import {
     getAutoColumnWidths,
+    measureClampedRowFragment,
     measureRow,
     measureRowFragment,
     resolveDocumentTitle,
@@ -43,9 +46,10 @@ const DEFAULTS = {
 };
 
 export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], params: PdfExportParams): string {
-    const pageSize = resolvePageSize(params.pageSize, params.pageOrientation);
-    const margin = resolveMargin(params.margin);
-    const styleColors = resolvePdfStyleColors(params.pdfStyles);
+    const pageSetup = params.page;
+    const pageSize = resolvePageSize(pageSetup?.size, pageSetup?.orientation);
+    const margin = resolveMargin(pageSetup?.margin);
+    const styleColors = resolvePdfStyleColors(params.colors);
 
     const columnCount = columnsToExport.length || Math.max(getMaxColumnCount(rows), 1);
     const availableWidth = Math.max(pageSize.width - margin.left - margin.right, 0);
@@ -87,8 +91,13 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         overflow: params.overflow,
         rowGroupIndentSize,
     };
-    const autoWidths = getAutoColumnWidths(rows, sizingLayout, bodyFont, headerFont, styleColors);
-    const columnWidths = getColumnWidths(columnsToExport, columnCount, availableWidth, params.columnWidth, autoWidths);
+    const requestedWidths = resolveRequestedColumnWidths(columnsToExport, columnCount, params.columnWidth);
+    const autoWidthColumns = requestedWidths.map(columnNeedsAutoWidth);
+    // measuring content widths is expensive, so skip the pass when no column consumes them.
+    const autoWidths = autoWidthColumns.includes(true)
+        ? getAutoColumnWidths(rows, sizingLayout, bodyFont, headerFont, styleColors, autoWidthColumns)
+        : undefined;
+    const columnWidths = getColumnWidths(columnsToExport, columnCount, availableWidth, requestedWidths, autoWidths);
     const layout: LayoutOptions = { ...sizingLayout, columnWidths };
 
     const measuredRows: MeasuredRow[] = [];
@@ -199,7 +208,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
                 fragment = measureRowFragment(row, state, availableHeight);
             }
             if (!fragment) {
-                break;
+                fragment = measureClampedRowFragment(row, state, availableHeight);
             }
 
             const previousPartCount = pageParts.length;

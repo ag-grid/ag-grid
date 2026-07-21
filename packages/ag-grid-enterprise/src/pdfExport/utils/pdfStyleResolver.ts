@@ -1,11 +1,12 @@
 import { paramToVariableName } from 'ag-stack';
 
-import type { PdfExportParams, PdfExportStyles } from 'ag-grid-community';
+import type { PdfColors, PdfDocumentTitleStyle } from 'ag-grid-community';
 import { _createElement } from 'ag-grid-community';
 
-import { isTransparentColorValue, resolveCssColorValue } from './colors';
+import { resolveCssColorValue } from './colors';
+import { isTransparentColorValue } from './pdfColor';
 
-const PDF_STYLE_COLOR_KEYS: (keyof PdfExportStyles)[] = [
+const PDF_COLOR_KEYS: (keyof PdfColors)[] = [
     'backgroundColor',
     'dataBackgroundColor',
     'oddRowBackgroundColor',
@@ -16,129 +17,89 @@ const PDF_STYLE_COLOR_KEYS: (keyof PdfExportStyles)[] = [
 ];
 
 /**
- * Merge default and override document title values.
- * Supports both string and `PdfCell` forms while preserving existing style/data fields.
- * @param baseTitle - Title from default params.
- * @param overrideTitle - Title from export call params.
- * @returns Merged document title value.
+ * Merge default and override document title styles.
+ * @param baseStyle - Title style from default params.
+ * @param overrideStyle - Title style from export call params.
+ * @returns Merged document title style.
  */
-export function mergeDocumentTitle(
-    baseTitle: PdfExportParams['documentTitle'],
-    overrideTitle: PdfExportParams['documentTitle']
-): PdfExportParams['documentTitle'] {
-    if (overrideTitle == null) {
-        return baseTitle;
+export function mergeDocumentTitleStyle(
+    baseStyle: PdfDocumentTitleStyle | undefined,
+    overrideStyle: PdfDocumentTitleStyle | undefined
+): PdfDocumentTitleStyle | undefined {
+    if (!baseStyle || !overrideStyle) {
+        return overrideStyle ?? baseStyle;
     }
 
-    if (typeof overrideTitle === 'string') {
-        if (baseTitle && typeof baseTitle !== 'string') {
-            return {
-                ...baseTitle,
-                data: {
-                    ...(baseTitle.data ?? {}),
-                    value: overrideTitle,
-                },
-            };
-        }
-        return overrideTitle;
-    }
-
-    const baseCell = typeof baseTitle === 'string' ? undefined : baseTitle;
-    const mergedData = {
-        ...(baseCell?.data ?? {}),
-        ...(overrideTitle.data ?? {}),
-    };
-    const baseValue = typeof baseTitle === 'string' ? baseTitle : baseCell?.data?.value;
-    if (mergedData.value == null && baseValue != null) {
-        mergedData.value = baseValue;
-    }
-
-    return {
-        ...(baseCell ?? {}),
-        ...overrideTitle,
-        data: mergedData,
-        style: {
-            ...(baseCell?.style ?? {}),
-            ...(overrideTitle.style ?? {}),
-        },
-    };
+    return { ...baseStyle, ...overrideStyle };
 }
 
 /**
- * Resolve colour properties in a `documentTitle` cell style.
- * @param documentTitle - Document title value.
+ * Resolve colour properties in a document title style.
+ * @param style - Document title style.
  * @param resolveColorValue - Colour resolver used for theme variables and CSS values.
- * @returns Document title with resolved colour fields.
+ * @returns Document title style with resolved colour fields.
  */
-export function resolveDocumentTitleColors(
-    documentTitle: PdfExportParams['documentTitle'],
+export function resolveDocumentTitleStyleColors(
+    style: PdfDocumentTitleStyle | undefined,
     resolveColorValue: (value?: string) => string | undefined
-): PdfExportParams['documentTitle'] {
-    if (!documentTitle || typeof documentTitle === 'string') {
-        return documentTitle;
-    }
-
-    const style = documentTitle.style;
+): PdfDocumentTitleStyle | undefined {
     if (!style) {
-        return documentTitle;
+        return style;
     }
 
     return {
-        ...documentTitle,
-        style: {
-            ...style,
-            color: resolveColorValue(style.color),
-            backgroundColor: resolveColorValue(style.backgroundColor),
-            borderColor: resolveColorValue(style.borderColor),
-        },
+        ...style,
+        color: resolveColorValue(style.color),
+        backgroundColor: resolveColorValue(style.backgroundColor),
+        borderColor: resolveColorValue(style.borderColor),
     };
 }
 
 /**
- * Merge theme/default/override PDF styles and resolve colour tokens.
- * @param themeStyles - Styles inferred from the active grid theme.
- * @param baseStyles - Styles from default export params.
- * @param overrideStyles - Styles from runtime export params.
+ * Merge theme/default/override PDF colours and resolve colour tokens.
+ * @param themeColors - Colours inferred from the active grid theme.
+ * @param baseColors - Colours from default export params.
+ * @param overrideColors - Colours from runtime export params.
  * @param resolveColorValue - Colour resolver used for theme variables and CSS values.
- * @returns Resolved PDF style object.
+ * @returns Resolved PDF colour object.
  */
-export function resolvePdfStyles(
-    themeStyles: PdfExportStyles,
-    baseStyles: PdfExportStyles | undefined,
-    overrideStyles: PdfExportStyles | undefined,
+export function resolvePdfColors(
+    themeColors: PdfColors,
+    baseColors: PdfColors | undefined,
+    overrideColors: PdfColors | undefined,
     resolveColorValue: (value?: string) => string | undefined
-): PdfExportStyles {
-    const mergedStyles: PdfExportStyles = {
-        ...themeStyles,
-        ...baseStyles,
-        ...overrideStyles,
+): PdfColors {
+    const mergedColors: PdfColors = {
+        ...themeColors,
+        ...baseColors,
+        ...overrideColors,
     };
 
-    for (const key of PDF_STYLE_COLOR_KEYS) {
-        const value = mergedStyles[key];
+    for (const key of PDF_COLOR_KEYS) {
+        const value = mergedColors[key];
         if (!value) {
             continue;
         }
-        mergedStyles[key] = resolveColorValue(value) ?? value;
+        mergedColors[key] = resolveColorValue(value) ?? value;
     }
 
-    return mergedStyles;
+    return mergedColors;
 }
 
 /**
- * Read theme colour variables from the grid root and map them to PDF style keys.
+ * Read theme colour variables from the grid root and map them to PDF colour keys.
  * @param eRootDiv - Grid root element.
- * @returns Theme-derived PDF style overrides.
+ * @returns Theme-derived PDF colour overrides.
  */
-export function getThemePdfStyles(eRootDiv: HTMLElement | undefined): PdfExportStyles {
+export function getThemePdfColors(eRootDiv: HTMLElement | undefined): PdfColors {
     if (!eRootDiv || typeof getComputedStyle !== 'function') {
         return {};
     }
 
     const styles = getComputedStyle(eRootDiv);
-    const themeStyles: PdfExportStyles = {};
+    const themeStyles: PdfColors = {};
 
-    for (const param of PDF_STYLE_COLOR_KEYS) {
+    for (const param of PDF_COLOR_KEYS) {
         const cssVar = paramToVariableName(param);
         const value = styles.getPropertyValue(cssVar).trim();
         if (!value) {

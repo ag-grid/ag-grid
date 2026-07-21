@@ -19,13 +19,21 @@ This page documents the PDF Export API and interfaces.
 
 {% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" /%}
 
-### PdfExportStyles
+### PdfColors
 
-{% interfaceDocumentation interfaceName="PdfExportStyles" /%}
+{% interfaceDocumentation interfaceName="PdfColors" /%}
 
 ### PdfCellStyle
 
 {% interfaceDocumentation interfaceName="PdfCellStyle" /%}
+
+### PdfDocumentTitleStyle
+
+{% interfaceDocumentation interfaceName="PdfDocumentTitleStyle" /%}
+
+### PdfPageSetup
+
+{% interfaceDocumentation interfaceName="PdfPageSetup" /%}
 
 ### PdfCell
 
@@ -35,13 +43,25 @@ This page documents the PDF Export API and interfaces.
 
 {% interfaceDocumentation interfaceName="PdfCellData" overrideSrc="pdf-export/pdf.json" /%}
 
-### PdfStyleCallbackParams
+### PdfRowStyleCallbackParams
 
-{% interfaceDocumentation interfaceName="PdfStyleCallbackParams" /%}
+{% interfaceDocumentation interfaceName="PdfRowStyleCallbackParams" /%}
 
-### PdfColumnWidthCallbackParams
+### PdfCellStyleCallbackParams
 
-{% interfaceDocumentation interfaceName="PdfColumnWidthCallbackParams" /%}
+{% interfaceDocumentation interfaceName="PdfCellStyleCallbackParams" /%}
+
+### PdfHeaderStyleCallbackParams
+
+{% interfaceDocumentation interfaceName="PdfHeaderStyleCallbackParams" /%}
+
+### PdfGroupHeaderStyleCallbackParams
+
+{% interfaceDocumentation interfaceName="PdfGroupHeaderStyleCallbackParams" /%}
+
+### ColumnWidthCallbackParams
+
+{% interfaceDocumentation interfaceName="ColumnWidthCallbackParams" /%}
 
 ### PdfMargin
 
@@ -112,7 +132,17 @@ type PdfColumnWidth = number | 'auto' | 'grid';
 ### PdfColumnWidthCallback
 
 ```ts
-type PdfColumnWidthCallback = (params: PdfColumnWidthCallbackParams) => PdfColumnWidth | null | undefined;
+type PdfColumnWidthCallback = (params: ColumnWidthCallbackParams) => PdfColumnWidth | null | undefined;
+```
+
+### PdfStyleCallbackParams
+
+```ts
+type PdfStyleCallbackParams =
+    | PdfRowStyleCallbackParams
+    | PdfCellStyleCallbackParams
+    | PdfHeaderStyleCallbackParams
+    | PdfGroupHeaderStyleCallbackParams;
 ```
 
 ### PdfStyleCallbackType

@@ -51,7 +51,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
     },
     defaultPdfExportParams: {
-        pdfStyles: {
+        colors: {
             headerBackgroundColor: '#e8f1ff',
             headerTextColor: '#123a5a',
             borderColor: '#c3d4ea',

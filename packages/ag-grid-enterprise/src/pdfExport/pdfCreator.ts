@@ -1,16 +1,16 @@
 import { _downloadFile } from 'ag-stack';
 
 import type { IPdfCreator, NamedBean, PdfCustomContent, PdfExportParams } from 'ag-grid-community';
-import { BaseCreator, _addGridCommonParams } from 'ag-grid-community';
+import { BaseCreator } from 'ag-grid-community';
 
 import { PdfSerializingSession } from './pdfSerializingSession';
 import {
-    getThemePdfStyles,
-    mergeDocumentTitle,
-    resolveDocumentTitleColors,
-    resolvePdfStyles,
+    getThemePdfColors,
+    mergeDocumentTitleStyle,
+    resolveDocumentTitleStyleColors,
+    resolvePdfColors,
     resolveThemeColorValue,
-} from './utils/creator';
+} from './utils/pdfStyleResolver';
 
 /**
  * Orchestrates PDF export by serialising grid data and downloading a file.
@@ -31,14 +31,17 @@ export class PdfCreator
         const baseParams = this.gos.get('defaultPdfExportParams');
         const resolveColor = this.getResolveColorValueFn();
         const merged: PdfExportParams = { ...(baseParams ?? {}), ...(params ?? {}) };
-        merged.pdfStyles = resolvePdfStyles(
-            getThemePdfStyles(this.beans.eRootDiv),
-            baseParams?.pdfStyles,
-            params?.pdfStyles,
+        merged.colors = resolvePdfColors(
+            getThemePdfColors(this.beans.eRootDiv),
+            baseParams?.colors,
+            params?.colors,
             resolveColor
         );
-        const mergedDocumentTitle = mergeDocumentTitle(baseParams?.documentTitle, params?.documentTitle);
-        merged.documentTitle = resolveDocumentTitleColors(mergedDocumentTitle, resolveColor);
+        if (baseParams?.page && params?.page) {
+            merged.page = { ...baseParams.page, ...params.page };
+        }
+        const mergedTitleStyle = mergeDocumentTitleStyle(baseParams?.documentTitleStyle, params?.documentTitleStyle);
+        merged.documentTitleStyle = resolveDocumentTitleStyleColors(mergedTitleStyle, resolveColor);
         return merged;
     }
 
@@ -52,28 +55,10 @@ export class PdfCreator
             return;
         }
 
-        const exportFunc = () => {
+        this.runExport(() => {
             const mergedParams = this.getMergedParams(userParams);
-            const data = this.getData(mergedParams);
-            const mimeType = mergedParams.mimeType || 'application/pdf';
-
-            const packagedFile = new Blob([data], { type: mimeType });
-            const fileNameParams = mergedParams.fileName;
-            const fileName =
-                typeof fileNameParams === 'function'
-                    ? fileNameParams(_addGridCommonParams(this.gos, {}))
-                    : fileNameParams;
-
-            _downloadFile(this.getFileName(fileName), packagedFile);
-        };
-
-        const { overlays } = this.beans;
-        if (overlays) {
-            // Match other exporters by showing a transient export overlay.
-            overlays.showExportOverlay(exportFunc);
-        } else {
-            exportFunc();
-        }
+            _downloadFile(this.resolveFileName(mergedParams), this.createPdfBlob(mergedParams));
+        });
     }
 
     /**
@@ -95,11 +80,12 @@ export class PdfCreator
             return undefined;
         }
 
-        const mergedParams = this.getMergedParams(params);
-        const data = this.getData(mergedParams);
-        const mimeType = mergedParams.mimeType || 'application/pdf';
+        return this.createPdfBlob(this.getMergedParams(params));
+    }
 
-        return new Blob([data], { type: mimeType });
+    private createPdfBlob(mergedParams: PdfExportParams): Blob {
+        const data = this.getData(mergedParams);
+        return new Blob([data], { type: mergedParams.mimeType || 'application/pdf' });
     }
 
     /**

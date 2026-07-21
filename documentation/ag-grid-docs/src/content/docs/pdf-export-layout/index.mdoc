@@ -11,9 +11,11 @@ The default page is A4 landscape with a 36-point margin on every side. Use named
 
 ```{% frameworkTransform=true %}
 api.exportDataAsPdf({
-    pageSize: { width: 720, height: 540 },
-    pageOrientation: 'landscape',
-    margin: { top: 36, right: 24, bottom: 36, left: 24 },
+    page: {
+        size: { width: 720, height: 540 },
+        orientation: 'landscape',
+        margin: { top: 36, right: 24, bottom: 36, left: 24 },
+    },
     repeatHeader: true,
 });
 ```
@@ -39,7 +41,7 @@ Auto widths are measured before page scaling. If the combined widths exceed the 
 
 ## Text Wrapping And Row Height
 
-Cells, including numeric cells, remain on one line by default. Set `wrapText=true` for all exported cells, use `colDef.wrapText` or `colDef.wrapHeaderText`, or return `wrapText: true` from `currentElementStyleCallback` for an individual PDF element.
+Cells, including numeric cells, remain on one line by default. Set `wrapText=true` for all exported cells, use `colDef.wrapText` or `colDef.wrapHeaderText`, or return `wrapText: true` from `processStyleCallback` for an individual PDF element.
 
 PDF Export also translates CSS white-space properties returned by `cellStyle`. For example, `white-space: normal` enables wrapping, `white-space-collapse: preserve-breaks` preserves explicit line breaks without wrapping, and `white-space: pre-line` enables both behaviours. The `pre`, `pre-wrap`, and `break-spaces` values also preserve repeated, leading, and trailing spaces. The equivalent PDF-specific properties are `preserveLineBreaks` and `preserveSpaces`.
 

@@ -21,11 +21,11 @@ api.exportDataAsPdf({
 - `processGroupHeaderCallback` customises column-group header text.
 - `processRowGroupCallback` customises row-group text. Group indentation is applied independently.
 
-These callbacks return text. To style the processed result, use `currentElementStyleCallback`; its `value` is the final exported string.
+These callbacks return text. To style the processed result, use `processStyleCallback`; its `value` is the final exported string.
 
 ## Document Title
 
-Use `documentTitle` to set the PDF metadata title and render a visible title above the table. Pass a `PdfCell` to configure its font, colour, border, padding, margin, alignment, wrapping, line height, line limit, and overflow behaviour.
+Use `documentTitle` to set the PDF metadata title and render a visible title above the table. Use `documentTitleStyle` to configure its font, colour, border, padding, margin, alignment, wrapping, line height, line limit, and overflow behaviour.
 
 {% gridExampleRunner title="Document Title" name="pdf-document-title" exampleHeight=520 /%}
 

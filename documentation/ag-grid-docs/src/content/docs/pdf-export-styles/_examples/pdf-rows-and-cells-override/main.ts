@@ -46,7 +46,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 
     defaultPdfExportParams: {
-        currentElementStyleCallback: (params: PdfStyleCallbackParams) => {
+        processStyleCallback: (params: PdfStyleCallbackParams) => {
             if (params.type === 'header') {
                 return {
                     backgroundColor: '#e0f2fe',

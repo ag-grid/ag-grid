@@ -1,4 +1,4 @@
-import type { PdfExportStyles } from 'ag-grid-community';
+import type { PdfColors } from 'ag-grid-community';
 
 import type { PdfRowType } from '../pdfSerializingSession';
 
@@ -22,9 +22,9 @@ export type PdfRowStyles = {
     text?: PdfRgb;
 };
 
-type PdfBaseExportStyles = Required<
+type PdfBaseColors = Required<
     Pick<
-        PdfExportStyles,
+        PdfColors,
         | 'backgroundColor'
         | 'dataBackgroundColor'
         | 'oddRowBackgroundColor'
@@ -35,7 +35,11 @@ type PdfBaseExportStyles = Required<
     >
 >;
 
-const DEFAULT_PDF_STYLES: PdfBaseExportStyles = {
+// PDF fill operators have no alpha channel, so translucent colours are blended against
+// their background; white stands in when no background colour is known.
+const ALPHA_BLEND_FALLBACK: PdfRgb = { r: 255, g: 255, b: 255 };
+
+const DEFAULT_PDF_STYLES: PdfBaseColors = {
     backgroundColor: '#ffffff',
     dataBackgroundColor: '#ffffff',
     oddRowBackgroundColor: '#ffffff',
@@ -50,7 +54,7 @@ const DEFAULT_PDF_STYLES: PdfBaseExportStyles = {
  * @param styles - Optional PDF style overrides.
  * @returns Fully resolved colour bundle used by the PDF renderer.
  */
-export function resolvePdfStyleColors(styles?: PdfExportStyles): PdfStyleColors {
+export function resolvePdfStyleColors(styles?: PdfColors): PdfStyleColors {
     const resolvedStyles = { ...DEFAULT_PDF_STYLES, ...(styles ?? {}) };
 
     const pageBackground = resolveColor(resolvedStyles.backgroundColor, DEFAULT_PDF_STYLES.backgroundColor);
@@ -163,7 +167,7 @@ export function resolveOptionalColor(
         return undefined;
     }
 
-    return blendWith && parsed.a < 1 ? blendColors(parsed, blendWith) : stripAlpha(parsed);
+    return parsed.a < 1 ? blendColors(parsed, blendWith ?? ALPHA_BLEND_FALLBACK) : stripAlpha(parsed);
 }
 
 /**
@@ -209,16 +213,18 @@ function resolveColor(value: string | undefined, fallback: string, blendWith?: P
             return undefined;
         }
         if (parsed && parsed.a > 0) {
-            return blendWith && parsed.a < 1 ? blendColors(parsed, blendWith) : stripAlpha(parsed);
+            return parsed.a < 1 ? blendColors(parsed, blendWith ?? ALPHA_BLEND_FALLBACK) : stripAlpha(parsed);
         }
     }
 
     const parsedFallback = parseColor(fallback);
-    if (!parsedFallback || parsedFallback === null || parsedFallback.a <= 0) {
+    if (!parsedFallback || parsedFallback.a <= 0) {
         return undefined;
     }
 
-    return blendWith && parsedFallback.a < 1 ? blendColors(parsedFallback, blendWith) : stripAlpha(parsedFallback);
+    return parsedFallback.a < 1
+        ? blendColors(parsedFallback, blendWith ?? ALPHA_BLEND_FALLBACK)
+        : stripAlpha(parsedFallback);
 }
 
 /**

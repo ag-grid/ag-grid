@@ -2,7 +2,12 @@ import type { AgColumn, PdfExportParams } from 'ag-grid-community';
 
 import { createPdfDocument } from './pdfDocument';
 import type { PdfRow } from './pdfSerializingSession';
-import { getColumnWidths, resolvePageSize } from './utils/document/layout';
+import {
+    columnNeedsAutoWidth,
+    getColumnWidths,
+    resolvePageSize,
+    resolveRequestedColumnWidths,
+} from './utils/document/layout';
 import type { LayoutOptions } from './utils/document/measurement';
 import { getAutoColumnWidths, measureRow } from './utils/document/measurement';
 import { resolvePdfStyleColors } from './utils/pdfColor';
@@ -41,38 +46,62 @@ describe('createPdfDocument', () => {
     it('uses current grid column widths by default', () => {
         const columns = [stubColumn(120), stubColumn(180)];
 
-        expect(getColumnWidths(columns, 2, 500, undefined, [40, 80])).toEqual([120, 180]);
+        expect(getColumnWidths(columns, 2, 500, resolveRequestedColumnWidths(columns, 2, undefined), [40, 80])).toEqual(
+            [120, 180]
+        );
     });
 
     it('uses the intrinsic width of the Row Numbers column by default', () => {
         const columns = [stubColumn(60, 'row-number'), stubColumn(180)];
 
-        expect(getColumnWidths(columns, 2, 500, undefined, [24, 80])).toEqual([24, 180]);
-        expect(getColumnWidths(columns, 2, 500, 'grid', [24, 80])).toEqual([60, 180]);
+        expect(getColumnWidths(columns, 2, 500, resolveRequestedColumnWidths(columns, 2, undefined), [24, 80])).toEqual(
+            [24, 180]
+        );
+        expect(getColumnWidths(columns, 2, 500, resolveRequestedColumnWidths(columns, 2, 'grid'), [24, 80])).toEqual([
+            60, 180,
+        ]);
     });
 
     it('uses intrinsic column widths without stretching them to fill the page when requested', () => {
         const columns = [stubColumn(120), stubColumn(180)];
 
-        expect(getColumnWidths(columns, 2, 500, 'auto', [40, 80])).toEqual([40, 80]);
+        expect(getColumnWidths(columns, 2, 500, resolveRequestedColumnWidths(columns, 2, 'auto'), [40, 80])).toEqual([
+            40, 80,
+        ]);
     });
 
     it('scales column widths down proportionally when they exceed the page', () => {
         const columns = [stubColumn(120), stubColumn(180)];
 
-        expect(getColumnWidths(columns, 2, 200, 'auto', [100, 300])).toEqual([50, 150]);
+        expect(getColumnWidths(columns, 2, 200, resolveRequestedColumnWidths(columns, 2, 'auto'), [100, 300])).toEqual([
+            50, 150,
+        ]);
     });
 
     it('supports fixed and per-column export widths', () => {
         const columns = [stubColumn(120), stubColumn(180)];
 
-        expect(getColumnWidths(columns, 2, 500, 75, [40, 80])).toEqual([75, 75]);
-        expect(getColumnWidths(columns, 2, 500, ({ index }) => (index === 0 ? 60 : 'grid'), [40, 80])).toEqual([
-            60, 180,
+        expect(getColumnWidths(columns, 2, 500, resolveRequestedColumnWidths(columns, 2, 75), [40, 80])).toEqual([
+            75, 75,
         ]);
-        expect(getColumnWidths(columns, 2, 500, ({ index }) => (index === 0 ? 60 : undefined), [40, 80])).toEqual([
-            60, 180,
-        ]);
+        expect(
+            getColumnWidths(
+                columns,
+                2,
+                500,
+                resolveRequestedColumnWidths(columns, 2, ({ index }) => (index === 0 ? 60 : 'grid')),
+                [40, 80]
+            )
+        ).toEqual([60, 180]);
+        expect(
+            getColumnWidths(
+                columns,
+                2,
+                500,
+                resolveRequestedColumnWidths(columns, 2, ({ index }) => (index === 0 ? 60 : undefined)),
+                [40, 80]
+            )
+        ).toEqual([60, 180]);
     });
 
     it('keeps short row-number content narrow when auto-sizing columns', () => {
@@ -90,10 +119,40 @@ describe('createPdfDocument', () => {
             cellPadding: 4,
         };
 
-        const widths = getAutoColumnWidths(rows, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors());
+        const widths = getAutoColumnWidths(rows, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), [
+            true,
+            true,
+        ]);
 
         expect(widths[0]).toBe(24);
         expect(widths[1]).toBeGreaterThan(widths[0]);
+    });
+
+    it('only measures content widths for columns that consume them', () => {
+        expect(columnNeedsAutoWidth('grid')).toBe(false);
+        expect(columnNeedsAutoWidth(120)).toBe(false);
+        expect(columnNeedsAutoWidth('auto')).toBe(true);
+        expect(columnNeedsAutoWidth(Number.NaN)).toBe(true);
+
+        const rows: PdfRow[] = [{ type: 'BODY', cells: [{ value: '1' }, { value: 'A longer exported value' }] }];
+        const layout: LayoutOptions = {
+            columnCount: 2,
+            columnWidths: [60, 200],
+            margin: { top: 36, right: 36, bottom: 36, left: 36 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+        };
+
+        const widths = getAutoColumnWidths(rows, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), [
+            true,
+            false,
+        ]);
+
+        // the unmeasured second column keeps the placeholder minimum width.
+        expect(widths[0]).toBe(24);
+        expect(widths[1]).toBe(24);
     });
 
     it('builds a valid PDF envelope', () => {
@@ -255,8 +314,7 @@ describe('createPdfDocument', () => {
             },
         ];
         const pdf = createPdfDocument(rows, [stubColumn(80)], {
-            pageSize: { width: 120, height: 80 },
-            margin: 10,
+            page: { size: { width: 120, height: 80 }, margin: 10 },
             columnWidth: 80,
         });
 
@@ -286,8 +344,7 @@ describe('createPdfDocument', () => {
             { type: 'BODY', cells: [{ value: values.join('\n'), style: { wrapText: true } }] },
         ];
         const pdf = createPdfDocument(rows, [stubColumn(80)], {
-            pageSize: { width: 120, height: 100 },
-            margin: 10,
+            page: { size: { width: 120, height: 100 }, margin: 10 },
             columnWidth: 80,
             headerRowHeight: 20,
         });
@@ -313,10 +370,8 @@ describe('createPdfDocument', () => {
 
     it('preserves explicit title line breaks without enabling wrapping', () => {
         const pdf = createPdfDocument([], [], {
-            documentTitle: {
-                data: { value: 'First line\nSecond line' },
-                style: { preserveLineBreaks: true, wrapText: false },
-            },
+            documentTitle: 'First line\nSecond line',
+            documentTitleStyle: { preserveLineBreaks: true, wrapText: false },
         });
 
         expect(pdf).toMatch(/Tm \(First line\) Tj/);
@@ -326,19 +381,16 @@ describe('createPdfDocument', () => {
     it('constrains a wrapped document title to the printable page height', () => {
         const title = Array.from({ length: 12 }, (_, index) => `Line ${index + 1}`).join('\n');
         const pdf = createPdfDocument([], [], {
-            pageSize: { width: 100, height: 100 },
-            margin: 10,
-            documentTitle: {
-                data: { value: title },
-                style: {
-                    borderColor: '#000000',
-                    borderWidth: 1,
-                    fontSize: 10,
-                    lineHeight: 10,
-                    margin: 0,
-                    padding: 0,
-                    wrapText: true,
-                },
+            page: { size: { width: 100, height: 100 }, margin: 10 },
+            documentTitle: title,
+            documentTitleStyle: {
+                borderColor: '#000000',
+                borderWidth: 1,
+                fontSize: 10,
+                lineHeight: 10,
+                margin: 0,
+                padding: 0,
+                wrapText: true,
             },
         });
 
@@ -359,10 +411,8 @@ describe('createPdfDocument', () => {
         const params = {
             fontFamily: 'Comic Sans MS',
             headerFontFamily: 'Papyrus',
-            documentTitle: {
-                data: { value: 'Report' },
-                style: { fontFamily: 'Wingdings' },
-            },
+            documentTitle: 'Report',
+            documentTitleStyle: { fontFamily: 'Wingdings' },
         } as unknown as PdfExportParams;
 
         const pdf = createPdfDocument(rows, columns, params);
@@ -405,13 +455,12 @@ describe('createPdfDocument', () => {
 
     it('does not emit invalid PDF tokens for malformed runtime values', () => {
         const params = {
-            pageSize: { width: Number.NaN, height: Number.POSITIVE_INFINITY },
-            margin: Number.NaN,
+            page: { size: { width: Number.NaN, height: Number.POSITIVE_INFINITY }, margin: Number.NaN },
             fontSize: Number.POSITIVE_INFINITY,
             headerFontSize: Number.NaN,
             cellPadding: Number.NEGATIVE_INFINITY,
             rowHeight: Number.NaN,
-            pdfStyles: {
+            colors: {
                 headerBackgroundColor: '#ggg',
             },
         } as PdfExportParams;
@@ -427,7 +476,7 @@ describe('createPdfDocument', () => {
         const rows = createRows();
         const columns = [stubColumn(100)];
         const params: PdfExportParams = {
-            pdfStyles: {
+            colors: {
                 headerBackgroundColor: 'color(srgb 0.2 0.4 0.6)',
             },
         };
@@ -441,7 +490,7 @@ describe('createPdfDocument', () => {
         const rows = createRows();
         const columns = [stubColumn(100)];
         const params: PdfExportParams = {
-            pdfStyles: {
+            colors: {
                 borderColor: 'transparent',
             },
         };
@@ -459,9 +508,7 @@ describe('createPdfDocument', () => {
         ];
         const columns = [stubColumn(100)];
         const params: PdfExportParams = {
-            pageSize: { width: 200, height: 120 },
-            pageOrientation: 'landscape',
-            margin: 10,
+            page: { size: { width: 200, height: 120 }, orientation: 'landscape', margin: 10 },
             rowHeight: 50,
             headerRowHeight: 50,
         };
@@ -480,9 +527,7 @@ describe('createPdfDocument', () => {
         ];
         const columns = [stubColumn(100)];
         const params: PdfExportParams = {
-            pageSize: { width: 200, height: 120 },
-            pageOrientation: 'landscape',
-            margin: 10,
+            page: { size: { width: 200, height: 120 }, orientation: 'landscape', margin: 10 },
             rowHeight: 50,
             headerRowHeight: 50,
         };
@@ -500,9 +545,7 @@ describe('createPdfDocument', () => {
         ];
         const columns = [stubColumn(100)];
         const params: PdfExportParams = {
-            pageSize: { width: 200, height: 120 },
-            pageOrientation: 'landscape',
-            margin: 10,
+            page: { size: { width: 200, height: 120 }, orientation: 'landscape', margin: 10 },
             rowHeight: 50,
             headerRowHeight: 60,
         };
@@ -513,12 +556,31 @@ describe('createPdfDocument', () => {
         expect(pdf).not.toContain('10 0 180 50 re S');
     });
 
+    it('clamps rows whose single line cannot fit a page instead of dropping them', () => {
+        const rows: PdfRow[] = [
+            { type: 'BODY', cells: [{ value: 'Oversized', style: { wrapText: true, lineHeight: 100 } }] },
+        ];
+        const pdf = createPdfDocument(rows, [stubColumn(80)], {
+            page: { size: { width: 120, height: 60 }, margin: 10 },
+            columnWidth: 80,
+        });
+
+        expect(countOccurrences(pdf, '(Oversized) Tj')).toBe(1);
+    });
+
+    it('rejects custom page sizes with an invalid dimension instead of mixing in defaults', () => {
+        expect(resolvePageSize({ width: 0, height: 500 }, 'portrait')).toEqual({ width: 595.28, height: 841.89 });
+        expect(resolvePageSize({ width: 500, height: Number.NaN }, 'portrait')).toEqual({
+            width: 595.28,
+            height: 841.89,
+        });
+    });
+
     it('does not emit a blank leading page when the first row is taller than the page content area', () => {
         const rows: PdfRow[] = [{ type: 'BODY', cells: [{ value: 'Oversized' }] }];
         const columns = [stubColumn(100)];
         const params: PdfExportParams = {
-            pageSize: { width: 100, height: 100 },
-            margin: 10,
+            page: { size: { width: 100, height: 100 }, margin: 10 },
             rowHeight: 120,
         };
 
@@ -588,7 +650,7 @@ describe('createPdfDocument', () => {
         ];
         const columns = [stubColumn(100)];
         const params: PdfExportParams = {
-            pdfStyles: {
+            colors: {
                 dataBackgroundColor: '#ff0000',
                 borderColor: '#00ff00',
             },

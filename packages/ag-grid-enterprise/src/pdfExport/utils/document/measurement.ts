@@ -1,5 +1,6 @@
 import type {
     PdfCellStyle,
+    PdfDocumentTitleStyle,
     PdfExportParams,
     PdfFontFamily,
     PdfMargin,
@@ -96,7 +97,7 @@ export type MeasuredRowFragment = {
 
 /**
  * Resolve document title text and style into measurement-ready values.
- * @param documentTitle - Raw document title param value.
+ * @param documentTitle - Document title text.
  * @param params - Export params.
  * @param styleColors - Resolved document colours.
  * @param headerFont - Default header font family.
@@ -104,7 +105,7 @@ export type MeasuredRowFragment = {
  * @returns Resolved title payload, or `undefined`.
  */
 export function resolveDocumentTitle(
-    documentTitle: PdfExportParams['documentTitle'],
+    documentTitle: string,
     params: PdfExportParams,
     styleColors: PdfStyleColors,
     headerFont: PdfFontFamily,
@@ -114,21 +115,9 @@ export function resolveDocumentTitle(
         return undefined;
     }
 
-    if (typeof documentTitle === 'string') {
-        return {
-            text: documentTitle,
-            style: resolveTitleStyle(undefined, params, styleColors, headerFont, defaultHeaderFontSize),
-        };
-    }
-
-    const value = documentTitle.data?.value ?? '';
-    if (!value) {
-        return undefined;
-    }
-
     return {
-        text: String(value),
-        style: resolveTitleStyle(documentTitle.style, params, styleColors, headerFont, defaultHeaderFontSize),
+        text: documentTitle,
+        style: resolveTitleStyle(params.documentTitleStyle, params, styleColors, headerFont, defaultHeaderFontSize),
     };
 }
 
@@ -292,20 +281,66 @@ export function measureRowFragment(
 }
 
 /**
+ * Clamp the remainder of a row into the available space, keeping at least one line per cell.
+ * Used as a last resort when no complete line fits even on a fresh page, so rows are never
+ * silently dropped from the export.
+ * @param row - Measured source row.
+ * @param state - Previous fragment continuation state.
+ * @param availableHeight - Vertical page space available in points.
+ * @returns A complete fragment constrained to the available space.
+ */
+export function measureClampedRowFragment(
+    row: MeasuredRow,
+    state: RowFragmentState | undefined,
+    availableHeight: number
+): MeasuredRowFragment {
+    const offsets = state?.lineOffsets ?? row.cells.map(() => 0);
+    const resolvedAvailableHeight = Number.isFinite(availableHeight) ? Math.max(availableHeight, 0) : 0;
+    const cells: MeasuredRowFragment['cells'] = [];
+
+    for (let i = 0, len = row.cells.length; i < len; i++) {
+        const cell = row.cells[i];
+        const remainingLines = cell.lines.slice(offsets[i] ?? 0);
+        const contentHeight = Math.max(resolvedAvailableHeight - cell.style.padding.top - cell.style.padding.bottom, 0);
+        const lineLimit = Math.max(Math.floor(contentHeight / cell.style.lineHeight), 1);
+        cells.push({
+            measurement: cell,
+            lines: constrainTextLines(
+                remainingLines,
+                lineLimit,
+                cell.style,
+                cell.width - cell.style.padding.left - cell.style.padding.right
+            ),
+        });
+    }
+
+    return {
+        row,
+        cells,
+        height: Math.min(getRemainingRowHeight(row, offsets), Math.max(resolvedAvailableHeight, row.minimumHeight)),
+        complete: true,
+    };
+}
+
+/**
  * Measure exported text and padding to obtain intrinsic column widths.
+ * Only cells that overlap a column consuming auto widths are measured, so exports
+ * using fixed or grid widths avoid a full extra measurement pass.
  * @param rows - Serialised table rows.
  * @param layout - Base layout and typography options.
  * @param bodyFont - Default body font family.
  * @param headerFont - Default header font family.
  * @param styleColors - Resolved document colours.
- * @returns Intrinsic widths in points.
+ * @param autoWidthColumns - Flags marking rendered columns that consume auto widths.
+ * @returns Intrinsic widths in points; only flagged columns hold meaningful values.
  */
 export function getAutoColumnWidths(
     rows: PdfRow[],
     layout: LayoutOptions,
     bodyFont: PdfFontFamily,
     headerFont: PdfFontFamily,
-    styleColors: PdfStyleColors
+    styleColors: PdfStyleColors,
+    autoWidthColumns: boolean[]
 ): number[] {
     const widths: number[] = [];
     for (let i = 0; i < layout.columnCount; i++) {
@@ -318,19 +353,45 @@ export function getAutoColumnWidths(
             continue;
         }
 
-        const measuredRow = measureRow(row, layout, bodyFont, headerFont, styleColors, bodyRowIndex);
-        for (let i = 0; i < measuredRow.cells.length; i++) {
-            const cell = measuredRow.cells[i];
-            const sourceCell = row.cells[i];
-            const textWidth = getIntrinsicTextWidth(sourceCell?.value ?? '', cell.style);
-            const requiredWidth = textWidth + cell.style.padding.left + cell.style.padding.right;
-            const currentWidth = getSpanWidth(widths, cell.columnIndex, cell.span);
+        const isHeader = isHeaderRowType(row.type);
+        const rowStyles = getRowStyles(row.type, styleColors, bodyRowIndex);
+        const baseFontFamily = isHeader ? headerFont : bodyFont;
+        const defaultFontSize = isHeader ? layout.headerFontSize : layout.fontSize;
+
+        let columnIndex = 0;
+        for (const cell of row.cells) {
+            const span = Math.min((cell.mergeAcross ?? 0) + 1, layout.columnCount - columnIndex);
+            if (span <= 0) {
+                break;
+            }
+
+            if (!spanIncludesAutoWidthColumn(autoWidthColumns, columnIndex, span)) {
+                columnIndex += span;
+                continue;
+            }
+
+            const style = resolveTableCellStyle(
+                mergePdfCellStyles(row.style, cell.style),
+                layout,
+                baseFontFamily,
+                rowStyles,
+                styleColors,
+                defaultFontSize
+            );
+            if (cell.elementType === 'rowgroup' && cell.groupLevel) {
+                style.padding.left += cell.groupLevel * (layout.rowGroupIndentSize ?? 0);
+            }
+
+            const textWidth = getIntrinsicTextWidth(cell.value ?? '', style);
+            const requiredWidth = textWidth + style.padding.left + style.padding.right;
+            const currentWidth = getSpanWidth(widths, columnIndex, span);
             if (requiredWidth > currentWidth) {
-                const additionalWidth = (requiredWidth - currentWidth) / cell.span;
-                for (let columnIndex = cell.columnIndex; columnIndex < cell.columnIndex + cell.span; columnIndex++) {
-                    widths[columnIndex] += additionalWidth;
+                const additionalWidth = (requiredWidth - currentWidth) / span;
+                for (let i = columnIndex; i < columnIndex + span; i++) {
+                    widths[i] += additionalWidth;
                 }
             }
+            columnIndex += span;
         }
 
         if (row.type === 'BODY') {
@@ -339,6 +400,15 @@ export function getAutoColumnWidths(
     }
 
     return widths;
+}
+
+function spanIncludesAutoWidthColumn(autoWidthColumns: boolean[], startIndex: number, span: number): boolean {
+    for (let i = startIndex, end = startIndex + span; i < end; i++) {
+        if (autoWidthColumns[i]) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
@@ -444,7 +514,7 @@ function getMinimumRowHeight(rowType: PdfRowType, layout: LayoutOptions): number
 }
 
 function resolveTitleStyle(
-    style: PdfCellStyle | undefined,
+    style: PdfDocumentTitleStyle | undefined,
     params: PdfExportParams,
     styleColors: PdfStyleColors,
     headerFont: PdfFontFamily,

@@ -52,10 +52,15 @@ type PdfGridSerializingParams = GridSerializingParams &
         resolveColor?: (value?: string) => string | undefined;
     };
 
+// distributes Omit over the params union so the discriminated members are preserved.
+type OmitGridCommon<T> = T extends unknown ? Omit<T, 'api' | 'context'> : never;
+type PdfStyleCallbackParamsInput = OmitGridCommon<PdfStyleCallbackParams>;
+
 export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomContent> {
     private readonly rows: PdfRow[] = [];
     private columnsToExport: AgColumn[] = [];
     private rowIndex = 0;
+    private bodyRowIndex = -1;
 
     constructor(private readonly config: PdfGridSerializingParams) {
         super(config);
@@ -126,7 +131,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                     sourceColumn: columnGroup,
                     style: mergePdfCellStyles(
                         this.resolveColumnGroupHeaderPdfStyle(columnGroup),
-                        this.resolveCurrentElementPdfStyle({
+                        this.resolveCallbackPdfStyle({
                             type: 'groupheader',
                             accumulatedRowIndex: this.rowIndex,
                             value,
@@ -150,7 +155,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                     sourceColumn: column,
                     style: mergePdfCellStyles(
                         this.resolveColumnHeaderPdfStyle(column),
-                        this.resolveCurrentElementPdfStyle({
+                        this.resolveCallbackPdfStyle({
                             type: 'header',
                             accumulatedRowIndex: this.rowIndex,
                             value,
@@ -165,6 +170,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
     public onNewBodyRow(node?: RowNode): RowAccumulator {
         const row = this.createRow('BODY', node);
         const rowIndex = this.rowIndex;
+        const exportedColumnCount = this.columnsToExport.length;
         let skipCols = 0;
         let rowStyleResolved = false;
 
@@ -190,8 +196,8 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 }
                 if (!rowStyleResolved) {
                     row.style = mergePdfCellStyles(
-                        this.resolveRowPdfStyle(activeNode, rowIndex),
-                        this.resolveCurrentElementPdfStyle({
+                        this.resolveRowPdfStyle(activeNode),
+                        this.resolveCallbackPdfStyle({
                             type: 'row',
                             accumulatedRowIndex: rowIndex,
                             value: activeNode.data,
@@ -201,7 +207,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                     rowStyleResolved = true;
                 }
 
-                const automaticCellStyle = this.resolveCellPdfStyle(column, activeNode, rowIndex);
+                const automaticCellStyle = this.resolveCellPdfStyle(column, activeNode);
 
                 const rowCellValue = this.extractPdfRowCellValue(
                     column,
@@ -215,7 +221,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 const value = String(rowCellValue.valueFormatted ?? rowCellValue.value ?? '');
                 const style = mergePdfCellStyles(
                     automaticCellStyle,
-                    this.resolveCurrentElementPdfStyle({
+                    this.resolveCallbackPdfStyle({
                         type: isRowGroupCell ? 'rowgroup' : 'cell',
                         accumulatedRowIndex: rowIndex,
                         value,
@@ -223,7 +229,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                         column,
                     })
                 );
-                const remainingColumns = Math.max(this.columnsToExport.length - index, 1);
+                const remainingColumns = Math.max(exportedColumnCount - index, 1);
                 const colSpan = Math.min(column.getColSpan(activeNode), remainingColumns);
                 const mergeAcross = colSpan > 1 ? colSpan - 1 : undefined;
 
@@ -249,6 +255,9 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
 
     private createRow(type: PdfRowType, sourceNode?: RowNode): PdfRow {
         this.rowIndex += 1;
+        if (type === 'BODY') {
+            this.bodyRowIndex += 1;
+        }
         const row: PdfRow = {
             type,
             cells: [],
@@ -260,14 +269,14 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
         return row;
     }
 
-    private resolveRowPdfStyle(node: RowNode, accumulatedRowIndex: number): PdfCellStyle | undefined {
-        if (this.shouldSkipStyleCallbacks()) {
+    private resolveRowPdfStyle(node: RowNode): PdfCellStyle | undefined {
+        if (this.shouldSkipGridStyles()) {
             return undefined;
         }
 
         const rowStyle = this.gos.get('rowStyle');
         const getRowStyle = this.gos.getCallback('getRowStyle');
-        const rowIndex = this.getNodeRowIndex(node, accumulatedRowIndex);
+        const rowIndex = this.getNodeRowIndex(node);
         const rowStyleResult = getRowStyle?.({
             data: node.data,
             node,
@@ -307,12 +316,8 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
         });
     }
 
-    private resolveCellPdfStyle(
-        column: AgColumn,
-        node: RowNode,
-        accumulatedRowIndex: number
-    ): PdfCellStyle | undefined {
-        if (this.shouldSkipStyleCallbacks()) {
+    private resolveCellPdfStyle(column: AgColumn, node: RowNode): PdfCellStyle | undefined {
+        if (this.shouldSkipGridStyles()) {
             return undefined;
         }
 
@@ -322,7 +327,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
             return undefined;
         }
 
-        const rowIndex = this.getNodeRowIndex(node, accumulatedRowIndex);
+        const rowIndex = this.getNodeRowIndex(node);
         let resolvedCellStyle: CellStyle | null | undefined;
         if (typeof cellStyle === 'function') {
             const value = this.valueSvc.getDisplayValue(column, node, this.valueFrom, this.transformValues);
@@ -351,7 +356,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 column,
                 floatingFilter: false,
             }),
-            this.shouldSkipStyleCallbacks() || colDef.wrapHeaderText == null
+            this.shouldSkipGridStyles() || colDef.wrapHeaderText == null
                 ? undefined
                 : { wrapText: colDef.wrapHeaderText }
         );
@@ -369,7 +374,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 columnGroup,
                 floatingFilter: false,
             }),
-            this.shouldSkipStyleCallbacks() || colGroupDef.wrapHeaderText == null
+            this.shouldSkipGridStyles() || colGroupDef.wrapHeaderText == null
                 ? undefined
                 : { wrapText: colGroupDef.wrapHeaderText }
         );
@@ -379,7 +384,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
         headerStyle: HeaderStyle | HeaderStyleFunc | undefined,
         params: Pick<HeaderClassParams, 'colDef' | 'column' | 'columnGroup' | 'floatingFilter'>
     ): PdfCellStyle | undefined {
-        if (!headerStyle || this.shouldSkipStyleCallbacks()) {
+        if (!headerStyle || this.shouldSkipGridStyles()) {
             return undefined;
         }
 
@@ -389,19 +394,18 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
         return mapCssStylesToPdfStyle([resolvedHeaderStyle], this.config.resolveColor);
     }
 
-    private getNodeRowIndex(node: RowNode, accumulatedRowIndex: number): number {
-        return node.rowIndex ?? Math.max(accumulatedRowIndex - 1, 0);
+    private getNodeRowIndex(node: RowNode): number {
+        // the accumulated row index counts header/custom rows too, so fall back to the body-only counter.
+        return node.rowIndex ?? Math.max(this.bodyRowIndex, 0);
     }
 
-    private resolveCurrentElementPdfStyle(
-        params: Omit<PdfStyleCallbackParams, 'api' | 'context'>
-    ): PdfCellStyle | undefined {
-        const callback = this.config.currentElementStyleCallback;
+    private resolveCallbackPdfStyle(params: PdfStyleCallbackParamsInput): PdfCellStyle | undefined {
+        const callback = this.config.processStyleCallback;
         if (!callback) {
             return undefined;
         }
 
-        const style = callback(_addGridCommonParams(this.gos, params));
+        const style = callback(_addGridCommonParams(this.gos, params) as PdfStyleCallbackParams);
         return resolvePdfCellStyleColors(style, this.config.resolveColor);
     }
 
@@ -417,7 +421,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
         return currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.pivotMode);
     }
 
-    private shouldSkipStyleCallbacks(): boolean {
-        return this.config.skipStyleCallbacks === true;
+    private shouldSkipGridStyles(): boolean {
+        return this.config.skipGridStyles === true;
     }
 }

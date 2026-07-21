@@ -80,9 +80,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 };
 
-function onSkipStyleCallbacksChange() {
-    const skipStyleCallbacks = document.querySelector<HTMLInputElement>('#skipStyleCallbacks')?.checked ?? false;
-    gridApi!.setGridOption('defaultPdfExportParams', { skipStyleCallbacks });
+function onSkipGridStylesChange() {
+    const skipGridStyles = document.querySelector<HTMLInputElement>('#skipGridStyles')?.checked ?? false;
+    gridApi!.setGridOption('defaultPdfExportParams', { skipGridStyles });
 }
 
 function onBtExport() {

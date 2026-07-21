@@ -1,6 +1,7 @@
 import type { ExportFileNameGetter, ExportParams } from './exportParams';
 import type { Column, ColumnGroup } from './iColumn';
 import type { AgGridCommon } from './iCommon';
+import type { ColumnWidthCallbackParams } from './iExcelCreator';
 import type { IRowNode } from './iRowNode';
 
 export type PdfPageOrientation = 'portrait' | 'landscape';
@@ -36,14 +37,7 @@ export type PdfTextOverflow = 'clip' | 'ellipsis';
 
 export type PdfColumnWidth = number | 'auto' | 'grid';
 
-export interface PdfColumnWidthCallbackParams {
-    /** Column being exported, or `null` for columns created by custom content. */
-    column: Column | null;
-    /** Zero-based exported column index. */
-    index: number;
-}
-
-export type PdfColumnWidthCallback = (params: PdfColumnWidthCallbackParams) => PdfColumnWidth | null | undefined;
+export type PdfColumnWidthCallback = (params: ColumnWidthCallbackParams) => PdfColumnWidth | null | undefined;
 
 export interface PdfCellStyle {
     /**
@@ -79,11 +73,6 @@ export interface PdfCellStyle {
      * Padding inside the cell in points. A number applies to all sides.
      */
     padding?: number | PdfMargin;
-    /**
-     * Margin around the cell in points. A number applies to all sides.
-     * Only applies to the document title.
-     */
-    margin?: number | PdfMargin;
     /**
      * Horizontal alignment for the cell text.
      */
@@ -141,11 +130,7 @@ export type PdfCustomContent = PdfCell[][] | string;
 
 export type PdfStyleCallbackType = 'cell' | 'row' | 'rowgroup' | 'header' | 'groupheader';
 
-export interface PdfStyleCallbackParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /**
-     * The exported element type currently being styled.
-     */
-    type: PdfStyleCallbackType;
+interface PdfStyleCallbackParamsBase<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
      * 1-based index of the current exported row.
      */
@@ -154,18 +139,57 @@ export interface PdfStyleCallbackParams<TData = any, TContext = any> extends AgG
      * The current value for the exported element.
      */
     value: any;
-    /**
-     * The row node for row and body cell elements.
-     */
-    node?: IRowNode<TData> | null;
-    /**
-     * The current column or column group for header/cell elements.
-     */
-    column?: Column | ColumnGroup;
 }
 
-export interface PdfExportStyles {
-    /** CSS colour strings that map to theme colour keys. */
+export interface PdfRowStyleCallbackParams<TData = any, TContext = any> extends PdfStyleCallbackParamsBase<
+    TData,
+    TContext
+> {
+    /** The exported element type currently being styled. */
+    type: 'row';
+    /** The row node for the exported row. */
+    node?: IRowNode<TData> | null;
+}
+
+export interface PdfCellStyleCallbackParams<TData = any, TContext = any> extends PdfStyleCallbackParamsBase<
+    TData,
+    TContext
+> {
+    /** The exported element type currently being styled. */
+    type: 'cell' | 'rowgroup';
+    /** The row node for the exported cell. */
+    node?: IRowNode<TData> | null;
+    /** The current column. */
+    column?: Column;
+}
+
+export interface PdfHeaderStyleCallbackParams<TData = any, TContext = any> extends PdfStyleCallbackParamsBase<
+    TData,
+    TContext
+> {
+    /** The exported element type currently being styled. */
+    type: 'header';
+    /** The current column. */
+    column?: Column;
+}
+
+export interface PdfGroupHeaderStyleCallbackParams<TData = any, TContext = any> extends PdfStyleCallbackParamsBase<
+    TData,
+    TContext
+> {
+    /** The exported element type currently being styled. */
+    type: 'groupheader';
+    /** The current column group. */
+    column?: ColumnGroup;
+}
+
+export type PdfStyleCallbackParams<TData = any, TContext = any> =
+    | PdfRowStyleCallbackParams<TData, TContext>
+    | PdfCellStyleCallbackParams<TData, TContext>
+    | PdfHeaderStyleCallbackParams<TData, TContext>
+    | PdfGroupHeaderStyleCallbackParams<TData, TContext>;
+
+export interface PdfColors {
     /**
      * Background colour for the PDF page.
      * Defaults to the theme `backgroundColor`.
@@ -203,6 +227,31 @@ export interface PdfExportStyles {
     borderColor?: string;
 }
 
+export interface PdfDocumentTitleStyle extends PdfCellStyle {
+    /**
+     * Margin around the document title in points. A number applies to all sides.
+     */
+    margin?: number | PdfMargin;
+}
+
+export interface PdfPageSetup {
+    /**
+     * The size of the PDF page.
+     * @default 'A4'
+     */
+    size?: PdfPageSize;
+    /**
+     * Page orientation.
+     * @default 'landscape'
+     */
+    orientation?: PdfPageOrientation;
+    /**
+     * Page margins in points. A number applies to all sides.
+     * @default 36
+     */
+    margin?: number | PdfMargin;
+}
+
 interface PdfFileParams {
     /**
      * String to use as the file name or a function that returns a string.
@@ -220,41 +269,33 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
     /**
      * The document title stored in the PDF metadata.
      * When set, a visible title is rendered above the exported table.
-     * Provide a `PdfCell` to style the title using `PdfCell.style`.
      */
-    documentTitle?: string | PdfCell;
+    documentTitle?: string;
+    /**
+     * Styling for the visible document title.
+     */
+    documentTitleStyle?: PdfDocumentTitleStyle;
     /**
      * Override PDF colours. Any missing values fall back to the current theme.
      */
-    pdfStyles?: PdfExportStyles;
+    colors?: PdfColors;
     /**
-     * Set to `true` to skip evaluating grid style callbacks and style definitions
+     * Set to `true` to skip applying grid style definitions and callbacks
      * (`rowStyle`, `getRowStyle`, `colDef.cellStyle`, `colDef.headerStyle`).
-     * Use this when you want to rely only on `pdfStyles` and theme defaults.
+     * Use this when you want to rely only on `colors` and theme defaults.
      * @default false
      */
-    skipStyleCallbacks?: boolean;
+    skipGridStyles?: boolean;
     /**
      * Callback that allows overriding styles for rows, cells, row groups,
      * headers and group headers during PDF export.
      * Returned styles are merged after resolved grid styles and take precedence.
      */
-    currentElementStyleCallback?(params: PdfStyleCallbackParams): PdfCellStyle | undefined;
+    processStyleCallback?(params: PdfStyleCallbackParams): PdfCellStyle | undefined;
     /**
-     * The size of the PDF page. Defaults to A4.
-     * @default 'A4'
+     * Page size, orientation and margins.
      */
-    pageSize?: PdfPageSize;
-    /**
-     * Page orientation.
-     * @default 'landscape'
-     */
-    pageOrientation?: PdfPageOrientation;
-    /**
-     * Page margins in points. A number applies to all sides.
-     * @default 36
-     */
-    margin?: number | PdfMargin;
+    page?: PdfPageSetup;
     /**
      * Base font size for body rows in points.
      * @default 10

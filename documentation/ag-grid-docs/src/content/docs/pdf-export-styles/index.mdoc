@@ -3,7 +3,7 @@ title: "PDF Export - Styling"
 enterprise: true
 ---
 
-PDF Export uses colours from the active grid theme by default. Use `pdfStyles` to override page, body-row, alternate-row, header, text, and border colours for the exported document.
+PDF Export uses colours from the active grid theme by default. Use `colors` to override page, body-row, alternate-row, header, text, and border colours for the exported document.
 
 {% gridExampleRunner title="PDF Styling" name="pdf-styling" exampleHeight=520 /%}
 
@@ -22,19 +22,19 @@ Only properties represented by `PdfCellStyle` are converted. CSS classes, `cellC
 
 {% gridExampleRunner title="Rows And Cells" name="pdf-rows-and-cells" exampleHeight=520 /%}
 
-Set `skipStyleCallbacks=true` to skip grid style definitions and use only theme defaults, `pdfStyles`, and PDF-specific overrides. This also skips `colDef.wrapText` and `colDef.wrapHeaderText` integration.
+Set `skipGridStyles=true` to skip grid style definitions and use only theme defaults, `colors`, and PDF-specific overrides. This also skips `colDef.wrapText` and `colDef.wrapHeaderText` integration.
 
 ## PDF-Specific Overrides
 
-Use `currentElementStyleCallback` to style exported elements without changing the grid. The callback receives `type: 'row' | 'cell' | 'rowgroup' | 'header' | 'groupheader'` and the final exported text in `value` for cell and header elements.
+Use `processStyleCallback` to style exported elements without changing the grid. The callback receives `type: 'row' | 'cell' | 'rowgroup' | 'header' | 'groupheader'` and the final exported text in `value` for cell and header elements.
 
-Styles returned by `currentElementStyleCallback` take precedence over automatic grid styles:
+Styles returned by `processStyleCallback` take precedence over automatic grid styles:
 
 1. A `row` result overrides `rowStyle` and `getRowStyle` for that row.
 1. A `cell` or `rowgroup` result overrides the resolved row style and `colDef.cellStyle` for that cell.
 1. A `header` or `groupheader` result overrides `colDef.headerStyle` for that header.
 
-`currentElementStyleCallback` still runs when `skipStyleCallbacks=true`.
+`processStyleCallback` still runs when `skipGridStyles=true`.
 
 {% gridExampleRunner title="Rows And Cells Override" name="pdf-rows-and-cells-override" exampleHeight=520 /%}
 

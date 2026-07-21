@@ -40,7 +40,7 @@ const createSession = (): PdfSerializingSession => {
             get: () => false,
             getCallback: () => undefined,
         },
-        skipStyleCallbacks: true,
+        skipGridStyles: true,
     } as any);
 
     (session as any).extractRowCellValue = ({ column }: { column: AgColumn }) => ({
@@ -118,9 +118,9 @@ describe('PdfSerializingSession', () => {
                 exportCallbackValue = params.value;
                 return `processed ${params.value}`;
             },
-            currentElementStyleCallback: (params: PdfStyleCallbackParams) => {
+            processStyleCallback: (params: PdfStyleCallbackParams) => {
                 if (params.type === 'cell') {
-                    callOrder.push('currentElementStyleCallback');
+                    callOrder.push('processStyleCallback');
                     pdfStyleValue = params.value;
                 }
                 return { backgroundColor: '#abcdef' };
@@ -132,7 +132,7 @@ describe('PdfSerializingSession', () => {
         session.onNewBodyRow(node).onColumn(column, 0, node);
 
         const cell = getRows(session)[0].cells[0];
-        expect(callOrder).toEqual(['cellStyle', 'processCellCallback', 'currentElementStyleCallback']);
+        expect(callOrder).toEqual(['cellStyle', 'processCellCallback', 'processStyleCallback']);
         expect(automaticStyleValue).toBe(42);
         expect(exportCallbackValue).toBe(42);
         expect(pdfStyleValue).toBe('processed 42');
@@ -158,7 +158,7 @@ describe('PdfSerializingSession', () => {
             },
             gos: createGridOptionsService(),
             processRowGroupCallback: () => 'Processed group',
-            currentElementStyleCallback: (params: PdfStyleCallbackParams) => {
+            processStyleCallback: (params: PdfStyleCallbackParams) => {
                 if (params.type === 'rowgroup') {
                     callbackValues.push({ type: params.type, value: params.value });
                 }
@@ -213,6 +213,36 @@ describe('PdfSerializingSession', () => {
         const cell = getRows(session)[0].cells[0];
         expect(cell).toMatchObject({ value: 'Current group', elementType: 'rowgroup', groupLevel: 2 });
         expect(cell.value).not.toContain('->');
+    });
+
+    it('reports body-relative row indexes to style callbacks for nodes without a row index', () => {
+        const reportedRowIndexes: number[] = [];
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {},
+            gos: {
+                get: () => undefined,
+                getCallback: (key: string) =>
+                    key === 'getRowStyle'
+                        ? (params: { rowIndex: number }) => {
+                              reportedRowIndexes.push(params.rowIndex);
+                              return undefined;
+                          }
+                        : undefined,
+            },
+        } as any);
+        (session as any).extractHeaderValue = () => 'Header';
+        (session as any).extractRowCellValue = () => ({ value: 'Value' });
+        const column = createColumn('Value', 1);
+        const node = { data: {}, group: false, level: 0, rowIndex: null } as unknown as RowNode;
+
+        session.prepare([column]);
+        session.onNewHeaderRow().onColumn(column, 0);
+        session.onNewBodyRow(node).onColumn(column, 0, node);
+
+        // the header row must not inflate the fallback index reported for the first body row.
+        expect(reportedRowIndexes).toEqual([0]);
     });
 
     it('retains source columns and element types for exported headers', () => {

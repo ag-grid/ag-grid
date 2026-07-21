@@ -51,18 +51,16 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
     },
     defaultPdfExportParams: {
-        documentTitle: {
-            data: { value: 'Quarterly Results' },
-            style: {
-                fontSize: 16,
-                padding: 6,
-                margin: { bottom: 10 },
-                backgroundColor: '#f3f6fb',
-                borderColor: '#c3d4ea',
-                borderWidth: 1,
-                color: '#123a5a',
-                alignment: 'center',
-            },
+        documentTitle: 'Quarterly Results',
+        documentTitleStyle: {
+            fontSize: 16,
+            padding: 6,
+            margin: { bottom: 10 },
+            backgroundColor: '#f3f6fb',
+            borderColor: '#c3d4ea',
+            borderWidth: 1,
+            color: '#123a5a',
+            alignment: 'center',
         },
     },
 };

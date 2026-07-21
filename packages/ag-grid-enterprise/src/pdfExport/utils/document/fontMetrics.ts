@@ -47,6 +47,47 @@ const TIMES_BOLD_WIDTHS = [
     220, 394, 520,
 ];
 
+// AFM advance widths for the WinAnsi 0x80–0x9f typographic glyphs, in 1/1000 em units.
+// Column order: Helvetica, Helvetica-Bold, Times-Roman, Times-Bold.
+const EXTENDED_GLYPH_WIDTHS = new Map<number, [number, number, number, number]>([
+    [0x20ac, [556, 556, 500, 500]], // €
+    [0x201a, [222, 278, 333, 333]], // ‚
+    [0x0192, [556, 556, 500, 500]], // ƒ
+    [0x201e, [333, 500, 444, 500]], // „
+    [0x2026, [1000, 1000, 1000, 1000]], // …
+    [0x2020, [556, 556, 500, 500]], // †
+    [0x2021, [556, 556, 500, 500]], // ‡
+    [0x02c6, [333, 333, 333, 333]], // ˆ
+    [0x2030, [1000, 1000, 1000, 1000]], // ‰
+    [0x0160, [667, 667, 556, 556]], // Š
+    [0x2039, [333, 333, 333, 333]], // ‹
+    [0x0152, [1000, 1000, 889, 1000]], // Œ
+    [0x017d, [611, 611, 611, 667]], // Ž
+    [0x2018, [222, 278, 333, 333]], // ‘
+    [0x2019, [222, 278, 333, 333]], // ’
+    [0x201c, [333, 500, 444, 500]], // “
+    [0x201d, [333, 500, 444, 500]], // ”
+    [0x2022, [350, 350, 350, 350]], // •
+    [0x2013, [556, 556, 500, 500]], // –
+    [0x2014, [1000, 1000, 1000, 1000]], // —
+    [0x02dc, [333, 333, 333, 333]], // ˜
+    [0x2122, [1000, 1000, 980, 1000]], // ™
+    [0x0161, [500, 556, 389, 389]], // š
+    [0x203a, [333, 333, 333, 333]], // ›
+    [0x0153, [944, 944, 722, 722]], // œ
+    [0x017e, [500, 500, 444, 444]], // ž
+    [0x0178, [667, 667, 722, 722]], // Ÿ
+]);
+
+const EXTENDED_WIDTH_FAMILY_INDEX: Record<PdfFontFamily, 0 | 1 | 2 | 3> = {
+    Helvetica: 0,
+    'Helvetica-Bold': 1,
+    'Times-Roman': 2,
+    'Times-Bold': 3,
+    Courier: 0,
+    'Courier-Bold': 0,
+};
+
 const SPECIAL_GLYPH_BASES = new Map<string, string>([
     ['Æ', 'W'],
     ['æ', 'm'],
@@ -73,10 +114,19 @@ export function getBase14GlyphWidth(char: string, fontFamily: PdfFontFamily): nu
     }
 
     const metrics = getFontWidths(fontFamily);
-    const baseChar = resolveBaseCharacter(char);
-    const codePoint = baseChar.codePointAt(0) ?? 0;
+    const codePoint = char.codePointAt(0) ?? 0;
     if (codePoint >= FIRST_PRINTABLE_ASCII && codePoint <= LAST_PRINTABLE_ASCII) {
         return metrics[codePoint - FIRST_PRINTABLE_ASCII] ?? DEFAULT_GLYPH_WIDTH;
+    }
+
+    const extendedWidths = EXTENDED_GLYPH_WIDTHS.get(codePoint);
+    if (extendedWidths) {
+        return extendedWidths[EXTENDED_WIDTH_FAMILY_INDEX[fontFamily]];
+    }
+
+    const baseCodePoint = resolveBaseCharacter(char).codePointAt(0) ?? 0;
+    if (baseCodePoint >= FIRST_PRINTABLE_ASCII && baseCodePoint <= LAST_PRINTABLE_ASCII) {
+        return metrics[baseCodePoint - FIRST_PRINTABLE_ASCII] ?? DEFAULT_GLYPH_WIDTH;
     }
 
     return DEFAULT_GLYPH_WIDTH;
@@ -89,7 +139,7 @@ export function getBase14GlyphWidth(char: string, fontFamily: PdfFontFamily): nu
  * @returns Baseline offset in points.
  */
 export function getBase14BaselineOffset(fontSize: number, fontFamily: PdfFontFamily): number {
-    const metrics = FONT_VERTICAL_METRICS[fontFamily];
+    const metrics = FONT_VERTICAL_METRICS[fontFamily] ?? FONT_VERTICAL_METRICS.Helvetica;
     return (metrics.ascent / (metrics.ascent + metrics.descent)) * fontSize;
 }
 

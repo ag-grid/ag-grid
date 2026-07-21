@@ -9,6 +9,15 @@ describe('PDF text utilities', () => {
         expect(estimateTextWidth('ø', 10, 'Helvetica')).toBeCloseTo(estimateTextWidth('o', 10, 'Helvetica'), 2);
     });
 
+    it('measures WinAnsi typographic glyph widths per font family', () => {
+        expect(estimateTextWidth('“', 10, 'Helvetica')).toBeCloseTo(3.33, 2);
+        expect(estimateTextWidth('•', 10, 'Helvetica')).toBeCloseTo(3.5, 2);
+        expect(estimateTextWidth('…', 10, 'Helvetica')).toBeCloseTo(10, 2);
+        expect(estimateTextWidth('—', 10, 'Times-Roman')).toBeCloseTo(10, 2);
+        expect(estimateTextWidth('€', 10, 'Times-Roman')).toBeCloseTo(5, 2);
+        expect(estimateTextWidth('’', 10, 'Helvetica-Bold')).toBeCloseTo(2.78, 2);
+    });
+
     it('truncates text using measured glyph widths', () => {
         const wide = truncateText('WWWWWWWWWW', 30, 10, 'Helvetica');
         const narrow = truncateText('iiiiiiiiii', 30, 10, 'Helvetica');
