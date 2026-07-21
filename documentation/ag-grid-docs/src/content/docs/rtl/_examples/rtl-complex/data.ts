@@ -707,3 +707,83 @@ export const LANGUAGES: Record<string, LanguageConfig> = {
     arabic: ARABIC,
     hebrew: HEBREW,
 };
+
+// Flag lookup keyed by the English country name. Placed on `gridOptions.context` so every framework's
+// CountryCellRenderer reads it identically. Flags therefore resolve in English mode; the localised
+// Arabic/Hebrew country names have no entry, so the renderer shows the name without a flag.
+export const COUNTRY_CODES: Record<string, string> = {
+    Ireland: 'ie',
+    Luxembourg: 'lu',
+    Belgium: 'be',
+    Spain: 'es',
+    'United Kingdom': 'gb',
+    France: 'fr',
+    Germany: 'de',
+    Sweden: 'se',
+    Italy: 'it',
+    Greece: 'gr',
+    Iceland: 'is',
+    Portugal: 'pt',
+    Malta: 'mt',
+    Norway: 'no',
+    Brazil: 'br',
+    Argentina: 'ar',
+    Colombia: 'co',
+    Peru: 'pe',
+    Venezuela: 've',
+    Uruguay: 'uy',
+};
+
+const BOOLEAN_VALUES = [true, 'true', false, 'false'];
+
+// Builds the example's row data for a language synchronously. Shared by every framework variant so the
+// grids render identical data; the deterministic pseudo-random seed is reset on each call.
+export function createRowData(languageKey: string): any[] {
+    const lang = LANGUAGES[languageKey];
+    const rowCount = 100;
+
+    let seed = 123456789;
+    const m = Math.pow(2, 32);
+    const a = 1103515245;
+    const c = 12345;
+    const pseudoRandom = () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+
+    const data: any[] = [];
+    for (let row = 0; row < rowCount; row++) {
+        const rowItem: any = {};
+
+        const countries = lang.countries;
+        const countriesToPickFrom = Math.floor(countries.length * (((row % 3) + 1) / 3));
+        const countryData = countries[(row * 19) % countriesToPickFrom];
+        rowItem.country = countryData.country;
+        rowItem.continent = countryData.continent;
+        rowItem.language = countryData.language;
+
+        const firstName = lang.firstNames[row % lang.firstNames.length];
+        const lastName = lang.lastNames[row % lang.lastNames.length];
+        rowItem.name = firstName + ' ' + lastName;
+
+        rowItem.game = {
+            name: lang.games[Math.floor(((row * 13) / 17) * 19) % lang.games.length],
+            bought: BOOLEAN_VALUES[row % BOOLEAN_VALUES.length],
+        };
+
+        rowItem.bankBalance = Math.round(pseudoRandom() * 10000000) / 100 - 3000;
+        rowItem.rating = Math.round(pseudoRandom() * 5);
+
+        let totalWinnings = 0;
+        for (let i = 0, len = lang.months.length; i < len; ++i) {
+            const value = Math.round(pseudoRandom() * 10000000) / 100 - 20;
+            rowItem['month_' + i] = value;
+            totalWinnings += value;
+        }
+        rowItem.totalWinnings = totalWinnings;
+
+        data.push(rowItem);
+    }
+
+    return data;
+}
