@@ -1,4 +1,4 @@
-import type { GridState, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
+import type { GridApi, GridState, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
@@ -2150,6 +2150,172 @@ describe('StateService - Grid State Management', () => {
             await asyncSetTimeout(50);
 
             expect(api.getState().columnGroup).toEqual({ openColumnGroupIds: ['pivotGroup_year_2000'] });
+        });
+    });
+
+    describe('Show Values As State', () => {
+        const showValuesAsRowData = [
+            { country: 'A', amount: 25 },
+            { country: 'A', amount: 25 },
+            { country: 'B', amount: 50 },
+        ];
+        const showValuesAsColumnDefs = [{ field: 'country' }, { field: 'amount', aggFunc: 'sum' }];
+        const modeOf = (api: GridApi, colId: string) =>
+            api.getColumnState().find((column) => column.colId === colId)?.showValuesAs ?? null;
+
+        test('captures a runtime-applied mode in getState on an already-aggregated column', async () => {
+            const api = gridsManager.createGrid('sva-runtime-capture', {
+                columnDefs: showValuesAsColumnDefs,
+                rowData: showValuesAsRowData,
+            });
+
+            // No mode applied yet, so nothing to persist.
+            expect(api.getState().showValuesAs).toBeUndefined();
+
+            // Apply the mode at runtime (the column-menu / API path), not via the colDef.
+            api.applyColumnState({ state: [{ colId: 'amount', showValuesAs: 'percentOfGrandTotal' }] });
+
+            await new GridColumns(api, 'sva runtime capture').checkColumns(`
+                CENTER
+                ├── country "Country" width:200
+                └── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal
+            `);
+            await new GridRows(api, 'sva runtime capture').check(`
+                ROOT id:ROOT_NODE_ID amount:"100.00%"
+                ├── LEAF id:0 country:"A" amount:"25.00%"
+                ├── LEAF id:1 country:"A" amount:"25.00%"
+                └── LEAF id:2 country:"B" amount:"50.00%"
+            `);
+
+            expect(api.getState().showValuesAs).toEqual({
+                showValuesAsModel: [{ colId: 'amount', showValuesAs: 'percentOfGrandTotal' }],
+            });
+        });
+
+        test('restores a captured mode via setState and initialState', async () => {
+            const source = gridsManager.createGrid('sva-source', {
+                columnDefs: showValuesAsColumnDefs,
+                rowData: showValuesAsRowData,
+            });
+            source.applyColumnState({ state: [{ colId: 'amount', showValuesAs: 'percentOfGrandTotal' }] });
+            await new GridRows(source, 'sva source').check(`
+                ROOT id:ROOT_NODE_ID amount:"100.00%"
+                ├── LEAF id:0 country:"A" amount:"25.00%"
+                ├── LEAF id:1 country:"A" amount:"25.00%"
+                └── LEAF id:2 country:"B" amount:"50.00%"
+            `);
+            const saved = source.getState();
+            expect(saved.showValuesAs).toEqual({
+                showValuesAsModel: [{ colId: 'amount', showValuesAs: 'percentOfGrandTotal' }],
+            });
+
+            const viaSetState = gridsManager.createGrid('sva-set-state', {
+                columnDefs: showValuesAsColumnDefs,
+                rowData: showValuesAsRowData,
+            });
+            viaSetState.setState(structuredClone(saved));
+            await new GridRows(viaSetState, 'sva setState').check(`
+                ROOT id:ROOT_NODE_ID amount:"100.00%"
+                ├── LEAF id:0 country:"A" amount:"25.00%"
+                ├── LEAF id:1 country:"A" amount:"25.00%"
+                └── LEAF id:2 country:"B" amount:"50.00%"
+            `);
+            expect(modeOf(viaSetState, 'amount')).toBe('percentOfGrandTotal');
+
+            const viaInitialState = gridsManager.createGrid('sva-initial-state', {
+                columnDefs: showValuesAsColumnDefs,
+                rowData: showValuesAsRowData,
+                initialState: structuredClone(saved),
+            });
+            await new GridRows(viaInitialState, 'sva initialState').check(`
+                ROOT id:ROOT_NODE_ID amount:"100.00%"
+                ├── LEAF id:0 country:"A" amount:"25.00%"
+                ├── LEAF id:1 country:"A" amount:"25.00%"
+                └── LEAF id:2 country:"B" amount:"50.00%"
+            `);
+            expect(modeOf(viaInitialState, 'amount')).toBe('percentOfGrandTotal');
+        });
+
+        test('round-trips the object form (custom precision) via getState and initialState', async () => {
+            const api = gridsManager.createGrid('sva-object-form', {
+                columnDefs: showValuesAsColumnDefs,
+                rowData: showValuesAsRowData,
+            });
+            api.applyColumnState({
+                state: [{ colId: 'amount', showValuesAs: { type: 'percentOfGrandTotal', precision: 0 } }],
+            });
+            await new GridRows(api, 'sva object form').check(`
+                ROOT id:ROOT_NODE_ID amount:"100%"
+                ├── LEAF id:0 country:"A" amount:"25%"
+                ├── LEAF id:1 country:"A" amount:"25%"
+                └── LEAF id:2 country:"B" amount:"50%"
+            `);
+            const saved = api.getState();
+            expect(saved.showValuesAs).toEqual({
+                showValuesAsModel: [{ colId: 'amount', showValuesAs: { type: 'percentOfGrandTotal', precision: 0 } }],
+            });
+
+            const restored = gridsManager.createGrid('sva-object-form-restored', {
+                columnDefs: showValuesAsColumnDefs,
+                rowData: showValuesAsRowData,
+                initialState: structuredClone(saved),
+            });
+            await new GridRows(restored, 'sva object form restored').check(`
+                ROOT id:ROOT_NODE_ID amount:"100%"
+                ├── LEAF id:0 country:"A" amount:"25%"
+                ├── LEAF id:1 country:"A" amount:"25%"
+                └── LEAF id:2 country:"B" amount:"50%"
+            `);
+            expect(modeOf(restored, 'amount')).toEqual({ type: 'percentOfGrandTotal', precision: 0 });
+        });
+
+        test('honours propertiesToIgnore / partial state when the section is omitted', async () => {
+            const api = gridsManager.createGrid('sva-partial', {
+                columnDefs: [
+                    { field: 'country' },
+                    { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
+                ],
+                rowData: showValuesAsRowData,
+            });
+            await new GridRows(api, 'sva partial setup').check(`
+                ROOT id:ROOT_NODE_ID amount:"100.00%"
+                ├── LEAF id:0 country:"A" amount:"25.00%"
+                ├── LEAF id:1 country:"A" amount:"25.00%"
+                └── LEAF id:2 country:"B" amount:"50.00%"
+            `);
+            expect(modeOf(api, 'amount')).toBe('percentOfGrandTotal');
+
+            const withoutSection: GridState = { ...api.getState(), showValuesAs: undefined };
+
+            // Ignored section: the existing mode is preserved.
+            api.setState(structuredClone(withoutSection), ['showValuesAs']);
+            expect(modeOf(api, 'amount')).toBe('percentOfGrandTotal');
+
+            // Full state with the section omitted: the mode is cleared.
+            api.setState(structuredClone(withoutSection));
+            expect(modeOf(api, 'amount')).toBeNull();
+        });
+
+        test('ignores a mode entry for a colId not in the grid', async () => {
+            const api = gridsManager.createGrid('sva-stale-colid', {
+                columnDefs: showValuesAsColumnDefs,
+                rowData: showValuesAsRowData,
+            });
+
+            // A stale entry is skipped while a valid sibling entry in the same model still applies.
+            expect(() =>
+                api.setState({
+                    aggregation: { aggregationModel: [{ colId: 'amount', aggFunc: 'sum' }] },
+                    showValuesAs: {
+                        showValuesAsModel: [
+                            { colId: 'does-not-exist', showValuesAs: 'percentOfColumnTotal' },
+                            { colId: 'amount', showValuesAs: 'percentOfGrandTotal' },
+                        ],
+                    },
+                })
+            ).not.toThrow();
+
+            expect(modeOf(api, 'amount')).toBe('percentOfGrandTotal');
         });
     });
 });

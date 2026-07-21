@@ -89,6 +89,8 @@ api.applyColumnState({ state: [{ colId: 'gold', showValuesAs: 'percentOfGrandTot
 api.applyColumnState({ state: [{ colId: 'gold', showValuesAs: null }] });
 ```
 
+The active mode is also part of [Grid State](./grid-state/), so it persists and restores through `initialState`, `api.getState()` and `api.setState()`.
+
 ### Reading the Transformed Value
 
 The methods `api.getCellValue` and `rowNode.getDataValue` return the raw aggregate by default. To read the transformed value, pass `transformValues: true` to `api.getCellValue`, or `'transformed'` to `rowNode.getDataValue`:

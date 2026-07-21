@@ -26,6 +26,7 @@ import type {
     RowGroupState,
     RowPinningState,
     ScrollState,
+    ShowValuesAsState,
     SideBarState,
     SortState,
 } from '../../interfaces/gridState';
@@ -186,6 +187,7 @@ export class StateService extends BeanStub implements NamedBean {
             'columnVisibility',
             'pivot',
             'rowGroup',
+            'showValuesAs',
             'sort',
         ]);
         this.updateCachedState('columnGroup', this.getColumnGroupState());
@@ -216,6 +218,7 @@ export class StateService extends BeanStub implements NamedBean {
             columnPivotChanged: onUpdate('pivot'),
             columnPivotModeChanged: onUpdate('pivot'),
             columnRowGroupChanged: onUpdate('rowGroup'),
+            columnShowValuesAsChanged: onUpdate('showValuesAs'),
             sortChanged: onUpdate('sort'),
             newColumnsLoaded: ({ source }) => {
                 this.updateColumnAndGroupState();
@@ -383,6 +386,7 @@ export class StateService extends BeanStub implements NamedBean {
         sort?: SortState;
         rowGroup?: RowGroupState;
         aggregation?: AggregationState;
+        showValuesAs?: ShowValuesAsState;
         pivot?: PivotState;
         columnPinning?: ColumnPinningState;
         columnVisibility?: ColumnVisibilityState;
@@ -403,6 +407,7 @@ export class StateService extends BeanStub implements NamedBean {
             sort: sortState,
             rowGroup: groupState,
             aggregation: aggregationState,
+            showValuesAs: showValuesAsState,
             pivot: pivotState,
             columnPinning: columnPinningState,
             columnVisibility: columnVisibilityState,
@@ -471,6 +476,18 @@ export class StateService extends BeanStub implements NamedBean {
         if (shouldSetAggregationState || !partialColumnState) {
             defaultState.aggFunc = null;
             defaultState.valueIndex = null;
+        }
+
+        const shouldSetShowValuesAsState = shouldSetState('showValuesAs', showValuesAsState);
+        if (shouldSetShowValuesAsState && showValuesAsState) {
+            const showValuesAsModel = showValuesAsState.showValuesAsModel;
+            for (let i = 0, len = showValuesAsModel.length; i < len; ++i) {
+                const { colId, showValuesAs } = showValuesAsModel[i];
+                getColumnState(colId).showValuesAs = showValuesAs;
+            }
+        }
+        if (shouldSetShowValuesAsState || !partialColumnState) {
+            defaultState.showValuesAs = null;
         }
 
         const shouldSetPivotState = shouldSetState('pivot', pivotState);

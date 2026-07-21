@@ -190,6 +190,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         headerRowsChanged: AgEvent<'headerRowsChanged'>;
         rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
         showRowGroupColsSetChanged: AgEvent<'showRowGroupColsSetChanged'>;
+        columnShowValuesAsChanged: AgEvent<'columnShowValuesAsChanged'>;
         rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
     }
 >;
