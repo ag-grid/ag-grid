@@ -15,6 +15,7 @@ const agGridRoot = path.resolve(__dirname, '../../..');
 export default defineConfig(async () => {
     const plugins = [cssFileDefaultImport(), ...(angularEnabled ? [] : [serveAngularDisabledPage()]), react(), vue()];
     const aliases: Record<string, string> = {
+        'ag-stack': path.join(agGridRoot, 'packages/ag-stack/src/main.ts'),
         'ag-grid-community': path.join(agGridRoot, 'packages/ag-grid-community/src/main.ts'),
         'ag-grid-community/styles': path.join(agGridRoot, 'packages/ag-grid-community/styles'),
         'ag-grid-enterprise': path.join(agGridRoot, 'packages/ag-grid-enterprise/src/main.ts'),

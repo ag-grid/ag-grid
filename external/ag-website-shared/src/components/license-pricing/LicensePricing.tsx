@@ -1,5 +1,6 @@
 import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { YOUTUBE_LICENSE_PRICING_URL, ZENDESK_URL } from '@ag-website-shared/constants';
 import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-active.svg?react';
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
 import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-active.svg?react';
@@ -16,10 +17,10 @@ import type { FunctionComponent } from 'react';
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';
 import { Licenses } from './Licenses';
-import { DEV_LICENSE_DATA } from './Licenses';
 import SocialProof from './SocialProof';
 import { ComparisonTable } from './comparison-table/ComparisonTable';
 import styles from './license-pricing.module.scss';
+import { DEV_LICENSE_DATA } from './licenseData';
 
 export type LicenseTab = 'grid' | 'charts';
 
@@ -271,9 +272,10 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                     <p>
                                         <b>Engineering support</b>
                                         <br />
-                                        Get direct assistance from our developers via{' '}
-                                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a> throughout your
-                                        trial.
+                                        Get direct assistance from our developers via <a href={ZENDESK_URL}>
+                                            Zendesk
+                                        </a>{' '}
+                                        throughout your trial.
                                     </p>
                                 </div>
                             </div>
@@ -305,7 +307,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         <div className={styles.videoPrompt}>
                             <a
                                 id="licence-explainer-video-thumbnail"
-                                href="https://www.youtube.com/watch?v=VPr__OKxH50"
+                                href={YOUTUBE_LICENSE_PRICING_URL}
                                 target="_blank"
                                 className={styles.thumbnail}
                             >
@@ -320,7 +322,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 <p>
                                     <a
                                         id="licence-explainer-video-text"
-                                        href="https://www.youtube.com/watch?v=VPr__OKxH50"
+                                        href={YOUTUBE_LICENSE_PRICING_URL}
                                         target="_blank"
                                     >
                                         <span className="icon"></span>

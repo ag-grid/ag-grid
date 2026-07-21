@@ -67,7 +67,7 @@ jobs:
       - name: Detect file changes (PR only)
         id: filter
         if: github.event_name == 'pull_request'
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3.0.3
         with:
           filters: |
             code:
@@ -229,6 +229,12 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          # ro consumers restore the node_modules cache warmed by `init` (which already ran
+          # postinstall before saving), so no yarn execution is needed. no-install skips it,
+          # removing the per-consumer registry install on a cache miss — the fan-out that
+          # amplified transient registry errors into an install storm. Applied to every ro
+          # consumer job below.
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: nx test
@@ -290,6 +296,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: nx test:e2e
@@ -308,7 +315,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     name: Lint & Format Check
-    needs: [ detect-changes ]
+    needs: [ detect-changes, init ]
     if: ${{ always() && needs.detect-changes.result == 'success' }}
     outputs:
       format: ${{ steps.format.outcome || '' }}
@@ -324,6 +331,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: nx format:check
@@ -344,7 +352,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Build
-    needs: [ detect-changes ]
+    needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
       (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-'))
     outputs:
@@ -360,6 +368,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: nx build
@@ -454,7 +463,7 @@ jobs:
 
       - name: Post sticky PR comment
         if: steps.stage.outputs.publish == 'true'
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2.9.4
         with:
           header: pr-preview-umd
           message: |
@@ -472,7 +481,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
-    needs: [ detect-changes ]
+    needs: [ detect-changes, init ]
     if: ${{ (needs.detect-changes.outputs.run_code_ci == 'true' ||
       needs.detect-changes.outputs.run_docs_ci == 'true') &&
       (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-')) && !inputs.skip_docs }}
@@ -491,6 +500,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: update base url
@@ -558,6 +568,7 @@ jobs:
         if: matrix.framework != 'none'
         uses: ./.github/actions/setup-nx
         with:
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: nx package:test
@@ -642,7 +653,7 @@ jobs:
           done)
 
       - name: Test Report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@3eeb9fc888e82e8be2fb356bbeec2750231672bc # v1
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
           needs.e2e.result == 'success' || needs.e2e.result == 'failure'
         id: testReport
@@ -703,7 +714,7 @@ jobs:
       - name: Tag Latest Successful Commit
         if: success() && github.ref == 'refs/heads/latest' &&
           steps.lastJobStatus.outputs.workflowStatus != 'failure'
-        uses: EndBug/latest-tag@latest
+        uses: EndBug/latest-tag@8fcae8848c1e23fd8212258f69a9619bc62cad67 # v1.6.3
         with:
           ref: latest-success
           description: Latest commit to pass GitHub Actions workflow on latest branch.
@@ -711,7 +722,7 @@ jobs:
       - name: Find matching workflow
         if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
         id: find_latest_sha
-        uses: SamhammerAG/last-successful-build-action@v4
+        uses: SamhammerAG/last-successful-build-action@1c368a27a90596574a71ac0ede422a897d0e8e84 # v4
         with:
           branch: "latest"
           workflow: "ci"

@@ -5,18 +5,21 @@ import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 export class ColumnAnimationService extends BeanStub implements NamedBean {
     beanName = 'colAnimation' as const;
 
-    private gridBodyCtrl: GridBodyCtrl;
+    private gridBodyCtrl: GridBodyCtrl | undefined;
 
     private readonly executeNextFuncs: ((...args: any[]) => any)[] = [];
     private readonly executeLaterFuncs: ((...args: any[]) => any)[] = [];
 
     private active = false;
-    // activeNext starts with active but it is reset earlier after the nextFuncs are cleared
-    // to prevent calls made to executeNextVMTurn from queuing functions after executeNextFuncs has already been flushed,
+    /** Cleared a VM-turn earlier than {@link active} (once `executeNextFuncs` has flushed) so a late
+     *  {@link executeNextVMTurn} runs immediately instead of queuing behind an already-flushed batch. */
     private activeNext = false;
     private suppressAnimation = false;
 
     private animationThreadCount = 0;
+    /** Nesting depth: only the outermost {@link start}/{@link finish} pair drives the animation, so a wrapped
+     *  refresh (e.g. a role-col flush re-entering via pivot-sort) can't end it early. */
+    private startDepth = 0;
 
     public postConstruct(): void {
         this.beans.ctrlsSvc.whenReady(this, (p) => (this.gridBodyCtrl = p.gridBodyCtrl));
@@ -30,31 +33,33 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
         this.suppressAnimation = suppress;
     }
 
+    /** Open an animation window; nestable — only the outermost open actually starts the animation. */
     public start(): void {
+        this.startDepth++;
         if (this.active) {
             return;
         }
 
-        const { gos } = this;
-
-        if (gos.get('suppressColumnMoveAnimation')) {
+        const { gos, gridBodyCtrl } = this;
+        if (!gridBodyCtrl || gos.get('suppressColumnMoveAnimation')) {
             return;
         }
 
-        this.ensureAnimationCssClassPresent();
+        this.ensureAnimationCssClassPresent(gridBodyCtrl);
 
         this.active = true;
         this.activeNext = true;
     }
 
+    /** Close an animation window; the outermost close flushes the queued next/later funcs. */
     public finish(): void {
-        if (!this.active) {
+        // Only the outermost close (depth back to 0) flushes; nested closes and unbalanced calls no-op.
+        const depth = Math.max(0, this.startDepth - 1);
+        this.startDepth = depth;
+        if (depth > 0 || !this.active) {
             return;
         }
-        this.flush(
-            () => (this.activeNext = false),
-            () => (this.active = false)
-        );
+        this.flush();
     }
 
     public executeNextVMTurn(func: (...args: any[]) => any): void {
@@ -73,12 +78,11 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
         }
     }
 
-    private ensureAnimationCssClassPresent(): void {
+    private ensureAnimationCssClassPresent(gridBodyCtrl: GridBodyCtrl): void {
         // up the count, so we can tell if someone else has updated the count
         // by the time the 'wait' func executes
         this.animationThreadCount++;
         const animationThreadCountCopy = this.animationThreadCount;
-        const { gridBodyCtrl } = this;
         gridBodyCtrl.setColumnMovingCss(true);
 
         this.executeLaterFuncs.push(() => {
@@ -89,35 +93,34 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
         });
     }
 
-    private flush(callbackNext: () => void, callbackLater: () => void): void {
+    private flush(): void {
         const { executeNextFuncs, executeLaterFuncs } = this;
         if (executeNextFuncs.length === 0 && executeLaterFuncs.length === 0) {
-            callbackNext();
-            callbackLater();
+            this.activeNext = false;
+            this.active = false;
             return;
         }
 
-        const runFuncs = (queue: ((...args: any[]) => any)[]) => {
-            while (queue.length) {
-                const func = queue.pop();
-                if (func) {
-                    func();
-                }
-            }
-        };
-
         this.beans.frameworkOverrides.wrapIncoming(() => {
             window.setTimeout(() => {
-                callbackNext();
+                this.activeNext = false;
                 runFuncs(executeNextFuncs);
             }, 0);
             window.setTimeout(() => {
-                // run the callback before executeLaterFuncs
-                // because some functions being executed later
-                // check if this service is `active`.
-                callbackLater();
+                // Clear `active` before the later funcs run — some of them check it.
+                this.active = false;
                 runFuncs(executeLaterFuncs);
             }, 200);
         });
     }
 }
+
+/** Drain a queue, running each func (LIFO); captures nothing, so it's shared rather than re-allocated per flush. */
+const runFuncs = (queue: ((...args: any[]) => any)[]): void => {
+    while (queue.length) {
+        const func = queue.pop();
+        if (func) {
+            func();
+        }
+    }
+};

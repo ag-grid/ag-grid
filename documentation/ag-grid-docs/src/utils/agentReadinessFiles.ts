@@ -20,6 +20,12 @@ interface AgentReadinessInput {
      * entry point for an LLM-facing guide.
      */
     gridDocsPrefix: string;
+    /**
+     * Whether per-page `.md` routes are generated. When false (the
+     * `DISABLE_MARKDOWN_DOCS` build flag), the llms.txt must not advertise the
+     * `.md` convention or it would point agents at 404s. Defaults to true.
+     */
+    includeMarkdownDocs?: boolean;
 }
 
 interface AgentReadinessLinks {
@@ -33,6 +39,7 @@ interface AgentReadinessLinks {
     mcpServer: string;
     pricing: string;
     changelog: string;
+    pipeline: string;
     sitemap: string;
     llmsTxt: string;
 }
@@ -50,6 +57,7 @@ function buildLinks({ siteRoot, gridDocsPrefix }: AgentReadinessInput): AgentRea
         mcpServer: `${grid}mcp-server/`,
         pricing: `${siteRoot}license-pricing/`,
         changelog: `${siteRoot}changelog/`,
+        pipeline: `${siteRoot}pipeline/`,
         sitemap: `${siteRoot}sitemap-index.xml`,
         llmsTxt: `${siteRoot}llms.txt`,
     };
@@ -61,6 +69,11 @@ function buildLinks({ siteRoot, gridDocsPrefix }: AgentReadinessInput): AgentRea
  */
 export function buildLlmsTxt(input: AgentReadinessInput): string {
     const l = buildLinks(input);
+    // Only advertise the `.md` convention when those routes are actually built.
+    const markdownLine =
+        input.includeMarkdownDocs === false
+            ? ''
+            : `\n- Markdown versions: append \`.md\` to any Data Grid docs page URL for a clean, framework-specific Markdown copy (e.g. ${l.dataGridDocs.replace(/\/$/, '')}.md), or send \`Accept: text/markdown\`. The Pricing, Changelog and Pipeline pages also have \`.md\` versions.`;
     return `# AG Grid
 > High-performance JavaScript Data Grid, plus AG Charts and AG Studio. Framework-agnostic, with React, Angular and Vue support. Free Community and paid Enterprise editions. Current major version: v${input.majorVersion}.
 
@@ -74,11 +87,12 @@ export function buildLlmsTxt(input: AgentReadinessInput): string {
 - [Data Grid API reference](${l.dataGridReference}): complete grid options and API
 - [Charts docs](${l.chartsDocs}): AG Charts quick start
 - [Examples](${l.examples}): live, runnable demos
-- [MCP server](${l.mcpServer}): ag-mcp - version-aware docs, examples and API for AI coding assistants
+- [MCP server](${l.mcpServer}): ag-mcp - version-aware docs, examples and API for AI coding assistants${markdownLine}
 
 ## Optional
 - [Pricing](${l.pricing}): Community (free) vs Enterprise
 - [Changelog](${l.changelog}): features and fixes by version
+- [Pipeline](${l.pipeline}): roadmap and backlog of upcoming features and fixes
 - [Sitemap](${l.sitemap}): full list of indexable pages
 `;
 }
@@ -89,6 +103,11 @@ export function buildLlmsTxt(input: AgentReadinessInput): string {
  */
 export function buildAgentsMd(input: AgentReadinessInput): string {
     const l = buildLinks(input);
+    // Advertise the markdown twins only when they are built (see includeMarkdownDocs).
+    const markdownBullet =
+        input.includeMarkdownDocs === false
+            ? ''
+            : `\n- **Markdown for LLMs:** append \`.md\` to any Data Grid docs page URL (e.g. ${l.dataGridDocs.replace(/\/$/, '')}.md), or request the page with \`Accept: text/markdown\`. The [Pricing](${l.pricing}), [Changelog](${l.changelog}) and [Pipeline](${l.pipeline}) pages also have \`.md\` versions.`;
     return `# AG Grid - guide for AI coding assistants
 
 - **What it is:** JavaScript Data Grid, plus [AG Charts](${l.charts}) and [AG Studio](${l.studio}). Framework-agnostic, with React, Angular and Vue wrappers. Community (free) and Enterprise (licensed) editions.
@@ -96,7 +115,7 @@ export function buildAgentsMd(input: AgentReadinessInput): string {
 - **Install:** \`npm i ag-grid-community\` (or \`ag-grid-enterprise\`), plus the framework wrapper - \`ag-grid-react\`, \`ag-grid-angular\` or \`ag-grid-vue3\`. JavaScript needs no wrapper.
 - **MCP server:** \`ag-mcp\` (\`npx ag-mcp\`) returns version-specific docs, examples and API in condensed markdown. Point your assistant at it for current, correct code - see [the MCP server docs](${l.mcpServer}).
 - **Where to look:** [Data Grid docs](${l.dataGridDocs}), [API reference](${l.dataGridReference}), [examples](${l.examples}) and the [changelog](${l.changelog}).
-- **Common tasks:** "create a grid", "define column definitions", "enable sorting and filtering", "server-side row model" - each has a canonical example in the docs and via the MCP server.
+- **Common tasks:** "create a grid", "define column definitions", "enable sorting and filtering", "server-side row model" - each has a canonical example in the docs and via the MCP server.${markdownBullet}
 
 Machine-readable index: [llms.txt](${l.llmsTxt}).
 `;

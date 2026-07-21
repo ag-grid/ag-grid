@@ -38,27 +38,28 @@ export const _setColGroupState = (
     }
 
     colAnimation?.start();
-
-    let impactedGroups: AgProvidedColumnGroup[] | null = null;
-    for (let i = 0; i < stateLen; ++i) {
-        const stateItem = stateItems[i];
-        const group = groupsById.get(stateItem.groupId);
-        if (group?.setExpanded(stateItem.open)) {
-            impactedGroups ??= [];
-            impactedGroups.push(group);
+    try {
+        let impactedGroups: AgProvidedColumnGroup[] | null = null;
+        for (let i = 0; i < stateLen; ++i) {
+            const stateItem = stateItems[i];
+            const group = groupsById.get(stateItem.groupId);
+            if (group?.setExpanded(stateItem.open)) {
+                impactedGroups ??= [];
+                impactedGroups.push(group);
+            }
         }
-    }
 
-    if (impactedGroups) {
-        visibleCols.refresh(source, true);
-        eventSvc.dispatchEvent({
-            type: 'columnGroupOpened',
-            columnGroup: impactedGroups.length === 1 ? impactedGroups[0] : undefined,
-            columnGroups: impactedGroups,
-        });
+        if (impactedGroups) {
+            visibleCols.refresh(source, true);
+            eventSvc.dispatchEvent({
+                type: 'columnGroupOpened',
+                columnGroup: impactedGroups.length === 1 ? impactedGroups[0] : undefined,
+                columnGroups: impactedGroups,
+            });
+        }
+    } finally {
+        colAnimation?.finish();
     }
-
-    colAnimation?.finish();
 };
 
 export const _resetColGroupState = (beans: BeanCollection, source: ColumnEventType): void => {

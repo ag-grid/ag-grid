@@ -60,3 +60,12 @@ export const STUDIO_FORM_DATA = {
 export const SITEMAP_CACHE_DIR = '.astro/cache/sitemap';
 
 export const PRIVACY_POLICY_URL = 'https://www.ag-grid.com/privacy';
+
+// Figma
+export const FIGMA_DESIGN_SYSTEM_URL = 'https://www.figma.com/community/file/1360600846643230092/ag-grid-design-system';
+
+// YouTube
+export const YOUTUBE_LICENSE_PRICING_URL = 'https://www.youtube.com/watch?v=VPr__OKxH50';
+
+// Zendesk
+export const ZENDESK_URL = 'https://ag-grid.zendesk.com/hc/en-us';

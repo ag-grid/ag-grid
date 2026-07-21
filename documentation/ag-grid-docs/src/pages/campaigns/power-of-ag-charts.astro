@@ -8,6 +8,7 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import ImageCarousel from '@components/campaigns-components/ImageCarousel';
 
 import { getIsProduction } from '@utils/env';
+import { ZENDESK_URL } from '@ag-website-shared/constants';
 
 const TRIAL_LICENCE_FORM_URL = getIsProduction()
     ? 'https://us-central1-aggrid-ecommerce.cloudfunctions.net/CreateLeadForTrialChartsCampaign'
@@ -173,7 +174,7 @@ const MAILTO_HREF = `mailto:info@ag-grid.com?subject=AG Charts Enterprise: ${CAM
                         <b>Access Support</b>
                         <br />
                         Access dedicated support from our engineering team via{' '}
-                        <a href={'https://ag-grid.zendesk.com/hc/en-us' + UTM_TRACKER} target="_blank">Zendesk</a>.
+                        <a href={ZENDESK_URL + UTM_TRACKER} target="_blank">Zendesk</a>.
                     </p>
                 </div>
             </div>

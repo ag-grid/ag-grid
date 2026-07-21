@@ -842,6 +842,382 @@ describe('Auto Group Column Order', () => {
             expect(getColumnOrder(gridApi, 'left')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`, `${GROUP_AUTO_COLUMN_ID}-b`]);
         });
 
+        test('animates the column reflow when a row group is added at runtime', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            const gridEl = getGridElement(gridApi)! as HTMLElement;
+            expect(gridEl.querySelector('.ag-column-moving')).toBeNull();
+
+            gridApi.addRowGroupColumns(['b']);
+
+            // colAnimation tags the grid body while the appended auto col slides in and the rest reflow.
+            expect(gridEl.querySelector('.ag-column-moving')).not.toBeNull();
+            await new GridColumns(gridApi, 'row group add animation').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-a width:200
+                ├── ag-Grid-AutoColumn-b width:200
+                ├── a width:200 rowGroup
+                └── c width:200
+            `);
+            await new GridRows(gridApi, 'row group add animation').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-a:null ag-Grid-AutoColumn-b:null
+            `);
+        });
+
+        test('suppressColumnMoveAnimation skips the row group add animation', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                suppressColumnMoveAnimation: true,
+            });
+            const gridEl = getGridElement(gridApi)! as HTMLElement;
+
+            gridApi.addRowGroupColumns(['b']);
+
+            expect(gridEl.querySelector('.ag-column-moving')).toBeNull();
+            await new GridColumns(gridApi, 'row group add without animation').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-a width:200
+                ├── ag-Grid-AutoColumn-b width:200
+                ├── a width:200 rowGroup
+                └── c width:200
+            `);
+            await new GridRows(gridApi, 'row group add without animation').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-a:null ag-Grid-AutoColumn-b:null
+            `);
+        });
+
+        test('animates the column reflow when a row group is removed at runtime', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            const gridEl = getGridElement(gridApi)! as HTMLElement;
+            expect(gridEl.querySelector('.ag-column-moving')).toBeNull();
+
+            gridApi.removeRowGroupColumns(['b']);
+
+            // colAnimation tags the grid body while the removed auto col's gap closes and the rest reflow.
+            expect(gridEl.querySelector('.ag-column-moving')).not.toBeNull();
+            await new GridColumns(gridApi, 'row group remove animation').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-a width:200
+                ├── a width:200 rowGroup
+                ├── b width:200
+                └── c width:200
+            `);
+            await new GridRows(gridApi, 'row group remove animation').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-a:null
+            `);
+        });
+
+        test('suppressColumnMoveAnimation skips the row group remove animation', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                suppressColumnMoveAnimation: true,
+            });
+            const gridEl = getGridElement(gridApi)! as HTMLElement;
+
+            gridApi.removeRowGroupColumns(['b']);
+
+            expect(gridEl.querySelector('.ag-column-moving')).toBeNull();
+            await new GridColumns(gridApi, 'row group remove without animation').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-a width:200
+                ├── a width:200 rowGroup
+                ├── b width:200
+                └── c width:200
+            `);
+            await new GridRows(gridApi, 'row group remove without animation').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-a:null
+            `);
+        });
+
+        test('reuses auto group column instances when row groups are reordered', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            const autoA = gridApi.getColumn(`${GROUP_AUTO_COLUMN_ID}-a`);
+            const autoB = gridApi.getColumn(`${GROUP_AUTO_COLUMN_ID}-b`);
+            expect(autoA).toBeTruthy();
+            expect(autoB).toBeTruthy();
+
+            gridApi.moveRowGroupColumn(1, 0);
+
+            // a pure reorder must reuse the existing instances (keeping their state + sliding), not recreate them
+            expect(gridApi.getColumn(`${GROUP_AUTO_COLUMN_ID}-a`)).toBe(autoA);
+            expect(gridApi.getColumn(`${GROUP_AUTO_COLUMN_ID}-b`)).toBe(autoB);
+            await new GridColumns(gridApi, 'reuse instances on reorder').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-b width:200
+                ├── ag-Grid-AutoColumn-a width:200
+                ├── a width:200 rowGroup
+                ├── b width:200 rowGroup
+                └── c width:200
+            `);
+            await new GridRows(gridApi, 'reuse instances on reorder').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-b:null ag-Grid-AutoColumn-a:null
+            `);
+        });
+
+        test('reuses surviving auto group column instances across add and remove', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            const autoA = gridApi.getColumn(`${GROUP_AUTO_COLUMN_ID}-a`);
+            expect(autoA).toBeTruthy();
+
+            gridApi.addRowGroupColumns(['b']); // a survives the add
+
+            expect(gridApi.getColumn(`${GROUP_AUTO_COLUMN_ID}-a`)).toBe(autoA);
+            const autoB = gridApi.getColumn(`${GROUP_AUTO_COLUMN_ID}-b`);
+            expect(autoB).toBeTruthy();
+
+            gridApi.removeRowGroupColumns(['a']); // b survives the remove, a's auto col is destroyed
+
+            expect(gridApi.getColumn(`${GROUP_AUTO_COLUMN_ID}-b`)).toBe(autoB);
+            expect(gridApi.getColumn(`${GROUP_AUTO_COLUMN_ID}-a`)).toBeNull();
+            await new GridColumns(gridApi, 'reuse survivors across add/remove').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-b width:200
+                ├── a width:200
+                └── c width:200
+            `);
+            await new GridRows(gridApi, 'reuse survivors across add/remove').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-b:null
+            `);
+        });
+
+        test('preserves a resized auto group column width across a runtime group add', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            gridApi.setColumnWidths([{ key: `${GROUP_AUTO_COLUMN_ID}-a`, newWidth: 321 }]);
+            expect(gridApi.getColumn(`${GROUP_AUTO_COLUMN_ID}-a`)?.getActualWidth()).toBe(321);
+
+            gridApi.addRowGroupColumns(['b']);
+
+            // the surviving auto col keeps the user's width — the instance is reused, not recreated
+            expect(gridApi.getColumn(`${GROUP_AUTO_COLUMN_ID}-a`)?.getActualWidth()).toBe(321);
+            await new GridColumns(gridApi, 'width preserved across add').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-a width:321
+                ├── ag-Grid-AutoColumn-b width:200
+                ├── a width:200 rowGroup
+                └── c width:200
+            `);
+            await new GridRows(gridApi, 'width preserved across add').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-a:null ag-Grid-AutoColumn-b:null
+            `);
+        });
+
+        test('resnaps a middle row group reordered to the front (3 groups)', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c', rowGroup: true },
+                { colId: 'd' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+                `${GROUP_AUTO_COLUMN_ID}-c`,
+                'a',
+                'b',
+                'c',
+                'd',
+            ]);
+
+            gridApi.moveRowGroupColumn(2, 0); // c to the front → [c, a, b]
+
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['c', 'a', 'b']);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                `${GROUP_AUTO_COLUMN_ID}-c`,
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+                'a',
+                'b',
+                'c',
+                'd',
+            ]);
+            await new GridColumns(gridApi, '3-group middle reorder').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-c width:200
+                ├── ag-Grid-AutoColumn-a width:200
+                ├── ag-Grid-AutoColumn-b width:200
+                ├── a width:200 rowGroup
+                ├── b width:200 rowGroup
+                ├── c width:200 rowGroup
+                └── d width:200
+            `);
+            await new GridRows(gridApi, '3-group middle reorder').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-c:null ag-Grid-AutoColumn-a:null ag-Grid-AutoColumn-b:null
+            `);
+        });
+
+        test('resnaps pinned auto group columns when row groups are reordered', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                autoGroupColumnDef: { pinned: 'left' },
+            });
+            expect(getColumnOrder(gridApi, 'left')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`, `${GROUP_AUTO_COLUMN_ID}-b`]);
+
+            gridApi.moveRowGroupColumn(1, 0);
+
+            expect(getColumnOrder(gridApi, 'left')).toEqual([`${GROUP_AUTO_COLUMN_ID}-b`, `${GROUP_AUTO_COLUMN_ID}-a`]);
+            await new GridColumns(gridApi, 'pinned reorder').checkColumns(`
+                LEFT
+                ├── ag-Grid-AutoColumn-b width:200
+                └── ag-Grid-AutoColumn-a width:200
+                CENTER
+                ├── a width:200 rowGroup
+                ├── b width:200 rowGroup
+                └── c width:200
+            `);
+            await new GridRows(gridApi, 'pinned reorder').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-b:null ag-Grid-AutoColumn-a:null
+            `);
+        });
+
+        test.each([
+            ['setRowGroupColumns', (api: GridApi) => api.setRowGroupColumns(['b', 'a'])],
+            ['moveRowGroupColumn', (api: GridApi) => api.moveRowGroupColumn(1, 0)],
+        ] as const)(
+            'resnaps auto group columns when existing row groups are reordered via %s',
+            async (label, reorder) => {
+                const columnDefs: (ColDef | ColGroupDef)[] = [
+                    { colId: 'a', rowGroup: true },
+                    { colId: 'b', rowGroup: true },
+                    { colId: 'c' },
+                ];
+                const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+                const gridEl = getGridElement(gridApi)! as HTMLElement;
+                expect(getColumnOrder(gridApi, 'center')).toEqual([
+                    `${GROUP_AUTO_COLUMN_ID}-a`,
+                    `${GROUP_AUTO_COLUMN_ID}-b`,
+                    'a',
+                    'b',
+                    'c',
+                ]);
+
+                reorder(gridApi);
+
+                expect(gridEl.querySelector('.ag-column-moving')).not.toBeNull();
+                expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['b', 'a']);
+                expect(getColumnOrder(gridApi, 'center')).toEqual([
+                    `${GROUP_AUTO_COLUMN_ID}-b`,
+                    `${GROUP_AUTO_COLUMN_ID}-a`,
+                    'a',
+                    'b',
+                    'c',
+                ]);
+                await new GridColumns(gridApi, `resnaps auto group columns via ${label}`).checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn-b width:200
+                    ├── ag-Grid-AutoColumn-a width:200
+                    ├── a width:200 rowGroup
+                    ├── b width:200 rowGroup
+                    └── c width:200
+                `);
+                await new GridRows(gridApi, `resnaps auto group columns via ${label}`).check(`
+                    ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-b:null ag-Grid-AutoColumn-a:null
+                `);
+            }
+        );
+
+        test('resnaps a manually reordered auto group column back to hierarchy order on the next rebuild', async () => {
+            // Auto cols always follow row-group order: a manual move that breaks it sticks only until the next
+            // rebuild, which resnaps them back to hierarchy order. This matches v35.
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', field: 'a', rowGroup: true },
+                { colId: 'b', field: 'b', rowGroup: true },
+                { colId: 'c', field: 'c' },
+            ];
+            const rowData = [
+                { a: 'a1', b: 'b1', c: 'c1' },
+                { a: 'a1', b: 'b1', c: 'c2' },
+                { a: 'a1', b: 'b2', c: 'c1' },
+                { a: 'a2', b: 'b1', c: 'c1' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, rowData, groupDisplayType });
+
+            gridApi.moveColumns([`${GROUP_AUTO_COLUMN_ID}-a`], 1); // manual move, out of hierarchy order
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                'a',
+                'b',
+                'c',
+            ]);
+
+            gridApi.addRowGroupColumns(['c']); // rebuild → resnaps every auto col to row-group order
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b', 'c']);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+                `${GROUP_AUTO_COLUMN_ID}-c`,
+                'a',
+                'b',
+            ]);
+            await new GridColumns(gridApi, 'resnap heals manual move on rebuild').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-a "A" width:200
+                ├── ag-Grid-AutoColumn-b "B" width:200
+                ├── ag-Grid-AutoColumn-c "C" width:200
+                ├── a "A" width:200 rowGroup
+                └── b "B" width:200 rowGroup
+            `);
+            await new GridRows(gridApi, 'resnap heals manual move on rebuild').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-a:null ag-Grid-AutoColumn-b:null ag-Grid-AutoColumn-c:null
+                ├─┬ filler collapsed id:row-group-a-a1 ag-Grid-AutoColumn-a:"a1" ag-Grid-AutoColumn-b:null ag-Grid-AutoColumn-c:null
+                │ ├─┬ filler collapsed hidden id:row-group-a-a1-b-b1 ag-Grid-AutoColumn-b:"b1" ag-Grid-AutoColumn-c:null
+                │ │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-a-a1-b-b1-c-c1 ag-Grid-AutoColumn-c:"c1"
+                │ │ │ └── LEAF hidden id:0 a:"a1" b:"b1" c:"c1"
+                │ │ └─┬ LEAF_GROUP collapsed hidden id:row-group-a-a1-b-b1-c-c2 ag-Grid-AutoColumn-c:"c2"
+                │ │ · └── LEAF hidden id:1 a:"a1" b:"b1" c:"c2"
+                │ └─┬ filler collapsed hidden id:row-group-a-a1-b-b2 ag-Grid-AutoColumn-b:"b2" ag-Grid-AutoColumn-c:null
+                │ · └─┬ LEAF_GROUP collapsed hidden id:row-group-a-a1-b-b2-c-c1 ag-Grid-AutoColumn-c:"c1"
+                │ · · └── LEAF hidden id:2 a:"a1" b:"b2" c:"c1"
+                └─┬ filler collapsed id:row-group-a-a2 ag-Grid-AutoColumn-a:"a2" ag-Grid-AutoColumn-b:null ag-Grid-AutoColumn-c:null
+                · └─┬ filler collapsed hidden id:row-group-a-a2-b-b1 ag-Grid-AutoColumn-b:"b1" ag-Grid-AutoColumn-c:null
+                · · └─┬ LEAF_GROUP collapsed hidden id:row-group-a-a2-b-b1-c-c1 ag-Grid-AutoColumn-c:"c1"
+                · · · └── LEAF hidden id:3 a:"a2" b:"b1" c:"c1"
+            `);
+        });
+
         test('orders row group column(s) by rowGroupIndex (lowest first) when enableRtl=true', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 { colId: 'a', rowGroupIndex: 1 },

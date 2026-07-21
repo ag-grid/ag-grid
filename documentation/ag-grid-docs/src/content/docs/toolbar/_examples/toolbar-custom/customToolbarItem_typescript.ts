@@ -16,17 +16,15 @@ export class WinnersToggle implements IToolbarItemComp {
         this.params = params;
 
         this.eGui = document.createElement('div');
-        this.eGui.className = 'ag-toolbar-item';
-        this.eGui.style.cssText = 'display: flex; gap: 12px; padding: 8px;';
+        this.eGui.className = 'ag-toolbar-item winners-toggle';
 
         for (const { column, label } of COLUMNS) {
             const eLabel = document.createElement('label');
-            eLabel.style.cssText = 'display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;';
+            eLabel.className = 'winners-toggle-item';
 
             const eInput = document.createElement('input');
             eInput.type = 'checkbox';
             eInput.dataset.column = column;
-            eInput.style.margin = '0';
 
             eLabel.appendChild(eInput);
             eLabel.appendChild(document.createTextNode(label));
