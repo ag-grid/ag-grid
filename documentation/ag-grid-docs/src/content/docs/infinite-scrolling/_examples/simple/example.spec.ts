@@ -59,6 +59,8 @@ test.agExample(import.meta, () => {
         }, DEEP_INDEX);
         expect(renderedIndex).toBeGreaterThanOrEqual(DEEP_INDEX);
         // A further block was fetched on demand: the deep row renders real data.
-        await expect(page.locator(`.ag-row[row-index="${renderedIndex}"]`).locator('[col-id="athlete"]')).not.toBeEmpty();
+        await expect(
+            page.locator(`.ag-row[row-index="${renderedIndex}"]`).locator('[col-id="athlete"]')
+        ).not.toBeEmpty();
     });
 });
