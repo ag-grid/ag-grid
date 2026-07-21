@@ -1,9 +1,8 @@
 import type { Framework } from '@ag-grid-types';
+import { markdownTable } from '@ag-website-shared/markdoc/markdownTable';
 import type { MarkdownFramework } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
+import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
-
-import { markdownTable } from './markdownTable';
-import { toAbsoluteUrl } from './toAbsoluteUrl';
 
 export interface ModuleNode {
     name: string;

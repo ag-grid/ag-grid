@@ -3,11 +3,10 @@ import { DEV_LICENSE_DATA } from '@ag-website-shared/components/license-pricing/
 import { YOUTUBE_LICENSE_PRICING_URL, ZENDESK_URL } from '@ag-website-shared/constants';
 import chartsFeaturesData from '@ag-website-shared/content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '@ag-website-shared/content/license-features/gridFeaturesMatrix.json';
+import { markdownTable } from '@ag-website-shared/markdoc/markdownTable';
+import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { resolveSharedUrl } from '@ag-website-shared/utils/resolveSharedUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
-
-import { markdownTable } from '../markdoc/markdownTable';
-import { toAbsoluteUrl } from '../markdoc/toAbsoluteUrl';
 
 // The page is framework-agnostic; resolve its framework-prefixed doc links against a
 // single framework, matching AGENTS.md.ts / llms.txt.ts.

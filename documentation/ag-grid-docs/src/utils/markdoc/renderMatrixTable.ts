@@ -1,3 +1,4 @@
+import { markdownTable } from '@ag-website-shared/markdoc/markdownTable';
 import { createRowDataFilter } from '@components/matrix-table/utils/createRowDataFilter';
 import {
     ENTERPRISE_FIELD,
@@ -8,8 +9,6 @@ import {
     getColumnField,
     normalizeGroupedData,
 } from '@components/matrix-table/utils/matrixData';
-
-import { markdownTable } from './markdownTable';
 
 /**
  * Build a `matrixTable` tag (feature comparison matrix) as a GFM table from its

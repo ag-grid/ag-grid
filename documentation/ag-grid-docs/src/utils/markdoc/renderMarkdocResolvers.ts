@@ -1,5 +1,6 @@
 import type { Framework } from '@ag-grid-types';
 import type { MarkdownFramework, MarkdownResolvers } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
+import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { getPageImages, getPagePath } from '@components/docs/utils/filesData';
 import { getExampleUrl } from '@components/docs/utils/urlPaths';
 import { getGeneratedContents } from '@components/example-generator';
@@ -13,7 +14,6 @@ import path from 'node:path';
 
 import { renderApiReferenceTable } from './renderApiReferenceTable';
 import { renderMarkdocTag } from './renderMarkdocTag';
-import { toAbsoluteUrl } from './toAbsoluteUrl';
 
 // Shiki-style language per framework, matching Snippet.astro's `frameworkLanguages`.
 const FRAMEWORK_LANGUAGES: Record<MarkdownFramework, string> = {

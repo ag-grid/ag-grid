@@ -1,12 +1,11 @@
 import type { Framework, Library } from '@ag-grid-types';
+import { markdownTable } from '@ag-website-shared/markdoc/markdownTable';
 import type { MarkdownFramework } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
+import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { getDocumentationArchiveUrl } from '@ag-website-shared/utils/getArchiveUrl';
 import { getChangelogUrl } from '@ag-website-shared/utils/getChangelogUrl';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
-
-import { markdownTable } from './markdownTable';
-import { toAbsoluteUrl } from './toAbsoluteUrl';
 
 export interface VersionEntry {
     version: string;
