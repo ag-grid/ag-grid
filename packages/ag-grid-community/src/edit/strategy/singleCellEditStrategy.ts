@@ -227,7 +227,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             super.cleanupEditors(nextCell, true);
 
             if (suppressStartEditOnTab) {
-                nextCell.focusCell(true, event);
+                nextCell.focusCell({ forceBrowserFocus: true, sourceEvent: event });
             } else {
                 startEditingCalled = true;
                 this.editSvc.startEditing(nextCell, {
@@ -242,9 +242,9 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         if (nextEditable && !preventNavigation) {
             // need to focus the cell before setting the editor, otherwise the focus handler won't cause previous editor cleanups
-            nextCell.focusCell(false, event);
+            nextCell.focusCell({ sourceEvent: event });
             if (suppressStartEditOnTab) {
-                nextCell.focusCell(true, event);
+                nextCell.focusCell({ forceBrowserFocus: true, sourceEvent: event });
             } else if (!nextCell.comp?.getCellEditor()) {
                 // If startEditing was called above (cross-row navigation), the editor may not
                 // exist yet because React creates editor components asynchronously. In that case
@@ -265,7 +265,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             if (nextEditable && preventNavigation) {
                 this.setFocusInOnEditor(nextCell);
             }
-            nextCell.focusCell(true, event);
+            nextCell.focusCell({ forceBrowserFocus: true, sourceEvent: event });
         }
 
         prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
