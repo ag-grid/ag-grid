@@ -1,28 +1,21 @@
-name: Module Size Test
-description: Build and run module size tests for a given git ref
+name: Module Size Build
+description: >
+  Build the ag-grid packages for a given git ref once and upload their dist
+  folders as an artifact, so the (sharded) module-size measure jobs can consume
+  a single build instead of each rebuilding the packages themselves.
 
 inputs:
   ref:
     description: 'Git ref to checkout (branch, tag, or SHA)'
     required: true
-  shard:
-    description: 'Current shard number'
+  dist-artifact:
+    description: 'Name of the artifact to upload the built dist folders under'
     required: true
-  total-shards:
-    description: 'Total number of shards'
-    required: true
-  artifact-prefix:
-    description: 'Prefix for the uploaded artifact name'
-    required: true
-  artifact-suffix:
-    description: 'Optional suffix for artifact name (e.g., PR number)'
-    required: false
-    default: ''
   base-ref:
     description: 'Base ref for nx setup (defaults to input ref)'
     required: false
   actions-ref:
-    description: 'Git ref to get .github/actions from (for testing older refs that lack these actions)'
+    description: 'Git ref to get .github/actions from (for building older refs that lack these actions)'
     required: false
     default: ''
   cache-mode:
@@ -73,21 +66,21 @@ runs:
       shell: bash
       run: yarn install --ci
 
-    - name: Build dependencies
+    - name: Build packages
       shell: bash
       run: |
         yarn nx run-many -t build --projects=ag-grid-community,ag-grid-enterprise,ag-grid-react
 
-    - name: Run module size tests
-      shell: bash
-      working-directory: testing/module-size
-      run: |
-        npm run module-combinations -- --shard=${{ inputs.shard }}/${{ inputs.total-shards }}
-        mv module-size-results.json module-size-results-shard-${{ inputs.shard }}.json
-
-    - name: Upload shard results
+    - name: Upload built dist
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.artifact-prefix }}-shard-${{ inputs.shard }}${{ inputs.artifact-suffix && format('-{0}', inputs.artifact-suffix) || '' }}
-        path: testing/module-size/module-size-results-shard-${{ inputs.shard }}.json
+        name: ${{ inputs.dist-artifact }}
+        # The module-size harness resolves ag-grid-community/enterprise/react through the
+        # workspace symlinks in node_modules into packages/*/dist, so those three dist
+        # folders are all the measure shards need. setup-nx recreates the symlinks there.
+        path: |
+          packages/ag-grid-community/dist
+          packages/ag-grid-enterprise/dist
+          packages/ag-grid-react/dist
         retention-days: 1
+        include-hidden-files: true

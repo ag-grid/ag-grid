@@ -1,0 +1,102 @@
+name: Module Size Measure
+description: >
+  Run the module-size combinations harness for a single shard, consuming the
+  pre-built dist folders produced by the module-size-build action. Does not
+  build the packages itself.
+
+inputs:
+  ref:
+    description: 'Git ref to checkout (branch, tag, or SHA)'
+    required: true
+  dist-artifact:
+    description: 'Name of the artifact holding the pre-built dist folders to download'
+    required: true
+  shard:
+    description: 'Current shard number'
+    required: true
+  total-shards:
+    description: 'Total number of shards'
+    required: true
+  artifact-prefix:
+    description: 'Prefix for the uploaded results artifact name'
+    required: true
+  artifact-suffix:
+    description: 'Optional suffix for artifact name (e.g., PR number)'
+    required: false
+    default: ''
+  base-ref:
+    description: 'Base ref for nx setup (defaults to input ref)'
+    required: false
+  actions-ref:
+    description: 'Git ref to get .github/actions from (for testing older refs that lack these actions)'
+    required: false
+    default: ''
+  cache-mode:
+    description: 'Cache mode for setup-nx (rw, ro, off).'
+    required: false
+    default: 'ro'
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.ref }}
+        fetch-depth: 1
+
+    - name: Checkout actions from actions-ref
+      if: inputs.actions-ref != '' && inputs.actions-ref != inputs.ref
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.actions-ref }}
+        sparse-checkout: |
+          .github/actions
+          external/ag-shared/github/actions
+        path: .actions-temp
+
+    - name: Copy actions from actions-ref
+      if: inputs.actions-ref != '' && inputs.actions-ref != inputs.ref
+      shell: bash
+      run: |
+        rm -rf .github/actions
+        cp -r .actions-temp/.github/actions .github/actions
+        # setup-nx wraps the shared core under external/ag-shared/github/actions; the
+        # base/release source can predate it, so bring it from the actions-ref too.
+        rm -rf external/ag-shared/github/actions
+        mkdir -p external/ag-shared/github
+        cp -r .actions-temp/external/ag-shared/github/actions external/ag-shared/github/actions
+        rm -rf .actions-temp
+
+    - name: Setup
+      uses: ./.github/actions/setup-nx
+      with:
+        cache_mode: ${{ inputs.cache-mode }}
+        base_ref: ${{ inputs.base-ref || inputs.ref }}
+
+    - name: yarn install (no cache)
+      if: inputs.cache-mode == 'off'
+      shell: bash
+      run: yarn install --ci
+
+    - name: Download pre-built dist
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.dist-artifact }}
+        # Artifact root is the packages/ common ancestor, so restore under packages/ to
+        # repopulate packages/ag-grid-*/dist that the workspace symlinks resolve into.
+        path: packages
+
+    - name: Run module size tests
+      shell: bash
+      working-directory: testing/module-size
+      run: |
+        npm run module-combinations -- --shard=${{ inputs.shard }}/${{ inputs.total-shards }}
+        mv module-size-results.json module-size-results-shard-${{ inputs.shard }}.json
+
+    - name: Upload shard results
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-prefix }}-shard-${{ inputs.shard }}${{ inputs.artifact-suffix && format('-{0}', inputs.artifact-suffix) || '' }}
+        path: testing/module-size/module-size-results-shard-${{ inputs.shard }}.json
+        retention-days: 1

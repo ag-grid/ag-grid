@@ -18,7 +18,8 @@ on:
       - 'testing/module-size/**'
       - 'testing/module-size-angular/**'
       - '.github/workflows/module-size-vs-release.yml'
-      - '.github/actions/module-size-test/**'
+      - '.github/actions/module-size-build/**'
+      - '.github/actions/module-size-measure/**'
       - 'scripts/ci/*module-size*'
   workflow_dispatch:
     inputs:
@@ -117,11 +118,32 @@ jobs:
           key: module-size-release-${{ needs.prepare.outputs.release-tag }}
           lookup-only: true
 
-  # Build and run module size tests on test branch (sharded)
+  # Build the test branch once; the measure shards below consume this single build.
+  build-latest:
+    name: Build ${{ needs.prepare.outputs.test-branch }}
+    runs-on: ubuntu-latest
+    needs: prepare
+    env:
+      TEST_BRANCH: ${{ needs.prepare.outputs.test-branch }}
+    steps:
+      - name: Checkout for actions
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TEST_BRANCH }}
+          fetch-depth: 1
+
+      - name: Build packages
+        uses: ./.github/actions/module-size-build
+        with:
+          ref: ${{ env.TEST_BRANCH }}
+          dist-artifact: module-size-dist-latest
+          base-ref: ${{ env.TEST_BRANCH }}
+
+  # Run module size tests on test branch (sharded) against the pre-built dist
   module-size-latest:
     name: Module Size ${{ needs.prepare.outputs.test-branch }} (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
-    needs: prepare
+    needs: [prepare, build-latest]
     strategy:
       matrix:
         shard: ${{ fromJSON(needs.prepare.outputs.shard-matrix) }}
@@ -136,19 +158,44 @@ jobs:
           fetch-depth: 1
 
       - name: Run module size tests
-        uses: ./.github/actions/module-size-test
+        uses: ./.github/actions/module-size-measure
         with:
           ref: ${{ env.TEST_BRANCH }}
+          dist-artifact: module-size-dist-latest
           shard: ${{ matrix.shard }}
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-latest
           base-ref: ${{ env.TEST_BRANCH }}
 
   # Build and run module size tests on release tag (sharded) - only if cache miss
+  # Build the release tag once (only if cache miss); measure shards consume this build.
+  build-release:
+    name: Build Release
+    runs-on: ubuntu-latest
+    needs: [prepare, check-release-cache]
+    if: needs.check-release-cache.outputs.cache-hit != 'true'
+    env:
+      TEST_BRANCH: ${{ needs.prepare.outputs.test-branch }}
+    steps:
+      - name: Checkout for actions
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TEST_BRANCH }}
+          fetch-depth: 1
+
+      - name: Build packages
+        uses: ./.github/actions/module-size-build
+        with:
+          ref: ${{ needs.prepare.outputs.release-tag }}
+          dist-artifact: module-size-dist-release
+          cache-mode: 'off'
+          actions-ref: ${{ env.TEST_BRANCH }}
+
+  # Run module size tests on release tag (sharded) - only if cache miss
   module-size-release:
     name: Module Size Release (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
-    needs: [prepare, check-release-cache]
+    needs: [prepare, check-release-cache, build-release]
     if: needs.check-release-cache.outputs.cache-hit != 'true'
     strategy:
       matrix:
@@ -164,9 +211,10 @@ jobs:
           fetch-depth: 1
 
       - name: Run module size tests
-        uses: ./.github/actions/module-size-test
+        uses: ./.github/actions/module-size-measure
         with:
           ref: ${{ needs.prepare.outputs.release-tag }}
+          dist-artifact: module-size-dist-release
           shard: ${{ matrix.shard }}
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-release
