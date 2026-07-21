@@ -1,11 +1,33 @@
-import { clickAllButtons, ensureGridReady, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { readFileSync } from 'node:fs';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page }) => {
-        // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
+    test.eachFramework('Renders sequential row numbers', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
-        await clickAllButtons(page);
-        // END PLACEHOLDER
+
+        await expect(agIdFor.rowNumber('0')).toContainText('1');
+        await expect(agIdFor.rowNumber('1')).toContainText('2');
+        await expect(agIdFor.rowNumber('2')).toContainText('3');
+    });
+
+    test.eachFramework('CSV export includes the row numbers column', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        // Export via the right-click context menu; defaultCsvExportParams.exportRowNumbers is true.
+        const downloadPromise = page.waitForEvent('download');
+        await agIdFor.cell('0', 'athlete').click({ button: 'right' });
+        await page.getByText('Export', { exact: true }).hover();
+        await page.getByText('CSV Export', { exact: true }).click();
+
+        const download = await downloadPromise;
+        const csvPath = await download.path();
+        const csv = readFileSync(csvPath, 'utf8');
+
+        // The data column is still present, and each data row is prefixed with its row number.
+        expect(csv).toContain('Athlete');
+        expect(csv).toMatch(/\n1,/);
+        expect(csv).toMatch(/\n2,/);
     });
 });
