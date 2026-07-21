@@ -17,7 +17,10 @@ test.agExample(import.meta, () => {
 
         await agIdFor.selectionColumnCheckbox('0').first().click();
         // Shift-click extends the selection across the intervening rows.
-        await agIdFor.selectionColumnCheckbox('3').first().click({ modifiers: ['Shift'] });
+        await agIdFor
+            .selectionColumnCheckbox('3')
+            .first()
+            .click({ modifiers: ['Shift'] });
 
         await expect(agIdFor.rowNode('0')).toHaveClass(/ag-row-selected/);
         await expect(agIdFor.rowNode('1')).toHaveClass(/ag-row-selected/);

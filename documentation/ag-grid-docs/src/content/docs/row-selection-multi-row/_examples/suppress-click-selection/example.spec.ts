@@ -9,7 +9,10 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.rowNode('0')).toHaveClass(/ag-row-selected/);
 
         // Ctrl-clicking another row adds it under multiRow mode.
-        await agIdFor.cell('2', 'athlete').first().click({ modifiers: ['ControlOrMeta'] });
+        await agIdFor
+            .cell('2', 'athlete')
+            .first()
+            .click({ modifiers: ['ControlOrMeta'] });
         await expect(agIdFor.rowNode('0')).toHaveClass(/ag-row-selected/);
         await expect(agIdFor.rowNode('2')).toHaveClass(/ag-row-selected/);
     });
