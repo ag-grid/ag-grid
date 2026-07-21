@@ -6,6 +6,23 @@ on:
       - 'latest'
       - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
     types: [opened, synchronize, reopened, ready_for_review]
+    # Only run when a change could actually move bundle sizes: grid source, its build
+    # config, dependency manifests, or the module-size measurement infra itself. Skips
+    # CI/config/docs-only PRs. NOTE: if this workflow is made a required status check,
+    # a paths filter causes it to be reported as skipped (not run) — see the
+    # "required check with path filtering" pattern before relying on it as a gate.
+    paths:
+      - 'packages/**'
+      - 'community-modules/**'
+      - 'yarn.lock'
+      - 'nx.json'
+      - 'tsconfig.*.json'
+      # module-size measurement infrastructure
+      - 'testing/module-size/**'
+      - 'testing/module-size-angular/**'
+      - '.github/workflows/module-size-comparison.yml'
+      - '.github/actions/module-size-test/**'
+      - 'scripts/ci/*module-size*'
   workflow_dispatch:
     inputs:
       pr_number:
