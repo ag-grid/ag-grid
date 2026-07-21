@@ -13,7 +13,8 @@
         display: contents;
     }
 
-    .ag-react-container:not(.ag-react-wrapper-block) {
+    // TODO scoped to ag-toolbar for minor release, should make global in v37.0
+    .ag-toolbar .ag-react-container:not(.ag-react-wrapper-block) {
         display: contents;
     }
 
