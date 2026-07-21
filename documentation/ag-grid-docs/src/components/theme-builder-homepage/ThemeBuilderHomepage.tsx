@@ -1,5 +1,5 @@
+import { ShadowDom } from '@ag-website-shared/components/ShadowDom';
 import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
-import { ShadowDom } from '@components/ShadowDom';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import React, { useMemo, useState } from 'react';
 

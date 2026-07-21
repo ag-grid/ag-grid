@@ -292,7 +292,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         if (nextEditable && !preventNavigation) {
             if (suppressStartEditOnTab) {
-                nextCell.focusCell(true, event);
+                nextCell.focusCell({ forceBrowserFocus: true, sourceEvent: event });
             } else {
                 if (!nextCell.comp?.getCellEditor()) {
                     // editor missing because it was outside the viewport during creating phase,
@@ -300,13 +300,13 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                     _setupEditor(beans, nextCell, { event, cellStartedEdit: true });
                 }
                 this.setFocusInOnEditor(nextCell);
-                nextCell.focusCell(false, event);
+                nextCell.focusCell({ sourceEvent: event });
             }
         } else {
             if (nextEditable && preventNavigation) {
                 this.setFocusInOnEditor(nextCell);
             }
-            nextCell.focusCell(true, event);
+            nextCell.focusCell({ forceBrowserFocus: true, sourceEvent: event });
         }
 
         if (!rowsMatch && !preventNavigation) {
@@ -319,7 +319,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             }
 
             if (suppressStartEditOnTab) {
-                nextCell.focusCell(true, event);
+                nextCell.focusCell({ forceBrowserFocus: true, sourceEvent: event });
             } else {
                 editSvc.startEditing(nextCell, {
                     startedEdit: true,
