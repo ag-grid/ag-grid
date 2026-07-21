@@ -544,7 +544,7 @@ export class CellCtrl extends BeanStub {
         });
 
         if (isEscape) {
-            this.focusCell(true, e);
+            this.focusCell({ forceBrowserFocus: true, sourceEvent: e });
         }
     }
 
@@ -851,7 +851,12 @@ export class CellCtrl extends BeanStub {
         return this.rangeFeature != null;
     }
 
-    public focusCell(forceBrowserFocus = false, sourceEvent?: Event): void {
+    public focusCell(params?: {
+        forceBrowserFocus?: boolean;
+        preventScrollOnBrowserFocus?: boolean;
+        sourceEvent?: Event;
+    }): void {
+        const { forceBrowserFocus = false, preventScrollOnBrowserFocus = false, sourceEvent } = params || {};
         const allowedTarget = this.editSvc?.allowedFocusTargetOnValidation(this);
         // if allowedTarget is set, then edit mode is active (with potential validation failures) and we should check if we can service the focus request
         if (allowedTarget && allowedTarget !== this) {
@@ -861,6 +866,7 @@ export class CellCtrl extends BeanStub {
         this.beans.focusSvc.setFocusedCell({
             ...this.getFocusedCellPosition(),
             forceBrowserFocus,
+            preventScrollOnBrowserFocus,
             sourceEvent,
         });
     }
