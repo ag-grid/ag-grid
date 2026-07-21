@@ -229,6 +229,11 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          # ro consumers restore the node_modules cache warmed by `init` (which already
+          # ran postinstall before saving), so no yarn execution is needed here. Skipping
+          # it removes every consumer's registry install on a cache miss — the fan-out that
+          # amplified transient registry errors into an install storm.
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: nx test
@@ -290,6 +295,11 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          # ro consumers restore the node_modules cache warmed by `init` (which already
+          # ran postinstall before saving), so no yarn execution is needed here. Skipping
+          # it removes every consumer's registry install on a cache miss — the fan-out that
+          # amplified transient registry errors into an install storm.
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: nx test:e2e
@@ -324,6 +334,11 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          # ro consumers restore the node_modules cache warmed by `init` (which already
+          # ran postinstall before saving), so no yarn execution is needed here. Skipping
+          # it removes every consumer's registry install on a cache miss — the fan-out that
+          # amplified transient registry errors into an install storm.
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: nx format:check
@@ -360,6 +375,11 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          # ro consumers restore the node_modules cache warmed by `init` (which already
+          # ran postinstall before saving), so no yarn execution is needed here. Skipping
+          # it removes every consumer's registry install on a cache miss — the fan-out that
+          # amplified transient registry errors into an install storm.
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: nx build
@@ -491,6 +511,11 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          # ro consumers restore the node_modules cache warmed by `init` (which already
+          # ran postinstall before saving), so no yarn execution is needed here. Skipping
+          # it removes every consumer's registry install on a cache miss — the fan-out that
+          # amplified transient registry errors into an install storm.
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: update base url
@@ -558,6 +583,11 @@ jobs:
         if: matrix.framework != 'none'
         uses: ./.github/actions/setup-nx
         with:
+          # ro consumers restore the node_modules cache warmed by `init` (which already
+          # ran postinstall before saving), so no yarn execution is needed here. Skipping
+          # it removes every consumer's registry install on a cache miss — the fan-out that
+          # amplified transient registry errors into an install storm.
+          yarn_postinstall: no-install
           cache_mode: ro
 
       - name: nx package:test
