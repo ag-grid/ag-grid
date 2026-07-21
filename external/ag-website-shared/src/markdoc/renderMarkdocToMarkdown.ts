@@ -261,7 +261,10 @@ async function renderTagBlock(node: Node, ctx: RenderContext): Promise<string> {
         case 'expandingSection': {
             const header = stringifyAttr(node.attributes.headerText, ctx);
             const inner = await renderBlocks(node.children, ctx);
-            return [header ? `#### ${header}` : '', inner].filter(Boolean).join('\n\n');
+            // A bold label, not a heading: an expandingSection is a disclosure widget that
+            // can appear at any depth, so a fixed heading level would corrupt the document
+            // outline. Emphasis carries the title without polluting the heading structure.
+            return [header ? `**${header}:**` : '', inner].filter(Boolean).join('\n\n');
         }
         case 'numberHeading':
             return renderNumberHeading(node, ctx);
@@ -423,7 +426,27 @@ function renderFence(node: Node, ctx: RenderContext): string {
         language = transformed.language || language;
     }
 
-    return `\`\`\`${language}\n${code}\n\`\`\``;
+    return fencedCodeBlock(code, language);
+}
+
+/**
+ * Wrap code in a fenced block whose delimiter is long enough to survive the content.
+ * Per CommonMark the fence must be longer than any backtick run inside the code, so we
+ * open/close with (longest run + 1), min 3 — otherwise a doc example that itself contains
+ * a ``` fence would terminate the block early and corrupt the rest of the page.
+ */
+export function fencedCodeBlock(code: string, language: string): string {
+    let longestRun = 0;
+    const matches = code.match(/`+/g);
+    if (matches) {
+        for (let i = 0, len = matches.length; i < len; ++i) {
+            if (matches[i].length > longestRun) {
+                longestRun = matches[i].length;
+            }
+        }
+    }
+    const fence = '`'.repeat(Math.max(3, longestRun + 1));
+    return `${fence}${language}\n${code}\n${fence}`;
 }
 
 /** The fence's code, resolving `{% if %}` guards and interpolation to raw text (no markdown escaping). */
@@ -706,7 +729,7 @@ async function renderExample(node: Node, ctx: RenderContext): Promise<string> {
             pageName: ctx.pageName,
         });
         if (example && example.code) {
-            parts.push(`\`\`\`${example.language || ''}\n${example.code.replace(/\n$/, '')}\n\`\`\``);
+            parts.push(fencedCodeBlock(example.code.replace(/\n$/, ''), example.language || ''));
         }
         if (example && example.liveUrl) {
             parts.push(`[Live example: ${title || name}](${example.liveUrl})`);

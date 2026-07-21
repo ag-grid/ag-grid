@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
     type MarkdownResolvers,
     type RenderMarkdocToMarkdownOptions,
+    fencedCodeBlock,
     renderMarkdocToMarkdown,
 } from './renderMarkdocToMarkdown';
 
@@ -354,6 +355,36 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).toContain('### 1. Install');
         expect(output).toContain('Run the install:');
         expect(output).toContain('npm install ag-grid-community');
+    });
+
+    it('renders expandingSection as a bold label, not a heading', async () => {
+        const body = [
+            '{% expandingSection headerText="Advanced options" %}',
+            'Hidden detail.',
+            '{% /expandingSection %}',
+        ].join('\n');
+        const output = await render(body);
+
+        expect(output).toContain('**Advanced options:**');
+        expect(output).not.toContain('#### Advanced options');
+        expect(output).toContain('Hidden detail.');
+    });
+
+    describe('fencedCodeBlock', () => {
+        it('uses a 3-backtick fence for code with no backticks', () => {
+            expect(fencedCodeBlock('const a = 1;', 'js')).toBe('```js\nconst a = 1;\n```');
+        });
+
+        it('lengthens the fence to outlast the longest backtick run in the code', () => {
+            // Code containing a ``` run needs a 4-backtick fence, or the block terminates early.
+            const code = 'Here:\n```js\nconst a = 1;\n```\nEnd.';
+            const output = fencedCodeBlock(code, 'md');
+            expect(output).toBe(`\`\`\`\`md\n${code}\n\`\`\`\``);
+        });
+
+        it('handles an empty language', () => {
+            expect(fencedCodeBlock('plain', '')).toBe('```\nplain\n```');
+        });
     });
 
     it('strips HTML comments from prose but keeps them inside code fences', async () => {

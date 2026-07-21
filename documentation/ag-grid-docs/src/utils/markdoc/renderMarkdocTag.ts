@@ -3,7 +3,7 @@ import featuresData from '@ag-website-shared/components/features-section/DocsFea
 import { FEATURE_MAP } from '@ag-website-shared/components/getting-started/gettingStartedData';
 import { FIGMA_DESIGN_SYSTEM_URL } from '@ag-website-shared/constants';
 import whatsNewData from '@ag-website-shared/content/whats-new/data.json';
-import type { MarkdownFramework } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
+import { type MarkdownFramework, fencedCodeBlock } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
 import { getDocumentationArchiveUrl } from '@ag-website-shared/utils/getArchiveUrl';
 import { getChangelogUrl } from '@ag-website-shared/utils/getChangelogUrl';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
@@ -143,7 +143,7 @@ function renderEmbedSnippet(attributes: Record<string, any>, pageName: string): 
     const file = path.join(examplePath, String(attributes.src));
     const code = readFileSync(file).toString().replace(/\n$/, '');
     const language = attributes.language ? String(attributes.language) : '';
-    return `\`\`\`${language}\n${code}\n\`\`\``;
+    return fencedCodeBlock(code, language);
 }
 
 function renderChangelogSection(attributes: Record<string, any>): string {
