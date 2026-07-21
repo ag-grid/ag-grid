@@ -33,6 +33,8 @@ test.agExample(import.meta, () => {
 
         await findInput(page).press('Enter');
         await expect(matchCount(page)).toHaveText(/^\s*1\/\d+\s*$/);
-        await expect(page.locator('mark.ag-find-active-match').filter({ hasText: 'level 3 - 1' }).first()).toBeVisible();
+        await expect(
+            page.locator('mark.ag-find-active-match').filter({ hasText: 'level 3 - 1' }).first()
+        ).toBeVisible();
     });
 });
