@@ -1,11 +1,25 @@
-import { clickAllButtons, ensureGridReady, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
 
+// The getLocaleText callback returns each default (English) value in upper case,
+// so every piece of grid chrome should render the uppercased default string.
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page }) => {
-        // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
+    test.eachFramework('row group panel uses the getLocaleText callback', async ({ page }) => {
         await ensureGridReady(page);
-        await waitForGridContent(page);
-        await clickAllButtons(page);
-        // END PLACEHOLDER
+
+        await expect(page.locator('.ag-column-drop-horizontal').first()).toContainText('DRAG HERE TO SET ROW GROUPS');
+    });
+
+    test.eachFramework('status bar uses the getLocaleText callback', async ({ page }) => {
+        await ensureGridReady(page);
+
+        await expect(page.locator('.ag-status-bar').first()).toContainText('ROWS');
+    });
+
+    test.eachFramework('pagination panel uses the getLocaleText callback', async ({ page }) => {
+        await ensureGridReady(page);
+
+        const pagingPanel = page.locator('.ag-paging-panel').first();
+        await expect(pagingPanel).toContainText('PAGE SIZE:');
+        await expect(pagingPanel).toContainText('PAGE');
     });
 });
