@@ -103,7 +103,7 @@ jobs:
           fetch-depth: 1
       - name: Detect file changes
         id: filter
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3.0.3
         with:
           filters: |
             size:

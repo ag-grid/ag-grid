@@ -81,7 +81,7 @@ jobs:
 
       - name: Publish CTRF Report
         if: always()
-        uses: ctrf-io/github-test-reporter@v1
+        uses: ctrf-io/github-test-reporter@e500b992f936420eb633c91644cf10d4d71df700 # v1.1.0
         with:
           report-path: 'reports/ag-grid-examples-interactive-default.json'
 
