@@ -298,7 +298,7 @@ export class CellComp extends Component {
         // of user hitting tab quickly (more quickly than renderers getting created) won't work
         const cellEditorAsync = _missing(this.cellEditor);
         if (cellEditorAsync && params.cellStartedEdit) {
-            this.cellCtrl.focusCell(true);
+            this.cellCtrl.focusCell({ forceBrowserFocus: true });
         }
     }
 
