@@ -1,4 +1,4 @@
-import { RefPlaceholder, _focusInto } from 'ag-stack';
+import { RefPlaceholder } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -634,6 +634,6 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
             this.hidePopupFunc = hidePopup;
             this.addDestroyFunc(hidePopup);
         }
-        _focusInto(this.mainMenuList.getGui());
+        this.mainMenuList.focusInto();
     }
 }

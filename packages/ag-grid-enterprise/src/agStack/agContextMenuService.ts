@@ -11,7 +11,6 @@ import {
     AgComponentStub,
     _anchorElementToMouseMoveEvent,
     _createAgElement,
-    _focusInto,
     _getPageBody,
     _getRootNode,
     _initStyledRoot,
@@ -364,7 +363,7 @@ class ContextMenu<
 
         const menuList = this.menuList;
         if (menuList) {
-            this.callbacks.preserveRangesWhile(this.beans, () => _focusInto(menuList.getGui()));
+            this.callbacks.preserveRangesWhile(this.beans, () => menuList.focusInto());
         }
     }
 }
