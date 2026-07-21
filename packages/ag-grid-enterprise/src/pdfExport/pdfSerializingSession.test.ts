@@ -1,13 +1,33 @@
-import type { AgColumn, PdfCustomContent, RowNode } from 'ag-grid-community';
+import type {
+    AgColumn,
+    CellClassParams,
+    CellStyle,
+    PdfCustomContent,
+    PdfStyleCallbackParams,
+    ProcessCellForExportParams,
+    RowNode,
+} from 'ag-grid-community';
 
 import type { PdfRow } from './pdfSerializingSession';
 import { PdfSerializingSession } from './pdfSerializingSession';
 
-const createColumn = (value: string, colSpan: number): AgColumn =>
+const createColumn = (
+    value: string,
+    colSpan: number,
+    cellStyle?: (params: CellClassParams) => CellStyle | null | undefined
+): AgColumn =>
     ({
         __value: value,
         getColSpan: () => colSpan,
+        getColDef: () => ({ cellStyle }),
+        isRowGroupDisplayed: () => false,
     }) as any;
+
+const createGridOptionsService = (treeData = false) => ({
+    addCommon: (params: object) => ({ ...params, api: {}, context: {} }),
+    get: (key: string) => (key === 'treeData' ? treeData : undefined),
+    getCallback: () => undefined,
+});
 
 const createSession = (): PdfSerializingSession => {
     const session = new PdfSerializingSession({
@@ -29,11 +49,13 @@ const createSession = (): PdfSerializingSession => {
     return session;
 };
 
+const getRows = (session: PdfSerializingSession): PdfRow[] => (session as any).rows;
+
 describe('PdfSerializingSession', () => {
     it('clamps cell spans to the remaining exported columns', () => {
         const session = createSession();
         const columns = [createColumn('A', 10), createColumn('B', 1), createColumn('C', 1)];
-        const node = { data: {}, group: false, rowIndex: 0 } as RowNode;
+        const node = { data: {}, group: false, level: 2, rowIndex: 0, rowPinned: 'top' } as RowNode;
 
         session.prepare(columns);
 
@@ -44,10 +66,17 @@ describe('PdfSerializingSession', () => {
             columnIndex += 1;
         }
 
-        const rows = (session as any).rows as PdfRow[];
+        const rows = getRows(session);
 
         expect(rows[0].cells).toHaveLength(1);
         expect(rows[0].cells[0].mergeAcross).toBe(2);
+        expect(rows[0]).toMatchObject({ sourceNode: node, rowPinned: 'top', groupLevel: 2 });
+        expect(rows[0].cells[0]).toMatchObject({
+            elementType: 'cell',
+            sourceColumn: columns[0],
+            sourceNode: node,
+            groupLevel: 2,
+        });
     });
 
     it('clamps custom content spans and cells to the exported table width', () => {
@@ -60,8 +89,120 @@ describe('PdfSerializingSession', () => {
         session.prepare(columns);
         session.addCustomContent(content);
 
-        const rows = (session as any).rows as PdfRow[];
+        const rows = getRows(session);
         expect(rows[0].cells).toHaveLength(1);
-        expect(rows[0].cells[0]).toMatchObject({ value: 'Spanning', mergeAcross: 2 });
+        expect(rows[0].cells[0]).toMatchObject({ value: 'Spanning', mergeAcross: 2, elementType: 'custom' });
+    });
+
+    it('resolves cellStyle with the original value before processing the exported value', () => {
+        const callOrder: string[] = [];
+        let automaticStyleValue: unknown;
+        let exportCallbackValue: unknown;
+        let pdfStyleValue: unknown;
+        const column = createColumn('A', 1, (params) => {
+            callOrder.push('cellStyle');
+            automaticStyleValue = params.value;
+            return { color: '#123456' };
+        });
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {
+                getDisplayValue: () => 42,
+            },
+            gos: createGridOptionsService(),
+            processCellCallback: (params: ProcessCellForExportParams) => {
+                callOrder.push('processCellCallback');
+                exportCallbackValue = params.value;
+                return `processed ${params.value}`;
+            },
+            currentElementStyleCallback: (params: PdfStyleCallbackParams) => {
+                if (params.type === 'cell') {
+                    callOrder.push('currentElementStyleCallback');
+                    pdfStyleValue = params.value;
+                }
+                return { backgroundColor: '#abcdef' };
+            },
+        } as any);
+        const node = { data: { value: 42 }, group: false, level: 0, rowIndex: 0 } as RowNode;
+
+        session.prepare([column]);
+        session.onNewBodyRow(node).onColumn(column, 0, node);
+
+        const cell = getRows(session)[0].cells[0];
+        expect(callOrder).toEqual(['cellStyle', 'processCellCallback', 'currentElementStyleCallback']);
+        expect(automaticStyleValue).toBe(42);
+        expect(exportCallbackValue).toBe(42);
+        expect(pdfStyleValue).toBe('processed 42');
+        expect(cell).toMatchObject({
+            value: 'processed 42',
+            elementType: 'cell',
+            style: { color: '#123456', backgroundColor: '#abcdef' },
+        });
+    });
+
+    it('retains group depth and provenance when processRowGroupCallback supplies the text', () => {
+        const callbackValues: Array<{ type: string; value: unknown }> = [];
+        const column = createColumn('Group', 1, (params) => {
+            callbackValues.push({ type: 'cellStyle', value: params.value });
+            return undefined;
+        });
+        (column as any).isRowGroupDisplayed = () => true;
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {
+                getDisplayValue: () => 'Raw group',
+            },
+            gos: createGridOptionsService(),
+            processRowGroupCallback: () => 'Processed group',
+            currentElementStyleCallback: (params: PdfStyleCallbackParams) => {
+                if (params.type === 'rowgroup') {
+                    callbackValues.push({ type: params.type, value: params.value });
+                }
+                return undefined;
+            },
+        } as any);
+        const rowGroupColumn = { colId: 'group', getColId: () => 'group' };
+        const node = { data: {}, group: true, level: 2, rowGroupColumn, rowIndex: 0 } as unknown as RowNode;
+
+        session.prepare([column]);
+        session.onNewBodyRow(node).onColumn(column, 0, node);
+
+        const row = getRows(session)[0];
+        expect(callbackValues).toEqual([
+            { type: 'cellStyle', value: 'Raw group' },
+            { type: 'rowgroup', value: 'Processed group' },
+        ]);
+        expect(row).toMatchObject({ sourceNode: node, groupLevel: 2 });
+        expect(row.cells[0]).toMatchObject({
+            value: 'Processed group',
+            elementType: 'rowgroup',
+            sourceColumn: column,
+            sourceNode: node,
+            groupLevel: 2,
+        });
+    });
+
+    it('retains source columns and element types for exported headers', () => {
+        const session = createSession();
+        const column = createColumn('A', 1);
+        const columnGroup = { getColGroupDef: () => undefined } as any;
+        (session as any).extractHeaderValue = () => 'Header';
+
+        session.onNewHeaderGroupingRow().onColumn(columnGroup, 'Group', 0, 1, []);
+        session.onNewHeaderRow().onColumn(column, 0);
+
+        const rows = getRows(session);
+        expect(rows[0].cells[0]).toMatchObject({
+            value: 'Group',
+            elementType: 'groupheader',
+            sourceColumn: columnGroup,
+        });
+        expect(rows[1].cells[0]).toMatchObject({
+            value: 'Header',
+            elementType: 'header',
+            sourceColumn: column,
+        });
     });
 });
