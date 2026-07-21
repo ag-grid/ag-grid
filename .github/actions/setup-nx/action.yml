@@ -85,5 +85,5 @@ runs:
                   testing/public-recipes/*/node_modules/
                   documentation/*/node_modules/
                   external/*/node_modules/
-              node_modules_hash: ${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json') }}
+              node_modules_hash: ${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'testing/public-recipes/*/package.json', 'external/*/package.json') }}
               nx_cache_hash: ${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}
