@@ -82,6 +82,7 @@ runs:
                   plugins/*/node_modules/
                   community-modules/*/node_modules/
                   testing/*/node_modules/
+                  testing/public-recipes/*/node_modules/
                   documentation/*/node_modules/
                   external/*/node_modules/
               node_modules_hash: ${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json') }}
