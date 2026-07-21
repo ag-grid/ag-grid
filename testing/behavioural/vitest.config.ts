@@ -1,7 +1,9 @@
 import { existsSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
+
+import { createReactAliases, loadSourceCodeAliases } from './vitest.source-aliases';
 
 import { dropCssParseErrors, loadSourceCodeAliases, sortAliases, vitestReporters } from '../../vitest.shared';
 import type { Alias } from '../../vitest.shared';
@@ -23,10 +25,7 @@ const benchCacheKey = process.env.AG_BENCH_PACKAGES
 
 // Pin react/react-dom to the versions installed in testing/behavioural/node_modules,
 // preventing Vite from resolving them from the repo-root node_modules instead.
-const aliases: Alias[] = [
-    { find: 'react', replacement: path.resolve(thisDir, 'node_modules/react') },
-    { find: 'react-dom', replacement: path.resolve(thisDir, 'node_modules/react-dom') },
-];
+const aliases = createReactAliases(thisDir);
 
 // Point package names at TypeScript source so tests run against uncompiled code.
 // AG_BENCH_PACKAGES overrides which checkout's `packages/` the grid imports resolve to — set by
@@ -114,6 +113,11 @@ export default defineConfig(({ mode }) => {
             root: repoRoot,
             dir: path.resolve(thisDir, 'src'),
             include: ['**/*.test.ts', '**/*.test.tsx'],
+            // Chart-snapshot tests render via a real Skia rasterizer, whose text/AA output is not
+            // pixel-identical across host OSes - they must only ever run inside the pinned Linux
+            // container (see testing/behavioural/docker/run-chart-snapshots.sh), never as part of
+            // the regular, cross-platform `test` target.
+            exclude: [...configDefaults.exclude, '**/*.chart-snapshot.test.ts'],
             benchmark: { include: ['**/*.bench.ts', '**/*.bench.tsx'] },
             css: browserEnabled,
             browser: {

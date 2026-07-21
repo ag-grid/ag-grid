@@ -12,6 +12,8 @@
     "ag-grid-enterprise": "36.0.0-beta.20260719.2054",
     "ag-grid-react": "36.0.0-beta.20260719.2054",
     "skia-canvas": "^3.0.8",
+    "jest-image-snapshot": "^6.0.0",
+    "@types/jest-image-snapshot": "^6.4.0",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@testing-library/dom": "^10.4.1",
