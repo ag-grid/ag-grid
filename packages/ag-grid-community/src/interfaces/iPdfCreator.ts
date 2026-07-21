@@ -32,6 +32,8 @@ export type PdfTextAlignment = 'left' | 'center' | 'right';
 
 export type PdfFontWeight = 'normal' | 'bold';
 
+export type PdfTextOverflow = 'clip' | 'ellipsis';
+
 export type PdfColumnWidth = number | 'auto' | 'grid';
 
 export interface PdfColumnWidthCallbackParams {
@@ -90,6 +92,20 @@ export interface PdfCellStyle {
      * Whether text should wrap onto multiple lines. Wrapped content increases the row height as required.
      */
     wrapText?: boolean;
+    /**
+     * Distance between text baselines in points.
+     * @default fontSize
+     */
+    lineHeight?: number;
+    /**
+     * Maximum number of rendered text lines.
+     */
+    maxLines?: number;
+    /**
+     * How text exceeding the available width, height or line limit is indicated.
+     * @default 'ellipsis'
+     */
+    overflow?: PdfTextOverflow;
 }
 
 export interface PdfCellData {
@@ -268,6 +284,20 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      * @default false
      */
     wrapText?: boolean;
+    /**
+     * Default distance between text baselines in points.
+     * @default fontSize
+     */
+    lineHeight?: number;
+    /**
+     * Default maximum number of rendered text lines.
+     */
+    maxLines?: number;
+    /**
+     * Default policy for text exceeding width, height or line limits.
+     * @default 'ellipsis'
+     */
+    overflow?: PdfTextOverflow;
     /**
      * Horizontal indentation in points for each row-group level.
      * @default 12

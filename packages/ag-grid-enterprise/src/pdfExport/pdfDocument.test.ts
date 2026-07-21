@@ -3,8 +3,8 @@ import type { AgColumn, PdfExportParams } from 'ag-grid-community';
 import { createPdfDocument } from './pdfDocument';
 import type { PdfRow } from './pdfSerializingSession';
 import { getColumnWidths, resolvePageSize } from './utils/document/layout';
-import type { LayoutOptions } from './utils/document/render';
-import { createRowRenderData, getAutoColumnWidths } from './utils/document/render';
+import type { LayoutOptions } from './utils/document/measurement';
+import { getAutoColumnWidths, measureRow } from './utils/document/measurement';
 import { resolvePdfStyleColors } from './utils/pdfColor';
 
 const stubColumn = (width: number, colKind: AgColumn['colKind'] = 'user'): AgColumn =>
@@ -16,6 +16,15 @@ const createRows = (): PdfRow[] => [
 ];
 
 const countOccurrences = (value: string, search: string): number => value.split(search).length - 1;
+
+const assertRowRectanglesRespectBottomMargin = (pdf: string, bottomMargin: number): void => {
+    const rectanglePattern = /(?:^|\n)-?\d+(?:\.\d+)? (-?\d+(?:\.\d+)?) \d+(?:\.\d+)? \d+(?:\.\d+)? re S/g;
+    const matches = [...pdf.matchAll(rectanglePattern)];
+    expect(matches.length).toBeGreaterThan(0);
+    for (const match of matches) {
+        expect(Number(match[1])).toBeGreaterThanOrEqual(bottomMargin);
+    }
+};
 
 describe('createPdfDocument', () => {
     it('normalises named page sizes to the requested orientation', () => {
@@ -133,11 +142,135 @@ describe('createPdfDocument', () => {
             cellPadding: 4,
             wrapText: true,
         };
-        const rowData = createRowRenderData(rows[0], layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
+        const rowData = measureRow(rows[0], layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
 
         expect(pdf).toContain('(First line) Tj');
         expect(pdf).toContain('(Second line) Tj');
         expect(rowData.rowHeight).toBe(28);
+    });
+
+    it('applies line height and max lines while preserving explicit newline boundaries', () => {
+        const row: PdfRow = {
+            type: 'BODY',
+            cells: [
+                {
+                    value: 'First line\nSecond line\nThird line',
+                    style: { wrapText: true, lineHeight: 14, maxLines: 2, overflow: 'clip' },
+                },
+            ],
+        };
+        const layout: LayoutOptions = {
+            columnCount: 1,
+            columnWidths: [100],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+        };
+
+        const measuredRow = measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
+
+        expect(measuredRow.cells[0].lines).toEqual(['First line', 'Second line']);
+        expect(measuredRow.rowHeight).toBe(36);
+    });
+
+    it('keeps numeric cells on one line unless wrapping is explicitly enabled', () => {
+        const row: PdfRow = {
+            type: 'BODY',
+            cells: [{ value: '123 456' }, { value: '123 456', style: { wrapText: true } }],
+        };
+        const layout: LayoutOptions = {
+            columnCount: 2,
+            columnWidths: [35, 35],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+        };
+
+        const measuredRow = measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
+
+        expect(measuredRow.cells[0].lines).toHaveLength(1);
+        expect(measuredRow.cells[1].lines.length).toBeGreaterThan(1);
+    });
+
+    it('treats explicit row height as a clipping constraint', () => {
+        const rows: PdfRow[] = [
+            {
+                type: 'BODY',
+                cells: [{ value: 'First line\nSecond line\nThird line' }],
+            },
+        ];
+        const pdf = createPdfDocument(rows, [stubColumn(100)], {
+            columnWidth: 100,
+            wrapText: true,
+            rowHeight: 28,
+        });
+
+        expect(pdf).toContain('(First line) Tj');
+        expect(pdf).toContain('(Second line...) Tj');
+        expect(pdf).not.toContain('(Third line) Tj');
+        expect(countOccurrences(pdf, '/Type /Page /Parent')).toBe(1);
+    });
+
+    it('fragments automatically sized rows without losing wrapped content', () => {
+        const values = ['Line 1', 'Line 2', 'Line 3', 'Line 4', 'Line 5', 'Line 6', 'Line 7', 'Line 8'];
+        const rows: PdfRow[] = [
+            {
+                type: 'BODY',
+                cells: [
+                    {
+                        value: values.join('\n'),
+                        style: { wrapText: true, backgroundColor: '#ffeeee', borderColor: '#333333' },
+                    },
+                ],
+            },
+        ];
+        const pdf = createPdfDocument(rows, [stubColumn(80)], {
+            pageSize: { width: 120, height: 80 },
+            margin: 10,
+            columnWidth: 80,
+        });
+
+        for (const value of values) {
+            expect(countOccurrences(pdf, `(${value}) Tj`)).toBe(1);
+        }
+        expect(countOccurrences(pdf, '/Type /Page /Parent')).toBe(2);
+        expect(countOccurrences(pdf, ' re S')).toBe(2);
+        assertRowRectanglesRespectBottomMargin(pdf, 10);
+    });
+
+    it('repeats headers only when they fit with the next oversized row fragment', () => {
+        const values = [
+            'Line 1',
+            'Line 2',
+            'Line 3',
+            'Line 4',
+            'Line 5',
+            'Line 6',
+            'Line 7',
+            'Line 8',
+            'Line 9',
+            'Line 10',
+        ];
+        const rows: PdfRow[] = [
+            { type: 'HEADER', cells: [{ value: 'Header' }] },
+            { type: 'BODY', cells: [{ value: values.join('\n'), style: { wrapText: true } }] },
+        ];
+        const pdf = createPdfDocument(rows, [stubColumn(80)], {
+            pageSize: { width: 120, height: 100 },
+            margin: 10,
+            columnWidth: 80,
+            headerRowHeight: 20,
+        });
+
+        for (const value of values) {
+            expect(countOccurrences(pdf, `(${value}) Tj`)).toBe(1);
+        }
+        expect(countOccurrences(pdf, '(Header) Tj')).toBe(2);
+        assertRowRectanglesRespectBottomMargin(pdf, 10);
     });
 
     it('includes PDF metadata title when documentTitle is set', () => {
@@ -197,7 +330,7 @@ describe('createPdfDocument', () => {
             cellPadding: 4,
         };
 
-        const rowRenderData = createRowRenderData(row, layout, 'Times-Roman', 'Times-Bold', resolvePdfStyleColors(), 0);
+        const rowRenderData = measureRow(row, layout, 'Times-Roman', 'Times-Bold', resolvePdfStyleColors(), 0);
         const pdf = createPdfDocument([row], [stubColumn(100)], {
             fontFamily: 'Times-Roman',
             headerFontFamily: 'Times-Roman',
@@ -350,14 +483,7 @@ describe('createPdfDocument', () => {
             headerRowHeight: 60,
         };
 
-        const rowRenderData = createRowRenderData(
-            row,
-            layout,
-            'Helvetica',
-            'Helvetica-Bold',
-            resolvePdfStyleColors(),
-            0
-        );
+        const rowRenderData = measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
 
         expect(rowRenderData.rowHeight).toBe(60);
     });
@@ -378,16 +504,9 @@ describe('createPdfDocument', () => {
             rowGroupIndentSize: 12,
         };
 
-        const rowRenderData = createRowRenderData(
-            row,
-            layout,
-            'Helvetica',
-            'Helvetica-Bold',
-            resolvePdfStyleColors(),
-            0
-        );
+        const rowRenderData = measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
 
-        expect(rowRenderData.cellStyles[0].padding.left).toBe(28);
+        expect(rowRenderData.cells[0].style.padding.left).toBe(28);
     });
 
     it('treats alpha-zero cell colours as transparent', () => {

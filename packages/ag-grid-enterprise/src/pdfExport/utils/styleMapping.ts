@@ -66,6 +66,11 @@ export function mapCssStylesToPdfStyle(
         result.fontSize = fontSize;
     }
 
+    const lineHeight = parseCssNumber(readStyleValue(mergedStyles, ['lineHeight', 'line-height']));
+    if (lineHeight != null) {
+        result.lineHeight = lineHeight;
+    }
+
     const fontFamily = resolveFontFamily(readStyleString(mergedStyles, ['fontFamily', 'font-family']));
     if (fontFamily) {
         result.fontFamily = fontFamily;

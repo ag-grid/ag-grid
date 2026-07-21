@@ -1,4 +1,4 @@
-import { estimateTextWidth, fmt, truncateText, wrapText } from './text';
+import { addTextEllipsis, clipText, estimateTextWidth, fmt, truncateText, wrapText } from './text';
 
 describe('PDF text utilities', () => {
     it('measures proportional Base-14 glyph widths', () => {
@@ -15,6 +15,12 @@ describe('PDF text utilities', () => {
 
         expect(wide).toBe('WW...');
         expect(narrow).toBe('iiiiiiiiii');
+    });
+
+    it('clips text without a marker and forces an ellipsis when requested', () => {
+        expect(clipText('WWWW', 20, 10, 'Helvetica')).toBe('WW');
+        expect(addTextEllipsis('alpha', 100, 10, 'Helvetica')).toBe('alpha...');
+        expect(addTextEllipsis('WWWW', 20, 10, 'Helvetica')).toBe('W...');
     });
 
     it('wraps words and preserves explicit line breaks', () => {

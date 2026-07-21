@@ -203,6 +203,45 @@ export function truncateText(text: string, maxWidth: number, fontSize: number, f
 }
 
 /**
+ * Clip text to a width budget without adding an overflow marker.
+ * @param text - Text to clip.
+ * @param maxWidth - Maximum allowed width in points.
+ * @param fontSize - Font size in points.
+ * @param fontFamily - Active font family.
+ * @returns The widest source prefix that fits.
+ */
+export function clipText(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string {
+    if (!text || !Number.isFinite(maxWidth) || maxWidth <= 0 || !Number.isFinite(fontSize) || fontSize <= 0) {
+        return '';
+    }
+
+    let clipped = '';
+    let clippedWidth = 0;
+    for (const char of text) {
+        const charWidth = estimateTextWidth(char, fontSize, fontFamily);
+        if (clippedWidth + charWidth > maxWidth) {
+            break;
+        }
+        clipped += char;
+        clippedWidth += charWidth;
+    }
+
+    return clipped;
+}
+
+/**
+ * Add an ellipsis to a line while keeping it within a width budget.
+ * @param text - Visible final line.
+ * @param maxWidth - Maximum allowed width in points.
+ * @param fontSize - Font size in points.
+ * @param fontFamily - Active font family.
+ * @returns Ellipsised line.
+ */
+export function addTextEllipsis(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string {
+    return truncateText(`${text}...`, maxWidth, fontSize, fontFamily);
+}
+
+/**
  * Format a PDF numeric token.
  * @param value - Numeric value.
  * @returns Integer string or fixed 2dp decimal string.

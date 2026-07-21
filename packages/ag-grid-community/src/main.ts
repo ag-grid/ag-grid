@@ -157,6 +157,7 @@ export type {
     PdfStyleCallbackParams,
     PdfStyleCallbackType,
     PdfTextAlignment,
+    PdfTextOverflow,
 } from './interfaces/iPdfCreator';
 
 // Drag and Drop
