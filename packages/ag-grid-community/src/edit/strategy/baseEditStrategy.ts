@@ -212,7 +212,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             // focus the cell instead
 
             const isFullRow = this.beans.gos.get('editType') === 'fullRow';
-            cellCtrl.focusCell(isFullRow);
+            cellCtrl.focusCell({ forceBrowserFocus: isFullRow });
             cellCtrl.onEditorAttachedFuncs.push(() => comp?.getCellEditor()?.focusIn?.());
         }
     }
