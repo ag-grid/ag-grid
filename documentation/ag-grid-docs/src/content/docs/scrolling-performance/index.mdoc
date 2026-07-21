@@ -75,6 +75,14 @@ achieve what you want instead? Value Getters and Value Formatters do not result 
 If you are looking for ways to squeeze performance, consider turning this feature off. As with all suggestions here, it is paramount you profile
 your own application with this suggestion to see how much of a difference it makes and if the trade off is worth it for your application.
 
+## Skip Rendering Off-Screen Grids
+
+If your application renders multiple grids and some are scrolled out of view, consider setting `enableContentVisibilityAuto=true` to apply the CSS [`content-visibility: auto`](https://developer.mozilla.org/en-US/docs/Web/CSS/content-visibility) property to the grid wrapper. This skips rendering work for off-screen grids. For pages with a large number of off-screen grids, including Master / Detail apps with many detail rows expanded, the improvement in frame-rate while scrolling can be an order of magnitude or more.
+
+When `content-visibility: auto` is applied and the grid is off-screen, any attempt to measure the width or height of an element within the grid will result in zero. For this reason, we only apply the style after one second to give time for any initial measurements done by application code or by the grid through [autoSizeStrategy](./grid-options/#reference-columnSizing-autoSizeStrategy) to be carried out. This delay can be customised by passing a millisecond value to `contentVisibilityAutoDelay`.
+
+However it can be even more effective to delay initialisation of off-screen grids altogether. `enableContentVisibilityAuto` prevents unnecessary rendering work on hidden grids, but these grids will still execute JavaScript and make network requests. Consider using an [Intersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to determine when your grids are about to scroll into view and initialising them just in time, then destroying them when they scroll out of view.
+
 ## Configure Row Buffer
 
 The `rowBuffer` property sets the number of rows the grid renders outside of the viewable area. The default is 10. For example, if your

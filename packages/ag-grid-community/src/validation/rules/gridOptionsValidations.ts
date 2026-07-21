@@ -99,6 +99,8 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         version: '34',
         message: 'Advanced filter no longer uses function evaluation, so this option has no effect.',
     },
+
+    suppressContentVisibilityAuto: { version: '36.1', message: 'Use `enableContentVisibilityAuto` instead.' },
 });
 
 function toConstrainedNum(key: keyof GridOptions, value: any, min: number): string | ValidationWarning | null {

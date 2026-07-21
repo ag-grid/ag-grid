@@ -1722,11 +1722,22 @@ export interface Props<TData> {
          * @initial
          */
     suppressRowTransform?: boolean,
-    /** Set to `false` to enable `content-visibility: auto` on the grid wrapper element. This improves performance by allowing the browser to skip rendering grids that are off screen, but may cause issues if your application depends on receiving resize events from hidden grids.
+    /** Setting this option to false is equivalent to setting `enableContentVisibilityAuto` to true. If both are set, `enableContentVisibilityAuto` takes precedence.
          * @default true
          * @initial
+         * @deprecated v36.1 use enableContentVisibilityAuto instead
          */
     suppressContentVisibilityAuto?: boolean,
+    /** Set to `true` to enable `content-visibility: auto` on the grid wrapper element. This improves performance by allowing the browser to skip rendering grids that are off screen. JavaScript size measurement APIs like `offsetWidth` or `getBoundingClientRect` will report zero size when the grid is off-screen. This means that APIs that need to measure the size of DOM elements, like `sizeColumnsToFit` will not work either. To ensure that `autoSizeStrategy` works, content-visibility:auto will only be applied 1000ms after rendering the first data. This can be customised with `contentVisibilityAutoDelay`
+         * @default false
+         * @initial
+         */
+    enableContentVisibilityAuto?: boolean,
+    /** The delay in ms between the firstDataRendered event and enabling content-visibility:auto on the grid wrapper element
+         * @default 1000
+         * @initial
+         */
+    contentVisibilityAutoDelay?: number,
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
          * @default false
          * @agModule `ColumnHoverModule`
@@ -2441,6 +2452,8 @@ export function getProps() {
         suppressRowHoverHighlight: undefined,
         suppressRowTransform: undefined,
         suppressContentVisibilityAuto: undefined,
+        enableContentVisibilityAuto: undefined,
+        contentVisibilityAutoDelay: undefined,
         columnHoverHighlight: undefined,
         gridId: undefined,
         deltaSort: undefined,
