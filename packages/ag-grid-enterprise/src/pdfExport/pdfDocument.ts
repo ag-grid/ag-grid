@@ -9,6 +9,7 @@ import {
     resolveMargin,
     resolvePageSize,
 } from './utils/document/layout';
+import { resolveFiniteNumber, resolveOptionalFiniteNumber } from './utils/document/numbers';
 import type { LayoutOptions } from './utils/document/render';
 import {
     createRowRenderData,
@@ -44,13 +45,13 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     const margin = resolveMargin(params.margin);
     const styleColors = resolvePdfStyleColors(params.pdfStyles);
 
-    const columnCount = Math.max(columnsToExport.length, getMaxColumnCount(rows), 1);
+    const columnCount = columnsToExport.length || Math.max(getMaxColumnCount(rows), 1);
     const availableWidth = Math.max(pageSize.width - margin.left - margin.right, 0);
     const columnWidths = getColumnWidths(columnsToExport, columnCount, availableWidth);
 
-    const fontSize = params.fontSize ?? DEFAULTS.fontSize;
-    const headerFontSize = params.headerFontSize ?? DEFAULTS.headerFontSize;
-    const cellPadding = params.cellPadding ?? DEFAULTS.cellPadding;
+    const fontSize = resolveFiniteNumber(params.fontSize, DEFAULTS.fontSize, Number.EPSILON);
+    const headerFontSize = resolveFiniteNumber(params.headerFontSize, DEFAULTS.headerFontSize, Number.EPSILON);
+    const cellPadding = resolveFiniteNumber(params.cellPadding, DEFAULTS.cellPadding);
     const repeatHeader = params.repeatHeader ?? DEFAULTS.repeatHeader;
     const drawCellBorders = params.drawCellBorders ?? DEFAULTS.drawCellBorders;
 
@@ -75,8 +76,8 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         fontSize,
         headerFontSize,
         cellPadding,
-        rowHeight: params.rowHeight,
-        headerRowHeight: params.headerRowHeight,
+        rowHeight: resolveOptionalFiniteNumber(params.rowHeight, Number.EPSILON),
+        headerRowHeight: resolveOptionalFiniteNumber(params.headerRowHeight, Number.EPSILON),
     };
 
     const pageContentHeight = Math.max(pageSize.height - margin.top - margin.bottom, 0);

@@ -30,6 +30,8 @@ export interface PdfMargin {
 
 export type PdfTextAlignment = 'left' | 'center' | 'right';
 
+export type PdfFontWeight = 'normal' | 'bold';
+
 export interface PdfCellStyle {
     /**
      * Font size in points.
@@ -39,6 +41,10 @@ export interface PdfCellStyle {
      * Font family.
      */
     fontFamily?: PdfFontFamily;
+    /**
+     * Font weight. When omitted, the weight from the resolved font family is preserved.
+     */
+    fontWeight?: PdfFontWeight;
     /**
      * Text colour.
      */

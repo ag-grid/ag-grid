@@ -1,7 +1,9 @@
 import type { AgColumn, PdfExportParams, PdfFontFamily, PdfPageOrientation, PdfPageSize } from 'ag-grid-community';
 
 import type { PdfRow, PdfRowType } from '../../pdfSerializingSession';
-import { normalisePdfFontFamily } from '../fonts';
+import { normalisePdfFontFamily, resolvePdfFontFamily } from '../fonts';
+import { mergePdfCellStyles } from '../styles';
+import { resolveFiniteNumber } from './numbers';
 
 export type ResolvedMargin = { top: number; right: number; bottom: number; left: number };
 
@@ -38,10 +40,12 @@ export function resolvePageSize(
         resolvedSize = pageSize;
     }
 
-    let width = resolvedSize.width;
-    let height = resolvedSize.height;
+    const fallbackSize = PAGE_SIZES[DEFAULT_PAGE_SIZE];
+    let width = resolveFiniteNumber(resolvedSize.width, fallbackSize.width, Number.EPSILON);
+    let height = resolveFiniteNumber(resolvedSize.height, fallbackSize.height, Number.EPSILON);
 
-    const resolvedOrientation = orientation ?? DEFAULT_PAGE_ORIENTATION;
+    const resolvedOrientation =
+        orientation === 'portrait' || orientation === 'landscape' ? orientation : DEFAULT_PAGE_ORIENTATION;
     const shouldSwap =
         (resolvedOrientation === 'landscape' && width < height) ||
         (resolvedOrientation === 'portrait' && width > height);
@@ -60,16 +64,17 @@ export function resolvePageSize(
  */
 export function resolveMargin(margin: PdfExportParams['margin']): ResolvedMargin {
     if (typeof margin === 'number') {
-        return { top: margin, right: margin, bottom: margin, left: margin };
+        const resolved = resolveFiniteNumber(margin, DEFAULT_MARGIN);
+        return { top: resolved, right: resolved, bottom: resolved, left: resolved };
     }
 
     const resolvedMargin = margin ?? {};
 
     return {
-        top: resolvedMargin.top ?? DEFAULT_MARGIN,
-        right: resolvedMargin.right ?? DEFAULT_MARGIN,
-        bottom: resolvedMargin.bottom ?? DEFAULT_MARGIN,
-        left: resolvedMargin.left ?? DEFAULT_MARGIN,
+        top: resolveFiniteNumber(resolvedMargin.top, DEFAULT_MARGIN),
+        right: resolveFiniteNumber(resolvedMargin.right, DEFAULT_MARGIN),
+        bottom: resolveFiniteNumber(resolvedMargin.bottom, DEFAULT_MARGIN),
+        left: resolveFiniteNumber(resolvedMargin.left, DEFAULT_MARGIN),
     };
 }
 
@@ -84,7 +89,7 @@ export function getMaxColumnCount(rows: PdfRow[]): number {
     for (const row of rows) {
         let count = 0;
         for (const cell of row.cells) {
-            count += 1 + (cell.mergeAcross ?? 0);
+            count += 1 + Math.floor(resolveFiniteNumber(cell.mergeAcross, 0));
         }
         max = Math.max(max, count);
     }
@@ -104,18 +109,19 @@ export function getColumnWidths(columnsToExport: AgColumn[], columnCount: number
         return [];
     }
 
+    const resolvedAvailableWidth = resolveFiniteNumber(availableWidth, 0);
     const baseWidths: number[] = [];
     let totalColumnWidth = 0;
 
     for (const column of columnsToExport) {
-        totalColumnWidth += column.getActualWidth();
+        totalColumnWidth += resolveFiniteNumber(column.getActualWidth(), 100, Number.EPSILON);
     }
 
     const defaultWidth = columnsToExport.length ? totalColumnWidth / columnsToExport.length : 100;
 
     for (let i = 0; i < columnCount; i++) {
         if (i < columnsToExport.length) {
-            baseWidths.push(columnsToExport[i].getActualWidth());
+            baseWidths.push(resolveFiniteNumber(columnsToExport[i].getActualWidth(), defaultWidth, Number.EPSILON));
         } else {
             baseWidths.push(defaultWidth);
         }
@@ -127,9 +133,9 @@ export function getColumnWidths(columnsToExport: AgColumn[], columnCount: number
         totalWidth += width;
     }
 
-    if (!totalWidth || !availableWidth) {
+    if (!totalWidth || !resolvedAvailableWidth) {
         const fallbackWidths: number[] = [];
-        const fallbackWidth = availableWidth / columnCount;
+        const fallbackWidth = resolvedAvailableWidth / columnCount;
 
         while (fallbackWidths.length < columnCount) {
             fallbackWidths.push(fallbackWidth);
@@ -138,7 +144,7 @@ export function getColumnWidths(columnsToExport: AgColumn[], columnCount: number
         return fallbackWidths;
     }
 
-    const scale = availableWidth / totalWidth;
+    const scale = resolvedAvailableWidth / totalWidth;
     const scaledWidths: number[] = [];
 
     for (const width of baseWidths) {
@@ -184,9 +190,11 @@ export function createFontKeyMap(
     registerFont(titleFont);
 
     for (const row of rows) {
-        registerFont(row.style?.fontFamily);
+        const baseFont = isHeaderRowType(row.type) ? headerFont : bodyFont;
+        registerFont(resolvePdfFontFamily(row.style?.fontFamily, row.style?.fontWeight, baseFont));
         for (const cell of row.cells) {
-            registerFont(cell.style?.fontFamily);
+            const style = mergePdfCellStyles(row.style, cell.style);
+            registerFont(resolvePdfFontFamily(style?.fontFamily, style?.fontWeight, baseFont));
         }
     }
 

@@ -77,12 +77,25 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
 
         for (const rowCells of content) {
             const row = this.createRow('CUSTOM');
+            const columnCount = Math.max(this.columnsToExport.length, 1);
+            let columnIndex = 0;
             for (const cell of rowCells) {
+                if (columnIndex >= columnCount) {
+                    break;
+                }
+
+                const rawMergeAcross = cell?.mergeAcross;
+                const requestedSpan =
+                    typeof rawMergeAcross === 'number' && Number.isFinite(rawMergeAcross)
+                        ? Math.max(Math.floor(rawMergeAcross), 0)
+                        : 0;
+                const mergeAcross = Math.min(requestedSpan, columnCount - columnIndex - 1);
                 row.cells.push({
                     value: String(cell?.data?.value ?? ''),
-                    mergeAcross: cell?.mergeAcross,
+                    mergeAcross: mergeAcross || undefined,
                     style: resolvePdfCellStyleColors(cell?.style, this.config.resolveColor),
                 });
+                columnIndex += mergeAcross + 1;
             }
         }
     }

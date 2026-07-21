@@ -147,6 +147,7 @@ export type {
     PdfExportParams,
     PdfExportStyles,
     PdfFontFamily,
+    PdfFontWeight,
     PdfMargin,
     PdfPageOrientation,
     PdfPageSize,

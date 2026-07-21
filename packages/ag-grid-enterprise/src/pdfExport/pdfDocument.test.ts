@@ -44,6 +44,14 @@ describe('createPdfDocument', () => {
         expect(pdf).toContain('/Type /Page');
     });
 
+    it('clips rendered text to the cell content box', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {});
+
+        expect(pdf).toContain(' re W n');
+        expect(pdf).toContain('q\n');
+        expect(pdf).toContain('\nQ');
+    });
+
     it('includes PDF metadata title when documentTitle is set', () => {
         const rows = createRows();
         const columns = [stubColumn(100)];
@@ -83,6 +91,53 @@ describe('createPdfDocument', () => {
         expect(pdf).not.toContain('Comic Sans MS');
         expect(pdf).not.toContain('Papyrus');
         expect(pdf).not.toContain('Wingdings');
+    });
+
+    it('applies bold weight to the inherited font family', () => {
+        const row: PdfRow = {
+            type: 'BODY',
+            style: { fontWeight: 'bold' },
+            cells: [{ value: 'Value' }],
+        };
+        const layout: LayoutOptions = {
+            columnCount: 1,
+            columnWidths: [100],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+        };
+
+        const rowRenderData = createRowRenderData(row, layout, 'Times-Roman', 'Times-Bold', resolvePdfStyleColors(), 0);
+        const pdf = createPdfDocument([row], [stubColumn(100)], {
+            fontFamily: 'Times-Roman',
+            headerFontFamily: 'Times-Roman',
+        });
+
+        expect(rowRenderData.defaultCellStyle.fontFamily).toBe('Times-Bold');
+        expect(pdf).toContain('/BaseFont /Times-Bold');
+        expect(pdf).toContain('/F2 10 Tf');
+    });
+
+    it('does not emit invalid PDF tokens for malformed runtime values', () => {
+        const params = {
+            pageSize: { width: Number.NaN, height: Number.POSITIVE_INFINITY },
+            margin: Number.NaN,
+            fontSize: Number.POSITIVE_INFINITY,
+            headerFontSize: Number.NaN,
+            cellPadding: Number.NEGATIVE_INFINITY,
+            rowHeight: Number.NaN,
+            pdfStyles: {
+                headerBackgroundColor: '#ggg',
+            },
+        } as PdfExportParams;
+
+        const pdf = createPdfDocument(createRows(), [stubColumn(Number.NaN)], params);
+
+        expect(pdf).not.toContain('NaN');
+        expect(pdf).not.toContain('Infinity');
+        expect(pdf).toContain('/MediaBox [0 0 841.89 595.28]');
     });
 
     it('renders srgb header background colours', () => {

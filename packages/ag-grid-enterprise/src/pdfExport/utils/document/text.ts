@@ -1,5 +1,7 @@
 import type { PdfFontFamily } from 'ag-grid-community';
 
+import { getBase14GlyphWidth } from './fontMetrics';
+
 const WIN_ANSI_CODEPOINT_MAP = new Map<number, number>([
     [0x20ac, 0x80],
     [0x201a, 0x82],
@@ -76,14 +78,23 @@ export function escapePdfString(value: string): string {
 }
 
 /**
- * Estimate text width using coarse font metrics for layout decisions.
+ * Measure text using the advance widths of the built-in PDF fonts.
  * @param text - Text to measure.
  * @param fontSize - Font size in points.
  * @param fontFamily - Active font family.
  * @returns Estimated width in points.
  */
 export function estimateTextWidth(text: string, fontSize: number, fontFamily: PdfFontFamily): number {
-    return text.length * getApproxCharWidth(fontSize, fontFamily);
+    if (!Number.isFinite(fontSize) || fontSize <= 0) {
+        return 0;
+    }
+
+    let width = 0;
+    for (const char of text) {
+        width += getBase14GlyphWidth(char, fontFamily);
+    }
+
+    return (width / 1000) * fontSize;
 }
 
 /**
@@ -99,22 +110,31 @@ export function truncateText(text: string, maxWidth: number, fontSize: number, f
         return '';
     }
 
-    const charWidth = getApproxCharWidth(fontSize, fontFamily);
-    const maxChars = Math.floor(maxWidth / charWidth);
-
-    if (maxChars <= 0) {
+    if (!Number.isFinite(maxWidth) || maxWidth <= 0 || !Number.isFinite(fontSize) || fontSize <= 0) {
         return '';
     }
 
-    if (text.length <= maxChars) {
+    if (estimateTextWidth(text, fontSize, fontFamily) <= maxWidth) {
         return text;
     }
 
-    if (maxChars <= 3) {
-        return text.slice(0, maxChars);
+    const ellipsis = '...';
+    const ellipsisWidth = estimateTextWidth(ellipsis, fontSize, fontFamily);
+    const ellipsisFits = ellipsisWidth <= maxWidth;
+    const widthBudget = ellipsisFits ? maxWidth - ellipsisWidth : maxWidth;
+    let truncated = '';
+    let truncatedWidth = 0;
+
+    for (const char of text) {
+        const charWidth = estimateTextWidth(char, fontSize, fontFamily);
+        if (truncatedWidth + charWidth > widthBudget) {
+            break;
+        }
+        truncated += char;
+        truncatedWidth += charWidth;
     }
 
-    return `${text.slice(0, maxChars - 3)}...`;
+    return ellipsisFits ? `${truncated}${ellipsis}` : truncated;
 }
 
 /**
@@ -123,21 +143,15 @@ export function truncateText(text: string, maxWidth: number, fontSize: number, f
  * @returns Integer string or fixed 2dp decimal string.
  */
 export function fmt(value: number): string {
+    if (!Number.isFinite(value)) {
+        return '0';
+    }
+
     if (Number.isInteger(value)) {
         return value.toString();
     }
 
     return value.toFixed(2);
-}
-
-/**
- * Estimate average glyph width for the built-in PDF fonts.
- * @param fontSize - Font size in points.
- * @param fontFamily - Active font family.
- * @returns Average character width in points.
- */
-function getApproxCharWidth(fontSize: number, fontFamily: PdfFontFamily): number {
-    return fontFamily.includes('Courier') ? fontSize * 0.6 : fontSize * 0.5;
 }
 
 /**

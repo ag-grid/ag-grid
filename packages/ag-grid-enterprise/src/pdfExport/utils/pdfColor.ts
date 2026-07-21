@@ -169,9 +169,9 @@ export function resolveOptionalColor(
  * @returns Space-separated decimal RGB values in 0..1 range.
  */
 export function formatColor(color: PdfRgb): string {
-    const r = (color.r / 255).toFixed(3);
-    const g = (color.g / 255).toFixed(3);
-    const b = (color.b / 255).toFixed(3);
+    const r = (resolveChannel(color.r) / 255).toFixed(3);
+    const g = (resolveChannel(color.g) / 255).toFixed(3);
+    const b = (resolveChannel(color.b) / 255).toFixed(3);
     return `${r} ${g} ${b}`;
 }
 
@@ -252,6 +252,10 @@ function parseColor(value: string): PdfRgba | null | undefined {
 
     if (normalised.startsWith('#')) {
         const hex = normalised.slice(1);
+        if (!/^(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/.test(hex)) {
+            return undefined;
+        }
+
         if (hex.length === 3 || hex.length === 4) {
             const r = Number.parseInt(hex[0] + hex[0], 16);
             const g = Number.parseInt(hex[1] + hex[1], 16);
@@ -460,6 +464,10 @@ function hslToRgb(h: number, s: number, l: number): PdfRgb {
  */
 function clampChannel(value: number): number {
     return Math.max(0, Math.min(255, Math.round(value)));
+}
+
+function resolveChannel(value: number): number {
+    return Number.isFinite(value) ? clampChannel(value) : 0;
 }
 
 /**

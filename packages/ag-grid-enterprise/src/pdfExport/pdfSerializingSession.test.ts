@@ -1,4 +1,4 @@
-import type { AgColumn, RowNode } from 'ag-grid-community';
+import type { AgColumn, PdfCustomContent, RowNode } from 'ag-grid-community';
 
 import type { PdfRow } from './pdfSerializingSession';
 import { PdfSerializingSession } from './pdfSerializingSession';
@@ -48,5 +48,20 @@ describe('PdfSerializingSession', () => {
 
         expect(rows[0].cells).toHaveLength(1);
         expect(rows[0].cells[0].mergeAcross).toBe(2);
+    });
+
+    it('clamps custom content spans and cells to the exported table width', () => {
+        const session = createSession();
+        const columns = [createColumn('A', 1), createColumn('B', 1), createColumn('C', 1)];
+        const content: PdfCustomContent = [
+            [{ data: { value: 'Spanning' }, mergeAcross: 100 }, { data: { value: 'Overflow' } }],
+        ];
+
+        session.prepare(columns);
+        session.addCustomContent(content);
+
+        const rows = (session as any).rows as PdfRow[];
+        expect(rows[0].cells).toHaveLength(1);
+        expect(rows[0].cells[0]).toMatchObject({ value: 'Spanning', mergeAcross: 2 });
     });
 });

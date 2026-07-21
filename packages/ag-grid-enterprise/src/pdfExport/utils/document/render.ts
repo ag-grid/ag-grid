@@ -1,12 +1,13 @@
 import type { PdfCellStyle, PdfExportParams, PdfFontFamily, PdfMargin, PdfTextAlignment } from 'ag-grid-community';
 
 import type { PdfRow, PdfRowType } from '../../pdfSerializingSession';
-import { normalisePdfFontFamily } from '../fonts';
+import { resolvePdfFontFamily } from '../fonts';
 import type { PdfRgb, PdfRowStyles, PdfStyleColors } from '../pdfColor';
 import { formatColor, getRowStyles, resolveOptionalColor } from '../pdfColor';
 import { mergePdfCellStyles } from '../styles';
 import type { ResolvedMargin, ResolvedPageSize } from './layout';
 import { getSpanWidth, isHeaderRowType } from './layout';
+import { resolveFiniteNumber } from './numbers';
 import { escapePdfString, estimateTextWidth, fmt, normaliseText, truncateText } from './text';
 
 const DEFAULT_TITLE_MARGIN: ResolvedMargin = { top: 0, right: 0, bottom: 8, left: 0 };
@@ -270,7 +271,18 @@ export function renderRow(
             currentLineWidth
         );
 
-        renderCellText(pageParts, cell.value, x, rowTop, cellWidth, cellStyle, defaultFontKey, fontKeyByFamily);
+        renderCellText(
+            pageParts,
+            cell.value,
+            x,
+            rowTop,
+            rowBottom,
+            cellWidth,
+            resolvedRowData.rowHeight,
+            cellStyle,
+            defaultFontKey,
+            fontKeyByFamily
+        );
 
         x += cellWidth;
         colIndex += span + 1;
@@ -410,7 +422,9 @@ function renderCellBox(
  * @param rawCellValue - Raw cell value.
  * @param x - Cell x position.
  * @param rowTop - Row top y position.
+ * @param rowBottom - Row bottom y position.
  * @param cellWidth - Cell width.
+ * @param rowHeight - Row height.
  * @param cellStyle - Resolved cell style.
  * @param defaultFontKey - Fallback font key.
  * @param fontKeyByFamily - Registered PDF font keys.
@@ -420,13 +434,20 @@ function renderCellText(
     rawCellValue: string,
     x: number,
     rowTop: number,
+    rowBottom: number,
     cellWidth: number,
+    rowHeight: number,
     cellStyle: ResolvedCellStyle,
     defaultFontKey: string,
     fontKeyByFamily: Map<PdfFontFamily, string>
 ): void {
     const padding = cellStyle.padding;
     const textWidthAvailable = Math.max(cellWidth - padding.left - padding.right, 0);
+    const textHeightAvailable = Math.max(rowHeight - padding.top - padding.bottom, 0);
+    if (!textWidthAvailable || !textHeightAvailable) {
+        return;
+    }
+
     const text = truncateText(
         normaliseText(rawCellValue),
         textWidthAvailable,
@@ -453,11 +474,17 @@ function renderCellText(
     const textY = rowTop - padding.top - cellStyle.fontSize;
     const fontKey = fontKeyByFamily.get(cellStyle.fontFamily) ?? defaultFontKey;
 
+    // constrain text operators to the cell content box even if malformed runtime styles escape measurement guards.
+    pageParts.push('q');
+    pageParts.push(
+        `${fmt(x + padding.left)} ${fmt(rowBottom + padding.bottom)} ${fmt(textWidthAvailable)} ${fmt(textHeightAvailable)} re W n`
+    );
     pageParts.push('BT');
     pageParts.push(`${formatColor(cellStyle.textColor)} rg`);
     pageParts.push(`/${fontKey} ${fmt(cellStyle.fontSize)} Tf`);
     pageParts.push(`1 0 0 1 ${fmt(textX)} ${fmt(textY)} Tm (${escapePdfString(text)}) Tj`);
     pageParts.push('ET');
+    pageParts.push('Q');
 }
 
 /**
@@ -507,9 +534,9 @@ function resolveTitleStyle(
     headerFont: PdfFontFamily,
     defaultHeaderFontSize: number
 ): ResolvedCellStyle {
-    const headerFontSize = params.headerFontSize ?? defaultHeaderFontSize;
-    const fontSize = style?.fontSize ?? Math.max(headerFontSize + 4, 14);
-    const fontFamily = normalisePdfFontFamily(style?.fontFamily, headerFont);
+    const headerFontSize = resolveFiniteNumber(params.headerFontSize, defaultHeaderFontSize, Number.EPSILON);
+    const fontSize = resolveFiniteNumber(style?.fontSize, Math.max(headerFontSize + 4, 14), Number.EPSILON);
+    const fontFamily = resolvePdfFontFamily(style?.fontFamily, style?.fontWeight, headerFont);
     const alignment = style?.alignment ?? DEFAULT_TITLE_ALIGNMENT;
     const padding = resolveBoxSpacing(style?.padding, DEFAULT_TITLE_PADDING);
     const margin = resolveBoxSpacing(style?.margin, DEFAULT_TITLE_MARGIN);
@@ -558,8 +585,8 @@ function resolveTableCellStyle(
         bottom: layout.cellPadding,
         left: layout.cellPadding,
     });
-    const resolvedFontSize = style?.fontSize ?? defaultFontSize;
-    const resolvedFontFamily = normalisePdfFontFamily(style?.fontFamily, fontFamily);
+    const resolvedFontSize = resolveFiniteNumber(style?.fontSize, defaultFontSize, Number.EPSILON);
+    const resolvedFontFamily = resolvePdfFontFamily(style?.fontFamily, style?.fontWeight, fontFamily);
     const alignment = style?.alignment ?? DEFAULT_CELL_ALIGNMENT;
 
     const blendWith = rowStyles.background ?? styleColors.dataBackground ?? styleColors.pageBackground;
@@ -590,16 +617,17 @@ function resolveTableCellStyle(
  */
 function resolveBoxSpacing(value: number | PdfMargin | undefined, fallback: ResolvedMargin): ResolvedMargin {
     if (typeof value === 'number') {
-        return { top: value, right: value, bottom: value, left: value };
+        const spacing = resolveFiniteNumber(value, 0);
+        return { top: spacing, right: spacing, bottom: spacing, left: spacing };
     }
 
     const resolvedValue = value ?? {};
 
     return {
-        top: resolvedValue.top ?? fallback.top,
-        right: resolvedValue.right ?? fallback.right,
-        bottom: resolvedValue.bottom ?? fallback.bottom,
-        left: resolvedValue.left ?? fallback.left,
+        top: resolveFiniteNumber(resolvedValue.top, fallback.top),
+        right: resolveFiniteNumber(resolvedValue.right, fallback.right),
+        bottom: resolveFiniteNumber(resolvedValue.bottom, fallback.bottom),
+        left: resolveFiniteNumber(resolvedValue.left, fallback.left),
     };
 }
 
@@ -610,7 +638,7 @@ function resolveBoxSpacing(value: number | PdfMargin | undefined, fallback: Reso
  * @returns Border width in points.
  */
 function resolveBorderWidth(borderWidth: number | undefined, borderColor?: PdfRgb): number {
-    return borderWidth ?? (borderColor ? 1 : 0);
+    return resolveFiniteNumber(borderWidth, borderColor ? 1 : 0);
 }
 
 /**

@@ -1,7 +1,7 @@
 import type { CellStyle, HeaderStyle, PdfCellStyle, RowStyle } from 'ag-grid-community';
 
 import { extractBorderColor, readResolvedStyleColor, resolveCssColorValue } from './colors';
-import { resolveFontFamily, resolveTextAlignment } from './fonts';
+import { resolveFontFamily, resolveFontWeight, resolveTextAlignment } from './fonts';
 import type { StyleValueMap } from './styleValues';
 import { parseCssNumber, readStyleString, readStyleValue, resolvePaddingStyle } from './styleValues';
 
@@ -66,12 +66,14 @@ export function mapCssStylesToPdfStyle(
         result.fontSize = fontSize;
     }
 
-    const fontFamily = resolveFontFamily(
-        readStyleString(mergedStyles, ['fontFamily', 'font-family']),
-        readStyleValue(mergedStyles, ['fontWeight', 'font-weight'])
-    );
+    const fontFamily = resolveFontFamily(readStyleString(mergedStyles, ['fontFamily', 'font-family']));
     if (fontFamily) {
         result.fontFamily = fontFamily;
+    }
+
+    const fontWeight = resolveFontWeight(readStyleValue(mergedStyles, ['fontWeight', 'font-weight']));
+    if (fontWeight) {
+        result.fontWeight = fontWeight;
     }
 
     const alignment = resolveTextAlignment(readStyleString(mergedStyles, ['textAlign', 'text-align']));
