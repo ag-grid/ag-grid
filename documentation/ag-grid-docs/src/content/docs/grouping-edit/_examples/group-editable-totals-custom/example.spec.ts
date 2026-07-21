@@ -1,6 +1,5 @@
-import type { Locator, Page } from 'playwright/test';
-
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import type { Locator, Page } from 'playwright/test';
 
 test.agExample(import.meta, () => {
     // Grouped by region then segment. Amount uses aggFunc 'sum' with a custom groupRowValueSetter

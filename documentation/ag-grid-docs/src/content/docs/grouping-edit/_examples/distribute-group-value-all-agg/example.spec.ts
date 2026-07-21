@@ -1,6 +1,5 @@
-import type { Locator, Page } from 'playwright/test';
-
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import type { Locator, Page } from 'playwright/test';
 
 test.agExample(import.meta, () => {
     // Grouped by department then team. Each column uses a different distribution strategy:
