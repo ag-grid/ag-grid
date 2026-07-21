@@ -84,12 +84,47 @@ jobs:
             core.setOutput('is-draft', pr.draft ? 'true' : 'false');
             core.setOutput('base-ref', pr.base.ref);
 
+  # Gate the heavy measurement jobs on whether any change could actually move bundle
+  # sizes. This is a per-job gate (not a workflow-level `paths:` filter) on purpose: the
+  # `status` job below is the required branch-protection check, and a path-filtered
+  # workflow would leave that check stuck "Expected" and block merges. Instead the heavy
+  # jobs skip and `status` treats skipped inputs as a pass.
+  detect-changes:
+    name: Detect Size-Relevant Changes
+    runs-on: ubuntu-latest
+    needs: prepare
+    if: needs.prepare.outputs.is-draft != 'true'
+    outputs:
+      relevant: ${{ steps.filter.outputs.size }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Detect file changes
+        id: filter
+        uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3.0.3
+        with:
+          filters: |
+            size:
+              - 'packages/**'
+              - 'community-modules/**'
+              - 'yarn.lock'
+              - 'nx.json'
+              - 'tsconfig.*.json'
+              # module-size measurement infrastructure
+              - 'testing/module-size/**'
+              - 'testing/module-size-angular/**'
+              - '.github/workflows/module-size-comparison.yml'
+              - '.github/actions/module-size-test/**'
+              - 'scripts/ci/*module-size*'
+
   # Check for cached base results
   check-base-cache:
     name: Check Base Cache
     runs-on: ubuntu-latest
-    needs: prepare
-    if: needs.prepare.outputs.is-draft != 'true'
+    needs: [prepare, detect-changes]
+    if: needs.prepare.outputs.is-draft != 'true' && needs.detect-changes.outputs.relevant == 'true'
     outputs:
       cache-hit: ${{ steps.cache-check.outputs.cache-hit }}
       base-sha: ${{ steps.get-merge-base.outputs.sha }}
@@ -129,8 +164,8 @@ jobs:
   module-size-pr:
     name: Module Size PR (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
-    needs: prepare
-    if: needs.prepare.outputs.is-draft != 'true'
+    needs: [prepare, detect-changes]
+    if: needs.prepare.outputs.is-draft != 'true' && needs.detect-changes.outputs.relevant == 'true'
     strategy:
       matrix:
         shard: ${{ fromJSON(needs.prepare.outputs.shard-matrix) }}
@@ -155,8 +190,8 @@ jobs:
   module-size-base:
     name: Module Size Base (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
-    needs: [prepare, check-base-cache]
-    if: needs.prepare.outputs.is-draft != 'true' && needs.check-base-cache.outputs.cache-hit != 'true'
+    needs: [prepare, detect-changes, check-base-cache]
+    if: needs.prepare.outputs.is-draft != 'true' && needs.detect-changes.outputs.relevant == 'true' && needs.check-base-cache.outputs.cache-hit != 'true'
     strategy:
       matrix:
         shard: ${{ fromJSON(needs.prepare.outputs.shard-matrix) }}
@@ -347,13 +382,14 @@ jobs:
   status:
     name: Module Size Status
     runs-on: ubuntu-latest
-    needs: [prepare, check-base-cache, module-size-pr, module-size-base, compare-and-report]
+    needs: [prepare, detect-changes, check-base-cache, module-size-pr, module-size-base, compare-and-report]
     if: always() && needs.prepare.outputs.is-draft != 'true'
     steps:
       - name: Check job results
         run: |
           echo "Checking job results..."
           echo "prepare: ${{ needs.prepare.result }}"
+          echo "detect-changes: ${{ needs.detect-changes.result }} (relevant=${{ needs.detect-changes.outputs.relevant }})"
           echo "check-base-cache: ${{ needs.check-base-cache.result }}"
           echo "module-size-pr: ${{ needs.module-size-pr.result }}"
           echo "module-size-base: ${{ needs.module-size-base.result }}"
@@ -363,6 +399,17 @@ jobs:
           if [[ "${{ needs.prepare.result }}" != "success" ]]; then
             echo "::error::prepare job failed"
             exit 1
+          fi
+
+          # No size-relevant changes: the heavy jobs are intentionally skipped and this
+          # required check passes without a comparison. detect-changes must have run.
+          if [[ "${{ needs.detect-changes.result }}" != "success" ]]; then
+            echo "::error::detect-changes job failed"
+            exit 1
+          fi
+          if [[ "${{ needs.detect-changes.outputs.relevant }}" != "true" ]]; then
+            echo "No size-relevant changes detected — skipping module size comparison."
+            exit 0
           fi
 
           # check-base-cache must succeed

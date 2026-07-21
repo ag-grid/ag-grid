@@ -213,7 +213,7 @@ jobs:
 
       - name: Test Reporter
         id: ctrf
-        uses: ctrf-io/github-test-reporter@v1.0.17
+        uses: ctrf-io/github-test-reporter@bb6b54d6514e0952c3eea739be0c641143d1f06c # v1.0.17
         with:
           report-path: ${{ env.PW_REPORT_PATH }}
           summary-report: true

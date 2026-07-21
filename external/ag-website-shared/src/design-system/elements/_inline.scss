@@ -87,6 +87,20 @@ svg#{$selector-exclude-grid} {
     overflow: hidden;
 }
 
+.kbd-shortcut .kbd-shortcut-mac {
+    display: none;
+}
+
+html[data-os='mac'] .kbd-shortcut {
+    .kbd-shortcut-default {
+        display: none;
+    }
+
+    .kbd-shortcut-mac {
+        display: inline;
+    }
+}
+
 a.meta-link {
     font-size: var(--text-fs-sm);
     font-family: var(--text-monospace-font-family);
