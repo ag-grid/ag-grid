@@ -14,7 +14,7 @@ import { PdfSerializingSession } from './pdfSerializingSession';
 const createColumn = (
     value: string,
     colSpan: number,
-    cellStyle?: (params: CellClassParams) => CellStyle | null | undefined,
+    cellStyle?: CellStyle | ((params: CellClassParams) => CellStyle | null | undefined),
     wrapText?: boolean,
     wrapHeaderText?: boolean
 ): AgColumn =>
@@ -256,6 +256,36 @@ describe('PdfSerializingSession', () => {
         const rows = getRows(session);
         expect(rows[0].cells[0].style).toMatchObject({ wrapText: false });
         expect(rows[1].cells[0].style).toMatchObject({ wrapText: true });
+    });
+
+    it('maps CSS white-space styles into PDF wrapping and line-break behaviour', () => {
+        const columns = [
+            createColumn('Normal', 1, { 'white-space': 'normal' }),
+            createColumn('Breaks', 1, { 'white-space-collapse': 'preserve-breaks' }),
+            createColumn('Pre-line', 1, { 'white-space': 'pre-line' }),
+        ];
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {},
+            gos: createGridOptionsService(),
+        } as any);
+        const node = { data: {}, group: false, level: 0, rowIndex: 0 } as RowNode;
+        (session as any).extractRowCellValue = ({ column }: { column: AgColumn }) => ({
+            value: (column as any).__value,
+        });
+
+        session.prepare(columns);
+        const accumulator = session.onNewBodyRow(node);
+        for (let i = 0; i < columns.length; i++) {
+            accumulator.onColumn(columns[i], i, node);
+        }
+
+        const cells = getRows(session)[0].cells;
+        expect(cells[0].style).toMatchObject({ wrapText: true, preserveLineBreaks: false });
+        expect(cells[1].style).toMatchObject({ preserveLineBreaks: true });
+        expect(cells[1].style?.wrapText).toBeUndefined();
+        expect(cells[2].style).toMatchObject({ wrapText: true, preserveLineBreaks: true });
     });
 
     it('skips column wrapping styles when automatic style resolution is disabled', () => {

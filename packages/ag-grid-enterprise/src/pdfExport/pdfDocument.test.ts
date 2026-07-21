@@ -175,6 +175,32 @@ describe('createPdfDocument', () => {
         expect(measuredRow.rowHeight).toBe(36);
     });
 
+    it('preserves explicit line breaks without wrapping long lines', () => {
+        const row: PdfRow = {
+            type: 'BODY',
+            cells: [
+                {
+                    value: 'Alpha Beta Gamma\nDelta Epsilon Zeta',
+                    style: { preserveLineBreaks: true },
+                },
+            ],
+        };
+        const layout: LayoutOptions = {
+            columnCount: 1,
+            columnWidths: [45],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+        };
+
+        const measuredRow = measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
+
+        expect(measuredRow.cells[0].lines).toHaveLength(2);
+        expect(measuredRow.rowHeight).toBe(28);
+    });
+
     it('keeps numeric cells on one line unless wrapping is explicitly enabled', () => {
         const row: PdfRow = {
             type: 'BODY',

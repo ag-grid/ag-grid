@@ -56,15 +56,18 @@ export function resolvePdfStyleColors(styles?: PdfExportStyles): PdfStyleColors 
     const pageBackground = resolveColor(resolvedStyles.backgroundColor, DEFAULT_PDF_STYLES.backgroundColor);
     const dataBackground = resolveColor(
         resolvedStyles.dataBackgroundColor,
-        resolvedStyles.backgroundColor || DEFAULT_PDF_STYLES.dataBackgroundColor
+        resolvedStyles.backgroundColor || DEFAULT_PDF_STYLES.dataBackgroundColor,
+        pageBackground
     );
     const oddRowBackground = resolveColor(
         resolvedStyles.oddRowBackgroundColor,
-        resolvedStyles.dataBackgroundColor || DEFAULT_PDF_STYLES.oddRowBackgroundColor
+        resolvedStyles.dataBackgroundColor || DEFAULT_PDF_STYLES.oddRowBackgroundColor,
+        dataBackground ?? pageBackground
     );
     const headerBackground = resolveColor(
         resolvedStyles.headerBackgroundColor,
-        resolvedStyles.backgroundColor || DEFAULT_PDF_STYLES.headerBackgroundColor
+        resolvedStyles.backgroundColor || DEFAULT_PDF_STYLES.headerBackgroundColor,
+        pageBackground
     );
     const border = resolveColor(
         resolvedStyles.borderColor,

@@ -151,6 +151,12 @@ export function getThemePdfStyles(eRootDiv: HTMLElement | undefined): PdfExportS
         }
     }
 
+    // legacy themes expose header text through --ag-header-foreground-color, so sample the real element.
+    const headerText = getElementStyleColor(eRootDiv, '.ag-header', 'color');
+    if (headerText) {
+        themeStyles.headerTextColor = headerText;
+    }
+
     // header background can come from class-level styling rather than css vars, so sample the real element too.
     const headerBackground = getElementStyleColor(eRootDiv, '.ag-header', 'backgroundColor');
     if (headerBackground) {

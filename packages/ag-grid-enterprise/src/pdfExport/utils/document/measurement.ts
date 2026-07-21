@@ -39,6 +39,7 @@ export type ResolvedCellStyle = {
     borderColor?: PdfRgb;
     borderWidth: number;
     wrapText: boolean;
+    preserveLineBreaks: boolean;
 };
 
 type ResolvedDocumentTitle = {
@@ -349,14 +350,26 @@ export function getAutoColumnWidths(
 export function measureTextLines(value: string, availableWidth: number, style: ResolvedCellStyle): string[] {
     let lines: string[];
     if (style.wrapText) {
-        lines = wrapText(normaliseText(value, true), availableWidth, style.fontSize, style.fontFamily);
+        lines = wrapText(
+            normaliseText(value, style.preserveLineBreaks),
+            availableWidth,
+            style.fontSize,
+            style.fontFamily
+        );
     } else {
-        const normalised = normaliseText(value);
-        const line =
-            style.overflow === 'clip'
-                ? clipText(normalised, availableWidth, style.fontSize, style.fontFamily)
-                : truncateText(normalised, availableWidth, style.fontSize, style.fontFamily);
-        lines = line ? [line] : [];
+        const normalised = normaliseText(value, style.preserveLineBreaks);
+        const sourceLines = style.preserveLineBreaks ? normalised.split('\n') : [normalised];
+        lines = [];
+        for (const line of sourceLines) {
+            lines.push(
+                style.overflow === 'clip'
+                    ? clipText(line, availableWidth, style.fontSize, style.fontFamily)
+                    : truncateText(line, availableWidth, style.fontSize, style.fontFamily)
+            );
+        }
+        if (!style.preserveLineBreaks && !lines[0]) {
+            lines = [];
+        }
     }
 
     return applyLineLimit(lines, style.maxLines, style, availableWidth);
@@ -450,6 +463,7 @@ function resolveTitleStyle(
         borderColor,
         borderWidth: resolveBorderWidth(style?.borderWidth, borderColor),
         wrapText: style?.wrapText ?? false,
+        preserveLineBreaks: style?.preserveLineBreaks ?? style?.wrapText ?? false,
     };
 }
 
@@ -487,12 +501,13 @@ function resolveTableCellStyle(
         borderColor,
         borderWidth: resolveBorderWidth(style?.borderWidth, borderColor),
         wrapText: style?.wrapText ?? layout.wrapText ?? false,
+        preserveLineBreaks: style?.preserveLineBreaks ?? style?.wrapText ?? layout.wrapText ?? false,
     };
 }
 
 function getIntrinsicTextWidth(value: string, style: ResolvedCellStyle): number {
-    const normalised = normaliseText(value, style.wrapText);
-    const lines = style.wrapText ? normalised.split('\n') : [normalised];
+    const normalised = normaliseText(value, style.preserveLineBreaks);
+    const lines = style.preserveLineBreaks ? normalised.split('\n') : [normalised];
     let width = 0;
     for (const line of lines) {
         width = Math.max(width, estimateTextWidth(line, style.fontSize, style.fontFamily));

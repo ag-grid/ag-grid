@@ -3,7 +3,13 @@ import type { CellStyle, HeaderStyle, PdfCellStyle, RowStyle } from 'ag-grid-com
 import { extractBorderColor, readResolvedStyleColor, resolveCssColorValue } from './colors';
 import { resolveFontFamily, resolveFontWeight, resolveTextAlignment } from './fonts';
 import type { StyleValueMap } from './styleValues';
-import { parseCssNumber, readStyleString, readStyleValue, resolvePaddingStyle } from './styleValues';
+import {
+    parseCssNumber,
+    readStyleString,
+    readStyleValue,
+    resolvePaddingStyle,
+    resolveWhiteSpaceStyle,
+} from './styleValues';
 
 /**
  * Convert CSS-style objects into a PDF cell style.
@@ -89,6 +95,11 @@ export function mapCssStylesToPdfStyle(
     const padding = resolvePaddingStyle(mergedStyles);
     if (padding != null) {
         result.padding = padding;
+    }
+
+    const whiteSpaceStyle = resolveWhiteSpaceStyle(mergedStyles);
+    if (whiteSpaceStyle) {
+        Object.assign(result, whiteSpaceStyle);
     }
 
     return Object.keys(result).length ? result : undefined;

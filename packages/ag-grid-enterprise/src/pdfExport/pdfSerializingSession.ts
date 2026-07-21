@@ -340,7 +340,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
         }
 
         const wrapStyle = colDef.wrapText == null ? undefined : { wrapText: colDef.wrapText };
-        return mergePdfCellStyles(mapCssStylesToPdfStyle([resolvedCellStyle], this.config.resolveColor), wrapStyle);
+        return mergePdfCellStyles(wrapStyle, mapCssStylesToPdfStyle([resolvedCellStyle], this.config.resolveColor));
     }
 
     private resolveColumnHeaderPdfStyle(column: AgColumn): PdfCellStyle | undefined {

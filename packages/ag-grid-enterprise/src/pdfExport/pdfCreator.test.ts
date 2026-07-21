@@ -3,7 +3,12 @@ import { vi } from 'vitest';
 import type { PdfCell, PdfExportParams } from 'ag-grid-community';
 
 import { PdfCreator } from './pdfCreator';
-import { mergeDocumentTitle, resolveDocumentTitleColors, resolveThemeColorValue } from './utils/creator';
+import {
+    getThemePdfStyles,
+    mergeDocumentTitle,
+    resolveDocumentTitleColors,
+    resolveThemeColorValue,
+} from './utils/creator';
 
 const getComputedColor = (root: HTMLElement, value: string): string => {
     const probe = document.createElement('span');
@@ -76,6 +81,19 @@ describe('PdfCreator', () => {
         expect(resolved.style?.color).toBe(expectedColor);
         expect(resolved.style?.backgroundColor).toBe(expectedBackground);
         expect(resolved.style?.borderColor).toBe(expectedBorder);
+
+        root.remove();
+    });
+
+    it('reads the computed header text colour when no header text theme variable is available', () => {
+        const root = document.createElement('div');
+        const header = document.createElement('div');
+        header.className = 'ag-header';
+        header.style.color = 'rgb(220, 230, 240)';
+        root.appendChild(header);
+        document.body.appendChild(root);
+
+        expect(getThemePdfStyles(root).headerTextColor).toBe('rgb(220, 230, 240)');
 
         root.remove();
     });

@@ -154,7 +154,7 @@
                         {
                             "heading": "Page Layout Control",
                             "detail": "Customise page size, orientation, margins, fonts, and row sizing to match your report layout.",
-                            "link": "./data-grid/pdf-export/#pdf-styling"
+                            "link": "./data-grid/pdf-export-layout/"
                         },
                         {
                             "heading": "Context Menu & API",

@@ -39,6 +39,10 @@ This page documents the PDF Export API and interfaces.
 
 {% interfaceDocumentation interfaceName="PdfStyleCallbackParams" /%}
 
+### PdfColumnWidthCallbackParams
+
+{% interfaceDocumentation interfaceName="PdfColumnWidthCallbackParams" /%}
+
 ### PdfMargin
 
 {% interfaceDocumentation interfaceName="PdfMargin" /%}
@@ -85,6 +89,30 @@ type PdfFontFamily =
 
 ```ts
 type PdfTextAlignment = 'left' | 'center' | 'right';
+```
+
+### PdfFontWeight
+
+```ts
+type PdfFontWeight = 'normal' | 'bold';
+```
+
+### PdfTextOverflow
+
+```ts
+type PdfTextOverflow = 'clip' | 'ellipsis';
+```
+
+### PdfColumnWidth
+
+```ts
+type PdfColumnWidth = number | 'auto' | 'grid';
+```
+
+### PdfColumnWidthCallback
+
+```ts
+type PdfColumnWidthCallback = (params: PdfColumnWidthCallbackParams) => PdfColumnWidth | null | undefined;
 ```
 
 ### PdfStyleCallbackType

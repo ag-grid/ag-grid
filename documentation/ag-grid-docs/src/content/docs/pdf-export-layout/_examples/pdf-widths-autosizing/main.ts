@@ -1,13 +1,19 @@
 import type { GridApi, GridOptions, PdfExportParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
-import { PdfExportModule } from 'ag-grid-enterprise';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    ROW_NUMBERS_COLUMN_ID,
+    createGrid,
+    enableDevValidations,
+} from 'ag-grid-community';
+import { PdfExportModule, RowNumbersModule } from 'ag-grid-enterprise';
 
 // Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, PdfExportModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowNumbersModule, PdfExportModule]);
 
 interface ProductData {
     sku: string;
@@ -47,22 +53,25 @@ const gridOptions: GridOptions<ProductData> = {
     columnDefs: [
         { field: 'sku', width: 100 },
         { field: 'product', width: 180 },
-        { field: 'description', minWidth: 260, wrapText: true, wrapHeaderText: true },
+        { field: 'description', minWidth: 260 },
         { field: 'units', width: 100 },
         { field: 'unitPrice', headerName: 'Unit Price', width: 120, valueFormatter: (p) => `$${p.value}` },
     ],
     defaultColDef: { resizable: true },
+    rowNumbers: true,
     rowData,
 };
 
 function onBtExport() {
     const widthMode = document.querySelector<HTMLSelectElement>('#widthMode')!.value;
-    const wrapText = document.querySelector<HTMLInputElement>('#wrapText')!.checked;
-    const params: PdfExportParams = { wrapText };
+    const params: PdfExportParams = { exportRowNumbers: true };
 
     if (widthMode === 'custom') {
         params.columnWidth = ({ column }) => {
             const columnId = column?.getColId();
+            if (columnId === ROW_NUMBERS_COLUMN_ID) {
+                return 'auto';
+            }
             if (columnId === 'description') {
                 return 220;
             }

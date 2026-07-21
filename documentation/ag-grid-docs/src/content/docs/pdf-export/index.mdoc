@@ -3,71 +3,60 @@ title: "PDF Export"
 enterprise: true
 ---
 
-The Grid provides built-in PDF export functionality without the need for any third party libraries. Exporting to PDF can be performed from the [Context Menu](./context-menu/) or programmatically via the [Grid API](./grid-api/).
+PDF Export creates a paginated PDF representation of grid data without requiring third-party libraries. The export follows the grid's current data state and displayed columns, but it is not a screenshot and does not reproduce every visual feature rendered in the browser.
 
 ## Enabling PDF Export
 
-The enterprise version of the grid provides a 'PDF Export' option via the grid's [Context Menu](./context-menu/) by default.
-
-PDF export is also possible via the [Grid API](./grid-api/) using the following method:
+PDF export is available through the [Grid API](./grid-api/):
 
 ```{% frameworkTransform=true %}
 api.exportDataAsPdf();
 ```
 
-For module-based builds, register the `PdfExportModule`. To show the PDF export item in the right-click menu, also register the `ContextMenuModule`:
+The enterprise [Context Menu](./context-menu/) also includes a **PDF Export** item. For module-based builds, register `PdfExportModule` and register `ContextMenuModule` when the menu item is required:
 
 ```js
 import { ModuleRegistry } from 'ag-grid-community';
 import { ContextMenuModule, PdfExportModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
+    PdfExportModule,
     ContextMenuModule,
-    PdfExportModule
 ]);
 ```
 
-No third party libraries are required for either approach. To disable PDF export, set `suppressPdfExport=true`.
+Set `suppressPdfExport=true` to disable both `exportDataAsPdf()` and `getDataAsPdf()`.
 
 ## Default PDF Export
 
-The default PDF export behaviour will export the grid as it is currently rendered. This means the exported PDF will match what is displayed in the grid at the time of export following any sorting, filtering, row grouping, columns visible, grouped columns etc...
+The export uses the current column order and visibility, together with the filtered, sorted, and grouped row data. Exported values are produced independently of the rendered grid cells:
 
-Note that the raw values, and not the result from a cell renderer will be used, meaning the results from:
+- Value Getters are used.
+- Value Formatters are used by default through [Use Value Formatter for Export](./value-formatters/#formatting-for-export).
+- Cell Renderer output and HTML are not exported.
+- Supported grid styles can be reused, but browser rendering and CSS classes are not copied into the PDF.
 
-- Value Getters will be used.
-- Cell Renderers will **NOT** be used.
-- Value Formatters will be used by default via the [Use Value Formatter for Export](./value-formatters/#formatting-for-export) feature.
-- Styles applied by Cell Renderers are **NOT** exported.
+Reorder columns or apply filtering and sorting in the following example, then export from the context menu or with the **Export to PDF** button.
 
-In the following example reorder some columns and apply some filter and sort operations - then export from the 'PDF Export' option in the context menu, or the 'Export to PDF' button provided. Note the following:
+{% gridExampleRunner title="Default PDF Export" name="pdf-default-export" exampleHeight=600 /%}
 
-- The current order of the columns is exported and any hidden columns will not be exported.
-- Filtered out rows are not included in the export, and the sort order is maintained.
+By default, regular columns use their current grid widths and the Row Numbers column is sized from its exported content. Columns are proportionally reduced when their combined width exceeds the printable page width. Cells remain on one line unless wrapping is enabled, and table headers repeat when a table continues onto another page.
 
-{% gridExampleRunner title="Default PDF Export" name="pdf-default-export"  exampleHeight=600 /%}
+PDF Export uses the built-in PDF Base 14 fonts with WinAnsi encoding. Characters outside the supported WinAnsi character set are replaced with `?`.
 
-{% note %}
+## Support And Limitations
 
-1. Columns are sized from their exported content by default. If their combined width exceeds the printable page width, they are scaled down proportionally.
+| Area       | Supported                                                                                                                     | Not Supported                                                        |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Grid state | Displayed column order and visibility, sorting, filtering, selected-row export options, grouping, pinned rows, column spans   | Cell Renderer output or custom HTML                                  |
+| Layout     | Named and custom page sizes, margins, orientation, column widths, text wrapping, automatic row height, repeated table headers | Automatic page size, horizontal pagination, page headers and footers |
+| Styling    | Theme colours, `pdfStyles`, supported `rowStyle`, `cellStyle`, and `headerStyle` properties, PDF-specific style callbacks     | `cellClass`, `cellClassRules`, arbitrary CSS, browser fonts          |
+| Content    | Value Getters, Value Formatters, export value callbacks, document title, content before and after the table                   | Images, SVG, clickable hyperlinks, embedded files                    |
+| Text       | Built-in Helvetica, Times, and Courier families; WinAnsi characters                                                           | Embedded custom fonts, full Unicode, RTL layout                      |
 
-1. Header rows repeat on each page by default. Set `repeatHeader=false` to disable this behaviour.
+## PDF Export Sections
 
-1. PDF export uses built-in fonts and supports WinAnsi (Latin-1) characters. Characters outside WinAnsi are replaced with `?`.
-
-{% /note %}
-
-## Custom PDF Export
-
-The sections below cover the available PDF export customisations:
-
-- **[Styles](./pdf-export-styles/)**: Reuse grid styles and apply PDF-specific row, cell, and header styling.
-- **[Extra Content](./pdf-export-extra-content/)**: Add a document title and content before, after, or between exported rows.
-- **[Customising Content](./pdf-export-customising-content/)**: Process exported cell, header, group-header, and row-group values.
-- **[Rows](./pdf-export-rows/)**: Select rows, include pinned rows, and control row-group indentation.
-- **[Columns](./pdf-export-columns/)**: Select columns, configure widths, and control text wrapping.
-- **[Page Setup](./pdf-export-page-setup/)**: Configure page size, orientation, margins, fonts, and repeated headers.
-
-## Next Up
-
-Continue to the next section: [Styles](./pdf-export-styles/).
+- **[Layout](./pdf-export-layout/)**: Configure pages, widths, wrapping, row height, grouping, and pinned rows.
+- **[Styling](./pdf-export-styles/)**: Reuse supported grid styles and apply PDF-specific overrides.
+- **[Content](./pdf-export-content/)**: Customise exported values, titles, and additional content.
+- **[API Reference](./pdf-export-api/)**: PDF export methods, grid options, interfaces, and types.

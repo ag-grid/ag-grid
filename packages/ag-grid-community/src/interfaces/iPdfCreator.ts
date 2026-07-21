@@ -93,6 +93,11 @@ export interface PdfCellStyle {
      */
     wrapText?: boolean;
     /**
+     * Whether explicit line breaks should be preserved.
+     * @default true when wrapText is true, otherwise false
+     */
+    preserveLineBreaks?: boolean;
+    /**
      * Distance between text baselines in points.
      * @default fontSize
      */

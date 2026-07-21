@@ -2,9 +2,10 @@ import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/t
 import { readFile } from 'node:fs/promises';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('exports pinned and grouped rows', async ({ page }) => {
+    test.eachFramework('exports configured column widths', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
+        await page.locator('#widthMode').selectOption('custom');
 
         const [download] = await Promise.all([
             page.waitForEvent('download'),
@@ -18,8 +19,8 @@ test.agExample(import.meta, () => {
         }
 
         const pdfContent = await readFile(downloadPath, 'latin1');
-        expect(pdfContent).toContain('(Approved Portfolio) Tj');
-        expect(pdfContent).toContain('(Contingency) Tj');
-        expect(pdfContent).not.toContain(' -> ');
+        expect(pdfContent.startsWith('%PDF-1.4')).toBe(true);
+        expect(pdfContent).toContain('(Mechanical Keyboard) Tj');
+        expect(pdfContent.trimEnd().endsWith('%%EOF')).toBe(true);
     });
 });
