@@ -245,12 +245,12 @@ runs:
                 if [[ -n "${NODE_MODULES_PATHS//[[:space:]]/}" ]] ; then
                   rm -rf ${NODE_MODULES_PATHS}
                 fi
-                yarn install --ci
+                yarn install --ci --prefer-offline
                 yarn check --integrity
               elif (yarn check --integrity) ; then
                 yarn postinstall
               else
-                yarn install --ci
+                yarn install --ci --prefer-offline
 
                 # Ensure that the integrity check passes after install to avoid
                 # cache polution with entries that will fail future integrity checks.
@@ -262,7 +262,7 @@ runs:
           id: yarn_install_fast
           shell: bash
           run: |
-              yarn check --integrity || yarn install --ci
+              yarn check --integrity || yarn install --ci --prefer-offline
 
         - name: yarn install (skipping postinstall)
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall == 'no-install' && steps.cache_ro.outputs.cache-hit != 'false'
