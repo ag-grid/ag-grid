@@ -12,3 +12,7 @@
 
     --ag-indentation-level: 0;
 }
+
+.ag-react-container:not(.ag-react-wrapper-block) {
+    display: contents;
+}

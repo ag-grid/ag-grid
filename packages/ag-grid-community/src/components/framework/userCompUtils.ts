@@ -38,6 +38,7 @@ const DateComponent: ComponentType<IDateComp> = {
 const DragAndDropImageComponent: ComponentType<IDragAndDropImageComponent> = {
     name: 'dragAndDropImageComponent',
     mandatoryMethods: ['setIcon', 'setLabel'],
+    requiresBlockWrapper: true,
 };
 
 const HeaderComponent: ComponentType = { name: 'headerComponent', optionalMethods: ['refresh'] };
@@ -82,7 +83,7 @@ const CellEditorComponent: ComponentType<ICellEditorComp> = {
     ],
 };
 
-const TooltipComponent: ComponentType = { name: 'tooltipComponent' };
+const TooltipComponent: ComponentType = { name: 'tooltipComponent', requiresBlockWrapper: true };
 
 const FilterComponent: ComponentType<ISimpleFilter> = {
     name: 'filter',

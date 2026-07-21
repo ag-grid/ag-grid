@@ -13,6 +13,10 @@
         display: contents;
     }
 
+    .ag-react-container:not(.ag-react-wrapper-block) {
+        display: contents;
+    }
+
     [class*='ag-theme-'] {
         -webkit-font-smoothing: antialiased;
         font-family: var(--ag-font-family);
