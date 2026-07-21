@@ -40,6 +40,7 @@ export type ResolvedCellStyle = {
     borderWidth: number;
     wrapText: boolean;
     preserveLineBreaks: boolean;
+    preserveSpaces: boolean;
 };
 
 type ResolvedDocumentTitle = {
@@ -354,7 +355,8 @@ export function measureTextLines(value: string, availableWidth: number, style: R
             normaliseText(value, style.preserveLineBreaks),
             availableWidth,
             style.fontSize,
-            style.fontFamily
+            style.fontFamily,
+            style.preserveSpaces
         );
     } else {
         const normalised = normaliseText(value, style.preserveLineBreaks);
@@ -372,7 +374,7 @@ export function measureTextLines(value: string, availableWidth: number, style: R
         }
     }
 
-    return applyLineLimit(lines, style.maxLines, style, availableWidth);
+    return constrainTextLines(lines, style.maxLines, style, availableWidth);
 }
 
 function getRemainingRowHeight(row: MeasuredRow, offsets: number[]): number {
@@ -393,7 +395,7 @@ function getRemainingRowHeight(row: MeasuredRow, offsets: number[]): number {
 function constrainLinesToHeight(cell: MeasuredCell, height: number): string[] {
     const contentHeight = Math.max(height - cell.style.padding.top - cell.style.padding.bottom, 0);
     const lineLimit = Math.floor(contentHeight / cell.style.lineHeight);
-    return applyLineLimit(
+    return constrainTextLines(
         cell.lines,
         lineLimit,
         cell.style,
@@ -401,7 +403,15 @@ function constrainLinesToHeight(cell: MeasuredCell, height: number): string[] {
     );
 }
 
-function applyLineLimit(
+/**
+ * Limit measured lines to a fixed count and apply the configured overflow marker.
+ * @param lines - Previously measured text lines.
+ * @param lineLimit - Maximum visible line count.
+ * @param style - Resolved text style.
+ * @param availableWidth - Available width for the overflow marker.
+ * @returns The visible text lines.
+ */
+export function constrainTextLines(
     lines: string[],
     lineLimit: number | undefined,
     style: ResolvedCellStyle,
@@ -464,6 +474,7 @@ function resolveTitleStyle(
         borderWidth: resolveBorderWidth(style?.borderWidth, borderColor),
         wrapText: style?.wrapText ?? false,
         preserveLineBreaks: style?.preserveLineBreaks ?? style?.wrapText ?? false,
+        preserveSpaces: style?.preserveSpaces ?? false,
     };
 }
 
@@ -502,6 +513,7 @@ function resolveTableCellStyle(
         borderWidth: resolveBorderWidth(style?.borderWidth, borderColor),
         wrapText: style?.wrapText ?? layout.wrapText ?? false,
         preserveLineBreaks: style?.preserveLineBreaks ?? style?.wrapText ?? layout.wrapText ?? false,
+        preserveSpaces: style?.preserveSpaces ?? false,
     };
 }
 

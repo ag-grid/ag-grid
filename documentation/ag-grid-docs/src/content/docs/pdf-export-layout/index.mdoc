@@ -41,7 +41,7 @@ Auto widths are measured before page scaling. If the combined widths exceed the 
 
 Cells, including numeric cells, remain on one line by default. Set `wrapText=true` for all exported cells, use `colDef.wrapText` or `colDef.wrapHeaderText`, or return `wrapText: true` from `currentElementStyleCallback` for an individual PDF element.
 
-PDF Export also translates CSS white-space properties returned by `cellStyle`. For example, `white-space: normal` enables wrapping, `white-space-collapse: preserve-breaks` preserves explicit line breaks without wrapping, and `white-space: pre-line` enables both behaviours. The equivalent PDF-specific property for retaining explicit breaks is `preserveLineBreaks`.
+PDF Export also translates CSS white-space properties returned by `cellStyle`. For example, `white-space: normal` enables wrapping, `white-space-collapse: preserve-breaks` preserves explicit line breaks without wrapping, and `white-space: pre-line` enables both behaviours. The `pre`, `pre-wrap`, and `break-spaces` values also preserve repeated, leading, and trailing spaces. The equivalent PDF-specific properties are `preserveLineBreaks` and `preserveSpaces`.
 
 Wrapped text breaks on whitespace and falls back to character-level wrapping for words wider than the cell. Explicit newline characters start distinct lines when wrapping is enabled. `lineHeight` defaults to the resolved font size, `maxLines` is unlimited by default, and `overflow` defaults to `'ellipsis'`.
 

@@ -263,6 +263,7 @@ describe('PdfSerializingSession', () => {
             createColumn('Normal', 1, { 'white-space': 'normal' }),
             createColumn('Breaks', 1, { 'white-space-collapse': 'preserve-breaks' }),
             createColumn('Pre-line', 1, { 'white-space': 'pre-line' }),
+            createColumn('Pre-wrap', 1, { 'white-space': 'pre-wrap' }),
         ];
         const session = new PdfSerializingSession({
             colModel: { pivotMode: false },
@@ -283,9 +284,18 @@ describe('PdfSerializingSession', () => {
 
         const cells = getRows(session)[0].cells;
         expect(cells[0].style).toMatchObject({ wrapText: true, preserveLineBreaks: false });
-        expect(cells[1].style).toMatchObject({ preserveLineBreaks: true });
+        expect(cells[1].style).toMatchObject({ preserveLineBreaks: true, preserveSpaces: false });
         expect(cells[1].style?.wrapText).toBeUndefined();
-        expect(cells[2].style).toMatchObject({ wrapText: true, preserveLineBreaks: true });
+        expect(cells[2].style).toMatchObject({
+            wrapText: true,
+            preserveLineBreaks: true,
+            preserveSpaces: false,
+        });
+        expect(cells[3].style).toMatchObject({
+            wrapText: true,
+            preserveLineBreaks: true,
+            preserveSpaces: true,
+        });
     });
 
     it('skips column wrapping styles when automatic style resolution is disabled', () => {

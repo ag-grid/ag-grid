@@ -98,6 +98,11 @@ export interface PdfCellStyle {
      */
     preserveLineBreaks?: boolean;
     /**
+     * Whether repeated, leading and trailing spaces should be preserved when text wraps.
+     * @default false
+     */
+    preserveSpaces?: boolean;
+    /**
      * Distance between text baselines in points.
      * @default fontSize
      */

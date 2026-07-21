@@ -4,7 +4,7 @@ import { formatColor } from '../pdfColor';
 import { getBase14BaselineOffset } from './fontMetrics';
 import type { ResolvedPageSize } from './layout';
 import type { LayoutOptions, MeasuredRow, MeasuredRowFragment, ResolvedCellStyle } from './measurement';
-import { measureRowFragment, measureTextLines } from './measurement';
+import { constrainTextLines, measureRowFragment, measureTextLines } from './measurement';
 import { escapePdfString, estimateTextWidth, fmt } from './text';
 
 /**
@@ -34,12 +34,15 @@ export function renderDocumentTitle(
         return cursorY;
     }
 
-    const lines = measureTextLines(title, innerWidth, style);
+    const boxTop = cursorY - style.margin.top;
+    const availableBoxHeight = Math.max(boxTop - layout.margin.bottom - style.margin.bottom, 0);
+    const availableTextHeight = Math.max(availableBoxHeight - style.padding.top - style.padding.bottom, 0);
+    const lineLimit = Math.floor(availableTextHeight / style.lineHeight);
+    const lines = constrainTextLines(measureTextLines(title, innerWidth, style), lineLimit, style, innerWidth);
     if (!lines.length) {
         return cursorY;
     }
 
-    const boxTop = cursorY - style.margin.top;
     const boxHeight = lines.length * style.lineHeight + style.padding.top + style.padding.bottom;
     const boxBottom = boxTop - boxHeight;
     const boxX = layout.margin.left + style.margin.left;

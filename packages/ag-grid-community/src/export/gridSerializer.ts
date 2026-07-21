@@ -257,7 +257,8 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     .filter((position) => position.rowPinned == null)
                     .sort((a, b) => a.rowIndex - b.rowIndex)
                     .map((position) => rowModel.getRow(position.rowIndex))
-                    .forEach(processRow);
+                    .filter((node): node is RowNode => node != null)
+                    .forEach(processBodyRow);
             } else if (this.colModel.pivotMode) {
                 if (usingCsrm) {
                     rowModel.forEachPivotNode(processBodyRow, true, exportedRows === 'filteredAndSorted');

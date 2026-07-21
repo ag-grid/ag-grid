@@ -311,6 +311,42 @@ describe('createPdfDocument', () => {
         expect(pdf).toContain('/Title (PDF Metadata Title)');
     });
 
+    it('preserves explicit title line breaks without enabling wrapping', () => {
+        const pdf = createPdfDocument([], [], {
+            documentTitle: {
+                data: { value: 'First line\nSecond line' },
+                style: { preserveLineBreaks: true, wrapText: false },
+            },
+        });
+
+        expect(pdf).toMatch(/Tm \(First line\) Tj/);
+        expect(pdf).toMatch(/Tm \(Second line\) Tj/);
+    });
+
+    it('constrains a wrapped document title to the printable page height', () => {
+        const title = Array.from({ length: 12 }, (_, index) => `Line ${index + 1}`).join('\n');
+        const pdf = createPdfDocument([], [], {
+            pageSize: { width: 100, height: 100 },
+            margin: 10,
+            documentTitle: {
+                data: { value: title },
+                style: {
+                    borderColor: '#000000',
+                    borderWidth: 1,
+                    fontSize: 10,
+                    lineHeight: 10,
+                    margin: 0,
+                    padding: 0,
+                    wrapText: true,
+                },
+            },
+        });
+
+        expect(pdf).toContain('10 10 80 80 re S');
+        expect(pdf).toMatch(/Tm \(Line 8\.\.\.\) Tj/);
+        expect(pdf).not.toMatch(/Tm \(Line 9\) Tj/);
+    });
+
     it('falls back to built-in fonts for unsupported runtime font values', () => {
         const rows = [
             {

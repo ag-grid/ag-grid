@@ -19,7 +19,7 @@ import {
 } from './utils/document/measurement';
 import { resolveFiniteNumber, resolveOptionalFiniteNumber } from './utils/document/numbers';
 import { renderDocumentTitle, renderMeasuredRows, renderRowFragment } from './utils/document/render';
-import { fmt, normaliseText } from './utils/document/text';
+import { fmt } from './utils/document/text';
 import { normalisePdfFontFamily } from './utils/fonts';
 import { formatColor, resolvePdfStyleColors } from './utils/pdfColor';
 import { buildPdf } from './utils/pdfObjectStore';
@@ -64,7 +64,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         ? resolveDocumentTitle(params.documentTitle, params, styleColors, headerFont, DEFAULTS.headerFontSize)
         : undefined;
     const titleStyle = titleData?.style;
-    const documentTitle = titleData?.text ? normaliseText(titleData.text, titleStyle?.wrapText) : '';
+    const documentTitle = titleData?.text ?? '';
 
     const fontKeyByFamily = createFontKeyMap(bodyFont, headerFont, titleStyle?.fontFamily, rows);
     const titleFontKey = titleStyle ? fontKeyByFamily.get(titleStyle.fontFamily) : undefined;

@@ -63,11 +63,22 @@ export function normaliseText(value: string, preserveLineBreaks = false): string
  * @param maxWidth - Maximum width of each line in points.
  * @param fontSize - Font size in points.
  * @param fontFamily - Active font family.
+ * @param preserveSpaces - Whether repeated, leading and trailing spaces should be retained.
  * @returns Wrapped text lines.
  */
-export function wrapText(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string[] {
+export function wrapText(
+    text: string,
+    maxWidth: number,
+    fontSize: number,
+    fontFamily: PdfFontFamily,
+    preserveSpaces = false
+): string[] {
     if (!text || !Number.isFinite(maxWidth) || maxWidth <= 0 || !Number.isFinite(fontSize) || fontSize <= 0) {
         return [];
+    }
+
+    if (preserveSpaces) {
+        return wrapPreformattedText(text, maxWidth, fontSize, fontFamily);
     }
 
     const lines: string[] = [];
@@ -108,6 +119,62 @@ export function wrapText(text: string, maxWidth: number, fontSize: number, fontF
 
         if (currentLine) {
             lines.push(currentLine);
+        }
+    }
+
+    return lines;
+}
+
+/**
+ * Wrap preformatted text without collapsing spaces.
+ * @param text - Normalised source text.
+ * @param maxWidth - Maximum width of each line in points.
+ * @param fontSize - Font size in points.
+ * @param fontFamily - Active font family.
+ * @returns Wrapped text lines retaining every source space.
+ */
+function wrapPreformattedText(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string[] {
+    const lines: string[] = [];
+
+    for (const paragraph of text.split('\n')) {
+        if (!paragraph) {
+            lines.push('');
+            continue;
+        }
+
+        let lineStart = 0;
+        while (lineStart < paragraph.length) {
+            let lineWidth = 0;
+            let lastBreak = -1;
+            let characterIndex = lineStart;
+
+            while (characterIndex < paragraph.length) {
+                const char = paragraph[characterIndex];
+                const nextWidth = lineWidth + estimateTextWidth(char, fontSize, fontFamily);
+                if (nextWidth > maxWidth) {
+                    break;
+                }
+                lineWidth = nextWidth;
+                characterIndex += 1;
+                if (char === ' ') {
+                    lastBreak = characterIndex;
+                }
+            }
+
+            if (characterIndex === paragraph.length) {
+                lines.push(paragraph.slice(lineStart));
+                break;
+            }
+
+            // a single glyph wider than the line still needs to make forward progress.
+            if (characterIndex === lineStart) {
+                characterIndex += 1;
+            } else if (lastBreak > lineStart) {
+                characterIndex = lastBreak;
+            }
+
+            lines.push(paragraph.slice(lineStart, characterIndex));
+            lineStart = characterIndex;
         }
     }
 

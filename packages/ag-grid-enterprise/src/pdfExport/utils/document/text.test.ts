@@ -32,6 +32,14 @@ describe('PDF text utilities', () => {
         expect(wrapText('WWWW', 20, 10, 'Helvetica')).toEqual(['WW', 'WW']);
     });
 
+    it('preserves repeated, leading and trailing spaces while wrapping preformatted text', () => {
+        const value = '  alpha  beta  ';
+        const lines = wrapText(value, 30, 10, 'Helvetica', true);
+
+        expect(lines.length).toBeGreaterThan(1);
+        expect(lines.join('')).toBe(value);
+    });
+
     it('never formats non-finite PDF numeric tokens', () => {
         expect(fmt(Number.NaN)).toBe('0');
         expect(fmt(Number.POSITIVE_INFINITY)).toBe('0');

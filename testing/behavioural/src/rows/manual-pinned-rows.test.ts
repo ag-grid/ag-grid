@@ -77,6 +77,16 @@ describe('Manual pinned rows', () => {
         expect(
             api.getDataAsCsv({
                 suppressQuotes: true,
+                rowPositions: [
+                    { rowIndex: 0, rowPinned: 'top' },
+                    { rowIndex: 1, rowPinned: null },
+                ],
+                skipPinnedRowDuplicates: true,
+            })
+        ).toBe(['Sport', 'rugby'].join('\r\n'));
+        expect(
+            api.getDataAsCsv({
+                suppressQuotes: true,
                 skipPinnedTop: true,
                 skipPinnedBottom: true,
                 skipPinnedRowDuplicates: true,
