@@ -1,8 +1,10 @@
 import { existsSync } from 'fs';
-import { readFile, readdir } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
+
+import { dropCssParseErrors, loadSourceCodeAliases, sortAliases, vitestReporters } from '../../vitest.shared';
+import type { Alias } from '../../vitest.shared';
 
 // Pin the timezone so date tests behave the same on every machine, matching the packages/* vitest configs.
 process.env.TZ = 'UTC';
@@ -18,11 +20,6 @@ const repoRoot = path.resolve(thisDir, '../..');
 const benchCacheKey = process.env.AG_BENCH_PACKAGES
     ? path.basename(path.resolve(process.env.AG_BENCH_PACKAGES, '..'))
     : 'self';
-
-type Alias = { find: string | RegExp; replacement: string };
-
-/** Candidate entry-point filenames tried when resolving a package to source. */
-const SOURCE_ENTRY_FILES = ['src/index.ts', 'src/index.tsx', 'src/main.ts', 'src/main.tsx'] as const;
 
 // Pin react/react-dom to the versions installed in testing/behavioural/node_modules,
 // preventing Vite from resolving them from the repo-root node_modules instead.
@@ -43,10 +40,7 @@ if (process.env.TESTS_USE_ORIGINAL_SOURCE_CODE !== 'false') {
     }
 }
 
-// Sort to a stable order: aliases are registered concurrently (Promise.all) from an unordered readdir,
-// so without this the array order varies per run → Vite sees a "changed" config and re-optimizes deps
-// every run. Distinct package-name finds, so order doesn't affect resolution.
-aliases.sort((a, b) => String(a.find).localeCompare(String(b.find)));
+sortAliases(aliases);
 
 // The grid's Theming API imports CSS as a default-exported string (e.g. inject.ts:
 // `import sharedCSS from './shared/shared.css'`) and injects it at runtime. Vite only produces that
@@ -100,21 +94,15 @@ export default defineConfig(({ mode }) => {
               }
             : undefined,
         test: {
+            name: 'behavioural',
             globals: true,
             environment: 'jsdom',
             setupFiles: [path.resolve(thisDir, 'vitest.setup.ts')],
-            reporters: ['basic'],
+            reporters: vitestReporters(),
             watch: false,
-            // jsdom's CSS parser rejects the modern CSS (nested rules, @layer, color-mix) that the Theming
-            // API and ag-charts inject at runtime, emitting "Could not parse CSS stylesheet" on every <style>
-            // attach. Real browsers accept it; the errors are harmless but flood CI (charts tests especially).
-            // Drop only those lines — every other console message still comes through. A local counterpart in
-            // theming/style-injection.test.ts swallows the same string where it needs to count occurrences.
-            onConsoleLog(log) {
-                if (log.includes('Could not parse CSS stylesheet')) {
-                    return false;
-                }
-            },
+            // Applies when this config runs standalone (benches.sh / direct); the workspace run uses the
+            // identical filter from the root config. Shared via dropCssParseErrors so both stay in sync.
+            onConsoleLog: dropCssParseErrors,
             // Benchmarks run in a single forked child (clean process isolation, no file parallelism)
             // so runs don't contend for cores or pay worker-migration noise. `--expose-gc` lives here
             // (not in the shell wrappers) so `./benches.sh`, raw `vitest bench` and `bench-compare`
@@ -159,44 +147,3 @@ export default defineConfig(({ mode }) => {
         clearScreen: false,
     };
 });
-
-/** Recursively discover packages under `dir` and alias them to their source entry. */
-async function loadSourceCodeAliases(aliases: Alias[], dir: string, depth = 0): Promise<void> {
-    const entries = await readdir(dir, { withFileTypes: true });
-    const tasks: Promise<void>[] = [];
-
-    for (const entry of entries) {
-        if (!entry.isDirectory() || entry.isSymbolicLink()) {
-            continue;
-        }
-        const name = entry.name;
-        if (name === 'node_modules' || name === 'dist' || name === '.git' || name[0] === '.') {
-            continue;
-        }
-
-        const dirPath = path.resolve(dir, name);
-        const pkgJsonPath = path.join(dirPath, 'package.json');
-
-        if (existsSync(pkgJsonPath)) {
-            tasks.push(registerPackageAlias(aliases, dirPath, pkgJsonPath));
-        } else if (depth < 2) {
-            tasks.push(loadSourceCodeAliases(aliases, dirPath, depth + 1));
-        }
-    }
-    await Promise.all(tasks);
-}
-
-async function registerPackageAlias(aliases: Alias[], dirPath: string, pkgJsonPath: string): Promise<void> {
-    const { name } = JSON.parse(await readFile(pkgJsonPath, 'utf-8'));
-    if (!name || aliases.some((a) => a.find === name)) {
-        return;
-    }
-
-    for (const entry of SOURCE_ENTRY_FILES) {
-        const entryPath = path.resolve(dirPath, entry);
-        if (existsSync(entryPath)) {
-            aliases.push({ find: name, replacement: entryPath });
-            return;
-        }
-    }
-}

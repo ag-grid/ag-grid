@@ -9,7 +9,6 @@
   },
   "devDependencies": {
     "typedoc": "0.28.19",
-    "typescript": "~5.8.3",
-    "vitest": "2.1.9"
+    "typescript": "~5.8.3"
   }
 }
