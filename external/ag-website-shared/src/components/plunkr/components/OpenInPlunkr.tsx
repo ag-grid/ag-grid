@@ -1,7 +1,7 @@
 import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
 import { cleanIndexHtml } from '@ag-website-shared/utils/cleanIndexHtml';
 import type { FileContents } from '@components/example-generator/types';
-import { stripOutExampleGeneratorCode } from '@components/example-runner/components/CodeViewer';
+import { stripOutExampleGeneratorCode } from '@components/example-runner/components/stripOutExampleGeneratorCode';
 import { fetchTextFile } from '@utils/fetchTextFile';
 import type { FunctionComponent } from 'react';
 

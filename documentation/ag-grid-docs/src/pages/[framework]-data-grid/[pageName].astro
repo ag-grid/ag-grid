@@ -14,7 +14,8 @@ import { DocsNav } from '@ag-website-shared/components/docs-navigation/DocsNav';
 
 import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
-import { agLibraryVersion } from '@constants';
+import { agLibraryVersion, DISABLE_MARKDOWN_DOCS } from '@constants';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -52,6 +53,8 @@ const { data: apiNavData } = (await getEntry('apiNav', 'nav')) as CollectionEntr
 const isApiPage = isApiMenuPath({ pageName, menuData: apiNavData });
 const menuData = isApiPage ? apiNavData : docsNavData;
 
+const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl(`/${currentFramework}-data-grid/${pageName}.md`);
+
 const { Content } = await render(page);
 
 const headings = await getHeadings({
@@ -81,6 +84,7 @@ const headings = await getHeadings({
     description={descriptionWithSeoTagline}
     showSearchBar={true}
     showDocsNav={true}
+    markdownUrl={markdownUrl}
 >
     <div class:list={[hidePageMenu && styles.noLeftMenu, styles.contentViewport, 'layout-grid']}>
         {
@@ -111,6 +115,8 @@ const headings = await getHeadings({
                 isEnterprise={enterprise}
                 path={path}
                 menuItems={menuData.sections}
+                version={version}
+                markdownHref={markdownUrl}
             />
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}

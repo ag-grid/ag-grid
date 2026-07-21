@@ -35,6 +35,10 @@ export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
 
 export const DISABLE_EXAMPLE_RUNNER = isTruthy(import.meta.env?.DISABLE_EXAMPLE_RUNNER);
 
+// Turn off per-page markdown (`.md`) generation for LLMs. When set, no `.md`
+// routes are emitted and the docs pages omit the markdown affordances
+export const DISABLE_MARKDOWN_DOCS = isTruthy(import.meta.env?.DISABLE_MARKDOWN_DOCS);
+
 export const agChartsVersion = gridEnterprisePackageJson.optionalDependencies['ag-charts-enterprise'];
 export const agGridVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? corePackageJson.version;
 export const agStackVersion = agGridVersion;

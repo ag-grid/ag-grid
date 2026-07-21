@@ -21,6 +21,7 @@ import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constant
 import buildTime from './plugins/agBuildTime';
 import agDevCsp from './plugins/agDevCsp';
 import agDevExampleAssetCors from './plugins/agDevExampleAssetCors';
+import agDevMarkdownNegotiation from './plugins/agDevMarkdownNegotiation';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
@@ -112,6 +113,11 @@ const {
      */
     DISABLE_EXAMPLE_RUNNER,
 
+    /*
+     * Disable markdown doc generation
+     */
+    DISABLE_MARKDOWN_DOCS,
+
     /**
      * Charts sitemap index to merge
      */
@@ -149,6 +155,7 @@ console.log(
             CHECK_REDIRECTS,
             QUICK_BUILD_PAGES,
             DISABLE_EXAMPLE_RUNNER,
+            DISABLE_MARKDOWN_DOCS,
             CHARTS_SITEMAP_INDEX_URL,
             CHARTS_ROBOTS_DISALLOW_JSON_URL,
             STUDIO_SITEMAP_INDEX_URL,
@@ -159,7 +166,14 @@ console.log(
     )
 );
 
-const plugins = [agSourcemapCors(), svgr(), agHotModuleReload(), agDevCsp(), agDevExampleAssetCors()];
+const plugins = [
+    agSourcemapCors(),
+    svgr(),
+    agHotModuleReload(),
+    agDevCsp(),
+    agDevExampleAssetCors(),
+    agDevMarkdownNegotiation(),
+];
 if (NODE_ENV !== 'test') {
     plugins.push(mkcert()); // mkcert is not necessary for tests
 }
