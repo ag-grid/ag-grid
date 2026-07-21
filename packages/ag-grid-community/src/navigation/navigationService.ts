@@ -448,7 +448,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             // in order for the tab navigation to work, we need to focus the browser back onto the
             // previous cell.
             if (previous instanceof CellCtrl) {
-                previous.focusCell(true);
+                previous.focusCell({ forceBrowserFocus: true });
             }
 
             if (focusSvc.focusOverlay(false) || _focusNextGridCoreContainer(beans, backwards)) {
@@ -532,7 +532,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             return null;
         }
         if (nextCell instanceof CellCtrl) {
-            nextCell.focusCell(true);
+            nextCell.focusCell({ forceBrowserFocus: true });
         } else if (nextCell) {
             return this.tryToFocusFullWidthRow(nextCell, backwards);
         }

@@ -308,7 +308,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     name: Lint & Format Check
-    needs: [ detect-changes ]
+    needs: [ detect-changes, init ]
     if: ${{ always() && needs.detect-changes.result == 'success' }}
     outputs:
       format: ${{ steps.format.outcome || '' }}
@@ -344,7 +344,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Build
-    needs: [ detect-changes ]
+    needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
       (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-'))
     outputs:
@@ -472,7 +472,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
-    needs: [ detect-changes ]
+    needs: [ detect-changes, init ]
     if: ${{ (needs.detect-changes.outputs.run_code_ci == 'true' ||
       needs.detect-changes.outputs.run_docs_ci == 'true') &&
       (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-')) && !inputs.skip_docs }}
