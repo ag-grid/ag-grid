@@ -1,0 +1,107 @@
+name: Build v23.2.1 release
+
+# Builds ag-grid-community and ag-grid-angular from the v23.2.1 tag and
+# attaches the packed tarballs to a GitHub release.
+#
+# Primary trigger: workflow_dispatch (run manually from the Actions tab).
+# The `release: published` trigger is guarded to v23.2.1, but note that
+# GitHub resolves release-event workflows from the tag's commit — since
+# the v23.2.1 tag predates this file, that trigger only fires if the tag
+# is ever recreated on a commit containing this workflow.
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  RELEASE_TAG: v23.2.1
+  # v23.2.1 was tagged 2020-06-18. Packages here are bootstrapped without a
+  # lockfile (lerna.json sets --no-package-lock), so unpinned ranges would
+  # resolve to today's versions — some incompatible with the era's toolchain
+  # (e.g. TypeScript 3.6). npm reads this as the --before flag and resolves
+  # every range to the latest version published before this date, recreating
+  # the dependency tree as it existed at release time.
+  npm_config_before: '2020-07-01T00:00:00.000Z'
+  MODULE_SCOPE: >-
+    {@ag-grid-community/core,@ag-grid-community/client-side-row-model,@ag-grid-community/csv-export,@ag-grid-community/infinite-row-model,@ag-grid-community/all-modules}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Only build when dispatched manually, or when the published release targets v23.2.1
+    if: github.event_name == 'workflow_dispatch' || github.event.release.tag_name == 'v23.2.1'
+    steps:
+      - name: Checkout v23.2.1 tag
+        uses: actions/checkout@v4
+        with:
+          ref: v23.2.1
+
+      # Node 12: node-sass ^4.12 (used by @ag-grid-community/core scss build)
+      # has no prebuilt bindings beyond Node 14, and Angular 9 targets this era.
+      - name: Setup Node 12
+        uses: actions/setup-node@v4
+        with:
+          node-version: '12'
+
+      - name: Install root dependencies (lerna, rollup, typescript)
+        run: npm install
+
+      - name: Bootstrap scoped packages
+        run: >
+          npx lerna bootstrap --no-ci
+          --scope '${{ env.MODULE_SCOPE }}'
+          --scope '{@ag-grid-community/angular,ag-grid-community,ag-grid-angular}'
+
+      - name: Build community modules (core, row models, csv-export, all-modules)
+        run: npx lerna run build --scope '${{ env.MODULE_SCOPE }}'
+
+      # Produces dist/ag-grid-community*.js UMD bundles that the umbrella
+      # ag-grid-community package copies during its gulp build.
+      - name: Package all-modules UMD bundles
+        run: npx lerna run package --scope @ag-grid-community/all-modules
+
+      - name: Build ag-grid-community
+        run: npx lerna run build --scope ag-grid-community
+
+      - name: Build ag-grid-angular
+        run: npx lerna run build --scope ag-grid-angular
+
+      - name: Pack release tarballs
+        run: |
+          mkdir -p release-artifacts
+          cd grid-packages/ag-grid-community
+          npm pack
+          mv ag-grid-community-*.tgz ../../release-artifacts/
+          cd ../ag-grid-angular/dist/ag-grid-angular
+          npm pack
+          mv ag-grid-angular-*.tgz ../../../../release-artifacts/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ag-grid-v23.2.1-packages
+          path: release-artifacts/*.tgz
+
+      - name: Publish build artifacts to GitHub packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm publish
+
+      - name: Attach tarballs to GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" release-artifacts/*.tgz --clobber
+          else
+            gh release create "$RELEASE_TAG" \
+              --verify-tag \
+              --title "ag-grid $RELEASE_TAG" \
+              --notes "Custom build of ag-grid-community and ag-grid-angular from tag $RELEASE_TAG." \
+              release-artifacts/*.tgz
+          fi
