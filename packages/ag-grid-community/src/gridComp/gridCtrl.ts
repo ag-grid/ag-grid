@@ -73,7 +73,6 @@ export class GridCtrl extends BeanStub {
 
         this.createManagedBean(new LayoutFeature(this.view));
 
-        eGui.style.setProperty('content-visibility', 'visible');
         // enableContentVisibilityAuto takes precedence; the deprecated suppressContentVisibilityAuto
         // is only consulted when the former is unset (suppress=false is equivalent to enable=true).
         const contentVisibilityAutoEnabled =
@@ -87,8 +86,8 @@ export class GridCtrl extends BeanStub {
                             this.beans,
                             eGui,
                             (change) => {
-                                if (change.isIntersecting) {
-                                    eGui.style.setProperty('content-visibility', 'visible');
+                                if (!change.isIntersecting) {
+                                    eGui.style.setProperty('content-visibility', 'auto');
                                 } else {
                                     eGui.style.removeProperty('content-visibility');
                                 }
