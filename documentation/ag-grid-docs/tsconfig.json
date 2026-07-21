@@ -30,7 +30,8 @@
       "@ag-grid-types": ["src/types/ag-grid.d.ts"],
       "@utils/*": ["src/utils/*"],
       "@constants": ["src/constants.ts"],
-      "@ag-website-shared/*": ["../../external/ag-website-shared/src/*"]
+      "@ag-website-shared/*": ["../../external/ag-website-shared/src/*"],
+      "@generated-reference/*": ["../../dist/documentation/reference/*"]
     },
     "types": ["vitest/globals"]
   }

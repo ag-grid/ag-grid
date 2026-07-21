@@ -193,7 +193,7 @@ function onMouseDown(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: Mous
         const forceBrowserFocus =
             (_isBrowserSafari() || shouldFocus) && !editing && !_isFocusableFormField(target) && !containsWidget;
 
-        cellCtrl.focusCell(forceBrowserFocus, mouseEvent);
+        cellCtrl.focusCell({ forceBrowserFocus, sourceEvent: mouseEvent });
     }
 
     // if shift clicking, and a range exists, we keep the focus on the cell that started the
