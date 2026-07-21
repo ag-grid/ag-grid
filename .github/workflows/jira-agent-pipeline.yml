@@ -336,6 +336,10 @@ jobs:
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  # Counterfactual effort-estimate (completed phase) write on the
+                  # green-CI promotion — the dominant RoI write path. Empty ⇒ the
+                  # estimate is silently skipped (best-effort), never a failure.
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
                   # Live-test snippet — the ci.yml `pr_preview` job publishes
                   # per-PR UMD bundles to gh-pages, so the reviewer can paste
                   # these two <script> tags into a vanilla-JS Plunker to
