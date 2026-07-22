@@ -5,7 +5,8 @@ import { SpannedCellCtrl } from './spannedCellCtrl';
 
 export class SpannedRowCtrl extends RowCtrl {
     protected override getInitialRowClasses(): string[] {
-        return ['ag-spanned-row'];
+        const positionClass = this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute';
+        return ['ag-spanned-row', positionClass];
     }
 
     public override getNewCellCtrl(col: AgColumn<any>): CellCtrl | undefined {

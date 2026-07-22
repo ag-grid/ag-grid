@@ -134,7 +134,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private rowLevel: number;
     public rowStyles: RowStyle;
     private readonly emptyStyle: RowStyle = {};
-    private readonly suppressRowTransform: boolean;
+    private readonly useTopPositioning: boolean;
 
     public rowId: string | null = null;
     public ariaRowIndex: number | null = null;
@@ -160,7 +160,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans = beans;
         this.gos = beans.gos;
         this.paginationPage = beans.pagination?.getCurrentPage() ?? 0;
-        this.suppressRowTransform = this.gos.get('suppressRowTransform');
+        // Transformed rows create stacking contexts which prevent spanned centre cells,
+        // regular pinned cells, and spanned pinned cells from being layered independently.
+        // Top positioning keeps those sections in the same stacking context, allowing
+        // pinned sections to remain synchronised by native CSS sticky positioning.
+        this.useTopPositioning = !!(this.gos.get('suppressRowTransform') || this.gos.get('enableCellSpan'));
 
         this.instanceId = (rowNode.id + '-' + instanceIdSequence++) as RowCtrlInstanceId;
         this.rowId = _escapeString(rowNode.id);
@@ -1321,10 +1325,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
      * time, the row would animate down (ie from position zero).
      */
     public getInitialRowTop(): string | undefined {
-        return this.suppressRowTransform ? this.getInitialRowTopShared() : undefined;
+        return this.useTopPositioning ? this.getInitialRowTopShared() : undefined;
     }
     public getInitialTransform(): string | undefined {
-        return this.suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared()})`;
+        return this.useTopPositioning ? undefined : `translateY(${this.getInitialRowTopShared()})`;
     }
     private getInitialRowTopShared(): string {
         if (this.printLayout) {
@@ -1353,13 +1357,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private setRowTopStyle(topPx: string): void {
-        const { rowGui, suppressRowTransform } = this;
+        const { rowGui, useTopPositioning } = this;
 
         if (!rowGui) {
             return;
         }
 
-        if (suppressRowTransform) {
+        if (useTopPositioning) {
             rowGui.rowComp.setTop(topPx);
         } else {
             rowGui.rowComp.setTransform(`translateY(${topPx})`);
