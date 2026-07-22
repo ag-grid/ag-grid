@@ -9,13 +9,7 @@ import type {
     IconName,
     MenuItemDef,
 } from 'ag-grid-community';
-import {
-    Component,
-    _createIconNoSpan,
-    _hasColumnMenuItems,
-    _resolveColumnMenuItems,
-    isProvidedColumnGroup,
-} from 'ag-grid-community';
+import { Component, _createIconNoSpan, _resolveColumnMenuItems, isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { MenuItemMapper } from '../menu/menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../menu/menuSeparators';
@@ -33,6 +27,8 @@ type MenuItemProperty = {
     deActivateFunction?: () => void;
     addIcon: IconName;
     removeIcon?: IconName;
+    /** Whether the item changes column state, and so must be disabled under `functionsReadOnly`. */
+    mutatesState?: boolean;
 };
 
 export class ToolPanelContextMenu extends Component {
@@ -90,11 +86,12 @@ export class ToolPanelContextMenu extends Component {
         const resolvedItems = _resolveColumnMenuItems(gos, col, columnGroup, source, defaultItems);
         const menuItemsMapped = this.mapMenuItems(resolvedItems, col);
 
-        // Suppress the native browser context menu whenever AG Grid handles the gesture: either it shows a
-        // menu, or customisation is configured but resolved to nothing (e.g. an empty array, or a callback
-        // returning nothing under functionsReadOnly). A right-click with no items and no customisation falls
-        // through to the browser menu.
-        const handled = menuItemsMapped.length > 0 || _hasColumnMenuItems(gos, col, columnGroup);
+        // Suppress the native browser context menu only when AG Grid handles the gesture: it shows a menu, or
+        // a per-column/group `columnMenuItems` is explicitly configured (including an empty array, which
+        // deliberately shows nothing). A grid-level `getColumnMenuItems` that resolves to nothing for this
+        // column does not suppress it, matching how the grid only blocks the browser menu when it has items.
+        const colOrGroupDef = col?.colDef ?? columnGroup?.getColGroupDef();
+        const handled = menuItemsMapped.length > 0 || colOrGroupDef?.columnMenuItems != null;
         if (handled) {
             const mouseEventOrTouch = this.mouseEventOrTouch;
             if ('preventDefault' in mouseEventOrTouch) {
@@ -119,11 +116,14 @@ export class ToolPanelContextMenu extends Component {
         const expanded: (DefaultMenuItem | MenuItemDef | 'separator')[] = [];
         for (let i = 0, len = items.length; i < len; ++i) {
             const item = items[i];
-            if (typeof item === 'string' && menuItemMap.has(item as DefaultToolPanelItem)) {
-                expanded.push(...this.resolveToolPanelToken(item as DefaultToolPanelItem));
-            } else {
-                expanded.push(item as DefaultMenuItem | MenuItemDef);
+            if (typeof item === 'string') {
+                const token = item as DefaultToolPanelItem;
+                if (menuItemMap.has(token)) {
+                    expanded.push(...this.resolveToolPanelToken(token));
+                    continue;
+                }
             }
+            expanded.push(item as DefaultMenuItem | MenuItemDef);
         }
 
         const menuItemMapper = this.beans.menuItemMapper as MenuItemMapper | undefined;
@@ -210,6 +210,7 @@ export class ToolPanelContextMenu extends Component {
             },
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup',
+            mutatesState: true,
         });
 
         const valueAllowed = (col: AgColumn) => col.primary && col.isAllowValue();
@@ -231,6 +232,7 @@ export class ToolPanelContextMenu extends Component {
             },
             addIcon: 'valuePanel',
             removeIcon: 'valuePanel',
+            mutatesState: true,
         });
 
         const pivotAllowed = (col: AgColumn) => isPivotMode && col.primary && col.isAllowPivot();
@@ -252,6 +254,7 @@ export class ToolPanelContextMenu extends Component {
             },
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel',
+            mutatesState: true,
         });
     }
 
@@ -355,10 +358,15 @@ export class ToolPanelContextMenu extends Component {
         const isInactive = columns.some((col) => val.allowedFunction(col) && !val.activeFunction(col));
         const isActive = columns.some((col) => val.allowedFunction(col) && val.activeFunction(col));
 
+        // State-changing tokens are shown disabled under functionsReadOnly, matching the column menu
+        // (MenuItemMapper), so an explicitly-returned token cannot be used to bypass the restriction.
+        const disabled = !!val.mutatesState && this.gos.get('functionsReadOnly');
+
         if (isInactive) {
             ret.push({
                 name: val.activateLabel(displayName!),
                 icon: _createIconNoSpan(val.addIcon, beans, null),
+                disabled,
                 action: () => val.activateFunction(),
             });
         }
@@ -367,6 +375,7 @@ export class ToolPanelContextMenu extends Component {
             ret.push({
                 name: val.deactivateLabel(displayName!),
                 icon: _createIconNoSpan(val.removeIcon, beans, null),
+                disabled,
                 action: () => val.deActivateFunction?.(),
             });
         }

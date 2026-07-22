@@ -512,5 +512,38 @@ describe('ToolPanelContextMenu', () => {
             expect(event.defaultPrevented).toBe(true);
             expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
         });
+
+        test('a grid-level getColumnMenuItems resolving to empty does not suppress the native menu', async () => {
+            const getColumnMenuItems = vi.fn(() => []);
+            const { gridDiv, toolPanel } = await createGrid(columnDefs, { getColumnMenuItems });
+
+            const entry = await getColumnEntry(toolPanel, gridDiv, 'Athlete');
+            const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 });
+            entry.dispatchEvent(event);
+            await asyncSetTimeout(1);
+
+            // Unlike a per-column columnMenuItems, a grid-level callback that returns nothing for this column
+            // does not claim the gesture, so the browser's native menu is left to show.
+            expect(event.defaultPrevented).toBe(false);
+            expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
+        });
+
+        test('under functionsReadOnly an explicitly-returned state-changing token is shown disabled', async () => {
+            const getColumnMenuItems = vi.fn((_params: GetColumnMenuItemsParams) => ['value' as const]);
+            const { gridApi, gridDiv, toolPanel } = await createGrid(columnDefs, {
+                functionsReadOnly: true,
+                getColumnMenuItems,
+            });
+
+            await openContextMenu(toolPanel, gridDiv, 'Age');
+
+            const option = await findByText(gridDiv, 'Add Age to values');
+            expect(option.closest('.ag-menu-option')!.classList.contains('ag-menu-option-disabled')).toBe(true);
+
+            // The disabled item must not mutate value state when clicked.
+            await userEvent.click(option);
+            await asyncSetTimeout(1);
+            expect(gridApi.getValueColumns().map((col) => col.getColId())).not.toContain('age');
+        });
     });
 });

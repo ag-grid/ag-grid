@@ -160,6 +160,9 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
      *
      * Note: when this is set, the Columns Tool Panel / Column Chooser right-click menu opens even under
      * `functionsReadOnly` (where it is otherwise suppressed), showing the items you provide.
+     *
+     * Requires `ColumnMenuModule` (for the column menu) or `ColumnsToolPanelModule` (for the Columns Tool
+     * Panel and Column Chooser), depending on which surface you are customising.
      * @agModule `ColumnMenuModule`
      */
     columnMenuItems?: (DefaultColumnMenuItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;
@@ -647,6 +650,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *
      * Note: when this is set, the Columns Tool Panel / Column Chooser right-click menu opens even under
      * `functionsReadOnly` (where it is otherwise suppressed), showing the items you provide.
+     *
+     * Requires `ColumnMenuModule` (for the column menu) or `ColumnsToolPanelModule` (for the Columns Tool
+     * Panel and Column Chooser), depending on which surface you are customising.
      * @agModule `ColumnMenuModule`
      */
     columnMenuItems?: (DefaultColumnMenuItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;

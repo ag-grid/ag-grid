@@ -60,6 +60,8 @@ Each item is either a string or a `MenuItemDef`. Use a string to pick a built-in
 
 `colDef.mainMenuItems` and the grid option `getMainMenuItems()` are the original way to customise the menu. They behave the same way, but apply to the column menu only - not the Columns Tool Panel or Column Chooser - and their callbacks do not receive a `source`. Prefer `columnMenuItems` / `getColumnMenuItems()`; these older properties remain supported and take effect when the newer ones are not set.
 
+The full order of precedence is `colDef.columnMenuItems`, then `getColumnMenuItems()`, then `colDef.mainMenuItems`, then `getMainMenuItems()`. A grid-level `getColumnMenuItems()` therefore takes precedence over a per-column `mainMenuItems`.
+
 {% apiDocumentation source="column-properties/properties.json" section="header" names=["mainMenuItems"] /%}
 
 {% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getMainMenuItems"] /%}
