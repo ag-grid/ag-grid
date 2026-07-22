@@ -1,31 +1,36 @@
 import { AG_GRID_LOCALE_EG, AG_GRID_LOCALE_IL } from '@ag-grid-community/locale';
+import React, { StrictMode, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     LocaleModule,
-    ModuleRegistry,
     NumberEditorModule,
     NumberFilterModule,
     TextEditorModule,
     TextFilterModule,
-    createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
+
+import './styles.css';
 
 // Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([
+const modules = [
     NumberEditorModule,
     TextEditorModule,
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
     LocaleModule,
-]);
+];
+
+type Language = 'arabic' | 'hebrew' | 'english';
 
 interface LanguageConfig {
     localeText: Record<string, string> | undefined;
@@ -34,7 +39,7 @@ interface LanguageConfig {
     rowData: Record<string, any>[];
 }
 
-const LANGUAGES: Record<string, LanguageConfig> = {
+const LANGUAGES: Record<Language, LanguageConfig> = {
     arabic: {
         localeText: AG_GRID_LOCALE_EG,
         enableRtl: true,
@@ -103,33 +108,61 @@ const LANGUAGES: Record<string, LanguageConfig> = {
     },
 };
 
-let gridApi: GridApi;
-
-function getGridOptions(language: string): GridOptions {
+const GridExample = () => {
+    const [language, setLanguage] = useState<Language>('arabic');
+    const [gridVisible, setGridVisible] = useState(true);
     const config = LANGUAGES[language];
-    return {
-        columnDefs: config.columnDefs,
-        rowData: config.rowData,
-        enableRtl: config.enableRtl,
-        localeText: config.localeText,
-        defaultColDef: {
+    const defaultColDef = useMemo<ColDef>(
+        () => ({
             editable: true,
             flex: 1,
             minWidth: 100,
             filter: true,
-        },
+        }),
+        []
+    );
+
+    // enableRtl is an initial-only option, so switching language recreates the grid.
+    const onLanguageChange = (next: Language) => {
+        setGridVisible(false);
+        setLanguage(next);
+        setTimeout(() => setGridVisible(true));
     };
-}
 
-function onLanguageChange() {
-    const select = document.querySelector<HTMLSelectElement>('#language')!;
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    return (
+        <AgGridProvider modules={modules}>
+            <div className="example-wrapper">
+                <div style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <label htmlFor="language">Language:</label>
+                    <select
+                        id="language"
+                        value={language}
+                        onChange={(event) => onLanguageChange(event.target.value as Language)}
+                    >
+                        <option value="arabic">العربية (Arabic)</option>
+                        <option value="hebrew">עברית (Hebrew)</option>
+                        <option value="english">English</option>
+                    </select>
+                </div>
+                <div style={{ height: '100%', width: '100%' }}>
+                    {gridVisible && (
+                        <AgGridReact
+                            enableRtl={config.enableRtl}
+                            columnDefs={config.columnDefs}
+                            rowData={config.rowData}
+                            localeText={config.localeText}
+                            defaultColDef={defaultColDef}
+                        />
+                    )}
+                </div>
+            </div>
+        </AgGridProvider>
+    );
+};
 
-    gridApi.destroy();
-    gridApi = createGrid(gridDiv, getGridOptions(select.value));
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, getGridOptions('arabic'));
-});
+const root = createRoot(document.getElementById('root')!);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

@@ -1,6 +1,8 @@
 import { AG_GRID_LOCALE_EG, AG_GRID_LOCALE_IL } from '@ag-grid-community/locale';
+import { Component, signal } from '@angular/core';
 
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import { AgGridAngular } from 'ag-grid-angular';
+import type { ColDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     LocaleModule,
@@ -9,9 +11,10 @@ import {
     NumberFilterModule,
     TextEditorModule,
     TextFilterModule,
-    createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
+
+import './styles.css';
 
 // Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
@@ -27,6 +30,8 @@ ModuleRegistry.registerModules([
     LocaleModule,
 ]);
 
+type Language = 'arabic' | 'hebrew' | 'english';
+
 interface LanguageConfig {
     localeText: Record<string, string> | undefined;
     enableRtl: boolean;
@@ -34,7 +39,7 @@ interface LanguageConfig {
     rowData: Record<string, any>[];
 }
 
-const LANGUAGES: Record<string, LanguageConfig> = {
+const LANGUAGES: Record<Language, LanguageConfig> = {
     arabic: {
         localeText: AG_GRID_LOCALE_EG,
         enableRtl: true,
@@ -103,33 +108,67 @@ const LANGUAGES: Record<string, LanguageConfig> = {
     },
 };
 
-let gridApi: GridApi;
+@Component({
+    standalone: true,
+    imports: [AgGridAngular],
+    selector: 'my-app',
+    template: `
+        <div class="example-wrapper">
+            <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
+                <label for="language">Language:</label>
+                <select id="language" (change)="onLanguageChange($event)">
+                    <option value="arabic" selected>العربية (Arabic)</option>
+                    <option value="hebrew">עברית (Hebrew)</option>
+                    <option value="english">English</option>
+                </select>
+            </div>
+            @if (gridVisible()) {
+                <ag-grid-angular
+                    style="width: 100%; height: 100%;"
+                    [enableRtl]="enableRtl"
+                    [columnDefs]="columnDefs"
+                    [rowData]="rowData"
+                    [localeText]="localeText"
+                    [defaultColDef]="defaultColDef"
+                />
+            }
+        </div>
+    `,
+})
+export class AppComponent {
+    public language = signal<Language>('arabic');
+    public gridVisible = signal(true);
 
-function getGridOptions(language: string): GridOptions {
-    const config = LANGUAGES[language];
-    return {
-        columnDefs: config.columnDefs,
-        rowData: config.rowData,
-        enableRtl: config.enableRtl,
-        localeText: config.localeText,
-        defaultColDef: {
-            editable: true,
-            flex: 1,
-            minWidth: 100,
-            filter: true,
-        },
+    public defaultColDef: ColDef = {
+        editable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
     };
+
+    // Getters re-read the active language config on each change-detection tick so the
+    // recreated grid always mounts with the current columns, data, RTL flag and locale.
+    public get columnDefs(): ColDef[] {
+        return LANGUAGES[this.language()].columnDefs;
+    }
+
+    public get rowData(): Record<string, any>[] {
+        return LANGUAGES[this.language()].rowData;
+    }
+
+    public get enableRtl(): boolean {
+        return LANGUAGES[this.language()].enableRtl;
+    }
+
+    public get localeText(): Record<string, string> | undefined {
+        return LANGUAGES[this.language()].localeText;
+    }
+
+    // enableRtl is an initial-only option, so switching language recreates the grid.
+    public onLanguageChange(event: Event): void {
+        const next = (event.target as HTMLSelectElement).value as Language;
+        this.gridVisible.set(false);
+        this.language.set(next);
+        setTimeout(() => this.gridVisible.set(true));
+    }
 }
-
-function onLanguageChange() {
-    const select = document.querySelector<HTMLSelectElement>('#language')!;
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-
-    gridApi.destroy();
-    gridApi = createGrid(gridDiv, getGridOptions(select.value));
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, getGridOptions('arabic'));
-});

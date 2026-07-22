@@ -1,6 +1,7 @@
 import { AG_GRID_LOCALE_EG, AG_GRID_LOCALE_IL } from '@ag-grid-community/locale';
+import { computed, createApp, defineComponent, ref } from 'vue';
 
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     LocaleModule,
@@ -9,9 +10,11 @@ import {
     NumberFilterModule,
     TextEditorModule,
     TextFilterModule,
-    createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
+import { AgGridVue } from 'ag-grid-vue3';
+
+import './styles.css';
 
 // Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
@@ -27,6 +30,8 @@ ModuleRegistry.registerModules([
     LocaleModule,
 ]);
 
+type Language = 'arabic' | 'hebrew' | 'english';
+
 interface LanguageConfig {
     localeText: Record<string, string> | undefined;
     enableRtl: boolean;
@@ -34,7 +39,7 @@ interface LanguageConfig {
     rowData: Record<string, any>[];
 }
 
-const LANGUAGES: Record<string, LanguageConfig> = {
+const LANGUAGES: Record<Language, LanguageConfig> = {
     arabic: {
         localeText: AG_GRID_LOCALE_EG,
         enableRtl: true,
@@ -103,33 +108,66 @@ const LANGUAGES: Record<string, LanguageConfig> = {
     },
 };
 
-let gridApi: GridApi;
-
-function getGridOptions(language: string): GridOptions {
-    const config = LANGUAGES[language];
-    return {
-        columnDefs: config.columnDefs,
-        rowData: config.rowData,
-        enableRtl: config.enableRtl,
-        localeText: config.localeText,
-        defaultColDef: {
+const VueExample = defineComponent({
+    template: `
+        <div class="example-wrapper">
+            <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
+                <label for="language">Language:</label>
+                <select id="language" v-on:change="onLanguageChange($event)">
+                    <option value="arabic" selected>العربية (Arabic)</option>
+                    <option value="hebrew">עברית (Hebrew)</option>
+                    <option value="english">English</option>
+                </select>
+            </div>
+            <ag-grid-vue
+                v-if="gridVisible"
+                style="width: 100%; height: 100%;"
+                :enableRtl="enableRtl"
+                :columnDefs="columnDefs"
+                :rowData="rowData"
+                :localeText="localeText"
+                :defaultColDef="defaultColDef"
+            ></ag-grid-vue>
+        </div>
+    `,
+    components: {
+        'ag-grid-vue': AgGridVue,
+    },
+    setup() {
+        const language = ref<Language>('arabic');
+        const gridVisible = ref(true);
+        const defaultColDef = ref<ColDef>({
             editable: true,
             flex: 1,
             minWidth: 100,
             filter: true,
-        },
-    };
-}
+        });
 
-function onLanguageChange() {
-    const select = document.querySelector<HTMLSelectElement>('#language')!;
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+        const columnDefs = computed(() => LANGUAGES[language.value].columnDefs);
+        const rowData = computed(() => LANGUAGES[language.value].rowData);
+        const enableRtl = computed(() => LANGUAGES[language.value].enableRtl);
+        const localeText = computed(() => LANGUAGES[language.value].localeText);
 
-    gridApi.destroy();
-    gridApi = createGrid(gridDiv, getGridOptions(select.value));
-}
+        // enableRtl is an initial-only option, so switching language recreates the grid.
+        const onLanguageChange = (event: Event) => {
+            const next = (event.target as HTMLSelectElement).value as Language;
+            gridVisible.value = false;
+            language.value = next;
+            setTimeout(() => {
+                gridVisible.value = true;
+            });
+        };
 
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, getGridOptions('arabic'));
+        return {
+            gridVisible,
+            defaultColDef,
+            columnDefs,
+            rowData,
+            enableRtl,
+            localeText,
+            onLanguageChange,
+        };
+    },
 });
+
+createApp(VueExample).mount('#app');
