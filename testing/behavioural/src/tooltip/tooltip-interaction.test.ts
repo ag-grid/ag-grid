@@ -90,4 +90,42 @@ describe('Tooltip interaction', () => {
         await asyncSetTimeout(150);
         expect(visibleTooltip()?.textContent).toContain('Age tooltip');
     });
+
+    test('AG-17885 leaving a cell with no tooltip showing does not lock the next tooltip', async () => {
+        // The interactive lock (100ms INTERACTIVE_HIDE_DELAY) exists so the cursor can travel from a
+        // cell onto its own tooltip. Leaving a cell that has nothing showing must NOT take that lock —
+        // otherwise the next cell's tooltip is needlessly delayed by 100ms while it waits it out.
+        const SHOW_DELAY = 200;
+        const INTERACTIVE_HIDE_DELAY = 100;
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'athlete' }, // empty cell, so leaving it has no tooltip to interact with
+                { field: 'age', tooltipValueGetter: () => 'Age tooltip' },
+            ],
+            rowData: [{ athlete: '', age: 19 }],
+            tooltipInteraction: true,
+            tooltipShowDelay: SHOW_DELAY,
+            tooltipHideDelay: 2000,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-interaction-no-lock', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const athleteCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'athlete')));
+        const ageCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'age')));
+
+        // hover then leave the empty ATHLETE cell — nothing was showing, so no lock should be taken
+        await userEvent.hover(athleteCell);
+        await userEvent.unhover(athleteCell);
+
+        // move straight to AGE and time how long its tooltip takes to appear
+        const start = performance.now();
+        await userEvent.hover(ageCell);
+        await waitFor(() => expect(visibleTooltip()?.textContent).toContain('Age tooltip'), { interval: 10 });
+        const elapsed = performance.now() - start;
+
+        // without the spurious lock the tooltip shows after ~SHOW_DELAY; a lock would add
+        // INTERACTIVE_HIDE_DELAY on top. Assert we land below the midpoint of those two timings.
+        expect(elapsed).toBeLessThan(SHOW_DELAY + INTERACTIVE_HIDE_DELAY / 2);
+    });
 });
