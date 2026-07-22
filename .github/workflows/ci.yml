@@ -243,12 +243,6 @@ jobs:
           git fetch origin --depth 1 latest
           git fetch origin --depth 1 tag latest-success
 
-      - name: DNS/CDN debug
-        shell: bash
-        run: |
-          getent hosts registry.ag-grid.com || true                                                                                                                                                                                    
-          curl -sI https://registry.ag-grid.com/ag-grid-community | grep -iE '^server:|^via:|x-amz-cf-id|x-cache' || true  
-
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx
