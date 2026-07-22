@@ -295,8 +295,8 @@ function _createEditorParams(
         data: rowNode.data,
         cellStartedEdit: !!cellStartedEdit,
         onKeyDown: cellCtrl?.onKeyDown.bind(cellCtrl),
-        stopEditing: (suppressNavigateAfterEdit: boolean) => {
-            editSvc!.stopEditing(position, { source: batchEdit ? 'ui' : 'api', suppressNavigateAfterEdit });
+        stopEditing: (suppressNavigateAfterEdit: boolean, event?: KeyboardEvent) => {
+            editSvc!.stopEditing(position, { source: batchEdit ? 'ui' : 'api', suppressNavigateAfterEdit, event });
             _destroyEditor(beans, position, {});
         },
         eGridCell: cellCtrl?.eGui,

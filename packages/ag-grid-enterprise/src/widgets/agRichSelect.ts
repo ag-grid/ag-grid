@@ -882,7 +882,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (!this.isPickerDisplayed) {
             if (isTypingMultiSelect) {
                 e.preventDefault();
-                this.dispatchPickerEventAndHidePicker(this.value, true);
+                this.dispatchPickerEventAndHidePicker(this.value, true, e);
             }
             return;
         }
@@ -904,9 +904,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             }
 
             if (this.config.multiSelect || lastRowHovered === undefined) {
-                this.dispatchPickerEventAndHidePicker(this.value, true);
+                this.dispatchPickerEventAndHidePicker(this.value, true, e);
             } else {
-                this.onListValueSelected(new Set<TValue>([lastRowHovered]), true);
+                this.onListValueSelected(new Set<TValue>([lastRowHovered]), true, e);
             }
         }
     }
@@ -1080,7 +1080,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         return selectedValues.length ? selectedValues : null;
     }
 
-    private onListValueSelected(valueSet: Set<TValue>, fromEnterKey: boolean): void {
+    private onListValueSelected(valueSet: Set<TValue>, fromEnterKey: boolean, keyboardEvent?: KeyboardEvent): void {
         const newValue = this.getValueFromSet(valueSet);
 
         this.setValue(newValue, false, true);
@@ -1091,15 +1091,20 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             this.resetTypingMultiSelectSearchState();
             this.hidePicker();
         } else if (!multiSelect) {
-            this.dispatchPickerEventAndHidePicker(newValue, fromEnterKey);
+            this.dispatchPickerEventAndHidePicker(newValue, fromEnterKey, keyboardEvent);
         }
     }
 
-    private dispatchPickerEventAndHidePicker(value: TValue[] | TValue | null, fromEnterKey: boolean): void {
+    private dispatchPickerEventAndHidePicker(
+        value: TValue[] | TValue | null,
+        fromEnterKey: boolean,
+        keyboardEvent?: KeyboardEvent
+    ): void {
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
             type: 'fieldPickerValueSelected',
             fromEnterKey,
             value,
+            keyboardEvent,
         };
 
         this.dispatchLocalEvent(event);
