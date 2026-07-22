@@ -16,6 +16,8 @@ interface BaseAddPopupParams<TContainerType extends string> {
     closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void;
     // if a clicked caused the popup (eg click a button) then the click that caused it
     click?: MouseEvent | Touch | null;
+    // mousedown/touchstart dismissal from this element is handled by the element itself
+    eventSourceToIgnore?: HTMLElement;
     alwaysOnTop?: boolean;
     afterGuiAttached?: (params: AfterGuiAttachedParams<TContainerType>) => void;
     // this gets called after the popup is created. the called could just call positionCallback themselves,

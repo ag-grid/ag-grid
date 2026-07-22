@@ -74,8 +74,12 @@ export async function firePointerLikeClick(element: string | HTMLElement | null 
     };
     element.dispatchEvent(new MouseEvent('mouseup', mouseUpInit));
 
-    element.click();
-    const clickNotCancelled = true;
+    const clickNotCancelled = element.dispatchEvent(
+        new MouseEvent('click', {
+            ...mouseUpInit,
+            detail: 1,
+        })
+    );
 
     return clickNotCancelled;
 }
