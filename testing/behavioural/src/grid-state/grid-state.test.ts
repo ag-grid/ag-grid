@@ -2367,5 +2367,38 @@ describe('StateService - Grid State Management', () => {
             api.applyColumnState({ state: [{ colId: 'amount', showValuesAs: null }] });
             expect(api.getState().showValuesAs).toBeUndefined();
         });
+
+        test('isolates live column config from the object passed to setState', async () => {
+            const api = gridsManager.createGrid('sva-input-isolation', {
+                columnDefs: showValuesAsColumnDefs,
+                rowData: showValuesAsRowData,
+            });
+            const input: GridState = {
+                aggregation: { aggregationModel: [{ colId: 'amount', aggFunc: 'sum' }] },
+                showValuesAs: {
+                    showValuesAsModel: [
+                        {
+                            colId: 'amount',
+                            showValuesAs: {
+                                type: 'percentOfGrandTotal',
+                                params: { nested: { value: 1 }, list: [1, 2] },
+                            },
+                        },
+                    ],
+                },
+            };
+            api.setState(input);
+            const expectedMode = { type: 'percentOfGrandTotal', params: { nested: { value: 1 }, list: [1, 2] } };
+            expect(modeOf(api, 'amount')).toEqual(expectedMode);
+
+            // Mutating the caller's object after setState must not reach the live column config.
+            const inputParams = input.showValuesAs!.showValuesAsModel[0].showValuesAs as {
+                params: { nested: { value: number }; list: number[] };
+            };
+            inputParams.params.nested.value = 999;
+            inputParams.params.list.push(3);
+
+            expect(modeOf(api, 'amount')).toEqual(expectedMode);
+        });
     });
 });
