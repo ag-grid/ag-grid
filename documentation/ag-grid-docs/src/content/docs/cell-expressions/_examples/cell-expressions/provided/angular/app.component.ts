@@ -107,7 +107,10 @@ export class AppComponent {
     leftColumnDefs: ColDef<LeftData>[] = [
         { headerName: 'Function', field: 'function', minWidth: 150 },
         { headerName: 'Value', field: 'value' },
-        { headerName: 'Times 10', valueGetter: 'typeof getValue("value") === "number" ? getValue("value") * 10 : null' },
+        {
+            headerName: 'Times 10',
+            valueGetter: 'typeof getValue("value") === "number" ? getValue("value") * 10 : null',
+        },
     ];
 
     leftDefaultColDef: ColDef = {
