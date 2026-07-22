@@ -666,6 +666,8 @@ export type {
     RowPinningState,
     ScrollState,
     SelectableFilterState,
+    ShowValuesAsColumnState,
+    ShowValuesAsState,
     SideBarState,
     SortState,
 } from './interfaces/gridState';

@@ -26,12 +26,14 @@ import type {
     RowGroupState,
     RowPinningState,
     ScrollState,
+    ShowValuesAsState,
     SideBarState,
     SortState,
 } from '../../interfaces/gridState';
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from '../../interfaces/iExpansionService';
 import type { FilterModel } from '../../interfaces/iFilter';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
+import { _cloneDeep } from '../../utils/mergeDeep';
 import { migrateGridStateModel } from './stateModelMigration';
 import { _convertColumnGroupState, convertColumnState } from './stateUtils';
 
@@ -186,6 +188,7 @@ export class StateService extends BeanStub implements NamedBean {
             'columnVisibility',
             'pivot',
             'rowGroup',
+            'showValuesAs',
             'sort',
         ]);
         this.updateCachedState('columnGroup', this.getColumnGroupState());
@@ -216,6 +219,7 @@ export class StateService extends BeanStub implements NamedBean {
             columnPivotChanged: onUpdate('pivot'),
             columnPivotModeChanged: onUpdate('pivot'),
             columnRowGroupChanged: onUpdate('rowGroup'),
+            columnShowValuesAsChanged: onUpdate('showValuesAs'),
             sortChanged: onUpdate('sort'),
             newColumnsLoaded: ({ source }) => {
                 this.updateColumnAndGroupState();
@@ -383,6 +387,7 @@ export class StateService extends BeanStub implements NamedBean {
         sort?: SortState;
         rowGroup?: RowGroupState;
         aggregation?: AggregationState;
+        showValuesAs?: ShowValuesAsState;
         pivot?: PivotState;
         columnPinning?: ColumnPinningState;
         columnVisibility?: ColumnVisibilityState;
@@ -403,6 +408,7 @@ export class StateService extends BeanStub implements NamedBean {
             sort: sortState,
             rowGroup: groupState,
             aggregation: aggregationState,
+            showValuesAs: showValuesAsState,
             pivot: pivotState,
             columnPinning: columnPinningState,
             columnVisibility: columnVisibilityState,
@@ -471,6 +477,19 @@ export class StateService extends BeanStub implements NamedBean {
         if (shouldSetAggregationState || !partialColumnState) {
             defaultState.aggFunc = null;
             defaultState.valueIndex = null;
+        }
+
+        const shouldSetShowValuesAsState = shouldSetState('showValuesAs', showValuesAsState);
+        if (shouldSetShowValuesAsState && showValuesAsState) {
+            const showValuesAsModel = showValuesAsState.showValuesAsModel;
+            for (let i = 0, len = showValuesAsModel.length; i < len; ++i) {
+                const { colId, showValuesAs } = showValuesAsModel[i];
+                // Clone so later mutation of the caller's state can't reach live column config.
+                getColumnState(colId).showValuesAs = _cloneDeep(showValuesAs);
+            }
+        }
+        if (shouldSetShowValuesAsState || !partialColumnState) {
+            defaultState.showValuesAs = null;
         }
 
         const shouldSetPivotState = shouldSetState('pivot', pivotState);

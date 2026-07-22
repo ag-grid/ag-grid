@@ -1,6 +1,13 @@
 import type { ColumnState } from '../../columns/columnStateUtils';
-import type { AggregationColumnState, ColumnGroupState, ColumnSizeState, GridState } from '../../interfaces/gridState';
+import type {
+    AggregationColumnState,
+    ColumnGroupState,
+    ColumnSizeState,
+    GridState,
+    ShowValuesAsColumnState,
+} from '../../interfaces/gridState';
 import type { SortModelItem } from '../../interfaces/iSortModelItem';
+import { _cloneDeep } from '../../utils/mergeDeep';
 
 /**
  * Converts state retrieved from `api.getColumnState()` to grid state.
@@ -22,10 +29,12 @@ export function convertColumnState(
     | 'columnVisibility'
     | 'columnSizing'
     | 'columnOrder'
+    | 'showValuesAs'
 > {
     const sortColumns: SortModelItem[] = [];
     const groupColIds: string[] = [];
     const aggregationColumns: IndexedAggregationColumnState[] = [];
+    const showValuesAsColumns: ShowValuesAsColumnState[] = [];
     const pivotColIds: string[] = [];
     const leftColIds: string[] = [];
     const rightColIds: string[] = [];
@@ -44,6 +53,7 @@ export function convertColumnState(
             rowGroupIndex,
             aggFunc,
             valueIndex,
+            showValuesAs,
             pivot,
             pivotIndex,
             pinned,
@@ -60,6 +70,9 @@ export function convertColumnState(
         }
         if (typeof aggFunc === 'string') {
             aggregationColumns.push({ colId, aggFunc, valueIndex });
+        }
+        if (showValuesAs != null) {
+            showValuesAsColumns.push({ colId, showValuesAs: _cloneDeep(showValuesAs) });
         }
         if (pivot) {
             pivotColIds[pivotIndex ?? 0] = colId;
@@ -81,6 +94,7 @@ export function convertColumnState(
         aggregation: aggregationColumns.length
             ? { aggregationModel: orderAggregationModel(aggregationColumns) }
             : undefined,
+        showValuesAs: showValuesAsColumns.length ? { showValuesAsModel: showValuesAsColumns } : undefined,
         pivot:
             pivotColIds.length || enablePivotMode
                 ? { pivotMode: enablePivotMode, pivotColIds: _removeEmptyValues(pivotColIds) }
