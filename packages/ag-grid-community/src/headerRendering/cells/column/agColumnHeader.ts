@@ -5,12 +5,14 @@ import type { UserComponentFactory } from '../../../components/framework/userCom
 import type { AgColumn } from '../../../entities/agColumn';
 import { _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { IHeaderComp, IHeaderParams, IInnerHeaderComponent } from '../../../interfaces/iHeader';
+import type { PopupToggleResult } from '../../../misc/menu/menuService';
 import type { SortIndicatorComp } from '../../../sort/sortIndicatorComp';
 import type { ElementParams } from '../../../utils/element';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _mergeDeep } from '../../../utils/mergeDeep';
 import { Component } from '../../../widgets/component';
+import { _addPopupToggleButtonListeners } from '../popupToggleButton';
 import { HeaderCellMouseListenerFeature } from './headerCellMouseListenerFeature';
 
 function getHeaderCompElementParams(
@@ -264,7 +266,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
 
         const currentSuppressMenuHide = this.shouldSuppressMenuHide();
         this.currentSuppressMenuHide = currentSuppressMenuHide;
-        this.addManagedElementListeners(eMenu, { click: () => this.showColumnMenu(this.eMenu!) });
+        _addPopupToggleButtonListeners(this, eMenu, () => this.toggleColumnMenu(eMenu));
         this.toggleMenuAlwaysShow(currentSuppressMenuHide);
     }
 
@@ -282,6 +284,26 @@ export class AgColumnHeader extends Component implements IHeaderComp {
                 this.toggleMenuAlwaysShow(false);
             }
         });
+    }
+
+    private toggleColumnMenu(element: HTMLElement): PopupToggleResult {
+        const { currentSuppressMenuHide, params } = this;
+        const result =
+            this.beans.menuSvc?.toggleColumnMenu({
+                column: params.column,
+                buttonElement: element,
+                positionBy: 'button',
+                onClosedCallback: () => {
+                    if (!currentSuppressMenuHide) {
+                        this.toggleMenuAlwaysShow(false);
+                    }
+                },
+            }) ?? 'declined';
+
+        if (result === 'opened' && !currentSuppressMenuHide) {
+            this.toggleMenuAlwaysShow(true);
+        }
+        return result;
     }
 
     public onMenuKeyboardShortcut(isFilterShortcut: boolean): boolean {
@@ -434,9 +456,17 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             'filter'
         );
         if (configured) {
-            this.addManagedElementListeners(eFilterButton, {
-                click: () => params.showFilter(eFilterButton),
-            });
+            _addPopupToggleButtonListeners(
+                this,
+                eFilterButton,
+                () =>
+                    this.beans.menuSvc?.toggleFilterMenu({
+                        column: params.column,
+                        buttonElement: eFilterButton,
+                        containerType: 'columnFilter',
+                        positionBy: 'button',
+                    }) ?? 'declined'
+            );
         } else {
             this.eFilterButton = undefined;
         }
