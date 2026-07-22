@@ -56,16 +56,31 @@ export const _mergeDeep = (dest: any, source: any, copyUndefined = true, makeCop
     }
 };
 
-/** Deep-clones a plain object/array; nested plain objects are copied, functions/class instances and
- *  (nested) arrays are shared by reference. Primitives pass through. Guards prototype pollution.
+/** Deep-clones plain objects and arrays recursively; functions/class instances (non-plain protos) and
+ *  primitives are returned as-is. Guards prototype pollution.
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const _cloneDeep = <T>(value: T): T => {
     if (value === null || typeof value !== 'object') {
         return value;
     }
-    const clone = (Array.isArray(value) ? [] : {}) as T;
-    _mergeDeep(clone, value, false, true);
-    return clone;
+    if (Array.isArray(value)) {
+        const len = value.length;
+        const arr = new Array(len);
+        for (let i = 0; i < len; ++i) {
+            arr[i] = _cloneDeep(value[i]);
+        }
+        return arr as T;
+    }
+    if (!isPlainProto(value)) {
+        return value; // functions/class instances/Dates etc. — not safely cloneable, share by reference
+    }
+    const out: any = {};
+    for (const key of Object.keys(value)) {
+        if (!_isProtoPollutionKey(key)) {
+            out[key] = _cloneDeep((value as any)[key]);
+        }
+    }
+    return out;
 };
 
 /** Inverse of `_mergeDeep`. Note: like mergeDeep it does not recurse into arrays.

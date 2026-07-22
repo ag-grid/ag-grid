@@ -2327,7 +2327,7 @@ describe('StateService - Grid State Management', () => {
                 state: [
                     {
                         colId: 'amount',
-                        showValuesAs: { type: 'percentOfGrandTotal', params: { nested: { value: 1 } } },
+                        showValuesAs: { type: 'percentOfGrandTotal', params: { nested: { value: 1 }, list: [1, 2] } },
                     },
                 ],
             });
@@ -2337,19 +2337,21 @@ describe('StateService - Grid State Management', () => {
                 showValuesAsModel: [
                     {
                         colId: 'amount',
-                        showValuesAs: { type: 'percentOfGrandTotal', params: { nested: { value: 1 } } },
+                        showValuesAs: { type: 'percentOfGrandTotal', params: { nested: { value: 1 }, list: [1, 2] } },
                     },
                 ],
             });
 
-            // Mutating the returned snapshot must not reach through to the live column's mode params.
+            // Mutating the returned snapshot (nested object and array) must not reach the live column's mode params.
             const snapshotMode = saved.showValuesAs!.showValuesAsModel[0].showValuesAs as {
-                params: { nested: { value: number } };
+                params: { nested: { value: number }; list: number[] };
             };
             snapshotMode.params.nested.value = 999;
+            snapshotMode.params.list.push(3);
 
-            const liveMode = modeOf(api, 'amount') as { params: { nested: { value: number } } };
+            const liveMode = modeOf(api, 'amount') as { params: { nested: { value: number }; list: number[] } };
             expect(liveMode.params.nested.value).toBe(1);
+            expect(liveMode.params.list).toEqual([1, 2]);
         });
 
         test('drops the section from getState when a runtime mode is cleared', async () => {
