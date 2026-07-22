@@ -1,4 +1,4 @@
-import { cleanup, render } from '@testing-library/react';
+import { act, cleanup, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import type { GridApi } from 'ag-grid-community';
@@ -11,7 +11,7 @@ import {
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-import { asyncSetTimeout, ignoreConsoleLicenseKeyError, nextAnimationFrame } from '../test-utils';
+import { ignoreConsoleLicenseKeyError } from '../test-utils';
 
 /**
  * AG-17868 React coverage: the fix lives in the shared SpannedCellCtrl, so it must also hold under
@@ -19,12 +19,6 @@ import { asyncSetTimeout, ignoreConsoleLicenseKeyError, nextAnimationFrame } fro
  * `aria-rowspan` AND the rendered `style.height` — the reported bug was a stale height even while
  * aria-rowspan looked correct.
  */
-
-const settle = async (): Promise<void> => {
-    await asyncSetTimeout(10);
-    await nextAnimationFrame();
-    await nextAnimationFrame();
-};
 
 /** aria-rowspan of the spanned `group` cell whose value is `value`, or null if none rendered. */
 function spannedGroupRowSpan(value: string): number | null {
@@ -88,30 +82,34 @@ describe('row spanning - rowData replacement (React)', () => {
         );
 
         const api = await ready;
-        await settle();
 
         // BEFORE: group A spans 3 rows, group B spans 2 rows.
-        expect(spannedGroupRowSpan('A')).toBe(3);
-        expect(spannedGroupRowSpan('B')).toBe(2);
-        expect(spannedGroupHeightPx('A')).toBe(125); // 3 rows
-        expect(spannedGroupHeightPx('B')).toBe(83); // 2 rows
+        await waitFor(() => {
+            expect(spannedGroupRowSpan('A')).toBe(3);
+            expect(spannedGroupRowSpan('B')).toBe(2);
+            expect(spannedGroupHeightPx('A')).toBe(125); // 3 rows
+            expect(spannedGroupHeightPx('B')).toBe(83); // 2 rows
+        });
 
-        api.setGridOption('rowData', [
-            { id: 'a0', group: 'A', label: 'r0' },
-            { id: 'a1', group: 'A', label: 'r1' },
-            { id: 'a2', group: 'A2', label: 'r2' },
-            { id: 'b0', group: 'B', label: 'r3' },
-            { id: 'b1', group: 'B', label: 'r4' },
-            { id: 'b2', group: 'B', label: 'r5' },
-        ]);
-        await settle();
+        act(() => {
+            api.setGridOption('rowData', [
+                { id: 'a0', group: 'A', label: 'r0' },
+                { id: 'a1', group: 'A', label: 'r1' },
+                { id: 'a2', group: 'A2', label: 'r2' },
+                { id: 'b0', group: 'B', label: 'r3' },
+                { id: 'b1', group: 'B', label: 'r4' },
+                { id: 'b2', group: 'B', label: 'r5' },
+            ]);
+        });
 
         // AFTER: group A now spans 2, group B now spans 3, and A2 renders as a regular (non-spanned) cell.
-        expect(spannedGroupRowSpan('A')).toBe(2);
-        expect(spannedGroupRowSpan('B')).toBe(3);
-        expect(hasRegularGroupCell('A2')).toBe(true);
         // The reported regression: the spanned cell kept its stale height. A shrank 3→2, B grew 2→3.
-        expect(spannedGroupHeightPx('A')).toBe(83); // 2 rows
-        expect(spannedGroupHeightPx('B')).toBe(125); // 3 rows
+        await waitFor(() => {
+            expect(spannedGroupRowSpan('A')).toBe(2);
+            expect(spannedGroupRowSpan('B')).toBe(3);
+            expect(hasRegularGroupCell('A2')).toBe(true);
+            expect(spannedGroupHeightPx('A')).toBe(83); // 2 rows
+            expect(spannedGroupHeightPx('B')).toBe(125); // 3 rows
+        });
     });
 });
