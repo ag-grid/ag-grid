@@ -5,6 +5,7 @@ import type {
     AgProvidedColumnGroup,
     ColumnEventType,
     ColumnMenuItemsSource,
+    DefaultColumnMenuItem,
     DefaultMenuItem,
     DefaultToolPanelItem,
     IconName,
@@ -111,7 +112,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private mapMenuItems(
-        items: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef)[],
+        items: (DefaultColumnMenuItem | MenuItemDef)[],
         column: AgColumn | null
     ): (MenuItemDef | 'separator')[] {
         // Resolve our own tool panel tokens locally (they carry tool-panel-specific actions), preserving

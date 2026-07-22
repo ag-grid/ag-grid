@@ -50,7 +50,7 @@ When both are set, `colDef.columnMenuItems` takes priority over `getColumnMenuIt
 
 The `source` param is one of `'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`, so a single callback can tailor the items for the column menu, the [Columns Tool Panel](./tool-panel-columns/#customising-the-right-click-menu) right-click menu, and the [Column Chooser](#customising-the-column-chooser).
 
-Each item is either a string or a `MenuItemDef`. Use a string to pick a built-in item (the column menu's [built-in items](#built-in-menu-items) are listed below; the tool panel and chooser have their own set) and a `MenuItemDef` for your own items.
+Each item is either a string or a `MenuItemDef`. Use a string to pick a built-in item and a `MenuItemDef` for your own. All built-in tokens share one type, `DefaultColumnMenuItem`, and can be returned for any surface; each is shown only where it applies to the column and grid state. The column menu's [built-in items](#built-in-menu-items) are listed below.
 
 {% apiDocumentation source="column-properties/properties.json" section="header" names=["columnMenuItems"] /%}
 
@@ -87,6 +87,8 @@ The following is a list of all the default built-in menu items with the rules ab
 The `defaultItems` list will change on different calls, depending on, for example, which columns are currently used for grouping.
 
 If you do not override the list of menu items, then the items displayed will be based on the rules above.
+
+The [Columns Tool Panel](./tool-panel-columns/#customising-the-right-click-menu) tokens `scrollIntoView` and `value` can also be returned here, and are shown when they apply to the column.
 
 ### Menu Item Separators
 

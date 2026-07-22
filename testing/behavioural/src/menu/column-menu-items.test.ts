@@ -30,6 +30,8 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         gridMgr.reset();
         restoreOffsetParent?.();
         restoreOffsetParent = undefined;
+        // throwOn is global; reset it so it cannot leak into later tests.
+        enableDevValidations({ throwOn: 'none' });
         vi.resetAllMocks();
     });
 
@@ -100,6 +102,40 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
         await openMenuOption('LegacyStillWorks');
+    });
+
+    test('tool-panel tokens (value, scrollIntoView) resolve on the column menu, and value toggles the column', async () => {
+        const api = await gridMgr.createGridAndWait('menu-tool-panel-tokens', {
+            columnDefs: [{ field: 'athlete' }, { field: 'age', enableValue: true }],
+            rowData,
+            getColumnMenuItems: () => ['scrollIntoView', 'value'],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('age');
+        await openMenuOption('Scroll Age into View');
+        await userEvent.click(await openMenuOption('Add Age to values'));
+
+        expect(api.getValueColumns().map((c) => c.getColId())).toStrictEqual(['age']);
+    });
+
+    test('a token that does not apply to the column menu (pivot outside pivot mode) is quietly omitted, not warned', async () => {
+        // #176 ("unknown menu item type") is a warning; throwOn:'warning' turns it into a throw, so a
+        // clean render proves pivot is treated as a known-but-inapplicable token (silently dropped),
+        // matching every other stock token, rather than an unrecognised one.
+        enableDevValidations({ throwOn: 'warning' });
+        const api = await gridMgr.createGridAndWait('menu-inapplicable-token', {
+            columnDefs: [{ field: 'athlete' }, { field: 'age', enableValue: true }],
+            rowData,
+            getColumnMenuItems: () => ['value', 'pivot'],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('age');
+        await openMenuOption('Add Age to values');
+
+        expect(menuOption('Add Age to labels')).toBeNull();
+        enableDevValidations({ throwOn: 'none' });
     });
 });
 

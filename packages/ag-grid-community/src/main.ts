@@ -990,6 +990,7 @@ export type {
 export type {
     BaseMenuItem,
     BaseMenuItemParams,
+    DefaultColumnMenuItem,
     DefaultMenuItem,
     DefaultToolPanelItem,
     IMenuConfigParams,

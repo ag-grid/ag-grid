@@ -4,8 +4,8 @@ import { _exists } from 'ag-stack';
 import type {
     AgColumn,
     ColumnEventType,
+    DefaultColumnMenuItem,
     DefaultMenuItem,
-    DefaultToolPanelItem,
     GetNoteParams,
     IAggFuncService,
     IMenuActionParams,
@@ -52,7 +52,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
 
     public mapWithStockItems(
-        originalList: (MenuItemDef | DefaultMenuItem | DefaultToolPanelItem)[],
+        originalList: (MenuItemDef | DefaultColumnMenuItem)[],
         column: AgColumn | null,
         node: RowNode | null,
         noteParams: GetNoteParams | undefined,
@@ -76,6 +76,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             colChooserFactory,
             colModel,
             colNames,
+            ctrlsSvc,
             csvCreator,
             excelCreator,
             expansionSvc,
@@ -86,6 +87,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             pdfCreator,
             pinnedCols,
             pinnedRowModel,
+            pivotColsSvc,
             rangeSvc,
             rowGroupColsSvc,
             showValuesAsSvc,
@@ -112,7 +114,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             };
 
         const getStockMenuItem = (
-            key: DefaultMenuItem | DefaultToolPanelItem,
+            key: DefaultColumnMenuItem,
             column: AgColumn | null,
             sourceElement: () => HTMLElement,
             source: ColumnEventType
@@ -308,6 +310,53 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     } else {
                         return null;
                     }
+                }
+                case 'scrollIntoView': {
+                    if (!ctrlsSvc || !column || column.isPinned()) {
+                        return null;
+                    }
+                    const displayName = colNames.getDisplayNameForColumn(column, 'header')!;
+                    return {
+                        name: localeTextFunc('scrollColumnIntoView', `Scroll ${displayName} into View`, [displayName]),
+                        icon: _createIconNoSpan('ensureColumnVisible', beans, null),
+                        action: () => ctrlsSvc.getScrollFeature().ensureColumnVisible(column),
+                    };
+                }
+                case 'value': {
+                    if (!valueColsSvc || !column?.primary || !column.isAllowValue()) {
+                        return null;
+                    }
+                    const active = column.isValueActive();
+                    const displayName = colNames.getDisplayNameForColumn(column, 'header')!;
+                    return {
+                        name: active
+                            ? localeTextFunc('removeFromValues', `Remove ${displayName} from values`, [displayName])
+                            : localeTextFunc('addToValues', `Add ${displayName} to values`, [displayName]),
+                        icon: _createIconNoSpan('valuePanel', beans, null),
+                        disabled: gos.get('functionsReadOnly'),
+                        action: () =>
+                            active
+                                ? valueColsSvc.removeColumns([column], source)
+                                : valueColsSvc.addColumns([column], source),
+                    };
+                }
+                case 'pivot': {
+                    if (!pivotColsSvc || !colModel.pivotMode || !column?.primary || !column.isAllowPivot()) {
+                        return null;
+                    }
+                    const active = column.isPivotActive();
+                    const displayName = colNames.getDisplayNameForColumn(column, 'header')!;
+                    return {
+                        name: active
+                            ? localeTextFunc('removeFromLabels', `Remove ${displayName} from labels`, [displayName])
+                            : localeTextFunc('addToLabels', `Add ${displayName} to labels`, [displayName]),
+                        icon: _createIconNoSpan('pivotPanel', beans, null),
+                        disabled: gos.get('functionsReadOnly'),
+                        action: () =>
+                            active
+                                ? pivotColsSvc.removeColumns([column], source)
+                                : pivotColsSvc.addColumns([column], source),
+                    };
                 }
                 case 'resetColumns':
                     return {

@@ -7,7 +7,7 @@ import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRende
 import type { RowDragTextFunc } from '../interfaces/iRowDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
-import type { DefaultMenuItem, DefaultToolPanelItem, MenuItemDef } from '../interfaces/menuItem';
+import type { DefaultColumnMenuItem, DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { Icons } from '../utils/icon';
@@ -162,7 +162,7 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
      * `functionsReadOnly` (where it is otherwise suppressed), showing the items you provide.
      * @agModule `ColumnMenuModule`
      */
-    columnMenuItems?: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;
+    columnMenuItems?: (DefaultColumnMenuItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;
 }
 
 /** Select a column via:
@@ -649,7 +649,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * `functionsReadOnly` (where it is otherwise suppressed), showing the items you provide.
      * @agModule `ColumnMenuModule`
      */
-    columnMenuItems?: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;
+    columnMenuItems?: (DefaultColumnMenuItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;
     /**
      * Customise the list of menu items available in the context menu.
      * @agModule `ContextMenuModule`

@@ -3,10 +3,10 @@ import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup
 import type { GridOptionsService } from '../../gridOptionsService';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { ColumnMenuItemsSource, GetColumnMenuItemsParams } from '../../interfaces/iCallbackParams';
-import type { DefaultMenuItem, DefaultToolPanelItem, MenuItemDef } from '../../interfaces/menuItem';
+import type { DefaultColumnMenuItem, DefaultMenuItem, MenuItemDef } from '../../interfaces/menuItem';
 
-type ColumnMenuDefaultItems = (DefaultMenuItem | DefaultToolPanelItem)[];
-type ColumnMenuItems = (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef)[];
+type ColumnMenuDefaultItems = DefaultColumnMenuItem[];
+type ColumnMenuItems = (DefaultColumnMenuItem | MenuItemDef)[];
 
 /**
  * Resolves the final menu item list for a column-scoped menu on any surface (column menu,

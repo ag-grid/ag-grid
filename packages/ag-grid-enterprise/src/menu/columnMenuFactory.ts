@@ -1,8 +1,8 @@
 import type {
     AgColumn,
     AgProvidedColumnGroup,
+    DefaultColumnMenuItem,
     DefaultMenuItem,
-    DefaultToolPanelItem,
     MenuItemDef,
     NamedBean,
 } from 'ag-grid-community';
@@ -26,7 +26,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
     public createMenu(
         parent: { createManagedBean(bean: MenuList): MenuList },
-        menuItems: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef)[],
+        menuItems: (DefaultColumnMenuItem | MenuItemDef)[],
         column: AgColumn | undefined,
         sourceElement: () => HTMLElement
     ): MenuList {
@@ -55,7 +55,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
     public getMenuItems(
         column: AgColumn | null = null,
         columnGroup: AgProvidedColumnGroup | null = null
-    ): (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef)[] {
+    ): (DefaultColumnMenuItem | MenuItemDef)[] {
         const defaultItems = this.getDefaultMenuOptions(column);
         // Copy so normalising never mutates a user-provided columnMenuItems/mainMenuItems array in place.
         const result = [..._resolveColumnMenuItems(this.gos, column, columnGroup, 'columnMenu', defaultItems)];
