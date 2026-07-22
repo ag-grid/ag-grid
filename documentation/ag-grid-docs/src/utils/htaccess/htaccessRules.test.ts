@@ -590,7 +590,7 @@ describe('htaccessRules', () => {
         it('adds Vary: Accept for negotiated paths (both envs) so shared caches key on the negotiated representation', () => {
             for (const content of [productionContent, stagingContent]) {
                 expect(content).toContain(
-                    '<If "%{REQUEST_URI} =~ m#^/((react|angular|vue|javascript)-data-grid/|(license-pricing|changelog|pipeline)/?$)#">'
+                    '<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/]+|license-pricing|changelog|pipeline)/?$#">'
                 );
                 expect(content).toContain('Header append Vary Accept');
             }

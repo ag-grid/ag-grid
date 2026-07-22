@@ -317,6 +317,19 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).toContain('```js\nconst a = 1;\n\n\nconst b = 2;\n```');
     });
 
+    it('treats a shorter inner fence as code, not a delimiter, when normalising blank lines', async () => {
+        // A doc example whose source contains a ``` fence is wrapped in a 4-backtick fence; the inner
+        // ``` must not flip the fence state, or blank lines after it get collapsed as if they were prose.
+        const body = ['````md', '```js', 'const a = 1;', '', '', 'const b = 2;', '```', '````'].join('\n');
+        const output = await render(body);
+        expect(output).toContain('const a = 1;\n\n\nconst b = 2;');
+    });
+
+    it('lengthens the inline-code delimiter so a span containing a backtick stays valid', async () => {
+        const output = await render('Use `` `foo` `` in config.');
+        expect(output).toContain('`` `foo` ``');
+    });
+
     it('resolves framework conditionals inside a code fence', async () => {
         const body = [
             '```js',

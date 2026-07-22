@@ -2736,7 +2736,7 @@ Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
 # SE-80: docs pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/((react|angular|vue|javascript)-data-grid/|(license-pricing|changelog|pipeline)/?$)#">
+<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/]+|license-pricing|changelog|pipeline)/?$#">
     Header append Vary Accept
 </If>
 
@@ -2816,7 +2816,7 @@ AddCharset utf-8 .md
 
 # SE-80: docs pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/((react|angular|vue|javascript)-data-grid/|(license-pricing|changelog|pipeline)/?$)#">
+<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/]+|license-pricing|changelog|pipeline)/?$#">
     Header append Vary Accept
 </If>
 

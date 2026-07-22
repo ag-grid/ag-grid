@@ -158,22 +158,35 @@ function buildFrontmatter({
 }
 
 function normalise(text: string): string {
-    // Collapse runs of blank lines left by dropped tags to a single blank line,
-    // but only OUTSIDE fenced code blocks — code (and its blank lines, trailing
-    // whitespace and Markdown hard breaks) is preserved verbatim.
+    // Collapse runs of blank lines left by dropped tags to a single blank line, but only OUTSIDE
+    // fenced code blocks — code (and its blank lines, trailing whitespace and Markdown hard breaks)
+    // is preserved verbatim. The opening fence's backtick-run length is tracked so a shorter ``` run
+    // inside a longer ```` fence (fencedCodeBlock opens with longest-run + 1) is treated as code, not
+    // a delimiter.
     const lines = text.split('\n');
     const out: string[] = [];
-    let inFence = false;
+    let openFenceLen = 0;
     let blankRun = 0;
     for (let i = 0, len = lines.length; i < len; ++i) {
         const line = lines[i];
-        if (/^\s*```/.test(line)) {
-            inFence = !inFence;
-            blankRun = 0;
+        if (openFenceLen === 0) {
+            const openMatch = /^\s*(`{3,})/.exec(line);
+            if (openMatch) {
+                openFenceLen = openMatch[1].length;
+                blankRun = 0;
+                out.push(line);
+                continue;
+            }
+        } else {
+            // Close only on a bare backtick line at least as long as the opening fence.
+            const closeMatch = /^\s*(`{3,})\s*$/.exec(line);
+            if (closeMatch && closeMatch[1].length >= openFenceLen) {
+                openFenceLen = 0;
+            }
             out.push(line);
-        } else if (inFence) {
-            out.push(line);
-        } else if (line.trim() === '') {
+            continue;
+        }
+        if (line.trim() === '') {
             blankRun++;
             if (blankRun <= 1) {
                 out.push('');
@@ -351,7 +364,7 @@ function renderInline(node: Node, ctx: RenderContext): string {
         case 's':
             return `~~${renderInlineChildren(node, ctx)}~~`;
         case 'code':
-            return `\`${stringifyValue(resolveValue(node.attributes.content, ctx))}\``;
+            return inlineCode(stringifyValue(resolveValue(node.attributes.content, ctx)));
         case 'link':
             return renderLink(node, ctx);
         case 'image':
@@ -447,6 +460,26 @@ export function fencedCodeBlock(code: string, language: string): string {
     }
     const fence = '`'.repeat(Math.max(3, longestRun + 1));
     return `${fence}${language}\n${code}\n${fence}`;
+}
+
+/**
+ * Wrap inline code in a backtick delimiter longer than any run inside the content, padding with a
+ * single space when the content starts or ends with a backtick (per CommonMark), so a code span
+ * whose text itself contains backticks stays valid Markdown.
+ */
+function inlineCode(content: string): string {
+    let longestRun = 0;
+    const matches = content.match(/`+/g);
+    if (matches) {
+        for (let i = 0, len = matches.length; i < len; ++i) {
+            if (matches[i].length > longestRun) {
+                longestRun = matches[i].length;
+            }
+        }
+    }
+    const fence = '`'.repeat(longestRun + 1);
+    const pad = content.startsWith('`') || content.endsWith('`') ? ' ' : '';
+    return `${fence}${pad}${content}${pad}${fence}`;
 }
 
 /** The fence's code, resolving `{% if %}` guards and interpolation to raw text (no markdown escaping). */
