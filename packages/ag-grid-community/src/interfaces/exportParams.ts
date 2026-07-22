@@ -66,6 +66,12 @@ export interface BaseExportParams {
      * @default false
      */
     skipPinnedBottom?: boolean;
+    /**
+     * Set to `true` to omit the body copies of manually pinned rows. The rows in the pinned sections
+     * are still exported unless `skipPinnedTop` or `skipPinnedBottom` is enabled.
+     * @default false
+     */
+    skipPinnedRowDuplicates?: boolean;
 
     /**
      * The base source to use for getting cell values.

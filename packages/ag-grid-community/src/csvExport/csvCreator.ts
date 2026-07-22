@@ -2,7 +2,6 @@ import { _downloadFile } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BaseCreator } from '../export/baseCreator';
-import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { CsvCustomContent, CsvExportParams } from '../interfaces/exportParams';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import { CsvSerializingSession } from './csvSerializingSession';
@@ -25,26 +24,14 @@ export class CsvCreator
             return;
         }
 
-        const exportFunc = () => {
+        this.runExport(() => {
             const mergedParams = this.getMergedParams(userParams);
             const data = this.getData(mergedParams);
 
             const packagedFile = new Blob(['\ufeff', data], { type: 'text/plain' });
 
-            const fileNameParams = mergedParams.fileName;
-            const fileName =
-                typeof fileNameParams === 'function'
-                    ? fileNameParams(_addGridCommonParams(this.gos, {}))
-                    : fileNameParams;
-
-            _downloadFile(this.getFileName(fileName), packagedFile);
-        };
-        const { overlays } = this.beans;
-        if (overlays) {
-            overlays.showExportOverlay(exportFunc);
-        } else {
-            exportFunc();
-        }
+            _downloadFile(this.resolveFileName(mergedParams), packagedFile);
+        });
     }
 
     public exportDataAsCsv(params?: CsvExportParams): void {

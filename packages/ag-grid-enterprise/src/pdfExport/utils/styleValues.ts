@@ -97,3 +97,59 @@ export function resolvePaddingStyle(styles: StyleValueMap): PdfCellStyle['paddin
 
     return Object.keys(spacing).length ? spacing : undefined;
 }
+
+/**
+ * Translate CSS white-space properties into PDF wrapping behaviour.
+ * @param styles - Flattened style object.
+ * @returns PDF wrapping overrides, or `undefined` when no white-space properties are present.
+ */
+export function resolveWhiteSpaceStyle(
+    styles: StyleValueMap
+): Pick<PdfCellStyle, 'wrapText' | 'preserveLineBreaks' | 'preserveSpaces'> | undefined {
+    const whiteSpace = readStyleString(styles, ['whiteSpace', 'white-space'])?.toLowerCase();
+    const whiteSpaceCollapse = readStyleString(styles, ['whiteSpaceCollapse', 'white-space-collapse'])?.toLowerCase();
+    const textWrapMode = readStyleString(styles, ['textWrapMode', 'text-wrap-mode'])?.toLowerCase();
+    const result: Pick<PdfCellStyle, 'wrapText' | 'preserveLineBreaks' | 'preserveSpaces'> = {};
+
+    if (whiteSpace) {
+        if (whiteSpace === 'normal') {
+            result.wrapText = true;
+            result.preserveLineBreaks = false;
+            result.preserveSpaces = false;
+        } else if (whiteSpace === 'nowrap') {
+            result.wrapText = false;
+            result.preserveLineBreaks = false;
+            result.preserveSpaces = false;
+        } else if (whiteSpace === 'pre') {
+            result.wrapText = false;
+            result.preserveLineBreaks = true;
+            result.preserveSpaces = true;
+        } else if (whiteSpace === 'pre-line') {
+            result.wrapText = true;
+            result.preserveLineBreaks = true;
+            result.preserveSpaces = false;
+        } else if (whiteSpace === 'pre-wrap' || whiteSpace === 'break-spaces') {
+            result.wrapText = true;
+            result.preserveLineBreaks = true;
+            result.preserveSpaces = true;
+        }
+    }
+
+    if (
+        whiteSpaceCollapse === 'preserve' ||
+        whiteSpaceCollapse === 'preserve-breaks' ||
+        whiteSpaceCollapse === 'break-spaces'
+    ) {
+        result.preserveLineBreaks = true;
+        result.preserveSpaces = whiteSpaceCollapse !== 'preserve-breaks';
+    } else if (whiteSpaceCollapse === 'collapse') {
+        result.preserveLineBreaks = false;
+        result.preserveSpaces = false;
+    }
+
+    if (textWrapMode === 'wrap' || textWrapMode === 'nowrap') {
+        result.wrapText = textWrapMode === 'wrap';
+    }
+
+    return Object.keys(result).length ? result : undefined;
+}

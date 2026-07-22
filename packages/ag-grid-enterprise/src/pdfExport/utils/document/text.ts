@@ -1,5 +1,7 @@
 import type { PdfFontFamily } from 'ag-grid-community';
 
+import { getBase14GlyphWidth } from './fontMetrics';
+
 const WIN_ANSI_CODEPOINT_MAP = new Map<number, number>([
     [0x20ac, 0x80],
     [0x201a, 0x82],
@@ -33,18 +35,150 @@ const WIN_ANSI_CODEPOINT_MAP = new Map<number, number>([
 /**
  * Replace non-WinAnsi characters and normalise new lines for PDF text streams.
  * @param value - Source text.
+ * @param preserveLineBreaks - Whether normalised line breaks should be retained.
  * @returns WinAnsi-safe text.
  */
-export function normaliseText(value: string): string {
-    const trimmed = value.replace(/\r\n?|\n/g, ' ');
+export function normaliseText(value: string, preserveLineBreaks = false): string {
+    const normalisedLineBreaks = value.replace(/\r\n?/g, '\n');
+    const source = preserveLineBreaks ? normalisedLineBreaks : normalisedLineBreaks.replace(/\n/g, ' ');
     let output = '';
 
-    for (const char of trimmed) {
+    for (const char of source) {
+        if (char === '\n') {
+            output += char;
+            continue;
+        }
+
         const codePoint = char.codePointAt(0) ?? 0;
         output += toWinAnsiByte(codePoint) == null ? '?' : char;
     }
 
     return output;
+}
+
+/**
+ * Wrap text to a width budget while preserving explicit line breaks.
+ * Words are kept intact where possible and oversized words are split by character.
+ * @param text - Normalised source text.
+ * @param maxWidth - Maximum width of each line in points.
+ * @param fontSize - Font size in points.
+ * @param fontFamily - Active font family.
+ * @param preserveSpaces - Whether repeated, leading and trailing spaces should be retained.
+ * @returns Wrapped text lines.
+ */
+export function wrapText(
+    text: string,
+    maxWidth: number,
+    fontSize: number,
+    fontFamily: PdfFontFamily,
+    preserveSpaces = false
+): string[] {
+    if (!text || !Number.isFinite(maxWidth) || maxWidth <= 0 || !Number.isFinite(fontSize) || fontSize <= 0) {
+        return [];
+    }
+
+    if (preserveSpaces) {
+        return wrapPreformattedText(text, maxWidth, fontSize, fontFamily);
+    }
+
+    const lines: string[] = [];
+    const paragraphs = text.split('\n');
+
+    for (const paragraph of paragraphs) {
+        if (!paragraph.trim()) {
+            lines.push('');
+            continue;
+        }
+
+        const words = paragraph.trim().split(/\s+/);
+        let currentLine = '';
+        let currentLineWidth = 0;
+        const spaceWidth = estimateTextWidth(' ', fontSize, fontFamily);
+
+        for (const word of words) {
+            const wordWidth = estimateTextWidth(word, fontSize, fontFamily);
+            const candidateWidth = currentLine ? currentLineWidth + spaceWidth + wordWidth : wordWidth;
+            if (candidateWidth <= maxWidth) {
+                currentLine = currentLine ? `${currentLine} ${word}` : word;
+                currentLineWidth = candidateWidth;
+                continue;
+            }
+
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+
+            const wordParts = splitWordToWidth(word, maxWidth, fontSize, fontFamily);
+            const lastPartIndex = wordParts.length - 1;
+            for (let i = 0; i < lastPartIndex; i++) {
+                lines.push(wordParts[i]);
+            }
+            currentLine = wordParts[lastPartIndex] ?? '';
+            currentLineWidth = estimateTextWidth(currentLine, fontSize, fontFamily);
+        }
+
+        if (currentLine) {
+            lines.push(currentLine);
+        }
+    }
+
+    return lines;
+}
+
+/**
+ * Wrap preformatted text without collapsing spaces.
+ * @param text - Normalised source text.
+ * @param maxWidth - Maximum width of each line in points.
+ * @param fontSize - Font size in points.
+ * @param fontFamily - Active font family.
+ * @returns Wrapped text lines retaining every source space.
+ */
+function wrapPreformattedText(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string[] {
+    const lines: string[] = [];
+
+    for (const paragraph of text.split('\n')) {
+        if (!paragraph) {
+            lines.push('');
+            continue;
+        }
+
+        let lineStart = 0;
+        while (lineStart < paragraph.length) {
+            let lineWidth = 0;
+            let lastBreak = -1;
+            let characterIndex = lineStart;
+
+            while (characterIndex < paragraph.length) {
+                const char = paragraph[characterIndex];
+                const nextWidth = lineWidth + estimateTextWidth(char, fontSize, fontFamily);
+                if (nextWidth > maxWidth) {
+                    break;
+                }
+                lineWidth = nextWidth;
+                characterIndex += 1;
+                if (char === ' ') {
+                    lastBreak = characterIndex;
+                }
+            }
+
+            if (characterIndex === paragraph.length) {
+                lines.push(paragraph.slice(lineStart));
+                break;
+            }
+
+            // a single glyph wider than the line still needs to make forward progress.
+            if (characterIndex === lineStart) {
+                characterIndex += 1;
+            } else if (lastBreak > lineStart) {
+                characterIndex = lastBreak;
+            }
+
+            lines.push(paragraph.slice(lineStart, characterIndex));
+            lineStart = characterIndex;
+        }
+    }
+
+    return lines;
 }
 
 /**
@@ -76,14 +210,23 @@ export function escapePdfString(value: string): string {
 }
 
 /**
- * Estimate text width using coarse font metrics for layout decisions.
+ * Measure text using the advance widths of the built-in PDF fonts.
  * @param text - Text to measure.
  * @param fontSize - Font size in points.
  * @param fontFamily - Active font family.
  * @returns Estimated width in points.
  */
 export function estimateTextWidth(text: string, fontSize: number, fontFamily: PdfFontFamily): number {
-    return text.length * getApproxCharWidth(fontSize, fontFamily);
+    if (!Number.isFinite(fontSize) || fontSize <= 0) {
+        return 0;
+    }
+
+    let width = 0;
+    for (const char of text) {
+        width += getBase14GlyphWidth(char, fontFamily);
+    }
+
+    return (width / 1000) * fontSize;
 }
 
 /**
@@ -99,22 +242,70 @@ export function truncateText(text: string, maxWidth: number, fontSize: number, f
         return '';
     }
 
-    const charWidth = getApproxCharWidth(fontSize, fontFamily);
-    const maxChars = Math.floor(maxWidth / charWidth);
-
-    if (maxChars <= 0) {
+    if (!Number.isFinite(maxWidth) || maxWidth <= 0 || !Number.isFinite(fontSize) || fontSize <= 0) {
         return '';
     }
 
-    if (text.length <= maxChars) {
+    if (estimateTextWidth(text, fontSize, fontFamily) <= maxWidth) {
         return text;
     }
 
-    if (maxChars <= 3) {
-        return text.slice(0, maxChars);
+    const ellipsis = '...';
+    const ellipsisWidth = estimateTextWidth(ellipsis, fontSize, fontFamily);
+    const ellipsisFits = ellipsisWidth <= maxWidth;
+    const widthBudget = ellipsisFits ? maxWidth - ellipsisWidth : maxWidth;
+    let truncated = '';
+    let truncatedWidth = 0;
+
+    for (const char of text) {
+        const charWidth = estimateTextWidth(char, fontSize, fontFamily);
+        if (truncatedWidth + charWidth > widthBudget) {
+            break;
+        }
+        truncated += char;
+        truncatedWidth += charWidth;
     }
 
-    return `${text.slice(0, maxChars - 3)}...`;
+    return ellipsisFits ? `${truncated}${ellipsis}` : truncated;
+}
+
+/**
+ * Clip text to a width budget without adding an overflow marker.
+ * @param text - Text to clip.
+ * @param maxWidth - Maximum allowed width in points.
+ * @param fontSize - Font size in points.
+ * @param fontFamily - Active font family.
+ * @returns The widest source prefix that fits.
+ */
+export function clipText(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string {
+    if (!text || !Number.isFinite(maxWidth) || maxWidth <= 0 || !Number.isFinite(fontSize) || fontSize <= 0) {
+        return '';
+    }
+
+    let clipped = '';
+    let clippedWidth = 0;
+    for (const char of text) {
+        const charWidth = estimateTextWidth(char, fontSize, fontFamily);
+        if (clippedWidth + charWidth > maxWidth) {
+            break;
+        }
+        clipped += char;
+        clippedWidth += charWidth;
+    }
+
+    return clipped;
+}
+
+/**
+ * Add an ellipsis to a line while keeping it within a width budget.
+ * @param text - Visible final line.
+ * @param maxWidth - Maximum allowed width in points.
+ * @param fontSize - Font size in points.
+ * @param fontFamily - Active font family.
+ * @returns Ellipsised line.
+ */
+export function addTextEllipsis(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string {
+    return truncateText(`${text}...`, maxWidth, fontSize, fontFamily);
 }
 
 /**
@@ -123,21 +314,15 @@ export function truncateText(text: string, maxWidth: number, fontSize: number, f
  * @returns Integer string or fixed 2dp decimal string.
  */
 export function fmt(value: number): string {
+    if (!Number.isFinite(value)) {
+        return '0';
+    }
+
     if (Number.isInteger(value)) {
         return value.toString();
     }
 
     return value.toFixed(2);
-}
-
-/**
- * Estimate average glyph width for the built-in PDF fonts.
- * @param fontSize - Font size in points.
- * @param fontFamily - Active font family.
- * @returns Average character width in points.
- */
-function getApproxCharWidth(fontSize: number, fontFamily: PdfFontFamily): number {
-    return fontFamily.includes('Courier') ? fontSize * 0.6 : fontSize * 0.5;
 }
 
 /**
@@ -152,4 +337,36 @@ function toWinAnsiByte(codePoint: number): number | undefined {
     }
 
     return WIN_ANSI_CODEPOINT_MAP.get(codePoint);
+}
+
+/**
+ * Split one word into the widest character chunks that fit a line.
+ * @param word - Word to split.
+ * @param maxWidth - Maximum width of each chunk.
+ * @param fontSize - Font size in points.
+ * @param fontFamily - Active font family.
+ * @returns One or more chunks containing every source character.
+ */
+function splitWordToWidth(word: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string[] {
+    const parts: string[] = [];
+    let part = '';
+    let partWidth = 0;
+
+    for (const char of word) {
+        const charWidth = estimateTextWidth(char, fontSize, fontFamily);
+        if (part && partWidth + charWidth > maxWidth) {
+            parts.push(part);
+            part = '';
+            partWidth = 0;
+        }
+
+        part += char;
+        partWidth += charWidth;
+    }
+
+    if (part) {
+        parts.push(part);
+    }
+
+    return parts;
 }
