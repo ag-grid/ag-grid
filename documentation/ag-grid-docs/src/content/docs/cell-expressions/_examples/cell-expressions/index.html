@@ -1,11 +1,13 @@
-<div style="float: left; width: 60%">
-    <div class="test-header">
-        Enter a number to analyse:
-        <input type="text" oninput="onNewNumber(this.value)" />
+<div class="example-wrapper">
+    <div class="grid-column">
+        <div class="test-header">
+            Enter a number to analyse:
+            <input type="text" oninput="onNewNumber(this.value)" />
+        </div>
+        <div class="grid-wrapper" id="myGridLeft"></div>
     </div>
-    <div style="height: 400px; padding: 10px; box-sizing: border-box" id="myGridLeft"></div>
-</div>
-<div style="float: left; width: 40%">
-    <div class="test-header">Edit data on RHS, table updates on LHS</div>
-    <div style="height: 400px; padding: 10px; box-sizing: border-box" id="myGridRight"></div>
+    <div class="grid-column">
+        <div class="test-header">Edit data on RHS, table updates on LHS</div>
+        <div class="grid-wrapper" id="myGridRight"></div>
+    </div>
 </div>
