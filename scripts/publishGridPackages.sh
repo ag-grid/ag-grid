@@ -26,7 +26,7 @@ npm dist-tag add $PACKAGE_NAME@$RELEASE_VERSION latest --registry=https://regist
 
 PACKAGE_NAME="@ag-grid-community/styles"
 echo $PACKAGE_NAME
-npm publish "styles.tgz" --registry https://registry.ag-grid.com//
+npm publish "styles.tgz" --registry https://registry.ag-grid.com/
 npm dist-tag add $PACKAGE_NAME@$RELEASE_VERSION latest --registry=https://registry.ag-grid.com/
 
 cd ../packages
@@ -34,7 +34,7 @@ for file in *.tgz; do
     PACKAGE_NAME=`basename $file .tgz`
     echo $PACKAGE_NAME
 
-    npm publish "$file" --registry https://registry.ag-grid.com// --tag $TAG
+    npm publish "$file" --registry https://registry.ag-grid.com/ --tag $TAG
     npm dist-tag add $PACKAGE_NAME@$RELEASE_VERSION $TAG --registry=https://registry.ag-grid.com/
 done
 
