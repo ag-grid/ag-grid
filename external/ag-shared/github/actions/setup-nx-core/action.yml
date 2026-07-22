@@ -233,8 +233,15 @@ runs:
           # internal registry — this is the core fix (node_modules was cached but this dir
           # was not, leaving --prefer-offline ineffective). The cache is content-addressed
           # by package version, so a restore-keys fallback is safe: stale entries are inert
-          # and simply ignored. Restored in both rw and ro; saved only in rw (below).
-          if: inputs.cache_mode != 'off'
+          # and simply ignored.
+          #
+          # Only restored when a tarball-fetching `yarn install` will actually run — i.e.
+          # NOT on `no-install` jobs (integrity check only) and NOT when node_modules was an
+          # exact hit (the common warm path: only `yarn postinstall` runs, no tarballs). This
+          # avoids downloading/extracting a large cache on the majority of jobs that never
+          # install. (The rare exact-hit-but-integrity-fails recovery path installs cold — an
+          # accepted trade-off vs restoring on every warm job.) Saved only in rw (below).
+          if: inputs.cache_mode != 'off' && inputs.yarn_postinstall != 'no-install' && steps.cache_rw.outputs.cache-hit != 'true' && steps.cache_ro.outputs.cache-hit != 'true'
           id: yarn_cache
           uses: actions/cache/restore@v4
           with:
@@ -300,8 +307,13 @@ runs:
           # Save the download cache warmed by yarn install (see "Restore yarn cache").
           # rw writers (e.g. the init job) warm it; ro readers (matrix jobs) only restore.
           # Warmed on the default branch (latest), whose caches GitHub makes readable by all
-          # branches, so a single warm propagates. Skipped on an exact restore hit.
-          if: inputs.cache_mode == 'rw' && steps.yarn_cache.outputs.cache-hit != 'true'
+          # branches, so a single warm propagates.
+          #
+          # Gated to mirror the restore: only when a real install ran (not `no-install`, and
+          # node_modules was not an exact hit) and the yarn cache itself was not an exact hit
+          # (nothing new to save otherwise). Without this, an exact-node_modules-hit job would
+          # skip the restore yet still attempt a save of an unpopulated/stale cache dir.
+          if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall != 'no-install' && steps.cache_rw.outputs.cache-hit != 'true' && steps.yarn_cache.outputs.cache-hit != 'true'
           uses: actions/cache/save@v4
           with:
               path: ~/.cache/yarn
