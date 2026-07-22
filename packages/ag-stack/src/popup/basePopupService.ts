@@ -461,7 +461,16 @@ export abstract class BasePopupService<
         const beans = this.beans;
         const eDocument = _getDocument(beans);
 
-        const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal, ariaOwns } = params;
+        const {
+            wrapperEl,
+            eChild: popupEl,
+            closedCallback,
+            afterGuiAttached,
+            closeOnEsc,
+            modal,
+            ariaOwns,
+            eventSourceToIgnore,
+        } = params;
 
         let popupHidden = false;
 
@@ -482,11 +491,18 @@ export abstract class BasePopupService<
 
         const removeListeners = (popupParams: PopupEventParams = {}) => {
             const { mouseEvent, touchEvent, keyboardEvent, forceHide } = popupParams;
+            const pointerEvent = mouseEvent ?? touchEvent;
+            const isSourceDismissalEvent =
+                (mouseEvent?.type === 'mousedown' && mouseEvent.button === 0) || touchEvent?.type === 'touchstart';
             if (
                 !forceHide &&
                 // we don't hide popup if the event was on the child, or any
                 // children of this child
                 (this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, popupEl) ||
+                    (!!eventSourceToIgnore &&
+                        isSourceDismissalEvent &&
+                        !!pointerEvent &&
+                        _isElementInEventPath(eventSourceToIgnore, pointerEvent)) ||
                     // this method should only be called once. the client can have different
                     // paths, each one wanting to close, so this method may be called multiple times.
                     popupHidden)
