@@ -2317,5 +2317,53 @@ describe('StateService - Grid State Management', () => {
 
             expect(modeOf(api, 'amount')).toBe('percentOfGrandTotal');
         });
+
+        test('round-trips object-form params and isolates the snapshot from the live column', async () => {
+            const api = gridsManager.createGrid('sva-params-isolation', {
+                columnDefs: showValuesAsColumnDefs,
+                rowData: showValuesAsRowData,
+            });
+            api.applyColumnState({
+                state: [
+                    {
+                        colId: 'amount',
+                        showValuesAs: { type: 'percentOfGrandTotal', params: { nested: { value: 1 } } },
+                    },
+                ],
+            });
+
+            const saved = api.getState();
+            expect(saved.showValuesAs).toEqual({
+                showValuesAsModel: [
+                    {
+                        colId: 'amount',
+                        showValuesAs: { type: 'percentOfGrandTotal', params: { nested: { value: 1 } } },
+                    },
+                ],
+            });
+
+            // Mutating the returned snapshot must not reach through to the live column's mode params.
+            const snapshotMode = saved.showValuesAs!.showValuesAsModel[0].showValuesAs as {
+                params: { nested: { value: number } };
+            };
+            snapshotMode.params.nested.value = 999;
+
+            const liveMode = modeOf(api, 'amount') as { params: { nested: { value: number } } };
+            expect(liveMode.params.nested.value).toBe(1);
+        });
+
+        test('drops the section from getState when a runtime mode is cleared', async () => {
+            const api = gridsManager.createGrid('sva-runtime-clear', {
+                columnDefs: showValuesAsColumnDefs,
+                rowData: showValuesAsRowData,
+            });
+            api.applyColumnState({ state: [{ colId: 'amount', showValuesAs: 'percentOfGrandTotal' }] });
+            expect(api.getState().showValuesAs).toEqual({
+                showValuesAsModel: [{ colId: 'amount', showValuesAs: 'percentOfGrandTotal' }],
+            });
+
+            api.applyColumnState({ state: [{ colId: 'amount', showValuesAs: null }] });
+            expect(api.getState().showValuesAs).toBeUndefined();
+        });
     });
 });

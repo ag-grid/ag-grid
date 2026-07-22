@@ -7,6 +7,7 @@ import type {
     ShowValuesAsColumnState,
 } from '../../interfaces/gridState';
 import type { SortModelItem } from '../../interfaces/iSortModelItem';
+import { _cloneDeep } from '../../utils/mergeDeep';
 
 /**
  * Converts state retrieved from `api.getColumnState()` to grid state.
@@ -71,7 +72,7 @@ export function convertColumnState(
             aggregationColumns.push({ colId, aggFunc, valueIndex });
         }
         if (showValuesAs != null) {
-            showValuesAsColumns.push({ colId, showValuesAs });
+            showValuesAsColumns.push({ colId, showValuesAs: _cloneDeep(showValuesAs) });
         }
         if (pivot) {
             pivotColIds[pivotIndex ?? 0] = colId;

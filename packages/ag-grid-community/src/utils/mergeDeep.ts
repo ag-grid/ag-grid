@@ -56,6 +56,18 @@ export const _mergeDeep = (dest: any, source: any, copyUndefined = true, makeCop
     }
 };
 
+/** Deep-clones a plain object/array; nested plain objects are copied, functions/class instances and
+ *  (nested) arrays are shared by reference. Primitives pass through. Guards prototype pollution.
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _cloneDeep = <T>(value: T): T => {
+    if (value === null || typeof value !== 'object') {
+        return value;
+    }
+    const clone = (Array.isArray(value) ? [] : {}) as T;
+    _mergeDeep(clone, value, false, true);
+    return clone;
+};
+
 /** Inverse of `_mergeDeep`. Note: like mergeDeep it does not recurse into arrays.
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const _mergedEqual = (a: any, b: any, topLevelSkipKey?: string): boolean => {
