@@ -1610,6 +1610,9 @@ export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> exte
     TContext
 > {
     fromEnterKey: boolean;
+    /** The keydown event that triggered the commit, when the value was selected via Enter.
+     * Forwarded so post-edit navigation (`enterNavigatesVerticallyAfterEdit`) can run. */
+    keyboardEvent?: KeyboardEvent;
 }
 export interface RichSelectListRowSelectedEvent<TData = any, TContext = any> extends FieldValueEvent<
     'richSelectListRowSelected',

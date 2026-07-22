@@ -425,4 +425,85 @@ describe('Rich Select cell editor', () => {
         expect(editingCells).toHaveLength(1);
         expect(editingCells[0].rowIndex).toBe(0);
     });
+
+    // 14. enterNavigatesVerticallyAfterEdit: committing a rich-select edit with Enter moves
+    // focus like the default Text Cell Editor, without loosening the general gate that keeps
+    // click / focus-loss commits from navigating.
+    describe('enterNavigatesVerticallyAfterEdit', () => {
+        const twoRows = [
+            { id: '0', a: 'Alpha' },
+            { id: '1', a: 'Beta' },
+        ];
+
+        test('Enter commit moves focus to the cell below when the option is on', async () => {
+            const api = await createGrid({
+                columnDefs: [baseColDef()],
+                rowData: twoRows,
+                getRowId: (p) => p.data.id,
+                enterNavigatesVerticallyAfterEdit: true,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            api.setFocusedCell(0, 'a');
+            await openEditor(api, gridDiv, 0, 'a');
+
+            pressKey(gridDiv, 'Enter');
+
+            await waitFor(() => expect(api.getFocusedCell()?.rowIndex).toBe(1));
+        });
+
+        test('Shift+Enter commit moves focus to the cell above when the option is on', async () => {
+            const api = await createGrid({
+                columnDefs: [baseColDef()],
+                rowData: twoRows,
+                getRowId: (p) => p.data.id,
+                enterNavigatesVerticallyAfterEdit: true,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            api.setFocusedCell(1, 'a');
+            await openEditor(api, gridDiv, 1, 'a');
+
+            const wrapper = gridDiv.querySelector<HTMLElement>('.ag-picker-field-wrapper')!;
+            fireEvent.keyDown(wrapper, { key: 'Enter', shiftKey: true });
+
+            await waitFor(() => expect(api.getFocusedCell()?.rowIndex).toBe(0));
+        });
+
+        test('Enter commit does not move focus when the option is off (default)', async () => {
+            const api = await createGrid({
+                columnDefs: [baseColDef()],
+                rowData: twoRows,
+                getRowId: (p) => p.data.id,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            api.setFocusedCell(0, 'a');
+            await openEditor(api, gridDiv, 0, 'a');
+
+            pressKey(gridDiv, 'Enter');
+
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+            expect(api.getFocusedCell()?.rowIndex).toBe(0);
+        });
+
+        test('a non-Enter (click) commit does not navigate even when the option is on', async () => {
+            const api = await createGrid({
+                columnDefs: [baseColDef()],
+                rowData: twoRows,
+                getRowId: (p) => p.data.id,
+                enterNavigatesVerticallyAfterEdit: true,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            api.setFocusedCell(0, 'a');
+            const popup = await openEditor(api, gridDiv, 0, 'a');
+
+            await commitByClick(popup, 'Beta');
+
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+            expect(getAllRows(api)[0].data.a).toBe('Beta');
+            expect(api.getFocusedCell()?.rowIndex).toBe(0);
+        });
+    });
 });
