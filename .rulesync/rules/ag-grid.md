@@ -20,7 +20,7 @@ This file provides guidance to AI Agents when working with code in this reposito
 - **Type-check:** `yarn nx build:types <package>` (run before commits)
 - **Lint:** `yarn nx lint <package>` (run before commits)
 - **Build:** `yarn nx build <package>`
-- **Test:** `yarn nx test <package>`
+- **Test:** `./behave.sh` (whole unit suite — package + behavioural — via the Vitest workspace). Single project: `./behave.sh --project <name>` (e.g. `ag-grid-community`, `behavioural`).
 - **E2E:** `yarn nx e2e ag-grid-docs`
 - **Dev server:** `yarn nx dev` (launches on https://localhost:4610/, check if it is already running before trying to run it)
 - **NX daemon:** Always use `NX_DAEMON=false` for nx commands to avoid pipe hangs (set automatically via SessionStart hook)
@@ -43,7 +43,7 @@ This file provides guidance to AI Agents when working with code in this reposito
 - **Formatting:** Run `yarn nx format --sort-root-tsconfig-paths=false` from the repo root before proposing commits.
 - **Typechecking:** Run `yarn nx build:types <package>` from the repo root before proposing commits.
 - **Linting:** Run `yarn nx lint <package>` from the repo root before proposing commits.
-- **Baseline verification:** Expect to run `yarn nx test ag-grid-community`, `yarn nx test ag-grid-enterprise`, and `yarn nx e2e ag-grid-docs` after meaningful grid changes.
+- **Baseline verification:** Expect to run `./behave.sh` (the merged unit suite) and `yarn nx e2e ag-grid-docs` after meaningful grid changes.
 - **Test verification patterns:** When writing or modifying tests, review similar tests to ensure consistent verification patterns (see [Testing Guide](.rulesync/rules/testing.md)).
 - **Context docs:** Skim [technology-stack.md](.rulesync/rules/technology-stack.md) for stack or architectural decisions before introducing new patterns.
 
@@ -99,10 +99,11 @@ For detailed information about preferred technologies and architectural constrai
 - `yarn nx build:package <package>` – create ESM/CJS bundles to validate publishable output.
 - `yarn nx build:umd <package>` – produce UMD bundles for browser distribution smoke-tests.
 - `yarn nx run-many -t build` – rebuild all packages when changes span the dependency graph.
-- `./behave.sh` – run behavioural tests in `testing/behavioural/` (primary test suite, uses Vitest).
-- `./behave.sh "<file-pattern>"` – run specific behavioural test file.
-- `./behave.sh "<file-pattern>" -t "<test-name>"` – run specific behavioural test by name.
-- `./behave.sh --watch` – run behavioural tests in watch mode.
+- `./behave.sh` – run the merged unit suite (package unit tests + behavioural) via the Vitest workspace; the single primary test command.
+- `./behave.sh "<file-pattern>"` – filter to matching test files across every project.
+- `./behave.sh "<file-pattern>" -t "<test-name>"` – run a specific test by name.
+- `./behave.sh --project <name>` – run only chosen project(s); `--project all` runs every workspace project (incl. docs, ag-website-shared).
+- `./behave.sh --watch` – run in watch mode.
 - `./behave.sh --update-grid-rows` – update GridRows inline snapshots after diagram format changes.
 - `./behave.sh --update-grid-rows "<pattern>"` – update snapshots in matching test files only.
 - `./behave.sh --update-grid-rows=dry` – dry run, shows what would change without writing files.
@@ -112,7 +113,7 @@ For detailed information about preferred technologies and architectural constrai
 - `./benches.sh --profile "<file-pattern>"` – node run with a V8 CPU profile (`.cpuprofile`) for method-cost analysis.
 - `./benches.sh --bench-compare <base|test|compare|all|backup> [...]` – baseline/compare benchmark runs (forwards to `bench-compare.mjs`).
 - `./benches.sh --watch` – run benchmarks in watch mode.
-- `yarn nx test <package>` – run the package's Vitest unit tests.
+- `yarn nx test <package>` – run one package's Vitest unit tests on their own (retrocompat; `./behave.sh` already covers them).
 - `yarn nx test <package> -- "<file-pattern>"` – run unit tests in files matching a pattern (forwarded to `vitest run`).
 - `yarn nx test <package> -- "<file-pattern>" -t "<test-name>"` – run a specific test by name within matching files. Vitest uses positional patterns and `-t`, not jest's `--testPathPattern`/`--testNamePattern`.
 - `./docs-e2e.sh` – run docs Playwright E2E tests directly, bypassing Nx (chromium by default).
@@ -169,10 +170,11 @@ Core dependency chain: `ag-grid-community` → `ag-grid-enterprise` → framewor
 
 For comprehensive testing information, see [Testing Guide](.rulesync/rules/testing.md).
 
-**Behavioural tests are the primary test suite.** When verifying grid changes, run behavioural tests first. Key testing tools:
+**Behavioural tests are the primary test suite.** When verifying grid changes, run `./behave.sh` — it runs the behavioural suite and the package unit tests together in one Vitest workspace. Key testing tools:
 
 - **Behavioural tests** (primary): `testing/behavioural/` for grid behaviour verification — use Vitest
-- **Unit tests**: Vitest with jsdom environment for package-level tests (`testing/angular-tests` still uses Jest)
+- **Package unit tests**: Vitest with jsdom environment, co-located in `packages/*/src` (`testing/angular-tests` still uses Jest)
+- **Merged runner**: `./behave.sh` runs both of the above via the `vitest.workspace.ts` workspace
 - **E2E tests**: Playwright for website interaction testing
 - **Accessibility tests**: `testing/accessibility/` for a11y compliance
 - **Performance tests**: `testing/performance/` for performance regression testing
@@ -216,7 +218,7 @@ While this transition is in progress, changes made to Theming API should be appl
 - **Bug fix or feature work (community/enterprise)**
     1. Update the affected implementation (typically under `packages/ag-grid-*/src/`).
     2. Sync any dependent docs/examples.
-    3. Run `yarn nx test ag-grid-community`, `yarn nx test ag-grid-enterprise`.
+    3. Run `./behave.sh` (the merged unit suite).
 
 - **Documentation/content update**
     1. Consult the [Documentation Pages Guide](.rulesync/rules/docs-pages.md) for structure and patterns.

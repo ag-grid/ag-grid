@@ -1,0 +1,19 @@
+.winners-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    height: 100%;
+    background-color: #2244cc44;
+}
+
+.winners-toggle-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px;
+}
+
+.winners-toggle-item input {
+    margin: 0;
+}

@@ -1,4 +1,4 @@
-import { cleanup, render, waitFor } from '@testing-library/react';
+import { act, cleanup, render, waitFor } from '@testing-library/react';
 import React from 'react';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
@@ -70,13 +70,18 @@ async function scrollFocusedColumnOutOfView({ ensureDomOrder, pinned }: ScrollOp
         `.ag-header-row-filter .ag-grid-scrolling-cells [col-id="${focusedColId}"] input`
     );
     expect(input).not.toBeNull();
-    input!.focus();
-    await asyncSetTimeout(0);
+    await act(async () => {
+        input!.focus();
+        await asyncSetTimeout(0);
+    });
 
     // Scroll horizontally until the focused column leaves the viewport. The first scroll also
     // measures the viewport (jsdom fires no initial resize), so virtualisation engages here.
     const lastCenterCol = pinned ? `c${COL_COUNT - 2}` : `c${COL_COUNT - 1}`;
-    apiRef.current!.ensureColumnVisible(lastCenterCol);
+    await act(async () => {
+        apiRef.current!.ensureColumnVisible(lastCenterCol);
+        await asyncSetTimeout(0);
+    });
 
     // Guard: wait until virtualisation has engaged (fewer than all centre columns rendered), otherwise
     // the scenario is not exercised. The focused cell stays rendered (kept alive for keyboard nav).

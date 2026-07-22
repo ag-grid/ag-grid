@@ -120,7 +120,7 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         } else {
             this.recordColChange(column);
         }
-        this.colModel.flushColChanges(source, membershipChanged);
+        this.colModel.flushColChanges(source, membershipChanged ? 'membership' : 'dispatch');
     }
 
     public override syncColState(

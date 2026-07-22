@@ -268,6 +268,7 @@ describe('Cols service events', () => {
 
             api.moveColumns(['d'], 0);
             api.moveRowGroupColumn(0, 1);
+            api.setRowGroupColumns(['a', 'b']); // pure reorder back — same set, no membership change
             api.setColumnWidths([{ key: 'd', newWidth: 123 }]);
             await asyncSetTimeout(0);
             expect(everything.length).toBe(0);

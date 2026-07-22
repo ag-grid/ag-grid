@@ -26,6 +26,22 @@ describe('buildLlmsTxt', () => {
         expect(txt).toContain('(https://www.ag-grid.com/sitemap-index.xml)');
     });
 
+    test('advertises the per-page markdown (.md) convention and the top-level .md pages', () => {
+        expect(txt).toContain('.md');
+        expect(txt).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
+        expect(txt).toContain('Pricing, Changelog and Pipeline pages also have `.md` versions');
+    });
+
+    test('lists the pipeline page', () => {
+        expect(txt).toContain('(https://www.ag-grid.com/pipeline/)');
+    });
+
+    test('omits the markdown convention when markdown docs are disabled', () => {
+        const disabled = buildLlmsTxt({ ...INPUT, includeMarkdownDocs: false });
+        expect(disabled).not.toContain('.md');
+        expect(disabled).not.toContain('Markdown versions');
+    });
+
     test('derives every link from the canonical base (no other host)', () => {
         const urls = txt.match(/\(https?:\/\/[^)]+\)/g) ?? [];
         expect(urls.length).toBeGreaterThan(0);
@@ -45,5 +61,17 @@ describe('buildAgentsMd', () => {
         expect(md).toContain('npx ag-mcp');
         expect(md).toContain('https://www.ag-grid.com/javascript-data-grid/mcp-server/');
         expect(md).toContain('https://www.ag-grid.com/llms.txt');
+    });
+
+    test('advertises the markdown (.md) versions', () => {
+        expect(md).toContain('Markdown for LLMs');
+        expect(md).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
+        expect(md).toContain('https://www.ag-grid.com/pipeline/');
+    });
+
+    test('omits the markdown affordance when markdown docs are disabled', () => {
+        const disabled = buildAgentsMd({ ...INPUT, includeMarkdownDocs: false });
+        expect(disabled).not.toContain('.md');
+        expect(disabled).not.toContain('Markdown for LLMs');
     });
 });

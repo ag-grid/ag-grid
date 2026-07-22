@@ -102,7 +102,6 @@
     "playwright": "^1.59.1",
     "playwright-ctrf-json-reporter": "0.0.29",
     "prettier-plugin-astro": "^0.14.1",
-    "vite-plugin-mkcert": "^1.17.8",
-    "vitest": "2.1.9"
+    "vite-plugin-mkcert": "^1.17.8"
   }
 }

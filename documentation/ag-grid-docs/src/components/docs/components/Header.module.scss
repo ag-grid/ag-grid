@@ -61,6 +61,24 @@
     }
 }
 
+.pageMeta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $spacing-size-3;
+    margin-top: $spacing-size-2;
+    font-size: var(--text-fs-sm);
+    color: var(--color-text-secondary);
+}
+
+.version {
+    color: var(--color-text-tertiary);
+}
+
+.markdownLink {
+    font-weight: var(--text-semibold);
+}
+
 .enterpriseLabel {
     display: inline-block;
     position: relative;

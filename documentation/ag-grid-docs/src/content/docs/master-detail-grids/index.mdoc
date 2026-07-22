@@ -107,6 +107,16 @@ The example below demonstrates keeping Detail Rows. Note the following:
 
 {% gridExampleRunner title="Keep Detail Rows" name="keep-detail-rows"  exampleHeight=565 /%}
 
+## Performance with many detail grids
+
+A detail grid is created when expanded and destroyed when collapsed, and remains active between these two events, even if the row scrolls out of the grid viewport. This is different to regular cell rendering where [DOM Virtualisation](./dom-virtualisation/) will remove hidden rows for improved performance.
+
+When many rows are expanded at once, rendering can become slow as re-rendering your application now involves re-rendering every detail grid, even the off-screen ones.
+
+1. Given the data that your application renders, consider how many detail grids can be expanded and decide if performance is acceptable
+2. Consider using pagination to limit the number of detail grids that can be displayed at once
+3. Consider using [enableContentVisibilityAuto](./grid-options/#reference-rendering-enableContentVisibilityAuto) in `detailGridOptions` to reduce the rendering work that the browser needs to do for off-screen grids. See [Scrolling Performance](./scrolling-performance/#skip-rendering-off-screen-grids) for details.
+
 ## Detail Parameters
 
 <!-- Below we don't show 'template' for React, hence listing the properties twice -->

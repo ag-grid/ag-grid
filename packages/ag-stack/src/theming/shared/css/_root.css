@@ -12,3 +12,8 @@
 
     --ag-indentation-level: 0;
 }
+
+/* TODO scoped to ag-toolbar for minor release, should make global in v37.0 */
+:where(.ag-toolbar) .ag-react-container:where(:not(.ag-react-wrapper-block)) {
+    display: contents;
+}

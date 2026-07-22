@@ -1,4 +1,12 @@
-import { Direction, _findTabbableParent, _focusInto, _getActiveDomElement, _last, _observeResize } from 'ag-stack';
+import {
+    Direction,
+    _findTabbableParent,
+    _focusInto,
+    _getActiveDomElement,
+    _last,
+    _observeIntersection,
+    _observeResize,
+} from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
 import { isHeaderPosition } from '../headerRendering/headerUtils';
@@ -65,8 +73,32 @@ export class GridCtrl extends BeanStub {
 
         this.createManagedBean(new LayoutFeature(this.view));
 
-        if (this.gos.get('suppressContentVisibilityAuto')) {
-            this.eGui.style.setProperty('content-visibility', 'visible');
+        // enableContentVisibilityAuto takes precedence; the deprecated suppressContentVisibilityAuto
+        // is only consulted when the former is unset (suppress=false is equivalent to enable=true).
+        const contentVisibilityAutoEnabled =
+            this.gos.get('enableContentVisibilityAuto') ?? this.gos.get('suppressContentVisibilityAuto') === false;
+        if (contentVisibilityAutoEnabled) {
+            const [removeListener] = this.addManagedEventListeners({
+                firstDataRendered: () => {
+                    removeListener();
+                    const timer = setTimeout(() => {
+                        const cleanup = _observeIntersection(
+                            this.beans,
+                            eGui,
+                            (change) => {
+                                if (!change.isIntersecting) {
+                                    eGui.style.setProperty('content-visibility', 'auto');
+                                } else {
+                                    eGui.style.removeProperty('content-visibility');
+                                }
+                            },
+                            { rootMargin: '200px' }
+                        );
+                        this.addDestroyFunc(() => cleanup());
+                    }, this.gos.get('contentVisibilityAutoDelay'));
+                    this.addDestroyFunc(() => clearTimeout(timer));
+                },
+            });
         }
 
         const unsubscribeFromResize = _observeResize(this.beans, this.eGui, this.onGridSizeChanged.bind(this));

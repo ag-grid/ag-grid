@@ -32,6 +32,7 @@ const modExpiresRules = `
 
     ExpiresByType application/json "access plus 1 hour"
     ExpiresByType text/html "access plus 1 hour"
+    ExpiresByType text/markdown "access plus 1 hour"
     ExpiresByType text/plain "access plus 1 hour"
     ExpiresByType text/richtext "access plus 1 hour"
     ExpiresByType text/xml "access plus 1 hour"
@@ -66,6 +67,7 @@ const modDeflateRules = `
     AddOutputFilterByType DEFLATE text/css
     AddOutputFilterByType DEFLATE text/html
     AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/markdown
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/xml
 
@@ -76,6 +78,46 @@ const modDeflateRules = `
     Header append Vary User-Agent
 </IfModule>
 `;
+
+// SE-80: the RewriteCond/RewriteRule lines that serve the per-page markdown variant
+// on `Accept: text/markdown`, shared by the production and staging .htaccess so the
+// rule can't drift between them. Indented 4 spaces for use inside a mod_rewrite block.
+// The negotiation is an internal rewrite (no redirect, URL unchanged), gated by an
+// on-disk check so a path without a .md is left untouched. %1 is the docs path
+// captured below, reused in both the -f test and the rewrite target.
+const markdownNegotiationRules = `    RewriteCond %{HTTP_ACCEPT} text/markdown
+    RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline)/?$
+    RewriteCond %{DOCUMENT_ROOT}/%1.md -f
+    RewriteRule ^ /%1.md [L]`;
+
+// Staging has no redirect rewrites, so negotiation gets its own minimal mod_rewrite
+// block. Production embeds the same rules inside its existing block instead.
+const markdownNegotiationBlock = `<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # SE-80: content-negotiate docs pages to their markdown variant on Accept: text/markdown.
+${markdownNegotiationRules}
+</IfModule>`;
+
+// SE-80: docs pages content-negotiate on the Accept header (see the markdown rewrite
+// above), so shared caches must key on it — otherwise they could serve the markdown
+// variant to a browser, or HTML to an agent. Scoped to the docs paths so the rest of
+// the site keeps its default (URL-only) cache key.
+const markdownVaryHeader = `# SE-80: docs pages content-negotiate on Accept (see the markdown rewrite), so shared
+# caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
+<If "%{REQUEST_URI} =~ m#^/((react|angular|vue|javascript)-data-grid/|(license-pricing|changelog|pipeline)/?$)#">
+    Header append Vary Accept
+</If>`;
+
+// SE-81: agent-useful Link response header. Gives AI agents a machine-readable pointer
+// to the key resources without parsing the page first: rel=describedby -> /llms.txt,
+// rel=sitemap -> the sitemap index, and rel=related -> the MCP server docs. Single-token
+// rel values are unquoted per RFC 8288, which keeps the directive free of escaped quotes.
+// Scoped to HTML documents via the Content-Type expr (evaluated at response time): the
+// header is document metadata, so applying it to assets, downloads, redirects and error
+// responses only wastes bandwidth and, for rel=describedby, wrongly describes non-documents.
+// Shared by the staging and production .htaccess so the header can be verified on staging.
+const agentLinkHeader = `Header set Link "</llms.txt>; rel=describedby, </sitemap-index.xml>; rel=sitemap, <https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related" "expr=%{CONTENT_TYPE} =~ m#^text/html#"`;
 
 // Lazily built: the redirect generation resolves urlWithBaseUrl (which needs the
 // build-time base URL), so it must not run at module import — only when the
@@ -153,6 +195,15 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
     RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
 
+    # SE-80: content-negotiate docs pages to their per-page markdown variant when a
+    # client asks for it via Accept: text/markdown (typically an AI agent — browsers
+    # never send this, so HTML stays the default). The .md files are generated at
+    # build time next to the HTML (see [pageName].md.ts). This is an internal rewrite
+    # (no redirect, URL unchanged), gated by an on-disk check so a path without a .md
+    # is left untouched. Placed after host/https canonicalization but before the
+    # trailing-slash 301 so the canonical (slashed) docs URL negotiates in one hop.
+${markdownNegotiationRules}
+
     # Remove "index.php" from URLs
     RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
     RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
@@ -210,10 +261,22 @@ ErrorDocument 404 /404.html
 AddType text/javascript jsx
 AddType application/typescript ts tsx
 AddType application/x-gzip .gz .tgz
+
+# serve the per-page LLM markdown files as markdown
+AddType text/markdown md
+# ...as UTF-8, so glyphs like ✓/✗ in generated tables aren't mojibaked by a
+# Latin-1 fallback (the .md endpoint sets this charset; static hosting must too).
+AddCharset utf-8 .md
 `;
 
 function getStagingHtaccessContent(): string {
     return `${baseRules}
+
+${markdownNegotiationBlock}
+
+${markdownVaryHeader}
+
+${agentLinkHeader}
 
 # Content-Security-Policy — enforced, path-scoped. Unsets the legacy wildcard CSP on
 # the staging vhost so this tightened policy is the only one in effect.
@@ -236,6 +299,10 @@ ${getModRewriteRules()}
 # protection is handled by the CSP frame-ancestors directive instead (see cspRules.ts).
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+${markdownVaryHeader}
+
+${agentLinkHeader}
 
 ${getProductionCspContent()}
 

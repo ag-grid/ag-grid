@@ -1,8 +1,8 @@
 import type { AgColumn, ColDef, GridApi, IColumnStateUpdateStrategy } from 'ag-grid-community';
-import { setupAgTestIds } from 'ag-grid-community';
+import { getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
     const gridMgr = new TestGridsManager({
@@ -443,6 +443,117 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             const { toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: true });
 
             expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'sport', 'gold']);
+        });
+    });
+
+    // A commit runs its role-column ops inside one beginColBatch/endColBatch. endColBatch flushes without the
+    // `change` kind, so the batch must still animate a reorder and skip the legacy event for a lone reorder.
+    describe('committing a batched role-column change', () => {
+        const createGroupedGrid = async (columnDefs: ColDef[]) => {
+            const gridApi = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData: [
+                    { country: 'US', sport: 'Swimming', athlete: 'Phelps' },
+                    { country: 'US', sport: 'Gymnastics', athlete: 'Biles' },
+                    { country: 'RO', sport: 'Gymnastics', athlete: 'Weber' },
+                ],
+                groupDisplayType: 'multipleColumns',
+                sideBar: {
+                    toolPanels: [
+                        {
+                            id: 'columns',
+                            labelDefault: 'Columns',
+                            labelKey: 'columns',
+                            iconKey: 'columns',
+                            toolPanel: 'agColumnsToolPanel',
+                        },
+                    ],
+                    defaultToolPanel: 'columns',
+                },
+            });
+            await asyncSetTimeout(50);
+            const strategy = getUpdateStrategy(gridApi.getToolPanelInstance('columns'));
+            return { gridApi, strategy };
+        };
+
+        test('a lone reorder skips columnEverythingChanged and animates the reflow', async () => {
+            const { gridApi, strategy } = await createGroupedGrid([
+                { colId: 'country', field: 'country', rowGroup: true },
+                { colId: 'sport', field: 'sport', rowGroup: true },
+                { colId: 'athlete', field: 'athlete' },
+            ]);
+            const gridEl = getGridElement(gridApi)! as HTMLElement;
+            expect(gridEl.querySelector('.ag-column-moving')).toBeNull();
+
+            const country = gridApi.getColumn('country')! as AgColumn;
+            const sport = gridApi.getColumn('sport')! as AgColumn;
+            const everything: any[] = [];
+            gridApi.addEventListener('columnEverythingChanged', (e) => everything.push(e));
+
+            strategy.setRowGroupColumns(true, [sport, country], 'toolPanelUi');
+            strategy.commit(true);
+
+            // colAnimation tags the body synchronously (the class is only removed a frame later).
+            expect(gridEl.querySelector('.ag-column-moving')).not.toBeNull();
+            await asyncSetTimeout(0);
+            expect(everything.length).toBe(0);
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['sport', 'country']);
+            await new GridColumns(gridApi, 'batched reorder').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-sport "Sport" width:200
+                ├── ag-Grid-AutoColumn-country "Country" width:200
+                ├── country "Country" width:200 rowGroup
+                ├── sport "Sport" width:200 rowGroup
+                └── athlete "Athlete" width:200
+            `);
+            await new GridRows(gridApi, 'batched reorder').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-sport:null ag-Grid-AutoColumn-country:null
+                ├─┬ filler collapsed id:row-group-sport-Swimming ag-Grid-AutoColumn-sport:"Swimming" ag-Grid-AutoColumn-country:null
+                │ └─┬ LEAF_GROUP collapsed hidden id:row-group-sport-Swimming-country-US ag-Grid-AutoColumn-country:"US"
+                │ · └── LEAF hidden id:0 country:"US" sport:"Swimming" athlete:"Phelps"
+                └─┬ filler collapsed id:row-group-sport-Gymnastics ag-Grid-AutoColumn-sport:"Gymnastics" ag-Grid-AutoColumn-country:null
+                · ├─┬ LEAF_GROUP collapsed hidden id:row-group-sport-Gymnastics-country-US ag-Grid-AutoColumn-country:"US"
+                · │ └── LEAF hidden id:1 country:"US" sport:"Gymnastics" athlete:"Biles"
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-sport-Gymnastics-country-RO ag-Grid-AutoColumn-country:"RO"
+                · · └── LEAF hidden id:2 country:"RO" sport:"Gymnastics" athlete:"Weber"
+            `);
+        });
+
+        test('adding a row group still raises columnEverythingChanged', async () => {
+            const { gridApi, strategy } = await createGroupedGrid([
+                { colId: 'country', field: 'country', rowGroup: true },
+                { colId: 'sport', field: 'sport' },
+                { colId: 'athlete', field: 'athlete' },
+            ]);
+            const country = gridApi.getColumn('country')! as AgColumn;
+            const sport = gridApi.getColumn('sport')! as AgColumn;
+            const everything: any[] = [];
+            gridApi.addEventListener('columnEverythingChanged', (e) => everything.push(e));
+
+            strategy.setRowGroupColumns(true, [country, sport], 'toolPanelUi');
+            strategy.commit(true);
+
+            await asyncSetTimeout(0);
+            expect(everything.length).toBe(1);
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
+            await new GridColumns(gridApi, 'batched add').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-country "Country" width:200
+                ├── ag-Grid-AutoColumn-sport "Sport" width:200
+                ├── country "Country" width:200 rowGroup
+                └── athlete "Athlete" width:200
+            `);
+            await new GridRows(gridApi, 'batched add').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-sport:null
+                ├─┬ filler collapsed id:row-group-country-US ag-Grid-AutoColumn-country:"US" ag-Grid-AutoColumn-sport:null
+                │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-US-sport-Swimming ag-Grid-AutoColumn-sport:"Swimming"
+                │ │ └── LEAF hidden id:0 country:"US" sport:"Swimming" athlete:"Phelps"
+                │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-US-sport-Gymnastics ag-Grid-AutoColumn-sport:"Gymnastics"
+                │ · └── LEAF hidden id:1 country:"US" sport:"Gymnastics" athlete:"Biles"
+                └─┬ filler collapsed id:row-group-country-RO ag-Grid-AutoColumn-country:"RO" ag-Grid-AutoColumn-sport:null
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-RO-sport-Gymnastics ag-Grid-AutoColumn-sport:"Gymnastics"
+                · · └── LEAF hidden id:2 country:"RO" sport:"Gymnastics" athlete:"Weber"
+            `);
         });
     });
 });

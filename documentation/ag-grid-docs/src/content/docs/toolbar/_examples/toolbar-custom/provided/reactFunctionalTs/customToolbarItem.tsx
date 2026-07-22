@@ -30,14 +30,13 @@ export const WinnersToggle = (props: IToolbarItemParams) => {
     };
 
     return (
-        <div className="ag-toolbar-item" style={{ display: 'flex', gap: 12, padding: 8 }}>
+        <div className="ag-toolbar-item winners-toggle">
             {COLUMNS.map(({ column, label }) => (
-                <label key={column} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '0 4px' }}>
+                <label key={column} className="winners-toggle-item">
                     <input
                         type="checkbox"
                         checked={checked[column] ?? false}
                         onChange={(event) => onChange(column, event)}
-                        style={{ margin: 0 }}
                     />
                     {label}
                 </label>

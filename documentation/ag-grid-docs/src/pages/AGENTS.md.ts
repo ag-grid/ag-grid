@@ -1,7 +1,7 @@
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { siteRootUrl } from '@ag-website-shared/utils/structuredData';
 import { getFrameworkPath } from '@components/docs/utils/urlPaths';
-import { agGridVersion } from '@constants';
+import { DISABLE_MARKDOWN_DOCS, agGridVersion } from '@constants';
 import { buildAgentsMd } from '@utils/agentReadinessFiles';
 import { type CollectionEntry, getEntry } from 'astro:content';
 
@@ -14,6 +14,7 @@ export async function GET() {
         siteRoot: siteRootUrl(metadata.canonicalUrlBase),
         majorVersion: parseVersion(agGridVersion).major,
         gridDocsPrefix: getFrameworkPath('javascript'),
+        includeMarkdownDocs: !DISABLE_MARKDOWN_DOCS,
     });
 
     return new Response(output, {

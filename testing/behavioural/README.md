@@ -8,10 +8,18 @@ Mocking is to be avoided as much as possible here, and the use of fakes is prefe
 
 ## Running tests
 
-To execute all tests, run from the repo root:
+`./behave.sh` runs the **merged unit suite** from the repo root via the Vitest workspace
+(`vitest.workspace.ts`): this behavioural project **and** the package (London-school) unit tests
+in `packages/*`, together in one command.
 
 ```sh
 ./behave.sh
+```
+
+To run only the behavioural project:
+
+```sh
+./behave.sh --project behavioural
 ```
 
 To execute tests matching a file pattern:

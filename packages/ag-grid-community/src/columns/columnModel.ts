@@ -20,6 +20,12 @@ import { _convertColumnEventSourceType, _destroyColumnTreeAll, _destroyColumnTre
 //   colDefList / colDefTree  — PRIMARY cols (user-defined leaves + hierarchy virtuals).
 //   colsList   / colsTree    — DISPLAY cols: [serviceCols, ...colDefList] (or pivot result).
 
+/** What a {@link ColumnModel.flushColChanges} call must do:
+ *  - `'dispatch'`: dispatch staged service changes only, no rebuild (batch close, `setColumnAggFunc`).
+ *  - `'membership'`: a role add/remove/set — rebuild, raise the legacy `columnEverythingChanged`, animate the reflow.
+ *  - `'reorder'`: a same-set move — rebuild and animate, but keep the set so skip the legacy event. */
+type ColChangeKind = 'dispatch' | 'membership' | 'reorder';
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ColumnModel extends BeanStub implements NamedBean {
     beanName = 'colModel' as const;
@@ -37,6 +43,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private pendingRefresh = false;
     /** A batched `buildFromColDefs` already raised `columnEverythingChanged`; stops the batch flush re-raising it. */
     private everythingChangedInBatch = false;
+    /** Accumulated across a batch: a change that must raise the legacy `columnEverythingChanged` (anything but a lone reorder). */
+    private pendingRaiseEverything = false;
     public colsList: AgColumn[] = [];
     public colsTree: (AgColumn | AgProvidedColumnGroup)[] = [];
     public colsTreeDepth = 0;
@@ -279,43 +287,59 @@ export class ColumnModel extends BeanStub implements NamedBean {
     /** Close a {@link beginColBatch}; the outermost close flushes once (one source for the whole action). */
     public endColBatch(source: ColumnEventType): void {
         this.colBatchDepth = Math.max(0, this.colBatchDepth - 1);
-        this.flushColChanges(source, false); // refresh only if a staged op accumulated one
+        this.flushColChanges(source, 'dispatch'); // flushes whatever the batch accumulated (refresh, animate, raise)
     }
 
     /** Refresh once (if needed) + dispatch each touched service. Fires immediately, or defers to {@link endColBatch}
-     *  when batched. `refresh` accumulates into {@link pendingRefresh}: membership passes `true`, order-only or a
-     *  func change on an already-active col (`moveColumn`, `setColumnAggFunc`) pass `false` to dispatch without a rebuild. */
-    public flushColChanges(source: ColumnEventType, refresh: boolean): void {
+     *  when batched. {@link ColChangeKind} selects the work: rebuild, legacy `columnEverythingChanged`, and/or a
+     *  move animation. */
+    public flushColChanges(source: ColumnEventType, kind: ColChangeKind): void {
+        const refresh = kind !== 'dispatch';
         if (refresh) {
             this.pendingRefresh = true;
+        }
+        // Accumulate the intent so a batched flush (endColBatch passes 'dispatch') still skips the legacy event
+        // for a batch of lone reorders, exactly as the unbatched path does.
+        if (refresh && kind !== 'reorder') {
+            this.pendingRaiseEverything = true;
         }
         if (this.colBatchDepth > 0) {
             return; // inside a batch: endColBatch will flush
         }
         const { rowGroupColsSvc, pivotColsSvc, valueColsSvc } = this.beans;
         const pendingRefresh = this.pendingRefresh;
+        const raiseEverything = this.pendingRaiseEverything;
         // A batched `buildFromColDefs` may already have raised it; consume the flag either way.
         const everythingAlreadyRaised = this.everythingChangedInBatch;
         this.everythingChangedInBatch = false;
+        this.pendingRaiseEverything = false;
         const nothingStaged =
             !rowGroupColsSvc?.pendingChanged && !pivotColsSvc?.pendingChanged && !valueColsSvc?.pendingChanged;
         if (nothingStaged && !pendingRefresh) {
             return; // no staged dispatch and no deferred refresh
         }
-        // Re-stamp active-col indexes once, before refresh/dispatch (and their listeners) read them.
-        rowGroupColsSvc?.flushReindex();
-        pivotColsSvc?.flushReindex();
-        valueColsSvc?.flushReindex();
-        if (pendingRefresh) {
-            this.performRefresh(source); // clears pendingRefresh
-            // Legacy compat: a role membership change (rowGroup/pivot/value add/remove/set) raised this.
-            if (!everythingAlreadyRaised) {
-                this.eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
+        // A rebuild slides its reflow (snapshot the pre-rebuild layout so cols animate from their old spots); when
+        // nothing actually moves the animation is inert.
+        const colAnimation = pendingRefresh ? this.beans.colAnimation : undefined;
+        colAnimation?.start();
+        try {
+            // Re-stamp active-col indexes once, before refresh/dispatch (and their listeners) read them.
+            rowGroupColsSvc?.flushReindex();
+            pivotColsSvc?.flushReindex();
+            valueColsSvc?.flushReindex();
+            if (pendingRefresh) {
+                this.performRefresh(source); // clears pendingRefresh
+                // Legacy compat: a role membership change (add/remove/set) raised this; a lone reorder keeps the set, so skip it.
+                if (raiseEverything && !everythingAlreadyRaised) {
+                    this.eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
+                }
             }
+            rowGroupColsSvc?.dispatchColChange(source);
+            pivotColsSvc?.dispatchColChange(source);
+            valueColsSvc?.dispatchColChange(source);
+        } finally {
+            colAnimation?.finish();
         }
-        rowGroupColsSvc?.dispatchColChange(source);
-        pivotColsSvc?.dispatchColChange(source);
-        valueColsSvc?.dispatchColChange(source);
     }
 
     public refreshCols(newColDefs: boolean, source: ColumnEventType): void {
@@ -329,141 +353,146 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (animatePivotSort) {
             beans.colAnimation?.start();
         }
-        const colDefList = this.colDefList;
-        const prevColTree = this.colsTree;
-        const prevWasPivot = this.showingPivotResult;
-        const resultColsSvc = this.pivotMode ? beans.pivotResultCols : null;
-        const pivotCols = resultColsSvc?.pivotCols ?? null;
-        const pivotResultCols = pivotCols != null ? resultColsSvc : null;
-        const showingPivotResult = !!pivotResultCols;
-        this.showingPivotResult = showingPivotResult;
-        const sourceList = pivotCols ?? colDefList;
-        const sourceTree = pivotResultCols ? pivotResultCols.pivotTree : this.colDefTree;
-        const sourceTreeDepth = pivotResultCols ? pivotResultCols.pivotTreeDepth : this.colDefTreeDepth;
-        this.colsTreeDepth = sourceTreeDepth;
-        this.hasMarryChildren = pivotResultCols ? pivotResultCols.pivotHasMarryChildren : this.colDefHasMarryChildren;
-        this.colsGroupsById = pivotResultCols ? pivotResultCols.pivotGroupsById : this.colDefGroupsById;
-        this.colsAllGroups = pivotResultCols ? pivotResultCols.pivotAllGroups : this.colDefAllGroups;
-        // Service refresh runs in dependency order; formulas operate on the primary cols (colDefList).
-        beans.formula?.setFormulasActive(colDefList);
-        const autoCols = beans.autoColSvc?.refreshCols(source);
-        const selectionCol = beans.selectionColSvc?.refreshCols();
-        const rowNumberCol = beans.rowNumbersSvc?.refreshCols();
-        // Snapshot prior colsList colIds into the mode's lastOrder so the next refresh restores user moves.
-        const oldColsList = this.colsList;
-        if (oldColsList.length > 0) {
-            if (prevWasPivot) {
-                // A strict pivot order (comparator/pivotSort) isn't a user arrangement to preserve - skip it so
-                // clearing pivotSort restores the prior non-strict order rather than the transient asc/desc one.
-                if (!this.prevPivotStrict) {
-                    this.lastPivotOrder = snapshotColIds(oldColsList, this.lastPivotOrder);
-                }
-            } else {
-                this.lastOrder = snapshotColIds(oldColsList, this.lastOrder);
-            }
-        }
-        this.prevPivotStrict = showingPivotResult && (beans.pivotColsSvc?.isStrictColumnOrder() ?? false);
-        // Emit in display order: rowNumbers → selection → autoGroup → user/pivot body cols.
-        const autoColsLen = autoCols?.length ?? 0;
-        const sourceListLen = sourceList.length;
-        const sourceTreeLen = sourceTree.length;
-        const serviceColsLen = (rowNumberCol ? 1 : 0) + (selectionCol ? 1 : 0) + autoColsLen;
-        // Pre-allocated at final size — the assemble loops below fill by index, not push.
-        const colsList = new Array<AgColumn>(serviceColsLen + sourceListLen);
-        const colsTree = new Array<AgColumn | AgProvidedColumnGroup>(serviceColsLen + sourceTreeLen);
-        const colsById: { [id: string]: AgColumn } = Object.create(null);
-        let colsIdx = 0;
-        if (rowNumberCol) {
-            colsList[colsIdx++] = rowNumberCol;
-        }
-        if (selectionCol) {
-            colsList[colsIdx++] = selectionCol;
-        }
-        for (let i = 0; i < autoColsLen; ++i) {
-            colsList[colsIdx++] = autoCols![i];
-        }
-        // At depth 0 the wrapper IS the col, so skip the wrap loop; still drop cached wrappers from
-        // a prior depth>0 build so service cols don't point at a stale wrapper.
-        const serviceWrapperCache = beans.colGroupSvc.wrapperCache;
-        if (sourceTreeDepth > 0) {
-            const buildToken = this.nextBuildToken();
-            for (let i = 0; i < serviceColsLen; ++i) {
-                const col = colsList[i];
-                colsById[col.colId] = col;
-                col.inColsList = true;
-                colsTree[i] = serviceWrapperCache.wrap(col, sourceTreeDepth, buildToken);
-            }
-            serviceWrapperCache.evict(buildToken);
-        } else {
-            serviceWrapperCache.destroy();
-            for (let i = 0; i < serviceColsLen; ++i) {
-                const col = colsList[i];
-                colsById[col.colId] = col;
-                col.inColsList = true;
-                col.originalParent = null;
-                colsTree[i] = col;
-            }
-        }
-
-        // In pivot mode, sourceList = pivotCols; primaries (colDefList) need colsById entries for lookups
-        // but are parked out of colsList (`inColsList = false`). Non-pivot covers them via the next loop.
-        if (pivotResultCols) {
-            // Entering pivot: freeze the current display order so `getColumnDefs` keeps reporting it.
-            if (!prevWasPivot) {
-                this.ensureColsListIndex();
-            }
-            // A col added while pivoting has no frozen index (-1); seat it after its left colDef neighbour so
-            // `getColumnDefs` reports it in colDef order (stable sort breaks the tie) without disturbing others.
-            let lastIndex = -1;
-            for (let i = 0, len = colDefList.length; i < len; ++i) {
-                const col = colDefList[i];
-                colsById[col.colId] = col;
-                col.inColsList = false;
-                if (col.colsListIndex < 0) {
-                    col.colsListIndex = lastIndex;
+        try {
+            const colDefList = this.colDefList;
+            const prevColTree = this.colsTree;
+            const prevWasPivot = this.showingPivotResult;
+            const resultColsSvc = this.pivotMode ? beans.pivotResultCols : null;
+            const pivotCols = resultColsSvc?.pivotCols ?? null;
+            const pivotResultCols = pivotCols != null ? resultColsSvc : null;
+            const showingPivotResult = !!pivotResultCols;
+            this.showingPivotResult = showingPivotResult;
+            const sourceList = pivotCols ?? colDefList;
+            const sourceTree = pivotResultCols ? pivotResultCols.pivotTree : this.colDefTree;
+            const sourceTreeDepth = pivotResultCols ? pivotResultCols.pivotTreeDepth : this.colDefTreeDepth;
+            this.colsTreeDepth = sourceTreeDepth;
+            this.hasMarryChildren = pivotResultCols
+                ? pivotResultCols.pivotHasMarryChildren
+                : this.colDefHasMarryChildren;
+            this.colsGroupsById = pivotResultCols ? pivotResultCols.pivotGroupsById : this.colDefGroupsById;
+            this.colsAllGroups = pivotResultCols ? pivotResultCols.pivotAllGroups : this.colDefAllGroups;
+            // Service refresh runs in dependency order; formulas operate on the primary cols (colDefList).
+            beans.formula?.setFormulasActive(colDefList);
+            const autoCols = beans.autoColSvc?.refreshCols(source);
+            const selectionCol = beans.selectionColSvc?.refreshCols();
+            const rowNumberCol = beans.rowNumbersSvc?.refreshCols();
+            // Snapshot prior colsList colIds into the mode's lastOrder so the next refresh restores user moves.
+            const oldColsList = this.colsList;
+            if (oldColsList.length > 0) {
+                if (prevWasPivot) {
+                    // A strict pivot order (comparator/pivotSort) isn't a user arrangement to preserve - skip it so
+                    // clearing pivotSort restores the prior non-strict order rather than the transient asc/desc one.
+                    if (!this.prevPivotStrict) {
+                        this.lastPivotOrder = snapshotColIds(oldColsList, this.lastPivotOrder);
+                    }
                 } else {
-                    lastIndex = col.colsListIndex;
+                    this.lastOrder = snapshotColIds(oldColsList, this.lastOrder);
                 }
             }
-        }
-        for (let i = 0; i < sourceListLen; ++i) {
-            const col = sourceList[i];
-            colsList[colsIdx++] = col;
-            colsById[col.colId] = col;
-            col.inColsList = true;
-        }
-        for (let i = 0; i < sourceTreeLen; ++i) {
-            colsTree[serviceColsLen + i] = sourceTree[i];
-        }
-        // An active interactive pivotSort forces strict pivot column order, overriding sticky-order preservation.
-        const restoreOrder = !newColDefs || _shouldMaintainColumnOrder(gos, showingPivotResult);
-        const lastOrder = showingPivotResult ? this.lastPivotOrder : this.lastOrder;
-        let prevOrder = restoreOrder ? lastOrder : null;
-        // pivotSort reorders the groups but keeps the user's within-group order and widths: re-rank the
-        // preserved order by the freshly-sorted group order rather than discarding it.
-        const pivotColsSvc = beans.pivotColsSvc;
-        if (prevOrder != null && showingPivotResult && !!pivotColsSvc?.hasInteractivePivotSort()) {
-            prevOrder = pivotColsSvc.reRankByPivotGroupOrder(colsList, prevOrder, colsById);
-        }
-        const ordered = prevOrder == null ? colsList : applyPrevColumnsOrder(colsList, colsById, prevOrder);
-        const finalColsList = placeLockedColumns(ordered, gos);
-        const colsListChanged = !_areEqual(finalColsList, oldColsList);
-        if (colsListChanged) {
-            this.colsListIndexDirty = true;
-        }
-        this.colsList = colsListChanged ? finalColsList : oldColsList;
-        this.colsTree = _areEqual(colsTree, prevColTree) ? prevColTree : colsTree;
-        this.colsById = colsById;
-        this.invalidateColsDerivedState();
-        this.refreshColsDerivedState();
-        if (colsListChanged) {
-            beans.rowSpanSvc?.refreshCols();
-        }
-        if (this.colsTree !== prevColTree) {
-            this.eventSvc.dispatchEvent({ type: 'gridColumnsChanged' });
-        }
-        if (animatePivotSort) {
-            beans.colAnimation?.finish();
+            this.prevPivotStrict = showingPivotResult && (beans.pivotColsSvc?.isStrictColumnOrder() ?? false);
+            // Emit in display order: rowNumbers → selection → autoGroup → user/pivot body cols.
+            const autoColsLen = autoCols?.length ?? 0;
+            const sourceListLen = sourceList.length;
+            const sourceTreeLen = sourceTree.length;
+            const serviceColsLen = (rowNumberCol ? 1 : 0) + (selectionCol ? 1 : 0) + autoColsLen;
+            // Pre-allocated at final size — the assemble loops below fill by index, not push.
+            const colsList = new Array<AgColumn>(serviceColsLen + sourceListLen);
+            const colsTree = new Array<AgColumn | AgProvidedColumnGroup>(serviceColsLen + sourceTreeLen);
+            const colsById: { [id: string]: AgColumn } = Object.create(null);
+            let colsIdx = 0;
+            if (rowNumberCol) {
+                colsList[colsIdx++] = rowNumberCol;
+            }
+            if (selectionCol) {
+                colsList[colsIdx++] = selectionCol;
+            }
+            for (let i = 0; i < autoColsLen; ++i) {
+                colsList[colsIdx++] = autoCols![i];
+            }
+            // At depth 0 the wrapper IS the col, so skip the wrap loop; still drop cached wrappers from
+            // a prior depth>0 build so service cols don't point at a stale wrapper.
+            const serviceWrapperCache = beans.colGroupSvc.wrapperCache;
+            if (sourceTreeDepth > 0) {
+                const buildToken = this.nextBuildToken();
+                for (let i = 0; i < serviceColsLen; ++i) {
+                    const col = colsList[i];
+                    colsById[col.colId] = col;
+                    col.inColsList = true;
+                    colsTree[i] = serviceWrapperCache.wrap(col, sourceTreeDepth, buildToken);
+                }
+                serviceWrapperCache.evict(buildToken);
+            } else {
+                serviceWrapperCache.destroy();
+                for (let i = 0; i < serviceColsLen; ++i) {
+                    const col = colsList[i];
+                    colsById[col.colId] = col;
+                    col.inColsList = true;
+                    col.originalParent = null;
+                    colsTree[i] = col;
+                }
+            }
+
+            // In pivot mode, sourceList = pivotCols; primaries (colDefList) need colsById entries for lookups
+            // but are parked out of colsList (`inColsList = false`). Non-pivot covers them via the next loop.
+            if (pivotResultCols) {
+                // Entering pivot: freeze the current display order so `getColumnDefs` keeps reporting it.
+                if (!prevWasPivot) {
+                    this.ensureColsListIndex();
+                }
+                // A col added while pivoting has no frozen index (-1); seat it after its left colDef neighbour so
+                // `getColumnDefs` reports it in colDef order (stable sort breaks the tie) without disturbing others.
+                let lastIndex = -1;
+                for (let i = 0, len = colDefList.length; i < len; ++i) {
+                    const col = colDefList[i];
+                    colsById[col.colId] = col;
+                    col.inColsList = false;
+                    if (col.colsListIndex < 0) {
+                        col.colsListIndex = lastIndex;
+                    } else {
+                        lastIndex = col.colsListIndex;
+                    }
+                }
+            }
+            for (let i = 0; i < sourceListLen; ++i) {
+                const col = sourceList[i];
+                colsList[colsIdx++] = col;
+                colsById[col.colId] = col;
+                col.inColsList = true;
+            }
+            for (let i = 0; i < sourceTreeLen; ++i) {
+                colsTree[serviceColsLen + i] = sourceTree[i];
+            }
+            // An active interactive pivotSort forces strict pivot column order, overriding sticky-order preservation.
+            const restoreOrder = !newColDefs || _shouldMaintainColumnOrder(gos, showingPivotResult);
+            const lastOrder = showingPivotResult ? this.lastPivotOrder : this.lastOrder;
+            let prevOrder = restoreOrder ? lastOrder : null;
+            // pivotSort reorders the groups but keeps the user's within-group order and widths: re-rank the
+            // preserved order by the freshly-sorted group order rather than discarding it.
+            const pivotColsSvc = beans.pivotColsSvc;
+            if (prevOrder != null && showingPivotResult && !!pivotColsSvc?.hasInteractivePivotSort()) {
+                prevOrder = pivotColsSvc.reRankByPivotGroupOrder(colsList, prevOrder, colsById);
+            }
+            const ordered = prevOrder == null ? colsList : applyPrevColumnsOrder(colsList, colsById, prevOrder);
+            const finalColsList = placeLockedColumns(ordered, gos);
+            const colsListChanged = !_areEqual(finalColsList, oldColsList);
+            if (colsListChanged) {
+                this.colsListIndexDirty = true;
+            }
+            this.colsList = colsListChanged ? finalColsList : oldColsList;
+            this.colsTree = _areEqual(colsTree, prevColTree) ? prevColTree : colsTree;
+            this.colsById = colsById;
+            this.invalidateColsDerivedState();
+            this.refreshColsDerivedState();
+            if (colsListChanged) {
+                beans.rowSpanSvc?.refreshCols();
+            }
+            if (this.colsTree !== prevColTree) {
+                this.eventSvc.dispatchEvent({ type: 'gridColumnsChanged' });
+            }
+        } finally {
+            if (animatePivotSort) {
+                beans.colAnimation?.finish();
+            }
         }
     }
 

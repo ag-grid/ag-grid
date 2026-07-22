@@ -2,7 +2,7 @@ import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/t
 
 test.agExample(import.meta, () => {
     // rowData: a = i % 4, b = i % 7 for i in 0..99.
-    // colIds: 'ID #' (anonymous) -> '0', 'a', 'b', 'A + B' -> 'a&b',
+    // colIds: 'ID #' (anonymous) -> '0', 'a', 'b', 'A + B' -> 'aPlusB',
     //         'A * 1000' -> '1', 'B * 137' -> '2', 'Chain' -> '3', 'Const' -> '4'.
 
     test.eachFramework('ID # valueGetter prints the row node id', async ({ agIdFor, page }) => {
@@ -21,7 +21,7 @@ test.agExample(import.meta, () => {
         // Row 5: a = 5 % 4 = 1, b = 5 % 7 = 5.
         await expect(agIdFor.cell('5', 'a')).toContainText('1');
         await expect(agIdFor.cell('5', 'b')).toContainText('5');
-        await expect(agIdFor.cell('5', 'a&b')).toContainText('6'); // a + b
+        await expect(agIdFor.cell('5', 'aPlusB')).toContainText('6'); // a + b
         await expect(agIdFor.cell('5', '1')).toContainText('1000'); // a * 1000
         await expect(agIdFor.cell('5', '2')).toContainText('685'); // b * 137
         await expect(agIdFor.cell('5', '3')).toContainText('6000'); // chain: (a + b) * 1000

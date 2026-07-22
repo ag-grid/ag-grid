@@ -1377,7 +1377,18 @@
             }
         },
         "suppressRowTransform": {},
-        "suppressContentVisibilityAuto": {}
+        "enableContentVisibilityAuto": {
+            "more": {
+                "name": "Skip Rendering Off-Screen Grids",
+                "url": "./scrolling-performance/#skip-rendering-off-screen-grids"
+            }
+        },
+        "contentVisibilityAutoDelay": {
+            "more": {
+                "name": "Skip Rendering Off-Screen Grids",
+                "url": "./scrolling-performance/#skip-rendering-off-screen-grids"
+            }
+        }
     },
     "rowDragging": {
         "meta": {

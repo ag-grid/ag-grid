@@ -90,6 +90,32 @@ describe('htaccessRules', () => {
         });
     });
 
+    describe('SE-81: agent-useful Link header', () => {
+        it('should include a Link header pointing at llms.txt, the sitemap index and the MCP server', () => {
+            expect(productionContent).toContain('Header set Link');
+            expect(productionContent).toContain('</llms.txt>; rel=describedby');
+            expect(productionContent).toContain('</sitemap-index.xml>; rel=sitemap');
+            expect(productionContent).toContain(
+                '<https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related'
+            );
+        });
+
+        it('should scope the Link header to HTML documents (not assets, redirects or errors)', () => {
+            const linkLine = productionContent.split('\n').find((l) => l.includes('set Link'));
+            expect(linkLine).toBeDefined();
+            // Not `always` (so it is skipped on error responses) and guarded by a
+            // Content-Type expr so it only applies to HTML documents.
+            expect(linkLine).not.toContain('always set Link');
+            expect(linkLine).toContain('"expr=%{CONTENT_TYPE} =~ m#^text/html#"');
+        });
+
+        it('should include the Link header on staging too so it can be verified before production', () => {
+            expect(stagingContent).toContain('Header set Link');
+            expect(stagingContent).toContain('</llms.txt>; rel=describedby');
+            expect(stagingContent).toContain('"expr=%{CONTENT_TYPE} =~ m#^text/html#"');
+        });
+    });
+
     describe('AG-17152: /charts/ framework overview redirects', () => {
         const chartsFrameworkRedirects = [
             { from: '^/javascript-charts', to: 'charts/javascript/quick-start/' },
@@ -190,9 +216,11 @@ describe('htaccessRules', () => {
     });
 
     describe('production vs staging', () => {
-        it('should include mod_rewrite rules in production only', () => {
-            expect(productionContent).toContain('mod_rewrite.c');
-            expect(stagingContent).not.toContain('mod_rewrite.c');
+        it('should include the redirect/canonicalization rewrites in production only', () => {
+            // Both envs carry a small mod_rewrite block for SE-80 markdown negotiation,
+            // but the host/https redirect rules are production-only.
+            expect(productionContent).toContain('RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]');
+            expect(stagingContent).not.toContain('https://www.ag-grid.com/$1 [R=301,L]');
         });
 
         it('should include mod_expires rules in production only', () => {
@@ -523,6 +551,65 @@ describe('htaccessRules', () => {
             expect(mirror).toBeGreaterThan(-1);
             expect(general).toBeGreaterThan(mirror);
             expect(hostSwap).toBeGreaterThan(general);
+        });
+    });
+
+    describe('SE-80: Accept: text/markdown content negotiation', () => {
+        const negotiationRules = [
+            'RewriteCond %{HTTP_ACCEPT} text/markdown',
+            // Captures a docs path or a top-level md page, reused (%1) in the -f test and rewrite target.
+            'RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline)/?$',
+            'RewriteCond %{DOCUMENT_ROOT}/%1.md -f',
+            'RewriteRule ^ /%1.md [L]',
+        ];
+
+        it('serves the per-page .md variant when Accept: text/markdown, gated by an on-disk check', () => {
+            for (const rule of negotiationRules) {
+                expect(productionContent).toContain(rule);
+            }
+        });
+
+        it('applies the same negotiation rules on staging, in its own mod_rewrite block', () => {
+            // Staging has no redirect rewrites, so negotiation gets a dedicated block.
+            expect(stagingContent).toContain('mod_rewrite.c');
+            expect(stagingContent).toContain('RewriteEngine On');
+            for (const rule of negotiationRules) {
+                expect(stagingContent).toContain(rule);
+            }
+        });
+
+        it('runs the negotiation before the trailing-slash 301 so the canonical URL negotiates in one hop', () => {
+            const negotiationIndex = productionContent.indexOf('RewriteRule ^ /%1.md [L]');
+            const trailingSlashIndex = productionContent.indexOf('# Add trailing slash for directories');
+            expect(negotiationIndex).toBeGreaterThan(-1);
+            expect(trailingSlashIndex).toBeGreaterThan(-1);
+            expect(negotiationIndex).toBeLessThan(trailingSlashIndex);
+        });
+
+        it('adds Vary: Accept for negotiated paths (both envs) so shared caches key on the negotiated representation', () => {
+            for (const content of [productionContent, stagingContent]) {
+                expect(content).toContain(
+                    '<If "%{REQUEST_URI} =~ m#^/((react|angular|vue|javascript)-data-grid/|(license-pricing|changelog|pipeline)/?$)#">'
+                );
+                expect(content).toContain('Header append Vary Accept');
+            }
+        });
+
+        it('negotiates the top-level license-pricing, changelog and pipeline pages to their .md', () => {
+            // %1 captures each page name, so the -f guard and rewrite target resolve to /<page>.md.
+            for (const content of [productionContent, stagingContent]) {
+                expect(content).toContain('|license-pricing|changelog|pipeline)/?$');
+            }
+        });
+
+        it('registers the markdown MIME type so the .md files are served as text/markdown', () => {
+            expect(productionContent).toContain('AddType text/markdown md');
+            expect(stagingContent).toContain('AddType text/markdown md');
+        });
+
+        it('serves .md as UTF-8 so table glyphs (✓/✗) are not mojibaked', () => {
+            expect(productionContent).toContain('AddCharset utf-8 .md');
+            expect(stagingContent).toContain('AddCharset utf-8 .md');
         });
     });
 

@@ -4,6 +4,7 @@ import {
     DateFilterModule,
     ModuleRegistry,
     NumberFilterModule,
+    RowApiModule,
     TextFilterModule,
     createGrid,
     enableDevValidations,
@@ -24,6 +25,7 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     DateFilterModule,
+    RowApiModule,
 ]);
 
 const filterParams: IDateFilterParams = {
