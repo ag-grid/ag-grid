@@ -105,7 +105,12 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         // picker list is still collapsing, so we make this call async to guarantee that.
         if (this.gos.get('editType') !== 'fullRow') {
             const { fromEnterKey, keyboardEvent } = e;
-            setTimeout(() => this.params.stopEditing(!fromEnterKey, keyboardEvent));
+            setTimeout(() => {
+                if (!this.isAlive()) {
+                    return;
+                }
+                this.params.stopEditing(!fromEnterKey, keyboardEvent);
+            });
         }
     }
 
