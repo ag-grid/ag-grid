@@ -1,11 +1,11 @@
 import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
-// typescriptOnly example. Grouped by year (2015/2016), groupDefaultExpanded: 1.
-// The 'Total' column valueGetter sums q1..q4 and logs a 'Total Value Getter' message on every call.
-// Leaf row id '0' (i=0): q1=6912, q2=1200, q3=0, q4=0 -> total 8112 -> displayed '8,112'.
+// Grouped by year (2015/2016), groupDefaultExpanded: 1. The 'Total' column valueGetter sums
+// q1..q4 and logs a 'Total Value Getter' message on every call. Leaf row id '0' (i=0):
+// q1=6912, q2=1200, q3=0, q4=0 -> total 8112 -> displayed '8,112'.
 
 test.agExample(import.meta, () => {
-    test.typescript(
+    test.eachFramework(
         'value getter computes the leaf and re-runs on expand when the cache is off',
         async ({ agIdFor, page }) => {
             await ensureGridReady(page);
@@ -30,14 +30,14 @@ test.agExample(import.meta, () => {
         }
     );
 
-    test.typescript(
+    test.eachFramework(
         'turning the cache on keeps values correct and stops re-execution on expand',
         async ({ agIdFor, page }) => {
             await ensureGridReady(page);
             await waitForGridContent(page);
 
-            // Turn the value cache ON (first radio); the grid is destroyed and recreated.
-            await page.locator('input[name="valueCache"]').first().click();
+            // Turn the value cache ON (first radio); the grid is recreated with the cache enabled.
+            await page.locator('#valueCacheOn').click();
 
             // Values are still correct when served from the cache.
             await expect(agIdFor.cell('0', 'total')).toContainText('8,112');
