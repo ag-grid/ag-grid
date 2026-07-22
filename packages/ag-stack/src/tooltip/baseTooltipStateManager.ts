@@ -571,16 +571,14 @@ export abstract class BaseTooltipStateManager<
         }
         window.clearTimeout(this.interactiveTooltipTimeoutId);
         this.interactiveTooltipTimeoutId = undefined;
+        // lockService sets the shared lock and this timeout together, so clearing the timeout must
+        // also release the lock, otherwise it is left orphaned and blocks every subsequent tooltip.
+        isLocked = false;
     }
 
     private clearTimeouts(): void {
         this.clearShowTimeout();
         this.clearHideTimeout();
-        // lockService sets the shared lock and this instance's interactive timeout together, so when
-        // this instance owns that timeout clearing it must release the lock via unlockService,
-        // otherwise the lock is left orphaned and blocks every subsequent tooltip.
-        if (this.interactiveTooltipTimeoutId) {
-            this.unlockService();
-        }
+        this.clearInteractiveTimeout();
     }
 }
