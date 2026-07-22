@@ -1,5 +1,3 @@
-import { _focusInto } from 'ag-stack';
-
 import type {
     AgColumn,
     AgProvidedColumnGroup,
@@ -310,7 +308,7 @@ export class ToolPanelContextMenu extends Component {
             modal: true,
             eChild: eGui,
             closeOnEsc: true,
-            afterGuiAttached: () => _focusInto(menuList.getGui()),
+            afterGuiAttached: () => menuList.focusInto(),
             ariaLabel: localeTextFunc('ariaLabelContextMenu', 'Context Menu'),
             closedCallback: (e: KeyboardEvent) => {
                 if (e instanceof KeyboardEvent) {
