@@ -329,14 +329,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             },
             validate: (
                 _options,
-                {
-                    rowSelection,
-                    cellSelection,
-                    suppressRowTransform,
-                    enableCellSpan,
-                    rowDragEntireRow,
-                    enableCellTextSelection,
-                }
+                { rowSelection, cellSelection, enableCellSpan, rowDragEntireRow, enableCellTextSelection }
             ) => {
                 if (typeof rowSelection === 'object') {
                     if (rowSelection?.mode === 'singleRow' && rowSelection?.enableClickSelection) {
@@ -350,12 +343,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     return _createValidationWarning(318, {
                         feature: '`colDef.spanRows`',
                         conflictsWith: '`cellSelection`',
-                    });
-                }
-                if (suppressRowTransform) {
-                    return _createValidationWarning(318, {
-                        feature: '`colDef.spanRows`',
-                        conflictsWith: '`suppressRowTransform`',
                     });
                 }
                 if (!enableCellSpan) {
