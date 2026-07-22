@@ -13,6 +13,7 @@ import { getExamplesPath } from '@components/docs/utils/filesData';
 import { ICON_NAMES, ICON_THEMES } from '@components/icon/iconsData';
 import type { MatrixDatum } from '@components/matrix-table/utils/matrixData';
 import { agLibraryVersion } from '@constants';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import { type CollectionEntry, getEntry } from 'astro:content';
 import { readFileSync } from 'node:fs';
@@ -51,7 +52,7 @@ export async function renderMarkdocTag(params: RenderMarkdocTagParams): Promise<
             case 'seedProjectsTable':
                 return renderSeedProjectsTable(siteRoot);
             case 'embedSnippet':
-                return renderEmbedSnippet(attributes, pageName);
+                return renderEmbedSnippet(attributes, pageName, siteRoot);
             case 'changelogSection':
                 return renderChangelogSection(attributes);
             case 'documentationArchiveSection':
@@ -133,17 +134,22 @@ function renderSeedProjectsTable(siteRoot?: string): string {
     return markdownTable(['GitHub Repo', 'Framework', 'Dev Environment', 'License Type'], rows);
 }
 
-function renderEmbedSnippet(attributes: Record<string, any>, pageName: string): string {
-    // Only the on-disk `src` branch is reproducible at build time; the `url` branch
-    // fetches a remote snippet client-side and is dropped.
-    if (!attributes.src) {
-        return '';
+function renderEmbedSnippet(attributes: Record<string, any>, pageName: string, siteRoot?: string): string {
+    // The on-disk `src` branch is inlined at build time; the `url` branch points to a served file
+    // the HTML page fetches client-side, so link to its absolute URL rather than fetch-and-inline.
+    if (attributes.src) {
+        const examplePath = getExamplesPath({ pageName });
+        const file = path.join(examplePath, String(attributes.src));
+        const code = readFileSync(file).toString().replace(/\n$/, '');
+        const language = attributes.language ? String(attributes.language) : '';
+        return fencedCodeBlock(code, language);
     }
-    const examplePath = getExamplesPath({ pageName });
-    const file = path.join(examplePath, String(attributes.src));
-    const code = readFileSync(file).toString().replace(/\n$/, '');
-    const language = attributes.language ? String(attributes.language) : '';
-    return fencedCodeBlock(code, language);
+    if (attributes.url) {
+        const href = toAbsoluteUrl(urlWithBaseUrl(String(attributes.url)), siteRoot);
+        const name = String(attributes.url).split('/').filter(Boolean).pop() ?? 'snippet';
+        return `[View snippet source: \`${name}\`](${href})`;
+    }
+    return '';
 }
 
 function renderChangelogSection(attributes: Record<string, any>): string {
