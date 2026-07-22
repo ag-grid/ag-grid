@@ -123,7 +123,7 @@ export async function renderMarkdocToMarkdown(opts: RenderMarkdocToMarkdownOptio
         imageSrc: new Map(),
     };
 
-    const ast = Markdoc.parse(body ?? '');
+    const ast = Markdoc.parse(stripSourceHtmlComments(body ?? ''));
     await prefetchImageSrcs(ast.children, ctx);
     const bodyMarkdown = await renderBlocks(ast.children, ctx);
 
@@ -903,4 +903,61 @@ function stringifyValue(value: unknown): string {
 /** Remove HTML comments (`<!-- … -->`, including multi-line) from prose text. */
 function stripHtmlComments(text: string): string {
     return text.replace(/<!--[\s\S]*?-->/g, '');
+}
+
+/**
+ * Strip block-level HTML comments from the raw Markdoc source before parsing. A comment whose `<!--`
+ * opens a line (the migration-template scaffolding) is authoring-only and must not render — and when
+ * it contains blank lines Markdoc splits it across sibling blocks, so the `<!--`/`-->` markers land in
+ * different nodes than the render-time strip can pair up and leak (along with any `{% %}` tags nested
+ * inside). Removing them here also stops those nested tags from being executed. Comments inside fenced
+ * code blocks are legitimate example content and are preserved; inline comments within prose are left
+ * to the render-time strip.
+ */
+function stripSourceHtmlComments(body: string): string {
+    const lines = body.split('\n');
+    const out: string[] = [];
+    let openFenceLen = 0;
+    let inComment = false;
+    for (let i = 0, len = lines.length; i < len; ++i) {
+        const line = lines[i];
+        if (inComment) {
+            const end = line.indexOf('-->');
+            if (end !== -1) {
+                inComment = false;
+                const rest = line.slice(end + 3);
+                if (rest.trim().length) {
+                    out.push(rest);
+                }
+            }
+            continue;
+        }
+        if (openFenceLen === 0) {
+            const open = /^\s*(`{3,})/.exec(line);
+            if (open) {
+                openFenceLen = open[1].length;
+                out.push(line);
+                continue;
+            }
+            if (/^\s*<!--/.test(line)) {
+                let stripped = line.replace(/<!--[\s\S]*?-->/g, '');
+                if (stripped.includes('<!--')) {
+                    inComment = true;
+                    stripped = stripped.slice(0, stripped.indexOf('<!--'));
+                }
+                if (stripped.trim().length) {
+                    out.push(stripped);
+                }
+                continue;
+            }
+            out.push(line);
+        } else {
+            const close = /^\s*(`{3,})\s*$/.exec(line);
+            if (close && close[1].length >= openFenceLen) {
+                openFenceLen = 0;
+            }
+            out.push(line);
+        }
+    }
+    return out.join('\n');
 }

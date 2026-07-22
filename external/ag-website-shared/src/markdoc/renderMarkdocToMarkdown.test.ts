@@ -441,6 +441,32 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).not.toContain('-->');
     });
 
+    it('strips a block comment containing blank lines and nested tags, without executing them', async () => {
+        const body = [
+            'Before.',
+            '',
+            '<!-- The full list for version {% gridVersion() %}.',
+            '',
+            '{% expandingSection headerText="Breaking Changes" %}',
+            'placeholder item',
+            '{% /expandingSection %}',
+            '-->',
+            '',
+            'After.',
+        ].join('\n');
+        const output = await render(body);
+
+        expect(output).toContain('Before.');
+        expect(output).toContain('After.');
+        expect(output).not.toContain('<!--');
+        expect(output).not.toContain('-->');
+        expect(output).not.toContain('The full list');
+        // The nested tag must not render, and the resolved version must not leak.
+        expect(output).not.toContain('Breaking Changes');
+        expect(output).not.toContain('placeholder item');
+        expect(output).not.toContain('33.1');
+    });
+
     it('resolves image tags (including inline in tables) via the async resolveImageSrc resolver', async () => {
         const resolvers: MarkdownResolvers = {
             resolveImageSrc: async ({ imagePath, pageName }) => `https://example.test/${pageName}/${imagePath}?hashed`,
