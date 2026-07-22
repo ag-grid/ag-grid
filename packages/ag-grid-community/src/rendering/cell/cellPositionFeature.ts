@@ -7,10 +7,9 @@ import { applyHorizontalPosition, getResolvedHorizontalOffset } from '../feature
 import type { CellCtrl } from './cellCtrl';
 
 /**
- * Takes care of:
- *  #) Cell Width (including when doing cell spanning, which makes width cover many columns)
- *  #) Cell Height (when doing row span, otherwise we don't touch the height as it's just row height)
- *  #) Cell Left (the horizontal positioning of the cell, the vertical positioning is on the row)
+ * Wires the listeners that keep a cell's width and left position in sync, including col spanning
+ * (which makes width cover many columns). Height is only ever touched for row-spanned cells, and is
+ * applied on attach in _initCellPosition (via legacyApplyRowSpan or _applySpanHeight), not here.
  */
 export function _setupCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
     // Listener setup runs from the CellCtrl constructor (before the cell component attaches) so that
@@ -18,10 +17,11 @@ export function _setupCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): v
     // React, where setComp() is called asynchronously, but navigation normalisation may query
     // the cell position synchronously before the first render completes.
     //
-    // A row-spanned cell keeps its own height and aria-rowspan in sync (SpannedCellCtrl) and must not
-    // also run the col/row span setup below. Gate on isCellSpanning() rather than getCellSpan(): the
-    // latter reads cellSpan, a constructor parameter property still unassigned while this runs inside
-    // super(), whereas isCellSpanning() is a prototype method that resolves correctly during super().
+    // A row-spanned cell keeps its own height and aria-rowspan in sync (see SpannedCellCtrl's
+    // constructor, which wires the refresh listeners) and must not also run the col/row span setup
+    // below. Gate on isCellSpanning() rather than getCellSpan(): the latter reads cellSpan, a
+    // constructor parameter property still unassigned while this runs inside super(), whereas
+    // isCellSpanning() is a prototype method that resolves correctly during super().
     if (cellCtrl.isCellSpanning()) {
         return;
     }
