@@ -15,6 +15,7 @@ import type { ColumnEvent, FilterChangedEvent } from '../../../events';
 import { _getFilterModel } from '../../../filter/columnFilterUtils';
 import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
+import type { PopupToggleResult } from '../../../misc/menu/menuService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _getCalculatedColumnCssClasses } from '../../../styling/calculatedColumnCss';
 import { _stopPropagationForAgGrid } from '../../../utils/gridEvent';
@@ -22,6 +23,7 @@ import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _refreshCssClasses } from '../cssClassApplier';
+import { _addPopupToggleButtonListeners } from '../popupToggleButton';
 import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -65,7 +67,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupSyncWithFilter(compBean);
         this.setupUi();
 
-        compBean.addManagedElementListeners(this.eButtonShowMainFilter, { click: this.showParentFilter.bind(this) });
+        _addPopupToggleButtonListeners(compBean, this.eButtonShowMainFilter, () => this.toggleParentFilter());
         this.setupFilterChangedListener(compBean);
         const colDefChanged = () => this.onColDefChanged(compBean);
         compBean.addManagedListeners(this.column, { colDefChanged });
@@ -307,6 +309,17 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             containerType: 'floatingFilter',
             positionBy: 'button',
         });
+    }
+
+    private toggleParentFilter(): PopupToggleResult {
+        return (
+            this.beans.menuSvc?.toggleFilterMenu({
+                column: this.column,
+                buttonElement: this.eButtonShowMainFilter,
+                containerType: 'floatingFilter',
+                positionBy: 'button',
+            }) ?? 'declined'
+        );
     }
 
     private setupSyncWithFilter(compBean: BeanStub): void {
