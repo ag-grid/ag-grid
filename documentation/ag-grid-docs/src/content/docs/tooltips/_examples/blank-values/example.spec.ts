@@ -9,7 +9,11 @@ test.agExample(import.meta, () => {
 
         // Row 0 has a missing (undefined) athlete value.
         // Column A uses tooltipField, so no tooltip is shown for the missing value.
+        // tooltipShowDelay is 500ms — wait past it before concluding no tooltip appears,
+        // otherwise a zero-count check immediately after hover would pass even if a
+        // tooltip surfaced after the delay.
         await agIdFor.cell('0', 'athlete').hover();
+        await page.waitForTimeout(900);
         await expect(tooltip).toHaveCount(0);
 
         // Column B (duplicate field) uses a tooltipValueGetter returning '- Missing -'.
