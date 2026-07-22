@@ -89,11 +89,13 @@ const LANGUAGES: Record<Language, LanguageConfig> = {
     english: {
         localeText: undefined,
         enableRtl: false,
+        // No headerName where the default (capitalised field name) already reads correctly;
+        // only `area` needs an explicit header to carry its unit.
         columnDefs: [
-            { field: 'name', headerName: 'Name' },
-            { field: 'city', headerName: 'City' },
-            { field: 'country', headerName: 'Country' },
-            { field: 'population', headerName: 'Population' },
+            { field: 'name' },
+            { field: 'city' },
+            { field: 'country' },
+            { field: 'population' },
             { field: 'area', headerName: 'Area (km²)' },
         ],
         rowData: [
