@@ -1,42 +1,49 @@
 import type {
     ColDef,
-    DefaultMenuItem,
-    DefaultToolPanelItem,
+    DefaultColumnMenuItem,
     GetColumnMenuItemsParams,
     GridApi,
     GridOptions,
     MenuItemDef,
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
-import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
+import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 // Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, ColumnMenuModule, ContextMenuModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    ColumnMenuModule,
+    ContextMenuModule,
+    RowGroupingModule,
+]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 200 },
     {
         field: 'age',
+        enableValue: true,
+        minWidth: 150,
         columnMenuItems: (params: GetColumnMenuItemsParams) => {
-            const athleteMenuItems: (MenuItemDef | DefaultMenuItem | DefaultToolPanelItem)[] =
-                params.defaultItems.slice(0);
-            athleteMenuItems.push({
+            // 'scrollIntoView' and 'value' are Columns Tool Panel tokens; returning them for the
+            // column menu shows that built-in tokens now resolve on any surface.
+            const menuItems: (MenuItemDef | DefaultColumnMenuItem)[] = [
+                'scrollIntoView',
+                'value',
+                'separator',
+                ...params.defaultItems,
+            ];
+            menuItems.push({
                 name: 'A Custom Item',
                 action: () => {
                     console.log('A Custom Item selected');
                 },
             });
-            athleteMenuItems.push({
-                name: 'Another Custom Item',
-                action: () => {
-                    console.log('Another Custom Item selected');
-                },
-            });
-            athleteMenuItems.push({
+            menuItems.push({
                 name: 'Custom Sub Menu',
                 subMenu: [
                     {
@@ -59,7 +66,7 @@ const columnDefs: ColDef[] = [
                     },
                 ],
             });
-            return athleteMenuItems;
+            return menuItems;
         },
     },
     {
@@ -88,7 +95,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'year',
         columnMenuItems: (params: GetColumnMenuItemsParams) => {
-            const menuItems: (MenuItemDef | DefaultMenuItem | DefaultToolPanelItem)[] = [];
+            const menuItems: (MenuItemDef | DefaultColumnMenuItem)[] = [];
             const itemsToExclude = ['separator', 'pinSubMenu', 'valueAggSubMenu'];
             params.defaultItems.forEach((item) => {
                 if (itemsToExclude.indexOf(item) < 0) {
@@ -98,7 +105,7 @@ const columnDefs: ColDef[] = [
             return menuItems;
         },
     },
-    { field: 'sport', minWidth: 200 },
+    { field: 'sport', minWidth: 200, rowGroup: true, enableRowGroup: true },
     { field: 'gold' },
     { field: 'silver' },
     { field: 'bronze' },
@@ -109,6 +116,9 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
+    autoGroupColumnDef: {
+        minWidth: 330,
+    },
     defaultColDef: {
         flex: 1,
         minWidth: 100,
