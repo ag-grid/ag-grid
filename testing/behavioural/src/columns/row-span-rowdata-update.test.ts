@@ -6,7 +6,9 @@ import { GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 
 /**
  * AG-17868 regression repro: after a full `rowData` replacement via
  * `api.setGridOption('rowData', ...)`, spanned cells must re-derive their row coverage from the new
- * data rather than keeping the stale pre-update span.
+ * data rather than keeping the stale pre-update span. Coverage is asserted two ways: the GridRows
+ * span marker (aria-rowspan) AND the rendered `style.height`, since the reported bug was a stale
+ * height even while aria-rowspan looked correct.
  */
 
 const settle = async (): Promise<void> => {
@@ -14,6 +16,17 @@ const settle = async (): Promise<void> => {
     await nextAnimationFrame();
     await nextAnimationFrame();
 };
+
+/** Rendered height (px) of the spanned `group` cell whose value is `value`. A row is 42px tall and
+ *  the span height drops one border pixel, so 2 rows = 83px and 3 rows = 125px. */
+function spannedGroupHeightPx(api: GridApi, value: string): number | null {
+    const root = TestGridsManager.getHTMLElement(api);
+    const cells = Array.from(
+        root?.querySelectorAll<HTMLElement>('.ag-spanned-row .ag-spanned-cell[col-id="group"]') ?? []
+    );
+    const cell = cells.find((c) => c.textContent?.trim() === value);
+    return cell ? parseInt(cell.style.height, 10) : null;
+}
 
 describe('row spanning - rowData replacement', () => {
     const gridsManager = new TestGridsManager({
@@ -52,6 +65,8 @@ describe('row spanning - rowData replacement', () => {
             ├── LEAF id:b0 group:"B"↧2 label:"r3"
             └── LEAF id:b1 group:"B"↥ label:"r4"
         `);
+        expect(spannedGroupHeightPx(api, 'A')).toBe(125); // 3 rows
+        expect(spannedGroupHeightPx(api, 'B')).toBe(83); // 2 rows
 
         api.setGridOption('rowData', [
             { id: 'a0', group: 'A', label: 'r0' },
@@ -72,5 +87,8 @@ describe('row spanning - rowData replacement', () => {
             ├── LEAF id:b1 group:"B"↥ label:"r4"
             └── LEAF id:b2 group:"B"↥ label:"r5"
         `);
+        // The reported regression: the spanned cell kept its stale height. A shrank 3→2, B grew 2→3.
+        expect(spannedGroupHeightPx(api, 'A')).toBe(83); // 2 rows
+        expect(spannedGroupHeightPx(api, 'B')).toBe(125); // 3 rows
     });
 });

@@ -8,6 +8,7 @@ import type { CellPosition } from '../../interfaces/iCellPosition';
 import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellComp } from '../cell/cellCtrl';
 import { CellCtrl } from '../cell/cellCtrl';
+import { _applySpanHeight } from '../cell/cellPositionFeature';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from './rowSpanCache';
 
@@ -22,13 +23,18 @@ export class SpannedCellCtrl extends CellCtrl {
     ) {
         super(cellSpan.col, cellSpan.firstNode, beans, rowCtrl);
 
-        // A reused CellSpan keeps its ctrl but its coverage can change, so aria-rowspan (applied
-        // once on mount) must be re-applied on the same cache-rebuild events that refresh height.
-        const refreshAriaRowSpan = this.setAriaRowSpan.bind(this);
+        // A reused CellSpan keeps its ctrl across rowData changes but its coverage can change, so the
+        // rendered height and aria-rowspan (both applied once on mount) must be re-derived on the
+        // cache-rebuild events. _setupCellPosition cannot wire this up because cellSpan is a
+        // parameter property still unassigned during super().
+        const refreshSpan = () => {
+            _applySpanHeight(this);
+            this.setAriaRowSpan();
+        };
         this.addManagedListeners(beans.eventSvc, {
-            paginationChanged: refreshAriaRowSpan,
-            recalculateRowBounds: refreshAriaRowSpan,
-            pinnedHeightChanged: refreshAriaRowSpan,
+            paginationChanged: refreshSpan,
+            recalculateRowBounds: refreshSpan,
+            pinnedHeightChanged: refreshSpan,
         });
     }
 

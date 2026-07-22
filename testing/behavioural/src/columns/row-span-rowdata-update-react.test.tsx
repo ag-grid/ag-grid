@@ -15,8 +15,9 @@ import { asyncSetTimeout, ignoreConsoleLicenseKeyError, nextAnimationFrame } fro
 
 /**
  * AG-17868 React coverage: the fix lives in the shared SpannedCellCtrl, so it must also hold under
- * React's async mount/reconciliation, not just the vanilla view layer. Asserted directly on the
- * rendered `aria-rowspan` (the same source the vanilla GridRows span marker reads).
+ * React's async mount/reconciliation, not just the vanilla view layer. Asserted on the rendered
+ * `aria-rowspan` AND the rendered `style.height` — the reported bug was a stale height even while
+ * aria-rowspan looked correct.
  */
 
 const settle = async (): Promise<void> => {
@@ -30,6 +31,16 @@ function spannedGroupRowSpan(value: string): number | null {
     const cells = Array.from(document.querySelectorAll('.ag-spanned-row [col-id="group"]'));
     const cell = cells.find((c) => c.textContent === value);
     return cell ? Number(cell.getAttribute('aria-rowspan')) : null;
+}
+
+/** Rendered height (px) of the spanned `group` cell whose value is `value`. A row is 42px tall and
+ *  the span height drops one border pixel, so 2 rows = 83px and 3 rows = 125px. */
+function spannedGroupHeightPx(value: string): number | null {
+    const cells = Array.from(
+        document.querySelectorAll<HTMLElement>('.ag-spanned-row .ag-spanned-cell[col-id="group"]')
+    );
+    const cell = cells.find((c) => c.textContent === value);
+    return cell ? parseInt(cell.style.height, 10) : null;
 }
 
 /** Whether a regular (non-spanned) `group` cell with `value` is rendered. */
@@ -82,6 +93,8 @@ describe('row spanning - rowData replacement (React)', () => {
         // BEFORE: group A spans 3 rows, group B spans 2 rows.
         expect(spannedGroupRowSpan('A')).toBe(3);
         expect(spannedGroupRowSpan('B')).toBe(2);
+        expect(spannedGroupHeightPx('A')).toBe(125); // 3 rows
+        expect(spannedGroupHeightPx('B')).toBe(83); // 2 rows
 
         api.setGridOption('rowData', [
             { id: 'a0', group: 'A', label: 'r0' },
@@ -97,5 +110,8 @@ describe('row spanning - rowData replacement (React)', () => {
         expect(spannedGroupRowSpan('A')).toBe(2);
         expect(spannedGroupRowSpan('B')).toBe(3);
         expect(hasRegularGroupCell('A2')).toBe(true);
+        // The reported regression: the spanned cell kept its stale height. A shrank 3→2, B grew 2→3.
+        expect(spannedGroupHeightPx('A')).toBe(83); // 2 rows
+        expect(spannedGroupHeightPx('B')).toBe(125); // 3 rows
     });
 });
