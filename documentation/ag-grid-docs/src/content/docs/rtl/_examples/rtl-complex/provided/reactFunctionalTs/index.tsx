@@ -1,4 +1,6 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import React, { StrictMode, useCallback, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
 import type {
     CellClassParams,
@@ -7,27 +9,52 @@ import type {
     ColGroupDef,
     DefaultMenuItem,
     GetContextMenuItemsParams,
-    GridApi,
-    GridOptions,
     ICellRendererParams,
+    IRowNode,
     MenuItemDef,
     RowSelectedEvent,
+    RowSelectionOptions,
     SelectionChangedEvent,
+    StatusPanelDef,
     ValueSetterParams,
 } from 'ag-grid-community';
-import { LocaleModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { LocaleModule } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import { CountryCellRenderer } from './country-renderer_typescript';
+import CountryCellRenderer from './countryCellRenderer';
 import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
+import './styles.css';
 
-ModuleRegistry.registerModules([AllEnterpriseModule.with(AgChartsEnterpriseModule), LocaleModule]);
+/** PROVIDED EXAMPLE DARK INTEGRATED **/
+
+const modules = [AllEnterpriseModule.with(AgChartsEnterpriseModule), LocaleModule];
 
 const dataSize: string = '.1x22';
 
+// Mutable module-level language config, mirroring main.ts. The plain string-returning renderers,
+// comparators and value setters below are framework-agnostic functions copied verbatim from main.ts;
+// they close over `currentLang` for a few localised literals. The component keeps this in sync with
+// the selected language on every render (before the column defs are rebuilt).
 let currentLang: LanguageConfig = LANGUAGES['arabic'];
-let gridApi: GridApi;
+
+const defaultColDef: ColDef = {
+    editable: true,
+    minWidth: 100,
+    filter: true,
+    floatingFilter: true,
+};
+
+const statusBar: { statusPanels: StatusPanelDef[] } = {
+    statusPanels: [{ statusPanel: 'agAggregationComponent' }],
+};
+
+const rowSelection: RowSelectionOptions = {
+    mode: 'multiRow',
+    groupSelects: 'descendants',
+    selectAll: 'filtered',
+};
 
 function getAutoGroupColumnDef(): ColDef {
     return {
@@ -42,46 +69,6 @@ function getAutoGroupColumnDef(): ColDef {
             }
         },
         cellRenderer: 'agGroupCellRenderer',
-    };
-}
-
-function getGridOptions(language: string): GridOptions {
-    currentLang = LANGUAGES[language];
-    return {
-        columnDefs: createCols(),
-        rowData: createRowData(language),
-        context: { COUNTRY_CODES },
-        defaultColDef: {
-            editable: true,
-            minWidth: 100,
-            filter: true,
-            floatingFilter: true,
-        },
-        sideBar: true,
-        rowGroupPanelShow: 'always',
-        pivotPanelShow: 'always',
-        enableRtl: currentLang.enableRtl,
-        localeText: currentLang.localeText,
-        statusBar: {
-            statusPanels: [{ statusPanel: 'agAggregationComponent' }],
-        },
-        rowSelection: {
-            mode: 'multiRow',
-            groupSelects: 'descendants',
-            selectAll: 'filtered',
-        },
-        quickFilterText: undefined,
-        autoGroupColumnDef: getAutoGroupColumnDef(),
-        onRowSelected: rowSelected,
-        onSelectionChanged: selectionChanged,
-        getBusinessKeyForNode: (node) => {
-            if (node.data) {
-                return node.data.name;
-            } else {
-                return '';
-            }
-        },
-        getContextMenuItems: getContextMenuItems,
     };
 }
 
@@ -183,7 +170,7 @@ function createDefaultCols(): (ColDef | ColGroupDef)[] {
                     enablePivot: true,
                     enableValue: true,
                     cellRenderer: booleanCellRenderer,
-                    cellStyle: { 'text-align': 'center' },
+                    cellStyle: { textAlign: 'center' },
                     comparator: booleanComparator,
                     filterParams: { cellRenderer: booleanFilterCellRenderer },
                 },
@@ -213,7 +200,7 @@ function createDefaultCols(): (ColDef | ColGroupDef)[] {
                     editable: false,
                     sortable: false,
                     suppressHeaderMenuButton: true,
-                    cellStyle: { 'text-align': 'right' },
+                    cellStyle: { textAlign: 'right' },
                     cellRenderer: () => {
                         return currentLang.cellContent.abra;
                     },
@@ -225,7 +212,7 @@ function createDefaultCols(): (ColDef | ColGroupDef)[] {
                     editable: false,
                     sortable: false,
                     suppressHeaderMenuButton: true,
-                    cellStyle: { 'text-align': 'left' },
+                    cellStyle: { textAlign: 'left' },
                     cellRenderer: () => {
                         return currentLang.cellContent.cadabra;
                     },
@@ -280,7 +267,7 @@ function createDefaultCols(): (ColDef | ColGroupDef)[] {
             },
             valueSetter: numberValueSetter,
             cellRenderer: currencyRenderer,
-            cellStyle: { 'text-align': 'right' },
+            cellStyle: { textAlign: 'right' },
         };
         monthGroup.children.push(child);
     }
@@ -330,6 +317,14 @@ function rowSelected(event: RowSelectedEvent) {
     }
 }
 
+function getBusinessKeyForNode(node: IRowNode): string {
+    if (node.data) {
+        return node.data.name;
+    } else {
+        return '';
+    }
+}
+
 function numberValueSetter(params: ValueSetterParams) {
     const newValue = params.newValue;
     let valueAsNumber;
@@ -346,9 +341,9 @@ function numberValueSetter(params: ValueSetterParams) {
 
 function currencyCssFunc(params: CellClassParams): CellStyle {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
-        return { color: 'red', 'text-align': 'right', 'font-weight': 'bold' };
+        return { color: 'red', textAlign: 'right', fontWeight: 'bold' };
     } else {
-        return { 'text-align': 'right' };
+        return { textAlign: 'right' };
     }
 }
 
@@ -360,24 +355,26 @@ function ratingRenderer(params: ICellRendererParams) {
     return ratingRendererGeneral(params.value, false);
 }
 
+// React renders a cell renderer's return value as JSX, so the flag/star/tick markup is expressed as
+// elements (not the HTML strings the vanilla example returns for innerHTML) to render identically.
 function ratingRendererGeneral(value: any, forFilter: boolean) {
     if (value === '(Select All)') {
         return value;
     }
 
-    let result = '<span>';
-
+    const stars = [];
     for (let i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="https://www.ag-grid.com/example-assets/gold-star.png" />';
+            stars.push(<img key={i} src="https://www.ag-grid.com/example-assets/gold-star.png" />);
         }
     }
 
-    if (forFilter && Number(value) === 0) {
-        result += currentLang.cellContent.noStars;
-    }
-
-    return result;
+    return (
+        <span>
+            {stars}
+            {forFilter && Number(value) === 0 ? currentLang.cellContent.noStars : null}
+        </span>
+    );
 }
 
 function currencyRenderer(params: ICellRendererParams) {
@@ -390,7 +387,7 @@ function currencyRenderer(params: ICellRendererParams) {
             return params.value;
         } else {
             return (
-                '&pound;' +
+                '£' +
                 Math.floor(params.value)
                     .toString()
                     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -407,21 +404,12 @@ function booleanComparator(value1: any, value2: any) {
     return value1Ordinal - value2Ordinal;
 }
 
-let count = 0;
-
 function booleanCellRenderer(params: ICellRendererParams) {
-    count++;
-    if (count <= 1) {
-        // params.api.onRowHeightChanged();
-    }
-
     const valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        //this is the unicode for tick character
-        return "<span title='true'>&#10004;</span>";
+        return <span title="true">✔</span>;
     } else if (valueCleaned === false) {
-        //this is the unicode for cross character
-        return "<span title='false'>&#10006;</span>";
+        return <span title="false">✖</span>;
     } else if (params.value !== null && params.value !== undefined) {
         return params.value.toString();
     } else {
@@ -433,11 +421,9 @@ function booleanFilterCellRenderer(params: ICellRendererParams) {
     const valueCleaned = booleanCleaner(params.value);
 
     if (valueCleaned === true) {
-        //this is the unicode for tick character
-        return '&#10004;';
+        return '✔';
     } else if (valueCleaned === false) {
-        //this is the unicode for cross character
-        return '&#10006;';
+        return '✖';
     } else if (params.value === '(Select All)') {
         return params.value;
     } else {
@@ -463,16 +449,69 @@ function languageCellRenderer(params: ICellRendererParams) {
     }
 }
 
-function onLanguageChange() {
-    const select = document.querySelector<HTMLSelectElement>('#language')!;
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const GridExample = () => {
+    const [language, setLanguage] = useState('arabic');
+    const [gridVisible, setGridVisible] = useState(true);
 
-    gridApi.destroy();
-    gridApi = createGrid(gridDiv, getGridOptions(select.value));
-}
+    // Keep the module-level `currentLang` (closed over by the plain renderers/comparators above) in
+    // sync with the selected language before rebuilding the language-dependent grid options below.
+    currentLang = LANGUAGES[language];
 
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const columnDefs = createCols();
+    const autoGroupColumnDef = getAutoGroupColumnDef();
+    const rowData = createRowData(language);
 
-    gridApi = createGrid(gridDiv, getGridOptions('arabic'));
-});
+    const onLanguageChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+        setLanguage(event.target.value);
+        // `enableRtl` and `localeText` are initial-only grid options, so the grid must be remounted
+        // to apply the newly-selected language (same pattern as the grid-state example).
+        setGridVisible(false);
+        setTimeout(() => {
+            setGridVisible(true);
+        });
+    }, []);
+
+    return (
+        <AgGridProvider modules={modules}>
+            <div className="example-wrapper">
+                <div style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <label htmlFor="language">Language:</label>
+                    <select id="language" value={language} onChange={onLanguageChange}>
+                        <option value="arabic">العربية (Arabic)</option>
+                        <option value="hebrew">עברית (Hebrew)</option>
+                        <option value="english">English</option>
+                    </select>
+                </div>
+                <div className="grid-wrapper">
+                    {gridVisible && (
+                        <AgGridReact
+                            columnDefs={columnDefs}
+                            rowData={rowData}
+                            context={{ COUNTRY_CODES }}
+                            defaultColDef={defaultColDef}
+                            sideBar={true}
+                            rowGroupPanelShow="always"
+                            pivotPanelShow="always"
+                            enableRtl={currentLang.enableRtl}
+                            localeText={currentLang.localeText}
+                            statusBar={statusBar}
+                            rowSelection={rowSelection}
+                            autoGroupColumnDef={autoGroupColumnDef}
+                            onRowSelected={rowSelected}
+                            onSelectionChanged={selectionChanged}
+                            getBusinessKeyForNode={getBusinessKeyForNode}
+                            getContextMenuItems={getContextMenuItems}
+                        />
+                    )}
+                </div>
+            </div>
+        </AgGridProvider>
+    );
+};
+
+const root = createRoot(document.getElementById('root')!);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

@@ -1,4 +1,6 @@
+/** PROVIDED EXAMPLE DARK INTEGRATED **/
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import { createApp, defineComponent, ref, watch } from 'vue';
 
 import type {
     CellClassParams,
@@ -7,27 +9,30 @@ import type {
     ColGroupDef,
     DefaultMenuItem,
     GetContextMenuItemsParams,
-    GridApi,
-    GridOptions,
     ICellRendererParams,
+    IRowNode,
     MenuItemDef,
     RowSelectedEvent,
+    RowSelectionOptions,
     SelectionChangedEvent,
     ValueSetterParams,
 } from 'ag-grid-community';
-import { LocaleModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { LocaleModule, ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { AgGridVue } from 'ag-grid-vue3';
 
-import { CountryCellRenderer } from './country-renderer_typescript';
+import CountryCellRenderer from './countryCellRenderer';
 import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
+import './styles.css';
 
 ModuleRegistry.registerModules([AllEnterpriseModule.with(AgChartsEnterpriseModule), LocaleModule]);
 
 const dataSize: string = '.1x22';
 
+// `enableRtl` and `localeText` are initial-only grid options, so switching language rebuilds every language
+// dependent grid prop against `currentLang` and remounts the grid (see the `gridVisible` toggle below).
 let currentLang: LanguageConfig = LANGUAGES['arabic'];
-let gridApi: GridApi;
 
 function getAutoGroupColumnDef(): ColDef {
     return {
@@ -42,46 +47,6 @@ function getAutoGroupColumnDef(): ColDef {
             }
         },
         cellRenderer: 'agGroupCellRenderer',
-    };
-}
-
-function getGridOptions(language: string): GridOptions {
-    currentLang = LANGUAGES[language];
-    return {
-        columnDefs: createCols(),
-        rowData: createRowData(language),
-        context: { COUNTRY_CODES },
-        defaultColDef: {
-            editable: true,
-            minWidth: 100,
-            filter: true,
-            floatingFilter: true,
-        },
-        sideBar: true,
-        rowGroupPanelShow: 'always',
-        pivotPanelShow: 'always',
-        enableRtl: currentLang.enableRtl,
-        localeText: currentLang.localeText,
-        statusBar: {
-            statusPanels: [{ statusPanel: 'agAggregationComponent' }],
-        },
-        rowSelection: {
-            mode: 'multiRow',
-            groupSelects: 'descendants',
-            selectAll: 'filtered',
-        },
-        quickFilterText: undefined,
-        autoGroupColumnDef: getAutoGroupColumnDef(),
-        onRowSelected: rowSelected,
-        onSelectionChanged: selectionChanged,
-        getBusinessKeyForNode: (node) => {
-            if (node.data) {
-                return node.data.name;
-            } else {
-                return '';
-            }
-        },
-        getContextMenuItems: getContextMenuItems,
     };
 }
 
@@ -138,16 +103,16 @@ function createDefaultCols(): (ColDef | ColGroupDef)[] {
                     field: 'country',
                     width: 150,
                     editable: true,
-                    cellRenderer: CountryCellRenderer,
+                    cellRenderer: 'CountryCellRenderer',
                     enableRowGroup: true,
                     enablePivot: true,
                     cellEditor: 'agRichSelectCellEditor',
                     cellEditorParams: {
-                        cellRenderer: CountryCellRenderer,
+                        cellRenderer: 'CountryCellRenderer',
                         values: currentLang.editorCountries,
                     },
                     filterParams: {
-                        cellRenderer: CountryCellRenderer,
+                        cellRenderer: 'CountryCellRenderer',
                     },
                 },
             ],
@@ -407,20 +372,11 @@ function booleanComparator(value1: any, value2: any) {
     return value1Ordinal - value2Ordinal;
 }
 
-let count = 0;
-
 function booleanCellRenderer(params: ICellRendererParams) {
-    count++;
-    if (count <= 1) {
-        // params.api.onRowHeightChanged();
-    }
-
     const valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        //this is the unicode for tick character
         return "<span title='true'>&#10004;</span>";
     } else if (valueCleaned === false) {
-        //this is the unicode for cross character
         return "<span title='false'>&#10006;</span>";
     } else if (params.value !== null && params.value !== undefined) {
         return params.value.toString();
@@ -433,10 +389,8 @@ function booleanFilterCellRenderer(params: ICellRendererParams) {
     const valueCleaned = booleanCleaner(params.value);
 
     if (valueCleaned === true) {
-        //this is the unicode for tick character
         return '&#10004;';
     } else if (valueCleaned === false) {
-        //this is the unicode for cross character
         return '&#10006;';
     } else if (params.value === '(Select All)') {
         return params.value;
@@ -463,16 +417,122 @@ function languageCellRenderer(params: ICellRendererParams) {
     }
 }
 
-function onLanguageChange() {
-    const select = document.querySelector<HTMLSelectElement>('#language')!;
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const VueExample = defineComponent({
+    template: `
+        <div style="height: 100%">
+            <div class="example-wrapper">
+                <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center">
+                    <label for="language">Language:</label>
+                    <select id="language" v-model="language">
+                        <option value="arabic">العربية (Arabic)</option>
+                        <option value="hebrew">עברית (Hebrew)</option>
+                        <option value="english">English</option>
+                    </select>
+                </div>
+                <ag-grid-vue
+                    v-if="gridVisible"
+                    style="width: 100%; height: 100%;"
+                    :columnDefs="columnDefs"
+                    :autoGroupColumnDef="autoGroupColumnDef"
+                    :enableRtl="enableRtl"
+                    :localeText="localeText"
+                    :defaultColDef="defaultColDef"
+                    :sideBar="true"
+                    :rowGroupPanelShow="'always'"
+                    :pivotPanelShow="'always'"
+                    :statusBar="statusBar"
+                    :rowSelection="rowSelection"
+                    :context="context"
+                    :rowData="rowData"
+                    :getContextMenuItems="getContextMenuItems"
+                    :getBusinessKeyForNode="getBusinessKeyForNode"
+                    @row-selected="rowSelected"
+                    @selection-changed="selectionChanged"
+                ></ag-grid-vue>
+            </div>
+        </div>
+    `,
+    components: {
+        'ag-grid-vue': AgGridVue,
+        CountryCellRenderer,
+    },
+    setup() {
+        // Arabic is the default language (RTL locale loaded on first render).
+        const language = ref('arabic');
+        const gridVisible = ref(true);
 
-    gridApi.destroy();
-    gridApi = createGrid(gridDiv, getGridOptions(select.value));
-}
+        const columnDefs = ref<(ColDef | ColGroupDef)[]>([]);
+        const autoGroupColumnDef = ref<ColDef>({});
+        const enableRtl = ref(false);
+        const localeText = ref<Record<string, string> | undefined>(undefined);
+        const rowData = ref<any[]>([]);
 
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+        const defaultColDef: ColDef = {
+            editable: true,
+            minWidth: 100,
+            filter: true,
+            floatingFilter: true,
+        };
+        const context = { COUNTRY_CODES };
+        const statusBar = {
+            statusPanels: [{ statusPanel: 'agAggregationComponent' }],
+        };
+        const rowSelection: RowSelectionOptions = {
+            mode: 'multiRow',
+            groupSelects: 'descendants',
+            selectAll: 'filtered',
+        };
 
-    gridApi = createGrid(gridDiv, getGridOptions('arabic'));
+        const getBusinessKeyForNode = (node: IRowNode) => {
+            if (node.data) {
+                return node.data.name;
+            } else {
+                return '';
+            }
+        };
+
+        // Rebuild every language-dependent grid prop against the newly selected language. The col-def builders
+        // and plain renderers read the module-level `currentLang`, so it must be set first.
+        const rebuild = () => {
+            currentLang = LANGUAGES[language.value];
+            columnDefs.value = createCols();
+            autoGroupColumnDef.value = getAutoGroupColumnDef();
+            enableRtl.value = currentLang.enableRtl;
+            localeText.value = currentLang.localeText;
+            rowData.value = createRowData(language.value);
+        };
+
+        // Initial build for the default (Arabic) language before the first mount.
+        rebuild();
+
+        // `enableRtl`/`localeText` only take effect on grid creation, so tear the grid down and recreate it
+        // (the grid-state remount idiom) whenever the language changes.
+        watch(language, () => {
+            gridVisible.value = false;
+            setTimeout(() => {
+                rebuild();
+                gridVisible.value = true;
+            });
+        });
+
+        return {
+            language,
+            gridVisible,
+            columnDefs,
+            autoGroupColumnDef,
+            enableRtl,
+            localeText,
+            rowData,
+            defaultColDef,
+            context,
+            statusBar,
+            rowSelection,
+            getContextMenuItems,
+            getBusinessKeyForNode,
+            rowSelected,
+            selectionChanged,
+        };
+    },
 });
+
+createApp(VueExample).mount('#app');

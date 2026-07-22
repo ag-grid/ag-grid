@@ -1,28 +1,5 @@
 import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
-const COUNTRY_CODES: Record<string, string> = {
-    Ireland: 'ie',
-    Luxembourg: 'lu',
-    Belgium: 'be',
-    Spain: 'es',
-    'United Kingdom': 'gb',
-    France: 'fr',
-    Germany: 'de',
-    Sweden: 'se',
-    Italy: 'it',
-    Greece: 'gr',
-    Iceland: 'is',
-    Portugal: 'pt',
-    Malta: 'mt',
-    Norway: 'no',
-    Brazil: 'br',
-    Argentina: 'ar',
-    Colombia: 'co',
-    Peru: 'pe',
-    Venezuela: 've',
-    Uruguay: 'uy',
-};
-
 export class CountryCellRenderer implements ICellRendererComp {
     eGui!: HTMLSpanElement;
 
@@ -32,15 +9,17 @@ export class CountryCellRenderer implements ICellRendererComp {
         this.eGui.style.overflow = 'hidden';
         this.eGui.style.textOverflow = 'ellipsis';
 
-        //get flags from here: http://www.freeflagicons.com/
         if (params.value == null || params.value === '' || params.value === '(Select All)') {
             this.eGui.innerHTML = params.value;
+            return;
+        }
+
+        const code = params.context.COUNTRY_CODES[params.value];
+        if (code) {
+            const flag = `<img class="flag" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/${code}.png">`;
+            this.eGui.innerHTML = `${flag} ${params.value}`;
         } else {
-            const flag =
-                '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' +
-                COUNTRY_CODES[params.value] +
-                '.png">';
-            this.eGui.innerHTML = flag + ' ' + params.value;
+            this.eGui.innerHTML = params.value;
         }
     }
 
@@ -48,7 +27,7 @@ export class CountryCellRenderer implements ICellRendererComp {
         return this.eGui;
     }
 
-    refresh(params: ICellRendererParams) {
+    refresh() {
         return false;
     }
 }

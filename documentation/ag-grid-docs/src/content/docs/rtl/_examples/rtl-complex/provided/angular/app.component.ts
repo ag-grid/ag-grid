@@ -1,5 +1,8 @@
+import { Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
+import { AgGridAngular } from 'ag-grid-angular';
 import type {
     CellClassParams,
     CellStyle,
@@ -7,27 +10,32 @@ import type {
     ColGroupDef,
     DefaultMenuItem,
     GetContextMenuItemsParams,
-    GridApi,
-    GridOptions,
     ICellRendererParams,
+    IRowNode,
     MenuItemDef,
     RowSelectedEvent,
+    RowSelectionOptions,
     SelectionChangedEvent,
+    StatusPanelDef,
     ValueSetterParams,
 } from 'ag-grid-community';
-import { LocaleModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { LocaleModule, ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { CountryCellRenderer } from './country-renderer_typescript';
+import { CountryCellRenderer } from './country-cell-renderer.component';
 import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
+import './styles.css';
 
 ModuleRegistry.registerModules([AllEnterpriseModule.with(AgChartsEnterpriseModule), LocaleModule]);
 
+/** PROVIDED EXAMPLE DARK INTEGRATED **/
+
 const dataSize: string = '.1x22';
 
+// The active language configuration. Mutated on every language switch so the framework-agnostic
+// renderers/comparators/column builders below read the current locale exactly as in the vanilla example.
 let currentLang: LanguageConfig = LANGUAGES['arabic'];
-let gridApi: GridApi;
 
 function getAutoGroupColumnDef(): ColDef {
     return {
@@ -43,60 +51,6 @@ function getAutoGroupColumnDef(): ColDef {
         },
         cellRenderer: 'agGroupCellRenderer',
     };
-}
-
-function getGridOptions(language: string): GridOptions {
-    currentLang = LANGUAGES[language];
-    return {
-        columnDefs: createCols(),
-        rowData: createRowData(language),
-        context: { COUNTRY_CODES },
-        defaultColDef: {
-            editable: true,
-            minWidth: 100,
-            filter: true,
-            floatingFilter: true,
-        },
-        sideBar: true,
-        rowGroupPanelShow: 'always',
-        pivotPanelShow: 'always',
-        enableRtl: currentLang.enableRtl,
-        localeText: currentLang.localeText,
-        statusBar: {
-            statusPanels: [{ statusPanel: 'agAggregationComponent' }],
-        },
-        rowSelection: {
-            mode: 'multiRow',
-            groupSelects: 'descendants',
-            selectAll: 'filtered',
-        },
-        quickFilterText: undefined,
-        autoGroupColumnDef: getAutoGroupColumnDef(),
-        onRowSelected: rowSelected,
-        onSelectionChanged: selectionChanged,
-        getBusinessKeyForNode: (node) => {
-            if (node.data) {
-                return node.data.name;
-            } else {
-                return '';
-            }
-        },
-        getContextMenuItems: getContextMenuItems,
-    };
-}
-
-function getContextMenuItems(params: GetContextMenuItemsParams): (DefaultMenuItem | MenuItemDef)[] {
-    const result: (DefaultMenuItem | MenuItemDef)[] = params.defaultItems!.splice(0);
-    result.push({
-        name: currentLang.contextMenu.customMenuItem,
-        icon: '<img src="https://www.ag-grid.com/example-assets/lab.png" style="width: 14px;" />',
-        action: () => {
-            const value = params.value ? params.value : '<empty>';
-            console.log('You clicked a custom menu item on cell ' + value);
-        },
-    });
-
-    return result;
 }
 
 function createDefaultCols(): (ColDef | ColGroupDef)[] {
@@ -316,20 +270,6 @@ function createCols() {
     return columns;
 }
 
-function selectionChanged(event: SelectionChangedEvent) {
-    console.log('Callback selectionChanged: selection count = ' + event.selectedNodes?.length);
-}
-
-function rowSelected(event: RowSelectedEvent) {
-    // the number of rows selected could be huge, if the user is grouping and selects a group, so
-    // to stop the console from clogging up, we only print if in the first 10 (by chance we know
-    // the node id's are assigned from 0 upwards)
-    if (Number(event.node.id) < 10) {
-        const valueToPrint = event.node.group ? 'group (' + event.node.key + ')' : event.node.data.name;
-        console.log('Callback rowSelected: ' + valueToPrint);
-    }
-}
-
 function numberValueSetter(params: ValueSetterParams) {
     const newValue = params.newValue;
     let valueAsNumber;
@@ -407,20 +347,11 @@ function booleanComparator(value1: any, value2: any) {
     return value1Ordinal - value2Ordinal;
 }
 
-let count = 0;
-
 function booleanCellRenderer(params: ICellRendererParams) {
-    count++;
-    if (count <= 1) {
-        // params.api.onRowHeightChanged();
-    }
-
     const valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        //this is the unicode for tick character
         return "<span title='true'>&#10004;</span>";
     } else if (valueCleaned === false) {
-        //this is the unicode for cross character
         return "<span title='false'>&#10006;</span>";
     } else if (params.value !== null && params.value !== undefined) {
         return params.value.toString();
@@ -433,10 +364,8 @@ function booleanFilterCellRenderer(params: ICellRendererParams) {
     const valueCleaned = booleanCleaner(params.value);
 
     if (valueCleaned === true) {
-        //this is the unicode for tick character
         return '&#10004;';
     } else if (valueCleaned === false) {
-        //this is the unicode for cross character
         return '&#10006;';
     } else if (params.value === '(Select All)') {
         return params.value;
@@ -463,16 +392,129 @@ function languageCellRenderer(params: ICellRendererParams) {
     }
 }
 
-function onLanguageChange() {
-    const select = document.querySelector<HTMLSelectElement>('#language')!;
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+@Component({
+    standalone: true,
+    imports: [AgGridAngular, FormsModule],
+    selector: 'my-app',
+    template: `
+        <div class="example-wrapper">
+            <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center">
+                <label for="language">Language:</label>
+                <select id="language" [ngModel]="language" (ngModelChange)="onLanguageChange($event)">
+                    <option value="arabic">العربية (Arabic)</option>
+                    <option value="hebrew">עברית (Hebrew)</option>
+                    <option value="english">English</option>
+                </select>
+            </div>
+            @if (gridVisible()) {
+                <ag-grid-angular
+                    style="width: 100%; height: 100%;"
+                    [columnDefs]="columnDefs"
+                    [autoGroupColumnDef]="autoGroupColumnDef"
+                    [enableRtl]="enableRtl"
+                    [localeText]="localeText"
+                    [defaultColDef]="defaultColDef"
+                    [sideBar]="true"
+                    [rowGroupPanelShow]="'always'"
+                    [pivotPanelShow]="'always'"
+                    [statusBar]="statusBar"
+                    [rowSelection]="rowSelection"
+                    [context]="context"
+                    [rowData]="rowData"
+                    [getContextMenuItems]="getContextMenuItems"
+                    [getBusinessKeyForNode]="getBusinessKeyForNode"
+                    (rowSelected)="onRowSelected($event)"
+                    (selectionChanged)="onSelectionChanged($event)"
+                />
+            }
+        </div>
+    `,
+})
+export class AppComponent {
+    // Arabic is the default language and is selected first in the dropdown.
+    public language: string = 'arabic';
+    // enableRtl and localeText are initial-only grid options, so the grid is remounted (via this
+    // signal + @if) whenever the language changes; the per-language inputs are recomputed first.
+    public readonly gridVisible = signal(true);
 
-    gridApi.destroy();
-    gridApi = createGrid(gridDiv, getGridOptions(select.value));
+    public columnDefs!: (ColDef | ColGroupDef)[];
+    public autoGroupColumnDef!: ColDef;
+    public enableRtl: boolean = false;
+    public localeText: Record<string, string> | undefined;
+    public rowData!: any[];
+
+    public readonly defaultColDef: ColDef = {
+        editable: true,
+        minWidth: 100,
+        filter: true,
+        floatingFilter: true,
+    };
+    public readonly context = { COUNTRY_CODES };
+    public readonly statusBar: { statusPanels: StatusPanelDef[] } = {
+        statusPanels: [{ statusPanel: 'agAggregationComponent' }],
+    };
+    public readonly rowSelection: RowSelectionOptions = {
+        mode: 'multiRow',
+        groupSelects: 'descendants',
+        selectAll: 'filtered',
+    };
+
+    constructor() {
+        this.rebuildGridInputs();
+    }
+
+    public onLanguageChange(language: string): void {
+        this.language = language;
+        this.gridVisible.set(false);
+        this.rebuildGridInputs();
+        setTimeout(() => {
+            this.gridVisible.set(true);
+        });
+    }
+
+    public readonly getBusinessKeyForNode = (node: IRowNode): string => {
+        if (node.data) {
+            return node.data.name;
+        } else {
+            return '';
+        }
+    };
+
+    public readonly getContextMenuItems = (params: GetContextMenuItemsParams): (DefaultMenuItem | MenuItemDef)[] => {
+        const result: (DefaultMenuItem | MenuItemDef)[] = params.defaultItems!.splice(0);
+        result.push({
+            name: currentLang.contextMenu.customMenuItem,
+            icon: '<img src="https://www.ag-grid.com/example-assets/lab.png" style="width: 14px;" />',
+            action: () => {
+                const value = params.value ? params.value : '<empty>';
+                console.log('You clicked a custom menu item on cell ' + value);
+            },
+        });
+
+        return result;
+    };
+
+    public onSelectionChanged(event: SelectionChangedEvent): void {
+        console.log('Callback selectionChanged: selection count = ' + event.selectedNodes?.length);
+    }
+
+    public onRowSelected(event: RowSelectedEvent): void {
+        // the number of rows selected could be huge, if the user is grouping and selects a group, so
+        // to stop the console from clogging up, we only print if in the first 10 (by chance we know
+        // the node id's are assigned from 0 upwards)
+        if (Number(event.node.id) < 10) {
+            const valueToPrint = event.node.group ? 'group (' + event.node.key + ')' : event.node.data.name;
+            console.log('Callback rowSelected: ' + valueToPrint);
+        }
+    }
+
+    // Recomputes every per-language grid input against the selected language before the grid remounts.
+    private rebuildGridInputs(): void {
+        currentLang = LANGUAGES[this.language];
+        this.columnDefs = createCols();
+        this.autoGroupColumnDef = getAutoGroupColumnDef();
+        this.enableRtl = currentLang.enableRtl;
+        this.localeText = currentLang.localeText;
+        this.rowData = createRowData(this.language);
+    }
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-
-    gridApi = createGrid(gridDiv, getGridOptions('arabic'));
-});

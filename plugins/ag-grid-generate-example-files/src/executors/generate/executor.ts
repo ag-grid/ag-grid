@@ -20,6 +20,7 @@ import {
     convertTsxToJsx,
     getBoilerPlateFiles,
     getEntryFileName,
+    getFileList,
     getHasExampleConsoleLog,
     getHasSimpleHtml,
     getIsEnterprise,
@@ -135,7 +136,10 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
     const htmlFiles = await getHtmlFiles({ folderPath, sourceFileList });
 
     const isEnterprise = getIsEnterprise({ entryFile });
-    const isLocale = getIsLocale({ entryFile });
+    // The locale import can live in any source file (e.g. a shared `data.ts`), not just the entry
+    // file, so scan every source file to decide whether the locale dependency/script is required.
+    const sourceFileContents = await getFileList({ folderPath, fileList: sourceFileList });
+    const isLocale = Object.values(sourceFileContents).some((contents) => getIsLocale({ entryFile: contents }));
 
     const frameworkProvidedExamples = sourceFileList.includes('provided') ? await getProvidedFiles(folderPath) : {};
 
