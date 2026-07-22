@@ -27,7 +27,14 @@ const {
 
 const isDev = getIsDev();
 
-const ENQUIRY_TYPE_OPTIONS = ['Sales', 'Technical Support', 'Press/Media', 'Partnerships', 'General'] as const;
+const ENQUIRY_TYPE_OPTIONS = [
+    'Sales',
+    'Request for Demo',
+    'Technical Support',
+    'Press/Media',
+    'Partnerships',
+    'General',
+] as const;
 
 type FormValues = {
     first_name: string;

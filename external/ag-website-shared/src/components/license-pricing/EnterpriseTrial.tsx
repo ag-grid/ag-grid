@@ -1,4 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { ZENDESK_URL } from '@ag-website-shared/constants';
 import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import classnames from 'classnames';
@@ -65,8 +66,7 @@ export const EnterpriseTrial: FunctionComponent<Props> = ({ className }) => {
                     <p>
                         <b>Access Support</b>
                         <br />
-                        Access dedicated support from our engineering team via{' '}
-                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a>.
+                        Access dedicated support from our engineering team via <a href={ZENDESK_URL}>Zendesk</a>.
                     </p>
                 </div>
             </div>

@@ -47,6 +47,8 @@ Observe how all rows are exported in the Excel file in the original unsorted row
 
 If you'd like to exclude pinned top/bottom rows in AG Grid from the Excel export, please set the `skipPinnedTop` and `skipPinnedBottom` properties to true.
 
+Manually pinned rows also remain in the exported body by default. Set `skipPinnedRowDuplicates=true` to omit those body copies while retaining the rows in their pinned sections.
+
 Note the following:
 
 - By default, all pinned rows are exported.

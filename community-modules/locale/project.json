@@ -130,12 +130,13 @@
         "cwd": "{projectRoot}"
       }
     },
-    "testx": {
+    "test": {
       "command": "npx vitest run --config vitest.config.ts",
+      "dependsOn": ["build:test"],
+      "outputs": ["{workspaceRoot}/reports/locale.xml"],
       "options": {
         "cwd": "{projectRoot}"
-      },
-      "dependsOn": ["build:test"]
+      }
     },
     "pack": {
       "executor": "nx:run-commands",

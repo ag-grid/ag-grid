@@ -1,6 +1,32 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-ESBUILD-17750822:
+    - '@astrojs/react@5.0.4 > vite@7.3.2 > esbuild@0.27.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:48:05.907Z
+    - astro@6.1.9 > vite@7.3.2 > esbuild@0.27.7:
+        reason: >-
+            The website is a static site, so server-side vulns are not relevant
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:48:03.075Z
+    - astro@6.1.9 > esbuild@0.27.7:
+        reason: >-
+            The website is a static site, so server-side vulns are not relevant
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:48:03.064Z
+    - '@astrojs/markdoc@1.0.4 > esbuild@0.27.7':
+        reason: >-
+            The website is a static site, so server-side vulns are not relevant
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:47:59.603Z
+    - vitest@2.1.9 > vite@5.4.21 > esbuild@0.21.5:
+        reason: >-
+            Test dependency - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:47:53.089Z
   SNYK-JS-ASTRO-17356189:
     - astro@6.1.9:
         reason: >-

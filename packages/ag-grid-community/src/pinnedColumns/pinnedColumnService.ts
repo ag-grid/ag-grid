@@ -99,7 +99,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     }
 
     public setColsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType): void {
-        const { colModel, visibleCols, gos } = this.beans;
+        const { colModel, visibleCols, gos, colAnimation } = this.beans;
         if (!colModel.ready) {
             return;
         }
@@ -139,8 +139,14 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         }
 
         if (updatedCols.length) {
-            visibleCols.refresh(source, false);
-            dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
+            // Slide the pinned/unpinned cols and the gap they leave, rather than jumping.
+            colAnimation?.start();
+            try {
+                visibleCols.refresh(source, false);
+                dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
+            } finally {
+                colAnimation?.finish();
+            }
         }
     }
 

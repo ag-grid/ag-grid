@@ -180,6 +180,7 @@ const _INTERNAL_EVENTS = [
     'rowExpansionStateChanged',
     'showRowGroupColsSetChanged',
     'columnHeaderNameChanged',
+    'columnShowValuesAsChanged',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

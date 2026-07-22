@@ -1045,9 +1045,10 @@ describe('AgRichSelect', () => {
         richSelect.dispatchPickerEventAndHidePicker = vi.fn();
 
         const preventDefault = vi.fn();
-        richSelect.onEnterKeyDown({ preventDefault } as unknown as KeyboardEvent);
+        const event = { preventDefault } as unknown as KeyboardEvent;
+        richSelect.onEnterKeyDown(event);
 
         expect(preventDefault).toHaveBeenCalled();
-        expect(richSelect.dispatchPickerEventAndHidePicker).toHaveBeenCalledWith(['Open'], true);
+        expect(richSelect.dispatchPickerEventAndHidePicker).toHaveBeenCalledWith(['Open'], true, event);
     });
 });

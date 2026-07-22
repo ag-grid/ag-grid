@@ -6,7 +6,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
-import type { EditMap, EditValue } from '../../interfaces/iEditModelService';
+import type { EditMap, EditValue, ReadonlyEditMap, ReadonlyEditRow } from '../../interfaces/iEditModelService';
 import type {
     EditInputEvents,
     EditPosition,
@@ -15,6 +15,7 @@ import type {
     StartEditWithPositionParams,
     _SetEditingCellsParams,
 } from '../../interfaces/iEditService';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { EditModelService } from '../editModelService';
 import type { EditService } from '../editService';
@@ -211,7 +212,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             // focus the cell instead
 
             const isFullRow = this.beans.gos.get('editType') === 'fullRow';
-            cellCtrl.focusCell(isFullRow);
+            cellCtrl.focusCell({ forceBrowserFocus: isFullRow });
             cellCtrl.onEditorAttachedFuncs.push(() => comp?.getCellEditor()?.focusIn?.());
         }
     }
@@ -320,11 +321,20 @@ export abstract class BaseEditStrategy extends BeanStub {
             });
         });
 
+        let newEdits: ReadonlyEditMap = edits;
         if (params?.update) {
-            edits = new Map([...this.model.getEditMap(), ...edits]);
+            // Merge existing rows under the new ones (new rows win). setEditMap deep-copies, so the
+            // read-only rows from the live map can be aliased here without mutating it.
+            const merged = new Map<IRowNode, ReadonlyEditRow>(edits);
+            this.model.getEditMap()?.forEach((row, rowNode) => {
+                if (!merged.has(rowNode)) {
+                    merged.set(rowNode, row);
+                }
+            });
+            newEdits = merged;
         }
 
-        this.model?.setEditMap(edits);
+        this.model?.setEditMap(newEdits);
 
         if (cells.length > 0) {
             const position = cells.at(-1)!;

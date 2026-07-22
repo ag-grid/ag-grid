@@ -6790,8 +6790,6 @@ apex	/charts/react/financial-charts	301	https://www.ag-grid.com/charts/react/fin
 apex	/javascript-data-grid/packages/	301	https://www.ag-grid.com/javascript-data-grid/modules/
 www	/charts/react/radial-gauge	301	https://www.ag-grid.com/charts/react/radial-gauge/
 apex	/charts/react/radial-gauge	301	https://www.ag-grid.com/charts/react/radial-gauge/
-www	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/bullet-series/
-apex	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/bullet-series/
 www	/charts/react/range-bar-series	301	https://www.ag-grid.com/charts/react/range-bar-series/
 apex	/charts/react/range-bar-series	301	https://www.ag-grid.com/charts/react/range-bar-series/
 apex	/vue-data-grid/	301	https://www.ag-grid.com/vue-data-grid/getting-started/
@@ -6834,7 +6832,6 @@ www	/vue-data-grid/getting-started/	200
 www	/angular-data-grid/grid-api/	200	
 www	/react-data-grid/aggregation-total-rows/	200	
 www	/javascript-data-grid/integrated-charts/	200	
-www	/charts/react/bar-series/	200	
 www	/react-data-grid/components/	200	
 www	/angular-data-grid/filtering/	200	
 www	/javascript-data-grid/cell-editing/	200	
@@ -6842,54 +6839,8 @@ www	/vue-data-grid/grid-options/	200
 www	/javascript-data-grid/aggregation/	200	
 www	/angular-data-grid/component-cell-renderer/	200	
 www	/forum	301	/forum/
-www	/charts/javascript/bullet-series/	301	/charts/javascript/linear-gauge/#bullet-series/
-www	/charts/javascript/bullet-series	301	/charts/javascript/bullet-series/
-www	/charts/angular/bullet-series/	301	/charts/angular/linear-gauge/#bullet-series/
-www	/charts/angular/bullet-series	301	/charts/angular/bullet-series/
-www	/charts/react/bullet-series	301	/charts/react/bullet-series/
-www	/charts/vue/bullet-series/	301	/charts/vue/linear-gauge/#bullet-series/
-www	/charts/vue/bullet-series	301	/charts/vue/bullet-series/
-www	/charts/javascript/fonts/	301	/charts/javascript/text/
-www	/charts/javascript/fonts	301	/charts/javascript/fonts/
-www	/charts/angular/fonts/	301	/charts/angular/text/
-www	/charts/angular/fonts	301	/charts/angular/fonts/
-www	/charts/react/fonts/	301	/charts/react/text/
-www	/charts/react/fonts	301	/charts/react/fonts/
-www	/charts/vue/fonts/	301	/charts/vue/text/
-www	/charts/vue/fonts	301	/charts/vue/fonts/
-www	/charts/javascript/	301	/charts/javascript/quick-start/
-www	/charts/javascript	301	/charts/javascript/
-www	/charts/react/	301	/charts/react/quick-start/
-www	/charts/react	301	/charts/react/
-www	/charts/vue/	301	/charts/vue/quick-start/
-www	/charts/vue	301	/charts/vue/
-www	/charts/angular/	301	/charts/angular/quick-start/
-www	/charts/angular	301	/charts/angular/
-www	/charts/javascript/toolbar/	301	/charts/javascript/financial-charts-toolbar/
-www	/charts/react/toolbar/	301	/charts/react/financial-charts-toolbar/
-www	/charts/react/line/	301	/charts/react/line-series/
 www	/charts/archive/13.1.0/javascript/getting-started/	200	
-www	/charts/archive/	301	/charts/documentation-archive/
-www	/charts/archive	301	/charts/archive/
 www	/charts/archive/13.1.0/javascript/getting-started	301	/charts/archive/13.1.0/javascript/getting-started/
-www	/charts/privacy/	301	https://www.ag-grid.com/privacy/
-www	/charts/privacy	301	/charts/privacy/
-www	/charts/javascript-charts/javascript/bar-series/	301	/charts/javascript/bar-series/
-www	/charts/javascript-charts/javascript/bar-series	301	/charts/javascript-charts/javascript/bar-series/
-www	/charts/angular-charts/angular/bar-series/	301	/charts/angular/bar-series/
-www	/charts/angular-charts/angular/bar-series	301	/charts/angular-charts/angular/bar-series/
-www	/charts/react-charts/react/bar-series/	301	/charts/react/bar-series/
-www	/charts/react-charts/react/bar-series	301	/charts/react-charts/react/bar-series/
-www	/charts/vue-charts/vue/bar-series/	301	/charts/vue/bar-series/
-www	/charts/vue-charts/vue/bar-series	301	/charts/vue-charts/vue/bar-series/
-www	/charts/enterprise-charts/react/bar-series/	301	/charts/react/bar-series/
-www	/charts/enterprise-charts/react/bar-series	301	/charts/enterprise-charts/react/bar-series/
-www	/charts/javascript-charts/gallery/	301	/charts/gallery/
-www	/charts/javascript-charts/gallery	301	/charts/javascript-charts/gallery/
-www	/charts/javascript-charts/options/	301	/charts/options/
-www	/charts/javascript-charts/options	301	/charts/javascript-charts/options/
-www	/charts/enterprise-charts/license-pricing/	301	/charts/enterprise-charts/
-www	/charts/enterprise-charts/license-pricing	301	/charts/enterprise-charts/license-pricing/
 www	/charts/javascript-charts/license-pricing/	200	
 www	/charts/javascript-charts/license-pricing	301	/charts/javascript-charts/license-pricing/
 www	/charts/angular-charts/license-pricing/	200	
@@ -6898,21 +6849,6 @@ www	/charts/react-charts/license-pricing/	200
 www	/charts/react-charts/license-pricing	301	/charts/react-charts/license-pricing/
 www	/charts/vue-charts/license-pricing/	200	
 www	/charts/vue-charts/license-pricing	301	/charts/vue-charts/license-pricing/
-www	/charts/core/bar-series/	301	/charts/javascript/bar-series/
-www	/charts/core/bar-series	301	/charts/core/bar-series/
-www	/charts/side/bar-series/	301	/charts/javascript/bar-series/
-www	/charts/side/bar-series	301	/charts/side/bar-series/
-www	/charts/server-side-rendering/	301	/charts/javascript/server-side-rendering/
-www	/charts/server-side-rendering	301	/charts/server-side-rendering/
-www	/charts/javascript/series/	301	/charts/javascript/bar-series/
-www	/charts/javascript/series	301	/charts/javascript/series/
-www	/charts/javascript/axes/	301	/charts/javascript/axes-configuration/
-www	/charts/javascript/axes	301	/charts/javascript/axes/
-www	/charts/javascript/quick-start/	200	
-www	/charts/angular/area-series/	200	
-www	/charts/vue/line-series/	200	
-www	/charts/gallery/	200	
-www	/charts/options/	200	
 
 # converted shadowed /{fw}-grid/<subpage>/ rules — apex single-hop coverage
 apex	/javascript-grid/cell-rendering/	301	https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/
@@ -7057,3 +6993,69 @@ apex	/vue-grid/selection-overview/	301	https://www.ag-grid.com/vue-data-grid/row
 apex	/vue-grid/server-side-model-refresh/	301	https://www.ag-grid.com/vue-data-grid/server-side-model-updating-refresh/
 apex	/vue-grid/themes-customising/	301	https://www.ag-grid.com/vue-data-grid/themes/
 apex	/vue-grid/themes-provided/	301	https://www.ag-grid.com/vue-data-grid/themes/
+www	/charts/javascript/bullet-series	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series
+www	/charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series
+www	/charts/angular/bullet-series	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series
+www	/charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series
+www	/charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
+www	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
+www	/charts/vue/bullet-series	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series
+www	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series
+www	/charts/javascript/fonts	301	https://www.ag-grid.com/charts/javascript/text/
+www	/charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/
+www	/charts/angular/fonts	301	https://www.ag-grid.com/charts/angular/text/
+www	/charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/
+www	/charts/react/fonts	301	https://www.ag-grid.com/charts/react/text/
+www	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/
+www	/charts/vue/fonts	301	https://www.ag-grid.com/charts/vue/text/
+www	/charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/
+www	/charts/javascript	301	https://www.ag-grid.com/charts/javascript/quick-start/
+www	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/
+www	/charts/react	301	https://www.ag-grid.com/charts/react/quick-start/
+www	/charts/react/	301	https://www.ag-grid.com/charts/react/quick-start/
+www	/charts/vue	301	https://www.ag-grid.com/charts/vue/quick-start/
+www	/charts/vue/	301	https://www.ag-grid.com/charts/vue/quick-start/
+www	/charts/angular	301	https://www.ag-grid.com/charts/angular/quick-start/
+www	/charts/angular/	301	https://www.ag-grid.com/charts/angular/quick-start/
+www	/charts/javascript/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/
+www	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/
+www	/charts/react/toolbar	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/
+www	/charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/
+www	/charts/react/line	301	https://www.ag-grid.com/charts/react/line-series/
+www	/charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/
+www	/charts/archive	301	https://www.ag-grid.com/charts/documentation-archive/
+www	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/
+www	/charts/privacy	301	https://www.ag-grid.com/charts/privacy/
+www	/charts/privacy/	410	
+www	/charts/javascript-charts/javascript/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/
+www	/charts/javascript-charts/javascript/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
+www	/charts/angular-charts/angular/bar-series	301	https://www.ag-grid.com/charts/angular/bar-series/
+www	/charts/angular-charts/angular/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/
+www	/charts/react-charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/
+www	/charts/react-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/
+www	/charts/vue-charts/vue/bar-series	301	https://www.ag-grid.com/charts/vue/bar-series/
+www	/charts/vue-charts/vue/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/
+www	/charts/enterprise-charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/
+www	/charts/enterprise-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/
+www	/charts/javascript-charts/gallery	301	https://www.ag-grid.com/charts/gallery/
+www	/charts/javascript-charts/gallery/	301	https://www.ag-grid.com/charts/gallery/
+www	/charts/javascript-charts/options	301	https://www.ag-grid.com/charts/options/
+www	/charts/javascript-charts/options/	301	https://www.ag-grid.com/charts/options/
+www	/charts/enterprise-charts/license-pricing	301	https://www.ag-grid.com/charts/enterprise-charts/
+www	/charts/enterprise-charts/license-pricing/	301	https://www.ag-grid.com/charts/enterprise-charts/
+www	/charts/core/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/
+www	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
+www	/charts/side/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/
+www	/charts/side/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
+www	/charts/server-side-rendering	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/
+www	/charts/server-side-rendering/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/
+www	/charts/javascript/series	301	https://www.ag-grid.com/charts/javascript/bar-series/
+www	/charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
+www	/charts/javascript/axes	301	https://www.ag-grid.com/charts/javascript/axes-configuration/
+www	/charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/
+www	/charts/react/bar-series/	200	
+www	/charts/javascript/quick-start/	200	
+www	/charts/angular/area-series/	200	
+www	/charts/vue/line-series/	200	
+www	/charts/gallery/	200	
+www	/charts/options/	200	

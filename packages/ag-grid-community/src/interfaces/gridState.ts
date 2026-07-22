@@ -1,3 +1,4 @@
+import type { ShowValuesAs, ShowValuesAsType } from '../entities/colDef-showValuesAs';
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from './iExpansionService';
@@ -124,6 +125,16 @@ export interface AggregationState {
     aggregationModel: AggregationColumnState[];
 }
 
+export interface ShowValuesAsColumnState {
+    colId: string;
+    /** The "Show Values As" mode: a mode name, or the object form (`{ type, params?, precision? }`) */
+    showValuesAs: ShowValuesAsType | ShowValuesAs;
+}
+
+export interface ShowValuesAsState {
+    showValuesAsModel: ShowValuesAsColumnState[];
+}
+
 export interface PivotState {
     pivotMode: boolean;
     pivotColIds: string[];
@@ -224,6 +235,8 @@ export interface GridState {
     sideBar?: SideBarState;
     /** Includes current sort columns and direction (column state) */
     sort?: SortState;
+    /** Includes the per-column "Show Values As" mode (column state) */
+    showValuesAs?: ShowValuesAsState;
     /**
      * When providing a partial `initialState` with some but not all column state properties, set this to `true`.
      * This controls which top-level sections are supplied, not whether a section may itself be partial:

@@ -54,6 +54,14 @@ description: Brief description of the feature
 4. Link to related documentation
 5. Keep paragraphs concise
 
+## Reference Component Descriptions
+
+The `interfaceDocumentation` and `apiDocumentation` components generate a default intro line from the interface name (e.g. *"Properties available on the `X` interface."*). This is a text string rendered above the interface table, **not** a heading — it does not create a section title or a navigable entry in the page's table of contents.
+
+- Omit `config` to accept the generated default intro line.
+- Write a `description` **only** when it adds real context beyond the interface name.
+- Add an explicit `###` subheading with the interface name above each component when an API Reference section documents more than one interface.
+
 ## Image Conventions
 
 The `imageCaption` and `image` markdoc components automatically pick up a `*-dark.{ext}` sibling next to the referenced image. For an `imageCaption imagePath="resources/foo.png"`, if `resources/foo-dark.png` exists it is loaded automatically when the docs site is in dark mode — no separate `mdoc` reference is needed.

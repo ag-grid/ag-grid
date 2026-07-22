@@ -1,0 +1,56 @@
+---
+title: "PDF Export - Styling"
+enterprise: true
+---
+
+PDF Export uses colours from the active grid theme by default. Use `colors` to override page, body-row, alternate-row, header, text, and border colours for the exported document.
+
+{% gridExampleRunner title="PDF Styling" name="pdf-styling" exampleHeight=520 /%}
+
+## Automatic Grid Styles
+
+PDF Export can evaluate supported grid style definitions during serialisation:
+
+1. `rowStyle` and `getRowStyle` are applied to the exported row.
+1. `colDef.cellStyle` is applied to each exported body cell.
+1. `colDef.headerStyle` is applied to exported header cells.
+1. A cell style overrides the row style for properties supplied by both.
+
+For function-based `cellStyle`, the `value` parameter is the grid's display value before PDF export callbacks process it. This allows existing grid styling logic to continue working when `processCellCallback` changes the exported text.
+
+Only properties represented by `PdfCellStyle` are converted. CSS classes, `cellClass`, `cellClassRules`, arbitrary CSS, and Cell Renderer styles are not exported.
+
+{% gridExampleRunner title="Rows And Cells" name="pdf-rows-and-cells" exampleHeight=520 /%}
+
+Set `skipGridStyles=true` to skip grid style definitions and use only theme defaults, `colors`, and PDF-specific overrides. This also skips `colDef.wrapText` and `colDef.wrapHeaderText` integration.
+
+## PDF-Specific Overrides
+
+Use `processStyleCallback` to style exported elements without changing the grid. The callback receives `type: 'row' | 'cell' | 'rowgroup' | 'header' | 'groupheader'` and the final exported text in `value` for cell and header elements.
+
+Styles returned by `processStyleCallback` take precedence over automatic grid styles:
+
+1. A `row` result overrides `rowStyle` and `getRowStyle` for that row.
+1. A `cell` or `rowgroup` result overrides the resolved row style and `colDef.cellStyle` for that cell.
+1. A `header` or `groupheader` result overrides `colDef.headerStyle` for that header.
+
+`processStyleCallback` still runs when `skipGridStyles=true`.
+
+{% gridExampleRunner title="Rows And Cells Override" name="pdf-rows-and-cells-override" exampleHeight=520 /%}
+
+## Text And Box Styles
+
+`PdfCellStyle` supports built-in PDF fonts, font size and weight, text and background colours, borders, padding, alignment, wrapping, explicit line-break preservation, line height, maximum lines, and overflow behaviour. Margin is supported for the document title only.
+
+Use the top-level export parameters to configure document-wide typography and table boxes:
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    fontFamily: 'Times-Roman',
+    headerFontFamily: 'Times-Bold',
+    fontSize: 9,
+    headerFontSize: 10,
+    cellPadding: 4,
+    drawCellBorders: true,
+});
+```

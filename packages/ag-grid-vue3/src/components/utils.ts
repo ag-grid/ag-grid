@@ -62,6 +62,7 @@ import type {
     IsExternalFilterPresent,
     IsFullWidthRow,
     IsGroupOpenByDefault,
+    IsMasterOpenByDefault,
     IsRowFilterable,
     IsRowMaster,
     IsRowPinnable,
@@ -1244,6 +1245,10 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     groupDefaultExpanded?: number,
+    /** Master Detail: set to the number of levels of master rows to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. If not set, falls back to `groupDefaultExpanded`.
+         * @agModule `MasterDetailModule`
+         */
+    masterDefaultExpanded?: number,
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
          * Cell tooltip properties set here (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
          * @agModule `RowGroupingModule` / `TreeDataModule`
@@ -1717,11 +1722,22 @@ export interface Props<TData> {
          * @initial
          */
     suppressRowTransform?: boolean,
-    /** Set to `false` to enable `content-visibility: auto` on the grid wrapper element. This improves performance by allowing the browser to skip rendering grids that are off screen, but may cause issues if your application depends on receiving resize events from hidden grids.
+    /** Setting this option to false is equivalent to setting `enableContentVisibilityAuto` to true. If both are set, `enableContentVisibilityAuto` takes precedence.
          * @default true
          * @initial
+         * @deprecated v36.1 use enableContentVisibilityAuto instead
          */
     suppressContentVisibilityAuto?: boolean,
+    /** Set to `true` to enable `content-visibility: auto` on the grid wrapper element. This improves performance by allowing the browser to skip rendering grids that are off screen. JavaScript size measurement APIs like `offsetWidth` or `getBoundingClientRect` will report zero size when the grid is off-screen. This means that APIs that need to measure the size of DOM elements, like `sizeColumnsToFit` will not work either. To ensure that `autoSizeStrategy` works, content-visibility:auto will only be applied 1000ms after rendering the first data. This can be customised with `contentVisibilityAutoDelay`
+         * @default false
+         * @initial
+         */
+    enableContentVisibilityAuto?: boolean,
+    /** The delay in ms between the firstDataRendered event and enabling content-visibility:auto on the grid wrapper element
+         * @default 1000
+         * @initial
+         */
+    contentVisibilityAutoDelay?: number,
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
          * @default false
          * @agModule `ColumnHoverModule`
@@ -1897,10 +1913,14 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
          */
     getGroupRowAgg?: GetGroupRowAgg<TData>,
-    /** (Client-side Row Model only) Allows groups to be open by default.
+    /** (Client-side Row Model only) Allows group rows to be open by default. For master rows use `isMasterOpenByDefault`.
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     isGroupOpenByDefault?: IsGroupOpenByDefault<TData>,
+    /** (Client-side Row Model only) Master Detail: allows master rows to be open by default.
+         * @agModule `MasterDetailModule`
+         */
+    isMasterOpenByDefault?: IsMasterOpenByDefault<TData>,
     /** Controls how expand/collapse operations affect all rows and group interactions.
          * If `true`, expandAll / collapseAll applies to all rows (not just loaded ones),
          * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
@@ -2336,6 +2356,7 @@ export function getProps() {
         embedFullWidthRows: undefined,
         groupDisplayType: undefined,
         groupDefaultExpanded: undefined,
+        masterDefaultExpanded: undefined,
         autoGroupColumnDef: undefined,
         groupMaintainOrder: undefined,
         groupSelectsChildren: undefined,
@@ -2431,6 +2452,8 @@ export function getProps() {
         suppressRowHoverHighlight: undefined,
         suppressRowTransform: undefined,
         suppressContentVisibilityAuto: undefined,
+        enableContentVisibilityAuto: undefined,
+        contentVisibilityAutoDelay: undefined,
         columnHoverHighlight: undefined,
         gridId: undefined,
         deltaSort: undefined,
@@ -2467,6 +2490,7 @@ export function getProps() {
         paginationNumberFormatter: undefined,
         getGroupRowAgg: undefined,
         isGroupOpenByDefault: undefined,
+        isMasterOpenByDefault: undefined,
         ssrmExpandAllAffectsAllRows: undefined,
         initialGroupOrderComparator: undefined,
         processPivotResultColDef: undefined,

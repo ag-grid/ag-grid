@@ -13,7 +13,7 @@
  */
 import { createHash } from 'node:crypto';
 
-import { DARK_MODE_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
+import { DARK_MODE_INIT_SCRIPT, KBD_PLATFORM_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
 
 export type CspEnv = 'dev' | 'staging' | 'production';
 export type CspMode = 'report-only' | 'enforce';
@@ -127,6 +127,7 @@ const GTM_ZOOMINFO_HASH = "'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
     hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
+    hashInlineScript(KBD_PLATFORM_INIT_SCRIPT),
     ...ASTRO_HYDRATION_SCRIPT_HASHES,
     GTM_ZOOMINFO_HASH,
 ];
@@ -333,6 +334,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             realexHppOrigin, // ecommerce checkout: payment form POST to Realex HPP
             'https://codesandbox.io', // example-runner "Open in CodeSandbox" form POST
             'https://plnkr.co', // example-runner "Open in Plunker" form POST
+            'https://ag-grid.us11.list-manage.com', // Beyond the Prompt "notify me" Mailchimp signup POST
         ],
         'frame-ancestors': [SELF, AG_GRID_HOSTS], // allow *.ag-grid.com (e.g. blog) to embed examples
     };

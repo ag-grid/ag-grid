@@ -829,6 +829,18 @@
             },
             "description": "Callback to be used with [Master Detail](./master-detail/) to determine if a row should be a master row. If `false` is returned no detail row will exist for this row."
         },
+        "masterDefaultExpanded": {
+            "more": {
+                "name": "Open Master Rows by Default",
+                "url": "./master-detail-master-rows/#opening-master-rows-by-default"
+            }
+        },
+        "isMasterOpenByDefault": {
+            "more": {
+                "name": "Open Master Rows by Default",
+                "url": "./master-detail-master-rows/#opening-master-rows-by-default"
+            }
+        },
         "detailCellRenderer": {
             "description": "Provide a custom `detailCellRenderer` to use when a master row is expanded.",
             "more": {
@@ -1365,7 +1377,18 @@
             }
         },
         "suppressRowTransform": {},
-        "suppressContentVisibilityAuto": {}
+        "enableContentVisibilityAuto": {
+            "more": {
+                "name": "Skip Rendering Off-Screen Grids",
+                "url": "./scrolling-performance/#skip-rendering-off-screen-grids"
+            }
+        },
+        "contentVisibilityAutoDelay": {
+            "more": {
+                "name": "Skip Rendering Off-Screen Grids",
+                "url": "./scrolling-performance/#skip-rendering-off-screen-grids"
+            }
+        }
     },
     "rowDragging": {
         "meta": {

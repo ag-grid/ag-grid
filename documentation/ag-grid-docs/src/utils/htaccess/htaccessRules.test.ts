@@ -5,7 +5,7 @@ import {
     EXAMPLES_PATH_CONDITION,
 } from './cspRules';
 import { PRODUCTION_CSP_PHASE, getHtaccessContent } from './htaccessRules';
-import { SITE_301_REDIRECTS } from './redirects';
+import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 describe('htaccessRules', () => {
     let productionContent: string;
@@ -87,6 +87,33 @@ describe('htaccessRules', () => {
 
         it('should NOT include X-Frame-Options header directive (replaced by CSP frame-ancestors)', () => {
             expect(productionContent).not.toMatch(/Header\s+.*set\s+X-Frame-Options/);
+        });
+    });
+
+    describe('SE-81: agent-useful Link header', () => {
+        it('should include a Link header pointing at llms.txt, the sitemap index and the MCP server', () => {
+            expect(productionContent).toContain('Header set Link');
+            expect(productionContent).toContain('</llms.txt>; rel=describedby');
+            expect(productionContent).toContain('</sitemap-index.xml>; rel=sitemap');
+            expect(productionContent).toContain(
+                '<https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related'
+            );
+        });
+
+        it('should scope the Link header to successful HTML documents (not assets, redirects or errors)', () => {
+            const linkLine = productionContent.split('\n').find((l) => l.includes('set Link'));
+            expect(linkLine).toBeDefined();
+            // Not `always` (so it is skipped on error responses), and guarded by an expr that
+            // requires both a 200 status and an HTML content-type. The status check is what
+            // keeps it off the custom text/html 404 page (whose content-type alone would match).
+            expect(linkLine).not.toContain('always set Link');
+            expect(linkLine).toContain('"expr=%{REQUEST_STATUS} == 200 && %{CONTENT_TYPE} =~ m#^text/html#"');
+        });
+
+        it('should include the Link header on staging too so it can be verified before production', () => {
+            expect(stagingContent).toContain('Header set Link');
+            expect(stagingContent).toContain('</llms.txt>; rel=describedby');
+            expect(stagingContent).toContain('"expr=%{REQUEST_STATUS} == 200 && %{CONTENT_TYPE} =~ m#^text/html#"');
         });
     });
 
@@ -190,9 +217,11 @@ describe('htaccessRules', () => {
     });
 
     describe('production vs staging', () => {
-        it('should include mod_rewrite rules in production only', () => {
-            expect(productionContent).toContain('mod_rewrite.c');
-            expect(stagingContent).not.toContain('mod_rewrite.c');
+        it('should include the redirect/canonicalization rewrites in production only', () => {
+            // Both envs carry a small mod_rewrite block for SE-80 markdown negotiation,
+            // but the host/https redirect rules are production-only.
+            expect(productionContent).toContain('RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]');
+            expect(stagingContent).not.toContain('https://www.ag-grid.com/$1 [R=301,L]');
         });
 
         it('should include mod_expires rules in production only', () => {
@@ -408,6 +437,181 @@ describe('htaccessRules', () => {
                 expect(ifBlock).not.toContain('Header always set Content-Security-Policy "');
             });
         }
+    });
+
+    describe('SE-66: single-hop rewrites must not redirect a path to itself', () => {
+        const SITE_HOST = 'www.ag-grid.com';
+
+        // A single-hop rewrite runs before the host-swap, so it fires for a request on either the
+        // apex (ag-grid.com) or the www host. The RewriteRule regex is anchored (`^/?<from>$`), so it
+        // only re-fires on its own output when the target is the EXACT same path on www — then the
+        // browser is sent straight back to the URL it just requested and the request loops forever,
+        // never reaching a 200. (A target that merely adds the www host or a trailing slash does not
+        // re-match, so it is a legitimate single hop, not a loop.) This is the bug reported for
+        // /charts/react/bullet-series/ (SE-66): it targeted its own www URL verbatim and looped.
+        it('no rule targets its own path on the site host', () => {
+            const loops = SITE_SINGLE_HOP_REWRITES.filter((rule) => {
+                const target = new URL(rule.to);
+                return target.host === SITE_HOST && target.pathname === rule.from;
+            }).map((rule) => `${rule.from} -> ${rule.to}`);
+
+            expect(loops).toEqual([]);
+        });
+
+        it('does not keep a react-only bullet-series entry in the single-hop data (moved to the charts mirror)', () => {
+            const reactBullet = SITE_SINGLE_HOP_REWRITES.filter((r) => r.from.includes('bullet-series'));
+            expect(reactBullet).toEqual([]);
+        });
+    });
+
+    describe('SE-66: charts-subdir semantic redirects mirrored into the docroot', () => {
+        // The /charts subdir (ag-charts-website repo) owns these semantic redirects, but it only runs
+        // after the docroot normalises host/slash — so they are mirrored here to collapse to ONE hop.
+        // Assertions cover a representative rule per family; the full block is guarded by the snapshot.
+
+        it('collapses bullet-series to linear-gauge for every framework, with [NE] and the correct anchor', () => {
+            // #bullet-series (no trailing slash) — the id generated by the "## Bullet Series" heading;
+            // the previous react-only rule used the broken "#bullet-series/". [NE] keeps the # verbatim.
+            expect(productionContent).toContain(
+                'RewriteRule "^/?charts/(javascript|angular|react|vue)/bullet-series/?$" "https://www.ag-grid.com/charts/$1/linear-gauge/#bullet-series" [R=301,NE,L]'
+            );
+            expect(productionContent).not.toContain('linear-gauge/#bullet-series/');
+        });
+
+        it('mirrors the fonts, landing, backreference, catch-all and aggregate-index families', () => {
+            expect(productionContent).toContain(
+                'RewriteRule "^/?charts/(javascript|angular|react|vue)/fonts/?$" "https://www.ag-grid.com/charts/$1/text/" [R=301,L]'
+            );
+            expect(productionContent).toContain(
+                'RewriteRule "^/?charts/(javascript|angular|react|vue)/?$" "https://www.ag-grid.com/charts/$1/quick-start/" [R=301,L]'
+            );
+            expect(productionContent).toContain(
+                'RewriteRule "^/?charts/react-charts/react/(.+?)/?$" "https://www.ag-grid.com/charts/react/$1/" [R=301,L]'
+            );
+            expect(productionContent).toContain(
+                'RewriteRule "^/?charts/(javascript|angular|react|vue)/series(/.*)?$" "https://www.ag-grid.com/charts/$1/bar-series/" [R=301,L]'
+            );
+        });
+
+        it('does NOT mirror /charts/privacy (unresolved 410-vs-301, left to the charts subdir)', () => {
+            expect(productionContent).not.toContain('"^/?charts/privacy(/.*)?$"');
+        });
+
+        it('orders the enterprise-charts/react backreference before the enterprise-charts catch-all', () => {
+            // charts repo is first-match-wins: the specific /react/(.+) must win over the broad catch-all.
+            const specific = productionContent.indexOf('"^/?charts/enterprise-charts/react/(.+?)/?$"');
+            const catchAll = productionContent.indexOf('"^/?charts/enterprise-charts/(?!index\\.html$).+$"');
+            expect(specific).toBeGreaterThan(-1);
+            expect(catchAll).toBeGreaterThan(specific);
+        });
+
+        it('host-scopes the whole chain-shortening block, with an exact [S] skip count', () => {
+            // The single-hops + mirror + add-slash all rewrite to the canonical www host, so a host
+            // guard skips them for charts.ag-grid.com / studio.ag-grid.com. The [S] count MUST equal
+            // the number of RewriteRules it guards — overshoot would also skip the host canonicalisation
+            // rules (breaking the phase-1 subdomain redirects), undershoot would leak the chain-shortening.
+            const lines = productionContent.split('\n');
+            const guardIdx = lines.findIndex((l) => /RewriteRule \^ - \[S=\d+\]/.test(l));
+            expect(guardIdx).toBeGreaterThan(-1);
+            expect(lines[guardIdx - 1]).toContain('RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]');
+
+            const skip = Number(lines[guardIdx].match(/\[S=(\d+)\]/)![1]);
+            // The guarded span ends just before the https-upgrade host-swap (first `-> www/$1` rule).
+            const hostSwapIdx = lines.findIndex(
+                (l, i) => i > guardIdx && l.includes('https://www.ag-grid.com/$1 [R=301,L]')
+            );
+            expect(hostSwapIdx).toBeGreaterThan(guardIdx);
+            const guardedRuleCount = lines
+                .slice(guardIdx + 1, hostSwapIdx)
+                .filter((l) => /^\s*RewriteRule /.test(l)).length;
+            expect(skip).toBe(guardedRuleCount);
+        });
+    });
+
+    describe('SE-66 follow-up: no-slash /charts/* pages resolve in a single hop', () => {
+        it('emits a general single-hop rewrite that adds the trailing slash for any no-slash /charts/* path', () => {
+            expect(productionContent).toContain(
+                'RewriteRule "^/?(charts/.+[^/])$" "https://www.ag-grid.com/$1/" [R=301,L]'
+            );
+        });
+
+        it('guards the general charts rewrite so real files (dot in the last segment) are left alone', () => {
+            const lines = productionContent.split('\n');
+            const ruleIndex = lines.findIndex((l) => l.includes('"^/?(charts/.+[^/])$"'));
+            expect(ruleIndex).toBeGreaterThan(0);
+            expect(lines[ruleIndex - 1]).toContain('RewriteCond %{REQUEST_URI} /+[^.]+$');
+        });
+
+        it('runs the charts semantic mirror before the general add-slash, and both before the host-swap', () => {
+            // Ordering is load-bearing: the semantic mirror (divergent targets, e.g. bullet-series) must
+            // win over the general add-slash rule ([L]), and both must precede the apex/www host-swap so
+            // the whole thing resolves in ONE hop.
+            const mirror = productionContent.indexOf('"^/?charts/(javascript|angular|react|vue)/bullet-series/?$"');
+            const general = productionContent.indexOf('"^/?(charts/.+[^/])$"');
+            const hostSwap = productionContent.indexOf('RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]');
+            expect(mirror).toBeGreaterThan(-1);
+            expect(general).toBeGreaterThan(mirror);
+            expect(hostSwap).toBeGreaterThan(general);
+        });
+    });
+
+    describe('SE-80: Accept: text/markdown content negotiation', () => {
+        const negotiationRules = [
+            'RewriteCond %{HTTP_ACCEPT} text/markdown',
+            // Captures a docs path or a top-level md page, reused (%1) in the -f test and rewrite target.
+            'RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline)/?$',
+            'RewriteCond %{DOCUMENT_ROOT}/%1.md -f',
+            'RewriteRule ^ /%1.md [L]',
+        ];
+
+        it('serves the per-page .md variant when Accept: text/markdown, gated by an on-disk check', () => {
+            for (const rule of negotiationRules) {
+                expect(productionContent).toContain(rule);
+            }
+        });
+
+        it('applies the same negotiation rules on staging, in its own mod_rewrite block', () => {
+            // Staging has no redirect rewrites, so negotiation gets a dedicated block.
+            expect(stagingContent).toContain('mod_rewrite.c');
+            expect(stagingContent).toContain('RewriteEngine On');
+            for (const rule of negotiationRules) {
+                expect(stagingContent).toContain(rule);
+            }
+        });
+
+        it('runs the negotiation before the trailing-slash 301 so the canonical URL negotiates in one hop', () => {
+            const negotiationIndex = productionContent.indexOf('RewriteRule ^ /%1.md [L]');
+            const trailingSlashIndex = productionContent.indexOf('# Add trailing slash for directories');
+            expect(negotiationIndex).toBeGreaterThan(-1);
+            expect(trailingSlashIndex).toBeGreaterThan(-1);
+            expect(negotiationIndex).toBeLessThan(trailingSlashIndex);
+        });
+
+        it('adds Vary: Accept for negotiated paths (both envs) so shared caches key on the negotiated representation', () => {
+            for (const content of [productionContent, stagingContent]) {
+                expect(content).toContain(
+                    '<If "%{REQUEST_URI} =~ m#^/((react|angular|vue|javascript)-data-grid/|(license-pricing|changelog|pipeline)/?$)#">'
+                );
+                expect(content).toContain('Header append Vary Accept');
+            }
+        });
+
+        it('negotiates the top-level license-pricing, changelog and pipeline pages to their .md', () => {
+            // %1 captures each page name, so the -f guard and rewrite target resolve to /<page>.md.
+            for (const content of [productionContent, stagingContent]) {
+                expect(content).toContain('|license-pricing|changelog|pipeline)/?$');
+            }
+        });
+
+        it('registers the markdown MIME type so the .md files are served as text/markdown', () => {
+            expect(productionContent).toContain('AddType text/markdown md');
+            expect(stagingContent).toContain('AddType text/markdown md');
+        });
+
+        it('serves .md as UTF-8 so table glyphs (✓/✗) are not mojibaked', () => {
+            expect(productionContent).toContain('AddCharset utf-8 .md');
+            expect(stagingContent).toContain('AddCharset utf-8 .md');
+        });
     });
 
     describe('basic structure', () => {

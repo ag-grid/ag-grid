@@ -56,8 +56,35 @@ export const DARK_MODE_INIT_SCRIPT = `
     });
     observer.observe(htmlEl, { attributes: true });
 
-    if (localStorage.getItem('documentation:announcement-banner-dismissed') !== 'true') {
-        document.documentElement.dataset.showAnnouncement = 'true';
+    // Show the announcement banner only when it has not been dismissed AND the current date
+    // falls within its scheduled window. Dismissal is tracked per-banner: the storage key is
+    // suffixed with the banner id (derived from its title + dates) so dismissing one banner
+    // does not hide future ones. Evaluated here (at request time) rather than in the Astro
+    // build so the window applies to a static deployment without a redeploy. Dates are read
+    // from <html> data attributes (YYYY-MM-DD); absent bounds are open-ended.
+    const announcementId = htmlEl.dataset.announcementId || '';
+    if (localStorage.getItem('documentation:announcement-banner-dismissed:' + announcementId) !== 'true') {
+        const today = new Date().toISOString().slice(0, 10);
+        const showDate = htmlEl.dataset.announcementShowDate;
+        const untilDate = htmlEl.dataset.announcementUntilDate;
+        const withinWindow = (!showDate || today >= showDate) && (!untilDate || today <= untilDate);
+
+        if (withinWindow) {
+            htmlEl.dataset.showAnnouncement = 'true';
+        }
+    }
+`;
+
+// Sets html[data-os="mac"] so the CSS in _inline.scss can show "⌘ Command" instead of
+// "^ Ctrl" in {% kbd %} tags for Mac visitors. There's no build-time (nor pure-CSS) way
+// to know the visitor's OS, so this runs render-blocking at the top of <body> — same
+// spot as the dark-mode script — to avoid a flash of the wrong label. Feature-detects
+// the Chromium-only User-Agent Client Hints API first, then falls back to the older
+// (deprecated but universally supported) navigator.platform.
+export const KBD_PLATFORM_INIT_SCRIPT = `
+    const platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+    if (/mac/i.test(platform)) {
+        document.documentElement.dataset.os = 'mac';
     }
 `;
 

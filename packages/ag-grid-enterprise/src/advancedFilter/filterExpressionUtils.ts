@@ -1,4 +1,6 @@
-import type { ColumnModel, DataTypeService, IRowNode, ValueService } from 'ag-grid-community';
+import { _parseBigIntOrNull } from 'ag-stack';
+
+import type { AgColumn, ColumnModel, DataTypeService, IRowNode, ValueService } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from './filterExpressionOperators';
@@ -38,6 +40,10 @@ export type FilterExpressionFunction = (
     node: IRowNode,
     params: FilterExpressionFunctionParams
 ) => boolean;
+
+export function getBigIntParser(column: AgColumn | null | undefined): (value: string | null) => bigint | null {
+    return column?.colDef.filterParams?.bigintParser ?? _parseBigIntOrNull;
+}
 
 export function getSearchString(value: string, position: number, endPosition: number): string {
     if (!value) {

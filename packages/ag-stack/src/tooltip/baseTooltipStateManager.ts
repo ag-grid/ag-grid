@@ -204,10 +204,9 @@ export abstract class BaseTooltipStateManager<
     }
 
     private onMouseLeave(): void {
-        // if interaction is enabled, we need to verify if the user is moving
-        // the cursor from the cell onto the tooltip, so we lock the service
-        // for 100ms to prevent other tooltips from being created while this is happening.
-        if (this.interactionEnabled) {
+        // the lock lets the cursor travel from the cell onto its own tooltip, so only lock when a
+        // tooltip is showing - locking with nothing to travel onto just blocks other cells' tooltips.
+        if (this.interactionEnabled && this.state === TooltipStates.SHOWING) {
             this.lockService();
         } else {
             this.setToDoNothing();
@@ -572,6 +571,9 @@ export abstract class BaseTooltipStateManager<
         }
         window.clearTimeout(this.interactiveTooltipTimeoutId);
         this.interactiveTooltipTimeoutId = undefined;
+        // lockService sets the shared lock and this timeout together, so clearing the timeout must
+        // also release the lock, otherwise it is left orphaned and blocks every subsequent tooltip.
+        isLocked = false;
     }
 
     private clearTimeouts(): void {

@@ -1,6 +1,33 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-ESBUILD-17750822:
+    - vite@5.4.21 > esbuild@0.21.5:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:47:55.965Z
+    - vitest@2.1.9 > vite@5.4.21 > esbuild@0.21.5:
+        reason: >-
+            Test dependency - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:47:53.078Z
+    - tsx@4.21.0 > esbuild@0.27.7:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:47:49.458Z
+    - esbuild@0.28.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:47:45.917Z
+  SNYK-JS-PISCINA-17817071:
+    - '@swc/cli@0.8.1 > piscina@4.9.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T09:41:58.414Z
   SNYK-JS-WS-17344547:
     - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > ws@8.18.0':
         reason: >-

@@ -29,8 +29,10 @@ test.agExample(import.meta, () => {
         await picker.click();
         await page.getByText('Last 24 Months', { exact: true }).click();
 
-        // close the popup and confirm the relative-range filter is now applied
-        await agIdFor.cell('0', 'athlete').click();
+        // Close the filter popup and confirm the relative-range filter is now applied.
+        // Press Escape rather than clicking a data cell: selecting the range re-filters the
+        // rows, so the cell at index 0 is mid-re-render and the click can race it.
+        await page.keyboard.press('Escape');
         await expect(dateHeader).toHaveClass(/ag-header-cell-filtered/);
 
         // The data spans ~12 months ago to ~6 months ahead; "Last 24 Months" (24 months ago →

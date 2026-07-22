@@ -61,11 +61,7 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
             return;
         }
         const key = colDef[indexProp] ?? (colIsNew ? colDef[initialIndexProp] : null);
-        if (key != null) {
-            this.extractAddColWithIndex(col, key);
-        } else {
-            this.extractAddColWithValue(col);
-        }
+        this.bucketByKey(col, key);
     }
 
     /** This col's hierarchy virtuals (date-part group levels) to seat immediately before it; undefined if none. */
@@ -105,9 +101,6 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
         return super.setColActive(col, active, source, runSideEffects);
     }
 
-    private pendingStateOrder: Map<AgColumn, number> | null = null;
-    private pendingStateChanged = false;
-
     public override syncColState(
         column: AgColumn,
         stateItem: ColumnState | null,
@@ -131,51 +124,21 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
         if (typeof idx === 'number') {
             // An explicit index can reorder an already-active col, so flag regardless of whether it flipped.
             this.setColActive(column, true, source);
-            let idxMap = this.pendingStateOrder;
-            if (idxMap === null) {
-                idxMap = new Map();
-                this.pendingStateOrder = idxMap;
-            }
-            idxMap.set(column, idx);
-            this.pendingStateChanged = true;
+            this.recordPendingStateOrder(column, idx);
         } else if (this.setColActive(column, !!enable, source)) {
             this.pendingStateChanged = true;
         }
     }
 
-    /** Re-order + re-stamp active cols when this apply changed membership; else keep insertion order. */
-    public sortByPendingState(): void {
-        if (!this.pendingStateChanged) {
-            return;
+    /** Fold hierarchy ordering in front of the state-index sort; else fall back to the base index sort. */
+    protected override sortPendingCols(cols: AgColumn[]): boolean {
+        const hierarchy = this.getActiveHierarchyCols();
+        if (hierarchy) {
+            cols.sort((a, b) => hierarchy.compareVirtualColumns(a, b) ?? this.compareByStateIndex(a, b));
+            return true;
         }
-        this.pendingStateChanged = false;
-        const cols = this.columns;
-        if (cols.length > 0) {
-            const hierarchy = this.getActiveHierarchyCols();
-            if (hierarchy) {
-                cols.sort((a, b) => hierarchy.compareVirtualColumns(a, b) ?? this.compareByStateIndex(a, b));
-                this.resetActiveCols(cols);
-            } else if (this.pendingStateOrder) {
-                cols.sort(this.compareByStateIndex);
-                this.resetActiveCols(cols);
-            }
-        }
-        this.onColumnsChanged();
-        this.pendingStateOrder = null;
+        return super.sortPendingCols(cols);
     }
-
-    private readonly compareByStateIndex = (a: AgColumn, b: AgColumn): number => {
-        const indexes = this.pendingStateOrder;
-        if (!indexes) {
-            return 0;
-        }
-        const aIdx = indexes.get(a);
-        const bIdx = indexes.get(b);
-        if (aIdx != null) {
-            return bIdx != null ? aIdx - bIdx : -1;
-        }
-        return bIdx != null ? 1 : 0;
-    };
 
     /** Stamps synthetic `indexProp` onto `incoming`/`accumulator` so a `cellDataType`-inferred rowGroup/pivot
      *  flip keeps the original primary-col order (new cols slot in at their col-def position). */

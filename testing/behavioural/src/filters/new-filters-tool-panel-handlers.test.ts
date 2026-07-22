@@ -1,7 +1,7 @@
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('new filters tool panel requires enableFilterHandlers', () => {
     const gridsManager = new TestGridsManager({
@@ -39,6 +39,14 @@ describe('new filters tool panel requires enableFilterHandlers', () => {
         expect(api.getToolPanelInstance('filters-new')).toBeTruthy();
         // the tool panel wrapper is rendered in the DOM rather than crashing
         expect(gridElement!.querySelector('.ag-tool-panel-wrapper')).toBeTruthy();
+
+        // No filter applied: both data rows still render despite the missing-flag warning.
+        expect(api.getDisplayedRowCount()).toBe(2);
+        await new GridRows(api, 'empty panel: all rows still rendered').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 id:"1" name:"Alice" age:30
+            └── LEAF id:1 id:"2" name:"Bob" age:25
+        `);
     });
 
     test('does not warn #282 when enableFilterHandlers is set', async () => {
@@ -54,5 +62,13 @@ describe('new filters tool panel requires enableFilterHandlers', () => {
 
         expect(consoleWarnSpy.mock.calls.some((call) => String(call[0]).includes('warning #282'))).toBe(false);
         expect(api.getToolPanelInstance('filters-new')).toBeTruthy();
+
+        // No filter applied: both data rows render with the handlers-enabled panel.
+        expect(api.getDisplayedRowCount()).toBe(2);
+        await new GridRows(api, 'handlers enabled: all rows rendered').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 id:"1" name:"Alice" age:30
+            └── LEAF id:1 id:"2" name:"Bob" age:25
+        `);
     });
 });

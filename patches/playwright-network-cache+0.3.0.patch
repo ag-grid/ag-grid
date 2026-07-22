@@ -1,0 +1,31 @@
+diff --git a/node_modules/playwright-network-cache/dist/CacheRouteHandler/index.js b/node_modules/playwright-network-cache/dist/CacheRouteHandler/index.js
+index 89d590b..ecc1f6b 100644
+--- a/node_modules/playwright-network-cache/dist/CacheRouteHandler/index.js
++++ b/node_modules/playwright-network-cache/dist/CacheRouteHandler/index.js
+@@ -62,10 +62,22 @@ class CacheRouteHandler {
+     }
+     async fetchFromCache() {
+         (0, debug_1.debug)(`Fetching from cache: ${this.req.method()} ${this.req.url()}`);
+-        const responseInfo = await new HeadersFile_1.HeadersFile(this.cacheDir).read();
+-        const bodyFile = new BodyFile_1.BodyFile(this.cacheDir, responseInfo);
+-        const body = await bodyFile.read();
+-        return new SyntheticApiResponse_1.SyntheticApiResponse(responseInfo, body);
++        try {
++            const responseInfo = await new HeadersFile_1.HeadersFile(this.cacheDir).read();
++            const bodyFile = new BodyFile_1.BodyFile(this.cacheDir, responseInfo);
++            const body = await bodyFile.read();
++            return new SyntheticApiResponse_1.SyntheticApiResponse(responseInfo, body);
++        }
++        catch (err) {
++            // Concurrency race: another worker wrote the headers file but has not
++            // yet written the body file, so the cache read hits ENOENT. Fall back
++            // to a live fetch instead of failing the test.
++            if (err && err.code === 'ENOENT') {
++                (0, debug_1.debug)(`Cache miss (ENOENT), fetching from server: ${this.req.method()} ${this.req.url()}`);
++                return this.fetchFromServer();
++            }
++            throw err;
++        }
+     }
+     isExpired() {
+         if (this.options.ttlMinutes === undefined)

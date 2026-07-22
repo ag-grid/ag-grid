@@ -206,6 +206,7 @@ export {
     _isNodeOrElement,
     _isVisible,
     _loadTemplate,
+    _observeIntersection,
     _observeResize,
     _placeCaretAtEnd,
     _radioCssClass,

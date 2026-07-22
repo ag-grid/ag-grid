@@ -413,14 +413,6 @@
 
 /* stylelint-enable no-descending-specificity */
 
-/* stylelint-disable-next-line ag/no-low-performance-key-selector -- Requires a
-    slow selector because the child might be a custom component so we can't
-    control the class name. */
-.ag-row.ag-full-width-row.ag-row-group > * {
-    /* Default the content position to relative so that it doesn't appear under the background */
-    position: relative;
-}
-
 .ag-column-hover {
     background-color: var(--ag-column-hover-color);
 }

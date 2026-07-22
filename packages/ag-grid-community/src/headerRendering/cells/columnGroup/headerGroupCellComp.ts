@@ -68,7 +68,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         // appending a second one alongside it.
         const previousComp = this.headerGroupComp;
         if (previousComp) {
-            this.eHeaderCompWrapper.removeChild(previousComp.getGui());
+            previousComp.getGui().remove();
             this.destroyBean(previousComp);
         }
 

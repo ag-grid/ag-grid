@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule, PaginationModule, PinnedRowModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CsvExportModule, PaginationModule, PinnedRowModule } from 'ag-grid-community';
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -24,7 +24,14 @@ function getPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>): RowN
 
 describe('Manual pinned rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [PinnedRowModule, ClientSideRowModelModule, RowGroupingModule, PaginationModule, PivotModule],
+        modules: [
+            PinnedRowModule,
+            ClientSideRowModelModule,
+            CsvExportModule,
+            RowGroupingModule,
+            PaginationModule,
+            PivotModule,
+        ],
     });
 
     const columnDefs = [{ field: 'sport' }];
@@ -44,6 +51,47 @@ describe('Manual pinned rows', () => {
 
     afterEach(() => {
         gridsManager.reset();
+    });
+
+    test('exports manually pinned rows and optionally omits their body duplicates', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            isRowPinned: (node) => {
+                if (node.data?.sport === 'rugby') {
+                    return 'top';
+                }
+                return node.data?.sport === 'golf' ? 'bottom' : null;
+            },
+        });
+
+        expect(api.getDataAsCsv({ suppressQuotes: true })).toBe(
+            ['Sport', 'rugby', 'football', 'rugby', 'tennis', 'cricket', 'golf', 'swimming', 'rowing', 'golf'].join(
+                '\r\n'
+            )
+        );
+        expect(api.getDataAsCsv({ suppressQuotes: true, skipPinnedRowDuplicates: true })).toBe(
+            ['Sport', 'rugby', 'football', 'tennis', 'cricket', 'swimming', 'rowing', 'golf'].join('\r\n')
+        );
+        expect(
+            api.getDataAsCsv({
+                suppressQuotes: true,
+                rowPositions: [
+                    { rowIndex: 0, rowPinned: 'top' },
+                    { rowIndex: 1, rowPinned: null },
+                ],
+                skipPinnedRowDuplicates: true,
+            })
+        ).toBe(['Sport', 'rugby'].join('\r\n'));
+        expect(
+            api.getDataAsCsv({
+                suppressQuotes: true,
+                skipPinnedTop: true,
+                skipPinnedBottom: true,
+                skipPinnedRowDuplicates: true,
+            })
+        ).toBe(['Sport', 'football', 'tennis', 'cricket', 'swimming', 'rowing'].join('\r\n'));
     });
 
     test('Setting `grandTotalRow` to non-pinned value does not reset pinned row state', async () => {

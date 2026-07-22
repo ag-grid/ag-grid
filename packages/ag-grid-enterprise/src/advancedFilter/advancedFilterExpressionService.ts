@@ -29,6 +29,7 @@ import {
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
+import { getBigIntParser } from './filterExpressionUtils';
 
 export class AdvancedFilterExpressionService extends BeanStub implements NamedBean {
     beanName = 'advFilterExpSvc' as const;
@@ -80,7 +81,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | null
     > = {
         number: (operand) => (_exists(operand) ? Number(operand) : null),
-        bigint: (operand) => operand,
+        bigint: (operand, column) => {
+            const parsed = getBigIntParser(column)(operand);
+            return parsed == null ? null : String(parsed);
+        },
         date: (operand, column, baseCellDataType) =>
             _serialiseDate(
                 this.valueSvc.parseValue(column, null, operand, undefined) as Date,
@@ -165,7 +169,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         if (filterType !== 'number' && filterType !== 'bigint') {
             operand1 ??= _toStringOrNull(filter) ?? '';
             if (!skipFormatting) {
-                operand1 = `"${operand1}"`;
+                // Quote with the char the value does not contain so a value holding one quote kind
+                // still round-trips (the parser accepts either quote); a value with both fails safe.
+                const quote = operand1.includes('"') && !operand1.includes(`'`) ? `'` : `"`;
+                operand1 = `${quote}${operand1}${quote}`;
             }
         }
         return skipFormatting ? operand1! : ` ${operand1}`;

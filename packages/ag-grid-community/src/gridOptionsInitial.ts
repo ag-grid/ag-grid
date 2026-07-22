@@ -71,6 +71,8 @@ export const INITIAL_GRID_OPTION_KEYS = {
     icons: true,
     suppressRowTransform: true,
     suppressContentVisibilityAuto: true,
+    enableContentVisibilityAuto: true,
+    contentVisibilityAutoDelay: true,
     gridId: true,
     enableGroupEdit: true,
     initialState: true,

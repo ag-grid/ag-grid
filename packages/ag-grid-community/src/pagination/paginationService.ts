@@ -152,9 +152,7 @@ export class PaginationService extends BeanStub implements NamedBean {
     }
 
     public goToLastPage(): void {
-        const rowCount = this.beans.rowModel.getRowCount();
-        const lastPage = Math.floor(rowCount / this.pageSize);
-        this.goToPage(lastPage);
+        this.goToPage(Math.max(0, this.totalPages - 1));
     }
 
     public getPageSize(): number {
@@ -312,6 +310,9 @@ export class PaginationService extends BeanStub implements NamedBean {
 
         this.adjustCurrentPageIfInvalid();
 
+        // Read `currentPage` only after `adjustCurrentPageIfInvalid()`, as it may clamp the current
+        // page (e.g. when jumping to the last page). Using the pre-clamp value here computes the
+        // wrong row bounds and can leave the viewport stuck, so keep this read below the adjust call.
         const currentPage = this.currentPage;
 
         const masterPageStartIndex = pageSize * currentPage;
@@ -347,12 +348,16 @@ export class PaginationService extends BeanStub implements NamedBean {
             return;
         }
 
-        const { pageSize, currentPage } = this;
+        const pageSize = this.pageSize;
         const maxRowIndex = masterRowCount - 1;
         this.totalPages = Math.floor(maxRowIndex / pageSize) + 1;
 
         this.adjustCurrentPageIfInvalid();
 
+        // Read `currentPage` only after `adjustCurrentPageIfInvalid()`, as it may clamp the current
+        // page (e.g. when jumping to the last page). Using the pre-clamp value here computes the
+        // wrong row bounds and can leave the viewport stuck, so keep this read below the adjust call.
+        const currentPage = this.currentPage;
         this.topDisplayedRowIndex = pageSize * currentPage;
         this.bottomDisplayedRowIndex = pageSize * (currentPage + 1) - 1;
 

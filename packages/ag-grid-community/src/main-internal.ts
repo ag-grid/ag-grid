@@ -87,7 +87,13 @@ export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeServ
 export type { RowDragComp } from './dragAndDrop/rowDragComp';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
-export { _getDisplaySortForColumn, _normalizeSortType, _resolvePivotColumnForRow, AgColumn } from './entities/agColumn';
+export {
+    _getAvailableSortTypes,
+    _getDisplaySortForColumn,
+    _normalizeSortType,
+    _resolvePivotColumnForRow,
+    AgColumn,
+} from './entities/agColumn';
 export type { ColKind } from './entities/agColumn';
 export type { AgShowValuesAsResolved } from './entities/colDef-showValuesAs';
 export { AgColumnGroup } from './entities/agColumnGroup';
@@ -271,7 +277,7 @@ export type { IRowGroupPanelBuilder as _IRowGroupPanelBuilder } from './interfac
 export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
 export type { ColumnTreeBuild, ColumnTreeEdit } from './columns/buildColumnTree';
 
-export type { IMenuFactory } from './interfaces/iMenuFactory';
+export type { IMenuFactory, ShowMenuAfterButtonClickOptions } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';
 export type {
     HorizontalSection,

@@ -32,11 +32,14 @@ export type EditPositionValue = Required<EditPosition> & EditValue;
 export type EditRow<C = Column, V = EditValue> = Map<C, V>;
 export type EditMap = Map<IRowNode, Map<Column, EditValue>>;
 
+/** Read-only view of the live edit map from getEditMap; mutating it would break editingCount bookkeeping. */
+export type ReadonlyEditRow = ReadonlyMap<Column, Readonly<EditValue>>;
+export type ReadonlyEditMap = ReadonlyMap<IRowNode, ReadonlyEditRow>;
+
 export type EditValidationMap = Map<IRowNode, Map<Column, EditValidation>>;
 export type EditRowValidationMap = Map<IRowNode, EditValidation>;
 
 export type GetEditsParams = {
     checkSiblings?: boolean;
-    includeParents?: boolean;
     withOpenEditor?: boolean;
 };

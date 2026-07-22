@@ -1,4 +1,5 @@
 ---
+import { createHash } from 'node:crypto';
 import { Font } from 'astro:assets';
 import { DevTools } from '@ag-website-shared/components/dev-tools/DevTools';
 import { getEntry, type CollectionEntry } from 'astro:content';
@@ -8,7 +9,7 @@ import { getFavIconsData, getAppleTouchIconsData } from '@utils/favicons';
 import { getIsProduction, getIsArchive, getIsStaging, getIsDev } from '@utils/env';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import Plausible from '@components/Plausible.astro';
-import { DARK_MODE_INIT_SCRIPT } from '@utils/csp/inlineScripts';
+import { DARK_MODE_INIT_SCRIPT, KBD_PLATFORM_INIT_SCRIPT } from '@utils/csp/inlineScripts';
 import { Footer } from '@ag-website-shared/components/footer/Footer';
 import styles from '@layouts/Layout.module.scss';
 import { getApiPaths } from '@utils/apiMenuPath';
@@ -37,6 +38,8 @@ interface Props {
     showAnnouncementBanner?: boolean;
     overrideSocialImage?: string;
     pageStructuredData?: JsonLdObject[];
+    /** URL of a markdown (`.md`) alternate for this page, advertised to LLMs/crawlers. */
+    markdownUrl?: string;
 }
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
@@ -55,6 +58,18 @@ const isStaging = getIsStaging();
 const isDev = getIsDev();
 const canonicalUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase);
 
+const { showDate: bannerShowDate, untilDate: bannerUntilDate } = announcementBannerContent;
+
+// Per-banner id so a dismissal only hides THIS banner. A new title/description/date combination
+// yields a new id, so future banners reappear even for visitors who dismissed a previous one.
+// Consumed by the inline show-script and the dismiss script to build the localStorage key.
+const bannerId = createHash('sha256')
+    .update(
+        `${announcementBannerContent.title}|${announcementBannerContent.description ?? ''}|${bannerShowDate ?? ''}|${bannerUntilDate ?? ''}`
+    )
+    .digest('hex')
+    .slice(0, 12);
+
 const {
     title,
     description = metadata.description,
@@ -67,6 +82,7 @@ const {
     showAnnouncementBanner = announcementBannerContent.enabled,
     overrideSocialImage,
     pageStructuredData,
+    markdownUrl,
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -95,6 +111,16 @@ const structuredData: JsonLdObject[] = includeStructuredData
               name: 'AG Grid',
               logoUrl: organizationLogoUrl,
               sameAs: sameAsUrls,
+              // Line up with the enquiry-type options on the contact page. Sales enquiries go
+              // through the contact form; technical support is handled via the Zendesk portal.
+              contactPoints: [
+                  { contactType: 'sales', url: `${siteRoot}contact/`, availableLanguage: 'English' },
+                  {
+                      contactType: 'technical support',
+                      url: 'https://ag-grid.zendesk.com/',
+                      availableLanguage: 'English',
+                  },
+              ],
           }),
           buildWebSite({
               canonicalUrlBase: metadata.canonicalUrlBase,
@@ -133,7 +159,12 @@ const announcementBannerProps = {
 ---
 
 <!doctype html>
-<html lang="en">
+<html
+    lang="en"
+    data-announcement-id={bannerId}
+    data-announcement-show-date={bannerShowDate ?? undefined}
+    data-announcement-until-date={bannerUntilDate ?? undefined}
+>
     <head>
         <meta charset="UTF-8" />
         <meta name="description" content={description} />
@@ -152,6 +183,7 @@ const announcementBannerProps = {
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
         {!isStaging && <link rel="canonical" href={canonicalUrl} />}
+        {markdownUrl && <link rel="alternate" type="text/markdown" href={markdownUrl} />}
         {
             !isDev && (
                 <link
@@ -238,6 +270,7 @@ const announcementBannerProps = {
             @utils/csp/inlineScripts so the rendered bytes match the hashed source. */
         }
         <script is:inline set:html={DARK_MODE_INIT_SCRIPT} />
+        <script is:inline set:html={KBD_PLATFORM_INIT_SCRIPT} />
 
         {
             !isArchive && showAnnouncementBanner && (

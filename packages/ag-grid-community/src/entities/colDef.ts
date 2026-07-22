@@ -255,8 +255,10 @@ export type ToolPanelClass<TData = any, TValue = any, TContext = any> =
     | string[]
     | ((params: ToolPanelClassParams<TData, TValue, TContext>) => string | string[] | undefined);
 
-type StringOrNumKeys<TObj> = keyof TObj & (string | number);
-type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = TValue extends object
+/** @knipIgnore Used in tests */
+export type StringOrNumKeys<TObj> = keyof TObj & (string | number);
+/** @knipIgnore Used in tests */
+export type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = TValue extends object
     ? `${Prefix}.${TDepth['length'] extends 5 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
     : never;
 
@@ -268,18 +270,24 @@ type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends
  */
 export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedFieldPaths<TData, TValue, []> : never;
 
-/**
- * Returns a union of all possible paths to nested fields in `TData`.
- */
-export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> = {
+type OwnFieldPaths<TData, TValue> = {
+    [TKey in StringOrNumKeys<TData>]: TData[TKey] extends TValue ? `${TKey}` : never;
+}[StringOrNumKeys<TData>];
+
+type NestedOnlyPaths<TData, TValue, TDepth extends any[]> = {
     [TKey in StringOrNumKeys<TData>]: TData[TKey] extends ((...args: any[]) => any) | undefined
         ? never // ignore functions
         : TData[TKey] extends any[] | undefined
-          ? (TData[TKey] extends TValue ? `${TKey}` : never) | `${TKey}.${number}` // arrays support index access
-          :
-                | (TData[TKey] extends TValue ? `${TKey}` : never)
-                | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
+          ? `${TKey}.${number}` // arrays support index access
+          : NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
 }[StringOrNumKeys<TData>];
+
+/**
+ * Returns a union of all possible paths to nested fields in `TData`.
+ */
+export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> =
+    | OwnFieldPaths<TData, TValue>
+    | NestedOnlyPaths<TData, TValue, TDepth>;
 
 export type SortComparatorFn<TData = any, TValue = any> = (
     valueA: TValue | null | undefined,
@@ -373,7 +381,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Callback to select which tooltip component to be used for a given row within the same column.
      * @agModule `TooltipModule`
      */
-    tooltipComponentSelector?: CellEditorSelectorFunc | CellRendererSelectorFunc;
+    tooltipComponentSelector?: TooltipComponentSelectorFunc<TData, TValue>;
 
     /**
      * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
@@ -1308,6 +1316,17 @@ export type HeaderTooltipValueGetterFunc<TData = any, TValue = any, TContext = a
 export type TooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: ITooltipParams<TData, TValue, TContext>
 ) => string | any;
+
+export type TooltipComponentSelectorFunc<TData = any, TValue = any, TContext = any> = (
+    params: ITooltipParams<TData, TValue, TContext>
+) => TooltipComponentSelectorResult | undefined;
+
+export interface TooltipComponentSelectorResult {
+    /** Equivalent of setting `colDef.tooltipComponent` */
+    component?: any;
+    /** Equivalent of setting `colDef.tooltipComponentParams` */
+    params?: any;
+}
 
 export interface NewValueParams<TData = any, TValue = any, TContext = any> extends ChangedValueParams<
     TData,

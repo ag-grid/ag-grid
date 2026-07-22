@@ -13,6 +13,22 @@ import type {
 
 import { BaseColsService } from '../columns/baseColsService';
 
+/** {@link ValueColsSvc.applyAggFunc} outcome: nothing moved / func changed on an active col / (de)activated. */
+const AGG_UNCHANGED = 0;
+const AGG_FUNC_ONLY = 1;
+const AGG_MEMBERSHIP = 2;
+type AggFuncChange = typeof AGG_UNCHANGED | typeof AGG_FUNC_ONLY | typeof AGG_MEMBERSHIP;
+
+/** Write `aggFunc` onto `column` (dispatching the state event); returns whether it changed. */
+const writeAggFunc = (column: AgColumn, aggFunc: ColAggFunc): boolean => {
+    if (column.aggFunc === aggFunc) {
+        return false;
+    }
+    column.aggFunc = aggFunc;
+    column.dispatchStateUpdatedEvent('aggFunc');
+    return true;
+};
+
 export class ValueColsSvc extends BaseColsService implements NamedBean, IValueColsService {
     beanName = 'valueColsSvc' as const;
     protected override eventName = 'columnValueChanged' as const;
@@ -45,16 +61,16 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
             if (modeAggFunc) {
                 this.bucketCol(col, colIsNew);
                 if (!col.aggFunc) {
-                    this.writeAggFunc(col, modeAggFunc);
+                    writeAggFunc(col, modeAggFunc);
                 }
             }
             return;
         }
         this.bucketCol(col, colIsNew);
         if (aggFunc != null && aggFunc !== '') {
-            this.writeAggFunc(col, aggFunc);
+            writeAggFunc(col, aggFunc);
         } else if (!col.aggFunc) {
-            this.writeAggFunc(col, colDef.initialAggFunc);
+            writeAggFunc(col, colDef.initialAggFunc);
         }
     }
 
@@ -63,11 +79,7 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
     private bucketCol(col: AgColumn, colIsNew: boolean): void {
         const colDef = col.colDef;
         const key = colDef.valueIndex ?? (colIsNew ? colDef.initialValueIndex : null);
-        if (key != null) {
-            this.extractAddColWithIndex(col, key);
-        } else {
-            this.extractAddColWithValue(col);
-        }
+        this.bucketByKey(col, key);
     }
 
     // Imperative-only (the base gates on `runSideEffects`); the state/agg-func paths set the func explicitly.
@@ -75,7 +87,7 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         // A newly-active col with no agg-func picks up the default for its cell-data type.
         const aggFuncSvc = this.aggFuncSvc;
         if (active && aggFuncSvc && !column.aggFunc) {
-            this.writeAggFunc(column, aggFuncSvc.getDefaultAggFunc(column));
+            writeAggFunc(column, aggFuncSvc.getDefaultAggFunc(column));
         }
     }
 
@@ -89,23 +101,27 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
     }
 
     public setColumnAggFunc(key: ColKey | undefined, aggFunc: ColAggFunc, source: ColumnEventType): void {
-        if (key) {
-            const column = this.colModel.getNonPivotCol(key);
-            if (column) {
-                const { changed, membershipChanged } = this.applyAggFunc(column, aggFunc, source);
-                if (changed) {
-                    // Membership changes ((de)activation) alter the value-column set, so pivot result columns must
-                    // rebuild; a func-only change on an already-active col re-aggregates event-driven, no refresh.
-                    this.stageColChange([column]);
-                    this.colModel.flushColChanges(source, membershipChanged);
-                }
-            }
+        if (!key) {
+            return;
         }
+        const column = this.colModel.getNonPivotCol(key);
+        if (!column) {
+            return;
+        }
+        const change = this.applyAggFunc(column, aggFunc, source);
+        if (change === AGG_UNCHANGED) {
+            return;
+        }
+        const membershipChanged = change === AGG_MEMBERSHIP;
+        // (De)activation moves the value-column set → reindex + rebuild pivot result cols; a func-only change
+        // keeps positions and re-aggregates event-driven, so just record it for dispatch (no reindex/rebuild).
+        if (membershipChanged) {
+            this.stageColChange(column);
+        } else {
+            this.recordColChange(column);
+        }
+        this.colModel.flushColChanges(source, membershipChanged ? 'membership' : 'dispatch');
     }
-
-    /** `valueIndex` per active col from the current state-apply pass; consumed by {@link sortByPendingState}.
-     *  Non-null signals a pending re-sort. */
-    private pendingStateOrder: Map<AgColumn, number> | null = null;
 
     public override syncColState(
         column: AgColumn,
@@ -133,42 +149,9 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
             this.setColActive(column, true, source, true);
         }
         if (typeof valueIndex === 'number' && column.aggregationActive) {
-            let idxMap = this.pendingStateOrder;
-            if (idxMap === null) {
-                idxMap = new Map();
-                this.pendingStateOrder = idxMap;
-            }
-            idxMap.set(column, valueIndex);
+            this.recordPendingStateOrder(column, valueIndex);
         }
     }
-
-    /** Re-order active value cols by the `valueIndex` recorded during the last `syncColState` pass; else keep
-     *  insertion order. Runs before `refreshCols` so pivot result columns pick up the new value-col order. */
-    public sortByPendingState(): void {
-        if (!this.pendingStateOrder) {
-            return;
-        }
-        const cols = this.columns;
-        if (cols.length > 0) {
-            cols.sort(this.compareByStateIndex);
-            this.resetActiveCols(cols);
-        }
-        this.onColumnsChanged();
-        this.pendingStateOrder = null;
-    }
-
-    private readonly compareByStateIndex = (a: AgColumn, b: AgColumn): number => {
-        const indexes = this.pendingStateOrder;
-        if (!indexes) {
-            return 0;
-        }
-        const aIdx = indexes.get(a);
-        const bIdx = indexes.get(b);
-        if (aIdx != null) {
-            return bIdx != null ? aIdx - bIdx : -1;
-        }
-        return bIdx != null ? 1 : 0;
-    };
 
     /** Stamps each active col's position as its value-column order (`aggregationActiveIndex`, valid only when active). */
     protected override onColumnsChanged(): void {
@@ -178,28 +161,18 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         }
     }
 
-    /** `changed`: any state moved (dispatch a change). `membershipChanged`: the col was (de)activated, so the
-     *  value-column set changed and callers must refresh dependent (pivot result) columns. */
-    private applyAggFunc(
-        column: AgColumn,
-        aggFunc: ColAggFunc,
-        source: ColumnEventType
-    ): { changed: boolean; membershipChanged: boolean } {
+    /** Apply `aggFunc` to `column` and report what moved: {@link AGG_MEMBERSHIP} ((de)activation — the
+     *  value-column set changed, so dependent pivot result columns must rebuild), {@link AGG_FUNC_ONLY} (func
+     *  changed on an already-active col — re-aggregates event-driven), or {@link AGG_UNCHANGED}. */
+    private applyAggFunc(column: AgColumn, aggFunc: ColAggFunc, source: ColumnEventType): AggFuncChange {
         if (aggFunc != null && aggFunc !== '') {
-            const aggFuncChanged = this.writeAggFunc(column, aggFunc);
+            const aggFuncChanged = writeAggFunc(column, aggFunc);
             const activeChanged = this.setColActive(column, true, source);
-            return { changed: aggFuncChanged || activeChanged, membershipChanged: activeChanged };
+            if (activeChanged) {
+                return AGG_MEMBERSHIP;
+            }
+            return aggFuncChanged ? AGG_FUNC_ONLY : AGG_UNCHANGED;
         }
-        const activeChanged = this.setColActive(column, false, source);
-        return { changed: activeChanged, membershipChanged: activeChanged };
-    }
-
-    private writeAggFunc(column: AgColumn, aggFunc: ColAggFunc): boolean {
-        if (column.aggFunc === aggFunc) {
-            return false;
-        }
-        column.aggFunc = aggFunc;
-        column.dispatchStateUpdatedEvent('aggFunc');
-        return true;
+        return this.setColActive(column, false, source) ? AGG_MEMBERSHIP : AGG_UNCHANGED;
     }
 }

@@ -280,18 +280,25 @@ The example below shows using `getCellEditorInstances`. The following can be not
 
 ## API Reference
 
+{% if isFramework("javascript") %}
+
+### ICellEditorComp
+
+{% interfaceDocumentation interfaceName="ICellEditorComp" /%}
+{% /if %}
+
 {% if isFramework("angular") %}
 
 ### ICellEditorAngularComp
 
-{% interfaceDocumentation interfaceName="ICellEditorAngularComp" config={"description": "The ICellEditorAngularComp interface has the following methods:"} /%}
+{% interfaceDocumentation interfaceName="ICellEditorAngularComp" /%}
 {% /if %}
 
 {% if isFramework("vue") %}
 
 ### ICellEditor
 
-{% interfaceDocumentation interfaceName="ICellEditor" config={"description": "The ICellEditor interface has the following methods:"} /%}
+{% interfaceDocumentation interfaceName="ICellEditor" /%}
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}

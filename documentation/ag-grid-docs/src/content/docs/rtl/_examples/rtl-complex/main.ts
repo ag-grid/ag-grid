@@ -19,12 +19,10 @@ import { LocaleModule, ModuleRegistry, createGrid } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { CountryCellRenderer } from './country-renderer_typescript';
-import { LANGUAGES } from './data';
+import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
 
 ModuleRegistry.registerModules([AllEnterpriseModule.with(AgChartsEnterpriseModule), LocaleModule]);
-
-const booleanValues = [true, 'true', false, 'false'];
 
 const dataSize: string = '.1x22';
 
@@ -50,6 +48,9 @@ function getAutoGroupColumnDef(): ColDef {
 function getGridOptions(language: string): GridOptions {
     currentLang = LANGUAGES[language];
     return {
+        columnDefs: createCols(),
+        rowData: createRowData(language),
+        context: { COUNTRY_CODES },
         defaultColDef: {
             editable: true,
             minWidth: 100,
@@ -296,21 +297,6 @@ function getColCount() {
     }
 }
 
-function getRowCount() {
-    switch (dataSize) {
-        case '.1x22':
-            return 100;
-        case '1x22':
-            return 1000;
-        case '10x100':
-            return 10000;
-        case '100x22':
-            return 100000;
-        default:
-            return -1;
-    }
-}
-
 function createCols() {
     const colCount = getColCount();
     const defaultCols = createDefaultCols();
@@ -328,104 +314,6 @@ function createCols() {
     }
 
     return columns;
-}
-
-let loadInstance = 0;
-
-function createData() {
-    loadInstance++;
-
-    const loadInstanceCopy = loadInstance;
-    gridApi!.setGridOption('loading', true);
-
-    const colDefs = createCols();
-
-    const rowCount = getRowCount();
-    const colCount = getColCount();
-
-    let row = 0;
-    const data: any[] = [];
-
-    const intervalId = setInterval(() => {
-        if (loadInstanceCopy != loadInstance) {
-            clearInterval(intervalId);
-            return;
-        }
-
-        for (let i = 0; i < 1000; i++) {
-            if (row < rowCount) {
-                const rowItem = createRowItem(row, colCount);
-                data.push(rowItem);
-                row++;
-            }
-        }
-
-        if (row >= rowCount) {
-            clearInterval(intervalId);
-            setTimeout(() => {
-                gridApi!.setGridOption('columnDefs', colDefs);
-                gridApi!.setGridOption('rowData', data);
-                gridApi!.setGridOption('loading', false);
-            }, 0);
-        }
-    }, 0);
-}
-
-function createRowItem(row: number, colCount: number) {
-    const rowItem: any = {};
-
-    const countries = currentLang.countries;
-    const countriesToPickFrom = Math.floor(countries.length * (((row % 3) + 1) / 3));
-    const countryData = countries[(row * 19) % countriesToPickFrom];
-    rowItem.country = countryData.country;
-    rowItem.continent = countryData.continent;
-    rowItem.language = countryData.language;
-
-    const firstName = currentLang.firstNames[row % currentLang.firstNames.length];
-    const lastName = currentLang.lastNames[row % currentLang.lastNames.length];
-    rowItem.name = firstName + ' ' + lastName;
-
-    rowItem.game = {
-        name: currentLang.games[Math.floor(((row * 13) / 17) * 19) % currentLang.games.length],
-        bought: booleanValues[row % booleanValues.length],
-    };
-
-    rowItem.bankBalance = Math.round(pseudoRandom() * 10000000) / 100 - 3000;
-    rowItem.rating = Math.round(pseudoRandom() * 5);
-
-    let totalWinnings = 0;
-    for (let i = 0, len = currentLang.months.length; i < len; ++i) {
-        const value = Math.round(pseudoRandom() * 10000000) / 100 - 20;
-        rowItem['month_' + i] = value;
-        totalWinnings += value;
-    }
-    rowItem.totalWinnings = totalWinnings;
-
-    const defaultColCount = 22;
-    for (let col = defaultColCount; col < colCount; col++) {
-        const randomBit = pseudoRandom().toString().substring(2, 5);
-        rowItem['col' + col] =
-            currentLang.colNames[col % currentLang.colNames.length] +
-            '-' +
-            randomBit +
-            ' - (' +
-            (row + 1) +
-            ',' +
-            col +
-            ')';
-    }
-
-    return rowItem;
-}
-
-let seed = 123456789;
-const m = Math.pow(2, 32);
-const a = 1103515245;
-const c = 12345;
-
-function pseudoRandom() {
-    seed = (a * seed + c) % m;
-    return seed / m;
 }
 
 function selectionChanged(event: SelectionChangedEvent) {
@@ -579,15 +467,12 @@ function onLanguageChange() {
     const select = document.querySelector<HTMLSelectElement>('#language')!;
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
-    seed = 123456789;
     gridApi.destroy();
     gridApi = createGrid(gridDiv, getGridOptions(select.value));
-    createData();
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
     gridApi = createGrid(gridDiv, getGridOptions('arabic'));
-    createData();
 });

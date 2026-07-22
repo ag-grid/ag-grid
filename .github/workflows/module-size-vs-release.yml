@@ -5,6 +5,21 @@ on:
     branches:
       - 'latest'
       - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
+    # Only re-measure vs the release baseline when a change could actually move bundle
+    # sizes: grid source, its build config, dependency manifests, or the module-size
+    # measurement infra. Skips config/docs-only merges. workflow_dispatch is unaffected.
+    paths:
+      - 'packages/**'
+      - 'community-modules/**'
+      - 'yarn.lock'
+      - 'nx.json'
+      - 'tsconfig.*.json'
+      # module-size measurement infrastructure
+      - 'testing/module-size/**'
+      - 'testing/module-size-angular/**'
+      - '.github/workflows/module-size-vs-release.yml'
+      - '.github/actions/module-size-test/**'
+      - 'scripts/ci/*module-size*'
   workflow_dispatch:
     inputs:
       release_tag:

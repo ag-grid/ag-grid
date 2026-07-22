@@ -700,6 +700,45 @@ describe('Column API', () => {
             expect(pinnedEvents[0].pinned).toBe('left');
             expect(pinnedEvents[1].pinned).toBe('right');
         });
+
+        test('animates the reflow when pinning a column', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            });
+            await asyncSetTimeout(0);
+            expect(document.querySelector('.ag-column-moving')).toBeNull();
+
+            api.setColumnsPinned(['c'], 'left');
+
+            // colAnimation tags the grid body while the pinned col and the gap it leaves slide.
+            expect(document.querySelector('.ag-column-moving')).not.toBeNull();
+            await new GridColumns(api, 'pin animation').checkColumns(`
+                LEFT
+                └── c width:200
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('suppressColumnMoveAnimation skips the pinning animation', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                suppressColumnMoveAnimation: true,
+            });
+            await asyncSetTimeout(0);
+
+            api.setColumnsPinned(['c'], 'left');
+
+            expect(document.querySelector('.ag-column-moving')).toBeNull();
+            await new GridColumns(api, 'pin without animation').checkColumns(`
+                LEFT
+                └── c width:200
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+        });
     });
 
     describe('column moving API', () => {

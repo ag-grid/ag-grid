@@ -17,4 +17,12 @@ export interface ComponentType<TComp = any> {
     cellRenderer?: boolean;
     mandatoryMethods?: (keyof TComp & string)[];
     optionalMethods?: (keyof TComp & string)[];
+    /**
+     * Set to true to force display:block on the .ag-react-wrapper element around custom react components
+     *
+     * By default the .ag-react-wrapper element around react custom components is display:contents so as not to break
+     * flex child behaviour. But when the grid positions or measures the React wrapper element itself (e.g.
+     * absolutely-positioned tooltips and drag images), the wrapper must be display:block.
+     */
+    requiresBlockWrapper?: boolean;
 }

@@ -180,9 +180,10 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         valueExtractor: (cellValueChange: CellValueChange) => any,
         source: string
     ) {
-        const { changeDetectionSvc } = this.beans;
-        changeDetectionSvc?.beginDeferred();
+        const { changeDetectionSvc, editSvc } = this.beans;
+        editSvc?.beginBulkWrite();
         try {
+            changeDetectionSvc?.beginDeferred();
             for (const cellValueChange of action.cellValueChanges) {
                 const { rowIndex, rowPinned, columnId } = cellValueChange;
                 const rowPosition: RowPosition = { rowIndex, rowPinned };
@@ -198,6 +199,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
             }
         } finally {
             changeDetectionSvc?.endDeferred();
+            editSvc?.endBulkWrite();
         }
     }
 

@@ -99,6 +99,8 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         version: '34',
         message: 'Advanced filter no longer uses function evaluation, so this option has no effect.',
     },
+
+    suppressContentVisibilityAuto: { version: '36.1', message: 'Use `enableContentVisibilityAuto` instead.' },
 });
 
 function toConstrainedNum(key: keyof GridOptions, value: any, min: number): string | ValidationWarning | null {
@@ -141,9 +143,11 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     grandTotalRow: ['CsrmHierarchy', 'ServerSideRowModel'],
     initialState: 'GridState',
     isExternalFilterPresent: 'ExternalFilter',
+    isMasterOpenByDefault: 'MasterDetail',
     isRowPinnable: 'PinnedRow',
     isRowPinned: 'PinnedRow',
     localeText: 'Locale',
+    masterDefaultExpanded: 'MasterDetail',
     masterDetail: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'MasterDetail',
     notesDataSource: 'Notes',
@@ -328,6 +332,12 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
 
         groupDefaultExpanded: {
+            supportedRowModels: ['clientSide'],
+        },
+        masterDefaultExpanded: {
+            supportedRowModels: ['clientSide'],
+        },
+        isMasterOpenByDefault: {
             supportedRowModels: ['clientSide'],
         },
         groupHideColumnsUntilExpanded: {

@@ -53,7 +53,9 @@ const postBuildMinificationPlugin = {
         /** @param {string} outputFile */
         const minifyFile = async (outputFile) => {
             try {
-                if (outputFile.endsWith('.map')) return;
+                if (outputFile.endsWith('.map')) {
+                    return;
+                }
 
                 writeState.get(outputFile)?.abort();
                 const abortController = new AbortController();
@@ -63,13 +65,17 @@ const postBuildMinificationPlugin = {
 
                 const contents = await fs.readFile(path.resolve(outputFile), 'utf-8');
 
-                if (signal.aborted) return;
+                if (signal.aborted) {
+                    return;
+                }
                 const minified = await esbuild.transform(contents, {
                     minify: true,
                     sourcemap: true,
                 });
 
-                if (signal.aborted) return;
+                if (signal.aborted) {
+                    return;
+                }
                 const { name, ext } = path.parse(outputFile);
                 const minifiedFile = path.resolve(path.dirname(outputFile), `${name}.min${ext}`);
                 await Promise.all([
@@ -77,12 +83,18 @@ const postBuildMinificationPlugin = {
                     fs.writeFile(`${minifiedFile}.map`, minified.map, { signal }),
                 ]);
             } catch (e) {
-                if (e.name !== 'AbortError') throw e;
+                if (e.name !== 'AbortError') {
+                    throw e;
+                }
             }
         };
 
         build.onEnd(async (result) => {
-            await Promise.all(Object.keys(result.metafile.outputs).map(minifyFile));
+            const metafile = result.metafile;
+            if (!metafile) {
+                return; // On failure esbuild omits metafile and reports its own errors; bail so we don't mask them with a crash.
+            }
+            await Promise.all(Object.keys(metafile.outputs).map(minifyFile));
         });
     },
 };
@@ -125,7 +137,7 @@ if (typeof require === 'undefined') {
 };
 
 const plugins = [cssPlugin];
-let outExtension = {};
+let outExtension;
 if (/:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '')) {
     plugins.push(umdWrapperAdaptorPlugin);
     outExtension = {

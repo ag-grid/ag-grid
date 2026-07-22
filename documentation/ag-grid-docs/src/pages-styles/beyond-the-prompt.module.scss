@@ -25,6 +25,14 @@ $btp-card: #ffffff;
     --btp-border: #{$btp-border};
     --btp-card: #{$btp-card};
 
+    // Retint the design-system input focus/hover styling — normally AG blue — to
+    // brand orange: `--color-input-shadow-focus` is the focus ring, and
+    // `--color-input-border-hover` is the focus/hover border. Scoped to `.page`,
+    // so only this page's form controls turn orange; the site header/search sit
+    // outside `.page` and keep the site-wide blue untouched.
+    --color-input-shadow-focus: #{rgba($btp-orange, 0.3)};
+    --color-input-border-hover: #{$btp-orange};
+
     background: var(--btp-bg);
     color: var(--btp-ink);
     font-family:
@@ -96,7 +104,13 @@ $btp-card: #ffffff;
 
 .eyebrowAccent {
     composes: eyebrow;
+    gap: 6px;
     color: var(--btp-orange);
+
+    :global(.icon) {
+        --icon-size: 14px;
+        --icon-color: var(--btp-orange);
+    }
 }
 
 // ─── Layout primitives ───────────────────────────────────────────────────────
@@ -187,6 +201,9 @@ $btp-card: #ffffff;
     align-items: center;
     gap: 12px;
     margin-bottom: 8px;
+    // The AG Grid logo SVG carries a little internal left padding, so the lockup
+    // reads as offset from the copy below. Nudge the row left to compensate.
+    margin-left: -12px;
 }
 
 // Recolour brand logos to match the page's brand orange (#f43800).
@@ -272,15 +289,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     aspect-ratio: 16 / 9;
     overflow: hidden;
     border-radius: 8px;
-    background: #000;
-
-    iframe {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-    }
+    // Light card backdrop behind the transparent recap PNG — a little lighter
+    // than the page bg (#f2f2f2) so the recap frame lifts off the page slightly.
+    background: #fbfbfb;
 }
 
 // Custom thumbnail + play button shown until the keynote is clicked, when the
@@ -372,6 +383,19 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
             --icon-color: var(--btp-orange);
         }
     }
+}
+
+// "New" callout marking the upcoming NYC edition in the hero meta row. A filled
+// orange pill with white text so the future date lifts off the row of muted
+// logistics copy; inherits the row's Geist Mono uppercase sizing.
+.heroMetaNewBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--btp-orange);
+    color: #fff;
+    font-weight: 600;
 }
 
 // ─── Hero faces (right side) ─────────────────────────────────────────────────
@@ -529,6 +553,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 .heroContent > *:nth-child(5) {
     animation-delay: 360ms;
 }
+.heroContent > *:nth-child(6) {
+    animation-delay: 450ms;
+}
 
 .heroFace {
     animation: btp-hero-face-in 820ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -601,23 +628,23 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
-.btnSecondary {
+// Hero CTA: outlined (not filled) — brand-orange border with an uppercase mono
+// label, echoing the page's eyebrow/tab treatment. Inverts to a filled orange
+// pill on hover.
+.heroNotifyBtn {
     composes: btn;
     background: transparent;
-    color: var(--btp-ink) !important;
     border-color: var(--btp-ink);
-
-    :global(.icon) {
-        --icon-color: var(--btp-ink);
-    }
+    color: var(--btp-ink);
+    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
 
     &:hover {
         background: var(--btp-ink);
-        color: #fff !important;
-
-        :global(.icon) {
-            --icon-color: #fff;
-        }
+        color: #fff;
     }
 }
 
@@ -753,7 +780,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
 // ─── Full-width section title rule ───────────────────────────────────────────
 // Editorial banner that replaces the large `.sectionTitle` heading on the
-// At a glance / Speakers / Full schedule / The venue sections. Top + bottom
+// At a glance / Speakers / Full schedule sections. Top + bottom
 // borders span the full viewport width; the label uses Geist Mono uppercase
 // to echo the section nav at the top of the page.
 .sectionRule {
@@ -766,17 +793,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         padding: 22px 0;
         margin-bottom: 64px;
     }
-}
-
-.page .sectionRuleTitle {
-    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--btp-ink);
-    text-align: center;
-    margin: 0;
 }
 
 // When a `.sectionLead` follows the full-width rule, it lives inside the
@@ -793,7 +809,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 // (separate from the cards), so the adjacent-sibling `+` rule above can't
 // reach across the wrapping containers. Mirror the same gap by pushing the
 // `.container` that immediately follows the lead's container down instead.
-// Speakers and Venue keep `.sectionLead` and their grids inside a single
+// The Speakers section keeps `.sectionLead` and its grid inside a single
 // `.container`, so that pattern continues to use the rule above.
 .container:has(> .sectionLead) + .container {
     margin-top: 32px;
@@ -851,6 +867,21 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 // ─── Speakers ────────────────────────────────────────────────────────────────
 .programmeSection {
     composes: section;
+}
+
+// Marks the Talks/Speakers programme as the London edition of the series.
+// Centred mono caps above the tab row, in full brand orange so it reads as a
+// heading over the muted tab labels. Nested under `.page` to beat the `.page p`
+// reset's margin.
+.page .programmeLocation {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--btp-ink);
 }
 
 .programmeTabs {
@@ -1426,56 +1457,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
-// ─── Venue ───────────────────────────────────────────────────────────────────
-.venueSection {
-    composes: section;
-
-    // Page-scoped container override (mirrors the same pattern used by `.hero`).
-    // The Savoy line drawing reads better at a generous size, so on wide
-    // screens we let the venue's `.container` stretch wider than the standard
-    // 1320px page container. Both class names live in this CSS module so the
-    // selector is hashed locally — no other section/page is affected.
-    .container {
-        max-width: 1480px;
-    }
-}
-
-// Single hero image of the venue. No card chrome — we want the line drawing
-// to read as a piece of editorial illustration sitting directly on the page.
-.venueGrid {
-    display: flex;
-    justify-content: center;
-}
-
-.venueSlide {
-    position: relative;
-    margin: 0;
-    width: 100%;
-    // Allow the figure to fill the (now wider) venue container all the way
-    // out to the section's max width. Previously capped at 960px, which
-    // looked dwarfed inside the page container.
-    max-width: 100%;
-}
-
-.venueImage {
-    display: block;
-    width: 100%;
-    height: auto;
-}
-
-// The "IET London" CTA sits directly under the illustration and links out to
-// Google Maps. Centred and given breathing room so it reads as a deliberate
-// closing beat for the section rather than a footer afterthought.
-.venueCta {
-    display: flex;
-    justify-content: center;
-    margin-top: 32px;
-
-    @media (min-width: 900px) {
-        margin-top: 40px;
-    }
-}
-
 // ─── Photo gallery (continuous marquee) ──────────────────────────────────────
 .gallerySection {
     composes: section;
@@ -1637,4 +1618,140 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         height: 100%;
         border: 0;
     }
+}
+
+// ─── Notify me (Mailchimp signup) ────────────────────────────────────────────
+// Closing CTA for the upcoming New York edition. The Mailchimp embed keeps its
+// functional attributes (action, field names, honeypot) but wears the page's
+// own controls — no Mailchimp default classes reach the DOM.
+.notify {
+    composes: section;
+    border-top: 1px solid var(--btp-border);
+}
+
+// Two-column CTA on desktop: the pitch on the left, the signup form on the
+// right. Collapses to a single stacked column on narrow screens.
+.notifyInner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: start;
+
+    @media (min-width: 900px) {
+        grid-template-columns: 1fr 1fr;
+        gap: 64px;
+    }
+}
+
+.notify .sectionHeader {
+    margin-bottom: 0;
+}
+
+.notifyLead {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--btp-ink-muted);
+}
+
+// Fields read left-aligned inside the centred column so labels and the
+// permissions copy scan naturally.
+.notifyForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.notifyField {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.notifyLabel {
+    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--btp-ink);
+}
+
+// Nested under `.page` to win over the global design-system input styling
+// (`input[type="email"]:where(...)`, specificity 0,1,1), which would otherwise
+// override the radius, border, and padding with the generic site input look.
+.page .notifyInput {
+    width: 100%;
+    margin: 0;
+    padding: 14px 18px;
+    border-radius: 999px;
+    border: 1.5px solid var(--btp-border);
+    background: var(--btp-card);
+    color: var(--btp-ink);
+    font-family: 'Geist', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1;
+    transition: border-color 0.2s ease;
+
+    &::placeholder {
+        color: var(--btp-ink-muted);
+        opacity: 0.7;
+    }
+
+    &:focus {
+        outline: none;
+        border-color: var(--btp-orange);
+    }
+}
+
+.notifyGdpr {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid var(--btp-border);
+    border-radius: 12px;
+}
+
+.notifyGdprText {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--btp-ink-muted);
+
+    a {
+        color: var(--btp-orange);
+        text-decoration: underline;
+    }
+}
+
+.notifyCheckbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--btp-ink);
+    cursor: pointer;
+
+    input {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--btp-orange);
+        cursor: pointer;
+    }
+}
+
+// The design system paints checkboxes as a custom box (appearance: none +
+// var(--color-input-bg-checked), i.e. AG blue), so accent-color has no effect.
+// Repaint the checked state in brand orange. `.page` + [type] lifts this past
+// the design-system :checked rule (specificity 0,3,1) so it wins cleanly, and
+// `.page` keeps it scoped to this page only.
+.page .notifyCheckbox input[type='checkbox']:checked {
+    background-color: var(--btp-orange);
+    border-color: var(--btp-orange);
+}
+
+.notifySubmit {
+    composes: btnPrimary;
+    width: 100%;
+    margin-top: 4px;
 }

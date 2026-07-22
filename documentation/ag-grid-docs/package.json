@@ -2,7 +2,7 @@
   "name": "ag-grid-docs",
   "description": "Documentation for AG Grid",
   "type": "module",
-  "version": "36.0.0-beta.20260713.1111",
+  "version": "36.0.0-beta.20260719.2054",
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
@@ -53,17 +53,17 @@
     "@tweenjs/tween.js": "^18.6.4",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
-    "ag-charts-angular": "14.0.0-beta.20260712",
-    "ag-charts-community": "14.0.0-beta.20260712",
-    "ag-charts-enterprise": "14.0.0-beta.20260712",
-    "ag-charts-types": "14.0.0-beta.20260712",
-    "ag-charts-react": "14.0.0-beta.20260712",
-    "ag-charts-vue3": "14.0.0-beta.20260712",
-    "ag-grid-angular": "36.0.0-beta.20260713.1111",
-    "ag-grid-community": "36.0.0-beta.20260713.1111",
-    "ag-grid-enterprise": "36.0.0-beta.20260713.1111",
-    "ag-grid-react": "36.0.0-beta.20260713.1111",
-    "ag-grid-vue3": "36.0.0-beta.20260713.1111",
+    "ag-charts-angular": "14.0.0-beta.20260719",
+    "ag-charts-community": "14.0.0-beta.20260719",
+    "ag-charts-enterprise": "14.0.0-beta.20260719",
+    "ag-charts-types": "14.0.0-beta.20260719",
+    "ag-charts-react": "14.0.0-beta.20260719",
+    "ag-charts-vue3": "14.0.0-beta.20260719",
+    "ag-grid-angular": "36.0.0-beta.20260719.2054",
+    "ag-grid-community": "36.0.0-beta.20260719.2054",
+    "ag-grid-enterprise": "36.0.0-beta.20260719.2054",
+    "ag-grid-react": "36.0.0-beta.20260719.2054",
+    "ag-grid-vue3": "36.0.0-beta.20260719.2054",
     "algoliasearch": "^5.51.0",
     "astro": "6.1.9",
     "cheerio": "^1.0.0",
@@ -102,7 +102,6 @@
     "playwright": "^1.59.1",
     "playwright-ctrf-json-reporter": "0.0.29",
     "prettier-plugin-astro": "^0.14.1",
-    "vite-plugin-mkcert": "^1.17.8",
-    "vitest": "2.1.9"
+    "vite-plugin-mkcert": "^1.17.8"
   }
 }

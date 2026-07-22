@@ -5,6 +5,7 @@ import React, { useEffect } from 'react';
 
 import { AllCommunityModule, ModuleRegistry, agTestIdFor, setupAgTestIds } from 'ag-grid-community';
 import type { CellRendererSelectorResult, ColDef, GridApi } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 
@@ -12,7 +13,7 @@ import { asyncSetTimeout, ignoreConsoleLicenseKeyError, mockGridLayout } from '.
 
 describe('Tooltips (React)', () => {
     beforeAll(() => {
-        ModuleRegistry.registerModules([AllCommunityModule]);
+        ModuleRegistry.registerModules([AllCommunityModule, RowGroupingModule]);
         setupAgTestIds();
     });
     beforeEach(() => ignoreConsoleLicenseKeyError());
@@ -127,6 +128,48 @@ describe('Tooltips (React)', () => {
         expect(hasTooltipText('Cell renderer tooltip')).toBe(false);
         expect(getTooltips().length).toBeLessThanOrEqual(1);
         expect(getTooltips()[0]).toHaveTextContent('ColDef tooltip');
+    });
+
+    test('AG-5004 aggregated group-row cell tooltips the aggregated value (React)', async () => {
+        let api: GridApi | undefined;
+        const columnDefs: ColDef[] = [
+            { field: 'country', rowGroup: true, hide: true },
+            { field: 'value', aggFunc: 'sum', tooltipField: 'value' },
+        ];
+
+        const rendered = render(
+            <div style={{ height: 400, width: 600 }}>
+                <AgGridReact
+                    columnDefs={columnDefs}
+                    rowData={[
+                        { country: 'AU', value: 2 },
+                        { country: 'AU', value: 4 },
+                    ]}
+                    tooltipShowDelay={200}
+                    onGridReady={(params) => {
+                        api = params.api;
+                    }}
+                />
+            </div>
+        );
+
+        const gridDiv = rendered.container;
+        let groupRowId: string | undefined;
+        await waitFor(() => {
+            api!.forEachNode((node) => {
+                if (node.group && node.key === 'AU') {
+                    groupRowId = node.id ?? undefined;
+                }
+            });
+            expect(groupRowId).toBeDefined();
+        });
+
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell(groupRowId!, 'value')));
+
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitFor(() => expect(getTooltips().length).toBe(1));
+        expect(getTooltips()[0]).toHaveTextContent('6');
     });
 
     describe('whenTruncated (React)', () => {

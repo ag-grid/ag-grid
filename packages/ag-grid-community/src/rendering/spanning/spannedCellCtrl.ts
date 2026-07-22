@@ -8,6 +8,7 @@ import type { CellPosition } from '../../interfaces/iCellPosition';
 import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellComp } from '../cell/cellCtrl';
 import { CellCtrl } from '../cell/cellCtrl';
+import { _applySpanHeight } from '../cell/cellPositionFeature';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from './rowSpanCache';
 
@@ -21,6 +22,20 @@ export class SpannedCellCtrl extends CellCtrl {
         beans: BeanCollection
     ) {
         super(cellSpan.col, cellSpan.firstNode, beans, rowCtrl);
+
+        // A reused CellSpan keeps its ctrl across rowData changes but its coverage can change, so the
+        // rendered height and aria-rowspan (both applied once on mount) must be re-derived on the
+        // cache-rebuild events. _setupCellPosition cannot wire this up because cellSpan is a
+        // parameter property still unassigned during super().
+        const refreshSpan = () => {
+            _applySpanHeight(this);
+            this.setAriaRowSpan();
+        };
+        this.addManagedListeners(beans.eventSvc, {
+            paginationChanged: refreshSpan,
+            recalculateRowBounds: refreshSpan,
+            pinnedHeightChanged: refreshSpan,
+        });
     }
 
     private focusedCellPosition: CellPosition | undefined;
@@ -39,6 +54,8 @@ export class SpannedCellCtrl extends CellCtrl {
         this.setAriaRowSpan();
     }
 
+    // Must stay a plain literal, independent of getCellSpan(): _setupCellPosition runs during super()
+    // where the cellSpan parameter property is still unassigned, so getCellSpan() cannot be relied on.
     public override isCellSpanning(): boolean {
         return true;
     }
@@ -62,6 +79,9 @@ export class SpannedCellCtrl extends CellCtrl {
      * When cell is spanning, ensure row index is also available on the cell
      */
     private setAriaRowSpan(): void {
+        if (!this.eGui) {
+            return;
+        }
         _setAriaRowSpan(this.eGui, this.cellSpan.spannedNodes.size);
     }
 

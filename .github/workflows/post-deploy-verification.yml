@@ -81,7 +81,7 @@ jobs:
 
       - name: Publish CTRF Report
         if: always()
-        uses: ctrf-io/github-test-reporter@v1
+        uses: ctrf-io/github-test-reporter@e500b992f936420eb633c91644cf10d4d71df700 # v1.1.0
         with:
           report-path: 'reports/ag-grid-examples-interactive-default.json'
 
@@ -111,20 +111,17 @@ jobs:
             --json headSha,conclusion \
             --jq '.[0] // {}')
 
-          PREV_SHA=$(echo "$PREV" | jq -r '.headSha // ""')
-          PREV_CONCLUSION=$(echo "$PREV" | jq -r '.conclusion // ""')
-          CURRENT="${{ steps.run_tests.outcome }}"
-
-          echo "sha=${PREV_SHA}" >> $GITHUB_OUTPUT
-
-          if [ "$PREV_CONCLUSION" != "$CURRENT" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "changed=false" >> $GITHUB_OUTPUT
-          fi
+          echo "sha=$(echo "$PREV" | jq -r '.headSha // ""')" >> $GITHUB_OUTPUT
+          echo "outcome=$(echo "$PREV" | jq -r '.conclusion // ""')" >> $GITHUB_OUTPUT
 
       - name: Notify Slack
-        if: always() && steps.run_tests.outcome == 'failure'
+        # Always notify on failure. On success, only notify if the previous run
+        # failed - a "back to green" signal - so a routine passing run doesn't
+        # spam the channel.
+        if: >
+          always() &&
+          (steps.run_tests.outcome == 'failure' ||
+           (steps.run_tests.outcome == 'success' && steps.prev_run.outputs.outcome == 'failure'))
         uses: ./external/ag-shared/github/actions/slack-integration
         with:
           AG_LIBRARY: grid

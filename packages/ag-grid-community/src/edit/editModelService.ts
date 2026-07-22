@@ -13,6 +13,7 @@ import type {
     EditValidationMap,
     EditValue,
     GetEditsParams,
+    ReadonlyEditMap,
 } from '../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -22,6 +23,8 @@ export class EditModelService extends BeanStub implements NamedBean {
     public beanName = 'editModelSvc' as const;
 
     private readonly edits: EditMap = new Map();
+    // O(1) count of 'editing'-state edits so hasOpenEditors avoids scanning the map (`state` is the truth).
+    private editingCount = 0;
     private cellValidations: EditCellValidationModel = new EditCellValidationModel();
     private rowValidations: EditRowValidationModel = new EditRowValidationModel();
 
@@ -32,6 +35,10 @@ export class EditModelService extends BeanStub implements NamedBean {
         this.suspendEdits = suspend;
     }
 
+    public hasOpenEditors(): boolean {
+        return this.editingCount > 0;
+    }
+
     public removeEdits({ rowNode, column }: EditPosition): void {
         if (!this.hasEdits({ rowNode }) || !rowNode) {
             return;
@@ -40,8 +47,16 @@ export class EditModelService extends BeanStub implements NamedBean {
         const editRow = this.getEditRow(rowNode)!;
 
         if (column) {
+            if (editRow.get(column)?.state === 'editing') {
+                this.editingCount--;
+            }
             editRow.delete(column);
         } else {
+            editRow.forEach((edit) => {
+                if (edit.state === 'editing') {
+                    this.editingCount--;
+                }
+            });
             editRow.clear();
         }
 
@@ -50,7 +65,7 @@ export class EditModelService extends BeanStub implements NamedBean {
         }
     }
 
-    public getEditRow(rowNode: IRowNode, params: GetEditsParams = {}): EditRow | undefined {
+    public getEditRow(rowNode: IRowNode, checkSiblings?: boolean): EditRow | undefined {
         if (this.suspendEdits) {
             return undefined;
         }
@@ -65,7 +80,7 @@ export class EditModelService extends BeanStub implements NamedBean {
             return edits;
         }
 
-        if (params.checkSiblings) {
+        if (checkSiblings) {
             const pinnedSibling = (rowNode as RowNode).pinnedSibling;
             if (pinnedSibling) {
                 return this.getEditRow(pinnedSibling);
@@ -75,79 +90,67 @@ export class EditModelService extends BeanStub implements NamedBean {
         return undefined;
     }
 
-    public getEditRowDataValue(rowNode: IRowNode, { checkSiblings }: GetEditsParams = {}): any {
+    public getEditRowDataValue(rowNode: IRowNode): any {
         if (!rowNode || this.edits.size === 0) {
             return undefined;
         }
 
-        // don't check siblings via getEditRow parameter, as we want to combine edits from the row and its siblings
+        // Merge the row AND its pinned sibling, so we can't use getEditRow's checkSiblings (returns one or the other).
         const editRow = this.getEditRow(rowNode);
         const pinnedSibling = (rowNode as RowNode).pinnedSibling;
-        const siblingRow = checkSiblings && pinnedSibling && this.getEditRow(pinnedSibling);
+        const siblingRow = pinnedSibling ? this.getEditRow(pinnedSibling) : undefined;
 
         if (!editRow && !siblingRow) {
             return undefined;
         }
 
         const data: any = { ...rowNode.data };
-
-        const applyEdits = (edits: EditRow, data: any) =>
-            edits.forEach(({ editorValue, pendingValue }, column) => {
-                const value = editorValue === undefined ? pendingValue : editorValue;
-                if (value !== UNEDITED) {
-                    data[column.getColId()] = value;
-                }
-            });
-
         if (editRow) {
-            applyEdits(editRow, data);
+            applyEditsToData(editRow, data);
         }
-
         if (siblingRow) {
-            applyEdits(siblingRow, data);
+            applyEditsToData(siblingRow, data);
         }
 
         return data;
     }
 
-    public getEdit(position: EditPosition = {}, params?: GetEditsParams): EditValue | undefined {
-        const { rowNode, column } = position;
-        const edits = this.edits;
-        if (this.suspendEdits || edits.size === 0 || !rowNode || !column) {
-            return undefined; // no edits or incomplete position
-        }
-
-        // Check the row's edits first
-        const edit = edits.get(rowNode)?.get(column);
-        if (edit) {
-            return edit; // found edit for the cell
-        }
-
-        // If checkSiblings, also check the pinned sibling for the column
-        if (params?.checkSiblings) {
-            const pinnedSibling = (rowNode as RowNode).pinnedSibling;
-            if (pinnedSibling) {
-                return edits.get(pinnedSibling)?.get(column); // return edit from pinned sibling if found
-            }
-        }
-
-        return undefined;
+    public getEdit(position: EditPosition = {}): EditValue | undefined {
+        return this.getCellEdit(position.rowNode, position.column);
     }
 
-    public getEditMap(copy = true): EditMap {
-        if (this.suspendEdits || this.edits.size === 0) {
-            return new Map();
+    /** Direct single-cell lookup — allocation-free, no pinned-sibling fallback (see {@link getCellEditWithSibling}). */
+    public getCellEdit(rowNode: IRowNode | null | undefined, column: Column | null | undefined): EditValue | undefined {
+        const edits = this.edits;
+        if (edits.size === 0 || this.suspendEdits || !rowNode || !column) {
+            return undefined; // no edits or incomplete position
         }
+        return edits.get(rowNode)?.get(column);
+    }
 
-        if (!copy) {
-            return this.edits;
+    /** Single-cell lookup that falls back to the pinned sibling, since pinned rows mirror their sibling's edits. */
+    public getCellEditWithSibling(
+        rowNode: IRowNode | null | undefined,
+        column: Column | null | undefined
+    ): EditValue | undefined {
+        return this.getCellEdit(rowNode, column) ?? this.getCellEdit((rowNode as RowNode)?.pinnedSibling, column);
+    }
+
+    /** The live edit map, or null while edits are suspended. Read-only: mutating it would break editingCount. */
+    public getEditMap(): ReadonlyEditMap | null {
+        return this.suspendEdits ? null : this.edits;
+    }
+
+    /** A deep copy of the edit map — a mutable snapshot, safe to hold and mutate across model changes. */
+    public getEditMapCopy(): EditMap {
+        const map: EditMap = new Map();
+        if (this.suspendEdits) {
+            return map;
         }
-
-        const map = new Map<IRowNode, Map<Column, EditValue>>();
         this.edits.forEach((editRow, rowNode) => {
             const newEditRow = new Map<Column, EditValue>();
             editRow.forEach(({ editorState: _, ...cellData }, column) =>
-                // Ensure we copy the cell data to avoid reference issues
+                // Copy the cell data so the snapshot is decoupled from the live model.
                 newEditRow.set(column, { ...cellData } as EditValue)
             );
             map.set(rowNode, newEditRow);
@@ -155,25 +158,39 @@ export class EditModelService extends BeanStub implements NamedBean {
         return map;
     }
 
-    public setEditMap(newEdits: EditMap): void {
-        this.edits.clear();
+    public setEditMap(newEdits: ReadonlyEditMap): void {
+        // newEdits may alias this.edits (getEditMap returns it), so build the copy before clearing.
+        const rebuilt = new Map<IRowNode, Map<Column, EditValue>>();
+        let editingCount = 0;
         newEdits.forEach((editRow, rowNode) => {
             const newRow = new Map<Column, EditValue>();
-            editRow.forEach((cellData, column) =>
-                // Ensure we copy the cell data to avoid reference issues
-                newRow.set(column, { ...cellData })
-            );
-            this.edits.set(rowNode, newRow);
+            editRow.forEach((cellData, column) => {
+                if (cellData.state === 'editing') {
+                    editingCount++;
+                }
+                newRow.set(column, { ...cellData });
+            });
+            rebuilt.set(rowNode, newRow);
         });
+
+        const edits = this.edits;
+        edits.clear();
+        rebuilt.forEach((row, rowNode) => edits.set(rowNode, row));
+        this.editingCount = editingCount;
     }
 
     public setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): Readonly<EditValue> {
+        const { rowNode, column } = position;
         const edits = this.edits;
-        if (edits.size === 0 || !edits.has(position.rowNode)) {
-            edits.set(position.rowNode, new Map());
+        let editRow = edits.get(rowNode);
+        if (!editRow) {
+            editRow = new Map<Column, EditValue>();
+            edits.set(rowNode, editRow);
         }
 
-        const currentEdit = this.getEdit(position);
+        // Matches getEdit's suspend semantics: while suspended there is no current edit to merge onto.
+        const existing = editRow.get(column);
+        const currentEdit = this.suspendEdits ? undefined : existing;
 
         const updatedEdit: EditValue = {
             editorState: {
@@ -184,7 +201,14 @@ export class EditModelService extends BeanStub implements NamedBean {
             ...edit,
         } as EditValue;
 
-        this.getEditRow(position.rowNode)!.set(position.column, updatedEdit);
+        // Track the 'editing' population from the actual stored state before/after the write.
+        const wasEditing = existing?.state === 'editing';
+        const nowEditing = updatedEdit.state === 'editing';
+        if (wasEditing !== nowEditing) {
+            this.editingCount += nowEditing ? 1 : -1;
+        }
+
+        editRow.set(column, updatedEdit);
 
         return updatedEdit;
     }
@@ -196,6 +220,9 @@ export class EditModelService extends BeanStub implements NamedBean {
         }
 
         const update = (edit: EditValue) => {
+            if (edit.state === 'editing') {
+                this.editingCount--;
+            }
             edit.editorValue = undefined;
             edit.pendingValue = edit.sourceValue;
             // Reverting to sourceValue is always 'changed' (i.e. "no longer editing").
@@ -242,7 +269,7 @@ export class EditModelService extends BeanStub implements NamedBean {
         return positions;
     }
 
-    public hasRowEdits(rowNode: IRowNode, params?: GetEditsParams): boolean {
+    public hasRowEdits(rowNode: IRowNode, checkSiblings?: boolean): boolean {
         if (this.suspendEdits) {
             return false;
         }
@@ -251,7 +278,7 @@ export class EditModelService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const rowEdits = this.getEditRow(rowNode, params);
+        const rowEdits = this.getEditRow(rowNode, checkSiblings);
         return !!rowEdits;
     }
 
@@ -267,7 +294,7 @@ export class EditModelService extends BeanStub implements NamedBean {
         const { rowNode, column } = position;
         const { withOpenEditor } = params;
         if (rowNode) {
-            const rowEdits = this.getEditRow(rowNode, params);
+            const rowEdits = this.getEditRow(rowNode, params.checkSiblings);
             if (!rowEdits) {
                 return false;
             }
@@ -290,15 +317,21 @@ export class EditModelService extends BeanStub implements NamedBean {
         }
 
         if (withOpenEditor) {
-            return this.getEditPositions().some(({ state }: any) => state === 'editing');
+            return this.hasOpenEditors();
         }
 
         return this.edits.size > 0;
     }
 
     public start(position: Required<EditPosition>): void {
-        const map = this.getEditRow(position.rowNode) ?? new Map<Column, EditValue>();
         const { rowNode, column } = position;
+        // Read the live row directly (not via getEditRow, which returns undefined while suspended):
+        // replacing an existing row here would drop its editing entries without adjusting editingCount.
+        let map = this.edits.get(rowNode);
+        if (!map) {
+            map = new Map<Column, EditValue>();
+            this.edits.set(rowNode, map);
+        }
         if (column && !map.has(column)) {
             map.set(column, {
                 editorValue: undefined,
@@ -310,8 +343,8 @@ export class EditModelService extends BeanStub implements NamedBean {
                     isCancelBeforeStart: undefined,
                 },
             });
+            this.editingCount++;
         }
-        this.edits.set(rowNode, map);
     }
 
     public stop(position: Required<EditPosition>, preserveBatch: boolean, cancel: boolean): void {
@@ -343,6 +376,7 @@ export class EditModelService extends BeanStub implements NamedBean {
             pendingRowEdits.clear();
         }
         this.edits.clear();
+        this.editingCount = 0;
     }
 
     public getCellValidationModel(): EditCellValidationModel {
@@ -440,3 +474,13 @@ export class EditRowValidationModel {
         this.rowValidations.clear();
     }
 }
+
+/** Merges a row's pending/editor values into a plain data object, skipping UNEDITED cells. */
+const applyEditsToData = (edits: EditRow, data: any): void => {
+    edits.forEach(({ editorValue, pendingValue }, column) => {
+        const value = editorValue === undefined ? pendingValue : editorValue;
+        if (value !== UNEDITED) {
+            data[column.getColId()] = value;
+        }
+    });
+};

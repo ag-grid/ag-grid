@@ -19,6 +19,16 @@ www	/cookies.php	301	/cookies/
 # --- SE-66 apex single-hop (Host: ag-grid.com): one hop straight to the final www URL ---
 apex	/angular-data-grid/cell-rendering/	301	https://www.ag-grid.com/angular-data-grid/component-cell-renderer/
 apex	/charts/react/zoom	301	https://www.ag-grid.com/charts/react/zoom/
+# bullet-series has no standalone page; every framework must land on the linear-gauge anchor in ONE
+# hop, NOT redirect to its own URL and loop. Now mirrored generically for all frameworks and BOTH
+# slash forms (see the charts mirror block in htaccessRules.ts). The # is emitted unescaped ([NE])
+# so it stays a fragment, and the anchor is #bullet-series (NO trailing slash — matches the
+# "## Bullet Series" heading id; the earlier react-only rule wrongly used #bullet-series/).
+apex	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
+www	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
+apex	/charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
+www	/charts/angular/bullet-series	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series
+www	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series
 
 # --- SE-61 main (non-/charts) ---
 www	/javascript-grid-cell-style/	301	/javascript-data-grid/cell-styles/
@@ -37,13 +47,23 @@ www	/ecosystem/	301	/community/tools-extensions/
 www	/charts/core/bar-series/	301	/charts/javascript/bar-series/
 www	/charts/side/axes-types/	301	/charts/javascript/axes-types/
 # Archive: versioned archive docs are live content (the blanket 410 was removed), so a versioned
-# path serves; only the bare archive index redirects, to /documentation-archive. Privacy redirects
-# to the apex policy page (301) — it is not gone.
+# path serves; only the bare archive index redirects, to /documentation-archive.
 www	/charts/archive/13.1.0/javascript/getting-started/	200
 www	/charts/archive/	301	/charts/documentation-archive/
-www	/charts/privacy/	301	https://www.ag-grid.com/privacy/
+# /charts/privacy has no charts-scoped page and must be 410 Gone (NOT a 301 to the apex policy). It
+# is the ONE charts semantic redirect deliberately NOT mirrored into the grid docroot (see
+# htaccessRules.ts), so the charts subdir stays its sole authority: the slashed form hits mod_alias
+# directly for a single 410.
+www	/charts/privacy/	410
 www	/charts/react-charts/react/area-series/	301	/charts/react/area-series/
 www	/charts/javascript/toolbar/	301	/charts/javascript/financial-charts-toolbar/
+
+# --- SE-66 host scoping: the chain-shortening rewrites must NOT force other hosts to www. On the
+# legacy charts host the guard skips them, so these fall through to the generic same-host add-slash
+# (path unchanged) instead of jumping to the www target. If the guard regressed, row 1 would land on
+# /angular-data-grid/grid-api/ (single-hop) and row 2 on /charts/react/linear-gauge/ (mirror). ---
+charts	/angular-grid-api	301	/angular-grid-api/
+charts	/charts/react/bullet-series	301	/charts/react/bullet-series/
 
 # --- Regression: pre-existing redirects must still work unchanged ---
 www	/javascript-grid/	301	/javascript-data-grid/

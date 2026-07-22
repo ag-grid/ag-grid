@@ -117,7 +117,7 @@ function validateDocumentedProperties(propsFile: any, codeConfig: any, source: s
         const msgs: string[] = [];
         if (stale.length) {
             msgs.push(
-                `These ${source} keys are documented but not in the API (checking ${codeSrc}): ${stale.join(', ')}`
+                `These ${source} keys should not be documented - they are either not real APIs or are deprecated (checking ${codeSrc}): ${stale.join(', ')}`
             );
         }
         if (undocumented.length) {

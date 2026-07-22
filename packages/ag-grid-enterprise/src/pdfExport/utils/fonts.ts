@@ -1,4 +1,4 @@
-import type { PdfCellStyle, PdfFontFamily } from 'ag-grid-community';
+import type { PdfCellStyle, PdfFontFamily, PdfFontWeight } from 'ag-grid-community';
 
 const DEFAULT_PDF_FONT_FAMILY: PdfFontFamily = 'Helvetica';
 const PDF_FONT_FAMILIES = new Set<string>([
@@ -51,38 +51,72 @@ export function resolveTextAlignment(value?: string): PdfCellStyle['alignment'] 
 }
 
 /**
- * Map CSS font family/weight values to one of the built-in PDF fonts.
+ * Map a CSS font-family value to one of the built-in PDF fonts.
  * @param fontFamilyValue - CSS `font-family` value.
- * @param fontWeightValue - CSS `font-weight` value.
  * @returns Matching PDF font family, or `undefined` when no mapping exists.
  */
-export function resolveFontFamily(
-    fontFamilyValue?: string,
-    fontWeightValue?: string | number
-): PdfFontFamily | undefined {
-    const baseFamily = mapFontFamily(fontFamilyValue);
-    const isBold = isBoldWeight(fontWeightValue);
+export function resolveFontFamily(fontFamilyValue?: string): PdfFontFamily | undefined {
+    return mapFontFamily(fontFamilyValue);
+}
 
-    if (!baseFamily) {
-        return isBold ? 'Helvetica-Bold' : undefined;
+/**
+ * Resolve a CSS font-weight value to a supported PDF font weight.
+ * @param fontWeightValue - CSS `font-weight` value.
+ * @returns Matching PDF font weight, or `undefined` when no weight was supplied.
+ */
+export function resolveFontWeight(fontWeightValue?: string | number): PdfFontWeight | undefined {
+    if (fontWeightValue == null) {
+        return undefined;
     }
 
-    if (!isBold) {
-        return baseFamily;
+    if (typeof fontWeightValue === 'number') {
+        return Number.isFinite(fontWeightValue) ? (fontWeightValue >= 600 ? 'bold' : 'normal') : undefined;
     }
 
-    switch (baseFamily) {
+    const normalised = String(fontWeightValue).trim().toLowerCase();
+    if (normalised === 'bold' || normalised === 'bolder') {
+        return 'bold';
+    }
+    if (normalised === 'normal' || normalised === 'lighter') {
+        return 'normal';
+    }
+    if (!/^\d+(?:\.\d+)?$/.test(normalised)) {
+        return undefined;
+    }
+
+    return Number.parseFloat(normalised) >= 600 ? 'bold' : 'normal';
+}
+
+/**
+ * Resolve a font family and weight after style inheritance has been applied.
+ * @param fontFamily - Optional style-specific font family.
+ * @param fontWeight - Optional style-specific font weight.
+ * @param fallback - Inherited font family.
+ * @returns Resolved built-in PDF font family.
+ */
+export function resolvePdfFontFamily(
+    fontFamily: PdfFontFamily | undefined,
+    fontWeight: PdfFontWeight | undefined,
+    fallback: PdfFontFamily = DEFAULT_PDF_FONT_FAMILY
+): PdfFontFamily {
+    const resolvedFamily = normalisePdfFontFamily(fontFamily, fallback);
+    if (!fontWeight) {
+        return resolvedFamily;
+    }
+
+    const useBold = fontWeight === 'bold';
+    switch (resolvedFamily) {
         case 'Helvetica':
         case 'Helvetica-Bold':
-            return 'Helvetica-Bold';
+            return useBold ? 'Helvetica-Bold' : 'Helvetica';
         case 'Times-Roman':
         case 'Times-Bold':
-            return 'Times-Bold';
+            return useBold ? 'Times-Bold' : 'Times-Roman';
         case 'Courier':
         case 'Courier-Bold':
-            return 'Courier-Bold';
+            return useBold ? 'Courier-Bold' : 'Courier';
         default:
-            return baseFamily;
+            return resolvedFamily;
     }
 }
 
@@ -128,27 +162,4 @@ function mapFontFamily(fontFamilyValue?: string): PdfFontFamily | undefined {
     }
 
     return undefined;
-}
-
-/**
- * Resolve whether a CSS font-weight should be treated as bold in PDF output.
- * @param fontWeightValue - CSS `font-weight` value.
- * @returns `true` when the weight should use the bold face.
- */
-function isBoldWeight(fontWeightValue?: string | number): boolean {
-    if (fontWeightValue == null) {
-        return false;
-    }
-
-    if (typeof fontWeightValue === 'number') {
-        return fontWeightValue >= 600;
-    }
-
-    const normalised = String(fontWeightValue).trim().toLowerCase();
-    if (normalised === 'bold' || normalised === 'bolder') {
-        return true;
-    }
-
-    const numeric = Number.parseInt(normalised, 10);
-    return Number.isFinite(numeric) && numeric >= 600;
 }

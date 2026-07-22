@@ -196,25 +196,30 @@ test.describe('Page Verification', () => {
         expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
-    test('docs page with an inline example renders a grid', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+    // Sense-check the standalone example runner across frameworks by loading a couple of
+    // examples directly at their framework-specific URLs and asserting the grid renders. This
+    // exercises each framework's example compiler head-on — in particular the vanilla
+    // (JavaScript) build. The docs-page inline runner defaults to the TypeScript variant, so it
+    // can render successfully while the vanilla compiler is broken; loading `/vanilla` directly
+    // is what actually catches that.
+    const exampleRenderChecks = [
+        { pageName: 'getting-started', exampleName: 'quick-start-example' },
+        { pageName: 'row-sorting', exampleName: 'multi-column' },
+    ];
+    for (const { pageName, exampleName } of exampleRenderChecks) {
+        for (const framework of ['reactFunctionalTs', 'vanilla']) {
+            test(`example runner renders a grid: ${pageName}/${exampleName} (${framework})`, async ({ page }) => {
+                const cspViolations = await setupPage(page);
 
-        await page.goto('/react-data-grid/row-sorting/');
-        await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+                // The standalone example page renders the grid directly in the top-level
+                // document (no iframe), unlike the embedded docs-page runner.
+                await page.goto(`/examples/${pageName}/${exampleName}/${framework}`);
+                await expect(page.locator('.ag-root-wrapper')).toBeVisible({ timeout: 30_000 });
 
-        // The iframe uses IntersectionObserver to lazy-load its src.
-        // scrollIntoViewIfNeeded() alone doesn't reliably trigger the observer in headless Chrome —
-        // mouse.wheel() simulates a real scroll event and fires it more reliably.
-        const iframeLocator = page.locator('iframe.exampleRunner').first();
-        await iframeLocator.scrollIntoViewIfNeeded();
-        await page.mouse.wheel(0, 100);
-        await expect(iframeLocator).toHaveAttribute('src', /example-runner/, { timeout: 30_000 });
-
-        const exampleFrame = page.locator('iframe.exampleRunner').first().contentFrame();
-        await expect(exampleFrame.locator('.ag-root-wrapper')).toBeVisible({ timeout: 30_000 });
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
-    });
+                expect(cspViolations, 'CSP violations').toEqual([]);
+            });
+        }
+    }
 
     // --- Product switcher ---
 

@@ -105,6 +105,9 @@ const excludeErrors = [
     'Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content.',
     'Request to access cookie or storage on “<URL>” was blocked because it came from a tracker and Enhanced Tracking Protection is enabled.',
     'This site appears to use a scroll-linked positioning effect.',
+    // Timing-dependent browser warning: a preloaded font occasionally isn't consumed within the
+    // browser's few-second window (e.g. under CI load), emitting a benign warning unrelated to the grid.
+    'preloaded with link preload was not used within a few seconds',
     // AG-17134: staging serves a Content-Security-Policy-Report-Only header with no report endpoint
     // (violations are captured via the securitypolicyviolation JS listener, not report-uri/report-to).
     // Browsers warn that such a policy can't report — benign for our validation window.
@@ -533,6 +536,28 @@ export async function waitForRowAnimations(page: Page) {
         }
         return true;
     });
+}
+
+/**
+ * Assert which row-id occupies a given `row-index` once the grid has settled after a sort.
+ *
+ * A sort that moves a row a long distance animates the outgoing row out over one animation
+ * cycle, during which the DOM briefly holds a second element sharing the moved row's
+ * row-id/row-index, and the moved row may leave the viewport (virtualised out) entirely.
+ * Asserting a specific row's `row-index` is therefore fragile — a strict-mode duplicate while
+ * the animation runs, or element-not-found once the row scrolls out. Reading the row-id at a
+ * fixed, always-rendered index inside a retry rides out that transient.
+ */
+export async function expectRowIdAtIndex(page: Page, rowIndex: number, rowId: string, options: { not?: boolean } = {}) {
+    const row = page.locator(`.ag-grid-scrolling-container .ag-row[row-index="${rowIndex}"]`);
+    await expect(async () => {
+        const actual = await row.getAttribute('row-id');
+        if (options.not) {
+            expect(actual).not.toBe(rowId);
+        } else {
+            expect(actual).toBe(rowId);
+        }
+    }).toPass();
 }
 
 export async function clickAllButtons(page: Page) {

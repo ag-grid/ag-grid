@@ -12,7 +12,7 @@ import {
 } from 'ag-grid-community';
 import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface Row {
     name?: string;
@@ -93,6 +93,10 @@ describe('Multi Filter floating filter keystroke race', () => {
             input.dispatchEvent(new Event('input', { bubbles: true }));
             await asyncSetTimeout(2);
             expect(api.getDisplayedRowCount()).toBe(0);
+            // No name contains 'u', so the applied `u` model empties the grid.
+            await new GridRows(api, "text 'u' applied empties grid").check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             // User continues typing: the live input is now `u8` while still focused, but the new
             // keystroke has not yet flushed through the debounce into the filter model.
@@ -110,6 +114,11 @@ describe('Multi Filter floating filter keystroke race', () => {
             // ...and the applied filter model must converge on the live keystroke, not the stale `u`.
             const model = api.getColumnFilterModel<{ filterModels: ({ filter?: string } | null)[] }>('name');
             expect(model?.filterModels?.[0]?.filter).toBe('u8');
+            // Converged `u8` model matches no name, so the grid stays empty (not reverted to a different set).
+            expect(api.getDisplayedRowCount()).toBe(0);
+            await new GridRows(api, "converged 'u8' model empties grid").check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
 
         test('external model writeback still updates the input when it is not focused', async () => {
@@ -126,6 +135,12 @@ describe('Multi Filter floating filter keystroke race', () => {
             await asyncSetTimeout(2);
 
             expect(input.value).toBe('bob');
+            // The programmatic `contains bob` model filters down to the single matching row.
+            expect(api.getDisplayedRowCount()).toBe(1);
+            await new GridRows(api, "writeback 'bob' filters to one row (blurred)").check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 name:"bob"
+            `);
         });
 
         test('external model writeback updates a focused input when no keystroke is pending', async () => {
@@ -143,6 +158,12 @@ describe('Multi Filter floating filter keystroke race', () => {
             await asyncSetTimeout(2);
 
             expect(input.value).toBe('bob');
+            // Same programmatic model applied while focused still filters to the single matching row.
+            expect(api.getDisplayedRowCount()).toBe(1);
+            await new GridRows(api, "writeback 'bob' filters to one row (focused)").check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 name:"bob"
+            `);
         });
 
         test('number floating filter keystroke is not clobbered by an interleaving filter-changed cycle', async () => {
@@ -176,6 +197,12 @@ describe('Multi Filter floating filter keystroke race', () => {
             expect(input.value).toBe('58');
             const model = api.getColumnFilterModel<{ filter?: number }>('age');
             expect(model?.filter).toBe(58);
+            // Converged `58` equals-model keeps only the age-58 row, not the stale age-5 result.
+            expect(api.getDisplayedRowCount()).toBe(1);
+            await new GridRows(api, "converged age '58' keeps one row").check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 age:58
+            `);
         });
 
         test('typed character survives an interleaving cycle when an apply button is configured', async () => {
@@ -205,6 +232,15 @@ describe('Multi Filter floating filter keystroke race', () => {
             expect(input.value).toBe('mich');
             // Nothing was applied: the apply button still gates the model.
             expect(api.getColumnFilterModel('name')).toBeNull();
+            // Gated keystroke never reaches the model, so no rows are filtered out.
+            expect(api.getDisplayedRowCount()).toBe(4);
+            await new GridRows(api, "gated 'mich' keystroke leaves all rows").check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"michael"
+                ├── LEAF id:1 name:"michelle"
+                ├── LEAF id:2 name:"bob"
+                └── LEAF id:3 name:"alice"
+            `);
         });
     });
 });

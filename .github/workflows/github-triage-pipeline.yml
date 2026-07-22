@@ -36,7 +36,7 @@ on:
                 description: 'Pipeline stage'
                 type: choice
                 default: triage
-                options: [triage, resume, execute]
+                options: [triage, resume, browser-verify, repro-rebuild, execute, open-investigation]
             gh_issue:
                 description: 'GitHub issue number (triage)'
                 type: string
@@ -63,11 +63,12 @@ concurrency:
     cancel-in-progress: false
 
 env:
-    # Defaults to `latest` (inputs is empty on issues / repository_dispatch).
-    # During rollout/dogfood, test unpromoted action changes by manually
-    # dispatching with channel=canary — the github-triage-pipeline action lands
-    # on the canary dist-tag first and reaches `latest` only on promotion.
-    DEV_PROMPTS_CHANNEL: ${{ inputs.channel || 'latest' }}
+    # Defaults to `latest`. A repository_dispatch (the JIRA `→ In Progress` drag)
+    # overrides via client_payload.channel; a workflow_dispatch via inputs.channel.
+    # During rollout/dogfood the JIRA rule sends "channel":"canary" so the drag runs
+    # the unpromoted action (canary dist-tag → `latest` only on promotion); drop the
+    # payload channel at activation so production drags run the promoted `latest`.
+    DEV_PROMPTS_CHANNEL: ${{ github.event.client_payload.channel || inputs.channel || 'latest' }}
 
 jobs:
     # -------------------------------------------------- preflight
@@ -99,6 +100,7 @@ jobs:
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
 
     # -------------------------------------------------- run
     # The parameterised stage runner (triage / resume / execute). Runs on the
@@ -136,3 +138,4 @@ jobs:
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}

@@ -48,9 +48,10 @@ export class SortService extends BeanStub implements NamedBean {
 
     public setSortForColumn(column: AgColumn, sortDef: SortDef, multiSort: boolean, source: ColumnEventType): void {
         const { gos, showRowGroupCols } = this.beans;
+        const coupled = _isColumnsSortingCoupledToGroup(gos);
 
         const columnsToUpdate: AgColumn[] = [column];
-        if (column.showRowGroup && _isColumnsSortingCoupledToGroup(gos)) {
+        if (column.showRowGroup && coupled) {
             const rowGroupColumns = showRowGroupCols?.getSourceColumnsForGroupColumn?.(column);
             for (let i = 0, len = rowGroupColumns?.length ?? 0; i < len; ++i) {
                 const col = rowGroupColumns![i];
@@ -63,14 +64,38 @@ export class SortService extends BeanStub implements NamedBean {
         for (let i = 0, len = columnsToUpdate.length; i < len; ++i) {
             this.setColSort(columnsToUpdate[i], sortDef, source);
         }
+
+        const displayCol = coupled ? column.showRowGroupCol : null;
+        if (displayCol) {
+            columnsToUpdate.push(displayCol);
+        }
+
         const doingMultiSort = (multiSort || gos.get('alwaysMultiSort')) && !gos.get('suppressMultiSort');
         const updatedColumns = doingMultiSort ? [] : this.clearSortBarTheseColumns(columnsToUpdate, source);
+
+        // Must run after clearSortBarTheseColumns, which may clear sibling sources in single-sort mode.
+        if (displayCol) {
+            this.setColSort(displayCol, this.getCoupledGroupSortDef(displayCol), source);
+        }
 
         this.updateSortIndex(column);
         for (let i = 0, len = columnsToUpdate.length; i < len; ++i) {
             updatedColumns.push(columnsToUpdate[i]);
         }
         this.dispatchSortChangedEvents(source, updatedColumns);
+    }
+
+    /** A coupled display group col's own sortDef derived from its source cols: the first sorted source's
+     *  def (only its truthiness matters — the arrow is source-derived), or unsorted when none is sorted. */
+    private getCoupledGroupSortDef(displayCol: AgColumn): SortDef {
+        const sourceCols = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(displayCol);
+        for (let i = 0, len = sourceCols?.length ?? 0; i < len; ++i) {
+            const sortDef = sourceCols![i].getSortDef();
+            if (sortDef) {
+                return sortDef;
+            }
+        }
+        return getSortDefFromInput();
     }
 
     private updateSortIndex(lastColToChange: AgColumn) {

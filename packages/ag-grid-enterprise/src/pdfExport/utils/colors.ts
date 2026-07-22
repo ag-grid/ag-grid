@@ -1,6 +1,5 @@
 import type { PdfCellStyle } from 'ag-grid-community';
 
-import { isTransparentColorValue } from './pdfColor';
 import type { StyleValueMap } from './styleValues';
 import { readStyleString } from './styleValues';
 
@@ -94,12 +93,25 @@ export function resolvePdfCellStyleColors(
         return undefined;
     }
 
-    return {
-        ...style,
-        color: resolveCssColorValue(style.color, resolveColor),
-        backgroundColor: resolveCssColorValue(style.backgroundColor, resolveColor),
-        borderColor: resolveCssColorValue(style.borderColor, resolveColor),
-    };
-}
+    const result = { ...style };
 
-export { isTransparentColorValue };
+    if (style.color) {
+        result.color = resolveCssColorValue(style.color, resolveColor);
+    } else {
+        delete result.color;
+    }
+
+    if (style.backgroundColor) {
+        result.backgroundColor = resolveCssColorValue(style.backgroundColor, resolveColor);
+    } else {
+        delete result.backgroundColor;
+    }
+
+    if (style.borderColor) {
+        result.borderColor = resolveCssColorValue(style.borderColor, resolveColor);
+    } else {
+        delete result.borderColor;
+    }
+
+    return result;
+}

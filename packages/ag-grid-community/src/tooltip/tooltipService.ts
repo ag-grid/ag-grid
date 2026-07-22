@@ -147,6 +147,20 @@ const resolveTooltipFieldValue = (
     return data[tooltipField];
 };
 
+// A group row whose cell value comes from aggregation (or a derived value on a data-less group node)
+// tooltips that aggregated value rather than the underlying tooltipField — mirrors
+// fullWidthRowFeature.setupGroupRowsTooltip / autoColService.
+const usesGroupRowAggregatedValue = (beans: BeanCollection, ctrl: CellCtrl): boolean => {
+    const { rowNode, column } = ctrl;
+    if (!rowNode.group) {
+        return false;
+    }
+    if (!rowNode.data) {
+        return true;
+    }
+    return !beans.valueSvc.displayIgnoresAggData(rowNode) && rowNode.aggData?.[column.colId] !== undefined;
+};
+
 const resolveCellTooltip = ({
     beans,
     ctrl,
@@ -200,12 +214,28 @@ const resolveCellTooltip = ({
     const data = rowNode.data;
 
     // 4) column tooltip field/valueGetter is the final fallback.
-    if (colDef.tooltipField && _exists(data)) {
-        return {
-            value: resolveTooltipFieldValue(beans, column, rowNode, data, colDef.tooltipField),
-            location: 'cell',
-            shouldDisplay: shouldDisplayColumnTooltip,
-        };
+    if (colDef.tooltipField) {
+        if (usesGroupRowAggregatedValue(beans, ctrl)) {
+            // The aggregated value unformatted and before any showValuesAs transform, so it stays consistent
+            // with a leaf-row tooltipField, which shows the underlying data value rather than the cell text.
+            return {
+                value: beans.valueSvc.getValueForDisplay({
+                    column,
+                    node: rowNode,
+                    from: 'edit',
+                    transformValues: false,
+                }).value,
+                location: 'cell',
+                shouldDisplay: shouldDisplayColumnTooltip,
+            };
+        }
+        if (_exists(data)) {
+            return {
+                value: resolveTooltipFieldValue(beans, column, rowNode, data, colDef.tooltipField),
+                location: 'cell',
+                shouldDisplay: shouldDisplayColumnTooltip,
+            };
+        }
     }
 
     const valueGetter = colDef.tooltipValueGetter;

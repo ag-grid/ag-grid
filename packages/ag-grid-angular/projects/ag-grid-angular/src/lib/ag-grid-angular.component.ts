@@ -149,6 +149,7 @@ import type {
     IsExternalFilterPresent,
     IsFullWidthRow,
     IsGroupOpenByDefault,
+    IsMasterOpenByDefault,
     IsRowFilterable,
     IsRowMaster,
     IsRowPinnable,
@@ -1420,6 +1421,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input() public groupDefaultExpanded: number | undefined = undefined;
+    /** Master Detail: set to the number of levels of master rows to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. If not set, falls back to `groupDefaultExpanded`.
+     * @agModule `MasterDetailModule`
+     */
+    @Input() public masterDefaultExpanded: number | undefined = undefined;
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
      * Cell tooltip properties set here (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
      * @agModule `RowGroupingModule` / `TreeDataModule`
@@ -1895,11 +1900,22 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressRowTransform: boolean | undefined = undefined;
-    /** Set to `false` to enable `content-visibility: auto` on the grid wrapper element. This improves performance by allowing the browser to skip rendering grids that are off screen, but may cause issues if your application depends on receiving resize events from hidden grids.
+    /** Setting this option to false is equivalent to setting `enableContentVisibilityAuto` to true. If both are set, `enableContentVisibilityAuto` takes precedence.
      * @default true
      * @initial
+     * @deprecated v36.1 use enableContentVisibilityAuto instead
      */
     @Input({ transform: booleanAttribute }) public suppressContentVisibilityAuto: boolean | undefined = undefined;
+    /** Set to `true` to enable `content-visibility: auto` on the grid wrapper element. This improves performance by allowing the browser to skip rendering grids that are off screen. JavaScript size measurement APIs like `offsetWidth` or `getBoundingClientRect` will report zero size when the grid is off-screen. This means that APIs that need to measure the size of DOM elements, like `sizeColumnsToFit` will not work either. To ensure that `autoSizeStrategy` works, content-visibility:auto will only be applied 1000ms after rendering the first data. This can be customised with `contentVisibilityAutoDelay`
+     * @default false
+     * @initial
+     */
+    @Input({ transform: booleanAttribute }) public enableContentVisibilityAuto: boolean | undefined = undefined;
+    /** The delay in ms between the firstDataRendered event and enabling content-visibility:auto on the grid wrapper element
+     * @default 1000
+     * @initial
+     */
+    @Input() public contentVisibilityAutoDelay: number | undefined = undefined;
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
      * @default false
      * @agModule `ColumnHoverModule`
@@ -2075,10 +2091,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input() public getGroupRowAgg: GetGroupRowAgg<TData> | undefined = undefined;
-    /** (Client-side Row Model only) Allows groups to be open by default.
+    /** (Client-side Row Model only) Allows group rows to be open by default. For master rows use `isMasterOpenByDefault`.
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input() public isGroupOpenByDefault: IsGroupOpenByDefault<TData> | undefined = undefined;
+    /** (Client-side Row Model only) Master Detail: allows master rows to be open by default.
+     * @agModule `MasterDetailModule`
+     */
+    @Input() public isMasterOpenByDefault: IsMasterOpenByDefault<TData> | undefined = undefined;
     /** Controls how expand/collapse operations affect all rows and group interactions.
      * If `true`, expandAll / collapseAll applies to all rows (not just loaded ones),
      * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.

@@ -14,7 +14,6 @@ ag-grid-angular {
     background-color: var(--ag-wrapper-background-color);
 
     &.ag-layout-normal {
-        content-visibility: auto;
         height: 100%;
     }
 }

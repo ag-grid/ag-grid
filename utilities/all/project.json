@@ -57,6 +57,14 @@
         "update": {}
       }
     },
+    "test:workspace": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["./behave.sh"],
+        "cwd": "{workspaceRoot}"
+      },
+      "cache": false
+    },
     "test:e2e": {
       "executor": "nx:run-commands",
       "options": {

@@ -3,9 +3,11 @@
  * multi-sort, column changes, pivot mode, coupled group sorting, postSortRows,
  * suppressMultiSort, sortingOrder, defaultColDef.sort, and data mutations.
  */
+import { waitFor } from '@testing-library/dom';
+
 import type { Column, GridApi, SortModelItem } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { ColumnMenuModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
@@ -1470,6 +1472,48 @@ describe('SortService', () => {
             label?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         }
 
+        const menuGridMgr = new TestGridsManager({
+            modules: [ClientSideRowModelModule, ColumnMenuModule],
+        });
+
+        let restoreOffsetParent: (() => void) | undefined;
+
+        function enableOffsetParentPolyfill(): void {
+            if (restoreOffsetParent) {
+                return;
+            }
+            const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
+            Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+                configurable: true,
+                get(this: HTMLElement) {
+                    return this.closest('.ag-measurement-container') ? null : this.parentElement;
+                },
+            });
+            restoreOffsetParent = () => {
+                if (original) {
+                    Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
+                }
+                restoreOffsetParent = undefined;
+            };
+        }
+
+        async function clickMenuOption(name: string): Promise<void> {
+            const option = await waitFor(() => {
+                const text = Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option-text')).find(
+                    (el) => el.textContent?.trim() === name
+                );
+                const menuOption = text?.closest<HTMLElement>('.ag-menu-option');
+                expect(menuOption).toBeTruthy();
+                return menuOption!;
+            });
+            option.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        }
+
+        afterEach(() => {
+            menuGridMgr.reset();
+            restoreOffsetParent?.();
+        });
+
         test('default sort orders by signed value and shows the default direction icon', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [{ colId: 'n', field: 'n' }],
@@ -1496,7 +1540,7 @@ describe('SortService', () => {
             `);
         });
 
-        test('absolute sort applied to a column that does not declare it still orders by magnitude, but shows no absolute icon', async () => {
+        test('absolute sort applied to a column that does not declare it orders by magnitude and shows the absolute icon', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [{ colId: 'n', field: 'n' }],
                 rowData: signedRowData,
@@ -1511,7 +1555,26 @@ describe('SortService', () => {
             api.applyColumnState({ state: [{ colId: 'n', sort: 'asc', sortType: 'absolute' }] });
             await asyncSetTimeout(0);
             expect(rowOrder(api)).toEqual(['3', '2', '1']);
-            expect(visibleSortIcons(api, 'n')).toEqual([]);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-absolute-ascending-icon']);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:asc
+            `);
+        });
+
+        test('absolute sort applied via applyColumnState that is not in the provided sortingOrder orders by magnitude and shows the absolute icon', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'n', field: 'n', sortingOrder: ['asc', 'desc', null] }],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+
+            // The provided sortingOrder declares only the default asc/desc entries; the applied
+            // absolute sort matches no item in it, yet the icon still reflects the applied sort.
+            api.applyColumnState({ state: [{ colId: 'n', sort: 'asc', sortType: 'absolute' }] });
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['3', '2', '1']);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-absolute-ascending-icon']);
             await new GridColumns(api).checkColumns(`
                 CENTER
                 └── n "N" width:200 sort:asc
@@ -1537,18 +1600,18 @@ describe('SortService', () => {
             expect(state.sortType).toBe('absolute');
         });
 
-        test('changing colDefs re-resolves available sort types: an absolute sortingOrder makes the absolute icon appear for the same absolute sort', async () => {
+        test('the absolute icon shows for an applied absolute sort before and after an explicit absolute sortingOrder is configured', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [{ colId: 'n', field: 'n' }],
                 rowData: signedRowData,
                 getRowId: (p) => p.data.id,
             });
 
-            // Plain column: absolute not declared -> absolute sort runs, but no absolute icon.
+            // Plain column: absolute not declared -> absolute sort runs and shows the absolute icon.
             api.applyColumnState({ state: [{ colId: 'n', sort: 'asc', sortType: 'absolute' }] });
             await asyncSetTimeout(0);
             expect(rowOrder(api)).toEqual(['3', '2', '1']);
-            expect(visibleSortIcons(api, 'n')).toEqual([]);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-absolute-ascending-icon']);
             await new GridColumns(api).checkColumns(`
                 CENTER
                 └── n "N" width:200 sort:asc
@@ -1668,6 +1731,35 @@ describe('SortService', () => {
             await new GridColumns(api).checkColumns(`
                 CENTER
                 └── n "N" width:200
+            `);
+        });
+
+        test('absolute sort applied via the column menu on a column with the default sorting order orders by magnitude and shows the absolute icon', async () => {
+            const api = menuGridMgr.createGrid('menu-abs', {
+                columnDefs: [
+                    {
+                        colId: 'n',
+                        field: 'n',
+                        mainMenuItems: ['sortAbsoluteAscending', 'sortAbsoluteDescending'],
+                    },
+                ],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+            await asyncSetTimeout(0);
+            expect(visibleSortIcons(api, 'n')).toEqual([]);
+
+            enableOffsetParentPolyfill();
+            api.showColumnMenu('n');
+            await clickMenuOption('Sort Absolute Ascending');
+            await asyncSetTimeout(0);
+
+            expect(rowOrder(api)).toEqual(['3', '2', '1']);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-absolute-ascending-icon']);
+            expect(api.getColumnState().find((s) => s.colId === 'n')?.sortType).toBe('absolute');
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:asc sortIndex:0
             `);
         });
     });

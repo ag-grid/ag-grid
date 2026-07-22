@@ -423,9 +423,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
             }
         };
 
-        const { changeDetectionSvc } = this.beans;
-        changeDetectionSvc?.beginDeferred();
+        const { changeDetectionSvc, editSvc } = this.beans;
+        editSvc?.beginBulkWrite();
         try {
+            changeDetectionSvc?.beginDeferred();
             if (isVertical) {
                 initialRange.columns.forEach((col: AgColumn) => {
                     iterateAcrossCells(col);
@@ -436,9 +437,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
             }
             // Stop the editor inside the deferred block so the commit (if any) is included
             // in the same doAggregate pass as the fill writes.
-            this.beans.editSvc?.stopEditing(undefined, { source: 'fillHandle' });
+            editSvc?.stopEditing(undefined, { source: 'fillHandle' });
         } finally {
             changeDetectionSvc?.endDeferred();
+            editSvc?.endBulkWrite();
         }
     }
 

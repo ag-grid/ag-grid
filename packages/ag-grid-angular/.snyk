@@ -1,6 +1,23 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-ESBUILD-17750822:
+    - ng-packagr@20.3.2 > esbuild@0.25.12:
+        reason: >-
+            Downstream dependency of angular - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:48:19.056Z
+    - '@angular/build@20.3.30 > vite@7.3.5 > esbuild@0.27.7':
+        reason: >-
+            Downstream dependency of angular - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:48:15.733Z
+  SNYK-JS-PISCINA-17817071:
+    - ng-packagr@20.3.2 > piscina@5.1.4:
+        reason: >-
+            Downstream dependency of angular - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T09:42:07.983Z
   SNYK-JS-ANGULARCORE-17353317:
     - '@angular/core@20.3.21':
         reason: >-

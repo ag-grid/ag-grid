@@ -1,4 +1,5 @@
 import { BeanStub } from '../context/beanStub';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { ExportParams } from '../interfaces/exportParams';
 import type { GridSerializingSession } from './iGridSerializer';
 
@@ -16,6 +17,25 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         }
 
         return fileName.includes('.') ? fileName : `${fileName}.${extension}`;
+    }
+
+    /** Resolve the configured file name (string or getter) to a complete file name with extension. */
+    protected resolveFileName(mergedParams: P): string {
+        const { fileName } = mergedParams;
+        const providedFileName =
+            typeof fileName === 'function' ? fileName(_addGridCommonParams(this.gos, {})) : fileName;
+
+        return this.getFileName(providedFileName);
+    }
+
+    /** Run an export function, showing a transient export overlay when the overlay service is present. */
+    protected runExport(exportFunc: () => void): void {
+        const { overlays } = this.beans;
+        if (overlays) {
+            overlays.showExportOverlay(exportFunc);
+        } else {
+            exportFunc();
+        }
     }
 
     protected getData(params: P): string {

@@ -16,6 +16,9 @@ export interface IColsService {
     /** Dispatch this service's staged change (if any); called by {@link ColumnModel.flushColChanges}. */
     dispatchColChange(source: ColumnEventType): void;
 
+    /** Re-stamp active-col indexes once if a staged change moved the set; called by {@link ColumnModel.flushColChanges}. */
+    flushReindex(): void;
+
     setColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void;
     addColumns(keys: (ColKey | null | undefined)[] | undefined, source: ColumnEventType): void;
     removeColumns(keys: (ColKey | null | undefined)[] | undefined, source: ColumnEventType): void;

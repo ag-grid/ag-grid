@@ -130,7 +130,6 @@
         white-space: normal;
 
         &.ag-layout-normal {
-            content-visibility: auto;
             height: 100%;
         }
     }
@@ -861,11 +860,6 @@
         z-index: 1;
     }
 
-    .ag-row-dragging {
-        // dragged rows must float above inline editors.
-        z-index: 2;
-    }
-
     .ag-stub-cell {
         display: flex;
         align-items: center;
@@ -1343,6 +1337,9 @@
         // grid-managed popups must sit above overlays and row content.
         z-index: 5;
         top: 0;
+        // never let a popup grow wider than the viewport (100% exactly matches viewport for
+        // body popupParent, 100vw-30px leaves room for scrollbars when popupParent is narrower)
+        max-width: min(100%, calc(100vw - 30px));
     }
 
     .ag-popup-editor {
@@ -1541,6 +1538,8 @@
         position: absolute;
         // tooltips must sit above all in-grid layers and popups.
         z-index: 99999;
+        // break long words so the tooltip stays within its constrained width.
+        overflow-wrap: break-word;
     }
 
     .ag-tooltip-custom {

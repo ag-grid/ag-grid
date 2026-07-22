@@ -11,20 +11,14 @@ const COLUMNS = [
 @Component({
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
+    host: { class: 'ag-toolbar-item winners-toggle' },
     template: `
-        <div class="ag-toolbar-item" style="display: flex; gap: 12px; padding: 8px;">
-            @for (option of options; track option.column) {
-                <label style="display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;">
-                    <input
-                        type="checkbox"
-                        [checked]="checked[option.column]"
-                        (change)="onChange(option.column, $event)"
-                        style="margin: 0;"
-                    />
-                    {{ option.label }}
-                </label>
-            }
-        </div>
+        @for (option of options; track option.column) {
+            <label class="winners-toggle-item">
+                <input type="checkbox" [checked]="checked[option.column]" (change)="onChange(option.column, $event)" />
+                {{ option.label }}
+            </label>
+        }
     `,
 })
 export class WinnersToggle implements IToolbarItemAngularComp, OnDestroy {

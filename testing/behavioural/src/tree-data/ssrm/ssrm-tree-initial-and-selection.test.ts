@@ -216,6 +216,17 @@ describe('ag-grid SSRM treeData initial-load & selection (characterization)', ()
     // (B) SELECTION (groupSelects: 'descendants') × Tree-data
     // ---------------------------------------------------------------------------------------
     describe('selection (groupSelects descendants) x tree-data', () => {
+        // These tests deliberately read selection via `getSelectedNodes()` under SSRM + groupSelects,
+        // which the grid warns (#202) is unreliable — that warning is exactly the behaviour being pinned.
+        let warnSpy: ReturnType<typeof vi.spyOn>;
+        beforeEach(() => {
+            warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        });
+        afterEach(() => {
+            expect(warnSpy.mock.calls.flat().join(' ')).toContain('#202');
+            warnSpy.mockRestore();
+        });
+
         function createSelectionGrid(gridId: string) {
             const requests: RecordedRequest[] = [];
             const fakeServer = createFakeServer(getSmallTreeDataSet());

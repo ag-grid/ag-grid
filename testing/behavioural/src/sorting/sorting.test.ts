@@ -2,6 +2,7 @@ import { getByTestId } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
@@ -472,5 +473,192 @@ describe('Sorting', () => {
             ├── LEAF id:c-b amount:5
             └── LEAF id:c-c amount:-3
         `);
+    });
+
+    describe('coupled group sort via row group panel chip', () => {
+        const groupGridMgr = new TestGridsManager({
+            modules: [ClientSideRowModelModule, RowGroupingModule, RowGroupingPanelModule],
+        });
+
+        afterEach(() => groupGridMgr.reset());
+
+        test('clearing the group column sort via the country chip clears its sort-order badge', async () => {
+            const api = await groupGridMgr.createGridAndWait('coupled-group-chip-sort', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true, sortable: true },
+                    { field: 'year', sortable: true },
+                ],
+                autoGroupColumnDef: { headerName: 'Group' },
+                rowGroupPanelShow: 'always',
+                rowData: [
+                    { country: 'Ireland', year: 2000 },
+                    { country: 'Ireland', year: 2004 },
+                    { country: 'Spain', year: 2008 },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const groupSortOrderEl = () =>
+                gridDiv.querySelector('.ag-header-cell[col-id="ag-Grid-AutoColumn"] .ag-sort-order');
+            const groupHeaderLabel = () =>
+                gridDiv.querySelector(
+                    '.ag-header-cell[col-id="ag-Grid-AutoColumn"] .ag-header-cell-label'
+                ) as HTMLElement;
+            const countryChip = () => {
+                const chip = gridDiv.querySelector(
+                    '.ag-column-drop-horizontal-rowgroup .ag-column-drop-cell'
+                ) as HTMLElement | null;
+                if (!chip) {
+                    throw new Error('country chip not found in the row group panel');
+                }
+                return chip;
+            };
+            const shiftClick = (el: HTMLElement) =>
+                el.dispatchEvent(new MouseEvent('click', { shiftKey: true, bubbles: true, cancelable: true }));
+            const shown = (el: Element | null | undefined) => !!el && !el.classList.contains('ag-hidden');
+            const groupArrowShown = () => {
+                const header = gridDiv.querySelector('.ag-header-cell[col-id="ag-Grid-AutoColumn"]');
+                return (
+                    shown(header?.querySelector('.ag-sort-ascending-icon')) ||
+                    shown(header?.querySelector('.ag-sort-descending-icon')) ||
+                    shown(header?.querySelector('.ag-sort-mixed-icon'))
+                );
+            };
+            const yearSort = () => api.getColumnState().find((s) => s.colId === 'year')?.sort ?? null;
+
+            // Sort year (single), then shift-add the group column via its header → multi-sort; the group
+            // column joins the sort and shows an ordinal badge + a sort arrow.
+            api.applyColumnState({ state: [{ colId: 'year', sort: 'asc' }], defaultState: { sort: null } });
+            await asyncSetTimeout(1);
+            shiftClick(groupHeaderLabel());
+            await asyncSetTimeout(1);
+            expect(shown(groupSortOrderEl())).toBe(true);
+            expect(groupSortOrderEl()?.textContent).toMatch(/^\d+$/);
+            expect(groupArrowShown()).toBe(true);
+
+            // Shift-click the country chip once: cycles the group column's sort asc → desc; still sorted, still badged.
+            shiftClick(countryChip());
+            await asyncSetTimeout(1);
+            expect(shown(groupSortOrderEl())).toBe(true);
+            expect(groupSortOrderEl()?.textContent).toMatch(/^\d+$/);
+
+            // Shift-click again: cycles desc → none. With the group column's sort cleared, its header must show
+            // neither the sort-order index badge (AC1) nor a sort arrow (AC2), while year stays sorted.
+            shiftClick(countryChip());
+            await asyncSetTimeout(1);
+            expect(shown(groupSortOrderEl())).toBe(false);
+            expect(groupArrowShown()).toBe(false);
+            expect(yearSort()).toBe('asc');
+        });
+
+        test('single-sort clearing one source chip leaves no stale group sort when a sibling source was still sorted', async () => {
+            const api = await groupGridMgr.createGridAndWait('coupled-multi-source-chip-clear', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true, sortable: true },
+                    { field: 'sport', rowGroup: true, hide: true, sortable: true },
+                    { field: 'year', sortable: true },
+                ],
+                autoGroupColumnDef: { headerName: 'Group' },
+                rowGroupPanelShow: 'always',
+                rowData: [
+                    { country: 'Ireland', sport: 'Rowing', year: 2000 },
+                    { country: 'Spain', sport: 'Swimming', year: 2004 },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const groupHeaderLabel = () =>
+                gridDiv.querySelector(
+                    '.ag-header-cell[col-id="ag-Grid-AutoColumn"] .ag-header-cell-label'
+                ) as HTMLElement;
+            const chipByText = (re: RegExp) => {
+                const chips = Array.from(
+                    gridDiv.querySelectorAll('.ag-column-drop-horizontal-rowgroup .ag-column-drop-cell')
+                ) as HTMLElement[];
+                const chip = chips.find((c) => re.test(c.textContent ?? ''));
+                if (!chip) {
+                    throw new Error(`row group panel chip matching ${re} not found`);
+                }
+                return chip;
+            };
+            const click = (el: HTMLElement) =>
+                el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+            const groupCol = () => api.getColumn('ag-Grid-AutoColumn')!;
+
+            // Single-sort the coupled group column to 'desc' via its header (two clicks). Both source
+            // columns (country, sport) and the display column end up sorted 'desc'.
+            click(groupHeaderLabel());
+            await asyncSetTimeout(1);
+            click(groupHeaderLabel());
+            await asyncSetTimeout(1);
+            expect(groupCol().getSort()).toBe('desc');
+            expect(api.getColumn('country')!.getSort()).toBe('desc');
+            expect(api.getColumn('sport')!.getSort()).toBe('desc');
+
+            // Single-click the country chip: cycles country 'desc' → none. In single-sort mode this also
+            // clears the still-sorted sibling 'sport'. With every source now unsorted, the group column
+            // must not read the about-to-be-cleared 'sport' sort — its own sort/index must clear too.
+            click(chipByText(/country/i));
+            await asyncSetTimeout(1);
+            expect(api.getColumn('country')!.getSort()).toBeFalsy();
+            expect(api.getColumn('sport')!.getSort()).toBeFalsy();
+            expect(groupCol().getSort()).toBeFalsy();
+            expect(groupCol().getSortIndex()).toBeFalsy();
+        });
+
+        test('multi-sort clearing one source chip leaves the group column sorted while a sibling source stays sorted', async () => {
+            const api = await groupGridMgr.createGridAndWait('coupled-multi-source-chip-multi-sort', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true, sortable: true },
+                    { field: 'sport', rowGroup: true, hide: true, sortable: true },
+                    { field: 'year', sortable: true },
+                ],
+                autoGroupColumnDef: { headerName: 'Group' },
+                rowGroupPanelShow: 'always',
+                rowData: [
+                    { country: 'Ireland', sport: 'Rowing', year: 2000 },
+                    { country: 'Spain', sport: 'Swimming', year: 2004 },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const chipByText = (re: RegExp) => {
+                const chips = Array.from(
+                    gridDiv.querySelectorAll('.ag-column-drop-horizontal-rowgroup .ag-column-drop-cell')
+                ) as HTMLElement[];
+                const chip = chips.find((c) => re.test(c.textContent ?? ''));
+                if (!chip) {
+                    throw new Error(`row group panel chip matching ${re} not found`);
+                }
+                return chip;
+            };
+            const shiftClick = (el: HTMLElement) =>
+                el.dispatchEvent(new MouseEvent('click', { shiftKey: true, bubbles: true, cancelable: true }));
+            const groupCol = () => api.getColumn('ag-Grid-AutoColumn')!;
+
+            // Multi-sort both group sources via their chips: country asc, then sport asc (shift-add). Both
+            // sources and the coupled display column are sorted.
+            shiftClick(chipByText(/country/i));
+            await asyncSetTimeout(1);
+            shiftClick(chipByText(/sport/i));
+            await asyncSetTimeout(1);
+            expect(api.getColumn('country')!.getSort()).toBe('asc');
+            expect(api.getColumn('sport')!.getSort()).toBe('asc');
+            expect(groupCol().getSort()).toBe('asc');
+
+            // Shift-click the country chip twice: cycles country asc → desc → none, clearing only that source
+            // (multi-sort leaves siblings alone). country is the FIRST source, so the display column must skip
+            // it and read the still-sorted sport sibling — staying sorted rather than clearing.
+            shiftClick(chipByText(/country/i));
+            await asyncSetTimeout(1);
+            shiftClick(chipByText(/country/i));
+            await asyncSetTimeout(1);
+            expect(api.getColumn('country')!.getSort()).toBeFalsy();
+            expect(api.getColumn('sport')!.getSort()).toBe('asc');
+            expect(groupCol().getSort()).toBe('asc');
+        });
     });
 });

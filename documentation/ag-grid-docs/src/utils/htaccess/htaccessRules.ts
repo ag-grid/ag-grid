@@ -32,6 +32,7 @@ const modExpiresRules = `
 
     ExpiresByType application/json "access plus 1 hour"
     ExpiresByType text/html "access plus 1 hour"
+    ExpiresByType text/markdown "access plus 1 hour"
     ExpiresByType text/plain "access plus 1 hour"
     ExpiresByType text/richtext "access plus 1 hour"
     ExpiresByType text/xml "access plus 1 hour"
@@ -66,6 +67,7 @@ const modDeflateRules = `
     AddOutputFilterByType DEFLATE text/css
     AddOutputFilterByType DEFLATE text/html
     AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/markdown
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/xml
 
@@ -77,6 +79,51 @@ const modDeflateRules = `
 </IfModule>
 `;
 
+// SE-80: the RewriteCond/RewriteRule lines that serve the per-page markdown variant
+// on `Accept: text/markdown`, shared by the production and staging .htaccess so the
+// rule can't drift between them. Indented 4 spaces for use inside a mod_rewrite block.
+// The negotiation is an internal rewrite (no redirect, URL unchanged), gated by an
+// on-disk check so a path without a .md is left untouched. %1 is the docs path
+// captured below, reused in both the -f test and the rewrite target.
+const markdownNegotiationRules = `    RewriteCond %{HTTP_ACCEPT} text/markdown
+    RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline)/?$
+    RewriteCond %{DOCUMENT_ROOT}/%1.md -f
+    RewriteRule ^ /%1.md [L]`;
+
+// Staging has no redirect rewrites, so negotiation gets its own minimal mod_rewrite
+// block. Production embeds the same rules inside its existing block instead.
+const markdownNegotiationBlock = `<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # SE-80: content-negotiate docs pages to their markdown variant on Accept: text/markdown.
+${markdownNegotiationRules}
+</IfModule>`;
+
+// SE-80: docs pages content-negotiate on the Accept header (see the markdown rewrite
+// above), so shared caches must key on it — otherwise they could serve the markdown
+// variant to a browser, or HTML to an agent. Scoped to the docs paths so the rest of
+// the site keeps its default (URL-only) cache key.
+const markdownVaryHeader = `# SE-80: docs pages content-negotiate on Accept (see the markdown rewrite), so shared
+# caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
+<If "%{REQUEST_URI} =~ m#^/((react|angular|vue|javascript)-data-grid/|(license-pricing|changelog|pipeline)/?$)#">
+    Header append Vary Accept
+</If>`;
+
+// SE-81: agent-useful Link response header. Gives AI agents a machine-readable pointer
+// to the key resources without parsing the page first: rel=describedby -> /llms.txt,
+// rel=sitemap -> the sitemap index, and rel=related -> the MCP server docs. Single-token
+// rel values are unquoted per RFC 8288, which keeps the directive free of escaped quotes.
+// Scoped to successful HTML documents via the expr (evaluated at response time): the
+// header is document metadata, so applying it to assets, downloads, redirects and error
+// responses only wastes bandwidth and, for rel=describedby, wrongly describes non-documents.
+// The Content-Type check alone is not enough: the custom `ErrorDocument 404 /404.html` is a
+// real text/html file served via an internal subrequest, so a 404 would still match on
+// content-type and leak the header (verified on staging). The `%{REQUEST_STATUS} == 200`
+// guard restricts it to genuine 200 documents — REQUEST_STATUS reflects the final response
+// status (404 for the error page), confirmed against Apache 2.4. Shared by the staging and
+// production .htaccess so the header can be verified on staging.
+const agentLinkHeader = `Header set Link "</llms.txt>; rel=describedby, </sitemap-index.xml>; rel=sitemap, <https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related" "expr=%{REQUEST_STATUS} == 200 && %{CONTENT_TYPE} =~ m#^text/html#"`;
+
 // Lazily built: the redirect generation resolves urlWithBaseUrl (which needs the
 // build-time base URL), so it must not run at module import — only when the
 // production .htaccess is actually generated.
@@ -84,13 +131,45 @@ const getModRewriteRules = (): string => `
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]
+    RewriteRule ^ - [S=${SITE_SINGLE_HOP_REWRITES.length + 21}]
+
     # SE-64 / SE-66: single-hop chain shortening. These run before the https-upgrade and
     # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
     # scheme) lands on its final www URL in ONE 301. Inbound query strings are preserved
     # (targets carry none). See SITE_SINGLE_HOP_REWRITES in redirects.ts.
-${SITE_SINGLE_HOP_REWRITES.map(
-    (r) => `    RewriteRule "^/?${r.from.replace(/^\//, '').replace(/\./g, '\\.')}$" "${r.to}" [R=301,L]`
-).join('\n')}
+${SITE_SINGLE_HOP_REWRITES.map((r) => {
+    const from = r.from.replace(/^\//, '').replace(/\./g, '\\.');
+    // Targets carrying a URL fragment need [NE] (noescape) so mod_rewrite emits the '#' verbatim in
+    // the Location header. Without it mod_rewrite escapes '#' to %23, turning the anchor into a
+    // literal path segment (a broken URL).
+    const flags = r.to.includes('#') ? 'R=301,NE,L' : 'R=301,L';
+    return `    RewriteRule "^/?${from}$" "${r.to}" [${flags}]`;
+}).join('\n')}
+
+    RewriteRule "^/?charts/(javascript|angular|react|vue)/bullet-series/?$" "https://www.ag-grid.com/charts/$1/linear-gauge/#bullet-series" [R=301,NE,L]
+    RewriteRule "^/?charts/(javascript|angular|react|vue)/fonts/?$" "https://www.ag-grid.com/charts/$1/text/" [R=301,L]
+    RewriteRule "^/?charts/(javascript|angular|react|vue)/?$" "https://www.ag-grid.com/charts/$1/quick-start/" [R=301,L]
+    RewriteRule "^/?charts/(javascript|react)/toolbar/?$" "https://www.ag-grid.com/charts/$1/financial-charts-toolbar/" [R=301,L]
+    RewriteRule "^/?charts/react/line/?$" "https://www.ag-grid.com/charts/react/line-series/" [R=301,L]
+    RewriteRule "^/?charts/archive/?$" "https://www.ag-grid.com/charts/documentation-archive/" [R=301,L]
+    RewriteRule "^/?charts/javascript-charts/javascript/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
+    RewriteRule "^/?charts/angular-charts/angular/(.+?)/?$" "https://www.ag-grid.com/charts/angular/$1/" [R=301,L]
+    RewriteRule "^/?charts/react-charts/react/(.+?)/?$" "https://www.ag-grid.com/charts/react/$1/" [R=301,L]
+    RewriteRule "^/?charts/vue-charts/vue/(.+?)/?$" "https://www.ag-grid.com/charts/vue/$1/" [R=301,L]
+    RewriteRule "^/?charts/enterprise-charts/react/(.+?)/?$" "https://www.ag-grid.com/charts/react/$1/" [R=301,L]
+    RewriteRule "^/?charts/[a-z]+-charts/gallery(/.*)?$" "https://www.ag-grid.com/charts/gallery/" [R=301,L]
+    RewriteRule "^/?charts/[a-z]+-charts/options(/.*)?$" "https://www.ag-grid.com/charts/options/" [R=301,L]
+    RewriteRule "^/?charts/enterprise-charts/(?!index\\.html$).+$" "https://www.ag-grid.com/charts/enterprise-charts/" [R=301,L]
+    RewriteRule "^/?charts/(?:core|side)/?$" "https://www.ag-grid.com/charts/javascript/quick-start/" [R=301,L]
+    RewriteRule "^/?charts/core/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
+    RewriteRule "^/?charts/side/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
+    RewriteRule "^/?charts/server-side-rendering(/.*)?$" "https://www.ag-grid.com/charts/javascript/server-side-rendering/" [R=301,L]
+    RewriteRule "^/?charts/(javascript|angular|react|vue)/series(/.*)?$" "https://www.ag-grid.com/charts/$1/bar-series/" [R=301,L]
+    RewriteRule "^/?charts/(javascript|angular|react|vue)/axes(/.*)?$" "https://www.ag-grid.com/charts/$1/axes-configuration/" [R=301,L]
+
+    RewriteCond %{REQUEST_URI} /+[^.]+$
+    RewriteRule "^/?(charts/.+[^/])$" "https://www.ag-grid.com/$1/" [R=301,L]
 
     # Always use https for secure connections (scoped to www/bare domain only
     # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
@@ -120,6 +199,15 @@ ${SITE_SINGLE_HOP_REWRITES.map(
     RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
     RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
     RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
+
+    # SE-80: content-negotiate docs pages to their per-page markdown variant when a
+    # client asks for it via Accept: text/markdown (typically an AI agent — browsers
+    # never send this, so HTML stays the default). The .md files are generated at
+    # build time next to the HTML (see [pageName].md.ts). This is an internal rewrite
+    # (no redirect, URL unchanged), gated by an on-disk check so a path without a .md
+    # is left untouched. Placed after host/https canonicalization but before the
+    # trailing-slash 301 so the canonical (slashed) docs URL negotiates in one hop.
+${markdownNegotiationRules}
 
     # Remove "index.php" from URLs
     RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
@@ -178,10 +266,22 @@ ErrorDocument 404 /404.html
 AddType text/javascript jsx
 AddType application/typescript ts tsx
 AddType application/x-gzip .gz .tgz
+
+# serve the per-page LLM markdown files as markdown
+AddType text/markdown md
+# ...as UTF-8, so glyphs like ✓/✗ in generated tables aren't mojibaked by a
+# Latin-1 fallback (the .md endpoint sets this charset; static hosting must too).
+AddCharset utf-8 .md
 `;
 
 function getStagingHtaccessContent(): string {
     return `${baseRules}
+
+${markdownNegotiationBlock}
+
+${markdownVaryHeader}
+
+${agentLinkHeader}
 
 # Content-Security-Policy — enforced, path-scoped. Unsets the legacy wildcard CSP on
 # the staging vhost so this tightened policy is the only one in effect.
@@ -204,6 +304,10 @@ ${getModRewriteRules()}
 # protection is handled by the CSP frame-ancestors directive instead (see cspRules.ts).
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+${markdownVaryHeader}
+
+${agentLinkHeader}
 
 ${getProductionCspContent()}
 
