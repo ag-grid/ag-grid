@@ -18,9 +18,13 @@ export function _setupCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): v
     // React, where setComp() is called asynchronously, but navigation normalisation may query
     // the cell position synchronously before the first render completes.
     //
-    // A row-spanned cell keeps its own height in sync (SpannedCellCtrl): its cellSpan is a
-    // constructor parameter property, still unassigned while this runs inside super(), so
-    // getCellSpan() cannot be relied on here.
+    // A row-spanned cell keeps its own height and aria-rowspan in sync (SpannedCellCtrl) and must not
+    // also run the col/row span setup below. Gate on isCellSpanning() rather than getCellSpan(): the
+    // latter reads cellSpan, a constructor parameter property still unassigned while this runs inside
+    // super(), whereas isCellSpanning() is a prototype method that resolves correctly during super().
+    if (cellCtrl.isCellSpanning()) {
+        return;
+    }
     setupColSpan(beans, cellCtrl);
     setupRowSpan(beans, cellCtrl);
 }

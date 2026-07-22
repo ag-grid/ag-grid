@@ -54,6 +54,8 @@ export class SpannedCellCtrl extends CellCtrl {
         this.setAriaRowSpan();
     }
 
+    // Must stay a plain literal, independent of getCellSpan(): _setupCellPosition runs during super()
+    // where the cellSpan parameter property is still unassigned, so getCellSpan() cannot be relied on.
     public override isCellSpanning(): boolean {
         return true;
     }
