@@ -109,6 +109,16 @@ const markdownVaryHeader = `# SE-80: docs pages content-negotiate on Accept (see
     Header append Vary Accept
 </If>`;
 
+// SE-81: agent-useful Link response header. Gives AI agents a machine-readable pointer
+// to the key resources without parsing the page first: rel=describedby -> /llms.txt,
+// rel=sitemap -> the sitemap index, and rel=related -> the MCP server docs. Single-token
+// rel values are unquoted per RFC 8288, which keeps the directive free of escaped quotes.
+// Scoped to HTML documents via the Content-Type expr (evaluated at response time): the
+// header is document metadata, so applying it to assets, downloads, redirects and error
+// responses only wastes bandwidth and, for rel=describedby, wrongly describes non-documents.
+// Shared by the staging and production .htaccess so the header can be verified on staging.
+const agentLinkHeader = `Header set Link "</llms.txt>; rel=describedby, </sitemap-index.xml>; rel=sitemap, <https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related" "expr=%{CONTENT_TYPE} =~ m#^text/html#"`;
+
 // Lazily built: the redirect generation resolves urlWithBaseUrl (which needs the
 // build-time base URL), so it must not run at module import — only when the
 // production .htaccess is actually generated.
@@ -266,6 +276,8 @@ ${markdownNegotiationBlock}
 
 ${markdownVaryHeader}
 
+${agentLinkHeader}
+
 # Content-Security-Policy — enforced, path-scoped. Unsets the legacy wildcard CSP on
 # the staging vhost so this tightened policy is the only one in effect.
 ${getScopedCspHtaccessBlock({ env: 'staging' }, 'enforce')}
@@ -290,14 +302,7 @@ Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
 ${markdownVaryHeader}
 
-# SE-81: agent-useful Link response header. Gives AI agents a machine-readable pointer
-# to the key resources without parsing the page first: rel=describedby -> /llms.txt,
-# rel=sitemap -> the sitemap index, and rel=related -> the MCP server docs. Single-token
-# rel values are unquoted per RFC 8288, which keeps the directive free of escaped quotes.
-# Scoped to HTML documents via the Content-Type expr (evaluated at response time): the
-# header is document metadata, so applying it to assets, downloads, redirects and error
-# responses only wastes bandwidth and, for rel=describedby, wrongly describes non-documents.
-Header set Link "</llms.txt>; rel=describedby, </sitemap-index.xml>; rel=sitemap, <https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related" "expr=%{CONTENT_TYPE} =~ m#^text/html#"
+${agentLinkHeader}
 
 ${getProductionCspContent()}
 

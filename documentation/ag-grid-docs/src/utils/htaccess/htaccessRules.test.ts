@@ -108,6 +108,12 @@ describe('htaccessRules', () => {
             expect(linkLine).not.toContain('always set Link');
             expect(linkLine).toContain('"expr=%{CONTENT_TYPE} =~ m#^text/html#"');
         });
+
+        it('should include the Link header on staging too so it can be verified before production', () => {
+            expect(stagingContent).toContain('Header set Link');
+            expect(stagingContent).toContain('</llms.txt>; rel=describedby');
+            expect(stagingContent).toContain('"expr=%{CONTENT_TYPE} =~ m#^text/html#"');
+        });
     });
 
     describe('AG-17152: /charts/ framework overview redirects', () => {
