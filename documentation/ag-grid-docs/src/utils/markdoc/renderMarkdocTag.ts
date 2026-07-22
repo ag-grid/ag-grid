@@ -121,7 +121,7 @@ async function renderMajorTable(
 }
 
 function renderSeedProjectsTable(siteRoot?: string): string {
-    const pricingUrl = toAbsoluteUrl('/license-pricing/', siteRoot);
+    const pricingUrl = toAbsoluteUrl(urlWithBaseUrl('/license-pricing/'), siteRoot);
     const rows = (gridSeedProjects as any[]).map((project) => {
         const licenseLabel = project.licenseType === 'enterprise-bundle' ? 'Enterprise Bundle' : 'AG Grid Enterprise';
         return [
@@ -265,7 +265,7 @@ function renderLicenseSetup(framework: MarkdownFramework, siteRoot?: string): st
 
 // Interactive trial-licence request form; link to the licensing page instead.
 function renderTrialLicenceForm(siteRoot?: string): string {
-    const url = toAbsoluteUrl('/license-pricing/', siteRoot);
+    const url = toAbsoluteUrl(urlWithBaseUrl('/license-pricing/'), siteRoot);
     return `[Request a 30-day Enterprise Bundle trial licence](${url})`;
 }
 
@@ -273,7 +273,7 @@ function renderIconsPanel(siteRoot?: string): string {
     const iconList = ICON_NAMES.map((name) => `\`${name}\``).join(', ');
     const downloads = ICON_THEMES.map((theme) => {
         const label = theme.charAt(0).toUpperCase() + theme.slice(1);
-        const url = toAbsoluteUrl(`/theme-icons/${theme}/${theme}-icons.zip`, siteRoot);
+        const url = toAbsoluteUrl(urlWithBaseUrl(`/theme-icons/${theme}/${theme}-icons.zip`), siteRoot);
         return `[${label}](${url})`;
     }).join(', ');
     return [`Available icons: ${iconList}`, `Download icon sets: ${downloads}`].join('\n\n');
