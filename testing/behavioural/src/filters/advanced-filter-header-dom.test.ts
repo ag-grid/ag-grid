@@ -1,13 +1,26 @@
 import { waitFor } from '@testing-library/dom';
 
-import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, PinnedRowModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
+import {
+    AdvancedFilterHarness,
+    FilterDom,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+} from '../test-utils';
 
 describe('Advanced Filter Header DOM', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, PinnedRowModule, AdvancedFilterModule],
+        modules: [
+            ClientSideRowModelModule,
+            PinnedRowModule,
+            TextFilterModule,
+            NumberFilterModule,
+            AdvancedFilterModule,
+        ],
     });
 
     const columnDefs = [{ field: 'athlete' }, { field: 'age' }];
@@ -119,5 +132,125 @@ describe('Advanced Filter Header DOM', () => {
 
         // Pinned top rows must start at or below the advanced filter row.
         expect(pinnedTopRowTop).toBeGreaterThanOrEqual(advancedFilterBottom - 1);
+    });
+
+    const filterableColumnDefs = [
+        { field: 'athlete', filter: true },
+        { field: 'age', filter: true },
+    ];
+
+    test('input stays enabled while the grid is still waiting for row data', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: filterableColumnDefs,
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+
+        await new FilterDom(api, 'no row data yet').checkFilterDom(`
+            ADVANCED FILTER
+            input: ""
+            valid: true
+            buttons: Apply ⊘ | Builder
+            model: null
+        `);
+    });
+
+    test('input stays enabled after row data is set to an empty array', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: filterableColumnDefs,
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        api.setGridOption('rowData', []);
+        await asyncSetTimeout(0);
+
+        await new FilterDom(api, 'empty row data').checkFilterDom(`
+            ADVANCED FILTER
+            input: ""
+            valid: true
+            buttons: Apply ⊘ | Builder
+            model: null
+        `);
+    });
+
+    test('a filter set before data loads is applied once data arrives', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: filterableColumnDefs,
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        api.setGridOption('rowData', []);
+        await asyncSetTimeout(0);
+
+        await AdvancedFilterHarness.get(api).applyExpression('[Athlete] contains "Bolt"');
+        await asyncSetTimeout(0);
+
+        await new FilterDom(api, 'filter built with no data').checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Athlete] contains "Bolt""
+            valid: true
+            buttons: Apply ⊘ | Builder
+            model:
+              filterType: "text"
+              colId: "athlete"
+              type: "contains"
+              filter: "Bolt"
+        `);
+
+        api.setGridOption('rowData', [
+            { athlete: 'Michael Phelps', age: 23 },
+            { athlete: 'Usain Bolt', age: 25 },
+        ]);
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'filter applied once data arrives').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 athlete:"Usain Bolt" age:25
+        `);
+    });
+
+    test('a number filter built before data loads self-corrects and filters once data arrives', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: filterableColumnDefs,
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+
+        // With no row data yet, Age's data type is not inferred (defaults to text), so a number
+        // expression cannot be validated and shows as invalid.
+        await AdvancedFilterHarness.get(api).applyExpression('[Age] > 20');
+        await asyncSetTimeout(0);
+
+        await new FilterDom(api, 'number filter before data').checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Age] > 20"
+            valid: false — Expression has an error. Option not found - > 20.
+            buttons: Apply ⊘ | Builder
+            model: null
+        `);
+
+        api.setGridOption('rowData', [
+            { athlete: 'Michael Phelps', age: 23 },
+            { athlete: 'Usain Bolt', age: 15 },
+        ]);
+        await asyncSetTimeout(0);
+
+        // Once data arrives Age is inferred as a number, the expression re-parses and becomes valid.
+        await new FilterDom(api, 'number filter after data').checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Age] > 20"
+            valid: true
+            buttons: Apply ⊘ | Builder
+            model:
+              filterType: "number"
+              colId: "age"
+              type: "greaterThan"
+              filter: 20
+        `);
+
+        await new GridRows(api, 'number filter applied once data arrives').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 athlete:"Michael Phelps" age:23
+        `);
     });
 });
