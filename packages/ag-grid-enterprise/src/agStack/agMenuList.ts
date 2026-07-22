@@ -251,18 +251,16 @@ export class AgMenuList<
         const focused = _focusInto(this.getGui());
         // Framework menu items render asynchronously and may be absent now; retry once they land,
         // unless focus has since moved to an item or away from the menu entirely.
-        this.itemsReady?.then(() => this.retryInitialFocus());
+        this.itemsReady?.then(() => {
+            if (!this.isAlive() || this.activeMenuItem) {
+                return;
+            }
+            const activeElement = _getActiveDomElement(this.beans);
+            if (_isNothingFocused(this.beans) || this.getGui().contains(activeElement)) {
+                this.activateFirstItem();
+            }
+        });
         return focused;
-    }
-
-    private retryInitialFocus(): void {
-        if (!this.isAlive() || this.activeMenuItem) {
-            return;
-        }
-        const activeElement = _getActiveDomElement(this.beans);
-        if (_isNothingFocused(this.beans) || this.getGui().contains(activeElement)) {
-            this.activateFirstItem();
-        }
     }
 
     public activateFirstItem(): void {
