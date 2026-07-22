@@ -23,7 +23,7 @@ ModuleRegistry.registerModules([
     NumberEditorModule,
 ]);
 
-///// left table
+///// Left table
 interface LeftData {
     function: string;
     value: string;
@@ -41,7 +41,7 @@ const gridOptionsLeft: GridOptions<LeftData> = {
     columnDefs: [
         { headerName: 'Function', field: 'function', minWidth: 150 },
         { headerName: 'Value', field: 'value' },
-        { headerName: 'Times 10', valueGetter: 'getValue("value") * 10' },
+        { headerName: 'Times 10', valueGetter: 'typeof getValue("value") === "number" ? getValue("value") * 10 : null' },
     ],
     defaultColDef: {
         flex: 1,
@@ -52,6 +52,14 @@ const gridOptionsLeft: GridOptions<LeftData> = {
     rowData: rowDataLeft,
     context: {
         theNumber: 4,
+        // sum a column of the Right grid's data, exposed to the Left grid's expressions
+        sum: (field: keyof RightData) => {
+            let result = 0;
+            rowDataRight.forEach((item) => {
+                result += item[field];
+            });
+            return result;
+        },
     },
 };
 
@@ -81,17 +89,9 @@ const gridOptionsRight: GridOptions<RightData> = {
     rowData: rowDataRight,
 };
 
-gridOptionsLeft.context.sum = function (field: keyof RightData) {
-    let result = 0;
-    rowDataRight.forEach((item) => {
-        result += item[field];
-    });
-    return result;
-};
-
 // tell Left grid to refresh when number changes
 function onNewNumber(value: string) {
-    gridOptionsLeft.context.theNumber = new Number(value);
+    gridOptionsLeft.context.theNumber = Number(value);
     leftApi!.refreshCells();
 }
 
