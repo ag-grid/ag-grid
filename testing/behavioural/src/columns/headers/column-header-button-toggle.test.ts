@@ -151,6 +151,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             const headerCell = eGridDiv.querySelector<HTMLElement>('.ag-header-cell')!;
             const button = eGridDiv.querySelector<HTMLElement>(selector)!;
 
+            headerCell.focus();
             headerCell.dispatchEvent(
                 new KeyboardEvent('keydown', { ...keyboardEvent, bubbles: true, cancelable: true })
             );
