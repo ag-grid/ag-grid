@@ -113,11 +113,16 @@ const markdownVaryHeader = `# SE-80: docs pages content-negotiate on Accept (see
 // to the key resources without parsing the page first: rel=describedby -> /llms.txt,
 // rel=sitemap -> the sitemap index, and rel=related -> the MCP server docs. Single-token
 // rel values are unquoted per RFC 8288, which keeps the directive free of escaped quotes.
-// Scoped to HTML documents via the Content-Type expr (evaluated at response time): the
+// Scoped to successful HTML documents via the expr (evaluated at response time): the
 // header is document metadata, so applying it to assets, downloads, redirects and error
 // responses only wastes bandwidth and, for rel=describedby, wrongly describes non-documents.
-// Shared by the staging and production .htaccess so the header can be verified on staging.
-const agentLinkHeader = `Header set Link "</llms.txt>; rel=describedby, </sitemap-index.xml>; rel=sitemap, <https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related" "expr=%{CONTENT_TYPE} =~ m#^text/html#"`;
+// The Content-Type check alone is not enough: the custom `ErrorDocument 404 /404.html` is a
+// real text/html file served via an internal subrequest, so a 404 would still match on
+// content-type and leak the header (verified on staging). The `%{REQUEST_STATUS} == 200`
+// guard restricts it to genuine 200 documents — REQUEST_STATUS reflects the final response
+// status (404 for the error page), confirmed against Apache 2.4. Shared by the staging and
+// production .htaccess so the header can be verified on staging.
+const agentLinkHeader = `Header set Link "</llms.txt>; rel=describedby, </sitemap-index.xml>; rel=sitemap, <https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related" "expr=%{REQUEST_STATUS} == 200 && %{CONTENT_TYPE} =~ m#^text/html#"`;
 
 // Lazily built: the redirect generation resolves urlWithBaseUrl (which needs the
 // build-time base URL), so it must not run at module import — only when the

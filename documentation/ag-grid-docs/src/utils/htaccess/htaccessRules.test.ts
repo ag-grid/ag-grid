@@ -100,19 +100,20 @@ describe('htaccessRules', () => {
             );
         });
 
-        it('should scope the Link header to HTML documents (not assets, redirects or errors)', () => {
+        it('should scope the Link header to successful HTML documents (not assets, redirects or errors)', () => {
             const linkLine = productionContent.split('\n').find((l) => l.includes('set Link'));
             expect(linkLine).toBeDefined();
-            // Not `always` (so it is skipped on error responses) and guarded by a
-            // Content-Type expr so it only applies to HTML documents.
+            // Not `always` (so it is skipped on error responses), and guarded by an expr that
+            // requires both a 200 status and an HTML content-type. The status check is what
+            // keeps it off the custom text/html 404 page (whose content-type alone would match).
             expect(linkLine).not.toContain('always set Link');
-            expect(linkLine).toContain('"expr=%{CONTENT_TYPE} =~ m#^text/html#"');
+            expect(linkLine).toContain('"expr=%{REQUEST_STATUS} == 200 && %{CONTENT_TYPE} =~ m#^text/html#"');
         });
 
         it('should include the Link header on staging too so it can be verified before production', () => {
             expect(stagingContent).toContain('Header set Link');
             expect(stagingContent).toContain('</llms.txt>; rel=describedby');
-            expect(stagingContent).toContain('"expr=%{CONTENT_TYPE} =~ m#^text/html#"');
+            expect(stagingContent).toContain('"expr=%{REQUEST_STATUS} == 200 && %{CONTENT_TYPE} =~ m#^text/html#"');
         });
     });
 
