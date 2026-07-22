@@ -71,82 +71,44 @@ This page documents the PDF Export API and interfaces.
 
 ### PdfCustomContent
 
-```ts
-type PdfCustomContent = PdfCell[][] | string;
-```
+{% interfaceDocumentation interfaceName="PdfCustomContent" config={"asCode":true} /%}
 
 ### PdfPageOrientation
 
-```ts
-type PdfPageOrientation = 'portrait' | 'landscape';
-```
+{% interfaceDocumentation interfaceName="PdfPageOrientation" config={"asCode":true} /%}
 
 ### PdfPageSize
 
-```ts
-type PdfPageSize =
-    | 'A4'
-    | 'Letter'
-    | {
-          width: number;
-          height: number;
-      };
-```
+{% interfaceDocumentation interfaceName="PdfPageSize" config={"asCode":true} /%}
 
 ### PdfFontFamily
 
-```ts
-type PdfFontFamily =
-    | 'Helvetica'
-    | 'Helvetica-Bold'
-    | 'Times-Roman'
-    | 'Times-Bold'
-    | 'Courier'
-    | 'Courier-Bold';
-```
+{% interfaceDocumentation interfaceName="PdfFontFamily" config={"asCode":true} /%}
 
 ### PdfTextAlignment
 
-```ts
-type PdfTextAlignment = 'left' | 'center' | 'right';
-```
+{% interfaceDocumentation interfaceName="PdfTextAlignment" config={"asCode":true} /%}
 
 ### PdfFontWeight
 
-```ts
-type PdfFontWeight = 'normal' | 'bold';
-```
+{% interfaceDocumentation interfaceName="PdfFontWeight" config={"asCode":true} /%}
 
 ### PdfTextOverflow
 
-```ts
-type PdfTextOverflow = 'clip' | 'ellipsis';
-```
+{% interfaceDocumentation interfaceName="PdfTextOverflow" config={"asCode":true} /%}
 
 ### PdfColumnWidth
 
-```ts
-type PdfColumnWidth = number | 'auto' | 'grid';
-```
+{% interfaceDocumentation interfaceName="PdfColumnWidth" config={"asCode":true} /%}
 
 ### PdfColumnWidthCallback
 
-```ts
-type PdfColumnWidthCallback = (params: ColumnWidthCallbackParams) => PdfColumnWidth | null | undefined;
-```
+{% interfaceDocumentation interfaceName="PdfColumnWidthCallback" config={"asCode":true} /%}
 
 ### PdfStyleCallbackParams
 
-```ts
-type PdfStyleCallbackParams =
-    | PdfRowStyleCallbackParams
-    | PdfCellStyleCallbackParams
-    | PdfHeaderStyleCallbackParams
-    | PdfGroupHeaderStyleCallbackParams;
-```
+{% interfaceDocumentation interfaceName="PdfStyleCallbackParams" config={"asCode":true} /%}
 
 ### PdfStyleCallbackType
 
-```ts
-type PdfStyleCallbackType = 'cell' | 'row' | 'rowgroup' | 'header' | 'groupheader';
-```
+{% interfaceDocumentation interfaceName="PdfStyleCallbackType" config={"asCode":true} /%}
