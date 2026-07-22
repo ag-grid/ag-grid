@@ -227,6 +227,21 @@ runs:
           with:
               branch_type: ${{ steps.nx_config.outputs.type }}
 
+        - name: Restore yarn cache
+          # Persist the yarn v1 download cache so `yarn install --prefer-offline` serves
+          # tarballs from here instead of cold-downloading the dependency closure from the
+          # internal registry — this is the core fix (node_modules was cached but this dir
+          # was not, leaving --prefer-offline ineffective). The cache is content-addressed
+          # by package version, so a restore-keys fallback is safe: stale entries are inert
+          # and simply ignored. Restored in both rw and ro; saved only in rw (below).
+          if: inputs.cache_mode != 'off'
+          id: yarn_cache
+          uses: actions/cache/restore@v4
+          with:
+              path: ~/.cache/yarn
+              key: yarn-cache-${{ runner.os }}-${{ inputs.node_modules_hash }}
+              restore-keys: yarn-cache-${{ runner.os }}-
+
         - name: yarn install
           if: inputs.yarn_postinstall == 'true'
           id: yarn_install_slow
@@ -280,3 +295,14 @@ runs:
           with:
               path: ${{ inputs.node_modules_paths }}
               key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, inputs.node_modules_hash) || inputs.node_modules_hash }}
+
+        - name: Save yarn cache
+          # Save the download cache warmed by yarn install (see "Restore yarn cache").
+          # rw writers (e.g. the init job) warm it; ro readers (matrix jobs) only restore.
+          # Warmed on the default branch (latest), whose caches GitHub makes readable by all
+          # branches, so a single warm propagates. Skipped on an exact restore hit.
+          if: inputs.cache_mode == 'rw' && steps.yarn_cache.outputs.cache-hit != 'true'
+          uses: actions/cache/save@v4
+          with:
+              path: ~/.cache/yarn
+              key: yarn-cache-${{ runner.os }}-${{ inputs.node_modules_hash }}
