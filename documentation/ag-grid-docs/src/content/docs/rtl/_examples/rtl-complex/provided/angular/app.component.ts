@@ -16,7 +16,7 @@ import type {
     RowSelectedEvent,
     RowSelectionOptions,
     SelectionChangedEvent,
-    StatusBar,
+    StatusPanelDef,
     ValueSetterParams,
 } from 'ag-grid-community';
 import { LocaleModule, ModuleRegistry } from 'ag-grid-community';
@@ -450,7 +450,7 @@ export class AppComponent {
         floatingFilter: true,
     };
     public readonly context = { COUNTRY_CODES };
-    public readonly statusBar: StatusBar = {
+    public readonly statusBar: { statusPanels: StatusPanelDef[] } = {
         statusPanels: [{ statusPanel: 'agAggregationComponent' }],
     };
     public readonly rowSelection: RowSelectionOptions = {
