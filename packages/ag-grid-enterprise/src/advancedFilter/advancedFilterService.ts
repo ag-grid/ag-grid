@@ -10,7 +10,6 @@ import type {
     IAdvancedFilterService,
     IRowNode,
     NamedBean,
-    NewColumnsLoadedEvent,
     ValueService,
 } from 'ag-grid-community';
 import { BeanStub, _isClientSideRowModel, _isServerSideRowModel } from 'ag-grid-community';
@@ -68,15 +67,18 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         };
 
         this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue));
+        this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.revalidateAndApply());
+        // Until data types are inferred, columns default to text, so a number/date expression built while
+        // waiting for row data parses as invalid - re-parse it once real types are known.
         this.addManagedEventListeners({
-            newColumnsLoaded: (event) => this.onNewColumnsLoaded(event),
+            dataTypesInferred: () => this.revalidateAndApply(),
         });
-        this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => {
-            const updatedValidity = this.updateValidity();
-            if (updatedValidity) {
-                this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
-            }
-        });
+    }
+
+    private revalidateAndApply(): void {
+        if (this.updateValidity()) {
+            this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
+        }
     }
 
     public isEnabled(): boolean {
@@ -217,19 +219,5 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.ctrl.refreshComp();
         this.ctrl.refreshBuilderComp();
         return updatedValidity;
-    }
-
-    private onNewColumnsLoaded(event: NewColumnsLoadedEvent): void {
-        if (event.source !== 'gridInitializing' || !this.dataTypeSvc?.isPendingInference) {
-            return;
-        }
-
-        this.ctrl.setInputDisabled(true);
-        const [destroyFunc] = this.addManagedEventListeners({
-            dataTypesInferred: () => {
-                destroyFunc?.();
-                this.ctrl.setInputDisabled(false);
-            },
-        });
     }
 }

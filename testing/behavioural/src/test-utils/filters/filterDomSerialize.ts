@@ -232,7 +232,11 @@ export function serializeAdvancedFilter(root: ParentNode): string {
     }
 
     const message = input.validationMessage;
-    const lines = ['ADVANCED FILTER', `input: "${input.value}"`, message ? `valid: false — ${message}` : 'valid: true'];
+    const lines = [
+        'ADVANCED FILTER',
+        `input: "${input.value}"${input.disabled ? ' ⊘' : ''}`,
+        message ? `valid: false — ${message}` : 'valid: true',
+    ];
 
     const buttons = Array.from(wrapper.querySelectorAll<HTMLButtonElement>('.ag-advanced-filter-buttons button'));
     const builderButton = wrapper.querySelector<HTMLButtonElement>('.ag-advanced-filter-builder-button');
