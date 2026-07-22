@@ -409,7 +409,7 @@ describe('Set Filter — excelMode button semantics', () => {
             └── LEAF id:2 country:"France"
         `);
 
-        await ColumnFilterHarness.open(api, 'country');
+        // mac Reset clears the filter without closing the popup.
         await new FilterDom(api, 'excel mac reset panel', { colId: 'country' }).checkFilterDom(`
             COLUMN FILTER (set)
             mini-filter: ""

@@ -1,4 +1,4 @@
-import { _exists, _isEventFromThisInstance, _isEventSupported, _isIOSUserAgent } from 'ag-stack';
+import { _isEventFromThisInstance, _isEventSupported, _isIOSUserAgent } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -87,7 +87,6 @@ export class TouchService extends BeanStub implements NamedBean {
         comp.addDestroyFunc(() => touchListener.destroy());
 
         const suppressMenuHide = comp.shouldSuppressMenuHide();
-        const tapMenuButton = suppressMenuHide && _exists(eMenu) && params.enableMenu;
         const isHeaderContextMenuEnabled = !!menuSvc?.isHeaderContextMenuEnabled(params.column as AgColumn);
         const shouldOpenMenuOnLongTap = _shouldOpenHeaderMenuOnLongTap(
             params.enableMenu,
@@ -95,17 +94,7 @@ export class TouchService extends BeanStub implements NamedBean {
             _isLegacyMenuEnabled(gos)
         );
 
-        let menuTouchListener = touchListener;
-        if (tapMenuButton) {
-            menuTouchListener = new TouchListener(eMenu, true);
-            comp.addDestroyFunc(() => menuTouchListener.destroy());
-        }
-
         const showMenuFn = (event: TapEvent | LongTapEvent) => params.showColumnMenuAfterMouseClick(event.touchStart);
-
-        if (tapMenuButton && params.enableMenu) {
-            comp.addManagedListeners(menuTouchListener, { tap: showMenuFn });
-        }
 
         if (shouldOpenMenuOnLongTap) {
             comp.addManagedListeners(touchListener, { longTap: showMenuFn });
@@ -124,14 +113,6 @@ export class TouchService extends BeanStub implements NamedBean {
             };
 
             comp.addManagedListeners(touchListener, { tap: tapListener });
-        }
-
-        if (params.enableFilterButton && eFilterButton) {
-            const filterButtonTouchListener = new TouchListener(eFilterButton, true);
-            comp.addManagedListeners(filterButtonTouchListener, {
-                tap: () => params.showFilter(eFilterButton),
-            });
-            comp.addDestroyFunc(() => filterButtonTouchListener.destroy());
         }
     }
 
