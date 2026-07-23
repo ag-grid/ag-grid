@@ -1,13 +1,7 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('opening the menu moves keyboard focus into it', async ({ agIdFor, page, agFramework }) => {
-        // React does not focus a menu containing custom framework items, breaking keyboard nav — see AG-17785.
-        test.fixme(
-            agFramework.startsWith('reactFunctionalTs'),
-            'AG-17785: React menu with custom items does not receive initial focus'
-        );
-
+    test.eachFramework('opening the menu moves keyboard focus into it', async ({ agIdFor, page }) => {
         await agIdFor.headerCell('athlete').hover();
         await agIdFor.headerCellMenuButton('athlete').click();
         await expect(agIdFor.menu()).toBeVisible();
