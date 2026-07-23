@@ -69,6 +69,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called. */
     private rowDataUpdatedPending: boolean = false;
+    private afterColumnsChangedPending: boolean = false;
+
+    /** True when a refresh deferred by a dispatching changeset awaits its end-of-changeset flush. */
+    private changeSetRefreshQueued: boolean = false;
+
+    /** Changed properties whose processing is deferred until the dispatching changeset has applied. */
+    private deferredChangeSetProperties: (keyof GridOptions)[] | null = null;
+
+    /** True while an end-of-changeset flush callback is registered with the grid options service. */
+    private changeSetFlushScheduled: boolean = false;
 
     /**
      * This is to prevent refresh model being called when it's already being called.
@@ -184,7 +194,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.addManagedPropertyListeners([...stagesRefreshProps.keys(), 'rowData'], (params) => {
             const properties = params.changeSet?.properties;
-            if (properties) {
+            if (!properties) {
+                return;
+            }
+            // this merged listener fires once per changeset, on its first matching property event; if the
+            // changeset also updates rowData, wait until the whole set has applied before processing, so
+            // row data is never ingested (nor value getters run) against partially-applied options
+            if (this.gos.isPendingChange('rowData')) {
+                const deferred = this.deferredChangeSetProperties;
+                this.deferredChangeSetProperties = deferred ? deferred.concat(properties) : properties;
+                this.scheduleChangeSetFlush();
+            } else {
                 this.onPropChange(properties);
             }
         });
@@ -567,6 +587,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             // Flag accumulation is intentional - they persist until the next successful refreshModel().
             this.setPendingRefreshFlags(params);
             this.rowDataUpdatedPending ||= rowDataUpdated;
+            this.afterColumnsChangedPending ||= !!params.afterColumnsChanged;
             const selectionSvc = this.beans.selectionSvc;
             if (rowDataUpdated && started && !this.refreshingModel && selectionSvc) {
                 if (suppressUpdateTransaction) {
@@ -580,9 +601,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return;
         }
 
+        this.changeSetRefreshQueued = false; // this refresh consumes any queued end-of-changeset flush
+
         if (this.rowDataUpdatedPending) {
             this.rowDataUpdatedPending = false;
             params.step = 'group'; // Ensure grouping runs
+        }
+
+        if (this.afterColumnsChangedPending) {
+            this.afterColumnsChangedPending = false;
+            params.afterColumnsChanged = true;
+            params.step = 'group'; // group state depends on the changed columns
         }
 
         // Apply forced flags from any previous skipped refresh calls
@@ -691,6 +720,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return true;
         }
 
+        if (this.gos.isPendingChange('rowData')) {
+            // The dispatching grid options changeset includes a rowData change whose ingestion is deferred
+            // to the end of the set; refreshing now would run against a mix of new columns and old rows.
+            // Refresh once the whole changeset has applied, with the captured flags, unless another
+            // refresh runs first (e.g. from the deferred rowData ingestion).
+            this.changeSetRefreshQueued = true;
+            this.scheduleChangeSetFlush();
+            return true;
+        }
+
         if (suppressUpdateTransaction) {
             // Suppressed update-only transaction - clear refreshingData when started
             if (this.started) {
@@ -705,6 +744,32 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         return false;
+    }
+
+    /**
+     * Registers a single end-of-changeset flush (at most one per changeset) that first processes any
+     * deferred property changes (ingesting the new rowData) and then performs any queued refresh, so a
+     * refresh deferred by {@link deferRefresh} never runs before the new row data has been ingested.
+     */
+    private scheduleChangeSetFlush(): void {
+        if (this.changeSetFlushScheduled) {
+            return;
+        }
+        this.changeSetFlushScheduled = true;
+        this.gos.whenChangeSetApplied(() => {
+            this.changeSetFlushScheduled = false;
+            if (!this.isAlive()) {
+                return;
+            }
+            const properties = this.deferredChangeSetProperties;
+            this.deferredChangeSetProperties = null;
+            if (properties) {
+                this.onPropChange(properties); // its refreshModel consumes any queued refresh
+            }
+            if (this.changeSetRefreshQueued) {
+                this.refreshModel({ step: 'nothing' });
+            }
+        });
     }
 
     /** Captures flags from deferred refresh calls to apply to the eventual modelUpdated event. */

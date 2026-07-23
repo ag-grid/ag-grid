@@ -730,11 +730,20 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onDisplayedColumnsChanged(): void {
-        this.rowModeFeature.onDisplayedColumnsChanged();
+        if (!this.beans.rowRenderer.deferColumnListUpdate(this)) {
+            this.rowModeFeature.onDisplayedColumnsChanged();
+        }
     }
 
     private onVirtualColumnsChanged(): void {
-        this.rowModeFeature.onVirtualColumnsChanged();
+        if (!this.beans.rowRenderer.deferColumnListUpdate(this)) {
+            this.rowModeFeature.onVirtualColumnsChanged();
+        }
+    }
+
+    /** Deferred replay of {@link RowRenderer.deferColumnListUpdate}; only called on rows surviving the changeset. */
+    public refreshColumnLists(): void {
+        this.rowModeFeature.onDisplayedColumnsChanged();
     }
 
     public getRowPosition(): RowPosition {

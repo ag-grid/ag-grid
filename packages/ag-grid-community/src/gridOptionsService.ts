@@ -110,6 +110,15 @@ export class GridOptionsService
 
     private readonly propEventSvc: LocalEventService<keyof GridOptions> = new LocalEventService();
 
+    /** All keys of the changeset currently dispatching, for the whole duration of the dispatch. */
+    private pendingChangeKeys: Set<keyof GridOptions> | null = null;
+
+    /** Callbacks to run once the changeset currently dispatching has fully applied. */
+    private changeSetAppliedCallbacks: (() => void)[] | null = null;
+
+    /** As {@link changeSetAppliedCallbacks}, but run after all of them (see {@link whenChangeSetApplied}). */
+    private changeSetRenderCallbacks: (() => void)[] | null = null;
+
     public postConstruct(): void {
         this.validateGridOptions(this.gridOptions);
 
@@ -217,9 +226,65 @@ export class GridOptionsService
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map((event) => event.type);
 
-        for (const event of events) {
-            _logIfDebug(this, `Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
-            this.propEventSvc.dispatchEvent(event);
+        // While dispatching, listeners observe a mix of applied and not-yet-applied changes; expose the
+        // changeset's keys so consumers can defer work until the whole set has applied.
+        const previousPendingKeys = this.pendingChangeKeys;
+        this.pendingChangeKeys = previousPendingKeys
+            ? new Set([...previousPendingKeys, ...changeSet.properties])
+            : new Set(changeSet.properties);
+        try {
+            for (const event of events) {
+                _logIfDebug(
+                    this,
+                    `Updated property ${event.type} from`,
+                    event.previousValue,
+                    ` to `,
+                    event.currentValue
+                );
+                this.propEventSvc.dispatchEvent(event);
+            }
+        } finally {
+            this.pendingChangeKeys = previousPendingKeys;
+            if (!previousPendingKeys) {
+                this.flushChangeSetCallbacks();
+            }
+        }
+    }
+
+    private flushChangeSetCallbacks(): void {
+        const applyCallbacks = this.changeSetAppliedCallbacks;
+        const renderCallbacks = this.changeSetRenderCallbacks;
+        this.changeSetAppliedCallbacks = null;
+        this.changeSetRenderCallbacks = null;
+        if (applyCallbacks) {
+            for (let i = 0, len = applyCallbacks.length; i < len; ++i) {
+                applyCallbacks[i]();
+            }
+        }
+        if (renderCallbacks) {
+            for (let i = 0, len = renderCallbacks.length; i < len; ++i) {
+                renderCallbacks[i]();
+            }
+        }
+    }
+
+    /** True while a grid options changeset containing `key` is dispatching, i.e. until every change in that set has applied. */
+    public isPendingChange(key: keyof GridOptions): boolean {
+        return !!this.pendingChangeKeys?.has(key);
+    }
+
+    /**
+     * Run `callback` once the changeset currently dispatching has fully applied (immediately if none is).
+     * All 'apply' callbacks (e.g. deferred rowData ingestion) run before any 'render' callback (deferred
+     * cell rebuilds), so deferred rendering never evaluates new column defs against old row data.
+     */
+    public whenChangeSetApplied(callback: () => void, phase: 'apply' | 'render' = 'apply'): void {
+        if (!this.pendingChangeKeys) {
+            callback();
+        } else if (phase === 'apply') {
+            (this.changeSetAppliedCallbacks ??= []).push(callback);
+        } else {
+            (this.changeSetRenderCallbacks ??= []).push(callback);
         }
     }
 

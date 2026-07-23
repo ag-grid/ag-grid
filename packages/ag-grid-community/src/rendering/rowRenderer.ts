@@ -106,6 +106,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private embedFullWidthRows: boolean;
     private stickyRowFeature?: IStickyRowFeature;
 
+    /** Rows whose column-list rebuild is deferred until the current grid options changeset has applied. */
+    private deferredColumnListRows: Set<RowCtrl> | null = null;
+
+    /** Cells whose colDef-changed refresh is deferred until the current grid options changeset has applied. */
+    private deferredColDefCells: Set<CellCtrl> | null = null;
+
     private dataFirstRenderedFired = false;
 
     public postConstruct(): void {
@@ -430,7 +436,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 forEachCellWithThisCol((cellCtrl) => cellCtrl.onLastLeftPinnedChanged());
             };
             const colDefChangedListener = () => {
-                forEachCellWithThisCol((cellCtrl) => cellCtrl.onColDefChanged());
+                if (this.deferringColumnUpdates()) {
+                    const deferredCells = (this.deferredColDefCells ??= new Set());
+                    forEachCellWithThisCol((cellCtrl) => deferredCells.add(cellCtrl));
+                } else {
+                    forEachCellWithThisCol((cellCtrl) => cellCtrl.onColDefChanged());
+                }
             };
 
             col.__addEventListener('leftChanged', leftChangedListener);
@@ -446,6 +457,56 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 col.__removeEventListener('lastLeftPinnedChanged', lastLeftPinnedChangedListener);
                 col.__removeEventListener('colDefChanged', colDefChangedListener);
             });
+        }
+    }
+
+    /**
+     * While a grid options changeset that also updates rowData is dispatching, rebuilding cell lists or
+     * refreshing cells would evaluate column value getters against row data that is about to be replaced.
+     * Returns true when updates must be deferred, scheduling an end-of-changeset flush on first use.
+     */
+    private deferringColumnUpdates(): boolean {
+        if (!this.gos.isPendingChange('rowData')) {
+            return false;
+        }
+        if (!this.deferredColumnListRows && !this.deferredColDefCells) {
+            this.gos.whenChangeSetApplied(() => this.flushDeferredColumnUpdates(), 'render');
+        }
+        return true;
+    }
+
+    /** Returns true if `rowCtrl`'s column-list rebuild was deferred (see {@link deferringColumnUpdates}). */
+    public deferColumnListUpdate(rowCtrl: RowCtrl): boolean {
+        if (!this.deferringColumnUpdates()) {
+            return false;
+        }
+        (this.deferredColumnListRows ??= new Set()).add(rowCtrl);
+        return true;
+    }
+
+    /** Replay deferred column-list rebuilds and colDef-changed refreshes on rows/cells that survived
+     *  the grid options changeset. */
+    private flushDeferredColumnUpdates(): void {
+        const rows = this.deferredColumnListRows;
+        const cells = this.deferredColDefCells;
+        this.deferredColumnListRows = null;
+        this.deferredColDefCells = null;
+        if (!this.isAlive()) {
+            return;
+        }
+        if (rows) {
+            for (const rowCtrl of rows) {
+                if (rowCtrl.isAlive()) {
+                    rowCtrl.refreshColumnLists();
+                }
+            }
+        }
+        if (cells) {
+            for (const cellCtrl of cells) {
+                if (cellCtrl.isAlive()) {
+                    cellCtrl.onColDefChanged();
+                }
+            }
         }
     }
 
