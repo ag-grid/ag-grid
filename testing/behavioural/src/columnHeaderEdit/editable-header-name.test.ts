@@ -26,11 +26,15 @@ describe('Editable header name', () => {
 
     const rowData = [{ athlete: 'Michael Phelps', age: 23 }];
 
-    async function createGrid(columnDefs: ColDef[]): Promise<{ api: GridApi; gridDiv: HTMLElement; toolPanel: any }> {
+    async function createGrid(
+        columnDefs: ColDef[],
+        extraOptions?: Record<string, any>
+    ): Promise<{ api: GridApi; gridDiv: HTMLElement; toolPanel: any }> {
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,
             rowData,
             defaultColDef: { flex: 1, minWidth: 100 },
+            ...extraOptions,
             sideBar: {
                 toolPanels: [
                     {
@@ -188,14 +192,18 @@ describe('Editable header name', () => {
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
     });
 
-    test('committing a changed name dispatches columnHeaderNameChanged once and updates the display name', async () => {
-        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+    test('deferred mode commits a changed name once on Enter and updates the display name', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }], {
+            columnHeaderEdit: { applyMode: 'deferred' },
+        });
         const column = api.getColumn('athlete') as unknown as AgColumn;
         const events = captureColumnHeaderNameChanged(column);
 
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
         await userEvent.clear(input);
         await userEvent.type(input, 'Competitor');
+        // Deferred mode does not apply while typing.
+        expect(events.length).toBe(0);
         pressEnter(input);
         await asyncSetTimeout(1);
 
@@ -204,8 +212,10 @@ describe('Editable header name', () => {
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Competitor');
     });
 
-    test('closing the editor via the close button cancels the edit', async () => {
-        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+    test('deferred mode: closing the editor via the close button cancels the edit', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }], {
+            columnHeaderEdit: { applyMode: 'deferred' },
+        });
         const column = api.getColumn('athlete') as unknown as AgColumn;
         const events = captureColumnHeaderNameChanged(column);
 
@@ -305,8 +315,10 @@ describe('Editable header name', () => {
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
     });
 
-    test('committing whitespace around the name preserves it verbatim (input is not trimmed)', async () => {
-        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+    test('deferred mode commits whitespace around the name verbatim (input is not trimmed)', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }], {
+            columnHeaderEdit: { applyMode: 'deferred' },
+        });
         const column = api.getColumn('athlete') as unknown as AgColumn;
         const events = captureColumnHeaderNameChanged(column);
 

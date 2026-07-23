@@ -64,6 +64,7 @@ import type {
     ColumnGroupOpenedEvent,
     ColumnHeaderClickedEvent,
     ColumnHeaderContextMenuEvent,
+    ColumnHeaderEditOptions,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
     ColumnMenuVisibleChangedEvent,
@@ -584,6 +585,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `CalculatedColumnsModule`
      */
     @Input() public calculatedColumns: CalculatedColumnsGridOption | undefined = undefined;
+    /** Configures editing of column and column group header names via the UI. Requires
+     * `headerNameEditable` on the relevant Column or Column Group Definitions.
+     * @agModule `ColumnHeaderEditModule`
+     */
+    @Input() public columnHeaderEdit: ColumnHeaderEditOptions | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
      *
      * @default false

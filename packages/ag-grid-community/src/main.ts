@@ -277,6 +277,7 @@ export type {
     CalculatedColumnUpdate,
     ICalculatedColumnsService,
 } from './interfaces/iCalculatedColumns';
+export type { ColumnHeaderEditApplyMode, ColumnHeaderEditOptions } from './interfaces/iColumnHeaderEdit';
 export type {
     AlwaysPassFilter,
     BaseFilter,

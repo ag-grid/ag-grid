@@ -1,6 +1,7 @@
 import type {
     AgColumn,
     AgProvidedColumnGroup,
+    ColumnHeaderEditOptions,
     IColumnHeaderEditService,
     MenuItemDef,
     NamedBean,
@@ -16,6 +17,20 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
 
     private activePopup: ColumnHeaderEditPopup | null = null;
     private removePopupColListener: (() => void) | null = null;
+
+    private getOptions(): ColumnHeaderEditOptions | undefined {
+        const options = this.gos.get('columnHeaderEdit');
+        return typeof options === 'object' && options != null ? options : undefined;
+    }
+
+    // 'live' by default, matching Calculated Columns.
+    public isLiveApplyMode(): boolean {
+        return this.getOptions()?.applyMode !== 'deferred';
+    }
+
+    private isHighlightSuppressed(): boolean {
+        return this.getOptions()?.suppressColumnHighlighting === true;
+    }
 
     private isEditable(target: EditTarget): boolean {
         return isProvidedColumnGroup(target)
@@ -76,16 +91,21 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
         this.destroyActivePopup();
 
         let initialValue = this.getEditableHeaderName(target);
+        const liveApply = this.isLiveApplyMode();
 
         const popup = this.createBean(
             new ColumnHeaderEditPopup({
                 initialValue,
-                onClosed: (committed, value) => {
-                    if (committed && value !== initialValue) {
-                        this.applyHeaderName(target, value);
+                liveApply,
+                onApply: (value) => {
+                    // Deferred commit of the unchanged value should not create an override; live mode
+                    // (which fires per change) applies everything to match Calculated Columns.
+                    if (!liveApply && value === initialValue) {
+                        return;
                     }
-                    this.destroyActivePopup();
+                    this.applyHeaderName(target, value);
                 },
+                onClosed: () => this.destroyActivePopup(),
             })
         );
         this.activePopup = popup;
@@ -93,7 +113,10 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
         // Keep the editor in sync if the target's name changes underneath it (e.g. a programmatic rename).
         const onNameChanged = () => {
             initialValue = this.getEditableHeaderName(target);
-            popup.setValue(initialValue);
+            // Don't clobber the user's own in-progress edit (live mode dispatches on every keystroke).
+            if (popup.getValue() !== initialValue) {
+                popup.setValue(initialValue);
+            }
         };
         // Columns and groups both notify through the grid-level event, keyed by colId or groupId.
         const isGroup = isProvidedColumnGroup(target);

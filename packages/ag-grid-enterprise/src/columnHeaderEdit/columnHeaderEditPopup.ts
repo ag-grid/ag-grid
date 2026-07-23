@@ -1,4 +1,4 @@
-import { RefPlaceholder, _getActiveDomElement } from 'ag-stack';
+import { RefPlaceholder, _getActiveDomElement, _setDisplayed } from 'ag-stack';
 
 import type { ElementParams, GridInputTextField } from 'ag-grid-community';
 import { AgInputTextFieldSelector, BeanStub, Component, KeyCode } from 'ag-grid-community';
@@ -7,7 +7,7 @@ import { Dialog } from '../widgets/dialog';
 
 const DEFAULT_SIZE = {
     width: 300,
-    height: 100,
+    height: 130,
     minWidth: 240,
     minHeight: 100,
 };
@@ -15,13 +15,41 @@ const DEFAULT_SIZE = {
 const ColumnHeaderEditContentElement: ElementParams = {
     tag: 'div',
     cls: 'ag-column-header-edit-popup-content',
-    children: [{ tag: 'ag-input-text-field', ref: 'eEditor', cls: 'ag-column-header-edit-popup-editor' }],
+    children: [
+        { tag: 'ag-input-text-field', ref: 'eEditor', cls: 'ag-column-header-edit-popup-editor' },
+        {
+            tag: 'div',
+            ref: 'eActions',
+            cls: 'ag-column-header-edit-popup-actions',
+            children: [
+                {
+                    tag: 'button',
+                    ref: 'eApply',
+                    cls: 'ag-button ag-standard-button ag-column-header-edit-action ag-column-header-edit-action-apply',
+                },
+                {
+                    tag: 'button',
+                    ref: 'eCancel',
+                    cls: 'ag-button ag-standard-button ag-column-header-edit-action',
+                },
+            ],
+        },
+    ],
 };
 
 class ColumnHeaderEditContent extends Component {
     private readonly eEditor: GridInputTextField = RefPlaceholder;
+    private readonly eActions: HTMLElement = RefPlaceholder;
+    private readonly eApply: HTMLButtonElement = RefPlaceholder;
+    private readonly eCancel: HTMLButtonElement = RefPlaceholder;
 
-    constructor(private readonly initialValue: string) {
+    constructor(
+        private readonly initialValue: string,
+        private readonly liveApply: boolean,
+        private readonly onValueChange: (value: string) => void,
+        private readonly onApply: () => void,
+        private readonly onCancel: () => void
+    ) {
         super(ColumnHeaderEditContentElement, [AgInputTextFieldSelector]);
     }
 
@@ -30,6 +58,19 @@ class ColumnHeaderEditContent extends Component {
         this.eEditor
             .setValue(this.initialValue, true)
             .setInputAriaLabel(translate('ariaColumnHeaderNameEditor', 'Column Name Editor'));
+
+        // Live mode applies every change to the header, so no Apply/Cancel buttons are shown.
+        _setDisplayed(this.eActions, !this.liveApply);
+        if (this.liveApply) {
+            this.eEditor.onValueChange((value) => this.onValueChange(value ?? ''));
+        } else {
+            this.eApply.textContent = translate('columnHeaderEditApply', 'Apply');
+            this.eCancel.textContent = translate('columnHeaderEditCancel', 'Cancel');
+            this.eApply.type = 'button';
+            this.eCancel.type = 'button';
+            this.addManagedElementListeners(this.eApply, { click: () => this.onApply() });
+            this.addManagedElementListeners(this.eCancel, { click: () => this.onCancel() });
+        }
     }
 
     public focusEditor(): void {
@@ -50,7 +91,6 @@ class ColumnHeaderEditContent extends Component {
 export class ColumnHeaderEditPopup extends BeanStub {
     private dialog?: Dialog;
     private contentComp?: ColumnHeaderEditContent;
-    private saveOnClose = false;
     private closed = false;
     private restoreFocusEl: HTMLElement | null = null;
     private focusEditorTimeout?: number;
@@ -58,14 +98,26 @@ export class ColumnHeaderEditPopup extends BeanStub {
     constructor(
         private readonly params: {
             initialValue: string;
-            onClosed: (committed: boolean, value: string) => void;
+            liveApply: boolean;
+            /** Apply `value` to the header. Live mode calls this on every change; deferred mode on commit only. */
+            onApply: (value: string) => void;
+            onClosed: () => void;
         }
     ) {
         super();
     }
 
     public postConstruct(): void {
-        const contentComp = this.createManagedBean(new ColumnHeaderEditContent(this.params.initialValue));
+        const { liveApply } = this.params;
+        const contentComp = this.createManagedBean(
+            new ColumnHeaderEditContent(
+                this.params.initialValue,
+                liveApply,
+                (value) => this.params.onApply(value),
+                () => this.commit(),
+                () => this.close()
+            )
+        );
         this.contentComp = contentComp;
 
         const translate = this.getLocaleTextFunc();
@@ -90,9 +142,16 @@ export class ColumnHeaderEditPopup extends BeanStub {
             keydown: (event: KeyboardEvent) => {
                 if (event.key === KeyCode.ENTER) {
                     event.preventDefault();
-                    this.hide(true);
+                    // Live already applied each change, so Enter just closes keeping it; deferred commits.
+                    if (liveApply) {
+                        this.close();
+                    } else {
+                        this.commit();
+                    }
                 } else if (event.key === KeyCode.ESCAPE) {
-                    this.hide(false);
+                    // Live keeps changes on Escape (they are already applied); deferred discards by
+                    // closing without committing.
+                    this.close();
                 }
             },
         });
@@ -106,13 +165,22 @@ export class ColumnHeaderEditPopup extends BeanStub {
         });
     }
 
-    public hide(save: boolean): void {
-        this.saveOnClose = save;
+    /** Deferred-mode commit: apply the current value, then close. */
+    private commit(): void {
+        this.params.onApply(this.contentComp?.getValue() ?? '');
+        this.close();
+    }
+
+    public close(): void {
         this.dialog?.close();
     }
 
     public setValue(value: string): void {
         this.contentComp?.setValue(value);
+    }
+
+    public getValue(): string {
+        return this.contentComp?.getValue() ?? '';
     }
 
     private onDialogClosed(): void {
@@ -121,7 +189,7 @@ export class ColumnHeaderEditPopup extends BeanStub {
         }
         this.closed = true;
         this.restoreFocus();
-        this.params.onClosed(this.saveOnClose, this.contentComp?.getValue() ?? '');
+        this.params.onClosed();
     }
 
     // Return focus to the element that launched the editor (chooser/tool-panel row), unless the user has since
@@ -146,7 +214,7 @@ export class ColumnHeaderEditPopup extends BeanStub {
         if (!this.closed) {
             this.closed = true;
             this.restoreFocus();
-            this.params.onClosed(false, this.contentComp?.getValue() ?? '');
+            this.params.onClosed();
         }
         super.destroy();
     }

@@ -181,6 +181,7 @@ import type {
     ChartToolbarMenuItemOptions,
     DefaultChartMenuItem,
 } from '../interfaces/iChartOptions';
+import type { ColumnHeaderEditOptions } from '../interfaces/iColumnHeaderEdit';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
@@ -418,6 +419,12 @@ export interface GridOptions<TData = any> {
      * @agModule `CalculatedColumnsModule`
      */
     calculatedColumns?: CalculatedColumnsGridOption;
+    /**
+     * Configures editing of column and column group header names via the UI. Requires
+     * `headerNameEditable` on the relevant Column or Column Group Definitions.
+     * @agModule `ColumnHeaderEditModule`
+     */
+    columnHeaderEdit?: ColumnHeaderEditOptions;
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
      *
