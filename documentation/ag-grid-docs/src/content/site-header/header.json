@@ -42,47 +42,6 @@
                 "isCollapsed": true
             },
             {
-                "title": "Home",
-                "path": "/"
-            },
-            {
-                "title": "Examples",
-                "path": "/example"
-            },
-            {
-                "title": "Theme Builder",
-                "path": "/theme-builder"
-            },
-            {
-                "title": "Docs",
-                "path": "./getting-started"
-            },
-            {
-                "title": "API",
-                "path": "./reference"
-            },
-            {
-                "title": "Community",
-                "path": "/community"
-            },
-            {
-                "title": "Pricing",
-                "path": "/license-pricing"
-            },
-            {
-                "title": "Contact Us",
-                "path": "/contact/"
-            },
-            {
-                "title": "",
-                "url": "",
-                "_isDivider_": true
-            },
-            {
-                "title": "Demos",
-                "path": "/example"
-            },
-            {
                 "title": "Theme Builder",
                 "path": "/theme-builder"
             },
