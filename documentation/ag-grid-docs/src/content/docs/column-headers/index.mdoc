@@ -58,7 +58,11 @@ An edited name takes priority over any `headerValueGetter` on the column. Once t
 
 ### Edit Modes
 
-Configure the editor with the `columnHeaderEdit` grid option. Its `applyMode` controls when edits are applied:
+Configure the editor with the `columnHeaderEdit` grid option.
+
+{% apiDocumentation source="grid-options/properties.json" section="columns" names=["columnHeaderEdit"] /%}
+
+Its `applyMode` controls when edits are applied:
 
 - `'live'` (default): each change is applied to the header immediately as the user types. Pressing `Escape` or closing the editor keeps the change.
 - `'deferred'`: the editor shows **Apply** and **Cancel** buttons and the header is only updated when the edit is committed with **Apply** or `Enter`. **Cancel**, `Escape`, or closing the editor discards the edit.
