@@ -230,11 +230,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.resizeFeature?.resizeLeafColumnsToFit(source);
     }
 
-    private setupUserComp(): void {
-        const { userCompFactory, gos, enterpriseMenuFactory } = this.beans;
+    private createUserCompParams(): IHeaderGroupParams {
+        const { gos, enterpriseMenuFactory } = this.beans;
         const columnGroup = this.column;
         const providedColumnGroup = columnGroup.getProvidedColumnGroup();
-        const params: IHeaderGroupParams = _addGridCommonParams(gos, {
+        return _addGridCommonParams(gos, {
             displayName: this.displayName!,
             columnGroup,
             setExpanded: (expanded: boolean) => {
@@ -260,11 +260,19 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                 ),
             eGridHeader: this.eGui,
         });
+    }
 
-        const compDetails = _getHeaderGroupCompDetails(userCompFactory, params);
+    private setupUserComp(): void {
+        const compDetails = _getHeaderGroupCompDetails(this.beans.userCompFactory, this.createUserCompParams());
         if (compDetails) {
             this.comp.setUserCompDetails(compDetails);
         }
+    }
+
+    /** Attempt an in-place refresh of the existing group header component; falls back to recreation. */
+    private attemptUserCompRefresh(): boolean {
+        const userComp = this.comp.getUserCompInstance();
+        return userComp?.refresh ? userComp.refresh(this.createUserCompParams()) : false;
     }
 
     private addHeaderMouseListeners(compBean: BeanStub, eHeaderCompWrapper: HTMLElement): void {
@@ -349,7 +357,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     private refreshDisplayName(): void {
         this.displayName = this.beans.colNames.getDisplayNameForColumnGroup(this.column, 'header');
-        this.setupUserComp();
+        // Prefer an in-place refresh of the existing component; only recreate if it can't refresh.
+        if (!this.attemptUserCompRefresh()) {
+            this.setupUserComp();
+        }
         this.refreshAnnouncement();
     }
 
