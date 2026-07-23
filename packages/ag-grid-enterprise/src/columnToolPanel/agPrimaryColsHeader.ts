@@ -61,6 +61,9 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         this.addManagedPropertyListener('functionsReadOnly', () => this.onFunctionsReadOnlyPropChanged());
 
         this.eFilterTextField.setAutoComplete(false).onValueChange(() => this.onFilterTextChanged());
+        this.addManagedElementListeners(this.eFilterTextField.getInputElement(), {
+            keydown: (e) => this.onFilterKeyDown(e!),
+        });
 
         this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
 
@@ -130,6 +133,17 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         }
 
         this.onFilterTextChangedDebounced();
+    }
+
+    private onFilterKeyDown(e: KeyboardEvent): void {
+        if (e.key === KeyCode.ENTER) {
+            // The filter is debounced, so defer the toggle until the filtered set has settled.
+            setTimeout(() => {
+                if (this.isAlive()) {
+                    this.onSelectClicked();
+                }
+            }, DEBOUNCE_DELAY);
+        }
     }
 
     private onSelectClicked(): void {
