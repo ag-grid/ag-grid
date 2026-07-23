@@ -1,5 +1,9 @@
 <div style="display: flex; flex-direction: column; height: 100%">
     <div style="margin-bottom: 1rem">
+        <label style="margin-right: 1rem">
+            <input type="checkbox" id="deferredMode" onchange="onModeChange()" />
+            Deferred edit mode (Apply / Cancel)
+        </label>
         <button onclick="saveState()">Save State</button>
         <button onclick="restoreState()">Restore State</button>
         <button onclick="resetState()">Reset State</button>

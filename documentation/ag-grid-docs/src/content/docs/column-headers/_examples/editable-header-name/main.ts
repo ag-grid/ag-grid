@@ -53,7 +53,15 @@ const gridOptions: GridOptions<IOlympicData> = {
         width: 170,
     },
     sideBar: 'columns',
+    columnHeaderEdit: {
+        applyMode: 'live',
+    },
 };
+
+function onModeChange() {
+    const deferred = document.querySelector<HTMLInputElement>('#deferredMode')?.checked;
+    gridApi!.setGridOption('columnHeaderEdit', { applyMode: deferred ? 'deferred' : 'live' });
+}
 
 function saveState() {
     window.gridState = gridApi!.getState();
