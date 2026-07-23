@@ -35,7 +35,8 @@
 .ag-floating-filter-button-button:hover,
 .ag-filter-toolpanel-expand:hover,
 .ag-panel-title-bar-button-icon:hover,
-.ag-chart-menu-icon:hover {
+.ag-chart-menu-icon:hover,
+.ag-has-menu-open {
     background-color: var(--ag-icon-button-hover-background-color);
     box-shadow: 0 0 0 var(--ag-icon-button-background-spread) var(--ag-icon-button-hover-background-color);
     color: var(--ag-icon-button-hover-color);

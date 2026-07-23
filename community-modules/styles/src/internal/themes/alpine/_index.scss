@@ -232,16 +232,20 @@
     .ag-floating-filter-button-button,
     .ag-filter-toolpanel-expand,
     .ag-chart-menu-icon {
-        &:hover {
+        &:hover,
+        &.ag-has-menu-open {
             color: var(--ag-alpine-active-color);
         }
     }
 
     .ag-header-cell-menu-button:hover .ag-icon,
+    .ag-header-cell-menu-button.ag-has-menu-open .ag-icon,
     .ag-header-cell-filter-button:hover .ag-icon,
+    .ag-header-cell-filter-button.ag-has-menu-open .ag-icon,
     .ag-side-button-button:hover .ag-icon,
     .ag-panel-title-bar-button:hover .ag-icon,
-    .ag-floating-filter-button-button:hover .ag-icon {
+    .ag-floating-filter-button-button:hover .ag-icon,
+    .ag-floating-filter-button-button.ag-has-menu-open .ag-icon {
         color: inherit;
     }
 
