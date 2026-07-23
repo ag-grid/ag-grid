@@ -1,4 +1,4 @@
-import type { ColDef, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridOptions, NavigateToNextCellParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode, PinnedRowModule } from 'ag-grid-community';
 
 import {
@@ -38,6 +38,17 @@ describe('Column Spanning Keyboard Navigation', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, PinnedRowModule],
     });
+
+    const createNavigationGrid = (gridOptions: GridOptions<RowData> = {}) =>
+        gridsManager.createGrid<RowData>('myGrid', {
+            columnDefs: makeColumnDefs(),
+            rowData: [
+                { a: 'a0', b: 'b0', c: 'c0' },
+                { a: 'a1', b: 'b1', c: 'c1' },
+                { a: 'a2', b: 'b2', c: 'c2' },
+            ],
+            ...gridOptions,
+        });
 
     afterEach(() => {
         gridsManager.reset();
@@ -236,6 +247,102 @@ describe('Column Spanning Keyboard Navigation', () => {
             ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
             └── LEAF id:1 a:"a1" b:"b1" c:"c1"
         `);
+    });
+
+    test('Arrow Down preserves the column covered by a spanning cell', () => {
+        const api = createNavigationGrid();
+
+        api.setFocusedCell(0, 'b');
+        dispatchKeyDown(KeyCode.DOWN);
+
+        expect(getFocusedRowIndex(api)).toBe(1);
+        expect(getFocusedColId(api)).toBe('a');
+
+        dispatchKeyDown(KeyCode.DOWN);
+
+        expect(getFocusedRowIndex(api)).toBe(2);
+        expect(getFocusedColId(api)).toBe('b');
+    });
+
+    test('Arrow Up preserves the column covered by a spanning cell', () => {
+        const api = createNavigationGrid();
+
+        api.setFocusedCell(2, 'b');
+        dispatchKeyDown(KeyCode.UP);
+
+        expect(getFocusedRowIndex(api)).toBe(1);
+        expect(getFocusedColId(api)).toBe('a');
+
+        dispatchKeyDown(KeyCode.UP);
+
+        expect(getFocusedRowIndex(api)).toBe(0);
+        expect(getFocusedColId(api)).toBe('b');
+    });
+
+    test('Arrow Down preserves the covered column across consecutive spanning rows', () => {
+        const columnDefs = makeColumnDefs();
+        columnDefs[0].colSpan = (params) => (params.node!.rowIndex! === 0 || params.node!.rowIndex! === 3 ? 1 : 2);
+
+        const api = createNavigationGrid({
+            columnDefs,
+            rowData: [
+                { a: 'a0', b: 'b0', c: 'c0' },
+                { a: 'a1', b: 'b1', c: 'c1' },
+                { a: 'a2', b: 'b2', c: 'c2' },
+                { a: 'a3', b: 'b3', c: 'c3' },
+            ],
+        });
+
+        api.setFocusedCell(0, 'b');
+        dispatchKeyDown(KeyCode.DOWN);
+        dispatchKeyDown(KeyCode.DOWN);
+
+        expect(getFocusedRowIndex(api)).toBe(2);
+        expect(getFocusedColId(api)).toBe('a');
+
+        dispatchKeyDown(KeyCode.DOWN);
+
+        expect(getFocusedRowIndex(api)).toBe(3);
+        expect(getFocusedColId(api)).toBe('b');
+    });
+
+    test('navigateToNextCell receives the preserved column after entering a spanning cell', () => {
+        const navigateToNextCell = vi.fn((params: NavigateToNextCellParams<RowData>) => params.nextCellPosition);
+        const api = createNavigationGrid({ navigateToNextCell });
+
+        api.setFocusedCell(0, 'b');
+        dispatchKeyDown(KeyCode.DOWN);
+        dispatchKeyDown(KeyCode.DOWN);
+
+        const secondCall = navigateToNextCell.mock.calls[1][0];
+        expect(secondCall.previousCellPosition.column.getColId()).toBe('a');
+        expect(secondCall.nextCellPosition?.column.getColId()).toBe('b');
+        expect(getFocusedRowIndex(api)).toBe(2);
+        expect(getFocusedColId(api)).toBe('b');
+    });
+
+    test('external focus changes clear the column covered by a spanning cell', () => {
+        const api = createNavigationGrid();
+
+        api.setFocusedCell(0, 'b');
+        dispatchKeyDown(KeyCode.DOWN);
+        api.setFocusedCell(1, 'a');
+        dispatchKeyDown(KeyCode.DOWN);
+
+        expect(getFocusedRowIndex(api)).toBe(2);
+        expect(getFocusedColId(api)).toBe('a');
+    });
+
+    test('horizontal navigation clears the column covered by a spanning cell', () => {
+        const api = createNavigationGrid();
+
+        api.setFocusedCell(0, 'b');
+        dispatchKeyDown(KeyCode.DOWN);
+        dispatchKeyDown(KeyCode.RIGHT);
+        dispatchKeyDown(KeyCode.DOWN);
+
+        expect(getFocusedRowIndex(api)).toBe(2);
+        expect(getFocusedColId(api)).toBe('c');
     });
 
     test('Page Down from pinned top row lands on body row and normalises spanning cell', async () => {
