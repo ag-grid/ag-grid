@@ -13,6 +13,7 @@ import { _isGroupRowsSticky } from '../gridOptionsUtils';
 import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { NavigateToNextCellParams, TabToNextCellParams } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
+import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { RowPinnedType, VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
@@ -46,6 +47,8 @@ export class NavigationService extends BeanStub implements NamedBean {
     beanName = 'navigation' as const;
 
     private gridBodyCon: GridBodyCtrl;
+    private currentColumnWithoutSpan: Column | null = null;
+    private hasColumnWithoutSpanListener = false;
 
     constructor() {
         super();
@@ -684,13 +687,19 @@ export class NavigationService extends BeanStub implements NamedBean {
         currentCell: CellPosition,
         allowUserOverride: boolean
     ) {
+        const isVertical = key === KeyCode.UP || key === KeyCode.DOWN;
+        const currentCellWithoutSpan =
+            isVertical && this.currentColumnWithoutSpan
+                ? { ...currentCell, column: this.currentColumnWithoutSpan }
+                : currentCell;
+
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
-        let nextCell: CellPosition | null = currentCell;
+        let nextCell: CellPosition | null = currentCellWithoutSpan;
         let hitEdgeOfGrid = false;
         const beans = this.beans;
         const { cellNavigation, focusSvc, gos } = beans;
 
-        while (nextCell && (nextCell === currentCell || !this.isValidNavigateCell(nextCell))) {
+        while (nextCell && (nextCell === currentCellWithoutSpan || !this.isValidNavigateCell(nextCell))) {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
@@ -712,7 +721,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             nextCell = {
                 rowIndex: -1,
                 rowPinned: null,
-                column: currentCell.column,
+                column: currentCellWithoutSpan.column,
             };
         }
 
@@ -765,9 +774,28 @@ export class NavigationService extends BeanStub implements NamedBean {
         const normalisedPosition = this.getNormalisedPosition(nextCell);
         if (normalisedPosition) {
             this.focusPosition(normalisedPosition);
+            if (nextCell.column !== normalisedPosition.column) {
+                this.setCurrentColumnWithoutSpan(nextCell.column);
+            }
         } else {
             this.tryToFocusFullWidthRow(nextCell);
         }
+    }
+
+    private setCurrentColumnWithoutSpan(column: Column): void {
+        if (!this.hasColumnWithoutSpanListener) {
+            const clearCurrentColumnWithoutSpan = () => {
+                this.currentColumnWithoutSpan = null;
+            };
+            this.addManagedEventListeners({
+                cellFocused: clearCurrentColumnWithoutSpan,
+                headerFocused: clearCurrentColumnWithoutSpan,
+            });
+            this.hasColumnWithoutSpanListener = true;
+        }
+
+        // preserve the requested column while focus is on the cell that spans it
+        this.currentColumnWithoutSpan = column;
     }
 
     private getNormalisedPosition(cellPosition: CellPosition): CellPosition | null {
