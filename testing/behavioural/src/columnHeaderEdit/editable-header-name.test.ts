@@ -530,4 +530,50 @@ describe('Editable group header name', () => {
         expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
         expect(getterCalls).toBe(callsBefore);
     });
+
+    test('an edited group name is shared across split instances and survives re-merge', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    groupId: 'athleteGroup',
+                    headerName: 'Group',
+                    headerNameEditable: true,
+                    children: [
+                        { field: 'athlete', pinned: 'left' },
+                        { field: 'age' },
+                        { field: 'country', pinned: 'right' },
+                    ],
+                },
+            ],
+            rowData: [{ athlete: 'Michael Phelps', age: 23, country: 'United States' }],
+            initialState: {
+                columnGroup: {
+                    openColumnGroupIds: [],
+                    headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
+                },
+            },
+        });
+        await asyncSetTimeout(1);
+
+        // The group's children span three pinned sections, so it is replicated as one instance per section.
+        // The override is keyed by groupId, so the single edited name applies to every split instance.
+        const groupInstances = () =>
+            [
+                ...api.getLeftDisplayedColumnGroups(),
+                ...api.getCenterDisplayedColumnGroups(),
+                ...api.getRightDisplayedColumnGroups(),
+            ].filter((cg) => (cg as any).getGroupId?.() === 'athleteGroup');
+        const displayNames = () => groupInstances().map((cg) => api.getDisplayNameForColumnGroup(cg as any, 'header'));
+
+        expect(displayNames()).toEqual(['Renamed', 'Renamed', 'Renamed']);
+
+        // Un-pinning re-merges the children into a single instance, which keeps the edited name.
+        api.applyColumnState({ defaultState: { pinned: null } });
+        await asyncSetTimeout(1);
+
+        const merged = groupInstances();
+        expect(merged.length).toBe(1);
+        expect(api.getDisplayNameForColumnGroup(merged[0] as any, 'header')).toBe('Renamed');
+        expect(api.getState().columnGroup?.headerNames).toEqual([{ groupId: 'athleteGroup', headerName: 'Renamed' }]);
+    });
 });

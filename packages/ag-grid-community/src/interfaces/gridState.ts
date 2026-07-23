@@ -164,15 +164,25 @@ export interface ColumnOrderState {
     orderedColIds: string[];
 }
 
+export interface ColumnGroupHeaderNameState {
+    groupId: string;
+    headerName: string;
+}
+
 export interface ColumnGroupState {
     openColumnGroupIds: string[];
     /** User-edited group header names, keyed by group id. */
-    headerNames?: { groupId: string; headerName: string }[];
+    headerNames?: ColumnGroupHeaderNameState[];
+}
+
+export interface ColumnHeaderNameColumnState {
+    colId: string;
+    headerName: string;
 }
 
 export interface ColumnHeaderNameState {
     /** User-edited column header names, keyed by column id. */
-    columnHeaderNames: { colId: string; headerName: string }[];
+    columnHeaderNames: ColumnHeaderNameColumnState[];
 }
 
 export interface RowPinningState {
