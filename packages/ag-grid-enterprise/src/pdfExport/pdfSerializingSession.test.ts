@@ -2,6 +2,7 @@ import type {
     AgColumn,
     CellClassParams,
     CellStyle,
+    PdfCellHyperlinkCallbackParams,
     PdfCustomContent,
     PdfStyleCallbackParams,
     ProcessCellForExportParams,
@@ -85,7 +86,13 @@ describe('PdfSerializingSession', () => {
         const session = createSession();
         const columns = [createColumn('A', 1), createColumn('B', 1), createColumn('C', 1)];
         const content: PdfCustomContent = [
-            [{ data: { value: 'Spanning' }, mergeAcross: 100 }, { data: { value: 'Overflow' } }],
+            [
+                {
+                    data: { value: 'Spanning', hyperlink: 'https://example.com/custom' },
+                    mergeAcross: 100,
+                },
+                { data: { value: 'Overflow' } },
+            ],
         ];
 
         session.prepare(columns);
@@ -93,7 +100,42 @@ describe('PdfSerializingSession', () => {
 
         const rows = getRows(session);
         expect(rows[0].cells).toHaveLength(1);
-        expect(rows[0].cells[0]).toMatchObject({ value: 'Spanning', mergeAcross: 2, elementType: 'custom' });
+        expect(rows[0].cells[0]).toMatchObject({
+            value: 'Spanning',
+            hyperlink: 'https://example.com/custom',
+            mergeAcross: 2,
+            elementType: 'custom',
+        });
+    });
+
+    it('resolves a hyperlink for an exported body cell', () => {
+        let callbackParams: PdfCellHyperlinkCallbackParams | undefined;
+        const column = createColumn('Website', 1);
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {},
+            gos: createGridOptionsService(),
+            skipGridStyles: true,
+            processCellHyperlinkCallback: (params: PdfCellHyperlinkCallbackParams) => {
+                callbackParams = params;
+                return `https://example.com/${params.value}`;
+            },
+        } as any);
+        const node = { data: {}, group: false, level: 0, rowIndex: 0 } as RowNode;
+        (session as any).extractRowCellValue = () => ({ value: 'docs' });
+        (session as any).isRowGroupCell = () => false;
+
+        session.prepare([column]);
+        session.onNewBodyRow(node).onColumn(column, 0, node);
+
+        expect(callbackParams).toMatchObject({
+            value: 'docs',
+            accumulatedRowIndex: 1,
+            node,
+            column,
+        });
+        expect(getRows(session)[0].cells[0].hyperlink).toBe('https://example.com/docs');
     });
 
     it('resolves cellStyle with the original value before processing the exported value', () => {

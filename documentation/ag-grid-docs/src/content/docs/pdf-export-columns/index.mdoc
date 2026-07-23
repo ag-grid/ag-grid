@@ -1,0 +1,78 @@
+---
+title: "PDF Export - Columns"
+enterprise: true
+---
+
+PDF Export includes the currently displayed columns in their displayed order by default. Export parameters can include hidden columns, choose a specific column set, suppress headers, or include the Row Numbers column.
+
+## Column Headers
+
+Column headers and column-group headers are exported by default. Set `skipColumnHeaders=true` or `skipColumnGroupHeaders=true` to omit the corresponding header rows.
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    skipColumnHeaders: false,
+    skipColumnGroupHeaders: true,
+});
+```
+
+When headers are included, `processHeaderCallback` and `processGroupHeaderCallback` can customise their exported text.
+
+## Hidden And Specific Columns
+
+Hidden columns are omitted by default. Set `allColumns=true` to export every primary column in `columnDefs` order, including hidden columns.
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    allColumns: true,
+});
+```
+
+Use `columnKeys` when only a specific set of columns should be exported. The supplied column keys or Column objects also determine their export order.
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    columnKeys: ['customer', 'product', 'total'],
+});
+```
+
+When pivot mode is active, PDF Export uses the currently displayed pivot result columns. Hidden or collapsed pivot result columns are not added by `allColumns`.
+
+## Column Groups
+
+Displayed column-group headers are rendered as PDF header rows. A PDF cannot contain interactive collapsible column groups, so exported groups are a static representation of the selected columns.
+
+Columns hidden by a closed grid group are omitted by default. Use `allColumns=true` to include every primary column, or use `columnKeys` for precise control over the exported column set.
+
+## Row Numbers
+
+The Row Numbers column is not exported by default, even when it is displayed in the grid. Set `exportRowNumbers=true` to include it.
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    exportRowNumbers: true,
+});
+```
+
+When `columnWidth` is omitted, the exported Row Numbers column is sized automatically from its contents. A global or per-column `columnWidth` configuration can override this behaviour.
+
+The example below demonstrates header suppression, visible or hidden column selection, and Row Numbers export.
+
+{% gridExampleRunner title="PDF Export - Columns" name="pdf-export-columns" exampleHeight=600 /%}
+
+## Column Widths
+
+The `columnWidth` option accepts:
+
+- `'grid'` to use the current grid width.
+- `'auto'` to measure the exported header and body content.
+- A number to use a fixed width in points.
+- A callback to configure each exported column independently.
+
+When `columnWidth` is omitted, regular columns use `'grid'` and the Row Numbers column uses `'auto'`. A `columnWidth` value overrides those defaults; a callback result overrides the default for that column. Returning `null` or `undefined` from the callback uses the column's default mode.
+
+Auto widths are measured before page scaling. If the combined widths exceed the printable page width, every column is reduced proportionally. Smaller tables are not stretched. Horizontal pagination and automatically expanding the page size are not supported.
+
+PDF layout dimensions use points, where 72 points equal one inch.
+
+{% gridExampleRunner title="Widths And Autosizing" name="pdf-widths-autosizing" exampleHeight=560 /%}

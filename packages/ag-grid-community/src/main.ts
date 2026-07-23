@@ -142,6 +142,7 @@ export type {
     IPdfCreator,
     PdfCell,
     PdfCellData,
+    PdfCellHyperlinkCallbackParams,
     PdfCellStyle,
     PdfCellStyleCallbackParams,
     PdfColors,

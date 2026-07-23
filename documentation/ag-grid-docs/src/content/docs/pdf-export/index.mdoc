@@ -51,12 +51,16 @@ PDF Export uses the built-in PDF Base 14 fonts with WinAnsi encoding. Characters
 | Grid state | Displayed column order and visibility, sorting, filtering, selected-row export options, grouping, pinned rows, column spans   | Cell Renderer output or custom HTML                                  |
 | Layout     | Named and custom page sizes, margins, orientation, column widths, text wrapping, automatic row height, repeated table headers | Automatic page size, horizontal pagination, page headers and footers |
 | Styling    | Theme colours, `colors`, supported `rowStyle`, `cellStyle`, and `headerStyle` properties, PDF-specific style callbacks        | `cellClass`, `cellClassRules`, arbitrary CSS, browser fonts          |
-| Content    | Value Getters, Value Formatters, export value callbacks, document title, content before and after the table                   | Images, SVG, clickable hyperlinks, embedded files                    |
+| Content    | Value Getters, Value Formatters, export value callbacks, document title, additional content, external URI hyperlinks          | Images, SVG, internal page links, embedded files                     |
 | Text       | Built-in Helvetica, Times, and Courier families; WinAnsi characters                                                           | Embedded custom fonts, full Unicode, RTL layout                      |
 
 ## PDF Export Sections
 
-- **[Layout](./pdf-export-layout/)**: Configure pages, widths, wrapping, row height, grouping, and pinned rows.
-- **[Styling](./pdf-export-styles/)**: Reuse supported grid styles and apply PDF-specific overrides.
-- **[Content](./pdf-export-content/)**: Customise exported values, titles, and additional content.
 - **[API Reference](./pdf-export-api/)**: PDF export methods, grid options, interfaces, and types.
+- **[Styles](./pdf-export-styles/)**: Reuse supported grid styles and apply PDF-specific overrides.
+- **[Extra Content](./pdf-export-extra-content/)**: Customise exported values, titles, and additional content.
+- **[Rows](./pdf-export-rows/)**: Select rows and configure filtered, sorted, and pinned-row export.
+- **[Columns](./pdf-export-columns/)**: Choose columns, headers, groups, Row Numbers, and widths.
+- **[Hyperlinks](./pdf-export-hyperlinks/)**: Add external URI links to grid cells and custom content.
+- **[Master Detail](./pdf-export-master-detail/)**: Include a PDF representation of detail data below master rows.
+- **[Page Setup](./pdf-export-page-setup/)**: Configure page size, orientation, margins, and repeated table headers.

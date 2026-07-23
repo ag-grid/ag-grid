@@ -72,6 +72,7 @@ export type MeasuredCell = {
     width: number;
     style: ResolvedCellStyle;
     lines: string[];
+    hyperlink?: string;
 };
 
 export type MeasuredRow = {
@@ -181,7 +182,7 @@ export function measureRow(
             naturalHeight,
             lineCount * style.lineHeight + style.padding.top + style.padding.bottom
         );
-        measuredCells.push({ columnIndex, span, width, style, lines });
+        measuredCells.push({ columnIndex, span, width, style, lines, hyperlink: cell.hyperlink });
         columnIndex += span;
     }
 
