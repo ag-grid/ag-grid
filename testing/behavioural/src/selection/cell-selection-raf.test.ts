@@ -269,7 +269,7 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
         `);
     });
 
-    test('data updates with enableCellSpan respond to span changes', async () => {
+    test('data updates with enableCellSpan active are processed without error', async () => {
         const api = gridMgr.createGrid('myGrid', {
             columnDefs: [{ field: 'name' }, { field: 'value' }],
             rowData,
@@ -277,12 +277,13 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             cellSelection: true,
             getRowId: (params) => params.data.name,
         });
-        await new GridColumns(api, `data updates with enableCellSpan respond to span changes setup`).checkColumns(`
+        await new GridColumns(api, `data updates with enableCellSpan active are processed without error setup`)
+            .checkColumns(`
             CENTER
             ├── name "Name" width:200
             └── value "Value" width:200
         `);
-        await new GridRows(api, `data updates with enableCellSpan respond to span changes setup`).check(`
+        await new GridRows(api, `data updates with enableCellSpan active are processed without error setup`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:a name:"a" value:1
             ├── LEAF id:b name:"b" value:2
@@ -296,8 +297,10 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
         api.applyTransaction({
             update: [{ name: 'a', value: 999 }],
         });
-        await new GridRows(api, `data updates with enableCellSpan respond to span changes after applyTransaction`)
-            .check(`
+        await new GridRows(
+            api,
+            `data updates with enableCellSpan active are processed without error after applyTransaction`
+        ).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:a name:"a" value:999
                 ├── LEAF id:b name:"b" value:2
