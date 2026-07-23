@@ -810,6 +810,7 @@ jobs:
   sonar_community:
     name: SonarQube Community
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
         with:
@@ -833,6 +834,7 @@ jobs:
   sonar_enterprise:
     name: SonarQube Enterprise
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
         with:
