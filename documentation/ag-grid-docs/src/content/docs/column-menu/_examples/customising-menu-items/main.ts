@@ -29,43 +29,43 @@ const columnDefs: ColDef[] = [
         enableValue: true,
         minWidth: 150,
         columnMenuItems: (params: GetColumnMenuItemsParams) => {
-            // 'scrollIntoView' and 'value' are Columns Tool Panel tokens; returning them for the
-            // column menu shows that built-in tokens now resolve on any surface.
-            const menuItems: (MenuItemDef | DefaultColumnMenuItem)[] = [
+            // 'value' and 'scrollIntoView' normally appear on the Columns Tool Panel menu - returning
+            // them here shows built-in tokens work on any surface.
+            const menuItems: (DefaultColumnMenuItem | MenuItemDef)[] = [
                 'scrollIntoView',
                 'value',
                 'separator',
                 ...params.defaultItems,
-            ];
-            menuItems.push({
-                name: 'A Custom Item',
-                action: () => {
-                    console.log('A Custom Item selected');
+                {
+                    name: 'A Custom Item',
+                    action: () => {
+                        console.log('A Custom Item selected');
+                    },
                 },
-            });
-            menuItems.push({
-                name: 'Custom Sub Menu',
-                subMenu: [
-                    {
-                        name: 'Black',
-                        action: () => {
-                            console.log('Black was pressed');
+                {
+                    name: 'Custom Sub Menu',
+                    subMenu: [
+                        {
+                            name: 'Black',
+                            action: () => {
+                                console.log('Black was pressed');
+                            },
                         },
-                    },
-                    {
-                        name: 'White',
-                        action: () => {
-                            console.log('White was pressed');
+                        {
+                            name: 'White',
+                            action: () => {
+                                console.log('White was pressed');
+                            },
                         },
-                    },
-                    {
-                        name: 'Grey',
-                        action: () => {
-                            console.log('Grey was pressed');
+                        {
+                            name: 'Grey',
+                            action: () => {
+                                console.log('Grey was pressed');
+                            },
                         },
-                    },
-                ],
-            });
+                    ],
+                },
+            ];
             return menuItems;
         },
     },
@@ -95,7 +95,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'year',
         columnMenuItems: (params: GetColumnMenuItemsParams) => {
-            const menuItems: (MenuItemDef | DefaultColumnMenuItem)[] = [];
+            const menuItems: (DefaultColumnMenuItem | MenuItemDef)[] = [];
             const itemsToExclude = ['separator', 'pinSubMenu', 'valueAggSubMenu'];
             params.defaultItems.forEach((item) => {
                 if (itemsToExclude.indexOf(item) < 0) {

@@ -52,7 +52,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
 
     public mapWithStockItems(
-        originalList: (MenuItemDef | DefaultColumnMenuItem)[],
+        originalList: (DefaultColumnMenuItem | MenuItemDef)[],
         column: AgColumn | null,
         node: RowNode | null,
         noteParams: GetNoteParams | undefined,
