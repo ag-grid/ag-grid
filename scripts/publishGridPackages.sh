@@ -21,8 +21,7 @@ RELEASE_VERSION=`node -e "console.log(require(\"$1/package.json\").version)"`
 cd $DIST_DIRECTORY/community-modules
 PACKAGE_NAME="@ag-grid-community/locale"
 echo $PACKAGE_NAME
-npm publish "locale.tgz" --registry https://registry.ag-grid.com/
-npm dist-tag add $PACKAGE_NAME@$RELEASE_VERSION latest --registry=https://registry.ag-grid.com/
+npm publish "locale.tgz" --registry https://registry.ag-grid.com/ --tag $TAG
 
 cd ../packages
 for file in *.tgz; do
