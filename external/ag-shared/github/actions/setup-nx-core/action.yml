@@ -241,7 +241,11 @@ runs:
           # avoids downloading/extracting a large cache on the majority of jobs that never
           # install. (The rare exact-hit-but-integrity-fails recovery path installs cold — an
           # accepted trade-off vs restoring on every warm job.) Saved only in rw (below).
-          if: inputs.cache_mode != 'off' && inputs.yarn_postinstall != 'no-install' && steps.cache_rw.outputs.cache-hit != 'true' && steps.cache_ro.outputs.cache-hit != 'true'
+          #
+          # Also skipped for `yarn_postinstall: false` in ro mode: the only install step for
+          # `false` is gated on rw, so an ro+false job never installs and a restore would be
+          # wasted (matters only on an inexact node_modules restore — a degraded path).
+          if: inputs.cache_mode != 'off' && inputs.yarn_postinstall != 'no-install' && (inputs.yarn_postinstall != 'false' || inputs.cache_mode == 'rw') && steps.cache_rw.outputs.cache-hit != 'true' && steps.cache_ro.outputs.cache-hit != 'true'
           id: yarn_cache
           uses: actions/cache/restore@v4
           with:
