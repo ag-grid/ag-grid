@@ -136,7 +136,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     }
 
     private onFilterKeyDown(e: KeyboardEvent): void {
-        if (e.key === KeyCode.ENTER) {
+        if (e.key === KeyCode.ENTER && !e.isComposing && !this.params.suppressColumnSelectAll) {
             // The filter is debounced, so defer the toggle until the filtered set has settled.
             setTimeout(() => {
                 if (this.isAlive()) {

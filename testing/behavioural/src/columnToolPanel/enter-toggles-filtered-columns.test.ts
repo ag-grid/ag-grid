@@ -24,7 +24,7 @@ describe('Columns Tool Panel — Enter in filter input toggles matching columns'
 
     const rowData = [Object.fromEntries(columnDefs.map((c) => [c.field!, `val_${c.field}`]))];
 
-    async function createGrid(): Promise<GridApi> {
+    async function createGrid(toolPanelParams?: Record<string, unknown>): Promise<GridApi> {
         return gridMgr.createGridAndWait('myGrid', {
             columnDefs,
             rowData,
@@ -36,6 +36,7 @@ describe('Columns Tool Panel — Enter in filter input toggles matching columns'
                         labelKey: 'columns',
                         iconKey: 'columns',
                         toolPanel: 'agColumnsToolPanel',
+                        toolPanelParams,
                     },
                 ],
                 defaultToolPanel: 'columns',
@@ -108,5 +109,27 @@ describe('Columns Tool Panel — Enter in filter input toggles matching columns'
         });
         expect(api.getColumn('athlete')!.isVisible()).toBe(true);
         expect(api.getColumn('country')!.isVisible()).toBe(true);
+    });
+
+    test('Enter does not toggle when suppressColumnSelectAll hides the select-all capability', async () => {
+        const api = await createGrid({ suppressColumnSelectAll: true });
+        forceVirtualListRender(api);
+
+        const input = getFilterInput(api);
+        setNativeInputValue(input, 'medals');
+
+        await waitFor(() => {
+            const labels = displayedItemLabels(api);
+            expect(labels.some((l) => l.includes('gold medals'))).toBe(true);
+            expect(labels.some((l) => l.includes('silver medals'))).toBe(true);
+        });
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+        // Select-all is suppressed, so the Enter shortcut must not perform the bulk
+        // toggle it would otherwise dispatch. Wait past the deferred toggle delay.
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        expect(api.getColumn('goldMedals')!.isVisible()).toBe(true);
+        expect(api.getColumn('silverMedals')!.isVisible()).toBe(true);
     });
 });
