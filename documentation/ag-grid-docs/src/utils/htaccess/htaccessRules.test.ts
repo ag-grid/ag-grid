@@ -559,9 +559,16 @@ describe('htaccessRules', () => {
         const negotiationRules = [
             'RewriteCond %{HTTP_ACCEPT} text/markdown',
             // Captures a docs path or a top-level md page, reused (%1) in the -f test and rewrite target.
-            'RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline)/?$',
+            'RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$',
             'RewriteCond %{DOCUMENT_ROOT}/%1.md -f',
             'RewriteRule ^ /%1.md [L]',
+        ];
+
+        // The homepage twin is a separate stanza: the root URL has no path segment to capture.
+        const homepageNegotiationRules = [
+            'RewriteCond %{REQUEST_URI} ^/$',
+            'RewriteCond %{DOCUMENT_ROOT}/index.md -f',
+            'RewriteRule ^ /index.md [L]',
         ];
 
         it('serves the per-page .md variant when Accept: text/markdown, gated by an on-disk check', () => {
@@ -590,16 +597,34 @@ describe('htaccessRules', () => {
         it('adds Vary: Accept for negotiated paths (both envs) so shared caches key on the negotiated representation', () => {
             for (const content of [productionContent, stagingContent]) {
                 expect(content).toContain(
-                    '<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/]+|license-pricing|changelog|pipeline)/?$#">'
+                    `<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/]+|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$# || %{REQUEST_URI} == '/'">`
                 );
                 expect(content).toContain('Header append Vary Accept');
             }
         });
 
-        it('negotiates the top-level license-pricing, changelog and pipeline pages to their .md', () => {
+        it('negotiates the top-level standalone pages to their .md', () => {
             // %1 captures each page name, so the -f guard and rewrite target resolve to /<page>.md.
             for (const content of [productionContent, stagingContent]) {
-                expect(content).toContain('|license-pricing|changelog|pipeline)/?$');
+                expect(content).toContain('|license-pricing|changelog|pipeline|about|community');
+                expect(content).toContain('|documentation-archive|example)/?$');
+            }
+        });
+
+        it('negotiates the community subpages to their .md', () => {
+            // e.g. /community/events -> %1 = community/events -> /community/events.md
+            for (const content of [productionContent, stagingContent]) {
+                expect(content).toContain(
+                    'community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?'
+                );
+            }
+        });
+
+        it('negotiates the homepage (/) to /index.md via a dedicated stanza in both envs', () => {
+            for (const content of [productionContent, stagingContent]) {
+                for (const rule of homepageNegotiationRules) {
+                    expect(content).toContain(rule);
+                }
             }
         });
 

@@ -55,7 +55,8 @@ export default function agDevMarkdownNegotiation({ pathPatterns, disabled }: Mar
                     }
                     const [pathname, query] = (req.url ?? '').split('?');
                     if (pathPatterns.some((pattern) => pattern.test(pathname))) {
-                        const markdownPath = pathname.replace(/\/$/, '') + '.md';
+                        // The homepage twin is `/index.md`; every other page maps to `<path>.md`.
+                        const markdownPath = pathname === '/' ? '/index.md' : pathname.replace(/\/$/, '') + '.md';
                         req.url = query != null ? `${markdownPath}?${query}` : markdownPath;
                     }
                     next();

@@ -5,7 +5,6 @@ import styles from '@pages-styles/homepage.module.scss';
 import { Quotes } from '@components/quotes/Quotes';
 import { quotesData } from '@components/quotes/quotesData';
 import { LandingPageFWSelector } from '@ag-website-shared/components/landing-pages/LandingPageFWSelector';
-import InstallText from '@components/framework-landing-pages/InstallText';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { Version } from '@ag-website-shared/components/whats-new/components/Version';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
@@ -30,7 +29,23 @@ const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) 
 const { data: faqData } = (await getEntry('faqs', 'homepage')) as CollectionEntry<'faqs'>;
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
 const { data: headerData } = (await getEntry('siteHeader', 'header')) as CollectionEntry<'siteHeader'>;
+const { data: homepageData } = (await getEntry('homepage', 'homepage')) as CollectionEntry<'homepage'>;
 const { blogPrefix } = whatsNewData['grid'];
+
+const { hero } = homepageData;
+const sectionById = Object.fromEntries(homepageData.sections.map((section) => [section.id, section]));
+
+// Resolve a homepage section's stored copy into <LandingPageSection> props: framework CTAs
+// keep their raw './' path (resolved by the component), other CTAs get urlWithBaseUrl, and
+// sectionClass maps to the local CSS-module class.
+const sectionProps = (id: string) => {
+    const { ctaUrl, ctaUrlIsBaseUrl, sectionClass, ...rest } = sectionById[id];
+    return {
+        ...rest,
+        ctaUrl: ctaUrl == null ? undefined : ctaUrlIsBaseUrl ? urlWithBaseUrl(ctaUrl) : ctaUrl,
+        sectionClass: sectionClass ? styles[sectionClass] : undefined,
+    };
+};
 
 // Reduce the markdown FAQ answers to plain text so the structured data matches the visible answer and
 // stays valid for rich results. Covers the inline markdown used in these answers: images, links,
@@ -119,15 +134,12 @@ const frameworksData = [
             <section class={styles.heroHeadings}>
                 <h1 className="text-xl">
                     <span className={styles.heroTopLine}>
-                        <span>The Best</span>&nbsp;<FrameworkTextAnimation client:load />
+                        <span>{hero.headingPrefix}</span>&nbsp;<FrameworkTextAnimation client:load />
                     </span>
-                    <span>Grid in the World</span>
+                    <span>{hero.headingSuffix}</span>
                 </h1>
 
-                <h2 class="text-base normal-weight-text">
-                    Add high-performance, feature rich, and fully customisable Data Grids to your application in minutes
-                    with our free, open source library.
-                </h2>
+                <h2 class="text-base normal-weight-text">{hero.subHeading}</h2>
                 <div class={styles.heroSectionbuttonContainer}>
                     <div class={styles.heroSectioncta2}>
                         <div class={styles.homepageFrameworks}>
@@ -155,16 +167,12 @@ const frameworksData = [
                         styles.heroSectioncta1,
                         'plausible-event-name=react-table-get-started',
                     ]}
-                    href={urlWithBaseUrl('./example/')}>See demos <Icon name="chevronRight" /></a
+                    href={urlWithBaseUrl(hero.seeDemosUrl)}>{hero.seeDemosText} <Icon name="chevronRight" /></a
                 >
 
-                <a
-                    id="github-cta"
-                    class="button-tertiary"
-                    href="https://github.com/ag-grid/ag-grid-demos/tree/main/finance"
-                >
+                <a id="github-cta" class="button-tertiary" href={hero.githubUrl}>
                     <Icon name="github" svgClasses={styles.githubIcon} />
-                    <span>View on GitHub</span>
+                    <span>{hero.githubText}</span>
                 </a>
             </div>
         </section>
@@ -177,19 +185,7 @@ const frameworksData = [
         </LandingPageSection>
     </div>
 
-    <LandingPageSection
-        client:load
-        id="fastest-data-grid"
-        tag="Unbeatable Speed & Performance"
-        heading="The Fastest Data Grid In The World"
-        subHeading="Handle millions of rows, and thousands of updates per second out of the box, without compromising on performance"
-        ctaTitle="Get Started For Free"
-        ctaUrl="./getting-started"
-        ctaId="get-started-for-free"
-        isFramework
-        showBackgroundGradient
-        client:load
-    >
+    <LandingPageSection client:load {...sectionProps('fastest-data-grid')}>
         <section className={styles.automatedRowGroupingOuter}>
             <div className={styles.automatedRowGrouping}>
                 <AutomatedRowGrouping client:visible visibilityThreshold={0.2} darkMode={true} />
@@ -197,32 +193,11 @@ const frameworksData = [
         </section>
     </LandingPageSection>
 
-    <LandingPageSection
-        client:load
-        id="custom-themes"
-        tag="Fully Customisable & Extendable"
-        heading="Custom Themes and Components"
-        subHeading="Customise your Data Grid styles with our Theming API and extend functionality with your own custom components."
-        ctaTitle="Create a Custom Theme"
-        ctaUrl={urlWithBaseUrl('/theme-builder/')}
-        ctaId="theme-builder-cta"
-    >
+    <LandingPageSection client:load {...sectionProps('custom-themes')}>
         <ThemeBuilderHomepage gridHeight={261} client:visible />
     </LandingPageSection>
 
-    <LandingPageSection
-        client:load
-        id="integrated-charting"
-        tag="Built-in Charting"
-        headingHtml="Integrated Charts, Powered by <a href='https://www.ag-grid.com/charts/' style='font-weight: 800'>AG Charts</a>"
-        subHeadingHtml="<p>Let your users visualise data with charts directly from the Grid. Powered by AG Charts: our <a href='https://www.ag-grid.com/charts/'> JavaScript Charting Library</a></p>"
-        ctaTitle="Explore Integrated Charts"
-        ctaUrl="./integrated-charts/"
-        ctaId="integrated-charting-cta"
-        isFramework
-        showBackgroundGradient
-        client:load
-    >
+    <LandingPageSection client:load {...sectionProps('integrated-charting')}>
         <section className={styles.automatedIntegratedChartsOuter}>
             <div className={styles.automatedIntegratedCharts}>
                 <AutomatedIntegratedCharts client:visible visibilityThreshold={0.8} />
@@ -230,30 +205,11 @@ const frameworksData = [
         </section>
     </LandingPageSection>
 
-    <LandingPageSection
-        client:load
-        id="showcase-examples"
-        tag="Unlimited Use-cases"
-        heading="Trusted By Developers Everywhere"
-        subHeading="AG Grid can be found in almost every industry, from Finance and AI, to Databases and Aerospace:"
-        ctaTitle="Browse Our Showcase"
-        ctaUrl={urlWithBaseUrl('/community/showcase/')}
-        ctaId="showcase-cta"
-    >
+    <LandingPageSection client:load {...sectionProps('showcase-examples')}>
         <Showcase client:load />
     </LandingPageSection>
 
-    <LandingPageSection
-        client:load
-        id="whats-new"
-        tag="Regular Updates & Improvements"
-        headingHtml="Latest Features and Enhancements"
-        subHeading="With minor releases every 6 weeks, and major releases every 6 months, stay up to date with all of the newest features and improvements to AG Grid Data Grids."
-        ctaTitle="See Whats New"
-        ctaUrl={urlWithBaseUrl('/whats-new/')}
-        ctaId="whats-new-cta"
-        showBackgroundGradient
-    >
+    <LandingPageSection client:load {...sectionProps('whats-new')}>
         <div class={styles.latestNewsVersions}>
             {
                 versionsData
@@ -280,14 +236,7 @@ const frameworksData = [
         </div>
     </LandingPageSection>
 
-    <LandingPageSection
-        client:load
-        id="faq-section"
-        tag="JavaScript Data Grid FAQs"
-        heading="Frequently Asked Questions"
-        subHeading="How many rows can AG Grid handle? How fast is AG Grid? Is AG Grid free? Answers to these common questions and more."
-        sectionClass={styles.faqSection}
-    >
+    <LandingPageSection client:load {...sectionProps('faq-section')}>
         <LandingPageFAQ client:load FAQData={renderedFaqData} />
     </LandingPageSection>
 </Layout>

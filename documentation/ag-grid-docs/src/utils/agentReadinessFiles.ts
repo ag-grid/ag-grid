@@ -29,6 +29,7 @@ interface AgentReadinessInput {
 }
 
 interface AgentReadinessLinks {
+    home: string;
     dataGrid: string;
     charts: string;
     studio: string;
@@ -37,6 +38,9 @@ interface AgentReadinessLinks {
     chartsDocs: string;
     examples: string;
     mcpServer: string;
+    about: string;
+    community: string;
+    documentationArchive: string;
     pricing: string;
     changelog: string;
     pipeline: string;
@@ -47,6 +51,7 @@ interface AgentReadinessLinks {
 function buildLinks({ siteRoot, gridDocsPrefix }: AgentReadinessInput): AgentReadinessLinks {
     const grid = `${siteRoot}${gridDocsPrefix}/`;
     return {
+        home: siteRoot,
         dataGrid: grid,
         charts: `${siteRoot}charts/`,
         studio: `${siteRoot}studio/`,
@@ -55,6 +60,9 @@ function buildLinks({ siteRoot, gridDocsPrefix }: AgentReadinessInput): AgentRea
         chartsDocs: `${siteRoot}charts/javascript/quick-start/`,
         examples: `${siteRoot}example/`,
         mcpServer: `${grid}mcp-server/`,
+        about: `${siteRoot}about/`,
+        community: `${siteRoot}community/`,
+        documentationArchive: `${siteRoot}documentation-archive/`,
         pricing: `${siteRoot}license-pricing/`,
         changelog: `${siteRoot}changelog/`,
         pipeline: `${siteRoot}pipeline/`,
@@ -73,7 +81,7 @@ export function buildLlmsTxt(input: AgentReadinessInput): string {
     const markdownLine =
         input.includeMarkdownDocs === false
             ? ''
-            : `\n- Markdown versions: append \`.md\` to any Data Grid docs page URL for a clean, framework-specific Markdown copy (e.g. ${l.dataGridDocs.replace(/\/$/, '')}.md), or send \`Accept: text/markdown\`. The Pricing, Changelog and Pipeline pages also have \`.md\` versions.`;
+            : `\n- Markdown versions: append \`.md\` to any Data Grid docs page URL for a clean, framework-specific Markdown copy (e.g. ${l.dataGridDocs.replace(/\/$/, '')}.md), or send \`Accept: text/markdown\`. The Home, About, Community, Documentation Archive, Example, Pricing, Changelog and Pipeline pages also have \`.md\` versions.`;
     return `# AG Grid
 > High-performance JavaScript Data Grid, plus AG Charts and AG Studio. Framework-agnostic, with React, Angular and Vue support. Free Community and paid Enterprise editions. Current major version: v${input.majorVersion}.
 
@@ -107,7 +115,7 @@ export function buildAgentsMd(input: AgentReadinessInput): string {
     const markdownBullet =
         input.includeMarkdownDocs === false
             ? ''
-            : `\n- **Markdown for LLMs:** append \`.md\` to any Data Grid docs page URL (e.g. ${l.dataGridDocs.replace(/\/$/, '')}.md), or request the page with \`Accept: text/markdown\`. The [Pricing](${l.pricing}), [Changelog](${l.changelog}) and [Pipeline](${l.pipeline}) pages also have \`.md\` versions.`;
+            : `\n- **Markdown for LLMs:** append \`.md\` to any Data Grid docs page URL (e.g. ${l.dataGridDocs.replace(/\/$/, '')}.md), or request the page with \`Accept: text/markdown\`. The [Home](${l.home}), [About](${l.about}), [Community](${l.community}), [Documentation Archive](${l.documentationArchive}), [Example](${l.examples}), [Pricing](${l.pricing}), [Changelog](${l.changelog}) and [Pipeline](${l.pipeline}) pages also have \`.md\` versions.`;
     return `# AG Grid - guide for AI coding assistants
 
 - **What it is:** JavaScript Data Grid, plus [AG Charts](${l.charts}) and [AG Studio](${l.studio}). Framework-agnostic, with React, Angular and Vue wrappers. Community (free) and Enterprise (licensed) editions.
