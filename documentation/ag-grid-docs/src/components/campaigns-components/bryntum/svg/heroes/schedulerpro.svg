@@ -84,7 +84,6 @@
 </g>
 </g>
 <g class="schedulerpro-lindsey">
-<line class="schedulerpro-lindsey-stroke-fake" stroke="#9e9e9e" x1="505" x2="585" y1="114.91" y2="114.91"></line>
 <g clip-path="url(#lindsey-introduction-clip)">
 <rect class="schedulerpro-lindsey-block" fill="#0076f8" height="42" rx="6" width="276" x="229.14" y="93.91"></rect>
 <path class="schedulerpro-lindsey-progress" d="M229.14,99.91a6,6,0,0,1,6-6h128v42h-128a6,6,0,0,1-6-6Z" fill="#fff" fill-opacity="0.25"></path>

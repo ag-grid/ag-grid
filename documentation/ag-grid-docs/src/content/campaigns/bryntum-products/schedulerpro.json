@@ -301,17 +301,17 @@
             "heading": "Sample Demos to Try",
             "items": [
                 {
-                    "heading": "schedulerpro-nested-events-lazy-load-svalbard",
-                    "href": "/products/schedulerpro/examples/nested-events-lazy-load/",
-                    "body_text": "Lazy-loaded nested events",
-                    "description": "Stream child events on demand for fast, scalable nested timelines.",
+                    "heading": "schedulerpro-flight-dispatch-svalbard",
+                    "href": "/products/schedulerpro/examples/flight-dispatch/",
+                    "body_text": "Flight dispatch",
+                    "description": "Coordinate aircraft, gates and crews on a live operations timeline.",
                     "media": {
                         "kind": "image",
-                        "src": "../assets/schedulerpro/schedulerpro-nested-events-lazy-load-svalbard-768x556.png",
-                        "alt": "schedulerpro-nested-events-lazy-load-svalbard",
-                        "width": "768",
-                        "height": "556",
-                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-nested-events-lazy-load-svalbard-768x556.png"
+                        "src": "../assets/schedulerpro/schedulerpro-flight-dispatch-svalbard-1024x768.png",
+                        "alt": "schedulerpro-flight-dispatch-svalbard",
+                        "width": "1024",
+                        "height": "768",
+                        "src_original": "https://bryntum.com/products/schedulerpro/examples/flight-dispatch/meta/thumb.svalbard-light.png"
                     }
                 },
                 {
@@ -330,7 +330,7 @@
                 },
                 {
                     "heading": "schedulerpro-constraints-svalbard",
-                    "href": "/products/schedulerpro/examples/constraints",
+                    "href": "/products/schedulerpro/examples/travel-time/",
                     "body_text": "Apply scheduling constraints",
                     "description": "Enforce start, end and dependency rules as you plan.",
                     "media": {
