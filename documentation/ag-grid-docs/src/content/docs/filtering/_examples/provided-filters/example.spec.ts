@@ -17,8 +17,25 @@ const EXPECTED = {
 
 // Reads the visible text of every rendered cell in a column.
 async function visibleColumnValues(page: any, colId: string): Promise<string[]> {
-    const texts = await page.locator(`.ag-center-cols-container .ag-cell[col-id="${colId}"]`).allInnerTexts();
+    const texts = await page.locator(`.ag-grid-scrolling-container .ag-cell[col-id="${colId}"]`).allInnerTexts();
     return texts.map((t: string) => t.trim()).filter((t: string) => t.length > 0);
+}
+
+// The displayed row count (grid API) settles before the viewport finishes repainting the filtered
+// rows, so a one-shot DOM read can catch an empty viewport. Poll the read and its assertions until
+// the rendered cells have caught up.
+async function expectVisibleColumnValues(
+    page: any,
+    colId: string,
+    assertValue: (value: string) => void
+): Promise<void> {
+    await expect(async () => {
+        const values = await visibleColumnValues(page, colId);
+        expect(values.length).toBeGreaterThan(0);
+        for (const value of values) {
+            assertValue(value);
+        }
+    }).toPass();
 }
 
 test.agExample(import.meta, () => {
@@ -44,11 +61,7 @@ test.agExample(import.meta, () => {
 
             // Michael Phelps (row-id 0) no longer passes the filter and every visible athlete matches.
             await expect(agIdFor.cell('0', 'athlete')).toHaveCount(0);
-            const values = await visibleColumnValues(page, 'athlete');
-            expect(values.length).toBeGreaterThan(0);
-            for (const value of values) {
-                expect(value).toContain('Fischer');
-            }
+            await expectVisibleColumnValues(page, 'athlete', (value) => expect(value).toContain('Fischer'));
         }
     );
 
@@ -72,11 +85,7 @@ test.agExample(import.meta, () => {
 
             // Michael Phelps is 23, so row-id 0 is filtered out; every visible age is above 40.
             await expect(agIdFor.cell('0', 'age')).toHaveCount(0);
-            const values = await visibleColumnValues(page, 'age');
-            expect(values.length).toBeGreaterThan(0);
-            for (const value of values) {
-                expect(Number(value)).toBeGreaterThan(40);
-            }
+            await expectVisibleColumnValues(page, 'age', (value) => expect(Number(value)).toBeGreaterThan(40));
         }
     );
 
@@ -109,11 +118,7 @@ test.agExample(import.meta, () => {
             }).toPass();
 
             // Every rendered country is United States.
-            const values = await visibleColumnValues(page, 'country');
-            expect(values.length).toBeGreaterThan(0);
-            for (const value of values) {
-                expect(value).toBe('United States');
-            }
+            await expectVisibleColumnValues(page, 'country', (value) => expect(value).toBe('United States'));
         }
     );
 
@@ -136,11 +141,7 @@ test.agExample(import.meta, () => {
                 expect(await remoteGrid(page).getDisplayedRowCount()).toBe(EXPECTED.sportContainsSwimming);
             }).toPass();
 
-            const values = await visibleColumnValues(page, 'sport');
-            expect(values.length).toBeGreaterThan(0);
-            for (const value of values) {
-                expect(value).toContain('Swimming');
-            }
+            await expectVisibleColumnValues(page, 'sport', (value) => expect(value).toContain('Swimming'));
         }
     );
 });

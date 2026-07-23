@@ -1,7 +1,7 @@
 const { execSync } = require('child_process');
 
 const information = JSON.parse(
-    execSync(`npm view ag-charts-community --registry http://52.50.158.57:4873 --json`, {
+    execSync(`npm view ag-charts-community --registry https://registry.ag-grid.com/ --json`, {
         stdio: 'pipe',
         encoding: 'utf-8',
     })

@@ -1879,6 +1879,24 @@
                             "children": [
                                 {
                                     "type": "item",
+                                    "title": "Layout",
+                                    "path": "pdf-export-layout",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Styling",
+                                    "path": "pdf-export-styles",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Content",
+                                    "path": "pdf-export-content",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
                                     "title": "API Reference",
                                     "path": "pdf-export-api",
                                     "isEnterprise": true

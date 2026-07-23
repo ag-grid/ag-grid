@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "36.0.0-beta.20260719.2054",
+  "version": "36.0.0-beta.20260723.1118",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
@@ -86,6 +86,7 @@
     "prettier": "3.8.3",
     "prompts": "^2.4.2",
     "rulesync": "^8.2.0",
+    "skia-canvas": "3.0.8",
     "stylelint": "^17.9.0",
     "stylelint-config-standard": "^40.0.0",
     "ts-node": "10.9.2",
@@ -143,6 +144,7 @@
       "eslint-plugin-import-x>unrs-resolver#1.11.1": true,
       "nx#20.8.4": true,
       "rulesync>fastmcp>mcp-proxy>pipenet>tldjs#2.3.2": true,
+      "skia-canvas#3.0.8": true,
       "tsx>esbuild#0.27.7": true,
       "vite>esbuild#0.21.5": true,
       "vite>sass>@parcel/watcher#2.5.1": true,

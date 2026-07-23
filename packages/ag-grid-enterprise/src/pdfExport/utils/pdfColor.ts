@@ -1,4 +1,4 @@
-import type { PdfExportStyles } from 'ag-grid-community';
+import type { PdfColors } from 'ag-grid-community';
 
 import type { PdfRowType } from '../pdfSerializingSession';
 
@@ -22,9 +22,9 @@ export type PdfRowStyles = {
     text?: PdfRgb;
 };
 
-type PdfBaseExportStyles = Required<
+type PdfBaseColors = Required<
     Pick<
-        PdfExportStyles,
+        PdfColors,
         | 'backgroundColor'
         | 'dataBackgroundColor'
         | 'oddRowBackgroundColor'
@@ -35,7 +35,11 @@ type PdfBaseExportStyles = Required<
     >
 >;
 
-const DEFAULT_PDF_STYLES: PdfBaseExportStyles = {
+// PDF fill operators have no alpha channel, so translucent colours are blended against
+// their background; white stands in when no background colour is known.
+const ALPHA_BLEND_FALLBACK: PdfRgb = { r: 255, g: 255, b: 255 };
+
+const DEFAULT_PDF_STYLES: PdfBaseColors = {
     backgroundColor: '#ffffff',
     dataBackgroundColor: '#ffffff',
     oddRowBackgroundColor: '#ffffff',
@@ -50,21 +54,24 @@ const DEFAULT_PDF_STYLES: PdfBaseExportStyles = {
  * @param styles - Optional PDF style overrides.
  * @returns Fully resolved colour bundle used by the PDF renderer.
  */
-export function resolvePdfStyleColors(styles?: PdfExportStyles): PdfStyleColors {
+export function resolvePdfStyleColors(styles?: PdfColors): PdfStyleColors {
     const resolvedStyles = { ...DEFAULT_PDF_STYLES, ...(styles ?? {}) };
 
     const pageBackground = resolveColor(resolvedStyles.backgroundColor, DEFAULT_PDF_STYLES.backgroundColor);
     const dataBackground = resolveColor(
         resolvedStyles.dataBackgroundColor,
-        resolvedStyles.backgroundColor || DEFAULT_PDF_STYLES.dataBackgroundColor
+        resolvedStyles.backgroundColor || DEFAULT_PDF_STYLES.dataBackgroundColor,
+        pageBackground
     );
     const oddRowBackground = resolveColor(
         resolvedStyles.oddRowBackgroundColor,
-        resolvedStyles.dataBackgroundColor || DEFAULT_PDF_STYLES.oddRowBackgroundColor
+        resolvedStyles.dataBackgroundColor || DEFAULT_PDF_STYLES.oddRowBackgroundColor,
+        dataBackground ?? pageBackground
     );
     const headerBackground = resolveColor(
         resolvedStyles.headerBackgroundColor,
-        resolvedStyles.backgroundColor || DEFAULT_PDF_STYLES.headerBackgroundColor
+        resolvedStyles.backgroundColor || DEFAULT_PDF_STYLES.headerBackgroundColor,
+        pageBackground
     );
     const border = resolveColor(
         resolvedStyles.borderColor,
@@ -160,7 +167,7 @@ export function resolveOptionalColor(
         return undefined;
     }
 
-    return blendWith && parsed.a < 1 ? blendColors(parsed, blendWith) : stripAlpha(parsed);
+    return parsed.a < 1 ? blendColors(parsed, blendWith ?? ALPHA_BLEND_FALLBACK) : stripAlpha(parsed);
 }
 
 /**
@@ -169,9 +176,9 @@ export function resolveOptionalColor(
  * @returns Space-separated decimal RGB values in 0..1 range.
  */
 export function formatColor(color: PdfRgb): string {
-    const r = (color.r / 255).toFixed(3);
-    const g = (color.g / 255).toFixed(3);
-    const b = (color.b / 255).toFixed(3);
+    const r = (resolveChannel(color.r) / 255).toFixed(3);
+    const g = (resolveChannel(color.g) / 255).toFixed(3);
+    const b = (resolveChannel(color.b) / 255).toFixed(3);
     return `${r} ${g} ${b}`;
 }
 
@@ -206,16 +213,18 @@ function resolveColor(value: string | undefined, fallback: string, blendWith?: P
             return undefined;
         }
         if (parsed && parsed.a > 0) {
-            return blendWith && parsed.a < 1 ? blendColors(parsed, blendWith) : stripAlpha(parsed);
+            return parsed.a < 1 ? blendColors(parsed, blendWith ?? ALPHA_BLEND_FALLBACK) : stripAlpha(parsed);
         }
     }
 
     const parsedFallback = parseColor(fallback);
-    if (!parsedFallback || parsedFallback === null || parsedFallback.a <= 0) {
+    if (!parsedFallback || parsedFallback.a <= 0) {
         return undefined;
     }
 
-    return blendWith && parsedFallback.a < 1 ? blendColors(parsedFallback, blendWith) : stripAlpha(parsedFallback);
+    return parsedFallback.a < 1
+        ? blendColors(parsedFallback, blendWith ?? ALPHA_BLEND_FALLBACK)
+        : stripAlpha(parsedFallback);
 }
 
 /**
@@ -252,6 +261,10 @@ function parseColor(value: string): PdfRgba | null | undefined {
 
     if (normalised.startsWith('#')) {
         const hex = normalised.slice(1);
+        if (!/^(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/.test(hex)) {
+            return undefined;
+        }
+
         if (hex.length === 3 || hex.length === 4) {
             const r = Number.parseInt(hex[0] + hex[0], 16);
             const g = Number.parseInt(hex[1] + hex[1], 16);
@@ -460,6 +473,10 @@ function hslToRgb(h: number, s: number, l: number): PdfRgb {
  */
 function clampChannel(value: number): number {
     return Math.max(0, Math.min(255, Math.round(value)));
+}
+
+function resolveChannel(value: number): number {
+    return Number.isFinite(value) ? clampChannel(value) : 0;
 }
 
 /**

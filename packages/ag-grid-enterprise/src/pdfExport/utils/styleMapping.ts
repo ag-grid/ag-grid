@@ -1,9 +1,15 @@
 import type { CellStyle, HeaderStyle, PdfCellStyle, RowStyle } from 'ag-grid-community';
 
 import { extractBorderColor, readResolvedStyleColor, resolveCssColorValue } from './colors';
-import { resolveFontFamily, resolveTextAlignment } from './fonts';
+import { resolveFontFamily, resolveFontWeight, resolveTextAlignment } from './fonts';
 import type { StyleValueMap } from './styleValues';
-import { parseCssNumber, readStyleString, readStyleValue, resolvePaddingStyle } from './styleValues';
+import {
+    parseCssNumber,
+    readStyleString,
+    readStyleValue,
+    resolvePaddingStyle,
+    resolveWhiteSpaceStyle,
+} from './styleValues';
 
 /**
  * Convert CSS-style objects into a PDF cell style.
@@ -66,12 +72,19 @@ export function mapCssStylesToPdfStyle(
         result.fontSize = fontSize;
     }
 
-    const fontFamily = resolveFontFamily(
-        readStyleString(mergedStyles, ['fontFamily', 'font-family']),
-        readStyleValue(mergedStyles, ['fontWeight', 'font-weight'])
-    );
+    const lineHeight = parseCssNumber(readStyleValue(mergedStyles, ['lineHeight', 'line-height']));
+    if (lineHeight != null) {
+        result.lineHeight = lineHeight;
+    }
+
+    const fontFamily = resolveFontFamily(readStyleString(mergedStyles, ['fontFamily', 'font-family']));
     if (fontFamily) {
         result.fontFamily = fontFamily;
+    }
+
+    const fontWeight = resolveFontWeight(readStyleValue(mergedStyles, ['fontWeight', 'font-weight']));
+    if (fontWeight) {
+        result.fontWeight = fontWeight;
     }
 
     const alignment = resolveTextAlignment(readStyleString(mergedStyles, ['textAlign', 'text-align']));
@@ -82,6 +95,11 @@ export function mapCssStylesToPdfStyle(
     const padding = resolvePaddingStyle(mergedStyles);
     if (padding != null) {
         result.padding = padding;
+    }
+
+    const whiteSpaceStyle = resolveWhiteSpaceStyle(mergedStyles);
+    if (whiteSpaceStyle) {
+        Object.assign(result, whiteSpaceStyle);
     }
 
     return Object.keys(result).length ? result : undefined;

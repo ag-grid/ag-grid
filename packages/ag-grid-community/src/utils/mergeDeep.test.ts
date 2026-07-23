@@ -1,4 +1,4 @@
-import { _isPlainObject, _mergeDeep, _mergedEqual } from './mergeDeep';
+import { _cloneDeep, _isPlainObject, _mergeDeep, _mergedEqual } from './mergeDeep';
 
 describe('_isPlainObject', () => {
     test('plain object literals are plain', () => {
@@ -199,6 +199,57 @@ describe('_mergeDeep', () => {
         const dest: any = {};
         _mergeDeep(dest, { list: arr }, true, true);
         expect(dest.list).toBe(arr);
+    });
+});
+
+describe('_cloneDeep', () => {
+    test('primitives and null pass through', () => {
+        expect(_cloneDeep(1)).toBe(1);
+        expect(_cloneDeep('x')).toBe('x');
+        expect(_cloneDeep(null)).toBe(null);
+        expect(_cloneDeep(undefined)).toBe(undefined);
+    });
+
+    test('nested plain objects are deep-copied (no shared references)', () => {
+        const source = { a: 1, b: { c: { d: 2 } } };
+        const clone = _cloneDeep(source);
+        expect(clone).toEqual(source);
+        expect(clone).not.toBe(source);
+        expect(clone.b).not.toBe(source.b);
+        expect(clone.b.c).not.toBe(source.b.c);
+    });
+
+    test('nested arrays are deep-copied (no shared references)', () => {
+        const source = { list: [1, [2, 3], { x: 4 }] };
+        const clone = _cloneDeep(source);
+        expect(clone).toEqual(source);
+        expect(clone.list).not.toBe(source.list);
+        expect(clone.list[1]).not.toBe(source.list[1]);
+        expect(clone.list[2]).not.toBe(source.list[2]);
+    });
+
+    test('a top-level array is cloned into an array (not an object)', () => {
+        const source = [1, { x: 2 }];
+        const clone = _cloneDeep(source);
+        expect(Array.isArray(clone)).toBe(true);
+        expect(clone).toEqual(source);
+        expect(clone[1]).not.toBe(source[1]);
+    });
+
+    test('functions and non-plain instances are shared by reference', () => {
+        const fn = () => 0;
+        const date = new Date(0);
+        const source = { fn, date };
+        const clone = _cloneDeep(source);
+        expect(clone.fn).toBe(fn);
+        expect(clone.date).toBe(date);
+    });
+
+    test('does not allow prototype pollution', () => {
+        const victim = _cloneDeep(JSON.parse('{"__proto__":{"polluted":true},"x":1}'));
+        expect((victim as any).polluted).toBeUndefined();
+        expect(({} as any).polluted).toBeUndefined();
+        expect(victim).toEqual({ x: 1 });
     });
 });
 

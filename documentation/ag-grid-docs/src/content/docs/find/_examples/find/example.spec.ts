@@ -1,13 +1,18 @@
 import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
 
-// Find is driven via grid options / API here. External controls: #find-text-box updates
-// findSearchValue, Previous/Next buttons call findPrevious()/findNext(), #activeMatchNum shows
+// Find is driven via grid options / API here. External controls: a text box updates
+// findSearchValue, Previous/Next buttons call findPrevious()/findNext(), a span shows
 // "current/total", and the Go To input + button call findGoTo(matchNumber).
 // Matched text is wrapped in <mark class="ag-find-match">; active match adds ag-find-active-match.
+//
+// The control `id`s are dropped by the framework example transforms, so target the controls by
+// structure (their position within .example-controls) so the selectors hold across every framework.
 
 test.agExample(import.meta, () => {
-    const findInput = (page: any) => page.locator('#find-text-box');
-    const activeMatchNum = (page: any) => page.locator('#activeMatchNum');
+    const findInput = (page: any) => page.locator('.example-controls input[type="text"]');
+    const gotoInput = (page: any) => page.locator('.example-controls input[type="number"]');
+    // The match counter is the trailing span of the first controls row (after the "Find:" label).
+    const activeMatchNum = (page: any) => page.locator('.example-controls').first().locator('span').last();
 
     test.eachFramework('Typing highlights matches and reports the total', async ({ page }) => {
         await ensureGridReady(page);
@@ -43,7 +48,7 @@ test.agExample(import.meta, () => {
         await findInput(page).fill('Swimming');
         await expect(page.locator('mark.ag-find-match').first()).toBeVisible();
 
-        await page.locator('#find-goto').fill('3');
+        await gotoInput(page).fill('3');
         await page.getByRole('button', { name: 'Go To', exact: true }).click();
 
         await expect(activeMatchNum(page)).toHaveText(/^\s*3\/\d+\s*$/);

@@ -4,32 +4,29 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
 import { applyHorizontalPosition, getResolvedHorizontalOffset } from '../features/horizontalPositionUtils';
-import type { CellSpan } from '../spanning/rowSpanCache';
 import type { CellCtrl } from './cellCtrl';
 
 /**
- * Takes care of:
- *  #) Cell Width (including when doing cell spanning, which makes width cover many columns)
- *  #) Cell Height (when doing row span, otherwise we don't touch the height as it's just row height)
- *  #) Cell Left (the horizontal positioning of the cell, the vertical positioning is on the row)
+ * Wires the listeners that keep a cell's width and left position in sync, including col spanning
+ * (which makes width cover many columns). Height is only ever touched for row-spanned cells, and is
+ * applied on attach in _initCellPosition (via legacyApplyRowSpan or _applySpanHeight), not here.
  */
 export function _setupCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
     // Listener setup runs from the CellCtrl constructor (before the cell component attaches) so that
     // getColSpanningList() is available as soon as the CellCtrl exists. This is required in
     // React, where setComp() is called asynchronously, but navigation normalisation may query
     // the cell position synchronously before the first render completes.
-    const cellSpan = cellCtrl.getCellSpan();
-    if (cellSpan) {
-        const refreshSpanHeight = () => applySpanHeight(cellCtrl, cellSpan);
-        cellCtrl.addManagedListeners(beans.eventSvc, {
-            paginationChanged: refreshSpanHeight,
-            recalculateRowBounds: refreshSpanHeight,
-            pinnedHeightChanged: refreshSpanHeight,
-        });
-    } else {
-        setupColSpan(beans, cellCtrl);
-        setupRowSpan(beans, cellCtrl);
+    //
+    // A row-spanned cell keeps its own height and aria-rowspan in sync (see SpannedCellCtrl's
+    // constructor, which wires the refresh listeners) and must not also run the col/row span setup
+    // below. Gate on isCellSpanning() rather than getCellSpan(): the latter reads cellSpan, a
+    // constructor parameter property still unassigned while this runs inside super(), whereas
+    // isCellSpanning() is a prototype method that resolves correctly during super().
+    if (cellCtrl.isCellSpanning()) {
+        return;
     }
+    setupColSpan(beans, cellCtrl);
+    setupRowSpan(beans, cellCtrl);
 }
 
 function setupRowSpan(beans: BeanCollection, cellCtrl: CellCtrl): void {
@@ -42,16 +39,16 @@ function setupRowSpan(beans: BeanCollection, cellCtrl: CellCtrl): void {
 export function _initCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
     _onCellLeftChanged(beans, cellCtrl);
     _onCellWidthChanged(cellCtrl);
-    const cellSpan = cellCtrl.getCellSpan();
-    if (cellSpan) {
-        applySpanHeight(cellCtrl, cellSpan);
+    if (cellCtrl.getCellSpan()) {
+        _applySpanHeight(cellCtrl);
     } else {
         legacyApplyRowSpan(beans, cellCtrl);
     }
 }
 
-function applySpanHeight(cellCtrl: CellCtrl, cellSpan: CellSpan): void {
-    const spanHeight = cellSpan.getCellHeight();
+/** Sets a row-spanned cell's rendered height to cover its spanned rows. No-op when not spanning. */
+export function _applySpanHeight(cellCtrl: CellCtrl): void {
+    const spanHeight = cellCtrl.getCellSpan()?.getCellHeight();
     const eContent = cellCtrl.eGui;
     if (spanHeight != null && eContent) {
         eContent.style.height = `${spanHeight}px`;

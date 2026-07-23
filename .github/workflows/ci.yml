@@ -31,6 +31,15 @@ on:
           - 'affected'
           - 'run-many'
 env:
+  # Disable git's post-fetch background gc/maintenance for every git invocation in this
+  # workflow (via git's GIT_CONFIG_* protocol); otherwise it rewrites .git/shallow
+  # concurrently with the next chained `git fetch --depth 1`, intermittently failing job
+  # setup with "fatal: shallow file has changed since we read it". Fixed in git >= 2.55.
+  GIT_CONFIG_COUNT: 2
+  GIT_CONFIG_KEY_0: gc.auto
+  GIT_CONFIG_VALUE_0: '0'
+  GIT_CONFIG_KEY_1: maintenance.auto
+  GIT_CONFIG_VALUE_1: 'false'
   NX_NO_CLOUD: true
   IBM_TELEMETRY_DISABLED: true
   NX_BRANCH: ${{ github.ref }}

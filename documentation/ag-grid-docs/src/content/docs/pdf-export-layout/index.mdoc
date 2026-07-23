@@ -1,0 +1,60 @@
+---
+title: "PDF Export - Layout"
+enterprise: true
+---
+
+PDF layout dimensions use points, where 72 points equal one inch. This applies to page dimensions, margins, column widths, row heights, font sizes, padding, borders, line height, and row-group indentation.
+
+## Page Setup
+
+The default page is A4 landscape with a 36-point margin on every side. Use named `A4` or `Letter` page sizes, or provide explicit dimensions. Custom dimensions are normalised to the requested orientation.
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    page: {
+        size: { width: 720, height: 540 },
+        orientation: 'landscape',
+        margin: { top: 36, right: 24, bottom: 36, left: 24 },
+    },
+    repeatHeader: true,
+});
+```
+
+Table header rows repeat when body rows continue onto another page. A repeated header is omitted when it cannot fit together with the next row or row fragment. Page headers and footers are not supported.
+
+## Columns And Widths
+
+PDF export uses displayed columns in their current order. Set `allColumns=true`, provide `columnKeys`, or set `exportRowNumbers=true` to change the exported columns.
+
+The `columnWidth` option accepts:
+
+- `'grid'` to use the current grid width.
+- `'auto'` to measure the exported header and body content.
+- A number to use a fixed width in points.
+- A callback to configure each exported column independently.
+
+When `columnWidth` is omitted, regular columns use `'grid'` and the Row Numbers column uses `'auto'`. A `columnWidth` value overrides those defaults; a callback result overrides the default for that column. Returning `null` or `undefined` from the callback uses the column's default mode.
+
+Auto widths are measured before page scaling. If the combined widths exceed the printable page width, every column is reduced proportionally. Smaller tables are not stretched. Horizontal pagination and automatically expanding the page size are not supported.
+
+{% gridExampleRunner title="Widths And Autosizing" name="pdf-widths-autosizing" exampleHeight=560 /%}
+
+## Text Wrapping And Row Height
+
+Cells, including numeric cells, remain on one line by default. Set `wrapText=true` for all exported cells, use `colDef.wrapText` or `colDef.wrapHeaderText`, or return `wrapText: true` from `processStyleCallback` for an individual PDF element.
+
+PDF Export also translates CSS white-space properties returned by `cellStyle`. For example, `white-space: normal` enables wrapping, `white-space-collapse: preserve-breaks` preserves explicit line breaks without wrapping, and `white-space: pre-line` enables both behaviours. The `pre`, `pre-wrap`, and `break-spaces` values also preserve repeated, leading, and trailing spaces. The equivalent PDF-specific properties are `preserveLineBreaks` and `preserveSpaces`.
+
+Wrapped text breaks on whitespace and falls back to character-level wrapping for words wider than the cell. Explicit newline characters start distinct lines when wrapping is enabled. `lineHeight` defaults to the resolved font size, `maxLines` is unlimited by default, and `overflow` defaults to `'ellipsis'`.
+
+When `rowHeight` is omitted, each row grows to its tallest cell. An automatically sized row that is taller than the printable area continues across pages, with its backgrounds and borders repeated for each fragment. An explicit `rowHeight` or `headerRowHeight` is a fixed clipping boundary and does not grow or continue onto another page. Use `maxLines` when a line-count limit is preferable to a fixed height.
+
+## Row Groups And Pinned Rows
+
+Row-group labels are indented according to their displayed depth. Use `rowGroupIndentSize` to configure the indentation in points; `processRowGroupCallback` changes the exported label independently.
+
+Static and manually pinned rows are exported in their top or bottom pinned sections. Manually pinned rows are also exported from the body by default. Set `skipPinnedRowDuplicates=true` to omit those body copies, or use `skipPinnedTop` and `skipPinnedBottom` to exclude a pinned section.
+
+The shared row export options, including `onlySelected`, `onlySelectedAllPages`, `rowPositions`, and `shouldRowBeSkipped`, can further control which rows are exported.
+
+{% gridExampleRunner title="Wrapping, Grouping And Pinning" name="pdf-wrapping-grouping-pinning" exampleHeight=580 /%}

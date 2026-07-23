@@ -8,6 +8,11 @@ test.agExample(import.meta, () => {
     const findInput = (page: any) => page.locator('.ag-toolbar-find input');
     const matchCount = (page: any) => page.locator('.ag-toolbar-find-match-count');
 
+    // The Vue example transform drops the `id` from the control checkboxes, so target them by their
+    // label text instead — this resolves consistently across every framework.
+    const optionCheckbox = (page: any, label: string) =>
+        page.locator('label', { hasText: label }).locator('input[type="checkbox"]');
+
     test.eachFramework('caseSensitive controls whether casing must match', async ({ page }) => {
         await ensureGridReady(page);
 
@@ -21,7 +26,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('mark.ag-find-match')).toHaveCount(0);
 
         // Turning off case sensitivity makes the same term match again.
-        await page.locator('#caseSensitive').uncheck();
+        await optionCheckbox(page, 'caseSensitive').uncheck();
         await expect(page.locator('mark.ag-find-match').first()).toBeVisible();
     });
 
@@ -39,7 +44,7 @@ test.agExample(import.meta, () => {
         }).toPass();
 
         // Turning it off searches every page, yielding strictly more matches.
-        await page.locator('#currentPageOnly').uncheck();
+        await optionCheckbox(page, 'currentPageOnly').uncheck();
         await expect(async () => {
             const [, total] = (await matchCount(page).innerText()).split('/');
             expect(Number(total)).toBeGreaterThan(pageOnlyTotal);

@@ -4,6 +4,8 @@ import { ColumnMenuModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
+const OPEN_MENU_CLASS = 'ag-has-menu-open';
+
 function mouseDown(element: HTMLElement, button: number = 0): MouseEvent {
     const event = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button });
     element.dispatchEvent(event);
@@ -82,16 +84,19 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             const openEvent = mouseDown(button);
             expect(openEvent.defaultPrevented).toBe(true);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
+            expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(true);
             if (selector === '.ag-header-cell-menu-button') {
                 expect(document.querySelector('.ag-popup')?.contains(document.activeElement)).toBe(true);
             }
 
             mouseClick(button, 1);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
+            expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(true);
 
             const closeEvent = mouseDown(button);
             expect(closeEvent.defaultPrevented).toBe(false);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
+            expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(false);
 
             mouseClick(button, 1);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
@@ -116,9 +121,11 @@ describe('column header popup toggle buttons (AG-16350)', () => {
 
             mouseClick(button, 0);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
+            expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(true);
             await asyncSetTimeout(0);
             mouseDown(button, 1);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
+            expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(false);
 
             mouseClick(button, 0);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
@@ -156,9 +163,11 @@ describe('column header popup toggle buttons (AG-16350)', () => {
                 new KeyboardEvent('keydown', { ...keyboardEvent, bubbles: true, cancelable: true })
             );
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
+            expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(true);
 
             mouseDown(button);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
+            expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(false);
         }
     );
 
@@ -207,6 +216,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             await asyncSetTimeout(0);
 
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
+            expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(false);
             expect(document.activeElement).toBe(button);
         }
     );
@@ -244,12 +254,17 @@ describe('column header popup toggle buttons (AG-16350)', () => {
 
         mouseDown(menuButton);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
+        expect(menuButton.classList.contains(OPEN_MENU_CLASS)).toBe(true);
+        expect(filterButton.classList.contains(OPEN_MENU_CLASS)).toBe(false);
         mouseDown(filterButton);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
+        expect(menuButton.classList.contains(OPEN_MENU_CLASS)).toBe(false);
+        expect(filterButton.classList.contains(OPEN_MENU_CLASS)).toBe(true);
         await asyncSetTimeout(0);
         expect(visibilityEvents).toEqual([true, false, true]);
         mouseDown(filterButton);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
+        expect(filterButton.classList.contains(OPEN_MENU_CLASS)).toBe(false);
     });
 
     test('switching between triggers owned by the same menu factory closes the old popup first', async () => {

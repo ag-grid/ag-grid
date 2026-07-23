@@ -388,7 +388,7 @@ export class ExcelCreator
             return;
         }
 
-        const exportFunc = () => {
+        this.runExport(() => {
             const mergedParams = this.getMergedParams(userParams);
             const data = this.getData(mergedParams);
 
@@ -405,20 +405,10 @@ export class ExcelCreator
 
             this.packageCompressedFile(exportParams).then((packageFile) => {
                 if (packageFile) {
-                    const { fileName } = mergedParams;
-                    const providedFileName =
-                        typeof fileName === 'function' ? fileName(_addGridCommonParams(this.gos, {})) : fileName;
-
-                    _downloadFile(this.getFileName(providedFileName), packageFile);
+                    _downloadFile(this.resolveFileName(mergedParams), packageFile);
                 }
             });
-        };
-        const { overlays } = this.beans;
-        if (overlays) {
-            overlays.showExportOverlay(exportFunc);
-        } else {
-            exportFunc();
-        }
+        });
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): void {

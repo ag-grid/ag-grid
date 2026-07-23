@@ -71,9 +71,8 @@
 .ag-spanning-container {
     position: absolute;
     top: 0;
-
-    /* row-span overlays must sit above regular cells but below dragged rows. */
-    z-index: 1;
+    height: 100%;
+    pointer-events: none;
 }
 
 .ag-grid-scrolling-container {
@@ -241,7 +240,8 @@
 
 .ag-row:where(:not(.ag-full-width-row)),
 :where(.ag-row.ag-embedded-full-width-row),
-.ag-header-row {
+.ag-header-row,
+.ag-spanned-row {
     display: flex;
     width: 100%;
 }
@@ -250,7 +250,8 @@
    the row's own background to bleed into the empty viewport area. */
 :where(.ag-row:not(.ag-full-width-row))::after,
 :where(.ag-header-row)::after,
-:where(.ag-row.ag-embedded-full-width-row::after) {
+:where(.ag-row.ag-embedded-full-width-row::after),
+:where(.ag-spanned-row)::after {
     content: '';
     flex: 1 0 0px;
     align-self: stretch;
@@ -324,7 +325,8 @@
    the scrolling section and pinned-right. */
 :where(.ag-row:not(.ag-full-width-row)),
 :where(.ag-header-row),
-:where(.ag-row.ag-embedded-full-width-row) {
+:where(.ag-row.ag-embedded-full-width-row),
+:where(.ag-spanned-row) {
     > .ag-grid-pinned-right-cells {
         order: 1;
     }
@@ -336,16 +338,33 @@
 .ag-rtl {
     :where(.ag-row:not(.ag-full-width-row)),
     :where(.ag-header-row),
-    :where(.ag-row.ag-embedded-full-width-row) {
+    :where(.ag-row.ag-embedded-full-width-row),
+    :where(.ag-spanned-row) {
         > :where(.ag-grid-scrolling-cells) {
             order: 1;
         }
     }
 
-    :where(.ag-row .ag-grid-scrolling-cells) {
+    :where(.ag-row .ag-grid-scrolling-cells),
+    :where(.ag-spanned-row .ag-grid-scrolling-cells) {
         /* when scrollable, offset for the vertical scrollbar on the left in rtl. */
         margin-left: var(--ag-internal-pinned-left-sticky-offset, 0);
     }
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-spanning-container .ag-grid-scrolling-cells {
+    /* centre spanned cells must paint above regular centre cells while remaining below pinned sections. */
+    z-index: 1;
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-spanning-container .ag-grid-pinned-left-cells,
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-spanning-container .ag-grid-pinned-right-cells {
+    /* pinned spanned cells must paint above both centre spans and regular pinned cells. */
+    z-index: 3;
+    overflow: visible;
 }
 
 .ag-row-position-absolute {
@@ -382,6 +401,11 @@
     &:focus-visible {
         box-shadow: none;
     }
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-spanning-container .ag-cell {
+    pointer-events: auto;
 }
 
 /* This is used when using a Cell Wrapper (eg row drag, selection, or auto-height).
@@ -521,7 +545,8 @@
 
     .ag-row:where(:not(.ag-full-width-row)),
     .ag-row:where(.ag-embedded-full-width-row),
-    .ag-header-row {
+    .ag-header-row,
+    .ag-spanned-row {
         flex-direction: row;
     }
 }
@@ -542,7 +567,8 @@
 
     .ag-row:where(:not(.ag-full-width-row)),
     .ag-row:where(.ag-embedded-full-width-row),
-    .ag-header-row {
+    .ag-header-row,
+    .ag-spanned-row {
         flex-direction: row-reverse;
     }
 

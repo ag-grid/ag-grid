@@ -680,6 +680,7 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
      *  root aggregate on demand via the transform params (which aggregates the root lazily), so no re-agg here. */
     private applyModeChangeEffects(column: AgColumn, source?: ColumnEventType): void {
         column.dispatchStateUpdatedEvent('showValuesAs');
+        this.eventSvc.dispatchEvent({ type: 'columnShowValuesAsChanged' });
         if (this.promoteToValueColumn(column, source)) {
             return; // promotion re-aggregates and refreshes
         }

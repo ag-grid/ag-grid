@@ -23,7 +23,7 @@ function b137ValueGetter(params: ValueGetterParams) {
     return params.data.b * 137;
 }
 function chainValueGetter(params: ValueGetterParams) {
-    return params.getValue('a&b') * 1000;
+    return params.getValue('aPlusB') * 1000;
 }
 function constValueGetter() {
     return 99999;
@@ -40,7 +40,7 @@ const gridOptions: GridOptions = {
         { field: 'b' },
         {
             headerName: 'A + B',
-            colId: 'a&b',
+            colId: 'aPlusB',
             valueGetter: abValueGetter,
         },
         {

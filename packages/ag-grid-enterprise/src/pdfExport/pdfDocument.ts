@@ -2,22 +2,27 @@ import type { AgColumn, PdfExportParams, PdfFontFamily } from 'ag-grid-community
 
 import type { PdfRow } from './pdfSerializingSession';
 import {
+    columnNeedsAutoWidth,
     createFontKeyMap,
     getColumnWidths,
+    getGridColumnWidths,
     getMaxColumnCount,
     getRepeatableHeaderRows,
     resolveMargin,
     resolvePageSize,
+    resolveRequestedColumnWidths,
 } from './utils/document/layout';
-import type { LayoutOptions } from './utils/document/render';
+import type { LayoutOptions, MeasuredRow, RowFragmentState } from './utils/document/measurement';
 import {
-    createRowRenderData,
-    renderDocumentTitle,
-    renderRow,
-    renderRows,
+    getAutoColumnWidths,
+    measureClampedRowFragment,
+    measureRow,
+    measureRowFragment,
     resolveDocumentTitle,
-} from './utils/document/render';
-import { fmt, normaliseText } from './utils/document/text';
+} from './utils/document/measurement';
+import { resolveFiniteNumber, resolveOptionalFiniteNumber } from './utils/document/numbers';
+import { renderDocumentTitle, renderMeasuredRows, renderRowFragment } from './utils/document/render';
+import { fmt } from './utils/document/text';
 import { normalisePdfFontFamily } from './utils/fonts';
 import { formatColor, resolvePdfStyleColors } from './utils/pdfColor';
 import { buildPdf } from './utils/pdfObjectStore';
@@ -37,72 +42,84 @@ const DEFAULTS = {
     cellPadding: 4,
     repeatHeader: true,
     drawCellBorders: true,
+    rowGroupIndentSize: 12,
 };
 
 export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], params: PdfExportParams): string {
-    const pageSize = resolvePageSize(params.pageSize, params.pageOrientation);
-    const margin = resolveMargin(params.margin);
-    const styleColors = resolvePdfStyleColors(params.pdfStyles);
+    const pageSetup = params.page;
+    const pageSize = resolvePageSize(pageSetup?.size, pageSetup?.orientation);
+    const margin = resolveMargin(pageSetup?.margin);
+    const styleColors = resolvePdfStyleColors(params.colors);
 
-    const columnCount = Math.max(columnsToExport.length, getMaxColumnCount(rows), 1);
+    const columnCount = columnsToExport.length || Math.max(getMaxColumnCount(rows), 1);
     const availableWidth = Math.max(pageSize.width - margin.left - margin.right, 0);
-    const columnWidths = getColumnWidths(columnsToExport, columnCount, availableWidth);
 
-    const fontSize = params.fontSize ?? DEFAULTS.fontSize;
-    const headerFontSize = params.headerFontSize ?? DEFAULTS.headerFontSize;
-    const cellPadding = params.cellPadding ?? DEFAULTS.cellPadding;
+    const fontSize = resolveFiniteNumber(params.fontSize, DEFAULTS.fontSize, Number.EPSILON);
+    const headerFontSize = resolveFiniteNumber(params.headerFontSize, DEFAULTS.headerFontSize, Number.EPSILON);
+    const cellPadding = resolveFiniteNumber(params.cellPadding, DEFAULTS.cellPadding);
     const repeatHeader = params.repeatHeader ?? DEFAULTS.repeatHeader;
     const drawCellBorders = params.drawCellBorders ?? DEFAULTS.drawCellBorders;
+    const wrapText = params.wrapText ?? false;
+    const rowGroupIndentSize = resolveFiniteNumber(params.rowGroupIndentSize, DEFAULTS.rowGroupIndentSize);
 
     const bodyFont = normalisePdfFontFamily(params.fontFamily);
     const headerFont = normalisePdfFontFamily(params.headerFontFamily, FONT_BOLD_MAP[bodyFont]);
     const titleData = params.documentTitle
         ? resolveDocumentTitle(params.documentTitle, params, styleColors, headerFont, DEFAULTS.headerFontSize)
         : undefined;
-    const documentTitle = titleData?.text ? normaliseText(titleData.text) : '';
     const titleStyle = titleData?.style;
+    const documentTitle = titleData?.text ?? '';
 
     const fontKeyByFamily = createFontKeyMap(bodyFont, headerFont, titleStyle?.fontFamily, rows);
     const titleFontKey = titleStyle ? fontKeyByFamily.get(titleStyle.fontFamily) : undefined;
 
     const headerRows = repeatHeader ? getRepeatableHeaderRows(rows) : [];
 
-    const layout: LayoutOptions = {
+    const sizingLayout: LayoutOptions = {
         columnCount,
-        columnWidths,
+        columnWidths: getGridColumnWidths(columnsToExport, columnCount),
         margin,
         drawCellBorders,
         fontSize,
         headerFontSize,
         cellPadding,
-        rowHeight: params.rowHeight,
-        headerRowHeight: params.headerRowHeight,
+        rowHeight: resolveOptionalFiniteNumber(params.rowHeight, Number.EPSILON),
+        headerRowHeight: resolveOptionalFiniteNumber(params.headerRowHeight, Number.EPSILON),
+        wrapText,
+        lineHeight: resolveOptionalFiniteNumber(params.lineHeight, Number.EPSILON),
+        maxLines: params.maxLines,
+        overflow: params.overflow,
+        rowGroupIndentSize,
     };
+    const requestedWidths = resolveRequestedColumnWidths(columnsToExport, columnCount, params.columnWidth);
+    const autoWidthColumns = requestedWidths.map(columnNeedsAutoWidth);
+    // measuring content widths is expensive, so skip the pass when no column consumes them.
+    const autoWidths = autoWidthColumns.includes(true)
+        ? getAutoColumnWidths(rows, sizingLayout, bodyFont, headerFont, styleColors, autoWidthColumns)
+        : undefined;
+    const columnWidths = getColumnWidths(columnsToExport, columnCount, availableWidth, requestedWidths, autoWidths);
+    const layout: LayoutOptions = { ...sizingLayout, columnWidths };
+
+    const measuredRows: MeasuredRow[] = [];
+    const measuredHeaderRows: MeasuredRow[] = [];
+    const headerRowSet = new Set(headerRows);
+    let measuredBodyRowIndex = 0;
+    for (const row of rows) {
+        const measuredRow = measureRow(row, layout, bodyFont, headerFont, styleColors, measuredBodyRowIndex);
+        measuredRows.push(measuredRow);
+        if (headerRowSet.has(row)) {
+            measuredHeaderRows.push(measuredRow);
+        }
+        if (row.type === 'BODY') {
+            measuredBodyRowIndex += 1;
+        }
+    }
 
     const pageContentHeight = Math.max(pageSize.height - margin.top - margin.bottom, 0);
-    const getRowsHeight = (rowsToMeasure: PdfRow[]): number => {
-        let height = 0;
-        let measuredBodyRowIndex = 0;
-
-        for (const row of rowsToMeasure) {
-            height += createRowRenderData(
-                row,
-                layout,
-                bodyFont,
-                headerFont,
-                styleColors,
-                measuredBodyRowIndex
-            ).rowHeight;
-            if (row.type === 'BODY') {
-                measuredBodyRowIndex += 1;
-            }
-        }
-
-        return height;
-    };
-    const repeatedHeaderHeight = getRowsHeight(headerRows);
-    const canRepeatHeadersWithRow = (row: PdfRow, rowHeight: number): boolean =>
-        repeatHeader && row.type === 'BODY' && repeatedHeaderHeight + rowHeight <= pageContentHeight;
+    let repeatedHeaderHeight = 0;
+    for (const headerRow of measuredHeaderRows) {
+        repeatedHeaderHeight += headerRow.rowHeight;
+    }
 
     const pages: string[] = [];
     let pageParts: string[] = [];
@@ -146,48 +163,63 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
             isFirstPage = false;
         }
 
-        if (includeHeaders && headerRows.length) {
+        if (includeHeaders && measuredHeaderRows.length) {
             const previousPartCount = pageParts.length;
-            cursorY = renderRows(
-                headerRows,
-                cursorY,
-                layout,
-                pageParts,
-                bodyFont,
-                headerFont,
-                styleColors,
-                fontKeyByFamily
-            );
+            cursorY = renderMeasuredRows(measuredHeaderRows, cursorY, layout, pageParts, fontKeyByFamily);
             markPageContentIfRendered(previousPartCount);
         }
     };
 
     startPage(false);
 
-    let bodyRowIndex = 0;
-    for (const row of rows) {
-        const rowRenderData = createRowRenderData(row, layout, bodyFont, headerFont, styleColors, bodyRowIndex);
-        if (cursorY - rowRenderData.rowHeight < margin.bottom) {
-            startPage(canRepeatHeadersWithRow(row, rowRenderData.rowHeight));
+    const canRepeatHeadersWithFragment = (row: MeasuredRow, state: RowFragmentState | undefined): boolean => {
+        if (!repeatHeader || row.type !== 'BODY' || !measuredHeaderRows.length) {
+            return false;
         }
+        const availableAfterHeaders = pageContentHeight - repeatedHeaderHeight;
+        if (!state && row.rowHeight <= pageContentHeight && row.rowHeight > availableAfterHeaders) {
+            return false;
+        }
+        return availableAfterHeaders > 0 && !!measureRowFragment(row, state, availableAfterHeaders);
+    };
 
-        const previousPartCount = pageParts.length;
-        cursorY = renderRow(
-            row,
-            cursorY,
-            layout,
-            pageParts,
-            bodyFont,
-            headerFont,
-            styleColors,
-            bodyRowIndex,
-            fontKeyByFamily,
-            rowRenderData
-        );
-        markPageContentIfRendered(previousPartCount);
+    for (const row of measuredRows) {
+        let state: RowFragmentState | undefined;
+        let complete = false;
 
-        if (row.type === 'BODY') {
-            bodyRowIndex += 1;
+        while (!complete) {
+            let availableHeight = Math.max(cursorY - margin.bottom, 0);
+            const freshPageRowHeight = row.fixedHeight ? Math.min(row.rowHeight, pageContentHeight) : row.rowHeight;
+            // keep rows whole when they fit on a fresh page; only oversized automatic rows are fragmented.
+            const shouldMoveWholeRow =
+                !state &&
+                hasPageContent &&
+                freshPageRowHeight <= pageContentHeight &&
+                freshPageRowHeight > availableHeight;
+            if (shouldMoveWholeRow) {
+                startPage(canRepeatHeadersWithFragment(row, state));
+                availableHeight = Math.max(cursorY - margin.bottom, 0);
+            }
+
+            let fragment = measureRowFragment(row, state, availableHeight);
+            if (!fragment && hasPageContent) {
+                startPage(canRepeatHeadersWithFragment(row, state));
+                availableHeight = Math.max(cursorY - margin.bottom, 0);
+                fragment = measureRowFragment(row, state, availableHeight);
+            }
+            if (!fragment) {
+                fragment = measureClampedRowFragment(row, state, availableHeight);
+            }
+
+            const previousPartCount = pageParts.length;
+            cursorY = renderRowFragment(fragment, cursorY, layout, pageParts, fontKeyByFamily);
+            markPageContentIfRendered(previousPartCount);
+            complete = fragment.complete;
+            state = fragment.nextState;
+
+            if (!complete) {
+                startPage(canRepeatHeadersWithFragment(row, state));
+            }
         }
     }
 
