@@ -566,6 +566,28 @@
                             "url": "https://www.ag-grid.com/campaigns/bryntum-gantt"
                         }
                     ]
+                },
+                {
+                    "type": "group",
+                    "title": "Calendar",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "See Bryntum Calendar",
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-calendar"
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "title": "Scheduler",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "See Bryntum Scheduler",
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler"
+                        }
+                    ]
                 }
             ]
         },
