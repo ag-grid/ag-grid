@@ -42,6 +42,10 @@
                 "isCollapsed": true
             },
             {
+                "title": "Demos",
+                "path": "/example"
+            },
+            {
                 "title": "Theme Builder",
                 "path": "/theme-builder"
             },
