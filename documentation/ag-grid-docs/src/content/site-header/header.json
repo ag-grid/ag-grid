@@ -22,6 +22,63 @@
                 "isCollapsed": true
             },
             {
+                "title": "Bryntum Scheduler",
+                "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler",
+                "isCollapsed": true
+            },
+            {
+                "title": "Bryntum Scheduler Pro",
+                "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler-pro",
+                "isCollapsed": true
+            },
+            {
+                "title": "Bryntum Calendar",
+                "url": "https://www.ag-grid.com/campaigns/bryntum-calendar",
+                "isCollapsed": true
+            },
+            {
+                "title": "Bryntum Task Board",
+                "url": "https://www.ag-grid.com/campaigns/bryntum-task-board",
+                "isCollapsed": true
+            },
+            {
+                "title": "Home",
+                "path": "/"
+            },
+            {
+                "title": "Examples",
+                "path": "/example"
+            },
+            {
+                "title": "Theme Builder",
+                "path": "/theme-builder"
+            },
+            {
+                "title": "Docs",
+                "path": "./getting-started"
+            },
+            {
+                "title": "API",
+                "path": "./reference"
+            },
+            {
+                "title": "Community",
+                "path": "/community"
+            },
+            {
+                "title": "Pricing",
+                "path": "/license-pricing"
+            },
+            {
+                "title": "Contact Us",
+                "path": "/contact/"
+            },
+            {
+                "title": "",
+                "url": "",
+                "_isDivider_": true
+            },
+            {
                 "title": "Demos",
                 "path": "/example"
             },
