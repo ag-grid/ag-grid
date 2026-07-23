@@ -24,9 +24,14 @@ cd documentation/ag-grid-docs/dist
 FILENAME=release_"$ZIP_PREFIX"_v"$ZIP_PREFIX".zip
 echo "Creating $FILENAME"
 zip -qr ../../../$FILENAME *
-# The glob above skips dotfiles, so add the generated .htaccess explicitly (present on staging/production builds)
+# The glob above skips dot-prefixed entries, so add them explicitly:
+# - the generated .htaccess (present on staging/production builds)
+# - the .well-known directory (e.g. the MCP discovery card, SE-79)
 if [ -f .htaccess ]; then
   zip -q ../../../$FILENAME .htaccess
+fi
+if [ -d .well-known ]; then
+  zip -qr ../../../$FILENAME .well-known
 fi
 
 cd ../../../
