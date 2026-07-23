@@ -12,7 +12,7 @@
             "id": "block_50bba12076720a48ac737bca5c196075",
             "type": "heroTBM",
             "modifiers": ["animated-hero"],
-            "heading": "A Contemporary JavaScript Calendar Toolkit",
+            "heading": "A Fully-featured JavaScript Calendar Toolkit",
             "body_html": "<p>The Bryntum Calendar is a contemporary calendar component offering multiple views. Written in pure JavaScript, it slots cleanly into <a href=\"https://bryntum.com/products/react-calendar/\"><span class=\"s1\">React</span></a>, <a href=\"https://bryntum.com/products/angular-calendar\"><span class=\"s1\">Angular</span></a> and <a href=\"https://bryntum.com/products/vue-calendar/\"><span class=\"s1\">Vue</span></a> apps.</p>",
             "body_text": "The Bryntum Calendar is a contemporary calendar component offering multiple views. Written in pure JavaScript, it slots cleanly into React , Angular and Vue apps.",
             "ctas": [
@@ -254,8 +254,8 @@
             "id": "block_aa0b0e20cb1c4626408c493f793c1527",
             "type": "text-media",
             "modifiers": ["image", "reverse", "added-shadow"],
-            "eyebrow": "Beyond a Date Picker",
-            "heading": "Beyond a Date Picker",
+            "eyebrow": "More Than Events on a Calendar",
+            "heading": "A Calendar Built for Serious Planning",
             "body_html": "<p class=\"p1\">The Bryntum Calendar packs distinctive features that boost your team’s productivity:</p> <ul class=\"ul1\"> <li class=\"li1\"><a href=\"/products/calendar/examples/travel-time/\">Show travel time</a> for grounded, real-world planning.</li> <li class=\"li1\">Monitor workload via the <a href=\"/products/calendar/examples/resource-time-capacity/\">capacity tick renderer</a>.</li> <li>Jump between <a href=\"/products/calendar/examples/resource-modes/\">linked resource calendars</a>.</li> </ul>",
             "body_text": "The Bryntum Calendar packs distinctive features that boost your team’s productivity: Show travel time for grounded, real-world planning. Monitor workload via the capacity tick renderer . Jump between linked resource calendars .",
             "links": [
