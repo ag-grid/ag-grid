@@ -187,6 +187,32 @@ describe('createPdfDocument', () => {
         expect(pdf).toMatch(/\/Annots \[\d+ 0 R\]/);
     });
 
+    it('encodes URI annotations without changing valid percent escapes', () => {
+        const rows: PdfRow[] = [
+            {
+                type: 'BODY',
+                cells: [
+                    { value: 'Existing escape', hyperlink: 'https://example.com/a%20b' },
+                    { value: 'Unicode', hyperlink: 'https://example.com/café' },
+                    { value: 'Literal percent', hyperlink: 'https://example.com/100%' },
+                    {
+                        value: 'Malformed Unicode',
+                        hyperlink: `https://example.com/${String.fromCharCode(0xd800)}broken`,
+                    },
+                ],
+            },
+        ];
+        const columns = [stubColumn(100), stubColumn(100), stubColumn(100), stubColumn(100)];
+
+        const pdf = createPdfDocument(rows, columns, { columnWidth: 100 });
+
+        expect(pdf).toContain('/URI (https://example.com/a%20b)');
+        expect(pdf).not.toContain('/URI (https://example.com/a%2520b)');
+        expect(pdf).toContain('/URI (https://example.com/caf%C3%A9)');
+        expect(pdf).toContain('/URI (https://example.com/100%25)');
+        expect(pdf).toContain('/URI (https://example.com/%EF%BF%BDbroken)');
+    });
+
     it('adds link annotations to every page containing a linked row fragment', () => {
         const rows: PdfRow[] = [
             {

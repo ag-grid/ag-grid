@@ -163,14 +163,40 @@ export function buildPdf(
 }
 
 /**
- * Encode non-ASCII URI characters while tolerating malformed runtime strings.
+ * Encode URI characters while preserving valid percent escapes supplied by the user.
  * @param uri - User-provided URI.
- * @returns An ASCII URI when encoding succeeds, otherwise the original value.
+ * @returns An ASCII URI suitable for a PDF URI action.
  */
 function encodePdfUri(uri: string): string {
-    try {
-        return encodeURI(uri);
-    } catch {
-        return uri;
+    const encodedUri = encodeURI(replaceUnpairedSurrogates(uri));
+    return encodedUri.replace(/%25([0-9a-f]{2})/gi, '%$1');
+}
+
+/**
+ * Replace unpaired UTF-16 surrogates so URI encoding cannot throw.
+ * @param value - Source string that may contain malformed UTF-16.
+ * @returns A well-formed string with malformed code units replaced.
+ */
+function replaceUnpairedSurrogates(value: string): string {
+    let result = '';
+
+    for (let i = 0; i < value.length; i++) {
+        const codeUnit = value.charCodeAt(i);
+
+        if (codeUnit >= 0xd800 && codeUnit <= 0xdbff) {
+            const nextCodeUnit = value.charCodeAt(i + 1);
+            if (nextCodeUnit >= 0xdc00 && nextCodeUnit <= 0xdfff) {
+                result += value[i] + value[i + 1];
+                i++;
+            } else {
+                result += '\ufffd';
+            }
+        } else if (codeUnit >= 0xdc00 && codeUnit <= 0xdfff) {
+            result += '\ufffd';
+        } else {
+            result += value[i];
+        }
     }
+
+    return result;
 }
