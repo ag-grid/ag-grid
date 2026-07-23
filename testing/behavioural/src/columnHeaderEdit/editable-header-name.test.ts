@@ -9,7 +9,7 @@ import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
  * Editable header name (UI): opening the editor prefills with the `headerValueGetter` output (called
- * with the `header` location) but dispatches no `headerNameOverrideChanged`. The event fires exactly
+ * with the `header` location) but dispatches no `columnHeaderNameChanged`. The event fires exactly
  * once, and only when the committed name differs from what the editor opened with. While the editor
  * is open, an override change underneath it (e.g. a programmatic rename) refreshes the input.
  */
@@ -104,16 +104,22 @@ describe('Editable header name', () => {
         input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
     }
 
-    function captureHeaderNameOverrideChanged(column: AgColumn): any[] {
+    // Columns and groups both notify header-name changes through the grid-level `columnHeaderNameChanged`
+    // event (keyed by colId), so capture it from the internal event service.
+    function captureColumnHeaderNameChanged(column: AgColumn): any[] {
         const events: any[] = [];
-        (column as any).__addEventListener('headerNameOverrideChanged', (e: any) => events.push(e));
+        (column as any).beans.eventSvc.addGlobalListener((type: string, e: any) => {
+            if (type === 'columnHeaderNameChanged') {
+                events.push(e);
+            }
+        });
         return events;
     }
 
-    test('opening the editor dispatches no headerNameOverrideChanged event', async () => {
+    test('opening the editor dispatches no columnHeaderNameChanged event', async () => {
         const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const column = api.getColumn('athlete') as unknown as AgColumn;
-        const events = captureHeaderNameOverrideChanged(column);
+        const events = captureColumnHeaderNameChanged(column);
 
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
         expect(input.value).toBe('Athlete');
@@ -169,10 +175,10 @@ describe('Editable header name', () => {
         expect(getterCalls).toBe(callsAfterCommit);
     });
 
-    test('committing an unchanged name dispatches no headerNameOverrideChanged event', async () => {
+    test('committing an unchanged name dispatches no columnHeaderNameChanged event', async () => {
         const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const column = api.getColumn('athlete') as unknown as AgColumn;
-        const events = captureHeaderNameOverrideChanged(column);
+        const events = captureColumnHeaderNameChanged(column);
 
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
         pressEnter(input);
@@ -182,10 +188,10 @@ describe('Editable header name', () => {
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
     });
 
-    test('committing a changed name dispatches headerNameOverrideChanged once and updates the display name', async () => {
+    test('committing a changed name dispatches columnHeaderNameChanged once and updates the display name', async () => {
         const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const column = api.getColumn('athlete') as unknown as AgColumn;
-        const events = captureHeaderNameOverrideChanged(column);
+        const events = captureColumnHeaderNameChanged(column);
 
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
         await userEvent.clear(input);
@@ -194,13 +200,14 @@ describe('Editable header name', () => {
         await asyncSetTimeout(1);
 
         expect(events.length).toBe(1);
+        expect(events[0].colId).toBe('athlete');
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Competitor');
     });
 
     test('closing the editor via the close button cancels the edit', async () => {
         const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const column = api.getColumn('athlete') as unknown as AgColumn;
-        const events = captureHeaderNameOverrideChanged(column);
+        const events = captureColumnHeaderNameChanged(column);
 
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
         await userEvent.clear(input);
@@ -301,7 +308,7 @@ describe('Editable header name', () => {
     test('committing whitespace around the name preserves it verbatim (input is not trimmed)', async () => {
         const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const column = api.getColumn('athlete') as unknown as AgColumn;
-        const events = captureHeaderNameOverrideChanged(column);
+        const events = captureColumnHeaderNameChanged(column);
 
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
         await userEvent.clear(input);

@@ -114,7 +114,14 @@ export class ToolPanelColumnComp extends Component {
             columnRowGroupChanged: onColStateChanged,
             visibleChanged: onColStateChanged,
             colDefChanged: this.onColDefChanged.bind(this),
-            headerNameOverrideChanged: this.onColDefChanged.bind(this),
+        });
+        // Header names notify through the grid-level event, keyed by colId, matching column groups.
+        this.addManagedEventListeners({
+            columnHeaderNameChanged: (event) => {
+                if (!event.colId || event.colId === column.getColId()) {
+                    this.onColDefChanged();
+                }
+            },
         });
         this.addManagedListeners(focusWrapper, {
             keydown: this.handleKeyDown.bind(this),
