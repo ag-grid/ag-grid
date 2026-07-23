@@ -313,8 +313,8 @@
             "type": "live-demo",
             "modifiers": [],
             "eyebrow": "Live Demo",
-            "heading": "Drag Unplanned Tasks In From a Grid",
-            "body_text": "Pick tasks from the unplanned grid and drop them straight onto a resource. The live Bryntum Scheduler engine is running below.",
+            "heading": "Try a live demo",
+            "body_text": "Pick tasks from the unplanned grid and drop them straight onto a resource.",
             "demo_src": null,
             "media": []
         },
