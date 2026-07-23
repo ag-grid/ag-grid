@@ -94,6 +94,15 @@ const altTextMediaSections = new WeakSet<object>();
                      * site's colour scheme.
                      */}
                     <link rel="stylesheet" data-bryntum-theme={slug} href={`${base}/svalbard-light.css`} />
+                    {/*
+                     * Per-product demo stylesheet ported from the upstream
+                     * Bryntum example's app.css. Loaded only for products that
+                     * define one so its generic `.b-*` rules stay off other
+                     * product pages that render the same Bryntum classes.
+                     */}
+                    {LIVE_DEMO_PRODUCT_CONFIG[slug]?.demoCss && (
+                        <link rel="stylesheet" href={urlWithBaseUrl(LIVE_DEMO_PRODUCT_CONFIG[slug].demoCss!)} />
+                    )}
                 </>
             ))}
             {/*
