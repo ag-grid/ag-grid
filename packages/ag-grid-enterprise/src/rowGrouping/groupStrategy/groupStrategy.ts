@@ -105,12 +105,18 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     public execute(rootNode: RowNode, params: RefreshModelParams): void {
-        const changedPath = params.changedPath!;
         const refreshResult = this.initRefresh(params);
+        if (refreshResult === 'groupColsChanged') {
+            // The whole tree rebuilds across a group-columns change, so any delta bookkeeping (and its
+            // restricted changed path) no longer describes the change - all stages must do a full pass.
+            params.changedRowNodes = undefined;
+            params.changedPath = undefined;
+        }
+        const changedPath = params.changedPath;
         if (refreshResult !== 'skip') {
             const changedRowNodes = params.changedRowNodes;
             if (changedRowNodes) {
-                this.handleDeltaUpdate(rootNode, changedPath, changedRowNodes, !!params.animate);
+                this.handleDeltaUpdate(rootNode, changedPath!, changedRowNodes, !!params.animate);
             } else {
                 this.shotgunResetEverything(rootNode);
             }
@@ -170,16 +176,14 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         if (afterColumnsChanged || !groupCols || this.checkGroupCols) {
             this.checkGroupCols = false;
             if (groupCols && !groupColumnsChanged(groupCols, cols)) {
-                if (afterColumnsChanged) {
-                    return 'skip'; // no change to grouping
+                // unchanged grouping only allows a skip when the refresh carries no data change
+                if (afterColumnsChanged && !params.rowDataUpdated && !params.changedRowNodes) {
+                    return 'skip';
                 }
             } else {
                 params.animate = false;
-                // If the top-level group column changed, every existing node ID will differ after
-                // rebuild, so no group nodes can be reused. Check before makeGroupColumns overwrites groupCols.
-                const topLevelChanged = groupCols[0]?.col.getId() !== cols?.[0]?.getId();
                 makeGroupColumns(cols, groupCols);
-                return topLevelChanged ? 'refresh' : 'groupColsChanged';
+                return 'groupColsChanged';
             }
         }
 
