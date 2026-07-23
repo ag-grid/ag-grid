@@ -50,11 +50,20 @@ Editable columns can be renamed via:
 
 Editable column groups can be renamed via the **Edit Column Name** item in the group header right-click menu or the Columns Tool Panel context menu.
 
-Both open the same editor. Press `Enter` to commit or `Escape` to cancel. Committing an empty value sets an empty header name; the header reverts to its Column Definition default only when the edit is cleared programmatically, such as `resetColumnState()`. Edited column names are persisted as part of [Column State](./column-state/) and [Grid State](./grid-state/); edited group names are persisted as part of Grid State. Both survive save and restore.
+Committing an empty value sets an empty header name; the header reverts to its Column Definition default only when the edit is cleared programmatically, such as `resetColumnState()`. Edited column names are persisted as part of [Column State](./column-state/) and [Grid State](./grid-state/); edited group names are persisted as part of Grid State. Both survive save and restore.
 
 {% note %}
 An edited name takes priority over any `headerValueGetter` on the column. Once the user has provided a custom header name, the `headerValueGetter` is no longer called for that column.
 {% /note %}
+
+### Edit Modes
+
+Configure the editor with the `columnHeaderEdit` grid option. Its `applyMode` controls when edits are applied:
+
+- `'live'` (default): each change is applied to the header immediately as the user types. Pressing `Escape` or closing the editor keeps the change.
+- `'deferred'`: the editor shows **Apply** and **Cancel** buttons and the header is only updated when the edit is committed with **Apply** or `Enter`. **Cancel**, `Escape`, or closing the editor discards the edit.
+
+While a header is being edited it is highlighted. Set `columnHeaderEdit: { suppressColumnHighlighting: true }` to turn the highlight off.
 
 The example below has editable columns and column groups. Rename a header, then use **Save State** and **Restore State** to confirm edited names are persisted as part of Grid State, or **Reset State** to revert to the Column Definition defaults.
 

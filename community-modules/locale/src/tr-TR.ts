@@ -848,6 +848,8 @@ export const AG_GRID_LOCALE_TR = {
     // Editable Column Header Name
     editColumnName: 'Sütun adını düzenle',
     ariaColumnHeaderNameEditor: 'Sütun adı düzenleyici',
+    columnHeaderEditApply: 'Uygula',
+    columnHeaderEditCancel: 'İptal',
 
     // Calculated Columns
     calculatedColumn: 'Hesaplanan sütun',

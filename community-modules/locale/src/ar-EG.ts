@@ -842,6 +842,8 @@ export const AG_GRID_LOCALE_EG = {
     // Editable Column Header Name
     editColumnName: 'تعديل اسم العمود',
     ariaColumnHeaderNameEditor: 'محرر اسم العمود',
+    columnHeaderEditApply: 'تطبيق',
+    columnHeaderEditCancel: 'إلغاء',
 
     // Calculated Columns
     calculatedColumn: 'عمود محسوب',

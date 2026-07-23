@@ -848,6 +848,8 @@ export const AG_GRID_LOCALE_PL = {
     // Editable Column Header Name
     editColumnName: 'Edytuj nazwę kolumny',
     ariaColumnHeaderNameEditor: 'Edytor nazwy kolumny',
+    columnHeaderEditApply: 'Zastosuj',
+    columnHeaderEditCancel: 'Anuluj',
 
     // Calculated Columns
     calculatedColumn: 'Kolumna obliczana',

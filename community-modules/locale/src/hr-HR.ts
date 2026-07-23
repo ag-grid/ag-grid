@@ -846,6 +846,8 @@ export const AG_GRID_LOCALE_HR = {
     // Editable Column Header Name
     editColumnName: 'Uredi naziv stupca',
     ariaColumnHeaderNameEditor: 'Uređivač naziva stupca',
+    columnHeaderEditApply: 'Primijeni',
+    columnHeaderEditCancel: 'Odustani',
 
     // Calculated Columns
     calculatedColumn: 'Izračunati stupac',

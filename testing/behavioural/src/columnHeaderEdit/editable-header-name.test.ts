@@ -422,6 +422,79 @@ describe('Editable header name', () => {
         const athleteGroup = api.getColumnGroup('athleteGroup')!;
         expect(api.getDisplayNameForColumnGroup(athleteGroup, 'header')).toBe('Swimmers');
     });
+
+    const headerText = () =>
+        document.querySelector('.ag-header-cell[col-id="athlete"] .ag-header-cell-text')?.textContent;
+    const isHighlighted = () =>
+        !!document
+            .querySelector('.ag-header-cell[col-id="athlete"]')
+            ?.classList.contains('ag-column-header-edit-highlighted');
+
+    test('live mode applies each change to the header as the user types', async () => {
+        const { gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Comp');
+        await asyncSetTimeout(1);
+        // Live: the header reflects the in-progress edit without committing.
+        expect(headerText()).toBe('Comp');
+
+        pressEscape(input);
+        await asyncSetTimeout(1);
+        // Escape keeps the live change (Calculated Columns parity).
+        expect(headerText()).toBe('Comp');
+    });
+
+    test('deferred mode shows Apply/Cancel; Apply commits, Cancel discards', async () => {
+        const { gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }], {
+            columnHeaderEdit: { applyMode: 'deferred' },
+        });
+
+        let input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Cancelled');
+        // Deferred: no live preview on the header.
+        expect(headerText()).toBe('Athlete');
+        const cancelBtn = document.querySelector(
+            '.ag-column-header-edit-action:not(.ag-column-header-edit-action-apply)'
+        ) as HTMLElement;
+        expect(cancelBtn).toBeTruthy();
+        await userEvent.click(cancelBtn);
+        await asyncSetTimeout(1);
+        expect(headerText()).toBe('Athlete');
+
+        input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Applied');
+        const applyBtn = document.querySelector('.ag-column-header-edit-action-apply') as HTMLElement;
+        await userEvent.click(applyBtn);
+        await asyncSetTimeout(1);
+        expect(headerText()).toBe('Applied');
+    });
+
+    test('editing highlights the header cell and clears it on close', async () => {
+        const { gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+        expect(isHighlighted()).toBe(false);
+
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await asyncSetTimeout(1);
+        expect(isHighlighted()).toBe(true);
+
+        pressEscape(input);
+        await asyncSetTimeout(1);
+        expect(isHighlighted()).toBe(false);
+    });
+
+    test('suppressColumnHighlighting disables the edit highlight', async () => {
+        const { gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }], {
+            columnHeaderEdit: { suppressColumnHighlighting: true },
+        });
+
+        await openEditor(toolPanel, gridDiv, 'Athlete');
+        await asyncSetTimeout(1);
+        expect(isHighlighted()).toBe(false);
+    });
 });
 
 describe('Editable group header name', () => {
@@ -594,5 +667,110 @@ describe('Editable group header name', () => {
         expect(merged.length).toBe(1);
         expect(api.getDisplayNameForColumnGroup(merged[0] as any, 'header')).toBe('Renamed');
         expect(api.getState().columnGroup?.headerNames).toEqual([{ groupId: 'athleteGroup', headerName: 'Renamed' }]);
+    });
+});
+
+describe('Editable group header name — custom header components', () => {
+    const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+    afterEach(() => {
+        gridMgr.reset();
+        vi.resetAllMocks();
+    });
+
+    // A custom group header component that supports in-place refresh.
+    let refreshableInits = 0;
+    let refreshableRefreshes = 0;
+    class RefreshableGroupHeader {
+        private eGui!: HTMLElement;
+        public init(params: any): void {
+            refreshableInits++;
+            this.eGui = document.createElement('div');
+            this.eGui.className = 'custom-group-header';
+            this.eGui.textContent = params.displayName;
+        }
+        public refresh(params: any): boolean {
+            refreshableRefreshes++;
+            this.eGui.textContent = params.displayName;
+            return true;
+        }
+        public getGui(): HTMLElement {
+            return this.eGui;
+        }
+    }
+
+    // A custom group header component without refresh — the grid must recreate it.
+    let staticInits = 0;
+    class StaticGroupHeader {
+        private eGui!: HTMLElement;
+        public init(params: any): void {
+            staticInits++;
+            this.eGui = document.createElement('div');
+            this.eGui.className = 'custom-group-header';
+            this.eGui.textContent = params.displayName;
+        }
+        public getGui(): HTMLElement {
+            return this.eGui;
+        }
+    }
+
+    const groupText = () => document.querySelector('.custom-group-header')?.textContent;
+
+    test('a refreshable custom group header is refreshed in place, not recreated', async () => {
+        refreshableInits = 0;
+        refreshableRefreshes = 0;
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    groupId: 'athleteGroup',
+                    headerName: 'Group',
+                    headerNameEditable: true,
+                    headerGroupComponent: RefreshableGroupHeader,
+                    children: [{ field: 'athlete' }],
+                },
+            ],
+            rowData: [{ athlete: 'Michael Phelps' }],
+        });
+        await asyncSetTimeout(1);
+        expect(groupText()).toBe('Group');
+        const initsAfterRender = refreshableInits;
+
+        api.setState({
+            columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
+        });
+        await asyncSetTimeout(1);
+
+        expect(groupText()).toBe('Renamed');
+        // Refreshed in place: refresh called, no new instance created.
+        expect(refreshableRefreshes).toBeGreaterThan(0);
+        expect(refreshableInits).toBe(initsAfterRender);
+    });
+
+    test('a non-refreshable custom group header is recreated on rename', async () => {
+        staticInits = 0;
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    groupId: 'athleteGroup',
+                    headerName: 'Group',
+                    headerNameEditable: true,
+                    headerGroupComponent: StaticGroupHeader,
+                    children: [{ field: 'athlete' }],
+                },
+            ],
+            rowData: [{ athlete: 'Michael Phelps' }],
+        });
+        await asyncSetTimeout(1);
+        expect(groupText()).toBe('Group');
+        const initsAfterRender = staticInits;
+
+        api.setState({
+            columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
+        });
+        await asyncSetTimeout(1);
+
+        expect(groupText()).toBe('Renamed');
+        // No refresh method, so the grid recreates the component.
+        expect(staticInits).toBeGreaterThan(initsAfterRender);
     });
 });

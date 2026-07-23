@@ -845,6 +845,8 @@ export const AG_GRID_LOCALE_IR = {
     // Editable Column Header Name
     editColumnName: 'ویرایش نام ستون',
     ariaColumnHeaderNameEditor: 'ویرایشگر نام ستون',
+    columnHeaderEditApply: 'اعمال',
+    columnHeaderEditCancel: 'لغو',
 
     // Calculated Columns
     calculatedColumn: 'ستون محاسبه‌شده',

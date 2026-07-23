@@ -844,6 +844,8 @@ export const AG_GRID_LOCALE_NO = {
     // Editable Column Header Name
     editColumnName: 'Rediger kolonnenavn',
     ariaColumnHeaderNameEditor: 'Kolonnenavn-redigerer',
+    columnHeaderEditApply: 'Bruk',
+    columnHeaderEditCancel: 'Avbryt',
 
     // Calculated Columns
     calculatedColumn: 'Beregnet kolonne',

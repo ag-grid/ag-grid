@@ -843,6 +843,8 @@ export const AG_GRID_LOCALE_PK = {
     // Editable Column Header Name
     editColumnName: 'کالم کا نام ترمیم کریں',
     ariaColumnHeaderNameEditor: 'کالم نام ایڈیٹر',
+    columnHeaderEditApply: 'لاگو کریں',
+    columnHeaderEditCancel: 'منسوخ کریں',
 
     // Calculated Columns
     calculatedColumn: 'محسوب کالم',

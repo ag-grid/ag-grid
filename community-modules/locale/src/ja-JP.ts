@@ -843,6 +843,8 @@ export const AG_GRID_LOCALE_JP = {
     // Editable Column Header Name
     editColumnName: '列名を編集',
     ariaColumnHeaderNameEditor: '列名エディター',
+    columnHeaderEditApply: '適用',
+    columnHeaderEditCancel: 'キャンセル',
 
     // Calculated Columns
     calculatedColumn: '計算列',

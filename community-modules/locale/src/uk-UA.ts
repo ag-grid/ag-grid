@@ -846,6 +846,8 @@ export const AG_GRID_LOCALE_UA = {
     // Editable Column Header Name
     editColumnName: 'Редагувати назву стовпця',
     ariaColumnHeaderNameEditor: 'Редактор назви стовпця',
+    columnHeaderEditApply: 'Застосувати',
+    columnHeaderEditCancel: 'Скасувати',
 
     // Calculated Columns
     calculatedColumn: 'Обчислюваний стовпець',

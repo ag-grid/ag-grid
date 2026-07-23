@@ -844,6 +844,8 @@ export const AG_GRID_LOCALE_VN = {
     // Editable Column Header Name
     editColumnName: 'Chỉnh sửa tên cột',
     ariaColumnHeaderNameEditor: 'Trình chỉnh sửa tên cột',
+    columnHeaderEditApply: 'Áp dụng',
+    columnHeaderEditCancel: 'Hủy',
 
     // Calculated Columns
     calculatedColumn: 'Cột tính toán',

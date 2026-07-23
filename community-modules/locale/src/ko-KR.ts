@@ -843,6 +843,8 @@ export const AG_GRID_LOCALE_KR = {
     // Editable Column Header Name
     editColumnName: '열 이름 편집',
     ariaColumnHeaderNameEditor: '열 이름 편집기',
+    columnHeaderEditApply: '적용',
+    columnHeaderEditCancel: '취소',
 
     // Calculated Columns
     calculatedColumn: '계산된 열',

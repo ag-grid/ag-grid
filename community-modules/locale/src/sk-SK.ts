@@ -844,6 +844,8 @@ export const AG_GRID_LOCALE_SK = {
     // Editable Column Header Name
     editColumnName: 'Upraviť názov stĺpca',
     ariaColumnHeaderNameEditor: 'Editor názvu stĺpca',
+    columnHeaderEditApply: 'Použiť',
+    columnHeaderEditCancel: 'Zrušiť',
 
     // Calculated Columns
     calculatedColumn: 'Vypočítaný stĺpec',

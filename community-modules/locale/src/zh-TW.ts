@@ -842,6 +842,8 @@ export const AG_GRID_LOCALE_TW = {
     // Editable Column Header Name
     editColumnName: '編輯欄位名稱',
     ariaColumnHeaderNameEditor: '欄位名稱編輯器',
+    columnHeaderEditApply: '應用',
+    columnHeaderEditCancel: '取消',
 
     // Calculated Columns
     calculatedColumn: '計算欄位',

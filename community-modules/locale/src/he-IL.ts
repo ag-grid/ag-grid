@@ -842,6 +842,8 @@ export const AG_GRID_LOCALE_IL = {
     // Editable Column Header Name
     editColumnName: 'ערוך שם עמודה',
     ariaColumnHeaderNameEditor: 'עורך שם עמודה',
+    columnHeaderEditApply: 'החל',
+    columnHeaderEditCancel: 'בטל',
 
     // Calculated Columns
     calculatedColumn: 'עמודה מחושבת',
