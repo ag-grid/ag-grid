@@ -9,4 +9,8 @@ export interface IColumnHeaderEditService extends Bean {
     getEditColumnNameMenuItem(target: AgColumn | AgProvidedColumnGroup): MenuItemDef | null;
     /** Open the header-name editor for the given column or column group. */
     showHeaderNameEditor(target: AgColumn | AgProvidedColumnGroup): void;
+    /** Whether the column's header is currently being edited and should be highlighted. */
+    isHighlightedColumn(column: AgColumn): boolean;
+    /** Whether the provided column group's header is currently being edited and should be highlighted. */
+    isHighlightedGroup(columnGroup: AgProvidedColumnGroup): boolean;
 }

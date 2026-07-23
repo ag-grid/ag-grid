@@ -16,6 +16,7 @@ import type { DisplaySortDef, SortDef, SortDirection } from '../../../interfaces
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
+import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeaderEditCss';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils';
@@ -154,7 +155,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                     this.refresh();
                 }
             },
+            // Toggle the edit highlight in place (no header component recreation).
+            columnHeaderEditHighlightChanged: (event) => {
+                if (!event.colId || event.colId === colId) {
+                    this.refreshEditHighlight();
+                }
+            },
         });
+        this.refreshEditHighlight();
 
         if (beans.showValuesAsSvc) {
             // The active mode (and its dormancy, which flips on grouping/pivot change) feed the header aria description.
@@ -406,6 +414,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         for (const f of Object.values(this.refreshFunctions)) {
             f();
         }
+    }
+
+    private refreshEditHighlight(): void {
+        this.comp.toggleCss(
+            CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED,
+            !!this.beans.colHeaderEditSvc?.isHighlightedColumn(this.column)
+        );
     }
 
     private refreshHeaderComp(): void {

@@ -13,6 +13,7 @@ import { _addGridCommonParams, _getEnableColumnSelection } from '../../../gridOp
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
+import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeaderEditCss';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
@@ -329,7 +330,21 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                     this.refreshDisplayName();
                 }
             },
+            // Toggle the edit highlight in place (no header component recreation).
+            columnHeaderEditHighlightChanged: (event) => {
+                if (!event.groupId || event.groupId === groupId) {
+                    this.refreshEditHighlight();
+                }
+            },
         });
+        this.refreshEditHighlight();
+    }
+
+    private refreshEditHighlight(): void {
+        this.comp.toggleCss(
+            CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED,
+            !!this.beans.colHeaderEditSvc?.isHighlightedGroup(this.column.getProvidedColumnGroup())
+        );
     }
 
     private refreshDisplayName(): void {

@@ -193,6 +193,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         columnShowValuesAsChanged: AgEvent<'columnShowValuesAsChanged'>;
         rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
         columnHeaderNameChanged: ColumnHeaderNameChangedEvent;
+        columnHeaderEditHighlightChanged: ColumnHeaderEditHighlightChangedEvent;
     }
 >;
 
@@ -958,6 +959,13 @@ export interface ColumnHeaderNameChangedEvent extends AgEvent<'columnHeaderNameC
     /** Set when a single column's header name changed. Listeners can ignore other columns. */
     colId?: string;
     /** Set when a single provided column group's header name changed. Listeners can ignore other groups. */
+    groupId?: string;
+}
+
+export interface ColumnHeaderEditHighlightChangedEvent extends AgEvent<'columnHeaderEditHighlightChanged'> {
+    /** Set when a single column's header edit-highlight changed. Listeners can ignore other columns. */
+    colId?: string;
+    /** Set when a single provided column group's header edit-highlight changed. Listeners can ignore other groups. */
     groupId?: string;
 }
 

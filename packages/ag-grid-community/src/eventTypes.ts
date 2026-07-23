@@ -180,6 +180,7 @@ const _INTERNAL_EVENTS = [
     'rowExpansionStateChanged',
     'showRowGroupColsSetChanged',
     'columnHeaderNameChanged',
+    'columnHeaderEditHighlightChanged',
     'columnShowValuesAsChanged',
 ] as const;
 

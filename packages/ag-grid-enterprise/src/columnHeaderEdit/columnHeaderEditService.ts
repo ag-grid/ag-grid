@@ -17,6 +17,7 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
 
     private activePopup: ColumnHeaderEditPopup | null = null;
     private removePopupColListener: (() => void) | null = null;
+    private editingTarget: EditTarget | null = null;
 
     private getOptions(): ColumnHeaderEditOptions | undefined {
         const options = this.gos.get('columnHeaderEdit');
@@ -30,6 +31,35 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
 
     private isHighlightSuppressed(): boolean {
         return this.getOptions()?.suppressColumnHighlighting === true;
+    }
+
+    public isHighlightedColumn(column: AgColumn): boolean {
+        return !this.isHighlightSuppressed() && this.editingTarget === column;
+    }
+
+    public isHighlightedGroup(columnGroup: AgProvidedColumnGroup): boolean {
+        return !this.isHighlightSuppressed() && this.editingTarget === columnGroup;
+    }
+
+    // Toggle the edited header's highlight without recreating the header component.
+    private setEditingTarget(target: EditTarget | null): void {
+        const previous = this.editingTarget;
+        this.editingTarget = target;
+        this.dispatchHighlightChanged(previous);
+        if (target && target !== previous) {
+            this.dispatchHighlightChanged(target);
+        }
+    }
+
+    private dispatchHighlightChanged(target: EditTarget | null): void {
+        if (!target) {
+            return;
+        }
+        if (isProvidedColumnGroup(target)) {
+            this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderEditHighlightChanged', groupId: target.groupId });
+        } else {
+            this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderEditHighlightChanged', colId: target.getColId() });
+        }
     }
 
     private isEditable(target: EditTarget): boolean {
@@ -129,6 +159,8 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
                 }
             },
         })[0];
+
+        this.setEditingTarget(target);
     }
 
     private destroyActivePopup(): void {
@@ -138,6 +170,7 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
             this.destroyBean(this.activePopup);
             this.activePopup = null;
         }
+        this.setEditingTarget(null);
     }
 
     public override destroy(): void {
