@@ -3,11 +3,7 @@ title: "Columns Tool Panel"
 enterprise: true
 ---
 
-The Columns Tool Panel provides controls for managing the grid's columns.
-
-## Example
-
-In the example below the Columns Tool Panel can be used to show / hide / reorder columns, group rows and aggregate data and perform pivot operations.
+The Columns Tool Panel provides controls for managing the grid's columns. It can be used to show / hide / reorder columns, group rows and aggregate data and perform pivot operations.
 
 {% gridExampleRunner title="Tool Panel Simple" name="simple"  exampleHeight=630 /%}
 
@@ -16,13 +12,6 @@ Remember to mark the column definitions with `enableRowGroup` for grouping, `ena
 for pivoting and `enableValue` for aggregation, otherwise you won't be able to drag and drop the
 columns to the desired sections.
 {% /note %}
-
-## Selection Action
-
-Selecting columns means different things depending on whether the grid is in pivot mode or not as follows:
-
-- **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
-- **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
 ## Columns Tool Panel Sections
 
@@ -51,6 +40,13 @@ The Columns Tool Panel is split into different sections as described from the to
     - Each column can be right-clicked to display a context menu. The context menu displays menu items related to whether the column can be grouped, pivoted and aggregated. When not in pivot mode, the context menu for visible columns includes an item to scroll the column into view.
 
 {% imageCaption imagePath="resources/screenshot.png" alt="AG Grid Tool Panel Section" centered=true constrained=true width="46rem" /%}
+
+## Selection Action
+
+Selecting columns means different things depending on whether the grid is in pivot mode or not as follows:
+
+- **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
+- **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
 ## Section Visibility
 
