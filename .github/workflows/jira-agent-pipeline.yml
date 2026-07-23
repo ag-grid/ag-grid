@@ -4,7 +4,7 @@ name: Jira Agent Pipeline
 # End-to-end Jira -> GHA agent pipeline. Stages, one workflow:
 #
 #   triage              — /fr --ci --phase 0..1 <KEY>            (intent / research / plan)
-#   build               — /fr --ci --phase 2..5 --resume --draft-pr <KEY>
+#   build               — /fr --ci --phase 2..5 --resume --ci-pr <KEY>
 #   pr-iterate          — /fr --ci --pr-iterate <KEY>                              (review-comment driven)
 #   ci-failure-iterate  — /fr --ci --pr-iterate --ci-failure <run_url> <KEY>       (main-CI failure driven)
 #   recycle             — /fr --ci --recycle --prior <merged|abandoned> <KEY>      (new -rN PR after prior PR merged/closed)
@@ -12,13 +12,13 @@ name: Jira Agent Pipeline
 # A single `→ In Progress` JIRA rule dispatches `jira-resume`; the cheap
 # `resume-preflight` job reads AI pr-url + the PR's GitHub state + whether
 # AI plan is populated, and emits a route (triage / build / iterate / recycle)
-# that the single `resume-run` job runs as a parameterised stage (no AI-status
+# that the single `agent-run` job runs as a parameterised stage (no AI-status
 # guard in the rule — the preflight does the disambiguation JIRA can't: it sees
 # whether the PR is open / merged / closed, and whether a build-ready plan
 # exists yet).
 # First-pass triage hands back to Needs Review for plan review; the human's
 # next drag (now finding a plan) routes to build. See ag-dev-prompts
-# docs/jira-agent-pipeline.md §"Re-engagement after Needs Review".
+# docs/ai-workflow.md §"Re-engagement after Needs Review".
 #
 # Each stage is its own job, gated on the `resume-preflight` route output
 # (the normal path), a forced `workflow_dispatch` stage input (dry-run /
@@ -133,7 +133,7 @@ on:
         # (Needs-Review transition). The `branches:` filter restricts firings
         # at the trigger level so non-AI PR completions don't create skipped
         # workflow runs in the Actions history. The agent branch shape is
-        # `ghabot-ag-<NNNNN>-<slug>` (see ag-dev-prompts modes/ci.md). Globs
+        # `ghabot-ag-<NNNNN>-<slug>` (see ag-dev-prompts modes/ci-build.md). Globs
         # are case-sensitive, but the agent always produces lowercase.
         workflows: [CI]
         types: [completed]
@@ -184,6 +184,10 @@ jobs:
             ci_failure_eligible: ${{ steps.cifail.outputs.eligible }}
             ci_failure_run_url: ${{ steps.cifail.outputs.run_url }}
             issue_key: ${{ steps.resume.outputs.issue_key || steps.cifail.outputs.issue_key }}
+            # AG-17889: per-effort agent wall clock (60 / high 90 / xhigh 120 /
+            # max 180), read from AI model effort. agent-run's timeout-minutes
+            # falls back to 60 when this is empty (workflow_run / forced paths).
+            agent_timeout_minutes: ${{ steps.resume.outputs.agent_timeout_minutes }}
         steps:
             - uses: actions/checkout@v4
               with:
@@ -240,7 +244,9 @@ jobs:
              needs.ci-success-handler.outputs.dispatch_pr_iterate == 'true' ||
              (github.event_name == 'workflow_dispatch' && inputs.stage != 'resume'))
         runs-on: ubuntu-latest
-        timeout-minutes: 60
+        # AG-17889: scale the wall clock to the ticket's resolved AI model
+        # effort (preflight output); 60 when preflight was skipped/empty.
+        timeout-minutes: ${{ fromJSON(needs.preflight.outputs.agent_timeout_minutes || '60') }}
         permissions:
             contents: read
             packages: read
