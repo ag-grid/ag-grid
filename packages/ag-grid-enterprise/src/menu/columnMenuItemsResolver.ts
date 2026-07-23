@@ -1,9 +1,14 @@
-import type { AgColumn } from '../../entities/agColumn';
-import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
-import type { GridOptionsService } from '../../gridOptionsService';
-import { _addGridCommonParams } from '../../gridOptionsUtils';
-import type { ColumnMenuItemsSource, GetColumnMenuItemsParams } from '../../interfaces/iCallbackParams';
-import type { DefaultColumnMenuItem, DefaultMenuItem, MenuItemDef } from '../../interfaces/menuItem';
+import type {
+    AgColumn,
+    AgProvidedColumnGroup,
+    ColumnMenuItemsSource,
+    DefaultColumnMenuItem,
+    DefaultMenuItem,
+    GetColumnMenuItemsParams,
+    GridOptionsService,
+    MenuItemDef,
+} from 'ag-grid-community';
+import { _addGridCommonParams } from 'ag-grid-community';
 
 type ColumnMenuDefaultItems = DefaultColumnMenuItem[];
 type ColumnMenuItems = (DefaultColumnMenuItem | MenuItemDef)[];
@@ -13,7 +18,6 @@ type ColumnMenuItems = (DefaultColumnMenuItem | MenuItemDef)[];
  * Columns Tool Panel, Column Chooser), applying user customisation with this precedence:
  * `columnMenuItems` (col/group) -> `getColumnMenuItems` (grid) -> [`source: 'columnMenu'` only]
  * legacy `mainMenuItems` (col/group) -> `getMainMenuItems` (grid) -> `defaultItems`.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _resolveColumnMenuItems(
     gos: GridOptionsService,
@@ -64,7 +68,6 @@ export function _resolveColumnMenuItems(
  * given column or group. Used to decide whether to open a menu when the built-in items are suppressed
  * (e.g. under `functionsReadOnly`). Legacy `mainMenuItems` / `getMainMenuItems` are deliberately excluded
  * as they only apply to the column menu.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _hasColumnMenuItems(
     gos: GridOptionsService,

@@ -1,10 +1,14 @@
-import type { AgColumn } from '../../entities/agColumn';
-import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
-import type { ColDef, ColGroupDef } from '../../entities/colDef';
-import type { GridOptions } from '../../entities/gridOptions';
-import type { GridOptionsService } from '../../gridOptionsService';
-import type { GetColumnMenuItemsParams } from '../../interfaces/iCallbackParams';
-import type { MenuItemDef } from '../../interfaces/menuItem';
+import type {
+    AgColumn,
+    AgProvidedColumnGroup,
+    ColDef,
+    ColGroupDef,
+    GetColumnMenuItemsParams,
+    GridOptions,
+    GridOptionsService,
+    MenuItemDef,
+} from 'ag-grid-community';
+
 import { _resolveColumnMenuItems } from './columnMenuItemsResolver';
 
 function makeGos(gridOptions: Partial<GridOptions>): GridOptionsService {

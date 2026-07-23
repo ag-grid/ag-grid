@@ -22,6 +22,7 @@ import { BeanStub, _createIconNoSpan, _getRowNode, _normalizeSortType, _resetCol
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
+import { PIVOT_TOKEN, SCROLL_INTO_VIEW_TOKEN, VALUE_TOKEN, columnMenuTokenLabel } from './columnMenuTokenLabels';
 import { validateMenuItem } from './menuItemValidations';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuSeparators';
 
@@ -317,8 +318,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     }
                     const displayName = colNames.getDisplayNameForColumn(column, 'header')!;
                     return {
-                        name: localeTextFunc('scrollColumnIntoView', `Scroll ${displayName} into View`, [displayName]),
-                        icon: _createIconNoSpan('ensureColumnVisible', beans, null),
+                        name: columnMenuTokenLabel(
+                            localeTextFunc,
+                            SCROLL_INTO_VIEW_TOKEN.key,
+                            SCROLL_INTO_VIEW_TOKEN.default,
+                            displayName
+                        ),
+                        icon: _createIconNoSpan(SCROLL_INTO_VIEW_TOKEN.icon, beans, null),
                         action: () => ctrlsSvc.getScrollFeature().ensureColumnVisible(column),
                     };
                 }
@@ -330,9 +336,19 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     const displayName = colNames.getDisplayNameForColumn(column, 'header')!;
                     return {
                         name: active
-                            ? localeTextFunc('removeFromValues', `Remove ${displayName} from values`, [displayName])
-                            : localeTextFunc('addToValues', `Add ${displayName} to values`, [displayName]),
-                        icon: _createIconNoSpan('valuePanel', beans, null),
+                            ? columnMenuTokenLabel(
+                                  localeTextFunc,
+                                  VALUE_TOKEN.removeKey,
+                                  VALUE_TOKEN.removeDefault,
+                                  displayName
+                              )
+                            : columnMenuTokenLabel(
+                                  localeTextFunc,
+                                  VALUE_TOKEN.addKey,
+                                  VALUE_TOKEN.addDefault,
+                                  displayName
+                              ),
+                        icon: _createIconNoSpan(VALUE_TOKEN.icon, beans, null),
                         disabled: gos.get('functionsReadOnly'),
                         action: () =>
                             active
@@ -348,9 +364,19 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     const displayName = colNames.getDisplayNameForColumn(column, 'header')!;
                     return {
                         name: active
-                            ? localeTextFunc('removeFromLabels', `Remove ${displayName} from labels`, [displayName])
-                            : localeTextFunc('addToLabels', `Add ${displayName} to labels`, [displayName]),
-                        icon: _createIconNoSpan('pivotPanel', beans, null),
+                            ? columnMenuTokenLabel(
+                                  localeTextFunc,
+                                  PIVOT_TOKEN.removeKey,
+                                  PIVOT_TOKEN.removeDefault,
+                                  displayName
+                              )
+                            : columnMenuTokenLabel(
+                                  localeTextFunc,
+                                  PIVOT_TOKEN.addKey,
+                                  PIVOT_TOKEN.addDefault,
+                                  displayName
+                              ),
+                        icon: _createIconNoSpan(PIVOT_TOKEN.icon, beans, null),
                         disabled: gos.get('functionsReadOnly'),
                         action: () =>
                             active

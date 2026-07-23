@@ -17,11 +17,9 @@ if (process.env.NODE_ENV !== 'production') {
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
-    // ColumnMenuModule provides the stock menu items (e.g. pinning) used in the tool panel menu below
     ColumnMenuModule,
     ContextMenuModule,
     RowGroupingModule,
-    // CellStyleModule powers the cellStyle highlight; RowApiModule powers api.redrawRows to re-apply it
     CellStyleModule,
     RowApiModule,
 ]);

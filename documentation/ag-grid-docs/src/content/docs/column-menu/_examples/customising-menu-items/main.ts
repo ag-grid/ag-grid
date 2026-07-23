@@ -29,10 +29,8 @@ const columnDefs: ColDef[] = [
         enableValue: true,
         minWidth: 150,
         columnMenuItems: (params: GetColumnMenuItemsParams) => {
-            // 'value' and 'scrollIntoView' normally appear on the Columns Tool Panel menu - returning
-            // them here shows built-in tokens work on any surface.
+            // 'value' is a Columns Tool Panel token; it resolves on the column menu too.
             const menuItems: (DefaultColumnMenuItem | MenuItemDef)[] = [
-                'scrollIntoView',
                 'value',
                 'separator',
                 ...params.defaultItems,

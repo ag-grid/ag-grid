@@ -2248,15 +2248,8 @@ export interface GridOptions<TData = any> {
      * For customising the menu items shown for a column across the column menu, the Columns Tool Panel
      * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for;
      * branch on it to target a single surface. Takes precedence over `getMainMenuItems` for the column menu.
-     *
-     * Note: when this is set, the Columns Tool Panel / Column Chooser right-click menu opens even under
-     * `functionsReadOnly` (where it is otherwise suppressed). Your custom items are shown; built-in
-     * state-changing items are hidden by default, and any you return explicitly are shown but disabled.
-     *
-     * Requires `ColumnMenuModule` (for the column menu) or `ColumnsToolPanelModule` (for the Columns Tool
-     * Panel and Column Chooser), depending on which surface you are customising.
      * @initial
-     * @agModule `ColumnMenuModule`
+     * @agModule `ColumnMenuModule` / `ColumnsToolPanelModule`
      */
     getColumnMenuItems?: GetColumnMenuItems<TData>;
     /**

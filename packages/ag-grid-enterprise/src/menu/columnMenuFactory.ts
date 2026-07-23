@@ -13,11 +13,11 @@ import {
     _getGrandTotalRow,
     _isClientSideRowModel,
     _isLegacyMenuEnabled,
-    _resolveColumnMenuItems,
 } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
+import { _resolveColumnMenuItems } from './columnMenuItemsResolver';
 import type { MenuItemMapper } from './menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuSeparators';
 

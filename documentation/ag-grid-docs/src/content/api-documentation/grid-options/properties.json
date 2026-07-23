@@ -71,7 +71,7 @@
         "getColumnMenuItems": {
             "more": {
                 "name": "Column Menu",
-                "url": "./column-menu/#customising-across-menus"
+                "url": "./column-menu/#customising-the-menu-items"
             }
         },
         "columnMenu": {

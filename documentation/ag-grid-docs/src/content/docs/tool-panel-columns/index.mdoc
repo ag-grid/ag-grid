@@ -158,37 +158,30 @@ The example below demonstrates the Columns Tool Panel using a mixture of items e
 
 {% gridExampleRunner title="Tool Panel Styling" name="styling"  exampleHeight=610 /%}
 
-## Customising the Right-Click Menu
+## Right-Click Menu
 
-Right-clicking a column in the Columns Tool Panel opens a menu. By default this shows scroll, group, aggregation and pivot items based on the column's configuration. You can customise these items, including adding your own, using the same callbacks as the [Column Menu](./column-menu/#customising-the-menu-items):
-
-1. Set `colDef.columnMenuItems`. This can either be a list of menu items, or a callback which is passed the list of default menu items.
-1. Set the grid option `getColumnMenuItems()`. This callback is passed the list of default menu items, the column, and a `source` indicating which menu is being shown.
-
-The `source` is `'columnsToolPanel'` for the Columns Tool Panel, `'columnChooser'` for the [Column Chooser](./column-menu/#customising-the-column-chooser), and `'columnMenu'` for the column header menu. Branch on it to tailor the items per menu.
-
-{% apiDocumentation source="column-properties/properties.json" section="header" names=["columnMenuItems"] /%}
-
-{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getColumnMenuItems"] /%}
-
-`params.defaultItems` is a list of string tokens, so you can filter and reorder it. All built-in tokens share one type, `DefaultColumnMenuItem`, and can be returned for any surface; each is shown only where it applies to the column and grid state. The tokens shown by default in the tool panel menu are:
+Right-clicking a column in the Columns Tool Panel opens a menu. By default it shows items based on the column's configuration and the grid's current state:
 
 - `scrollIntoView`: Scroll the column into view. Not shown when pivoting or the column is pinned.
 - `rowGroup`: Group or un-group by the column. Only shown when row grouping is allowed.
-- `value`: Add or remove the column from values. Only shown when aggregation is allowed.
-- `pivot`: Add or remove the column from labels. Only shown in pivot mode when pivoting is allowed.
+- `value`: Add or remove the column as an aggregated value (the **Values** section). Only shown when aggregation is allowed.
+- `pivot`: Add or remove the column as a pivot column label (the **Column Labels** section). Only shown in pivot mode when pivoting is allowed.
 
-The concrete item shown for a token depends on the column's current state (e.g. `rowGroup` renders "Group by" or "Un-Group by"). Add custom items as [`MenuItemDef`](./column-menu/#custom-menu-item-components) objects, and include column menu tokens such as `'pinSubMenu'` where you need them.
-
-{% note %}
-Resolving column menu tokens (such as `'pinSubMenu'`) in the tool panel menu requires the `ColumnMenuModule` to be registered. Pin items are only available for individual columns, not column groups.
-{% /note %}
-
-When `columnMenuItems` or `getColumnMenuItems()` is configured, the tool panel and Column Chooser menu opens even when [`functionsReadOnly`](#read-only-functions) is enabled - where it is otherwise suppressed. The built-in group / value / pivot items are hidden in this case, but the items you return are still shown. Branch on `source` if you only want to customise the column menu.
-
-The following example demonstrates customising the tool panel menu. Right-click a column in the Columns Tool Panel to see an optional pinning sub-menu and a custom **Highlight Column** item, which toggles a highlight style on the column:
+The label a token shows depends on the column's current state - for example `rowGroup` renders "Group by" or "Un-Group by".
 
 {% gridExampleRunner title="Customising the Tool Panel Menu" name="customising-tool-panel-menu" exampleHeight=670 /%}
+
+### Customising the Menu
+
+Customise these items - filter them, reorder them, or add your own - with `colDef.columnMenuItems` or the grid option `getColumnMenuItems()`, exactly as for the [Column Menu](./column-menu/#customising-the-menu-items). In the tool panel the callback's `source` is `'columnsToolPanel'` (and `'columnChooser'` for the [Column Chooser](./column-menu/#customising-the-column-chooser)), so one callback can tailor the items per surface.
+
+{% note %}
+Resolving column menu tokens (such as `'pinSubMenu'`) in the tool panel menu requires the `ColumnMenuModule`. Pin items are only available for individual columns, not column groups.
+{% /note %}
+
+When `columnMenuItems` or `getColumnMenuItems()` is configured, the menu opens even with [Read Only Functions](#read-only-functions) enabled, where it is otherwise suppressed. The built-in group / value / pivot items are hidden in this case, but the items you return are still shown.
+
+The example above demonstrates this: right-click a column to see an optional pinning sub-menu and a custom **Highlight Column** item, which toggles a highlight style on the column.
 
 ## Read Only Functions
 

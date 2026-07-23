@@ -181,8 +181,8 @@
         },
         "columnMenuItems": {
             "more": {
-                "name": "Customising Across Menus",
-                "url": "./column-menu/#customising-across-menus"
+                "name": "Customising the Menu Items",
+                "url": "./column-menu/#customising-the-menu-items"
             }
         },
         "suppressHeaderMenuButton": {

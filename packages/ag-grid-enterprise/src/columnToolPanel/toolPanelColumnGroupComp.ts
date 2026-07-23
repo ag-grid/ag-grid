@@ -24,9 +24,9 @@ import {
     _createIconNoSpan,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
-    _hasColumnMenuItems,
 } from 'ag-grid-community';
 
+import { _hasColumnMenuItems } from '../menu/columnMenuItemsResolver';
 import type { ColumnModelItem } from './columnModelItem';
 import { createPivotStateForToolPanel, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';

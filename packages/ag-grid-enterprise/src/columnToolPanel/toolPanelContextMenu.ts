@@ -9,8 +9,10 @@ import type {
     IconName,
     MenuItemDef,
 } from 'ag-grid-community';
-import { Component, _createIconNoSpan, _resolveColumnMenuItems, isProvidedColumnGroup } from 'ag-grid-community';
+import { Component, _createIconNoSpan, isProvidedColumnGroup } from 'ag-grid-community';
 
+import { _resolveColumnMenuItems } from '../menu/columnMenuItemsResolver';
+import { PIVOT_TOKEN, SCROLL_INTO_VIEW_TOKEN, VALUE_TOKEN, columnMenuTokenLabel } from '../menu/columnMenuTokenLabels';
 import type { MenuItemMapper } from '../menu/menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../menu/menuSeparators';
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
@@ -176,7 +178,12 @@ export class ToolPanelContextMenu extends Component {
             allowedFunction: (col) => !col.isPinned() && !isPivotMode && this.isColumnValidForScrollIntoView(col),
             activeFunction: () => false,
             activateLabel: () =>
-                localeTextFunc('scrollColumnIntoView', `Scroll ${displayName} into View`, [displayName!]),
+                columnMenuTokenLabel(
+                    localeTextFunc,
+                    SCROLL_INTO_VIEW_TOKEN.key,
+                    SCROLL_INTO_VIEW_TOKEN.default,
+                    displayName!
+                ),
             activateFunction: () => {
                 const firstVisibleColumn = this.columns.find(this.isColumnValidForScrollIntoView);
 
@@ -185,7 +192,7 @@ export class ToolPanelContextMenu extends Component {
                 }
             },
             deActivateFunction: () => {},
-            addIcon: 'ensureColumnVisible',
+            addIcon: SCROLL_INTO_VIEW_TOKEN.icon,
         });
 
         const rowGroupAllowed = (col: AgColumn) =>
@@ -217,9 +224,10 @@ export class ToolPanelContextMenu extends Component {
         menuItemMap.set('value', {
             allowedFunction: valueAllowed,
             activeFunction: (col) => valueColIdSet.has(col.colId),
-            activateLabel: () => localeTextFunc('addToValues', `Add ${displayName} to values`, [displayName!]),
+            activateLabel: () =>
+                columnMenuTokenLabel(localeTextFunc, VALUE_TOKEN.addKey, VALUE_TOKEN.addDefault, displayName!),
             deactivateLabel: () =>
-                localeTextFunc('removeFromValues', `Remove ${displayName} from values`, [displayName!]),
+                columnMenuTokenLabel(localeTextFunc, VALUE_TOKEN.removeKey, VALUE_TOKEN.removeDefault, displayName!),
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getValueColumns(deferMode), valueAllowed);
                 updateStrategy.setValueColumns(deferMode, columns, this.eventType);
@@ -230,8 +238,8 @@ export class ToolPanelContextMenu extends Component {
                 updateStrategy.setValueColumns(deferMode, columns, this.eventType);
                 refreshDeferredToolPanelUi(this.beans, this.params);
             },
-            addIcon: 'valuePanel',
-            removeIcon: 'valuePanel',
+            addIcon: VALUE_TOKEN.icon,
+            removeIcon: VALUE_TOKEN.icon,
             mutatesState: true,
         });
 
@@ -239,9 +247,10 @@ export class ToolPanelContextMenu extends Component {
         menuItemMap.set('pivot', {
             allowedFunction: pivotAllowed,
             activeFunction: (col) => pivotColIdSet.has(col.colId),
-            activateLabel: () => localeTextFunc('addToLabels', `Add ${displayName} to labels`, [displayName!]),
+            activateLabel: () =>
+                columnMenuTokenLabel(localeTextFunc, PIVOT_TOKEN.addKey, PIVOT_TOKEN.addDefault, displayName!),
             deactivateLabel: () =>
-                localeTextFunc('removeFromLabels', `Remove ${displayName} from labels`, [displayName!]),
+                columnMenuTokenLabel(localeTextFunc, PIVOT_TOKEN.removeKey, PIVOT_TOKEN.removeDefault, displayName!),
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getPivotColumns(deferMode), pivotAllowed);
                 updateStrategy.setPivotColumns(deferMode, columns, this.eventType);
@@ -252,8 +261,8 @@ export class ToolPanelContextMenu extends Component {
                 updateStrategy.setPivotColumns(deferMode, columns, this.eventType);
                 refreshDeferredToolPanelUi(this.beans, this.params);
             },
-            addIcon: 'pivotPanel',
-            removeIcon: 'pivotPanel',
+            addIcon: PIVOT_TOKEN.icon,
+            removeIcon: PIVOT_TOKEN.icon,
             mutatesState: true,
         });
     }
