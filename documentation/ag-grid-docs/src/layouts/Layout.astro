@@ -104,13 +104,24 @@ const sameAsUrls = includeStructuredData
     : [];
 const organizationLogoUrl = `${siteRoot}images/ag-logos/png-logos/AG-Grid-Logo_Light-Theme_476_140.png`;
 const licensePricingUrl = `${siteRoot}license-pricing/`;
+// AG Grid's Wikidata item, appended to the footer-derived social profiles so Google can tie
+// the site, the Wikidata entry and the Knowledge Graph panel to the same entity.
+const organizationSameAs = [...sameAsUrls, 'https://www.wikidata.org/wiki/Q128283374'];
+const organizationDescription =
+    'AG Grid is the maker of the industry-leading JavaScript Data Grid, offering high-performance, feature-rich data grid components for React, Angular, Vue and JavaScript, available as a free open-source Community edition and a commercial Enterprise edition.';
+const organizationFounder = {
+    name: 'Niall Crosby',
+    sameAs: ['https://www.wikidata.org/wiki/Q114758691'],
+};
 const structuredData: JsonLdObject[] = includeStructuredData
     ? [
           buildOrganization({
               canonicalUrlBase: metadata.canonicalUrlBase,
               name: 'AG Grid',
               logoUrl: organizationLogoUrl,
-              sameAs: sameAsUrls,
+              sameAs: organizationSameAs,
+              description: organizationDescription,
+              founder: organizationFounder,
               // Line up with the enquiry-type options on the contact page. Sales enquiries go
               // through the contact form; technical support is handled via the Zendesk portal.
               contactPoints: [

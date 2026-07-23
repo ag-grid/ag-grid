@@ -24,11 +24,25 @@ export interface ContactPoint {
     availableLanguage?: string | string[];
 }
 
+export interface OrganizationFounder {
+    name: string;
+    /**
+     * Authoritative entries for the person (e.g. their Wikidata item), so the
+     * emitted `Person` node can be tied to the same entity across sources.
+     */
+    sameAs?: string[];
+    url?: string;
+}
+
 interface OrgInput {
     canonicalUrlBase: string;
     name: string;
     logoUrl: string;
     sameAs: string[];
+    /** Optional short company description, emitted as the Organization `description`. */
+    description?: string;
+    /** Optional founder, emitted as a nested schema.org `Person`. */
+    founder?: OrganizationFounder;
     /**
      * Optional points of contact (sales, technical support, etc.). Emitted as
      * a `contactPoint` array on the Organization so any page referencing the
@@ -127,7 +141,15 @@ const BREADCRUMB_ID_FRAGMENT = '#breadcrumb';
 const FAQ_ID_FRAGMENT = '#faq';
 const CONTACT_PAGE_ID_FRAGMENT = '#contact-page';
 
-export function buildOrganization({ canonicalUrlBase, name, logoUrl, sameAs, contactPoints }: OrgInput): JsonLdObject {
+export function buildOrganization({
+    canonicalUrlBase,
+    name,
+    logoUrl,
+    sameAs,
+    description,
+    founder,
+    contactPoints,
+}: OrgInput): JsonLdObject {
     const result: JsonLdObject = {
         '@type': 'Organization',
         '@id': getOrganizationId(canonicalUrlBase),
@@ -136,6 +158,19 @@ export function buildOrganization({ canonicalUrlBase, name, logoUrl, sameAs, con
         logo: logoUrl,
         sameAs,
     };
+    if (description) {
+        result.description = description;
+    }
+    if (founder) {
+        const founderNode: JsonLdObject = { '@type': 'Person', name: founder.name };
+        if (founder.url) {
+            founderNode.url = founder.url;
+        }
+        if (founder.sameAs && founder.sameAs.length > 0) {
+            founderNode.sameAs = founder.sameAs;
+        }
+        result.founder = founderNode;
+    }
     if (contactPoints && contactPoints.length > 0) {
         result.contactPoint = contactPoints.map((point) => ({ '@type': 'ContactPoint', ...point }));
     }
