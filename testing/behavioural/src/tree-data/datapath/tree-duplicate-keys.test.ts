@@ -1,6 +1,6 @@
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../../test-utils';
@@ -26,6 +26,8 @@ describe('ag-grid tree duplicate keys', () => {
     });
 
     test('preserves the first root child duplicate, and can recover when renamed', async () => {
+        // Asserts the duplicate-key warning (#186); suppress only that id so any other still throws.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [186] });
         const rowData = [
             { id: 'KtTkR5g-0', orgHierarchy: ['A'] },
             { id: 'X80CJzw-1', orgHierarchy: ['A'] },
@@ -76,6 +78,8 @@ describe('ag-grid tree duplicate keys', () => {
     });
 
     test('can handle duplicate leafs of a group, and can recover when moved', async () => {
+        // Asserts the duplicate-key warning (#186); suppress only that id so any other still throws.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [186] });
         const rowData = [
             { id: 'j4SDrJw-0', orgHierarchy: ['A', 'B'] },
             { id: 'BexVZIg-1', orgHierarchy: ['A', 'B'] },
@@ -127,6 +131,8 @@ describe('ag-grid tree duplicate keys', () => {
     });
 
     test('preserves the first duplicate, but can recover renaming it, allowing swapping', async () => {
+        // Asserts the duplicate-key warning (#186); suppress only that id so any other still throws.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [186] });
         const rowData = [
             { id: 'UzWrPgX-0', orgHierarchy: ['A', 'B'] },
             { id: 'q7lpQ9A-1', orgHierarchy: ['A', 'B', 'C'] },
@@ -231,6 +237,8 @@ describe('ag-grid tree duplicate keys', () => {
     });
 
     test('sourceRowIndex of duplicates matters, and when a duplicate over many duplicates is moved the right one is used as main row', async () => {
+        // Asserts the duplicate-key warning (#186); suppress only that id so any other still throws.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [186] });
         const rowData = [
             { id: 'xRow-0', orgHierarchy: ['A', 'B'] },
             { id: 'xRow-1', orgHierarchy: ['A', 'B'] },

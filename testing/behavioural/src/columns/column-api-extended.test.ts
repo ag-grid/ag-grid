@@ -4,6 +4,7 @@ import {
     ColumnAutoSizeModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -786,6 +787,8 @@ describe('Column API — extended coverage', () => {
 
     describe('applyColumnState with aggFunc', () => {
         test('non-string aggFunc in state is rejected with a warning (value col left unchanged)', async () => {
+            // Asserts warning #33 (non-string aggFunc in column state is rejected).
+            enableDevValidations({ throwOn: 'deprecation', suppress: [33] });
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { field: 'country', rowGroup: true, hide: true },

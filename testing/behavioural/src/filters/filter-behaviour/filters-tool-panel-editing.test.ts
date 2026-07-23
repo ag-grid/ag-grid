@@ -1,5 +1,11 @@
 import type { IFiltersToolPanel } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextFilterModule,
+    enableDevValidations,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import {
@@ -163,6 +169,8 @@ describe('Filters Tool Panel', () => {
     });
 
     test('expandFilters with an unrecognised colId warns #167', async () => {
+        // This test deliberately passes an unrecognised colId, which warns #167.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [167] });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'name', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],

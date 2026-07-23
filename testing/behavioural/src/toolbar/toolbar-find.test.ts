@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
@@ -118,6 +118,8 @@ describe('Toolbar find item', () => {
         });
 
         test('hides find and logs error when FindModule is not registered', async () => {
+            // This test deliberately triggers error #302 (module not registered) and asserts it via a console spy.
+            enableDevValidations({ throwOn: 'deprecation', suppress: [302] });
             const errorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
             const api = minimalGridMgr.createGrid('find-no-module', {

@@ -6,7 +6,7 @@ import type {
     IStatusPanelParams,
     StatusPanelDef,
 } from 'ag-grid-community';
-import { getGridElement } from 'ag-grid-community';
+import { enableDevValidations, getGridElement } from 'ag-grid-community';
 import { ServerSideRowModelModule, StatusBarModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
@@ -89,6 +89,8 @@ describe('SSRM status bar panel filtering', () => {
     };
 
     test('under SSRM, client-side-only panels are dropped; supported and custom panels render', async () => {
+        // Client-side-only panels under SSRM emit this warning as they are dropped — the behaviour under test.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [222, 224, 225] });
         const gridDiv = document.createElement('div');
         document.body.appendChild(gridDiv);
 

@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 
 import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
@@ -24,6 +24,8 @@ describe('dev validation overlay (bare module registration)', () => {
     }
 
     beforeEach(() => {
+        // This file asserts on validation diagnostics / the dev overlay; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: 'none' });
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
         gridsManager.reset();

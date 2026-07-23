@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
@@ -360,6 +360,8 @@ describe('Toolbar menu item (agMenuToolbarItem) without a menu module', () => {
     });
 
     test('logs a module-registration error and does not open a popup on click', async () => {
+        // This test deliberately triggers error #200 (no menu module registered) and asserts it via a console spy.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [200] });
         const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
         const api = gridMgr.createGrid('menu-item-no-menu-module', {

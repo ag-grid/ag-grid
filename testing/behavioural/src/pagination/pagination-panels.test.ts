@@ -2,7 +2,13 @@ import { userEvent } from '@testing-library/user-event';
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, PaginationModule, ValidationModule, getGridElement } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    PaginationModule,
+    ValidationModule,
+    enableDevValidations,
+    getGridElement,
+} from 'ag-grid-community';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
@@ -875,6 +881,8 @@ describe('paginationPanels', () => {
         });
 
         test('unrecognised items are ignored, warning logged', () => {
+            // Deliberately passes an unrecognised panel name to verify the warning is logged.
+            enableDevValidations({ throwOn: 'deprecation', suppress: [323] });
             const api = createPaginationGrid(gridsManagerWithValidation, {
                 paginationPanels: ['pageSize', 'invalidName' as any, 'pageSummary'],
             });

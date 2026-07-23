@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
@@ -13,6 +13,8 @@ describe('ag-grid validation warnings', () => {
     let consoleWarnSpy: MockInstance;
 
     beforeEach(() => {
+        // This file asserts on validation diagnostics; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: 'none' });
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         gridsManager.reset();
     });

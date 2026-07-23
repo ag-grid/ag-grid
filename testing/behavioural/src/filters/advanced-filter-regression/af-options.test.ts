@@ -4,6 +4,7 @@ import {
     DateFilterModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
 import { AdvancedFilterModule, SetFilterModule } from 'ag-grid-enterprise';
@@ -136,6 +137,8 @@ describe('Advanced Filter — grid options', () => {
 
     describe('suppressAdvancedFilterEval (deprecated no-op since v34)', () => {
         test('the option has no effect — the filter still evaluates client-side', async () => {
+            // This test deliberately sets the deprecated suppressAdvancedFilterEval option (deprecation #306).
+            enableDevValidations({ throwOn: 'deprecation', suppress: [306] });
             // The deprecated option logs warning #306 on grid creation — assert it fires, don't leak it.
             const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             const api = await gridsManager.createGridAndWait('grid1', {

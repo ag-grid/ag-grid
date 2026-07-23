@@ -9,6 +9,21 @@ export function assertSelectedRowsByIndex(indices: number[], api: GridApi): void
     expect(actual).toEqual(expected);
 }
 
+/**
+ * Selection assertion by row index that reads node state directly rather than via `getSelectedNodes()`,
+ * for modes where that API is unsupported: `groupSelects: 'descendants'` under the server-side row model
+ * (see error #202, which directs callers to `getServerSideSelectionState()`).
+ */
+export function assertSelectedRowsByIndexFromNodes(indices: number[], api: GridApi): void {
+    const actual = new Set<number | null>();
+    api.forEachNode((node) => {
+        if (node.isSelected()) {
+            actual.add(node.rowIndex);
+        }
+    });
+    expect(actual).toEqual(new Set(indices));
+}
+
 export function assertSelectedRowElementsById(ids: string[], api: GridApi): void {
     const selected = new Set<string>();
     api.forEachNode((node) => (node.isSelected() ? selected.add(node.id!) : null));

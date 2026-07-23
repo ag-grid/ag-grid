@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, assertSelectedCellRanges } from '../test-utils';
@@ -19,6 +19,9 @@ describe('Cell Selection Grid API', () => {
     }
 
     beforeEach(() => {
+        // This file exercises deprecated cell-selection APIs on purpose; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: 'none' });
+
         gridMgr.reset();
 
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});

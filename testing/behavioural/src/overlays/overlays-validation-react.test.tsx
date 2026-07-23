@@ -1,7 +1,7 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 import { isAgHtmlElementVisible } from '../test-utils';
@@ -18,6 +18,8 @@ describe('dev validation overlay (react)', () => {
     });
 
     beforeEach(() => {
+        // This file asserts on validation diagnostics / the dev overlay; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: 'none' });
         vitest.spyOn(console, 'warn').mockImplementation(() => {});
         vitest.spyOn(console, 'error').mockImplementation(() => {});
     });

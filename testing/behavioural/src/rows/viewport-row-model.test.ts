@@ -1,5 +1,5 @@
 import type { GridApi, GridOptions, IViewportDatasource, IViewportDatasourceParams } from 'ag-grid-community';
-import { RowSelectionModule, ScrollApiModule, TextEditorModule } from 'ag-grid-community';
+import { RowSelectionModule, ScrollApiModule, TextEditorModule, enableDevValidations } from 'ag-grid-community';
 import { ViewportRowModelModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../selection/utils';
@@ -296,6 +296,9 @@ describe('viewport row model', () => {
         });
 
         test('warns when the datasource has no init method', () => {
+            // A datasource without init is the misconfiguration under test; assert the warning fires.
+            enableDevValidations({ throwOn: 'deprecation', suppress: [226] });
+
             const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
             try {
                 gridsManager.createGrid('myGrid', {

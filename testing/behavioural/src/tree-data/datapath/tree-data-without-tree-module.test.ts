@@ -1,6 +1,6 @@
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
@@ -16,6 +16,8 @@ describe('ag-grid tree data without tree module', () => {
     let consoleErrorSpy: MockInstance;
 
     beforeEach(() => {
+        // This file deliberately triggers validation/missing-module diagnostics; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: 'none' });
         gridsManager.reset();
     });
 

@@ -7,6 +7,7 @@ import {
     PaginationModule,
     QuickFilterModule,
     RowSelectionModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterprise';
 
@@ -57,6 +58,9 @@ describe('Row Selection Legacy Grid Options', () => {
     });
 
     beforeEach(() => {
+        // This file exercises deprecated selection options on purpose; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: 'none' });
+
         gridMgr.reset();
 
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});

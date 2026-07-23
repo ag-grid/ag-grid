@@ -5,7 +5,13 @@
 import { vi } from 'vitest';
 
 import type { ColDef, ColGroupDef, Column } from 'ag-grid-community';
-import { CellSpanModule, ClientSideRowModelModule, RowSelectionModule, TooltipModule } from 'ag-grid-community';
+import {
+    CellSpanModule,
+    ClientSideRowModelModule,
+    RowSelectionModule,
+    TooltipModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, getGridHTMLElement } from '../../test-utils';
@@ -1602,6 +1608,8 @@ describe('Column Mutations', () => {
         // Edge case: a NEW sibling claims the same id-string that the existing group used.
         // Reuse must NOT fire — would collide and silently shadow the sibling col.
         test('group reuse falls back to a fresh id when a sibling claimed the existing groupId first', async () => {
+            // Asserts warning #273 (provided id already in use) fires when a sibling claims the groupId first.
+            enableDevValidations({ throwOn: 'deprecation', suppress: [273] });
             const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             try {
                 const api = gridsManager.createGrid('groupIdClash', {

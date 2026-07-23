@@ -2,7 +2,7 @@ import { _doOnce } from 'ag-stack';
 import { vi } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { CalculatedColumnsModule, FormulaModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -346,6 +346,8 @@ describe('calculated columns - pivot mode', () => {
     });
 
     test('pivot result columns keep allowFormula from a non-calc source but drop calc fields for a calc source', async () => {
+        // This test deliberately exercises warning #295 (allowFormula unsupported with Row Groups), asserted below.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [295] });
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-result-allowformula', {
             rowData,

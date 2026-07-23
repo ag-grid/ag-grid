@@ -7,6 +7,7 @@ import {
     PinnedRowModule,
     QuickFilterModule,
     RowSelectionModule,
+    TextEditorModule,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -72,7 +73,14 @@ describe('Row Selection Grid Options', () => {
     }
 
     const gridMgr = new TestGridsManager({
-        modules: [RowSelectionModule, ClientSideRowModelModule, RowGroupingModule, PaginationModule, QuickFilterModule],
+        modules: [
+            RowSelectionModule,
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            PaginationModule,
+            QuickFilterModule,
+            TextEditorModule,
+        ],
     });
 
     beforeEach(() => {
@@ -3460,6 +3468,7 @@ describe('Row Selection Grid Options', () => {
                     rowSelection: { mode: 'multiRow', headerCheckbox: true },
                     pagination: true,
                     paginationPageSize: 5,
+                    paginationPageSizeSelector: false,
                 });
                 await new GridColumns(api, `can select multiple pages of data setup`).checkColumns(`
                     CENTER
@@ -3505,6 +3514,7 @@ describe('Row Selection Grid Options', () => {
                     },
                     pagination: true,
                     paginationPageSize: 5,
+                    paginationPageSizeSelector: false,
                 });
                 await new GridColumns(api, `can select only current page of data setup`).checkColumns(`
                     CENTER
@@ -3550,6 +3560,7 @@ describe('Row Selection Grid Options', () => {
                     },
                     pagination: true,
                     paginationPageSize: 5,
+                    paginationPageSizeSelector: false,
                 });
                 await new GridColumns(api, `can select only filtered data setup`).checkColumns(`
                     CENTER

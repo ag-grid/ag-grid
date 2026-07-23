@@ -1,8 +1,20 @@
 import * as jestDomMatchers from '@testing-library/jest-dom/matchers';
-import { afterAll, expect, vitest } from 'vitest';
+import { afterAll, beforeEach, expect, vitest } from 'vitest';
 
 // Register all jest-dom matchers globally.
 expect.extend(jestDomMatchers);
+
+// Dogfood the dev-validation throw mode: a misconfigured grid under test (a deprecation, warning or
+// error diagnostic) fails the test loudly instead of scrolling past in the console. Re-asserted each
+// test because the throw threshold is global, last-write-wins module state. A test that deliberately
+// exercises a diagnostic opts out with a local `enableDevValidations({ throwOn: 'deprecation', suppress: [id] })`.
+//
+// `ag-grid-community` is imported lazily (not at module top level) so this setup file does not pull the
+// grid in before a test file's own pre-`ag`-import ordering guards have run (e.g. style-injection).
+beforeEach(async () => {
+    const { enableDevValidations } = await import('ag-grid-community');
+    enableDevValidations({ throwOn: 'deprecation' });
+});
 
 // Shim for code that references `jest` — redirect to vitest.
 (globalThis as Record<string, unknown>).jest = vitest;

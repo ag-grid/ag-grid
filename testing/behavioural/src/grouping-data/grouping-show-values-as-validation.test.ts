@@ -1,6 +1,7 @@
 import { vi } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
+import { enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -19,6 +20,8 @@ describe('showValuesAs row-model validation', () => {
     let errorSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
+        // This file deliberately triggers validation/missing-module diagnostics; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: 'none' });
         warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     });

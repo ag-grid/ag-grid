@@ -1,5 +1,11 @@
 import type { GetQuickFilterTextParams, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, QuickFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    QuickFilterModule,
+    TextFilterModule,
+    enableDevValidations,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
@@ -331,6 +337,8 @@ describe('Quick Filter — extended coverage', () => {
     });
 
     test('non-string quickFilterText is rejected with a warning and does not filter', async () => {
+        // This test deliberately sets a non-string quickFilterText, which warns #70.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [70] });
         const api: GridApi = await gridsManager.createGridAndWait<Animal>('grid', {
             columnDefs: [{ field: 'name' }, { field: 'habitat' }],
             rowData: ROW_DATA,

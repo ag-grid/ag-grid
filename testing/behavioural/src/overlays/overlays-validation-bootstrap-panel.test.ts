@@ -1,4 +1,4 @@
-import { ValidationModule, createGrid } from 'ag-grid-community';
+import { ValidationModule, createGrid, enableDevValidations } from 'ag-grid-community';
 
 // When grid creation aborts before any bean exists (e.g. the row-model module is missing), there is no
 // grid and so no overlay. The ValidationModule instead renders a standalone, inline-styled panel into the
@@ -6,6 +6,8 @@ import { ValidationModule, createGrid } from 'ag-grid-community';
 // (it is enterprise-only), so requesting it aborts creation with the missing-module error #200.
 describe('dev validation bootstrap panel', () => {
     beforeEach(() => {
+        // This file asserts on validation diagnostics / the dev overlay; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: 'none' });
         vitest.spyOn(console, 'error').mockImplementation(() => {});
         document.body.innerHTML = '<div id="grid"></div>';
     });

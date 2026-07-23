@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, QuickFilterModule, enableDevValidations } from 'ag-grid-community';
 import { ToolbarModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
@@ -89,6 +89,8 @@ describe('Toolbar quickFilter item', () => {
         });
 
         test('hides quickFilter and logs error when QuickFilterModule is not registered', async () => {
+            // This test deliberately triggers error #302 (module not registered) and asserts it via a console spy.
+            enableDevValidations({ throwOn: 'deprecation', suppress: [302] });
             const errorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
             const api = minimalGridMgr.createGrid('quick-filter-no-module', {

@@ -1,7 +1,13 @@
 import type { MockInstance } from 'vitest';
 
 import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, PaginationModule, QuickFilterModule, RowSelectionModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    PaginationModule,
+    QuickFilterModule,
+    RowSelectionModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import {
@@ -72,6 +78,8 @@ describe('Row Selection Grid API', () => {
         describe('CSRM', () => {
             describe('selectAll', () => {
                 test('Prevented from selecting all rows via the API', async () => {
+                    // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
+                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
                     const [api] = createGrid({
                         columnDefs,
                         rowData,
@@ -115,6 +123,8 @@ describe('Row Selection Grid API', () => {
 
             describe('selectAll("currentPage")', () => {
                 test('Cannot select all rows on current page', async () => {
+                    // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
+                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
                     const [api] = createGrid(
                         {
                             columnDefs,
@@ -160,6 +170,8 @@ describe('Row Selection Grid API', () => {
 
             describe('selectAll("filtered")', () => {
                 test('Cannot select all filtered rows', async () => {
+                    // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
+                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
                     const [api] = createGrid(
                         {
                             columnDefs,
@@ -245,6 +257,8 @@ describe('Row Selection Grid API', () => {
                 });
 
                 test('Cannot select multiple rows', async () => {
+                    // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
+                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
                     const [api] = createGrid({
                         columnDefs,
                         rowData,
@@ -288,6 +302,8 @@ describe('Row Selection Grid API', () => {
         describe('SSRM', () => {
             describe('selectAll', () => {
                 test('Prevented from selecting all rows via the API', async () => {
+                    // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
+                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
                     const [api] = createGrid({
                         columnDefs,
                         rowSelection: {
@@ -376,6 +392,8 @@ describe('Row Selection Grid API', () => {
                 });
 
                 test('Cannot select multiple rows', async () => {
+                    // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
+                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
                     const [api] = createGrid({
                         columnDefs,
                         rowModelType: 'serverSide',
@@ -1193,7 +1211,7 @@ describe('Row Selection Grid API', () => {
 
                 actions.selectRowsByIndex([2, 4, 6], false);
 
-                applyTransactionChecked(api, { update: [{ id: '7', sport: 'lacrosse' }] });
+                api.applyServerSideTransaction({ update: [{ id: '7', sport: 'lacrosse' }] });
 
                 assertSelectedRowsByIndex([2, 4, 6], api);
                 await new GridRows(api, `selection state maintained after update transaction final state`).check(`
@@ -1204,7 +1222,7 @@ describe('Row Selection Grid API', () => {
                     ├── LEAF id:4 sport:"cricket"
                     ├── LEAF selected id:5 sport:"golf"
                     ├── LEAF id:6 sport:"swimming"
-                    └── LEAF selected id:7 sport:"rowing"
+                    └── LEAF selected id:7 sport:"lacrosse"
                 `);
             });
 

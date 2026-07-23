@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, enableDevValidations } from 'ag-grid-community';
 import type { ColDef, GridApi, IRowNode, RowPinnedType } from 'ag-grid-community';
 
 import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
@@ -254,6 +254,9 @@ describe('Pinned rows', () => {
         });
 
         test('cannot render duplicate rows with getRowId', () => {
+            // Duplicate pinned-row ids are the condition under test; assert the duplicate-id warning.
+            enableDevValidations({ throwOn: 'deprecation', suppress: [96] });
+
             const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
             const getRowId = vitest.fn((p) => JSON.stringify(p.data));
             gridsManager.createGrid('myGrid', { columnDefs, pinnedTopRowData: topData.concat(topData), getRowId });
@@ -572,6 +575,9 @@ describe('Pinned rows', () => {
         });
 
         test('cannot render duplicate rows with getRowId', () => {
+            // Duplicate pinned-row ids are the condition under test; assert the duplicate-id warning.
+            enableDevValidations({ throwOn: 'deprecation', suppress: [96] });
+
             const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
             const getRowId = vitest.fn((p) => JSON.stringify(p.data));
             gridsManager.createGrid('myGrid', {

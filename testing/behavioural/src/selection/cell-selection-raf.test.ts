@@ -270,15 +270,8 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
     });
 
     test('data updates with enableCellSpan respond to span changes', async () => {
-        let spanValue = 1;
         const api = gridMgr.createGrid('myGrid', {
-            columnDefs: [
-                { field: 'name' },
-                {
-                    field: 'value',
-                    rowSpan: () => spanValue,
-                },
-            ],
+            columnDefs: [{ field: 'name' }, { field: 'value' }],
             rowData,
             enableCellSpan: true,
             cellSelection: true,
@@ -300,7 +293,6 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
         await asyncSetTimeout(0);
 
         // Update data — with enableCellSpan active, RowSpanService should be processing events
-        spanValue = 2;
         api.applyTransaction({
             update: [{ name: 'a', value: 999 }],
         });

@@ -10,7 +10,7 @@
  * - RTL column interactions
  */
 import type { ColDef, Column, ColumnGroup } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -91,6 +91,8 @@ describe('Column Edge Cases', () => {
 
     describe('duplicate colIds', () => {
         test('duplicate colIds in columnDefs warns and renames', async () => {
+            // Asserts warning #273 (duplicate column id renamed).
+            enableDevValidations({ throwOn: 'deprecation', suppress: [273] });
             const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
             const api = gridsManager.createGrid('myGrid', {
@@ -1298,6 +1300,8 @@ describe('Column Edge Cases', () => {
 
     describe('column state edge cases', () => {
         test('applyColumnState with non-array state warns and returns false', async () => {
+            // Asserts warning #32 (applyColumnState state must be an array).
+            enableDevValidations({ throwOn: 'deprecation', suppress: [32] });
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }],
             });

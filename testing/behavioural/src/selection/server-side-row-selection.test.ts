@@ -1,7 +1,12 @@
 import type { MockInstance } from 'vitest';
 
 import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    PaginationModule,
+    RowSelectionModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import {
@@ -10,6 +15,7 @@ import {
     TestGridsManager,
     assertSelectedRowElementsById,
     assertSelectedRowsByIndex,
+    assertSelectedRowsByIndexFromNodes,
     waitForEvent,
 } from '../test-utils';
 import { fakeFetch } from './group-data';
@@ -44,10 +50,20 @@ describe('Row Selection Grid Options', () => {
     }
 
     const gridMgr = new TestGridsManager({
-        modules: [RowSelectionModule, ClientSideRowModelModule, RowGroupingModule, ServerSideRowModelModule],
+        modules: [
+            RowSelectionModule,
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            ServerSideRowModelModule,
+            PaginationModule,
+        ],
     });
 
     beforeEach(() => {
+        // These tests exercise SSRM selection with the row model's default identity, so #188 (the
+        // getRowId-recommended advisory) is reviewed and accepted here; every other diagnostic still throws.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [188] });
+
         gridMgr.reset();
 
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
@@ -2824,7 +2840,6 @@ describe('Row Selection Grid Options', () => {
                                 return params.success({ rowData, rowCount: rowData.length });
                             },
                         },
-                        rowData,
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
                     await new GridColumns(api, `META+SHIFT-click within range allows batch deselection setup`)
@@ -3181,6 +3196,7 @@ describe('Row Selection Grid Options', () => {
                     rowSelection: { mode: 'multiRow', headerCheckbox: true },
                     pagination: true,
                     paginationPageSize: 5,
+                    paginationPageSizeSelector: false,
                 });
                 await new GridColumns(api, `can select multiple pages of data setup`).checkColumns(`
                     CENTER
@@ -4932,13 +4948,13 @@ describe('Row Selection Grid Options', () => {
 
                     actions.toggleCheckboxByIndex(2);
                     actions.toggleCheckboxByIndex(6, { shiftKey: true });
-                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
+                    assertSelectedRowsByIndexFromNodes([2, 3, 4, 5, 6], api);
 
                     actions.toggleCheckboxByIndex(3, { metaKey: true });
-                    assertSelectedRowsByIndex([2, 4, 5, 6], api);
+                    assertSelectedRowsByIndexFromNodes([2, 4, 5, 6], api);
 
                     actions.toggleCheckboxByIndex(5, { shiftKey: true, ctrlKey: true });
-                    assertSelectedRowsByIndex([2, 6], api);
+                    assertSelectedRowsByIndexFromNodes([2, 6], api);
                     await new GridRows(
                         api,
                         `CTRL+SHIFT-click within range allows batch deselection when _groupSelects: "desc final state`
@@ -4988,7 +5004,7 @@ describe('Row Selection Grid Options', () => {
 
                     actions.toggleCheckboxByIndex(2);
                     actions.toggleCheckboxByIndex(5, { shiftKey: true, ctrlKey: true });
-                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
+                    assertSelectedRowsByIndexFromNodes([2, 3, 4, 5], api);
                     await new GridRows(
                         api,
                         `CTRL+SHIFT-click defaults to selection when root is selected when _groupSelects  final state`

@@ -1,6 +1,6 @@
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from '../../test-utils';
@@ -65,6 +65,8 @@ describe('ag-grid parentId tree remove', () => {
     });
 
     test('tree transaction remove parent with children raises warning', async () => {
+        // This test deliberately removes a parent whose children remain to assert the orphaned-row warning.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [271] });
         const rowA = { id: 'a', orgHierarchy: ['A'] };
         const rowB = { id: 'b', parentId: 'a' };
         const rowC = { id: 'c-xDhjGsdDc', parentId: 'b' };

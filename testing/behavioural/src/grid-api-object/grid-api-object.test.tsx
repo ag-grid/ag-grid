@@ -9,6 +9,7 @@ import {
     RowApiModule,
     ValidationModule,
     createGrid,
+    enableDevValidations,
     getGridApi,
     getGridElement,
 } from 'ag-grid-community';
@@ -132,6 +133,8 @@ describe('ag-grid overlays state', () => {
     });
 
     test('destruction warnings', () => {
+        // Deliberately calls an API on a destroyed grid to verify the destruction warning.
+        enableDevValidations({ throwOn: 'deprecation', suppress: [26] });
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api = createMyGrid();
@@ -164,6 +167,8 @@ describe('ag-grid overlays state', () => {
     });
 
     test('missing module warning', () => {
+        // Deliberately calls an API whose module is not registered (error #200), then on a destroyed grid (warning #26).
+        enableDevValidations({ throwOn: 'deprecation', suppress: [200, 26] });
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 

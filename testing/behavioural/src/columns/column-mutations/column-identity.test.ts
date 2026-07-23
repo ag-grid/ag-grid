@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import type { ColDef, GridApi } from 'ag-grid-community';
 
 import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
@@ -148,6 +148,8 @@ describe('Column identity & id allocation', () => {
         });
 
         test('duplicate explicit colId gets a "_1" suffix', () => {
+            // Asserts warning #273 (duplicate colId suffixed).
+            enableDevValidations({ throwOn: 'deprecation', suppress: [273] });
             vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'x' }, { colId: 'x' }],
@@ -181,6 +183,8 @@ describe('Column identity & id allocation', () => {
         });
 
         test('both duplicate-colId cols keep their instances across a rebuild', async () => {
+            // Asserts warning #273 (duplicate colId suffixed).
+            enableDevValidations({ throwOn: 'deprecation', suppress: [273] });
             vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'x' }, { colId: 'x' }],
@@ -222,6 +226,8 @@ describe('Column identity & id allocation', () => {
         });
 
         test('the SAME colDef instance with an explicit colId used twice yields two distinct cols, reused across rebuild', async () => {
+            // Asserts warning #273 (duplicate colId suffixed).
+            enableDevValidations({ throwOn: 'deprecation', suppress: [273] });
             vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
             const shared: ColDef = { colId: 'x', width: 100 };
             const api = gridsManager.createGrid('myGrid', {
