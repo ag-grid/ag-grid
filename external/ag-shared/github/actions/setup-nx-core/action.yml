@@ -227,6 +227,17 @@ runs:
           with:
               branch_type: ${{ steps.nx_config.outputs.type }}
 
+        - name: Resolve yarn cache dir
+          # Ask yarn where its download cache lives rather than hard-coding the default
+          # location, so a relocated cache folder (YARN_CACHE_FOLDER, or a .yarnrc
+          # cache-folder) cannot silently point restore/save at the wrong (empty) path.
+          # Gated to the cases where the yarn cache restore/save can run. Runners are
+          # Linux-only, so no cross-OS path handling is needed.
+          if: inputs.cache_mode != 'off' && inputs.yarn_postinstall != 'no-install'
+          id: yarn_cache_dir
+          shell: bash
+          run: echo "dir=$(yarn cache dir)" >> "$GITHUB_OUTPUT"
+
         - name: Restore yarn cache
           # Persist the yarn v1 download cache so `yarn install --prefer-offline` serves
           # tarballs from here instead of cold-downloading the dependency closure from the
@@ -249,7 +260,7 @@ runs:
           id: yarn_cache
           uses: actions/cache/restore@v4
           with:
-              path: ~/.cache/yarn
+              path: ${{ steps.yarn_cache_dir.outputs.dir }}
               key: yarn-cache-${{ runner.os }}-${{ inputs.node_modules_hash }}
               restore-keys: yarn-cache-${{ runner.os }}-
 
@@ -320,5 +331,5 @@ runs:
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall != 'no-install' && steps.cache_rw.outputs.cache-hit != 'true' && steps.yarn_cache.outputs.cache-hit != 'true'
           uses: actions/cache/save@v4
           with:
-              path: ~/.cache/yarn
+              path: ${{ steps.yarn_cache_dir.outputs.dir }}
               key: yarn-cache-${{ runner.os }}-${{ inputs.node_modules_hash }}
