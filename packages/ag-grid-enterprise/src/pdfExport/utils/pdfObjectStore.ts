@@ -5,6 +5,22 @@ import { escapePdfString, fmt, normaliseText } from './document/text';
 import { normalisePdfFontFamily } from './fonts';
 
 /**
+ * A clickable URI rectangle attached to one PDF page.
+ */
+export interface PdfLinkAnnotation {
+    uri: string;
+    rect: [left: number, bottom: number, right: number, top: number];
+}
+
+/**
+ * Rendered content and annotations for one PDF page.
+ */
+export interface PdfPageContent {
+    content: string;
+    annotations: PdfLinkAnnotation[];
+}
+
+/**
  * Mutable store for PDF indirect objects.
  * Handles object id allocation and final cross-reference generation.
  */
@@ -81,14 +97,14 @@ class PdfObjectStore {
 
 /**
  * Build a complete PDF document from rendered page content.
- * @param pages - Per-page content stream payloads.
+ * @param pages - Per-page content streams and link annotations.
  * @param pageSize - Resolved page size in points.
  * @param fontKeyByFamily - Map of fonts used by the document.
  * @param documentTitle - Optional metadata title.
  * @returns Complete PDF document string.
  */
 export function buildPdf(
-    pages: string[],
+    pages: PdfPageContent[],
     pageSize: ResolvedPageSize,
     fontKeyByFamily: Map<PdfFontFamily, string>,
     documentTitle?: string
@@ -106,12 +122,24 @@ export function buildPdf(
     const pageIds: number[] = [];
     const fontResources = `<< ${fontResourcesParts.join(' ')} >>`;
 
-    for (const content of pages) {
+    for (const page of pages) {
         // each page has its own content stream object and page object.
         // content is ASCII-only, so string length equals the byte length required by /Length.
+        const content = page.content;
         const contentStream = `<< /Length ${content.length} >>\nstream\n${content}\nendstream`;
         const contentId = store.add(contentStream);
-        const pageObject = `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)}] /Resources << /Font ${fontResources} >> /Contents ${contentId} 0 R >>`;
+        const annotationRefs: string[] = [];
+        for (const annotation of page.annotations) {
+            const [left, bottom, right, top] = annotation.rect;
+            const rect = `${fmt(left)} ${fmt(bottom)} ${fmt(right)} ${fmt(top)}`;
+            const uri = escapePdfString(encodePdfUri(annotation.uri));
+            const annotationId = store.add(
+                `<< /Type /Annot /Subtype /Link /Rect [${rect}] /Border [0 0 0] /A << /S /URI /URI (${uri}) >> >>`
+            );
+            annotationRefs.push(`${annotationId} 0 R`);
+        }
+        const annotations = annotationRefs.length ? ` /Annots [${annotationRefs.join(' ')}]` : '';
+        const pageObject = `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)}] /Resources << /Font ${fontResources} >> /Contents ${contentId} 0 R${annotations} >>`;
         const pageId = store.add(pageObject);
         pageIds.push(pageId);
     }
@@ -132,4 +160,17 @@ export function buildPdf(
         : undefined;
 
     return store.build(catalogId, infoId);
+}
+
+/**
+ * Encode non-ASCII URI characters while tolerating malformed runtime strings.
+ * @param uri - User-provided URI.
+ * @returns An ASCII URI when encoding succeeds, otherwise the original value.
+ */
+function encodePdfUri(uri: string): string {
+    try {
+        return encodeURI(uri);
+    } catch {
+        return uri;
+    }
 }

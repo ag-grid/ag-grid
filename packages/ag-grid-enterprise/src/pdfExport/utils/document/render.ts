@@ -1,6 +1,7 @@
 import type { PdfFontFamily } from 'ag-grid-community';
 
 import { formatColor } from '../pdfColor';
+import type { PdfLinkAnnotation } from '../pdfObjectStore';
 import { getBase14BaselineOffset } from './fontMetrics';
 import type { ResolvedPageSize } from './layout';
 import type { LayoutOptions, MeasuredRow, MeasuredRowFragment, ResolvedCellStyle } from './measurement';
@@ -79,6 +80,7 @@ export function renderDocumentTitle(
  * @param startY - Starting cursor position.
  * @param layout - Layout options.
  * @param pageParts - Mutable page content buffer.
+ * @param annotations - Mutable page link annotations.
  * @param fontKeyByFamily - Registered PDF font keys.
  * @returns Updated cursor position.
  */
@@ -87,13 +89,14 @@ export function renderMeasuredRows(
     startY: number,
     layout: LayoutOptions,
     pageParts: string[],
+    annotations: PdfLinkAnnotation[],
     fontKeyByFamily: Map<PdfFontFamily, string>
 ): number {
     let cursorY = startY;
     for (const row of rows) {
         const fragment = measureRowFragment(row, undefined, row.rowHeight);
         if (fragment) {
-            cursorY = renderRowFragment(fragment, cursorY, layout, pageParts, fontKeyByFamily);
+            cursorY = renderRowFragment(fragment, cursorY, layout, pageParts, annotations, fontKeyByFamily);
         }
     }
     return cursorY;
@@ -105,6 +108,7 @@ export function renderMeasuredRows(
  * @param cursorY - Fragment top position.
  * @param layout - Document layout.
  * @param pageParts - Mutable page content buffer.
+ * @param annotations - Mutable page link annotations.
  * @param fontKeyByFamily - Registered PDF font keys.
  * @returns Fragment bottom position.
  */
@@ -113,6 +117,7 @@ export function renderRowFragment(
     cursorY: number,
     layout: LayoutOptions,
     pageParts: string[],
+    annotations: PdfLinkAnnotation[],
     fontKeyByFamily: Map<PdfFontFamily, string>
 ): number {
     const row = fragment.row;
@@ -144,7 +149,9 @@ export function renderRowFragment(
             fragment.height,
             measurement.style,
             defaultFontKey,
-            fontKeyByFamily
+            fontKeyByFamily,
+            measurement.hyperlink,
+            annotations
         );
         x += measurement.width;
         columnIndex += measurement.span;
@@ -207,7 +214,9 @@ function renderCellText(
     rowHeight: number,
     cellStyle: ResolvedCellStyle,
     defaultFontKey: string,
-    fontKeyByFamily: Map<PdfFontFamily, string>
+    fontKeyByFamily: Map<PdfFontFamily, string>,
+    hyperlink: string | undefined,
+    annotations: PdfLinkAnnotation[]
 ): void {
     const padding = cellStyle.padding;
     const textWidthAvailable = Math.max(cellWidth - padding.left - padding.right, 0);
@@ -226,10 +235,23 @@ function renderCellText(
     pageParts.push(`${formatColor(cellStyle.textColor)} rg`);
     pageParts.push(`/${fontKey} ${fmt(cellStyle.fontSize)} Tf`);
     let textY = rowTop - padding.top - getBase14BaselineOffset(cellStyle.fontSize, cellStyle.fontFamily);
+    let lineTop = rowTop - padding.top;
     for (const line of lines) {
         const textX = getTextX(line, x, cellWidth, cellStyle);
         pageParts.push(`1 0 0 1 ${fmt(textX)} ${fmt(textY)} Tm (${escapePdfString(line)}) Tj`);
+        if (hyperlink && line) {
+            const textWidth = Math.min(
+                estimateTextWidth(line, cellStyle.fontSize, cellStyle.fontFamily),
+                textWidthAvailable
+            );
+            const lineBottom = Math.max(lineTop - cellStyle.lineHeight, rowBottom + padding.bottom);
+            const textRight = Math.min(textX + textWidth, x + cellWidth - padding.right);
+            if (textRight > textX && lineTop > lineBottom) {
+                annotations.push({ uri: hyperlink, rect: [textX, lineBottom, textRight, lineTop] });
+            }
+        }
         textY -= cellStyle.lineHeight;
+        lineTop -= cellStyle.lineHeight;
     }
     pageParts.push('ET');
     pageParts.push('Q');

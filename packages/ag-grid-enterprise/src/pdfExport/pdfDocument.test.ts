@@ -171,6 +171,46 @@ describe('createPdfDocument', () => {
         expect(pdf).toContain('/Type /Page');
     });
 
+    it('adds URI annotations for linked cell text', () => {
+        const rows: PdfRow[] = [
+            {
+                type: 'BODY',
+                cells: [{ value: 'AG Grid', hyperlink: 'https://www.ag-grid.com/' }],
+            },
+        ];
+
+        const pdf = createPdfDocument(rows, [stubColumn(100)], { columnWidth: 100 });
+
+        expect(pdf).toContain('/Type /Annot /Subtype /Link');
+        expect(pdf).toContain('/A << /S /URI /URI (https://www.ag-grid.com/) >>');
+        expect(pdf).toMatch(/\/Rect \[[\d.]+ [\d.]+ [\d.]+ [\d.]+\]/);
+        expect(pdf).toMatch(/\/Annots \[\d+ 0 R\]/);
+    });
+
+    it('adds link annotations to every page containing a linked row fragment', () => {
+        const rows: PdfRow[] = [
+            {
+                type: 'BODY',
+                cells: [
+                    {
+                        value: ['Line 1', 'Line 2', 'Line 3', 'Line 4', 'Line 5', 'Line 6'].join('\n'),
+                        hyperlink: 'https://example.com/report',
+                        style: { wrapText: true },
+                    },
+                ],
+            },
+        ];
+
+        const pdf = createPdfDocument(rows, [stubColumn(80)], {
+            page: { size: { width: 120, height: 60 }, margin: 10 },
+            columnWidth: 80,
+        });
+
+        expect(countOccurrences(pdf, '/Type /Page /Parent')).toBeGreaterThan(1);
+        expect(countOccurrences(pdf, '/Annots [')).toBeGreaterThan(1);
+        expect(countOccurrences(pdf, '/Subtype /Link')).toBe(6);
+    });
+
     it('clips rendered text horizontally without clipping descenders', () => {
         const pdf = createPdfDocument(createRows(), [stubColumn(100)], { columnWidth: 100 });
 

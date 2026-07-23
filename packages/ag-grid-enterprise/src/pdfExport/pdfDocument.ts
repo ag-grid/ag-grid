@@ -25,6 +25,7 @@ import { renderDocumentTitle, renderMeasuredRows, renderRowFragment } from './ut
 import { fmt } from './utils/document/text';
 import { normalisePdfFontFamily } from './utils/fonts';
 import { formatColor, resolvePdfStyleColors } from './utils/pdfColor';
+import type { PdfLinkAnnotation, PdfPageContent } from './utils/pdfObjectStore';
 import { buildPdf } from './utils/pdfObjectStore';
 
 const FONT_BOLD_MAP: Record<PdfFontFamily, PdfFontFamily> = {
@@ -121,8 +122,9 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         repeatedHeaderHeight += headerRow.rowHeight;
     }
 
-    const pages: string[] = [];
+    const pages: PdfPageContent[] = [];
     let pageParts: string[] = [];
+    let pageAnnotations: PdfLinkAnnotation[] = [];
     let cursorY = pageSize.height - margin.top;
     let isFirstPage = true;
     let hasPageContent = false;
@@ -135,10 +137,11 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
 
     const startPage = (includeHeaders: boolean) => {
         if (hasPageContent) {
-            pages.push(pageParts.join('\n'));
+            pages.push({ content: pageParts.join('\n'), annotations: pageAnnotations });
         }
 
         pageParts = ['0.5 w'];
+        pageAnnotations = [];
         hasPageContent = false;
         if (styleColors.pageBackground) {
             pageParts.push(`${formatColor(styleColors.pageBackground)} rg`);
@@ -165,7 +168,14 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
 
         if (includeHeaders && measuredHeaderRows.length) {
             const previousPartCount = pageParts.length;
-            cursorY = renderMeasuredRows(measuredHeaderRows, cursorY, layout, pageParts, fontKeyByFamily);
+            cursorY = renderMeasuredRows(
+                measuredHeaderRows,
+                cursorY,
+                layout,
+                pageParts,
+                pageAnnotations,
+                fontKeyByFamily
+            );
             markPageContentIfRendered(previousPartCount);
         }
     };
@@ -212,7 +222,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
             }
 
             const previousPartCount = pageParts.length;
-            cursorY = renderRowFragment(fragment, cursorY, layout, pageParts, fontKeyByFamily);
+            cursorY = renderRowFragment(fragment, cursorY, layout, pageParts, pageAnnotations, fontKeyByFamily);
             markPageContentIfRendered(previousPartCount);
             complete = fragment.complete;
             state = fragment.nextState;
@@ -224,11 +234,11 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     }
 
     if (hasPageContent || !pages.length) {
-        pages.push(pageParts.join('\n'));
+        pages.push({ content: pageParts.join('\n'), annotations: pageAnnotations });
     }
 
     if (!pages.length) {
-        pages.push('');
+        pages.push({ content: '', annotations: [] });
     }
 
     return buildPdf(pages, pageSize, fontKeyByFamily, documentTitle);
