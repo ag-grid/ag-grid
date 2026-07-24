@@ -11,15 +11,25 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.rowNode('6')).toHaveClass(/ag-row-selected/);
     });
 
-    test.eachFramework('only year-2012 rows render a checkbox', async ({ agIdFor, page }) => {
+    test.eachFramework('only year-2012 rows render an enabled checkbox', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
 
         // checkboxes callback returns true only when year === 2012.
         await expect(agIdFor.cell('2', 'year')).toContainText('2012');
-        await expect(agIdFor.selectionColumnCheckbox('2').first()).toBeVisible();
+        const enabledCheckbox = agIdFor.selectionColumnCheckbox('2').first();
+        await expect(enabledCheckbox).toBeVisible();
+        await expect(enabledCheckbox).toBeEnabled();
 
-        // Row 0 (2008) has no checkbox even though it is selectable.
-        await expect(agIdFor.selectionColumnCheckbox('0')).toHaveCount(0);
+        // Row 0 (2008) is selectable but checkboxes returns false, so its checkbox
+        // is rendered disabled rather than removed (hideDisabledCheckboxes defaults to false).
+        await expect(agIdFor.cell('0', 'year')).toContainText('2008');
+        const disabledCheckbox = agIdFor.selectionColumnCheckbox('0').first();
+        await expect(disabledCheckbox).toBeVisible();
+        const wrapper = disabledCheckbox.locator(
+            'xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " ag-checkbox-input-wrapper ")]'
+        );
+        await expect(wrapper).toHaveClass(/ag-disabled/);
+        await expect(disabledCheckbox).toBeDisabled();
     });
 
     test.eachFramework('clicking a forced checkbox selects that row', async ({ agIdFor, page }) => {

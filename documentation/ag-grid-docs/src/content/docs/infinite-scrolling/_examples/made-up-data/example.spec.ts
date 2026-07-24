@@ -18,11 +18,17 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         // rowCount is a known 100, so scrolling to the bottom renders the final rows (index 99).
-        await page.locator('.ag-body-viewport').evaluate((el) => {
-            el.scrollTop = el.scrollHeight;
-        });
+        // Under the infinite row model the last block loads asynchronously, so re-issue the
+        // scroll on each retry until the last block has loaded and its rows have rendered.
+        const viewport = page.locator('.ag-grid-viewport');
+        const lastCell = page.locator('.ag-row[row-index="99"]').locator('[col-id="a"]');
 
-        // Row 99 (the last row): column A => 'A100 = 116' (17 + 99 + 0).
-        await expect(page.locator('.ag-row[row-index="99"]').locator('[col-id="a"]')).toContainText('A100 = 116');
+        await expect(async () => {
+            await viewport.evaluate((el) => {
+                el.scrollTop = el.scrollHeight;
+            });
+            // Row 99 (the last row): column A => 'A100 = 116' (17 + 99 + 0).
+            await expect(lastCell).toContainText('A100 = 116');
+        }).toPass();
     });
 });

@@ -8,19 +8,19 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-row[row-index="0"]').locator('[col-id="athlete"]')).toContainText(
             'Michael Phelps'
         );
-        await expect(agIdFor.paginationSummaryPanelCurrentPage()).toHaveText('1');
+        await expect(agIdFor.paginationSummaryPanelCurrentPage('1')).toBeVisible();
     });
 
     test.eachFramework('navigating to the next page fetches the next block', async ({ page, agIdFor }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await expect(agIdFor.paginationSummaryPanelCurrentPage()).toHaveText('1');
+        await expect(agIdFor.paginationSummaryPanelCurrentPage('1')).toBeVisible();
 
         // Page and block sizes are both the default 100, so page 2 is a fresh block starting at
         // dataset index 100 (Sabine Völker / Germany) — proving new rows were fetched, not stale data.
         await agIdFor.paginationSummaryPanelButton('next page').click();
-        await expect(agIdFor.paginationSummaryPanelCurrentPage()).toHaveText('2');
+        await expect(agIdFor.paginationSummaryPanelCurrentPage('2')).toBeVisible();
         await expect(page.locator('.ag-row[row-index="100"]').locator('[col-id="athlete"]')).toContainText(
             'Sabine Völker'
         );

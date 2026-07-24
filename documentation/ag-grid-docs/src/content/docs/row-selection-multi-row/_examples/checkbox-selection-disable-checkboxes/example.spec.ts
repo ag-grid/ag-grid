@@ -18,7 +18,7 @@ test.agExample(import.meta, () => {
 
             // Row 0 is 2008 — not selectable; its disabled checkbox is hidden by default.
             await expect(agIdFor.cell('0', 'year')).toContainText('2008');
-            await expect(agIdFor.selectionColumnCheckbox('0')).toHaveCount(0);
+            await expect(agIdFor.selectionColumnCheckbox('0')).not.toBeVisible();
         }
     );
 
@@ -27,17 +27,21 @@ test.agExample(import.meta, () => {
         async ({ agIdFor, page }) => {
             await ensureGridReady(page);
 
-            await expect(agIdFor.selectionColumnCheckbox('0')).toHaveCount(0);
+            await expect(agIdFor.selectionColumnCheckbox('0')).not.toBeVisible();
             await page.locator('#toggle-hide-checkbox').uncheck();
 
             // The revealed checkbox is present but disabled, not merely visible.
-            const checkbox = agIdFor.selectionColumnCheckbox('0').first();
-            await expect(checkbox).toBeVisible();
-            await expect(checkbox.locator('.ag-checkbox-input-wrapper').first()).toHaveClass(/ag-disabled/);
-            await expect(checkbox.locator('input').first()).toBeDisabled();
+            // The test id resolves to the <input>; its wrapper (an ancestor) carries the disabled class.
+            const checkboxInput = agIdFor.selectionColumnCheckbox('0').first();
+            await expect(checkboxInput).toBeVisible();
+            const wrapper = checkboxInput.locator(
+                'xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " ag-checkbox-input-wrapper ")]'
+            );
+            await expect(wrapper).toHaveClass(/ag-disabled/);
+            await expect(checkboxInput).toBeDisabled();
 
             // Force-clicking the disabled checkbox cannot select the non-selectable row.
-            await checkbox.click({ force: true });
+            await checkboxInput.click({ force: true });
             await expect(agIdFor.rowNode('0')).not.toHaveClass(/ag-row-selected/);
         }
     );

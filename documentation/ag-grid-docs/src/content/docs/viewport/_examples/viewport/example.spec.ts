@@ -29,7 +29,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await page.locator('.ag-body-viewport').evaluate((el) => {
+        await page.locator('.ag-grid-viewport').evaluate((el) => {
             el.scrollTop = 800;
         });
 

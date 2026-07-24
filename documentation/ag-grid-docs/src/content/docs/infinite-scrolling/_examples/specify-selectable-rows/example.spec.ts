@@ -23,6 +23,6 @@ test.agExample(import.meta, () => {
 
         // Row 4 (Aleksey Nemov, Russia) is not selectable; hideDisabledCheckboxes hides its checkbox.
         await expect(dataRow(4).locator('[col-id="country"]')).toContainText('Russia');
-        await expect(dataRow(4).locator('.ag-selection-checkbox')).toHaveCount(0);
+        await expect(dataRow(4).locator('.ag-selection-checkbox')).not.toBeVisible();
     });
 });
