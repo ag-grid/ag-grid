@@ -31,7 +31,7 @@ const lines = ['## Failed tests', '', `${failed.length} test(s) failed.`, '', '|
 
 for (let i = 0, len = Math.min(failed.length, MAX_FAILURES); i < len; ++i) {
     const test = failed[i];
-    lines.push(`| ${escapeCell(test.name)} | ${escapeCell(truncate(firstLine(test.message)))} |`);
+    lines.push(`| ${escapeCell(truncate(firstLine(test.name)))} | ${escapeCell(truncate(firstLine(test.message)))} |`);
 }
 
 if (failed.length > MAX_FAILURES) {
