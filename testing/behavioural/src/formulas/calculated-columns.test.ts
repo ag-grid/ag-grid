@@ -1949,6 +1949,26 @@ describe('ag-grid calculated columns', () => {
         expect(api.getColumn('profit')!.getColDef().headerName).toBe('Net Profit');
     });
 
+    test('edit dialog shows the edited header name, not the stale colDef name', async () => {
+        const api = createGrid('calculated-edit-dialog-uses-edited-name', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        // Rename the column header (stored as a header-name override, not in colDef.headerName).
+        api.applyColumnState({ state: [{ colId: 'profit', headerName: 'Custom Profit' }] });
+
+        await openEditDialogViaMenu(api, 'profit');
+
+        const titleInput = getCalculatedColumnDialog().querySelector('input')!;
+        expect(titleInput.value).toBe('Custom Profit');
+    });
+
     test('dialog column picker renders group path and leaf as fixed-height clickable rows', async () => {
         const api = createGrid('calculated-dialog-column-picker-group-path', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
