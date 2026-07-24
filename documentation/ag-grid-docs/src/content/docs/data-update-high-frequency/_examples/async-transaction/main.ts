@@ -176,6 +176,27 @@ const gridOptions: GridOptions = {
     },
 };
 
+// picks a row at random and returns an updated copy: the old current value
+// becomes the previous value, and a new random current value is generated.
+// the updated row is also written back to globalRowData, so the next update
+// to that row starts from the latest values.
+function createRandomUpdate() {
+    const index = Math.floor(Math.random() * globalRowData.length);
+    const item = globalRowData[index];
+    const updatedItem = {
+        ...item,
+        previous: item.current,
+        current: Math.floor(Math.random() * 100000) + 100,
+    };
+    globalRowData[index] = updatedItem;
+    return updatedItem;
+}
+
+function setMessage(msg: string) {
+    const eMessage = document.querySelector('#eMessage')!;
+    eMessage.textContent = msg;
+}
+
 function onNormalUpdate() {
     const startMillis = new Date().getTime();
 
@@ -183,16 +204,8 @@ function onNormalUpdate() {
 
     for (let i = 0; i < UPDATE_COUNT; i++) {
         setTimeout(() => {
-            // pick one index at random
-            const index = Math.floor(Math.random() * globalRowData.length);
-            const itemToUpdate = globalRowData[index];
-            const newItem = copyObject(itemToUpdate);
-            // copy previous to current value
-            newItem.previous = newItem.current;
-            // then create new current value
-            newItem.current = Math.floor(Math.random() * 100000) + 100;
             // do normal update. update is done before method returns
-            gridApi.applyTransaction({ update: [newItem] });
+            gridApi.applyTransaction({ update: [createRandomUpdate()] });
         }, 0);
     }
 
@@ -200,15 +213,9 @@ function onNormalUpdate() {
     // we assume the browser executes the timeouts in order they are created,
     // so this timeout executes after all the update timeouts created above.
     setTimeout(() => {
-        const endMillis = new Date().getTime();
-        const duration = endMillis - startMillis;
+        const duration = new Date().getTime() - startMillis;
         setMessage('Transaction took ' + duration.toLocaleString() + 'ms');
     }, 0);
-
-    function setMessage(msg: string) {
-        const eMessage = document.querySelector('#eMessage') as any;
-        eMessage.textContent = msg;
-    }
 }
 
 function onAsyncUpdate() {
@@ -219,19 +226,10 @@ function onAsyncUpdate() {
     let updatedCount = 0;
     for (let i = 0; i < UPDATE_COUNT; i++) {
         setTimeout(() => {
-            // pick one index at random
-            const index = Math.floor(Math.random() * globalRowData.length);
-            const itemToUpdate = globalRowData[index];
-            const newItem = copyObject(itemToUpdate);
-            // copy previous to current value
-            newItem.previous = newItem.current;
-            // then create new current value
-            newItem.current = Math.floor(Math.random() * 100000) + 100;
-
             // update using async method. passing the callback is
             // optional, we are doing it here so we know when the update
             // was processed by the grid.
-            gridApi.applyTransactionAsync({ update: [newItem] }, resultCallback);
+            gridApi.applyTransactionAsync({ update: [createRandomUpdate()] }, resultCallback);
         }, 0);
     }
 
@@ -240,30 +238,11 @@ function onAsyncUpdate() {
         if (updatedCount === UPDATE_COUNT) {
             // print message in next VM turn to allow browser to refresh
             setTimeout(() => {
-                const endMillis = new Date().getTime();
-                const duration = endMillis - startMillis;
+                const duration = new Date().getTime() - startMillis;
                 setMessage('Async took ' + duration.toLocaleString() + 'ms');
             }, 0);
         }
     }
-
-    function setMessage(msg: string) {
-        const eMessage = document.querySelector('#eMessage') as any;
-        eMessage.textContent = msg;
-    }
-}
-
-// makes a copy of the original and merges in the new values
-function copyObject(object: any) {
-    // start with new object
-    const newObject: any = {};
-
-    // copy in the old values
-    Object.keys(object).forEach((key) => {
-        newObject[key] = object[key];
-    });
-
-    return newObject;
 }
 
 // after page is loaded, create the grid.

@@ -203,42 +203,33 @@ function startFeed(api: GridApi) {
 
     setInterval(() => {
         const thisCount = count++;
-        const updatedIndexes: any = {};
-        const newItems: any[] = [];
+        const updatedIndexes = new Set<number>();
+        const updatedItems: any[] = [];
         for (let i = 0; i < UPDATE_COUNT; i++) {
-            // pick one index at random
+            // pick one row at random, skipping rows already updated in this transaction
             const index = Math.floor(Math.random() * globalRowData.length);
-            // dont do same index twice, otherwise two updates for same row in one transaction
-            if (updatedIndexes[index]) {
+            if (updatedIndexes.has(index)) {
                 continue;
             }
-            const itemToUpdate = globalRowData[index];
-            const newItem: any = copyObject(itemToUpdate);
-            // copy previous to current value
-            newItem.previous = newItem.current;
-            // then create new current value
-            newItem.current = Math.floor(Math.random() * 100000) + 100;
-            newItems.push(newItem);
+            updatedIndexes.add(index);
+
+            // the old current value becomes the previous value
+            const item = globalRowData[index];
+            const updatedItem = {
+                ...item,
+                previous: item.current,
+                current: Math.floor(Math.random() * 100000) + 100,
+            };
+
+            // write back, so the next update to this row starts from the latest values
+            globalRowData[index] = updatedItem;
+            updatedItems.push(updatedItem);
         }
-        const resultCallback = () => {
+        api.applyTransactionAsync({ update: updatedItems }, () => {
             console.log('transactionApplied() - ' + thisCount);
-        };
-        api.applyTransactionAsync({ update: newItems }, resultCallback);
+        });
         console.log('applyTransactionAsync() - ' + thisCount);
     }, 500);
-}
-
-// makes a copy of the original and merges in the new values
-function copyObject(object: any) {
-    // start with new object
-    const newObject: any = {};
-
-    // copy in the old values
-    Object.keys(object).forEach((key) => {
-        newObject[key] = object[key];
-    });
-
-    return newObject;
 }
 
 // after page is loaded, create the grid.
