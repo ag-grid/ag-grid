@@ -4,27 +4,15 @@ import { createRoot } from 'react-dom/client';
 import type {
     AutoGroupColumnDef,
     ColDef,
+    ColGroupDef,
     GridPreDestroyedEvent,
     GridReadyEvent,
     GridState,
     RowSelectionOptions,
     StateUpdatedEvent,
 } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    GridStateModule,
-    NumberFilterModule,
-    PaginationModule,
-    RowSelectionModule,
-    enableDevValidations,
-} from 'ag-grid-community';
-import {
-    CellSelectionModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-    PivotModule,
-    SetFilterModule,
-} from 'ag-grid-enterprise';
+import { enableDevValidations } from 'ag-grid-community';
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
@@ -35,35 +23,36 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-const modules = [
-    NumberFilterModule,
-    RowSelectionModule,
-    GridStateModule,
-    PaginationModule,
-    ClientSideRowModelModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-    SetFilterModule,
-    CellSelectionModule,
-    PivotModule,
-];
+const modules = [AllEnterpriseModule];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact<IOlympicData>>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState<IOlympicData[]>();
-    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
+    const [columnDefs, setColumnDefs] = useState<(ColDef | ColGroupDef)[]>([
         { field: 'athlete', minWidth: 150 },
         { field: 'age', maxWidth: 90 },
         { field: 'country', minWidth: 150 },
-        { field: 'year', maxWidth: 90 },
-        { field: 'date', minWidth: 150 },
-        { field: 'sport', minWidth: 150 },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' },
+        {
+            headerName: 'Competition',
+            groupId: 'competition',
+            children: [
+                { field: 'year', maxWidth: 90 },
+                { field: 'date', minWidth: 150 },
+                { field: 'sport', minWidth: 150 },
+            ],
+        },
+        {
+            headerName: 'Medals',
+            groupId: 'medals',
+            children: [
+                { field: 'gold' },
+                { field: 'silver', columnGroupShow: 'open' },
+                { field: 'bronze', columnGroupShow: 'open' },
+                { field: 'total', columnGroupShow: 'closed' },
+            ],
+        },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
         return {
@@ -151,6 +140,9 @@ const GridExample = () => {
                                 sideBar={true}
                                 pagination={true}
                                 rowSelection={rowSelection}
+                                cellSelection={true}
+                                calculatedColumns={true}
+                                enableRowPinning={true}
                                 suppressColumnMoveAnimation={true}
                                 onGridReady={onGridReady}
                                 onGridPreDestroyed={onGridPreDestroyed}
