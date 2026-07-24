@@ -273,17 +273,33 @@ jobs:
       - name: Normalise example test reports
         run: node documentation/ag-grid-docs/scripts/normalise-ctrf-reports.mjs combined-reports
 
+      # failed-folded-report is deliberately off: it embeds the full message/trace for every
+      # failed test with no cap, so a run with hundreds of failures produces a step summary
+      # over GitHub's 1MB per-job limit - at which point the summary is silently dropped
+      # entirely. "Summarise failed tests" below writes a fixed-size table instead, so the
+      # summary always renders.
       - name: Publish Combined Test Report
         id: ctrf
         uses: ctrf-io/github-test-reporter@bb6b54d6514e0952c3eea739be0c641143d1f06c # v1.0.17
         with:
           report-path: 'combined-reports/**/*.json'
           summary-report: true
-          failed-folded-report: true
           flaky-report: true
           skipped-report: false
           group-by: filePath
           write-ctrf-to-file: ${{ env.CTRF_FILE }}
+
+      - name: Summarise failed tests
+        if: always()
+        run: node documentation/ag-grid-docs/scripts/summarise-ctrf-failures.mjs ${{ env.CTRF_FILE }}
+
+      - name: Upload combined CTRF report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ctrf-report
+          path: ${{ env.CTRF_FILE }}
+          retention-days: ${{ env.DEFAULT_RETENTION_DAYS }}
 
       - name: Get previous run commit SHA
         id: prev-commit-sha
