@@ -23,11 +23,11 @@ test.agExample(import.meta, () => {
 
         const download = await downloadPromise;
         const csvPath = await download.path();
-        const csv = readFileSync(csvPath, 'utf8');
+        const lines = readFileSync(csvPath, 'utf8').split('\n');
 
         // The data column is still present, and each data row is prefixed with its row number.
-        expect(csv).toContain('Athlete');
-        expect(csv).toMatch(/\n1,/);
-        expect(csv).toMatch(/\n2,/);
+        expect(lines[0]).toContain('Athlete');
+        expect(lines[1]).toMatch(/^"1",/);
+        expect(lines[2]).toMatch(/^"2",/);
     });
 });
