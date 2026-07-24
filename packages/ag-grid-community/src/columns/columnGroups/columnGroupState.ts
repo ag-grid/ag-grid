@@ -63,7 +63,7 @@ export const _setColGroupState = (
     try {
         const overrides = colModel.groupHeaderNameOverrides;
         let impactedGroups: AgProvidedColumnGroup[] | null = null;
-        let headerNameChanged = false;
+        let renamedGroups: AgProvidedColumnGroup[] | null = null;
         for (let i = 0; i < stateLen; ++i) {
             const stateItem = stateItems[i];
             const group = groupsById.get(stateItem.groupId);
@@ -74,14 +74,21 @@ export const _setColGroupState = (
                 impactedGroups ??= [];
                 impactedGroups.push(group);
             }
-            if ('headerName' in stateItem) {
-                headerNameChanged = applyHeaderNameOverride(overrides, stateItem) || headerNameChanged;
+            if ('headerName' in stateItem && applyHeaderNameOverride(overrides, stateItem)) {
+                renamedGroups ??= [];
+                renamedGroups.push(group);
             }
         }
 
-        if (headerNameChanged) {
+        if (renamedGroups) {
             // Grid-level event so the state service can refresh the cached group header-name state.
-            eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged' });
+            eventSvc.dispatchEvent({
+                type: 'columnHeaderNameChanged',
+                column: null,
+                columns: null,
+                columnGroup: renamedGroups.length === 1 ? renamedGroups[0] : null,
+                source,
+            });
         }
 
         if (impactedGroups) {

@@ -35,6 +35,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         columnMoved: ColumnMovedEvent<TData, TContext>;
         columnVisible: ColumnVisibleEvent<TData, TContext>;
         columnPinned: ColumnPinnedEvent<TData, TContext>;
+        columnHeaderNameChanged: ColumnHeaderNameChangedEvent<TData, TContext>;
         columnGroupOpened: ColumnGroupOpenedEvent<TData, TContext>;
         columnResized: ColumnResizedEvent<TData, TContext>;
         displayedColumnsChanged: DisplayedColumnsChangedEvent<TData, TContext>;
@@ -192,7 +193,6 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         showRowGroupColsSetChanged: AgEvent<'showRowGroupColsSetChanged'>;
         columnShowValuesAsChanged: AgEvent<'columnShowValuesAsChanged'>;
         rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
-        columnHeaderNameChanged: ColumnHeaderNameChangedEvent;
         columnHeaderEditHighlightChanged: ColumnHeaderEditHighlightChangedEvent;
     }
 >;
@@ -955,11 +955,16 @@ export interface StickyBottomOffsetChangedEvent extends AgEvent<'stickyBottomOff
     offset: number;
 }
 
-export interface ColumnHeaderNameChangedEvent extends AgEvent<'columnHeaderNameChanged'> {
-    /** Set when a single column's header name changed. Listeners can ignore other columns. */
-    colId?: string;
-    /** Set when a single provided column group's header name changed. Listeners can ignore other groups. */
-    groupId?: string;
+export interface ColumnHeaderNameChangedEvent<TData = any, TContext = any> extends ColumnEvent<
+    'columnHeaderNameChanged',
+    TData,
+    TContext
+> {
+    /**
+     * The provided column group whose header name changed, when a column group was renamed.
+     * `null` for column renames or a bulk change (e.g. state reset).
+     */
+    columnGroup: ProvidedColumnGroup | null;
 }
 
 export interface ColumnHeaderEditHighlightChangedEvent extends AgEvent<'columnHeaderEditHighlightChanged'> {

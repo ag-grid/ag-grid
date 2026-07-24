@@ -67,6 +67,7 @@ import type {
     ColumnHeaderEditOptions,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
+    ColumnHeaderNameChangedEvent,
     ColumnMenuVisibleChangedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
@@ -2287,6 +2288,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public columnPinned: EventEmitter<ColumnPinnedEvent<TData>> = new EventEmitter<
         ColumnPinnedEvent<TData>
+    >();
+    /** A column or column group header name was changed via the UI header-name editor.
+     */
+    @Output() public columnHeaderNameChanged: EventEmitter<ColumnHeaderNameChangedEvent<TData>> = new EventEmitter<
+        ColumnHeaderNameChangedEvent<TData>
     >();
     /** A column was resized.
      */

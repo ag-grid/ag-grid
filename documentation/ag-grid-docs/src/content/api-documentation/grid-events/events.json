@@ -403,6 +403,12 @@
         },
         "columnVisible": {},
         "columnPinned": {},
+        "columnHeaderNameChanged": {
+            "more": {
+                "name": "Editable Header Name",
+                "url": "./column-headers/#editable-header-name"
+            }
+        },
         "columnResized": {},
         "columnMoved": {},
         "columnValueChanged": {},

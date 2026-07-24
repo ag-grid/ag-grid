@@ -44,6 +44,7 @@ import type {
     ColumnHeaderContextMenuEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
+    ColumnHeaderNameChangedEvent,
     ColumnMenuVisibleChangedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
@@ -2613,6 +2614,10 @@ export interface GridOptions<TData = any> {
      * A column, or group of columns, was pinned / unpinned.
      */
     onColumnPinned?(event: ColumnPinnedEvent<TData>): void;
+    /**
+     * A column or column group header name was changed via the UI header-name editor.
+     */
+    onColumnHeaderNameChanged?(event: ColumnHeaderNameChangedEvent<TData>): void;
     /**
      * A column was resized.
      */

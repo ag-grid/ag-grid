@@ -337,8 +337,8 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onHeaderNameChanged(event: ColumnHeaderNameChangedEvent): void {
-        // A missing groupId means a bulk change, so refresh unconditionally.
-        if (event.groupId && event.groupId !== this.columnGroup.groupId) {
+        // A missing columnGroup means a column rename or bulk change, so refresh unconditionally.
+        if (event.columnGroup && event.columnGroup.getGroupId() !== this.columnGroup.groupId) {
             return;
         }
         this.displayName = this.beans.colNames.getDisplayNameForProvidedColumnGroup(

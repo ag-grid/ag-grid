@@ -334,7 +334,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const groupId = providedColGroup.groupId;
         compBean.addManagedEventListeners({
             columnHeaderNameChanged: (event) => {
-                if (!event.groupId || event.groupId === groupId) {
+                if (!event.columnGroup || event.columnGroup.getGroupId() === groupId) {
                     this.refreshDisplayName();
                 }
             },
