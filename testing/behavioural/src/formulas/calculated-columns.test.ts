@@ -3930,6 +3930,51 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
+    test('dialog-created calculated column cells follow moves next to a group with an explicit groupId', async () => {
+        const api = createGrid('calc-dialog-group-id-move', {
+            suppressColumnMoveAnimation: true,
+            rowData: [{ id: 'r1', athlete: 'Michael Phelps', age: 23, country: 'United States', year: 2008 }],
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'age' },
+                { field: 'country' },
+                {
+                    headerName: 'Competition',
+                    groupId: 'competition',
+                    children: [{ field: 'year' }],
+                },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'country');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        setExpression('"Foo"');
+        await asyncSetTimeout(40);
+
+        const closeButton = document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button');
+        expect(closeButton).toBeTruthy();
+        closeButton!.click();
+        api.moveColumns(['calculated_1'], 2);
+        await asyncSetTimeout(1);
+
+        const gridEl = getGridElement(api)!;
+        const calculatedColumn = api.getColumn('calculated_1')!;
+        const calculatedCell = gridEl.querySelector<HTMLElement>('[row-index="0"] [col-id="calculated_1"]');
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'athlete',
+            'age',
+            'calculated_1',
+            'country',
+            'year',
+        ]);
+        expect(calculatedCell).toBeTruthy();
+        expect(calculatedCell!.style.left).toBe(`${calculatedColumn.getLeft()}px`);
+        expect(calculatedCell!.textContent).toBe('Foo');
+    });
+
     // Same order-preservation invariant, but via `applyColumnState({ applyOrder: true })` instead
     // of `moveColumns`. Drives the same `colsList` mutation through a different code path —
     // guards that the lean variant's display-order sort sees the applied order.
