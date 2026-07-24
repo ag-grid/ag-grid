@@ -14,6 +14,7 @@ import type {
     CalculatedColumnUpdate,
     CalculatedColumnValidationReason,
     CalculatedColumnsOptions,
+    CalculatedUserColumnState,
     ColDef,
     ColKey,
     ColumnEventType,
@@ -516,6 +517,89 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
         }
         return restored;
+    }
+
+    public getUserColumnState(): CalculatedUserColumnState[] | undefined {
+        if (!this.isEnabled() || this.dynamicColumns.size === 0) {
+            return undefined;
+        }
+        // Insertion order matters: a col anchored to another dynamic col must serialise after its anchor
+        // so restore recreates the anchor first (see recreateUserColumns).
+        const res: CalculatedUserColumnState[] = [];
+        this.dynamicColumns.forEach((dc, colId) => {
+            const { calculatedExpression, cellDataType, headerName } = dc.colDef;
+            const state: CalculatedUserColumnState = {
+                kind: 'calculated',
+                colId,
+                groupAnchorColId: dc.anchorColId,
+                calculatedExpression: calculatedExpression ?? '',
+            };
+            if (typeof cellDataType === 'string') {
+                state.cellDataType = cellDataType;
+            }
+            if (headerName != null) {
+                state.headerName = headerName;
+            }
+            res.push(state);
+        });
+        return res;
+    }
+
+    public recreateUserColumns(state: CalculatedUserColumnState[]): void {
+        if (!this.isEnabled()) {
+            return;
+        }
+        const { colModel } = this.beans;
+        const dynamicColumns = this.dynamicColumns;
+        const inactive = this.inactiveDynamicColumns;
+        let added = false;
+        // Recreate in serialised order so an anchor is present before a col that anchors to it.
+        for (let i = 0, len = state.length; i < len; ++i) {
+            const userCol = state[i];
+            const colId = userCol.colId;
+            if (dynamicColumns.has(colId)) {
+                continue;
+            }
+            // Honour the serialised colId, but never clobber a real columnDefs column of the same id.
+            if (colModel.getCol(colId) != null) {
+                _warnOnce(`recreateUserColumns: colId '${colId}' already exists; skipping.`);
+                continue;
+            }
+            inactive.delete(colId);
+            dynamicColumns.set(colId, {
+                colDef: this.toRestoredColDef(userCol),
+                anchorColId: userCol.groupAnchorColId,
+                instance: null,
+            });
+            added = true;
+        }
+        if (added) {
+            this.refreshDynamicColumns('calculatedColumn');
+        }
+    }
+
+    // The stored expression is already in internal colId form, so it is used verbatim (no reference re-mapping).
+    private toRestoredColDef(state: CalculatedUserColumnState): ColDef {
+        const colDef: ColDef = {
+            colId: state.colId,
+            headerName: state.headerName,
+            calculatedExpression: state.calculatedExpression,
+            cellDataType: state.cellDataType,
+            editable: false,
+            suppressPaste: true,
+        };
+        const anchorColId = state.groupAnchorColId;
+        if (anchorColId != null) {
+            // A dynamic anchor recreated earlier in the same batch is not in the col model until the
+            // batched rebuild runs, so fall back to its stored colDef.
+            const anchorColDef =
+                this.beans.colModel.getCol(anchorColId)?.colDef ?? this.dynamicColumns.get(anchorColId)?.colDef;
+            const columnGroupShow = anchorColDef?.columnGroupShow;
+            if (columnGroupShow != null) {
+                colDef.columnGroupShow = columnGroupShow;
+            }
+        }
+        return colDef;
     }
 
     private getOrCreateColumn(

@@ -642,6 +642,7 @@ export type { GridOptionsService, PropertyChangedEvent, PropertyValueChangedEven
 export type {
     AggregationColumnState,
     AggregationState,
+    CalculatedUserColumnState,
     CellSelectionCellState,
     CellSelectionState,
     ColumnGroupState,
@@ -670,6 +671,8 @@ export type {
     ShowValuesAsState,
     SideBarState,
     SortState,
+    UserColumnState,
+    UserColumnStateBase,
 } from './interfaces/gridState';
 export type { RowGroupBulkExpansionState, RowGroupExpansionState } from './interfaces/iExpansionService';
 export type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './interfaces/selectionState';

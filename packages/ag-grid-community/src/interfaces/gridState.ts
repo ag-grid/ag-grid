@@ -168,6 +168,28 @@ export interface ColumnGroupState {
     openColumnGroupIds: string[];
 }
 
+/** Shared shape for a column added at runtime that is not present in `columnDefs`. `kind` routes the
+ *  descriptor to the service that owns that column type and selects the strict payload below. Layout and
+ *  config (width, hide, pinned, sort, …) are intentionally absent here — they are owned by the
+ *  `columnSizing` / `columnVisibility` / `columnPinning` / `sort` sections. */
+export interface UserColumnStateBase {
+    kind: string;
+    colId: string;
+    /** Leaf `colId` whose column group this column joins; group membership is inherited from that sibling
+     *  leaf. `null` when the column sits at the top level (no group). */
+    groupAnchorColId: string | null;
+}
+
+export interface CalculatedUserColumnState extends UserColumnStateBase {
+    kind: 'calculated';
+    calculatedExpression: string;
+    cellDataType?: string;
+    headerName?: string;
+}
+
+/** Discriminated union of runtime-added columns; grows one member per column kind. */
+export type UserColumnState = CalculatedUserColumnState;
+
 export interface RowPinningState {
     /** Row IDs of rows pinned to the top container */
     top: string[];
@@ -184,6 +206,10 @@ export interface GridState {
     columnGroup?: ColumnGroupState;
     /** Includes column ordering (column state) */
     columnOrder?: ColumnOrderState;
+    /** Columns added at runtime that are not present in `columnDefs` (e.g. calculated columns).
+     *  Unlike the other column sections (which configure existing columns), this recreates the columns
+     *  themselves when the state is applied. */
+    userColumns?: UserColumnState[];
     /** Includes left/right pinned columns (column state) */
     columnPinning?: ColumnPinningState;
     /** Includes column width/flex (column state) */

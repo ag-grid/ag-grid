@@ -62,6 +62,9 @@ The following is captured in the grid state:
 - [Show Values As](./aggregation-show-values-as/) (column state)
 - [Side Bar](./side-bar/)
 - [Sort](./row-sorting/) (column state)
+- [Calculated Columns](./calculated-columns/) added at runtime
+
+Most sections configure columns that already exist. Runtime-added columns such as [Calculated Columns](./calculated-columns/) are the exception: their definitions are captured so the grid can recreate the columns themselves when the state is restored, after which the other sections apply on top.
 
 {% note %}
 When restoring the current page using the [Server Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/),
