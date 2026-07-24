@@ -842,13 +842,15 @@ export class AgColumn<TValue = any>
     }
 
     /** Override the displayed header name. Pass `null` to revert to the `colDef` value. */
-    public setHeaderNameOverride(headerName: string | null): void {
+    public setHeaderNameOverride(headerName: string | null, source: ColumnEventType = 'api'): void {
         if (this.headerNameOverride === headerName) {
             return;
         }
         this.headerNameOverride = headerName;
-        // Grid-level event, matching column groups, so header cells, the tool panel and the state
-        // service all refresh from a single event keyed by colId.
+        // Column-scoped event for the column's own header cell and tool panel entry, so they refresh
+        // without filtering by colId; the grid-level event drives the state service and keeps parity
+        // with column groups (which have no per-column event bus).
+        this.dispatchColEvent('headerNameChanged', source);
         this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged', colId: this.colId });
     }
 

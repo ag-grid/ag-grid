@@ -6,7 +6,7 @@ import type { ColumnEventType } from '../../events';
 interface ColGroupState {
     groupId: string;
     open: boolean;
-    headerName: string | null;
+    headerName?: string | null;
 }
 
 export const _getColGroupState = (beans: BeanCollection): ColGroupState[] => {
@@ -32,10 +32,7 @@ export const _setColGroupOpen = (
     _setColGroupState(beans, [{ groupId, open: newValue }], source);
 };
 
-const applyHeaderNameOverride = (
-    overrides: Map<string, string>,
-    stateItem: { groupId: string; headerName?: string | null }
-): boolean => {
+const applyHeaderNameOverride = (overrides: Map<string, string>, stateItem: ColGroupState): boolean => {
     const { groupId } = stateItem;
     const headerName = stateItem.headerName ?? null;
     const current = overrides.get(groupId) ?? null;
@@ -52,7 +49,7 @@ const applyHeaderNameOverride = (
 
 export const _setColGroupState = (
     beans: BeanCollection,
-    stateItems: { groupId: string; open: boolean | undefined; headerName?: string | null }[],
+    stateItems: ColGroupState[],
     source: ColumnEventType
 ): void => {
     const { colAnimation, visibleCols, eventSvc, colModel } = beans;
@@ -101,9 +98,9 @@ export const _setColGroupState = (
 };
 
 export const _resetColGroupState = (beans: BeanCollection, source: ColumnEventType): void => {
-    const stateItems: { groupId: string; open: boolean | undefined; headerName: string | null }[] = [];
+    const stateItems: ColGroupState[] = [];
     beans.colModel.colDefGroupsById.forEach((group) => {
-        stateItems.push({ groupId: group.groupId, open: group.colGroupDef?.openByDefault, headerName: null });
+        stateItems.push({ groupId: group.groupId, open: !!group.colGroupDef?.openByDefault, headerName: null });
     });
     _setColGroupState(beans, stateItems, source);
 };

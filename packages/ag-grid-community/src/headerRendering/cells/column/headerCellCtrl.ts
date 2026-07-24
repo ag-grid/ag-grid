@@ -137,6 +137,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         compBean.addManagedPropertyListener('cellSelection', () => this.refreshAria());
         compBean.addManagedListeners(column, {
             colDefChanged: () => this.refresh(),
+            headerNameChanged: () => this.refresh(),
             formulaRefChanged: () => this.refresh(),
             headerHighlightChanged: this.onHeaderHighlightChanged.bind(this),
         });
@@ -148,13 +149,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             columnRowGroupChanged: listener,
             columnPivotChanged: listener,
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
-            // Header names are keyed by colId in a shared store, matching column groups; a missing
-            // colId means a bulk change, so refresh unconditionally.
-            columnHeaderNameChanged: (event) => {
-                if (!event.colId || event.colId === colId) {
-                    this.refresh();
-                }
-            },
             // Toggle the edit highlight in place (no header component recreation).
             columnHeaderEditHighlightChanged: (event) => {
                 if (!event.colId || event.colId === colId) {

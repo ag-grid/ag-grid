@@ -31,6 +31,13 @@ export type { BaseColDefParams, ColumnFunctionCallbackParams } from './colDef-ba
 export interface AbstractColDef<TData = any, TValue = any> {
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */
     headerName?: string;
+    /**
+     * Set to `true` to allow the user to edit this column's (or column group's) header name from the UI.
+     * The edited value is persisted as part of grid state.
+     * @default false
+     * @agModule `ColumnHeaderEditModule`
+     */
+    headerNameEditable?: boolean;
     /** Function or expression. Gets the value for display in the header. */
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /**
@@ -138,14 +145,6 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
      * @default false
      */
     suppressStickyLabel?: boolean;
-
-    /**
-     * Set to `true` to allow the user to edit this column group's header name from the UI.
-     * The edited value is persisted as part of grid state.
-     * @default false
-     * @agModule `ColumnHeaderEditModule`
-     */
-    headerNameEditable?: boolean;
 
     /**
      * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
@@ -610,13 +609,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     headerComponent?: any;
     /** The parameters to be passed to the `headerComponent`. */
     headerComponentParams?: any;
-    /**
-     * Set to `true` to allow the user to edit this column's header name from the UI.
-     * The edited value is persisted as part of column state.
-     * @default false
-     * @agModule `ColumnHeaderEditModule`
-     */
-    headerNameEditable?: boolean;
 
     /**
      * Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
