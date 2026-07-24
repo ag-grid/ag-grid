@@ -303,8 +303,7 @@ describe('Column Mutations - transitions', () => {
 
     describe('pivot + groupHideColumnsUntilExpanded interaction', () => {
         test('auto-group col visibility tracks expansion when groupHideColumnsUntilExpanded=true and pivot mode is on', async () => {
-            // groupHideColumnsUntilExpanded without the required display mode legitimately warns.
-            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            // groupHideColumnsUntilExpanded only engages with groupDisplayType='multipleColumns' (see #319).
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { field: 'country', rowGroup: true, hide: true },
@@ -316,16 +315,16 @@ describe('Column Mutations - transitions', () => {
                     { country: 'UK', sport: 'rugby', amount: 3 },
                 ],
                 pivotMode: true,
+                groupDisplayType: 'multipleColumns',
                 groupHideColumnsUntilExpanded: true,
             });
             await asyncSetTimeout(0);
-            consoleWarnSpy.mockRestore();
 
-            // With groupHideColumnsUntilExpanded the auto-group col should not be displayed until
-            // a group is expanded — even in pivot mode. Snapshot the displayed set.
+            // multipleColumns gives one auto-group column per level; the top-level (country) column is
+            // shown so the group can be expanded (deeper levels stay hidden until expanded), in pivot mode.
             await new GridColumns(api, 'pivot + hideUntilExpanded').checkColumns(`
                 CENTER
-                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── ag-Grid-AutoColumn-country "Country" width:200
                 └── amount "Amount" width:200 aggFunc:sum
             `);
         });

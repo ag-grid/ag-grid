@@ -3,7 +3,7 @@ import type { MockInstance } from 'vitest';
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, CsvExportModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 
-import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
+import { ALL_SEVERITIES, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('dev validation overlay', () => {
     const gridsManager = new TestGridsManager({
@@ -36,13 +36,13 @@ describe('dev validation overlay', () => {
     });
 
     test('does not show the overlay for a clean configuration', () => {
-        enableDevValidations({ overlay: 'deprecation' });
+        enableDevValidations({ showOverlayOn: ALL_SEVERITIES });
         gridsManager.createGrid('myGrid', { columnDefs, rowData });
         expect(hasErrorOverlay()).toBe(false);
     });
 
-    test("shows the overlay when a diagnostic is captured (overlay: 'deprecation')", () => {
-        enableDevValidations({ overlay: 'deprecation' });
+    test('shows the overlay when a diagnostic is captured (default showOverlayOn)', () => {
+        enableDevValidations({ showOverlayOn: ALL_SEVERITIES });
         gridsManager.createGrid('myGrid', withUnknownOption());
 
         expect(hasErrorOverlay()).toBe(true);
@@ -51,28 +51,28 @@ describe('dev validation overlay', () => {
         expect(panel!.querySelector('.ag-overlay-error-body')?.childElementCount).toBeGreaterThan(0);
     });
 
-    test("does not show the overlay when overlay is 'none'", () => {
-        enableDevValidations({ overlay: 'none' });
+    test('does not show the overlay when showOverlayOn is empty', () => {
+        enableDevValidations({ showOverlayOn: [] });
         gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(false);
     });
 
-    test("does not show warnings when overlay is 'error'", () => {
-        enableDevValidations({ overlay: 'error' });
+    test("does not show warnings when showOverlayOn is ['error']", () => {
+        enableDevValidations({ showOverlayOn: ['error'] });
         gridsManager.createGrid('myGrid', withUnknownOption());
         // The unknown-property diagnostic is a warning, so it is filtered out in errors-only mode.
         expect(hasErrorOverlay()).toBe(false);
     });
 
-    test("shows warnings when overlay is 'warning'", () => {
-        enableDevValidations({ overlay: 'warning' });
+    test("shows warnings when showOverlayOn includes 'warning'", () => {
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         gridsManager.createGrid('myGrid', withUnknownOption());
-        // The unknown-property diagnostic is a warning, which the inclusive 'warning' threshold surfaces.
+        // The unknown-property diagnostic is a warning, which the enabled 'warning' severity surfaces.
         expect(hasErrorOverlay()).toBe(true);
     });
 
     test('can be dismissed', () => {
-        enableDevValidations({ overlay: 'deprecation' });
+        enableDevValidations({ showOverlayOn: ALL_SEVERITIES });
         gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(true);
 
@@ -81,7 +81,7 @@ describe('dev validation overlay', () => {
     });
 
     test('takes priority over an imperative showLoadingOverlay()', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const api = gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(true);
 
@@ -92,7 +92,7 @@ describe('dev validation overlay', () => {
     });
 
     test('takes priority over an imperative showNoRowsOverlay()', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const api = gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(true);
 
@@ -103,7 +103,7 @@ describe('dev validation overlay', () => {
     });
 
     test('takes priority over an imperative export overlay', async () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const api = gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(true);
 
@@ -135,7 +135,7 @@ describe('dev validation overlay', () => {
     });
 
     test('takes priority over a data-driven loading overlay', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         // loading=true would normally show the loading overlay, but the captured diagnostic wins.
         gridsManager.createGrid('myGrid', { ...withUnknownOption(), loading: true });
 
@@ -144,7 +144,7 @@ describe('dev validation overlay', () => {
     });
 
     test('resumes normal overlays after the dev overlay is dismissed', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const api = gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(true);
 
@@ -156,7 +156,7 @@ describe('dev validation overlay', () => {
     });
 
     test('copies diagnostics to the clipboard', () => {
-        enableDevValidations({ overlay: 'deprecation' });
+        enableDevValidations({ showOverlayOn: ALL_SEVERITIES });
         gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(true);
 

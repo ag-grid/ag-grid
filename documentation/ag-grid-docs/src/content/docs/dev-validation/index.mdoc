@@ -29,13 +29,13 @@ Pass options to `enableDevValidations` to configure:
 import { enableDevValidations } from 'ag-grid-community';
 
 enableDevValidations({
-    overlay: 'deprecation',
-    throwOn: 'warning',
+    showOverlayOn: ['deprecation', 'warning', 'error'],
+    throwOn: ['warning', 'error'],
     suppress: [],
 });
 ```
 
-If you register the module explicitly (instead of using `enableDevValidations`), then pass the same options via `ValidationModule.with({ overlay: 'deprecation', throwOn: 'warning', suppress: [] })`
+If you register the module explicitly (instead of using `enableDevValidations`), then pass the same options via `ValidationModule.with({ showOverlayOn: ['deprecation', 'warning', 'error'], throwOn: ['warning', 'error'], suppress: [] })`
 
 Configuration is global and applies to every grid on the page, with the options from the last call being used.
 
@@ -43,14 +43,21 @@ Configuration is global and applies to every grid on the page, with the options 
 
 The overlay lists the diagnostics captured for a grid on top of that grid, with controls to copy them or dismiss the overlay. It is shown by default.
 
-The threshold is inclusive, from least to most severe, mirroring `throwOn`:
+Diagnostics have one of three severities:
 
-- `'error'` — errors only
-- `'warning'` — warnings and errors
-- `'deprecation'` (default) — deprecations, warnings and errors
-- `'none'` — no overlay
+- `'deprecation'` — use of a deprecated option or feature
+- `'warning'` — a likely misconfiguration the grid can recover from
+- `'error'` — an invalid configuration
 
-For example, if a column definition includes a property the grid does not recognise, the resulting warnings surface in the overlay:
+Set `showOverlayOn` to an array of the severities to show. For example, to show warnings and errors but not deprecations:
+
+```js
+enableDevValidations({ showOverlayOn: ['warning', 'error'] });
+```
+
+Defaults to `['deprecation', 'warning', 'error']` (every severity). Pass `[]` to hide the overlay.
+
+In the example below, a column definition includes a property the grid does not recognise, so the resulting warnings surface in the overlay:
 
 {% gridExampleRunner title="Overlay" name="overlay" /%}
 
@@ -60,12 +67,13 @@ Each grid shows only its own diagnostics. A nested grid (such as a detail grid i
 
 `throwOn` turns matching diagnostics into thrown errors instead of console messages, so problems fail fast rather than scrolling past unnoticed. This suits automated workflows (for example, end-to-end test runs or AI-assisted development) where a hard failure is surfaced to be acted on immediately.
 
-The threshold is inclusive, from least to most severe:
+Set `throwOn` to an array of the [severities](#overlay) to throw on. For example, to throw on errors only:
 
-- `'error'` — throws on errors
-- `'warning'` — throws on warnings and errors
-- `'deprecation'` — throws on deprecations, warnings and errors
-- `'none'` (default) — never throws
+```js
+enableDevValidations({ throwOn: ['error'] });
+```
+
+Defaults to `[]` (never throws).
 
 `throwOn` throws synchronously wherever a matching diagnostic is raised. That is not only at start-up, it also happens during API calls, data updates, and rendering. A throw can interrupt an operation part-way and leave the grid in an inconsistent state. Use `throwOn` with harnesses that recreate the grid on failure rather than carrying on with the same instance, and never in production.
 

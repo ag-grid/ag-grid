@@ -1,20 +1,25 @@
 import type { MockInstance } from 'vitest';
 
-import { AllCommunityModule, createGrid, enableDevValidations } from 'ag-grid-community';
+import { AllCommunityModule } from '../allCommunityModule';
+import { createGrid } from '../grid';
+import { enableDevValidations } from './validationModule';
 
-// Module registration is global and persists for the lifetime of this test file, so the
-// before-opt-in and after-opt-in assertions must run in order within a single test.
+// Lives as a package unit test rather than in the behavioural suite: the behavioural global setup opts
+// every test into dev validations before it runs, whereas this pins the *default-off* contract — that
+// AllCommunityModule alone leaves validation disabled until enableDevValidations() is called — so it must
+// run where that hook is absent. Registration is process-global, so the before/after assertions run in
+// order within one test (Vitest isolates module state per file).
 describe('enableDevValidations', () => {
     let consoleWarnSpy: MockInstance;
 
     beforeEach(() => {
-        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
-        vitest.spyOn(console, 'error').mockImplementation(() => {});
+        consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         document.body.innerHTML = '<div id="grid1"></div><div id="grid2"></div>';
     });
 
     afterEach(() => {
-        vitest.restoreAllMocks();
+        vi.restoreAllMocks();
     });
 
     test('validations are off until opted into, then on after enableDevValidations()', () => {
@@ -28,8 +33,8 @@ describe('enableDevValidations', () => {
                 args.join(' ').includes('Invalid `gridOptions` property `notARealOption`')
             );
 
-        // AllCommunityModule no longer bundles the ValidationModule, so an invalid grid option is
-        // silently ignored - no validation warning is produced.
+        // AllCommunityModule does not bundle the ValidationModule, so an invalid grid option is silently
+        // ignored - no validation warning is produced.
         createGrid(document.getElementById('grid1')!, invalidOptions, { modules: [AllCommunityModule] });
         expect(hasInvalidPropertyWarning()).toBe(false);
 

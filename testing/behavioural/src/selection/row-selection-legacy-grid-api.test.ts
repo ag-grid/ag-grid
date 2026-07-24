@@ -1,7 +1,13 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, PaginationModule, QuickFilterModule, RowSelectionModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    PaginationModule,
+    QuickFilterModule,
+    RowSelectionModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 
 import {
     GridColumns,
@@ -24,6 +30,9 @@ describe('Row Selection Grid API', () => {
     }
 
     beforeEach(() => {
+        // This file exercises deprecated selection APIs on purpose; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: [] });
+
         gridMgr.reset();
 
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});

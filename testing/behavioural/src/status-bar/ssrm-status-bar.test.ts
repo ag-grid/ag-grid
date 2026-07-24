@@ -6,10 +6,10 @@ import type {
     IStatusPanelParams,
     StatusPanelDef,
 } from 'ag-grid-community';
-import { getGridElement } from 'ag-grid-community';
+import { enableDevValidations, getGridElement } from 'ag-grid-community';
 import { ServerSideRowModelModule, StatusBarModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { ALL_SEVERITIES, TestGridsManager } from '../test-utils';
 
 // AG-16023: under SSRM, client-side-only status panels (total / filtered / total-and-filtered row counts) must be
 // dropped, while serverSide-supported panels (aggregation, selected row count) and custom panels are kept. Under the
@@ -89,6 +89,8 @@ describe('SSRM status bar panel filtering', () => {
     };
 
     test('under SSRM, client-side-only panels are dropped; supported and custom panels render', async () => {
+        // Client-side-only panels under SSRM emit this warning as they are dropped — the behaviour under test.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [222, 224, 225] });
         const gridDiv = document.createElement('div');
         document.body.appendChild(gridDiv);
 

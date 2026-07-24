@@ -1,10 +1,10 @@
 import type { MockInstance } from 'vitest';
 
 import type { ColDef, ColGroupDef } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, TestGridsManager } from '../../test-utils';
+import { ALL_SEVERITIES, GridColumns, TestGridsManager } from '../../test-utils';
 import { VERSION } from '../../version';
 import { getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
 
@@ -152,6 +152,10 @@ describe('lockPosition Column Order', () => {
             test.each([1, 2])(
                 'cannot move columns after lockPosition=right column using index=%i',
                 async (idx: number) => {
+                    // idx=2 is an invalid insert location and asserts warning #30; idx=1 does not warn.
+                    if (idx === 2) {
+                        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [30] });
+                    }
                     const columnDefs: (ColDef | ColGroupDef)[] = [
                         { colId: 'a' },
                         { colId: 'b', lockPosition: 'right' },

@@ -13,6 +13,7 @@ import {
     RowSelectionModule,
     TextEditorModule,
     ValidationModule,
+    enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
 import {
@@ -30,6 +31,7 @@ import {
 } from 'ag-grid-enterprise';
 
 import {
+    ALL_SEVERITIES,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -550,6 +552,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('does not enable calculated columns when calculatedColumns is omitted or false', async () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
         const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const cases: { id: string; calculatedColumns: false | undefined }[] = [
             { id: 'calculated-option-omitted', calculatedColumns: undefined },
@@ -598,6 +602,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('runtime calculatedColumns toggle enables and disables static calculated columns', async () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
         const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         try {
             const api = createGrid('calculated-option-runtime-toggle', {
@@ -3091,6 +3097,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('dialog type list uses configured data types and ignores unregistered ones', async () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [304] });
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('calculated-dialog-configured-types', {
             calculatedColumns: {
@@ -3237,6 +3245,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('calculated columns are always non-editable', async () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
         const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         try {
             const api = createGrid('calculated-non-editable', {
@@ -3280,6 +3290,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('calculated columns do not write through to row data', async () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
         const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         try {
             const rowData = [{ id: 'r1', revenue: 10, cost: 3, profit: 999 }];
@@ -3667,6 +3679,9 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('validates CalculatedColumnsModule registration', () => {
+        // Suppress the diagnostics this deliberate misconfig raises (#200 module missing, #319 no
+        // calculatedColumns option); any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200, 319] });
         const validationGridsManager = new TestGridsManager({
             modules: [ClientSideRowModelModule, ValidationModule],
         });
@@ -3761,11 +3776,13 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('warns when calculatedExpression is combined with field, valueGetter or valueSetter', () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
         let consoleWarnSpy: MockInstance | undefined;
         try {
             consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             createGrid('calculated-field-conflict', {
-                rowData: [{ revenue: 10, cost: 3 }],
+                rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
                 columnDefs: [
                     { field: 'revenue' },
                     { field: 'cost' },
@@ -3788,6 +3805,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('does not evaluate calculatedExpression with FormulaModule alone', async () => {
+        // Suppress only the diagnostics this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200, 319] });
         const formulaOnlyGridsManager = new TestGridsManager({
             modules: [ClientSideRowModelModule, FormulaModule, TextEditorModule],
         });

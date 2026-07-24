@@ -1,9 +1,15 @@
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from '../../test-utils';
+import {
+    ALL_SEVERITIES,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    executeTransactionsAsync,
+} from '../../test-utils';
 
 describe('ag-grid hierarchical tree data reset', () => {
     const gridsManager = new TestGridsManager({
@@ -22,6 +28,8 @@ describe('ag-grid hierarchical tree data reset', () => {
     });
 
     test('transactions are no-ops and an error is generated', async () => {
+        // This test deliberately applies transactions to `treeDataChildrenField` data to assert the no-op warning.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [268] });
         const rowData = [
             { id: 'A', children: [{ id: 'B' }] },
             { id: 'C', children: [{ id: 'D' }, { id: 'E' }] },

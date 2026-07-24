@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
-import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextEditorModule, enableDevValidations } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
 
@@ -28,6 +28,8 @@ describe('object cellDataType validation warnings', () => {
     let warnSpy: ReturnType<typeof vitest.spyOn>;
 
     beforeEach(() => {
+        // This file asserts on validation diagnostics; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: [] });
         gridsManager.reset();
         warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
     });
