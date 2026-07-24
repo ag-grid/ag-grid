@@ -29,7 +29,9 @@ describe('buildLlmsTxt', () => {
     test('advertises the per-page markdown (.md) convention and the top-level .md pages', () => {
         expect(txt).toContain('.md');
         expect(txt).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
-        expect(txt).toContain('Pricing, Changelog and Pipeline pages also have `.md` versions');
+        expect(txt).toContain(
+            'The Home, About, Community, Documentation Archive, Example, Pricing, Changelog and Pipeline pages also have `.md` versions'
+        );
     });
 
     test('lists the pipeline page', () => {
@@ -67,6 +69,10 @@ describe('buildAgentsMd', () => {
         expect(md).toContain('Markdown for LLMs');
         expect(md).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
         expect(md).toContain('https://www.ag-grid.com/pipeline/');
+        // The new page twins are advertised with links.
+        expect(md).toContain('[About](https://www.ag-grid.com/about/)');
+        expect(md).toContain('[Community](https://www.ag-grid.com/community/)');
+        expect(md).toContain('[Documentation Archive](https://www.ag-grid.com/documentation-archive/)');
     });
 
     test('omits the markdown affordance when markdown docs are disabled', () => {

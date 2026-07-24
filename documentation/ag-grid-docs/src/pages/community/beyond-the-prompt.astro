@@ -4,6 +4,7 @@ import styles from '../../pages-styles/beyond-the-prompt.module.scss';
 
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { DISABLE_MARKDOWN_DOCS } from '@constants';
 import {
     SESSIONS,
     sessionDurationMins,
@@ -183,6 +184,8 @@ const GALLERY_IMAGES = [
     'images/campaigns/beyond-the-prompt/gallery/gallery-17.webp',
     'images/campaigns/beyond-the-prompt/gallery/gallery-18.webp',
 ];
+
+const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/community/beyond-the-prompt.md');
 ---
 
 {/* Astro hoists these <link> tags into <head> at build time, so the Geist fonts only load on this page. */}
@@ -229,6 +232,7 @@ const GALLERY_IMAGES = [
     hideFooter={true}
     overrideSocialImage={SOCIAL_IMAGE_URL}
     showAnnouncementBanner={false}
+    markdownUrl={markdownUrl}
 >
     <div class={styles.page}>
         <nav class={styles.communityNav} aria-label="Community">

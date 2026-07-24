@@ -5,6 +5,7 @@ import type {
     AgColumn,
     AgProvidedColumnGroup,
     ColumnEventType,
+    DefaultColumnMenuItem,
     DefaultMenuItem,
     GetNoteParams,
     IAggFuncService,
@@ -22,35 +23,9 @@ import { BeanStub, _createIconNoSpan, _getRowNode, _normalizeSortType, _resetCol
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
+import { PIVOT_TOKEN, SCROLL_INTO_VIEW_TOKEN, VALUE_TOKEN, columnMenuTokenLabel } from './columnMenuTokenLabels';
 import { validateMenuItem } from './menuItemValidations';
-
-export const MENU_ITEM_SEPARATOR = 'separator';
-
-export function _normaliseSeparators<T>(array: T[], separator: T) {
-    if (!array?.length) {
-        return;
-    }
-
-    let writeIndex = 0;
-    let lastItemWasSeparator = true;
-
-    for (const item of array) {
-        const isSeparator = item === separator;
-
-        if (isSeparator && lastItemWasSeparator) {
-            continue;
-        }
-
-        array[writeIndex++] = item;
-        lastItemWasSeparator = isSeparator;
-    }
-
-    if (writeIndex > 0 && array[writeIndex - 1] === separator) {
-        writeIndex--;
-    }
-
-    array.length = writeIndex;
-}
+import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuSeparators';
 
 const SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS: Record<
     string,
@@ -79,7 +54,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
 
     public mapWithStockItems(
-        originalList: (MenuItemDef | DefaultMenuItem)[],
+        originalList: (DefaultColumnMenuItem | MenuItemDef)[],
         column: AgColumn | null,
         node: RowNode | null,
         noteParams: GetNoteParams | undefined,
@@ -105,6 +80,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             colHeaderEditSvc,
             colModel,
             colNames,
+            ctrlsSvc,
             csvCreator,
             excelCreator,
             expansionSvc,
@@ -115,6 +91,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             pdfCreator,
             pinnedCols,
             pinnedRowModel,
+            pivotColsSvc,
             rangeSvc,
             rowGroupColsSvc,
             showValuesAsSvc,
@@ -141,7 +118,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             };
 
         const getStockMenuItem = (
-            key: DefaultMenuItem,
+            key: DefaultColumnMenuItem,
             column: AgColumn | null,
             sourceElement: () => HTMLElement,
             source: ColumnEventType
@@ -337,6 +314,78 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     } else {
                         return null;
                     }
+                }
+                case 'scrollIntoView': {
+                    if (!ctrlsSvc || !column || column.isPinned()) {
+                        return null;
+                    }
+                    const displayName = colNames.getDisplayNameForColumn(column, 'header')!;
+                    return {
+                        name: columnMenuTokenLabel(
+                            localeTextFunc,
+                            SCROLL_INTO_VIEW_TOKEN.key,
+                            SCROLL_INTO_VIEW_TOKEN.default,
+                            displayName
+                        ),
+                        icon: _createIconNoSpan(SCROLL_INTO_VIEW_TOKEN.icon, beans, null),
+                        action: () => ctrlsSvc.getScrollFeature().ensureColumnVisible(column),
+                    };
+                }
+                case 'value': {
+                    if (!valueColsSvc || !column?.primary || !column.isAllowValue()) {
+                        return null;
+                    }
+                    const active = column.isValueActive();
+                    const displayName = colNames.getDisplayNameForColumn(column, 'header')!;
+                    return {
+                        name: active
+                            ? columnMenuTokenLabel(
+                                  localeTextFunc,
+                                  VALUE_TOKEN.removeKey,
+                                  VALUE_TOKEN.removeDefault,
+                                  displayName
+                              )
+                            : columnMenuTokenLabel(
+                                  localeTextFunc,
+                                  VALUE_TOKEN.addKey,
+                                  VALUE_TOKEN.addDefault,
+                                  displayName
+                              ),
+                        icon: _createIconNoSpan(VALUE_TOKEN.icon, beans, null),
+                        disabled: gos.get('functionsReadOnly'),
+                        action: () =>
+                            active
+                                ? valueColsSvc.removeColumns([column], source)
+                                : valueColsSvc.addColumns([column], source),
+                    };
+                }
+                case 'pivot': {
+                    if (!pivotColsSvc || !colModel.pivotMode || !column?.primary || !column.isAllowPivot()) {
+                        return null;
+                    }
+                    const active = column.isPivotActive();
+                    const displayName = colNames.getDisplayNameForColumn(column, 'header')!;
+                    return {
+                        name: active
+                            ? columnMenuTokenLabel(
+                                  localeTextFunc,
+                                  PIVOT_TOKEN.removeKey,
+                                  PIVOT_TOKEN.removeDefault,
+                                  displayName
+                              )
+                            : columnMenuTokenLabel(
+                                  localeTextFunc,
+                                  PIVOT_TOKEN.addKey,
+                                  PIVOT_TOKEN.addDefault,
+                                  displayName
+                              ),
+                        icon: _createIconNoSpan(PIVOT_TOKEN.icon, beans, null),
+                        disabled: gos.get('functionsReadOnly'),
+                        action: () =>
+                            active
+                                ? pivotColsSvc.removeColumns([column], source)
+                                : pivotColsSvc.addColumns([column], source),
+                    };
                 }
                 case 'resetColumns':
                     return {

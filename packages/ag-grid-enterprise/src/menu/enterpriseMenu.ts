@@ -1,4 +1,4 @@
-import { RefPlaceholder, _focusInto } from 'ag-stack';
+import { RefPlaceholder } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -9,6 +9,7 @@ import type {
     ComponentEvent,
     ContainerType,
     DefaultMenuItem,
+    DefaultToolPanelItem,
     IAfterGuiAttachedParams,
     IEventEmitter,
     IMenuFactory,
@@ -607,7 +608,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     private mainMenuList: MenuList;
 
     constructor(
-        private readonly menuItems: (DefaultMenuItem | MenuItemDef)[],
+        private readonly menuItems: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef)[],
         private readonly column: AgColumn | undefined,
         private readonly columnGroup: AgProvidedColumnGroup | undefined,
         private readonly restoreFocusParams: MenuRestoreFocusParams,
@@ -643,6 +644,6 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
             this.hidePopupFunc = hidePopup;
             this.addDestroyFunc(hidePopup);
         }
-        _focusInto(this.mainMenuList.getGui());
+        this.mainMenuList.focusInto();
     }
 }

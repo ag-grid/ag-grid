@@ -566,6 +566,28 @@
                             "url": "https://www.ag-grid.com/campaigns/bryntum-gantt"
                         }
                     ]
+                },
+                {
+                    "type": "group",
+                    "title": "Calendar",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "See Bryntum Calendar",
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-calendar"
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "title": "Scheduler",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "See Bryntum Scheduler",
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler"
+                        }
+                    ]
                 }
             ]
         },
@@ -1879,26 +1901,50 @@
                             "children": [
                                 {
                                     "type": "item",
-                                    "title": "Layout",
-                                    "path": "pdf-export-layout",
+                                    "title": "API Reference",
+                                    "path": "pdf-export-api",
                                     "isEnterprise": true
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Styling",
+                                    "title": "Styles",
                                     "path": "pdf-export-styles",
                                     "isEnterprise": true
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Content",
-                                    "path": "pdf-export-content",
+                                    "title": "Extra Content",
+                                    "path": "pdf-export-extra-content",
                                     "isEnterprise": true
                                 },
                                 {
                                     "type": "item",
-                                    "title": "API Reference",
-                                    "path": "pdf-export-api",
+                                    "title": "Rows",
+                                    "path": "pdf-export-rows",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Columns",
+                                    "path": "pdf-export-columns",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Hyperlinks",
+                                    "path": "pdf-export-hyperlinks",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Master Detail",
+                                    "path": "pdf-export-master-detail",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Page Setup",
+                                    "path": "pdf-export-page-setup",
                                     "isEnterprise": true
                                 }
                             ]

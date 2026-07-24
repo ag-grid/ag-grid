@@ -1,0 +1,47 @@
+---
+title: "PDF Export - Master Detail"
+enterprise: true
+---
+
+By default, exporting a Master Detail grid includes the master rows but not their detail grids. Use `getCustomContentBelowRow` to return a PDF representation of the detail data that should be inserted below each master row.
+
+## Exporting Master And Detail Rows
+
+`getCustomContentBelowRow` receives the master row node and returns `PdfCell[][]`. Build these rows from the detail data stored on the master record:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    defaultPdfExportParams: {
+        getCustomContentBelowRow: (params) => {
+            const records = params.node.data.callRecords;
+
+            return [
+                [
+                    { data: { value: 'Call ID' } },
+                    { data: { value: 'Direction' } },
+                    { data: { value: 'Number' } },
+                    { data: { value: 'Duration / Switch Code' } },
+                ],
+                ...records.map((record) => [
+                    { data: { value: String(record.callId) } },
+                    { data: { value: record.direction } },
+                    { data: { value: record.number } },
+                    { data: { value: `${record.duration}s / ${record.switchCode}` } },
+                ]),
+            ];
+        },
+    },
+};
+```
+
+This approach does not create or export a separate detail-grid instance. It works whether the detail row is expanded or collapsed and avoids creating every detail grid during export.
+
+Detail-grid behaviour is not applied automatically. If `detailGridOptions` contains Value Getters, Value Formatters, sorting or filtering that should be represented in the PDF, apply the equivalent logic while building the custom rows.
+
+{% note %}
+Custom content uses the master table's exported column layout. Build a compact detail representation that fits the number and widths of the exported master columns.
+{% /note %}
+
+The example below exports a heading, column headers and all call records below each master account row. The duration formatting used by the detail grid is reproduced when the PDF content is created.
+
+{% gridExampleRunner title="PDF Export - Master Detail" name="pdf-export-master-detail" exampleHeight=550 /%}

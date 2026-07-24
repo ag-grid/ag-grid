@@ -1,6 +1,6 @@
 import type { MenuItemDef } from 'ag-grid-community';
 
-import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuItemMapper';
+import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuSeparators';
 
 describe('_normaliseSeparators', () => {
     it('removes leading, trailing and repeated separators', () => {

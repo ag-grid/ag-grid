@@ -6,7 +6,7 @@ import type { AgGridCommon } from './iCommon';
 import type { FocusableContainerName } from './iFocusableContainer';
 import type { HeaderPosition } from './iHeaderPosition';
 import type { IRowNode, RowPinnedType } from './iRowNode';
-import type { DefaultMenuItem } from './menuItem';
+import type { DefaultColumnMenuItem, DefaultMenuItem } from './menuItem';
 import type { GetNoteParams } from './notes';
 import type { ServerSideTransaction } from './serverSideTransaction';
 
@@ -30,6 +30,26 @@ export interface GetMainMenuItemsParams<TData = any, TContext = any> extends AgG
     columnGroup: ProvidedColumnGroup | null;
     /** List of the items that would be displayed by default */
     defaultItems: DefaultMenuItem[];
+}
+
+/** The surface a column menu is being shown on. */
+export type ColumnMenuItemsSource = 'columnMenu' | 'columnsToolPanel' | 'columnChooser';
+
+export interface GetColumnMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The column the menu is for. Will be `null` for a column group or empty header space. */
+    column: Column | null;
+    /** The column group the menu is for. Will be `null` for a single column or empty header space. */
+    columnGroup: ProvidedColumnGroup | null;
+    /**
+     * The items shown by default, as string tokens. These differ per surface: the column menu
+     * (`source: 'columnMenu'`) leads with `DefaultMenuItem` tokens, while the Columns Tool Panel and
+     * Column Chooser (`source: 'columnsToolPanel'` or `'columnChooser'`) lead with `DefaultToolPanelItem`
+     * tokens. Any `DefaultColumnMenuItem` token can be returned whatever the `source`, and is shown only
+     * where it applies to the column and grid state.
+     */
+    defaultItems: DefaultColumnMenuItem[];
+    /** The surface the menu is being shown on. */
+    source: ColumnMenuItemsSource;
 }
 
 export interface GetChartMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

@@ -5,6 +5,7 @@ import type { MockInstance } from 'vitest';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    NumberEditorModule,
     PaginationModule,
     PinnedRowModule,
     TextEditorModule,
@@ -30,7 +31,14 @@ describe('Cell Selection', () => {
     let consoleWarnSpy: MockInstance;
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CellSelectionModule, PaginationModule, PinnedRowModule, TextEditorModule],
+        modules: [
+            ClientSideRowModelModule,
+            CellSelectionModule,
+            NumberEditorModule,
+            PaginationModule,
+            PinnedRowModule,
+            TextEditorModule,
+        ],
     });
 
     async function createGrid(go: GridOptions): Promise<[GridApi, GridActions]> {
@@ -266,6 +274,7 @@ describe('Cell Selection', () => {
                 },
                 pagination: true,
                 paginationPageSize: 5,
+                paginationPageSizeSelector: false,
             });
             await new GridColumns(api, `clicking a column header only selects cells on the current page setup`)
                 .checkColumns(`

@@ -1,8 +1,8 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
  * Regression coverage for edge cases surfaced while reviewing the column-model rewrite (AG-17366).
@@ -56,6 +56,7 @@ describe('column-model rewrite edge cases', () => {
     // colId — reuse is scoped to the same build kind (primary vs pivot result), not just colKind 'user'.
     test('pivot build does not reuse a user column that shares a generated pivot colId', async () => {
         // The colliding colId is expected to raise warning #273 (colId suffixed) — capture and assert it.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = pivotGridsManager.createGrid('g', {
             columnDefs: [

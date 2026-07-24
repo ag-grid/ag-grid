@@ -1,6 +1,6 @@
 import { RefPlaceholder } from 'ag-stack';
 
-import type { ColDef, ColGroupDef, ColumnEventType, ElementParams } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, ColumnEventType, ColumnMenuItemsSource, ElementParams } from 'ag-grid-community';
 import { Component, PositionableFeature } from 'ag-grid-community';
 
 import agPrimaryColsCSS from './agPrimaryCols.css';
@@ -30,7 +30,12 @@ export class AgPrimaryCols extends Component {
     }
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
-    public init(allowDragging: boolean, params: ToolPanelColumnCompParams, eventType: ColumnEventType): void {
+    public init(
+        allowDragging: boolean,
+        params: ToolPanelColumnCompParams,
+        eventType: ColumnEventType,
+        source: ColumnMenuItemsSource
+    ): void {
         const { primaryColsHeaderPanel, primaryColsListPanel } = this;
 
         primaryColsHeaderPanel.init(params);
@@ -51,7 +56,7 @@ export class AgPrimaryCols extends Component {
             selectionChanged: (event) => primaryColsHeaderPanel.setSelectionState(event.state),
         });
 
-        primaryColsListPanel.init(params, allowDragging, eventType);
+        primaryColsListPanel.init(params, allowDragging, eventType, source);
 
         this.addManagedListeners(primaryColsHeaderPanel, {
             expandAll: primaryColsListPanel.doSetExpandedAll.bind(primaryColsListPanel, true),

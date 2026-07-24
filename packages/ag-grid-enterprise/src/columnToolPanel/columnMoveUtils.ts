@@ -2,6 +2,7 @@ import type {
     AgColumn,
     AgProvidedColumnGroup,
     BeanCollection,
+    ColumnEventType,
     ColumnPanelItemDragStartEvent,
     GridOptionsService,
 } from 'ag-grid-community';
@@ -75,7 +76,8 @@ export const moveItem = (
     beans: BeanCollection,
     currentColumns: AgColumn[],
     lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null,
-    params: ColumnStateUpdateParams
+    params: ColumnStateUpdateParams,
+    eventType: ColumnEventType
 ): void => {
     if (!lastHoveredListItem) {
         return;
@@ -105,7 +107,7 @@ export const moveItem = (
     const targetIndex: number | null = getMoveTargetIndex(currentColumns, lastHoveredColumn, isBefore, allColumns);
 
     if (targetIndex != null) {
-        beans.columnStateUpdateStrategy.moveColumns(deferMode, currentColumns, targetIndex, 'toolPanelUi');
+        beans.columnStateUpdateStrategy.moveColumns(deferMode, currentColumns, targetIndex, eventType);
         refreshDeferredToolPanelUi(beans, params);
     }
 };

@@ -1,0 +1,15 @@
+<div class="example-wrapper">
+    <div class="controls">
+        <button onclick="onBtExport()">Export to PDF</button>
+        <label for="columnSet">Columns</label>
+        <select id="columnSet">
+            <option value="visible">Visible</option>
+            <option value="all">All, including hidden</option>
+            <option value="specific">Customer, Product and Total</option>
+        </select>
+        <label><input id="skipColumnGroupHeaders" type="checkbox" /> Skip group headers</label>
+        <label><input id="skipColumnHeaders" type="checkbox" /> Skip headers</label>
+        <label><input id="exportRowNumbers" type="checkbox" /> Export row numbers</label>
+    </div>
+    <div id="myGrid"></div>
+</div>

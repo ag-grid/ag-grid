@@ -2,7 +2,7 @@ import type { MockInstance } from 'vitest';
 import { beforeEach } from 'vitest';
 
 import type { GridOptions, Params } from 'ag-grid-community';
-import { ClientSideRowModelModule, createGrid } from 'ag-grid-community';
+import { ClientSideRowModelModule, createGrid, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 describe('Mismatched rowModelType error', () => {
@@ -18,6 +18,8 @@ describe('Mismatched rowModelType error', () => {
     }
 
     beforeEach(() => {
+        // This file asserts on validation diagnostics; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: [] });
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 

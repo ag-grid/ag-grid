@@ -1,0 +1,96 @@
+/* Bryntum Scheduler "Try it yourself!" demo styles.
+   Ported verbatim from the upstream drag-from-grid(-custom) example's app.css:
+   https://bryntum.com/products/scheduler/examples/drag-from-grid-custom/resources/app.css
+
+   The only change from upstream is the container selector: the example mounts
+   its widgets in `#main`, whereas our UMD port (public/scripts/bryntum-scheduler-demo.js)
+   mounts them in `#live-scheduler-demo`. Without the flex rule below the
+   scheduler, splitter and unplanned grid stack vertically instead of laying out
+   side-by-side.
+
+   Loaded only on the scheduler campaign page (see BryntumCampaign.astro) so the
+   generic `.b-sch-event-wrap` / `.b-event-header` rules don't leak onto other
+   product demos (e.g. scheduler-pro) that also render those Bryntum classes. */
+
+.b-sch-event-wrap {
+    --b-sch-event-box-shadow: var(--b-elevation-1);
+
+    .b-sch-event-content {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: space-evenly;
+    }
+}
+
+.b-event-header {
+    display: flex;
+    font-weight: 600;
+
+    span {
+        flex: 1;
+    }
+}
+
+.b-event-footer {
+    display: flex;
+    font-weight: 400;
+    font-size: 0.8em;
+    opacity: 0.7;
+
+    .b-meta {
+        flex: 1;
+    }
+}
+
+#live-scheduler-demo {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 100%;
+}
+
+.b-grid.b-unplanned-grid {
+    --b-grid-cell-background: transparent;
+    --b-grid-cell-hover-background: transparent;
+    --b-grid-cell-selected-background: transparent;
+    --b-grid-cell-hover-selected-background: transparent;
+    --b-grid-cell-padding-inline: 0.5em;
+
+    .b-sch-event-wrap {
+        display: flex;
+        position: static;
+        flex: 1;
+        grid-template-rows: min-content auto min-content;
+
+        .b-sch-event {
+            height: 4em;
+        }
+
+        &:hover {
+            background: var(--b-grid-cell-hover-background);
+        }
+    }
+}
+
+.b-unplanned-grid .b-panel-ui-toolbar.b-dock-top,
+.b-scheduler > .b-panel-body-wrap > .b-toolbar {
+    min-height: 4.3em;
+}
+
+.b-unassigned-class.b-drag-proxy {
+    &.b-drag-invalid {
+        --b-primary: var(--b-color-red);
+        opacity: 0.5;
+    }
+
+    &.b-horizontal {
+        align-items: center;
+        padding-inline-start: 0.5em;
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+    }
+}
+
+.b-sch-tooltip-start-date,
+.b-sch-tooltip-end-date {
+    margin-top: 0.2em;
+}

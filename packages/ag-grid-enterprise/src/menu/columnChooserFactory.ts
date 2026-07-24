@@ -54,7 +54,8 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
                 suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
                 onStateUpdated: () => {},
             }),
-            'columnMenu'
+            'columnMenu',
+            'columnChooser'
         );
 
         if (columnLayout) {

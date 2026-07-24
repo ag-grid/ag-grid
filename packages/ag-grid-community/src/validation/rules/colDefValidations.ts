@@ -98,6 +98,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     headerTooltip: 'Tooltip',
     headerTooltipValueGetter: 'Tooltip',
     mainMenuItems: 'ColumnMenu',
+    columnMenuItems: ['ColumnMenu', 'ColumnsToolPanel'],
     menuTabs: (options: ColDef) => {
         const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
         if (options.menuTabs?.some((tab) => enterpriseMenuTabs.includes(tab))) {
@@ -329,14 +330,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             },
             validate: (
                 _options,
-                {
-                    rowSelection,
-                    cellSelection,
-                    suppressRowTransform,
-                    enableCellSpan,
-                    rowDragEntireRow,
-                    enableCellTextSelection,
-                }
+                { rowSelection, cellSelection, enableCellSpan, rowDragEntireRow, enableCellTextSelection }
             ) => {
                 if (typeof rowSelection === 'object') {
                     if (rowSelection?.mode === 'singleRow' && rowSelection?.enableClickSelection) {
@@ -350,12 +344,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     return _createValidationWarning(318, {
                         feature: '`colDef.spanRows`',
                         conflictsWith: '`cellSelection`',
-                    });
-                }
-                if (suppressRowTransform) {
-                    return _createValidationWarning(318, {
-                        feature: '`colDef.spanRows`',
-                        conflictsWith: '`suppressRowTransform`',
                     });
                 }
                 if (!enableCellSpan) {
@@ -569,6 +557,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     useValueFormatterForExport: undefined,
     useValueParserForImport: undefined,
     mainMenuItems: undefined,
+    columnMenuItems: undefined,
     contextMenuItems: undefined,
     suppressFloatingFilterButton: undefined,
     suppressHeaderFilterButton: undefined,

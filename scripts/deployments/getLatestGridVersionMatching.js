@@ -25,7 +25,7 @@ if (process.argv.length < 3) {
 const [exec, scriptPath, chartsVersion] = process.argv;
 
 const information = JSON.parse(
-    execSync(`npm view ag-grid-community --registry http://52.50.158.57:4873 --json`, {
+    execSync(`npm view ag-grid-community --registry https://registry.ag-grid.com/ --json`, {
         stdio: 'pipe',
         encoding: 'utf-8',
     })

@@ -21,7 +21,7 @@ function onValidationModuleRegister(): void {
 type ValidationModuleType = {
     /**
      * Configures development-time diagnostics, then returns the module to register, e.g.
-     * `ModuleRegistry.registerModules([ValidationModule.with({ throwOn: 'error' })])`. Configuration
+     * `ModuleRegistry.registerModules([ValidationModule.with({ throwOn: ['error'] })])`. Configuration
      * is global (see {@link DevValidationOptions}) — passing different options per grid does not scope
      * them per grid; the last call wins for all grids.
      */
@@ -78,7 +78,7 @@ export const ValidationModule: ValidationModuleType = {
  * grid) replaces the previous options for all grids, with the last call winning. Not intended for
  * production builds.
  *
- * Pass {@link DevValidationOptions} to configure development-time diagnostics, e.g. `{ throwOn: 'error' }`.
+ * Pass {@link DevValidationOptions} to configure development-time diagnostics, e.g. `{ throwOn: ['error'] }`.
  */
 export function enableDevValidations(options?: DevValidationOptions): void {
     _registerModule(ValidationModule.with(options), undefined);

@@ -27,18 +27,12 @@ export function setValidationDocLink(docLink: string) {
 
 export type Severity = 'error' | 'warning' | 'deprecation';
 
-export type SeverityThreshold = Severity | 'none';
-
-// Inclusive severity ordering: a threshold fires on that level and every more-severe one.
-const SEVERITY_ORDER: Record<Severity, number> = { deprecation: 1, warning: 2, error: 3 };
-
 /**
- * Whether `severity` meets an inclusive `threshold`: true when it is at least as severe. A `'none'`
- * threshold matches nothing. Shared by the throw-on check and the overlay's severity filter so both
- * honour the same graded model.
+ * Whether `severity` is one of the `enabled` severities to act on. An empty list matches nothing.
+ * Shared by the throw-on check and the overlay's severity filter so both honour the same set model.
  */
-export function _meetsSeverityThreshold(severity: Severity, threshold: SeverityThreshold): boolean {
-    return threshold !== 'none' && SEVERITY_ORDER[severity] >= SEVERITY_ORDER[threshold];
+export function _isSeverityEnabled(severity: Severity, enabled: readonly Severity[]): boolean {
+    return enabled.includes(severity);
 }
 
 /**
@@ -103,26 +97,26 @@ const MAX_BUFFERED_DIAGNOSTICS = 100;
 // Both default off so that without the ValidationModule (i.e. production) each log call is two boolean
 // checks and no allocation. The ValidationModule turns them on at registration, before any grid exists.
 let captureEnabled = false;
-let throwThreshold: SeverityThreshold = 'none';
+let throwSeverities: readonly Severity[] = [];
 // Error ids the developer has chosen to ignore: kept out of the overlay and never thrown in throw mode.
 // The console log still fires — suppression only affects the dev-diagnostics surfaces, not the base logger.
 let suppressedIds = new Set<ErrorId>();
 
 /**
- * Called by the ValidationModule to enable diagnostic capture and set the throw threshold and/or the
- * suppressed ids. Core never imports the ValidationModule, so its config is pushed in through this setter
- * (the same idiom as `provideValidationServiceLogger`) to keep the dependency direction one-way.
+ * Called by the ValidationModule to enable diagnostic capture and set the severities to throw on and/or
+ * the suppressed ids. Core never imports the ValidationModule, so its config is pushed in through this
+ * setter (the same idiom as `provideValidationServiceLogger`) to keep the dependency direction one-way.
  */
 export function _configureDiagnostics(config: {
     capture?: boolean;
-    throwOn?: SeverityThreshold;
+    throwOn?: readonly Severity[];
     suppress?: ErrorId[];
 }): void {
     if (config.capture !== undefined) {
         captureEnabled = config.capture;
     }
     if (config.throwOn !== undefined) {
-        throwThreshold = config.throwOn;
+        throwSeverities = config.throwOn;
     }
     if (config.suppress !== undefined) {
         suppressedIds = new Set(config.suppress);
@@ -211,7 +205,7 @@ function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMes
             }
         }
     }
-    if (_meetsSeverityThreshold(severity, throwThreshold)) {
+    if (_isSeverityEnabled(severity, throwSeverities)) {
         throw new Error(`${severity} #${id} ` + getErrorParts(id, params, defaultMessage).join(' '));
     }
 }

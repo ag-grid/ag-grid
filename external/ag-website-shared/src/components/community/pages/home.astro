@@ -1,5 +1,6 @@
 ---
 import CommunityLayout from '@ag-website-shared/components/community/layout/CommunityLayout.astro';
+import { COMMUNITY_SHOWCASE_LIMIT, COMMUNITY_TOOLS_LIMIT } from '@ag-website-shared/components/community/constants';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from './home.module.scss';
 import Videos from '@ag-website-shared/components/community/components/news-updates/Videos';
@@ -49,7 +50,7 @@ const { currentSite } = Astro.props;
                 <Icon name="arrowRight" />
             </a>
         </div>
-        <Showcase favouritesOnly={true} maxItems={8} showcase={showcase} client:load />
+        <Showcase favouritesOnly={true} maxItems={COMMUNITY_SHOWCASE_LIMIT} showcase={showcase} client:load />
     </section>
     <!-- Tools & Extensons -->
     <section>
@@ -62,7 +63,7 @@ const { currentSite } = Astro.props;
                 <Icon name="arrowRight" />
             </a>
         </div>
-        <ToolsExtensions limit={3} client:idle />
+        <ToolsExtensions limit={COMMUNITY_TOOLS_LIMIT} client:idle />
     </section>
     <!-- Media -->
     <section>

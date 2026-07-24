@@ -1,7 +1,7 @@
-import { getGridElement } from 'ag-grid-community';
+import { enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('new filters tool panel requires enableFilterHandlers', () => {
     const gridsManager = new TestGridsManager({
@@ -20,6 +20,8 @@ describe('new filters tool panel requires enableFilterHandlers', () => {
     });
 
     test('warns #282 and renders an empty panel when enableFilterHandlers is not set', async () => {
+        // This test deliberately omits enableFilterHandlers for the new filters tool panel, which warns #282.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [282] });
         const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 

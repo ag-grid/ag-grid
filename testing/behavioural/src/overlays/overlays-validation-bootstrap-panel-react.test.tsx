@@ -1,13 +1,18 @@
 import { cleanup, render } from '@testing-library/react';
 import React from 'react';
 
-import { ValidationModule } from 'ag-grid-community';
+import { ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 // React creates the grid via GridCoreCreator.create directly, passing its own React-rendered container
 // as the grid root (unlike Angular/Vue, which go through the top-level createGrid). This verifies the
 // bootstrap panel still renders into that container when creation aborts (serverSide module not loaded).
 describe('dev validation bootstrap panel (React)', () => {
+    beforeEach(() => {
+        // This file asserts on validation diagnostics / the dev overlay; the global throw-on-validation must be off here.
+        enableDevValidations({ throwOn: [] });
+    });
+
     afterEach(() => {
         vitest.restoreAllMocks();
         cleanup();

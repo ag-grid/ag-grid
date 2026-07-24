@@ -5,6 +5,7 @@ import type {
     AgProvidedColumnGroup,
     ColumnEventType,
     ColumnHeaderNameChangedEvent,
+    ColumnMenuItemsSource,
     DragItem,
     ElementParams,
     GridCheckbox,
@@ -72,7 +73,8 @@ export class ToolPanelColumnGroupComp extends Component {
         private readonly allowDragging: boolean,
         private readonly eventType: ColumnEventType,
         private readonly focusWrapper: HTMLElement,
-        private readonly params: ColumnStateUpdateParams
+        private readonly params: ColumnStateUpdateParams,
+        private readonly source: ColumnMenuItemsSource
     ) {
         super();
         const { columnGroup, depth, displayName } = modelItem;
@@ -181,13 +183,9 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent | Touch): void {
-        const { columnGroup, gos } = this;
-
-        if (gos.get('functionsReadOnly')) {
-            return;
-        }
-
-        const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper, this.params));
+        const contextMenu = this.createBean(
+            new ToolPanelContextMenu(this.columnGroup, e, this.focusWrapper, this.params, this.eventType, this.source)
+        );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);

@@ -10,7 +10,7 @@ const errorDiagnostic: CapturedDiagnostic = {
 
 describe('renderBootstrapPanel', () => {
     test('renders a panel with the diagnostic, an error link and a Copy control', () => {
-        _applyDevValidationConfig({ overlay: 'deprecation' });
+        _applyDevValidationConfig({ showOverlayOn: ['deprecation', 'warning', 'error'] });
         const container = document.createElement('div');
 
         renderBootstrapPanel(container, [errorDiagnostic]);
@@ -23,7 +23,7 @@ describe('renderBootstrapPanel', () => {
     });
 
     test('renders nothing when the overlay is disabled', () => {
-        _applyDevValidationConfig({ overlay: 'none' });
+        _applyDevValidationConfig({ showOverlayOn: [] });
         const container = document.createElement('div');
 
         renderBootstrapPanel(container, [errorDiagnostic]);
@@ -31,8 +31,8 @@ describe('renderBootstrapPanel', () => {
         expect(container.childElementCount).toBe(0);
     });
 
-    test("renders only errors when the overlay mode is 'error'", () => {
-        _applyDevValidationConfig({ overlay: 'error' });
+    test("renders only errors when showOverlayOn is ['error']", () => {
+        _applyDevValidationConfig({ showOverlayOn: ['error'] });
         const container = document.createElement('div');
         const warning: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning' };
 
@@ -41,8 +41,8 @@ describe('renderBootstrapPanel', () => {
         expect(container.querySelectorAll('.ag-overlay-error-item')).toHaveLength(1);
     });
 
-    test("renders errors and warnings but not deprecations when the overlay mode is 'warning'", () => {
-        _applyDevValidationConfig({ overlay: 'warning' });
+    test("renders errors and warnings but not deprecations when showOverlayOn is ['warning', 'error']", () => {
+        _applyDevValidationConfig({ showOverlayOn: ['warning', 'error'] });
         const container = document.createElement('div');
         const warning: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning' };
         const deprecation: CapturedDiagnostic = { id: 23, params: { key: 'rowData' }, severity: 'deprecation' };
@@ -53,7 +53,7 @@ describe('renderBootstrapPanel', () => {
     });
 
     test('groups diagnostics into titled sections divided by an <hr>', () => {
-        _applyDevValidationConfig({ overlay: 'warning' });
+        _applyDevValidationConfig({ showOverlayOn: ['warning', 'error'] });
         const container = document.createElement('div');
         const warning: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning' };
 
@@ -67,7 +67,7 @@ describe('renderBootstrapPanel', () => {
     });
 
     test('shows no divider within a single-severity section', () => {
-        _applyDevValidationConfig({ overlay: 'deprecation' });
+        _applyDevValidationConfig({ showOverlayOn: ['deprecation', 'warning', 'error'] });
         const container = document.createElement('div');
         const secondError: CapturedDiagnostic = {
             id: 200,
@@ -82,7 +82,7 @@ describe('renderBootstrapPanel', () => {
     });
 
     test('renders a single panel when called repeatedly on the same container', () => {
-        _applyDevValidationConfig({ overlay: 'deprecation' });
+        _applyDevValidationConfig({ showOverlayOn: ['deprecation', 'warning', 'error'] });
         const container = document.createElement('div');
 
         // A re-created grid (e.g. React StrictMode) renders into the same container more than once.
@@ -93,19 +93,19 @@ describe('renderBootstrapPanel', () => {
     });
 
     test('removes a stale panel when the overlay is disabled before a re-render', () => {
-        _applyDevValidationConfig({ overlay: 'deprecation' });
+        _applyDevValidationConfig({ showOverlayOn: ['deprecation', 'warning', 'error'] });
         const container = document.createElement('div');
         renderBootstrapPanel(container, [errorDiagnostic]);
 
         // Overlay config is global and last-write-wins, so it can be turned off between grid re-creations.
-        _applyDevValidationConfig({ overlay: 'none' });
+        _applyDevValidationConfig({ showOverlayOn: [] });
         renderBootstrapPanel(container, [errorDiagnostic]);
 
         expect(container.childElementCount).toBe(0);
     });
 
     test('dedupes identical diagnostics within a single render', () => {
-        _applyDevValidationConfig({ overlay: 'deprecation' });
+        _applyDevValidationConfig({ showOverlayOn: ['deprecation', 'warning', 'error'] });
         const container = document.createElement('div');
 
         renderBootstrapPanel(container, [errorDiagnostic, errorDiagnostic]);

@@ -6,6 +6,8 @@ import {
     ClientSideRowModelModule,
     KeyCode,
     ROW_NUMBERS_COLUMN_ID,
+    ScrollApiModule,
+    TooltipModule,
     agTestIdFor,
     getGridElement,
     setupAgTestIds,
@@ -555,7 +557,7 @@ describe('Row Numbers Keyboard Navigation', () => {
     let consoleWarnSpy: MockInstance;
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CellSelectionModule, RowNumbersModule],
+        modules: [ClientSideRowModelModule, CellSelectionModule, RowNumbersModule, ScrollApiModule, TooltipModule],
     });
 
     async function createGrid(go: GridOptions): Promise<GridApi> {
