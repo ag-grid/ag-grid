@@ -39,6 +39,7 @@ import {
     asyncSetTimeout,
     nextAnimationFrame,
     waitForEvent,
+    waitForMissingModuleReports,
 } from '../test-utils';
 
 describe('ag-grid calculated columns', () => {
@@ -3698,7 +3699,7 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
-    test('validates CalculatedColumnsModule registration', () => {
+    test('validates CalculatedColumnsModule registration', async () => {
         // Suppress the diagnostics this deliberate misconfig raises (#200 module missing, #319 no
         // calculatedColumns option); any other diagnostic still throws.
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200, 319] });
@@ -3719,10 +3720,17 @@ describe('ag-grid calculated columns', () => {
                     { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
                 ],
             });
+            await waitForMissingModuleReports();
 
             expect(consoleErrorSpy).toHaveBeenCalledWith(
                 expect.stringContaining('error #200'),
                 expect.stringContaining('CalculatedColumnsModule'),
+                expect.any(String)
+            );
+            // A colDef-level option is qualified with `colDef.` so it is clear where the option lives.
+            expect(consoleErrorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('error #200'),
+                expect.stringContaining('`colDef.calculatedExpression`'),
                 expect.any(String)
             );
 
@@ -3733,10 +3741,17 @@ describe('ag-grid calculated columns', () => {
                 rowData: [{ revenue: 10 }],
                 columnDefs: [{ field: 'revenue' }],
             });
+            await waitForMissingModuleReports();
 
             expect(consoleErrorSpy).toHaveBeenCalledWith(
                 expect.stringContaining('error #200'),
                 expect.stringContaining('CalculatedColumnsModule'),
+                expect.any(String)
+            );
+            // A grid-level option stays unqualified (no `colDef.` prefix).
+            expect(consoleErrorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('error #200'),
+                expect.stringContaining('`calculatedColumns`'),
                 expect.any(String)
             );
 
@@ -3746,6 +3761,7 @@ describe('ag-grid calculated columns', () => {
                 rowData: [{ revenue: 10 }],
                 columnDefs: [{ field: 'revenue' }],
             });
+            await waitForMissingModuleReports();
             expect(consoleErrorSpy.mock.calls).toHaveLength(callsBeforeDisabledOption);
         } finally {
             validationGridsManager.reset();
@@ -3854,6 +3870,7 @@ describe('ag-grid calculated columns', () => {
             expect(profitColumn.isCellEditable(rowNode)).toBe(true);
             expect(profitColumn.isSuppressPaste(rowNode)).toBe(false);
 
+            await waitForMissingModuleReports();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
                 expect.stringContaining('error #200'),
                 expect.stringContaining('CalculatedColumnsModule'),

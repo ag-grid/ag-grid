@@ -1,8 +1,10 @@
 import { BASE_URL } from '../baseUrl';
+import type { ValidationModuleName } from '../interfaces/iModule';
+import type { RowModelType } from '../interfaces/iRowModel';
 import { _isUmd } from '../modules/moduleRegistry';
 import { _errorOnce, _warnOnce } from '../utils/log';
 import { VERSION } from '../version';
-import type { ErrorId, ErrorMap, GetErrorParams } from './errorMessages/errorText';
+import type { ErrorId, ErrorMap, GetErrorParams, MissingModuleErrors } from './errorMessages/errorText';
 
 const MAX_URL_LENGTH = 2000;
 const MIN_PARAM_LENGTH = 100;
@@ -187,27 +189,160 @@ export function _renderBootstrapPanel(container: HTMLElement): void {
     bootstrapPanelRenderer(container, untied);
 }
 
-function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string, gridId?: string): void {
-    // Suppressed ids are omitted from the overlay and never throw; the console log has already fired.
-    if (suppressedIds.has(id)) {
+// Buffers the diagnostic for the overlay and notifies matching listeners. Does not throw — the throw
+// decision is separate (see shouldThrow/throwDiagnostic) so the debounced missing-module flush can capture
+// without it. Suppressed ids never reach the overlay; the console log is unaffected by suppression.
+function captureDiagnostic(
+    id: ErrorId,
+    params: any,
+    severity: Severity,
+    defaultMessage?: string,
+    gridId?: string
+): void {
+    if (!captureEnabled || suppressedIds.has(id)) {
         return;
     }
-    if (captureEnabled) {
-        // gridId is supplied by the grid-scoped LogService; a diagnostic emitted through a free function
-        // (pre-init, or a grid-less util) is undefined here and delivered to every listener.
-        const diagnostic: CapturedDiagnostic = { id, params, severity, gridId, defaultMessage };
-        if (bufferedDiagnostics.length < MAX_BUFFERED_DIAGNOSTICS) {
-            bufferedDiagnostics.push(diagnostic);
-        }
-        for (const entry of diagnosticListeners) {
-            if (shouldNotify(gridId, entry.gridId)) {
-                entry.listener(diagnostic);
-            }
+    // gridId is supplied by the grid-scoped LogService; a diagnostic emitted through a free function
+    // (pre-init, or a grid-less util) is undefined here and delivered to every listener.
+    const diagnostic: CapturedDiagnostic = { id, params, severity, gridId, defaultMessage };
+    if (bufferedDiagnostics.length < MAX_BUFFERED_DIAGNOSTICS) {
+        bufferedDiagnostics.push(diagnostic);
+    }
+    for (const entry of diagnosticListeners) {
+        if (shouldNotify(gridId, entry.gridId)) {
+            entry.listener(diagnostic);
         }
     }
-    if (_isSeverityEnabled(severity, throwSeverities)) {
-        throw new Error(`${severity} #${id} ` + getErrorParts(id, params, defaultMessage).join(' '));
+}
+
+// A suppressed id never throws; otherwise throw once the severity is one of the configured throw-on set.
+function shouldThrow(id: ErrorId, severity: Severity): boolean {
+    return !suppressedIds.has(id) && _isSeverityEnabled(severity, throwSeverities);
+}
+
+function throwDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string): never {
+    throw new Error(`${severity} #${id} ` + getErrorParts(id, params, defaultMessage).join(' '));
+}
+
+function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string, gridId?: string): void {
+    captureDiagnostic(id, params, severity, defaultMessage, gridId);
+    if (shouldThrow(id, severity)) {
+        throwDiagnostic(id, params, severity, defaultMessage);
     }
+}
+
+const MISSING_MODULE_ERROR_ID = 200;
+// Debounce missing-module errors into a single combined console error and overlay entry.
+const MISSING_MODULE_DEBOUNCE_MS = 50;
+
+/**
+ * The context a single missing-module report carries, matching the id-200 message params.
+ * @knipIgnore Param type of the exported `_reportMissingModule`; also used in tests.
+ */
+export interface MissingModuleReportParams {
+    reasonOrId: string | keyof MissingModuleErrors;
+    moduleName: ValidationModuleName | ValidationModuleName[];
+    gridScoped: boolean;
+    gridId: string;
+    rowModelType: RowModelType;
+    additionalText?: string;
+    isUmd?: boolean;
+    usesAgGridProvider?: boolean;
+}
+
+const pendingMissingModules: MissingModuleReportParams[] = [];
+// Dedup so the same module+reason never reports twice for a given grid. Keyed by gridId so different grids
+// stay separate — at the cost of a duplicate on a React StrictMode remount, which mounts with a fresh
+// gridId. Never cleared: matches the once-per-page intent of the base logger.
+const reportedMissingModuleKeys = new Set<string>();
+let missingModuleFlushHandle: ReturnType<typeof setTimeout> | undefined;
+
+function missingModuleKey(params: MissingModuleReportParams): string {
+    // Key off the raw report, not the resolved module list — resolving would pull the resolvableModuleNames
+    // tables into the base bundle, and the same moduleName + rowModelType always resolves identically anyway.
+    const names = Array.isArray(params.moduleName) ? [...params.moduleName].sort() : [params.moduleName];
+    return `${params.gridId}::${names.join('|')}::${params.rowModelType}::${String(params.reasonOrId)}`;
+}
+
+function combineMissingModuleParams(reports: MissingModuleReportParams[]): GetErrorParams<200> {
+    // Encode each report to a JSON string so the array survives the error-page URL (a flat string[]
+    // round-trips; an array of objects is stripped). The shared context comes from the first report; its
+    // top-level reasonOrId/moduleName are unused once `reports` is present but satisfy the id-200 params.
+    const encodedReports = reports.map(({ reasonOrId, moduleName, additionalText }) =>
+        JSON.stringify({ reasonOrId, moduleName, additionalText })
+    );
+    return { ...reports[0], reports: encodedReports };
+}
+
+/**
+ * Accumulates a missing-module report to be flushed as a single combined error after a short debounce,
+ * deduped per grid by module+reason. The console output is always batched (even in production without the
+ * ValidationModule); the overlay capture is added when capture is enabled and the id is not suppressed.
+ * Throw-on-severity stays synchronous and per-module so throw mode keeps its call stack and fails fast.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _reportMissingModule(params: MissingModuleReportParams): void {
+    const key = missingModuleKey(params);
+    if (reportedMissingModuleKeys.has(key)) {
+        return;
+    }
+    reportedMissingModuleKeys.add(key);
+
+    // Throw synchronously, in the reporting call stack, rather than deferring it to the debounce timer.
+    if (shouldThrow(MISSING_MODULE_ERROR_ID, 'error')) {
+        throwDiagnostic(MISSING_MODULE_ERROR_ID, params, 'error');
+    }
+
+    pendingMissingModules.push(params);
+    if (missingModuleFlushHandle === undefined) {
+        missingModuleFlushHandle = setTimeout(flushMissingModules, MISSING_MODULE_DEBOUNCE_MS);
+    }
+}
+
+/** Flushes the pending missing-module reports as one combined error per grid. Run by the debounce timer. */
+function flushMissingModules(): void {
+    if (missingModuleFlushHandle !== undefined) {
+        clearTimeout(missingModuleFlushHandle);
+        missingModuleFlushHandle = undefined;
+    }
+    if (pendingMissingModules.length === 0) {
+        return;
+    }
+    const reports = pendingMissingModules.splice(0, pendingMissingModules.length);
+
+    // Group by grid so each grid's combined message keeps its own context/attribution — usually a single
+    // group, but two grids missing different modules in the same window then render as separate errors.
+    const reportsByGrid = new Map<string, MissingModuleReportParams[]>();
+    for (let i = 0, len = reports.length; i < len; ++i) {
+        const report = reports[i];
+        const existing = reportsByGrid.get(report.gridId);
+        if (existing) {
+            existing.push(report);
+        } else {
+            reportsByGrid.set(report.gridId, [report]);
+        }
+    }
+
+    // Console always fires (batched); captureDiagnostic no-ops for a suppressed id or when capture is off.
+    for (const [gridId, gridReports] of reportsByGrid) {
+        const combined = combineMissingModuleParams(gridReports);
+        logToConsole(_errorOnce, MISSING_MODULE_ERROR_ID, combined, false);
+        captureDiagnostic(MISSING_MODULE_ERROR_ID, combined, 'error', undefined, gridId);
+    }
+}
+
+/**
+ * Clears the missing-module batch and its page-wide dedup so a fresh "page" starts clean. For test
+ * harnesses that reuse the module across cases (mirrors clearing the `_doOnce` dedup on reset).
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _resetMissingModuleReports(): void {
+    if (missingModuleFlushHandle !== undefined) {
+        clearTimeout(missingModuleFlushHandle);
+        missingModuleFlushHandle = undefined;
+    }
+    pendingMissingModules.length = 0;
+    reportedMissingModuleKeys.clear();
 }
 
 /**
