@@ -17,6 +17,7 @@ const gridOptions = {
         { field: 'cost' },
         {
             colId: 'profit',
+            headerName: 'Profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
             sortable: true,
@@ -161,17 +162,20 @@ const gridOptions = {
         { field: 'cost' },
         {
             colId: 'profit',
+            headerName: 'Profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         },
         {
             colId: 'margin',
+            headerName: 'Margin',
             calculatedExpression: '[profit] / [revenue]',
             cellDataType: 'number',
             valueFormatter: params => `${Math.round(params.value * 100)}%`,
         },
         {
             colId: 'status',
+            headerName: 'Status',
             calculatedExpression: 'IF([margin] >= 0.25, "Healthy", "Review")',
             cellDataType: 'text',
         },
