@@ -62,18 +62,3 @@ export function _resolveColumnMenuItems(
 
     return defaultItems;
 }
-
-/**
- * Whether a new-style `columnMenuItems` / `getColumnMenuItems` customisation is configured for the
- * given column or group. Used to decide whether to open a menu when the built-in items are suppressed
- * (e.g. under `functionsReadOnly`). Legacy `mainMenuItems` / `getMainMenuItems` are deliberately excluded
- * as they only apply to the column menu.
- */
-export function _hasColumnMenuItems(
-    gos: GridOptionsService,
-    column: AgColumn | null,
-    columnGroup: AgProvidedColumnGroup | null
-): boolean {
-    const colOrGroupDef = column?.colDef ?? columnGroup?.getColGroupDef();
-    return colOrGroupDef?.columnMenuItems != null || gos.get('getColumnMenuItems') != null;
-}

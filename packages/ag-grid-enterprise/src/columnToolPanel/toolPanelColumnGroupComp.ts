@@ -26,7 +26,6 @@ import {
     _getToolPanelClassesFromColDef,
 } from 'ag-grid-community';
 
-import { _hasColumnMenuItems } from '../menu/columnMenuItemsResolver';
 import type { ColumnModelItem } from './columnModelItem';
 import { createPivotStateForToolPanel, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
@@ -182,14 +181,8 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent | Touch): void {
-        const { columnGroup, gos } = this;
-
-        if (gos.get('functionsReadOnly') && !_hasColumnMenuItems(gos, null, columnGroup)) {
-            return;
-        }
-
         const contextMenu = this.createBean(
-            new ToolPanelContextMenu(columnGroup, e, this.focusWrapper, this.params, this.eventType, this.source)
+            new ToolPanelContextMenu(this.columnGroup, e, this.focusWrapper, this.params, this.eventType, this.source)
         );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {

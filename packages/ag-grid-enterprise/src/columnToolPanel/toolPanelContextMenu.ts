@@ -80,10 +80,19 @@ export class ToolPanelContextMenu extends Component {
             col = column;
         }
 
-        // The built-in items all mutate column state, so they are suppressed under functionsReadOnly.
-        // A user callback can still contribute items, which is why the menu may still open.
-        const suppressDefaults = gos.get('functionsReadOnly') || !this.isActive();
-        const defaultItems: DefaultToolPanelItem[] = suppressDefaults ? [] : this.getDefaultTokens();
+        // Under functionsReadOnly the state-changing defaults are dropped, but non-mutating items (scroll
+        // into view) remain, so a read-only grid can still be navigated. A user callback can additionally
+        // contribute items. An explicitly-returned state-changing token still renders disabled rather than
+        // being dropped (see resolveToolPanelToken), so read-only cannot be bypassed.
+        const functionsReadOnly = gos.get('functionsReadOnly');
+        let defaultItems: DefaultToolPanelItem[];
+        if (!this.isActive()) {
+            defaultItems = [];
+        } else if (functionsReadOnly) {
+            defaultItems = this.getDefaultTokens().filter((token) => !this.menuItemMap.get(token)?.mutatesState);
+        } else {
+            defaultItems = this.getDefaultTokens();
+        }
 
         const resolvedItems = _resolveColumnMenuItems(gos, col, columnGroup, source, defaultItems);
         const menuItemsMapped = this.mapMenuItems(resolvedItems, col);
