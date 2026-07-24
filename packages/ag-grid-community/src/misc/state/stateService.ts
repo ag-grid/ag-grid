@@ -211,35 +211,36 @@ export class StateService extends BeanStub implements NamedBean {
     ): void {
         // Recreate runtime-added columns BEFORE applying column state, so their colIds exist when
         // columnOrder / columnSizing / sort / etc. are applied on top of them.
-        this.recreateUserColumns(state, ignoreSet);
+        this.reconcileUserColumns(state, ignoreSet);
         this.applyColumnGridState(state, source, partialColumnState, ignoreSet);
         this.setColumnGroupState(state, source, ignoreSet);
 
         this.updateColumnAndGroupState();
     }
 
-    private recreateUserColumns(state: GridState, ignoreSet?: Set<GridStateKey>): void {
+    private reconcileUserColumns(state: GridState, ignoreSet?: Set<GridStateKey>): void {
         if (ignoreSet?.has('userColumns')) {
             return;
         }
-        const userColumns = state.userColumns;
-        if (!userColumns?.length) {
-            return;
-        }
+        // When the feature is disabled (or the module is absent), leave any provided `userColumns`
+        // untouched so a later re-save into a calc-enabled grid is not lossy.
         const calculatedColsSvc = this.beans.calculatedColsSvc;
         if (!calculatedColsSvc?.isEnabled()) {
             return;
         }
+        // The incoming state is authoritative: recreate the calc cols it lists and drop any it omits.
+        // An absent/empty section therefore removes every runtime-added calc col.
+        const userColumns = state.userColumns;
         const calculatedCols: CalculatedUserColumnState[] = [];
-        for (let i = 0, len = userColumns.length; i < len; ++i) {
-            const userColumn = userColumns[i];
-            if (userColumn.kind === 'calculated') {
-                calculatedCols.push(userColumn);
+        if (userColumns) {
+            for (let i = 0, len = userColumns.length; i < len; ++i) {
+                const userColumn = userColumns[i];
+                if (userColumn.kind === 'calculated') {
+                    calculatedCols.push(userColumn);
+                }
             }
         }
-        if (calculatedCols.length) {
-            calculatedColsSvc.recreateUserColumns(calculatedCols);
-        }
+        calculatedColsSvc.reconcileUserColumns(calculatedCols);
     }
 
     private setupStateOnColumnsInitialised(initialState: GridState, partialColumnState: boolean): void {

@@ -69,8 +69,9 @@ export interface ICalculatedColumnsService extends Bean {
     restoreDynamicColumnDefs(state: ColumnState[]): boolean;
     /** Serialise dynamic (API/dialog-added) calc cols to grid state, in creation order. `undefined` when none. */
     getUserColumnState(): CalculatedUserColumnState[] | undefined;
-    /** Recreate dynamic calc cols from grid state (fresh grid / reload, where nothing is parked). Rebuilds once. */
-    recreateUserColumns(state: CalculatedUserColumnState[]): void;
+    /** Reconcile dynamic calc cols against authoritative grid state: recreate listed cols, drop any not
+     *  listed. Rebuilds once. */
+    reconcileUserColumns(state: CalculatedUserColumnState[]): void;
     /** Run a suppressed rebuild after calc-col mutation so column-state ops avoid spurious calc lifecycle events. */
     refreshDynamicColumns(source: ColumnEventType): void;
     isEnabled(): boolean;

@@ -562,14 +562,31 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return anchor;
     }
 
-    public recreateUserColumns(state: CalculatedUserColumnState[]): void {
+    public reconcileUserColumns(state: CalculatedUserColumnState[]): void {
         if (!this.isEnabled()) {
             return;
         }
         const { colModel } = this.beans;
         const dynamicColumns = this.dynamicColumns;
         const inactive = this.inactiveDynamicColumns;
-        let added = false;
+        const wanted = new Set<string>();
+        for (let i = 0, len = state.length; i < len; ++i) {
+            wanted.add(state[i].colId);
+        }
+        let changed = false;
+
+        // Removal: the incoming state is authoritative, so any dynamic col it does not list is dropped.
+        for (const colId of dynamicColumns.keys()) {
+            if (wanted.has(colId)) {
+                continue;
+            }
+            this.closeCalculatedColumnDialog(colId);
+            dynamicColumns.delete(colId);
+            inactive.delete(colId);
+            changed = true;
+        }
+
+        // Addition: recreate any listed col not already present.
         for (let i = 0, len = state.length; i < len; ++i) {
             const userCol = state[i];
             const colId = userCol.colId;
@@ -578,7 +595,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
             // Honour the serialised colId, but never clobber a real columnDefs column of the same id.
             if (colModel.getCol(colId) != null) {
-                _warnOnce(`recreateUserColumns: colId '${colId}' already exists; skipping.`);
+                _warnOnce(`reconcileUserColumns: colId '${colId}' already exists; skipping.`);
                 continue;
             }
             inactive.delete(colId);
@@ -587,9 +604,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 anchorColId: userCol.groupAnchorColId,
                 instance: null,
             });
-            added = true;
+            changed = true;
         }
-        if (added) {
+        if (changed) {
             this.refreshDynamicColumns('calculatedColumn');
         }
     }

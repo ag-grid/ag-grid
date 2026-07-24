@@ -220,6 +220,54 @@ describe('calculated columns - grid state persistence', () => {
         expect(roundTripped.userColumns).toEqual(savedState.userColumns);
     });
 
+    // === removal: setState is authoritative — a calc col absent from the new state is removed ======
+
+    test('api.setState with a state that omits an existing calc col removes it from the grid', async () => {
+        const api = createGrid('state-remove', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        // Snapshot the pre-calc state (no userColumns), then add a calc col on top of it.
+        const stateWithoutCalc = api.getState();
+        expect(stateWithoutCalc.userColumns).toBeUndefined();
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        expect(order(api)).toEqual(['a', calcId, 'b']);
+
+        // Re-applying the pre-calc state must drop the runtime-added calc col — the state does not list it.
+        api.setState(stateWithoutCalc);
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
+        expect(api.getColumn(calcId)).toBeNull();
+        expect(api.getState().userColumns).toBeUndefined();
+        await new GridRows(api, 'calc col removed via setState - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 a:5 b:2
+        `);
+    });
+
+    test('api.setState reconciles the calc-col set — cols not in the new state are removed, listed ones kept', async () => {
+        const api = createGrid('state-reconcile', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const calcId1 = await addViaDialog(api, 'a', '[A] * 2');
+        // Snapshot with only the first calc col present, then add a second on top.
+        const stateWithOneCalc = api.getState();
+        expect(stateWithOneCalc.userColumns).toHaveLength(1);
+        const calcId2 = await addViaDialog(api, 'b', '[B] * 3');
+        expect(order(api)).toEqual(['a', calcId1, 'b', calcId2]);
+
+        // Applying the one-calc state must keep calcId1 and drop calcId2.
+        api.setState(stateWithOneCalc);
+        await waitFor(() => expect(api.getColumn(calcId2)).toBeNull());
+        expect(order(api)).toEqual(['a', calcId1, 'b']);
+        expect(api.getColumn(calcId1)).not.toBeNull();
+        expect(api.getState().userColumns).toEqual(stateWithOneCalc.userColumns);
+        await new GridRows(api, 'calc col reconciled via setState - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 a:5 ${calcId1}:10 b:2
+        `);
+    });
+
     // === save-side freshness: getState reflects the current expression, not a stale snapshot =====
 
     test('getState reflects the current expression and cellDataType after a live edit through the dialog', async () => {
