@@ -623,11 +623,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         };
         const anchorColId = state.groupAnchorColId;
         if (anchorColId != null) {
-            // A dynamic anchor recreated earlier in the same batch is not in the col model until the
-            // batched rebuild runs, so fall back to its stored colDef.
-            const anchorColDef =
-                this.beans.colModel.getCol(anchorColId)?.colDef ?? this.dynamicColumns.get(anchorColId)?.colDef;
-            const columnGroupShow = anchorColDef?.columnGroupShow;
+            // The anchor is always serialised as a stable (columnDefs-declared) leaf, so it is already
+            // in the col model here — inherit its group membership.
+            const columnGroupShow = this.beans.colModel.getCol(anchorColId)?.colDef.columnGroupShow;
             if (columnGroupShow != null) {
                 colDef.columnGroupShow = columnGroupShow;
             }
