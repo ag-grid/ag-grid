@@ -523,6 +523,13 @@ export class CellCtrl extends BeanStub {
         return selectionChanged || rowDragChanged || dndSourceChanged || autoHeightChanged;
     }
 
+    // block mode takes priority over stopEditingWhenCellsLoseFocus: while this cell has an invalid value
+    // being blocked, an outside click must not close the popup editor (which would leave it uneditable).
+    public shouldKeepPopupOpen(): boolean {
+        const { editSvc } = this;
+        return !!editSvc?.cellEditingInvalidCommitBlocks() && editSvc.hasValidationErrors(this);
+    }
+
     public onPopupEditorClosed(e?: MouseEvent | TouchEvent | KeyboardEvent): void {
         const { editSvc } = this.beans;
         if (!editSvc?.isEditing(this, { withOpenEditor: true })) {

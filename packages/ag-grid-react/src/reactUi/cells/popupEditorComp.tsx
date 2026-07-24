@@ -60,6 +60,7 @@ const PopupEditorComp = (props: {
                 closedCallback: (e?: MouseEvent | TouchEvent | KeyboardEvent) => {
                     cellCtrl.onPopupEditorClosed(e);
                 },
+                shouldClose: () => !cellCtrl.shouldKeepPopupOpen(),
                 anchorToElement: eParentCell,
                 positionCallback,
                 ariaOwns: eParentCell,

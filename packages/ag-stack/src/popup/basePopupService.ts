@@ -470,6 +470,7 @@ export abstract class BasePopupService<
             modal,
             ariaOwns,
             eventSourceToIgnore,
+            shouldClose,
         } = params;
 
         let popupHidden = false;
@@ -507,6 +508,13 @@ export abstract class BasePopupService<
                     // paths, each one wanting to close, so this method may be called multiple times.
                     popupHidden)
             ) {
+                return;
+            }
+
+            // the caller can veto an outside-pointer dismissal (e.g. block mode keeps its invalid popup
+            // editor open); leaving the listeners attached lets a later click re-evaluate. Gated on
+            // mouse/touch so Escape and programmatic/forceHide (no pointer event) always close.
+            if ((mouseEvent || touchEvent) && shouldClose && !shouldClose(popupParams)) {
                 return;
             }
 

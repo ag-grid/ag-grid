@@ -571,6 +571,7 @@ export class CellComp extends Component {
             closedCallback: (e) => {
                 cellCtrl.onPopupEditorClosed(e);
             },
+            shouldClose: () => !cellCtrl.shouldKeepPopupOpen(),
             anchorToElement: eCell,
             positionCallback,
             ariaOwns: eCell,

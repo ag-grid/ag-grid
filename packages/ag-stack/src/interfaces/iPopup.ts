@@ -14,6 +14,9 @@ interface BaseAddPopupParams<TContainerType extends string> {
     closeOnEsc?: boolean;
     // a callback that gets called when the popup is closed
     closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void;
+    // called on an outside pointer (mouse/touch) dismissal to let the caller veto the close; returning
+    // false keeps the popup open and its listeners attached. Not consulted for Escape or programmatic hides.
+    shouldClose?: (params: PopupEventParams) => boolean;
     // if a clicked caused the popup (eg click a button) then the click that caused it
     click?: MouseEvent | Touch | null;
     // mousedown/touchstart dismissal from this element is handled by the element itself
