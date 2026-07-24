@@ -65,7 +65,7 @@ export class StateService extends BeanStub implements NamedBean {
         0
     );
     private columnStates?: ColumnState[];
-    private columnGroupStates?: { groupId: string; open: boolean | undefined }[];
+    private columnGroupStates?: { groupId: string; open: boolean; headerName?: string | null }[];
     /** Filter state held back until firstDataRendered, when pivot result columns exist. */
     private deferredFilterState?: FilterState;
     private readonly staleStateKeys: Set<keyof GridState> = new Set();
