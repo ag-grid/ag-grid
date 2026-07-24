@@ -190,3 +190,18 @@ export type DefaultMenuItem =
     | 'sortAbsoluteAscending'
     | 'sortAbsoluteDescending'
     | 'sortUnSort';
+
+/**
+ * Built-in menu items for the Columns Tool Panel and Column Chooser right-click menu.
+ * The concrete item shown for a token depends on the column's current state (e.g. `rowGroup`
+ * renders "Group by" or "Un-Group by").
+ */
+export type DefaultToolPanelItem = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
+
+/**
+ * The complete set of built-in menu item tokens usable with `columnMenuItems` / `getColumnMenuItems`
+ * across the column menu, Columns Tool Panel and Column Chooser. Tokens are resolved per surface and
+ * per column state, so a token whose action does not apply to the current column or grid state (e.g.
+ * `pivot` outside pivot mode) is not shown.
+ */
+export type DefaultColumnMenuItem = DefaultMenuItem | DefaultToolPanelItem;

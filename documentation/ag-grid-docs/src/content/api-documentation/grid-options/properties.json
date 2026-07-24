@@ -68,6 +68,12 @@
                 "url": "./column-menu/#customising-the-menu-items"
             }
         },
+        "getColumnMenuItems": {
+            "more": {
+                "name": "Column Menu",
+                "url": "./column-menu/#customising-the-menu-items"
+            }
+        },
         "columnMenu": {
             "more": {
                 "name": "Column Menu",

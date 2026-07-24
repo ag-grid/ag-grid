@@ -179,6 +179,12 @@
                 "url": "./column-menu/#customising-the-menu-items"
             }
         },
+        "columnMenuItems": {
+            "more": {
+                "name": "Customising the Menu Items",
+                "url": "./column-menu/#customising-the-menu-items"
+            }
+        },
         "suppressHeaderMenuButton": {
             "more": {
                 "name": "Customising the Column Menu",

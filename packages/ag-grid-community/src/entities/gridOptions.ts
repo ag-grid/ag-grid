@@ -146,6 +146,7 @@ import type {
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetChildCount,
+    GetColumnMenuItemsParams,
     GetContextMenuItemsParams,
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,
@@ -198,7 +199,7 @@ import type { SortDirection } from '../interfaces/iSort';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { Toolbar } from '../interfaces/iToolbar';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
-import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
+import type { DefaultColumnMenuItem, DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { FullWidthNotesDataSource, NotesDataSource } from '../interfaces/notes';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
 import type { OverlaySelectorFunc, OverlayType } from '../rendering/overlays/overlayComponent';
@@ -2244,6 +2245,14 @@ export interface GridOptions<TData = any> {
      */
     getMainMenuItems?: GetMainMenuItems<TData>;
     /**
+     * For customising the menu items shown for a column across the column menu, the Columns Tool Panel
+     * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for;
+     * branch on it to target a single surface. Takes precedence over `getMainMenuItems` for the column menu.
+     * @initial
+     * @agModule `ColumnMenuModule` / `ColumnsToolPanelModule`
+     */
+    getColumnMenuItems?: GetColumnMenuItems<TData>;
+    /**
      * Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
     postProcessPopup?: PostProcessPopup<TData>;
@@ -3151,6 +3160,10 @@ export type GetMainMenuItems<TData = any, TContext = any> = (
     params: GetMainMenuItemsParams<TData, TContext>
 ) => MenuCallbackReturn<DefaultMenuItem, TData, TContext>;
 
+export type GetColumnMenuItems<TData = any, TContext = any> = (
+    params: GetColumnMenuItemsParams<TData, TContext>
+) => MenuCallbackReturn<DefaultColumnMenuItem, TData, TContext>;
+
 export type GetChartMenuItems<TData = any, TContext = any> = (
     params: GetChartMenuItemsParams<TData, TContext>
 ) => MenuCallbackReturn<DefaultChartMenuItem, TData, TContext>;
@@ -3384,6 +3397,7 @@ export type SelectionColumnDef = Pick<
     | 'headerName'
     | 'headerValueGetter'
     | 'mainMenuItems'
+    | 'columnMenuItems'
     | 'suppressHeaderContextMenu'
     | 'suppressHeaderMenuButton'
     | 'suppressHeaderKeyboardEvent'

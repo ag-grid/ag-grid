@@ -41,14 +41,26 @@ The following example demonstrates different ways of customising the column menu
 
 ## Customising the Menu Items
 
-The main menu list, by default, will show a set of items. You can adjust which of these items get displayed, or you can start from scratch and provide your own items. There are two ways to customise the menu items:
+The menu shows a default set of items. You can add your own items, or change which defaults are shown, via two independent properties - use whichever suits, or both:
 
-1. Set `colDef.mainMenuItems`. This can either be a list of menu items, or a callback which is passed the list of default menu items.
-1. Set the grid option `getMainMenuItems()`. This callback will be passed the list of default menu items as well as the column.
+- `colDef.columnMenuItems` - set per column. Either a list of menu items, or a callback which is passed the list of default items.
+- `getColumnMenuItems()` - a grid option callback which is passed the list of default items, the column, and the `source` of the menu.
 
-Note that `colDef.mainMenuItems` will take priority over `getMainMenuItems()`.
+When both are set, `colDef.columnMenuItems` takes priority over `getColumnMenuItems()`.
 
-The menu item list should be a list with each item either a) a string or b) a `MenuItemDef` description. Use 'string' to pick from built-in menu items (listed below) and use `MenuItemDef` descriptions for your own menu items.
+The `source` param is one of `'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`, so a single callback can tailor the items for the column menu, the [Columns Tool Panel](./tool-panel-columns/#context-menu) context menu, and the [Column Chooser](#customising-the-column-chooser).
+
+Each item is either a string or a `MenuItemDef`. Use a string to pick a built-in item and a `MenuItemDef` for your own. All built-in tokens share one type, `DefaultColumnMenuItem`, and each is shown only where it applies to the column and grid state. The column menu's [built-in items](#built-in-menu-items) are listed below.
+
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["columnMenuItems"] /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getColumnMenuItems"] /%}
+
+### Legacy Column Menu Properties
+
+`colDef.mainMenuItems` and the grid option `getMainMenuItems()` are the original way to customise the menu. They behave the same way, but apply to the column menu only - not the Columns Tool Panel or Column Chooser - and their callbacks do not receive a `source`. Prefer `columnMenuItems` / `getColumnMenuItems()`; these older properties remain supported and take effect when the newer ones are not set.
+
+The full order of precedence is `colDef.columnMenuItems`, then `getColumnMenuItems()`, then `colDef.mainMenuItems`, then `getMainMenuItems()`. A grid-level `getColumnMenuItems()` therefore takes precedence over a per-column `mainMenuItems`.
 
 {% apiDocumentation source="column-properties/properties.json" section="header" names=["mainMenuItems"] /%}
 
@@ -78,6 +90,8 @@ The `defaultItems` list will change on different calls, depending on, for exampl
 
 If you do not override the list of menu items, then the items displayed will be based on the rules above.
 
+[Columns Tool Panel](./tool-panel-columns/#context-menu) tokens such as `value` can also be returned here, and are shown where they apply to the column.
+
 ### Menu Item Separators
 
 Menu items can be grouped together by adding separators between groups. Separators are defined by the string value `'separator'`. For example, you could add menu item separators as follows:
@@ -94,12 +108,12 @@ For more details, refer to the section: [Custom Menu Item Components](./componen
 
 ### Example: Customising the Menu Items
 
-The following example demonstrates the `colDef.mainMenuItems` property:
+The following example demonstrates the `colDef.columnMenuItems` property:
 
 - The **Athlete** column shows the list of built-in items.
-- The **Age** column appends custom items to the list of built-in items.
-- The **Country** column provides custom items and adds one built-in default item. Clicking on the custom items logs to the developer console.
-- The **Year** column trims down the default items by removing values.
+- The **Age** column includes the `value` token before its custom items. The grid is grouped by **Sport**, so **Add Age to values** aggregates Age in the group rows.
+- The **Country** column provides two custom items and one built-in item, **Reset Columns** (`resetColumns`). Clicking a custom item logs to the developer console.
+- The **Year** column keeps the default items but removes the separators, the pinning sub-menu, and the value aggregation sub-menu.
 
 {% gridExampleRunner title="Customising the Menu Items" name="customising-menu-items" /%}
 

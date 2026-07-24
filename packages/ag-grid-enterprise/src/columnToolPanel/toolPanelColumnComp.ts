@@ -2,6 +2,8 @@ import { RefPlaceholder, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } fro
 
 import type {
     AgColumn,
+    ColumnEventType,
+    ColumnMenuItemsSource,
     DragItem,
     ElementParams,
     GridCheckbox,
@@ -51,7 +53,9 @@ export class ToolPanelColumnComp extends Component {
         private readonly allowDragging: boolean,
         private readonly groupsExist: boolean,
         private readonly focusWrapper: HTMLElement,
-        private readonly params: ToolPanelColumnCompParams
+        private readonly params: ToolPanelColumnCompParams,
+        private readonly eventType: ColumnEventType,
+        private readonly source: ColumnMenuItemsSource
     ) {
         super();
         const { column, depth, displayName } = modelItem;
@@ -153,13 +157,9 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent | Touch): void {
-        const { column, gos } = this;
-
-        if (gos.get('functionsReadOnly')) {
-            return;
-        }
-
-        const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper, this.params));
+        const contextMenu = this.createBean(
+            new ToolPanelContextMenu(this.column, e, this.focusWrapper, this.params, this.eventType, this.source)
+        );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -203,7 +203,7 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi', this.params);
+        setAllColumns(this.beans, [this.column], nextState, this.eventType, this.params);
     }
 
     private refreshAriaLabel(): void {
@@ -258,7 +258,7 @@ export class ToolPanelColumnComp extends Component {
                         columns: [this.column],
                         visibleState: dragItem?.visibleState,
                         pivotState: dragItem?.pivotState,
-                        eventType: 'toolPanelUi',
+                        eventType: this.eventType,
                         buttons: this.params.buttons,
                     });
                 }
