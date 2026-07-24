@@ -7,6 +7,12 @@ import {
     waitForRowAnimations,
 } from '@utils/grid/test-utils';
 
+// Attributes that differ across a destroy/recreate cycle without reflecting restored state:
+// `grid-id` and the root `data-testid` embed a monotonic grid-instance counter, and tab-guard
+// `tabindex` toggles with transient focus. Ignored when comparing the rendered grid before and
+// after recreate — column/row identity is still compared via `col-id` / `row-id`.
+const RECREATE_VOLATILE_ATTRIBUTES = ['grid-id', 'data-testid', 'tabindex'];
+
 // The grid records every state change (onStateUpdated) and, when recreated, seeds the new
 // grid from the previous grid's state so sort/filter/etc. are restored. State changes and
 // getState() are logged to the console via the Print State / Recreate buttons.
@@ -128,15 +134,19 @@ test.agExample(import.meta, () => {
         await page.locator('.ag-group-contracted').first().click();
         await waitForRowAnimations(page);
 
-        // Open the Medals column group (opened column groups) — the only group with collapsible children.
-        await page.locator('.ag-header-group-cell .ag-header-expand-icon-collapsed').first().click();
+        // Open the Medals column group (opened column groups) — the only group with columnGroupShow children.
+        await page
+            .locator('.ag-header-group-cell', { hasText: 'Medals' })
+            .locator('.ag-header-expand-icon-collapsed')
+            .click();
         await expect(agIdFor.headerCell('silver')).toBeVisible();
 
         // Pin the athlete column left (column state) via the column menu.
         const athleteHeader = agIdFor.headerCell('athlete');
         await athleteHeader.hover();
         await athleteHeader.locator('.ag-header-cell-menu-button').click();
-        await page.locator('.ag-menu-option-text', { hasText: 'Pin Column' }).click();
+        // 'Pin Column' opens a submenu on hover; the pin options live inside it.
+        await page.locator('.ag-menu-option', { hasText: 'Pin Column' }).hover();
         await page.locator('.ag-menu-option-text', { hasText: 'Pin Left' }).click();
         await expect(page.locator('.ag-pinned-left-header')).toContainText('Athlete');
 
@@ -164,7 +174,7 @@ test.agExample(import.meta, () => {
         await waitForRowAnimations(page);
 
         // Snapshot the rendered grid, then recreate from the captured state.
-        const before = await serializeGridDom(page);
+        const before = await serializeGridDom(page, { ignoreAttributes: RECREATE_VOLATILE_ATTRIBUTES });
         expect(before).not.toBeNull();
 
         await page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true }).click();
@@ -173,7 +183,7 @@ test.agExample(import.meta, () => {
         await waitForRowAnimations(page);
 
         // The recreated grid renders identically to the pre-recreate snapshot.
-        expect(await serializeGridDom(page)).toBe(before);
+        expect(await serializeGridDom(page, { ignoreAttributes: RECREATE_VOLATILE_ATTRIBUTES })).toBe(before);
     });
 
     test.eachFramework('Recreating the grid restores the current page', async ({ agIdFor, page }) => {
@@ -184,13 +194,13 @@ test.agExample(import.meta, () => {
         await page.locator('[aria-label="Next Page"]').click();
         await waitForRowAnimations(page);
 
-        const before = await serializeGridDom(page);
+        const before = await serializeGridDom(page, { ignoreAttributes: RECREATE_VOLATILE_ATTRIBUTES });
         expect(before).not.toBeNull();
 
         await page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true }).click();
         await waitForGridContent(page);
         await waitForRowAnimations(page);
 
-        expect(await serializeGridDom(page)).toBe(before);
+        expect(await serializeGridDom(page, { ignoreAttributes: RECREATE_VOLATILE_ATTRIBUTES })).toBe(before);
     });
 });

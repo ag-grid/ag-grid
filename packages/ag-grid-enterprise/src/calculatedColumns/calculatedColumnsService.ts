@@ -613,14 +613,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     // The stored expression is already in internal colId form, so it is used verbatim (no reference re-mapping).
     private toRestoredColDef(state: CalculatedUserColumnState): ColDef {
-        const colDef: ColDef = {
-            colId: state.colId,
-            headerName: state.headerName,
-            calculatedExpression: state.calculatedExpression,
-            cellDataType: state.cellDataType,
-            editable: false,
-            suppressPaste: true,
-        };
+        const colDef = this.baseCalculatedColDef(state);
         const anchorColId = state.groupAnchorColId;
         if (anchorColId != null) {
             // The anchor is always serialised as a stable (columnDefs-declared) leaf, so it is already
@@ -999,11 +992,25 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private toColDef(draft: CalculatedColumnDraft): ColDef {
-        return {
-            colId: draft.colId,
-            headerName: draft.headerName,
+        return this.baseCalculatedColDef({
+            ...draft,
             calculatedExpression: _normaliseCalculatedExpression(draft.calculatedExpression) ?? '',
-            cellDataType: draft.cellDataType,
+        });
+    }
+
+    /** Base colDef shared by every calc-col builder: the data fields plus the calc-col invariants
+     *  (`editable: false`, `suppressPaste: true`), which the grid also enforces centrally via `isCalculatedCol`. */
+    private baseCalculatedColDef(source: {
+        colId: string;
+        headerName?: string;
+        cellDataType?: string;
+        calculatedExpression: string;
+    }): ColDef {
+        return {
+            colId: source.colId,
+            headerName: source.headerName,
+            calculatedExpression: source.calculatedExpression,
+            cellDataType: source.cellDataType,
             editable: false,
             suppressPaste: true,
         };
