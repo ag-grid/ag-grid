@@ -523,15 +523,16 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (!this.isEnabled() || this.dynamicColumns.size === 0) {
             return undefined;
         }
-        // Insertion order matters: a col anchored to another dynamic col must serialise after its anchor
-        // so restore recreates the anchor first (see recreateUserColumns).
         const res: CalculatedUserColumnState[] = [];
         this.dynamicColumns.forEach((dc, colId) => {
             const { calculatedExpression, cellDataType, headerName } = dc.colDef;
             const state: CalculatedUserColumnState = {
                 kind: 'calculated',
                 colId,
-                groupAnchorColId: dc.anchorColId,
+                // The anchor only identifies the group the col joins (order is owned by `columnOrder`),
+                // so serialise a stable leaf: collapse any chain through other runtime-added cols, which
+                // may not exist when this state is restored into a fresh grid.
+                groupAnchorColId: this.resolveLeafAnchor(dc.anchorColId),
                 calculatedExpression: calculatedExpression ?? '',
             };
             if (typeof cellDataType === 'string') {
@@ -545,6 +546,18 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return res;
     }
 
+    /** Walk an anchor chain through runtime-added cols down to the first stable (non-dynamic) column —
+     *  the leaf whose group the calc col ultimately joins. Returns null for a top-level col. */
+    private resolveLeafAnchor(anchorColId: string | null): string | null {
+        const seen = new Set<string>();
+        let anchor = anchorColId;
+        while (anchor != null && this.dynamicColumns.has(anchor) && !seen.has(anchor)) {
+            seen.add(anchor);
+            anchor = this.dynamicColumns.get(anchor)!.anchorColId;
+        }
+        return anchor;
+    }
+
     public recreateUserColumns(state: CalculatedUserColumnState[]): void {
         if (!this.isEnabled()) {
             return;
@@ -553,7 +566,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const dynamicColumns = this.dynamicColumns;
         const inactive = this.inactiveDynamicColumns;
         let added = false;
-        // Recreate in serialised order so an anchor is present before a col that anchors to it.
         for (let i = 0, len = state.length; i < len; ++i) {
             const userCol = state[i];
             const colId = userCol.colId;

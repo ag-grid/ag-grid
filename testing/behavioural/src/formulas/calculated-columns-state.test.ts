@@ -296,15 +296,16 @@ describe('calculated columns - grid state persistence', () => {
             columnDefs,
         });
         const calcId1 = await addViaDialog(api, 'revenue', '[Revenue] - [Cost]');
-        // The second col is anchored to the first calc col — the chained case where serialisation
-        // order (anchor before dependant) is load-bearing on restore.
+        // The second col is added against the first calc col, but the anchor is a group-membership
+        // pointer: it serialises the stable leaf (`revenue`), collapsing the runtime-added chain so
+        // restore never depends on another runtime-added col existing first.
         const calcId2 = await addViaDialog(api, calcId1, '[Revenue] * 2');
         expect(order(api)).toEqual(['revenue', calcId1, calcId2, 'cost']);
 
         const savedState = api.getState();
         expect(savedState.userColumns?.map(({ colId, groupAnchorColId }) => ({ colId, groupAnchorColId }))).toEqual([
             { colId: calcId1, groupAnchorColId: 'revenue' },
-            { colId: calcId2, groupAnchorColId: calcId1 },
+            { colId: calcId2, groupAnchorColId: 'revenue' },
         ]);
 
         const api2 = createGrid('state-plural-target', {
@@ -314,8 +315,7 @@ describe('calculated columns - grid state persistence', () => {
         });
         await waitFor(() => expect(order(api2)).toContain(calcId2));
         expect(order(api2)).toEqual(['revenue', calcId1, calcId2, 'cost']);
-        // Both calc cols sit inside the group, and the chained col inherits columnGroupShow through
-        // its dynamic anchor even though that anchor was recreated in the same batch.
+        // Both calc cols sit inside the group, inheriting columnGroupShow from the shared leaf anchor.
         expect(api2.getColumn(calcId1)!.getColDef().columnGroupShow).toBe('open');
         expect(api2.getColumn(calcId2)!.getColDef().columnGroupShow).toBe('open');
         await new GridColumns(api2, 'two chained dynamic calc cols restored').checkColumns(`
@@ -329,6 +329,69 @@ describe('calculated columns - grid state persistence', () => {
         await new GridRows(api2, 'two chained dynamic calc cols restored - rows').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 revenue:10 ${calcId1}:7 ${calcId2}:20 cost:3
+        `);
+    });
+
+    // === order-independence: a chained calc col anchors to a stable leaf, so userColumns order is free =
+
+    test('a calc col added against another calc col anchors to the shared leaf, so userColumns order does not affect restore', async () => {
+        // calculated_2 is added against calculated_1, which is itself anchored to the `gold` leaf. The
+        // anchor is a group-membership pointer (display order is owned by columnOrder), so it must
+        // serialise the stable leaf `gold` — never the runtime-added calculated_1, which may not exist
+        // yet on restore. That makes the userColumns order irrelevant: reversing it restores identically.
+        const columnDefs: GridOptions['columnDefs'] = [
+            { field: 'athlete' },
+            {
+                headerName: 'Medals',
+                groupId: 'medals',
+                children: [{ field: 'gold' }, { field: 'silver' }],
+            },
+        ];
+        const rowData = [{ id: 'r1', athlete: 'A', gold: 3, silver: 1 }];
+
+        const source = createGrid('state-order-source', { rowData, columnDefs });
+        const calcId1 = await addViaDialog(source, 'gold', '[gold]*2');
+        const calcId2 = await addViaDialog(source, calcId1, '34');
+        expect(order(source)).toEqual(['athlete', 'gold', calcId1, calcId2, 'silver']);
+
+        const savedState = source.getState();
+        // Both calc cols anchor to the leaf `gold` — the chain through calcId1 is collapsed on save.
+        expect(savedState.userColumns?.map(({ colId, groupAnchorColId }) => ({ colId, groupAnchorColId }))).toEqual([
+            { colId: calcId1, groupAnchorColId: 'gold' },
+            { colId: calcId2, groupAnchorColId: 'gold' },
+        ]);
+
+        // Restore the saved state and a variant with userColumns reversed: the two must be identical,
+        // including group membership (the part columnOrder does not carry).
+        const reversedState: GridState = {
+            ...savedState,
+            userColumns: [savedState.userColumns![1], savedState.userColumns![0]],
+        };
+        const apiNatural = createGrid('state-order-natural', { rowData, columnDefs, initialState: savedState });
+        const apiReversed = createGrid('state-order-reversed', { rowData, columnDefs, initialState: reversedState });
+
+        await waitFor(() => expect(order(apiReversed)).toContain(calcId2));
+        const expectedOrder = ['athlete', 'gold', calcId1, calcId2, 'silver'];
+        expect(order(apiNatural)).toEqual(expectedOrder);
+        expect(order(apiReversed)).toEqual(expectedOrder);
+
+        // Both calc cols land inside the Medals group regardless of userColumns order.
+        for (const api of [apiNatural, apiReversed]) {
+            expect(api.getColumn(calcId1)!.getParent()!.getGroupId()).toBe('medals');
+            expect(api.getColumn(calcId2)!.getParent()!.getGroupId()).toBe('medals');
+        }
+        await new GridColumns(apiReversed, 'chained calc cols restored from reversed userColumns').checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            └─┬ "Medals" GROUP
+              ├── gold "Gold" width:200
+              ├── ${calcId1} "Untitled" width:200 ƒ
+              ├── ${calcId2} "Untitled" width:200 ƒ
+              └── silver "Silver" width:200
+        `);
+        await new GridRows(apiReversed, 'chained calc cols restored from reversed userColumns - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 athlete:"A" gold:3 ${calcId1}:6 ${calcId2}:34 silver:1
         `);
     });
 
