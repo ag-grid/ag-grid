@@ -32,4 +32,7 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
 export interface InternalAgGridReactProps<TData = any> extends AgGridReactProps<TData> {
     /** Internal method to pass api to top level class component. */
     passGridApi?: (gridApi: GridApi<TData>) => void;
+    /** Internal flag set when this grid is nested inside another grid's styled root (e.g. a
+     * master/detail detail grid), so its own styled root should not re-apply theme classes. */
+    hasAncestorStyledRoot?: boolean;
 }

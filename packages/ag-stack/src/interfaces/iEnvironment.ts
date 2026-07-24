@@ -6,7 +6,9 @@ export interface IEnvironment {
     getDefaultListItemHeight(): number;
 
     /** Returns `[inheritClass, applyClass, directionClass]` for the three styled-root levels. */
-    getStyledRootClasses(): [inheritClass: string, applyClass: string, directionClass: string];
+    getStyledRootClasses(
+        hasAncestorStyledRoot?: boolean
+    ): [inheritClass: string, applyClass: string, directionClass: string];
 
     /** Subscribes to theme-change events. Returns an unsubscribe fn. */
     onThemeChanged(handler: () => void): () => void;

@@ -27,6 +27,7 @@ export interface AgCoreBeanCollection<
     localeSvc?: ILocaleService;
     environment: IEnvironment;
     eRootDiv: HTMLElement;
+    hasAncestorStyledRoot?: boolean;
     popupSvc?: IPopupService<any>;
     registry: IRegistry<this, 'tooltipFeature' | 'highlightTooltipFeature' | 'tooltipStateManager'>;
     iconSvc: IIconService<string, any>;

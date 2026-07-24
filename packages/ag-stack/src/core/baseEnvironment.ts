@@ -96,14 +96,24 @@ export abstract class BaseEnvironment<
         this.addDestroyFunc(() => _unregisterInstanceUsingThemingAPI(this));
     }
 
-    public getStyledRootClasses(): [inheritClass: string, applyClass: string, directionClass: string] {
+    public getStyledRootClasses(
+        hasAncestorStyledRoot?: boolean
+    ): [inheritClass: string, applyClass: string, directionClass: string] {
         const { theme } = this;
-        const [inheritClass, applyClass] = theme ? theme._getCssClasses() : ['', this.getLegacyThemeClasses()];
+        const [inheritClass, applyClass] = theme ? theme._getCssClasses() : ['', this.useLegacyThemeClasses()];
         const directionClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
+        // A grid nested within another grid's styled root inherits its theme, so its
+        // own styled root must not re-apply the theme classes. Note it's intentional that
+        if (hasAncestorStyledRoot) {
+            return ['', '', directionClass];
+        }
         return [inheritClass, applyClass, directionClass];
     }
 
-    private getLegacyThemeClasses(): string {
+    /**
+     * Get legacy theme classes, setting up a mutation observer to watch for changes on first call
+     */
+    private useLegacyThemeClasses(): string {
         const themeClasses = new Set<string>();
         // rebuild the observer set every time we call this function, to handle
         // edge cases where the grid is initialised outside the DOM or moved
@@ -311,7 +321,9 @@ export abstract class BaseEnvironment<
 
     // overridden by studio
     protected initStyledRoot(): void {
-        this.addDestroyFunc(_initStyledRootFromInnerOfThreeElements(this, this.eRootDiv));
+        this.addDestroyFunc(
+            _initStyledRootFromInnerOfThreeElements(this, this.eRootDiv, undefined, this.beans.hasAncestorStyledRoot)
+        );
     }
 }
 
