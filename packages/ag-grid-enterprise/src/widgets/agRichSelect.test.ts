@@ -39,6 +39,7 @@ describe('AgRichSelect', () => {
                 stateAnnouncementCallback = callback;
             }),
             setParentComponent: vi.fn(),
+            getAriaElement: vi.fn(() => document.createElement('div')),
         };
 
         richSelect.ariaAnnounce = { announceValue };
