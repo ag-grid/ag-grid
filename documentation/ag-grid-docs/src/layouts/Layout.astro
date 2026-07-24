@@ -113,6 +113,16 @@ const organizationFounder = {
     name: 'Niall Crosby',
     sameAs: ['https://www.wikidata.org/wiki/Q114758691'],
 };
+const organizationLegalName = 'AG Grid Ltd.';
+// ISO 8601 (YYYY-MM-DD) for schema.org — the company was founded on 19 July 2010.
+const organizationFoundingDate = '2010-07-19';
+const organizationAddress = {
+    streetAddress: '70 Wilson St',
+    addressLocality: 'London',
+    postalCode: 'EC2A 2DB',
+    // ISO 3166-1 alpha-2 country code, the form Google expects for addressCountry.
+    addressCountry: 'GB',
+};
 const structuredData: JsonLdObject[] = includeStructuredData
     ? [
           buildOrganization({
@@ -121,6 +131,9 @@ const structuredData: JsonLdObject[] = includeStructuredData
               logoUrl: organizationLogoUrl,
               sameAs: organizationSameAs,
               description: organizationDescription,
+              legalName: organizationLegalName,
+              foundingDate: organizationFoundingDate,
+              address: organizationAddress,
               founder: organizationFounder,
               // Line up with the enquiry-type options on the contact page. Sales enquiries go
               // through the contact form; technical support is handled via the Zendesk portal.

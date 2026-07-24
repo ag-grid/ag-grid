@@ -34,6 +34,15 @@ export interface OrganizationFounder {
     url?: string;
 }
 
+export interface OrganizationAddress {
+    streetAddress: string;
+    addressLocality: string;
+    postalCode: string;
+    /** ISO 3166-1 alpha-2 country code (e.g. `GB`) — the form Google expects. */
+    addressCountry: string;
+    addressRegion?: string;
+}
+
 interface OrgInput {
     canonicalUrlBase: string;
     name: string;
@@ -41,6 +50,12 @@ interface OrgInput {
     sameAs: string[];
     /** Optional short company description, emitted as the Organization `description`. */
     description?: string;
+    /** Optional registered legal name, emitted as the Organization `legalName`. */
+    legalName?: string;
+    /** Optional founding date in ISO 8601 (`YYYY-MM-DD`), emitted as `foundingDate`. */
+    foundingDate?: string;
+    /** Optional registered address, emitted as a nested schema.org `PostalAddress`. */
+    address?: OrganizationAddress;
     /** Optional founder, emitted as a nested schema.org `Person`. */
     founder?: OrganizationFounder;
     /**
@@ -147,6 +162,9 @@ export function buildOrganization({
     logoUrl,
     sameAs,
     description,
+    legalName,
+    foundingDate,
+    address,
     founder,
     contactPoints,
 }: OrgInput): JsonLdObject {
@@ -160,6 +178,15 @@ export function buildOrganization({
     };
     if (description) {
         result.description = description;
+    }
+    if (legalName) {
+        result.legalName = legalName;
+    }
+    if (foundingDate) {
+        result.foundingDate = foundingDate;
+    }
+    if (address) {
+        result.address = { '@type': 'PostalAddress', ...address };
     }
     if (founder) {
         const founderNode: JsonLdObject = { '@type': 'Person', name: founder.name };

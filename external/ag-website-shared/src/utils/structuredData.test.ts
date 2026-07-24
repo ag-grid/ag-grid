@@ -87,6 +87,33 @@ describe('buildOrganization', () => {
         });
     });
 
+    test('emits legalName, foundingDate and a nested PostalAddress when provided', () => {
+        const result = buildOrganization({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            name: 'AG Grid',
+            logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
+            sameAs: [],
+            legalName: 'AG Grid Ltd.',
+            foundingDate: '2010-07-19',
+            address: {
+                streetAddress: '70 Wilson St',
+                addressLocality: 'London',
+                postalCode: 'EC2A 2DB',
+                addressCountry: 'GB',
+            },
+        });
+
+        expect(result.legalName).toBe('AG Grid Ltd.');
+        expect(result.foundingDate).toBe('2010-07-19');
+        expect(result.address).toEqual({
+            '@type': 'PostalAddress',
+            streetAddress: '70 Wilson St',
+            addressLocality: 'London',
+            postalCode: 'EC2A 2DB',
+            addressCountry: 'GB',
+        });
+    });
+
     test('omits description and founder when not provided, and a founder without sameAs has no sameAs key', () => {
         const withoutOptionals = buildOrganization({
             canonicalUrlBase: CANONICAL_URL_BASE,
@@ -96,6 +123,9 @@ describe('buildOrganization', () => {
         });
         expect(withoutOptionals.description).toBeUndefined();
         expect(withoutOptionals.founder).toBeUndefined();
+        expect(withoutOptionals.legalName).toBeUndefined();
+        expect(withoutOptionals.foundingDate).toBeUndefined();
+        expect(withoutOptionals.address).toBeUndefined();
 
         const bareFounder = buildOrganization({
             canonicalUrlBase: CANONICAL_URL_BASE,
