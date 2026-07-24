@@ -1,8 +1,16 @@
+import { waitFor } from '@testing-library/dom';
+
 import { getGridElement } from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, fakeElementAttribute, waitForPopup } from '../../test-utils';
+import {
+    TestGridsManager,
+    asyncSetTimeout,
+    fakeElementAttribute,
+    firePointerLikeClick,
+    waitForPopup,
+} from '../../test-utils';
 
 /**
  * The Rich Select combobox must not carry a dangling `aria-controls` idref (WCAG 4.1.2). The list is
@@ -53,5 +61,15 @@ describe('Rich Select combobox aria-controls (WCAG 4.1.2)', () => {
         const controlsId = ariaEl.getAttribute('aria-controls');
         expect(controlsId).toBeTruthy();
         expect(document.getElementById(controlsId!)).not.toBeNull();
+
+        // Collapse: the list leaves the DOM, so aria-controls must be dropped in step with
+        // aria-expanded, leaving no dangling idref (WCAG 4.1.2).
+        const wrapper = gridDiv.querySelector<HTMLElement>('.ag-picker-field-wrapper')!;
+        await firePointerLikeClick(wrapper);
+
+        expect(gridDiv.contains(ariaEl)).toBe(true);
+        await waitFor(() => expect(ariaEl.getAttribute('aria-expanded')).toBe('false'));
+        expect(ariaEl.getAttribute('aria-controls')).toBeNull();
+        expect(document.getElementById(controlsId!)).toBeNull();
     });
 });
