@@ -40,13 +40,17 @@ test.agExample(import.meta, () => {
         await page.locator('#quickFilter').fill('Gymnastics');
         await waitForRowAnimations(page);
 
+        const headerWrapper = page.locator('.ag-header-select-all .ag-checkbox-input-wrapper').first();
+        await expect(headerWrapper).not.toHaveClass(/ag-checked/);
+
         await page.locator('.ag-header-select-all .ag-checkbox-input').first().click();
 
-        // All rows matching the filter are selected.
-        const rows = page.locator('.ag-grid-scrolling-container .ag-row');
-        const total = await rows.count();
-        expect(total).toBeGreaterThan(0);
-        await expect(page.locator('.ag-grid-scrolling-container .ag-row.ag-row-selected')).toHaveCount(total);
+        // With selectAll: 'filtered', clicking the header selects every row matching the filter.
+        // The header's fully-checked (not indeterminate) state is computed from the whole filtered
+        // selection model, so it confirms all filtered rows are selected without depending on which
+        // rows happen to be rendered under virtualisation.
+        await expect(headerWrapper).toHaveClass(/ag-checked/);
+        await expect(headerWrapper).not.toHaveClass(/ag-indeterminate/);
 
         // Clear the filter to reveal the previously-hidden rows and prove that ONLY the filtered
         // rows were selected: row 1 (Aleksey Nemov, Gymnastics) matched and is selected, while

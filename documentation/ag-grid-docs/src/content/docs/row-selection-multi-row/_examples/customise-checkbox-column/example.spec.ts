@@ -23,6 +23,6 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
 
         await agIdFor.headerCell(SELECTION_COL).first().click();
-        await expect(agIdFor.headerCell(SELECTION_COL).first()).toHaveClass(/ag-header-cell-sorted-asc/);
+        await expect(agIdFor.headerCell(SELECTION_COL).first()).toHaveAttribute('aria-sort', 'ascending');
     });
 });

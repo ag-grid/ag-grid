@@ -32,6 +32,9 @@ test.agExample(import.meta, () => {
         await page.mouse.up();
 
         // Poll: AG Grid re-renders the row at its new height on a later frame than mouseup.
-        await expect.poll(async () => (await row.boundingBox())!.height).toBeGreaterThan(heightBefore);
+        await expect(async () => {
+            const heightAfter = (await row.boundingBox())!.height;
+            expect(heightAfter).toBeGreaterThan(heightBefore);
+        }).toPass();
     });
 });

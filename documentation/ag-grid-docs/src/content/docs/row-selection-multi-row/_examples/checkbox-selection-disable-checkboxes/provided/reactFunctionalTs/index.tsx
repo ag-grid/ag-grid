@@ -38,7 +38,9 @@ const GridExample = () => {
         []
     );
 
-    const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
+    const { data, loading } = useFetchJson<IOlympicData>(
+        'https://www.ag-grid.com/example-assets/small-olympic-winners.json'
+    );
 
     function toggleHideCheckbox() {
         grid.current?.api.setGridOption('rowSelection', {
