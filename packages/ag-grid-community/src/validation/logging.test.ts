@@ -293,7 +293,7 @@ describe('suppression', () => {
 });
 
 // Missing-module reports are debounced (50ms) and combined into a single console error (and a single
-// overlay entry) rather than one per unregistered module, and deduped page-wide by module+reason. Fake
+// overlay entry) rather than one per unregistered module, and deduped per grid by module+reason. Fake
 // timers exercise the real debounce; `_resetMissingModuleReports` clears the batch + dedup between tests.
 describe('missing-module batching', () => {
     function report(reasonOrId: string, moduleName: string, gridId = 'grid-a'): void {
@@ -346,7 +346,21 @@ describe('missing-module batching', () => {
         off();
     });
 
-    test('dedupes the same module+reason across grids (StrictMode / second grid)', () => {
+    test('dedupes the same module+reason within a single grid', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        report('dedupe feat', 'RowSelection', 'grid-1');
+        report('dedupe feat', 'RowSelection', 'grid-1'); // same grid, same module+reason
+        vi.advanceTimersByTime(50);
+
+        expect(mockErrorOnce).toHaveBeenCalledTimes(1);
+        expect(received).toHaveLength(1);
+        off();
+    });
+
+    test('reports the same module+reason once per grid (StrictMode / second grid)', () => {
         _configureDiagnostics({ capture: true });
         const received: CapturedDiagnostic[] = [];
         const off = listenAll((e) => received.push(e));
@@ -355,8 +369,8 @@ describe('missing-module batching', () => {
         report('dedupe feat', 'RowSelection', 'grid-2'); // different grid, same module+reason
         vi.advanceTimersByTime(50);
 
-        expect(mockErrorOnce).toHaveBeenCalledTimes(1);
-        expect(received).toHaveLength(1);
+        expect(mockErrorOnce).toHaveBeenCalledTimes(2);
+        expect(received.map((e) => e.gridId)).toEqual(['grid-1', 'grid-2']);
         off();
     });
 

@@ -251,8 +251,9 @@ export interface MissingModuleReportParams {
 }
 
 const pendingMissingModules: MissingModuleReportParams[] = [];
-// Page-wide dedup so the same module+reason never reports twice — across a StrictMode double-render (new
-// gridId each mount) or a second grid. Never cleared: matches the once-per-page intent of the base logger.
+// Dedup so the same module+reason never reports twice for a given grid. Keyed by gridId so different grids
+// stay separate — at the cost of a duplicate on a React StrictMode remount, which mounts with a fresh
+// gridId. Never cleared: matches the once-per-page intent of the base logger.
 const reportedMissingModuleKeys = new Set<string>();
 let missingModuleFlushHandle: ReturnType<typeof setTimeout> | undefined;
 
@@ -260,7 +261,7 @@ function missingModuleKey(params: MissingModuleReportParams): string {
     // Key off the raw report, not the resolved module list — resolving would pull the resolvableModuleNames
     // tables into the base bundle, and the same moduleName + rowModelType always resolves identically anyway.
     const names = Array.isArray(params.moduleName) ? [...params.moduleName].sort() : [params.moduleName];
-    return `${names.join('|')}::${params.rowModelType}::${String(params.reasonOrId)}`;
+    return `${params.gridId}::${names.join('|')}::${params.rowModelType}::${String(params.reasonOrId)}`;
 }
 
 function combineMissingModuleParams(reports: MissingModuleReportParams[]): GetErrorParams<200> {
@@ -275,7 +276,7 @@ function combineMissingModuleParams(reports: MissingModuleReportParams[]): GetEr
 
 /**
  * Accumulates a missing-module report to be flushed as a single combined error after a short debounce,
- * deduped page-wide by module+reason. The console output is always batched (even in production without the
+ * deduped per grid by module+reason. The console output is always batched (even in production without the
  * ValidationModule); the overlay capture is added when capture is enabled and the id is not suppressed.
  * Throw-on-severity stays synchronous and per-module so throw mode keeps its call stack and fails fast.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
