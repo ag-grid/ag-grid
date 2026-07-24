@@ -383,7 +383,7 @@ describe('missing-module batching', () => {
     });
 
     test('throws synchronously on the first report in throw mode, before any debounce', () => {
-        _configureDiagnostics({ throwOn: 'error' });
+        _configureDiagnostics({ throwOn: ['error'] });
 
         // The throw happens in the reporting call stack, not deferred to the debounce timer.
         expect(() => report('throwing feat', 'RowSelection')).toThrow(/#200/);
