@@ -16,7 +16,7 @@ describe('ag-grid tree data without hierarchical and without data path', () => {
 
     beforeEach(() => {
         // This file deliberately triggers validation/missing-module diagnostics; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
         gridsManager.reset();
     });
 

@@ -21,7 +21,7 @@ describe('showValuesAs row-model validation', () => {
 
     beforeEach(() => {
         // This file deliberately triggers validation/missing-module diagnostics; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
         warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     });

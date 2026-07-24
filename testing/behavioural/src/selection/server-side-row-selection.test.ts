@@ -10,6 +10,7 @@ import {
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import {
+    ALL_SEVERITIES,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -62,7 +63,7 @@ describe('Row Selection Grid Options', () => {
     beforeEach(() => {
         // These tests exercise SSRM selection with the row model's default identity, so #188 (the
         // getRowId-recommended advisory) is reviewed and accepted here; every other diagnostic still throws.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [188] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [188] });
 
         gridMgr.reset();
 

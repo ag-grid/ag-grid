@@ -16,6 +16,7 @@ import {
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import {
+    ALL_SEVERITIES,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -447,7 +448,7 @@ describe('SSRM grand total row', () => {
     test('duplicate grand total rows in response triggers warning', async () => {
         // The datasource deliberately returns two grand total rows, which raises warning #205 (duplicate row
         // ids) from the async load callback. Suppress it before the load so it logs (asserted) without throwing.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [205] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [205] });
         // Suppress expected console warnings for duplicate IDs
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 

@@ -2,7 +2,14 @@ import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, QuickFilterModule, enableDevValidations, getGridElement } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    cachedJSONObjects,
+} from '../test-utils';
 
 function getVisibleAutoGroupColIds(api: GridApi): string[] {
     return api
@@ -1022,7 +1029,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
 
     test('runtime groupDisplayType change to multipleColumns - feature activates', async () => {
         // Deliberately starts in the invalid combo and asserts #319; suppress only that id.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [319] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -1100,7 +1107,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
 
     test('runtime groupDisplayType change from multipleColumns - resets to singleColumn', async () => {
         // Deliberately transitions into the invalid combo and asserts #319; suppress only that id.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [319] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -1174,7 +1181,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
 
     test('runtime groupHideOpenParents true - feature activates with multipleColumns behaviour', async () => {
         // Deliberately starts in the invalid combo and asserts #319; suppress only that id.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [319] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -1248,7 +1255,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
 
     test('runtime groupHideOpenParents false - feature deactivates', async () => {
         // Deliberately transitions into the invalid combo and asserts #319; suppress only that id.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [319] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -1357,7 +1364,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
 
     test('has no effect with singleColumn display type', async () => {
         // Deliberately sets the invalid combo and asserts #319; suppress only that id.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [319] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -1494,7 +1501,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
 
     test('has no effect with groupRows display type', async () => {
         // Deliberately sets the invalid combo and asserts #319; suppress only that id.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [319] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },

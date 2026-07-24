@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('Delta Sorting', () => {
     const gridMgr = new TestGridsManager({
@@ -373,7 +373,7 @@ describe('Delta Sorting', () => {
 
     test('delta sort with duplicate node IDs', async () => {
         // Duplicate node ids are the deliberate condition under test.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [2] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [2] });
         const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         // Note: Duplicate IDs result in Map key collision - last duplicate wins in indexByNode
@@ -439,7 +439,7 @@ describe('Delta Sorting', () => {
 
     test('delta sort with duplicate rowData instances', async () => {
         // Duplicate node ids are the deliberate condition under test.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [2] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [2] });
         const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const sharedData = { id: 'shared', value: 90 };

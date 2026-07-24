@@ -3,7 +3,7 @@ import { RowSelectionModule, ScrollApiModule, TextEditorModule, enableDevValidat
 import { ViewportRowModelModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../selection/utils';
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from '../test-utils';
 import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
 
 const PAGE = 10;
@@ -297,7 +297,7 @@ describe('viewport row model', () => {
 
         test('warns when the datasource has no init method', () => {
             // A datasource without init is the misconfiguration under test; assert the warning fires.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [226] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [226] });
 
             const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
             try {

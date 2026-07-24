@@ -3,7 +3,7 @@ import { ClientSideRowModelModule, TextEditorModule, enableDevValidations } from
 import { SetFilterModule } from 'ag-grid-enterprise';
 import type { SetFilter } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface Country {
     name: string;
@@ -372,7 +372,7 @@ describe('Set Filter Complex Objects', () => {
 
     test('mini filter with cellDataType false does not pass colDef valueFormatter to filter', async () => {
         // Deliberate: keyCreator without a Set Filter valueFormatter triggers error #249.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [249] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [249] });
         vi.spyOn(console, 'warn').mockImplementation(() => {});
         vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -669,7 +669,7 @@ describe('Set Filter Complex Objects', () => {
 
     test('editable column with valueParser prevents cellDataType object inference so valueFormatter is not applied', async () => {
         // Deliberate: keyCreator without a Set Filter valueFormatter triggers error #249.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [249] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [249] });
         vi.spyOn(console, 'warn').mockImplementation(() => {});
         vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -901,7 +901,7 @@ describe('Set Filter Complex Objects', () => {
 
     test('complex objects with no keyCreator or valueFormatter warns and does not show [object Object] in filter list', async () => {
         // Deliberate: inferred object cellDataType without a valueFormatter triggers warning #48.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [48] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [48] });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api = await gridsManager.createGridAndWait('grid3', {

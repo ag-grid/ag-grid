@@ -10,7 +10,7 @@ import {
     getGridElement,
 } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 const COLUMN_DEFS = [{ field: 'name' }];
 const ROW_DATA = Array.from({ length: 50 }, (_, i) => ({ name: `Row ${i + 1}` }));
@@ -882,7 +882,7 @@ describe('paginationPanels', () => {
 
         test('unrecognised items are ignored, warning logged', () => {
             // Deliberately passes an unrecognised panel name to verify the warning is logged.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [323] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [323] });
             const api = createPaginationGrid(gridsManagerWithValidation, {
                 paginationPanels: ['pageSize', 'invalidName' as any, 'pageSummary'],
             });

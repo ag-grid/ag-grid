@@ -20,7 +20,7 @@ describe('Cell Selection Grid API', () => {
 
     beforeEach(() => {
         // This file exercises deprecated cell-selection APIs on purpose; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
 
         gridMgr.reset();
 

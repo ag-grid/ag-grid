@@ -2,7 +2,7 @@ import type { GridOptions, IServerSideDatasource, IServerSideGetRowsParams } fro
 import { enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
@@ -112,7 +112,7 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
     test('expanding empty group with groupHideOpenParents and groupTotalRow bottom does not cause infinite requests', async () => {
         // This test deliberately combines groupHideOpenParents with treeData, which validation rejects
         // (#315) and which also drives an incompatible multi-column group display (#182).
-        enableDevValidations({ throwOn: 'deprecation', suppress: [182, 315] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [182, 315] });
         const tracker = { loadCount: 0, active: true };
 
         const datasource: IServerSideDatasource = {

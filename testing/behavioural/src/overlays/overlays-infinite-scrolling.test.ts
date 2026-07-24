@@ -2,7 +2,7 @@ import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, InfiniteRowModelModule, enableDevValidations } from 'ag-grid-community';
 
-import { GridColumns, GridRows, TestGridsManager, setRowDataChecked } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid overlays infinite scrolling state', () => {
     const gridsManager = new TestGridsManager({
@@ -33,7 +33,7 @@ describe('ag-grid overlays infinite scrolling state', () => {
 
     test('does not shows no-rows when using InfiniteRowModelModule', async () => {
         // Deliberately sets `rowData` on an infinite row model to prove it is a no-op; this warns.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [200, 309] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200, 309] });
         const pendingGetRows: (() => void)[] = [];
 
         const api = gridsManager.createGrid('myGrid', {

@@ -59,7 +59,7 @@ describe('Row Selection Legacy Grid Options', () => {
 
     beforeEach(() => {
         // This file exercises deprecated selection options on purpose; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
 
         gridMgr.reset();
 

@@ -2,7 +2,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { RowAutoHeightModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, waitForEvent } from '../test-utils';
+import { ALL_SEVERITIES, TestGridsManager, waitForEvent } from '../test-utils';
 import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
 
 /**
@@ -55,7 +55,7 @@ describe('SSRM resetRowHeights', () => {
 
     test('resetRowHeights warns and no-ops when auto row height is active', async () => {
         // The no-op-with-warning is the behaviour under test; assert the warning fires.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [3] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [3] });
 
         const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 

@@ -4,6 +4,7 @@ import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-communit
 import type { GridOptions, RowDataTransaction } from 'ag-grid-community';
 
 import {
+    ALL_SEVERITIES,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -96,7 +97,7 @@ describe('ag-grid rows-ordering', () => {
 
     test('row order is the same as row data (with id)', async () => {
         // Deliberately reuses id `9` in the async transaction to assert the duplicate-node-id warning.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [2] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [2] });
 
         const rowData1 = [
             { id: '1', x: 1 },
@@ -712,7 +713,7 @@ describe('ag-grid rows-ordering', () => {
     describe('edge cases', () => {
         test('updating rows that do not exists do not add them', async () => {
             // Deliberately updates non-existent ids to assert the row-not-found error.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [4] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [4] });
 
             const rowData1 = [
                 { id: '1', x: 1 },
@@ -755,7 +756,7 @@ describe('ag-grid rows-ordering', () => {
 
         test('duplicate IDs do not cause sourceRowIndex to be invalid', async () => {
             // Deliberately supplies duplicate ids to assert the duplicate-node-id warning.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [2] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [2] });
 
             const rowData1 = [
                 { id: '1', x: 1 },

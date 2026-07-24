@@ -30,7 +30,7 @@ function listenAll(listener: (diagnostic: CapturedDiagnostic) => void): () => vo
 }
 
 function resetDiagnostics(): void {
-    _configureDiagnostics({ capture: false, throwOn: 'none', suppress: [] });
+    _configureDiagnostics({ capture: false, throwOn: [], suppress: [] });
     // Attaching then detaching the only listener drops the buffer (cleared on last detach)
     listenAll(() => undefined)();
 }
@@ -212,17 +212,18 @@ describe('grid attribution', () => {
 });
 
 describe('throw mode', () => {
-    test("throwOn 'error' throws on errors but not warnings", () => {
-        _configureDiagnostics({ throwOn: 'error' });
+    test("throwOn ['error'] throws on errors but not warnings or deprecations", () => {
+        _configureDiagnostics({ throwOn: ['error'] });
 
         expect(() => _errorWithoutAttribution(11)).toThrow();
         expect(() => _warnWithoutAttribution(11)).not.toThrow();
+        expect(() => _deprecatedForGrid('grid-a', 11)).not.toThrow();
         expect(() => _logPreInitErr(11, undefined as any, 'boom')).toThrow();
         expect(() => _logPreInitWarn(11, undefined as any, 'boom')).not.toThrow();
     });
 
-    test("throwOn 'warning' throws on errors and warnings but not deprecations", () => {
-        _configureDiagnostics({ throwOn: 'warning' });
+    test("throwOn ['warning', 'error'] throws on warnings and errors but not deprecations", () => {
+        _configureDiagnostics({ throwOn: ['warning', 'error'] });
 
         expect(() => _errorWithoutAttribution(11)).toThrow();
         expect(() => _warnWithoutAttribution(11)).toThrow();
@@ -230,28 +231,36 @@ describe('throw mode', () => {
         expect(() => _deprecatedForGrid('grid-a', 11)).not.toThrow();
     });
 
-    test("throwOn 'deprecation' throws on deprecations, warnings and errors", () => {
-        _configureDiagnostics({ throwOn: 'deprecation' });
+    test('throwOn with every severity throws on deprecations, warnings and errors', () => {
+        _configureDiagnostics({ throwOn: ['deprecation', 'warning', 'error'] });
 
         expect(() => _deprecatedForGrid('grid-a', 11)).toThrow();
         expect(() => _warnWithoutAttribution(11)).toThrow();
         expect(() => _errorWithoutAttribution(11)).toThrow();
     });
 
+    test("throwOn ['deprecation'] throws on deprecations only, not warnings or errors", () => {
+        _configureDiagnostics({ throwOn: ['deprecation'] });
+
+        expect(() => _deprecatedForGrid('grid-a', 11)).toThrow();
+        expect(() => _warnWithoutAttribution(11)).not.toThrow();
+        expect(() => _errorWithoutAttribution(11)).not.toThrow();
+    });
+
     test('logs to the console before throwing', () => {
-        _configureDiagnostics({ throwOn: 'error' });
+        _configureDiagnostics({ throwOn: ['error'] });
 
         expect(() => _errorWithoutAttribution(11)).toThrow();
         expect(mockErrorOnce).toHaveBeenCalledTimes(1);
     });
 
     test('includes the default message in the thrown error', () => {
-        _configureDiagnostics({ throwOn: 'error' });
+        _configureDiagnostics({ throwOn: ['error'] });
 
         expect(() => _logPreInitErr(11, undefined as any, 'Custom boom')).toThrow(/Custom boom/);
     });
 
-    test('does not throw when no threshold is configured', () => {
+    test('does not throw when no severities are configured', () => {
         expect(() => _errorWithoutAttribution(11)).not.toThrow();
         expect(() => _warnWithoutAttribution(11)).not.toThrow();
     });
@@ -273,8 +282,8 @@ describe('suppression', () => {
         off();
     });
 
-    test('does not throw a suppressed id even when it meets the throw threshold', () => {
-        _configureDiagnostics({ throwOn: 'error', suppress: [11] });
+    test('does not throw a suppressed id even when its severity is enabled', () => {
+        _configureDiagnostics({ throwOn: ['error'], suppress: [11] });
 
         expect(() => _errorWithoutAttribution(11)).not.toThrow();
         expect(() => _errorWithoutAttribution(22, { key: 'x' })).toThrow();
@@ -282,8 +291,8 @@ describe('suppression', () => {
 });
 
 describe('dev validation config', () => {
-    test('registering without options resets a previously-configured throw threshold', () => {
-        _applyDevValidationConfig({ throwOn: 'error' });
+    test('registering without options resets previously-configured throw severities', () => {
+        _applyDevValidationConfig({ throwOn: ['error'] });
         expect(() => _errorWithoutAttribution(11)).toThrow();
 
         // A later registration with no options must not inherit the earlier `throwOn`
@@ -317,8 +326,8 @@ describe('dev validation config', () => {
         off();
     });
 
-    test('enabling capture does not clobber a throw threshold set by a with call', () => {
-        _applyDevValidationConfig({ throwOn: 'error' });
+    test('enabling capture does not clobber throw severities set by a with call', () => {
+        _applyDevValidationConfig({ throwOn: ['error'] });
         // A bare registration enables capture only, so the earlier throwOn must survive.
         _enableDiagnosticCapture();
 

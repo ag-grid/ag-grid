@@ -15,7 +15,7 @@ describe('ag-grid parentId tree data without tree module', () => {
 
     beforeEach(() => {
         // This file deliberately triggers validation/missing-module diagnostics; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
         gridsManager.reset();
     });
 

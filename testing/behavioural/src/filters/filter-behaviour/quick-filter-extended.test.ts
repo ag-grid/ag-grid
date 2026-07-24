@@ -9,6 +9,7 @@ import {
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     GridRows,
@@ -338,7 +339,7 @@ describe('Quick Filter — extended coverage', () => {
 
     test('non-string quickFilterText is rejected with a warning and does not filter', async () => {
         // This test deliberately sets a non-string quickFilterText, which warns #70.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [70] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [70] });
         const api: GridApi = await gridsManager.createGridAndWait<Animal>('grid', {
             columnDefs: [{ field: 'name' }, { field: 'habitat' }],
             rowData: ROW_DATA,

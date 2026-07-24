@@ -1,19 +1,24 @@
 import * as jestDomMatchers from '@testing-library/jest-dom/matchers';
 import { afterAll, beforeEach, expect, vitest } from 'vitest';
 
+// Imported from the specific module, not the test-utils barrel: the barrel transitively imports
+// `ag-grid-community` at runtime, which would defeat the lazy `ag`-import guard below. This module is
+// type-only besides the constant, so it pulls in nothing at runtime.
+import { ALL_SEVERITIES } from './src/test-utils/dev-validations';
+
 // Register all jest-dom matchers globally.
 expect.extend(jestDomMatchers);
 
 // Dogfood the dev-validation throw mode: a misconfigured grid under test (a deprecation, warning or
 // error diagnostic) fails the test loudly instead of scrolling past in the console. Re-asserted each
-// test because the throw threshold is global, last-write-wins module state. A test that deliberately
-// exercises a diagnostic opts out with a local `enableDevValidations({ throwOn: 'deprecation', suppress: [id] })`.
+// test because the throw config is global, last-write-wins module state. A test that deliberately
+// exercises a diagnostic opts out with a local `enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [id] })`.
 //
 // `ag-grid-community` is imported lazily (not at module top level) so this setup file does not pull the
 // grid in before a test file's own pre-`ag`-import ordering guards have run (e.g. style-injection).
 beforeEach(async () => {
     const { enableDevValidations } = await import('ag-grid-community');
-    enableDevValidations({ throwOn: 'deprecation' });
+    enableDevValidations({ throwOn: ALL_SEVERITIES });
 });
 
 // Shim for code that references `jest` — redirect to vitest.

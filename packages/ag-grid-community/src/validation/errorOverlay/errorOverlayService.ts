@@ -2,9 +2,9 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { OverlayService } from '../../rendering/overlays/overlayService';
-import type { CapturedDiagnostic, SeverityThreshold } from '../logging';
-import { _addDiagnosticListener, _diagnosticKey, _meetsSeverityThreshold } from '../logging';
-import { _getDevOverlayMode } from '../validationConfig';
+import type { CapturedDiagnostic, Severity } from '../logging';
+import { _addDiagnosticListener, _diagnosticKey, _isSeverityEnabled } from '../logging';
+import { _getDevOverlaySeverities } from '../validationConfig';
 
 type UpdateListener = () => void;
 
@@ -17,7 +17,7 @@ export class ErrorOverlayService extends BeanStub implements NamedBean {
     beanName = 'errorOverlay' as const;
 
     private overlays?: OverlayService;
-    private overlayMode: SeverityThreshold = 'none';
+    private overlaySeverities: readonly Severity[] = [];
 
     private readonly diagnostics: CapturedDiagnostic[] = [];
     private readonly seenKeys = new Set<string>();
@@ -29,12 +29,12 @@ export class ErrorOverlayService extends BeanStub implements NamedBean {
     }
 
     public postConstruct(): void {
-        const mode = _getDevOverlayMode();
-        // 'none' means the developer opted out of the overlay; attach no listener so there is no work.
-        if (mode === 'none') {
+        const severities = _getDevOverlaySeverities();
+        // An empty list means the developer opted out of the overlay; attach no listener so there is no work.
+        if (severities.length === 0) {
             return;
         }
-        this.overlayMode = mode;
+        this.overlaySeverities = severities;
         this.addDestroyFunc(
             _addDiagnosticListener(this.beans.context.getId(), (diagnostic) => this.onDiagnostic(diagnostic))
         );
@@ -59,7 +59,7 @@ export class ErrorOverlayService extends BeanStub implements NamedBean {
     }
 
     private onDiagnostic(diagnostic: CapturedDiagnostic): void {
-        if (!_meetsSeverityThreshold(diagnostic.severity, this.overlayMode)) {
+        if (!_isSeverityEnabled(diagnostic.severity, this.overlaySeverities)) {
             return;
         }
         const key = this.getKey(diagnostic);

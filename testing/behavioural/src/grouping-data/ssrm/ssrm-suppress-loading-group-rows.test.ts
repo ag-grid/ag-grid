@@ -4,7 +4,7 @@ import type { IServerSideDatasource, RowGroupingDisplayType } from 'ag-grid-comm
 import { ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../../test-utils';
+import { ALL_SEVERITIES, TestGridsManager } from '../../test-utils';
 
 /**
  * Tests for suppressServerSideFullWidthLoadingRow combined with groupDisplayType and groupHideOpenParents.
@@ -114,7 +114,7 @@ describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () 
 
         test('groupHideOpenParents=true: warns that groupHideOpenParents has no effect', () => {
             // Asserts the invalid-combo warning (#315); suppress only that id so any other still throws.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [315] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [315] });
             gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
@@ -132,7 +132,7 @@ describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () 
 
         test('suppressServerSideFullWidthLoadingRow=true + groupHideOpenParents=true: warns that groupHideOpenParents has no effect', () => {
             // Asserts the invalid-combo warning (#315); suppress only that id so any other still throws.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [315] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [315] });
             gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
@@ -186,7 +186,7 @@ describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () 
                 // groupHideOpenParents is invalid outside multipleColumns (#315); suppress only there so
                 // the valid multipleColumns case still throws on any diagnostic.
                 if (groupDisplayType !== 'multipleColumns') {
-                    enableDevValidations({ throwOn: 'deprecation', suppress: [315] });
+                    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [315] });
                 }
                 gridManager.createGrid('myGrid', {
                     columnDefs,
@@ -203,7 +203,7 @@ describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () 
                 // groupHideOpenParents is invalid outside multipleColumns (#315); suppress only there so
                 // the valid multipleColumns case still throws on any diagnostic.
                 if (groupDisplayType !== 'multipleColumns') {
-                    enableDevValidations({ throwOn: 'deprecation', suppress: [315] });
+                    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [315] });
                 }
                 gridManager.createGrid('myGrid', {
                     columnDefs,

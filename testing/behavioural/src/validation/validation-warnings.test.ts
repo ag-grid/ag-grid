@@ -14,7 +14,7 @@ describe('ag-grid validation warnings', () => {
 
     beforeEach(() => {
         // This file asserts on validation diagnostics; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         gridsManager.reset();
     });

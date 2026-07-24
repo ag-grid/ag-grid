@@ -3,6 +3,7 @@ import { ClientSideRowModelModule, enableDevValidations, setupAgTestIds } from '
 import { SetFilterModule } from 'ag-grid-enterprise';
 
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     GridRows,
@@ -428,7 +429,7 @@ describe('Set Filter — excelMode', () => {
     test('defaultToNothingSelected is ignored under excelMode and warns', async () => {
         // This test deliberately combines defaultToNothingSelected with excelMode, which warns #207
         // when the filter is created (asynchronously, on open). Suppress before that fires.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [207] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [207] });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {

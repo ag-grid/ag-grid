@@ -31,7 +31,7 @@ describe('Row Selection Grid API', () => {
 
     beforeEach(() => {
         // This file exercises deprecated selection APIs on purpose; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
 
         gridMgr.reset();
 

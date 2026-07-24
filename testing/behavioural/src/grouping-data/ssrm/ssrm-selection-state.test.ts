@@ -2,7 +2,7 @@ import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
@@ -119,7 +119,7 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
 
     test('selectAll then deselect one -> {selectAll:true, toggledNodes:[thatId]}; round-trips', async () => {
         // getSelectedNodes() after selectAll under SSRM deliberately warns (#199); asserted below.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [199] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [199] });
         const api = await createAndLoad('ssrmSelStateSelectAll');
 
         // Reading getSelectedNodes() after selectAll under SSRM warns (#199) that it is unreliable —

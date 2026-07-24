@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path';
 import { ClientSideRowModelModule, PinnedRowModule, enableDevValidations } from 'ag-grid-community';
 import type { ColDef, GridApi, IRowNode, RowPinnedType } from 'ag-grid-community';
 
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager } from '../test-utils';
 import { VERSION } from '../version';
 
 describe('Pinned rows', () => {
@@ -255,7 +255,7 @@ describe('Pinned rows', () => {
 
         test('cannot render duplicate rows with getRowId', () => {
             // Duplicate pinned-row ids are the condition under test; assert the duplicate-id warning.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [96] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [96] });
 
             const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
             const getRowId = vitest.fn((p) => JSON.stringify(p.data));
@@ -576,7 +576,7 @@ describe('Pinned rows', () => {
 
         test('cannot render duplicate rows with getRowId', () => {
             // Duplicate pinned-row ids are the condition under test; assert the duplicate-id warning.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [96] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [96] });
 
             const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
             const getRowId = vitest.fn((p) => JSON.stringify(p.data));

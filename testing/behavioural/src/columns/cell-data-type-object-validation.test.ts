@@ -29,7 +29,7 @@ describe('object cellDataType validation warnings', () => {
 
     beforeEach(() => {
         // This file asserts on validation diagnostics; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
         gridsManager.reset();
         warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
     });

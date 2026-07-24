@@ -13,7 +13,7 @@ import {
     ToolbarModule,
 } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
     const gridMgr = new TestGridsManager({
@@ -361,7 +361,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
 
         test('hides rowGroupPanel and logs error when RowGroupingModule is not registered', async () => {
             // This test deliberately triggers error #302 (module not registered) and asserts it via a console spy.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [302] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [302] });
             const errorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
             const api = minimalGridMgr.createGrid('row-group-panel-no-module', {
@@ -407,7 +407,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
 
         test('hides pivotPanel and logs error when PivotModule is not registered', async () => {
             // This test deliberately triggers error #302 (module not registered) and asserts it via a console spy.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [302] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [302] });
             const errorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
             const api = minimalGridMgr.createGrid('pivot-panel-no-module', {

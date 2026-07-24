@@ -7,7 +7,7 @@ import { ValidationModule, createGrid, enableDevValidations } from 'ag-grid-comm
 describe('dev validation bootstrap panel', () => {
     beforeEach(() => {
         // This file asserts on validation diagnostics / the dev overlay; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
         vitest.spyOn(console, 'error').mockImplementation(() => {});
         document.body.innerHTML = '<div id="grid"></div>';
     });

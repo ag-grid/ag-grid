@@ -6,7 +6,7 @@ import type { ColDef, Column, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 describe('Column Mutations - applyColumnState', () => {
     const gridsManager = new TestGridsManager({
@@ -447,7 +447,7 @@ describe('Column Mutations - applyColumnState', () => {
 
         test('applyOrder respects marryChildren — order that would split a married group is rejected', async () => {
             // Asserts warning #39 (order that splits a married group is discarded).
-            enableDevValidations({ throwOn: 'deprecation', suppress: [39] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [39] });
             const api = gridsManager.createGrid('applyOrderMarry', {
                 columnDefs: [
                     {
@@ -1504,7 +1504,7 @@ describe('Column Mutations - applyColumnState', () => {
     describe('columnStateUtils edge cases', () => {
         test('applyColumnState malformed inputs: non-array state, orphan service colIds, null/undefined colIds', async () => {
             // Asserts warning #32 (applyColumnState state must be an array).
-            enableDevValidations({ throwOn: 'deprecation', suppress: [32] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [32] });
             const api = gridsManager.createGrid('malformedState', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
             });
@@ -2314,7 +2314,7 @@ describe('Column Mutations - applyColumnState', () => {
 
         test('invalid non-string aggFunc in state warns (#33) and is ignored', async () => {
             // Asserts warning #33 (non-string aggFunc in column state is rejected).
-            enableDevValidations({ throwOn: 'deprecation', suppress: [33] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [33] });
             const api = gridsManager.createGrid('aggFuncInvalid', {
                 columnDefs: [{ colId: 'gold', aggFunc: 'sum' }, { colId: 'a' }],
                 rowData: [{ gold: 1, a: 2 }],

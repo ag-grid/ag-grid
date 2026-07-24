@@ -10,7 +10,7 @@ import { AgGridReact } from 'ag-grid-react';
 describe('dev validation bootstrap panel (React)', () => {
     beforeEach(() => {
         // This file asserts on validation diagnostics / the dev overlay; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
     });
 
     afterEach(() => {

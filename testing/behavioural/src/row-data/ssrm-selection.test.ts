@@ -2,7 +2,7 @@ import type { GetRowIdFunc, GetRowIdParams, GridOptions } from 'ag-grid-communit
 import { RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 /**
  * Black-box behavioural tests for SSRM selection, exercised entirely through the public grid API
@@ -76,7 +76,7 @@ describe('SSRM Selection (behavioural)', () => {
     test('numeric row ids work with selection', async () => {
         // #25 (numeric getRowId cast to string) is the behaviour under test and fires from the async
         // SSRM getRows callback; suppress it before the datasource loads so the throw can't escape there.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [25] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [25] });
 
         const rowData = Array.from({ length: 5 }, (_, i) => ({ id: i, value: `Row ${i}` }));
 

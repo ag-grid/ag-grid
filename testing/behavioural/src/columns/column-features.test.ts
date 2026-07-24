@@ -23,7 +23,14 @@ import {
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, mockGridLayout } from '../test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    mockGridLayout,
+} from '../test-utils';
 
 /** Reads the rendered height of the (single) column header row from the grid DOM. */
 function getHeaderRowHeight(api: GridApi): number {
@@ -189,7 +196,7 @@ describe('Column Features', () => {
 
         test('unknown type key in colDef without userTypes is a warn-only no-op', async () => {
             // Asserts the warn-only #36; suppress only that id so any other diagnostic still throws.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [36] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [36] });
             const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a', type: 'does-not-exist' }],
@@ -216,7 +223,7 @@ describe('Column Features', () => {
 
         test('userTypes that override a default type are rejected (warn-only)', async () => {
             // Asserts the warn-only #34; suppress only that id so any other diagnostic still throws.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [34] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [34] });
             const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
             const api = gridsManager.createGrid('myGrid', {
                 // 'numericColumn' is a default — overriding should warn and be ignored
@@ -243,7 +250,7 @@ describe('Column Features', () => {
 
         test('userTypes with nested `type` field is rejected (warn-only)', async () => {
             // Asserts the warn-only #35; suppress only that id so any other diagnostic still throws.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [35] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [35] });
             const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
             const api = gridsManager.createGrid('myGrid', {
                 columnTypes: { custom: { type: 'something', cellClass: 'c' } as any },
@@ -269,7 +276,7 @@ describe('Column Features', () => {
 
         test('unknown type with userTypes present is a warn-only no-op', async () => {
             // Asserts the warn-only #36; suppress only that id so any other diagnostic still throws.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [36] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [36] });
             const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
             const api = gridsManager.createGrid('myGrid', {
                 columnTypes: { custom: { cellClass: 'c' } as any },
@@ -1051,7 +1058,7 @@ describe('Column Features', () => {
         test('colSpan and rowSpan callbacks clamped min 1; default 1 when no callback', async () => {
             // rowSpan without suppressRowTransform legitimately warns (#319); this test only checks
             // callback clamping, not row-span rendering. Suppress that id and silence the console noise.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [319] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
             const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [

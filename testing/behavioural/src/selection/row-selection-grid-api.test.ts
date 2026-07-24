@@ -11,6 +11,7 @@ import {
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import {
+    ALL_SEVERITIES,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -79,7 +80,7 @@ describe('Row Selection Grid API', () => {
             describe('selectAll', () => {
                 test('Prevented from selecting all rows via the API', async () => {
                     // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
-                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
+                    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [130] });
                     const [api] = createGrid({
                         columnDefs,
                         rowData,
@@ -124,7 +125,7 @@ describe('Row Selection Grid API', () => {
             describe('selectAll("currentPage")', () => {
                 test('Cannot select all rows on current page', async () => {
                     // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
-                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
+                    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [130] });
                     const [api] = createGrid(
                         {
                             columnDefs,
@@ -171,7 +172,7 @@ describe('Row Selection Grid API', () => {
             describe('selectAll("filtered")', () => {
                 test('Cannot select all filtered rows', async () => {
                     // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
-                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
+                    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [130] });
                     const [api] = createGrid(
                         {
                             columnDefs,
@@ -258,7 +259,7 @@ describe('Row Selection Grid API', () => {
 
                 test('Cannot select multiple rows', async () => {
                     // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
-                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
+                    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [130] });
                     const [api] = createGrid({
                         columnDefs,
                         rowData,
@@ -303,7 +304,7 @@ describe('Row Selection Grid API', () => {
             describe('selectAll', () => {
                 test('Prevented from selecting all rows via the API', async () => {
                     // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
-                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
+                    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [130] });
                     const [api] = createGrid({
                         columnDefs,
                         rowSelection: {
@@ -393,7 +394,7 @@ describe('Row Selection Grid API', () => {
 
                 test('Cannot select multiple rows', async () => {
                     // Asserts multi-select is blocked in singleRow mode (#130); suppress only that id.
-                    enableDevValidations({ throwOn: 'deprecation', suppress: [130] });
+                    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [130] });
                     const [api] = createGrid({
                         columnDefs,
                         rowModelType: 'serverSide',

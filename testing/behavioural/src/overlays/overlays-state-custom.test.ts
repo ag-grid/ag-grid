@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 
-import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid modern overlays state', () => {
     const gridsManager = new TestGridsManager({
@@ -1685,7 +1685,7 @@ describe('ag-grid modern overlays state', () => {
 
         test('suppressOverlays: [loading, noRows] suppresses built-in but not custom overlays', async () => {
             // Deliberately calls the deprecated `showLoadingOverlay`/`showNoRowsOverlay` APIs to verify suppression.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [308] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [308] });
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 components: {

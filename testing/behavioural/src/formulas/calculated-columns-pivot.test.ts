@@ -5,7 +5,7 @@ import type { ColDef, GridApi, GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { CalculatedColumnsModule, FormulaModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 // Calculated-column behaviour in PIVOT mode. A calculated column stays active under pivot, evaluating
 // against the primary columns on leaf rows, and works in every pivot role: as a non-value primary column
@@ -347,7 +347,7 @@ describe('calculated columns - pivot mode', () => {
 
     test('pivot result columns keep allowFormula from a non-calc source but drop calc fields for a calc source', async () => {
         // This test deliberately exercises warning #295 (allowFormula unsupported with Row Groups), asserted below.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [295] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-result-allowformula', {
             rowData,

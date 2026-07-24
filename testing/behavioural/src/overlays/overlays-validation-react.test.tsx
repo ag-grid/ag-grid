@@ -19,7 +19,7 @@ describe('dev validation overlay (react)', () => {
 
     beforeEach(() => {
         // This file asserts on validation diagnostics / the dev overlay; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
         vitest.spyOn(console, 'warn').mockImplementation(() => {});
         vitest.spyOn(console, 'error').mockImplementation(() => {});
     });

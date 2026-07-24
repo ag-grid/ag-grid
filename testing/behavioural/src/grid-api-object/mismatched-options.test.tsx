@@ -19,7 +19,7 @@ describe('Mismatched rowModelType error', () => {
 
     beforeEach(() => {
         // This file asserts on validation diagnostics; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 

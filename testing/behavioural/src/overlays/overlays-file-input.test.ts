@@ -3,7 +3,13 @@ import type { MockInstance } from 'vitest';
 import type { ProcessFileInputParams } from 'ag-grid-community';
 import { AutoGenerateColumnsModule, ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 
-import { GridRows, TestGridsManager, initPointerEventPolyfill, isAgHtmlElementVisible } from '../test-utils';
+import {
+    ALL_SEVERITIES,
+    GridRows,
+    TestGridsManager,
+    initPointerEventPolyfill,
+    isAgHtmlElementVisible,
+} from '../test-utils';
 
 describe('ag-grid file input overlay', () => {
     const gridsManager = new TestGridsManager({
@@ -247,7 +253,7 @@ describe('ag-grid file input overlay', () => {
 
         test('activeOverlay shows file input even without processFileInput', () => {
             // Deliberately shows the file input overlay with no `processFileInput`, which warns.
-            enableDevValidations({ throwOn: 'deprecation', suppress: [305] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [305] });
             gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'a' }],
                 rowData: [{ a: 1 }],

@@ -25,7 +25,7 @@ describe('dev validation overlay (bare module registration)', () => {
 
     beforeEach(() => {
         // This file asserts on validation diagnostics / the dev overlay; the global throw-on-validation must be off here.
-        enableDevValidations({ throwOn: 'none' });
+        enableDevValidations({ throwOn: [] });
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
         gridsManager.reset();

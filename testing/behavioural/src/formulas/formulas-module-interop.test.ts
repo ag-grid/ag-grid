@@ -6,7 +6,7 @@ import type { GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { FormulaModule, MasterDetailModule, PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid formulas module interop', () => {
     const rowNumberRefreshBufferMs = 25;
@@ -57,7 +57,7 @@ describe('ag-grid formulas module interop', () => {
 
     test('masterDetail blocks formulas', async () => {
         // Asserts the blocker warning (#295) fires; suppress only that id so any other still throws.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [295] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
         const options: GridOptions = {
             defaultColDef: { allowFormula: true },
             masterDetail: true,
@@ -77,7 +77,7 @@ describe('ag-grid formulas module interop', () => {
 
     test('treeData blocks formulas', async () => {
         // Asserts the blocker warning (#295) fires; suppress only that id so any other still throws.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [295] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
         const options: GridOptions = {
             defaultColDef: { allowFormula: true },
             treeData: true,
@@ -96,7 +96,7 @@ describe('ag-grid formulas module interop', () => {
     test('enableCellExpressions blocks formulas', async () => {
         // Asserts the blocker warning (#295); #16 is the expected eval failure of the `=REF(...)` row
         // data under enableCellExpressions (see the console.error stub above). Any other id still throws.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [295, 16] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295, 16] });
         const options: GridOptions = {
             defaultColDef: { allowFormula: true },
             enableCellExpressions: true,
@@ -112,7 +112,7 @@ describe('ag-grid formulas module interop', () => {
 
     test('column pivoting blocks formulas', async () => {
         // Asserts the blocker warning (#295) fires; suppress only that id so any other still throws.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [295] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
         const options: GridOptions = {
             defaultColDef: { allowFormula: true },
             rowData,
@@ -131,7 +131,7 @@ describe('ag-grid formulas module interop', () => {
 
     test('row grouping blocks formulas', async () => {
         // Asserts the blocker warning (#295) fires; suppress only that id so any other still throws.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [295] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
         const options: GridOptions = {
             defaultColDef: { allowFormula: true },
             rowData,
@@ -146,7 +146,7 @@ describe('ag-grid formulas module interop', () => {
 
     test('value aggregation blocks formulas', async () => {
         // Asserts the blocker warning (#295) fires; suppress only that id so any other still throws.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [295] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
         const options: GridOptions = {
             defaultColDef: { allowFormula: true },
             rowData,
@@ -218,7 +218,7 @@ describe('ag-grid formulas module interop', () => {
 
     test('setGridOption columnDefs introduces a blocker column → formulas deactivate with warning', async () => {
         // Asserts the blocker warning (#295) fires; suppress only that id so any other still throws.
-        enableDevValidations({ throwOn: 'deprecation', suppress: [295] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
         const api = gridsManager.createGrid('formulas-interop-defs-blocker', {
             defaultColDef: { allowFormula: true },
             rowData,
