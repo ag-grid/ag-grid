@@ -32,6 +32,24 @@ export const _setColGroupOpen = (
     _setColGroupState(beans, [{ groupId, open: newValue }], source);
 };
 
+const applyHeaderNameOverride = (
+    overrides: Map<string, string>,
+    stateItem: { groupId: string; headerName?: string | null }
+): boolean => {
+    const { groupId } = stateItem;
+    const headerName = stateItem.headerName ?? null;
+    const current = overrides.get(groupId) ?? null;
+    if (current === headerName) {
+        return false;
+    }
+    if (headerName == null) {
+        overrides.delete(groupId);
+    } else {
+        overrides.set(groupId, headerName);
+    }
+    return true;
+};
+
 export const _setColGroupState = (
     beans: BeanCollection,
     stateItems: { groupId: string; open: boolean | undefined; headerName?: string | null }[],
@@ -60,17 +78,7 @@ export const _setColGroupState = (
                 impactedGroups.push(group);
             }
             if ('headerName' in stateItem) {
-                const groupId = stateItem.groupId;
-                const headerName = stateItem.headerName ?? null;
-                const current = overrides.get(groupId) ?? null;
-                if (current !== headerName) {
-                    if (headerName == null) {
-                        overrides.delete(groupId);
-                    } else {
-                        overrides.set(groupId, headerName);
-                    }
-                    headerNameChanged = true;
-                }
+                headerNameChanged = applyHeaderNameOverride(overrides, stateItem) || headerNameChanged;
             }
         }
 
