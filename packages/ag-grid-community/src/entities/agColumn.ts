@@ -854,7 +854,7 @@ export class AgColumn<TValue = any>
         this.beans.eventSvc.dispatchEvent({
             type: 'columnHeaderNameChanged',
             column: this,
-            columns: [this],
+            columns: null,
             columnGroup: null,
             source,
         });

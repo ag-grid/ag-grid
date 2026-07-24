@@ -2289,7 +2289,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public columnPinned: EventEmitter<ColumnPinnedEvent<TData>> = new EventEmitter<
         ColumnPinnedEvent<TData>
     >();
-    /** A column or column group header name was changed via the UI header-name editor.
+    /** A column or column group header name changed. Fires for edits made through the UI header-name
+     * editor and for header names applied via column state (e.g. `applyColumnState`, state reset).
+     * Inspect `event.source` to distinguish (`'uiColumnHeaderEdit'` for editor changes).
      */
     @Output() public columnHeaderNameChanged: EventEmitter<ColumnHeaderNameChangedEvent<TData>> = new EventEmitter<
         ColumnHeaderNameChangedEvent<TData>
