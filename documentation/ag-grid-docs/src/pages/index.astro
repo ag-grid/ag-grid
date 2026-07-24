@@ -22,7 +22,7 @@ import { AutomatedIntegratedCharts } from '@ag-website-shared/components/automat
 import { FrameworkTextAnimation } from '@ag-website-shared/components/framework-text-animation/FrameworkTextAnimation';
 import LogoMark from '@components/logo/LogoMark';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
-import { DEFAULT_FRAMEWORK } from '@constants';
+import { DEFAULT_FRAMEWORK, DISABLE_MARKDOWN_DOCS } from '@constants';
 import { buildFAQPage, buildSiteNavigationElement, siteRootUrl } from '@ag-website-shared/utils/structuredData';
 
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
@@ -111,6 +111,8 @@ const frameworksData = [
         }),
     },
 ];
+
+const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.md');
 ---
 
 <!-- Prefetch customer logos -->
@@ -128,6 +130,7 @@ const frameworksData = [
     showSearchBar={false}
     showDocsNav={false}
     pageStructuredData={[siteNavigationStructuredData, faqStructuredData]}
+    markdownUrl={markdownUrl}
 >
     <div class={styles.homepageHero}>
         <section class:list={[styles.heroInner, 'layout-max-width-small']}>

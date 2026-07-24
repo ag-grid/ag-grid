@@ -7,6 +7,7 @@ import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
+import { DISABLE_MARKDOWN_DOCS } from '@constants';
 import styles from '@pages-styles/about.module.scss';
 
 import BornSvg from '../images/about-icons/born.svg';
@@ -85,6 +86,8 @@ const carouselImages = [
 ];
 
 const allCarouselImages = [...carouselImages, ...carouselImages];
+
+const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/about.md');
 ---
 
 <Layout
@@ -92,6 +95,7 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
     description="AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are."
     showSearchBar={true}
     showDocsNav={false}
+    markdownUrl={markdownUrl}
 >
     <div class={styles.aboutPage}>
         <div class="layout-max-width-small">
