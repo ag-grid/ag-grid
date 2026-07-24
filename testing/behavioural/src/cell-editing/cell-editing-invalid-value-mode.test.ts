@@ -244,7 +244,7 @@ describe('Cell Editing invalidEditValueMode', () => {
         await asyncSetTimeout(1);
         const editingWhileBlocked = api.getEditingCells();
         expect(editingWhileBlocked.length).toBe(1);
-        expect(editingWhileBlocked[0].column.getColId()).toBe('a');
+        expect(editingWhileBlocked[0]!.colId).toBe('a');
 
         // resolve the block by correcting cell A in the still-open popup and committing, then edit cell B
         const invalidInputA = popup.querySelector<HTMLInputElement>('input')!;
