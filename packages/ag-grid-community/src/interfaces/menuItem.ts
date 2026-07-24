@@ -185,6 +185,7 @@ export type DefaultMenuItem =
     | 'calculatedColumn'
     | 'editCalculatedColumn'
     | 'removeCalculatedColumn'
+    | 'editColumnName'
     | 'sortAscending'
     | 'sortDescending'
     | 'sortAbsoluteAscending'

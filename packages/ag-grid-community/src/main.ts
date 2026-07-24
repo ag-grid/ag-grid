@@ -278,6 +278,7 @@ export type {
     CalculatedColumnUpdate,
     ICalculatedColumnsService,
 } from './interfaces/iCalculatedColumns';
+export type { ColumnHeaderEditApplyMode, ColumnHeaderEditOptions } from './interfaces/iColumnHeaderEdit';
 export type {
     AlwaysPassFilter,
     BaseFilter,
@@ -645,7 +646,10 @@ export type {
     AggregationState,
     CellSelectionCellState,
     CellSelectionState,
+    ColumnGroupHeaderNameState,
     ColumnGroupState,
+    ColumnHeaderNameColumnState,
+    ColumnHeaderNameState,
     ColumnOrderState,
     ColumnPinningState,
     ColumnSizeState,

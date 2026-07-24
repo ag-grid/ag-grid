@@ -839,6 +839,12 @@ export const AG_GRID_LOCALE_EG = {
     timeFormatHHMMSS: 'ساعة:دقيقة:ثانية',
     timeFormatHHMMSSAmPm: 'ساعة:دقيقة:ثانية ص/م',
 
+    // Editable Column Header Name
+    editColumnName: 'تعديل اسم العمود',
+    ariaColumnHeaderNameEditor: 'محرر اسم العمود',
+    columnHeaderEditApply: 'تطبيق',
+    columnHeaderEditCancel: 'إلغاء',
+
     // Calculated Columns
     calculatedColumn: 'عمود محسوب',
     calculatedColumnAdd: 'إضافة عمود محسوب',

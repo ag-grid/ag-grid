@@ -44,7 +44,7 @@ export class ToolPanelColumnComp extends Component {
     public readonly column: AgColumn;
     public readonly columnDepth: number;
     private eDragHandle: Element;
-    private readonly displayName: string | null;
+    private displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
 
@@ -117,6 +117,8 @@ export class ToolPanelColumnComp extends Component {
             columnPivotChanged: onColStateChanged,
             columnRowGroupChanged: onColStateChanged,
             visibleChanged: onColStateChanged,
+            colDefChanged: this.onColDefChanged.bind(this),
+            headerNameChanged: this.onColDefChanged.bind(this),
         });
         this.addManagedListeners(focusWrapper, {
             keydown: this.handleKeyDown.bind(this),
@@ -204,6 +206,13 @@ export class ToolPanelColumnComp extends Component {
         }
 
         setAllColumns(this.beans, [this.column], nextState, this.eventType, this.params);
+    }
+
+    private onColDefChanged(): void {
+        const displayName = this.beans.colNames.getDisplayNameForColumn(this.column, 'columnToolPanel');
+        this.displayName = displayName;
+        this.eLabel.textContent = displayName;
+        this.refreshAriaLabel();
     }
 
     private refreshAriaLabel(): void {

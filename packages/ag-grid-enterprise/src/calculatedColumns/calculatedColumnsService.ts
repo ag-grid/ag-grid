@@ -856,7 +856,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
         return {
             colId,
-            headerName: colDef.headerName ?? displayName ?? colId,
+            headerName: displayName ?? colDef.headerName ?? colId,
             cellDataType: typeof cellDataType === 'string' ? cellDataType : DEFAULT_DRAFT.cellDataType,
             calculatedExpression: mapper.toDisplayExpression(colDef.calculatedExpression ?? ''),
         };

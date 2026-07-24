@@ -179,6 +179,8 @@ const _INTERNAL_EVENTS = [
     'headerRowsChanged',
     'rowExpansionStateChanged',
     'showRowGroupColsSetChanged',
+    'columnHeaderNameChanged',
+    'columnHeaderEditHighlightChanged',
     'columnShowValuesAsChanged',
 ] as const;
 

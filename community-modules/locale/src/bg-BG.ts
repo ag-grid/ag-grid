@@ -846,6 +846,12 @@ export const AG_GRID_LOCALE_BG = {
     timeFormatHHMMSS: 'ЧЧ:ММ:СС',
     timeFormatHHMMSSAmPm: 'ЧЧ:ММ:СС AM/PM',
 
+    // Editable Column Header Name
+    editColumnName: 'Редактиране на името на колоната',
+    ariaColumnHeaderNameEditor: 'Редактор на име на колона',
+    columnHeaderEditApply: 'Приложи',
+    columnHeaderEditCancel: 'Отказ',
+
     // Calculated Columns
     calculatedColumn: 'Изчислена колона',
     calculatedColumnAdd: 'Добавяне на изчислена колона',

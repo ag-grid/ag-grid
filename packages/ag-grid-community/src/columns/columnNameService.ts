@@ -54,6 +54,18 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         providedColumnGroup: AgProvidedColumnGroup | null,
         location: HeaderLocation
     ): string | null {
+        // Columns keep the override on their stable AgColumn entity; provided groups are rebuilt and
+        // multi-instance, so their override lives in a groupId-keyed store on the column model instead.
+        const groupHeaderNameOverride = providedColumnGroup
+            ? (this.beans.colModel.groupHeaderNameOverrides.get(providedColumnGroup.groupId) ?? null)
+            : null;
+        const headerNameOverride = column?.headerNameOverride ?? groupHeaderNameOverride;
+
+        // A UI-edited name wins outright: the header value getter is not consulted once the user has renamed.
+        if (headerNameOverride != null) {
+            return headerNameOverride;
+        }
+
         const headerValueGetter = colDef.headerValueGetter;
 
         if (headerValueGetter) {

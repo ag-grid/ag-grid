@@ -1,0 +1,23 @@
+.ag-column-header-edit-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ag-widget-vertical-spacing);
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding)
+        calc(var(--ag-widget-container-vertical-padding) * 2);
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.ag-column-header-edit-popup-editor {
+    flex: 1 1 auto;
+}
+
+.ag-column-header-edit-popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--ag-widget-horizontal-spacing);
+}
+
+.ag-column-header-edit-highlighted {
+    background-color: var(--ag-column-header-edit-highlight-color);
+}

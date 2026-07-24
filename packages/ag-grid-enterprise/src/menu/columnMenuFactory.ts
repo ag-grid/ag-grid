@@ -28,7 +28,8 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         parent: { createManagedBean(bean: MenuList): MenuList },
         menuItems: (DefaultColumnMenuItem | MenuItemDef)[],
         column: AgColumn | undefined,
-        sourceElement: () => HTMLElement
+        sourceElement: () => HTMLElement,
+        columnGroup?: AgProvidedColumnGroup
     ): MenuList {
         const menuList = parent.createManagedBean(
             new MenuList(0, {
@@ -44,7 +45,8 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             null,
             undefined,
             sourceElement,
-            'columnMenu'
+            'columnMenu',
+            columnGroup ?? null
         );
 
         menuList.addMenuItems(menuItemsMapped);
@@ -56,7 +58,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         column: AgColumn | null = null,
         columnGroup: AgProvidedColumnGroup | null = null
     ): (DefaultColumnMenuItem | MenuItemDef)[] {
-        const defaultItems = this.getDefaultMenuOptions(column);
+        const defaultItems = this.getDefaultMenuOptions(column, columnGroup);
         // Copy so normalising never mutates a user-provided columnMenuItems/mainMenuItems array in place.
         const result = [..._resolveColumnMenuItems(this.gos, column, columnGroup, 'columnMenu', defaultItems)];
 
@@ -67,7 +69,10 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         return result;
     }
 
-    private getDefaultMenuOptions(column: AgColumn | null): DefaultMenuItem[] {
+    private getDefaultMenuOptions(
+        column: AgColumn | null,
+        columnGroup: AgProvidedColumnGroup | null = null
+    ): DefaultMenuItem[] {
         const result: DefaultMenuItem[] = [];
 
         const { beans, gos } = this;
@@ -92,6 +97,10 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         };
 
         if (!column) {
+            if (beans.colHeaderEditSvc && columnGroup?.colGroupDef?.headerNameEditable) {
+                result.push('editColumnName');
+                result.push(MENU_ITEM_SEPARATOR);
+            }
             addColumnItems();
             return result;
         }
@@ -167,6 +176,12 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                 result.push('editCalculatedColumn');
                 result.push('removeCalculatedColumn');
             }
+            result.push(MENU_ITEM_SEPARATOR);
+        }
+
+        if (beans.colHeaderEditSvc && colDef.headerNameEditable) {
+            result.push(MENU_ITEM_SEPARATOR);
+            result.push('editColumnName');
             result.push(MENU_ITEM_SEPARATOR);
         }
 

@@ -207,6 +207,9 @@ export class AgColumn<TValue = any>
     /** Public so the free `_getAvailableSortTypes` sort helper can cache on the column; nulled in {@link setColDef}. */
     public cachedSortTypes: Set<SortType> | null = null;
 
+    /** User-edited header name that takes precedence over `colDef.headerName`. Persisted in column state. */
+    public headerNameOverride: string | null = null;
+
     constructor(
         public colDef: ColDef<any, TValue>,
         // kept only for object-identity checks in ColumnFactory (matching an updated col list to an
@@ -836,6 +839,19 @@ export class AgColumn<TValue = any>
 
     public isAllowFormula(): boolean {
         return this.allowFormula;
+    }
+
+    /** Override the displayed header name. Pass `null` to revert to the `colDef` value. */
+    public setHeaderNameOverride(headerName: string | null, source: ColumnEventType = 'api'): void {
+        if (this.headerNameOverride === headerName) {
+            return;
+        }
+        this.headerNameOverride = headerName;
+        // Column-scoped event for the column's own header cell and tool panel entry, so they refresh
+        // without filtering by colId; the grid-level event drives the state service and keeps parity
+        // with column groups (which have no per-column event bus).
+        this.dispatchColEvent('headerNameChanged', source);
+        this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged', colId: this.colId });
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {

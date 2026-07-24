@@ -39,6 +39,7 @@ export class ToolPanelContextMenu extends Component {
     private allowGrouping: boolean;
     private allowValues: boolean;
     private allowPivoting: boolean;
+    private allowEditHeaderName: boolean;
     private menuItemMap: Map<DefaultToolPanelItem, MenuItemProperty>;
     private displayName: string | null = null;
 
@@ -96,6 +97,13 @@ export class ToolPanelContextMenu extends Component {
 
         const resolvedItems = _resolveColumnMenuItems(gos, col, columnGroup, source, defaultItems);
         const menuItemsMapped = this.mapMenuItems(resolvedItems, col);
+
+        if (this.allowEditHeaderName) {
+            const editColumnNameItem = this.beans.colHeaderEditSvc!.getEditColumnNameMenuItem(this.column);
+            if (editColumnNameItem) {
+                menuItemsMapped.unshift(editColumnNameItem);
+            }
+        }
 
         // Suppress the native browser context menu only when AG Grid handles the gesture: it shows a menu, or
         // a per-column/group `columnMenuItems` is explicitly configured (including an empty array, which
@@ -165,6 +173,10 @@ export class ToolPanelContextMenu extends Component {
         this.allowGrouping = columns.some((col) => col.primary && col.isAllowRowGroup());
         this.allowValues = columns.some((col) => col.primary && col.isAllowValue());
         this.allowPivoting = isPivotMode && columns.some((col) => col.isPrimary() && col.isAllowPivot());
+        const headerNameEditable = isProvidedColumnGroup(column)
+            ? !!column.colGroupDef?.headerNameEditable
+            : !!column.colDef.headerNameEditable;
+        this.allowEditHeaderName = !!this.beans.colHeaderEditSvc && headerNameEditable;
     }
 
     private buildMenuItemMap(): void {
@@ -351,7 +363,13 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private isActive(): boolean {
-        return this.allowScrollIntoView || this.allowGrouping || this.allowValues || this.allowPivoting;
+        return (
+            this.allowScrollIntoView ||
+            this.allowGrouping ||
+            this.allowValues ||
+            this.allowPivoting ||
+            this.allowEditHeaderName
+        );
     }
 
     private getDefaultTokens(): DefaultToolPanelItem[] {

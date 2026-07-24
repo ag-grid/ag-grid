@@ -844,6 +844,12 @@ export const AG_GRID_LOCALE_FI = {
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
 
+    // Editable Column Header Name
+    editColumnName: 'Muokkaa sarakkeen nimeä',
+    ariaColumnHeaderNameEditor: 'Sarakkeen nimen muokkain',
+    columnHeaderEditApply: 'Käytä',
+    columnHeaderEditCancel: 'Peruuta',
+
     // Calculated Columns
     calculatedColumn: 'Laskettu sarake',
     calculatedColumnAdd: 'Lisää laskettu sarake',

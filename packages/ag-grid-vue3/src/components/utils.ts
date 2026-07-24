@@ -12,6 +12,7 @@ import type {
     ColDef,
     ColGroupDef,
     ColTypeDefs,
+    ColumnHeaderEditOptions,
     Components,
     CreateChartContainer,
     CsvExportParams,
@@ -420,6 +421,11 @@ export interface Props<TData> {
          * @agModule `CalculatedColumnsModule`
          */
     calculatedColumns?: CalculatedColumnsGridOption,
+    /** Configures editing of column and column group header names via the UI. Requires
+         * `headerNameEditable` on the relevant Column or Column Group Definitions.
+         * @agModule `ColumnHeaderEditModule`
+         */
+    columnHeaderEdit?: ColumnHeaderEditOptions,
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
          *
          * @default false
@@ -2200,6 +2206,7 @@ export function getProps() {
         columnTypes: undefined,
         dataTypeDefinitions: undefined,
         calculatedColumns: undefined,
+        columnHeaderEdit: undefined,
         maintainColumnOrder: undefined,
         enableStrictPivotColumnOrder: undefined,
         suppressFieldDotNotation: undefined,

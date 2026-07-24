@@ -6,7 +6,13 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { ColumnsToolPanelModule, PivotModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
+import {
+    ColumnHeaderEditModule,
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    PivotModule,
+    RowGroupingPanelModule,
+} from 'ag-grid-enterprise';
 
 declare let window: any;
 
@@ -18,15 +24,17 @@ if (process.env.NODE_ENV !== 'production') {
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
+    ColumnHeaderEditModule,
+    ColumnMenuModule,
     PivotModule,
     RowGroupingPanelModule,
     ColumnApiModule,
 ]);
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete' },
-    { field: 'age' },
-    { field: 'country' },
+    { field: 'athlete', headerNameEditable: true },
+    { field: 'age', headerNameEditable: true },
+    { field: 'country', headerNameEditable: true },
     { field: 'sport' },
     { field: 'year' },
     { field: 'date' },

@@ -64,6 +64,14 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         const eGui = this.getGui();
         const eHeaderGroupGui = headerGroupComp.getGui();
 
+        // Replace any previously-rendered component (e.g. when the header name is edited) rather than
+        // appending a second one alongside it.
+        const previousComp = this.headerGroupComp;
+        if (previousComp) {
+            previousComp.getGui().remove();
+            this.destroyBean(previousComp);
+        }
+
         this.eHeaderCompWrapper.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
 

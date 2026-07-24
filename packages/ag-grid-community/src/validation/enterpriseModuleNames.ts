@@ -8,6 +8,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     CalculatedColumns: 1,
     CellSelection: 1,
     Clipboard: 1,
+    ColumnHeaderEdit: 1,
     ColumnMenu: 1,
     ColumnsToolPanel: 1,
     ContextMenu: 1,

@@ -9,6 +9,7 @@ import { BatchEditModule } from './batch-edit/batchEditModule';
 import { CalculatedColumnsModule } from './calculatedColumns/calculatedColumnsModule';
 import { IntegratedChartsModule } from './charts/integratedChartsModule';
 import { ClipboardModule } from './clipboard/clipboardModule';
+import { ColumnHeaderEditModule } from './columnHeaderEdit/columnHeaderEditModule';
 import { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
 import { ExcelExportModule } from './excelExport/excelExportModule';
 import { FiltersToolPanelModule, NewFiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
@@ -59,6 +60,7 @@ const dependsOn = [
     ServerSideRowModelApiModule,
     FormulaModule,
     NotesModule,
+    ColumnHeaderEditModule,
     SetFilterModule,
     MultiFilterModule,
     AdvancedFilterModule,

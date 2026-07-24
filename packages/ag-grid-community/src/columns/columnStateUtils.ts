@@ -61,6 +61,8 @@ export interface ColumnStateParams {
     /** The active "Show Values As" selection: the mode name, or the object form (with `params` / `precision`)
      *  for modes that take input. `null` clears it. */
     showValuesAs?: ShowValuesAsStateValue;
+    /** User-edited header name overriding `colDef.headerName`. `null` reverts to the colDef value. */
+    headerName?: string | null;
 }
 
 export interface ColumnState extends ColumnStateParams {
@@ -379,6 +381,11 @@ function applyFieldState(
         source
     );
 
+    const headerName = orDefault(stateItem?.headerName, defaultState?.headerName);
+    if (headerName !== undefined) {
+        column.setHeaderNameOverride(headerName);
+    }
+
     // No flex → fall back to width.
     if (flex == null) {
         const width = orDefault(stateItem?.width, defaultState?.width);
@@ -498,6 +505,13 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         forEachColTreeLeaf(colModel.colDefTree, (col) => {
             orderState[orderIdx++] = { colId: col.colId };
         });
+
+        // Group header names live outside column state, so clear their overrides here too.
+        const groupOverrides = colModel.groupHeaderNameOverrides;
+        if (groupOverrides.size) {
+            groupOverrides.clear();
+            eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged' });
+        }
 
         // Re-order + refresh + dispatch once, over the final (ordered) structure.
         finalizeChange(beans, { state: orderState, applyOrder: true }, source, stateChanges);
@@ -806,6 +820,7 @@ export const _getColumnState = (beans: BeanCollection): ColumnState[] => {
             pivotSort: column.pivotSort === undefined ? 'asc' : column.pivotSort,
             flex: column.flex ?? null,
             showValuesAs: beans.showValuesAsSvc?.toColState(column) ?? null,
+            headerName: column.headerNameOverride,
         };
     }
     return res;
@@ -846,6 +861,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
         pivotSort: resolveInitialPivotSort(colDef),
         aggFunc: colDef.aggFunc ?? colDef.initialAggFunc ?? null,
         showValuesAs: beans.showValuesAsSvc?.colDefSelection(colDef) ?? null,
+        headerName: null,
     };
 }
 

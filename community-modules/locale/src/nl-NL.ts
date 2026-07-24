@@ -843,6 +843,12 @@ export const AG_GRID_LOCALE_NL = {
     timeFormatHHMMSS: 'UU:MM:SS',
     timeFormatHHMMSSAmPm: 'UU:MM:SS AM/PM',
 
+    // Editable Column Header Name
+    editColumnName: 'Kolomnaam bewerken',
+    ariaColumnHeaderNameEditor: 'Kolomnaam-editor',
+    columnHeaderEditApply: 'Toepassen',
+    columnHeaderEditCancel: 'Annuleren',
+
     // Calculated Columns
     calculatedColumn: 'Berekende kolom',
     calculatedColumnAdd: 'Berekende kolom toevoegen',

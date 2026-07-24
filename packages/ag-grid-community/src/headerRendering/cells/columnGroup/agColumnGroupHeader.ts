@@ -60,7 +60,13 @@ export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridC
     eGridHeader: HTMLElement;
 }
 
-export interface IHeaderGroup {}
+export interface IHeaderGroup {
+    /**
+     * Optional: update the component in place instead of recreating it (e.g. when the group header name
+     * is edited). Return `true` if the update was handled, `false` to have the grid recreate the component.
+     */
+    refresh?(params: IHeaderGroupParams): boolean;
+}
 
 export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {}
 
@@ -106,6 +112,30 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
         this.addGroupExpandIcon(params);
         this.setupExpandIcons();
         touchSvc?.setupForHeaderGroup(this);
+    }
+
+    public refresh(params: IHeaderGroupParams): boolean {
+        const { innerHeaderGroupComponent, isLoadingInnerComponent } = this;
+        // Inner component still resolving: let the grid recreate so the two stay in sync.
+        if (isLoadingInnerComponent) {
+            return false;
+        }
+        if (innerHeaderGroupComponent) {
+            // Delegate to a custom inner component when it supports refresh; otherwise recreate.
+            if (!innerHeaderGroupComponent.refresh) {
+                return false;
+            }
+            const handled = innerHeaderGroupComponent.refresh(params);
+            if (handled) {
+                this.params = params;
+            }
+            return handled;
+        }
+        // Default text label: update in place rather than recreating the component.
+        this.params = params;
+        const { displayName } = params;
+        this.agLabel.textContent = _exists(displayName) ? _toString(displayName) : '';
+        return true;
     }
 
     private checkWarnings(): void {

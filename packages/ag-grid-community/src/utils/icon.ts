@@ -64,6 +64,7 @@ export type IconName =
     | 'calculatedColumnAdd'
     | 'calculatedColumnEdit'
     | 'calculatedColumnRemove'
+    | 'columnHeaderEdit'
     | 'maximize'
     | 'minimize'
     | 'menuPin'

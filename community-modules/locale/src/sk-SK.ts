@@ -841,6 +841,12 @@ export const AG_GRID_LOCALE_SK = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
 
+    // Editable Column Header Name
+    editColumnName: 'Upraviť názov stĺpca',
+    ariaColumnHeaderNameEditor: 'Editor názvu stĺpca',
+    columnHeaderEditApply: 'Použiť',
+    columnHeaderEditCancel: 'Zrušiť',
+
     // Calculated Columns
     calculatedColumn: 'Vypočítaný stĺpec',
     calculatedColumnAdd: 'Pridať vypočítaný stĺpec',

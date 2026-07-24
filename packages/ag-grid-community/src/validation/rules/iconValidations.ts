@@ -105,6 +105,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     calculatedColumnAdd: 'CalculatedColumns',
     calculatedColumnEdit: 'CalculatedColumns',
     calculatedColumnRemove: 'CalculatedColumns',
+    columnHeaderEdit: 'ColumnHeaderEdit',
     maximize: 'EnterpriseCore',
     minimize: 'EnterpriseCore',
     save: 'MenuCore',
