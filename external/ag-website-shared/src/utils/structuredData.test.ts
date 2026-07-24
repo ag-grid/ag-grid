@@ -65,6 +65,77 @@ describe('buildOrganization', () => {
             },
         ]);
     });
+
+    test('emits description and a nested founder Person when provided', () => {
+        const result = buildOrganization({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            name: 'AG Grid',
+            logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
+            sameAs: ['https://www.wikidata.org/wiki/Q128283374'],
+            description: 'AG Grid is the industry-leading JavaScript Data Grid.',
+            founder: {
+                name: 'Niall Crosby',
+                sameAs: ['https://www.wikidata.org/wiki/Q114758691'],
+            },
+        });
+
+        expect(result.description).toBe('AG Grid is the industry-leading JavaScript Data Grid.');
+        expect(result.founder).toEqual({
+            '@type': 'Person',
+            name: 'Niall Crosby',
+            sameAs: ['https://www.wikidata.org/wiki/Q114758691'],
+        });
+    });
+
+    test('emits legalName, foundingDate and a nested PostalAddress when provided', () => {
+        const result = buildOrganization({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            name: 'AG Grid',
+            logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
+            sameAs: [],
+            legalName: 'AG Grid Ltd.',
+            foundingDate: '2010-07-19',
+            address: {
+                streetAddress: '70 Wilson St',
+                addressLocality: 'London',
+                postalCode: 'EC2A 2DB',
+                addressCountry: 'GB',
+            },
+        });
+
+        expect(result.legalName).toBe('AG Grid Ltd.');
+        expect(result.foundingDate).toBe('2010-07-19');
+        expect(result.address).toEqual({
+            '@type': 'PostalAddress',
+            streetAddress: '70 Wilson St',
+            addressLocality: 'London',
+            postalCode: 'EC2A 2DB',
+            addressCountry: 'GB',
+        });
+    });
+
+    test('omits description and founder when not provided, and a founder without sameAs has no sameAs key', () => {
+        const withoutOptionals = buildOrganization({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            name: 'AG Grid',
+            logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
+            sameAs: [],
+        });
+        expect(withoutOptionals.description).toBeUndefined();
+        expect(withoutOptionals.founder).toBeUndefined();
+        expect(withoutOptionals.legalName).toBeUndefined();
+        expect(withoutOptionals.foundingDate).toBeUndefined();
+        expect(withoutOptionals.address).toBeUndefined();
+
+        const bareFounder = buildOrganization({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            name: 'AG Grid',
+            logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
+            sameAs: [],
+            founder: { name: 'Niall Crosby' },
+        });
+        expect(bareFounder.founder).toEqual({ '@type': 'Person', name: 'Niall Crosby' });
+    });
 });
 
 describe('buildWebSite', () => {

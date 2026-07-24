@@ -24,11 +24,40 @@ export interface ContactPoint {
     availableLanguage?: string | string[];
 }
 
+export interface OrganizationFounder {
+    name: string;
+    /**
+     * Authoritative entries for the person (e.g. their Wikidata item), so the
+     * emitted `Person` node can be tied to the same entity across sources.
+     */
+    sameAs?: string[];
+    url?: string;
+}
+
+export interface OrganizationAddress {
+    streetAddress: string;
+    addressLocality: string;
+    postalCode: string;
+    /** ISO 3166-1 alpha-2 country code (e.g. `GB`) — the form Google expects. */
+    addressCountry: string;
+    addressRegion?: string;
+}
+
 interface OrgInput {
     canonicalUrlBase: string;
     name: string;
     logoUrl: string;
     sameAs: string[];
+    /** Optional short company description, emitted as the Organization `description`. */
+    description?: string;
+    /** Optional registered legal name, emitted as the Organization `legalName`. */
+    legalName?: string;
+    /** Optional founding date in ISO 8601 (`YYYY-MM-DD`), emitted as `foundingDate`. */
+    foundingDate?: string;
+    /** Optional registered address, emitted as a nested schema.org `PostalAddress`. */
+    address?: OrganizationAddress;
+    /** Optional founder, emitted as a nested schema.org `Person`. */
+    founder?: OrganizationFounder;
     /**
      * Optional points of contact (sales, technical support, etc.). Emitted as
      * a `contactPoint` array on the Organization so any page referencing the
@@ -127,7 +156,18 @@ const BREADCRUMB_ID_FRAGMENT = '#breadcrumb';
 const FAQ_ID_FRAGMENT = '#faq';
 const CONTACT_PAGE_ID_FRAGMENT = '#contact-page';
 
-export function buildOrganization({ canonicalUrlBase, name, logoUrl, sameAs, contactPoints }: OrgInput): JsonLdObject {
+export function buildOrganization({
+    canonicalUrlBase,
+    name,
+    logoUrl,
+    sameAs,
+    description,
+    legalName,
+    foundingDate,
+    address,
+    founder,
+    contactPoints,
+}: OrgInput): JsonLdObject {
     const result: JsonLdObject = {
         '@type': 'Organization',
         '@id': getOrganizationId(canonicalUrlBase),
@@ -136,6 +176,28 @@ export function buildOrganization({ canonicalUrlBase, name, logoUrl, sameAs, con
         logo: logoUrl,
         sameAs,
     };
+    if (description) {
+        result.description = description;
+    }
+    if (legalName) {
+        result.legalName = legalName;
+    }
+    if (foundingDate) {
+        result.foundingDate = foundingDate;
+    }
+    if (address) {
+        result.address = { '@type': 'PostalAddress', ...address };
+    }
+    if (founder) {
+        const founderNode: JsonLdObject = { '@type': 'Person', name: founder.name };
+        if (founder.url) {
+            founderNode.url = founder.url;
+        }
+        if (founder.sameAs && founder.sameAs.length > 0) {
+            founderNode.sameAs = founder.sameAs;
+        }
+        result.founder = founderNode;
+    }
     if (contactPoints && contactPoints.length > 0) {
         result.contactPoint = contactPoints.map((point) => ({ '@type': 'ContactPoint', ...point }));
     }
