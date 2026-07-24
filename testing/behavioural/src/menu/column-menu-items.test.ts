@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 
 import type { ColumnEventType, ColumnMenuItemsSource, GetColumnMenuItemsParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { AllEnterpriseModule, ColumnMenuModule, ColumnsToolPanelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from '../test-utils';
@@ -30,8 +30,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         gridMgr.reset();
         restoreOffsetParent?.();
         restoreOffsetParent = undefined;
-        // throwOn is global; reset it so it cannot leak into later tests.
-        enableDevValidations({ throwOn: 'none' });
         vi.resetAllMocks();
     });
 
@@ -120,10 +118,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
     });
 
     test('a token that does not apply to the column menu (pivot outside pivot mode) is quietly omitted, not warned', async () => {
-        // #176 ("unknown menu item type") is a warning; throwOn:'warning' turns it into a throw, so a
-        // clean render proves pivot is treated as a known-but-inapplicable token (silently dropped),
-        // matching every other stock token, rather than an unrecognised one.
-        enableDevValidations({ throwOn: 'warning' });
         const api = await gridMgr.createGridAndWait('menu-inapplicable-token', {
             columnDefs: [{ field: 'athlete' }, { field: 'age', enableValue: true }],
             rowData,
@@ -135,7 +129,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         await openMenuOption('Add Age to values');
 
         expect(menuOption('Add Age to labels')).toBeNull();
-        enableDevValidations({ throwOn: 'none' });
     });
 });
 
@@ -235,16 +228,11 @@ describe('getColumnMenuItems module requirement', () => {
 
     // getColumnMenuItems drives the column menu (ColumnMenuModule) and the Columns Tool Panel /
     // Column Chooser (ColumnsToolPanelModule), so either surface module satisfies it. With
-    // throwOn:'error' a missing-module warning (#200) becomes a thrown error, so grid creation
-    // throwing is a direct proxy for the validation firing.
-    afterEach(() => {
-        // throwOn is global; reset it so it does not leak into later tests.
-        enableDevValidations({ throwOn: 'none' });
-    });
-
+    // throwOn: ['error'] a missing-module error (#200) is thrown, so grid creation throwing is a
+    // direct proxy for the validation firing.
     test('is satisfied by ColumnMenuModule alone, without ColumnsToolPanelModule', () => {
         const gridMgr = new TestGridsManager({
-            modules: [ClientSideRowModelModule, ColumnMenuModule, ValidationModule.with({ throwOn: 'error' })],
+            modules: [ClientSideRowModelModule, ColumnMenuModule, ValidationModule.with({ throwOn: ['error'] })],
         });
         expect(() =>
             gridMgr.createGrid('column-menu-only', {
@@ -258,7 +246,7 @@ describe('getColumnMenuItems module requirement', () => {
 
     test('is satisfied by ColumnsToolPanelModule alone, without ColumnMenuModule', () => {
         const gridMgr = new TestGridsManager({
-            modules: [ClientSideRowModelModule, ColumnsToolPanelModule, ValidationModule.with({ throwOn: 'error' })],
+            modules: [ClientSideRowModelModule, ColumnsToolPanelModule, ValidationModule.with({ throwOn: ['error'] })],
         });
         expect(() =>
             gridMgr.createGrid('tool-panel-only', {
@@ -272,7 +260,7 @@ describe('getColumnMenuItems module requirement', () => {
 
     test('still warns when neither the column menu nor the tool panel module is registered', () => {
         const gridMgr = new TestGridsManager({
-            modules: [ClientSideRowModelModule, ValidationModule.with({ throwOn: 'error' })],
+            modules: [ClientSideRowModelModule, ValidationModule.with({ throwOn: ['error'] })],
         });
         expect(() =>
             gridMgr.createGrid('no-surface', {
