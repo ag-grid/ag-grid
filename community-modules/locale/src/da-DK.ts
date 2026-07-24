@@ -843,6 +843,12 @@ export const AG_GRID_LOCALE_DK = {
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
 
+    // Editable Column Header Name
+    editColumnName: 'Rediger kolonnenavn',
+    ariaColumnHeaderNameEditor: 'Kolonnenavn-editor',
+    columnHeaderEditApply: 'Anvend',
+    columnHeaderEditCancel: 'Annuller',
+
     // Calculated Columns
     calculatedColumn: 'Beregnet kolonne',
     calculatedColumnAdd: 'Tilføj beregnet kolonne',

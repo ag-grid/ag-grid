@@ -7,6 +7,7 @@ import type {
     HeaderClassParams,
     HeaderStyle,
     HeaderStyleFunc,
+    PdfCellHyperlinkCallbackParams,
     PdfCellStyle,
     PdfCustomContent,
     PdfExportParams,
@@ -21,6 +22,7 @@ import { BaseGridSerializingSession, _addGridCommonParams, _isFullWidthGroupRow 
 
 import { createPdfDocument } from './pdfDocument';
 import { resolvePdfCellStyleColors } from './utils/colors';
+import { normaliseHyperlink } from './utils/hyperlinks';
 import { mapCssStylesToPdfStyle } from './utils/styleMapping';
 import { mergePdfCellStyles } from './utils/styles';
 
@@ -30,6 +32,7 @@ type PdfElementType = PdfStyleCallbackType | 'custom';
 
 interface PdfSerializingCell {
     value: string;
+    hyperlink?: string;
     mergeAcross?: number;
     style?: PdfCellStyle;
     elementType?: PdfElementType;
@@ -109,6 +112,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 const mergeAcross = Math.min(requestedSpan, columnCount - columnIndex - 1);
                 row.cells.push({
                     value: String(cell?.data?.value ?? ''),
+                    hyperlink: normaliseHyperlink(cell?.data?.hyperlink),
                     mergeAcross: mergeAcross || undefined,
                     style: resolvePdfCellStyleColors(cell?.style, this.config.resolveColor),
                     elementType: 'custom',
@@ -238,6 +242,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 }
                 row.cells.push({
                     value,
+                    hyperlink: this.resolveCellHyperlink(value, column, activeNode, rowIndex),
                     mergeAcross,
                     style,
                     elementType: isRowGroupCell ? 'rowgroup' : 'cell',
@@ -407,6 +412,26 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
 
         const style = callback(_addGridCommonParams(this.gos, params) as PdfStyleCallbackParams);
         return resolvePdfCellStyleColors(style, this.config.resolveColor);
+    }
+
+    private resolveCellHyperlink(
+        value: string,
+        column: AgColumn,
+        node: RowNode,
+        accumulatedRowIndex: number
+    ): string | undefined {
+        const callback = this.config.processCellHyperlinkCallback;
+        if (!callback) {
+            return undefined;
+        }
+
+        const params: Omit<PdfCellHyperlinkCallbackParams, 'api' | 'context'> = {
+            value,
+            accumulatedRowIndex,
+            node,
+            column,
+        };
+        return normaliseHyperlink(callback(_addGridCommonParams(this.gos, params) as PdfCellHyperlinkCallbackParams));
     }
 
     private isRowGroupCell(column: AgColumn, node: RowNode, isFullWidthGroup: boolean): boolean {

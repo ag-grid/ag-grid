@@ -53,6 +53,7 @@ import type { GridOptionsService } from '../gridOptionsService';
 import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
+import type { IColumnHeaderEditService } from '../interfaces/columnHeaderEdit';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { IFormulaDataService, IFormulaInputManagerService, IFormulaService } from '../interfaces/formulas';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
@@ -427,6 +428,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     calculatedColsSvc?: ICalculatedColumnsService;
     notesDataSvc?: INotesDataService;
     notesSvc?: INotesService;
+    colHeaderEditSvc?: IColumnHeaderEditService;
     columnStateUpdateStrategy: IColumnStateUpdateStrategy;
 }
 

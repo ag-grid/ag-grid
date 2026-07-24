@@ -98,6 +98,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     headerTooltip: 'Tooltip',
     headerTooltipValueGetter: 'Tooltip',
     mainMenuItems: 'ColumnMenu',
+    columnMenuItems: ['ColumnMenu', 'ColumnsToolPanel'],
     menuTabs: (options: ColDef) => {
         const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
         if (options.menuTabs?.some((tab) => enterpriseMenuTabs.includes(tab))) {
@@ -409,6 +410,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 type ColOrGroupKey = keyof ColDef | keyof ColGroupDef;
 const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerName: undefined,
+    headerNameEditable: undefined,
     columnGroupShow: undefined,
     headerStyle: undefined,
     headerClass: undefined,
@@ -555,6 +557,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     useValueFormatterForExport: undefined,
     useValueParserForImport: undefined,
     mainMenuItems: undefined,
+    columnMenuItems: undefined,
     contextMenuItems: undefined,
     suppressFloatingFilterButton: undefined,
     suppressHeaderFilterButton: undefined,

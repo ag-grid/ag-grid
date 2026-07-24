@@ -3,6 +3,9 @@ import { LicensePricing } from '@ag-website-shared/components/license-pricing/Li
 import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
 import Layout from '@layouts/Layout.astro';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { DISABLE_MARKDOWN_DOCS } from '@constants';
+
+const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/license-pricing.md');
 ---
 
 <Layout
@@ -11,6 +14,7 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
     showSearchBar={true}
     showDocsNav={false}
     showMicrosoftMessage={true}
+    markdownUrl={markdownUrl}
 >
     <PageHero
         eyebrow="Licensing and Sales"

@@ -13,6 +13,7 @@ import { _addGridCommonParams, _getEnableColumnSelection } from '../../../gridOp
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
+import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeaderEditCss';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
@@ -229,11 +230,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.resizeFeature?.resizeLeafColumnsToFit(source);
     }
 
-    private setupUserComp(): void {
-        const { userCompFactory, gos, enterpriseMenuFactory } = this.beans;
+    private createUserCompParams(): IHeaderGroupParams {
+        const { gos, enterpriseMenuFactory } = this.beans;
         const columnGroup = this.column;
         const providedColumnGroup = columnGroup.getProvidedColumnGroup();
-        const params: IHeaderGroupParams = _addGridCommonParams(gos, {
+        return _addGridCommonParams(gos, {
             displayName: this.displayName!,
             columnGroup,
             setExpanded: (expanded: boolean) => {
@@ -259,11 +260,19 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                 ),
             eGridHeader: this.eGui,
         });
+    }
 
-        const compDetails = _getHeaderGroupCompDetails(userCompFactory, params);
+    private setupUserComp(): void {
+        const compDetails = _getHeaderGroupCompDetails(this.beans.userCompFactory, this.createUserCompParams());
         if (compDetails) {
             this.comp.setUserCompDetails(compDetails);
         }
+    }
+
+    /** Attempt an in-place refresh of the existing group header component; falls back to recreation. */
+    private attemptUserCompRefresh(): boolean {
+        const userComp = this.comp.getUserCompInstance();
+        return userComp?.refresh ? userComp.refresh(this.createUserCompParams()) : false;
     }
 
     private addHeaderMouseListeners(compBean: BeanStub, eHeaderCompWrapper: HTMLElement): void {
@@ -320,6 +329,39 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             expandedChanged: listener,
             expandableChanged: listener,
         });
+        // Group header names are keyed by groupId in a shared store, so refresh on the grid-level event
+        // rather than a per-instance one. A missing groupId means a bulk change, so refresh unconditionally.
+        const groupId = providedColGroup.groupId;
+        compBean.addManagedEventListeners({
+            columnHeaderNameChanged: (event) => {
+                if (!event.groupId || event.groupId === groupId) {
+                    this.refreshDisplayName();
+                }
+            },
+            // Toggle the edit highlight in place (no header component recreation).
+            columnHeaderEditHighlightChanged: (event) => {
+                if (!event.groupId || event.groupId === groupId) {
+                    this.refreshEditHighlight();
+                }
+            },
+        });
+        this.refreshEditHighlight();
+    }
+
+    private refreshEditHighlight(): void {
+        this.comp.toggleCss(
+            CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED,
+            !!this.beans.colHeaderEditSvc?.isHighlightedGroup(this.column.getProvidedColumnGroup())
+        );
+    }
+
+    private refreshDisplayName(): void {
+        this.displayName = this.beans.colNames.getDisplayNameForColumnGroup(this.column, 'header');
+        // Prefer an in-place refresh of the existing component; only recreate if it can't refresh.
+        if (!this.attemptUserCompRefresh()) {
+            this.setupUserComp();
+        }
+        this.refreshAnnouncement();
     }
 
     private refreshExpanded(): void {

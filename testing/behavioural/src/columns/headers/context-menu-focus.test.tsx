@@ -3,11 +3,18 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
-import { ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule, ValidationModule } from 'ag-grid-enterprise';
+import type { GridApi } from 'ag-grid-community';
+import {
+    AllEnterpriseModule,
+    ClientSideRowModelModule,
+    ColumnMenuModule,
+    ContextMenuModule,
+    ValidationModule,
+} from 'ag-grid-enterprise';
 import type { CustomMenuItemProps } from 'ag-grid-react';
 import { AgGridReact, useGridMenuItem } from 'ag-grid-react';
 
-import { ignoreConsoleLicenseKeyError } from '../../test-utils';
+import { ignoreConsoleLicenseKeyError, polyfillOffsetParent } from '../../test-utils';
 
 // jsdom reports offsetParent as null, which the focus-management utilities read as
 // "not visible"; polyfill it so focusable detection inside the menu works.
@@ -74,6 +81,64 @@ describe('React menu initial focus with async framework menu items', () => {
         await waitFor(() => {
             expect(document.activeElement).toBe(menuItem);
         });
+    });
+
+    it('places keyboard focus inside the Columns Tool Panel / Chooser menu once an async framework item has rendered', async () => {
+        // The Columns Tool Panel and Column Chooser share ToolPanelContextMenu; the chooser is the
+        // reliably drivable surface in jsdom, so it stands in for both here.
+        const customName = 'Custom Item';
+        let api: GridApi | undefined;
+
+        // The chooser's virtual list needs the measurement-container-aware offsetParent polyfill to
+        // render its rows in jsdom; the file-level polyfill above is enough only for the open menu.
+        const restoreOffsetParent = polyfillOffsetParent();
+
+        render(
+            <AgGridReact
+                columnDefs={[{ field: 'name' }]}
+                rowData={[{ name: 'cell value' }]}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+                getColumnMenuItems={() => [{ name: customName, menuItem: CustomMenuItem }]}
+                modules={[AllEnterpriseModule]}
+            />
+        );
+
+        await waitFor(() => expect(api).toBeTruthy());
+        api!.showColumnChooser();
+
+        // jsdom has no layout engine, so force the chooser's virtual list to render its items.
+        const viewport = await waitFor(() => {
+            const el = document.querySelector('.ag-column-select-virtual-list-viewport') as HTMLElement | null;
+            if (!el) {
+                throw new Error('chooser viewport not rendered');
+            }
+            return el;
+        });
+        Object.defineProperty(viewport, 'offsetHeight', { value: 200, configurable: true });
+        viewport.dispatchEvent(new Event('scroll'));
+
+        // Right-click the column's entry in the chooser to open its menu.
+        const entry = await waitFor(() => {
+            const el = Array.from(document.querySelectorAll<HTMLElement>('.ag-column-select-column')).find((e) =>
+                e.textContent?.includes('Name')
+            );
+            if (!el) {
+                throw new Error('chooser column entry not rendered');
+            }
+            return el;
+        });
+        const row = (entry.closest('.ag-virtual-list-item') as HTMLElement | null) ?? entry;
+        row.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
+
+        const menuItem = await screen.findByRole('menuitem', { name: customName });
+
+        await waitFor(() => {
+            expect(document.activeElement).toBe(menuItem);
+        });
+
+        restoreOffsetParent();
     });
 
     it('still focuses the first native menu item (no regression for synchronous items)', async () => {

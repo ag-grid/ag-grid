@@ -3,6 +3,7 @@ import Layout from '@layouts/Layout.astro';
 import CommunityMenu from '@ag-website-shared/components/community/components/CommunityMenu';
 import styles from './CommunityLayout.module.scss';
 import menu from '@ag-website-shared/content/community/community-menu.json';
+import { DISABLE_MARKDOWN_DOCS } from '@constants';
 
 interface Props {
     title: string;
@@ -11,9 +12,13 @@ interface Props {
 }
 
 const { title, description, pageTitle } = Astro.props as Props;
+
+// Every community page has a markdown twin at `<page>.md` (see the community *.md.ts routes); point
+// the alternate link at it. The pathname already carries the site base, so no urlWithBaseUrl here.
+const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : `${Astro.url.pathname.replace(/\/$/, '')}.md`;
 ---
 
-<Layout showSearchBar={true} showDocsNav={false} title={title} description={description}>
+<Layout showSearchBar={true} showDocsNav={false} title={title} description={description} markdownUrl={markdownUrl}>
     <div class="layout-max-width-large">
         <div class={styles.header}>
             <CommunityMenu client:load path={Astro.url.pathname} menu={menu} />

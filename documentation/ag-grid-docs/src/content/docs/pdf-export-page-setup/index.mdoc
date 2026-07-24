@@ -1,0 +1,46 @@
+---
+title: "PDF Export - Page Setup"
+enterprise: true
+---
+
+Configure the PDF page size, orientation, margins, and repeated table headers using the `page` and `repeatHeader` export options. Page dimensions and margins use points, where 72 points equal one inch.
+
+## Page Size And Orientation
+
+The default page is A4 landscape with a 36-point margin on every side. Use named `A4` or `Letter` page sizes, or provide explicit dimensions. Custom dimensions are normalised to the requested orientation.
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    page: {
+        size: { width: 720, height: 540 },
+        orientation: 'landscape',
+        margin: { top: 36, right: 24, bottom: 36, left: 24 },
+    },
+});
+```
+
+For named sizes, changing `orientation` rotates the page dimensions. For custom sizes, the supplied dimensions are normalised so the wider side is used for landscape and the taller side is used for portrait.
+
+## Page Margins
+
+Set `page.margin` to one number for every side, or provide individual `top`, `right`, `bottom`, and `left` values.
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    page: {
+        margin: 24,
+    },
+});
+```
+
+Margins reduce the printable area available to the document title and table. Exported columns are scaled down proportionally when their combined widths exceed the available width.
+
+## Repeating Table Headers
+
+Table header rows repeat when body rows continue onto another page by default. Set `repeatHeader=false` to render them only on the first page.
+
+A repeated header is omitted when it cannot fit together with the next row or row fragment. Page headers and footers are not currently supported.
+
+The example below lets you change the page size, orientation, margins, and repeated-header behaviour before exporting.
+
+{% gridExampleRunner title="PDF Export - Page Setup" name="pdf-export-page-setup" exampleHeight=600 /%}

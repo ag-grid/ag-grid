@@ -346,12 +346,15 @@ bryntumDemoInit('gantt', 'live-gantt-demo', function (api) {
 
     GanttToolbar.initClass();
 
+    const startDate = new Date(2026, 0, 8);
+    const endDate = new Date(2026, 2, 30);
+
     const gantt = new Gantt({
         project: project,
         adopt: 'live-gantt-demo',
         tbar: { type: 'gantttoolbar' },
-        startDate: '2019-01-12',
-        endDate: '2019-03-24',
+        startDate: startDate,
+        endDate: endDate,
         resourceImagePath: '//bryntum.com/dist/gantt-next/examples/_shared/images/users/',
         columns: [
             { type: 'wbs' },

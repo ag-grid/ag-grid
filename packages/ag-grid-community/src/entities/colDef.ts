@@ -7,7 +7,7 @@ import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRende
 import type { RowDragTextFunc } from '../interfaces/iRowDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
-import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
+import type { DefaultColumnMenuItem, DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { Icons } from '../utils/icon';
@@ -23,7 +23,7 @@ import type {
     GroupRowValueSetterOptions,
 } from './colDef-groupRowValueSetter';
 import type { ShowValuesAs, ShowValuesAsDef, ShowValuesAsType } from './colDef-showValuesAs';
-import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
+import type { GetColumnMenuItems, GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
 
 export type { BaseColDefParams, ColumnFunctionCallbackParams } from './colDef-base';
 
@@ -31,6 +31,13 @@ export type { BaseColDefParams, ColumnFunctionCallbackParams } from './colDef-ba
 export interface AbstractColDef<TData = any, TValue = any> {
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */
     headerName?: string;
+    /**
+     * Set to `true` to allow the user to edit this column's (or column group's) header name from the UI.
+     * The edited value is persisted as part of grid state.
+     * @default false
+     * @agModule `ColumnHeaderEditModule`
+     */
+    headerNameEditable?: boolean;
     /** Function or expression. Gets the value for display in the header. */
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /**
@@ -153,6 +160,13 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
      * @agModule `ColumnMenuModule`
      */
     mainMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
+    /**
+     * Customise the menu items shown for this column group across the column menu, the Columns Tool Panel
+     * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for.
+     * Takes precedence over `mainMenuItems`.
+     * @agModule `ColumnMenuModule` / `ColumnsToolPanelModule`
+     */
+    columnMenuItems?: (DefaultColumnMenuItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;
 }
 
 /** Select a column via:
@@ -630,6 +644,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `ColumnMenuModule`
      */
     mainMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
+    /**
+     * Customise the menu items shown for this column across the column menu, the Columns Tool Panel
+     * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for.
+     * Takes precedence over `mainMenuItems`.
+     * @agModule `ColumnMenuModule` / `ColumnsToolPanelModule`
+     */
+    columnMenuItems?: (DefaultColumnMenuItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;
     /**
      * Customise the list of menu items available in the context menu.
      * @agModule `ContextMenuModule`

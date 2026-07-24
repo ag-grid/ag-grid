@@ -14,6 +14,7 @@ import type {
     CalculatedUserColumnState,
     CellSelectionState,
     ColumnGroupState,
+    ColumnHeaderNameState,
     ColumnOrderState,
     ColumnPinningState,
     ColumnSizingState,
@@ -65,7 +66,7 @@ export class StateService extends BeanStub implements NamedBean {
         0
     );
     private columnStates?: ColumnState[];
-    private columnGroupStates?: { groupId: string; open: boolean | undefined }[];
+    private columnGroupStates?: { groupId: string; open: boolean; headerName?: string | null }[];
     /** Filter state held back until firstDataRendered, when pivot result columns exist. */
     private deferredFilterState?: FilterState;
     private readonly staleStateKeys: Set<keyof GridState> = new Set();
@@ -187,6 +188,7 @@ export class StateService extends BeanStub implements NamedBean {
             'columnPinning',
             'columnSizing',
             'columnVisibility',
+            'columnHeaderName',
             'pivot',
             'rowGroup',
             'showValuesAs',
@@ -265,6 +267,10 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
             columnGroupOpened: () => this.updateCachedState('columnGroup', this.getColumnGroupState()),
+            columnHeaderNameChanged: () => {
+                this.updateColumnState(['columnHeaderName']);
+                this.updateCachedState('columnGroup', this.getColumnGroupState());
+            },
         });
     }
 
@@ -427,6 +433,7 @@ export class StateService extends BeanStub implements NamedBean {
         columnVisibility?: ColumnVisibilityState;
         columnSizing?: ColumnSizingState;
         columnOrder?: ColumnOrderState;
+        columnHeaderName?: ColumnHeaderNameState;
     } {
         const beans = this.beans;
         return convertColumnState(_getColumnState(beans), beans.colModel.pivotMode);
@@ -448,6 +455,7 @@ export class StateService extends BeanStub implements NamedBean {
             columnVisibility: columnVisibilityState,
             columnSizing: columnSizingState,
             columnOrder: columnOrderState,
+            columnHeaderName: columnHeaderNameState,
         } = state;
         // if any column state property is provided, or from `setState`, should always apply state even if empty
         let forceSetState = false;
@@ -579,6 +587,16 @@ export class StateService extends BeanStub implements NamedBean {
             defaultState.flex = null;
         }
 
+        const shouldSetHeaderNameState = shouldSetState('columnHeaderName', columnHeaderNameState);
+        if (shouldSetHeaderNameState) {
+            for (const { colId, headerName } of columnHeaderNameState?.columnHeaderNames ?? []) {
+                getColumnState(colId).headerName = headerName;
+            }
+        }
+        if (shouldSetHeaderNameState || !partialColumnState) {
+            defaultState.headerName = null;
+        }
+
         const columns = columnOrderState?.orderedColIds;
         const applyOrder = !!columns?.length && !ignoreSet?.has('columnOrder');
         const columnStates = applyOrder ? columns.map((colId) => getColumnState(colId)) : Object.values(columnStateMap);
@@ -651,6 +669,9 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const openColumnGroups = new Set(state.columnGroup?.openColumnGroupIds);
+        const headerNamesById = new Map(
+            (state.columnGroup?.headerNames ?? []).map(({ groupId, headerName }) => [groupId, headerName])
+        );
         const existingColumnGroupState = _getColGroupState(this.beans);
         const stateItems = existingColumnGroupState.map(({ groupId }) => {
             const open = openColumnGroups.has(groupId);
@@ -660,6 +681,7 @@ export class StateService extends BeanStub implements NamedBean {
             return {
                 groupId,
                 open,
+                headerName: headerNamesById.get(groupId) ?? null,
             };
         });
         // probably pivot cols
@@ -667,6 +689,7 @@ export class StateService extends BeanStub implements NamedBean {
             stateItems.push({
                 groupId,
                 open: true,
+                headerName: headerNamesById.get(groupId) ?? null,
             });
         }
         if (stateItems.length) {

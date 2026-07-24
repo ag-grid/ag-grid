@@ -1,8 +1,14 @@
-import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    RowSelectionModule,
+    TextFilterModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../../../selection/utils';
 import {
+    ALL_SEVERITIES,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -571,6 +577,8 @@ describe('ag-grid tree selection', () => {
     // A real leaf can be detached from the tree (treeParent=null → hideRow) without being destroyed when
     // two rows collide on the same path. The orphaned, still-alive node must drop out of the selection.
     test('selected leaf dropped from selection when orphaned by a duplicate path', async () => {
+        // This test deliberately collides two rows on one path to assert the duplicate-path warning.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [186] });
         const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'name' }],

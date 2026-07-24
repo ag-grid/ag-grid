@@ -846,6 +846,12 @@ export const AG_GRID_LOCALE_GR = {
     timeFormatHHMMSS: 'ΩΩ:ΛΛ:ΔΔ',
     timeFormatHHMMSSAmPm: 'ΩΩ:ΛΛ:ΔΔ ΠΜ/ΜΜ',
 
+    // Editable Column Header Name
+    editColumnName: 'Επεξεργασία ονόματος στήλης',
+    ariaColumnHeaderNameEditor: 'Επεξεργαστής ονόματος στήλης',
+    columnHeaderEditApply: 'Εφαρμογή',
+    columnHeaderEditCancel: 'Ακύρωση',
+
     // Calculated Columns
     calculatedColumn: 'Υπολογιζόμενη στήλη',
     calculatedColumnAdd: 'Προσθήκη υπολογιζόμενης στήλης',

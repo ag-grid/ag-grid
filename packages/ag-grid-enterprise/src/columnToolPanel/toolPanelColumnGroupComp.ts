@@ -4,6 +4,8 @@ import type {
     AgColumn,
     AgProvidedColumnGroup,
     ColumnEventType,
+    ColumnHeaderNameChangedEvent,
+    ColumnMenuItemsSource,
     DragItem,
     ElementParams,
     GridCheckbox,
@@ -62,7 +64,7 @@ export class ToolPanelColumnGroupComp extends Component {
     public readonly columnGroup: AgProvidedColumnGroup;
     public readonly columnDepth: number;
 
-    private readonly displayName: string | null;
+    private displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
 
@@ -71,7 +73,8 @@ export class ToolPanelColumnGroupComp extends Component {
         private readonly allowDragging: boolean,
         private readonly eventType: ColumnEventType,
         private readonly focusWrapper: HTMLElement,
-        private readonly params: ColumnStateUpdateParams
+        private readonly params: ColumnStateUpdateParams,
+        private readonly source: ColumnMenuItemsSource
     ) {
         super();
         const { columnGroup, depth, displayName } = modelItem;
@@ -115,6 +118,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
         this.addManagedListeners(modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
+        this.addManagedEventListeners({ columnHeaderNameChanged: this.onHeaderNameChanged.bind(this) });
 
         const touchListener = new TouchListener(this.getGui(), false);
         this.addManagedListeners(touchListener, {
@@ -179,13 +183,9 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent | Touch): void {
-        const { columnGroup, gos } = this;
-
-        if (gos.get('functionsReadOnly')) {
-            return;
-        }
-
-        const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper, this.params));
+        const contextMenu = this.createBean(
+            new ToolPanelContextMenu(this.columnGroup, e, this.focusWrapper, this.params, this.eventType, this.source)
+        );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -334,6 +334,20 @@ export class ToolPanelColumnGroupComp extends Component {
         }
 
         selectAllChildren(this.beans, this.modelItem.children, nextState, this.eventType, this.params);
+    }
+
+    private onHeaderNameChanged(event: ColumnHeaderNameChangedEvent): void {
+        // A missing groupId means a bulk change, so refresh unconditionally.
+        if (event.groupId && event.groupId !== this.columnGroup.groupId) {
+            return;
+        }
+        this.displayName = this.beans.colNames.getDisplayNameForProvidedColumnGroup(
+            null,
+            this.columnGroup,
+            'columnToolPanel'
+        );
+        this.eLabel.textContent = this.displayName ?? '';
+        this.refreshAriaLabel();
     }
 
     private refreshAriaLabel(): void {

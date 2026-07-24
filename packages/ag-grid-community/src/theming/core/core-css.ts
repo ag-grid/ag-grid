@@ -424,6 +424,11 @@ export interface CoreParams extends SharedThemeParams {
     calculatedColumnHighlightColor: ColorValue;
 
     /**
+     * Background color for the column header currently being edited.
+     */
+    columnHeaderEditHighlightColor: ColorValue;
+
+    /**
      * Color for the parent of columns in the suggestion list.
      */
     calculatedColumnParentSuggestionColor: ColorValue;
@@ -895,6 +900,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     rangeSelectionHighlightColor: accentMix(0.5),
     rangeHeaderHighlightColor: foregroundHeaderBackgroundMix(0.08),
     calculatedColumnHighlightColor: accentMix(0.12),
+    columnHeaderEditHighlightColor: accentMix(0.12),
     calculatedColumnParentSuggestionColor: foregroundMix(0.75),
     calculatedColumnSuggestionListWidth: 200,
     rowNumbersSelectedColor: accentMix(0.5),

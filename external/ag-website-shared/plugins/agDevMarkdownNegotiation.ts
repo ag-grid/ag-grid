@@ -9,6 +9,12 @@ export interface MarkdownNegotiationOptions {
     pathPatterns: RegExp[];
     /** When true the plugin is a no-op (mirrors the build-time DISABLE_MARKDOWN_DOCS flag). */
     disabled: boolean;
+    /**
+     * Site base path (`/` for a root site, `/charts` for a based site). The homepage lives at this
+     * root and its twin is `<base>/index.md`; every other page maps to a sibling `<path>.md`. The
+     * caller supplies it because Astro's base isn't exposed on Vite's `server.config.base` in dev.
+     */
+    basePath?: string;
 }
 
 // A client (typically an AI agent) asks for the markdown variant by sending
@@ -19,6 +25,20 @@ function prefersMarkdown(accept: string | undefined): boolean {
     return accept != null && accept.includes('text/markdown');
 }
 
+// Resolve the `.md` twin for a negotiable request, or null if the path has no twin. The homepage
+// — the base root (`/`, or `/charts/` for a based site) — has no page segment to suffix, so its
+// twin is `index.md` in that root directory; every other matched page maps to a sibling `<path>.md`.
+function markdownTwinPath(pathname: string, basePath: string, pathPatterns: RegExp[]): string | null {
+    const root = basePath.replace(/\/$/, '');
+    if (pathname === root || pathname === `${root}/`) {
+        return `${root}/index.md`;
+    }
+    if (pathPatterns.some((pattern) => pattern.test(pathname))) {
+        return pathname.replace(/\/$/, '') + '.md';
+    }
+    return null;
+}
+
 /**
  * SE-80: content-negotiate docs pages to their per-page markdown variant in the
  * dev server. When a request carries `Accept: text/markdown` for a page that has a
@@ -27,6 +47,8 @@ function prefersMarkdown(accept: string | undefined): boolean {
  *
  * Product-agnostic: the caller supplies the `pathPatterns` that identify negotiable
  * paths, so grid and charts share the mechanism and differ only in their URL shapes.
+ * The homepage twin is resolved from `basePath` (the base root has no page segment to
+ * suffix), which the caller passes because Astro's base is not on `server.config.base`.
  *
  * This has to be a Vite dev-server middleware rather than the Astro middleware:
  * docs pages are prerendered, and Astro strips request headers on prerendered
@@ -39,7 +61,11 @@ function prefersMarkdown(accept: string | undefined): boolean {
  * routes on. The `.md` route is generated from the same page fan-out as the HTML
  * page, so a page that exists as HTML always has a matching `.md`.
  */
-export default function agDevMarkdownNegotiation({ pathPatterns, disabled }: MarkdownNegotiationOptions): Plugin {
+export default function agDevMarkdownNegotiation({
+    pathPatterns,
+    disabled,
+    basePath = '/',
+}: MarkdownNegotiationOptions): Plugin {
     return {
         name: 'ag-dev-markdown-negotiation',
         enforce: 'post',
@@ -54,8 +80,8 @@ export default function agDevMarkdownNegotiation({ pathPatterns, disabled }: Mar
                         return;
                     }
                     const [pathname, query] = (req.url ?? '').split('?');
-                    if (pathPatterns.some((pattern) => pattern.test(pathname))) {
-                        const markdownPath = pathname.replace(/\/$/, '') + '.md';
+                    const markdownPath = markdownTwinPath(pathname, basePath, pathPatterns);
+                    if (markdownPath != null) {
                         req.url = query != null ? `${markdownPath}?${query}` : markdownPath;
                     }
                     next();

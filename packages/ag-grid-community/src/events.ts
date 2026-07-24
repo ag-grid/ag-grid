@@ -192,6 +192,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         showRowGroupColsSetChanged: AgEvent<'showRowGroupColsSetChanged'>;
         columnShowValuesAsChanged: AgEvent<'columnShowValuesAsChanged'>;
         rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
+        columnHeaderNameChanged: ColumnHeaderNameChangedEvent;
+        columnHeaderEditHighlightChanged: ColumnHeaderEditHighlightChangedEvent;
     }
 >;
 
@@ -953,6 +955,20 @@ export interface StickyBottomOffsetChangedEvent extends AgEvent<'stickyBottomOff
     offset: number;
 }
 
+export interface ColumnHeaderNameChangedEvent extends AgEvent<'columnHeaderNameChanged'> {
+    /** Set when a single column's header name changed. Listeners can ignore other columns. */
+    colId?: string;
+    /** Set when a single provided column group's header name changed. Listeners can ignore other groups. */
+    groupId?: string;
+}
+
+export interface ColumnHeaderEditHighlightChangedEvent extends AgEvent<'columnHeaderEditHighlightChanged'> {
+    /** Set when a single column's header edit-highlight changed. Listeners can ignore other columns. */
+    colId?: string;
+    /** Set when a single provided column group's header edit-highlight changed. Listeners can ignore other groups. */
+    groupId?: string;
+}
+
 export interface CommonCellFocusParams {
     /** Row index of the focused cell */
     rowIndex: number | null;
@@ -1032,6 +1048,7 @@ export type ColumnEventType =
     | 'uiColumnDragged'
     | 'uiColumnExpanded'
     | 'uiColumnSorted'
+    | 'uiColumnHeaderEdit'
     | 'contextMenu'
     | 'columnMenu'
     | 'rowModelUpdated'

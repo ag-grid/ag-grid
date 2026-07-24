@@ -317,6 +317,19 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).toContain('```js\nconst a = 1;\n\n\nconst b = 2;\n```');
     });
 
+    it('treats a shorter inner fence as code, not a delimiter, when normalising blank lines', async () => {
+        // A doc example whose source contains a ``` fence is wrapped in a 4-backtick fence; the inner
+        // ``` must not flip the fence state, or blank lines after it get collapsed as if they were prose.
+        const body = ['````md', '```js', 'const a = 1;', '', '', 'const b = 2;', '```', '````'].join('\n');
+        const output = await render(body);
+        expect(output).toContain('const a = 1;\n\n\nconst b = 2;');
+    });
+
+    it('lengthens the inline-code delimiter so a span containing a backtick stays valid', async () => {
+        const output = await render('Use `` `foo` `` in config.');
+        expect(output).toContain('`` `foo` ``');
+    });
+
     it('resolves framework conditionals inside a code fence', async () => {
         const body = [
             '```js',
@@ -426,6 +439,32 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).not.toContain('authoring note');
         expect(output).not.toContain('<!--');
         expect(output).not.toContain('-->');
+    });
+
+    it('strips a block comment containing blank lines and nested tags, without executing them', async () => {
+        const body = [
+            'Before.',
+            '',
+            '<!-- The full list for version {% gridVersion() %}.',
+            '',
+            '{% expandingSection headerText="Breaking Changes" %}',
+            'placeholder item',
+            '{% /expandingSection %}',
+            '-->',
+            '',
+            'After.',
+        ].join('\n');
+        const output = await render(body);
+
+        expect(output).toContain('Before.');
+        expect(output).toContain('After.');
+        expect(output).not.toContain('<!--');
+        expect(output).not.toContain('-->');
+        expect(output).not.toContain('The full list');
+        // The nested tag must not render, and the resolved version must not leak.
+        expect(output).not.toContain('Breaking Changes');
+        expect(output).not.toContain('placeholder item');
+        expect(output).not.toContain('33.1');
     });
 
     it('resolves image tags (including inline in tables) via the async resolveImageSrc resolver', async () => {

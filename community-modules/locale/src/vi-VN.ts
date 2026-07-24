@@ -841,6 +841,12 @@ export const AG_GRID_LOCALE_VN = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS SA/CH',
 
+    // Editable Column Header Name
+    editColumnName: 'Chỉnh sửa tên cột',
+    ariaColumnHeaderNameEditor: 'Trình chỉnh sửa tên cột',
+    columnHeaderEditApply: 'Áp dụng',
+    columnHeaderEditCancel: 'Hủy',
+
     // Calculated Columns
     calculatedColumn: 'Cột tính toán',
     calculatedColumnAdd: 'Thêm cột tính toán',

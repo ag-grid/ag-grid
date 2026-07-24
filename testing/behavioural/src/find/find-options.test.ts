@@ -1,7 +1,7 @@
-import { PaginationModule, TextEditorModule } from 'ag-grid-community';
+import { PaginationModule, TextEditorModule, enableDevValidations } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
  * Tests for find options: case sensitivity, pagination, etc.
@@ -187,6 +187,8 @@ describe('Find Options', () => {
         // which triggers warnings #94 and #95. Suppress the console output and assert they fire.
         let warnSpy: ReturnType<typeof vitest.spyOn>;
         beforeEach(() => {
+            // These tests deliberately use a paginationPageSize outside the default selector (warnings #94 and #95).
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [94, 95] });
             warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         });
         afterEach(() => {

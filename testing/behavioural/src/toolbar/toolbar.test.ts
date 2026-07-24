@@ -1,7 +1,7 @@
-import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, QuickFilterModule, enableDevValidations } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Toolbar', () => {
     const gridMgr = new TestGridsManager({
@@ -301,6 +301,8 @@ describe('Toolbar', () => {
 
     describe('duplicate items', () => {
         test('does not render duplicate built-in items in string form', async () => {
+            // This test deliberately triggers warning #303 (duplicate toolbar item key) and asserts it via a console spy.
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [303] });
             const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             const api = gridMgr.createGrid('duplicate-string-form', {
                 columnDefs: [{ field: 'name' }],
@@ -372,6 +374,8 @@ describe('Toolbar', () => {
         });
 
         test('does not render both items when explicit keys collide and warns', async () => {
+            // This test deliberately triggers warning #303 (duplicate toolbar item key) and asserts it via a console spy.
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [303] });
             const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
             const api = gridMgr.createGrid('duplicate-explicit-key-collision', {

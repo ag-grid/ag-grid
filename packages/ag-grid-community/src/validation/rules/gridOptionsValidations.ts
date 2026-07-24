@@ -120,6 +120,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     allowContextMenuWithControlKey: 'ContextMenu',
     autoSizeStrategy: 'ColumnAutoSize',
     calculatedColumns: 'CalculatedColumns',
+    columnHeaderEdit: 'ColumnHeaderEdit',
     cellSelection: 'CellSelection',
     columnHoverHighlight: 'ColumnHover',
     datasource: 'InfiniteRowModel',
@@ -136,6 +137,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     getContextMenuItems: 'ContextMenu',
     getLocaleText: 'Locale',
     getMainMenuItems: 'ColumnMenu',
+    getColumnMenuItems: ['ColumnMenu', 'ColumnsToolPanel'],
     getRowClass: 'RowStyle',
     getRowStyle: 'RowStyle',
     groupTotalRow: (_options, gridOptions) =>
@@ -228,6 +230,27 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     });
                 }
 
+                return null;
+            },
+        },
+        columnHeaderEdit: {
+            validate({ columnHeaderEdit }) {
+                if (columnHeaderEdit == null) {
+                    return null;
+                }
+                if (typeof columnHeaderEdit !== 'object' || Array.isArray(columnHeaderEdit)) {
+                    return _createValidationWarning(321, {
+                        property: 'columnHeaderEdit',
+                        expected: 'an object',
+                    });
+                }
+                const { applyMode } = columnHeaderEdit;
+                if (applyMode != null && applyMode !== 'live' && applyMode !== 'deferred') {
+                    return _createValidationWarning(320, {
+                        property: 'columnHeaderEdit.applyMode',
+                        allowed: ['live', 'deferred'],
+                    });
+                }
                 return null;
             },
         },

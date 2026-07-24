@@ -44,7 +44,7 @@ describe('dev validation diagnostic attribution', () => {
             .map((diagnostic: any) => diagnostic.id);
 
     test('attributes a colDef diagnostic to its own grid when validation runs outside the creation scope', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const apiClean = gridsManager.createGrid('cleanGrid', { columnDefs, rowData } as GridOptions);
         const apiInvalid = gridsManager.createGrid('invalidGrid', { columnDefs, rowData } as GridOptions);
 
@@ -60,7 +60,7 @@ describe('dev validation diagnostic attribution', () => {
     });
 
     test('attributes a non-colDef validation diagnostic to its own grid', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const apiClean = gridsManager.createGrid('cleanGrid', { columnDefs, rowData } as GridOptions);
         const apiDeprecated = gridsManager.createGrid('deprecatedGrid', { columnDefs, rowData } as GridOptions);
 
@@ -74,7 +74,7 @@ describe('dev validation diagnostic attribution', () => {
     });
 
     test('attributes an async-transaction row-data diagnostic to its own grid', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const DUPLICATE_ID_WARNING = 2;
         const txnRowData = [{ id: 'r1', athlete: 'Michael Phelps' }];
         const options = {
@@ -95,7 +95,7 @@ describe('dev validation diagnostic attribution', () => {
     });
 
     test('attributes a column-build diagnostic to its own grid', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const COLID_COLLISION_WARNING = 273;
         const apiClean = gridsManager.createGrid('cleanGrid', { columnDefs, rowData } as GridOptions);
         const apiCollision = gridsManager.createGrid('collisionGrid', { columnDefs, rowData } as GridOptions);
@@ -115,7 +115,7 @@ describe('dev validation diagnostic attribution', () => {
     });
 
     test('attributes a runtime diagnostic self-emitted by a bean with no active-grid scope', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const NON_ARRAY_ROWDATA_WARNING = 1;
         const apiClean = gridsManager.createGrid('cleanGrid', { columnDefs, rowData } as GridOptions);
         const apiInvalid = gridsManager.createGrid('invalidGrid', { columnDefs, rowData } as GridOptions);
@@ -130,7 +130,7 @@ describe('dev validation diagnostic attribution', () => {
     });
 
     test('attributes a malformed-initialState diagnostic to its own grid', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const SELECTION_STATE_ERROR = 103;
         // No rowData, so rowCountReady does not fire during creation and the state-restore listener stays
         // armed. A non-array selection state is rejected by setSelectionState during the restore.
@@ -154,7 +154,7 @@ describe('dev validation diagnostic attribution', () => {
     const EMPTY_EXCEL_DATA_WARNING = 159;
 
     test('attributes an excel-export diagnostic to its own grid via the grid API', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const apiClean = gridsManager.createGrid('cleanGrid', { columnDefs, rowData } as GridOptions);
         const apiExport = gridsManager.createGrid('exportGrid', { columnDefs, rowData } as GridOptions);
 
@@ -166,7 +166,7 @@ describe('dev validation diagnostic attribution', () => {
     });
 
     test('attributes an excel-export diagnostic triggered directly on the creator bean', () => {
-        enableDevValidations({ overlay: 'warning' });
+        enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const apiClean = gridsManager.createGrid('cleanGrid', { columnDefs, rowData } as GridOptions);
         const apiExport = gridsManager.createGrid('exportGrid', { columnDefs, rowData } as GridOptions);
 

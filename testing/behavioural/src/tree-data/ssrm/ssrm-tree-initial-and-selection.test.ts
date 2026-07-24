@@ -1,8 +1,8 @@
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
-import { RowSelectionModule } from 'ag-grid-community';
+import { RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import { countLoadingRows, waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 import { createFakeServer, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
 
@@ -220,6 +220,8 @@ describe('ag-grid SSRM treeData initial-load & selection (characterization)', ()
         // which the grid warns (#202) is unreliable — that warning is exactly the behaviour being pinned.
         let warnSpy: ReturnType<typeof vi.spyOn>;
         beforeEach(() => {
+            // These tests deliberately call getSelectedNodes under SSRM + groupSelectsChildren to pin the #202 warning.
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [202] });
             warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         });
         afterEach(() => {

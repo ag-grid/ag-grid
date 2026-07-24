@@ -839,6 +839,12 @@ export const AG_GRID_LOCALE_HK = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
 
+    // Editable Column Header Name
+    editColumnName: '編輯欄名',
+    ariaColumnHeaderNameEditor: '欄名編輯器',
+    columnHeaderEditApply: '應用',
+    columnHeaderEditCancel: '取消',
+
     // Calculated Columns
     calculatedColumn: '計算欄',
     calculatedColumnAdd: '新增計算欄',

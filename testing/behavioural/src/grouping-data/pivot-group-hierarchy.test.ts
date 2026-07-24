@@ -1,8 +1,15 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+} from '../test-utils';
 
 describe('pivot with groupHierarchy (date-time)', () => {
     // Tests ported from e2e: documentation/ag-grid-docs/src/content/docs/pivoting-column-groups/_examples/pivoting-date-time/example.spec.ts
@@ -1367,7 +1374,8 @@ describe('pivot with groupHierarchy (date-time)', () => {
     });
 
     test('unrecognised string parts in groupHierarchy are silently dropped', async () => {
-        // The unrecognised 'bogus' part legitimately warns — silence the noise and assert it fires.
+        // The unrecognised 'bogus' part legitimately warns (#322) — silence the noise and assert it fires.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
         const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         const api = gridsManager.createGrid('unknownHierarchyPart', {
             columnDefs: [

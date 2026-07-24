@@ -259,6 +259,53 @@ const seedProjects = defineCollection({
 const aboutPage = defineCollection({
     loader: glob({ base: './src/content/about', pattern: 'about.json' }),
     schema: z.object({
+        prose: z.object({
+            intro: z.object({
+                headingLine1: z.string(),
+                headingLine2: z.string(),
+                paragraphHtml: z.string(),
+            }),
+            customerLogosFootnote: z.string(),
+            memoriam: z.object({
+                heading: z.string(),
+                paragraph: z.string(),
+                linkText: z.string(),
+                linkUrl: z.string(),
+            }),
+            history: z.object({ heading: z.string(), paragraph: z.string() }),
+            principles: z.object({ heading: z.string(), subheading: z.string() }),
+            leadership: z.object({ heading: z.string(), subheading: z.string() }),
+            lifeAt: z.object({ heading: z.string(), paragraph: z.string() }),
+            resources: z.object({
+                heading: z.string(),
+                subheading: z.string(),
+                items: z.array(
+                    z.object({
+                        icon: z.string(),
+                        title: z.string(),
+                        description: z.string(),
+                        url: z.string(),
+                        external: z.boolean().optional(),
+                    })
+                ),
+            }),
+            contact: z.object({ heading: z.string(), subheading: z.string() }),
+            office: z.object({
+                heading: z.string(),
+                addressLines: z.array(z.string()),
+                mapUrl: z.string(),
+                mapCta: z.string(),
+            }),
+            socials: z.array(z.object({ icon: z.string(), label: z.string(), ariaLabel: z.string(), url: z.string() })),
+        }),
+        timeline: z.array(
+            z.object({
+                year: z.string(),
+                icon: z.string(),
+                title: z.string(),
+                description: z.string(),
+            })
+        ),
         principles: z.array(
             z.object({
                 icon: z.string(),
@@ -469,8 +516,45 @@ const landingPages = defineCollection({
     }),
 });
 
+// Homepage marketing copy (index.astro). The bespoke interactive islands stay inline in the
+// page; only the hero and section text lives here so it can be shared with the /index.md twin.
+const homepage = defineCollection({
+    loader: glob({ base: './src/content/homepage', pattern: 'homepage.json' }),
+    schema: z.object({
+        hero: z.object({
+            headingPrefix: z.string(),
+            headingSuffix: z.string(),
+            subHeading: z.string(),
+            seeDemosText: z.string(),
+            seeDemosUrl: z.string(),
+            githubText: z.string(),
+            githubUrl: z.string(),
+        }),
+        sections: z.array(
+            z.object({
+                id: z.string(),
+                tag: z.string().optional(),
+                heading: z.string().optional(),
+                headingHtml: z.string().optional(),
+                subHeading: z.string().optional(),
+                subHeadingHtml: z.string().optional(),
+                ctaTitle: z.string().optional(),
+                ctaUrl: z.string().optional(),
+                // When true, index.astro wraps ctaUrl with urlWithBaseUrl (matching the original
+                // per-section behaviour); framework CTAs instead pass the raw './' path through.
+                ctaUrlIsBaseUrl: z.boolean().optional(),
+                ctaId: z.string().optional(),
+                isFramework: z.boolean().optional(),
+                showBackgroundGradient: z.boolean().optional(),
+                sectionClass: z.string().optional(),
+            })
+        ),
+    }),
+});
+
 export const collections = {
     docs,
+    homepage,
     apiDocumentation,
     interfaceDocumentation,
     matrixTable,

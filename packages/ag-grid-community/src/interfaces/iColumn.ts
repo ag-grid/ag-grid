@@ -80,6 +80,7 @@ export type ColumnEventName =
     | 'headerHighlightChanged'
     | 'sortChanged'
     | 'colDefChanged'
+    | 'headerNameChanged'
     | 'formulaRefChanged'
     | 'menuVisibleChanged'
     | 'columnRowGroupChanged'

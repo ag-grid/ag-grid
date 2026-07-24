@@ -3,11 +3,7 @@ title: "Columns Tool Panel"
 enterprise: true
 ---
 
-The Columns Tool Panel provides controls for managing the grid's columns.
-
-## Example
-
-In the example below the Columns Tool Panel can be used to show / hide / reorder columns, group rows and aggregate data and perform pivot operations.
+The Columns Tool Panel provides controls for managing the grid's columns. It can be used to show / hide / reorder columns, group rows and aggregate data and perform pivot operations.
 
 {% gridExampleRunner title="Tool Panel Simple" name="simple"  exampleHeight=630 /%}
 
@@ -16,13 +12,6 @@ Remember to mark the column definitions with `enableRowGroup` for grouping, `ena
 for pivoting and `enableValue` for aggregation, otherwise you won't be able to drag and drop the
 columns to the desired sections.
 {% /note %}
-
-## Selection Action
-
-Selecting columns means different things depending on whether the grid is in pivot mode or not as follows:
-
-- **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
-- **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
 ## Columns Tool Panel Sections
 
@@ -51,6 +40,13 @@ The Columns Tool Panel is split into different sections as described from the to
     - Each column can be right-clicked to display a context menu. The context menu displays menu items related to whether the column can be grouped, pivoted and aggregated. When not in pivot mode, the context menu for visible columns includes an item to scroll the column into view.
 
 {% imageCaption imagePath="resources/screenshot.png" alt="AG Grid Tool Panel Section" centered=true constrained=true width="46rem" /%}
+
+## Selection Action
+
+Selecting columns means different things depending on whether the grid is in pivot mode or not as follows:
+
+- **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
+- **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
 ## Section Visibility
 
@@ -161,6 +157,37 @@ The example below demonstrates the Columns Tool Panel using a mixture of items e
 - The country column uses a `headerValueGetter` to give the column a slightly different name dependent on where it appears using the `location` parameter.
 
 {% gridExampleRunner title="Tool Panel Styling" name="styling"  exampleHeight=610 /%}
+
+## Context Menu
+
+Right-clicking a column or column group label opens a menu with items for grouping, aggregating and pivoting. The menu items can be customised or include custom menu items.
+
+### Built-In Menu Items
+
+The following menu items are shown by default based on the column's configuration and the grid's current state:
+
+- `scrollIntoView`: "Scroll into View". Scrolls the column into view. Hides while pivoting or when the column is pinned.
+- `rowGroup`: "Group by" or "Un-Group by". Appears only when the column allows row grouping.
+- `value`: "Add to values" or "Remove from values". Adds or removes the column as an aggregated value (the **Values** section). Appears only when the column allows aggregation.
+- `pivot`: "Add to labels" or "Remove from labels". Adds or removes the column as a pivot column label (the **Column Labels** section). Appears only in pivot mode when the column allows pivoting.
+
+For a column group, `rowGroup`, `value` and `pivot` apply to every child column that individually allows the action; `scrollIntoView` instead scrolls only the first visible child column into view.
+
+With [Read Only Functions](#read-only-functions) `rowGroup`, `value` and `pivot` are not shown.
+
+### Custom Menu Items
+
+The menu items shown can be customised via `colDef.columnMenuItems` or `getColumnMenuItems()`. See [Column Menu - Customising the menu items](./column-menu/#customising-the-menu-items). The callback's `params.source` will be `'columnsToolPanel'` when triggered from the columns tool panel.
+
+The example below shows both the built-in items and this customisation. Note the following:
+
+- Right-click **Gold** to see the built-in items plus an optional pinning sub-menu and a custom **Highlight Column** item, added by the `getColumnMenuItems()` callback.
+- **Silver** hides the "Scroll into View" item via `colDef.columnMenuItems`.
+- **Bronze** restricts its menu to only "Add to values" via a static `colDef.columnMenuItems` array.
+- Since `colDef.columnMenuItems` takes priority over `getColumnMenuItems()`, Silver and Bronze don't get the Highlight Column item.
+- The column header menu and Column Chooser are unaffected: `getColumnMenuItems()` returns `params.defaultItems` unchanged for those sources.
+
+{% gridExampleRunner title="Customising the Tool Panel Menu" name="customising-tool-panel-menu" exampleHeight=670 /%}
 
 ## Read Only Functions
 

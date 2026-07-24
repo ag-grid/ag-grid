@@ -3,12 +3,12 @@ title: "Column State"
 ---
 
 {% if isFramework("javascript", "angular", "vue") %}
-Column Definitions contain both stateful and non-stateful attributes. Stateful attributes can have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header). Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Header Name is set as part of a Column Definition, it typically does not change).
+Column Definitions contain both stateful and non-stateful attributes. Stateful attributes can have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header). Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Field is set as part of a Column Definition, it does not change).
 {% /if %}
 
 {% if isFramework("react") %}
 {% videoSection id="d9Kohpbt42M" title="React Column State" showHeader=true %}
-Column Definitions contain both stateful and non-stateful attributes. Stateful attributes can have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header). Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Header Name is set as part of a Column Definition, it typically does not change).
+Column Definitions contain both stateful and non-stateful attributes. Stateful attributes can have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header). Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Field is set as part of a Column Definition, it does not change).
 {% /videoSection %}
 {% /if %}
 
@@ -40,7 +40,7 @@ column state and `api.applyColumnState(params)` sets the column state.
 The example below demonstrates saving and restoring column state. Try the following:
 
 1. Click 'Save State' to save the Column State.
-1. Change some column state, e.g. resize columns, move columns around, apply column sorting or row grouping, etc.
+1. Change some column state, e.g. resize columns, move columns around, apply column sorting or row grouping, or rename an [editable header](./column-headers/#editable-header-name) from its column menu, etc.
 1. Click 'Restore State' and the column state is set back to where it was when you clicked 'Save State'.
 1. Click 'Reset State' and the state will go back to what was defined in the Column Definitions.
 

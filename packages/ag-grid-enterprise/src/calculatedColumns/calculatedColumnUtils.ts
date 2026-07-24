@@ -1,4 +1,4 @@
-import type { ColDef } from 'ag-grid-community';
+import type { AgColumn, ColDef } from 'ag-grid-community';
 import { _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from 'ag-grid-community';
 
 /**
@@ -70,6 +70,30 @@ export function replaceBracketReferences(expression: string, replaceReference: (
         }
     }
     return result + expression.slice(lastIndex);
+}
+
+/**
+ * Checks whether a column rebuild added, removed, or replaced a displayed column, ignoring order-only changes.
+ *
+ * @param previous The displayed columns before the rebuild.
+ * @param current The displayed columns after the rebuild.
+ * @param previousById The column-id lookup captured before the rebuild, used to compare column instances.
+ */
+export function hasColumnMembershipChanged(
+    previous: AgColumn[],
+    current: AgColumn[],
+    previousById: Record<string, AgColumn>
+): boolean {
+    const len = previous.length;
+    if (len !== current.length) {
+        return true;
+    }
+    for (const col of current) {
+        if (previousById[col.colId] !== col) {
+            return true;
+        }
+    }
+    return false;
 }
 
 export function getOperatorReplacementRange(

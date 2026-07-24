@@ -6,6 +6,9 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import DemoTabs from '@components/demos/DemosTabs.astro';
 import LogoMark from '@components/logo/LogoMark';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { DISABLE_MARKDOWN_DOCS } from '@constants';
+
+const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/example.md');
 ---
 
 <Layout
@@ -13,6 +16,7 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
     description="Example showing grid performance with adjustable rows and columns."
     showSearchBar={true}
     hideFooter={true}
+    markdownUrl={markdownUrl}
 >
     <div class={styles.topHeader}>
         <div>

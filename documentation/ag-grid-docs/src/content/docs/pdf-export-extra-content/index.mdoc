@@ -1,0 +1,38 @@
+---
+title: "PDF Export - Extra Content"
+enterprise: true
+---
+
+PDF Export uses Value Getters and Value Formatters but does not export Cell Renderer output. Export callbacks can replace the resulting text without changing the grid.
+
+## Document Title
+
+Use `documentTitle` to set the PDF metadata title and render a visible title above the table. Use `documentTitleStyle` to configure its font, colour, border, padding, margin, alignment, wrapping, line height, line limit, and overflow behaviour.
+
+{% gridExampleRunner title="Document Title" name="pdf-document-title" exampleHeight=520 /%}
+
+## Customising Exported Values
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    processCellCallback: (params) => params.formatValue(params.value),
+    processHeaderCallback: (params) => params.column.getColDef().headerName ?? params.column.getColId(),
+    processGroupHeaderCallback: (params) => params.columnGroup.getColGroupDef()?.headerName ?? '',
+    processRowGroupCallback: (params) => `Group: ${params.node.key ?? ''}`,
+});
+```
+
+- `processCellCallback` customises body cell text.
+- `processHeaderCallback` customises column header text.
+- `processGroupHeaderCallback` customises column-group header text.
+- `processRowGroupCallback` customises row-group text. Group indentation is applied independently.
+
+These callbacks return text. To style the processed result, use `processStyleCallback`; its `value` is the final exported string.
+
+## Additional Content
+
+Use `prependContent`, `appendContent`, or `getCustomContentBelowRow` to add content that is not displayed in the grid. Strings create full-width rows. Use `PdfCell[][]` for explicit spans and styling.
+
+See [PDF Export - Master Detail](./pdf-export-master-detail/) for an example that uses `getCustomContentBelowRow` to include detail data below each master row.
+
+{% gridExampleRunner title="Custom Content" name="pdf-custom-content" exampleHeight=520 /%}

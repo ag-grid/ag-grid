@@ -6,6 +6,7 @@
         "colors": {},
         "skipGridStyles": {},
         "processStyleCallback": {},
+        "processCellHyperlinkCallback": {},
         "page": {},
         "fontSize": {},
         "headerFontSize": {},
@@ -35,6 +36,7 @@
     "PdfCellData": {
         "value": {
             "isRequired": true
-        }
+        },
+        "hyperlink": {}
     }
 }

@@ -1,30 +1,6 @@
 import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
-import type { Page } from 'playwright/test';
 
 const ROW_NUMBERS_COL = 'ag-Grid-RowNumbersColumn';
-
-// Read the row-number column values in top-to-bottom display order (by row-index).
-async function rowNumberOrder(page: Page): Promise<string[]> {
-    const rows = await page.locator('.ag-row[row-index]').all();
-    const seen = new Map<number, string>();
-    for (let i = 0, len = rows.length; i < len; ++i) {
-        const row = rows[i];
-        const idxAttr = await row.getAttribute('row-index');
-        if (idxAttr == null) {
-            continue;
-        }
-        const idx = Number(idxAttr);
-        if (seen.has(idx)) {
-            continue;
-        }
-        const cell = row.locator(`[col-id="${ROW_NUMBERS_COL}"]`);
-        if ((await cell.count()) === 0) {
-            continue;
-        }
-        seen.set(idx, ((await cell.first().innerText()) ?? '').trim());
-    }
-    return [...seen.entries()].sort((a, b) => a[0] - b[0]).map(([, v]) => v);
-}
 
 test.agExample(import.meta, () => {
     test.eachFramework('Renders sequential row numbers', async ({ agIdFor, page }) => {
@@ -44,10 +20,15 @@ test.agExample(import.meta, () => {
         await waitForRowAnimations(page);
 
         // Row numbers track display position, not the data, so they remain 1, 2, 3, ... after a sort.
-        await expect(async () => {
-            const numbers = await rowNumberOrder(page);
-            expect(numbers.length).toBeGreaterThan(2);
-            expect(numbers.slice(0, 3)).toEqual(['1', '2', '3']);
-        }).toPass();
+        // A long-distance sort can briefly leave a zombie duplicate of a moved row sharing its
+        // row-index in the DOM (see waitForRowAnimations above) - scope to the scrolling
+        // container (as expectRowIdAtIndex does) and let each auto-retrying assertion ride out
+        // the transient, rather than hand-scraping every row with a one-shot `.all()`.
+        for (let index = 0; index < 3; ++index) {
+            const cell = page.locator(
+                `.ag-grid-scrolling-container .ag-row[row-index="${index}"] [col-id="${ROW_NUMBERS_COL}"]`
+            );
+            await expect(cell).toHaveText(String(index + 1));
+        }
     });
 });

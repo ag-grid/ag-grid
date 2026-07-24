@@ -1,4 +1,142 @@
 {
+    "prose": {
+        "intro": {
+            "headingLine1": "Open source heart,",
+            "headingLine2": "enterprise muscle.",
+            "paragraphHtml": "<b>Built by developers for developers</b>, AG Grid is a self-funded, bootstrapped company with thousands of customers globally. Our data grid and charting products are now trusted by developers worldwide when building their applications."
+        },
+        "customerLogosFootnote": "Our community versions remain true to our roots, offering free, open-source grids and charts delivering world-class performance. Our enterprise products deliver powerful features and direct developer technical support.",
+        "memoriam": {
+            "heading": "In memory of our amazing founder Niall Crosby",
+            "paragraph": "AG Grid's success has a lot to do with Niall's ingenuity, craft and commitment to building",
+            "linkText": "Read Niall's story",
+            "linkUrl": "/niall"
+        },
+        "history": {
+            "heading": "Our history",
+            "paragraph": "Born from a gap in the market, now providing world-class data-grids and charts to millions of users."
+        },
+        "principles": {
+            "heading": "Our principles",
+            "subheading": "Empowering developers to build world-class applications for their users"
+        },
+        "leadership": {
+            "heading": "Leadership",
+            "subheading": "Decades of experience, that you can count on"
+        },
+        "lifeAt": {
+            "heading": "Life at AG Grid",
+            "paragraph": "We are headquartered in London, with a team of 60 professionals obsessed about building our products, bringing them to market, and ensuring our customers are successful with them."
+        },
+        "resources": {
+            "heading": "Resources",
+            "subheading": "How to find us online, common resources",
+            "items": [
+                {
+                    "icon": "blog",
+                    "title": "Blog",
+                    "description": "See our latest articles",
+                    "url": "https://blog.ag-grid.com",
+                    "external": true
+                },
+                {
+                    "icon": "conference",
+                    "title": "Community",
+                    "description": "View our upcoming and past events",
+                    "url": "/community"
+                }
+            ]
+        },
+        "contact": {
+            "heading": "Get in touch",
+            "subheading": "We are here to help with licenses, developer support and any other queries."
+        },
+        "office": {
+            "heading": "Where to find us",
+            "addressLines": ["AG Grid Ltd", "70 Wilson Street", "London", "EC2A 2DB"],
+            "mapUrl": "https://maps.app.goo.gl/LhvkucDnWtZ9z7rB8",
+            "mapCta": "Visit our office"
+        },
+        "socials": [
+            { "icon": "github", "label": "GitHub", "ariaLabel": "GitHub", "url": "https://github.com/ag-grid/ag-grid" },
+            { "icon": "xLogo", "label": "X", "ariaLabel": "X (Twitter)", "url": "https://x.com/ag_grid" },
+            { "icon": "youtube", "label": "YouTube", "ariaLabel": "YouTube", "url": "https://youtube.com/c/aggrid" },
+            {
+                "icon": "linkedin",
+                "label": "LinkedIn",
+                "ariaLabel": "LinkedIn",
+                "url": "https://linkedin.com/company/ag-grid"
+            }
+        ]
+    },
+    "timeline": [
+        {
+            "year": "2015",
+            "icon": "born",
+            "title": "First commit",
+            "description": "<a href=\"/niall/\">Niall Crosby</a> makes his <a href=\"https://github.com/ag-grid/ag-grid/blob/3a276fa22a328aed53e1b3bebe45c83f78bf9d98/src/angularGrid.js\">first commit for AG Grid</a>, creating an open-source data grid solution to address a gap in the market"
+        },
+        {
+            "year": "2016",
+            "icon": "rocket",
+            "title": "Commercial launch",
+            "description": "<a href=\"/data-grid/community-vs-enterprise/\">AG Grid Enterprise</a> is launched to widespread adoption within the developer community."
+        },
+        {
+            "year": "2017",
+            "icon": "barChart",
+            "title": "Enterprise momentum",
+            "description": "AG Grid signs its 1,000th enterprise customer, proving the commercial model's success."
+        },
+        {
+            "year": "2018",
+            "icon": "conference",
+            "title": "AG Grid Conf",
+            "description": "Dedicated <a href=\"community/events/\">AG Grid conferences</a> delivered in London & New York, engaging us with our growing developer community."
+        },
+        {
+            "year": "2019",
+            "icon": "barChart",
+            "title": "Integrated Charting",
+            "description": "<a href=\"/data-grid/integrated-charts/\">Integrated Charts</a> is launched within AG Grid. The first JS data-grid to contain built-in charting."
+        },
+        {
+            "year": "2020",
+            "icon": "chart",
+            "title": "AG Charts",
+            "description": "<a href=\"https://ag-grid.com/charts/\">AG Charts Community</a> is released as a standalone library"
+        },
+        {
+            "year": "2021",
+            "icon": "license",
+            "title": "Self-service licensing",
+            "description": "<a href=\"/license-pricing/\">eCommerce platform</a> is launched to allow customers to self-service."
+        },
+        {
+            "year": "2022",
+            "icon": "conference",
+            "title": "Mass adoption",
+            "description": "<a href=\"https://www.npmjs.com/package/ag-grid-community\">AG Grid Community</a> breaks one million downloads per month on NPM."
+        },
+        {
+            "year": "2023",
+            "icon": "donutAccelerating",
+            "title": "AG Chart Enterprise",
+            "description": "<a href=\"/data-grid/community-vs-enterprise/\">AG Chart Enterprise</a> is launched in response to strong user demand."
+        },
+        {
+            "year": "2024",
+            "icon": "conference",
+            "title": "Leadership updates",
+            "description": "<a href=\"#leadership-section\">John Masterson</a> appointed CEO, a new board is formed."
+        },
+        {
+            "year": "Now",
+            "icon": "rocket",
+            "title": "What's next",
+            "description": "We're always on the lookout for the next exciting product, stay tuned"
+        }
+    ],
     "principles": [
         {
             "icon": "code",

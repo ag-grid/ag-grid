@@ -13,6 +13,7 @@ import {
     RowSelectionModule,
     TextEditorModule,
     ValidationModule,
+    enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
 import {
@@ -30,6 +31,7 @@ import {
 } from 'ag-grid-enterprise';
 
 import {
+    ALL_SEVERITIES,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -550,6 +552,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('does not enable calculated columns when calculatedColumns is omitted or false', async () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
         const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const cases: { id: string; calculatedColumns: false | undefined }[] = [
             { id: 'calculated-option-omitted', calculatedColumns: undefined },
@@ -598,6 +602,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('runtime calculatedColumns toggle enables and disables static calculated columns', async () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
         const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         try {
             const api = createGrid('calculated-option-runtime-toggle', {
@@ -1949,6 +1955,26 @@ describe('ag-grid calculated columns', () => {
         expect(api.getColumn('profit')!.getColDef().headerName).toBe('Net Profit');
     });
 
+    test('edit dialog shows the edited header name, not the stale colDef name', async () => {
+        const api = createGrid('calculated-edit-dialog-uses-edited-name', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        // Rename the column header (stored as a header-name override, not in colDef.headerName).
+        api.applyColumnState({ state: [{ colId: 'profit', headerName: 'Custom Profit' }] });
+
+        await openEditDialogViaMenu(api, 'profit');
+
+        const titleInput = getCalculatedColumnDialog().querySelector('input')!;
+        expect(titleInput.value).toBe('Custom Profit');
+    });
+
     test('dialog column picker renders group path and leaf as fixed-height clickable rows', async () => {
         const api = createGrid('calculated-dialog-column-picker-group-path', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
@@ -3091,6 +3117,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('dialog type list uses configured data types and ignores unregistered ones', async () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [304] });
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('calculated-dialog-configured-types', {
             calculatedColumns: {
@@ -3237,6 +3265,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('calculated columns are always non-editable', async () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
         const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         try {
             const api = createGrid('calculated-non-editable', {
@@ -3280,6 +3310,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('calculated columns do not write through to row data', async () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
         const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         try {
             const rowData = [{ id: 'r1', revenue: 10, cost: 3, profit: 999 }];
@@ -3667,6 +3699,9 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('validates CalculatedColumnsModule registration', () => {
+        // Suppress the diagnostics this deliberate misconfig raises (#200 module missing, #319 no
+        // calculatedColumns option); any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200, 319] });
         const validationGridsManager = new TestGridsManager({
             modules: [ClientSideRowModelModule, ValidationModule],
         });
@@ -3761,11 +3796,13 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('warns when calculatedExpression is combined with field, valueGetter or valueSetter', () => {
+        // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
         let consoleWarnSpy: MockInstance | undefined;
         try {
             consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             createGrid('calculated-field-conflict', {
-                rowData: [{ revenue: 10, cost: 3 }],
+                rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
                 columnDefs: [
                     { field: 'revenue' },
                     { field: 'cost' },
@@ -3788,6 +3825,8 @@ describe('ag-grid calculated columns', () => {
     });
 
     test('does not evaluate calculatedExpression with FormulaModule alone', async () => {
+        // Suppress only the diagnostics this test asserts on; any other diagnostic still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200, 319] });
         const formulaOnlyGridsManager = new TestGridsManager({
             modules: [ClientSideRowModelModule, FormulaModule, TextEditorModule],
         });
@@ -3909,6 +3948,51 @@ describe('ag-grid calculated columns', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 c:3 a:1 b:2 sum:6
         `);
+    });
+
+    test('dialog-created calculated column cells follow moves next to a group with an explicit groupId', async () => {
+        const api = createGrid('calc-dialog-group-id-move', {
+            suppressColumnMoveAnimation: true,
+            rowData: [{ id: 'r1', athlete: 'Michael Phelps', age: 23, country: 'United States', year: 2008 }],
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'age' },
+                { field: 'country' },
+                {
+                    headerName: 'Competition',
+                    groupId: 'competition',
+                    children: [{ field: 'year' }],
+                },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'country');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        setExpression('"Foo"');
+        await asyncSetTimeout(40);
+
+        const closeButton = document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button');
+        expect(closeButton).toBeTruthy();
+        closeButton!.click();
+        api.moveColumns(['calculated_1'], 2);
+        await asyncSetTimeout(1);
+
+        const gridEl = getGridElement(api)!;
+        const calculatedColumn = api.getColumn('calculated_1')!;
+        const calculatedCell = gridEl.querySelector<HTMLElement>('[row-index="0"] [col-id="calculated_1"]');
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'athlete',
+            'age',
+            'calculated_1',
+            'country',
+            'year',
+        ]);
+        expect(calculatedCell).toBeTruthy();
+        expect(calculatedCell!.style.left).toBe(`${calculatedColumn.getLeft()}px`);
+        expect(calculatedCell!.textContent).toBe('Foo');
     });
 
     // Same order-preservation invariant, but via `applyColumnState({ applyOrder: true })` instead

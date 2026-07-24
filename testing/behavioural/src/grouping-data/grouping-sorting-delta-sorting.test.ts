@@ -1,7 +1,7 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('Grouping delta sorting', () => {
     const gridsManager = new TestGridsManager({
@@ -845,6 +845,8 @@ describe('Grouping delta sorting', () => {
     });
 
     test('delta sort grouped with duplicate node IDs', async () => {
+        // This test deliberately supplies duplicate row IDs, which raises warning #2 (duplicate node id).
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [2] });
         const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         // Note: Duplicate IDs result in Map key collision - last duplicate wins in indexByNode
@@ -946,6 +948,8 @@ describe('Grouping delta sorting', () => {
     });
 
     test('delta sort grouped with duplicate rowData instances', async () => {
+        // This test deliberately supplies duplicate row instances, which raises warning #2 (duplicate node id).
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [2] });
         const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const sharedIre = { id: 'ire-shared', country: 'Ireland', athlete: 'Shared', score: 25 };

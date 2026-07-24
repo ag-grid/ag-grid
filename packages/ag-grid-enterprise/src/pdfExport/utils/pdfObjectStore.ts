@@ -5,6 +5,22 @@ import { escapePdfString, fmt, normaliseText } from './document/text';
 import { normalisePdfFontFamily } from './fonts';
 
 /**
+ * A clickable URI rectangle attached to one PDF page.
+ */
+export interface PdfLinkAnnotation {
+    uri: string;
+    rect: [left: number, bottom: number, right: number, top: number];
+}
+
+/**
+ * Rendered content and annotations for one PDF page.
+ */
+export interface PdfPageContent {
+    content: string;
+    annotations: PdfLinkAnnotation[];
+}
+
+/**
  * Mutable store for PDF indirect objects.
  * Handles object id allocation and final cross-reference generation.
  */
@@ -81,14 +97,14 @@ class PdfObjectStore {
 
 /**
  * Build a complete PDF document from rendered page content.
- * @param pages - Per-page content stream payloads.
+ * @param pages - Per-page content streams and link annotations.
  * @param pageSize - Resolved page size in points.
  * @param fontKeyByFamily - Map of fonts used by the document.
  * @param documentTitle - Optional metadata title.
  * @returns Complete PDF document string.
  */
 export function buildPdf(
-    pages: string[],
+    pages: PdfPageContent[],
     pageSize: ResolvedPageSize,
     fontKeyByFamily: Map<PdfFontFamily, string>,
     documentTitle?: string
@@ -106,12 +122,24 @@ export function buildPdf(
     const pageIds: number[] = [];
     const fontResources = `<< ${fontResourcesParts.join(' ')} >>`;
 
-    for (const content of pages) {
+    for (const page of pages) {
         // each page has its own content stream object and page object.
         // content is ASCII-only, so string length equals the byte length required by /Length.
+        const content = page.content;
         const contentStream = `<< /Length ${content.length} >>\nstream\n${content}\nendstream`;
         const contentId = store.add(contentStream);
-        const pageObject = `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)}] /Resources << /Font ${fontResources} >> /Contents ${contentId} 0 R >>`;
+        const annotationRefs: string[] = [];
+        for (const annotation of page.annotations) {
+            const [left, bottom, right, top] = annotation.rect;
+            const rect = `${fmt(left)} ${fmt(bottom)} ${fmt(right)} ${fmt(top)}`;
+            const uri = escapePdfString(encodePdfUri(annotation.uri));
+            const annotationId = store.add(
+                `<< /Type /Annot /Subtype /Link /Rect [${rect}] /Border [0 0 0] /A << /S /URI /URI (${uri}) >> >>`
+            );
+            annotationRefs.push(`${annotationId} 0 R`);
+        }
+        const annotations = annotationRefs.length ? ` /Annots [${annotationRefs.join(' ')}]` : '';
+        const pageObject = `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)}] /Resources << /Font ${fontResources} >> /Contents ${contentId} 0 R${annotations} >>`;
         const pageId = store.add(pageObject);
         pageIds.push(pageId);
     }
@@ -132,4 +160,43 @@ export function buildPdf(
         : undefined;
 
     return store.build(catalogId, infoId);
+}
+
+/**
+ * Encode URI characters while preserving valid percent escapes supplied by the user.
+ * @param uri - User-provided URI.
+ * @returns An ASCII URI suitable for a PDF URI action.
+ */
+function encodePdfUri(uri: string): string {
+    const encodedUri = encodeURI(replaceUnpairedSurrogates(uri));
+    return encodedUri.replace(/%25([0-9a-f]{2})/gi, '%$1');
+}
+
+/**
+ * Replace unpaired UTF-16 surrogates so URI encoding cannot throw.
+ * @param value - Source string that may contain malformed UTF-16.
+ * @returns A well-formed string with malformed code units replaced.
+ */
+function replaceUnpairedSurrogates(value: string): string {
+    let result = '';
+
+    for (let i = 0; i < value.length; i++) {
+        const codeUnit = value.charCodeAt(i);
+
+        if (codeUnit >= 0xd800 && codeUnit <= 0xdbff) {
+            const nextCodeUnit = value.charCodeAt(i + 1);
+            if (nextCodeUnit >= 0xdc00 && nextCodeUnit <= 0xdfff) {
+                result += value[i] + value[i + 1];
+                i++;
+            } else {
+                result += '\ufffd';
+            }
+        } else if (codeUnit >= 0xdc00 && codeUnit <= 0xdfff) {
+            result += '\ufffd';
+        } else {
+            result += value[i];
+        }
+    }
+
+    return result;
 }

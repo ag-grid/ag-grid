@@ -1,7 +1,7 @@
-import { findByText } from '@testing-library/dom';
+import { findByText, queryByText } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
+import type { ColDef, ColumnEventType, GetColumnMenuItemsParams, GridApi, GridOptions } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -137,6 +137,18 @@ describe('ToolPanelContextMenu', () => {
             await clickMenuItem(gridDiv, 'Group by Athlete');
 
             expect(getGroupedRowIds()).toStrictEqual(['athlete']);
+        });
+
+        test("stock actions invoked from the tool panel emit column events with source 'toolPanelUi'", async () => {
+            const rowGroupSources: ColumnEventType[] = [];
+            gridApi.addEventListener('columnRowGroupChanged', (e) => rowGroupSources.push(e.source));
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+            await clickMenuItem(gridDiv, 'Group by Athlete');
+
+            expect(getGroupedRowIds()).toStrictEqual(['athlete']);
+            expect(rowGroupSources).toContain<ColumnEventType>('toolPanelUi');
+            expect(rowGroupSources).not.toContain<ColumnEventType>('columnMenu');
         });
 
         test('user can remove a row group by clicking the tool panel context menu item', async () => {
@@ -340,6 +352,224 @@ describe('ToolPanelContextMenu', () => {
 
             expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
             expect(getToolPanelDropZoneText(toolPanel.pivotDropZonePanel)).not.toContain('Country');
+        });
+    });
+
+    describe('customisation via columnMenuItems / getColumnMenuItems', () => {
+        async function createGrid(
+            cols: ColDef[],
+            gridOptions: Partial<GridOptions>
+        ): Promise<{ gridApi: GridApi; gridDiv: HTMLElement; toolPanel: any }> {
+            const gridApi = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: cols,
+                rowData,
+                defaultColDef: { flex: 1, minWidth: 100, enableValue: true, enableRowGroup: true },
+                sideBar: {
+                    toolPanels: [
+                        {
+                            id: 'columns',
+                            labelDefault: 'Columns',
+                            labelKey: 'columns',
+                            iconKey: 'columns',
+                            toolPanel: 'agColumnsToolPanel',
+                        },
+                    ],
+                    defaultToolPanel: 'columns',
+                },
+                ...gridOptions,
+            });
+            await asyncSetTimeout(1);
+            return {
+                gridApi,
+                gridDiv: getGridElement(gridApi)! as HTMLElement,
+                toolPanel: gridApi.getToolPanelInstance('columns') as any,
+            };
+        }
+
+        test('col-level columnMenuItems adds a custom item to the tool panel menu and runs its action', async () => {
+            const action = vi.fn();
+            const { gridDiv, toolPanel } = await createGrid(
+                [
+                    { field: 'athlete', minWidth: 200, columnMenuItems: [{ name: 'Highlight column', action }] },
+                    { field: 'age' },
+                ],
+                {}
+            );
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+            await clickMenuItem(gridDiv, 'Highlight column');
+
+            expect(action).toHaveBeenCalled();
+        });
+
+        test('getColumnMenuItems fires with source "columnsToolPanel" and the built-in default items', async () => {
+            const getColumnMenuItems = vi.fn((params: GetColumnMenuItemsParams) => [
+                ...params.defaultItems,
+                { name: 'Custom' },
+            ]);
+            const { gridDiv, toolPanel } = await createGrid(columnDefs, { getColumnMenuItems });
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            // built-in item is still present, and the custom item is appended
+            await findByText(gridDiv, 'Group by Athlete');
+            await findByText(gridDiv, 'Custom');
+
+            expect(getColumnMenuItems).toHaveBeenCalledWith(expect.objectContaining({ source: 'columnsToolPanel' }));
+            const { defaultItems } = getColumnMenuItems.mock.calls[0][0];
+            expect(defaultItems).toContain('rowGroup');
+            expect(defaultItems.every((item) => typeof item === 'string')).toBe(true);
+        });
+
+        test('col-level columnMenuItems takes precedence over grid getColumnMenuItems', async () => {
+            const getColumnMenuItems = vi.fn(() => [{ name: 'FromGrid' }]);
+            const { gridDiv, toolPanel } = await createGrid(
+                [{ field: 'athlete', minWidth: 200, columnMenuItems: [{ name: 'FromColumn' }] }, { field: 'age' }],
+                { getColumnMenuItems }
+            );
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            await findByText(gridDiv, 'FromColumn');
+            expect(queryByText(gridDiv, 'FromGrid')).toBeNull();
+            expect(getColumnMenuItems).not.toHaveBeenCalled();
+        });
+
+        test("returning 'pinSubMenu' renders the pin item in the tool panel menu", async () => {
+            const { gridDiv, toolPanel } = await createGrid(
+                [
+                    {
+                        field: 'athlete',
+                        minWidth: 200,
+                        columnMenuItems: (params) => [...params.defaultItems, 'pinSubMenu'],
+                    },
+                    { field: 'age' },
+                ],
+                {}
+            );
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            await findByText(gridDiv, 'Pin Column');
+        });
+
+        test('under functionsReadOnly a callback receives only the non-mutating defaults', async () => {
+            const getColumnMenuItems = vi.fn((params: GetColumnMenuItemsParams) => [
+                ...params.defaultItems,
+                { name: 'Read-only custom' },
+            ]);
+            const { gridDiv, toolPanel } = await createGrid(columnDefs, {
+                functionsReadOnly: true,
+                getColumnMenuItems,
+            });
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            await findByText(gridDiv, 'Read-only custom');
+            expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
+            // Scroll into view is non-mutating so it survives read-only; the state-changing defaults do not.
+            expect(getColumnMenuItems.mock.calls[0][0].defaultItems).toEqual(['scrollIntoView']);
+        });
+
+        test('under functionsReadOnly with no callback the menu still offers scroll into view', async () => {
+            const { gridDiv, toolPanel } = await createGrid(columnDefs, { functionsReadOnly: true });
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            // Non-mutating navigation stays available and enabled; the state-changing defaults are gone.
+            const scrollItem = await findByText(gridDiv, 'Scroll Athlete into View');
+            expect(scrollItem.closest('.ag-menu-option')!.classList.contains('ag-menu-option-disabled')).toBe(false);
+            expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
+            expect(queryByText(gridDiv, 'Add Athlete to values')).toBeNull();
+
+            // The item is actionable — clicking it runs the scroll handler without error.
+            await clickMenuItem(gridDiv, 'Scroll Athlete into View');
+        });
+
+        test('under functionsReadOnly with no scrollable column the menu does not open', async () => {
+            const { gridDiv, toolPanel } = await createGrid(
+                [{ field: 'athlete', minWidth: 200, pinned: 'left' }, { field: 'age' }],
+                { functionsReadOnly: true }
+            );
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            // A pinned column has no valid scroll-into-view target, and every other default mutates state,
+            // so with no callback there is nothing to show.
+            expect(queryByText(gridDiv, 'Scroll Athlete into View')).toBeNull();
+            expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
+        });
+
+        test('a separator stranded by empty default items is collapsed (matches the column menu)', async () => {
+            const getColumnMenuItems = vi.fn((params: GetColumnMenuItemsParams) => [
+                ...params.defaultItems,
+                'separator' as const,
+                { name: 'Lonely Item' },
+            ]);
+            // A pinned column under functionsReadOnly has no valid default (scroll into view needs an
+            // unpinned target, the rest mutate state), so defaultItems is [] and the list starts with a separator.
+            const { gridDiv, toolPanel } = await createGrid(
+                [{ field: 'athlete', minWidth: 200, pinned: 'left' }, { field: 'age' }],
+                {
+                    functionsReadOnly: true,
+                    getColumnMenuItems,
+                }
+            );
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            await findByText(gridDiv, 'Lonely Item');
+            expect(gridDiv.querySelectorAll('.ag-menu-separator')).toHaveLength(0);
+        });
+
+        test('suppresses the native context menu when a configured menu resolves to empty', async () => {
+            const { gridDiv, toolPanel } = await createGrid(
+                [{ field: 'athlete', minWidth: 200, columnMenuItems: [] }, { field: 'age' }],
+                {}
+            );
+
+            const entry = await getColumnEntry(toolPanel, gridDiv, 'Athlete');
+            const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 });
+            entry.dispatchEvent(event);
+            await asyncSetTimeout(1);
+
+            // AG Grid handled the gesture (columnMenuItems is configured) so the browser menu is suppressed,
+            // even though the resolved menu is empty and nothing opens.
+            expect(event.defaultPrevented).toBe(true);
+            expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
+        });
+
+        test('a grid-level getColumnMenuItems resolving to empty does not suppress the native menu', async () => {
+            const getColumnMenuItems = vi.fn(() => []);
+            const { gridDiv, toolPanel } = await createGrid(columnDefs, { getColumnMenuItems });
+
+            const entry = await getColumnEntry(toolPanel, gridDiv, 'Athlete');
+            const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 });
+            entry.dispatchEvent(event);
+            await asyncSetTimeout(1);
+
+            // Unlike a per-column columnMenuItems, a grid-level callback that returns nothing for this column
+            // does not claim the gesture, so the browser's native menu is left to show.
+            expect(event.defaultPrevented).toBe(false);
+            expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
+        });
+
+        test('under functionsReadOnly an explicitly-returned state-changing token is shown disabled', async () => {
+            const getColumnMenuItems = vi.fn((_params: GetColumnMenuItemsParams) => ['value' as const]);
+            const { gridApi, gridDiv, toolPanel } = await createGrid(columnDefs, {
+                functionsReadOnly: true,
+                getColumnMenuItems,
+            });
+
+            await openContextMenu(toolPanel, gridDiv, 'Age');
+
+            const option = await findByText(gridDiv, 'Add Age to values');
+            expect(option.closest('.ag-menu-option')!.classList.contains('ag-menu-option-disabled')).toBe(true);
+
+            // The disabled item must not mutate value state when clicked.
+            await userEvent.click(option);
+            await asyncSetTimeout(1);
+            expect(gridApi.getValueColumns().map((col) => col.getColId())).not.toContain('age');
         });
     });
 });

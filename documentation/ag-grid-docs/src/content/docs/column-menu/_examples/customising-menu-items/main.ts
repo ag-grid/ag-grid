@@ -1,69 +1,76 @@
 import type {
     ColDef,
-    DefaultMenuItem,
-    GetMainMenuItemsParams,
+    DefaultColumnMenuItem,
+    GetColumnMenuItemsParams,
     GridApi,
     GridOptions,
     MenuItemDef,
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
-import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
+import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 // Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, ColumnMenuModule, ContextMenuModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    ColumnMenuModule,
+    ContextMenuModule,
+    RowGroupingModule,
+]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 200 },
     {
         field: 'age',
-        mainMenuItems: (params: GetMainMenuItemsParams) => {
-            const athleteMenuItems: (MenuItemDef | DefaultMenuItem)[] = params.defaultItems.slice(0);
-            athleteMenuItems.push({
-                name: 'A Custom Item',
-                action: () => {
-                    console.log('A Custom Item selected');
+        enableValue: true,
+        minWidth: 150,
+        columnMenuItems: (params: GetColumnMenuItemsParams) => {
+            // 'value' is a Columns Tool Panel token; it resolves on the column menu too.
+            const menuItems: (DefaultColumnMenuItem | MenuItemDef)[] = [
+                'value',
+                'separator',
+                ...params.defaultItems,
+                {
+                    name: 'A Custom Item',
+                    action: () => {
+                        console.log('A Custom Item selected');
+                    },
                 },
-            });
-            athleteMenuItems.push({
-                name: 'Another Custom Item',
-                action: () => {
-                    console.log('Another Custom Item selected');
+                {
+                    name: 'Custom Sub Menu',
+                    subMenu: [
+                        {
+                            name: 'Black',
+                            action: () => {
+                                console.log('Black was pressed');
+                            },
+                        },
+                        {
+                            name: 'White',
+                            action: () => {
+                                console.log('White was pressed');
+                            },
+                        },
+                        {
+                            name: 'Grey',
+                            action: () => {
+                                console.log('Grey was pressed');
+                            },
+                        },
+                    ],
                 },
-            });
-            athleteMenuItems.push({
-                name: 'Custom Sub Menu',
-                subMenu: [
-                    {
-                        name: 'Black',
-                        action: () => {
-                            console.log('Black was pressed');
-                        },
-                    },
-                    {
-                        name: 'White',
-                        action: () => {
-                            console.log('White was pressed');
-                        },
-                    },
-                    {
-                        name: 'Grey',
-                        action: () => {
-                            console.log('Grey was pressed');
-                        },
-                    },
-                ],
-            });
-            return athleteMenuItems;
+            ];
+            return menuItems;
         },
     },
     {
         field: 'country',
         minWidth: 200,
-        mainMenuItems: [
+        columnMenuItems: [
             {
                 // our own item with an icon
                 name: 'A Custom Item',
@@ -85,8 +92,8 @@ const columnDefs: ColDef[] = [
     },
     {
         field: 'year',
-        mainMenuItems: (params: GetMainMenuItemsParams) => {
-            const menuItems: (MenuItemDef | DefaultMenuItem)[] = [];
+        columnMenuItems: (params: GetColumnMenuItemsParams) => {
+            const menuItems: (DefaultColumnMenuItem | MenuItemDef)[] = [];
             const itemsToExclude = ['separator', 'pinSubMenu', 'valueAggSubMenu'];
             params.defaultItems.forEach((item) => {
                 if (itemsToExclude.indexOf(item) < 0) {
@@ -96,7 +103,7 @@ const columnDefs: ColDef[] = [
             return menuItems;
         },
     },
-    { field: 'sport', minWidth: 200 },
+    { field: 'sport', minWidth: 200, rowGroup: true, enableRowGroup: true },
     { field: 'gold' },
     { field: 'silver' },
     { field: 'bronze' },
@@ -107,6 +114,9 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
+    autoGroupColumnDef: {
+        minWidth: 330,
+    },
     defaultColDef: {
         flex: 1,
         minWidth: 100,

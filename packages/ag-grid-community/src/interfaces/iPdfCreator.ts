@@ -110,6 +110,8 @@ export interface PdfCellStyle {
 export interface PdfCellData {
     /** The value of the cell. */
     value: string | null;
+    /** External URI opened when the exported cell text is selected. */
+    hyperlink?: string;
 }
 
 export interface PdfCell {
@@ -188,6 +190,17 @@ export type PdfStyleCallbackParams<TData = any, TContext = any> =
     | PdfCellStyleCallbackParams<TData, TContext>
     | PdfHeaderStyleCallbackParams<TData, TContext>
     | PdfGroupHeaderStyleCallbackParams<TData, TContext>;
+
+export interface PdfCellHyperlinkCallbackParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The final text exported for the cell. */
+    value: string;
+    /** The 1-based index of the current exported row. */
+    accumulatedRowIndex: number;
+    /** The row node for the exported cell. */
+    node: IRowNode<TData>;
+    /** The current column. */
+    column: Column;
+}
 
 export interface PdfColors {
     /**
@@ -292,6 +305,11 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      * Returned styles are merged after resolved grid styles and take precedence.
      */
     processStyleCallback?(params: PdfStyleCallbackParams): PdfCellStyle | undefined;
+    /**
+     * Callback that provides an external URI for an exported body cell.
+     * The returned URI is added to the PDF as a clickable link annotation.
+     */
+    processCellHyperlinkCallback?(params: PdfCellHyperlinkCallbackParams): string | null | undefined;
     /**
      * Page size, orientation and margins.
      */

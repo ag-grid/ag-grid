@@ -29,6 +29,8 @@ export * from './drag-n-drop/drag-n-drop-utils';
 export * from './drag-n-drop/row-drag-dispatcher';
 export * from './ssrm-test-utils';
 export * from './prng';
+export * from './menu-test-utils';
 export * from './test-utils-assertions';
 export * from './test-utils-events';
 export * from './test-utils-edit';
+export * from './dev-validations';

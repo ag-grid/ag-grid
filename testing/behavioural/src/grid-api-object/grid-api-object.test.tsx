@@ -9,10 +9,13 @@ import {
     RowApiModule,
     ValidationModule,
     createGrid,
+    enableDevValidations,
     getGridApi,
     getGridElement,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
+
+import { ALL_SEVERITIES } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
     let consoleWarnSpy: MockInstance | undefined;
@@ -132,6 +135,8 @@ describe('ag-grid overlays state', () => {
     });
 
     test('destruction warnings', () => {
+        // Deliberately calls an API on a destroyed grid to verify the destruction warning.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [26] });
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api = createMyGrid();
@@ -164,6 +169,8 @@ describe('ag-grid overlays state', () => {
     });
 
     test('missing module warning', () => {
+        // Deliberately calls an API whose module is not registered (error #200), then on a destroyed grid (warning #26).
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200, 26] });
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 

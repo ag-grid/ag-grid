@@ -86,9 +86,16 @@ const modDeflateRules = `
 // on-disk check so a path without a .md is left untouched. %1 is the docs path
 // captured below, reused in both the -f test and the rewrite target.
 const markdownNegotiationRules = `    RewriteCond %{HTTP_ACCEPT} text/markdown
-    RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline)/?$
+    RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$
     RewriteCond %{DOCUMENT_ROOT}/%1.md -f
-    RewriteRule ^ /%1.md [L]`;
+    RewriteRule ^ /%1.md [L]
+
+    # SE-80: the homepage twin (/ -> /index.md). Handled separately because the root URL has no
+    # path segment to capture in %1; ^/$ matches only the root, so no other route is affected.
+    RewriteCond %{HTTP_ACCEPT} text/markdown
+    RewriteCond %{REQUEST_URI} ^/$
+    RewriteCond %{DOCUMENT_ROOT}/index.md -f
+    RewriteRule ^ /index.md [L]`;
 
 // Staging has no redirect rewrites, so negotiation gets its own minimal mod_rewrite
 // block. Production embeds the same rules inside its existing block instead.
@@ -105,7 +112,7 @@ ${markdownNegotiationRules}
 // the site keeps its default (URL-only) cache key.
 const markdownVaryHeader = `# SE-80: docs pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/((react|angular|vue|javascript)-data-grid/|(license-pricing|changelog|pipeline)/?$)#">
+<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/]+|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$# || %{REQUEST_URI} == '/'">
     Header append Vary Accept
 </If>`;
 

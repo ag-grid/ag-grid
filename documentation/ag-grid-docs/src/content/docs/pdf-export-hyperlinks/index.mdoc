@@ -1,0 +1,46 @@
+---
+title: "PDF Export - Hyperlinks"
+enterprise: true
+---
+
+PDF Export can add external URI hyperlinks to body cells and custom content. Hyperlinks are written as native PDF link annotations, so they remain clickable when the document is opened in a compatible PDF viewer.
+
+## Grid Cell Hyperlinks
+
+Use `processCellHyperlinkCallback` to return the URI for an exported body cell. The callback receives the final exported text together with its row node and column.
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    processCellHyperlinkCallback: (params) => {
+        return params.column.getColId() === 'url' ? params.value : undefined;
+    },
+});
+```
+
+Adding a hyperlink does not change the appearance of the cell. Use `cellStyle` or `processStyleCallback` when linked text should use a different colour or other PDF styling.
+
+## Custom Content Hyperlinks
+
+Set `PdfCellData.hyperlink` when adding a link to `prependContent`, `appendContent`, or `getCustomContentBelowRow`:
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    appendContent: [
+        [
+            {
+                data: {
+                    value: 'AG Grid Documentation',
+                    hyperlink: 'https://www.ag-grid.com/documentation/',
+                },
+                style: {
+                    color: '#358ccb',
+                },
+            },
+        ],
+    ],
+});
+```
+
+The hyperlink is applied to each visible line of the exported cell text. When wrapped content continues onto another page, the corresponding link annotations are added to every page containing that text.
+
+{% gridExampleRunner title="PDF Export - Hyperlinks" name="pdf-export-hyperlinks" exampleHeight=530 /%}

@@ -54,7 +54,11 @@ import {
     createCalculatedColumnReferenceMapper,
     translateCalculatedColumnReferenceError,
 } from './calculatedColumnReferenceMapper';
-import { clearStaleDataTypeProperties, replaceBracketReferences } from './calculatedColumnUtils';
+import {
+    clearStaleDataTypeProperties,
+    hasColumnMembershipChanged,
+    replaceBracketReferences,
+} from './calculatedColumnUtils';
 
 type ValidationState = 'valid' | CalculatedColumnValidationReason;
 
@@ -638,9 +642,20 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     /** Rebuild the column tree for a calc-col mutation. Suppresses lifecycle/validation dispatch during the
      *  rebuild so the imperative caller (or column-state op) emits its own events, not duplicates. */
     public refreshDynamicColumns(source: ColumnEventType): void {
+        const { colModel } = this.beans;
+        const previousCols = colModel.colsList;
+        const previousColsById = colModel.colsById;
+        const previousTree = colModel.colsTree;
         this.suppressValidationChecks++;
         try {
-            this.beans.colModel.rebuildCols(source);
+            colModel.rebuildCols(source);
+            // a leaf can be spliced into a reused group without changing the root tree reference.
+            if (
+                colModel.colsTree === previousTree &&
+                hasColumnMembershipChanged(previousCols, colModel.colsList, previousColsById)
+            ) {
+                this.eventSvc.dispatchEvent({ type: 'gridColumnsChanged' });
+            }
         } finally {
             this.suppressValidationChecks--;
         }
@@ -952,7 +967,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
         return {
             colId,
-            headerName: colDef.headerName ?? displayName ?? colId,
+            headerName: displayName ?? colDef.headerName ?? colId,
             cellDataType: typeof cellDataType === 'string' ? cellDataType : DEFAULT_DRAFT.cellDataType,
             calculatedExpression: mapper.toDisplayExpression(colDef.calculatedExpression ?? ''),
         };

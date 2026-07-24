@@ -37,6 +37,42 @@ The parameters for `headerValueGetter` differ from a [Cell Value Getter](./value
 
 See the [Column Tool Panel Example](./tool-panel-columns/#columns-tool-panel-example) for an example of `headerValueGetter` used in different locations, where you can change the header name depending on where the name appears.
 
+## Editable Header Name {% enterpriseIcon /%} {% #editable-header-name %}
+
+Set `headerNameEditable: true` on a `ColDef` (or a `ColGroupDef`) to let users rename that column or column group header from the UI. This is an AG Grid Enterprise feature.
+
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["headerNameEditable"] /%}
+
+Editable columns can be renamed via:
+
+- The **Edit Column Name** item in the [Column Menu](./column-menu/).
+- Right-clicking the column in the [Columns Tool Panel](./tool-panel-columns/) and choosing **Edit Column Name**.
+
+Editable column groups can be renamed via the **Edit Column Name** item in the group header right-click menu or the Columns Tool Panel context menu.
+
+Committing an empty value sets an empty header name; the header reverts to its Column Definition default only when the edit is cleared programmatically, such as `resetColumnState()`. Edited column names are persisted as part of [Column State](./column-state/) and [Grid State](./grid-state/); edited group names are persisted as part of Grid State. Both survive save and restore.
+
+{% note %}
+An edited name takes priority over any `headerValueGetter` on the column. Once the user has provided a custom header name, the `headerValueGetter` is no longer called for that column.
+{% /note %}
+
+### Edit Modes
+
+Configure the editor with the `columnHeaderEdit` grid option.
+
+{% apiDocumentation source="grid-options/properties.json" section="columns" names=["columnHeaderEdit"] /%}
+
+Its `applyMode` controls when edits are applied:
+
+- `'live'` (default): each change is applied to the header immediately as the user types. Pressing `Escape` or closing the editor keeps the change.
+- `'deferred'`: the editor shows **Apply** and **Cancel** buttons and the header is only updated when the edit is committed with **Apply** or `Enter`. **Cancel**, `Escape`, or closing the editor discards the edit.
+
+While a header is being edited it is highlighted. Set `columnHeaderEdit: { suppressColumnHighlighting: true }` to turn the highlight off.
+
+The example below has editable columns and column groups. Toggle **Deferred edit mode** to switch between live and deferred editing. Rename a header, then use **Save State** and **Restore State** to confirm edited names are persisted as part of Grid State, or **Reset State** to revert to the Column Definition defaults.
+
+{% gridExampleRunner title="Editable Header Name" name="editable-header-name" /%}
+
 ## Tooltips
 
 Tooltips can be added to the Column Header by using either the `headerTooltipValueGetter`, or `headerTooltip` property of the `ColDef`.

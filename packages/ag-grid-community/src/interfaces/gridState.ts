@@ -164,8 +164,25 @@ export interface ColumnOrderState {
     orderedColIds: string[];
 }
 
+export interface ColumnGroupHeaderNameState {
+    groupId: string;
+    headerName: string;
+}
+
 export interface ColumnGroupState {
     openColumnGroupIds: string[];
+    /** User-edited group header names, keyed by group id. */
+    headerNames?: ColumnGroupHeaderNameState[];
+}
+
+export interface ColumnHeaderNameColumnState {
+    colId: string;
+    headerName: string;
+}
+
+export interface ColumnHeaderNameState {
+    /** User-edited column header names, keyed by column id. */
+    columnHeaderNames: ColumnHeaderNameColumnState[];
 }
 
 /** Shared shape for a column added at runtime that is not present in `columnDefs`. `kind` routes the
@@ -216,6 +233,8 @@ export interface GridState {
     columnSizing?: ColumnSizingState;
     /** Includes hidden columns (column state) */
     columnVisibility?: ColumnVisibilityState;
+    /** Includes user-edited column header names (column state) */
+    columnHeaderName?: ColumnHeaderNameState;
     /** Includes Column Filters and Advanced Filter */
     filter?: FilterState;
     /** Includes currently focused cell. Works for Client-Side Row Model only */

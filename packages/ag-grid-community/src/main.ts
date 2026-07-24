@@ -142,6 +142,7 @@ export type {
     IPdfCreator,
     PdfCell,
     PdfCellData,
+    PdfCellHyperlinkCallbackParams,
     PdfCellStyle,
     PdfCellStyleCallbackParams,
     PdfColors,
@@ -277,6 +278,7 @@ export type {
     CalculatedColumnUpdate,
     ICalculatedColumnsService,
 } from './interfaces/iCalculatedColumns';
+export type { ColumnHeaderEditApplyMode, ColumnHeaderEditOptions } from './interfaces/iColumnHeaderEdit';
 export type {
     AlwaysPassFilter,
     BaseFilter,
@@ -645,7 +647,10 @@ export type {
     CalculatedUserColumnState,
     CellSelectionCellState,
     CellSelectionState,
+    ColumnGroupHeaderNameState,
     ColumnGroupState,
+    ColumnHeaderNameColumnState,
+    ColumnHeaderNameState,
     ColumnOrderState,
     ColumnPinningState,
     ColumnSizeState,
@@ -841,6 +846,7 @@ export type {
     FillHandleOptions,
     GetChartMenuItems,
     GetChartToolbarItems,
+    GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
     GetDocument,
@@ -895,6 +901,7 @@ export type {
 export type { GridOptionsWithDefaults } from './gridOptionsDefault';
 export type { ManagedGridOptionKey, ManagedGridOptions } from './gridOptionsInitial';
 export type {
+    ColumnMenuItemsSource,
     DoesExternalFilterPass,
     FillOperation,
     FillOperationParams,
@@ -905,6 +912,7 @@ export type {
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetChildCount,
+    GetColumnMenuItemsParams,
     GetContextMenuItemsParams,
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,
@@ -989,7 +997,9 @@ export type {
 export type {
     BaseMenuItem,
     BaseMenuItemParams,
+    DefaultColumnMenuItem,
     DefaultMenuItem,
+    DefaultToolPanelItem,
     IMenuConfigParams,
     IMenuItem,
     IMenuItemComp,
@@ -1106,6 +1116,7 @@ export { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 export { TooltipModule } from './tooltip/tooltipModule';
 export { enableDevValidations, ValidationModule } from './validation/validationModule';
 export type { DevValidationOptions } from './validation/validationConfig';
+export type { Severity } from './validation/logging';
 export { CellApiModule, ValueCacheModule } from './valueService/valueModule';
 
 // Events
