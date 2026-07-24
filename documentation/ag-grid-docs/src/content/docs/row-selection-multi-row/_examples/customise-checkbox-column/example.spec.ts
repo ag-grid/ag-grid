@@ -16,7 +16,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
 
         // selectionColumnDef.pinned: 'left' — the select-all header lives in the left pinned container.
-        await expect(page.locator('.ag-pinned-left-header .ag-header-select-all').first()).toBeVisible();
+        await expect(page.locator('.ag-header .ag-grid-pinned-left-cells .ag-header-select-all').first()).toBeVisible();
     });
 
     test.eachFramework('the selection column is sortable via its header', async ({ agIdFor, page }) => {

@@ -18,7 +18,7 @@ test.agExample(import.meta, () => {
 
             // Row 0 is 2008 — not selectable; its disabled checkbox is hidden by default.
             await expect(agIdFor.cell('0', 'year')).toContainText('2008');
-            await expect(agIdFor.selectionColumnCheckbox('0')).toHaveCount(0);
+            await expect(agIdFor.selectionColumnCheckbox('0')).not.toBeVisible();
         }
     );
 
@@ -27,7 +27,7 @@ test.agExample(import.meta, () => {
         async ({ agIdFor, page }) => {
             await ensureGridReady(page);
 
-            await expect(agIdFor.selectionColumnCheckbox('0')).toHaveCount(0);
+            await expect(agIdFor.selectionColumnCheckbox('0')).not.toBeVisible();
             await page.locator('#toggle-hide-checkbox').uncheck();
 
             // The revealed checkbox is present but disabled, not merely visible.

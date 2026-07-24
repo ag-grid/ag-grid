@@ -18,7 +18,7 @@ test.agExample(import.meta, () => {
 
         // The footer sits below all 40 US sports — scroll it into the rendered range.
         await page.evaluate(() => {
-            const vp = document.querySelector('.ag-body-viewport') as HTMLElement;
+            const vp = document.querySelector('.ag-grid-viewport') as HTMLElement;
             if (vp) {
                 vp.scrollTop = 1700;
             }

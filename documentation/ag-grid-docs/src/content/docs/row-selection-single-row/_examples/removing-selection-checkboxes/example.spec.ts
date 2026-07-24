@@ -5,7 +5,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
 
         // checkboxes: false removes the checkbox column entirely.
-        await expect(page.locator('.ag-center-cols-container .ag-selection-checkbox')).toHaveCount(0);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-selection-checkbox')).toHaveCount(0);
     });
 
     test.eachFramework('restores the initial selection from grid state', async ({ agIdFor, page }) => {

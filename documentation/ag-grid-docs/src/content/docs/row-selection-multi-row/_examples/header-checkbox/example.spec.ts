@@ -16,10 +16,10 @@ test.agExample(import.meta, () => {
         await expect(headerWrapper).not.toHaveClass(/ag-indeterminate/);
 
         // Every rendered row is also visibly selected.
-        const rows = page.locator('.ag-center-cols-container .ag-row');
+        const rows = page.locator('.ag-grid-scrolling-container .ag-row');
         const total = await rows.count();
         expect(total).toBeGreaterThan(0);
-        await expect(page.locator('.ag-center-cols-container .ag-row.ag-row-selected')).toHaveCount(total);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row.ag-row-selected')).toHaveCount(total);
     });
 
     test.eachFramework('the quick filter narrows the displayed rows', async ({ page }) => {
@@ -28,7 +28,7 @@ test.agExample(import.meta, () => {
         await page.locator('#quickFilter').fill('Nemov');
         await waitForRowAnimations(page);
 
-        const rows = page.locator('.ag-center-cols-container .ag-row');
+        const rows = page.locator('.ag-grid-scrolling-container .ag-row');
         await expect(rows).toHaveCount(1);
         await expect(rows.first()).toContainText('Aleksey Nemov');
     });
@@ -43,10 +43,10 @@ test.agExample(import.meta, () => {
         await page.locator('.ag-header-select-all .ag-checkbox-input').first().click();
 
         // All rows matching the filter are selected.
-        const rows = page.locator('.ag-center-cols-container .ag-row');
+        const rows = page.locator('.ag-grid-scrolling-container .ag-row');
         const total = await rows.count();
         expect(total).toBeGreaterThan(0);
-        await expect(page.locator('.ag-center-cols-container .ag-row.ag-row-selected')).toHaveCount(total);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row.ag-row-selected')).toHaveCount(total);
 
         // Clear the filter to reveal the previously-hidden rows and prove that ONLY the filtered
         // rows were selected: row 1 (Aleksey Nemov, Gymnastics) matched and is selected, while

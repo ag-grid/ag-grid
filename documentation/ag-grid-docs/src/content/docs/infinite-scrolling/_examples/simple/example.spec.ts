@@ -33,7 +33,7 @@ test.agExample(import.meta, () => {
         // Rows past the first block only exist after scrolling triggers another getRows() call.
         for (let i = 0; i < 10 && (await deepestRenderedIndex(page)) < DEEP_INDEX; i++) {
             const before = await deepestRenderedIndex(page);
-            await page.locator('.ag-body-viewport').evaluate((el) => {
+            await page.locator('.ag-grid-viewport').evaluate((el) => {
                 el.scrollTop = el.scrollHeight;
             });
             await page

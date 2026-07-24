@@ -18,7 +18,7 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         // rowCount is a known 100, so scrolling to the bottom renders the final rows (index 99).
-        await page.locator('.ag-body-viewport').evaluate((el) => {
+        await page.locator('.ag-grid-viewport').evaluate((el) => {
             el.scrollTop = el.scrollHeight;
         });
 

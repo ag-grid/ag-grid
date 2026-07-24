@@ -50,7 +50,7 @@ test.agExample(import.meta, () => {
         const cellIsActive = await page.evaluate(() => {
             const activeEl = document.activeElement;
             return (
-                activeEl?.closest('.ag-body-viewport') != null ||
+                activeEl?.closest('.ag-grid-viewport') != null ||
                 activeEl?.closest('[role="gridcell"]') != null ||
                 activeEl?.closest('.ag-cell') != null
             );

@@ -9,20 +9,20 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-row[row-index="0"]').locator('[col-id="name"]')).toContainText(
             'Eco City Vehicles plc'
         );
-        await expect(agIdFor.paginationSummaryPanelCurrentPage()).toHaveText('1');
+        await expect(agIdFor.paginationSummaryPanelCurrentPage('1')).toBeVisible();
     });
 
     test.eachFramework('navigating to the next page requests the next viewport range', async ({ page, agIdFor }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await expect(agIdFor.paginationSummaryPanelCurrentPage()).toHaveText('1');
+        await expect(agIdFor.paginationSummaryPanelCurrentPage('1')).toBeVisible();
 
         // Paging asks the datasource for a new viewport range, so the top stock is no longer ECV.L.
         await agIdFor.paginationSummaryPanelButton('next page').click();
-        await expect(agIdFor.paginationSummaryPanelCurrentPage()).toHaveText('2');
+        await expect(agIdFor.paginationSummaryPanelCurrentPage('2')).toBeVisible();
 
-        const firstCode = page.locator('.ag-center-cols-container .ag-row [col-id="code"]').first();
+        const firstCode = page.locator('.ag-grid-scrolling-container .ag-row [col-id="code"]').first();
         await expect(firstCode).not.toBeEmpty();
         await expect(firstCode).not.toContainText('ECV.L');
     });
