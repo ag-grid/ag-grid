@@ -22,6 +22,31 @@ export function getWidthOfColsInList(columnList: AgColumn[]): number {
     return width;
 }
 
+/**
+ * Checks whether a column rebuild added, removed, or replaced a displayed column, ignoring order-only changes.
+ *
+ * @param previous The displayed columns before the rebuild.
+ * @param current The displayed columns after the rebuild.
+ * @param previousById The column-id lookup captured before the rebuild, used to compare column instances.
+ */
+export function _hasColumnMembershipChanged(
+    previous: AgColumn[],
+    current: AgColumn[],
+    previousById: Record<string, AgColumn>
+): boolean {
+    const len = previous.length;
+    if (len !== current.length) {
+        return true;
+    }
+    for (let i = 0; i < len; ++i) {
+        const col = current[i];
+        if (previousById[col.colId] !== col) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function isColumnGroupAutoCol(col: Column): boolean {
     return (col as AgColumn).colKind === 'auto-group';

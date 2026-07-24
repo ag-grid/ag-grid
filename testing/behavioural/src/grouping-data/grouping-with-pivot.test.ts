@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, getGridElement } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
@@ -81,6 +81,39 @@ describe('ag-grid grouping with pivot', () => {
               ├── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
               └── pivot_year_2021_profit "Profit" width:200 columnGroupShow:open
         `);
+    });
+
+    test('new pivot result cells follow column positions after adding a value column', async () => {
+        const api = gridsManager.createGrid('pivot-added-value-column-position', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'year', pivot: true },
+                { field: 'gold', aggFunc: 'sum' },
+                { field: 'silver' },
+            ],
+            rowData: [
+                { country: 'Ireland', year: 2020, gold: 1, silver: 2 },
+                { country: 'USA', year: 2020, gold: 3, silver: 4 },
+            ],
+            pivotMode: true,
+            suppressColumnMoveAnimation: true,
+        });
+        await asyncSetTimeout(10);
+
+        api.addValueColumns(['silver']);
+        await asyncSetTimeout(10);
+
+        const silverColumn = api.getColumn('pivot_year_2020_silver')!;
+        const silverCell = getGridElement(api)!.querySelector<HTMLElement>(
+            '[row-index="0"] [col-id="pivot_year_2020_silver"]'
+        );
+        expect(silverCell).toBeTruthy();
+        expect(silverCell!.style.left).toBe(`${silverColumn.getLeft()}px`);
+
+        api.setColumnWidths([{ key: 'pivot_year_2020_gold', newWidth: 300 }]);
+        await asyncSetTimeout(0);
+
+        expect(silverCell!.style.left).toBe(`${silverColumn.getLeft()}px`);
     });
 
     test('multiple grouping levels with pivot', async () => {
