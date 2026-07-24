@@ -1,0 +1,40 @@
+/* Bryntum Task Board "Try it yourself!" demo styles.
+   Ported verbatim from the upstream zooming example's app.css:
+   https://bryntum.com/products/taskboard/examples/zooming/resources/app.css
+
+   Loaded only on the task-board campaign page (see BryntumCampaign.astro).
+   The upstream example mounts a single TaskBoard widget (no `#main` flex
+   container), so unlike the scheduler port these rules need no adaptation. */
+
+.b-task-board-base {
+    --b-task-board-background: var(--b-neutral-100);
+    --b-task-board-body-padding: 1em;
+
+    --b-task-board-column-background: var(--b-neutral-98);
+    --b-task-board-column-header-background: var(--b-task-board-column-background);
+    --b-task-board-column-border-radius: 0 0 0.5em 0.5em;
+    --b-task-board-column-gap: 1em;
+
+    --b-task-board-column-header-border-radius: 0.5em 0.5em 0 0;
+
+    .b-colorize {
+        --b-task-board-card-border-top: 7px solid var(--b-primary);
+        --b-task-board-column-header-border-top: var(--b-task-board-card-border-top);
+    }
+}
+
+.b-medium-cards [data-field='description'] {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.b-micro-cards .b-task-board-card {
+    background: var(--b-primary);
+    border-top: none;
+
+    .b-task-board-resource-avatars {
+        align-items: center;
+        font-size: 0.8em;
+    }
+}
