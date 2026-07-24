@@ -178,9 +178,9 @@ const gridOptions: GridOptions = {
 
 // picks a row at random and returns an updated copy: the old current value
 // becomes the previous value, and a new random current value is generated.
-// the updated row is written back to globalRowData, so the next update to
-// that row starts from the latest values.
-function updateRandomItem() {
+// the updated row is also written back to globalRowData, so the next update
+// to that row starts from the latest values.
+function createRandomUpdate() {
     const index = Math.floor(Math.random() * globalRowData.length);
     const item = globalRowData[index];
     const updatedItem = {
@@ -205,7 +205,7 @@ function onNormalUpdate() {
     for (let i = 0; i < UPDATE_COUNT; i++) {
         setTimeout(() => {
             // do normal update. update is done before method returns
-            gridApi.applyTransaction({ update: [updateRandomItem()] });
+            gridApi.applyTransaction({ update: [createRandomUpdate()] });
         }, 0);
     }
 
@@ -229,7 +229,7 @@ function onAsyncUpdate() {
             // update using async method. passing the callback is
             // optional, we are doing it here so we know when the update
             // was processed by the grid.
-            gridApi.applyTransactionAsync({ update: [updateRandomItem()] }, resultCallback);
+            gridApi.applyTransactionAsync({ update: [createRandomUpdate()] }, resultCallback);
         }, 0);
     }
 
