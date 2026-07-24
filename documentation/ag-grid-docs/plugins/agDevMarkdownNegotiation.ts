@@ -9,11 +9,9 @@ import { DISABLE_MARKDOWN_DOCS, FRAMEWORKS } from '../src/constants';
 // is left alone.
 const DOCS_PAGE_PATH = new RegExp(`/(?:${FRAMEWORKS.join('|')})-data-grid/[^/.]+/?$`);
 
-// Top-level (non-docs) pages that also ship a `.md` twin, and the homepage (`/`, whose
-// twin is `/index.md`). Kept in sync with the same page list in the SE-80 htaccess
-// negotiation rule (see htaccessRules.ts).
+// Top-level (non-docs) pages that also ship a `.md` twin. Kept in sync with the same page
+// list in the SE-80 htaccess negotiation rule (see htaccessRules.ts).
 const TOP_LEVEL_MD_PATH = /^\/(?:license-pricing|changelog|pipeline|about|documentation-archive|example)\/?$/;
-const HOMEPAGE_PATH = /^\/$/;
 
 // The /community landing page and its subpages, each with a `.md` twin.
 const COMMUNITY_MD_PATH = /^\/community(?:\/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?\/?$/;
@@ -21,9 +19,11 @@ const COMMUNITY_MD_PATH = /^\/community(?:\/(?:events|showcase|tools-extensions|
 // SE-80: content-negotiate grid docs pages to their markdown variant in the dev
 // server. Grid supplies its URL shapes; the shared factory holds the mechanism
 // (see external/ag-website-shared/plugins/agDevMarkdownNegotiation for the full rationale).
+// The homepage twin is handled by the factory: grid is a root site, so the default
+// base (`/`) maps `/` to `/index.md`.
 export default function agDevGridMarkdownNegotiation(): Plugin {
     return agDevMarkdownNegotiation({
-        pathPatterns: [DOCS_PAGE_PATH, TOP_LEVEL_MD_PATH, COMMUNITY_MD_PATH, HOMEPAGE_PATH],
+        pathPatterns: [DOCS_PAGE_PATH, TOP_LEVEL_MD_PATH, COMMUNITY_MD_PATH],
         disabled: DISABLE_MARKDOWN_DOCS,
     });
 }
