@@ -9,7 +9,9 @@
  * import it directly under Vite; Node runs .mjs natively, so the production cron and
  * dev/build share one transform and cannot drift.
  *
- * CLI: node jiraDataToMarkdown.mjs <changelog|pipeline> <input.json> <output.md>
+ * CLI: node jiraDataToMarkdown.mjs <changelog|pipeline> <input.json> <output.md> [product]
+ * where [product] is the product name used in headings (default "AG Grid"), e.g.
+ * "AG Charts" or "AG Studio".
  */
 import fs from 'node:fs';
 import { pathToFileURL } from 'node:url';
@@ -19,6 +21,7 @@ import { pathToFileURL } from 'node:url';
 const SEMVER = /^\d+\.\d+(?:\.\d+)?$/;
 const UNVERSIONED = 'Unversioned';
 const TABLE_HEADERS = ['Issue', 'Type', 'Summary'];
+const DEFAULT_PRODUCT = 'AG Grid';
 
 /** Flatten a Jira rich-text HTML fragment to a single line of readable plain text. */
 export function htmlToText(html) {
@@ -165,17 +168,17 @@ function allChangesSection(versionKeys, groups) {
     return blocks.join('\n\n');
 }
 
-export function changelogToMarkdown(entries) {
+export function changelogToMarkdown(entries, product = DEFAULT_PRODUCT) {
     const groups = groupByVersion(entries);
     const versionKeys = sortedVersionKeys(groups);
 
     return joinSections([
         frontmatter(
-            'AG Grid Changelog',
-            'Every completed AG Grid change by release, with all breaking changes and deprecations listed across releases.'
+            `${product} Changelog`,
+            `Every completed ${product} change by release, with all breaking changes and deprecations listed across releases.`
         ),
-        '# AG Grid Changelog',
-        'Completed AG Grid changes, newest release first. The Breaking Changes and Deprecations sections collect those items across every release; All Changes lists every entry.',
+        `# ${product} Changelog`,
+        `Completed ${product} changes, newest release first. The Breaking Changes and Deprecations sections collect those items across every release; All Changes lists every entry.`,
         notesSection(
             'Breaking Changes',
             'Breaking changes across all releases, newest first.',
@@ -235,7 +238,7 @@ function comparePipelineGroups(a, b) {
     return a.localeCompare(b);
 }
 
-export function pipelineToMarkdown(entries) {
+export function pipelineToMarkdown(entries, product = DEFAULT_PRODUCT) {
     const groups = new Map();
     for (const entry of entries) {
         const key = pipelineStatus(entry);
@@ -248,11 +251,11 @@ export function pipelineToMarkdown(entries) {
 
     const sections = [
         frontmatter(
-            'AG Grid Pipeline',
-            'Feature requests and active bugs in the AG Grid backlog, grouped by their scheduled release.'
+            `${product} Pipeline`,
+            `Feature requests and active bugs in the ${product} backlog, grouped by their scheduled release.`
         ),
-        '# AG Grid Pipeline',
-        'Feature requests and active bugs in the AG Grid backlog, grouped by scheduled release. Items scheduled for the next release appear under "Scheduled"; unscheduled items under "Backlog".',
+        `# ${product} Pipeline`,
+        `Feature requests and active bugs in the ${product} backlog, grouped by scheduled release. Items scheduled for the next release appear under "Scheduled"; unscheduled items under "Backlog".`,
     ];
     for (const key of groupKeys) {
         sections.push(`## ${key}`);
@@ -264,9 +267,9 @@ export function pipelineToMarkdown(entries) {
 /* ------------------------------------------------------------------------ cli */
 
 function runCli(args) {
-    const [kind, inputPath, outputPath] = args;
+    const [kind, inputPath, outputPath, product = DEFAULT_PRODUCT] = args;
     if (!kind || !inputPath || !outputPath) {
-        console.error('Usage: node jiraDataToMarkdown.mjs <changelog|pipeline> <input.json> <output.md>');
+        console.error('Usage: node jiraDataToMarkdown.mjs <changelog|pipeline> <input.json> <output.md> [product]');
         process.exit(1);
     }
     const transform = kind === 'changelog' ? changelogToMarkdown : kind === 'pipeline' ? pipelineToMarkdown : null;
@@ -275,7 +278,7 @@ function runCli(args) {
         process.exit(1);
     }
     const entries = JSON.parse(fs.readFileSync(inputPath, 'utf-8'));
-    fs.writeFileSync(outputPath, transform(entries), 'utf-8');
+    fs.writeFileSync(outputPath, transform(entries, product), 'utf-8');
     console.log(`Wrote ${kind} markdown (${entries.length} entries) to ${outputPath}`);
 }
 
