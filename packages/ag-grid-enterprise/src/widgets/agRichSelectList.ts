@@ -3,8 +3,8 @@ import {
     _addOrRemoveAttribute,
     _requestAnimationFrame,
     _setAriaActiveDescendant,
-    _setAriaControlsAndLabel,
     _setAriaLabel,
+    _setAriaLabelledBy,
     _setDisplayed,
 } from 'ag-stack';
 
@@ -105,7 +105,9 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const ariaLabel = translate(pickerAriaLabelKey, pickerAriaLabelValue);
 
         _setAriaLabel(eListAriaEl, ariaLabel);
-        _setAriaControlsAndLabel(this.richSelectWrapper, eListAriaEl);
+        // Keep the list's `aria-labelledby` back-reference to the always-present wrapper; the wrapper's
+        // `aria-controls` is gated on the expand state by AgRichSelect (the list is popup-mounted).
+        _setAriaLabelledBy(eListAriaEl, this.richSelectWrapper.id);
     }
 
     public setIsLoading() {

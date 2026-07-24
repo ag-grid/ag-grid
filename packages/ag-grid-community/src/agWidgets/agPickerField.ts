@@ -14,6 +14,7 @@ import {
     _getAbsoluteWidth,
     _getInnerHeight,
     _isNothingFocused,
+    _setAriaControls,
     _setAriaExpanded,
     _setAriaRole,
     _setElementWidth,
@@ -100,6 +101,9 @@ export abstract class AgPickerField<
     private hideCurrentPicker: (() => void) | null = null;
     private destroyMouseWheelFunc: (() => null) | undefined;
     private readonly ariaRole?: string;
+    // Id of the picker's list element. Only in the DOM while the picker is shown, so `aria-controls`
+    // is gated on the expand state (see `toggleExpandedStyles`) rather than set permanently.
+    private ariaControlsId?: string;
 
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     protected readonly eWrapper: HTMLElement = RefPlaceholder;
@@ -365,6 +369,9 @@ export abstract class AgPickerField<
         const ariaEl = this.getAriaElement();
 
         _setAriaExpanded(ariaEl, expanded);
+        if (this.ariaControlsId != null) {
+            _setAriaControls(ariaEl, expanded ? this.ariaControlsId : null);
+        }
 
         const classList = this.eWrapper.classList;
         classList.toggle('ag-picker-expanded', expanded);
@@ -405,6 +412,11 @@ export abstract class AgPickerField<
 
     public override getFocusableElement(): HTMLElement {
         return this.eWrapper;
+    }
+
+    // Called by subclasses once the list is created, so `aria-controls` can be gated on expand state.
+    protected setAriaControlsId(controlsId: string): void {
+        this.ariaControlsId = controlsId;
     }
 
     public setPickerGap(gap: number): this {
