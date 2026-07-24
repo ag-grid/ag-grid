@@ -31,8 +31,16 @@ const columnDefs: ColDef[] = [
     { field: 'year', enableRowGroup: true },
     { field: 'sport', minWidth: 200, enableRowGroup: true },
     { field: 'gold', enableValue: true },
-    { field: 'silver', enableValue: true },
-    { field: 'bronze', enableValue: true },
+    {
+        field: 'silver',
+        enableValue: true,
+        // column-level override: hide the "Scroll into View" item for this column only.
+        // colDef.columnMenuItems takes priority over getColumnMenuItems, so silver and
+        // bronze don't get the Highlight Column item added below.
+        columnMenuItems: (params) => params.defaultItems.filter((item) => item !== 'scrollIntoView'),
+    },
+    // column-level override: only ever show the "Add to values" item
+    { field: 'bronze', enableValue: true, columnMenuItems: ['value'] },
 ];
 
 const highlightedColumns = new Set<string>();

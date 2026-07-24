@@ -158,30 +158,36 @@ The example below demonstrates the Columns Tool Panel using a mixture of items e
 
 {% gridExampleRunner title="Tool Panel Styling" name="styling"  exampleHeight=610 /%}
 
-## Right-Click Menu
+## Context Menu
 
-Right-clicking a column in the Columns Tool Panel opens a menu. By default it shows items based on the column's configuration and the grid's current state:
+Right-clicking a column or column group label opens a menu with items for grouping, aggregating and pivoting. The menu items can be customised or include custom menu items.
 
-- `scrollIntoView`: Scroll the column into view. Not shown when pivoting or the column is pinned.
-- `rowGroup`: Group or un-group by the column. Only shown when row grouping is allowed.
-- `value`: Add or remove the column as an aggregated value (the **Values** section). Only shown when aggregation is allowed.
-- `pivot`: Add or remove the column as a pivot column label (the **Column Labels** section). Only shown in pivot mode when pivoting is allowed.
+### Built-In Menu Items
 
-The label a token shows depends on the column's current state - for example `rowGroup` renders "Group by" or "Un-Group by".
+The following menu items are shown by default based on the column's configuration and the grid's current state:
+
+- `scrollIntoView`: "Scroll into View". Scrolls the column into view. Hides while pivoting or when the column is pinned.
+- `rowGroup`: "Group by" or "Un-Group by". Appears only when the column allows row grouping.
+- `value`: "Add to values" or "Remove from values". Adds or removes the column as an aggregated value (the **Values** section). Appears only when the column allows aggregation.
+- `pivot`: "Add to labels" or "Remove from labels". Adds or removes the column as a pivot column label (the **Column Labels** section). Appears only in pivot mode when the column allows pivoting.
+
+For a column group, `rowGroup`, `value` and `pivot` apply to every child column that individually allows the action; `scrollIntoView` instead scrolls only the first visible child column into view.
+
+With [Read Only Functions](#read-only-functions) `rowGroup`, `value` and `pivot` are not shown.
+
+### Custom Menu Items
+
+The menu items shown can be customised via `colDef.columnMenuItems` or `getColumnMenuItems()`. See [Column Menu - Customising the menu items](./column-menu/#customising-the-menu-items). The callback's `params.source` will be `'columnsToolPanel'` when triggered from the columns tool panel.
+
+The example below shows both the built-in items and this customisation. Note the following:
+
+- Right-click **Gold** to see the built-in items plus an optional pinning sub-menu and a custom **Highlight Column** item, added by the `getColumnMenuItems()` callback.
+- **Silver** hides the "Scroll into View" item via `colDef.columnMenuItems`.
+- **Bronze** restricts its menu to only "Add to values" via a static `colDef.columnMenuItems` array.
+- Since `colDef.columnMenuItems` takes priority over `getColumnMenuItems()`, Silver and Bronze don't get the Highlight Column item.
+- The column header menu and Column Chooser are unaffected: `getColumnMenuItems()` returns `params.defaultItems` unchanged for those sources.
 
 {% gridExampleRunner title="Customising the Tool Panel Menu" name="customising-tool-panel-menu" exampleHeight=670 /%}
-
-### Customising the Menu
-
-Customise these items - filter them, reorder them, or add your own - with `colDef.columnMenuItems` or the grid option `getColumnMenuItems()`, exactly as for the [Column Menu](./column-menu/#customising-the-menu-items). In the tool panel the callback's `source` is `'columnsToolPanel'` (and `'columnChooser'` for the [Column Chooser](./column-menu/#customising-the-column-chooser)), so one callback can tailor the items per surface.
-
-{% note %}
-Resolving column menu tokens (such as `'pinSubMenu'`) in the tool panel menu requires the `ColumnMenuModule`. Pin items are only available for individual columns, not column groups.
-{% /note %}
-
-When `columnMenuItems` or `getColumnMenuItems()` is configured, the menu opens even with [Read Only Functions](#read-only-functions) enabled, where it is otherwise suppressed. The built-in group / value / pivot items are hidden in this case, but the items you return are still shown.
-
-The example above demonstrates this: right-click a column to see an optional pinning sub-menu and a custom **Highlight Column** item, which toggles a highlight style on the column.
 
 ## Read Only Functions
 

@@ -48,7 +48,7 @@ The menu shows a default set of items. You can add your own items, or change whi
 
 When both are set, `colDef.columnMenuItems` takes priority over `getColumnMenuItems()`.
 
-The `source` param is one of `'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`, so a single callback can tailor the items for the column menu, the [Columns Tool Panel](./tool-panel-columns/#right-click-menu) right-click menu, and the [Column Chooser](#customising-the-column-chooser).
+The `source` param is one of `'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`, so a single callback can tailor the items for the column menu, the [Columns Tool Panel](./tool-panel-columns/#context-menu) context menu, and the [Column Chooser](#customising-the-column-chooser).
 
 Each item is either a string or a `MenuItemDef`. Use a string to pick a built-in item and a `MenuItemDef` for your own. All built-in tokens share one type, `DefaultColumnMenuItem`, and each is shown only where it applies to the column and grid state. The column menu's [built-in items](#built-in-menu-items) are listed below.
 
@@ -90,7 +90,7 @@ The `defaultItems` list will change on different calls, depending on, for exampl
 
 If you do not override the list of menu items, then the items displayed will be based on the rules above.
 
-[Columns Tool Panel](./tool-panel-columns/#right-click-menu) tokens such as `value` can also be returned here, and are shown where they apply to the column.
+[Columns Tool Panel](./tool-panel-columns/#context-menu) tokens such as `value` can also be returned here, and are shown where they apply to the column.
 
 ### Menu Item Separators
 

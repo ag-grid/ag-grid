@@ -26,4 +26,20 @@ test.agExample(import.meta, () => {
         // the tool-panel-only custom item is not added to the column header menu
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Highlight Column' })).toHaveCount(0);
     });
+
+    test.eachFramework('colDef.columnMenuItems overrides getColumnMenuItems for that column', async ({ page }) => {
+        // Silver's callback filters out "Scroll into View" but keeps "Add to values"
+        await page.locator('.ag-column-select-column', { hasText: 'Silver' }).click({ button: 'right' });
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Scroll into View' })).toHaveCount(0);
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Add Silver to values' })).toBeVisible();
+        // colDef.columnMenuItems takes priority, so getColumnMenuItems never runs for this column
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Highlight Column' })).toHaveCount(0);
+        await page.keyboard.press('Escape');
+
+        // Bronze's static array restricts the menu to only the "value" token
+        await page.locator('.ag-column-select-column', { hasText: 'Bronze' }).click({ button: 'right' });
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Scroll into View' })).toHaveCount(0);
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Add Bronze to values' })).toBeVisible();
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Highlight Column' })).toHaveCount(0);
+    });
 });
