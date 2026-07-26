@@ -2,6 +2,7 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellSpanModule,
     ClientSideRowModelModule,
+    ColumnApiModule,
     ModuleRegistry,
     createGrid,
     enableDevValidations,
@@ -12,7 +13,7 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([CellSpanModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CellSpanModule, ClientSideRowModelModule, ColumnApiModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'country', spanRows: true, sort: 'asc' },

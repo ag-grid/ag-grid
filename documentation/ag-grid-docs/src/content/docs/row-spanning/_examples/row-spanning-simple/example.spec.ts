@@ -22,11 +22,18 @@ async function expectCellOwnsItsCentre(page: Page, selector: string, minimumHeig
 }
 
 async function scrollHorizontally(page: Page): Promise<void> {
-    const viewport = page.locator('.ag-grid-viewport');
-    await viewport.evaluate((element) => {
-        element.scrollLeft = 300;
+    // The grid drives horizontal scroll from the dedicated scrollbar viewport; assigning
+    // scrollLeft on the display viewport is reset by the grid, so scroll the scrollbar one.
+    // Retry via waitForFunction until the grid is wide enough for the scroll to take effect.
+    await page.waitForFunction(() => {
+        const scrollbar = document.querySelector<HTMLElement>('.ag-body-horizontal-scroll-viewport');
+        if (!scrollbar) {
+            return false;
+        }
+        scrollbar.scrollLeft = 300;
+        scrollbar.dispatchEvent(new Event('scroll'));
+        return scrollbar.scrollLeft > 0;
     });
-    await expect.poll(() => viewport.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
 }
 
 test.agExample(import.meta, () => {
