@@ -28,11 +28,12 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'year', pivot: true }, // pivot on 'year'
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
+        { field: 'country', rowGroup: true, enableRowGroup: true },
+        { field: 'sport', enableRowGroup: true },
+        { field: 'year', pivot: true, enablePivot: true }, // pivot on 'year'
+        { field: 'gold', aggFunc: 'sum', enableValue: true },
+        { field: 'silver', aggFunc: 'sum', enableValue: true },
+        { field: 'bronze', aggFunc: 'sum', enableValue: true },
     ],
     defaultColDef: {
         flex: 1,
