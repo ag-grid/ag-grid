@@ -17,6 +17,7 @@ const gridOptions = {
         { field: 'cost' },
         {
             colId: 'profit',
+            headerName: 'Profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
             sortable: true,
@@ -161,17 +162,20 @@ const gridOptions = {
         { field: 'cost' },
         {
             colId: 'profit',
+            headerName: 'Profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         },
         {
             colId: 'margin',
+            headerName: 'Margin',
             calculatedExpression: '[profit] / [revenue]',
             cellDataType: 'number',
             valueFormatter: params => `${Math.round(params.value * 100)}%`,
         },
         {
             colId: 'status',
+            headerName: 'Status',
             calculatedExpression: 'IF([margin] >= 0.25, "Healthy", "Review")',
             cellDataType: 'text',
         },
@@ -189,7 +193,7 @@ A column added from the header menu appears after the column it was created from
 
 Manage calculated columns through column definitions, like other columns. Read the current definitions with `api.getColumnDefs()` and write them back with `api.setGridOption('columnDefs', ...)` to add, edit or remove a calculated column. To find the calculated columns in the grid, filter `api.getColumns()` by `calculatedExpression`.
 
-The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`.
+The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`, or use [Grid State](./grid-state/) which captures them and recreates them on restore.
 
 The following example adds, edits and removes a Profit Margin column through these APIs, and logs the calculated columns currently in the grid:
 

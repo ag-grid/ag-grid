@@ -55,6 +55,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     pagination: true,
     rowSelection: { mode: 'multiRow' },
     cellSelection: true,
+    calculatedColumns: true,
     enableRowPinning: true,
     suppressColumnMoveAnimation: true,
     ensureDomOrder: true,

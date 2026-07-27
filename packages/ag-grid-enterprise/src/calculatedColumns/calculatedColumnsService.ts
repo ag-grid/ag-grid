@@ -14,6 +14,7 @@ import type {
     CalculatedColumnUpdate,
     CalculatedColumnValidationReason,
     CalculatedColumnsOptions,
+    CalculatedUserColumnState,
     ColDef,
     ColKey,
     ColumnEventType,
@@ -518,6 +519,109 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return restored;
     }
 
+    public getUserColumnState(): CalculatedUserColumnState[] | undefined {
+        if (!this.isEnabled() || this.dynamicColumns.size === 0) {
+            return undefined;
+        }
+        const res: CalculatedUserColumnState[] = [];
+        this.dynamicColumns.forEach((dc, colId) => {
+            const { calculatedExpression, cellDataType, headerName } = dc.colDef;
+            const state: CalculatedUserColumnState = {
+                kind: 'calculated',
+                colId,
+                // The anchor only identifies the group the col joins (order is owned by `columnOrder`),
+                // so serialise a stable leaf: collapse any chain through other runtime-added cols, which
+                // may not exist when this state is restored into a fresh grid.
+                groupAnchorColId: this.resolveLeafAnchor(dc.anchorColId),
+                calculatedExpression: calculatedExpression ?? '',
+            };
+            if (typeof cellDataType === 'string') {
+                state.cellDataType = cellDataType;
+            }
+            if (headerName != null) {
+                state.headerName = headerName;
+            }
+            res.push(state);
+        });
+        return res;
+    }
+
+    /** Walk an anchor chain through runtime-added cols down to the first stable (non-dynamic) column —
+     *  the leaf whose group the calc col ultimately joins. Returns null for a top-level col. */
+    private resolveLeafAnchor(anchorColId: string | null): string | null {
+        const seen = new Set<string>();
+        let anchor = anchorColId;
+        while (anchor != null && this.dynamicColumns.has(anchor) && !seen.has(anchor)) {
+            seen.add(anchor);
+            anchor = this.dynamicColumns.get(anchor)!.anchorColId;
+        }
+        return anchor;
+    }
+
+    public reconcileUserColumns(state: CalculatedUserColumnState[]): void {
+        if (!this.isEnabled()) {
+            return;
+        }
+        const { colModel } = this.beans;
+        const dynamicColumns = this.dynamicColumns;
+        const inactive = this.inactiveDynamicColumns;
+        const wanted = new Set<string>();
+        for (let i = 0, len = state.length; i < len; ++i) {
+            wanted.add(state[i].colId);
+        }
+        let changed = false;
+
+        // Removal: the incoming state is authoritative, so any dynamic col it does not list is dropped.
+        for (const colId of dynamicColumns.keys()) {
+            if (wanted.has(colId)) {
+                continue;
+            }
+            this.closeCalculatedColumnDialog(colId);
+            dynamicColumns.delete(colId);
+            inactive.delete(colId);
+            changed = true;
+        }
+
+        // Addition: recreate any listed col not already present.
+        for (let i = 0, len = state.length; i < len; ++i) {
+            const userCol = state[i];
+            const colId = userCol.colId;
+            if (dynamicColumns.has(colId)) {
+                continue;
+            }
+            // Honour the serialised colId, but never clobber a real columnDefs column of the same id.
+            if (colModel.getCol(colId) != null) {
+                _warnOnce(`reconcileUserColumns: colId '${colId}' already exists; skipping.`);
+                continue;
+            }
+            inactive.delete(colId);
+            dynamicColumns.set(colId, {
+                colDef: this.toRestoredColDef(userCol),
+                anchorColId: userCol.groupAnchorColId,
+                instance: null,
+            });
+            changed = true;
+        }
+        if (changed) {
+            this.refreshDynamicColumns('calculatedColumn');
+        }
+    }
+
+    // The stored expression is already in internal colId form, so it is used verbatim (no reference re-mapping).
+    private toRestoredColDef(state: CalculatedUserColumnState): ColDef {
+        const colDef = this.baseCalculatedColDef(state);
+        const anchorColId = state.groupAnchorColId;
+        if (anchorColId != null) {
+            // The anchor is always serialised as a stable (columnDefs-declared) leaf, so it is already
+            // in the col model here — inherit its group membership.
+            const columnGroupShow = this.beans.colModel.getCol(anchorColId)?.colDef.columnGroupShow;
+            if (columnGroupShow != null) {
+                colDef.columnGroupShow = columnGroupShow;
+            }
+        }
+        return colDef;
+    }
+
     private getOrCreateColumn(
         dc: DynamicCalculatedColumn,
         colId: string,
@@ -873,11 +977,25 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private toColDef(draft: CalculatedColumnDraft): ColDef {
-        return {
-            colId: draft.colId,
-            headerName: draft.headerName,
+        return this.baseCalculatedColDef({
+            ...draft,
             calculatedExpression: _normaliseCalculatedExpression(draft.calculatedExpression) ?? '',
-            cellDataType: draft.cellDataType,
+        });
+    }
+
+    /** Base colDef shared by every calc-col builder: the data fields plus the calc-col invariants
+     *  (`editable: false`, `suppressPaste: true`), which the grid also enforces centrally via `isCalculatedCol`. */
+    private baseCalculatedColDef(source: {
+        colId: string;
+        headerName?: string;
+        cellDataType?: string;
+        calculatedExpression: string;
+    }): ColDef {
+        return {
+            colId: source.colId,
+            headerName: source.headerName,
+            calculatedExpression: source.calculatedExpression,
+            cellDataType: source.cellDataType,
             editable: false,
             suppressPaste: true,
         };

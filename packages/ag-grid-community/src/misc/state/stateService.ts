@@ -11,6 +11,7 @@ import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOption
 import type { CellRange } from '../../interfaces/IRangeService';
 import type {
     AggregationState,
+    CalculatedUserColumnState,
     CellSelectionState,
     ColumnGroupState,
     ColumnHeaderNameState,
@@ -194,6 +195,12 @@ export class StateService extends BeanStub implements NamedBean {
             'sort',
         ]);
         this.updateCachedState('columnGroup', this.getColumnGroupState());
+        // Only reflect user columns when the feature is active. When it is disabled (or the module is
+        // absent), leave any provided `userColumns` untouched in the cache so a later re-save is not lossy.
+        const calculatedColsSvc = this.beans.calculatedColsSvc;
+        if (calculatedColsSvc?.isEnabled()) {
+            this.updateCachedState('userColumns', calculatedColsSvc.getUserColumnState());
+        }
     }
 
     private setColumnsInitialisedState(
@@ -202,10 +209,38 @@ export class StateService extends BeanStub implements NamedBean {
         partialColumnState: boolean,
         ignoreSet?: Set<GridStateKey>
     ): void {
+        // Recreate runtime-added columns BEFORE applying column state, so their colIds exist when
+        // columnOrder / columnSizing / sort / etc. are applied on top of them.
+        this.reconcileUserColumns(state, ignoreSet);
         this.applyColumnGridState(state, source, partialColumnState, ignoreSet);
         this.setColumnGroupState(state, source, ignoreSet);
 
         this.updateColumnAndGroupState();
+    }
+
+    private reconcileUserColumns(state: GridState, ignoreSet?: Set<GridStateKey>): void {
+        if (ignoreSet?.has('userColumns')) {
+            return;
+        }
+        // When the feature is disabled (or the module is absent), leave any provided `userColumns`
+        // untouched so a later re-save into a calc-enabled grid is not lossy.
+        const calculatedColsSvc = this.beans.calculatedColsSvc;
+        if (!calculatedColsSvc?.isEnabled()) {
+            return;
+        }
+        // The incoming state is authoritative: recreate the calc cols it lists and drop any it omits.
+        // An absent/empty section therefore removes every runtime-added calc col.
+        const userColumns = state.userColumns;
+        const calculatedCols: CalculatedUserColumnState[] = [];
+        if (userColumns) {
+            for (let i = 0, len = userColumns.length; i < len; ++i) {
+                const userColumn = userColumns[i];
+                if (userColumn.kind === 'calculated') {
+                    calculatedCols.push(userColumn);
+                }
+            }
+        }
+        calculatedColsSvc.reconcileUserColumns(calculatedCols);
     }
 
     private setupStateOnColumnsInitialised(initialState: GridState, partialColumnState: boolean): void {

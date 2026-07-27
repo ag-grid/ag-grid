@@ -4,6 +4,7 @@ import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
+import type { CalculatedUserColumnState } from './gridState';
 import type { HeaderPosition } from './iHeaderPosition';
 
 export type CalculatedColumnExpressionPicker = 'columns' | 'functions' | 'operators';
@@ -66,6 +67,11 @@ export interface ICalculatedColumnsService extends Bean {
     resetDynamicColumnDefs(preserveCreatedColumns?: boolean): boolean;
     /** Re-add parked dynamic cols referenced by `state` and return whether any were restored (caller rebuilds). */
     restoreDynamicColumnDefs(state: ColumnState[]): boolean;
+    /** Serialise dynamic (API/dialog-added) calc cols to grid state, in creation order. `undefined` when none. */
+    getUserColumnState(): CalculatedUserColumnState[] | undefined;
+    /** Reconcile dynamic calc cols against authoritative grid state: recreate listed cols, drop any not
+     *  listed. Rebuilds once. */
+    reconcileUserColumns(state: CalculatedUserColumnState[]): void;
     /** Run a suppressed rebuild after calc-col mutation so column-state ops avoid spurious calc lifecycle events. */
     refreshDynamicColumns(source: ColumnEventType): void;
     isEnabled(): boolean;
