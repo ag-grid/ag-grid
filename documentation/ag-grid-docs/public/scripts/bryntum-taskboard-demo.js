@@ -13,6 +13,7 @@ bryntumDemoInit('taskboard', 'live-taskboard-demo', function (api) {
         resourceImagePath: 'https://bryntum.com/dist/taskboard/examples/_shared/images/transparent-users/',
         useDomTransition: true,
         chainFilters: true,
+        tasksPerRow: 3,
 
         columns: [
             { id: 'todo', text: 'Todo', color: 'orange' },
@@ -32,7 +33,6 @@ bryntumDemoInit('taskboard', 'live-taskboard-demo', function (api) {
         ],
 
         footerItems: {
-            tags: { type: 'tags', order: 1, style: 'flex:1' },
             resourceAvatars: { order: 2 },
         },
 
