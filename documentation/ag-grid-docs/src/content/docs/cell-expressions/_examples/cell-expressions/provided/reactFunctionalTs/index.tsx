@@ -102,31 +102,27 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div className="grid-column">
-                    <div className="test-header">
-                        Enter a number to analyse:
-                        <input type="text" onInput={(e) => onNewNumber(e.currentTarget.value)} />
-                    </div>
-                    <div className="grid-wrapper">
-                        <AgGridReact<LeftData>
-                            columnDefs={leftColumnDefs}
-                            defaultColDef={leftDefaultColDef}
-                            enableCellExpressions={true}
-                            rowData={rowDataLeft}
-                            context={context}
-                            onGridReady={(params: GridReadyEvent) => setLeftApi(params.api)}
-                        />
-                    </div>
+                <div className="item-header">
+                    Enter a number to analyse:
+                    <input type="text" onInput={(e) => onNewNumber(e.currentTarget.value)} />
                 </div>
-                <div className="grid-column">
-                    <div className="test-header">Edit data on RHS, table updates on LHS</div>
-                    <div className="grid-wrapper">
-                        <AgGridReact<RightData>
-                            columnDefs={rightColumnDefs}
-                            defaultColDef={rightDefaultColDef}
-                            rowData={rowDataRight}
-                        />
-                    </div>
+                <div className="item-header">Edit data on RHS, table updates on LHS</div>
+                <div className="grid-wrapper">
+                    <AgGridReact<LeftData>
+                        columnDefs={leftColumnDefs}
+                        defaultColDef={leftDefaultColDef}
+                        enableCellExpressions={true}
+                        rowData={rowDataLeft}
+                        context={context}
+                        onGridReady={(params: GridReadyEvent) => setLeftApi(params.api)}
+                    />
+                </div>
+                <div className="grid-wrapper">
+                    <AgGridReact<RightData>
+                        columnDefs={rightColumnDefs}
+                        defaultColDef={rightDefaultColDef}
+                        rowData={rowDataRight}
+                    />
                 </div>
             </div>
         </AgGridProvider>

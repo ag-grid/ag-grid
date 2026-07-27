@@ -54,30 +54,26 @@ const rowDataRight: RightData[] = [
     imports: [AgGridAngular],
     selector: 'my-app',
     template: /* html */ ` <div class="example-wrapper">
-        <div class="grid-column">
-            <div class="test-header">
-                Enter a number to analyse:
-                <input type="text" (input)="onNewNumber($any($event.target).value)" />
-            </div>
-            <ag-grid-angular
-                class="grid-wrapper"
-                [columnDefs]="leftColumnDefs"
-                [defaultColDef]="leftDefaultColDef"
-                [enableCellExpressions]="true"
-                [rowData]="rowDataLeft"
-                [context]="context"
-                (gridReady)="onLeftGridReady($event)"
-            />
+        <div class="item-header">
+            Enter a number to analyse:
+            <input type="text" (input)="onNewNumber($any($event.target).value)" />
         </div>
-        <div class="grid-column">
-            <div class="test-header">Edit data on RHS, table updates on LHS</div>
-            <ag-grid-angular
-                class="grid-wrapper"
-                [columnDefs]="rightColumnDefs"
-                [defaultColDef]="rightDefaultColDef"
-                [rowData]="rowDataRight"
-            />
-        </div>
+        <div class="item-header">Edit data on RHS, table updates on LHS</div>
+        <ag-grid-angular
+            class="grid-wrapper"
+            [columnDefs]="leftColumnDefs"
+            [defaultColDef]="leftDefaultColDef"
+            [enableCellExpressions]="true"
+            [rowData]="rowDataLeft"
+            [context]="context"
+            (gridReady)="onLeftGridReady($event)"
+        />
+        <ag-grid-angular
+            class="grid-wrapper"
+            [columnDefs]="rightColumnDefs"
+            [defaultColDef]="rightDefaultColDef"
+            [rowData]="rowDataRight"
+        />
     </div>`,
 })
 export class AppComponent {
