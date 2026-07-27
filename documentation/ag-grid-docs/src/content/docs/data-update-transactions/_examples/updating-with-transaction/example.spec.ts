@@ -21,6 +21,6 @@ test.agExample(import.meta, () => {
         await page.getByRole('button', { name: 'Clear Data' }).click();
 
         await expect(agIdFor.cell('0', 'make')).toHaveCount(0);
-        await expect(page.locator('.ag-center-cols-container .ag-row')).toHaveCount(0);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row')).toHaveCount(0);
     });
 });

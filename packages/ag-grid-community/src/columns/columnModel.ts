@@ -14,7 +14,12 @@ import { _buildColumnTree, finalizeColumnTree } from './buildColumnTree';
 import { applyPrevColumnsOrder } from './colsApplyPrevOrder';
 import { ColWrapperCache } from './columnGroups/colWrapperCache';
 import { captureColumnStateChanges, dispatchColStateChanges } from './columnStateUtils';
-import { _convertColumnEventSourceType, _destroyColumnTreeAll, _destroyColumnTreeUnused } from './columnUtils';
+import {
+    _convertColumnEventSourceType,
+    _destroyColumnTreeAll,
+    _destroyColumnTreeUnused,
+    _hasColumnMembershipChanged,
+} from './columnUtils';
 
 // Two parallel col representations:
 //   colDefList / colDefTree  — PRIMARY cols (user-defined leaves + hierarchy virtuals).
@@ -384,6 +389,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             const rowNumberCol = beans.rowNumbersSvc?.refreshCols();
             // Snapshot prior colsList colIds into the mode's lastOrder so the next refresh restores user moves.
             const oldColsList = this.colsList;
+            const oldColsById = this.colsById;
             if (oldColsList.length > 0) {
                 if (prevWasPivot) {
                     // A strict pivot order (comparator/pivotSort) isn't a user arrangement to preserve - skip it so
@@ -492,7 +498,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
             if (colsListChanged) {
                 beans.rowSpanSvc?.refreshCols();
             }
-            if (this.colsTree !== prevColTree) {
+            if (
+                this.colsTree !== prevColTree ||
+                (colsListChanged && _hasColumnMembershipChanged(oldColsList, finalColsList, oldColsById))
+            ) {
                 this.eventSvc.dispatchEvent({ type: 'gridColumnsChanged' });
             }
         } finally {

@@ -15,7 +15,7 @@ import {
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-import { ALL_SEVERITIES } from '../test-utils';
+import { ALL_SEVERITIES, waitForMissingModuleReports } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
     let consoleWarnSpy: MockInstance | undefined;
@@ -168,7 +168,7 @@ describe('ag-grid overlays state', () => {
         expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
     });
 
-    test('missing module warning', () => {
+    test('missing module warning', async () => {
         // Deliberately calls an API whose module is not registered (error #200), then on a destroyed grid (warning #26).
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200, 26] });
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
@@ -183,10 +183,14 @@ describe('ag-grid overlays state', () => {
         expect(consoleErrorSpy).toHaveBeenCalledTimes(0);
 
         expect(api.exportDataAsExcel()).toBeUndefined();
+        await waitForMissingModuleReports();
 
         expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-        // expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('exportDataAsExcel'));
-        // expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('ExcelExportModule'));
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'AG Grid: error #200',
+            expect.stringContaining('Unable to use `api.exportDataAsExcel` as `ExcelExportModule` is not registered'),
+            expect.stringContaining('/javascript-data-grid/errors/200')
+        );
 
         expect(api.exportDataAsExcel()).toBeUndefined();
         expect(consoleErrorSpy).toHaveBeenCalledTimes(1);

@@ -15,6 +15,6 @@ test.agExample(import.meta, () => {
 
         // selectionColumnDef.sortable: true — clicking the header applies a sort.
         await agIdFor.headerCell(SELECTION_COL).first().click();
-        await expect(agIdFor.headerCell(SELECTION_COL).first()).toHaveClass(/ag-header-cell-sorted-asc/);
+        await expect(agIdFor.headerCell(SELECTION_COL).first()).toHaveAttribute('aria-sort', 'ascending');
     });
 });

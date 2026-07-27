@@ -9,7 +9,9 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         // The name column renders in the centre viewport, not the pinned-left container.
-        await expect(page.locator('.ag-pinned-left-cols-container [col-id="name"]')).toHaveCount(0);
+        await expect(
+            page.locator('.ag-grid-scrolling-container .ag-grid-pinned-left-cells [col-id="name"]')
+        ).toHaveCount(0);
         await expect(agIdFor.cell('0', 'name')).toContainText('Michael Phelps');
     });
 
@@ -21,6 +23,8 @@ test.agExample(import.meta, () => {
         await page.locator('#reloadGridButton').click();
 
         // After the grid is destroyed and re-created, gridReady pins 'name' to the left.
-        await expect(page.locator('.ag-pinned-left-cols-container [col-id="name"]').first()).toBeVisible();
+        await expect(
+            page.locator('.ag-grid-scrolling-container .ag-grid-pinned-left-cells [col-id="name"]').first()
+        ).toBeVisible();
     });
 });

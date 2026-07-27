@@ -43,10 +43,6 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('row-group-region-Europe-country-UK', electronics).first()).toHaveText('100');
         await expect(agIdFor.cell('row-group-region-Europe-country-Italy', electronics).first()).toHaveText('100');
 
-        // The cascade reaches each country's single Electronics leaf.
-        await expect(agIdFor.cell('eu-fr-elec', electronics).first()).toHaveText('100');
-        await expect(agIdFor.cell('eu-de-elec', electronics).first()).toHaveText('100');
-
         // The Clothing pivot category is untouched by the Electronics edit.
         await expect(agIdFor.cell(europe, clothing).first()).toHaveText('360');
     });

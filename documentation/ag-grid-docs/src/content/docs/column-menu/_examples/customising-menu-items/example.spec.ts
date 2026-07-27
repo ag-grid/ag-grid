@@ -1,8 +1,11 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('age column appends custom items to the default menu', async ({ agIdFor, page }) => {
-        await expect(agIdFor.cell('0', 'age')).toContainText('23');
+        // `sport` is row-grouped, so the top displayed rows are group rows without leaf cells;
+        // just wait for the grid to render rather than asserting a specific leaf cell.
+        await ensureGridReady(page);
+        await waitForGridContent(page);
 
         await agIdFor.headerCell('age').hover();
         await agIdFor.headerCellMenuButton('age').click();

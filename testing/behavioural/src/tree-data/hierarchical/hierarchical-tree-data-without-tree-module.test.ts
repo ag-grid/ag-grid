@@ -3,7 +3,7 @@ import type { MockInstance } from 'vitest';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 
-import { GridRows, TestGridsManager } from '../../test-utils';
+import { GridRows, TestGridsManager, waitForMissingModuleReports } from '../../test-utils';
 
 describe('ag-grid tree data without tree module', () => {
     const gridsManager = new TestGridsManager({
@@ -45,6 +45,7 @@ describe('ag-grid tree data without tree module', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
+        await waitForMissingModuleReports();
         expect(consoleErrorSpy).toHaveBeenCalled();
 
         consoleErrorSpy.mockRestore();

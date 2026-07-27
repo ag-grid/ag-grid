@@ -70,9 +70,62 @@ describe('getErrorText param reconstruction', () => {
         expect(text).toContain('SideBar');
     });
 
+    it('reconstructs a batched #200 message from JSON-encoded reports (the URL form)', () => {
+        // The grid encodes each missing-module report to a JSON string and the array to a JSON param, so a
+        // batched error survives the URL. The page must rebuild the per-report message, not a single line.
+        const reports = [
+            JSON.stringify({ reasonOrId: '`rowSelection`', moduleName: 'RowSelection' }),
+            JSON.stringify({ reasonOrId: '`enableValue`', moduleName: 'RowGrouping' }),
+        ];
+        const text = getErrorText({
+            errorCode: 200,
+            params: {
+                reports: JSON.stringify(reports),
+                reasonOrId: '`rowSelection`',
+                moduleName: 'RowSelection',
+                gridScoped: 'false',
+                gridId: '1',
+                rowModelType: 'clientSide',
+            },
+        });
+
+        expect(text).toMatchInlineSnapshot(`
+          "Unable to use \`rowSelection\` as \`RowSelectionModule\` is not registered.
+          Unable to use \`enableValue\` as \`RowGroupingModule\` is not registered.
+          Check if you have registered the modules:
+
+          import { ModuleRegistry, RowSelectionModule } from 'ag-grid-community'; 
+          import { RowGroupingModule } from 'ag-grid-enterprise';
+
+          ModuleRegistry.registerModules([ RowSelectionModule, RowGroupingModule ]);
+
+          For more info see: https://localhost:4610/javascript-data-grid/modules/"
+        `);
+    });
+
     it('falls back to the raw string when a bracketed value is not valid JSON', () => {
         expect(() =>
             getErrorText({ errorCode: 307, params: { objectName: 'x', name: 'y', suggestions: '[not json' } })
         ).not.toThrow();
+    });
+
+    it('renders the single-report fallback when a batched #200 reports param is truncated to a corrupt string', () => {
+        // A large batch can push the URL past MAX_URL_LENGTH; truncation corrupts the JSON reports array,
+        // so `cleanParams` hands back a raw string. The message must not throw and should use the top-level
+        // reason/module that also survive the URL.
+        let text = '';
+        expect(() => {
+            text = getErrorText({
+                errorCode: 200,
+                params: {
+                    reports: '["{\\"reasonOrId\\":\\"`rowSelection`\\",\\"modu',
+                    reasonOrId: '`rowSelection`',
+                    moduleName: 'RowSelection',
+                    rowModelType: 'clientSide',
+                },
+            });
+        }).not.toThrow();
+
+        expect(text).toContain('Unable to use `rowSelection` as `RowSelectionModule` is not registered.');
     });
 });

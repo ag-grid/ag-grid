@@ -8,7 +8,7 @@ import type {
     ITooltipFeature,
     TooltipCtrl,
 } from 'ag-stack';
-import { KeyCode, _isElementOverflowingCallback, _setAriaControlsAndLabel } from 'ag-stack';
+import { KeyCode, _isElementOverflowingCallback, _setAriaLabelledBy } from 'ag-stack';
 
 import type { ListOption } from './agList';
 import { AgList } from './agList';
@@ -142,7 +142,10 @@ export class AgSelect<
         const listId = `ag-select-list-${listComponent.getCompId()}`;
 
         eListAriaEl.setAttribute('id', listId);
-        _setAriaControlsAndLabel(this.getAriaElement(), eListAriaEl);
+        // Keep the list's `aria-labelledby` back-reference (points at the always-present wrapper, so it
+        // never dangles), but gate `aria-controls` on the expand state instead of setting it up front.
+        _setAriaLabelledBy(eListAriaEl, this.getAriaElement().id);
+        this.setAriaControlsId(listId);
 
         listComponent.addManagedElementListeners(listComponent.getGui(), {
             mousedown: (e) => {

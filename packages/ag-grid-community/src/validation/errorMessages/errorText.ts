@@ -16,9 +16,24 @@ import { resolveModuleNames } from '../resolvableModuleNames';
 import { USER_COMP_MODULES } from '../rules/userCompValidations';
 
 /** Formats a code snippet showing how to register modules — via AgGridProvider for React, or ModuleRegistry otherwise. */
-const moduleRegistrationSnippet = (imports: string[], moduleList: string, usesAgGridProvider?: boolean): string => {
+const moduleRegistrationSnippet = (
+    imports: { name: string; source: string }[],
+    moduleList: string,
+    usesAgGridProvider?: boolean
+): string => {
+    // eslint-disable-next-line no-restricted-properties
+    const importStrings = Object.entries(
+        imports.reduce(
+            (mapping, { name, source }) => ({
+                ...mapping,
+                [source]: (mapping[source] || []).concat(name),
+            }),
+            {} as Record<string, string[]>
+        )
+    ).map(([source, names]) => `import { ${names.join(', ')} } from '${source}';`);
+
     if (usesAgGridProvider) {
-        const allImports = ["import { AgGridProvider, AgGridReact } from 'ag-grid-react';", ...imports];
+        const allImports = ["import { AgGridProvider, AgGridReact } from 'ag-grid-react';", ...importStrings];
         return `${allImports.join(' \n')}
 
 const modules = [ ${moduleList} ];
@@ -32,27 +47,28 @@ function App() {
 }`;
     }
 
-    return `${imports.join(' \n')}
+    return `${importStrings.join(' \n')}
 
 ModuleRegistry.registerModules([ ${moduleList} ]);`;
 };
 
 const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean) => {
-    const imports = moduleNames.map(
-        (moduleName) =>
-            `import { ${convertToUserModuleName(moduleName)} } from '${ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] ? 'ag-grid-enterprise' : 'ag-grid-community'}';`
-    );
+    const imports = moduleNames.map((moduleName) => ({
+        name: convertToUserModuleName(moduleName),
+        source: ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName]
+            ? 'ag-grid-enterprise'
+            : 'ag-grid-community',
+    }));
 
     const includeCharts = moduleNames.some((m) => m === 'IntegratedCharts' || m === 'Sparklines');
     if (includeCharts) {
-        const chartImport = `import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';`;
-        imports.push(chartImport);
+        imports.push({ name: 'AgChartsEnterpriseModule', source: 'ag-charts-enterprise' });
     }
 
     const moduleList = moduleNames.map((m) => convertToUserModuleName(m, true)).join(', ');
 
     if (!usesAgGridProvider) {
-        imports.unshift("import { ModuleRegistry } from 'ag-grid-community';");
+        imports.unshift({ name: 'ModuleRegistry', source: 'ag-grid-community' });
     }
     return `${moduleRegistrationSnippet(imports, moduleList, usesAgGridProvider)}
 
@@ -87,9 +103,59 @@ function umdMissingModule(
     return message;
 }
 
+/**
+ * A single missing-module report: what could not be used, and the module(s) that would enable it.
+ * @knipIgnore Surfaces through the exported `AG_GRID_ERRORS[200]` params type.
+ */
+export interface MissingModuleReport {
+    reasonOrId: string | keyof MissingModuleErrors;
+    moduleName: ValidationModuleName | ValidationModuleName[];
+    additionalText?: string;
+}
+
+/**
+ * Decodes a report that may have arrived JSON-encoded via the error-page URL (see `combineMissingModuleParams`);
+ * passes an in-memory report through unchanged. Returns `undefined` for a malformed string so one bad entry is
+ * skipped rather than discarding the whole batch.
+ */
+function decodeReport(report: MissingModuleReport | string): MissingModuleReport | undefined {
+    if (typeof report !== 'string') {
+        return report;
+    }
+    try {
+        // Known shape encoded by our own code; the try/catch guards against a corrupted URL param.
+        return JSON.parse(report) as MissingModuleReport;
+    } catch {
+        return undefined;
+    }
+}
+
+/** The per-report "Unable to use X as module Y is not registered" line, shared by the single and batched forms. */
+const explainMissingModule = (
+    reason: string,
+    resolvedModuleNames: (CommunityModuleName | EnterpriseModuleName)[],
+    gridScoped: boolean,
+    gridId: string
+): string => {
+    const chartModules = resolvedModuleNames.filter((m) => m === 'IntegratedCharts' || m === 'Sparklines');
+    const moduleNames = chartModules.map((m) => convertToUserModuleName(m)).join();
+    const chartImportRequired =
+        chartModules.length > 0
+            ? `${moduleNames} must be initialised with an AG Charts module. One of \`AgChartsCommunityModule\` / \`AgChartsEnterpriseModule\`.`
+            : '';
+
+    const moduleList =
+        resolvedModuleNames.length > 1
+            ? 'one of ' + resolvedModuleNames.map((m) => `\`${convertToUserModuleName(m)}\``).join(', ')
+            : `\`${convertToUserModuleName(resolvedModuleNames[0])}\``;
+
+    return `Unable to use ${reason} as ${moduleList} is not registered${gridScoped ? ' for gridId: ' + gridId : ''}. ${chartImportRequired}`.trim();
+};
+
 const missingModule = ({
     reasonOrId,
     moduleName,
+    reports,
     gridScoped,
     gridId,
     rowModelType,
@@ -99,6 +165,10 @@ const missingModule = ({
 }: {
     reasonOrId: string | keyof MissingModuleErrors;
     moduleName: ValidationModuleName | ValidationModuleName[];
+    // A batch of reports. Objects in-memory; JSON strings off the error-page URL — `combineMissingModuleParams`
+    // encodes them because a flat string[] survives URL serialisation whereas an array of objects is stripped,
+    // letting the docs page rebuild the exact per-report message the console shows.
+    reports?: (MissingModuleReport | string)[];
     gridScoped: boolean;
     gridId: string;
     rowModelType: RowModelType;
@@ -106,28 +176,40 @@ const missingModule = ({
     isUmd?: boolean;
     usesAgGridProvider?: boolean;
 }) => {
-    const resolvedModuleNames = resolveModuleNames(moduleName, rowModelType);
-    const reason = typeof reasonOrId === 'string' ? reasonOrId : MISSING_MODULE_REASONS[reasonOrId];
+    // Normalise the single-report form (top-level reasonOrId + moduleName) and the batched form (reports[],
+    // decoding any that arrived JSON-encoded via the URL) to one list, so both share the path below.
+    // `Array.isArray` guards the docs page: a large batch can truncate the reports URL param to a corrupt
+    // string, which arrives here as a non-array — fall back to the single form rather than throwing.
+    const allReports: MissingModuleReport[] =
+        Array.isArray(reports) && reports.length
+            ? reports.map(decodeReport).filter((report): report is MissingModuleReport => report != null)
+            : [{ reasonOrId, moduleName, additionalText }];
+
+    const resolvedReports = allReports.map((report) => ({
+        reason: typeof report.reasonOrId === 'string' ? report.reasonOrId : MISSING_MODULE_REASONS[report.reasonOrId],
+        resolvedModuleNames: resolveModuleNames(report.moduleName, rowModelType),
+        additionalText: report.additionalText,
+    }));
 
     if (isUmd) {
-        return umdMissingModule(reason, resolvedModuleNames);
+        return resolvedReports.map((report) => umdMissingModule(report.reason, report.resolvedModuleNames)).join('');
     }
 
-    const chartModules = resolvedModuleNames.filter((m) => m === 'IntegratedCharts' || m === 'Sparklines');
-    const chartImportRequired =
-        chartModules.length > 0
-            ? `${chartModules.map((m) => convertToUserModuleName(m)).join()} must be initialised with an AG Charts module. One of \`AgChartsCommunityModule\` / \`AgChartsEnterpriseModule\`.`
-            : '';
+    const allResolvedModuleNames = [...new Set(resolvedReports.flatMap((report) => report.resolvedModuleNames))];
 
-    const moduleList =
-        resolvedModuleNames.length > 1
-            ? 'one of ' + resolvedModuleNames.map((m) => `\`${convertToUserModuleName(m)}\``).join(', ')
-            : `\`${convertToUserModuleName(resolvedModuleNames[0])}\``;
-    const explanation = `Unable to use ${reason} as ${moduleList} is not registered${gridScoped ? ' for gridId: ' + gridId : ''}. ${chartImportRequired} Check if you have registered the module:\n`;
+    const explanations = resolvedReports
+        .map((report) => explainMissingModule(report.reason, report.resolvedModuleNames, gridScoped, gridId))
+        .join('\n');
+    const explanation =
+        `${explanations}${resolvedReports.length == 1 ? ' ' : '\n'}` +
+        `Check if you have registered the module${allResolvedModuleNames.length == 1 ? '' : 's'}:\n`;
+
+    const additionalTexts = [...new Set(resolvedReports.map((report) => report.additionalText).filter(Boolean))];
+    const trailer = additionalTexts.length > 0 ? ` \n\n${additionalTexts.join('\n')}` : '';
 
     return (
         `${explanation}
-${moduleImportMsg(resolvedModuleNames, usesAgGridProvider)}` + (additionalText ? ` \n\n${additionalText}` : '')
+${moduleImportMsg(allResolvedModuleNames, usesAgGridProvider)}` + trailer
     );
 };
 

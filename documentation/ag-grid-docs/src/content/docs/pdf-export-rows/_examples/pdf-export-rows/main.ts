@@ -3,6 +3,7 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     PinnedRowModule,
+    RowApiModule,
     RowSelectionModule,
     TextFilterModule,
     createGrid,
@@ -18,6 +19,7 @@ if (process.env.NODE_ENV !== 'production') {
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     PinnedRowModule,
+    RowApiModule,
     RowSelectionModule,
     TextFilterModule,
     PdfExportModule,

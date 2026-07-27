@@ -5,9 +5,7 @@ test.agExample(import.meta, () => {
         // pagination is enabled with a page size of 10
         const pagingPanel = page.locator('.ag-paging-panel');
         await expect(pagingPanel).toBeVisible();
-        await expect(
-            page.locator('.ag-center-cols-container .ag-row, .ag-grid-scrolling-container .ag-row')
-        ).toHaveCount(10);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row')).toHaveCount(10);
 
         // sort by price ascending — the cheapest car (Fiat Panda, 13724) moves to the top
         await agIdFor.headerCell('price').click();

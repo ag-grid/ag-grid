@@ -1,5 +1,5 @@
 import { _errorOnce, _warnOnce } from '../utils/log';
-import type { CapturedDiagnostic } from './logging';
+import type { CapturedDiagnostic, MissingModuleReportParams } from './logging';
 import {
     _addDiagnosticListener,
     _configureDiagnostics,
@@ -10,6 +10,8 @@ import {
     _logPreInitWarn,
     _provideBootstrapPanelRenderer,
     _renderBootstrapPanel,
+    _reportMissingModule,
+    _resetMissingModuleReports,
     _warnForGrid,
     _warnWithoutAttribution,
     getErrorLink,
@@ -287,6 +289,119 @@ describe('suppression', () => {
 
         expect(() => _errorWithoutAttribution(11)).not.toThrow();
         expect(() => _errorWithoutAttribution(22, { key: 'x' })).toThrow();
+    });
+});
+
+// Missing-module reports are debounced (50ms) and combined into a single console error (and a single
+// overlay entry) rather than one per unregistered module, and deduped per grid by module+reason. Fake
+// timers exercise the real debounce; `_resetMissingModuleReports` clears the batch + dedup between tests.
+describe('missing-module batching', () => {
+    function report(reasonOrId: string, moduleName: string, gridId = 'grid-a'): void {
+        _reportMissingModule({
+            reasonOrId,
+            moduleName: moduleName as MissingModuleReportParams['moduleName'],
+            gridScoped: false,
+            gridId,
+            rowModelType: 'clientSide',
+        });
+    }
+
+    beforeEach(() => {
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+        _resetMissingModuleReports();
+    });
+
+    test('combines a burst of reports into a single console error after the debounce', () => {
+        report('burst feat 1', 'RowSelection');
+        report('burst feat 2', 'TextEditor');
+        report('burst feat 3', 'Sort');
+
+        // Nothing logged until the debounce window elapses.
+        expect(mockErrorOnce).not.toHaveBeenCalled();
+        vi.advanceTimersByTime(50);
+
+        // A single console call carries all three modules (here via the minified error-link params, as no
+        // ValidationService logger is wired in this unit test).
+        expect(mockErrorOnce).toHaveBeenCalledTimes(1);
+        const message = mockErrorOnce.mock.calls[0].join(' ');
+        expect(message).toContain('RowSelection');
+        expect(message).toContain('TextEditor');
+        expect(message).toContain('Sort');
+    });
+
+    test('captures a single combined overlay diagnostic after the debounce', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        report('overlay feat 1', 'RowSelection');
+        report('overlay feat 2', 'TextEditor');
+        vi.advanceTimersByTime(50);
+
+        expect(received.map((e) => e.id)).toEqual([200]);
+        off();
+    });
+
+    test('dedupes the same module+reason within a single grid', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        report('dedupe feat', 'RowSelection', 'grid-1');
+        report('dedupe feat', 'RowSelection', 'grid-1'); // same grid, same module+reason
+        vi.advanceTimersByTime(50);
+
+        expect(mockErrorOnce).toHaveBeenCalledTimes(1);
+        expect(received).toHaveLength(1);
+        off();
+    });
+
+    test('reports the same module+reason once per grid (StrictMode / second grid)', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        report('dedupe feat', 'RowSelection', 'grid-1');
+        report('dedupe feat', 'RowSelection', 'grid-2'); // different grid, same module+reason
+        vi.advanceTimersByTime(50);
+
+        expect(mockErrorOnce).toHaveBeenCalledTimes(2);
+        expect(received.map((e) => e.gridId)).toEqual(['grid-1', 'grid-2']);
+        off();
+    });
+
+    test('emits one combined error per grid when grids miss different modules', () => {
+        report('per-grid feat a', 'RowSelection', 'grid-x');
+        report('per-grid feat b', 'TextEditor', 'grid-y');
+        vi.advanceTimersByTime(50);
+
+        expect(mockErrorOnce).toHaveBeenCalledTimes(2);
+    });
+
+    test('throws synchronously on the first report in throw mode, before any debounce', () => {
+        _configureDiagnostics({ throwOn: ['error'] });
+
+        // The throw happens in the reporting call stack, not deferred to the debounce timer.
+        expect(() => report('throwing feat', 'RowSelection')).toThrow(/#200/);
+        vi.advanceTimersByTime(50);
+        expect(mockErrorOnce).not.toHaveBeenCalled();
+    });
+
+    test('still logs a suppressed id to the console but keeps it out of the overlay', () => {
+        _configureDiagnostics({ capture: true, suppress: [200] });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        report('suppressed feat', 'RowSelection');
+        vi.advanceTimersByTime(50);
+
+        expect(mockErrorOnce).toHaveBeenCalledTimes(1);
+        expect(received).toEqual([]);
+        off();
     });
 });
 

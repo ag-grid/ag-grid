@@ -389,6 +389,7 @@ export {
     _errorWithoutAttribution,
     _logPreInitWarn,
     _preInitErrMsg,
+    _resetMissingModuleReports,
     _warnForGrid,
     _warnWithoutAttribution,
 } from './validation/logging';

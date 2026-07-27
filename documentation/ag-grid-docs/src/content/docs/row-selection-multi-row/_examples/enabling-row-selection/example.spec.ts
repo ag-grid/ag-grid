@@ -41,10 +41,10 @@ test.agExample(import.meta, () => {
         await expect(headerWrapper).not.toHaveClass(/ag-indeterminate/);
 
         // Every rendered row is also visibly selected.
-        const rows = page.locator('.ag-center-cols-container .ag-row');
+        const rows = page.locator('.ag-grid-scrolling-container .ag-row');
         const total = await rows.count();
         expect(total).toBeGreaterThan(0);
-        await expect(page.locator('.ag-center-cols-container .ag-row.ag-row-selected')).toHaveCount(total);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row.ag-row-selected')).toHaveCount(total);
         await expect(agIdFor.rowNode('0')).toHaveClass(/ag-row-selected/);
     });
 });

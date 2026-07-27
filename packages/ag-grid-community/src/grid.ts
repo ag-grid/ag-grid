@@ -46,6 +46,9 @@ export interface GridParams {
     providedBeanInstances?: { [key: string]: any };
     // INTERNAL - set by studio
     withinStudio?: boolean;
+    // INTERNAL - set when this grid is nested inside another grid's styled root (e.g. a
+    // master/detail detail grid), so its own styled root should not re-apply theme classes
+    hasAncestorStyledRoot?: boolean;
 
     /**
      * Modules to be registered directly with this grid instance.
@@ -228,6 +231,7 @@ export class GridCoreCreator {
             globalSyncListener: params ? params.globalSyncListener : null,
             frameworkOverrides: frameworkOverrides,
             withinStudio: params?.withinStudio,
+            hasAncestorStyledRoot: params?.hasAncestorStyledRoot,
         };
         if (params?.providedBeanInstances) {
             Object.assign(seed, params.providedBeanInstances);

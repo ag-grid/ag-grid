@@ -3,6 +3,7 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     PinnedRowModule,
+    RowAutoHeightModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
@@ -13,7 +14,13 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, PinnedRowModule, RowGroupingModule, PdfExportModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    PinnedRowModule,
+    RowAutoHeightModule,
+    RowGroupingModule,
+    PdfExportModule,
+]);
 
 interface ProjectData {
     division: string;
