@@ -316,8 +316,7 @@ export class SortService extends BeanStub implements NamedBean {
             displayedColumnsChanged: refreshStyles,
         });
 
-        // A column already sorted when its header is created (e.g. from initialState) fires none of the
-        // above, so the styles must be applied up front rather than only on the next change.
+        // A column already sorted when its header is created (e.g. from initialState) must have correct styles
         refreshStyles();
     }
 
