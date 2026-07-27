@@ -45,6 +45,47 @@ All public documentation examples MUST work across all frameworks:
 - Avoid complex DOM manipulation
 - No external library dependencies
 
+### Hand-authored `provided/` framework variants
+
+Examples are generated from `main.ts` by `generate-examples` — this is the default and strongly
+preferred path. A single `main.ts` yields all framework variants automatically, so there is
+nothing to keep in sync.
+
+Hand-authored `provided/` variants are a **last resort**, used only when an example cannot be
+generated cleanly (e.g. it needs framework-specific idioms the generator can't express). Do **not** add a
+`provided/` folder to work around a fixable generation issue — first try to make `main.ts`
+generate correctly. Prefer deleting a `provided/` variant and reverting to pure generation if a
+later change makes generation viable.
+
+```
+_examples/example-name/
+├── main.ts                              # vanilla source (generation input)
+└── provided/                            # last resort — only when generation can't express it
+    ├── reactFunctionalTs/index.tsx
+    ├── angular/app.component.ts
+    └── vue3/main.ts
+```
+
+When a `provided/` folder **does** exist, its files are **not** overwritten by
+`generate-examples` — they are the source of truth for their framework. So when you change
+`main.ts` (modules, `columnDefs`, grid options, handlers, or the HTML controls), you **must**
+make the equivalent change in every `provided/` variant so all frameworks stay consistent. Search
+for a `provided/` folder before considering an example edit complete. Watch for per-framework
+shape differences:
+
+- **React** — `columnDefs` is typed React state (e.g. `useState<(ColDef | ColGroupDef)[]>`); grid
+  options are JSX props; modules are passed via `AgGridProvider modules={...}` (no
+  `ModuleRegistry`).
+- **Angular** — `columnDefs` is a typed class field; grid options are template bindings
+  (`[option]="..."`); modules via `ModuleRegistry.registerModules`.
+- **Vue** — `columnDefs` is a typed `ref`; grid options are template bindings (`:option="..."`);
+  modules via `ModuleRegistry.registerModules`. Note comments inside the `template:` string are
+  in a template literal, but `setup()` body comments are ordinary code — don't escape backticks
+  there.
+
+After editing, run `yarn nx generate-examples ag-grid-docs` and `yarn nx format` to confirm every
+variant still typechecks and is formatted.
+
 ## Validation
 
 ```bash
@@ -108,27 +149,21 @@ The flexbox layout makes the controls sit at the top and the grid fills the rema
 
 ## Example Spec File (Required)
 
-Every example **must** have an `example.spec.ts` file. Without it, the build fails. At minimum, use this placeholder template:
+Every example **must** have an `example.spec.ts` file — without it, the build fails.
 
-```typescript
-import { clickAllButtons, ensureGridReady, test, waitForGridContent } from '@utils/grid/test-utils';
+When you **add a new example** or **create a new doc page** with examples, the example is not complete until its `example.spec.ts` contains **meaningful** assertions — not the placeholder template — and passes across every framework. A placeholder that only proves the grid mounts asserts nothing about the behaviour the example exists to demonstrate.
 
-test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page }) => {
-        // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
-        await ensureGridReady(page);
-        await waitForGridContent(page);
-        await clickAllButtons(page);
-        // END PLACEHOLDER
-    });
-});
-```
+Follow these steps (the `docs-e2e-tests` skill walks through them):
 
-Replace the placeholder with meaningful assertions when the example demonstrates specific interactive behaviour.
+1. Read the page's `index.mdoc` and the example source to understand what the example demonstrates.
+2. Write assertions that exercise that specific behaviour (not just that the grid loads).
+3. Validate across all frameworks, e.g. `./docs-e2e.sh "<example-name>"`.
+
+See [.rulesync/skills/docs-e2e-tests/SKILL.md](.rulesync/skills/docs-e2e-tests/SKILL.md) for the full procedure.
 
 ## Best Practices
 
 1. Keep examples focused on a single feature
 2. Use realistic but minimal data
-3. Include comments explaining key concepts
+3. Keep comments to a minimum — only annotate code when the comment genuinely adds value (a non-obvious concept or gotcha); do not narrate what the code plainly does
 4. Test in dev server across all frameworks
