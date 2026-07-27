@@ -20,6 +20,9 @@ export async function getSitemapIgnorePaths() {
 
         // Release note stubs — minimal content, crawl waste
         urlWithBaseUrl('/changelog/releases'),
+
+        // Opt out success page
+        urlWithBaseUrl('/privacy/your-choice'),
     ];
     const folderPaths = ignorePaths.map(addTrailingSlash);
 
