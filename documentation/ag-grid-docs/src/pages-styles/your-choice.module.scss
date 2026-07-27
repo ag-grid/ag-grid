@@ -1,0 +1,10 @@
+@use 'design-system' as *;
+
+.optOutRequestPage {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-top: $spacing-size-20;
+    padding-bottom: $spacing-size-20;
+}
