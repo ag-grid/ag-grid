@@ -10,20 +10,31 @@ interface TestRow {
 
 function parseBigInt(value: string): bigint | null {
     const trimmed = value.trim();
-    if (!trimmed) return null;
+    if (!trimmed) {
+        return null;
+    }
     const withoutSuffix = trimmed.endsWith('n') || trimmed.endsWith('N') ? trimmed.slice(0, -1).trim() : trimmed;
-    if (!withoutSuffix) return null;
+    if (!withoutSuffix) {
+        return null;
+    }
     let sign = 1n;
     let body = withoutSuffix;
-    if (body.startsWith('+')) body = body.slice(1);
-    else if (body.startsWith('-')) {
+    if (body.startsWith('+')) {
+        body = body.slice(1);
+    } else if (body.startsWith('-')) {
         sign = -1n;
         body = body.slice(1);
     }
-    if (!body) return null;
+    if (!body) {
+        return null;
+    }
     try {
-        if (/^0[xX][0-9a-fA-F]+$/.test(body)) return BigInt(body);
-        if (/^\d+$/.test(body)) return sign * BigInt(body);
+        if (/^0[xX][0-9a-fA-F]+$/.test(body)) {
+            return sign * BigInt(body);
+        }
+        if (/^\d+$/.test(body)) {
+            return sign * BigInt(body);
+        }
         return null;
     } catch {
         return null;

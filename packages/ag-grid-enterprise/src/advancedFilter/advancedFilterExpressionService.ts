@@ -1,4 +1,4 @@
-import { _exists, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-stack';
+import { _exists, _parseBigIntOrNull, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -51,7 +51,9 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             if (!formatter || rawValue == null) {
                 return rawValue ?? '';
             }
-            const parsed = getBigIntParser(column)(rawValue);
+            // The model already holds the canonical decimal string, so parse it back with the
+            // default parser - the custom parser expects user-facing input and could double-transform.
+            const parsed = _parseBigIntOrNull(rawValue);
             return (parsed == null ? null : formatter(parsed)) ?? rawValue;
         },
         date: (model) => {
