@@ -591,6 +591,13 @@ export type ConsistentDomOptions = {
     includeText?: boolean;
     /** Extra attribute names to drop before comparing (in addition to the volatile defaults). */
     ignoreAttributes?: string[];
+    /**
+     * Collapse measured pixel values and virtualisation transforms in `style` attributes. Defaults to
+     * `false`, so widths, offsets and scroll positions are compared as their real values. Set to
+     * `true` when comparing across frameworks or browsers, where measured layout legitimately differs
+     * ({@link expectConsistentFrameworkDom} does this).
+     */
+    normalisePixels?: boolean;
 };
 
 // Attributes dropped before comparing:
@@ -625,7 +632,8 @@ const DEFAULT_VOLATILE_ATTRIBUTES = [
  * React provider div, vanilla `#myGrid`) legitimately differs and is excluded.
  *
  * The serialised markup is normalised to remove non-structural noise: measured pixel values and
- * transforms are collapsed, generated ids are dropped, and class lists are sorted.
+ * transforms are collapsed (frameworks and browsers measure layout differently), generated ids are
+ * dropped, and class lists are sorted.
  *
  * The first framework to run writes the shared baseline snapshot (`<spec>-snapshots/grid-dom.html`);
  * commit it alongside the spec. On the initial run Playwright reports the baseline-writing test as
@@ -660,29 +668,63 @@ const DEFAULT_VOLATILE_ATTRIBUTES = [
  * });
  */
 export async function expectConsistentFrameworkDom(page: Page, options?: ConsistentDomOptions) {
-    const rootSelector = options?.rootSelector ?? '.ag-root-wrapper';
     const snapshotName = options?.snapshotName ?? 'grid-dom.html';
+
+    // One baseline is shared by every framework and browser, where measured layout legitimately differs.
+    const serialised = await serializeGridDom(page, { normalisePixels: true, ...options });
+
+    playwrightExpect(
+        serialised,
+        `No element matching '${options?.rootSelector ?? '.ag-root-wrapper'}' found to compare across frameworks`
+    ).not.toBeNull();
+    playwrightExpect(serialised).toMatchSnapshot(snapshotName);
+}
+
+/**
+ * Serialise the rendered grid DOM to a normalised, comparable string.
+ *
+ * This is the primitive behind {@link expectConsistentFrameworkDom}. Use it directly to compare
+ * the rendered grid at two points in the same test — for example capturing the grid before and
+ * after a destroy/recreate cycle to assert that restored state renders identically:
+ *
+ * @example
+ * const before = await serializeGridDom(page);
+ * await recreateGrid();
+ * await waitForGridContent(page);
+ * expect(await serializeGridDom(page)).toBe(before);
+ *
+ * Only the subtree rooted at `rootSelector` (default `.ag-root-wrapper`, the grid core's output) is
+ * serialised, so the differing framework host element is excluded. Generated ids / `comp-id`s are
+ * dropped and class lists are sorted, while measured pixel values are compared as-is unless
+ * `normalisePixels` is set.
+ *
+ * Returns `null` when no element matches `rootSelector`.
+ */
+export async function serializeGridDom(page: Page, options?: ConsistentDomOptions): Promise<string | null> {
+    const rootSelector = options?.rootSelector ?? '.ag-root-wrapper';
     const includeText = options?.includeText ?? true;
     const volatileAttributes = [...DEFAULT_VOLATILE_ATTRIBUTES, ...(options?.ignoreAttributes ?? [])];
+    const normalisePixels = options?.normalisePixels ?? false;
 
     // Wait for the grid to render before serialising — the raw page.evaluate does not auto-wait like a locator.
     await page.locator(rootSelector).first().waitFor({ state: 'attached' });
 
-    const serialised = await page.evaluate(
-        ({ rootSelector, includeText, volatileAttributes }) => {
+    return await page.evaluate(
+        ({ rootSelector, includeText, volatileAttributes, normalisePixels }) => {
             const root = document.querySelector(rootSelector);
             if (!root) {
                 return null;
             }
 
             const normaliseStyle = (value: string): string => {
-                const collapsed = value
-                    // Collapse measured pixel values (widths, offsets) that depend on runtime layout.
-                    .replace(/-?\d+(\.\d+)?px/g, 'Npx')
-                    // Collapse virtualisation transforms.
-                    .replace(/translate[XY3d]*\([^)]*\)/g, 'translate(_)')
-                    .replace(/\s+/g, ' ')
-                    .trim();
+                const measured = normalisePixels
+                    ? value
+                          // Collapse measured pixel values (widths, offsets) that depend on runtime layout.
+                          .replace(/-?\d+(\.\d+)?px/g, 'Npx')
+                          // Collapse virtualisation transforms.
+                          .replace(/translate[XY3d]*\([^)]*\)/g, 'translate(_)')
+                    : value;
+                const collapsed = measured.replace(/\s+/g, ' ').trim();
                 // Sort declarations — property order is not structurally significant and varies by framework.
                 return collapsed
                     .split(';')
@@ -732,14 +774,8 @@ export async function expectConsistentFrameworkDom(page: Page, options?: Consist
             walk(root, 0);
             return lines.join('\n');
         },
-        { rootSelector, includeText, volatileAttributes }
+        { rootSelector, includeText, volatileAttributes, normalisePixels }
     );
-
-    playwrightExpect(
-        serialised,
-        `No element matching '${rootSelector}' found to compare across frameworks`
-    ).not.toBeNull();
-    playwrightExpect(serialised).toMatchSnapshot(snapshotName);
 }
 
 export { ensureGridReady, waitForGridContent } from './test/remoteGridapi';

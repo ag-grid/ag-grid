@@ -2,6 +2,7 @@ import { createApp, defineComponent, ref, shallowRef } from 'vue';
 
 import type {
     ColDef,
+    ColGroupDef,
     GridApi,
     GridPreDestroyedEvent,
     GridReadyEvent,
@@ -9,22 +10,8 @@ import type {
     RowSelectionOptions,
     StateUpdatedEvent,
 } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    GridStateModule,
-    ModuleRegistry,
-    NumberFilterModule,
-    PaginationModule,
-    RowSelectionModule,
-    enableDevValidations,
-} from 'ag-grid-community';
-import {
-    CellSelectionModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-    PivotModule,
-    SetFilterModule,
-} from 'ag-grid-enterprise';
+import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
@@ -34,18 +21,7 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    NumberFilterModule,
-    RowSelectionModule,
-    PaginationModule,
-    GridStateModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-    SetFilterModule,
-    CellSelectionModule,
-    PivotModule,
-]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 const VueExample = defineComponent({
     template: `
@@ -60,6 +36,7 @@ const VueExample = defineComponent({
                 <ag-grid-vue
                     v-if="gridVisible"
                     style="width: 100%; height: 100%;"
+                    gridId="gridState"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
@@ -67,7 +44,10 @@ const VueExample = defineComponent({
                     :sideBar="true"
                     :pagination="true"
                     :rowSelection="rowSelection"
+                    :cellSelection="true"
+                    :enableRowPinning="true"
                     :suppressColumnMoveAnimation="true"
+                    :ensureDomOrder="true"
                     :rowData="rowData"
                     :initialState="initialState"
                     @grid-pre-destroyed="onGridPreDestroyed"
@@ -80,17 +60,30 @@ const VueExample = defineComponent({
         'ag-grid-vue': AgGridVue,
     },
     setup(props) {
-        const columnDefs = ref<ColDef[]>([
+        const columnDefs = ref<(ColDef | ColGroupDef)[]>([
             { field: 'athlete', minWidth: 150 },
             { field: 'age', maxWidth: 90 },
             { field: 'country', minWidth: 150 },
-            { field: 'year', maxWidth: 90 },
-            { field: 'date', minWidth: 150 },
-            { field: 'sport', minWidth: 150 },
-            { field: 'gold' },
-            { field: 'silver' },
-            { field: 'bronze' },
-            { field: 'total' },
+            {
+                headerName: 'Competition',
+                groupId: 'competition',
+                children: [
+                    { field: 'year', maxWidth: 90 },
+                    { field: 'date', minWidth: 150 },
+                    { field: 'sport', minWidth: 150 },
+                ],
+            },
+            {
+                // Collapsible group with a stable groupId so open/closed columnGroup state can round-trip.
+                headerName: 'Medals',
+                groupId: 'medals',
+                children: [
+                    { field: 'gold' },
+                    { field: 'silver', columnGroupShow: 'open' },
+                    { field: 'bronze', columnGroupShow: 'open' },
+                    { field: 'total', columnGroupShow: 'closed' },
+                ],
+            },
         ]);
         const gridApi = shallowRef<GridApi | null>(null);
         const defaultColDef = ref<ColDef>({
@@ -105,26 +98,28 @@ const VueExample = defineComponent({
         const rowSelection = ref<RowSelectionOptions>({
             mode: 'multiRow',
         });
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | undefined>(undefined);
         const gridVisible = ref(true);
-        const initialState = ref(undefined);
+        const initialState = ref<GridState | undefined>(undefined);
 
         const reloadGrid = () => {
-            const state = gridApi.value.getState();
-            gridVisible.value = false;
-            setTimeout(() => {
-                initialState.value = state;
-                rowData.value = undefined;
-                gridVisible.value = true;
-            });
+            if (gridApi.value) {
+                const state = gridApi.value.getState();
+                gridVisible.value = false;
+                setTimeout(() => {
+                    initialState.value = state;
+                    rowData.value = undefined;
+                    gridVisible.value = true;
+                });
+            }
         };
         const printState = () => {
-            console.log('Grid state', gridApi.value.getState());
+            console.log('Grid state', gridApi.value!.getState());
         };
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
 
-            const updateData = (data) => (rowData.value = data);
+            const updateData = (data: any[]) => (rowData.value = data);
 
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
                 .then((resp) => resp.json())

@@ -1,4 +1,10 @@
-import { _getInnerWidth, _getScrollLeft, _isElementChildOfClass, _setScrollLeft } from 'ag-stack';
+import {
+    _getInnerWidth,
+    _getScrollLeft,
+    _isElementChildOfClass,
+    _isInvisibleScrollbar,
+    _setScrollLeft,
+} from 'ag-stack';
 
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
@@ -14,6 +20,7 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import type { PopupService } from '../widgets/popupService';
+import { INVISIBLE_SCROLLBAR_SIZE } from './abstractFakeScrollComp';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
@@ -619,7 +626,12 @@ export class GridBodyCtrl extends BeanStub {
             return fakeScrollbarHeight;
         }
 
+        // Showing the horizontal scrollbar is debounced, so it can still measure zero here while it is
+        // about to take up space. Fall back to the size the scroll comps themselves will apply.
         const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth() || 0;
+        if (scrollbarWidth === 0 && _isInvisibleScrollbar()) {
+            return INVISIBLE_SCROLLBAR_SIZE;
+        }
         return scrollbarWidth;
     }
 }

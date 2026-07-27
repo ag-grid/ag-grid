@@ -315,6 +315,9 @@ export class SortService extends BeanStub implements NamedBean {
             columnRowGroupChanged: refreshStyles,
             displayedColumnsChanged: refreshStyles,
         });
+
+        // A column already sorted when its header is created (e.g. from initialState) must have correct styles
+        refreshStyles();
     }
 
     public initCol(column: AgColumn): void {
