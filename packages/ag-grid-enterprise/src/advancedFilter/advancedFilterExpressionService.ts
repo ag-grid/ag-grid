@@ -29,7 +29,7 @@ import {
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
-import { getBigIntParser } from './filterExpressionUtils';
+import { getBigIntFormatter, getBigIntParser } from './filterExpressionUtils';
 
 export class AdvancedFilterExpressionService extends BeanStub implements NamedBean {
     beanName = 'advFilterExpSvc' as const;
@@ -44,7 +44,16 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         (model: { filter?: string | number; colId: string }) => string | null
     > = {
         number: (model) => _toStringOrNull(model.filter) ?? '',
-        bigint: (model) => _toStringOrNull(model.filter) ?? '',
+        bigint: (model) => {
+            const rawValue = _toStringOrNull(model.filter);
+            const column = this.colModel.getNonPivotCol(model.colId);
+            const formatter = getBigIntFormatter(column);
+            if (!formatter || rawValue == null) {
+                return rawValue ?? '';
+            }
+            const parsed = getBigIntParser(column)(rawValue);
+            return (parsed == null ? null : formatter(parsed)) ?? rawValue;
+        },
         date: (model) => {
             const column = this.colModel.getNonPivotCol(model.colId);
             if (!column) {

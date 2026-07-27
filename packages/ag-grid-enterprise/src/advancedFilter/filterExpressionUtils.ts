@@ -45,6 +45,12 @@ export function getBigIntParser(column: AgColumn | null | undefined): (value: st
     return column?.colDef.filterParams?.bigintParser ?? _parseBigIntOrNull;
 }
 
+export function getBigIntFormatter(
+    column: AgColumn | null | undefined
+): ((value: bigint | null) => string | null) | undefined {
+    return column?.colDef.filterParams?.bigintFormatter;
+}
+
 export function getSearchString(value: string, position: number, endPosition: number): string {
     if (!value) {
         return '';

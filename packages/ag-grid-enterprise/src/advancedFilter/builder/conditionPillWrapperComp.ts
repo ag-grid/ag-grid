@@ -11,6 +11,7 @@ import { Component } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import { getBigIntParser } from '../filterExpressionUtils';
 import type {
     AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
@@ -209,6 +210,9 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         // Number comes back as string from input, so convert. Dates are already in iso string format
         if (this.baseCellDataType === 'number') {
             parsedOperand = _exists(operand) ? Number(operand) : '';
+        } else if (this.baseCellDataType === 'bigint') {
+            const parsed = _exists(operand) ? getBigIntParser(this.column)(operand) : null;
+            parsedOperand = parsed == null ? '' : String(parsed);
         }
         (this.filterModel as any).filter = parsedOperand;
         this.validate();
