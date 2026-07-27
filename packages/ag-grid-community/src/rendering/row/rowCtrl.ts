@@ -1414,12 +1414,18 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
      * (React mounts a child cell's effect before its parent row's).
      */
     public getAriaRowIndex(): number | null {
-        const { rowNode, beans } = this;
+        const { rowNode } = this;
 
         const { rowIndex } = rowNode;
         if (rowIndex == null || rowNode.getRowIndexString() === null) {
             return null;
         }
+
+        return this.getAriaRowIndexForRow(rowIndex);
+    }
+
+    private getAriaRowIndexForRow(rowIndex: number): number {
+        const { rowNode, beans } = this;
 
         const rowPosition: RowPosition = {
             rowIndex,
@@ -1444,16 +1450,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const rowIsEven = rowIndex % 2 === 0;
-        const ariaRowIndex = (this.ariaRowIndex = this.getAriaRowIndex());
+        const ariaRowIndex = (this.ariaRowIndex = this.getAriaRowIndexForRow(rowIndex));
 
         if (rowGui) {
             rowGui.rowComp.setRowIndex(rowIndexStr);
             rowGui.rowComp.toggleCss('ag-row-even', rowIsEven);
             rowGui.rowComp.toggleCss('ag-row-odd', !rowIsEven);
 
-            if (ariaRowIndex != null) {
-                _setAriaRowIndex(rowGui.element, ariaRowIndex);
-            }
+            _setAriaRowIndex(rowGui.element, ariaRowIndex);
         }
     }
 }
