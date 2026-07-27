@@ -19,9 +19,12 @@ test.agExample(import.meta, () => {
         await expect(aggregations.locator('.ag-status-name-value').filter({ hasText: 'Average' })).toContainText('6');
         await expect(aggregations.locator('.ag-status-name-value').filter({ hasText: 'Sum' })).toContainText('18');
 
-        // Count, Min and Max are not configured, so they must not be shown.
-        await expect(aggregations).not.toContainText('Count');
-        await expect(aggregations).not.toContainText('Min');
-        await expect(aggregations).not.toContainText('Max');
+        // Count, Min and Max are not configured. Their label elements stay in the DOM but are
+        // hidden (display:none), so assert visibility rather than text absence — `toContainText`
+        // matches textContent, which includes hidden nodes.
+        const named = (label: string) => aggregations.locator('.ag-status-name-value').filter({ hasText: label });
+        await expect(named('Count')).toBeHidden();
+        await expect(named('Min')).toBeHidden();
+        await expect(named('Max')).toBeHidden();
     });
 });

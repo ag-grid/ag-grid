@@ -23,9 +23,15 @@ test.agExample(import.meta, () => {
         await agIdFor.headerCell('athlete').click();
         await waitForRowAnimations(page);
 
-        // Ascending by athlete name: 'Michael Phelps' is no longer the first row.
-        await expect(dataRow(0).locator('[col-id="athlete"]')).not.toContainText('Michael Phelps');
-        await expect(dataRow(0).locator('[col-id="athlete"]')).not.toBeEmpty();
+        // The sort purges the cache and re-fetches; row 0 is briefly a loading placeholder
+        // (a spinner image in the ID column). This demo dataset has blank-athlete records
+        // that sort to the top ascending, so assert the block has finished loading (no
+        // spinner) and that the re-order moved 'Michael Phelps' off the first row — rather
+        // than assuming row 0's athlete is non-empty.
+        await expect(async () => {
+            await expect(dataRow(0).locator('img')).toHaveCount(0);
+            await expect(dataRow(0).locator('[col-id="athlete"]')).not.toContainText('Michael Phelps');
+        }).toPass();
     });
 
     test.eachFramework('selecting a row applies the selected state', async ({ page }) => {
