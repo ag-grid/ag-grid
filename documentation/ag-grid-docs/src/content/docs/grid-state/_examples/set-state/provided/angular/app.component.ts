@@ -44,6 +44,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
             @if (gridVisible()) {
                 <ag-grid-angular
                     style="width: 100%; height: 100%;"
+                    gridId="setState"
                     [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef"
                     [autoGroupColumnDef]="autoGroupColumnDef"

@@ -114,6 +114,7 @@ const GridExample = () => {
                         {gridVisible && (
                             <AgGridReact<IOlympicData>
                                 ref={gridRef}
+                                gridId="gridState"
                                 rowData={data}
                                 loading={loading}
                                 columnDefs={columnDefs}
@@ -126,6 +127,7 @@ const GridExample = () => {
                                 calculatedColumns={true}
                                 enableRowPinning={true}
                                 suppressColumnMoveAnimation={true}
+                                ensureDomOrder={true}
                                 initialState={initialState}
                                 onGridPreDestroyed={onGridPreDestroyed}
                                 onStateUpdated={onStateUpdated}

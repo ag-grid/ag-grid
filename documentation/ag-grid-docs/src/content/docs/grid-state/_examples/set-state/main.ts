@@ -12,6 +12,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
+    gridId: 'setState',
     columnDefs: [
         {
             field: 'athlete',

@@ -36,6 +36,7 @@ const VueExample = defineComponent({
                 <ag-grid-vue
                     v-if="gridVisible"
                     style="width: 100%; height: 100%;"
+                    gridId="gridState"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
@@ -47,6 +48,7 @@ const VueExample = defineComponent({
                     :calculatedColumns="true"
                     :enableRowPinning="true"
                     :suppressColumnMoveAnimation="true"
+                    :ensureDomOrder="true"
                     :rowData="rowData"
                     :initialState="initialState"
                     @grid-pre-destroyed="onGridPreDestroyed"

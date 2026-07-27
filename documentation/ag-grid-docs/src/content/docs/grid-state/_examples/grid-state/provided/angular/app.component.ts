@@ -42,6 +42,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
             @if (gridVisible()) {
                 <ag-grid-angular
                     style="width: 100%; height: 100%;"
+                    gridId="gridState"
                     [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef"
                     [autoGroupColumnDef]="autoGroupColumnDef"
@@ -52,6 +53,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                     [calculatedColumns]="true"
                     [enableRowPinning]="true"
                     [suppressColumnMoveAnimation]="true"
+                    [ensureDomOrder]="true"
                     [rowData]="rowData"
                     [initialState]="initialState"
                     [gridOptions]="gridOptions"

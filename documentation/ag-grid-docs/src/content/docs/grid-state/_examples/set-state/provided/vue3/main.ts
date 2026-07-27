@@ -38,6 +38,7 @@ const VueExample = defineComponent({
                 <ag-grid-vue
                     v-if="gridVisible"
                     style="width: 100%; height: 100%;"
+                    gridId="setState"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"

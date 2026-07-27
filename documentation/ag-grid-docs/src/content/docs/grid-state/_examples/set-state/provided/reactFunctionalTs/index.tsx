@@ -133,6 +133,7 @@ const GridExample = () => {
                         {gridVisible && (
                             <AgGridReact<IOlympicData>
                                 ref={gridRef}
+                                gridId="setState"
                                 rowData={rowData}
                                 columnDefs={columnDefs}
                                 defaultColDef={defaultColDef}

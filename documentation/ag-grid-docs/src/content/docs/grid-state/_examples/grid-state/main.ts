@@ -12,6 +12,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
+    gridId: 'gridState',
     columnDefs: [
         {
             field: 'athlete',
@@ -57,6 +58,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     calculatedColumns: true,
     enableRowPinning: true,
     suppressColumnMoveAnimation: true,
+    ensureDomOrder: true,
     onGridPreDestroyed: onGridPreDestroyed,
     onStateUpdated: onStateUpdated,
 };
