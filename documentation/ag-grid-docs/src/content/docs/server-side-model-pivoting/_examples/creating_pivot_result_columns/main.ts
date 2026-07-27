@@ -12,6 +12,7 @@ import {
     ColumnsToolPanelModule,
     ContextMenuModule,
     RowGroupingModule,
+    RowGroupingPanelModule,
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
 
@@ -27,17 +28,19 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     RowGroupingModule,
+    RowGroupingPanelModule,
     ServerSideRowModelModule,
 ]);
 
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'year', pivot: true }, // pivot on 'year'
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
+        { field: 'country', rowGroup: true, enableRowGroup: true },
+        { field: 'sport', enableRowGroup: true },
+        { field: 'year', pivot: true, enablePivot: true }, // pivot on 'year'
+        { field: 'gold', aggFunc: 'sum', enableValue: true },
+        { field: 'silver', aggFunc: 'sum', enableValue: true },
+        { field: 'bronze', aggFunc: 'sum', enableValue: true },
     ],
     defaultColDef: {
         flex: 1,
@@ -52,6 +55,12 @@ const gridOptions: GridOptions<IOlympicData> = {
 
     // enable pivoting
     pivotMode: true,
+
+    sideBar: {
+        toolPanels: ['columns'],
+    },
+    rowGroupPanelShow: 'always',
+    pivotPanelShow: 'always',
 };
 
 // setup the grid after the page has finished loading

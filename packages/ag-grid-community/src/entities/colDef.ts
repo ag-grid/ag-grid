@@ -737,6 +737,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Sort direction applied to this column's pivot result columns when this column is used to pivot on.
      * Independent of `sort` - pivot sorting does not flow to or from the column's own sort.
+     * @default 'asc'
      * @agModule `PivotModule`
      */
     pivotSort?: SortDirection;

@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
@@ -13,11 +13,11 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
     beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
-    function createPivotGrid(): GridApi {
+    function createPivotGrid(yearColDef?: Partial<ColDef>): GridApi {
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
-                { field: 'year', pivot: true, hide: true },
+                { field: 'year', pivot: true, hide: true, ...yearColDef },
                 { field: 'sales', aggFunc: 'sum', hide: true },
             ],
             pivotMode: true,
@@ -43,6 +43,18 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
             'pivot_year_2021_sales',
             'pivot_year_2022_sales',
         ]);
+    });
+
+    test.each(['pivotSort', 'initialPivotSort'] as const)('colDef.%s is applied on initialisation', async (prop) => {
+        const api = createPivotGrid({ [prop]: 'desc' });
+        await asyncSetTimeout(10);
+
+        expect(getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'))).toEqual([
+            'pivot_year_2022_sales',
+            'pivot_year_2021_sales',
+            'pivot_year_2020_sales',
+        ]);
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
     });
 
     test('pivotSort desc reverses the pivot column order; asc/none restore it', async () => {
