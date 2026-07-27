@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
-import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
+import type { AgColumn, ColDef, GridApi, HeaderLocation } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -82,9 +82,7 @@ describe('Editable header name — tooltips', () => {
 
     test('a static headerTooltip string is unaffected by a rename', async () => {
         // headerTooltip is a fixed string independent of the display name, so a rename does not touch it.
-        const { api } = await createGrid([
-            { field: 'athlete', headerNameEditable: true, headerTooltip: 'Static tip' },
-        ]);
+        const { api } = await createGrid([{ field: 'athlete', headerNameEditable: true, headerTooltip: 'Static tip' }]);
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
         await asyncSetTimeout(1);
@@ -94,6 +92,43 @@ describe('Editable header name — tooltips', () => {
         await hoverHeader();
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Static tip');
+    });
+});
+
+describe('Editable header name — header locations', () => {
+    const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+    afterEach(() => {
+        gridMgr.reset();
+        vi.resetAllMocks();
+    });
+
+    // The override is resolved in getHeaderName ahead of the headerValueGetter, independent of the
+    // location passed in, so the edited name must be returned for every consumer location.
+    const locations: Exclude<HeaderLocation, null>[] = [
+        'header',
+        'columnDrop',
+        'columnToolPanel',
+        'csv',
+        'filterToolPanel',
+        'groupFilter',
+        'model',
+        'advancedFilter',
+        'chart',
+    ];
+
+    test.each(locations)('an edited header name is returned for the "%s" location', async (location) => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'athlete', headerNameEditable: true, headerValueGetter: () => 'From Getter' }],
+            rowData: [{ athlete: 'Michael Phelps' }],
+            initialState: {
+                columnHeaderName: { columnHeaderNames: [{ colId: 'athlete', headerName: 'Renamed' }] },
+            },
+        });
+        await asyncSetTimeout(1);
+
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+        expect(api.getDisplayNameForColumn(column, location)).toBe('Renamed');
     });
 });
 
