@@ -83,7 +83,6 @@ import type {
     OverlayType,
     PaginationNumberFormatter,
     PaginationPanel,
-    PdfExportParams,
     PivotColumnGroupTotals,
     PivotRowTotals,
     PostProcessPopup,
@@ -606,14 +605,6 @@ export interface Props<TData> {
          * @default false
          */
     suppressExcelExport?: boolean,
-    /** A default configuration object used to export to PDF.
-         * @agModule `PdfExportModule`
-         */
-    defaultPdfExportParams?: PdfExportParams,
-    /** Prevents the user from exporting the grid to PDF.
-         * @default false
-         */
-    suppressPdfExport?: boolean,
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.
          * @initial
          * @agModule `ExcelExportModule`
@@ -2250,8 +2241,6 @@ export function getProps() {
         suppressCsvExport: undefined,
         defaultExcelExportParams: undefined,
         suppressExcelExport: undefined,
-        defaultPdfExportParams: undefined,
-        suppressPdfExport: undefined,
         excelStyles: undefined,
         findSearchValue: undefined,
         findOptions: undefined,

@@ -176,7 +176,6 @@ export type DefaultMenuItem =
     | 'export'
     | 'csvExport'
     | 'excelExport'
-    | 'pdfExport'
     | 'separator'
     | 'pivotChart'
     | 'chartRange'
