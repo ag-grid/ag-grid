@@ -19,6 +19,21 @@ name: GitHub issue AI triage
 #       (from the single AITGH `→ In Progress` JIRA automation rule:
 #        POST /repos/ag-grid/ag-grid/dispatches
 #        {"event_type":"gh-triage-resume","client_payload":{"issue_key":"AITGH-XXX"}})
+#   repository_dispatch gh-triage-manual-resume → ALWAYS stage=resume, no routing
+#       (from a per-issue "Manual trigger" Jira Automation rule — a PM-facing
+#        button in the AITGH issue view's "..." menu, unrelated to the
+#        In Progress drag above. Explicit human intent, so it bypasses
+#        preflight/decide-resume-route entirely rather than going through the
+#        execute-vs-resume ambiguity that routing exists to resolve for the
+#        drag. POST /repos/ag-grid/ag-grid/dispatches
+#        {"event_type":"gh-triage-manual-resume","client_payload":{"issue_key":"AITGH-XXX"}})
+#   repository_dispatch gh-triage-manual-repro-rebuild → ALWAYS stage=repro-rebuild
+#       (same "Manual trigger" pattern, a second AITGH button. Independent of
+#        the browser-verify-chain/repro-rebuild-chain auto-chain below — this
+#        is the human-confirmed-reproduces path from github-triage-pipeline's
+#        rules.md, letting repro-rebuild run without ever needing browser-verify.
+#        POST /repos/ag-grid/ag-grid/dispatches
+#        {"event_type":"gh-triage-manual-repro-rebuild","client_payload":{"issue_key":"AITGH-XXX"}})
 #   workflow_dispatch                  → force a stage (dry-run / debugging)
 # ============================================================================
 
@@ -29,7 +44,7 @@ on:
     # issues:
     #     types: [opened, labeled]
     repository_dispatch:
-        types: [gh-triage-resume]
+        types: [gh-triage-resume, gh-triage-manual-resume, gh-triage-manual-repro-rebuild]
     workflow_dispatch:
         inputs:
             stage:
@@ -103,8 +118,12 @@ jobs:
                   jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
 
     # -------------------------------------------------- run
-    # The parameterised stage runner (triage / resume / execute). Runs on the
-    # issue event (triage), a forced dispatch, or a non-empty preflight route.
+    # The parameterised stage runner (triage / resume / execute / repro-rebuild).
+    # Runs on the issue event (triage), a forced dispatch, a non-empty preflight
+    # route, or one of the two manual-trigger button events (which — unlike
+    # gh-triage-resume — always resolve to ONE specific stage directly, no
+    # preflight/routing involved: the PM's button click IS the unambiguous
+    # intent signal).
     run:
         needs: [preflight]
         if: |
@@ -113,6 +132,8 @@ jobs:
               (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'triage') && github.event.issue.state == 'open')
               || github.event_name == 'workflow_dispatch'
               || (github.event_name == 'repository_dispatch' && needs.preflight.outputs.stage != '')
+              || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-resume')
+              || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-repro-rebuild')
             )
         runs-on: ubuntu-latest
         permissions:
@@ -136,7 +157,7 @@ jobs:
             - id: pipeline
               uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
               with:
-                  stage: ${{ needs.preflight.outputs.stage || inputs.stage || 'triage' }}
+                  stage: ${{ needs.preflight.outputs.stage || inputs.stage || (github.event.action == 'gh-triage-manual-resume' && 'resume') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'repro-rebuild') || 'triage' }}
                   product: grid
                   gh_issue: ${{ github.event.issue.number || github.event.client_payload.gh_issue || inputs.gh_issue }}
                   issue_key: ${{ needs.preflight.outputs.issue_key || github.event.client_payload.issue_key || inputs.issue_key }}
