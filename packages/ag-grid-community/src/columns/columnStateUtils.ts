@@ -510,7 +510,13 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         const groupOverrides = colModel.groupHeaderNameOverrides;
         if (groupOverrides.size) {
             groupOverrides.clear();
-            eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged' });
+            eventSvc.dispatchEvent({
+                type: 'columnHeaderNameChanged',
+                column: null,
+                columns: null,
+                columnGroup: null,
+                source,
+            });
         }
 
         // Re-order + refresh + dispatch once, over the final (ordered) structure.

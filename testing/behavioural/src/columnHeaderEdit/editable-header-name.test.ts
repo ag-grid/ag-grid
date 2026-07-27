@@ -108,8 +108,8 @@ describe('Editable header name', () => {
         input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
     }
 
-    // Columns and groups both notify header-name changes through the grid-level `columnHeaderNameChanged`
-    // event (keyed by colId), so capture it from the internal event service.
+    // Columns and groups both notify header-name changes through the public `columnHeaderNameChanged`
+    // event (carrying the renamed column or columnGroup), so capture it from the event service.
     function captureColumnHeaderNameChanged(column: AgColumn): any[] {
         const events: any[] = [];
         (column as any).beans.eventSvc.addGlobalListener((type: string, e: any) => {
@@ -208,7 +208,7 @@ describe('Editable header name', () => {
         await asyncSetTimeout(1);
 
         expect(events.length).toBe(1);
-        expect(events[0].colId).toBe('athlete');
+        expect(events[0].column.getColId()).toBe('athlete');
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Competitor');
     });
 
@@ -374,11 +374,19 @@ describe('Editable header name', () => {
             Array.from(gridDiv.querySelectorAll('.ag-column-select-column-label')).map((el) => el.textContent);
         expect(groupLabel()).toContain('Group');
 
+        const events = captureColumnHeaderNameChanged(api.getColumn('athlete') as unknown as AgColumn);
         const input = await openEditor(toolPanel, gridDiv, 'Group');
         await userEvent.clear(input);
         await userEvent.type(input, 'Renamed');
         pressEnter(input);
         await asyncSetTimeout(1);
+
+        // The public event carries the renamed columnGroup (and no column) for a group rename.
+        // Live mode (the default) dispatches per keystroke, so assert on the latest event.
+        expect(events.length).toBeGreaterThan(0);
+        const lastEvent = events[events.length - 1];
+        expect(lastEvent.columnGroup.getGroupId()).toBe('athleteGroup');
+        expect(lastEvent.column).toBeNull();
 
         // The tool panel (and column chooser, which shares agPrimaryColsList) label reflects the new name.
         expect(groupLabel()).toContain('Renamed');

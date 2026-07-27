@@ -18,6 +18,7 @@ export const _PUBLIC_EVENTS = [
     'columnMoved',
     'columnVisible',
     'columnPinned',
+    'columnHeaderNameChanged',
     'columnGroupOpened',
     'columnResized',
     'displayedColumnsChanged',
@@ -179,7 +180,6 @@ const _INTERNAL_EVENTS = [
     'headerRowsChanged',
     'rowExpansionStateChanged',
     'showRowGroupColsSetChanged',
-    'columnHeaderNameChanged',
     'columnHeaderEditHighlightChanged',
     'columnShowValuesAsChanged',
 ] as const;

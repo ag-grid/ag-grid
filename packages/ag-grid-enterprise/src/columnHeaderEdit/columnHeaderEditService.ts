@@ -89,9 +89,15 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
             } else {
                 overrides.set(groupId, headerName);
             }
-            this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged', groupId });
+            this.beans.eventSvc.dispatchEvent({
+                type: 'columnHeaderNameChanged',
+                column: null,
+                columns: null,
+                columnGroup: target,
+                source: 'uiColumnHeaderEdit',
+            });
         } else {
-            target.setHeaderNameOverride(headerName);
+            target.setHeaderNameOverride(headerName, 'uiColumnHeaderEdit');
         }
     }
 
@@ -153,7 +159,7 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
         const targetId = isGroup ? target.groupId : target.getColId();
         this.removePopupColListener = this.addManagedEventListeners({
             columnHeaderNameChanged: (event) => {
-                const eventId = isGroup ? event.groupId : event.colId;
+                const eventId = isGroup ? event.columnGroup?.getGroupId() : event.column?.getColId();
                 if (!eventId || eventId === targetId) {
                     onNameChanged();
                 }

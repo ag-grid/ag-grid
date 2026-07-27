@@ -851,7 +851,13 @@ export class AgColumn<TValue = any>
         // without filtering by colId; the grid-level event drives the state service and keeps parity
         // with column groups (which have no per-column event bus).
         this.dispatchColEvent('headerNameChanged', source);
-        this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged', colId: this.colId });
+        this.beans.eventSvc.dispatchEvent({
+            type: 'columnHeaderNameChanged',
+            column: this,
+            columns: null,
+            columnGroup: null,
+            source,
+        });
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {
