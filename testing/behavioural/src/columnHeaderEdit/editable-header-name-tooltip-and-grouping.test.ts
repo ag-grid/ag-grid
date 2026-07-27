@@ -1,5 +1,5 @@
-import { userEvent } from '@testing-library/user-event';
 import { waitFor } from '@testing-library/dom';
+import { userEvent } from '@testing-library/user-event';
 
 import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
@@ -23,12 +23,16 @@ describe('Editable header name — tooltips', () => {
 
     const rowData = [{ athlete: 'Michael Phelps' }];
 
-    async function createGrid(columnDefs: ColDef[]): Promise<{ api: GridApi; gridDiv: HTMLElement }> {
+    async function createGrid(
+        columnDefs: ColDef[],
+        extraOptions?: Record<string, any>
+    ): Promise<{ api: GridApi; gridDiv: HTMLElement }> {
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs,
             rowData,
             defaultColDef: { flex: 1, minWidth: 100 },
             tooltipShowDelay: 200,
+            ...extraOptions,
         });
         return { api, gridDiv: getGridElement(api)! as HTMLElement };
     }
@@ -37,7 +41,7 @@ describe('Editable header name — tooltips', () => {
     const waitForTooltips = async (count: number) =>
         await waitFor(() => expect(getTooltips().length).toBe(count), { timeout: 2000 });
 
-    async function hoverHeader(gridDiv: HTMLElement): Promise<void> {
+    async function hoverHeader(): Promise<void> {
         const headerCell = await waitFor(
             () => document.querySelector('.ag-header-cell[col-id="athlete"]') as HTMLElement
         );
@@ -52,10 +56,10 @@ describe('Editable header name — tooltips', () => {
         await waitForTooltips(0);
     }
 
-    test('the header tooltip reflects the renamed name through headerTooltipValueGetter', async () => {
-        // The getter returns valueFormatted, which the tooltip service derives from the display name,
-        // so the override must surface here just as it does in the header cell text.
-        const { api, gridDiv } = await createGrid([
+    test('the header tooltip reflects the edited name after a rename', async () => {
+        // headerTooltipValueGetter reads valueFormatted, which the tooltip service resolves from the
+        // display name on each read, so a rename underneath the header must surface in the tooltip.
+        const { api } = await createGrid([
             {
                 field: 'athlete',
                 headerNameEditable: true,
@@ -63,7 +67,7 @@ describe('Editable header name — tooltips', () => {
             },
         ]);
 
-        await hoverHeader(gridDiv);
+        await hoverHeader();
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Athlete');
         await unhoverHeader();
@@ -71,14 +75,14 @@ describe('Editable header name — tooltips', () => {
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
         await asyncSetTimeout(1);
 
-        await hoverHeader(gridDiv);
+        await hoverHeader();
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Renamed');
     });
 
     test('a static headerTooltip string is unaffected by a rename', async () => {
         // headerTooltip is a fixed string independent of the display name, so a rename does not touch it.
-        const { api, gridDiv } = await createGrid([
+        const { api } = await createGrid([
             { field: 'athlete', headerNameEditable: true, headerTooltip: 'Static tip' },
         ]);
 
@@ -87,7 +91,7 @@ describe('Editable header name — tooltips', () => {
         const column = api.getColumn('athlete') as unknown as AgColumn;
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
 
-        await hoverHeader(gridDiv);
+        await hoverHeader();
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Static tip');
     });
@@ -126,12 +130,12 @@ describe('Editable header name — row grouping', () => {
         await asyncSetTimeout(1);
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
 
-        api.addRowGroupColumn('athlete');
+        api.addRowGroupColumns(['athlete']);
         await asyncSetTimeout(1);
         expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['athlete']);
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
 
-        api.removeRowGroupColumn('athlete');
+        api.removeRowGroupColumns(['athlete']);
         await asyncSetTimeout(1);
         expect(api.getRowGroupColumns()).toEqual([]);
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
@@ -141,7 +145,7 @@ describe('Editable header name — row grouping', () => {
         const api = await createGrid();
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
-        api.addRowGroupColumn('athlete');
+        api.addRowGroupColumns(['athlete']);
         await asyncSetTimeout(1);
 
         expect(api.getState().columnHeaderName?.columnHeaderNames).toEqual([

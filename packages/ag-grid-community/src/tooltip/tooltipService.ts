@@ -291,17 +291,22 @@ export class TooltipService extends BeanStub implements NamedBean {
         }
         const location = 'header';
         const headerLocation = 'header';
-        const valueFormatted = this.beans.colNames.getDisplayNameForColumn(column, headerLocation, true);
-        const value = passedValue ?? valueFormatted;
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
             getLocation: () => location,
-            getTooltipValue: () =>
-                passedValue ??
-                colDef?.headerTooltipValueGetter?.(
-                    _addGridCommonParams(gos, { location, colDef, column, value, valueFormatted })
-                ) ??
-                colDef?.headerTooltip,
+            // Resolve the display name on each read so a refresh (e.g. after a header rename) reflects the
+            // current name, rather than serving the name captured when the tooltip was first set up.
+            getTooltipValue: () => {
+                if (passedValue != null) {
+                    return passedValue;
+                }
+                const valueFormatted = this.beans.colNames.getDisplayNameForColumn(column, headerLocation, true);
+                return (
+                    colDef?.headerTooltipValueGetter?.(
+                        _addGridCommonParams(gos, { location, colDef, column, value: valueFormatted, valueFormatted })
+                    ) ?? colDef?.headerTooltip
+                );
+            },
             shouldDisplayTooltip,
             getAdditionalParams: () => ({
                 column,
@@ -342,18 +347,23 @@ export class TooltipService extends BeanStub implements NamedBean {
 
         const location = 'headerGroup';
         const headerLocation = 'header';
-        const valueFormatted = this.beans.colNames.getDisplayNameForColumnGroup(column, headerLocation);
-        const value = passedValue ?? valueFormatted;
 
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
             getLocation: () => location,
-            getTooltipValue: () =>
-                passedValue ??
-                colDef?.headerTooltipValueGetter?.(
-                    _addGridCommonParams(gos, { location, colDef, column, value, valueFormatted })
-                ) ??
-                colDef?.headerTooltip,
+            // Resolve the display name on each read so a refresh (e.g. after a group rename) reflects the
+            // current name, rather than serving the name captured when the tooltip was first set up.
+            getTooltipValue: () => {
+                if (passedValue != null) {
+                    return passedValue;
+                }
+                const valueFormatted = this.beans.colNames.getDisplayNameForColumnGroup(column, headerLocation);
+                return (
+                    colDef?.headerTooltipValueGetter?.(
+                        _addGridCommonParams(gos, { location, colDef, column, value: valueFormatted, valueFormatted })
+                    ) ?? colDef?.headerTooltip
+                );
+            },
             shouldDisplayTooltip,
             getAdditionalParams: () => {
                 const additionalParams: ITooltipCtrlParams = {
