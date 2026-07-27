@@ -119,6 +119,99 @@ jobs:
             contents: read
             issues: write
             packages: read
+        outputs:
+            # NEW — downstream chain jobs need the mapping-ticket key and the
+            # fresh-confirmed-bug signal. See github-triage-pipeline action's own
+            # CLAUDE.md § "Auto-chaining browser-verify / repro-rebuild".
+            issue_key: ${{ steps.pipeline.outputs.issue_key }}
+            confirmed_bug: ${{ steps.pipeline.outputs.confirmed_bug }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+            - id: pipeline
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
+              with:
+                  stage: ${{ needs.preflight.outputs.stage || inputs.stage || 'triage' }}
+                  product: grid
+                  gh_issue: ${{ github.event.issue.number || github.event.client_payload.gh_issue || inputs.gh_issue }}
+                  issue_key: ${{ needs.preflight.outputs.issue_key || github.event.client_payload.issue_key || inputs.issue_key }}
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
+
+    # -------------------------------------------------- browser-verify-chain (NEW)
+    # Auto-fires ONLY after a FRESH triage (issues event, or an explicit
+    # workflow_dispatch stage=triage) just recorded a genuine triage-confirmed-bug
+    # — never after a resume/execute run, and never on a stale/failed run (the
+    # confirmed_bug output is itself gated on that — see the action's CLAUDE.md).
+    # Deliberately NOT gated on a resume also confirming a bug for this first
+    # increment — extending that is a small, separate follow-on if wanted.
+    #
+    # SECURITY NOTE: this reuses the SAME job permissions as `run` (no dedicated
+    # minimal-permission job split / persist-credentials:false / harden-runner
+    # block yet) — that hardening is a deliberately separate, not-yet-landed
+    # follow-up (see github-triage-pipeline action's CLAUDE.md § "Browser-verify
+    # (B2) — security posture"). Do not treat this job as hardened.
+    browser-verify-chain:
+        needs: [run]
+        if: |
+            !cancelled() &&
+            needs.run.outputs.confirmed_bug == 'true' &&
+            (
+              github.event_name == 'issues'
+              || (github.event_name == 'workflow_dispatch' && inputs.stage == 'triage')
+            )
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            issues: write
+            packages: read
+        outputs:
+            reproduces: ${{ steps.pipeline.outputs.reproduces }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+            - id: pipeline
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
+              with:
+                  stage: browser-verify
+                  product: grid
+                  issue_key: ${{ needs.run.outputs.issue_key }}
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
+
+    # -------------------------------------------------- repro-rebuild-chain (NEW)
+    # Auto-fires ONLY after browser-verify-chain recorded a genuine, fresh
+    # `reproduces` verdict. needs BOTH prior jobs (not just browser-verify-chain)
+    # because its own step below reads needs.run.outputs.issue_key — a job can
+    # only reference needs.<job>.outputs for jobs actually listed in its own
+    # `needs:`. Same security note as browser-verify-chain above.
+    repro-rebuild-chain:
+        needs: [run, browser-verify-chain]
+        if: |
+            !cancelled() && needs.browser-verify-chain.outputs.reproduces == 'true'
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            issues: write
+            packages: read
         steps:
             - uses: actions/checkout@v4
               with:
@@ -129,10 +222,9 @@ jobs:
                   channel: ${{ env.DEV_PROMPTS_CHANNEL }}
             - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
               with:
-                  stage: ${{ needs.preflight.outputs.stage || inputs.stage || 'triage' }}
+                  stage: repro-rebuild
                   product: grid
-                  gh_issue: ${{ github.event.issue.number || github.event.client_payload.gh_issue || inputs.gh_issue }}
-                  issue_key: ${{ needs.preflight.outputs.issue_key || github.event.client_payload.issue_key || inputs.issue_key }}
+                  issue_key: ${{ needs.run.outputs.issue_key }}
                   anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
