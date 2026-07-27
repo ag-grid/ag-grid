@@ -1,15 +1,15 @@
 @use '../core' as *;
 
-button#{$selector-exclude-grid} {
+button#{$selector-exclude-grid-bryntum} {
     font-family: var(--text-font-family);
     font-size: inherit;
     line-height: inherit;
     cursor: pointer;
 }
 
-button#{$selector-exclude-grid},
-input[type='reset']#{$selector-exclude-grid},
-input[type='submit']#{$selector-exclude-grid},
+button#{$selector-exclude-grid-bryntum},
+input[type='reset']#{$selector-exclude-grid-bryntum},
+input[type='submit']#{$selector-exclude-grid-bryntum},
 .button,
 .button-secondary,
 .button-tertiary {

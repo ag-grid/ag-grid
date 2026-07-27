@@ -10,6 +10,16 @@ $selector-lightmode: "[data-dark-mode='false']";
 // Exclude simple selectors from interfering with grid styles
 $selector-exclude-grid: ':where(:not([class^=ag]))';
 
+// Exlude bryntum classes from interfering with grid styles
+$selector-exclude-bryntum: ':where(:not([class^=b-]))';
+
+// Exclude both grid (ag) and bryntum (b-) component classes in a single
+// compound selector. Both :not()s must sit on the same element for the
+// exclusion to hold — listing $selector-exclude-grid and
+// $selector-exclude-bryntum as separate comma entries is a union and lets each
+// through the other's gap.
+$selector-exclude-grid-bryntum: ':where(:not([class^=ag]):not([class^=b-]))';
+
 $spacing-size-1: 4px;
 $spacing-size-2: 8px;
 $spacing-size-3: 12px;
