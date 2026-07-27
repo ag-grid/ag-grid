@@ -329,17 +329,17 @@
                     }
                 },
                 {
-                    "heading": "schedulerpro-constraints-svalbard",
+                    "heading": "schedulerpro-traveltime-svalbard",
                     "href": "/products/schedulerpro/examples/travel-time/",
                     "body_text": "Travel time",
                     "description": "Visualize travel time before/after an event",
                     "media": {
                         "kind": "image",
-                        "src": "../assets/schedulerpro/schedulerpro-traveltime-svalbard-768x556.png",
+                        "src": "../assets/schedulerpro/thumb.svalbard-light.png",
                         "alt": "schedulerpro-traveltime-svalbard",
                         "width": "768",
                         "height": "556",
-                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-constraints-svalbard-768x556.png"
+                        "src_original": "https://bryntum.com/products/schedulerpro/examples/travel-time/meta/thumb.svalbard-light.png"
                     }
                 }
             ]
