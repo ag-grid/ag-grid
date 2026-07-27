@@ -55,32 +55,28 @@ let rightApi: GridApi | undefined;
 const VueExample = defineComponent({
     template: /* html */ `
         <div class="example-wrapper">
-            <div class="grid-column">
-                <div class="test-header">
-                    Enter a number to analyse:
-                    <input type="text" @input="onNewNumber($event.target.value)" />
-                </div>
-                <ag-grid-vue
-                    class="grid-wrapper"
-                    :columnDefs="leftColumnDefs"
-                    :defaultColDef="leftDefaultColDef"
-                    :enableCellExpressions="true"
-                    :rowData="rowDataLeft"
-                    :context="context"
-                    @grid-ready="onLeftGridReady">
-                </ag-grid-vue>
+            <div class="item-header">
+                Enter a number to analyse:
+                <input type="text" @input="onNewNumber($event.target.value)" />
             </div>
-            <div class="grid-column">
-                <div class="test-header">Edit data on RHS, table updates on LHS</div>
-                <ag-grid-vue
-                    class="grid-wrapper"
-                    :columnDefs="rightColumnDefs"
-                    :defaultColDef="rightDefaultColDef"
-                    :rowData="rowDataRight"
-                    @grid-ready="onRightGridReady"
-                    @cell-value-changed="cellValueChanged">
-                </ag-grid-vue>
-            </div>
+            <div class="item-header">Edit data on RHS, table updates on LHS</div>
+            <ag-grid-vue
+                class="grid-wrapper"
+                :columnDefs="leftColumnDefs"
+                :defaultColDef="leftDefaultColDef"
+                :enableCellExpressions="true"
+                :rowData="rowDataLeft"
+                :context="context"
+                @grid-ready="onLeftGridReady">
+            </ag-grid-vue>
+            <ag-grid-vue
+                class="grid-wrapper"
+                :columnDefs="rightColumnDefs"
+                :defaultColDef="rightDefaultColDef"
+                :rowData="rowDataRight"
+                @grid-ready="onRightGridReady"
+                @cell-value-changed="cellValueChanged">
+            </ag-grid-vue>
         </div>`,
     components: {
         'ag-grid-vue': AgGridVue,
