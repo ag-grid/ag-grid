@@ -1408,8 +1408,29 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
+    /**
+     * The 1-based, header- and pinned-lane-aware aria-rowindex for this row, derived on demand from the
+     * row node and beans. Independent of comp mount, so a cell can read it before the row's comp is set up
+     * (React mounts a child cell's effect before its parent row's).
+     */
+    public getAriaRowIndex(): number | null {
+        const { rowNode, beans } = this;
+
+        const { rowIndex } = rowNode;
+        if (rowIndex == null || rowNode.getRowIndexString() === null) {
+            return null;
+        }
+
+        const rowPosition: RowPosition = {
+            rowIndex,
+            rowPinned: rowNode.rowPinned ?? null,
+        };
+
+        return getAriaHeaderRowCount(beans) + _getAbsoluteRowIndex(beans, rowPosition) + 1;
+    }
+
     private updateRowIndexes(): void {
-        const { rowNode, rowGui, beans } = this;
+        const { rowNode, rowGui } = this;
 
         const { rowIndex } = rowNode;
         if (rowIndex == null) {
@@ -1422,21 +1443,17 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const rowPosition: RowPosition = {
-            rowIndex,
-            rowPinned: this.rowNode.rowPinned ?? null,
-        };
-
-        const absoluteRowIndex = _getAbsoluteRowIndex(beans, rowPosition);
         const rowIsEven = rowIndex % 2 === 0;
-        const ariaRowIndex = (this.ariaRowIndex = getAriaHeaderRowCount(beans) + absoluteRowIndex + 1);
+        const ariaRowIndex = (this.ariaRowIndex = this.getAriaRowIndex());
 
         if (rowGui) {
-            rowGui?.rowComp.setRowIndex(rowIndexStr);
-            rowGui?.rowComp.toggleCss('ag-row-even', rowIsEven);
-            rowGui?.rowComp.toggleCss('ag-row-odd', !rowIsEven);
+            rowGui.rowComp.setRowIndex(rowIndexStr);
+            rowGui.rowComp.toggleCss('ag-row-even', rowIsEven);
+            rowGui.rowComp.toggleCss('ag-row-odd', !rowIsEven);
 
-            _setAriaRowIndex(rowGui.element, ariaRowIndex);
+            if (ariaRowIndex != null) {
+                _setAriaRowIndex(rowGui.element, ariaRowIndex);
+            }
         }
     }
 }

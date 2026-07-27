@@ -69,7 +69,7 @@ export class SpannedCellCtrl extends CellCtrl {
      */
     public override refreshAriaRowIndex(): void {
         const { eGui, rowCtrl } = this;
-        const ariaRowIndex = rowCtrl.ariaRowIndex;
+        const ariaRowIndex = rowCtrl.getAriaRowIndex();
         if (!eGui || ariaRowIndex == null) {
             return;
         }

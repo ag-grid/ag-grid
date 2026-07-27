@@ -1,8 +1,5 @@
-import type { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
-import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { CellCtrl } from '../cell/cellCtrl';
-import type { IRowComp } from '../row/rowCtrl';
 import { RowCtrl } from '../row/rowCtrl';
 import { SpannedCellCtrl } from './spannedCellCtrl';
 
@@ -10,20 +7,6 @@ export class SpannedRowCtrl extends RowCtrl {
     protected override getInitialRowClasses(): string[] {
         const positionClass = this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute';
         return ['ag-spanned-row', positionClass];
-    }
-
-    public override setComp(
-        rowComp: IRowComp,
-        element: HTMLElement,
-        containerType: RowContainerType,
-        compBean: BeanStub<any> | undefined
-    ): void {
-        super.setComp(rowComp, element, containerType, compBean);
-        // React fires a child cell's mount effect before its parent row's, so a spanned cell can run
-        // refreshAriaRowIndex before super.setComp derives ariaRowIndex; re-push it now the value exists.
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            cellCtrl.refreshAriaRowIndex();
-        }
     }
 
     public override getNewCellCtrl(col: AgColumn<any>): CellCtrl | undefined {
