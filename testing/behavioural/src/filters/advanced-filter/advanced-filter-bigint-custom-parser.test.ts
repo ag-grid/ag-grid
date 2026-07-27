@@ -2,7 +2,14 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { BigIntFilterModule, ClientSideRowModelModule, NumberFilterModule, getGridElement } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import {
+    AdvancedFilterBuilderHarness,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from '../../test-utils';
 
 interface TestRow {
     value: bigint;
@@ -63,6 +70,15 @@ function applyExpression(gridDiv: HTMLElement, expression: string): void {
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 }
 
+/** Display text of a builder condition row's value pill. */
+function valuePillText(item: HTMLElement): string {
+    return (
+        item
+            .querySelector('.ag-advanced-filter-builder-value-pill .ag-advanced-filter-builder-pill-display')
+            ?.textContent?.trim() ?? ''
+    );
+}
+
 const withParser: GridOptions<TestRow>['columnDefs'] = [
     {
         field: 'value',
@@ -86,6 +102,8 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
     const gridsManager = new TestGridsManager({
         modules: [NumberFilterModule, BigIntFilterModule, AdvancedFilterModule, ClientSideRowModelModule],
     });
+    beforeAll(() => installFilterLayoutMock());
+    afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
     test('hex typed via text input matches and displays with formatter', async () => {
@@ -143,5 +161,39 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         `);
         api.setAdvancedFilterModel(api.getAdvancedFilterModel());
         expect(getService(api).getExpressionDisplayValue()).toBe('[Value] = 255');
+    });
+
+    test('builder value pill formats the stored operand and parses custom bigint input', async () => {
+        const api = gridsManager.createGrid('grid3', {
+            columnDefs: withParser,
+            rowData: [{ value: 10n }, { value: 255n }, { value: 1000n }, { value: 65535n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        api.setAdvancedFilterModel({ filterType: 'bigint', colId: 'value', type: 'equals', filter: '255' } as any);
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+
+        // The stored decimal model value is displayed through the column's bigintFormatter.
+        expect(valuePillText(condition)).toBe('0xFF');
+
+        // `1000n` is only understood by the column's bigintParser (native BigInt rejects the suffix),
+        // so a canonical decimal in the model proves the builder ran the edit through that parser.
+        await builder.setValue(condition, '1000n');
+        await builder.apply();
+        await asyncSetTimeout(0);
+
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'bigint',
+            colId: 'value',
+            type: 'equals',
+            filter: '1000',
+        });
+        await new GridRows(api, 'builder operand edit matches only 1000').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 value:"1000n"
+        `);
     });
 });
