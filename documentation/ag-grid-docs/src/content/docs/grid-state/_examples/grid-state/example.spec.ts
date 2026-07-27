@@ -13,6 +13,15 @@ import {
 // after recreate — column/row identity is still compared via `col-id` / `row-id`.
 const RECREATE_VOLATILE_ATTRIBUTES = ['grid-id', 'data-testid', 'tabindex'];
 
+// Serialise the rendered grid once it has settled. `ag-scrollbar-scrolling` is a transient class
+// present mid-scroll-settle, so wait for it to clear first — otherwise a snapshot can capture the
+// grid at a different point in the scroll-settle than its counterpart.
+async function captureSettledGrid(page: Parameters<typeof serializeGridDom>[0]) {
+    await waitForRowAnimations(page);
+    await expect(page.locator('.ag-scrollbar-scrolling')).toHaveCount(0);
+    return serializeGridDom(page, { ignoreAttributes: RECREATE_VOLATILE_ATTRIBUTES });
+}
+
 // The grid records every state change (onStateUpdated) and, when recreated, seeds the new
 // grid from the previous grid's state so sort/filter/etc. are restored. State changes and
 // getState() are logged to the console via the Print State / Recreate buttons.
@@ -148,7 +157,7 @@ test.agExample(import.meta, () => {
         // 'Pin Column' opens a submenu on hover; the pin options live inside it.
         await page.locator('.ag-menu-option', { hasText: 'Pin Column' }).hover();
         await page.locator('.ag-menu-option-text', { hasText: 'Pin Left' }).click();
-        await expect(page.locator('.ag-pinned-left-header')).toContainText('Athlete');
+        await expect(agIdFor.headerCell('athlete')).toHaveClass(/ag-header-cell-last-left-pinned/);
 
         // Add a runtime calculated column (userColumns state) via the age header menu.
         await agIdFor.headerCell('age').hover();
@@ -166,24 +175,22 @@ test.agExample(import.meta, () => {
             page.locator('.ag-header-cell.ag-calculated-column').filter({ hasText: 'Age Plus Ten' })
         ).toBeVisible();
 
-        // Open the Columns side bar (side bar state) and hide the date column (column state).
-        await agIdFor.sideBarButton('Columns').click();
+        // Hide the date column (column state) via the Columns tool panel, which the open side bar
+        // (side bar state) shows by default.
         await expect(agIdFor.columnToolPanel()).toBeVisible();
-        await agIdFor.columnSelectListItemCheckbox('date').click();
+        await agIdFor.columnSelectListItemCheckbox('Date Column').click();
         await expect(agIdFor.headerCell('date')).toBeHidden();
-        await waitForRowAnimations(page);
 
         // Snapshot the rendered grid, then recreate from the captured state.
-        const before = await serializeGridDom(page, { ignoreAttributes: RECREATE_VOLATILE_ATTRIBUTES });
+        const before = await captureSettledGrid(page);
         expect(before).not.toBeNull();
 
         await page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true }).click();
         await waitForGridContent(page);
         await expect(agIdFor.headerCell('ag-Grid-AutoColumn')).toBeVisible();
-        await waitForRowAnimations(page);
 
         // The recreated grid renders identically to the pre-recreate snapshot.
-        expect(await serializeGridDom(page, { ignoreAttributes: RECREATE_VOLATILE_ATTRIBUTES })).toBe(before);
+        expect(await captureSettledGrid(page)).toBe(before);
     });
 
     test.eachFramework('Recreating the grid restores the current page', async ({ agIdFor, page }) => {
@@ -192,15 +199,13 @@ test.agExample(import.meta, () => {
 
         // Move to the second page (pagination state).
         await page.locator('[aria-label="Next Page"]').click();
-        await waitForRowAnimations(page);
 
-        const before = await serializeGridDom(page, { ignoreAttributes: RECREATE_VOLATILE_ATTRIBUTES });
+        const before = await captureSettledGrid(page);
         expect(before).not.toBeNull();
 
         await page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true }).click();
         await waitForGridContent(page);
-        await waitForRowAnimations(page);
 
-        expect(await serializeGridDom(page, { ignoreAttributes: RECREATE_VOLATILE_ATTRIBUTES })).toBe(before);
+        expect(await captureSettledGrid(page)).toBe(before);
     });
 });
