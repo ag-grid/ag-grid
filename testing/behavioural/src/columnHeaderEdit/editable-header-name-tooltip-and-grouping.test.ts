@@ -1,11 +1,12 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
-import type { AgColumn, ColDef, GridApi, HeaderLocation } from 'ag-grid-community';
+import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout, canvasPolyfill } from '../test-utils';
 
 /**
  * A renamed header name is stored as an override on the column entity (and the group-id-keyed group
@@ -95,7 +96,14 @@ describe('Editable header name — tooltips', () => {
     });
 });
 
-describe('Editable header name — header locations', () => {
+/**
+ * Each HeaderLocation surface resolves the name through the same getHeaderName override short-circuit,
+ * so an edited name must appear wherever the column is rendered — not just in the header cell. Each test
+ * renders the surface and asserts the edited name in its real output. `headerValueGetter` is present so
+ * the assertions also prove the override wins over it. The 'chart' location is covered separately (it
+ * needs the AG Charts module and canvas polyfill); 'model' is SSRM-internal metadata and not rendered.
+ */
+describe('Editable header name — rendered header locations', () => {
     const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
 
     afterEach(() => {
@@ -103,32 +111,162 @@ describe('Editable header name — header locations', () => {
         vi.resetAllMocks();
     });
 
-    // The override is resolved in getHeaderName ahead of the headerValueGetter, independent of the
-    // location passed in, so the edited name must be returned for every consumer location.
-    const locations: Exclude<HeaderLocation, null>[] = [
-        'header',
-        'columnDrop',
-        'columnToolPanel',
-        'csv',
-        'filterToolPanel',
-        'groupFilter',
-        'model',
-        'advancedFilter',
-        'chart',
+    const rowData = [
+        { athlete: 'Michael Phelps', country: 'United States', age: 23 },
+        { athlete: 'Ian Thorpe', country: 'Australia', age: 24 },
     ];
 
-    test.each(locations)('an edited header name is returned for the "%s" location', async (location) => {
+    const RENAMED = 'Renamed';
+    const editedAthlete = (extra: Partial<ColDef> = {}): ColDef => ({
+        field: 'athlete',
+        headerNameEditable: true,
+        headerValueGetter: () => 'From Getter',
+        ...extra,
+    });
+    const initialRename = {
+        columnHeaderName: { columnHeaderNames: [{ colId: 'athlete', headerName: RENAMED }] },
+    };
+
+    const panelText = (selector: string): string =>
+        Array.from(document.querySelectorAll(selector))
+            .map((el) => el.textContent ?? '')
+            .join(' | ');
+
+    test('header: the edited name renders as the header cell text', async () => {
+        await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [editedAthlete(), { field: 'country' }],
+            rowData,
+            initialState: initialRename,
+        });
+        await waitFor(() =>
+            expect(document.querySelector('.ag-header-cell[col-id="athlete"] .ag-header-cell-text')?.textContent).toBe(
+                RENAMED
+            )
+        );
+    });
+
+    test('csv: the edited name is used in the exported header row', async () => {
         const api = await gridMgr.createGridAndWait('myGrid', {
-            columnDefs: [{ field: 'athlete', headerNameEditable: true, headerValueGetter: () => 'From Getter' }],
-            rowData: [{ athlete: 'Michael Phelps' }],
-            initialState: {
-                columnHeaderName: { columnHeaderNames: [{ colId: 'athlete', headerName: 'Renamed' }] },
-            },
+            columnDefs: [editedAthlete(), { field: 'country' }],
+            rowData,
+            initialState: initialRename,
         });
         await asyncSetTimeout(1);
 
-        const column = api.getColumn('athlete') as unknown as AgColumn;
-        expect(api.getDisplayNameForColumn(column, location)).toBe('Renamed');
+        const headerRow = api.getDataAsCsv()!.split('\n')[0];
+        expect(headerRow).toContain(RENAMED);
+        expect(headerRow).not.toContain('From Getter');
+    });
+
+    test('columnToolPanel: the edited name renders as the tool-panel column label', async () => {
+        await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [editedAthlete(), { field: 'country' }],
+            rowData,
+            initialState: initialRename,
+            sideBar: { toolPanels: ['columns'], defaultToolPanel: 'columns' },
+        });
+        await waitFor(() => expect(panelText('.ag-column-select-column-label')).toContain(RENAMED));
+    });
+
+    test('columnDrop: the edited name renders in the row-group panel pill', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [editedAthlete(), { field: 'country' }, { field: 'age' }],
+            rowData,
+            initialState: initialRename,
+            rowGroupPanelShow: 'always',
+        });
+        api.addRowGroupColumns(['athlete']);
+        await waitFor(() => expect(panelText('.ag-column-drop-cell-text')).toContain(RENAMED));
+    });
+
+    test('filterToolPanel: the edited name renders as the filters tool-panel group title', async () => {
+        await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [editedAthlete({ filter: true }), { field: 'country', filter: true }],
+            rowData,
+            initialState: initialRename,
+            sideBar: { toolPanels: ['filters'], defaultToolPanel: 'filters' },
+        });
+        await waitFor(() => expect(panelText('.ag-filter-toolpanel-header')).toContain(RENAMED));
+    });
+
+    test('advancedFilter: the edited name renders in the column autocomplete', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [editedAthlete({ filter: true }), { field: 'country', filter: true }],
+            rowData,
+            initialState: initialRename,
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+
+        const input = getGridElement(api)!.querySelector('.ag-advanced-filter input[type=text]') as HTMLInputElement;
+        input.value = '[';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        await asyncSetTimeout(0);
+
+        await waitFor(() => expect(panelText('.ag-autocomplete-list-popup')).toContain(RENAMED));
+    });
+
+    test('groupFilter: the edited name renders in the group filter field select', async () => {
+        // Two row-grouped columns make the group filter render its column field-select, whose options
+        // are labelled by display name; the first (athlete) is selected, so its edited name shows.
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [editedAthlete({ filter: true }), { field: 'country', filter: true }, { field: 'age' }],
+            rowData,
+            initialState: initialRename,
+            groupDisplayType: 'singleColumn',
+            autoGroupColumnDef: { filter: 'agGroupColumnFilter' },
+        });
+        api.addRowGroupColumns(['athlete', 'country']);
+        await waitFor(() => expect(api.getRowGroupColumns().length).toBe(2));
+
+        const autoCol = document.querySelector('.ag-header-cell[col-id^="ag-Grid-AutoColumn"]')?.getAttribute('col-id');
+        expect(autoCol).toBeTruthy();
+        api.showColumnFilter(autoCol!);
+        await waitFor(() => expect(panelText('.ag-group-filter-field-select-wrapper')).toContain(RENAMED));
+    });
+});
+
+describe('Editable header name — integrated charts location', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [AllEnterpriseModule.with(AgChartsEnterpriseModule)],
+    });
+
+    beforeAll(async () => {
+        await canvasPolyfill.init();
+    });
+    afterAll(() => canvasPolyfill.reset());
+    afterEach(() => {
+        gridMgr.reset();
+        vi.resetAllMocks();
+    });
+
+    test('chart: the edited name renders in the chart data tool panel', async () => {
+        // The chart resolves each column name via the 'chart' location; the data tool panel renders those
+        // names, so an edited value-column name must appear there. Rename the charted value column 'gold'.
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'country' },
+                { field: 'gold', headerNameEditable: true, headerValueGetter: () => 'From Getter' },
+            ],
+            rowData: [
+                { country: 'United States', gold: 3 },
+                { country: 'Australia', gold: 2 },
+            ],
+            initialState: { columnHeaderName: { columnHeaderNames: [{ colId: 'gold', headerName: 'Renamed' }] } },
+        });
+
+        const chartRef = api.createRangeChart({
+            cellRange: { columns: ['country', 'gold'] },
+            chartType: 'groupedColumn',
+        })!;
+        expect(chartRef).toBeTruthy();
+
+        api.openChartToolPanel({ chartId: chartRef.chartId, panel: 'data' });
+        await waitFor(() => expect(document.querySelector('.ag-chart-data-wrapper')?.textContent).toContain('Renamed'));
+
+        // The settings panel schedules an unguarded 250ms scroll-into-view; let it run while the chart is
+        // still mounted so it does not fire against a torn-down component after this test completes.
+        await asyncSetTimeout(300);
     });
 });
 
