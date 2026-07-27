@@ -33,12 +33,13 @@ export function _createStyledRootElements(): [outer: HTMLElement, inner: HTMLEle
 export function _initStyledRootFromInnerOfThreeElements(
     env: IEnvironment,
     inner: HTMLElement,
-    postApplyClasses?: () => void
+    postApplyClasses?: () => void,
+    hasAncestorStyledRoot?: boolean
 ): () => void {
     const middle = inner.parentElement!;
     const outer = middle.parentElement!;
     const applyClasses = () => {
-        const [inheritClass, applyClass, directionClass] = env.getStyledRootClasses();
+        const [inheritClass, applyClass, directionClass] = env.getStyledRootClasses(hasAncestorStyledRoot);
         outer.className = ['ag-styled-root', inheritClass].join(' ');
         middle.className = ['ag-styled-root', applyClass].join(' ');
         inner.className = ['ag-styled-root', directionClass].join(' ');

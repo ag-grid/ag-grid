@@ -43,4 +43,15 @@ test.agExample(import.meta, () => {
         await agIdFor.groupContracted('0', 'name').click();
         await expect(detailRows).toHaveCount(2);
     });
+
+    test.eachFramework("Detail grid's styled root does not re-apply a theme class", async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        // The detail grid inherits the theme from the master grid, so its own styled root
+        // must not re-apply the theme class
+        const detailStyledRoots = page.locator('.ag-details-row .ag-styled-root');
+        await expect(detailStyledRoots.first()).toBeVisible();
+        await expect(page.locator('.ag-details-row .ag-styled-root[class*="ag-theme-"]')).toHaveCount(0);
+    });
 });
