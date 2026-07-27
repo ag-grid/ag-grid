@@ -588,6 +588,28 @@
                             "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler"
                         }
                     ]
+                },
+                {
+                    "type": "group",
+                    "title": "Scheduler Pro",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "See Bryntum Scheduler Pro",
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler-pro"
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "title": "Task Board",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "See Bryntum Task Board",
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-task-board"
+                        }
+                    ]
                 }
             ]
         },
