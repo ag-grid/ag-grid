@@ -1,5 +1,9 @@
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
+// The example sets an explicit `gridId`, so the same selector resolves the grid before and after
+// it is recreated.
+const GRID_ID = 'setState';
+
 // Save State captures the current grid state, Recreate Grid with No State throws it away
 // (fresh grid), and Set State restores the saved state onto the existing grid via
 // api.setState(). We drive that round-trip with a sort so the restore is observable.
@@ -11,11 +15,13 @@ test.agExample(import.meta, () => {
             const handler = (msg: { text: () => string }) => logs.push(msg.text());
             page.on('console', handler);
 
-            await ensureGridReady(page);
+            await ensureGridReady(page, GRID_ID);
             await waitForGridContent(page);
 
-            // Apply a sort so there is meaningful state to save.
-            await agIdFor.headerCell('age').click();
+            // Apply a sort so there is meaningful state to save. Click the sort label rather than
+            // the cell centre: age is narrow (maxWidth 90) with an always-visible menu button, so a
+            // centre click can land on the menu button instead.
+            await agIdFor.headerCell('age').locator('.ag-header-cell-label').click();
             await expect(agIdFor.headerCell('age')).toHaveAttribute('aria-sort', 'ascending');
 
             // Wait for the state-updated event so the captured state includes the sort.
@@ -30,6 +36,7 @@ test.agExample(import.meta, () => {
 
             // Recreate with no state: the fresh grid has no sort.
             await page.getByRole('button', { name: 'Recreate Grid with No State', exact: true }).click();
+            await ensureGridReady(page, GRID_ID);
             await waitForGridContent(page);
             await expect(agIdFor.headerCell('age')).toHaveAttribute('aria-sort', 'none');
 
@@ -49,7 +56,7 @@ test.agExample(import.meta, () => {
         const handler = (msg: { text: () => string }) => logs.push(msg.text());
         page.on('console', handler);
 
-        await ensureGridReady(page);
+        await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
         await page.getByRole('button', { name: 'Print State', exact: true }).click();

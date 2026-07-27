@@ -7,19 +7,43 @@ import {
     waitForRowAnimations,
 } from '@utils/grid/test-utils';
 
-// Attributes that differ across a destroy/recreate cycle without reflecting restored state:
-// `grid-id` and the root `data-testid` embed a monotonic grid-instance counter, and tab-guard
-// `tabindex` toggles with transient focus. Ignored when comparing the rendered grid before and
-// after recreate — column/row identity is still compared via `col-id` / `row-id`.
-const RECREATE_VOLATILE_ATTRIBUTES = ['grid-id', 'data-testid', 'tabindex'];
+// The example sets an explicit `gridId`, so `grid-id` and the root `data-testid` survive a
+// destroy/recreate cycle unchanged.
+const GRID_ID = 'gridState';
 
-// Serialise the rendered grid once it has settled. `ag-scrollbar-scrolling` is a transient class
-// present mid-scroll-settle, so wait for it to clear first — otherwise a snapshot can capture the
-// grid at a different point in the scroll-settle than its counterpart.
-async function captureSettledGrid(page: Parameters<typeof serializeGridDom>[0]) {
+// Normalise the parts of the serialised grid that record how a state was reached rather than the
+// state itself: the aria live region holds the most recent screen-reader announcement, and the
+// hidden overlay keeps the class of whichever overlay was last shown — only the frameworks that
+// drive a `loading` flag put up a loading overlay while fetching, and only on the first fetch.
+function stripHistory(dom: string | null): string | null {
+    return (
+        dom
+            ?.replace(/(class="ag-aria-description-container">).*?(<\/div>)/g, '$1$2')
+            .replace(/ag-overlay-loading-wrapper /g, '') ?? null
+    );
+}
+
+type Page = Parameters<typeof serializeGridDom>[0];
+
+const recreateButton = (page: Page) =>
+    page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true });
+
+// Serialise the rendered grid once it has settled: loading is complete, scrolling has stopped
+// (`ag-scrollbar-scrolling` is transient mid-settle), and rows are not mid-animation. A freshly
+// created grid also applies measured scrollbar sizing and header classes over subsequent frames, so
+// poll until two consecutive serialisations agree rather than capturing part-way through settling.
+async function captureSettledGrid(page: Page) {
+    await expect(page.locator('.ag-overlay-loading-center')).toHaveCount(0);
     await waitForRowAnimations(page);
     await expect(page.locator('.ag-scrollbar-scrolling')).toHaveCount(0);
-    return serializeGridDom(page, { ignoreAttributes: RECREATE_VOLATILE_ATTRIBUTES });
+    let previous: string | null = null;
+    let current: string | null = null;
+    await expect(async () => {
+        previous = current;
+        current = stripHistory(await serializeGridDom(page));
+        expect(current).toBe(previous);
+    }).toPass();
+    return current;
 }
 
 // The grid records every state change (onStateUpdated) and, when recreated, seeds the new
@@ -31,7 +55,7 @@ test.agExample(import.meta, () => {
         const handler = (msg: { text: () => string }) => logs.push(msg.text());
         page.on('console', handler);
 
-        await ensureGridReady(page);
+        await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
         // Click the sort label rather than the cell centre: age is narrow (maxWidth 90) with an
@@ -52,7 +76,7 @@ test.agExample(import.meta, () => {
         const handler = (msg: { text: () => string }) => logs.push(msg.text());
         page.on('console', handler);
 
-        await ensureGridReady(page);
+        await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
         await page.getByRole('button', { name: 'Print State', exact: true }).click();
@@ -64,14 +88,15 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('Recreating the grid restores the applied sort', async ({ agIdFor, page }) => {
-        await ensureGridReady(page);
+        await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
         await agIdFor.headerCell('age').locator('.ag-header-cell-label').click();
         await expect(agIdFor.headerCell('age')).toHaveAttribute('aria-sort', 'ascending');
 
         // Recreate destroys the grid and seeds the new one from the previous state.
-        await page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true }).click();
+        await recreateButton(page).click();
+        await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
         // The ascending sort on 'age' survives the destroy/recreate cycle via the restored state.
@@ -79,7 +104,7 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('Recreating the grid restores a runtime-added calculated column', async ({ agIdFor, page }) => {
-        await ensureGridReady(page);
+        await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
         // Add a calculated column at runtime via the 'age' header menu.
@@ -110,7 +135,8 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-row[row-id="0"] .ag-cell', { hasText: '33' }).first()).toBeVisible();
 
         // Recreate destroys the grid and seeds the new one from the previous state.
-        await page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true }).click();
+        await recreateButton(page).click();
+        await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
         // The calculated column is recreated from the restored userColumns state.
@@ -123,7 +149,7 @@ test.agExample(import.meta, () => {
     // runtime-added calculated column, and an open side bar with a hidden column — then snapshot
     // the rendered grid, recreate it from the captured state, and assert it renders identically.
     test.eachFramework('Recreating the grid restores the whole rendered grid', async ({ agIdFor, page }) => {
-        await ensureGridReady(page);
+        await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
         // Sort (column state).
@@ -181,11 +207,16 @@ test.agExample(import.meta, () => {
         await agIdFor.columnSelectListItemCheckbox('Date Column').click();
         await expect(agIdFor.headerCell('date')).toBeHidden();
 
+        // Tab guards only sit in the tab order while focus is outside the grid, and recreating leaves
+        // focus on the Recreate button, so both snapshots are taken with that button focused.
+        await recreateButton(page).focus();
+
         // Snapshot the rendered grid, then recreate from the captured state.
         const before = await captureSettledGrid(page);
         expect(before).not.toBeNull();
 
-        await page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true }).click();
+        await recreateButton(page).click();
+        await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
         await expect(agIdFor.headerCell('ag-Grid-AutoColumn')).toBeVisible();
 
@@ -194,17 +225,27 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('Recreating the grid restores the current page', async ({ agIdFor, page }) => {
-        await ensureGridReady(page);
+        await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
-        // Move to the second page (pagination state).
+        // Move to the second page (pagination state). Page size is 100, so the second page starts at
+        // row-index 100 — a recreated grid renders page one first and moves to the restored page a
+        // moment later, so this is the anchor for both captures being of the same page.
         await page.locator('[aria-label="Next Page"]').click();
+        const firstRowOfSecondPage = page.locator('.ag-grid-scrolling-container .ag-row[row-index="100"]');
+        await expect(firstRowOfSecondPage).toBeVisible();
+
+        // Clicking Next Page left focus inside the grid, which takes the tab guards out of the tab
+        // order — park focus where recreating leaves it so both snapshots agree.
+        await recreateButton(page).focus();
 
         const before = await captureSettledGrid(page);
         expect(before).not.toBeNull();
 
-        await page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true }).click();
+        await recreateButton(page).click();
+        await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
+        await expect(firstRowOfSecondPage).toBeVisible();
 
         expect(await captureSettledGrid(page)).toBe(before);
     });
