@@ -560,6 +560,17 @@ export async function expectRowIdAtIndex(page: Page, rowIndex: number, rowId: st
     }).toPass();
 }
 
+/**
+ * Click a column header's label to cycle its sort.
+ *
+ * Clicking the header cell itself targets the cell's centre. On a narrow column whose menu and
+ * filter buttons are always shown, those icons occupy the centre, so the click opens the menu
+ * instead of sorting. The label is always the sort target, whatever the remaining width.
+ */
+export async function clickHeaderToSort(headerCell: Locator) {
+    await headerCell.locator('.ag-header-cell-label').click();
+}
+
 export async function clickAllButtons(page: Page) {
     // Click all visible buttons in the grid example
     // Don't use buttons within the ag-root-wrapper as these are not part of the example
@@ -732,5 +743,6 @@ export async function expectConsistentFrameworkDom(page: Page, options?: Consist
 }
 
 export { ensureGridReady, waitForGridContent } from './test/remoteGridapi';
+export { orderedValues } from './test/orderedValues';
 export { repeat } from './test/repeat';
 export { scrollGridRelative } from './test/scrollGridRelative';

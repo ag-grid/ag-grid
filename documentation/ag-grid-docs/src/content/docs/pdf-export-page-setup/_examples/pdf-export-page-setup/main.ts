@@ -17,19 +17,22 @@ interface InventoryData {
     status: string;
 }
 
-const categories = ['Accessories', 'Displays', 'Networking', 'Storage'];
-const warehouses = ['London', 'Chicago', 'Singapore'];
-const rowData: InventoryData[] = [];
+// Build the rows in the declaration itself: the framework generators inline the `rowData` grid
+// option's initialiser and drop the declaration, so a separately-populated array (a top-level
+// `rowData.push(...)` loop) is left referencing a name that no longer exists.
+const rowData: InventoryData[] = Array.from({ length: 40 }, (_, index) => {
+    const categories = ['Accessories', 'Displays', 'Networking', 'Storage'];
+    const warehouses = ['London', 'Chicago', 'Singapore'];
+    const itemNumber = index + 1;
 
-for (let i = 1; i <= 40; i++) {
-    rowData.push({
-        item: `Item ${i}`,
-        category: categories[(i - 1) % categories.length],
-        warehouse: warehouses[(i - 1) % warehouses.length],
-        quantity: 20 + i * 3,
-        status: i % 4 === 0 ? 'Reorder' : 'Available',
-    });
-}
+    return {
+        item: `Item ${itemNumber}`,
+        category: categories[index % categories.length],
+        warehouse: warehouses[index % warehouses.length],
+        quantity: 20 + itemNumber * 3,
+        status: itemNumber % 4 === 0 ? 'Reorder' : 'Available',
+    };
+});
 
 let gridApi: GridApi<InventoryData>;
 

@@ -305,6 +305,23 @@ export function tsNodeIsTopLevelFunction(node: any): boolean {
 }
 
 /**
+ * The names a declaration's binding name introduces into scope: the identifier itself, or every
+ * element of an object/array destructuring pattern.
+ */
+function boundNames(name: ts.BindingName): string[] {
+    if (ts.isObjectBindingPattern(name) || ts.isArrayBindingPattern(name)) {
+        const names: string[] = [];
+        name.elements.forEach((element) => {
+            if (ts.isBindingElement(element)) {
+                names.push(...boundNames(element.name));
+            }
+        });
+        return names;
+    }
+    return [name.getText()];
+}
+
+/**
  * Find all the variables defined in this node tree recursively
  */
 export function findAllVariables(node) {
@@ -313,12 +330,8 @@ export function findAllVariables(node) {
         allVariables.push(node.name.getText());
     }
     if (ts.isVariableDeclaration(node)) {
-        if (ts.isObjectBindingPattern(node.name)) {
-            // Code like this:  const { pageSetup, margins } = getSheetConfig();
-            node.name.elements.forEach((n) => allVariables.push(n.getText()));
-        } else {
-            allVariables.push(node.name.getText());
-        }
+        // Code like this:  const { pageSetup, margins } = getSheetConfig();
+        allVariables.push(...boundNames(node.name));
     }
     if (ts.isFunctionDeclaration(node)) {
         // catch locally defined functions within the main function body
@@ -329,8 +342,9 @@ export function findAllVariables(node) {
         // catch locally defined arrow functions with their params
         //  const colToNameFunc = (col: Column, index: number) => index + ' = ' + col.getId()
         //  const colNames = cols.map(colToNameFunc).join(', ')
-
-        allVariables.push(node.name.getText());
+        // Destructured params bind each element, not the pattern text: without unpacking them,
+        // `({ column }) => column.getColId()` reports `column` as an external dependency.
+        allVariables.push(...boundNames(node.name));
     }
     ts.forEachChild(node, (n) => {
         const variables = findAllVariables(n);

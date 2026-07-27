@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { clickHeaderToSort, ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 // Save State captures the current grid state, Recreate Grid with No State throws it away
 // (fresh grid), and Set State restores the saved state onto the existing grid via
@@ -15,7 +15,7 @@ test.agExample(import.meta, () => {
             await waitForGridContent(page);
 
             // Apply a sort so there is meaningful state to save.
-            await agIdFor.headerCell('age').click();
+            await clickHeaderToSort(agIdFor.headerCell('age'));
             await expect(agIdFor.headerCell('age')).toHaveAttribute('aria-sort', 'ascending');
 
             // Wait for the state-updated event so the captured state includes the sort.

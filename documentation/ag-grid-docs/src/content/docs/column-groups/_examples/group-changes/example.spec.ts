@@ -17,16 +17,18 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
+        // Anchored but whitespace-tolerant: the Angular and Vue generators reformat the longer
+        // button labels onto their own lines, so the element's text is padded with newlines.
         await page
             .locator('button')
-            .filter({ hasText: /^Medals in Group$/ })
+            .filter({ hasText: /^\s*Medals in Group\s*$/ })
             .click();
         await expect(page.locator('.ag-header-group-cell').filter({ hasText: 'Medals' })).toHaveCount(1);
         await expect(agIdFor.cell('0', 'gold')).toContainText('8');
 
         await page
             .locator('button')
-            .filter({ hasText: /^Participant in Group$/ })
+            .filter({ hasText: /^\s*Participant in Group\s*$/ })
             .click();
         await expect(page.locator('.ag-header-group-cell').filter({ hasText: 'Participant' })).toHaveCount(1);
         await expect(page.locator('.ag-header-group-cell').filter({ hasText: 'Medals' })).toHaveCount(0);
@@ -34,7 +36,7 @@ test.agExample(import.meta, () => {
 
         await page
             .locator('button')
-            .filter({ hasText: /^No Groups$/ })
+            .filter({ hasText: /^\s*No Groups\s*$/ })
             .click();
         await expect(page.locator('.ag-header-group-cell')).toHaveCount(0);
     });
