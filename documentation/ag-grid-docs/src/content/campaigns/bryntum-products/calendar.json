@@ -188,9 +188,9 @@
         {
             "id": "block_7f8a8ef5340328b7601457cdd648ee6d",
             "type": "text-mini-demo",
-            "eyebrow": "Try It Yourself",
-            "heading": "Try It Live",
-            "body_html": "<p class=\"pre-title\">Have a play yourself</p>  <p>The calendar handles recurring tasks out of the box. Repeat tasks on any cadence you need – daily, weekly, monthly or yearly.</p>",
+            "eyebrow": "Try It Live",
+            "heading": "Have a play yourself",
+            "body_html": "<p>The calendar handles recurring tasks out of the box. Repeat tasks on any cadence you need – daily, weekly, monthly or yearly.</p>",
             "body_text": "Have a play yourself  The calendar handles recurring tasks out of the box. Repeat tasks on any cadence you need – daily, weekly, monthly or yearly.",
             "ctas": [],
             "demo_kind": "calendar",
