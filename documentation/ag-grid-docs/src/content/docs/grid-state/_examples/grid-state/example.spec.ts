@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { clickHeaderToSort, ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 // The grid records every state change (onStateUpdated) and, when recreated, seeds the new
 // grid from the previous grid's state so sort/filter/etc. are restored. State changes and
@@ -12,7 +12,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await agIdFor.headerCell('age').click();
+        await clickHeaderToSort(agIdFor.headerCell('age'));
         await expect(agIdFor.headerCell('age')).toHaveAttribute('aria-sort', 'ascending');
 
         // onStateUpdated logs 'State updated' whenever the grid state changes.
@@ -43,7 +43,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await agIdFor.headerCell('age').click();
+        await clickHeaderToSort(agIdFor.headerCell('age'));
         await expect(agIdFor.headerCell('age')).toHaveAttribute('aria-sort', 'ascending');
 
         // Recreate destroys the grid and seeds the new one from the previous state.

@@ -1,9 +1,11 @@
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 // 1x1 transparent PNG used to stub the external flag CDN, so the flag-image assertions do not depend
-// on network reachability of flags.fmcdn.net.
+// on network reachability of flags.fmcdn.net. Must be a byte-complete PNG (valid chunk CRCs, IEND
+// present): Firefox rejects a malformed one with a console "Image corrupt or truncated." error, which
+// fails the example's console-error check even though Chromium and WebKit decode it regardless.
 const TRANSPARENT_PNG = Buffer.from(
-    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGNgAAIAAAUAAXpeqz8AAAAASUVORK5CYII=',
     'base64'
 );
 
