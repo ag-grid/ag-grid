@@ -341,9 +341,9 @@
                 },
                 {
                     "heading": "scheduler-multi-groups-svalbard",
-                    "href": "/products/scheduler/examples/multi-groups/",
-                    "body_text": "Multi-group membership",
-                    "description": "Surface a single resource across multiple grouping dimensions.",
+                    "href": "/products/scheduler/examples/vertical/",
+                    "body_text": "Vertical mode",
+                    "description": "Flip the timeline so resources run across the top and time flows top to bottom.",
                     "media": {
                         "kind": "image",
                         "src": "../assets/scheduler/scheduler-multi-groups-svalbard-768x465.png",
