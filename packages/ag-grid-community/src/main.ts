@@ -137,35 +137,6 @@ export type {
     RowHeightCallbackParams,
 } from './interfaces/iExcelCreator';
 
-// PDF Export
-export type {
-    IPdfCreator,
-    PdfCell,
-    PdfCellData,
-    PdfCellHyperlinkCallbackParams,
-    PdfCellStyle,
-    PdfCellStyleCallbackParams,
-    PdfColors,
-    PdfColumnWidth,
-    PdfColumnWidthCallback,
-    PdfCustomContent,
-    PdfDocumentTitleStyle,
-    PdfExportParams,
-    PdfFontFamily,
-    PdfFontWeight,
-    PdfGroupHeaderStyleCallbackParams,
-    PdfHeaderStyleCallbackParams,
-    PdfMargin,
-    PdfPageOrientation,
-    PdfPageSetup,
-    PdfPageSize,
-    PdfRowStyleCallbackParams,
-    PdfStyleCallbackParams,
-    PdfStyleCallbackType,
-    PdfTextAlignment,
-    PdfTextOverflow,
-} from './interfaces/iPdfCreator';
-
 // Drag and Drop
 export { DragSourceType } from './dragAndDrop/dragAndDropService';
 export type { DragAndDropIcon, DropTarget, GridDraggingEvent, GridDragSource } from './dragAndDrop/dragAndDropService';

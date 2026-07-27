@@ -475,12 +475,6 @@
                     "isEnterprise": true
                 },
                 {
-                    "moduleName": "PdfExportModule",
-                    "name": "PDF Export",
-                    "path": "pdf-export",
-                    "isEnterprise": true
-                },
-                {
                     "moduleName": "ClipboardModule",
                     "name": "Clipboard",
                     "path": "clipboard",
