@@ -1414,29 +1414,18 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
      * (React mounts a child cell's effect before its parent row's).
      */
     public getAriaRowIndex(): number | null {
-        const { rowNode } = this;
+        const { rowNode, beans } = this;
 
         const { rowIndex } = rowNode;
         if (rowIndex == null || rowNode.getRowIndexString() === null) {
             return null;
         }
 
-        return this.getAriaRowIndexForRow(rowIndex);
-    }
-
-    private getAriaRowIndexForRow(rowIndex: number): number {
-        const { rowNode, beans } = this;
-
-        const rowPosition: RowPosition = {
-            rowIndex,
-            rowPinned: rowNode.rowPinned ?? null,
-        };
-
-        return getAriaHeaderRowCount(beans) + _getAbsoluteRowIndex(beans, rowPosition) + 1;
+        return getAriaRowIndexForRow(beans, rowNode, rowIndex);
     }
 
     private updateRowIndexes(): void {
-        const { rowNode, rowGui } = this;
+        const { rowNode, rowGui, beans } = this;
 
         const { rowIndex } = rowNode;
         if (rowIndex == null) {
@@ -1450,7 +1439,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const rowIsEven = rowIndex % 2 === 0;
-        const ariaRowIndex = (this.ariaRowIndex = this.getAriaRowIndexForRow(rowIndex));
+        const ariaRowIndex = (this.ariaRowIndex = getAriaRowIndexForRow(beans, rowNode, rowIndex));
 
         if (rowGui) {
             rowGui.rowComp.setRowIndex(rowIndexStr);
@@ -1460,4 +1449,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             _setAriaRowIndex(rowGui.element, ariaRowIndex);
         }
     }
+}
+
+/** The 1-based, header- and pinned-lane-aware aria-rowindex for a row at the given index. */
+function getAriaRowIndexForRow(beans: BeanCollection, rowNode: RowNode, rowIndex: number): number {
+    const rowPosition: RowPosition = {
+        rowIndex,
+        rowPinned: rowNode.rowPinned ?? null,
+    };
+
+    return getAriaHeaderRowCount(beans) + _getAbsoluteRowIndex(beans, rowPosition) + 1;
 }
