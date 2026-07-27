@@ -12,6 +12,7 @@ import {
     ColumnsToolPanelModule,
     ContextMenuModule,
     RowGroupingModule,
+    RowGroupingPanelModule,
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
 
@@ -27,6 +28,7 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     RowGroupingModule,
+    RowGroupingPanelModule,
     ServerSideRowModelModule,
 ]);
 
@@ -52,6 +54,12 @@ const gridOptions: GridOptions<IOlympicData> = {
 
     // enable pivoting
     pivotMode: true,
+
+    sideBar: {
+        toolPanels: ['columns'],
+    },
+    rowGroupPanelShow: 'always',
+    pivotPanelShow: 'always',
 };
 
 // setup the grid after the page has finished loading

@@ -247,6 +247,8 @@ export class AgColumn<TValue = any>
         const hide = colDef.hide;
         this.visible = hide !== undefined ? !hide : !colDef.initialHide;
 
+        this.pivotSort = _resolvePivotSortFromColDef(colDef);
+
         pinnedCols?.initCol(this);
 
         colFlex?.initCol(this);
@@ -959,6 +961,14 @@ export const _isSortDefValid = (maybeSortDef: unknown): maybeSortDef is SortDef 
     }
     const maybeSortDefT = maybeSortDef as { type?: unknown; direction?: unknown };
     return isSortTypeValid(maybeSortDefT.type) && isSortDirectionValid(maybeSortDefT.direction);
+};
+
+/** Resolves a colDef's pivot sort. Unset (`undefined`) is left as-is so it resolves to ascending;
+ *  an explicit `null` ("no sort") is preserved.
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _resolvePivotSortFromColDef = (colDef: ColDef): SortDirection | undefined => {
+    const pivotSortLike = colDef.pivotSort !== undefined ? colDef.pivotSort : colDef.initialPivotSort;
+    return pivotSortLike === undefined ? undefined : normalizeSortDirection(pivotSortLike);
 };
 
 export const normalizeSortDirection = (sortDirectionLike?: unknown): SortDirection =>

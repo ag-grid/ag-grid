@@ -5,6 +5,7 @@ import {
     ColumnsToolPanelModule,
     ContextMenuModule,
     RowGroupingModule,
+    RowGroupingPanelModule,
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
 
@@ -20,6 +21,7 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     RowGroupingModule,
+    RowGroupingPanelModule,
     ServerSideRowModelModule,
 ]);
 
@@ -45,6 +47,12 @@ const gridOptions: GridOptions<IOlympicData> = {
 
     // enable pivoting
     pivotMode: true,
+
+    sideBar: {
+        toolPanels: ['columns'],
+    },
+    rowGroupPanelShow: 'always',
+    pivotPanelShow: 'always',
 
     // specify the field separator, e.g. '2000_gold' should be '_' which is the default
     serverSidePivotResultFieldSeparator: '_',

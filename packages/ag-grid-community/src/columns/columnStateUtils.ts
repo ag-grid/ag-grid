@@ -5,6 +5,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import {
     _normalizeSortType,
+    _resolvePivotSortFromColDef,
     getSortDefFromInput,
     isSortDirectionValid,
     isSortTypeValid,
@@ -487,7 +488,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         const primaryCols = colModel.colDefList;
         for (let i = 0, len = primaryCols.length; i < len; ++i) {
             const col = primaryCols[i];
-            col.pivotSort = resolveInitialPivotSort(col.colDef);
+            col.pivotSort = _resolvePivotSortFromColDef(col.colDef);
         }
 
         // Order from the now-current service cols: auto cols may have been recreated above (their colIds change
@@ -832,12 +833,6 @@ export const _getColumnState = (beans: BeanCollection): ColumnState[] => {
     return res;
 };
 
-// Unset (`undefined`) is left as-is so it resolves to ascending; an explicit `null` ("no sort") is preserved.
-function resolveInitialPivotSort(colDef: AgColumn['colDef']): SortDirection | undefined {
-    const pivotSortLike = colDef.pivotSort !== undefined ? colDef.pivotSort : colDef.initialPivotSort;
-    return pivotSortLike === undefined ? undefined : normalizeSortDirection(pivotSortLike);
-}
-
 export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn): ColumnState {
     const colDef = column.colDef;
     const sortDef = getSortDefFromInput(colDef.sort ?? colDef.initialSort ?? null);
@@ -864,7 +859,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
         rowGroupIndex,
         pivot,
         pivotIndex,
-        pivotSort: resolveInitialPivotSort(colDef),
+        pivotSort: _resolvePivotSortFromColDef(colDef),
         aggFunc: colDef.aggFunc ?? colDef.initialAggFunc ?? null,
         showValuesAs: beans.showValuesAsSvc?.colDefSelection(colDef) ?? null,
         headerName: null,
