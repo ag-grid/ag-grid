@@ -35,8 +35,6 @@ if (process.env.FRAMEWORK) {
 export default defineConfig({
     snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
     testDir: './src/content/docs/',
-    /* PDF Export is not part of the public API yet (release delayed), so its examples cannot load the module. */
-    testIgnore: '**/pdf-export*/**',
     /* Run tests in files in parallel */
     fullyParallel: true,
     timeout: process.env.CI ? 60_000 : 20_000,
