@@ -90,7 +90,7 @@ export async function editCell(api: GridApi, rowNode: IRowNode, colId: string, n
 
     // Enter dispatched into an input the grid has already discarded commits nothing. Fail here
     // rather than leaving the test to report a confusing stale value several assertions later.
-    expect(api.getEditingCells(), `edit of "${colId}" was not committed`).toEqual([]);
+    expect(api.getEditingCells()).toEqual([]);
 }
 
 /**
