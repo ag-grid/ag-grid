@@ -6,6 +6,7 @@ import { useSyncFrameworkStoreState } from '@utils/hooks/useSyncFrameworkStoreSt
 import type { FunctionComponent } from 'react';
 
 import styles from './Header.module.scss';
+import { MarkdownActions } from './MarkdownActions';
 
 interface Props {
     title: string;
@@ -38,28 +39,23 @@ export const Header: FunctionComponent<Props> = ({
                 <div className={styles.pageTitleContainer}>
                     <div className={styles.pageTitleGroup}>
                         <h1>
-                            {!suppressFrameworkHeader && (
-                                <span className={styles.headerFramework}>
-                                    {`${getFrameworkDisplayText(framework)} Data Grid`}
-                                </span>
-                            )}
+                            <span className={styles.titleMeta}>
+                                {!suppressFrameworkHeader && (
+                                    <span className={styles.headerFramework}>
+                                        {`${getFrameworkDisplayText(framework)} Data Grid`}
+                                    </span>
+                                )}
+                                {version && <span className={styles.version}>{`Version ${version}`}</span>}
+                            </span>
                             {title}
                         </h1>
                     </div>
 
-                    <FrameworkSelectorInsideDocs path={path} currentFramework={framework} menuItems={menuItems} />
-                </div>
-
-                {(version || markdownHref) && (
-                    <div className={styles.pageMeta}>
-                        {version && <span className={styles.version}>{`Version ${version}`}</span>}
-                        {markdownHref && (
-                            <a className={styles.markdownLink} href={markdownHref} data-markdown-link>
-                                View as Markdown
-                            </a>
-                        )}
+                    <div className={styles.headerActions}>
+                        {markdownHref && <MarkdownActions markdownHref={markdownHref} />}
+                        <FrameworkSelectorInsideDocs path={path} currentFramework={framework} menuItems={menuItems} />
                     </div>
-                )}
+                </div>
 
                 {isEnterprise && (
                     <span className={styles.enterpriseLabel}>

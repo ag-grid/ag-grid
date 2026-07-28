@@ -30,13 +30,6 @@
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         flex-direction: row;
     }
-
-    // Prevent framework selector dropdown from appearing off screen
-    @media screen and (min-width: $breakpoint-docs-search-medium) and (max-width: $breakpoint-docs-nav-large) {
-        button {
-            min-width: 140px;
-        }
-    }
 }
 
 .pageTitleGroup {
@@ -49,6 +42,17 @@
     }
 }
 
+// Eyebrow line above the page title, holding the framework name and grid version.
+.titleMeta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: $spacing-size-3;
+}
+
+// Both children carry the spacing below the eyebrow, so the gap survives the
+// framework name being hidden on narrow screens without leaving a stray gap
+// when neither is rendered.
 .headerFramework {
     display: none;
     font-size: var(--text-fs-base);
@@ -61,22 +65,20 @@
     }
 }
 
-.pageMeta {
+// Nested in the <h1>, so the heading typography has to be reset explicitly.
+.version {
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-regular);
+    letter-spacing: normal;
+    color: var(--color-text-tertiary);
+    padding-bottom: $spacing-size-3;
+}
+
+.headerActions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: $spacing-size-3;
-    margin-top: $spacing-size-2;
-    font-size: var(--text-fs-sm);
-    color: var(--color-text-secondary);
-}
-
-.version {
-    color: var(--color-text-tertiary);
-}
-
-.markdownLink {
-    font-weight: var(--text-semibold);
+    gap: $spacing-size-2;
 }
 
 .enterpriseLabel {
