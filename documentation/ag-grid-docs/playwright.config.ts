@@ -7,6 +7,21 @@ const PROD_URL = process.env['PUBLIC_SITE_URL'];
 const BASE_URL = process.env.BASE_URL;
 const baseURL = BASE_URL || PREV_URL || PROD_URL || 'https://localhost:4610';
 
+const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
+
+function isLocalRun(url: string): boolean {
+    try {
+        return LOCAL_HOSTNAMES.includes(new URL(url).hostname);
+    } catch {
+        // A URL that does not parse is not one we can treat as local.
+        return false;
+    }
+}
+
+// A run against the local dev server gets no retry, so a flaky example fails fast rather than being
+// masked by a re-run. A run against a deployed site keeps one, since it can fail on the network alone.
+const localRetries = isLocalRun(baseURL) ? 0 : 1;
+
 // eslint-disable-next-line no-console
 console.log(`Using base URL: ${baseURL}`);
 if (process.env.FRAMEWORK) {
@@ -34,8 +49,7 @@ export default defineConfig({
     },
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
-    /* Retry on CI only */
-    retries: process.env.CI ? 2 : 1,
+    retries: process.env.CI ? 2 : localRetries,
     /* Limit parallel tests on CI. */
     workers: process.env.CI ? 4 : undefined,
     // Stop running tests if lots of errors as likely configuration issues
