@@ -35,8 +35,9 @@ const CHAT_APPS = [
 ];
 
 /**
- * Split button beside the framework selector: the primary action copies the markdown
- * version of the page, the chevron reveals the remaining markdown/LLM actions.
+ * Split button exposing the markdown version of the current page: the primary action
+ * copies it, and the chevron reveals the remaining markdown/LLM actions. Consumers
+ * pass the page's `.md` URL and place it wherever the page header has room.
  */
 export const MarkdownActions: FunctionComponent<Props> = ({ markdownHref }) => {
     const [copyState, setCopyState] = useState<CopyState>('idle');
@@ -61,7 +62,6 @@ export const MarkdownActions: FunctionComponent<Props> = ({ markdownHref }) => {
             await navigator.clipboard.writeText(await response.text());
             flashCopyState('copied');
         } catch (error) {
-            // eslint-disable-next-line no-console
             console.error('Could not copy the markdown version of this page', error);
             flashCopyState('failed');
         }

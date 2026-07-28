@@ -1,12 +1,12 @@
 import type { Framework, MenuItem } from '@ag-grid-types';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { MarkdownActions } from '@ag-website-shared/components/markdown-actions/MarkdownActions';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
 import { getFrameworkDisplayText } from '@utils/framework';
 import { useSyncFrameworkStoreState } from '@utils/hooks/useSyncFrameworkStoreState';
 import type { FunctionComponent } from 'react';
 
 import styles from './Header.module.scss';
-import { MarkdownActions } from './MarkdownActions';
 
 interface Props {
     title: string;

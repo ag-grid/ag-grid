@@ -1,7 +1,7 @@
 @use 'design-system' as *;
 
-// Matches the height and border treatment of the adjacent framework selector
-// (see Select.module.scss) so the two read as one control group.
+// Matches the height and border treatment of the shared Select trigger (see
+// Select.module.scss) so this sits alongside one as a single control group.
 // The segments carry their own corner radii rather than the container clipping
 // them, so the focus ring on the chevron is not cut off.
 $segment-radius: calc(var(--radius-sm) - 1px);
