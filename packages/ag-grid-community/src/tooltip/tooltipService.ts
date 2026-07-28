@@ -5,6 +5,8 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
@@ -265,6 +267,31 @@ const resolveCellTooltip = ({
 export class TooltipService extends BeanStub implements NamedBean {
     beanName = 'tooltipSvc' as const;
 
+    /**
+     * Resolves the display name on each read so a refresh (e.g. after a header rename) reflects the current
+     * name, rather than serving the name captured when the tooltip was first set up.
+     */
+    private createHeaderTooltipValueGetter(
+        location: 'header' | 'headerGroup',
+        column: AgColumn | AgColumnGroup,
+        colDef: ColDef | ColGroupDef | null | undefined,
+        passedValue: string | undefined,
+        getDisplayName: () => string | null
+    ): () => string | null | undefined {
+        const gos = this.gos;
+        return () => {
+            if (passedValue != null) {
+                return passedValue;
+            }
+            const valueFormatted = getDisplayName();
+            return (
+                colDef?.headerTooltipValueGetter?.(
+                    _addGridCommonParams(gos, { location, colDef, column, value: valueFormatted, valueFormatted })
+                ) ?? colDef?.headerTooltip
+            );
+        };
+    }
+
     public setupHeaderTooltip(
         existingTooltipFeature: TooltipFeature | undefined,
         ctrl: HeaderCellCtrl,
@@ -291,17 +318,12 @@ export class TooltipService extends BeanStub implements NamedBean {
         }
         const location = 'header';
         const headerLocation = 'header';
-        const valueFormatted = this.beans.colNames.getDisplayNameForColumn(column, headerLocation, true);
-        const value = passedValue ?? valueFormatted;
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
             getLocation: () => location,
-            getTooltipValue: () =>
-                passedValue ??
-                colDef?.headerTooltipValueGetter?.(
-                    _addGridCommonParams(gos, { location, colDef, column, value, valueFormatted })
-                ) ??
-                colDef?.headerTooltip,
+            getTooltipValue: this.createHeaderTooltipValueGetter(location, column, colDef, passedValue, () =>
+                this.beans.colNames.getDisplayNameForColumn(column, headerLocation, true)
+            ),
             shouldDisplayTooltip,
             getAdditionalParams: () => ({
                 column,
@@ -342,18 +364,13 @@ export class TooltipService extends BeanStub implements NamedBean {
 
         const location = 'headerGroup';
         const headerLocation = 'header';
-        const valueFormatted = this.beans.colNames.getDisplayNameForColumnGroup(column, headerLocation);
-        const value = passedValue ?? valueFormatted;
 
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
             getLocation: () => location,
-            getTooltipValue: () =>
-                passedValue ??
-                colDef?.headerTooltipValueGetter?.(
-                    _addGridCommonParams(gos, { location, colDef, column, value, valueFormatted })
-                ) ??
-                colDef?.headerTooltip,
+            getTooltipValue: this.createHeaderTooltipValueGetter(location, column, colDef, passedValue, () =>
+                this.beans.colNames.getDisplayNameForColumnGroup(column, headerLocation)
+            ),
             shouldDisplayTooltip,
             getAdditionalParams: () => {
                 const additionalParams: ITooltipCtrlParams = {
