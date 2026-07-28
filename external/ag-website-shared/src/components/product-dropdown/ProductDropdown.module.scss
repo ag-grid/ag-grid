@@ -130,9 +130,9 @@
         left: 0;
         // Fixed width gives each product row enough room for its title and
         // description without truncation.
-        width: 400px;
-        // display: grid;
-        // grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 720px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
