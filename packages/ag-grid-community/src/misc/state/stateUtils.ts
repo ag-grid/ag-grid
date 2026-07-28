@@ -4,6 +4,7 @@ import type {
     ColumnGroupState,
     ColumnSizeState,
     GridState,
+    PivotSortModelItem,
     ShowValuesAsColumnState,
 } from '../../interfaces/gridState';
 import type { SortModelItem } from '../../interfaces/iSortModelItem';
@@ -37,6 +38,7 @@ export function convertColumnState(
     const aggregationColumns: IndexedAggregationColumnState[] = [];
     const showValuesAsColumns: ShowValuesAsColumnState[] = [];
     const pivotColIds: string[] = [];
+    const pivotSortModel: PivotSortModelItem[] = [];
     const leftColIds: string[] = [];
     const rightColIds: string[] = [];
     const hiddenColIds: string[] = [];
@@ -58,6 +60,7 @@ export function convertColumnState(
             showValuesAs,
             pivot,
             pivotIndex,
+            pivotSort,
             pinned,
             hide,
             width,
@@ -82,6 +85,9 @@ export function convertColumnState(
         }
         if (pivot) {
             pivotColIds[pivotIndex ?? 0] = colId;
+            if (pivotSort !== undefined) {
+                pivotSortModel.push({ colId, sort: pivotSort });
+            }
         }
         if (pinned) {
             (pinned === 'right' ? rightColIds : leftColIds).push(colId);
@@ -103,7 +109,11 @@ export function convertColumnState(
         showValuesAs: showValuesAsColumns.length ? { showValuesAsModel: showValuesAsColumns } : undefined,
         pivot:
             pivotColIds.length || enablePivotMode
-                ? { pivotMode: enablePivotMode, pivotColIds: _removeEmptyValues(pivotColIds) }
+                ? {
+                      pivotMode: enablePivotMode,
+                      pivotColIds: _removeEmptyValues(pivotColIds),
+                      pivotSortModel: pivotSortModel.length ? pivotSortModel : undefined,
+                  }
                 : undefined,
         columnPinning: leftColIds.length || rightColIds.length ? { leftColIds, rightColIds } : undefined,
         columnVisibility: hiddenColIds.length ? { hiddenColIds } : undefined,
