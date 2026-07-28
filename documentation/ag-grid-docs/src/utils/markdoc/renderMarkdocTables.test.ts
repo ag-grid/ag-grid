@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildMajorTable } from './renderMajorTable';
 import { buildMatrixTable } from './renderMatrixTable';
 import { buildModuleMappingsTable } from './renderModuleMappings';
 
@@ -71,46 +70,5 @@ describe('buildModuleMappingsTable', () => {
     it('makes links absolute when a siteRoot is given', () => {
         const output = buildModuleMappingsTable(groups, 'react', 'https://www.ag-grid.com/');
         expect(output).toContain('(https://www.ag-grid.com/');
-    });
-});
-
-describe('buildMajorTable', () => {
-    const versions = [
-        { version: '33.0.0', date: '2024-01', notesPath: './upgrading-to-ag-grid-33' },
-        { version: '33.1.0', date: '2024-02', notesPath: './changelog' },
-        { version: '32.0.0', date: '2023-01', notesPath: './upgrading-to-ag-grid-32' },
-    ];
-
-    it('renders migration rows, filtered to the major, with guide vs release-notes labels', () => {
-        const output = buildMajorTable(versions, { library: 'grid', major: 33, type: 'migration' }, 'react');
-
-        expect(output).toContain('| Version | Date | Type | Guide |');
-        expect(output).toContain('33.0.0');
-        expect(output).toContain('Migration Guide');
-        expect(output).toContain('33.1.0');
-        expect(output).toContain('Release Notes');
-        expect(output).not.toContain('32.0.0');
-    });
-
-    it('renders archive rows with changelog + documentation links', () => {
-        const output = buildMajorTable(
-            [{ version: '33.0.0', date: '2024-01' }],
-            { library: 'grid', major: 33, type: 'archive' },
-            'react'
-        );
-
-        expect(output).toContain('| Version | Date | Type | Changelog | Documentation |');
-        expect(output).toContain('[Changelog](');
-        expect(output).toContain('33.0.0 Documentation]');
-    });
-
-    it('omits the changelog column when suppressChangelog is set', () => {
-        const output = buildMajorTable(
-            [{ version: '33.0.0', date: '2024-01' }],
-            { library: 'grid', major: 33, type: 'archive', suppressChangelog: true },
-            'react'
-        );
-        expect(output).toContain('| Version | Date | Type | Documentation |');
-        expect(output).not.toContain('[Changelog](');
     });
 });

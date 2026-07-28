@@ -3,11 +3,17 @@ import { defineConfig } from 'vitest/config';
 
 import packageJson from '../../package.json';
 
-const GRID_PATH_PREFIX = '../../documentation/ag-grid-docs';
-const CHARTS_PATH_PREFIX = '../../packages/ag-charts-website';
+// The website package that hosts this subrepo, per container repository. `@utils`/`@constants` and
+// friends resolve into it, so a shared module that imports a product alias is testable in whichever
+// repo the tests are run from.
+const WEBSITE_PATH_PREFIX = {
+    'ag-grid': '../../documentation/ag-grid-docs',
+    'ag-charts': '../../packages/ag-charts-website',
+    'ag-studio': '../../packages/ag-studio-docs',
+};
 
 function resolvePath(srcPath) {
-    const pathPrefix = packageJson.name === 'ag-grid' ? GRID_PATH_PREFIX : CHARTS_PATH_PREFIX;
+    const pathPrefix = WEBSITE_PATH_PREFIX[packageJson.name] ?? WEBSITE_PATH_PREFIX['ag-charts'];
     return path.resolve(__dirname, pathPrefix, srcPath);
 }
 
