@@ -5,6 +5,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import type {
     AutoGroupColumnDef,
     ColDef,
+    ColGroupDef,
     GridApi,
     GridOptions,
     GridPreDestroyedEvent,
@@ -13,22 +14,8 @@ import type {
     RowSelectionOptions,
     StateUpdatedEvent,
 } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    GridStateModule,
-    ModuleRegistry,
-    NumberFilterModule,
-    PaginationModule,
-    RowSelectionModule,
-    enableDevValidations,
-} from 'ag-grid-community';
-import {
-    CellSelectionModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-    PivotModule,
-    SetFilterModule,
-} from 'ag-grid-enterprise';
+import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import type { IOlympicData } from './interfaces';
 import './styles.css';
@@ -38,18 +25,7 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([
-    NumberFilterModule,
-    GridStateModule,
-    PaginationModule,
-    ClientSideRowModelModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-    RowSelectionModule,
-    CellSelectionModule,
-    SetFilterModule,
-    PivotModule,
-]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 @Component({
     standalone: true,
@@ -66,13 +42,17 @@ ModuleRegistry.registerModules([
             @if (gridVisible()) {
                 <ag-grid-angular
                     style="width: 100%; height: 100%;"
+                    gridId="gridState"
                     [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef"
                     [autoGroupColumnDef]="autoGroupColumnDef"
                     [sideBar]="true"
                     [pagination]="true"
                     [rowSelection]="rowSelection"
+                    [cellSelection]="true"
+                    [enableRowPinning]="true"
                     [suppressColumnMoveAnimation]="true"
+                    [ensureDomOrder]="true"
                     [rowData]="rowData"
                     [initialState]="initialState"
                     [gridOptions]="gridOptions"
@@ -86,17 +66,29 @@ ModuleRegistry.registerModules([
 export class AppComponent {
     private gridApi!: GridApi<IOlympicData>;
 
-    public columnDefs: ColDef[] = [
+    public columnDefs: (ColDef | ColGroupDef)[] = [
         { field: 'athlete', minWidth: 150 },
         { field: 'age', maxWidth: 90 },
         { field: 'country', minWidth: 150 },
-        { field: 'year', maxWidth: 90 },
-        { field: 'date', minWidth: 150 },
-        { field: 'sport', minWidth: 150 },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' },
+        {
+            headerName: 'Competition',
+            groupId: 'competition',
+            children: [
+                { field: 'year', maxWidth: 90 },
+                { field: 'date', minWidth: 150 },
+                { field: 'sport', minWidth: 150 },
+            ],
+        },
+        {
+            headerName: 'Medals',
+            groupId: 'medals',
+            children: [
+                { field: 'gold' },
+                { field: 'silver', columnGroupShow: 'open' },
+                { field: 'bronze', columnGroupShow: 'open' },
+                { field: 'total', columnGroupShow: 'closed' },
+            ],
+        },
     ];
     public defaultColDef: ColDef = {
         flex: 1,
