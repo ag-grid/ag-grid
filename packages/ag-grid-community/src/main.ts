@@ -151,7 +151,11 @@ export type {
     PdfCustomContent,
     PdfDocumentTitleStyle,
     PdfExportParams,
+    PdfBuiltInFontFamily,
+    PdfFontFace,
     PdfFontFamily,
+    PdfFontFamilyDefinition,
+    PdfFontStyle,
     PdfFontWeight,
     PdfGroupHeaderStyleCallbackParams,
     PdfHeaderStyleCallbackParams,
@@ -163,6 +167,7 @@ export type {
     PdfStyleCallbackParams,
     PdfStyleCallbackType,
     PdfTextAlignment,
+    PdfTextDirection,
     PdfTextOverflow,
 } from './interfaces/iPdfCreator';
 

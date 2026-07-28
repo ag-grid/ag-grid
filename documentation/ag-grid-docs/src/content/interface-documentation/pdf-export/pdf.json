@@ -1,6 +1,9 @@
 {
     "_config_": {},
     "PdfExportParams": {
+        "fonts": {},
+        "language": {},
+        "direction": {},
         "documentTitle": {},
         "documentTitleStyle": {},
         "colors": {},
@@ -38,5 +41,20 @@
             "isRequired": true
         },
         "hyperlink": {}
+    },
+    "PdfFontFamilyDefinition": {
+        "family": {
+            "isRequired": true
+        },
+        "faces": {
+            "isRequired": true
+        }
+    },
+    "PdfFontFace": {
+        "data": {
+            "isRequired": true
+        },
+        "weight": {},
+        "style": {}
     }
 }

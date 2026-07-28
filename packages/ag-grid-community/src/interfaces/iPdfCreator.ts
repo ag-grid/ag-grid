@@ -6,7 +6,15 @@ import type { IRowNode } from './iRowNode';
 
 export type PdfPageOrientation = 'portrait' | 'landscape';
 
-export type PdfFontFamily = 'Helvetica' | 'Helvetica-Bold' | 'Times-Roman' | 'Times-Bold' | 'Courier' | 'Courier-Bold';
+export type PdfBuiltInFontFamily =
+    | 'Helvetica'
+    | 'Helvetica-Bold'
+    | 'Times-Roman'
+    | 'Times-Bold'
+    | 'Courier'
+    | 'Courier-Bold';
+
+export type PdfFontFamily = PdfBuiltInFontFamily | (string & {});
 
 export type PdfPageSize =
     | 'A4'
@@ -31,7 +39,33 @@ export interface PdfMargin {
 
 export type PdfTextAlignment = 'left' | 'center' | 'right';
 
-export type PdfFontWeight = 'normal' | 'bold';
+export type PdfFontWeight = 'normal' | 'bold' | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+
+export type PdfFontStyle = 'normal' | 'italic' | 'oblique';
+
+export type PdfTextDirection = 'ltr' | 'rtl' | 'auto';
+
+export interface PdfFontFace {
+    /** Static TrueType font data. */
+    data: ArrayBuffer | Uint8Array;
+    /**
+     * Weight represented by this face.
+     * @default 400
+     */
+    weight?: PdfFontWeight;
+    /**
+     * Style represented by this face.
+     * @default 'normal'
+     */
+    style?: PdfFontStyle;
+}
+
+export interface PdfFontFamilyDefinition {
+    /** Family name used by PDF styles. */
+    family: string;
+    /** Font faces available for this family. */
+    faces: PdfFontFace[];
+}
 
 export type PdfTextOverflow = 'clip' | 'ellipsis';
 
@@ -52,6 +86,22 @@ export interface PdfCellStyle {
      * Font weight. When omitted, the weight from the resolved font family is preserved.
      */
     fontWeight?: PdfFontWeight;
+    /**
+     * Font style.
+     * @default 'normal'
+     */
+    fontStyle?: PdfFontStyle;
+    /**
+     * Text direction. `auto` uses the first strong directional character.
+     * When omitted, the export-level direction is used.
+     * Text direction does not change exported column order.
+     */
+    direction?: PdfTextDirection;
+    /**
+     * BCP 47 language tag used when selecting language-specific OpenType features.
+     * When omitted, the export-level language is used.
+     */
+    language?: string;
     /**
      * Text colour.
      */
@@ -93,7 +143,8 @@ export interface PdfCellStyle {
     preserveSpaces?: boolean;
     /**
      * Distance between text baselines in points.
-     * @default fontSize
+     * Defaults to the natural line height from the resolved font metrics,
+     * with a minimum of `fontSize`.
      */
     lineHeight?: number;
     /**
@@ -280,6 +331,23 @@ interface PdfFileParams {
 
 export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFileParams {
     /**
+     * Custom static TrueType font families available to this export.
+     * Font data must be loaded by the application before export.
+     */
+    fonts?: PdfFontFamilyDefinition[];
+    /**
+     * BCP 47 language tag used for text shaping and PDF accessibility metadata.
+     * This can be overridden by individual cell styles.
+     */
+    language?: string;
+    /**
+     * Default text direction for the PDF document. When omitted, this inherits
+     * the grid's `enableRtl` setting. Individual `PdfCellStyle.direction`
+     * values take precedence for text. An export-level value of `rtl` also
+     * renders table columns in right-to-left order.
+     */
+    direction?: PdfTextDirection;
+    /**
      * The document title stored in the PDF metadata.
      * When set, a visible title is rendered above the exported table.
      */
@@ -355,7 +423,8 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
     wrapText?: boolean;
     /**
      * Default distance between text baselines in points.
-     * @default fontSize
+     * Defaults to the natural line height from the resolved font metrics,
+     * with a minimum of `fontSize`.
      */
     lineHeight?: number;
     /**

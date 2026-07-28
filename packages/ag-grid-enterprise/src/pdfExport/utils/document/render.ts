@@ -1,12 +1,10 @@
-import type { PdfFontFamily } from 'ag-grid-community';
-
+import type { EncodedPdfText, PdfFontRegistry } from '../fontRegistry';
 import { formatColor } from '../pdfColor';
 import type { PdfLinkAnnotation } from '../pdfObjectStore';
-import { getBase14BaselineOffset } from './fontMetrics';
 import type { ResolvedPageSize } from './layout';
 import type { LayoutOptions, MeasuredRow, MeasuredRowFragment, ResolvedCellStyle } from './measurement';
 import { constrainTextLines, measureRowFragment, measureTextLines } from './measurement';
-import { escapePdfString, estimateTextWidth, fmt } from './text';
+import { encodePdfUnicodeString, fmt } from './text';
 
 /**
  * Render the document title box and text at the top of a page.
@@ -26,7 +24,8 @@ export function renderDocumentTitle(
     layout: LayoutOptions,
     pageParts: string[],
     style: ResolvedCellStyle,
-    fontKey: string
+    fontKey: string,
+    fontRegistry: PdfFontRegistry
 ): number {
     const availableWidth = Math.max(pageSize.width - layout.margin.left - layout.margin.right, 0);
     const boxWidth = Math.max(availableWidth - style.margin.left - style.margin.right, 0);
@@ -63,10 +62,11 @@ export function renderDocumentTitle(
     pageParts.push(`${formatColor(style.textColor)} rg`);
     pageParts.push('BT');
     pageParts.push(`/${fontKey} ${fmt(style.fontSize)} Tf`);
-    let textY = boxTop - style.padding.top - getBase14BaselineOffset(style.fontSize, style.fontFamily);
+    let textY = boxTop - style.padding.top - fontRegistry.getBaselineOffset(style.fontSize, style.font);
     for (const line of lines) {
-        const textX = getTextX(line, boxX, boxWidth, style);
-        pageParts.push(`1 0 0 1 ${fmt(textX)} ${fmt(textY)} Tm (${escapePdfString(line)}) Tj`);
+        const encoded = fontRegistry.encodeText(line, style.font, style.direction, style.language);
+        const textX = getTextX(line, boxX, boxWidth, style, fontRegistry, encoded.direction);
+        renderEncodedText(pageParts, encoded, textX, textY, style);
         textY -= style.lineHeight;
     }
     pageParts.push('ET');
@@ -81,7 +81,7 @@ export function renderDocumentTitle(
  * @param layout - Layout options.
  * @param pageParts - Mutable page content buffer.
  * @param annotations - Mutable page link annotations.
- * @param fontKeyByFamily - Registered PDF font keys.
+ * @param fontRegistry - Font registry used by the document.
  * @returns Updated cursor position.
  */
 export function renderMeasuredRows(
@@ -90,13 +90,13 @@ export function renderMeasuredRows(
     layout: LayoutOptions,
     pageParts: string[],
     annotations: PdfLinkAnnotation[],
-    fontKeyByFamily: Map<PdfFontFamily, string>
+    fontRegistry: PdfFontRegistry
 ): number {
     let cursorY = startY;
     for (const row of rows) {
         const fragment = measureRowFragment(row, undefined, row.rowHeight);
         if (fragment) {
-            cursorY = renderRowFragment(fragment, cursorY, layout, pageParts, annotations, fontKeyByFamily);
+            cursorY = renderRowFragment(fragment, cursorY, layout, pageParts, annotations, fontRegistry);
         }
     }
     return cursorY;
@@ -109,7 +109,7 @@ export function renderMeasuredRows(
  * @param layout - Document layout.
  * @param pageParts - Mutable page content buffer.
  * @param annotations - Mutable page link annotations.
- * @param fontKeyByFamily - Registered PDF font keys.
+ * @param fontRegistry - Font registry used by the document.
  * @returns Fragment bottom position.
  */
 export function renderRowFragment(
@@ -118,11 +118,10 @@ export function renderRowFragment(
     layout: LayoutOptions,
     pageParts: string[],
     annotations: PdfLinkAnnotation[],
-    fontKeyByFamily: Map<PdfFontFamily, string>
+    fontRegistry: PdfFontRegistry
 ): number {
     const row = fragment.row;
     const rowBottom = cursorY - fragment.height;
-    const defaultFontKey = fontKeyByFamily.get(row.defaultCellStyle.fontFamily) ?? 'F1';
     let currentLineWidth = 0.5;
     let x = layout.margin.left;
     let columnIndex = 0;
@@ -148,8 +147,7 @@ export function renderRowFragment(
             measurement.width,
             fragment.height,
             measurement.style,
-            defaultFontKey,
-            fontKeyByFamily,
+            fontRegistry,
             measurement.hyperlink,
             annotations
         );
@@ -213,8 +211,7 @@ function renderCellText(
     cellWidth: number,
     rowHeight: number,
     cellStyle: ResolvedCellStyle,
-    defaultFontKey: string,
-    fontKeyByFamily: Map<PdfFontFamily, string>,
+    fontRegistry: PdfFontRegistry,
     hyperlink: string | undefined,
     annotations: PdfLinkAnnotation[]
 ): void {
@@ -225,7 +222,7 @@ function renderCellText(
         return;
     }
 
-    const fontKey = fontKeyByFamily.get(cellStyle.fontFamily) ?? defaultFontKey;
+    const fontKey = cellStyle.font.key;
     // constrain fragment text to its cell content box.
     pageParts.push('q');
     pageParts.push(
@@ -234,14 +231,21 @@ function renderCellText(
     pageParts.push('BT');
     pageParts.push(`${formatColor(cellStyle.textColor)} rg`);
     pageParts.push(`/${fontKey} ${fmt(cellStyle.fontSize)} Tf`);
-    let textY = rowTop - padding.top - getBase14BaselineOffset(cellStyle.fontSize, cellStyle.fontFamily);
+    let textY = rowTop - padding.top - fontRegistry.getBaselineOffset(cellStyle.fontSize, cellStyle.font);
     let lineTop = rowTop - padding.top;
     for (const line of lines) {
-        const textX = getTextX(line, x, cellWidth, cellStyle);
-        pageParts.push(`1 0 0 1 ${fmt(textX)} ${fmt(textY)} Tm (${escapePdfString(line)}) Tj`);
+        const encoded = fontRegistry.encodeText(line, cellStyle.font, cellStyle.direction, cellStyle.language);
+        const textX = getTextX(line, x, cellWidth, cellStyle, fontRegistry, encoded.direction);
+        renderEncodedText(pageParts, encoded, textX, textY, cellStyle);
         if (hyperlink && line) {
             const textWidth = Math.min(
-                estimateTextWidth(line, cellStyle.fontSize, cellStyle.fontFamily),
+                fontRegistry.measureText(
+                    line,
+                    cellStyle.fontSize,
+                    cellStyle.font,
+                    cellStyle.direction,
+                    cellStyle.language
+                ),
                 textWidthAvailable
             );
             const lineBottom = Math.max(lineTop - cellStyle.lineHeight, rowBottom + padding.bottom);
@@ -257,8 +261,15 @@ function renderCellText(
     pageParts.push('Q');
 }
 
-function getTextX(text: string, boxX: number, boxWidth: number, style: ResolvedCellStyle): number {
-    const textWidth = estimateTextWidth(text, style.fontSize, style.fontFamily);
+function getTextX(
+    text: string,
+    boxX: number,
+    boxWidth: number,
+    style: ResolvedCellStyle,
+    fontRegistry: PdfFontRegistry,
+    resolvedDirection: 'ltr' | 'rtl'
+): number {
+    const textWidth = fontRegistry.measureText(text, style.fontSize, style.font, style.direction, style.language);
     const minX = boxX + style.padding.left;
     const maxX = boxX + boxWidth - style.padding.right - textWidth;
     const textAreaWidth = Math.max(boxWidth - style.padding.left - style.padding.right, 0);
@@ -266,9 +277,40 @@ function getTextX(text: string, boxX: number, boxWidth: number, style: ResolvedC
 
     if (style.alignment === 'center') {
         textX = minX + (textAreaWidth - textWidth) / 2;
-    } else if (style.alignment === 'right') {
+    } else if (style.alignment === 'right' || (!style.alignmentExplicit && resolvedDirection === 'rtl')) {
         textX = minX + textAreaWidth - textWidth;
     }
 
     return Math.max(minX, Math.min(textX, maxX));
+}
+
+function renderEncodedText(
+    pageParts: string[],
+    encoded: EncodedPdfText,
+    textX: number,
+    textY: number,
+    style: ResolvedCellStyle
+): void {
+    const run = encoded.glyphRun;
+    const cids = encoded.cids;
+    const trueType = style.font.trueType;
+    if (!run || !cids || !trueType) {
+        pageParts.push(`1 0 0 1 ${fmt(textX)} ${fmt(textY)} Tm ${encoded.operatorValue} Tj`);
+        return;
+    }
+
+    pageParts.push(`/Span << /ActualText ${encodePdfUnicodeString(encoded.logicalText)} >> BDC`);
+    const scale = style.fontSize / trueType.unitsPerEm;
+    let cursorX = textX;
+    let cursorY = textY;
+    for (let index = 0; index < run.glyphs.length; index++) {
+        const glyph = run.glyphs[index];
+        const cid = cids[index];
+        const glyphX = cursorX + glyph.xOffset * scale;
+        const glyphY = cursorY + glyph.yOffset * scale;
+        pageParts.push(`1 0 0 1 ${fmt(glyphX)} ${fmt(glyphY)} Tm <${cid.toString(16).padStart(4, '0')}> Tj`);
+        cursorX += glyph.xAdvance * scale;
+        cursorY += glyph.yAdvance * scale;
+    }
+    pageParts.push('EMC');
 }

@@ -31,6 +31,7 @@ export class PdfCreator
         const baseParams = this.gos.get('defaultPdfExportParams');
         const resolveColor = this.getResolveColorValueFn();
         const merged: PdfExportParams = { ...(baseParams ?? {}), ...(params ?? {}) };
+        merged.direction ??= this.gos.get('enableRtl') ? 'rtl' : 'ltr';
         merged.colors = resolvePdfColors(
             getThemePdfColors(this.beans.eRootDiv),
             baseParams?.colors,

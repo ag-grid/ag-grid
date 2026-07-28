@@ -1,9 +1,8 @@
-import type { AgColumn, PdfExportParams, PdfFontFamily } from 'ag-grid-community';
+import type { AgColumn, PdfExportParams } from 'ag-grid-community';
 
 import type { PdfRow } from './pdfSerializingSession';
 import {
     columnNeedsAutoWidth,
-    createFontKeyMap,
     getColumnWidths,
     getGridColumnWidths,
     getMaxColumnCount,
@@ -23,19 +22,10 @@ import {
 import { resolveFiniteNumber, resolveOptionalFiniteNumber } from './utils/document/numbers';
 import { renderDocumentTitle, renderMeasuredRows, renderRowFragment } from './utils/document/render';
 import { fmt } from './utils/document/text';
-import { normalisePdfFontFamily } from './utils/fonts';
+import { PdfFontRegistry } from './utils/fontRegistry';
 import { formatColor, resolvePdfStyleColors } from './utils/pdfColor';
 import type { PdfLinkAnnotation, PdfPageContent } from './utils/pdfObjectStore';
 import { buildPdf } from './utils/pdfObjectStore';
-
-const FONT_BOLD_MAP: Record<PdfFontFamily, PdfFontFamily> = {
-    Helvetica: 'Helvetica-Bold',
-    'Helvetica-Bold': 'Helvetica-Bold',
-    'Times-Roman': 'Times-Bold',
-    'Times-Bold': 'Times-Bold',
-    Courier: 'Courier-Bold',
-    'Courier-Bold': 'Courier-Bold',
-};
 
 const DEFAULTS = {
     fontSize: 10,
@@ -51,6 +41,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     const pageSize = resolvePageSize(pageSetup?.size, pageSetup?.orientation);
     const margin = resolveMargin(pageSetup?.margin);
     const styleColors = resolvePdfStyleColors(params.colors);
+    const fontRegistry = new PdfFontRegistry(params.fonts);
 
     const columnCount = columnsToExport.length || Math.max(getMaxColumnCount(rows), 1);
     const availableWidth = Math.max(pageSize.width - margin.left - margin.right, 0);
@@ -63,16 +54,27 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     const wrapText = params.wrapText ?? false;
     const rowGroupIndentSize = resolveFiniteNumber(params.rowGroupIndentSize, DEFAULTS.rowGroupIndentSize);
 
-    const bodyFont = normalisePdfFontFamily(params.fontFamily);
-    const headerFont = normalisePdfFontFamily(params.headerFontFamily, FONT_BOLD_MAP[bodyFont]);
+    const bodyFont = fontRegistry.resolve(params.fontFamily, undefined, undefined);
+    const headerFont = fontRegistry.resolve(
+        params.headerFontFamily ?? bodyFont.family,
+        700,
+        bodyFont.style,
+        bodyFont.family
+    );
     const titleData = params.documentTitle
-        ? resolveDocumentTitle(params.documentTitle, params, styleColors, headerFont, DEFAULTS.headerFontSize)
+        ? resolveDocumentTitle(
+              params.documentTitle,
+              params,
+              styleColors,
+              headerFont,
+              fontRegistry,
+              DEFAULTS.headerFontSize
+          )
         : undefined;
     const titleStyle = titleData?.style;
     const documentTitle = titleData?.text ?? '';
 
-    const fontKeyByFamily = createFontKeyMap(bodyFont, headerFont, titleStyle?.fontFamily, rows);
-    const titleFontKey = titleStyle ? fontKeyByFamily.get(titleStyle.fontFamily) : undefined;
+    const titleFontKey = titleStyle?.font.key;
 
     const headerRows = repeatHeader ? getRepeatableHeaderRows(rows) : [];
 
@@ -91,6 +93,9 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         maxLines: params.maxLines,
         overflow: params.overflow,
         rowGroupIndentSize,
+        fontRegistry,
+        language: params.language,
+        direction: params.direction,
     };
     const requestedWidths = resolveRequestedColumnWidths(columnsToExport, columnCount, params.columnWidth);
     const autoWidthColumns = requestedWidths.map(columnNeedsAutoWidth);
@@ -159,7 +164,8 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
                     layout,
                     pageParts,
                     titleStyle,
-                    titleFontKey
+                    titleFontKey,
+                    fontRegistry
                 );
                 markPageContentIfRendered(previousPartCount);
             }
@@ -168,14 +174,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
 
         if (includeHeaders && measuredHeaderRows.length) {
             const previousPartCount = pageParts.length;
-            cursorY = renderMeasuredRows(
-                measuredHeaderRows,
-                cursorY,
-                layout,
-                pageParts,
-                pageAnnotations,
-                fontKeyByFamily
-            );
+            cursorY = renderMeasuredRows(measuredHeaderRows, cursorY, layout, pageParts, pageAnnotations, fontRegistry);
             markPageContentIfRendered(previousPartCount);
         }
     };
@@ -222,7 +221,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
             }
 
             const previousPartCount = pageParts.length;
-            cursorY = renderRowFragment(fragment, cursorY, layout, pageParts, pageAnnotations, fontKeyByFamily);
+            cursorY = renderRowFragment(fragment, cursorY, layout, pageParts, pageAnnotations, fontRegistry);
             markPageContentIfRendered(previousPartCount);
             complete = fragment.complete;
             state = fragment.nextState;
@@ -241,5 +240,5 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         pages.push({ content: '', annotations: [] });
     }
 
-    return buildPdf(pages, pageSize, fontKeyByFamily, documentTitle);
+    return buildPdf(pages, pageSize, fontRegistry.getUsedFonts(), documentTitle, params.language);
 }

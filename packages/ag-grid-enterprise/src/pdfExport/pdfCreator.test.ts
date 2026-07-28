@@ -20,6 +20,27 @@ const getComputedColor = (root: HTMLElement, value: string): string => {
 };
 
 describe('PdfCreator', () => {
+    it('inherits the grid text direction unless the export direction is specified', () => {
+        const creator = new PdfCreator() as unknown as {
+            getMergedParams: (params?: PdfExportParams) => PdfExportParams;
+            gos: { get: (key: string) => unknown };
+            beans: { eRootDiv: HTMLElement };
+        };
+        const root = document.createElement('div');
+        let enableRtl = true;
+        creator.gos = {
+            get: (key: string) => (key === 'enableRtl' ? enableRtl : undefined),
+        };
+        creator.beans = { eRootDiv: root };
+
+        expect(creator.getMergedParams().direction).toBe('rtl');
+
+        enableRtl = false;
+        expect(creator.getMergedParams().direction).toBe('ltr');
+        expect(creator.getMergedParams({ direction: 'auto' }).direction).toBe('auto');
+        expect(creator.getMergedParams({ direction: 'ltr' }).direction).toBe('ltr');
+    });
+
     it('does not return PDF data when PDF export is suppressed', () => {
         const creator = new PdfCreator() as unknown as {
             getDataAsPdf: (params?: PdfExportParams) => Blob | undefined;

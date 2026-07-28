@@ -1935,6 +1935,12 @@
                                 },
                                 {
                                     "type": "item",
+                                    "title": "Languages",
+                                    "path": "pdf-export-languages",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
                                     "title": "Extra Content",
                                     "path": "pdf-export-extra-content",
                                     "isEnterprise": true

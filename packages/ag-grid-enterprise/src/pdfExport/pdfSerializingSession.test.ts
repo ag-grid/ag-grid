@@ -23,7 +23,9 @@ const createColumn = (
         __value: value,
         getColSpan: () => colSpan,
         getColDef: () => ({ cellStyle, wrapText, wrapHeaderText }),
+        getActualWidth: () => 100,
         isRowGroupDisplayed: () => false,
+        colKind: 'user',
     }) as any;
 
 const createGridOptionsService = (treeData = false) => ({
@@ -307,6 +309,34 @@ describe('PdfSerializingSession', () => {
             elementType: 'header',
             sourceColumn: column,
         });
+    });
+
+    it('renders columns in right-to-left order for an RTL export', () => {
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {},
+            gos: createGridOptionsService(),
+            direction: 'rtl',
+            skipGridStyles: true,
+        } as any);
+        const columns = [createColumn('First', 1), createColumn('Second', 1), createColumn('Third', 1)];
+        (session as any).extractHeaderValue = (column: AgColumn) => (column as any).__value;
+
+        session.prepare(columns);
+        const accumulator = session.onNewHeaderRow();
+        for (const [index, column] of columns.entries()) {
+            accumulator.onColumn(column, index);
+        }
+
+        const pdf = session.parse();
+        const firstPosition = pdf.indexOf('(First) Tj');
+        const secondPosition = pdf.indexOf('(Second) Tj');
+        const thirdPosition = pdf.indexOf('(Third) Tj');
+
+        expect(thirdPosition).toBeGreaterThan(-1);
+        expect(thirdPosition).toBeLessThan(secondPosition);
+        expect(secondPosition).toBeLessThan(firstPosition);
     });
 
     it('maps column and header wrapping into automatic PDF styles', () => {

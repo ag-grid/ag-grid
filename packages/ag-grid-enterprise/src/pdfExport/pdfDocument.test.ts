@@ -347,6 +347,28 @@ describe('createPdfDocument', () => {
         expect(measuredRow.cells[1].lines.length).toBeGreaterThan(1);
     });
 
+    it('allows a cell direction to override the export direction', () => {
+        const row: PdfRow = {
+            type: 'BODY',
+            cells: [{ value: 'Inherited' }, { value: 'Detected', style: { direction: 'auto' } }],
+        };
+        const layout: LayoutOptions = {
+            columnCount: 2,
+            columnWidths: [100, 100],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+            direction: 'rtl',
+        };
+
+        const measuredRow = measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
+
+        expect(measuredRow.cells[0].style.direction).toBe('rtl');
+        expect(measuredRow.cells[1].style.direction).toBe('auto');
+    });
+
     it('treats explicit row height as a clipping constraint', () => {
         const rows: PdfRow[] = [
             {
@@ -697,6 +719,29 @@ describe('createPdfDocument', () => {
         const rowRenderData = measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
 
         expect(rowRenderData.cells[0].style.padding.left).toBe(28);
+    });
+
+    it('indents RTL row-group cells from the right edge', () => {
+        const row: PdfRow = {
+            type: 'BODY',
+            cells: [{ value: 'مجموعة متداخلة', elementType: 'rowgroup', groupLevel: 2 }],
+        };
+        const layout: LayoutOptions = {
+            columnCount: 1,
+            columnWidths: [200],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+            rowGroupIndentSize: 12,
+            direction: 'rtl',
+        };
+
+        const rowRenderData = measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
+
+        expect(rowRenderData.cells[0].style.padding.left).toBe(4);
+        expect(rowRenderData.cells[0].style.padding.right).toBe(28);
     });
 
     it('treats alpha-zero cell colours as transparent', () => {

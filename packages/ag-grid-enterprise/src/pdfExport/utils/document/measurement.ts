@@ -3,20 +3,24 @@ import type {
     PdfDocumentTitleStyle,
     PdfExportParams,
     PdfFontFamily,
+    PdfFontStyle,
     PdfMargin,
     PdfTextAlignment,
+    PdfTextDirection,
     PdfTextOverflow,
 } from 'ag-grid-community';
 
 import type { PdfRow, PdfRowType } from '../../pdfSerializingSession';
-import { resolvePdfFontFamily } from '../fonts';
+import type { ResolvedPdfFont } from '../fontRegistry';
+import { PdfFontRegistry } from '../fontRegistry';
 import type { PdfRgb, PdfRowStyles, PdfStyleColors } from '../pdfColor';
 import { getRowStyles, resolveOptionalColor } from '../pdfColor';
 import { mergePdfCellStyles } from '../styles';
+import { resolveBidiCharacters } from '../textDirection';
 import type { ResolvedMargin } from './layout';
 import { getSpanWidth, isHeaderRowType } from './layout';
 import { resolveFiniteNumber } from './numbers';
-import { addTextEllipsis, clipText, estimateTextWidth, normaliseText, truncateText, wrapText } from './text';
+import { addTextEllipsis, clipText, normaliseText, truncateText, wrapText } from './text';
 
 const DEFAULT_TITLE_MARGIN: ResolvedMargin = { top: 0, right: 0, bottom: 8, left: 0 };
 const DEFAULT_TITLE_PADDING: ResolvedMargin = { top: 6, right: 6, bottom: 6, left: 6 };
@@ -29,10 +33,17 @@ const MIN_AUTO_COLUMN_WIDTH = 24;
 export type ResolvedCellStyle = {
     fontSize: number;
     fontFamily: PdfFontFamily;
+    fontWeight: number;
+    fontStyle: PdfFontStyle;
+    font: ResolvedPdfFont;
+    fontRegistry: PdfFontRegistry;
+    direction: PdfTextDirection;
+    language?: string;
     lineHeight: number;
     maxLines?: number;
     overflow: PdfTextOverflow;
     alignment: PdfTextAlignment;
+    alignmentExplicit: boolean;
     padding: ResolvedMargin;
     margin: ResolvedMargin;
     textColor: PdfRgb;
@@ -64,6 +75,9 @@ export type LayoutOptions = {
     maxLines?: number;
     overflow?: PdfTextOverflow;
     rowGroupIndentSize?: number;
+    fontRegistry?: PdfFontRegistry;
+    language?: string;
+    direction?: PdfTextDirection;
 };
 
 export type MeasuredCell = {
@@ -109,7 +123,8 @@ export function resolveDocumentTitle(
     documentTitle: string,
     params: PdfExportParams,
     styleColors: PdfStyleColors,
-    headerFont: PdfFontFamily,
+    headerFont: ResolvedPdfFont,
+    fontRegistry: PdfFontRegistry,
     defaultHeaderFontSize: number
 ): ResolvedDocumentTitle | undefined {
     if (!documentTitle) {
@@ -118,7 +133,14 @@ export function resolveDocumentTitle(
 
     return {
         text: documentTitle,
-        style: resolveTitleStyle(params.documentTitleStyle, params, styleColors, headerFont, defaultHeaderFontSize),
+        style: resolveTitleStyle(
+            params.documentTitleStyle,
+            params,
+            styleColors,
+            headerFont,
+            fontRegistry,
+            defaultHeaderFontSize
+        ),
     };
 }
 
@@ -135,19 +157,20 @@ export function resolveDocumentTitle(
 export function measureRow(
     row: PdfRow,
     layout: LayoutOptions,
-    bodyFont: PdfFontFamily,
-    headerFont: PdfFontFamily,
+    bodyFont: ResolvedPdfFont | PdfFontFamily,
+    headerFont: ResolvedPdfFont | PdfFontFamily,
     styleColors: PdfStyleColors,
     bodyRowIndex: number
 ): MeasuredRow {
     const isHeader = isHeaderRowType(row.type);
     const rowStyles = getRowStyles(row.type, styleColors, bodyRowIndex);
-    const baseFontFamily = isHeader ? headerFont : bodyFont;
+    const fontRegistry = getFontRegistry(layout);
+    const baseFont = resolveFontInput(isHeader ? headerFont : bodyFont, fontRegistry);
     const defaultFontSize = isHeader ? layout.headerFontSize : layout.fontSize;
     const defaultCellStyle = resolveTableCellStyle(
         row.style,
         layout,
-        baseFontFamily,
+        baseFont,
         rowStyles,
         styleColors,
         defaultFontSize
@@ -165,14 +188,12 @@ export function measureRow(
         const style = resolveTableCellStyle(
             mergePdfCellStyles(row.style, cell.style),
             layout,
-            baseFontFamily,
+            baseFont,
             rowStyles,
             styleColors,
             defaultFontSize
         );
-        if (cell.elementType === 'rowgroup' && cell.groupLevel) {
-            style.padding.left += cell.groupLevel * (layout.rowGroupIndentSize ?? 0);
-        }
+        applyRowGroupIndent(cell, style, layout);
 
         const width = getSpanWidth(layout.columnWidths, columnIndex, span);
         const textWidth = Math.max(width - style.padding.left - style.padding.right, 0);
@@ -338,8 +359,8 @@ export function measureClampedRowFragment(
 export function getAutoColumnWidths(
     rows: PdfRow[],
     layout: LayoutOptions,
-    bodyFont: PdfFontFamily,
-    headerFont: PdfFontFamily,
+    bodyFont: ResolvedPdfFont | PdfFontFamily,
+    headerFont: ResolvedPdfFont | PdfFontFamily,
     styleColors: PdfStyleColors,
     autoWidthColumns: boolean[]
 ): number[] {
@@ -356,7 +377,8 @@ export function getAutoColumnWidths(
 
         const isHeader = isHeaderRowType(row.type);
         const rowStyles = getRowStyles(row.type, styleColors, bodyRowIndex);
-        const baseFontFamily = isHeader ? headerFont : bodyFont;
+        const fontRegistry = getFontRegistry(layout);
+        const baseFont = resolveFontInput(isHeader ? headerFont : bodyFont, fontRegistry);
         const defaultFontSize = isHeader ? layout.headerFontSize : layout.fontSize;
 
         let columnIndex = 0;
@@ -374,14 +396,12 @@ export function getAutoColumnWidths(
             const style = resolveTableCellStyle(
                 mergePdfCellStyles(row.style, cell.style),
                 layout,
-                baseFontFamily,
+                baseFont,
                 rowStyles,
                 styleColors,
                 defaultFontSize
             );
-            if (cell.elementType === 'rowgroup' && cell.groupLevel) {
-                style.padding.left += cell.groupLevel * (layout.rowGroupIndentSize ?? 0);
-            }
+            applyRowGroupIndent(cell, style, layout);
 
             const textWidth = getIntrinsicTextWidth(cell.value ?? '', style);
             const requiredWidth = textWidth + style.padding.left + style.padding.right;
@@ -420,24 +440,27 @@ function spanIncludesAutoWidthColumn(autoWidthColumns: boolean[], startIndex: nu
  * @returns Permanently constrained text lines.
  */
 export function measureTextLines(value: string, availableWidth: number, style: ResolvedCellStyle): string[] {
+    const calculateWidth = (text: string) =>
+        style.fontRegistry.measureText(text, style.fontSize, style.font, style.direction, style.language);
     let lines: string[];
     if (style.wrapText) {
         lines = wrapText(
-            normaliseText(value, style.preserveLineBreaks),
+            normaliseText(value, style.preserveLineBreaks, !!style.font.trueType),
             availableWidth,
             style.fontSize,
             style.fontFamily,
-            style.preserveSpaces
+            style.preserveSpaces,
+            calculateWidth
         );
     } else {
-        const normalised = normaliseText(value, style.preserveLineBreaks);
+        const normalised = normaliseText(value, style.preserveLineBreaks, !!style.font.trueType);
         const sourceLines = style.preserveLineBreaks ? normalised.split('\n') : [normalised];
         lines = [];
         for (const line of sourceLines) {
             lines.push(
                 style.overflow === 'clip'
-                    ? clipText(line, availableWidth, style.fontSize, style.fontFamily)
-                    : truncateText(line, availableWidth, style.fontSize, style.fontFamily)
+                    ? clipText(line, availableWidth, style.fontSize, style.fontFamily, calculateWidth)
+                    : truncateText(line, availableWidth, style.fontSize, style.fontFamily, calculateWidth)
             );
         }
         if (!style.preserveLineBreaks && !lines[0]) {
@@ -502,7 +525,8 @@ export function constrainTextLines(
             visibleLines[lastLineIndex],
             availableWidth,
             style.fontSize,
-            style.fontFamily
+            style.fontFamily,
+            (text) => style.fontRegistry.measureText(text, style.fontSize, style.font, style.direction, style.language)
         );
     }
     return visibleLines;
@@ -518,12 +542,18 @@ function resolveTitleStyle(
     style: PdfDocumentTitleStyle | undefined,
     params: PdfExportParams,
     styleColors: PdfStyleColors,
-    headerFont: PdfFontFamily,
+    headerFont: ResolvedPdfFont,
+    fontRegistry: PdfFontRegistry,
     defaultHeaderFontSize: number
 ): ResolvedCellStyle {
     const headerFontSize = resolveFiniteNumber(params.headerFontSize, defaultHeaderFontSize, Number.EPSILON);
     const fontSize = resolveFiniteNumber(style?.fontSize, Math.max(headerFontSize + 4, 14), Number.EPSILON);
-    const fontFamily = resolvePdfFontFamily(style?.fontFamily, style?.fontWeight, headerFont);
+    const font = fontRegistry.resolve(
+        style?.fontFamily,
+        style?.fontWeight ?? headerFont.weight,
+        style?.fontStyle ?? headerFont.style,
+        headerFont.family
+    );
     const padding = resolveBoxSpacing(style?.padding, DEFAULT_TITLE_PADDING);
     const margin = resolveBoxSpacing(style?.margin, DEFAULT_TITLE_MARGIN);
     const blendWith = styleColors.pageBackground ?? styleColors.dataBackground;
@@ -532,11 +562,22 @@ function resolveTitleStyle(
 
     return {
         fontSize,
-        fontFamily,
-        lineHeight: resolveFiniteNumber(style?.lineHeight ?? params.lineHeight, fontSize, Number.EPSILON),
+        fontFamily: font.family,
+        fontWeight: font.weight,
+        fontStyle: font.style,
+        font,
+        fontRegistry,
+        direction: style?.direction ?? params.direction ?? 'auto',
+        language: style?.language ?? params.language,
+        lineHeight: resolveFiniteNumber(
+            style?.lineHeight ?? params.lineHeight,
+            fontRegistry.getNaturalLineHeight(fontSize, font),
+            Number.EPSILON
+        ),
         maxLines: resolveMaxLines(style?.maxLines ?? params.maxLines),
         overflow: style?.overflow ?? params.overflow ?? DEFAULT_OVERFLOW,
         alignment: style?.alignment ?? DEFAULT_TITLE_ALIGNMENT,
+        alignmentExplicit: style?.alignment != null,
         padding,
         margin,
         textColor: resolveOptionalColor(style?.color, fallbackTextColor, blendWith) ?? fallbackTextColor,
@@ -552,7 +593,7 @@ function resolveTitleStyle(
 function resolveTableCellStyle(
     style: PdfCellStyle | undefined,
     layout: LayoutOptions,
-    fontFamily: PdfFontFamily,
+    inheritedFont: ResolvedPdfFont,
     rowStyles: PdfRowStyles,
     styleColors: PdfStyleColors,
     defaultFontSize: number
@@ -564,18 +605,35 @@ function resolveTableCellStyle(
         left: layout.cellPadding,
     });
     const fontSize = resolveFiniteNumber(style?.fontSize, defaultFontSize, Number.EPSILON);
-    const resolvedFontFamily = resolvePdfFontFamily(style?.fontFamily, style?.fontWeight, fontFamily);
+    const fontRegistry = getFontRegistry(layout);
+    const font = fontRegistry.resolve(
+        style?.fontFamily,
+        style?.fontWeight ?? inheritedFont.weight,
+        style?.fontStyle ?? inheritedFont.style,
+        inheritedFont.family
+    );
     const blendWith = rowStyles.background ?? styleColors.dataBackground ?? styleColors.pageBackground;
     const fallbackTextColor = rowStyles.text ?? styleColors.foreground ?? { r: 0, g: 0, b: 0 };
     const borderColor = resolveOptionalColor(style?.borderColor, rowStyles.border, blendWith);
 
     return {
         fontSize,
-        fontFamily: resolvedFontFamily,
-        lineHeight: resolveFiniteNumber(style?.lineHeight ?? layout.lineHeight, fontSize, Number.EPSILON),
+        fontFamily: font.family,
+        fontWeight: font.weight,
+        fontStyle: font.style,
+        font,
+        fontRegistry,
+        direction: style?.direction ?? layout.direction ?? 'auto',
+        language: style?.language ?? layout.language,
+        lineHeight: resolveFiniteNumber(
+            style?.lineHeight ?? layout.lineHeight,
+            fontRegistry.getNaturalLineHeight(fontSize, font),
+            Number.EPSILON
+        ),
         maxLines: resolveMaxLines(style?.maxLines ?? layout.maxLines),
         overflow: style?.overflow ?? layout.overflow ?? DEFAULT_OVERFLOW,
         alignment: style?.alignment ?? DEFAULT_CELL_ALIGNMENT,
+        alignmentExplicit: style?.alignment != null,
         padding,
         margin: DEFAULT_CELL_MARGIN,
         textColor: resolveOptionalColor(style?.color, fallbackTextColor, blendWith) ?? fallbackTextColor,
@@ -589,11 +647,14 @@ function resolveTableCellStyle(
 }
 
 function getIntrinsicTextWidth(value: string, style: ResolvedCellStyle): number {
-    const normalised = normaliseText(value, style.preserveLineBreaks);
+    const normalised = normaliseText(value, style.preserveLineBreaks, !!style.font.trueType);
     const lines = style.preserveLineBreaks ? normalised.split('\n') : [normalised];
     let width = 0;
     for (const line of lines) {
-        width = Math.max(width, estimateTextWidth(line, style.fontSize, style.fontFamily));
+        width = Math.max(
+            width,
+            style.fontRegistry.measureText(line, style.fontSize, style.font, style.direction, style.language)
+        );
     }
     return width;
 }
@@ -613,6 +674,21 @@ function resolveBoxSpacing(value: number | PdfMargin | undefined, fallback: Reso
     };
 }
 
+function applyRowGroupIndent(cell: PdfRow['cells'][number], style: ResolvedCellStyle, layout: LayoutOptions): void {
+    if (cell.elementType !== 'rowgroup' || !cell.groupLevel) {
+        return;
+    }
+
+    const indent = cell.groupLevel * (layout.rowGroupIndentSize ?? 0);
+    const direction =
+        style.direction === 'auto' ? resolveBidiCharacters(cell.value, style.direction).direction : style.direction;
+    if (direction === 'rtl') {
+        style.padding.right += indent;
+    } else {
+        style.padding.left += indent;
+    }
+}
+
 function resolveMaxLines(value: number | undefined): number | undefined {
     if (value == null || !Number.isFinite(value) || value < 1) {
         return undefined;
@@ -622,4 +698,13 @@ function resolveMaxLines(value: number | undefined): number | undefined {
 
 function resolveBorderWidth(borderWidth: number | undefined, borderColor?: PdfRgb): number {
     return resolveFiniteNumber(borderWidth, borderColor ? 1 : 0);
+}
+
+function getFontRegistry(layout: LayoutOptions): PdfFontRegistry {
+    layout.fontRegistry ??= new PdfFontRegistry(undefined);
+    return layout.fontRegistry;
+}
+
+function resolveFontInput(font: ResolvedPdfFont | PdfFontFamily, registry: PdfFontRegistry): ResolvedPdfFont {
+    return typeof font === 'string' ? registry.resolve(font, undefined, undefined) : font;
 }

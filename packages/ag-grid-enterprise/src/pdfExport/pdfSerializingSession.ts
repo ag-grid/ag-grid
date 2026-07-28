@@ -255,7 +255,14 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
     }
 
     public parse(): string {
-        return createPdfDocument(this.rows, this.columnsToExport, this.config);
+        if (this.config.direction !== 'rtl') {
+            return createPdfDocument(this.rows, this.columnsToExport, this.config);
+        }
+
+        const rows = this.rows.map((row) => ({ ...row, cells: [...row.cells].reverse() }));
+        const columnsToExport = [...this.columnsToExport].reverse();
+
+        return createPdfDocument(rows, columnsToExport, this.config);
     }
 
     private createRow(type: PdfRowType, sourceNode?: RowNode): PdfRow {

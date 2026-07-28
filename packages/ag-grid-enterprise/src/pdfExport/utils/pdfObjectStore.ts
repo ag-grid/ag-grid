@@ -1,8 +1,7 @@
-import type { PdfFontFamily } from 'ag-grid-community';
-
 import type { ResolvedPageSize } from './document/layout';
-import { escapePdfString, fmt, normaliseText } from './document/text';
-import { normalisePdfFontFamily } from './fonts';
+import { encodePdfUnicodeString, escapePdfString, fmt } from './document/text';
+import type { ResolvedPdfFont } from './fontRegistry';
+import { encodeAsciiHex } from './ttf';
 
 /**
  * A clickable URI rectangle attached to one PDF page.
@@ -99,24 +98,24 @@ class PdfObjectStore {
  * Build a complete PDF document from rendered page content.
  * @param pages - Per-page content streams and link annotations.
  * @param pageSize - Resolved page size in points.
- * @param fontKeyByFamily - Map of fonts used by the document.
+ * @param fonts - Concrete font resources used by the document.
  * @param documentTitle - Optional metadata title.
  * @returns Complete PDF document string.
  */
 export function buildPdf(
     pages: PdfPageContent[],
     pageSize: ResolvedPageSize,
-    fontKeyByFamily: Map<PdfFontFamily, string>,
-    documentTitle?: string
+    fonts: ResolvedPdfFont[],
+    documentTitle?: string,
+    language?: string
 ): string {
     const store = new PdfObjectStore();
     const fontResourcesParts: string[] = [];
 
-    fontKeyByFamily.forEach((fontKey, fontFamily) => {
-        const baseFont = normalisePdfFontFamily(fontFamily);
-        const fontId = store.add(`<< /Type /Font /Subtype /Type1 /BaseFont /${baseFont} /Encoding /WinAnsiEncoding >>`);
-        fontResourcesParts.push(`/${fontKey} ${fontId} 0 R`);
-    });
+    for (const font of fonts) {
+        const fontId = font.trueType ? addTrueTypeFontResource(store, font) : addBuiltInFontResource(store, font);
+        fontResourcesParts.push(`/${font.key} ${fontId} 0 R`);
+    }
 
     const pagesId = store.reserve();
     const pageIds: number[] = [];
@@ -152,14 +151,121 @@ export function buildPdf(
 
     store.set(pagesId, `<< /Type /Pages /Kids [${pageKids.join(' ')}] /Count ${pageIds.length} >>`);
 
-    const catalogId = store.add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
+    const documentLanguage = language?.trim();
+    const languageEntry = documentLanguage ? ` /Lang (${escapePdfString(documentLanguage)})` : '';
+    const catalogId = store.add(`<< /Type /Catalog /Pages ${pagesId} 0 R${languageEntry} >>`);
 
-    const resolvedTitle = documentTitle ? normaliseText(documentTitle) : '';
-    const infoId = resolvedTitle?.trim().length
-        ? store.add(`<< /Title (${escapePdfString(resolvedTitle)}) >>`)
+    const resolvedTitle = documentTitle?.trim() ?? '';
+    const infoId = resolvedTitle.length
+        ? store.add(`<< /Title ${encodePdfMetadataString(resolvedTitle)} >>`)
         : undefined;
 
     return store.build(catalogId, infoId);
+}
+
+function encodePdfMetadataString(value: string): string {
+    if (/^[\x20-\x7e]*$/.test(value)) {
+        return `(${escapePdfString(value)})`;
+    }
+
+    return encodePdfUnicodeString(value);
+}
+
+function addBuiltInFontResource(store: PdfObjectStore, font: ResolvedPdfFont): number {
+    const baseFont = font.builtInFamily ?? 'Helvetica';
+    return store.add(`<< /Type /Font /Subtype /Type1 /BaseFont /${baseFont} /Encoding /WinAnsiEncoding >>`);
+}
+
+function addTrueTypeFontResource(store: PdfObjectStore, font: ResolvedPdfFont): number {
+    const trueType = font.trueType!;
+    const embeddedFontName = trueType.canSubset ? `AGGRID+${trueType.postScriptName}` : trueType.postScriptName;
+    const subset = trueType.createSubset(Array.from(font.mappingByCid.values(), (mapping) => mapping.glyphId));
+    const encodedFont = encodeAsciiHex(subset);
+    const fontFileId = store.add(
+        `<< /Length ${encodedFont.length} /Length1 ${subset.length} /Filter /ASCIIHexDecode >>\nstream\n${encodedFont}\nendstream`
+    );
+    const scale = 1000 / trueType.unitsPerEm;
+    const bbox = trueType.bbox.map((value) => fmt(value * scale)).join(' ');
+    const flags = font.style === 'normal' && !trueType.italicAngle ? 4 : 68;
+    const descriptorId = store.add(
+        `<< /Type /FontDescriptor /FontName /${embeddedFontName} /Flags ${flags} ` +
+            `/FontBBox [${bbox}] /ItalicAngle ${fmt(trueType.italicAngle)} ` +
+            `/Ascent ${fmt(trueType.ascent * scale)} /Descent ${fmt(trueType.descent * scale)} ` +
+            `/CapHeight ${fmt(trueType.capHeight * scale)} /StemV 80 /FontWeight ${font.weight} ` +
+            `/FontFile2 ${fontFileId} 0 R >>`
+    );
+    const widths = createCidWidths(font);
+    const cidToGid = createCidToGidMap(font);
+    const cidToGidId = store.add(
+        `<< /Length ${cidToGid.length} /Filter /ASCIIHexDecode >>\nstream\n${cidToGid}\nendstream`
+    );
+    const descendantId = store.add(
+        `<< /Type /Font /Subtype /CIDFontType2 /BaseFont /${embeddedFontName} ` +
+            `/CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> ` +
+            `/FontDescriptor ${descriptorId} 0 R /DW 1000${widths ? ` /W [${widths}]` : ''} ` +
+            `/CIDToGIDMap ${cidToGidId} 0 R >>`
+    );
+    const toUnicode = createToUnicodeCMap(font);
+    const toUnicodeId = store.add(`<< /Length ${toUnicode.length} >>\nstream\n${toUnicode}\nendstream`);
+    return store.add(
+        `<< /Type /Font /Subtype /Type0 /BaseFont /${embeddedFontName} /Encoding /Identity-H ` +
+            `/DescendantFonts [${descendantId} 0 R] /ToUnicode ${toUnicodeId} 0 R >>`
+    );
+}
+
+function createCidWidths(font: ResolvedPdfFont): string {
+    const trueType = font.trueType!;
+    const mappings = Array.from(font.mappingByCid.entries()).sort(([left], [right]) => left - right);
+    const parts: string[] = [];
+    const scale = 1000 / trueType.unitsPerEm;
+
+    for (const [cid, mapping] of mappings) {
+        parts.push(`${cid} [${fmt(trueType.getAdvanceWidth(mapping.glyphId) * scale)}]`);
+    }
+    return parts.join(' ');
+}
+
+function createToUnicodeCMap(font: ResolvedPdfFont): string {
+    const mappings: string[] = [];
+    for (const [cid, mapping] of font.mappingByCid) {
+        if (!mapping.unicode) {
+            continue;
+        }
+        mappings.push(`<${toHex(cid, 4)}> ${encodePdfUnicodeString(mapping.unicode, false)}`);
+    }
+
+    const parts = [
+        '/CIDInit /ProcSet findresource begin',
+        '12 dict begin',
+        'begincmap',
+        '/CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def',
+        '/CMapName /Adobe-Identity-UCS def',
+        '/CMapType 2 def',
+        '1 begincodespacerange',
+        '<0000> <FFFF>',
+        'endcodespacerange',
+    ];
+
+    for (let start = 0; start < mappings.length; start += 100) {
+        const chunk = mappings.slice(start, start + 100);
+        parts.push(`${chunk.length} beginbfchar`, ...chunk, 'endbfchar');
+    }
+    parts.push('endcmap', 'CMapName currentdict /CMap defineresource pop', 'end', 'end');
+    return parts.join('\n');
+}
+
+function createCidToGidMap(font: ResolvedPdfFont): string {
+    const maximumCid = font.mappingByCid.size;
+    const bytes = new Uint8Array((maximumCid + 1) * 2);
+    const view = new DataView(bytes.buffer);
+    for (const [cid, mapping] of font.mappingByCid) {
+        view.setUint16(cid * 2, mapping.glyphId, false);
+    }
+    return encodeAsciiHex(bytes);
+}
+
+function toHex(value: number, length: number): string {
+    return value.toString(16).toUpperCase().padStart(length, '0');
 }
 
 /**
