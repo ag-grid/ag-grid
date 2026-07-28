@@ -13,6 +13,12 @@ import type { ElementParams } from '../utils/element';
 import { Component } from '../widgets/component';
 import type { ScrollPartner } from './gridBodyScrollFeature';
 
+/**
+ * Size given to a fake scrollbar when the platform reports a zero-width scrollbar (overlay
+ * scrollbars, e.g. macOS): the fake scrollbar is always drawn, so it still occupies space.
+ */
+export const INVISIBLE_SCROLLBAR_SIZE = 16;
+
 export abstract class AbstractFakeScrollComp extends Component implements ScrollPartner {
     public readonly eViewport: HTMLElement = RefPlaceholder;
     protected readonly eContainer: HTMLElement = RefPlaceholder;

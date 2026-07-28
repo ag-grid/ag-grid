@@ -3,7 +3,7 @@ import { RefPlaceholder, _isVisible, _requestAnimationFrame, _setFixedWidth } fr
 import type { CtrlsService } from '../ctrlsService';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
-import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
+import { AbstractFakeScrollComp, INVISIBLE_SCROLLBAR_SIZE } from './abstractFakeScrollComp';
 
 const FakeVScrollElement: ElementParams = {
     tag: 'div',
@@ -64,7 +64,8 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         const scrollbarWidth = vScrollShowing
             ? (gridBodyCtrl?.getVerticalScrollbarWidth() ?? fallbackScrollbarWidth)
             : 0;
-        const adjustedScrollbarWidth = scrollbarWidth === 0 && invisibleScrollbar ? 16 : scrollbarWidth;
+        const adjustedScrollbarWidth =
+            scrollbarWidth === 0 && invisibleScrollbar ? INVISIBLE_SCROLLBAR_SIZE : scrollbarWidth;
         const horizontalScrollHeight = gridBodyCtrl?.getHorizontalScrollbarHeight() ?? 0;
         const headerRowsOffset = gridBodyCtrl?.getHeaderRowsOffset() ?? 0;
 

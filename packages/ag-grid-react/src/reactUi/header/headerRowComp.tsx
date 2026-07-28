@@ -58,6 +58,9 @@ const HeaderRowComp = ({
     const sectionSignatureRef = useRef<string>('');
     const domOrderRef = useRef<boolean>(false);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>([]);
+    const [tabIndex, setTabIndex] = useState<number | undefined>(() =>
+        _isHeaderFocusSuppressed(beans) ? undefined : gos.get('tabIndex')
+    );
 
     const pinnedWidthsCache = useRef<PinnedSectionWidthsCache>({
         pinnedLeftWidth: undefined,
@@ -132,6 +135,7 @@ const HeaderRowComp = ({
                         eGui.current.classList.toggle('ag-header-row-not-first', rowIndex !== 1);
                     }
                 },
+                setTabIndex,
             };
 
             ctrl.setComp(compProxy, compBean.current);
@@ -164,8 +168,6 @@ const HeaderRowComp = ({
         },
         [ctrl.type]
     );
-
-    const tabIndex = _isHeaderFocusSuppressed(beans) ? undefined : gos.get('tabIndex');
 
     return (
         <div ref={setRef} className={ctrl.headerRowClass} role="row" tabIndex={tabIndex}>
