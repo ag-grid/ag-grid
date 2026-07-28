@@ -37,24 +37,27 @@ export const Header: FunctionComponent<Props> = ({
         <header className={styles.docsPageHeader}>
             <div id="top" className={styles.docsPageTitle}>
                 <div className={styles.pageTitleContainer}>
-                    <div className={styles.pageTitleGroup}>
-                        <h1>
-                            <span className={styles.titleMeta}>
-                                {!suppressFrameworkHeader && (
-                                    <span className={styles.headerFramework}>
-                                        {`${getFrameworkDisplayText(framework)} Data Grid`}
-                                    </span>
-                                )}
-                                {version && <span className={styles.version}>{`Version ${version}`}</span>}
+                    <div className={styles.titleMeta}>
+                        {!suppressFrameworkHeader && (
+                            <span className={styles.headerFramework}>
+                                {`${getFrameworkDisplayText(framework)} Data Grid`}
                             </span>
-                            {title}
-                        </h1>
+                        )}
+                        {version && <span className={styles.version}>{`Version ${version}`}</span>}
                     </div>
 
                     <div className={styles.headerActions}>
                         {markdownHref && <MarkdownActions markdownHref={markdownHref} />}
-                        <FrameworkSelectorInsideDocs path={path} currentFramework={framework} menuItems={menuItems} />
+                        <div className={styles.frameworkSelectorSlot}>
+                            <FrameworkSelectorInsideDocs
+                                path={path}
+                                currentFramework={framework}
+                                menuItems={menuItems}
+                            />
+                        </div>
                     </div>
+
+                    <h1 className={styles.pageTitle}>{title}</h1>
                 </div>
 
                 {isEnterprise && (
