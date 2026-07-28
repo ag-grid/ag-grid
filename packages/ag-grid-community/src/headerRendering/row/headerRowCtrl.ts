@@ -5,6 +5,7 @@ import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { _isDomLayout } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { HeaderColumnId } from '../../interfaces/iColumn';
+import { _isHeaderFocusSuppressed } from '../../utils/gridFocus';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
@@ -25,6 +26,7 @@ export interface IHeaderRowComp {
     refreshPinnedCellGroupWidths(): void;
     setWidth(width: string): void;
     setRowIndex(rowIndex: number): void;
+    setTabIndex(tabIndex: number | undefined): void;
 }
 
 let instanceIdSequence = 0;
@@ -97,6 +99,12 @@ export class HeaderRowCtrl extends BeanStub {
         this.setWidth();
 
         this.addEventListeners(compBean);
+        this.refreshTabIndex();
+    }
+
+    private refreshTabIndex(): void {
+        const { beans, gos } = this;
+        this.comp?.setTabIndex(_isHeaderFocusSuppressed(beans) ? undefined : gos.get('tabIndex'));
     }
 
     public getAriaRowIndex(): number {
@@ -106,6 +114,7 @@ export class HeaderRowCtrl extends BeanStub {
     private addEventListeners(compBean: BeanStub): void {
         const onHeightChanged = this.onRowHeightChanged.bind(this);
         const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
+        const refreshTabIndex = this.refreshTabIndex.bind(this);
         compBean.addManagedEventListeners({
             columnResized: this.setWidth.bind(this),
             leftPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
@@ -117,7 +126,10 @@ export class HeaderRowCtrl extends BeanStub {
             columnHeaderHeightChanged: onHeightChanged,
             stylesChanged: onHeightChanged,
             advancedFilterEnabledChanged: onHeightChanged,
+            overlayExclusiveChanged: refreshTabIndex,
         });
+
+        compBean.addManagedPropertyListeners(['suppressHeaderFocus'], refreshTabIndex);
 
         // when print layout changes, it changes what columns are in what section
         compBean.addManagedPropertyListener('domLayout', onDisplayedColumnsChanged);

@@ -4,7 +4,7 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import type { BeanCollection } from '../context/context';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
-import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
+import { AbstractFakeScrollComp, INVISIBLE_SCROLLBAR_SIZE } from './abstractFakeScrollComp';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 const FakeHScrollElement: ElementParams = {
@@ -103,7 +103,8 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         const invisibleScrollbar = this.invisibleScrollbar;
         const isSuppressHorizontalScroll = this.gos.get('suppressHorizontalScroll');
         const scrollbarWidth = hScrollShowing ? this.scrollVisibleSvc.getScrollbarWidth() || 0 : 0;
-        const adjustedScrollbarWidth = scrollbarWidth === 0 && invisibleScrollbar ? 16 : scrollbarWidth;
+        const adjustedScrollbarWidth =
+            scrollbarWidth === 0 && invisibleScrollbar ? INVISIBLE_SCROLLBAR_SIZE : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
 
         // Avoid scrollbars flickering on as we resize the grid. Before showing

@@ -664,6 +664,7 @@ export type {
     NewFiltersToolPanelFilterState,
     NewFiltersToolPanelState,
     PaginationState,
+    PivotSortModelItem,
     PivotState,
     RangeSelectionCellState,
     RangeSelectionState,

@@ -1,0 +1,129 @@
+@use 'design-system' as *;
+
+// Matches the height and border treatment of the shared Select trigger (see
+// Select.module.scss) so this sits alongside one as a single control group.
+// The segments carry their own corner radii rather than the container clipping
+// them, so the focus ring on the chevron is not cut off.
+$segment-radius: calc(var(--radius-sm) - 1px);
+
+.markdownActions {
+    display: flex;
+    align-items: stretch;
+    height: 36px;
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-primary);
+
+    &:hover {
+        border-color: var(--color-input-border-hover);
+
+        #{$selector-darkmode} & {
+            border-color: var(--color-brand-200);
+        }
+    }
+}
+
+.primaryAction {
+    display: flex;
+    align-items: center;
+    padding: 0 $spacing-size-3;
+    border: none;
+    border-radius: $segment-radius 0 0 $segment-radius;
+    background-color: transparent;
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-regular);
+    color: var(--color-fg-primary);
+    white-space: nowrap;
+
+    // Re-assert the colour, otherwise the global button hover style fades the label.
+    &:hover {
+        background-color: var(--color-bg-secondary);
+        color: var(--color-fg-primary);
+    }
+}
+
+// Stacks the live label over a hidden copy of the longest one, so the button
+// keeps its width when the label changes.
+.labelStack {
+    display: grid;
+
+    > * {
+        grid-area: 1 / 1;
+    }
+}
+
+.labelSizer {
+    visibility: hidden;
+}
+
+.trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    padding: 0;
+    border: none;
+    border-left: 1px solid var(--color-input-border);
+    border-radius: 0 $segment-radius $segment-radius 0;
+    background-color: transparent;
+    color: var(--color-fg-primary);
+
+    // Re-assert the colour, otherwise the global button hover style fades the chevron.
+    &:hover {
+        background-color: var(--color-bg-secondary);
+        color: var(--color-fg-primary);
+    }
+}
+
+.chevron {
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+}
+
+.content {
+    min-width: 180px;
+    overflow: hidden;
+    padding: 6px;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+    box-shadow:
+        0px 10px 38px -10px rgba(22, 23, 24, 0.35),
+        0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+    z-index: 1000;
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 12%);
+        border: 1px solid color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 22%);
+    }
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 3px;
+    font-size: var(--text-fs-base);
+    // Pinned so the "View as Markdown" link is not bolder than its sibling items.
+    font-weight: var(--text-regular);
+    line-height: 1;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+
+    #{$selector-darkmode} & {
+        color: var(--color-fg-white);
+    }
+
+    &[data-highlighted] {
+        outline: none;
+        background-color: var(--color-util-brand-50);
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 20%);
+        }
+    }
+}
