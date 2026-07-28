@@ -3,6 +3,7 @@ import featuresData from '@ag-website-shared/components/features-section/DocsFea
 import { FEATURE_MAP } from '@ag-website-shared/components/getting-started/gettingStartedData';
 import { FIGMA_DESIGN_SYSTEM_URL } from '@ag-website-shared/constants';
 import whatsNewData from '@ag-website-shared/content/whats-new/data.json';
+import { type MajorTableVersionEntry, buildMajorTable } from '@ag-website-shared/markdoc/buildMajorTable';
 import { markdownTable } from '@ag-website-shared/markdoc/markdownTable';
 import { type MarkdownFramework, fencedCodeBlock } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
@@ -20,7 +21,6 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import gridSeedProjects from '../../content/seed-projects/grid-seed-projects.json';
-import { type VersionEntry, buildMajorTable } from './renderMajorTable';
 import { buildMatrixTable } from './renderMatrixTable';
 import { type ModuleNode, buildModuleMappingsTable } from './renderModuleMappings';
 
@@ -117,7 +117,13 @@ async function renderMajorTable(
     if (!entry) {
         return '';
     }
-    return buildMajorTable(entry.data as VersionEntry[], attributes, framework, siteRoot);
+    return buildMajorTable({
+        versions: entry.data as MajorTableVersionEntry[],
+        attributes,
+        defaultLibrary: 'grid',
+        resolveNotesUrl: (notesPath) =>
+            toAbsoluteUrl(urlWithPrefix({ url: notesPath, framework: framework as Framework }), siteRoot),
+    });
 }
 
 function renderSeedProjectsTable(siteRoot?: string): string {
