@@ -39,7 +39,7 @@ import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { isCellEditable, isFullRowCellEditable, shouldStartEditing } from './strategy/strategyUtils';
 import { _applyCellEditStyles } from './styles/cellEditStyleFeature';
 import { _applyRowEditStyles } from './styles/rowEditStyleFeature';
-import { _addStopEditingWhenGridLosesFocus, _getCellCtrl } from './utils/controllers';
+import { _addStopEditingWhenGridLosesFocus, _getCellCtrl, _getRowCtrl } from './utils/controllers';
 import {
     UNEDITED,
     _destroyEditor,
@@ -48,6 +48,7 @@ import {
     _flushEditors,
     _onPopupEditorClosed,
     _populateModelValidationErrors,
+    _populateRowValidationErrors,
     _purgeUnchangedEdit,
     _purgeUnchangedEdits,
     _refreshEditorOnColDefChanged,
@@ -725,11 +726,17 @@ export class EditService extends BeanStub implements NamedBean {
     private revertInvalidEdits(): void {
         const model = this.model;
         const positions = model.getEditPositions();
+        // Chosen up front: each revert revalidates the row, and a row error clearing part-way through
+        // would spare the siblings it had invalidated.
+        const invalid: Required<EditPosition>[] = [];
         for (let i = 0, len = positions.length; i < len; ++i) {
             const position = positions[i];
             if (model.hasValidationErrors(position)) {
-                this.revertCellEdit(position);
+                invalid.push(position);
             }
+        }
+        for (let i = 0, len = invalid.length; i < len; ++i) {
+            this.revertCellEdit(invalid[i]);
         }
     }
 
@@ -753,6 +760,13 @@ export class EditService extends BeanStub implements NamedBean {
         model.stop(position, true, true);
         // The dropped attempt takes its error with it — outside the stop pipeline nothing else clears it.
         model.getCellValidationModel().clearCellValidation(position);
+        // The row rule was last run against the value just dropped, so its verdict is about a value the
+        // row no longer holds — recompute it, and restyle the row on the new one.
+        _populateRowValidationErrors(beans);
+        const rowCtrl = _getRowCtrl(beans, position);
+        if (rowCtrl) {
+            this.applyRowEditStyles(rowCtrl);
+        }
         _getCellCtrl(beans, position)?.refreshCell(FORCE_REFRESH);
     }
 
@@ -1148,24 +1162,6 @@ export class EditService extends BeanStub implements NamedBean {
             }
         });
         _purgeEdits(this.beans, positions);
-    }
-
-    /** The column half of {@link releaseRowEdits}: one column leaving the grid, across every row editing it. */
-    public releaseColumnEdits(column: Column): void {
-        const editMap = this.model.getEditMap();
-        if (!editMap?.size || this.beans.gridDestroySvc.destroyCalled) {
-            return;
-        }
-        // Snapshot, as in releaseRowEdits. One hash lookup per row, rather than a walk of its columns.
-        const positions: Required<EditPosition>[] = [];
-        editMap.forEach((editRow, rowNode) => {
-            if (editRow.has(column)) {
-                positions.push({ rowNode, column });
-            }
-        });
-        if (positions.length) {
-            _purgeEdits(this.beans, positions);
-        }
     }
 
     public cellEditingInvalidCommitBlocks(): boolean {
@@ -1711,21 +1707,12 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public dispatchBatchEvent(type: 'batchEditingStarted' | 'batchEditingStopped', edits: EditMap): void {
-        this.eventSvc.dispatchEvent(this.createBatchEditEvent(type, edits));
-    }
-
-    public createBatchEditEvent(
-        type: 'batchEditingStarted' | 'batchEditingStopped',
-        edits: EditMap
-    ): BatchEditingStartedEvent | BatchEditingStoppedEvent {
-        return _addGridCommonParams(this.gos, {
+        const event: BatchEditingStartedEvent | BatchEditingStoppedEvent = _addGridCommonParams(this.gos, {
             type,
-            ...(type === 'batchEditingStopped'
-                ? {
-                      changes: this.toEventChangeList(edits),
-                  }
-                : {}),
+            // Only the stopped event carries what changed.
+            ...(type === 'batchEditingStopped' ? { changes: this.toEventChangeList(edits) } : {}),
         });
+        this.eventSvc.dispatchEvent(event);
     }
 
     private toEventChangeList(edits: EditMap): CellValueChange[] {

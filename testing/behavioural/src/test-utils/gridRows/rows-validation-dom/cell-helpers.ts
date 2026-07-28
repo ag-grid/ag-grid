@@ -80,12 +80,13 @@ export function cellShowsInvalid(cellElement: HTMLElement): boolean {
     ) {
         return true;
     }
-    // Every control exposing validationMessage, so a select marked only by setCustomValidity counts.
+    // customError only: native constraints (the number editor's own min/max params, pattern, required)
+    // fill validationMessage on their own, with no grid validation pass behind it.
     const controls = cellElement.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
         'input, textarea, select'
     );
     for (let i = 0, len = controls.length; i < len; ++i) {
-        if (controls[i].validationMessage) {
+        if (controls[i].validity.customError) {
             return true;
         }
     }
@@ -100,12 +101,18 @@ export function cellShowsInvalid(cellElement: HTMLElement): boolean {
  */
 export function captureDomInvalidCellKeys(gridElement: HTMLElement): Set<string> {
     const keys = new Set<string>();
+    // As in getGridRowsHtmlElements: a nested detail grid renders inside this element, and its row
+    // indexes collide with this grid's.
+    const gridRoot = gridElement.querySelector('.ag-root-wrapper');
     // Iterate the actively-editing cells (not just AG editor inputs) so custom editors are covered.
     const cells = gridElement.querySelectorAll<HTMLElement>('.ag-cell-inline-editing[col-id]');
     for (let i = 0, len = cells.length; i < len; ++i) {
         const cellElement = cells[i];
         const rowElement = cellElement.closest<HTMLElement>('[row-index]');
         if (!rowElement || !cellShowsInvalid(cellElement)) {
+            continue;
+        }
+        if (gridRoot && rowElement.closest('.ag-root-wrapper') !== gridRoot) {
             continue;
         }
         const { rowIndex, pinned } = parseRowElement(rowElement);

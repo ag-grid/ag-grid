@@ -224,10 +224,6 @@ export class AgColumn<TValue = any>
     }
 
     public override destroy() {
-        // Before the teardown: the editor stop below reads a column that must still be alive and displayed.
-        const beans = this.beans;
-        beans.editSvc?.releaseColumnEdits(this);
-
         super.destroy();
         this.allColsIndex = -1;
         this.displayed = false;
@@ -235,7 +231,7 @@ export class AgColumn<TValue = any>
         this.inColsList = false;
         this.lastLeftPinned = false;
         this.firstRightPinned = false;
-        beans.rowSpanSvc?.deregister(this);
+        this.beans.rowSpanSvc?.deregister(this);
     }
 
     public getInstanceId(): ColumnInstanceId {

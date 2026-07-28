@@ -46,22 +46,16 @@ function locateCellElements(api: GridApi, rowNode: IRowNode, colId: string) {
     return { gridDiv: gridDiv!, cell: cell!, rowIndex: rowIndex! };
 }
 
-const TYPE_ATTEMPTS = 3;
-
 /**
  * Types `newValue` into the open editor of a cell and returns the input it was typed into.
  *
- * A redraw landing part-way through typing replaces the editor input, discarding the keystrokes
- * already dispatched into the now-detached element. Re-query the cell and retry on that, rather
- * than committing a half-typed (or empty) editor and silently dropping the edit.
+ * A redraw part-way through typing replaces the input, discarding the keystrokes dispatched into the
+ * now-detached one, so retry rather than commit a half-typed editor.
  */
 async function typeIntoEditor(api: GridApi, rowNode: IRowNode, colId: string, newValue: string) {
     for (let attempt = 0; attempt < TYPE_ATTEMPTS; ++attempt) {
-        // Re-query the cell each attempt — in jsdom, `ensureIndexVisible` and aggregation-driven
-        // redraws replace cell DOM elements, making an earlier reference stale. Scope the input
-        // lookup to this cell rather than the whole grid: when edits happen in sequence a previous
-        // editor's input can briefly linger in the DOM, and a grid-wide lookup would grab that
-        // stale input instead of the one just opened.
+        // Re-queried per attempt and cell-scoped: a previous editor's input can linger in the DOM
+        // long enough for a grid-wide lookup to find it instead of the one just opened.
         const { gridDiv, cell } = locateCellElements(api, rowNode, colId);
         const input = await waitForInput(gridDiv, cell);
         await userEvent.clear(input);
@@ -74,23 +68,40 @@ async function typeIntoEditor(api: GridApi, rowNode: IRowNode, colId: string, ne
     throw new Error(`Could not type "${newValue}" into the editor of "${colId}": the input kept being replaced`);
 }
 
+const TYPE_ATTEMPTS = 4;
+
 export async function editCell(api: GridApi, rowNode: IRowNode, colId: string, newValue: string) {
-    // Let a redraw still pending from a previous edit settle before opening this editor, so it
-    // cannot detach this editor's input part-way through typing.
+    // A redraw still pending from a previous edit would detach this editor's input mid-typing.
     await asyncSetTimeout(0);
 
-    const { rowIndex } = locateCellElements(api, rowNode, colId);
-    api.setFocusedCell(rowIndex, colId, rowNode.rowPinned ?? undefined);
-    api.startEditingCell({ rowIndex, rowPinned: rowNode.rowPinned, colKey: colId });
-    await asyncSetTimeout(0);
+    // Enter dispatched into a detached input commits nothing yet still leaves the grid not editing,
+    // so the stop event is the only proof the keystroke landed; without it, re-open and retype.
+    for (let attempt = 0; attempt < TYPE_ATTEMPTS; ++attempt) {
+        const { rowIndex } = locateCellElements(api, rowNode, colId);
+        api.setFocusedCell(rowIndex, colId, rowNode.rowPinned ?? undefined);
+        api.startEditingCell({ rowIndex, rowPinned: rowNode.rowPinned, colKey: colId });
+        await asyncSetTimeout(0);
 
-    const input = await typeIntoEditor(api, rowNode, colId, newValue);
-    await userEvent.type(input, '{Enter}');
-    await asyncSetTimeout(0);
+        const input = await typeIntoEditor(api, rowNode, colId, newValue);
 
-    // Enter dispatched into an input the grid has already discarded commits nothing. Fail here
-    // rather than leaving the test to report a confusing stale value several assertions later.
-    expect(api.getEditingCells()).toEqual([]);
+        let stopped = false;
+        const onStopped = () => {
+            stopped = true;
+        };
+        api.addEventListener('cellEditingStopped', onStopped);
+        if (input.isConnected) {
+            await userEvent.type(input, '{Enter}');
+            await asyncSetTimeout(0);
+        }
+        api.removeEventListener('cellEditingStopped', onStopped);
+
+        if (stopped) {
+            expect(api.getEditingCells()).toEqual([]);
+            return;
+        }
+        await asyncSetTimeout(attempt * 2);
+    }
+    throw new Error(`Enter never reached the editor of "${colId}": its input kept being replaced`);
 }
 
 /**

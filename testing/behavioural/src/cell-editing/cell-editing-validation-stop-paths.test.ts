@@ -941,6 +941,82 @@ describe('Cell editing validation — a full-row popup close only ends its own c
         `);
     });
 
+    // A blocked value never reaches the edit model (the sync drops it), so the row rule keeps seeing the
+    // source value while it is held. The revert then restores the staged value: recompute, or the row
+    // carries the verdict on a value it no longer holds.
+    test('full-row: reverting a blocked popup value revalidates the row against the value left behind', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [98] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const rowData = [{ number: 10, other: 50 }];
+        const api = await gridsManager.createGridAndWait('fullrow-popup-revert-row-error', {
+            columnDefs: [
+                {
+                    field: 'number',
+                    cellEditor: 'agNumberCellEditor',
+                    cellEditorPopup: true,
+                    cellEditorParams: { max: 100 },
+                },
+                { field: 'other', cellEditor: 'agNumberCellEditor', cellEditorParams: { max: 100 } },
+            ],
+            rowData,
+            defaultColDef: { editable: true },
+            editType: 'fullRow',
+            invalidEditValueMode: 'block',
+            stopEditingWhenCellsLoseFocus: true,
+            getFullRowEditValidationErrors: ({ editorsState }) => {
+                const number = editorsState.find((e) => e.colId === 'number')?.newValue;
+                return number != null && number > 20 ? ['number must not exceed 20'] : [];
+            },
+        } satisfies GridOptions);
+        const grid = getGridElement(api)! as HTMLElement;
+        const user = userEvent.setup();
+        const rowShowsInvalid = () => !!grid.querySelector('.ag-row[row-index="0"].ag-row-editing-invalid');
+        const otherInput = () => grid.querySelector<HTMLInputElement>('[col-id="other"] input')!;
+
+        // 42 breaks the row rule but not the cell's own max, so it is staged by the popup close.
+        await user.dblClick(cell(api, 0, 'number'));
+        const numberInput = (await waitForPopup(grid)).querySelector<HTMLInputElement>('input')!;
+        expect(warnSpy).toHaveBeenCalled(); // the unsupported popup/fullRow pairing announces itself
+        await user.clear(numberInput);
+        await user.type(numberInput, '42');
+        await user.click(otherInput());
+        await asyncSetTimeout(0);
+
+        expect(rowShowsInvalid()).toBe(true);
+        await new GridRows(api, 'full-row popup: 42 staged, row rule broken by it').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ ⏳ id:0 number:🖍️42 10 other:50
+        `);
+
+        // Reopening and typing over its max drops 42 from the model, so the row rule now sees 10.
+        api.startEditingCell({ rowIndex: 0, colKey: 'number' });
+        const reopened = (await waitForPopup(grid)).querySelector<HTMLInputElement>('input')!;
+        await user.clear(reopened);
+        await user.type(reopened, '500');
+        await asyncSetTimeout(0);
+
+        expect(rowShowsInvalid()).toBe(false);
+
+        // Closing the popup reverts the blocked 500, leaving the staged 42 — which the rule rejects.
+        await user.click(otherInput());
+        await asyncSetTimeout(0);
+
+        expect(api.getEditValidationErrors()).toEqual([]); // no cell is at fault, the hold is the row's
+        expect(rowShowsInvalid()).toBe(true);
+        await new GridRows(api, 'full-row popup: revert restored 42, row rule broken again').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ ⏳ id:0 number:🖍️42 10 other:50
+        `);
+
+        // Block mode holds the row for its own error: nothing commits until the rule is satisfied.
+        await user.type(otherInput(), '{Enter}');
+        await asyncSetTimeout(0);
+
+        expect(rowData[0].number).toBe(10);
+        expect(api.getEditingCells().length).toBeGreaterThan(0);
+    });
+
     // Escape on a held invalid value cancels the edit, which reverts it in place and so re-creates the
     // editor before closing it. The close still belongs to the session that fired cellEditingStarted.
     test('block: Escape in a popup holding an invalid value fires cellEditingStopped', async () => {

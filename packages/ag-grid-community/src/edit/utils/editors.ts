@@ -22,7 +22,6 @@ import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
-import { _applyCellEditStyles } from '../styles/cellEditStyleFeature';
 import { _getCellCtrl, _getRowCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
@@ -813,14 +812,14 @@ export function _scanEditorsForValidation(beans: BeanCollection): boolean {
 }
 
 export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {
-    if (!(force || beans.editSvc!.hasValidationRules())) {
+    const editSvc = beans.editSvc;
+    if (!(force || editSvc?.hasValidationRules())) {
         return;
     }
 
     const cellValidationModel = new EditCellValidationModel();
 
-    const { ariaAnnounce, localeSvc, editModelSvc, gos } = beans;
-    const includeRows = gos.get('editType') === 'fullRow';
+    const { ariaAnnounce, localeSvc, editModelSvc } = beans;
     const translate = _getLocaleTextFunc(localeSvc);
     const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');
     const rowCtrlSet = new Set<RowCtrl>();
@@ -871,20 +870,25 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
     // the second loop over mappedEditor below
     editModelSvc?.setCellValidationModel(cellValidationModel);
 
-    if (includeRows) {
-        const rowValidations = _generateRowValidationErrors(beans);
-        editModelSvc?.setRowValidationModel(rowValidations);
-    }
+    _populateRowValidationErrors(beans);
 
     for (const rowCtrl of rowCtrlSet.values()) {
-        beans.editSvc?.applyRowEditStyles(rowCtrl);
+        editSvc?.applyRowEditStyles(rowCtrl);
         for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
             cellCtrl.tooltipFeature?.refreshTooltip(true);
             cellCtrl.editorTooltipFeature?.refreshTooltip(true);
-            _applyCellEditStyles(beans, cellCtrl);
+            editSvc?.applyCellEditStyles(cellCtrl);
         }
     }
 }
+
+/** The row half of {@link _populateModelValidationErrors}: cell errors, and the editors behind them, untouched.
+ *  Row rules only ever apply to a full row, so any other edit type leaves the map as it is — empty. */
+export const _populateRowValidationErrors = (beans: BeanCollection): void => {
+    if (beans.gos.get('editType') === 'fullRow') {
+        beans.editModelSvc?.setRowValidationModel(_generateRowValidationErrors(beans));
+    }
+};
 
 const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationModel => {
     const rowValidationModel = new EditRowValidationModel();
