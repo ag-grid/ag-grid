@@ -30,7 +30,7 @@ function getCellSectionSignature(ctrls: AbstractHeaderCellCtrl[], isPrint: boole
 
     return ctrls
         .map((ctrl) => {
-            const pinned = ctrl.column.getPinned() ?? 'center';
+            const pinned = ctrl.column?.getPinned() ?? 'center';
             return `${ctrl.instanceId}:${pinned}`;
         })
         .join('|');
@@ -148,7 +148,7 @@ const HeaderRowComp = ({
         if (isPrint) {
             return { left: [] as AbstractHeaderCellCtrl[], center: cellCtrls, right: [] as AbstractHeaderCellCtrl[] };
         }
-        return _partitionByPinned(cellCtrls, (ctrl: AbstractHeaderCellCtrl) => ctrl.column.getPinned());
+        return _partitionByPinned(cellCtrls, (ctrl: AbstractHeaderCellCtrl) => ctrl.column?.getPinned());
     }, [cellCtrls, isPrint]);
 
     const createCellJsx = useCallback(
