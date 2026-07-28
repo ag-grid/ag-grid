@@ -33,7 +33,7 @@ React re-implements the **core grid scaffolding** — cells, rows, row container
 
 -   **Vanilla behavioural tests do not exercise React.** The behavioural suite defaults to the vanilla grid (which Angular and Vue share), so green vanilla tests say nothing about React's `reactUi` layer.
 -   **A shared-controller fix still needs a React test.** "It lives in the `*Ctrl`, so React is covered by construction" is a hypothesis, not a verification. The shared method runs under React's async mount and reconciliation, whose timing diverges from vanilla's synchronous render — a fix that holds for vanilla can still break under React. Confirm it; don't assert it.
--   **A React `.test.tsx` is the default for any lifecycle, teardown, or state-reset change to a twinned controller**, not an optional extra. Make it a real regression guard: confirm it fails without the fix and passes with it. See [Testing Guide](.rulesync/rules/testing.md) for the `render(<AgGridReact .../>)` pattern.
+-   **A React `.test.tsx` is the default for any lifecycle, teardown, or state-reset change to a twinned controller**, not an optional extra. Make it a real regression guard: confirm it fails without the fix and passes with it. See [Testing Guide](testing.md) for the `render(<AgGridReact .../>)` pattern.
 -   **Skip the React test only when it is genuinely infeasible** — for example, no way to drive the scenario through `AgGridReact`. Then trace the exact React call path that reaches your fix, state that trace, and flag the missing coverage to the reviewer. Never let a green vanilla suite stand in for React.
 
 ## Pre-PR checkpoint
