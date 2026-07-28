@@ -5,6 +5,7 @@ import type {
     GridOptions,
     IServerSideDatasource,
     IServerSideGetRowsRequest,
+    SortDirection,
 } from 'ag-grid-community';
 import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
@@ -107,18 +108,49 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
     };
 }
 
+let suppliedPivotResultColsKey: string | undefined;
+
 function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, api: GridApi) {
-    // check if pivot colDefs already exist
-    const existingPivotColDefs = api.getPivotResultColumns();
-    if (existingPivotColDefs && existingPivotColDefs.length > 0) {
+    // the sort direction of each pivot chip, so the columns can be ordered to match
+    const pivotSorts = getPivotSorts(request, api);
+
+    // only rebuild when the pivot fields or the pivot sorts change, so the columns aren't recreated on every block
+    const pivotResultColsKey = JSON.stringify([response.pivotFields, pivotSorts]);
+    if (pivotResultColsKey === suppliedPivotResultColsKey) {
         return;
     }
+    suppliedPivotResultColsKey = pivotResultColsKey;
 
     // create pivot colDef's based of data returned from the server
     const pivotResultColumns = createPivotResultColumns(request, response.pivotFields);
+    sortPivotResultColumns(pivotResultColumns, pivotSorts, 0);
 
     // supply pivot result columns to the grid
     api.setPivotResultColumns(pivotResultColumns);
+}
+
+function getPivotSorts(request: IServerSideGetRowsRequest, api: GridApi): SortDirection[] {
+    const columnState = api.getColumnState();
+    return request.pivotCols.map(
+        (pivotCol) => columnState.find((state) => state.colId === pivotCol.id)?.pivotSort ?? null
+    );
+}
+
+// each nesting level of the pivot result columns corresponds to a pivot column, so is ordered by that chip's sort
+function sortPivotResultColumns(cols: (ColDef | ColGroupDef)[], pivotSorts: SortDirection[], depth: number) {
+    const sort = pivotSorts[depth];
+    if (sort) {
+        const multiplier = sort === 'desc' ? -1 : 1;
+        cols.sort(
+            (a, b) =>
+                multiplier * String(a.headerName).localeCompare(String(b.headerName), undefined, { numeric: true })
+        );
+    }
+    for (const col of cols) {
+        if ('children' in col) {
+            sortPivotResultColumns(col.children, pivotSorts, depth + 1);
+        }
+    }
 }
 
 function addColDef(
