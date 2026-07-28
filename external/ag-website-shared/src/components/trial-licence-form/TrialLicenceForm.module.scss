@@ -73,6 +73,13 @@ $trial-licence-small: 680px;
     }
 }
 
+.consents {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    margin-bottom: $spacing-size-4;
+}
+
 .actions {
     display: flex;
     flex-direction: column;
