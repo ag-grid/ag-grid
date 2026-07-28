@@ -673,10 +673,6 @@ export async function expectConsistentFrameworkDom(page: Page, options?: Consist
     // One baseline is shared by every framework and browser, where measured layout legitimately differs.
     const serialised = await serializeGridDom(page, { normalisePixels: true, ...options });
 
-    playwrightExpect(
-        serialised,
-        `No element matching '${options?.rootSelector ?? '.ag-root-wrapper'}' found to compare across frameworks`
-    ).not.toBeNull();
     playwrightExpect(serialised).toMatchSnapshot(snapshotName);
 }
 
@@ -697,10 +693,8 @@ export async function expectConsistentFrameworkDom(page: Page, options?: Consist
  * serialised, so the differing framework host element is excluded. Generated ids / `comp-id`s are
  * dropped and class lists are sorted, while measured pixel values are compared as-is unless
  * `normalisePixels` is set.
- *
- * Returns `null` when no element matches `rootSelector`.
  */
-export async function serializeGridDom(page: Page, options?: ConsistentDomOptions): Promise<string | null> {
+export async function serializeGridDom(page: Page, options?: ConsistentDomOptions): Promise<string> {
     const rootSelector = options?.rootSelector ?? '.ag-root-wrapper';
     const includeText = options?.includeText ?? true;
     const volatileAttributes = [...DEFAULT_VOLATILE_ATTRIBUTES, ...(options?.ignoreAttributes ?? [])];
@@ -709,7 +703,7 @@ export async function serializeGridDom(page: Page, options?: ConsistentDomOption
     // Wait for the grid to render before serialising — the raw page.evaluate does not auto-wait like a locator.
     await page.locator(rootSelector).first().waitFor({ state: 'attached' });
 
-    return await page.evaluate(
+    const serialised = await page.evaluate(
         ({ rootSelector, includeText, volatileAttributes, normalisePixels }) => {
             const root = document.querySelector(rootSelector);
             if (!root) {
@@ -776,6 +770,12 @@ export async function serializeGridDom(page: Page, options?: ConsistentDomOption
         },
         { rootSelector, includeText, volatileAttributes, normalisePixels }
     );
+
+    if (serialised === null) {
+        throw new Error(`Element matching '${rootSelector}' was detached before it could be serialised`);
+    }
+
+    return serialised;
 }
 
 export { ensureGridReady, waitForGridContent } from './test/remoteGridapi';

@@ -16,12 +16,10 @@ const GRID_ID = 'gridState';
 // state itself: the aria live region holds the most recent screen-reader announcement, and the
 // hidden overlay keeps the class of whichever overlay was last shown — only the frameworks that
 // drive a `loading` flag put up a loading overlay while fetching, and only on the first fetch.
-function stripHistory(dom: string | null): string | null {
-    return (
-        dom
-            ?.replace(/(class="ag-aria-description-container">).*?(<\/div>)/g, '$1$2')
-            .replace(/ag-overlay-loading-wrapper /g, '') ?? null
-    );
+function stripHistory(dom: string): string {
+    return dom
+        .replace(/(class="ag-aria-description-container">).*?(<\/div>)/g, '$1$2')
+        .replace(/ag-overlay-loading-wrapper /g, '');
 }
 
 type Page = Parameters<typeof serializeGridDom>[0];
