@@ -1,5 +1,5 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import { getColumnOrder } from '../columns/column-test-utils';
@@ -8,7 +8,7 @@ import { TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../t
 // AG-9664: pivotSort reorders the generated pivot columns interactively, isolated from colDef.sort.
 describe('pivot: interactive pivot column sorting (pivotSort)', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, RowGroupingPanelModule, PivotModule],
+        modules: [ClientSideRowModelModule, GridStateModule, RowGroupingModule, RowGroupingPanelModule, PivotModule],
     });
     beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
