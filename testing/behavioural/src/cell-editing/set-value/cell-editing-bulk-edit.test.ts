@@ -448,7 +448,11 @@ describe('Cell Editing: bulk edit', () => {
 
         const user = userEvent.setup({ skipHover: true });
         const cell = gridDiv.querySelectorAll('.ag-row')[0].querySelector<HTMLElement>('[col-id="a"]')!;
-        await user.click(cell);
+        await user.click(cell); // focuses the cell, so Ctrl+Enter has a target
+
+        // Clicking a cell can select it, and addCellRange appends: dropping that first makes the two
+        // ranges below the only ones, whatever the click did.
+        api.clearCellSelection();
 
         // Two disjoint single-cell ranges: column 'a' of each row.
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['a'] });

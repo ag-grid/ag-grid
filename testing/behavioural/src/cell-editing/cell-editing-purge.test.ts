@@ -301,6 +301,11 @@ describe('Cell editing: purging edits on departure', () => {
 
         await type(api, '0', 'a', 'CHANGED');
 
+        await new GridRows(api, 'editing before the grid is destroyed').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 a:🖍️"CHANGED" "A0" b:"B0"
+        `);
+
         await new GridRows(api, 'row 0 mid-edit before grid destroy').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF 🖍️ id:0 a:🖍️"CHANGED" "A0" b:"B0"
@@ -373,11 +378,62 @@ describe('Cell editing: purging edits on departure', () => {
         await type(api, '1', 'a', 'BAD');
         expect(rowElement().classList.contains('ag-row-editing-invalid')).toBe(true);
 
+        await new GridRows(api, 'the edit in column a that breaks the row rule').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:1 a:🖍️"BAD" "1" b:"2"
+        `);
+
         api.setGridOption('columnDefs', [{ field: 'b', editable: true }]);
         await asyncSetTimeout(1);
 
         // The row edit carries on through column b, so the stale error would still be styling it as invalid.
         expect(api.getEditingCells()).toHaveLength(1);
         expect(rowElement().classList.contains('ag-row-editing-invalid')).toBe(false);
+
+        await new GridRows(api, 'column a gone: the row error went with its edit').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:1 b:"2"
+        `);
+    });
+
+    // The other side of it: what the row still holds can break the rule on its own, so the purge has to
+    // recompute the row error rather than assume the departing edit was the only cause.
+    test('a column removal keeps a row-level error the remaining edit still causes', async () => {
+        const api = await gridsManager.createGridAndWait('purge-row-validation-retained', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+            ],
+            rowData: [{ id: '1', a: '1', b: '2' }],
+            getRowId: ({ data }) => data.id,
+            editType: 'fullRow',
+            invalidEditValueMode: 'block',
+            // Either column can break the rule, so removing one leaves the other's breach standing.
+            getFullRowEditValidationErrors: ({ editorsState }) =>
+                editorsState.some((e) => e.newValue === 'BAD') ? ['no cell may be BAD'] : [],
+        } satisfies GridOptions);
+
+        const rowElement = () => getGridElement(api)!.querySelector('.ag-row[row-index="0"]')!;
+
+        await type(api, '1', 'b', 'BAD');
+        await type(api, '1', 'a', 'ALSO BAD');
+        expect(rowElement().classList.contains('ag-row-editing-invalid')).toBe(true);
+
+        await new GridRows(api, 'both edits in place, each breaking the row rule').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:1 a:🖍️"ALSO BAD" "1" b:🖍️"BAD" "2"
+        `);
+
+        api.setGridOption('columnDefs', [{ field: 'b', editable: true }]);
+        await asyncSetTimeout(1);
+
+        // b is still BAD, so the row is still invalid — and still blocked from committing.
+        expect(api.getEditingCells()).toHaveLength(1);
+        expect(rowElement().classList.contains('ag-row-editing-invalid')).toBe(true);
+
+        await new GridRows(api, 'column a gone: the remaining edit still breaks the row rule').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:1 b:🖍️"BAD" "2"
+        `);
     });
 });

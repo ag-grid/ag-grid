@@ -3,7 +3,7 @@ import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import { _getRowCtrl } from './controllers';
 import type { DestroyEditorParams } from './editors';
-import { _destroyEditor } from './editors';
+import { _destroyEditor, _populateModelValidationErrors } from './editors';
 
 /** Drops edits on pinned rows that left their section: static pinned rows are dropped without being
  *  destroyed and without reporting it, so membership has to be re-tested. */
@@ -59,13 +59,23 @@ export const _purgeEdits = (beans: BeanCollection, positions: Required<EditPosit
     // started-rows bookkeeping — no rowEditingStopped, and the detached node held alive.
     const releasedRows = new Set<IRowNode>();
     const rowValidations = editModelSvc.getRowValidationModel();
+    let retainedEdits = false;
     for (const rowNode of touchedRows) {
-        // The recorded row error was computed from an edit set that no longer exists. Block mode repopulates
-        // before every stop, so a still-real error comes straight back.
-        rowValidations.clearRowValidation({ rowNode });
-        if (!editModelSvc.getEditRow(rowNode)?.size) {
+        if (editModelSvc.getEditRow(rowNode)?.size) {
+            retainedEdits = true;
+        } else {
             releasedRows.add(rowNode);
+            rowValidations.clearRowValidation({ rowNode });
         }
+    }
+
+    // The recorded row error was computed from an edit set that no longer exists, and what is left of the row
+    // may break the rule on its own — so recompute rather than clear, and before the rows restyle below.
+    if (retainedEdits) {
+        _populateModelValidationErrors(beans);
+    }
+
+    for (const rowNode of touchedRows) {
         // Only once the edits are gone, or the row restyles as still-editing.
         const rowCtrl = _getRowCtrl(beans, { rowNode });
         if (rowCtrl) {

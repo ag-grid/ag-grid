@@ -79,6 +79,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             expect(ageInput.getAttribute('aria-invalid')).toBe('true');
             expect(ageInput.validationMessage).toContain('greater than or equal to 0');
 
+            await new GridRows(api, 'block: -5 typed, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ ❌ id:0 athlete:"Alice" age:23❌
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
+
             await user.keyboard('{Enter}');
 
             // Blocked: editor stays open, value not committed.
@@ -115,6 +121,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             const ageInput = await waitForInput(gridElement, ageCell);
             await user.clear(ageInput);
             await user.type(ageInput, '-5');
+            await new GridRows(api, 'revert: -5 typed, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ ❌ id:0 athlete:"Alice" age:23❌
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
+
             await user.keyboard('{Enter}');
 
             expect(editorCount(api)).toBe(0);
@@ -179,6 +191,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             await user.type(ageInput, '42');
             expect(ageInput.validationMessage).toBe('42 is not allowed');
 
+            await new GridRows(api, 'block: custom-rejected 42 typed, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ ❌ id:0 athlete:"Alice" age:23❌
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
+
             await user.keyboard('{Enter}');
             expect(editorCount(api)).toBeGreaterThan(0);
             expect(rowData[0].age).toBe(23);
@@ -206,6 +224,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             expect(ageInput.validationMessage).toContain('less than or equal to 100');
             expect(ageInput.validationMessage).toContain('Custom rule failed');
 
+            await new GridRows(api, 'block: 999 typed against both rules, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ ❌ id:0 athlete:"Alice" age:23❌
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
+
             await user.keyboard('{Enter}');
             expect(editorCount(api)).toBeGreaterThan(0);
             expect(rowData[0].age).toBe(23);
@@ -228,6 +252,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             const ageInput = await waitForInput(gridElement, ageCell);
             await user.clear(ageInput);
             await user.type(ageInput, '50');
+            await new GridRows(api, 'block: valid 50 typed, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ id:0 athlete:"Alice" age:🖍️50 23
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
+
             await user.keyboard('{Enter}');
 
             expect(editorCount(api)).toBe(0);
@@ -272,6 +302,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             expect(athleteInput.value.length).toBeLessThanOrEqual(5);
             expect(athleteInput.getAttribute('aria-invalid')).not.toBe('true');
             expect(athleteInput.validationMessage).toBe('');
+
+            await new GridRows(api, 'block: over-long text typed, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ id:0 athlete:🖍️"ABCDE" "Alice" age:23
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
 
             await user.keyboard('{Enter}');
 
@@ -324,6 +360,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             expect(athleteInput.getAttribute('aria-invalid')).toBe('true');
             expect(athleteInput.validationMessage).toBe('Name not allowed');
 
+            await new GridRows(api, 'block: rejected text typed, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ ❌ id:0 athlete:"Alice"❌ age:23
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
+
             await user.keyboard('{Enter}');
             expect(editorCount(api)).toBeGreaterThan(0);
             expect(rowData[0].athlete).toBe('Alice');
@@ -347,6 +389,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             const athleteInput = await waitForInput(gridElement, athleteCell);
             await user.clear(athleteInput);
             await user.type(athleteInput, 'BAD');
+            await new GridRows(api, 'revert: rejected text typed, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ ❌ id:0 athlete:"Alice"❌ age:23
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
+
             await user.keyboard('{Enter}');
 
             expect(editorCount(api)).toBe(0);
@@ -398,6 +446,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             await user.type(whenInput, '1995-06-15');
             expect(whenInput.validationMessage).toBe('Date too early');
 
+            await new GridRows(api, 'block: too-early date typed, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ ❌ id:0 athlete:"Alice" when:"2020-01-15"❌
+            └── LEAF id:1 athlete:"Bob" when:"2020-06-10"
+        `);
+
             await user.keyboard('{Enter}');
             expect(editorCount(api)).toBeGreaterThan(0);
             expect(rowData[0].when).toEqual(new Date(2020, 0, 15));
@@ -421,6 +475,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             const whenInput = await waitForInput(gridElement, whenCell);
             await user.clear(whenInput);
             await user.type(whenInput, '1995-06-15');
+            await new GridRows(api, 'revert: too-early date typed, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ ❌ id:0 athlete:"Alice" when:"2020-01-15"❌
+            └── LEAF id:1 athlete:"Bob" when:"2020-06-10"
+        `);
+
             await user.keyboard('{Enter}');
 
             expect(editorCount(api)).toBe(0);
@@ -465,6 +525,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             const ageInput = await waitForInput(gridElement, ageCell);
             await user.clear(ageInput);
             await user.type(ageInput, '42');
+            await new GridRows(api, 'fullRow block: invalid age typed, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ ❌ id:0 athlete:"Alice" age:23❌
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
+
             await user.keyboard('{Enter}');
 
             // Full-row edit opens editors on every editable cell; the invalid cell blocks all of them.
@@ -522,6 +588,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             const athleteInput = await waitForInput(gridElement, athleteCell);
             await user.clear(athleteInput);
             await user.type(athleteInput, 'INVALID');
+            await new GridRows(api, 'block: custom editor value typed, before Enter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ id:0 athlete:"Alice" age:23
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
+
             await user.keyboard('{Enter}');
 
             expect(editorCount(api)).toBeGreaterThan(0);

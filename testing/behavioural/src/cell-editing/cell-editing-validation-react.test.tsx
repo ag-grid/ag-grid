@@ -6,15 +6,18 @@ import { vi } from 'vitest';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import {
+    CellApiModule,
     ClientSideRowModelModule,
+    ColumnApiModule,
     ModuleRegistry,
     NumberEditorModule,
+    RowApiModule,
     TextEditorModule,
     setupAgTestIds,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-import { ignoreConsoleLicenseKeyError } from '../test-utils';
+import { GridRows, ignoreConsoleLicenseKeyError } from '../test-utils';
 
 interface PersonRow {
     athlete: string;
@@ -37,7 +40,15 @@ function makeRowData(): PersonRow[] {
 // validation fix — which lives in the shared edit service — must be verified under React too.
 describe('Cell editing validation modes (React)', () => {
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, NumberEditorModule, TextEditorModule]);
+        // GridRows reads the grid through the API: the row model, and each cell's value.
+        ModuleRegistry.registerModules([
+            ClientSideRowModelModule,
+            NumberEditorModule,
+            TextEditorModule,
+            RowApiModule,
+            CellApiModule,
+            ColumnApiModule,
+        ]);
         setupAgTestIds();
     });
     beforeEach(() => ignoreConsoleLicenseKeyError());
@@ -265,6 +276,12 @@ describe('Cell editing validation modes (React)', () => {
 
         expect(rowData[0].age).toBe(23); // nothing invalid written
         expect(api!.getEditingCells().length).toBeGreaterThan(0); // row edit survived the popup close
+
+        await new GridRows(api!, 'react popup: invalid value reverted, row still editing').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ id:0 athlete:"Alice" age:23
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
     });
 
     // The other half of the same React path: a valid popup value must be staged as the popup closes, so
@@ -324,11 +341,23 @@ describe('Cell editing validation modes (React)', () => {
 
         expect(rowData[0].age).toBe(23); // full-row commits on the row stop, not on the popup close
 
+        await new GridRows(api!, 'react popup: valid value staged by the popup close').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF 🖍️ ⏳ id:0 athlete:"Alice" age:🖍️42 23
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
+
         await user.type(athleteInput, '{Enter}');
         await act(async () => {
             await Promise.resolve();
         });
 
         expect(rowData[0].age).toBe(42);
+
+        await new GridRows(api!, 'react popup: staged value committed by the row stop').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Alice" age:42
+            └── LEAF id:1 athlete:"Bob" age:40
+        `);
     });
 });
