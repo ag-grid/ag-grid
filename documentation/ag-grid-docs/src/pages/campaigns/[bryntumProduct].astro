@@ -36,6 +36,17 @@ interface Props {
 const { content } = Astro.props;
 const pageTitle = content.meta?.og_title ?? content.title;
 const pageDescription = content.meta?.description ?? '';
+
+// Per-product Open Graph images; Scheduler and Scheduler Pro deliberately share one image.
+const ogImageBasePath = '/images/campaigns/bryntum-products/opengraph-images';
+const socialImagesBySlug: Record<string, string> = {
+    calendar: `${ogImageBasePath}/calendar.webp`,
+    gantt: `${ogImageBasePath}/gantt.webp`,
+    scheduler: `${ogImageBasePath}/scheduler.webp`,
+    schedulerpro: `${ogImageBasePath}/scheduler.webp`,
+    taskboard: `${ogImageBasePath}/task-board.webp`,
+};
+const overrideSocialImage = socialImagesBySlug[content.slug];
 ---
 
 <Layout
@@ -44,6 +55,7 @@ const pageDescription = content.meta?.description ?? '';
     showDocsNav={false}
     showSearchBar={true}
     showAnnouncementBanner={false}
+    overrideSocialImage={overrideSocialImage}
 >
     <BryntumCampaign content={content} />
 </Layout>
