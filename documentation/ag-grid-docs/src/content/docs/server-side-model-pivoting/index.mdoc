@@ -169,12 +169,11 @@ more complex implementation that creates column groups. Note the following:
 
 - Column definitions are created from the `pivotFields` are returned from the server.
 - These column definitions are then supplied to the grid via `api.setPivotResultColumns()`.
-- Clicking the **Year** pivot chip toggles its [Pivot Column Sort](./pivoting-column-groups/#sorting-pivot-columns). The example reads the direction from `pivotSort` in the column state and orders the column definitions to match.
 
 {% gridExampleRunner title="Creating Pivot Result Columns" name="creating_pivot_result_columns"  exampleHeight=605 /%}
 
 {% note %}
-The pivot result columns are displayed in the order they are supplied to `api.setPivotResultColumns(pivotColDefs)`. You can control the order of the columns by sorting the `pivotColDefs` array before passing it to the grid. The grid does not reorder supplied columns, so pivot column sorting also has to be applied to that array.
+The pivot result columns are displayed in the order they are supplied to `api.setPivotResultColumns(pivotColDefs)`. You can control the order of the columns by sorting the `pivotColDefs` array before passing it to the grid.
 {% /note %}
 
 ## Example: Pivot Column Groups
