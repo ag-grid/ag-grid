@@ -57,6 +57,12 @@ export interface MarkdownResolvers {
         attributes: Record<string, any>;
         framework: MarkdownFramework;
         pageName: string;
+        /**
+         * Render the tag's children to markdown. Content-bearing tags whose attributes carry
+         * meaning the children don't (e.g. a card's heading and link) need both halves; the
+         * transparent-wrapper fallback only gives the children.
+         */
+        renderChildren: () => Promise<string>;
     }) => Promise<string | null> | string | null;
     /** Read a `{% partial %}` file's raw Markdoc contents (or null if missing). */
     readPartial?: (params: { file: string; pageName: string }) => string | null;
@@ -291,6 +297,7 @@ async function renderTagBlock(node: Node, ctx: RenderContext): Promise<string> {
             return renderVideo(node, ctx);
         case 'gridExampleRunner':
         case 'chartExampleRunner':
+        case 'studioExampleRunner':
             return renderExample(node, ctx);
         case 'apiDocumentation':
             return renderApi(node, ctx, 'api');
@@ -317,6 +324,7 @@ async function renderDelegatedTag(node: Node, ctx: RenderContext): Promise<strin
             attributes: resolveAttributes(node.attributes ?? {}, ctx),
             framework: ctx.framework,
             pageName: ctx.pageName,
+            renderChildren: () => renderBlocks(node.children ?? [], ctx),
         });
         if (rendered != null) {
             return rendered;
@@ -391,7 +399,15 @@ function renderTagInline(node: Node, ctx: RenderContext): string {
         case 'link':
             return renderLink(node, ctx);
         case 'image':
+        case 'gif':
             return renderImageTag(node, ctx);
+        case 'imageCaption': {
+            // Inline (typically a table cell) there is no room for the block layout the
+            // block-level renderer uses, so the caption trails the image on one line.
+            const caption = renderInlineChildren(node, ctx).trim();
+            const image = renderImageTag(node, ctx);
+            return caption.length ? `${image} ${caption}` : image;
+        }
         case 'if': {
             const branch = selectBranch(node, ctx);
             let out = '';
@@ -645,7 +661,15 @@ async function renderNumberHeading(node: Node, ctx: RenderContext): Promise<stri
     return inner.length ? `${heading}\n\n${inner}` : heading;
 }
 
-const IMAGE_TAGS = new Set(['image', 'imageCaption', 'gif']);
+// Tags whose media path is resolved through the product's asset pipeline, and the attribute each
+// one carries that path in. `video` belongs here too: Video.astro resolves `videoSrc` via the same
+// `getPageImages` lookup the image tags use, so a raw `videoSrc` would not be a servable URL.
+const MEDIA_PATH_ATTRIBUTE: Record<string, string> = {
+    image: 'imagePath',
+    imageCaption: 'imagePath',
+    gif: 'imagePath',
+    video: 'videoSrc',
+};
 
 function imageCacheKey(pageName: string, imagePath: string): string {
     return `${pageName} ${imagePath}`;
@@ -671,8 +695,9 @@ async function prefetchImageSrcs(nodes: Node[], ctx: RenderContext): Promise<voi
                 walk(selectBranch(node, ctx));
                 continue;
             }
-            if (node.type === 'tag' && node.tag && IMAGE_TAGS.has(node.tag)) {
-                const imagePath = stringifyAttr(node.attributes.imagePath, ctx);
+            const mediaAttribute = node.type === 'tag' && node.tag ? MEDIA_PATH_ATTRIBUTE[node.tag] : undefined;
+            const imagePath = mediaAttribute ? stringifyAttr(node.attributes[mediaAttribute], ctx) : '';
+            if (imagePath) {
                 const pageName = stringifyAttr(node.attributes.pageName, ctx) || ctx.pageName;
                 const key = imageCacheKey(pageName, imagePath);
                 if (!ctx.imageSrc.has(key)) {
@@ -698,8 +723,8 @@ async function prefetchImageSrcs(nodes: Node[], ctx: RenderContext): Promise<voi
     await Promise.all(pending);
 }
 
-function resolveImagePath(node: Node, ctx: RenderContext): string {
-    const imagePath = stringifyAttr(node.attributes.imagePath, ctx);
+function resolveMediaPath(node: Node, ctx: RenderContext, attribute: string): string {
+    const imagePath = stringifyAttr(node.attributes[attribute], ctx);
     if (!ctx.resolvers.resolveImageSrc) {
         return imagePath;
     }
@@ -709,7 +734,7 @@ function resolveImagePath(node: Node, ctx: RenderContext): string {
 
 function renderImageTag(node: Node, ctx: RenderContext): string {
     const alt = stringifyAttr(node.attributes.alt, ctx);
-    return `![${alt}](${resolveImagePath(node, ctx)})`;
+    return `![${alt}](${resolveMediaPath(node, ctx, 'imagePath')})`;
 }
 
 async function renderImageCaption(node: Node, ctx: RenderContext): Promise<string> {
@@ -720,11 +745,11 @@ async function renderImageCaption(node: Node, ctx: RenderContext): Promise<strin
 
 function renderGif(node: Node, ctx: RenderContext): string {
     const alt = stringifyAttr(node.attributes.alt, ctx);
-    return `![${alt}](${resolveImagePath(node, ctx)})`;
+    return `![${alt}](${resolveMediaPath(node, ctx, 'imagePath')})`;
 }
 
 function renderVideo(node: Node, ctx: RenderContext): string {
-    const src = stringifyAttr(node.attributes.videoSrc, ctx);
+    const src = resolveMediaPath(node, ctx, 'videoSrc');
     return src ? `[Video](${src})` : '';
 }
 
