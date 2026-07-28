@@ -825,7 +825,11 @@ describe('deferred column tool panel pivot mode', () => {
     test('toggling pivot mode in deferred mode persists pivot state to grid state and restores pivot columns', async () => {
         const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
 
-        expect(gridApi.getState().pivot).toEqual({ pivotMode: true, pivotColIds: ['year'] });
+        expect(gridApi.getState().pivot).toEqual({
+            pivotMode: true,
+            pivotColIds: ['year'],
+            pivotSortModel: [{ colId: 'year', sort: 'asc' }],
+        });
 
         getUpdateStrategy(toolPanel).setPivotMode(true, false, 'toolPanelUi');
         commitChanges(toolPanel);
@@ -840,7 +844,11 @@ describe('deferred column tool panel pivot mode', () => {
 
         expect(gridApi.isPivotMode()).toBe(true);
         expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
-        expect(gridApi.getState().pivot).toEqual({ pivotMode: true, pivotColIds: ['year'] });
+        expect(gridApi.getState().pivot).toEqual({
+            pivotMode: true,
+            pivotColIds: ['year'],
+            pivotSortModel: [{ colId: 'year', sort: 'asc' }],
+        });
     });
 
     test('commit should make exactly one server call', async () => {
@@ -1555,7 +1563,11 @@ describe('deferred column tool panel pivot mode', () => {
 
     test('getState().pivot through a deferred pivot-mode toggle off then back on', async () => {
         const { gridApi, toolPanelGui } = await createDeferredPivotModeGrid();
-        expect(gridApi.getState().pivot).toEqual({ pivotMode: true, pivotColIds: ['year'] });
+        expect(gridApi.getState().pivot).toEqual({
+            pivotMode: true,
+            pivotColIds: ['year'],
+            pivotSortModel: [{ colId: 'year', sort: 'asc' }],
+        });
 
         getPivotModeToggle(toolPanelGui).click();
         getApplyButton(toolPanelGui).click();
@@ -1568,7 +1580,11 @@ describe('deferred column tool panel pivot mode', () => {
         getApplyButton(toolPanelGui).click();
         await waitForNoLoadingRows(gridApi);
         expect(gridApi.isPivotMode()).toBe(true);
-        expect(gridApi.getState().pivot).toEqual({ pivotMode: true, pivotColIds: ['year'] });
+        expect(gridApi.getState().pivot).toEqual({
+            pivotMode: true,
+            pivotColIds: ['year'],
+            pivotSortModel: [{ colId: 'year', sort: 'asc' }],
+        });
         expect(gridApi.getPivotColumns().map((c) => c.getColId())).toEqual(['year']);
     });
 

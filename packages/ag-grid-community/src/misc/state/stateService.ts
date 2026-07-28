@@ -508,6 +508,9 @@ export class StateService extends BeanStub implements NamedBean {
                 columnState.pivot = true;
                 columnState.pivotIndex = pivotIndex;
             }
+            for (const { colId, sort } of pivotState.pivotSortModel ?? []) {
+                getColumnState(colId).pivotSort = sort;
+            }
             this.gos.updateGridOptions({
                 options: { pivotMode: !!pivotState.pivotMode },
                 source: source as any,

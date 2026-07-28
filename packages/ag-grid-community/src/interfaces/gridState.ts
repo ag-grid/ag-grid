@@ -4,6 +4,7 @@ import type { AdvancedFilterModel } from './advancedFilterModel';
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from './iExpansionService';
 import type { ColumnFilterState, FilterModel } from './iFilter';
 import type { RowPosition } from './iRowPosition';
+import type { SortDirection } from './iSort';
 import type { SortModelItem } from './iSortModelItem';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
 
@@ -135,9 +136,17 @@ export interface ShowValuesAsState {
     showValuesAsModel: ShowValuesAsColumnState[];
 }
 
+export interface PivotSortModelItem {
+    colId: string;
+    /** Direction the pivot column's labels are ordered in. `null` keeps the generated (natural) order */
+    sort: SortDirection;
+}
+
 export interface PivotState {
     pivotMode: boolean;
     pivotColIds: string[];
+    /** Pivot label sort direction of each pivot column */
+    pivotSortModel?: PivotSortModelItem[];
 }
 
 export interface ColumnPinningState {

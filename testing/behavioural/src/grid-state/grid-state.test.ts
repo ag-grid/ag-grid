@@ -419,6 +419,7 @@ describe('StateService - Grid State Management', () => {
             expect(api.getState().pivot).toEqual({
                 pivotColIds: ['sport'],
                 pivotMode: true,
+                pivotSortModel: [{ colId: 'sport', sort: 'asc' }],
             });
             await new GridRows(api, `should capture pivot state final state`).check(`
                 ROOT id:ROOT_NODE_ID

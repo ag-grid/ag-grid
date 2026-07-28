@@ -1,5 +1,5 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import { getColumnOrder } from '../columns/column-test-utils';
@@ -8,12 +8,16 @@ import { TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../t
 // AG-9664: pivotSort reorders the generated pivot columns interactively, isolated from colDef.sort.
 describe('pivot: interactive pivot column sorting (pivotSort)', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, RowGroupingPanelModule, PivotModule],
+        modules: [ClientSideRowModelModule, GridStateModule, RowGroupingModule, RowGroupingPanelModule, PivotModule],
     });
     beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
-    function createPivotGrid(yearColDef?: Partial<ColDef>): GridApi {
+    function createPivotGrid(
+        yearColDef?: Partial<ColDef>,
+        extraGridOptions?: Partial<GridOptions>,
+        gridId: string = 'pivotColumnSort'
+    ): GridApi {
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -22,8 +26,9 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
             ],
             pivotMode: true,
             getRowId: ({ data }) => data.id,
+            ...extraGridOptions,
         };
-        const api = gridsManager.createGrid('pivotColumnSort', gridOptions);
+        const api = gridsManager.createGrid(gridId, gridOptions);
         applyTransactionChecked(api, {
             add: [
                 { id: 'a', country: 'USA', year: 2020, sales: 1 },
@@ -304,6 +309,54 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         await asyncSetTimeout(10);
         expect(strategy.getPivotSort(false, yearCol)).toBe('asc');
         expect(pivots()).toEqual(ascending);
+    });
+
+    test('grid state captures pivotSort and restores it through initialState', async () => {
+        const api = createPivotGrid();
+        await asyncSetTimeout(10);
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        await asyncSetTimeout(10);
+
+        const state = api.getState();
+        expect(state.pivot?.pivotSortModel).toEqual([{ colId: 'year', sort: 'desc' }]);
+
+        api.destroy();
+        const restoredApi = createPivotGrid(undefined, { initialState: state }, 'pivotColumnSortRestored');
+        await asyncSetTimeout(10);
+
+        expect(restoredApi.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+        expect(getColumnOrder(restoredApi, 'all').filter((id) => id.startsWith('pivot_'))).toEqual([
+            'pivot_year_2022_sales',
+            'pivot_year_2021_sales',
+            'pivot_year_2020_sales',
+        ]);
+    });
+
+    test('setState applies pivotSortModel, including the natural (null) order', async () => {
+        const api = createPivotGrid();
+        await asyncSetTimeout(10);
+
+        const state = api.getState();
+        api.setState({
+            ...state,
+            pivot: { ...state.pivot!, pivotSortModel: [{ colId: 'year', sort: 'desc' }] },
+        });
+        await asyncSetTimeout(10);
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+        expect(getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'))).toEqual([
+            'pivot_year_2022_sales',
+            'pivot_year_2021_sales',
+            'pivot_year_2020_sales',
+        ]);
+
+        api.setState({
+            ...state,
+            pivot: { ...state.pivot!, pivotSortModel: [{ colId: 'year', sort: null }] },
+        });
+        await asyncSetTimeout(10);
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBeNull();
+        expect(api.getState().pivot?.pivotSortModel).toEqual([{ colId: 'year', sort: null }]);
     });
 
     test('setting colDef.sort does not affect pivotSort and vice versa', async () => {
