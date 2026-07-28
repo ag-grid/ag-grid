@@ -55,4 +55,40 @@ describe('BigInt Filter — custom bigintParser', () => {
             └── LEAF id:0 val:"255n"
         `);
     });
+
+    test('hex from/to values are both parsed for a range condition', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid2', {
+            columnDefs: [
+                {
+                    field: 'val',
+                    cellDataType: 'bigint',
+                    filter: 'agBigIntColumnFilter',
+                    filterParams: {
+                        debounceMs: 0,
+                        allowedCharPattern: '[\\dxXa-fA-F]',
+                        bigintParser: (text: string | null) =>
+                            text == null || text.trim() === '' ? null : BigInt(text),
+                    },
+                },
+            ],
+            rowData: [{ val: 1n }, { val: 16n }, { val: 100n }, { val: 255n }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'val');
+        await filter.selectOperator('Between');
+        await filter.setText('0x10', 0);
+        await filter.setText('0xFF', 1);
+        await asyncSetTimeout(0);
+
+        expect(filter.getModel()).toEqual({
+            filterType: 'bigint',
+            type: 'inRange',
+            filter: '16',
+            filterTo: '255',
+        });
+        await new GridRows(api, 'hex range bounds filter to the row inside the range').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 val:"100n"
+        `);
+    });
 });

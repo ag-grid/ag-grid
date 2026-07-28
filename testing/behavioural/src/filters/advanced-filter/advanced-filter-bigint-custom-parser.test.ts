@@ -196,4 +196,34 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
             └── LEAF id:2 value:"1000n"
         `);
     });
+
+    test('builder decimal operand is stored canonically, matches, and displays via the formatter', async () => {
+        const api = gridsManager.createGrid('grid4', {
+            columnDefs: withParser,
+            rowData: [{ value: 10n }, { value: 255n }, { value: 1000n }, { value: 65535n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        api.setAdvancedFilterModel({ filterType: 'bigint', colId: 'value', type: 'equals', filter: '1000' } as any);
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+        await builder.setValue(condition, '255');
+        await builder.apply();
+        await asyncSetTimeout(0);
+
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'bigint',
+            colId: 'value',
+            type: 'equals',
+            filter: '255',
+        });
+        await new GridRows(api, 'builder decimal operand matches only 255').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 value:"255n"
+        `);
+        // The formatter is the canonical presentation of a stored operand, whatever syntax was typed.
+        expect(getService(api).getExpressionDisplayValue()).toBe('[Value] = 0xFF');
+    });
 });
