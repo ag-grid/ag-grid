@@ -429,4 +429,47 @@ describe('Cell Editing: bulk edit', () => {
         // Should update in row order, then column order within each row
         expect(updateOrder).toEqual(['ROW_0:a', 'ROW_0:b', 'ROW_0:c', 'ROW_1:a', 'ROW_1:b', 'ROW_1:c']);
     });
+
+    // One Ctrl+Enter is one bulk edit, however many ranges it covers. A stopped event per range leaves
+    // the pair unbalanced, and consumers that latch on the first (undo/redo) drop every later range.
+    test('bulk edit across two cell ranges dispatches one started/stopped pair', async () => {
+        const api = await gridMgr.createGridAndWait('cellEditingBulkMultiRange', {
+            cellSelection: true,
+            defaultColDef: { editable: true },
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [
+                { id: 'ROW_0', a: 'A0', b: 'B0' },
+                { id: 'ROW_1', a: 'A1', b: 'B1' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+        const eventTracker = new EditEventTracker(api);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        const user = userEvent.setup({ skipHover: true });
+        const cell = gridDiv.querySelectorAll('.ag-row')[0].querySelector<HTMLElement>('[col-id="a"]')!;
+        await user.click(cell);
+
+        // Two disjoint single-cell ranges: column 'a' of each row.
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['a'] });
+        api.addCellRange({ rowStartIndex: 1, rowEndIndex: 1, columns: ['a'] });
+        expect(api.getCellRanges()).toHaveLength(2);
+
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        const input = await waitForInput(gridDiv, cell);
+        await user.clear(input);
+        await user.type(input, 'X');
+        await user.keyboard('{Control>}{Enter}{/Control}');
+        await asyncSetTimeout(0);
+
+        // Every cell in both ranges takes the value, and the event pair stays balanced.
+        await new GridRows(api, 'after bulk edit across two ranges').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"X" b:"B0"
+            └── LEAF id:ROW_1 a:"X" b:"B1"
+        `);
+
+        expect(eventTracker.counts.bulkEditingStarted).toBe(1);
+        expect(eventTracker.counts.bulkEditingStopped).toBe(1);
+    });
 });

@@ -381,7 +381,9 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
             if (focusAfterAttached) {
                 const focusableEl = richSelect.getFocusableElement() as HTMLInputElement;
-                focusableEl.focus();
+                // preventScroll: focusing a partly-visible cell would scroll it into view, and that scroll
+                // arrives after showPicker() below has wired its bodyScroll listener, closing the picker.
+                focusableEl.focus({ preventScroll: true });
 
                 if (allowTyping && eventKey?.length !== 1) {
                     focusableEl.select();

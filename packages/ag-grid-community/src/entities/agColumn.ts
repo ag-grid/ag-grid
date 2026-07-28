@@ -224,6 +224,10 @@ export class AgColumn<TValue = any>
     }
 
     public override destroy() {
+        // Before the teardown: the editor stop below reads a column that must still be alive and displayed.
+        const beans = this.beans;
+        beans.editSvc?.releaseColumnEdits(this);
+
         super.destroy();
         this.allColsIndex = -1;
         this.displayed = false;
@@ -231,7 +235,7 @@ export class AgColumn<TValue = any>
         this.inColsList = false;
         this.lastLeftPinned = false;
         this.firstRightPinned = false;
-        this.beans.rowSpanSvc?.deregister(this);
+        beans.rowSpanSvc?.deregister(this);
     }
 
     public getInstanceId(): ColumnInstanceId {
@@ -267,6 +271,7 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
+        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
         this.initColDefHotFields();
         this.beans.showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only

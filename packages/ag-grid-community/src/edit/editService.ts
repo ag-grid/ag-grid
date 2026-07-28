@@ -12,12 +12,7 @@ import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
-import type {
-    AgBaseCellEditor,
-    EditingCellPosition,
-    ICellEditorParams,
-    ICellEditorValidationError,
-} from '../interfaces/iCellEditor';
+import type { AgBaseCellEditor, EditingCellPosition, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { Column } from '../interfaces/iColumn';
@@ -47,19 +42,23 @@ import { _applyRowEditStyles } from './styles/rowEditStyleFeature';
 import { _addStopEditingWhenGridLosesFocus, _getCellCtrl } from './utils/controllers';
 import {
     UNEDITED,
+    _destroyEditor,
     _destroyEditors,
     _filterChangedEdits,
+    _flushEditors,
+    _onPopupEditorClosed,
     _populateModelValidationErrors,
     _purgeUnchangedEdit,
     _purgeUnchangedEdits,
     _refreshEditorOnColDefChanged,
+    _scanEditorsForValidation,
     _setupEditor,
     _sourceAndPendingDiffer,
     _syncFromEditor,
+    _syncFromEditorComp,
     _syncFromEditors,
-    _validateEdit,
 } from './utils/editors';
-import { _refreshEditCells } from './utils/refresh';
+import { _purgeEdits, _purgeStalePinnedEdits } from './utils/refresh';
 
 type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
 
@@ -123,6 +122,21 @@ export class EditService extends BeanStub implements NamedBean {
     private strategy?: BaseEditStrategy;
     private stopping = false;
     private rangeSelectionWhileEditing = 0;
+    /**
+     * Whether the last stop was rejected by block mode holding an invalid value. `res === false` can't
+     * stand in for this: a consumed mid-batch key also reports false but is a real stop that must still
+     * navigate and must still be able to end the batch.
+     */
+    private stopBlockRejected = false;
+
+    /** Memo for hasConfiguredValidation, keyed on colModel.colDefsVersion. -1 never matches a real version. */
+    private validationConfigVersion = -1;
+    private validationConfigResult = false;
+    /** Memo for editorsRequireValidation; undefined means "not scanned yet". */
+    private editorsValidation: boolean | undefined;
+    /** Cell whose editor takes focus as it attaches, and whether the cell itself must be focused first. */
+    private pendingEditorFocus: CellCtrl | null = null;
+    private pendingEditorFocusCell = false;
 
     // Nonzero while a bulk write coalesces per-cell cleanup/refresh (see beginBulkWrite).
     private bulkWriteDepth = 0;
@@ -135,6 +149,11 @@ export class EditService extends BeanStub implements NamedBean {
         this.rangeSvc = beans.rangeSvc!;
         this.csrm = _isClientSideRowModel(this.gos, beans.rowModel);
 
+        // The row-level callback feeds hasConfiguredValidation's memo, which is keyed on the colDef version.
+        this.addManagedPropertyListener('getFullRowEditValidationErrors', () => {
+            this.validationConfigVersion = -1;
+        });
+
         this.addManagedPropertyListener('editType', ({ currentValue }: any) => {
             this.stopEditing(undefined, CANCEL_PARAMS);
 
@@ -142,31 +161,28 @@ export class EditService extends BeanStub implements NamedBean {
             this.createStrategy(currentValue);
         });
 
-        const handler = _refreshEditCells(beans);
+        const pinnedSweep = _purgeStalePinnedEdits(beans);
         const stopInvalidEdits = () => {
-            const hasCellValidation = this.model.getCellValidationModel().getCellValidationMap().size > 0;
-            const hasRowValidation = this.model.getRowValidationModel().getRowValidationMap().size > 0;
-
-            if (hasCellValidation || hasRowValidation) {
-                this.stopEditing(undefined, CANCEL_PARAMS);
-            } else if (this.isEditing()) {
-                if (this.batch) {
-                    _destroyEditors(beans, this.model.getEditPositions());
-                } else {
-                    this.stopEditing(undefined, COMMIT_PARAMS);
-                }
+            if (!this.isEditing()) {
+                return;
             }
 
-            return false;
+            // Flushes and repopulates first: a pull-only editor never calls params.validate(), so a stale
+            // read here would let the commit-vs-cancel choice persist an invalid value.
+            if (this.revalidateAndCheck()) {
+                this.stopEditing(undefined, CANCEL_PARAMS);
+            } else if (this.batch) {
+                _destroyEditors(beans, this.model.getEditPositions());
+            } else {
+                this.stopEditing(undefined, COMMIT_PARAMS);
+            }
         };
 
         this.addManagedEventListeners({
-            columnPinned: handler,
-            columnVisible: handler,
-            columnRowGroupChanged: handler,
-            rowExpansionStateChanged: handler,
-            pinnedRowsChanged: handler,
-            displayedRowsChanged: handler,
+            // Static pinned rows are dropped without being destroyed and without reporting it, so pinned
+            // membership is re-tested here. Manual pinning pushes from PinnedRows.delete instead.
+            pinnedRowsChanged: pinnedSweep,
+            pinnedRowDataChanged: pinnedSweep,
             sortChanged: stopInvalidEdits,
             filterChanged: stopInvalidEdits,
             cellFocused: this.onCellFocused.bind(this),
@@ -192,6 +208,12 @@ export class EditService extends BeanStub implements NamedBean {
         }
         if (params) {
             this.stopEditing(undefined, params);
+            // A block-mode commit rejected by validation keeps its editors open: hold the batch so the
+            // user can fix the value and re-commit (or cancel). Any other incomplete stop (an empty or
+            // fully purged batch, a re-entrant call) must still end the batch rather than strand it.
+            if (params.commit && this.stopBlockRejected) {
+                return;
+            }
         }
         // If batchEditingStarted was dispatched but stopEditing didn't reach dispatchBatchStopped
         // (e.g. all edits were purged so prepareStopContext returned null), fire it now to
@@ -201,6 +223,34 @@ export class EditService extends BeanStub implements NamedBean {
         }
         this.batch = false;
         this.batchStartDispatched = false;
+    }
+
+    /**
+     * Closes a batch's open editors, staging their values, without ending the batch. Block mode holds
+     * instead: an invalid edit keeps its editor open so it can be corrected, as on every other stop path.
+     */
+    public stopBatchEditors(cancel: boolean): void {
+        const { beans, model } = this;
+
+        if (cancel) {
+            const positions = model.getEditPositions();
+            for (let i = 0, len = positions.length; i < len; ++i) {
+                const position = positions[i];
+                if (position.state === 'editing') {
+                    this.revertSingleCellEdit(position);
+                }
+            }
+        } else {
+            // Probed only in block mode, so revert mode neither repopulates nor refreshes on a plain close.
+            if (this.cellEditingInvalidCommitBlocks() && this.revalidateAndCheck()) {
+                return;
+            }
+            _syncFromEditors(beans, { persist: true });
+        }
+
+        _destroyEditors(beans, model.getEditPositions(), { cancel });
+        // Every editor is closed, so the errors they were holding go with them.
+        this.clearValidationIfNoOpenEditors();
     }
 
     /** Lazily dispatch batchEditingStarted when the first write or editor open occurs during a batch session. */
@@ -268,10 +318,6 @@ export class EditService extends BeanStub implements NamedBean {
         return this.strategy?.shouldCancel(position, event, source) ?? null;
     }
 
-    public validateEdit(): ICellEditorValidationError[] | null {
-        return _validateEdit(this.beans);
-    }
-
     public isEditing(position?: EditPosition | null, params?: IsEditingParams): boolean {
         return this.model.hasEdits(position ?? undefined, params ?? CHECK_SIBLING);
     }
@@ -310,7 +356,8 @@ export class EditService extends BeanStub implements NamedBean {
         const cellCtrl = _getCellCtrl(this.beans, position)!;
         if (cellCtrl && !cellCtrl.comp) {
             params.editable = undefined; // So we re-evaluate editable later
-            cellCtrl.onCompAttachedFuncs.push(() => this.startEditing(position, params));
+            // On the cell, so a second cell asking while this one waits to mount cannot displace it.
+            cellCtrl.pendingEditStart = params;
             return;
         }
 
@@ -342,6 +389,12 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public stopEditing(position?: EditPosition, params?: StopEditParams): boolean {
+        // Cleared early so a stop that bails below can't leave a stale rejection for stopBatchEditing —
+        // but never from a nested stop, which would wipe the live rejection it sits inside.
+        if (!this.stopping) {
+            this.stopBlockRejected = false;
+        }
+
         const context = this.prepareStopContext(position, params);
         if (!context) {
             return false;
@@ -396,10 +449,10 @@ export class EditService extends BeanStub implements NamedBean {
             return null;
         }
 
+        // A stop cancels any focus still waiting on an editor that is about to go.
+        this.pendingEditorFocus = null;
+
         const cellCtrl = _getCellCtrl(this.beans, position);
-        if (cellCtrl) {
-            cellCtrl.onEditorAttachedFuncs = [];
-        }
 
         const willStop =
             (!cancel &&
@@ -432,10 +485,7 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         if (this.shouldHandleMidBatchKey(event, position)) {
-            return {
-                res: false,
-                edits: this.handleMidBatchKey(event, position, context),
-            };
+            return { res: false, edits: this.handleMidBatchKey(event, position, context) };
         }
 
         _syncFromEditors(this.beans, { persist: true });
@@ -451,14 +501,38 @@ export class EditService extends BeanStub implements NamedBean {
         const { beans, model } = this;
         const { cancel, commit, edits, event, source, willCancel, willStop } = context;
 
-        // In batch cancel, don't persist editorValue→pendingValue: per-cell Escape preserves the
-        // previous pending value, and batch-wide cancel (forceCancel) discards all edits anyway.
-        const persist = !this.batch || !willCancel;
+        // A pull-only editor leaves the validation maps stale, and buffered input has to reach the value
+        // before validity is read, or the stop validates the old value and commits the flushed one.
+        const applying = !willCancel && !cancel;
+        if (applying) {
+            _flushEditors(beans);
+            _populateModelValidationErrors(beans);
+        }
+
+        // Grid-wide by design: cell validation only holds cells with an open editor, and a batch commit
+        // must block on all of them. Read directly — a populate on cancel would refresh styles.
+        const invalid = model.hasValidationErrors();
+        // Revert mode must discard each invalid cell's in-flight attempt before the persist below
+        // overwrites it (see revertInvalidEdits); block mode instead holds the whole commit.
+        const blockMode = this.cellEditingInvalidCommitBlocks();
+        const revertBatchCommit = invalid && !blockMode && this.batch && commit;
+        if (revertBatchCommit) {
+            this.revertInvalidEdits();
+        }
+
+        // A block-mode invalid commit is rejected (batch or not): persist nothing and report the stop as
+        // not completed, so the held edit, its editor and the previous valid pending value all survive.
+        const blockRejected = invalid && blockMode && willStop && applying;
+        this.stopBlockRejected = blockRejected;
+
+        // Batch cancel also skips the persist: per-cell Escape keeps the previous pending value, and
+        // forceCancel discards everything anyway.
+        const persist = (!this.batch || !willCancel) && !blockRejected;
         _syncFromEditors(beans, { persist, isCancelling: willCancel || cancel, isStopping: willStop });
 
         const freshEdits = model.getEditMapCopy();
         const shouldCommit = !willCancel && (!this.batch || commit);
-        const editsToDelete = shouldCommit ? this.processEdits(freshEdits, source) : [];
+        const editsToDelete = shouldCommit ? this.processEdits(freshEdits, source, invalid && !revertBatchCommit) : [];
 
         if (cancel) {
             this.strategy?.stopCancelled(context.forceCancel);
@@ -482,7 +556,7 @@ export class EditService extends BeanStub implements NamedBean {
             cellCtrl?.refreshCell({ force: true, suppressFlash: !valueChanged });
         }
 
-        return { res: willStop, edits: freshEdits };
+        return { res: willStop && !blockRejected, edits: freshEdits };
     }
 
     private shouldHandleMidBatchKey(
@@ -512,14 +586,8 @@ export class EditService extends BeanStub implements NamedBean {
             } else if (isEscape && cellCtrl) {
                 const { rowNode, column } = cellCtrl;
                 if (this.batch && rowNode && column) {
-                    // Defensive: this Escape branch handles the case where the strategy blocked
-                    // direct cancellation (shouldCancelEditing returned false), so processStopRequest
-                    // fell through to handleMidBatchKey instead of handleStopOrCancel.
-                    // In batch mode, Escape reverts to previous pending value, not source value.
-                    const pos: Required<EditPosition> = { rowNode, column };
-                    _destroyEditors(beans, [pos], { silent: true });
-                    this.model.stop(pos, true, true);
-                    _getCellCtrl(beans, pos)?.refreshCell(FORCE_REFRESH);
+                    // The strategy refuses a direct cancel mid-batch, so the revert lands here.
+                    this.revertCellEdit({ rowNode, column });
                 } else {
                     this.revertSingleCellEdit(cellCtrl);
                 }
@@ -550,7 +618,6 @@ export class EditService extends BeanStub implements NamedBean {
         commit,
         forceCancel,
         willCancel,
-        willStop,
     }: StopContext & { params?: StopEditParams; res: boolean }): void {
         const beans = this.beans;
         if (res && position) {
@@ -561,8 +628,11 @@ export class EditService extends BeanStub implements NamedBean {
 
         // Suppress navigation is required for bulk activities like pasting or fill handle via setDataValue,
         // otherwise navigateAfterEdit will cause the grid to redundantly scan for the next available cell
-        // to edit, which causes focus and rendering changes, for each cell in the bulk operation
-        this.navigateAfterEdit(params, cellCtrl?.cellPosition);
+        // to edit, which causes focus and rendering changes, for each cell in the bulk operation.
+        // A block-rejected stop never happened, so navigating would strand the held invalid editor.
+        if (!this.stopBlockRejected) {
+            this.navigateAfterEdit(params, cellCtrl?.cellPosition);
+        }
 
         _purgeUnchangedEdits(beans);
 
@@ -582,11 +652,13 @@ export class EditService extends BeanStub implements NamedBean {
                 rowRenderer.refreshRows({ suppressFlash: true, force: true });
             }
 
-            const batchCommit = willStop && commit;
+            // res is false when block mode rejected the commit, so the batch stays open (see
+            // stopBatchEditing) and no batchEditingStopped fires — the batch has not stopped.
+            const batchCommit = res && commit;
             const batchCancel = willCancel && forceCancel;
 
             // Only fire batchEditingStopped when the batch is genuinely ending:
-            // - commit: commitBatchEdit() was called (forceStop + commit)
+            // - commit: commitBatchEdit() was called (forceStop + commit) and validation passed
             // - forceCancel: cancelBatchEdit() was called (cancel + forceCancel)
             // Do NOT fire during mid-batch row transitions (Tab/Enter across rows in fullRow mode).
             if (batchCommit || batchCancel) {
@@ -646,12 +718,46 @@ export class EditService extends BeanStub implements NamedBean {
         this.beans.navigation?.navigateToNextCell(null, direction, cellPosition, false);
     }
 
-    private processEdits(edits: EditMap, source: EditSource): EditPosition[] {
-        const rowNodes = Array.from(edits.keys());
+    /**
+     * Reverts each invalid cell to its previous pending value, so a revert-mode batch commit still
+     * writes an earlier valid edit and drops cells that never held one. A row error invalidates the row.
+     */
+    private revertInvalidEdits(): void {
+        const model = this.model;
+        const positions = model.getEditPositions();
+        for (let i = 0, len = positions.length; i < len; ++i) {
+            const position = positions[i];
+            if (model.hasValidationErrors(position)) {
+                this.revertCellEdit(position);
+            }
+        }
+    }
 
-        const hasValidationErrors =
-            this.model.getCellValidationModel().getCellValidationMap().size > 0 ||
-            this.model.getRowValidationModel().getRowValidationMap().size > 0;
+    /** Closes one cell's editor while its row keeps editing, so the edit and its pending value survive. */
+    public closeCellEditor(position: Required<EditPosition>): void {
+        const beans = this.beans;
+        // Staged first: the editor goes while the row edit carries on, so an unstaged value would be lost.
+        _syncFromEditorComp(beans, position, { persist: true, isStopping: true });
+        _destroyEditor(beans, position, {});
+    }
+
+    /**
+     * Drops a cell's in-flight editor attempt, keeping any earlier pending value (per-cell Escape
+     * semantics), leaving any surrounding row or batch edit untouched. Callers that must revert one
+     * cell without a key event go through here.
+     */
+    public revertCellEdit(position: Required<EditPosition>): void {
+        const beans = this.beans;
+        _destroyEditor(beans, position, { cancel: true });
+        const model = this.model;
+        model.stop(position, true, true);
+        // The dropped attempt takes its error with it — outside the stop pipeline nothing else clears it.
+        model.getCellValidationModel().clearCellValidation(position);
+        _getCellCtrl(beans, position)?.refreshCell(FORCE_REFRESH);
+    }
+
+    private processEdits(edits: EditMap, source: EditSource, skipAllCommits: boolean): EditPosition[] {
+        const rowNodes = Array.from(edits.keys());
 
         const editsToDelete: EditPosition[] = [];
 
@@ -664,7 +770,7 @@ export class EditService extends BeanStub implements NamedBean {
                     const editValue = editRow.get(column)!;
                     const position: Required<EditPosition> = { rowNode, column };
 
-                    if (_sourceAndPendingDiffer(editValue) && !hasValidationErrors) {
+                    if (_sourceAndPendingDiffer(editValue) && !skipAllCommits) {
                         const cellCtrl = _getCellCtrl(this.beans, position);
                         const success = this.setNodeDataValue(
                             rowNode,
@@ -940,6 +1046,128 @@ export class EditService extends BeanStub implements NamedBean {
         return isEditable;
     }
 
+    /**
+     * Whether anything can report a validation error: a configured rule, or an open editor that validates
+     * itself. Both halves are memoised — every probe would otherwise rescan the colDefs and the cell ctrls.
+     */
+    public hasValidationRules(): boolean {
+        return this.hasConfiguredValidation() || this.editorsRequireValidation();
+    }
+
+    /** Configured validation: a row-level callback or a colDef rule, so it changes only with the colDefs. */
+    private hasConfiguredValidation(): boolean {
+        const colModel = this.beans.colModel;
+        const version = colModel.colDefsVersion;
+        if (this.validationConfigVersion === version) {
+            return this.validationConfigResult;
+        }
+        this.validationConfigVersion = version;
+
+        let required = !!this.gos.get('getFullRowEditValidationErrors');
+        const cols = colModel.colDefList;
+        for (let i = 0, len = cols.length; !required && i < len; ++i) {
+            const colDef = cols[i].colDef;
+            const params = colDef.cellEditorParams;
+            if (!params || (!colDef.editable && !colDef.groupRowEditable)) {
+                continue;
+            }
+            required =
+                // cellEditorParams can be a function, whose per-row rules can't be read from the colDef.
+                typeof params === 'function' ||
+                params.minLength !== undefined ||
+                params.maxLength !== undefined ||
+                params.getValidationErrors !== undefined ||
+                params.min !== undefined ||
+                params.max !== undefined;
+        }
+        this.validationConfigResult = required;
+        return required;
+    }
+
+    /** Editor-supplied validation: the scan materialises every rendered cell ctrl, hence the memo. */
+    private editorsRequireValidation(): boolean {
+        // Only an open editor can match, so with none there is nothing to scan or to remember.
+        if (!this.model.hasOpenEditors()) {
+            return false;
+        }
+        this.editorsValidation ??= _scanEditorsForValidation(this.beans);
+        return this.editorsValidation;
+    }
+
+    /** Called wherever an editor comes or goes: created, attached (React mounts late) or gone with its cell. */
+    public invalidateEditorsValidation(): void {
+        this.editorsValidation = undefined;
+    }
+
+    /** Rows whose edits were purged without a stop: the strategy still holds them, so let it release. */
+    public releasePurgedRows(rowNodes: Set<IRowNode>): void {
+        this.strategy?.releaseRows(rowNodes);
+    }
+
+    /** Ends a row's edits as it is torn down; its position can never be reached again. */
+    public releaseRowEdits(rowNode: IRowNode): void {
+        const editRow = this.model.getEditRow(rowNode);
+        if (!editRow?.size || this.beans.gridDestroySvc.destroyCalled) {
+            return;
+        }
+        // Snapshot: the purge dispatches cellEditingStopped, and a listener may edit the map underneath.
+        const positions: Required<EditPosition>[] = [];
+        for (const column of editRow.keys()) {
+            positions.push({ rowNode, column });
+        }
+        _purgeEdits(this.beans, positions);
+    }
+
+    /** Ends edits on every column dropping out of colsList, destroyed or merely parked. */
+    public releaseColumnsLeaving(newCols: AgColumn[]): void {
+        const editMap = this.model.getEditMap();
+        if (!editMap?.size) {
+            return;
+        }
+
+        // Driven from the edited columns, a handful, rather than diffing a list that can be thousands long.
+        const leaving = new Set<Column>();
+        for (const editRow of editMap.values()) {
+            for (const column of editRow.keys()) {
+                leaving.add(column);
+            }
+        }
+        for (let i = 0, len = newCols.length; leaving.size > 0 && i < len; ++i) {
+            leaving.delete(newCols[i]);
+        }
+        if (!leaving.size) {
+            return;
+        }
+
+        const positions: Required<EditPosition>[] = [];
+        editMap.forEach((editRow, rowNode) => {
+            for (const column of editRow.keys()) {
+                if (leaving.has(column)) {
+                    positions.push({ rowNode, column });
+                }
+            }
+        });
+        _purgeEdits(this.beans, positions);
+    }
+
+    /** The column half of {@link releaseRowEdits}: one column leaving the grid, across every row editing it. */
+    public releaseColumnEdits(column: Column): void {
+        const editMap = this.model.getEditMap();
+        if (!editMap?.size || this.beans.gridDestroySvc.destroyCalled) {
+            return;
+        }
+        // Snapshot, as in releaseRowEdits. One hash lookup per row, rather than a walk of its columns.
+        const positions: Required<EditPosition>[] = [];
+        editMap.forEach((editRow, rowNode) => {
+            if (editRow.has(column)) {
+                positions.push({ rowNode, column });
+            }
+        });
+        if (positions.length) {
+            _purgeEdits(this.beans, positions);
+        }
+    }
+
     public cellEditingInvalidCommitBlocks(): boolean {
         return this.gos.get('invalidEditValueMode') === 'block';
     }
@@ -949,7 +1177,7 @@ export class EditService extends BeanStub implements NamedBean {
         event?: Event | CellFocusedEvent,
         focus: boolean = true
     ): EditNavOnValidationResult {
-        if (this.hasValidationErrors(position)) {
+        if (this.revalidateAndCheck(position)) {
             const cellCtrl = _getCellCtrl(this.beans, position);
             if (this.cellEditingInvalidCommitBlocks()) {
                 (event as Event)?.preventDefault?.();
@@ -977,6 +1205,72 @@ export class EditService extends BeanStub implements NamedBean {
         _populateModelValidationErrors(this.beans);
     }
 
+    /**
+     * A cell component has attached: opens its editor if the cell is (or is starting) editing.
+     * @returns whether the cell is editing, so the caller renders its value only when it is not.
+     */
+    public onCompAttached(cellCtrl: CellCtrl, startEdit?: boolean): boolean {
+        const editable = startEdit ? cellCtrl.isCellEditable() : undefined;
+        const editing = !!editable || this.isEditing(cellCtrl, { withOpenEditor: true });
+        if (editing) {
+            this.startEditing(cellCtrl, {
+                startedEdit: false,
+                source: 'api',
+                silent: true,
+                continueEditing: true,
+                editable,
+            });
+        }
+
+        return editing;
+    }
+
+    /** Replays a start that was waiting for a component — React mounts one a turn late. Called after the
+     *  cell has rendered, so the editor takes over a cell that is already showing its value. */
+    public replayPendingStart(cellCtrl: CellCtrl): void {
+        const params = cellCtrl.pendingEditStart!;
+        cellCtrl.pendingEditStart = null;
+        this.startEditing(cellCtrl, params);
+    }
+
+    /** A cell leaving takes its validation, and the focus it was owed, with it. */
+    public onCellDestroyed(cellCtrl: CellCtrl): void {
+        if (this.pendingEditorFocus === cellCtrl) {
+            this.pendingEditorFocus = null;
+        }
+        if (cellCtrl.comp?.getCellEditor()) {
+            this.invalidateEditorsValidation();
+        }
+    }
+
+    /** Focus can only be in one place, so a later request replaces an earlier one. */
+    public focusEditorOnAttach(cellCtrl: CellCtrl, focusCell: boolean): void {
+        this.pendingEditorFocus = cellCtrl;
+        this.pendingEditorFocusCell = focusCell;
+    }
+
+    /** An editor has attached to its cell — both view layers route here once the editor is live. */
+    public onEditorAttached(cellCtrl: CellCtrl): void {
+        // The editor lands after the setup that created it, so the validation memo is stale until now.
+        this.invalidateEditorsValidation();
+        cellCtrl.rangeFeature?.unsetComp();
+
+        if (this.pendingEditorFocus !== cellCtrl) {
+            return;
+        }
+        const focusCell = this.pendingEditorFocusCell;
+        this.pendingEditorFocus = null;
+        if (focusCell) {
+            cellCtrl.focusCell({ forceBrowserFocus: true });
+        }
+        cellCtrl.comp?.getCellEditor()?.focusIn?.();
+    }
+
+    /** Calls through to standalone method for treeshaking via the editService */
+    public onPopupEditorClosed(cellCtrl: CellCtrl, event?: MouseEvent | TouchEvent | KeyboardEvent): void {
+        _onPopupEditorClosed(this.beans, cellCtrl, event);
+    }
+
     public revertSingleCellEdit(cellPosition: Required<EditPosition>, focus = false): void {
         const cellCtrl = _getCellCtrl(this.beans, cellPosition);
         if (!cellCtrl?.comp?.getCellEditor()) {
@@ -984,7 +1278,7 @@ export class EditService extends BeanStub implements NamedBean {
             return;
         }
 
-        _destroyEditors(this.beans, [cellPosition], { silent: true });
+        _destroyEditor(this.beans, cellPosition, { silent: true });
 
         this.model.clearEditValue(cellPosition);
 
@@ -1002,8 +1296,20 @@ export class EditService extends BeanStub implements NamedBean {
         cellCtrl?.comp?.getCellEditor()?.focusIn?.();
     }
 
-    public hasValidationErrors(position?: EditPosition): boolean {
+    /**
+     * Brings the validation state up to date, then reports it. Not a plain query: use the model's
+     * {@link EditModelService.hasValidationErrors} when the state is known to be current.
+     */
+    public revalidateAndCheck(position?: EditPosition): boolean {
+        // Buffered input has to reach the value before validity is read, or the answer describes the
+        // pre-flush value while the stop that follows commits the flushed one.
+        _flushEditors(this.beans);
         _populateModelValidationErrors(this.beans);
+        return this.checkValidated(position);
+    }
+
+    /** The read half of {@link revalidateAndCheck}, for a caller that has just revalidated. */
+    public checkValidated(position?: EditPosition): boolean {
         const cellCtrl = _getCellCtrl(this.beans, position);
         if (cellCtrl) {
             cellCtrl.refreshCell(FORCE_REFRESH);
@@ -1012,20 +1318,7 @@ export class EditService extends BeanStub implements NamedBean {
             this.applyRowEditStyles(cellCtrl.rowCtrl);
         }
 
-        let invalid = false;
-        if (position?.rowNode) {
-            invalid ||= this.model.getRowValidationModel().hasRowValidation({ rowNode: position.rowNode });
-            if (position.column) {
-                invalid ||= this.model
-                    .getCellValidationModel()
-                    .hasCellValidation({ rowNode: position.rowNode, column: position.column });
-            }
-        } else {
-            invalid ||= this.model.getCellValidationModel().getCellValidationMap().size > 0;
-            invalid ||= this.model.getRowValidationModel().getRowValidationMap().size > 0;
-        }
-
-        return invalid;
+        return this.model.hasValidationErrors(position);
     }
 
     public moveToNextCell(
@@ -1289,16 +1582,11 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         // Fallback for editors that don't implement refresh(): recreate the editor to pick up the new value.
-        const restoreFocus = cellCtrl.hasBrowserFocus();
-        if (restoreFocus) {
-            cellCtrl.onEditorAttachedFuncs.push(() => {
-                const latestCellCtrl = _getCellCtrl(this.beans, position);
-                latestCellCtrl?.focusCell({ forceBrowserFocus: true });
-                latestCellCtrl?.comp?.getCellEditor()?.focusIn?.();
-            });
+        if (cellCtrl.hasBrowserFocus()) {
+            this.focusEditorOnAttach(cellCtrl, true);
         }
 
-        _destroyEditors(beans, [position], { silent: true, cancel: true });
+        _destroyEditor(beans, position, { silent: true, cancel: true });
         _setupEditor(beans, position, { silent: true });
         _populateModelValidationErrors(beans);
         _getCellCtrl(beans, position)?.refreshCell(FORCE_REFRESH);
@@ -1471,7 +1759,8 @@ export class EditService extends BeanStub implements NamedBean {
 
         const isFormula = formula?.isFormula(editValue) ?? false;
 
-        ranges.forEach((range: CellRange) => {
+        for (let i = 0, len = ranges.length; i < len; ++i) {
+            const range = ranges[i];
             const rangeColumns = range.columns as AgColumn[];
             const hasFormulaColumnsInRange = rangeColumns.some((col) => col?.allowFormula);
             rangeSvc?.forEachRowInRange(range, (position) => {
@@ -1525,19 +1814,19 @@ export class EditService extends BeanStub implements NamedBean {
                     editValue = formula?.updateFormulaByOffset({ value: editValue, rowDelta: 1 });
                 }
             });
+        }
 
-            this.setEditMap(edits);
+        // One bulk edit however many ranges it spans, so commit once: a stopped event per range leaves
+        // the pair unbalanced, and consumers that latch on the first (undo/redo) drop every later range.
+        this.setEditMap(edits);
 
-            if (this.batch) {
-                this.cleanupEditors();
+        if (this.batch) {
+            this.cleanupEditors();
 
-                _purgeUnchangedEdits(beans);
+            _purgeUnchangedEdits(beans);
 
-                this.ensureBatchStarted();
-
-                return;
-            }
-
+            this.ensureBatchStarted();
+        } else {
             this.committing = true;
             try {
                 this.stopEditing(undefined, { source: 'bulk' });
@@ -1547,7 +1836,7 @@ export class EditService extends BeanStub implements NamedBean {
                     this.eventSvc.dispatchEvent({ type: 'bulkEditingStopped', changes: this.toEventChangeList(edits) });
                 }
             }
-        });
+        }
 
         // focus the first cell in the range
         const cellCtrl = _getCellCtrl(beans, { rowNode, column })!;

@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import { asyncSetTimeout } from '../node-utils';
 import { firePointerLikeClick } from '../test-utils-events';
 
@@ -54,16 +56,20 @@ export async function clickSelectOption(label: string, root: ParentNode = docume
  * a plain synthetic click has clientY 0 and always hits row 0. Assumes the list isn't scrolled.
  */
 export async function selectRichSelectRow(label: string, root: ParentNode = document): Promise<void> {
-    nudgeVirtualList(RICH_SELECT_VIEWPORT, root);
-    await asyncSetTimeout(0);
-
-    const rows = Array.from(root.querySelectorAll<HTMLElement>('.ag-rich-select-row'));
-    const index = rows.findIndex((r) => r.textContent?.trim() === label);
-    if (index < 0) {
-        throw new Error(
-            `AgRichSelect row "${label}" not found. Available: ${rows.map((r) => r.textContent?.trim()).join(', ')}`
-        );
-    }
+    let rows: HTMLElement[] = [];
+    let index = -1;
+    // Polled, not awaited once: the picker mounts its list a macrotask after the click, and the rows
+    // only exist once the nudge has run against the mounted viewport.
+    await waitFor(() => {
+        nudgeVirtualList(RICH_SELECT_VIEWPORT, root);
+        rows = Array.from(root.querySelectorAll<HTMLElement>('.ag-rich-select-row'));
+        index = rows.findIndex((r) => r.textContent?.trim() === label);
+        if (index < 0) {
+            throw new Error(
+                `AgRichSelect row "${label}" not found. Available: ${rows.map((r) => r.textContent?.trim()).join(', ')}`
+            );
+        }
+    });
 
     const list = root.querySelector<HTMLElement>('.ag-rich-select-list');
     const listTop = list?.getBoundingClientRect().top ?? 0;

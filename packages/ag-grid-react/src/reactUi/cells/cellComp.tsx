@@ -99,7 +99,7 @@ const CellComp = ({
                         cellCtrl.stopEditing(true);
                         cellCtrl.focusCell({ forceBrowserFocus: true });
                     } else {
-                        cellCtrl.cellEditorAttached();
+                        beans.editSvc?.onEditorAttached(cellCtrl);
                         cellCtrl.enableEditorTooltipFeature(cellEditor);
                     }
                 });

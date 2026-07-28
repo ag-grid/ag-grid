@@ -1,4 +1,4 @@
-import { _getLocaleTextFunc, _setAriaInvalid } from 'ag-stack';
+import { KeyCode, _getLocaleTextFunc, _setAriaInvalid } from 'ag-stack';
 
 import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
@@ -7,6 +7,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { CellEditingStoppedEvent } from '../../events';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type {
+    AgBaseCellEditor,
     DefaultProvidedCellEditorParams,
     EditingCellPosition,
     GetCellEditorInstancesParams,
@@ -22,7 +23,7 @@ import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
 import { _applyCellEditStyles } from '../styles/cellEditStyleFeature';
-import { _getCellCtrl } from './controllers';
+import { _getCellCtrl, _getRowCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
 
@@ -177,18 +178,20 @@ export function _setupEditor(
         return;
     }
 
-    const { rangeFeature, rowCtrl, comp, onEditorAttachedFuncs } = cellCtrl;
+    const { rowCtrl, comp } = cellCtrl;
+
+    // A silent setup continues a session that already fired cellEditingStarted, and wiping its bookkeeping
+    // would swallow the stop. A new session resets it: a reused row node can carry the previous one's flags.
+    const { cellStartedEditing, cellStoppedEditing } = (silent ? previousEdit?.editorState : undefined) ?? {};
 
     editModelSvc?.setEdit(position, {
         editorValue: getNormalisedFormula(beans, newValue, true, position.column),
         state: 'editing',
-        // Reset lifecycle flags for this new editor session. Previous sessions may have left
-        // cellStartedEditing/cellStoppedEditing set on a reused row node.
-        editorState: { cellStartedEditing: undefined, cellStoppedEditing: undefined },
+        editorState: { cellStartedEditing, cellStoppedEditing },
     });
 
     cellCtrl.editCompDetails = compDetails;
-    onEditorAttachedFuncs.push(() => rangeFeature?.unsetComp());
+    beans.editSvc?.invalidateEditorsValidation(); // a new editor may bring validation with it
     comp?.setEditDetails(compDetails, popup, popupLocation, gos.get('reactiveCustomComponents'));
     rowCtrl?.refreshRow({ suppressFlash: true });
     cellCtrl.refreshNoteState();
@@ -223,7 +226,7 @@ function _valueFromEditor(
 ): { editorValue?: any; editorValueExists: boolean; isCancelAfterEnd?: boolean } {
     const noValueResult = { editorValueExists: false };
 
-    if (_hasValidationRules(beans)) {
+    if (beans.editSvc!.hasValidationRules()) {
         const validationErrors = cellEditor.getValidationErrors?.();
 
         if ((validationErrors?.length ?? 0) > 0) {
@@ -296,14 +299,25 @@ function _createEditorParams(
         cellStartedEdit: !!cellStartedEdit,
         onKeyDown: cellCtrl?.onKeyDown.bind(cellCtrl),
         stopEditing: (suppressNavigateAfterEdit: boolean, event?: KeyboardEvent) => {
-            editSvc!.stopEditing(position, { source: batchEdit ? 'ui' : 'api', suppressNavigateAfterEdit, event });
-            _destroyEditor(beans, position, {});
+            editSvc!.stopEditing(position, {
+                source: batchEdit ? 'ui' : 'api',
+                suppressNavigateAfterEdit,
+                event,
+            });
+            // Block mode holds an invalid edit's editors open — tearing this one down would orphan it.
+            // Row-scoped, since in full-row the hold can come from a sibling cell. The stop's own result
+            // can't stand in for this: a mid-batch stop reports false while still being a real close.
+            const held =
+                editSvc!.cellEditingInvalidCommitBlocks() && !!beans.editModelSvc?.hasValidationErrors({ rowNode });
+            if (!held) {
+                _destroyEditor(beans, position, {});
+            }
         },
         eGridCell: cellCtrl?.eGui,
         parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl?.value),
         formatValue: cellCtrl?.formatValue.bind(cellCtrl),
         validate: () => {
-            editSvc?.validateEdit();
+            _validateEdit(beans);
         },
     });
 }
@@ -383,35 +397,142 @@ function checkAndPreventDefault(
     return params;
 }
 
-export function _syncFromEditors(
+/**
+ * Commits every open editor's buffered input (e.g. a Firefox date segment) so a stop validates and reads
+ * the final value. Stop-only: the Firefox flush blurs the input, so it must never run per keystroke.
+ */
+export function _flushEditors(beans: BeanCollection): void {
+    const editModelSvc = beans.editModelSvc;
+    // Every staged edit would otherwise cost a cell-ctrl resolve to discover it has no editor to flush.
+    if (!editModelSvc?.hasOpenEditors()) {
+        return;
+    }
+
+    // Walk the live map rather than getEditPositions: only the position is needed, not the cloned values.
+    // One scratch position for the whole walk — _getCellCtrl only reads it.
+    const position = {} as Required<EditPosition>;
+    editModelSvc.getEditMap()?.forEach((editRow, rowNode) => {
+        position.rowNode = rowNode;
+        for (const column of editRow.keys()) {
+            position.column = column;
+            const editor = _getCellCtrl(beans, position)?.comp?.getCellEditor();
+            if (editor) {
+                (_unwrapUserComp(editor) as AgBaseCellEditor).agFlushInput?.();
+            }
+        }
+    });
+}
+
+/**
+ * Block mode can't hold an invalid editor whose popup is gone, so the caller must revert: an orphaned
+ * editor would leave the cell uneditable.
+ */
+const isPopupEditBlockedInvalid = (beans: BeanCollection, cellCtrl: CellCtrl): boolean => {
+    if (!beans.editSvc!.cellEditingInvalidCommitBlocks()) {
+        return false;
+    }
+    // Buffered input has to reach the value first, or it reads as the old valid one.
+    _flushEditors(beans);
+    _populateModelValidationErrors(beans);
+    // Cell-scoped: a row-level error, or a sibling's, is not this value's fault, and reverting cannot fix it.
+    return !!beans.editModelSvc?.getCellValidationModel().hasCellValidation(cellCtrl);
+};
+
+/**
+ * A popup editor closed — clicked away, Escape, or focus moved on. That is this cell's stop and no more:
+ * the row or batch it belongs to keeps its own session, and block mode still holds an invalid value.
+ */
+export const _onPopupEditorClosed = (
+    beans: BeanCollection,
+    cellCtrl: CellCtrl,
+    e?: MouseEvent | TouchEvent | KeyboardEvent
+): void => {
+    const editSvc = beans.editSvc;
+    if (!editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
+        return;
+    }
+
+    const isKeyboardEvent = e instanceof KeyboardEvent;
+    const isMouseEvent = e instanceof MouseEvent;
+
+    const isEscape = isKeyboardEvent && e.key === KeyCode.ESCAPE;
+
+    const fullRow = beans.gos.get('editType') === 'fullRow';
+    const revertBlockedInvalid = !isEscape && isPopupEditBlockedInvalid(beans, cellCtrl);
+    const batch = editSvc.isBatchEditing();
+
+    // Full-row owns its own stop (Escape, Enter, grid focus loss); ending it because a popup closed
+    // would commit — or, when blocked, discard — every sibling at whatever value it happens to hold.
+    const { rowNode, column } = cellCtrl;
+    if (!isEscape && fullRow && editSvc.isRowEditing(rowNode, { checkSiblings: true })) {
+        if (revertBlockedInvalid) {
+            editSvc.revertCellEdit({ rowNode, column });
+        } else {
+            editSvc.closeCellEditor({ rowNode, column });
+        }
+        return;
+    }
+
+    // Mid-batch a mouse-driven cancel is a no-op (only Escape cancels), so revert this cell
+    // directly; that also keeps any earlier staged value, as per-cell Escape does.
+    if (revertBlockedInvalid && batch) {
+        editSvc.revertCellEdit({ rowNode, column });
+        return;
+    }
+
+    // note: this happens because of a click outside of the grid or if the popupEditor
+    // is closed with `Escape` key. if another cell was clicked, then the editing will
+    // have already stopped and returned on the conditional above.
+    editSvc.stopEditing(cellCtrl, {
+        source: batch ? 'ui' : 'api',
+        cancel: isEscape || revertBlockedInvalid,
+        event: isKeyboardEvent || isMouseEvent ? e : undefined,
+    });
+
+    if (isEscape) {
+        cellCtrl.focusCell({ forceBrowserFocus: true, sourceEvent: e });
+    }
+};
+
+export const _syncFromEditors = (
     beans: BeanCollection,
     params: { persist: boolean; isCancelling?: boolean; isStopping?: boolean }
-): void {
-    for (const cellId of beans.editModelSvc?.getEditPositions() ?? []) {
-        const cellCtrl = _getCellCtrl(beans, cellId);
-
-        if (!cellCtrl) {
-            continue;
+): void => {
+    // As in _flushEditors, and for the same reason: this runs per keystroke, and getEditPositions would
+    // allocate a position plus a copy of every edit value to reach the two fields read here.
+    const position = {} as Required<EditPosition>;
+    beans.editModelSvc?.getEditMap()?.forEach((editRow, rowNode) => {
+        position.rowNode = rowNode;
+        for (const column of editRow.keys()) {
+            position.column = column;
+            _syncFromEditorComp(beans, position, params);
         }
+    });
+};
 
-        const editor = cellCtrl.comp?.getCellEditor();
+/** The single-cell half of {@link _syncFromEditors}: stages one open editor's value into the model. */
+export const _syncFromEditorComp = (
+    beans: BeanCollection,
+    position: Required<EditPosition>,
+    params: { persist: boolean; isCancelling?: boolean; isStopping?: boolean }
+): void => {
+    const editor = _getCellCtrl(beans, position)?.comp?.getCellEditor();
 
-        if (!editor) {
-            continue;
-        }
-
-        const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(beans, editor, params);
-
-        if (isCancelAfterEnd) {
-            const { cellStartedEditing, cellStoppedEditing } = beans.editModelSvc?.getEdit(cellId)?.editorState || {};
-            beans.editModelSvc?.setEdit(cellId, {
-                editorState: { isCancelAfterEnd, cellStartedEditing, cellStoppedEditing },
-            });
-        }
-
-        _syncFromEditor(beans, cellId, editorValue, undefined, !editorValueExists, params);
+    if (!editor) {
+        return;
     }
-}
+
+    const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(beans, editor, params);
+
+    if (isCancelAfterEnd) {
+        const { cellStartedEditing, cellStoppedEditing } = beans.editModelSvc?.getEdit(position)?.editorState || {};
+        beans.editModelSvc?.setEdit(position, {
+            editorState: { isCancelAfterEnd, cellStartedEditing, cellStoppedEditing },
+        });
+    }
+
+    _syncFromEditor(beans, position, editorValue, undefined, !editorValueExists, params);
+};
 
 export function _syncFromEditor(
     beans: BeanCollection,
@@ -490,23 +611,22 @@ function _persistEditorValue(beans: BeanCollection, position: Required<EditPosit
     editModelSvc?.setEdit(position, editValue);
 }
 
+/** `edits` is explicit so that tearing down every open editor can never be the result of an omitted argument. */
 export function _destroyEditors(
     beans: BeanCollection,
-    edits?: Required<EditPosition>[],
-    params: { event?: Event; silent?: boolean; cancel?: boolean } = {}
+    edits: Required<EditPosition>[],
+    params: DestroyEditorParams = {}
 ): void {
-    if (!edits) {
-        edits = beans.editModelSvc?.getEditPositions();
-    }
-
-    if (edits) {
-        for (const cellPosition of edits) {
-            _destroyEditor(beans, cellPosition, params);
-        }
+    for (let i = 0, len = edits.length; i < len; ++i) {
+        _destroyEditor(beans, edits[i], params);
     }
 }
 
-type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: boolean };
+export type DestroyEditorParams = {
+    event?: Event | null;
+    silent?: boolean;
+    cancel?: boolean;
+};
 
 export function _destroyEditor(
     beans: BeanCollection,
@@ -531,7 +651,17 @@ export function _destroyEditor(
 
     if (!cellCtrl) {
         if (edit) {
+            // Unguarded: with the editor gone no probe can see its rules, so a guarded clear would
+            // strand the error and reject every later commit.
+            editModelSvc?.getCellValidationModel().clearCellValidation(position);
             editModelSvc?.setEdit(position, { state });
+            dispatchStoppedIfFinished(beans, position, edit, params);
+            // The row survives even though the cell doesn't, so refresh its edit styles here — no cell
+            // ctrl remains to do it, and the row would keep its stale editing classes.
+            const rowCtrl = _getRowCtrl(beans, { rowNode: position.rowNode });
+            if (rowCtrl) {
+                beans.editSvc?.applyRowEditStyles(rowCtrl);
+            }
         }
 
         return;
@@ -546,20 +676,15 @@ export function _destroyEditor(
 
         if (edit) {
             editModelSvc?.setEdit(position, { state });
-            const args = beans.gos.get('enableGroupEdit')
-                ? _enabledGroupEditStoppedArgs(edit, params?.cancel)
-                : {
-                      valueChanged: false,
-                      newValue: undefined,
-                      oldValue: edit.sourceValue,
-                  };
-            dispatchEditingStopped(beans, position, args, params);
+            // Derived like every other stop: the model can still hold a pending value that differs from
+            // source here, so the args can't be hardcoded to "nothing changed".
+            dispatchStoppedIfFinished(beans, position, edit, params);
         }
 
         return;
     }
 
-    if (_hasValidationRules(beans)) {
+    if (beans.editSvc!.hasValidationRules()) {
         const errorMessages = edit && cellEditor?.getValidationErrors?.();
         const cellValidationModel = editModelSvc?.getCellValidationModel();
 
@@ -571,6 +696,7 @@ export function _destroyEditor(
     }
 
     if (edit) {
+        // hasOpenEditors under-reports until setEditDetails below: the edit is closed, the editor isn't.
         editModelSvc?.setEdit(position, { state });
     }
 
@@ -579,15 +705,7 @@ export function _destroyEditor(
 
     cellCtrl?.refreshCell({ force: true, suppressFlash: true });
 
-    const latest = editModelSvc?.getEdit(position);
-
-    if (latest && latest.state !== 'editing') {
-        const cancel = params?.cancel;
-        const args = beans.gos.get('enableGroupEdit')
-            ? _enabledGroupEditStoppedArgs(latest, cancel)
-            : _cellEditStoppedArgs(latest, edit, cancel);
-        dispatchEditingStopped(beans, position, args, params);
-    }
+    dispatchStoppedIfFinished(beans, position, edit, params);
 }
 
 type EditingStoppedArgs = Partial<Pick<CellEditingStoppedEvent, 'valueChanged' | 'newValue' | 'oldValue' | 'value'>>;
@@ -638,6 +756,24 @@ function _cellEditStoppedArgs(
     };
 }
 
+/** Fires cellEditingStopped once the edit has left the 'editing' state, with the right event args. */
+const dispatchStoppedIfFinished = (
+    beans: BeanCollection,
+    position: Required<EditPosition>,
+    edit: Readonly<EditValue> | undefined,
+    params: DestroyEditorParams
+): void => {
+    const latest = beans.editModelSvc?.getEdit(position);
+    if (!latest || latest.state === 'editing') {
+        return;
+    }
+    const cancel = params?.cancel;
+    const args = beans.gos.get('enableGroupEdit')
+        ? _enabledGroupEditStoppedArgs(latest, cancel)
+        : _cellEditStoppedArgs(latest, edit, cancel);
+    dispatchEditingStopped(beans, position, args, params);
+};
+
 function dispatchEditingStopped(
     beans: BeanCollection,
     position: Required<EditPosition>,
@@ -660,27 +796,8 @@ function dispatchEditingStopped(
     }
 }
 
-function _columnDefsRequireValidation(cols: AgColumn[]): boolean {
-    for (let i = 0, len = cols.length; i < len; ++i) {
-        const colDef = cols[i].colDef;
-        const params = colDef.cellEditorParams;
-        if (!params || (!colDef.editable && !colDef.groupRowEditable)) {
-            continue;
-        }
-        if (
-            params.minLength !== undefined ||
-            params.maxLength !== undefined ||
-            params.getValidationErrors !== undefined ||
-            params.min !== undefined ||
-            params.max !== undefined
-        ) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function _editorsRequireValidation(beans: BeanCollection): boolean {
+/** The uncached scan behind {@link EditService.editorsRequireValidation}, which owns the memo. */
+export function _scanEditorsForValidation(beans: BeanCollection): boolean {
     const ctrls = beans.rowRenderer.getCellCtrls();
     for (let i = 0, len = ctrls.length; i < len; ++i) {
         const ctrl = ctrls[i];
@@ -695,16 +812,8 @@ function _editorsRequireValidation(beans: BeanCollection): boolean {
     return false;
 }
 
-function _hasValidationRules(beans: BeanCollection): boolean {
-    return (
-        !!beans.gos.get('getFullRowEditValidationErrors') ||
-        _columnDefsRequireValidation(beans.colModel.colDefList) ||
-        _editorsRequireValidation(beans)
-    );
-}
-
 export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {
-    if (!(force || _hasValidationRules(beans))) {
+    if (!(force || beans.editSvc!.hasValidationRules())) {
         return;
     }
 
@@ -834,7 +943,11 @@ const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationM
 
 export function _validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
     _populateModelValidationErrors(beans, true);
+    return _readEditValidationErrors(beans);
+}
 
+/** The read half of {@link _validateEdit}: reports the validation state as it stands, changing nothing. */
+export function _readEditValidationErrors(beans: BeanCollection): ICellEditorValidationError[] | null {
     const map = beans.editModelSvc?.getCellValidationModel().getCellValidationMap();
 
     if (!map) {

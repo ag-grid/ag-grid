@@ -18,6 +18,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     private rowNode?: IRowNode | null;
     private column?: Column | null;
 
+    public override releaseRows(rowNodes: Set<IRowNode>): void {
+        if (this.rowNode && rowNodes.has(this.rowNode)) {
+            this.rowNode = undefined;
+            this.column = undefined;
+        }
+    }
+
     public override shouldStop(
         position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
@@ -261,10 +268,11 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
                 this.cleanupEditors(nextCell);
             }
+        } else if (preventNavigation) {
+            // Only one cell edits at a time here, so any blocked Tab — same row or not — would leave the
+            // held invalid editor behind: pin the user to the cell they must correct (or cancel).
+            this.focusFirstInvalidCell(prevCell, event);
         } else {
-            if (nextEditable && preventNavigation) {
-                this.setFocusInOnEditor(nextCell);
-            }
             nextCell.focusCell({ forceBrowserFocus: true, sourceEvent: event });
         }
 

@@ -11,4 +11,6 @@ export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends 
     getStartValue(): string | null | undefined;
     getValidationErrors(): string[] | null;
     setCaret?(): void;
+    /** Commit any buffered input to the field's value before the grid reads it on stop (e.g. a Firefox date segment). */
+    flushInput?(): void;
 }
