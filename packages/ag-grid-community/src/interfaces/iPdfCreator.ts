@@ -4,13 +4,10 @@ import type { AgGridCommon } from './iCommon';
 import type { ColumnWidthCallbackParams } from './iExcelCreator';
 import type { IRowNode } from './iRowNode';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PdfPageOrientation = 'portrait' | 'landscape';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PdfFontFamily = 'Helvetica' | 'Helvetica-Bold' | 'Times-Roman' | 'Times-Bold' | 'Courier' | 'Courier-Bold';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PdfPageSize =
     | 'A4'
     | 'Letter'
@@ -21,7 +18,6 @@ export type PdfPageSize =
           height: number;
       };
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfMargin {
     /** Top margin in points. */
     top?: number;
@@ -33,22 +29,16 @@ export interface PdfMargin {
     left?: number;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PdfTextAlignment = 'left' | 'center' | 'right';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PdfFontWeight = 'normal' | 'bold';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PdfTextOverflow = 'clip' | 'ellipsis';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PdfColumnWidth = number | 'auto' | 'grid';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PdfColumnWidthCallback = (params: ColumnWidthCallbackParams) => PdfColumnWidth | null | undefined;
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfCellStyle {
     /**
      * Font size in points.
@@ -117,7 +107,6 @@ export interface PdfCellStyle {
     overflow?: PdfTextOverflow;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfCellData {
     /** The value of the cell. */
     value: string | null;
@@ -125,7 +114,6 @@ export interface PdfCellData {
     hyperlink?: string;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfCell {
     /** The data that will be added to the cell. */
     data: PdfCellData;
@@ -140,10 +128,8 @@ export interface PdfCell {
     style?: PdfCellStyle;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PdfCustomContent = PdfCell[][] | string;
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PdfStyleCallbackType = 'cell' | 'row' | 'rowgroup' | 'header' | 'groupheader';
 
 interface PdfStyleCallbackParamsBase<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -157,7 +143,6 @@ interface PdfStyleCallbackParamsBase<TData = any, TContext = any> extends AgGrid
     value: any;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfRowStyleCallbackParams<TData = any, TContext = any> extends PdfStyleCallbackParamsBase<
     TData,
     TContext
@@ -168,7 +153,6 @@ export interface PdfRowStyleCallbackParams<TData = any, TContext = any> extends 
     node?: IRowNode<TData> | null;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfCellStyleCallbackParams<TData = any, TContext = any> extends PdfStyleCallbackParamsBase<
     TData,
     TContext
@@ -181,7 +165,6 @@ export interface PdfCellStyleCallbackParams<TData = any, TContext = any> extends
     column?: Column;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfHeaderStyleCallbackParams<TData = any, TContext = any> extends PdfStyleCallbackParamsBase<
     TData,
     TContext
@@ -192,7 +175,6 @@ export interface PdfHeaderStyleCallbackParams<TData = any, TContext = any> exten
     column?: Column;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfGroupHeaderStyleCallbackParams<TData = any, TContext = any> extends PdfStyleCallbackParamsBase<
     TData,
     TContext
@@ -203,14 +185,12 @@ export interface PdfGroupHeaderStyleCallbackParams<TData = any, TContext = any> 
     column?: ColumnGroup;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PdfStyleCallbackParams<TData = any, TContext = any> =
     | PdfRowStyleCallbackParams<TData, TContext>
     | PdfCellStyleCallbackParams<TData, TContext>
     | PdfHeaderStyleCallbackParams<TData, TContext>
     | PdfGroupHeaderStyleCallbackParams<TData, TContext>;
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfCellHyperlinkCallbackParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The final text exported for the cell. */
     value: string;
@@ -222,7 +202,6 @@ export interface PdfCellHyperlinkCallbackParams<TData = any, TContext = any> ext
     column: Column;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfColors {
     /**
      * Background colour for the PDF page.
@@ -261,7 +240,6 @@ export interface PdfColors {
     borderColor?: string;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfDocumentTitleStyle extends PdfCellStyle {
     /**
      * Margin around the document title in points. A number applies to all sides.
@@ -269,7 +247,6 @@ export interface PdfDocumentTitleStyle extends PdfCellStyle {
     margin?: number | PdfMargin;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfPageSetup {
     /**
      * The size of the PDF page.
@@ -301,7 +278,6 @@ interface PdfFileParams {
     mimeType?: string;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFileParams {
     /**
      * The document title stored in the PDF metadata.
@@ -416,7 +392,6 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
     drawCellBorders?: boolean;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IPdfCreator {
     getDataAsPdf(params?: PdfExportParams): Blob | undefined;
     exportDataAsPdf(params?: PdfExportParams): void;

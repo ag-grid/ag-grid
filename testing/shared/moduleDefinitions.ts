@@ -81,7 +81,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     RichSelectModule: 132.51,
     RowNumbersModule: 32.03,
     NotesModule: 30.53,
-    // PdfExportModule: 30,
+    PdfExportModule: 30,
     RowGroupingEditModule: 142.38,
     RowGroupingModule: 98.79,
     RowGroupingPanelModule: 73.57,

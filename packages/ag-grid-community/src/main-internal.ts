@@ -478,32 +478,3 @@ export { KeyboardNavigationModule as _KeyboardNavigationModule } from './navigat
 export { SharedRowSelectionModule as _SharedRowSelectionModule } from './selection/rowSelectionModule';
 export { SortModule as _SortModule } from './sort/sortModule';
 export { PopupModule as _PopupModule } from './widgets/popupModule';
-
-// PDF Export
-export type {
-    IPdfCreator,
-    PdfCell,
-    PdfCellData,
-    PdfCellHyperlinkCallbackParams,
-    PdfCellStyle,
-    PdfCellStyleCallbackParams,
-    PdfColors,
-    PdfColumnWidth,
-    PdfColumnWidthCallback,
-    PdfCustomContent,
-    PdfDocumentTitleStyle,
-    PdfExportParams,
-    PdfFontFamily,
-    PdfFontWeight,
-    PdfGroupHeaderStyleCallbackParams,
-    PdfHeaderStyleCallbackParams,
-    PdfMargin,
-    PdfPageOrientation,
-    PdfPageSetup,
-    PdfPageSize,
-    PdfRowStyleCallbackParams,
-    PdfStyleCallbackParams,
-    PdfStyleCallbackType,
-    PdfTextAlignment,
-    PdfTextOverflow,
-} from './interfaces/iPdfCreator';

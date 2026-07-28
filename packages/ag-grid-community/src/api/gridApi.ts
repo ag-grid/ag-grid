@@ -2060,6 +2060,7 @@ export interface GridApi<TData = any>
         _MasterDetailGridApi,
         _FormulaGridApi<TData>,
         _ExcelExportGridApi,
+        _PdfExportGridApi,
         _ClipboardGridApi,
         _GridChartsGridApi,
         _AdvancedFilterGridApi,

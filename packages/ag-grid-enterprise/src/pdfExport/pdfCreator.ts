@@ -28,7 +28,7 @@ export class PdfCreator
      * @returns The merged params with resolved theme styles applied.
      */
     protected getMergedParams(params?: PdfExportParams): PdfExportParams {
-        const baseParams = {} as PdfExportParams;
+        const baseParams = this.gos.get('defaultPdfExportParams');
         const resolveColor = this.getResolveColorValueFn();
         const merged: PdfExportParams = { ...(baseParams ?? {}), ...(params ?? {}) };
         merged.colors = resolvePdfColors(
@@ -128,7 +128,7 @@ export class PdfCreator
      * @returns True when export is disabled, otherwise false.
      */
     public isExportSuppressed(): boolean {
-        return true;
+        return this.gos.get('suppressPdfExport');
     }
 
     private getResolveColorValueFn(): (value?: string) => string | undefined {

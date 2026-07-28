@@ -86,7 +86,8 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const defaultMenuOptions: DefaultMenuItem[] = [];
 
-        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos, notesSvc } = this.beans;
+        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos, notesSvc, pdfCreator } =
+            this.beans;
 
         const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
 
@@ -143,7 +144,8 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
             const suppressExcel = gos.get('suppressExcelExport') || !excelCreator;
             const suppressCsv = gos.get('suppressCsvExport') || !csvCreator;
-            const anyExport = !suppressExcel || !suppressCsv;
+            const suppressPdf = gos.get('suppressPdfExport') || !pdfCreator;
+            const anyExport = !suppressExcel || !suppressCsv || !suppressPdf;
 
             if (anyExport) {
                 defaultMenuOptions.push('export');
