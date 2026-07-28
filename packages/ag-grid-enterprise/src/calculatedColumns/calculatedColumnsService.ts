@@ -54,7 +54,11 @@ import {
     createCalculatedColumnReferenceMapper,
     translateCalculatedColumnReferenceError,
 } from './calculatedColumnReferenceMapper';
-import { clearStaleDataTypeProperties, replaceBracketReferences } from './calculatedColumnUtils';
+import {
+    clearStaleDataTypeProperties,
+    persistedColDefDiffers,
+    replaceBracketReferences,
+} from './calculatedColumnUtils';
 
 type ValidationState = 'valid' | CalculatedColumnValidationReason;
 
@@ -578,15 +582,29 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
             this.closeCalculatedColumnDialog(colId);
             dynamicColumns.delete(colId);
-            inactive.delete(colId);
             changed = true;
         }
+        // Parked cols are dropped too, so a later `applyColumnState` cannot resurrect one the state omits.
+        for (const colId of inactive.keys()) {
+            if (!wanted.has(colId)) {
+                inactive.delete(colId);
+            }
+        }
 
-        // Addition: recreate any listed col not already present.
+        // Addition / update: recreate any listed col not already present, and re-apply the persisted
+        // definition over any live edits made to one that is.
         for (let i = 0, len = state.length; i < len; ++i) {
             const userCol = state[i];
             const colId = userCol.colId;
-            if (dynamicColumns.has(colId)) {
+            const colDef = this.toRestoredColDef(userCol);
+            const anchorColId = userCol.groupAnchorColId;
+            const existing = dynamicColumns.get(colId);
+            if (existing !== undefined) {
+                if (existing.anchorColId !== anchorColId || persistedColDefDiffers(existing.colDef, colDef)) {
+                    existing.colDef = colDef;
+                    existing.anchorColId = anchorColId;
+                    changed = true;
+                }
                 continue;
             }
             // Honour the serialised colId, but never clobber a real columnDefs column of the same id.
@@ -596,8 +614,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
             inactive.delete(colId);
             dynamicColumns.set(colId, {
-                colDef: this.toRestoredColDef(userCol),
-                anchorColId: userCol.groupAnchorColId,
+                colDef,
+                anchorColId,
                 instance: null,
             });
             changed = true;

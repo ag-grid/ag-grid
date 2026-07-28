@@ -27,6 +27,20 @@ export function clearStaleDataTypeProperties(colDef: ColDef, userColDef: ColDef 
 }
 
 /**
+ * Whether two calculated-column colDefs differ in any property carried by `GridState.userColumns`.
+ * Only these properties are restorable from state, so an identical result means re-applying the
+ * persisted definition would be a no-op and the grid does not need rebuilding.
+ */
+export function persistedColDefDiffers(colDef: ColDef, nextColDef: ColDef): boolean {
+    return (
+        colDef.calculatedExpression !== nextColDef.calculatedExpression ||
+        colDef.cellDataType !== nextColDef.cellDataType ||
+        colDef.headerName !== nextColDef.headerName ||
+        colDef.columnGroupShow !== nextColDef.columnGroupShow
+    );
+}
+
+/**
  * Visits every `[ref]` bracket reference in a calculated-column expression and produces a new
  * expression with each reference replaced by the callback's return value. String-literal
  * boundaries (`"..."`) are respected, including the SQL-style `""` escape — brackets inside a

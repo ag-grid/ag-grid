@@ -146,6 +146,27 @@ describe('calculated columns - grid state persistence', () => {
         return added[0];
     }
 
+    /** Edits an existing calc col through its header menu, under the default 'live' apply mode. */
+    async function editViaDialog(
+        api: GridApi,
+        colId: string,
+        edits: { expression?: string; title?: string }
+    ): Promise<void> {
+        enableOffsetParentPolyfill();
+        api.showColumnMenu(colId);
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Edit Calculated Column');
+        await asyncSetTimeout(1);
+        if (edits.title !== undefined) {
+            setTitle(edits.title);
+        }
+        if (edits.expression !== undefined) {
+            setExpression(edits.expression);
+        }
+        clickDialogButton('Apply');
+        await asyncSetTimeout(40);
+    }
+
     // === core repro: initialState round-trip =====================================================
 
     test('a dynamic calc col added via the dialog is saved in getState().userColumns and recreated via initialState on a fresh grid', async () => {
@@ -266,6 +287,58 @@ describe('calculated columns - grid state persistence', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 a:5 ${calcId1}:10 b:2
         `);
+    });
+
+    test('api.setState restores the persisted definition of a calc col that has since been edited', async () => {
+        const api = createGrid('state-update-existing', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        const savedState = api.getState();
+        expect(savedState.userColumns).toMatchObject([{ colId: calcId, calculatedExpression: '[a] * 2' }]);
+
+        // Edit the live column so its definition no longer matches the snapshot.
+        await editViaDialog(api, calcId, { expression: '[A] * 3', title: 'Triple A' });
+        expect(api.getColumn(calcId)!.getColDef().calculatedExpression).toBe('[a] * 3');
+        expect(api.getColumn(calcId)!.getColDef().headerName).toBe('Triple A');
+
+        // The incoming state is authoritative: the surviving column must be reverted to its persisted
+        // definition, not left on the edited one just because a col of that colId already exists.
+        api.setState(savedState);
+        await waitFor(() => expect(api.getColumn(calcId)!.getColDef().calculatedExpression).toBe('[a] * 2'));
+        expect(api.getColumn(calcId)!.getColDef().headerName).not.toBe('Triple A');
+        expect(api.getState().userColumns).toEqual(savedState.userColumns);
+        await new GridRows(api, 'calc col definition restored via setState - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 a:5 ${calcId}:10 b:2
+        `);
+    });
+
+    test('api.setState drops a calc col parked by resetColumnState, so a later applyColumnState cannot resurrect it', async () => {
+        const api = createGrid('state-parked-removal', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const stateWithoutCalc = api.getState();
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        const columnStateWithCalc = api.getColumnState();
+
+        // resetColumnState parks the runtime-added col so a later applyColumnState can bring it back.
+        api.resetColumnState();
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
+
+        // Applying a state that does not list the calc col must also discard the parked copy.
+        api.setState(stateWithoutCalc);
+        await asyncSetTimeout(0);
+        expect(order(api)).toEqual(['a', 'b']);
+
+        // The parked copy is gone, so the old column state can no longer resurrect the removed column.
+        api.applyColumnState({ state: columnStateWithCalc, applyOrder: true });
+        await asyncSetTimeout(0);
+        expect(order(api)).toEqual(['a', 'b']);
+        expect(api.getColumn(calcId)).toBeNull();
+        expect(api.getState().userColumns).toBeUndefined();
     });
 
     // === save-side freshness: getState reflects the current expression, not a stale snapshot =====
