@@ -33,6 +33,8 @@ Application-declared calculated columns must define a `colId` explicitly.
 
 {% gridExampleRunner title="Calculated Columns" name="calculated-columns" /%}
 
+Register [Cell Data Types](./cell-data-types/) to give users formatting options to pick from when they create a column. The example above provides a `currency` type — see [dataTypes](#datatypes).
+
 Calculated expressions do not need a leading equals sign (`=`). The value inside brackets must match a column `colId`, which defaults to the `field` when no explicit `colId` is provided.
 
 Calculated Columns are supported with all row models. Same-row bracket references are reliable everywhere. Cross-row and range references depend on the referenced rows being loaded in the current row model.
@@ -92,8 +94,19 @@ const gridOptions = {
     calculatedColumns: {
         dataTypes: ['currency', 'number', 'boolean'],
     },
+    columnDefs: [
+        { field: 'revenue', cellDataType: 'currency' },
+        {
+            colId: 'profit',
+            headerName: 'Profit',
+            calculatedExpression: '[revenue] - [cost]',
+            cellDataType: 'currency',
+        },
+    ],
 };
 ```
+
+Applying the type to your own columns as well means a user who picks **Currency** in the dialog gets the same formatting as the columns you declared. A `valueFormatter` on a column definition cannot be selected in the dialog, so it is not available to users.
 
 Built-in types use the grid's locale text, while custom type names are converted to readable labels in the dialog. If a selected value does not match a registered [Cell Data Type](./cell-data-types/), the grid's normal `cellDataType` validation applies when the calculated column is created.
 
@@ -164,14 +177,13 @@ const gridOptions = {
             colId: 'profit',
             headerName: 'Profit',
             calculatedExpression: '[revenue] - [cost]',
-            cellDataType: 'number',
+            cellDataType: 'currency',
         },
         {
             colId: 'margin',
             headerName: 'Margin',
             calculatedExpression: '[profit] / [revenue]',
-            cellDataType: 'number',
-            valueFormatter: params => `${Math.round(params.value * 100)}%`,
+            cellDataType: 'percentage',
         },
         {
             colId: 'status',
@@ -182,6 +194,8 @@ const gridOptions = {
     ],
 };
 ```
+
+The `currency` and `percentage` types are registered with `dataTypeDefinitions`, as shown in [dataTypes](#datatypes).
 
 {% gridExampleRunner title="Advanced Calculated Columns" name="calculated-columns-advanced" /%}
 

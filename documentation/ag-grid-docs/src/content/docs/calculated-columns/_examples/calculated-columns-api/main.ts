@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ValueFormatterLiteParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
@@ -27,30 +27,28 @@ type SalesRow = {
     cost: number;
 };
 
-const currencyFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
+const currencyFormatter = (params: ValueFormatterLiteParams<SalesRow, number>) =>
     params.value == null ? '' : `$${params.value.toLocaleString()}`;
 
-const percentFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
+const percentFormatter = (params: ValueFormatterLiteParams<SalesRow, number>) =>
     params.value == null ? '' : `${(params.value * 100).toFixed(1)}%`;
 
 const marginColumn: ColDef<SalesRow> = {
     colId: 'profitMargin',
     headerName: 'Profit Margin',
     calculatedExpression: '([revenue] - [cost]) / [revenue]',
-    cellDataType: 'number',
-    valueFormatter: percentFormatter,
+    cellDataType: 'percentage',
 };
 
 const columnDefs: ColDef<SalesRow>[] = [
     { field: 'product', flex: 1 },
-    { field: 'revenue', valueFormatter: currencyFormatter },
-    { field: 'cost', valueFormatter: currencyFormatter },
+    { field: 'revenue', cellDataType: 'currency' },
+    { field: 'cost', cellDataType: 'currency' },
     {
         colId: 'profit',
         headerName: 'Profit',
         calculatedExpression: '[revenue] - [cost]',
-        cellDataType: 'number',
-        valueFormatter: currencyFormatter,
+        cellDataType: 'currency',
     },
 ];
 
@@ -82,6 +80,18 @@ let gridApi: GridApi<SalesRow>;
 const gridOptions: GridOptions<SalesRow> = {
     columnDefs,
     rowData,
+    dataTypeDefinitions: {
+        currency: {
+            baseDataType: 'number',
+            extendsDataType: 'number',
+            valueFormatter: currencyFormatter,
+        },
+        percentage: {
+            baseDataType: 'number',
+            extendsDataType: 'number',
+            valueFormatter: percentFormatter,
+        },
+    },
     calculatedColumns: true,
     defaultColDef: {
         flex: 1,
