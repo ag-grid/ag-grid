@@ -6,6 +6,7 @@ import type {
     BeanCollection,
     ColumnModel,
     ColumnNameService,
+    ColumnPivotChangedEvent,
     ColumnVO,
     FilterManager,
     FilterModel,
@@ -97,6 +98,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private managingPivotResultColumns = false;
 
+    private pivotResultFields?: string[];
+
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(): boolean {
         return false;
@@ -126,7 +129,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             newColumnsLoaded: this.onColumnEverything.bind(this),
             storeUpdated: this.onStoreUpdated.bind(this),
             columnValueChanged: resetListener,
-            columnPivotChanged: resetListener,
+            columnPivotChanged: this.onPivotChanged.bind(this),
             columnRowGroupChanged: resetListener,
             columnPivotModeChanged: resetListener,
         });
@@ -269,6 +272,42 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         }
     }
 
+    /** A `pivotSort` toggle reorders the pivot result columns without changing what the server is asked for,
+     *  so re-derive the column defs from the fields already loaded instead of refetching every block. */
+    private onPivotChanged(event: ColumnPivotChangedEvent): void {
+        if (!this.arePivotColsUnchanged()) {
+            this.resetRootStore();
+            return;
+        }
+        const pivotResultFields = this.pivotResultFields;
+        if (this.managingPivotResultColumns && pivotResultFields) {
+            this.generateSecondaryColumns(pivotResultFields);
+            return;
+        }
+        // Application-supplied pivot result columns: re-order the ones already applied.
+        this.pivotResultCols?.resortPivotResultCols(event.source);
+    }
+
+    /** True when the active pivot columns, in order, match the ones the current store was built with. */
+    private arePivotColsUnchanged(): boolean {
+        const oldCols = this.storeParams?.pivotCols;
+        if (!oldCols) {
+            return false;
+        }
+        const newCols = this.columnsToValueObjects(this.pivotColsSvc?.columns);
+        if (oldCols.length !== newCols.length) {
+            return false;
+        }
+        for (let i = 0, len = oldCols.length; i < len; ++i) {
+            const oldCol = oldCols[i];
+            const newCol = newCols[i];
+            if (oldCol.id !== newCol.id || oldCol.field !== newCol.field || oldCol.aggFunc !== newCol.aggFunc) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private destroyRootStore(): void {
         if (!this.rootNode?.childStore) {
             return;
@@ -299,6 +338,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         }
 
         const pivotColumnGroupDefs = this.pivotColDefSvc.createColDefsFromFields(pivotFields);
+        this.pivotResultFields = pivotFields;
         this.managingPivotResultColumns = true;
         this.pivotResultCols?.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
     }
@@ -361,6 +401,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             // if managing pivot columns, also reset secondary columns.
             this.pivotResultCols?.setPivotResultCols(null, 'api');
             this.managingPivotResultColumns = false;
+            this.pivotResultFields = undefined;
         }
 
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).

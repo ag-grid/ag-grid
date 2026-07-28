@@ -35,7 +35,12 @@ export interface IPivotResultColsService {
 
     lookupPivotResultCol(pivotKeys: string[], valueColKey: ColKey): AgColumn | null;
 
-    setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void;
+    /** `appSupplied`: colDefs came from `setPivotResultColumns`, so the grid orders them by `pivotSort`.
+     *  Generated colDefs are already ordered and must be left alone. */
+    setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType, appSupplied?: boolean): void;
+
+    /** Re-order the applied pivot result cols for the pivot columns' current `pivotSort`. */
+    resortPivotResultCols(source: ColumnEventType): void;
 
     /** Return aggregation order for pivot result cols (regular first, totals after).
      *  Cache until pivot result cols change. */

@@ -107,6 +107,9 @@ api.applyColumnState({
 Sorting reorders the pivot column groups while preserving any column width and within-group ordering changes
 the user has made.
 
+Supplying the pivot result columns yourself with `setPivotResultColumns` resets `pivotSort` to no sort on every
+pivot column, so the supplied order is kept. Sorting afterwards reorders the supplied columns by group header name.
+
 Set the `pivotPanelSuppressSort` grid option to `true` to disable this interaction. Pills for columns with
 `sortable: false` are not interactive, though `pivotSort` can still be set on them via `applyColumnState`.
 

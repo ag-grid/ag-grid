@@ -311,6 +311,60 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         expect(pivots()).toEqual(ascending);
     });
 
+    test('updating colDefs applies a changed pivotSort, but initialPivotSort is create-only', async () => {
+        const api = createPivotGrid();
+        await asyncSetTimeout(10);
+        const pivots = () => getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'));
+        const ascending = ['pivot_year_2020_sales', 'pivot_year_2021_sales', 'pivot_year_2022_sales'];
+        const descending = ['pivot_year_2022_sales', 'pivot_year_2021_sales', 'pivot_year_2020_sales'];
+
+        const columnDefs = (yearColDef: Partial<ColDef>) => [
+            { field: 'country', rowGroup: true, hide: true },
+            { field: 'year', pivot: true, hide: true, ...yearColDef },
+            { field: 'sales', aggFunc: 'sum', hide: true },
+        ];
+
+        api.setGridOption('columnDefs', columnDefs({ pivotSort: 'desc' }));
+        await asyncSetTimeout(10);
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+        expect(pivots()).toEqual(descending);
+
+        // An omitted pivotSort leaves the live value alone, as with `sort`.
+        api.setGridOption('columnDefs', columnDefs({}));
+        await asyncSetTimeout(10);
+        expect(pivots()).toEqual(descending);
+
+        api.setGridOption('columnDefs', columnDefs({ pivotSort: 'asc' }));
+        await asyncSetTimeout(10);
+        expect(pivots()).toEqual(ascending);
+
+        // initialPivotSort is documented as create-only, so it must not reorder an existing column.
+        api.setGridOption('columnDefs', columnDefs({ initialPivotSort: 'desc' }));
+        await asyncSetTimeout(10);
+        expect(pivots()).toEqual(ascending);
+    });
+
+    const pivotResultColumnCases: [string, ColDef[] | null][] = [
+        ['supplied', [{ headerName: '2022', field: 'pivot_year_2022_sales' }]],
+        ['cleared', null],
+    ];
+    test.each(pivotResultColumnCases)(
+        'setPivotResultColumns (%s) resets pivotSort to no sort',
+        async (_name, colDefs) => {
+            const api = createPivotGrid();
+            await asyncSetTimeout(10);
+
+            api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+            await asyncSetTimeout(10);
+            expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+
+            // The app takes ownership of the pivot result columns, so the grid must stop claiming an ordering.
+            api.setPivotResultColumns(colDefs);
+            await asyncSetTimeout(10);
+            expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBeNull();
+        }
+    );
+
     test('grid state captures pivotSort and restores it through initialState', async () => {
         const api = createPivotGrid();
         await asyncSetTimeout(10);

@@ -174,6 +174,10 @@ more complex implementation that creates column groups. Note the following:
 
 {% note %}
 The pivot result columns are displayed in the order they are supplied to `api.setPivotResultColumns(pivotColDefs)`. You can control the order of the columns by sorting the `pivotColDefs` array before passing it to the grid.
+
+Supplying the columns resets [Pivot Column Sorting](./pivoting-column-groups/#sorting-pivot-columns) so the supplied
+order is kept, but sorting a pivot column afterwards - from its pill or with `pivotSort` - reorders the supplied
+columns by group header name.
 {% /note %}
 
 ## Example: Pivot Column Groups

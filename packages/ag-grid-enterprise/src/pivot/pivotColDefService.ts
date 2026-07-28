@@ -41,6 +41,22 @@ const convertToHeaderNameComparator =
 // `pivotSort: null` is an explicit "no sort": keep the order the columns were generated in (stable sort no-op).
 const naturalOrderComparator = (): number => 0;
 
+type ColDefComparator = (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) => number;
+
+/** Sorts `colDefs` in place with the comparator for their level, then recurses into each group's children. */
+const sortColDefLevel = (colDefs: (ColDef | ColGroupDef)[], depth: number, comparators: ColDefComparator[]): void => {
+    if (depth >= comparators.length) {
+        return; // measure level: keep the supplied order
+    }
+    colDefs.sort(comparators[depth]);
+    for (let i = 0, len = colDefs.length; i < len; ++i) {
+        const children = (colDefs[i] as ColGroupDef).children;
+        if (children) {
+            sortColDefLevel(children, depth + 1, comparators);
+        }
+    }
+};
+
 export class PivotColDefService extends BeanStub implements NamedBean, IPivotColDefService {
     beanName = 'pivotColDefSvc' as const;
 
@@ -511,6 +527,18 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             return (a, b) => baseComparator(b, a);
         }
         return baseComparator;
+    }
+
+    /** Orders application-supplied pivot result colDefs (in place) by each pivot column's `pivotSort`, so pill
+     *  sorting reaches them too. Depth maps to pivot level, as in {@link createColDefsFromFields}; the measure
+     *  level beyond the pivot columns keeps the supplied order. */
+    public sortPivotResultColDefs(colDefs: (ColDef | ColGroupDef)[]): void {
+        const pivotColumns = this.pivotColsSvc?.columns ?? [];
+        if (!pivotColumns.length) {
+            return;
+        }
+        const levelComparators = pivotColumns.map((col) => this.getPivotGroupComparator(col));
+        sortColDefLevel(colDefs, 0, levelComparators);
     }
 
     /**
