@@ -83,8 +83,9 @@ shape differences:
   in a template literal, but `setup()` body comments are ordinary code — don't escape backticks
   there.
 
-After editing, run `yarn nx generate-examples ag-grid-docs` and `yarn nx format` to confirm every
-variant still typechecks and is formatted.
+After editing, run `yarn nx generate-examples ag-grid-docs` and
+`yarn nx format --sort-root-tsconfig-paths=false` to confirm every variant still typechecks and is
+formatted.
 
 ## Validation
 
@@ -159,7 +160,7 @@ Follow these steps (the `docs-e2e-tests` skill walks through them):
 2. Write assertions that exercise that specific behaviour (not just that the grid loads).
 3. Validate across all frameworks, e.g. `./docs-e2e.sh "<example-name>"`.
 
-See [.rulesync/skills/docs-e2e-tests/SKILL.md](.rulesync/skills/docs-e2e-tests/SKILL.md) for the full procedure.
+See [docs-e2e-tests/SKILL.md](../skills/docs-e2e-tests/SKILL.md) for the full procedure.
 
 ## Best Practices
 
