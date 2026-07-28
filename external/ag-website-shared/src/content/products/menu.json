@@ -18,34 +18,10 @@
                 "url": "https://www.ag-grid.com/studio"
             },
             {
+                "inlineHeading": "Bryntum",
                 "title": "Bryntum Gantt",
                 "description": "Speed-tuned Gantt chart for project planning",
                 "url": "https://www.ag-grid.com/campaigns/bryntum-gantt"
-            }
-        ]
-    },
-    {
-        "label": "",
-        "items": [
-            {
-                "title": "Bryntum Scheduler",
-                "description": "Resource scheduling for complex projects",
-                "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler"
-            },
-            {
-                "title": "Bryntum Scheduler Pro",
-                "description": "Resource scheduling for complex projects",
-                "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler-pro"
-            },
-            {
-                "title": "Bryntum Calendar",
-                "description": "Calendar component for web applications",
-                "url": "https://www.ag-grid.com/campaigns/bryntum-calendar"
-            },
-            {
-                "title": "Bryntum Task Board",
-                "description": "Kanban board for web applications",
-                "url": "https://www.ag-grid.com/campaigns/bryntum-task-board"
             }
         ]
     }
