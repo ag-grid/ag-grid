@@ -17,6 +17,7 @@ export * from './gridColumns/gridColumnsOptions';
 export * from './gridColumns/columns-validation/gridColumnErrors';
 export * from './gridColumns/columns-validation/gridColumnsErrors';
 export * from './utils';
+export * from './gc-utils';
 export * from './node-utils';
 export * from './string-utils';
 export * from './cachedJSONObjects';
