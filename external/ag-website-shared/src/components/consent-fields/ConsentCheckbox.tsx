@@ -14,13 +14,27 @@ interface Props {
 }
 
 export const ConsentCheckbox: FunctionComponent<Props> = ({ id, label, error, nested, inputProps }: Props) => {
+    const errorId = `${id}-error`;
+
     return (
         <div className={classnames('input-field', { 'input-error': error }, { [styles.nested]: nested })}>
             <label className={styles.consentLabel} htmlFor={id}>
-                <input type="checkbox" id={id} {...inputProps} />
+                <input
+                    type="checkbox"
+                    id={id}
+                    aria-invalid={error ? true : undefined}
+                    aria-describedby={error ? errorId : undefined}
+                    {...inputProps}
+                />
                 <span>{label}</span>
             </label>
-            <div className={styles.errorContainer}>{error && <p className="error">{error}</p>}</div>
+            <div className={styles.errorContainer}>
+                {error && (
+                    <p className="error" id={errorId} role="alert">
+                        {error}
+                    </p>
+                )}
+            </div>
         </div>
     );
 };
