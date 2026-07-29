@@ -411,6 +411,26 @@ describe('calculated columns - grid state persistence', () => {
         expect(api.getState().userColumns).toEqual(userColumns);
     });
 
+    test('overrides and removals of declared columns are inert when calculated columns are disabled', async () => {
+        const userColumns: GridState['userColumns'] = [
+            { colId: 'a', properties: [{ property: 'headerName', value: 'Overridden' }] },
+            { colId: 'b', removed: true },
+        ];
+        const api = createGrid('state-disabled-declared', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            calculatedColumns: false,
+            initialState: { userColumns },
+        });
+        await asyncSetTimeout(0);
+
+        // Disabling the feature must not leave state half-applied: no column is changed or removed, and
+        // everything re-saves unchanged for a grid that does enable it.
+        expect(order(api)).toEqual(['a', 'b']);
+        expect(api.getColumn('a')!.getColDef().headerName).toBeUndefined();
+        expect(api.getState().userColumns).toEqual(userColumns);
+    });
+
     // === columnGroupShow is persisted, not re-derived from the anchor on restore =================
 
     test('a calc col keeps its columnGroupShow when the anchor leaf no longer declares one', async () => {
@@ -1182,6 +1202,110 @@ describe('calculated columns - grid state persistence', () => {
         expect(target.getState().userColumns).toEqual(savedState.userColumns);
     });
 
+    test('successive edits of a declared calc col each add to the persisted override', async () => {
+        const source = createGrid('state-declared-successive-edits', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: staticColumnDefs(),
+        });
+        await waitFor(() => expect(cellValue(source, 'declared')).toBe(13));
+        await editViaDialog(source, 'declared', { expression: '[a] * [b]' });
+        await editViaDialog(source, 'declared', { title: 'Renamed' });
+
+        // The second edit must not replace the first: both properties differ from the declaration.
+        const savedState = source.getState();
+        expect(propertiesOf(savedState, 'declared')).toMatchObject({
+            calculatedExpression: '[a] * [b]',
+            headerName: 'Renamed',
+        });
+
+        const target = createGrid('state-declared-successive-edits-target', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: staticColumnDefs(),
+            initialState: savedState,
+        });
+        await waitFor(() => expect(cellValue(target, 'declared')).toBe(30));
+        expect(target.getColumn('declared')!.getColDef().headerName).toBe('Renamed');
+    });
+
+    test('an override applies to a declared calc col that the previous state had removed', async () => {
+        const api = createGrid('state-declared-tombstone-then-override', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: staticColumnDefs(),
+        });
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b', 'declared']));
+        await removeViaMenu(api, 'declared');
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
+
+        // The column is absent only because of the tombstone, so an override arriving for it must still be
+        // recognised as belonging to a declared column and bring the column back.
+        api.setState({
+            userColumns: [
+                { colId: 'declared', properties: [{ property: 'calculatedExpression', value: '[a] * [b]' }] },
+            ],
+        });
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b', 'declared']));
+        expect(cellValue(api, 'declared')).toBe(30);
+    });
+
+    test('a created column cannot take the colId of a declared column the user had removed', async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const api = createGrid('state-created-vs-tombstoned-declared', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: staticColumnDefs(),
+        });
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b', 'declared']));
+        await removeViaMenu(api, 'declared');
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
+
+        // The colId belongs to `columnDefs` whether or not a column is currently built for it, so a created
+        // entry claiming it is refused rather than shadowing the developer's column.
+        api.setState({
+            userColumns: [
+                {
+                    colId: 'declared',
+                    created: true,
+                    parentGroupId: null,
+                    properties: [{ property: 'calculatedExpression', value: '[a] * 5' }],
+                },
+            ],
+        });
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b', 'declared']));
+        expect(cellValue(api, 'declared')).toBe(13);
+        expect(warn).toHaveBeenCalledWith(
+            expect.stringContaining(`userColumns: colId 'declared' is declared in columnDefs; skipping.`)
+        );
+        warn.mockRestore();
+    });
+
+    test('replacing a grouped calc col through setState keeps the replacement in the group', async () => {
+        const groupedColumnDefs = (): GridOptions['columnDefs'] => [
+            { field: 'a' },
+            { groupId: 'derived', headerName: 'Derived', children: [{ field: 'b' }] },
+        ];
+        const api = createGrid('state-grouped-calc-col-replaced', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: groupedColumnDefs(),
+        });
+        const firstId = await addViaDialog(api, 'b', '[a] + [b]');
+        expect(api.getColumn(firstId)!.getParent()!.getGroupId()).toBe('derived');
+
+        // The outgoing column still sits in `colDefList` when the incoming one looks for an anchor, so an
+        // anchor search that does not filter it out seats the replacement at the top level instead.
+        api.setState({
+            userColumns: [
+                {
+                    colId: 'calculated_9',
+                    created: true,
+                    parentGroupId: 'derived',
+                    properties: [{ property: 'calculatedExpression', value: '[a] * [b]' }],
+                },
+            ],
+        });
+        await waitFor(() => expect(api.getColumn('calculated_9')).toBeTruthy());
+        expect(api.getColumn(firstId)).toBeNull();
+        expect(api.getColumn('calculated_9')!.getParent()!.getGroupId()).toBe('derived');
+    });
+
     test('applying a state that lists no override reverts a live edit to the declared definition', async () => {
         const clean = createGrid('state-declared-revert-clean', {
             rowData: STATIC_ROW_DATA,
@@ -1432,5 +1556,36 @@ describe('calculated columns - grid state persistence without the calculated col
         // later be restored into a grid that does register the module.
         expect(api.getAllGridColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
         expect(api.getState().userColumns).toEqual(userColumns);
+    });
+
+    test('overrides and removals of declared columns are inert when the module is not registered', () => {
+        const userColumns: GridState['userColumns'] = [
+            { colId: 'a', properties: [{ property: 'headerName', value: 'Overridden' }] },
+            { colId: 'b', removed: true },
+        ];
+        const api = gridsManager.createGrid('state-no-module-declared', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            initialState: { userColumns },
+        });
+
+        // With no owner to interpret them, entries must not touch the developer's columns — an applied
+        // tombstone would destroy a column for a feature that is not even loaded.
+        expect(api.getAllGridColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+        expect(api.getColumn('a')!.getColDef().headerName).toBeUndefined();
+        expect(api.getState().userColumns).toEqual(userColumns);
+    });
+
+    test('setting columnDefs clears the layer when the module is not registered', () => {
+        const api = gridsManager.createGrid('state-no-module-clear', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            initialState: { userColumns: [{ colId: 'b', removed: true }] },
+        });
+        expect(api.getState().userColumns).toHaveLength(1);
+
+        // Clearing cannot depend on an owning service that was never registered.
+        api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
+        expect(api.getState().userColumns).toBeUndefined();
     });
 });

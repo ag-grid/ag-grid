@@ -424,8 +424,13 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
 
     // Park API/dialog-added calc cols and revert edits/removals of declared ones, so the reset below runs
     // against the original set — via the calc svc, so the rebuild emits no calc lifecycle/validation events.
-    if (calculatedColsSvc?.resetDynamicColumnDefs(true)) {
-        calculatedColsSvc.refreshDynamicColumns(source);
+    const userColumnsCleared = beans.userColumnSvc.clear();
+    if (calculatedColsSvc?.resetDynamicColumnDefs(true) || userColumnsCleared) {
+        if (calculatedColsSvc) {
+            calculatedColsSvc.refreshDynamicColumns(source);
+        } else {
+            colModel.rebuildCols(source);
+        }
     }
 
     if (!colModel.colDefList.length) {

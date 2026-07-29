@@ -1,6 +1,6 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { ColDef } from '../../entities/colDef';
+import type { ColDef, ColGroupDef } from '../../entities/colDef';
 import type { UserColumnProperty, UserColumnState } from '../../interfaces/gridState';
 
 /** One column's user-owned layer entry. `properties` holds the definition the user configured; a
@@ -25,6 +25,45 @@ export class UserColumnService extends BeanStub implements NamedBean {
     beanName = 'userColumnSvc' as const;
 
     private readonly entries = new Map<string, UserColumnEntry>();
+    /** Owners' enabled checks. An entry only reaches the built columns while an owner is active, so a
+     *  disabled feature (or an unregistered module) preserves state without acting on it. */
+    private readonly owners: (() => boolean)[] = [];
+    /** `colModel.colDefs` the declared lookup was built from; a new array rebuilds it. */
+    private declaredDefsSource: (ColDef | ColGroupDef)[] | null | undefined;
+    private declaredDefs = new Map<string, ColDef>();
+
+    /** Registers a feature that builds user columns, along with its enabled check. */
+    public registerOwner(isEnabled: () => boolean): void {
+        this.owners.push(isEnabled);
+    }
+
+    public isActive(): boolean {
+        const owners = this.owners;
+        for (let i = 0, len = owners.length; i < len; ++i) {
+            if (owners[i]()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** The definition the developer declared for `colId`, untouched by any entry. The built column cannot
+     *  serve: after the first rebuild its `userProvidedColDef` is the declaration with the entry already
+     *  merged in, and a tombstoned column is not built at all. */
+    public getDeclaredDef(colId: string): ColDef | undefined {
+        const colDefs = this.beans.colModel.colDefs ?? null;
+        if (this.declaredDefsSource !== colDefs) {
+            const declaredDefs = new Map<string, ColDef>();
+            collectDeclaredDefs(colDefs, declaredDefs);
+            this.declaredDefs = declaredDefs;
+            this.declaredDefsSource = colDefs;
+        }
+        return this.declaredDefs.get(colId);
+    }
+
+    public isDeclared(colId: string): boolean {
+        return this.getDeclaredDef(colId) !== undefined;
+    }
 
     public getEntry(colId: string): UserColumnEntry | undefined {
         return this.entries.get(colId);
@@ -64,8 +103,15 @@ export class UserColumnService extends BeanStub implements NamedBean {
         this.entries.delete(colId);
     }
 
-    public clear(): void {
-        this.entries.clear();
+    /** Drops the whole layer, returning whether it held anything. */
+    public clear(): boolean {
+        const { entries } = this;
+        this.declaredDefsSource = undefined;
+        if (!entries.size) {
+            return false;
+        }
+        entries.clear();
+        return true;
     }
 
     /** Build hook for `columnDefs`-declared columns: `null` when the user removed the column (never
@@ -81,6 +127,11 @@ export class UserColumnService extends BeanStub implements NamedBean {
         }
         const entry = this.entries.get(colId);
         if (entry === undefined) {
+            return undefined;
+        }
+        if (!this.isActive()) {
+            // No owner to build or interpret these entries, so leave the developer's columns alone. The
+            // entries stay in the layer and re-save unchanged, so restoring elsewhere is not lossy.
             return undefined;
         }
         if (entry.removed) {
@@ -137,9 +188,10 @@ export class UserColumnService extends BeanStub implements NamedBean {
                     parentGroupId: state.parentGroupId ?? null,
                     created: true,
                 });
-            } else if (this.beans.colModel.getCol(colId) !== undefined) {
+            } else if (this.isDeclared(colId)) {
                 // Changes to a column the developer no longer declares are dropped: state configures the
-                // developer's columns, it cannot reinstate one they have taken away.
+                // developer's columns, it cannot reinstate one they have taken away. Resolved against the
+                // declarations, not the built columns — a tombstoned column is absent from the build.
                 next.set(colId, { properties: fromProperties(state.properties) });
             }
         }
@@ -216,4 +268,21 @@ const propertiesEqual = (a: ColDef | undefined, b: ColDef | undefined): boolean 
         }
     }
     return true;
+};
+
+const collectDeclaredDefs = (defs: (ColDef | ColGroupDef)[] | null | undefined, result: Map<string, ColDef>): void => {
+    for (let i = 0, len = defs?.length ?? 0; i < len; ++i) {
+        const def = defs![i];
+        const children = (def as ColGroupDef).children;
+        if (children) {
+            collectDeclaredDefs(children, result);
+            continue;
+        }
+        const colDef = def as ColDef;
+        // Same key the build matches on, before it allocates suffixed ids for duplicates.
+        const colId = colDef.colId ?? colDef.field;
+        if (colId != null && !result.has(colId)) {
+            result.set(colId, colDef);
+        }
+    }
 };

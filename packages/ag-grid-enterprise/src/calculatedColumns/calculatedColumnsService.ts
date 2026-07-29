@@ -135,6 +135,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private readonly formulaErrorsByExpression = new Map<string, FormulaError | null>();
 
     public postConstruct(): void {
+        this.beans.userColumnSvc.registerOwner(() => this.isEnabled());
         this.addManagedEventListeners({
             newColumnsLoaded: (event) => {
                 this.checkColumnLifecycle(event.source);
@@ -441,7 +442,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
      *  put back to the declared value are dropped, so reverting an edit persists nothing. */
     private setDeclaredColOverride(column: AgColumn, nextColDef: ColDef): void {
         const { userColumnSvc } = this.beans;
-        const declared = pickUserOwnedProperties(column.getUserProvidedColDef() ?? {}) as Record<string, any>;
+        const colId = column.colId;
+        // The declaration as the developer wrote it: the built column's own definition already has any
+        // previous entry merged in, so diffing against it would drop the properties that entry carries.
+        const declared = pickUserOwnedProperties(userColumnSvc.getDeclaredDef(colId) ?? {}) as Record<string, any>;
         const next = pickUserOwnedProperties(nextColDef) as Record<string, any>;
         const properties: Record<string, any> = {};
         const nextKeys = Object.keys(next);
@@ -458,7 +462,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 properties[key] = undefined; // the update cleared a declared property
             }
         }
-        const colId = column.colId;
         if (Object.keys(properties).length) {
             userColumnSvc.setOverride(colId, properties as ColDef);
         } else {
@@ -509,8 +512,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (!preserveCreatedColumns) {
             this.inactiveDynamicColumns.clear();
         }
-        const userColumnSvc = this.beans.userColumnSvc;
-        if (!this.dynamicColumns.size && !userColumnSvc.hasEntries()) {
+        if (!this.dynamicColumns.size) {
             return false;
         }
         // Owned AgColumns are destroyed by the rebuild that always follows (colModel owns tree lifetime).
@@ -522,9 +524,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             });
         }
         this.dynamicColumns.clear();
-        // Setting `columnDefs` or resetting column state is the developer reclaiming the columns, so the
-        // user-column layer goes with it; only restoring grid state brings user columns back.
-        userColumnSvc.clear();
         return true;
     }
 
@@ -535,7 +534,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (!this.isEnabled()) {
             return false;
         }
-        const { userColumnSvc, colModel } = this.beans;
+        const { userColumnSvc } = this.beans;
         const dynamicColumns = this.dynamicColumns;
         let changed = false;
         const staleColIds: string[] = [];
@@ -574,8 +573,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 }
                 return;
             }
-            // `columnDefs` owns the colId, so the user column cannot take it without clobbering a real column.
-            if (colModel.getCol(colId) !== undefined) {
+            // `columnDefs` owns the colId, so the user column cannot take it without clobbering a real
+            // column — including one currently hidden by a tombstone, which is not in the built columns.
+            if (userColumnSvc.isDeclared(colId)) {
                 _warnOnce(`userColumns: colId '${colId}' is declared in columnDefs; skipping.`);
                 return;
             }
@@ -590,16 +590,27 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return changed;
     }
 
-    /** A leaf in `groupId` to append a restored column after, so it is built into that group. */
+    /** A leaf in `groupId` to append a restored column after, so it is built into that group. Only columns
+     *  that survive the coming rebuild qualify: `colDefList` still holds the ones this restore dropped, and
+     *  anchoring to one of those would strand the new column at the top level. */
     private findAnchorInGroup(groupId: string | null | undefined): string | null {
         if (groupId == null) {
             return null;
         }
-        const cols = this.beans.colModel.colDefList;
+        const { colModel, userColumnSvc } = this.beans;
+        const cols = colModel.colDefList;
         for (let i = cols.length - 1; i >= 0; --i) {
             const col = cols[i];
-            if (_getParentGroupId(col) === groupId) {
-                return col.colId;
+            if (_getParentGroupId(col) !== groupId) {
+                continue;
+            }
+            const colId = col.colId;
+            const entry = userColumnSvc.getEntry(colId);
+            if (entry?.removed) {
+                continue;
+            }
+            if (userColumnSvc.isDeclared(colId) || this.dynamicColumns.has(colId)) {
+                return colId;
             }
         }
         return null;
@@ -681,9 +692,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const colId = column.colId;
         const dynamicColumn = this.dynamicColumns.get(colId);
         const userColDef = column.getUserProvidedColDef();
-        // A declared col the user already edited resolves against its layer entry merged over the declaration.
-        const override = this.beans.userColumnSvc.getEntry(colId)?.properties;
-        const declaredColDef = override && userColDef ? { ...userColDef, ...override } : (override ?? userColDef);
+        // A declared col the user already edited resolves against its entry merged over the declaration.
+        const { userColumnSvc } = this.beans;
+        const override = userColumnSvc.getEntry(colId)?.properties;
+        const declaredDef = userColumnSvc.getDeclaredDef(colId) ?? userColDef;
+        const declaredColDef = override ? { ...declaredDef, ...override } : declaredDef;
         const baseColDef = dynamicColumn?.colDef ?? declaredColDef ?? column.colDef;
         const safeUpdate: ColDef = { ...colDefUpdate };
         delete safeUpdate.colId;
