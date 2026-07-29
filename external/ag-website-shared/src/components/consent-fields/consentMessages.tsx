@@ -16,6 +16,11 @@ export const CONSENT_LABELS: Record<string, ReactElement | string> = {
     ),
     marketingEmail: "I'd like to receive product updates and marketing emails",
     emailTracking: 'I consent to tracking of email opens and clicks',
+    /**
+     * Temporary stand-in for IP geolocation: email tracking consent only applies to
+     * France and Italy, so visitors declare it themselves to reveal that checkbox.
+     */
+    franceOrItaly: 'Please check this box if you live in France or Italy',
 };
 
 export const DATA_PROCESSING_CONSENT_REQUIRED = 'You must agree to the Privacy Policy to continue';

@@ -105,6 +105,7 @@ function useCheckbox(initialValue: boolean = false) {
 
     return {
         checked,
+        setChecked,
         handleCheckedChange,
     };
 }
@@ -175,7 +176,24 @@ function useTrialForm({ submitUrl }: Props) {
     const dataProcessingConsentError = wasValidated && !dataProcessingConsent ? DATA_PROCESSING_CONSENT_REQUIRED : '';
 
     const { checked: marketingEmailConsent, handleCheckedChange: handleMarketingEmailConsentChange } = useCheckbox();
-    const { checked: emailTrackingConsent, handleCheckedChange: handleEmailTrackingConsentChange } = useCheckbox();
+
+    const {
+        checked: emailTrackingConsent,
+        setChecked: setEmailTrackingConsent,
+        handleCheckedChange: handleEmailTrackingConsentChange,
+    } = useCheckbox();
+
+    const { checked: isFranceOrItaly, setChecked: setIsFranceOrItaly } = useCheckbox();
+
+    // Email tracking consent only applies to France and Italy, so hiding it must also
+    // withdraw it — never submit a consent the visitor can no longer see
+    const handleFranceOrItalyChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
+        const { checked } = e.target;
+        setIsFranceOrItaly(checked);
+        if (!checked) {
+            setEmailTrackingConsent(false);
+        }
+    }, []);
 
     const handleFormSubmit: FormEventHandler<HTMLFormElement> = useCallback(
         async (e) => {
@@ -264,6 +282,8 @@ function useTrialForm({ submitUrl }: Props) {
         handleMarketingEmailConsentChange,
         emailTrackingConsent,
         handleEmailTrackingConsentChange,
+        isFranceOrItaly,
+        handleFranceOrItalyChange,
         handleFormSubmit,
     };
 }
@@ -288,6 +308,8 @@ export const TrialLicenceForm: FunctionComponent = ({ submitUrl }: Props) => {
         handleMarketingEmailConsentChange,
         emailTrackingConsent,
         handleEmailTrackingConsentChange,
+        isFranceOrItaly,
+        handleFranceOrItalyChange,
         handleFormSubmit,
     } = useTrialForm({ submitUrl });
     const hasFormError = Boolean(emailError || firstNameError || lastNameError || dataProcessingConsentError);
@@ -383,14 +405,27 @@ export const TrialLicenceForm: FunctionComponent = ({ submitUrl }: Props) => {
                 />
 
                 <ConsentCheckbox
-                    id="email-tracking-consent"
-                    label={CONSENT_LABELS.emailTracking}
+                    id="france-or-italy"
+                    label={CONSENT_LABELS.franceOrItaly}
                     inputProps={{
-                        name: 'email-tracking-consent',
-                        checked: emailTrackingConsent,
-                        onChange: handleEmailTrackingConsentChange,
+                        name: 'france-or-italy',
+                        checked: isFranceOrItaly,
+                        onChange: handleFranceOrItalyChange,
                     }}
                 />
+
+                {isFranceOrItaly && (
+                    <ConsentCheckbox
+                        id="email-tracking-consent"
+                        label={CONSENT_LABELS.emailTracking}
+                        nested
+                        inputProps={{
+                            name: 'email-tracking-consent',
+                            checked: emailTrackingConsent,
+                            onChange: handleEmailTrackingConsentChange,
+                        }}
+                    />
+                )}
             </div>
 
             <div className={classnames(styles.actions, 'trial-licence-actions')}>

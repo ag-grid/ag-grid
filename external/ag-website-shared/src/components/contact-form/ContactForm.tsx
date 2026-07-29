@@ -5,16 +5,11 @@ import {
 } from '@ag-website-shared/components/consent-fields/consentMessages';
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import {
-    CONSENT_FIELD_IDS,
-    CONTACT_FORM_DATA,
-    RECAPTCHA_URL,
-    STUDIO_FORM_DATA,
-} from '@ag-website-shared/constants';
+import { CONSENT_FIELD_IDS, CONTACT_FORM_DATA, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
 import { LIBRARY } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
-import type { FunctionComponent } from 'react';
+import type { ChangeEvent, FunctionComponent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -96,13 +91,29 @@ export const ContactForm: FunctionComponent<Props> = ({
     const [isDisabled, setIsDisabled] = useState(false);
     const [captchaError, setCaptchaError] = useState(false);
 
+    const [isFranceOrItaly, setIsFranceOrItaly] = useState(false);
+
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
     } = useForm<FormValues>({
         mode: 'onBlur',
     });
+
+    // Email tracking consent only applies to France and Italy, so hiding it must also
+    // withdraw it — never submit a consent the visitor can no longer see
+    const handleFranceOrItalyChange = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+            const { checked } = e.target;
+            setIsFranceOrItaly(checked);
+            if (!checked) {
+                setValue(emailTrackingConsentId, '');
+            }
+        },
+        [setValue]
+    );
 
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -278,10 +289,19 @@ export const ContactForm: FunctionComponent<Props> = ({
                 />
 
                 <ConsentCheckbox
-                    id={emailTrackingConsentId}
-                    label={CONSENT_LABELS.emailTracking}
-                    inputProps={{ value: '1', ...register(emailTrackingConsentId) }}
+                    id="france-or-italy"
+                    label={CONSENT_LABELS.franceOrItaly}
+                    inputProps={{ checked: isFranceOrItaly, onChange: handleFranceOrItalyChange }}
                 />
+
+                {isFranceOrItaly && (
+                    <ConsentCheckbox
+                        id={emailTrackingConsentId}
+                        label={CONSENT_LABELS.emailTracking}
+                        nested
+                        inputProps={{ value: '1', ...register(emailTrackingConsentId) }}
+                    />
+                )}
             </div>
 
             <div className={classnames('input-field', { 'input-error': captchaError })}>
