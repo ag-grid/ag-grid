@@ -505,16 +505,16 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
         await switchGroupField('Country');
         await new FilterDom(api, 'country level still shows Italy+France selected', { colId: 'country' })
             .checkFilterDom(`
-            COLUMN FILTER (set)
-            mini-filter: ""
-            ☑ (Select All)
-            ☑ France
-            ☑ Italy
-            model:
-              values:
-                - "France"
-                - "Italy"
-              filterType: "set"
-        `);
+                COLUMN FILTER (set)
+                mini-filter: ""
+                ☑ (Select All)
+                ☑ France
+                ☑ Italy
+                model:
+                  values:
+                    - "France"
+                    - "Italy"
+                  filterType: "set"
+            `);
     });
 });

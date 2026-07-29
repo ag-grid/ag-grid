@@ -494,7 +494,7 @@ export class CellComp extends Component {
 
         cellEditor.afterGuiAttached?.();
         this.cellCtrl.enableEditorTooltipFeature(cellEditor);
-        this.cellCtrl.cellEditorAttached();
+        this.beans.editSvc?.onEditorAttached(this.cellCtrl);
     }
 
     public refreshEditStyles(editing: boolean, isPopup?: boolean): void {
@@ -569,7 +569,7 @@ export class CellComp extends Component {
             eChild: ePopupGui,
             closeOnEsc: true,
             closedCallback: (e) => {
-                cellCtrl.onPopupEditorClosed(e);
+                editSvc!.onPopupEditorClosed(cellCtrl, e);
             },
             anchorToElement: eCell,
             positionCallback,

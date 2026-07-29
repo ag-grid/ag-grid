@@ -6,9 +6,10 @@ import type { Column, EditingCellPosition, GridApi, IRowNode, RowNode } from 'ag
 import { log } from '../utils';
 import { addDiagramToError, collectGridRows, makeSnapshotTarget, runSnapshotCheck } from './grid-rows-helpers';
 import type { SnapshotCheckTarget } from './grid-rows-helpers';
-import { getGridHTMLElement, parseSpannedCell } from './gridHtmlRows';
+import { cellKey, getGridHTMLElement, parseSpannedCell, rowKey } from './gridHtmlRows';
 import type { GridRowsOptions } from './gridRowsOptions';
 import { GridRowsDiagramTree } from './rows-diagram/gridRowsDiagramTree';
+import { captureDomInvalidCellKeys } from './rows-validation-dom/cell-helpers';
 import { GridRowsDomValidator } from './rows-validation-dom/gridRowsDomValidator';
 import type { GridRowsBugs } from './rows-validation/bugs';
 import { gridRowsBugs } from './rows-validation/bugs';
@@ -43,11 +44,12 @@ export class GridRows<TData = any> {
     #indexMap: Map<IRowNode<TData>, number> | null = null;
     #displayedRowsSet: Set<RowNode<TData>> | null = null;
     #editingCells: EditingCellPosition[] | null = null;
-    #editingRowIndices: Set<number> | null = null;
-    #activelyEditingRowIndices: Set<number> | null = null;
-    #batchPendingRowIndices: Set<number> | null = null;
+    #editingRowKeys: Set<string> | null = null;
+    #activelyEditingRowKeys: Set<string> | null = null;
+    #batchPendingRowKeys: Set<string> | null = null;
     #editingCellKeys: Set<string> | null = null;
     #activeEditorCellKeys: Set<string> | null = null;
+    #invalid: { model: Set<string>; dom: Set<string>; rows: Set<string> } | null = null;
     readonly #detailGridRows: Map<IRowNode<TData> | GridApi, GridRows<any>>;
     #rowSpanMap: Map<string, string> | null = null;
 
@@ -159,38 +161,40 @@ export class GridRows<TData = any> {
         return (this.#editingCells ??= this.api.getEditingCells?.() ?? []);
     }
 
-    /** Checks if a row (by rowIndex) has any editing or changed cells. */
+    /** Checks if a row has any editing or changed cells. */
     public isRowEditing(row: RowNode): boolean {
-        const indices = (this.#editingRowIndices ??= new Set(this.getEditingCells().map((c) => c.rowIndex)));
-        return indices.has(row.rowIndex!);
+        const keys = (this.#editingRowKeys ??= new Set(
+            this.getEditingCells().map((c) => rowKey(c.rowIndex, c.rowPinned))
+        ));
+        return keys.has(rowKey(row.rowIndex, row.rowPinned));
     }
 
     /** Checks if a row has any cell with an active editor (state === 'editing'). */
     public isRowActivelyEditing(row: RowNode): boolean {
-        const indices = (this.#activelyEditingRowIndices ??= new Set(
+        const keys = (this.#activelyEditingRowKeys ??= new Set(
             this.getEditingCells()
                 .filter((c) => c.state === 'editing')
-                .map((c) => c.rowIndex)
+                .map((c) => rowKey(c.rowIndex, c.rowPinned))
         ));
-        return indices.has(row.rowIndex!);
+        return keys.has(rowKey(row.rowIndex, row.rowPinned));
     }
 
     /** Checks if a row has any cell with a batch pending change (state !== 'editing'). */
     public isRowBatchPending(row: RowNode): boolean {
-        const indices = (this.#batchPendingRowIndices ??= new Set(
+        const keys = (this.#batchPendingRowKeys ??= new Set(
             this.getEditingCells()
                 .filter((c) => c.state !== 'editing')
-                .map((c) => c.rowIndex)
+                .map((c) => rowKey(c.rowIndex, c.rowPinned))
         ));
-        return indices.has(row.rowIndex!);
+        return keys.has(rowKey(row.rowIndex, row.rowPinned));
     }
 
     /** Checks if a specific cell is being edited or has pending changes. */
     public isCellEditing(row: RowNode, colId: string): boolean {
         const keys = (this.#editingCellKeys ??= new Set(
-            this.getEditingCells().map((c) => `${c.rowIndex}:${c.rowPinned ?? ''}:${c.colId}`)
+            this.getEditingCells().map((c) => cellKey(c.rowIndex, c.rowPinned, c.colId))
         ));
-        return keys.has(`${row.rowIndex}:${row.rowPinned ?? ''}:${colId}`);
+        return keys.has(cellKey(row.rowIndex, row.rowPinned, colId));
     }
 
     /** Checks if a specific cell has an active editor (state === 'editing', not just 'changed'). */
@@ -198,9 +202,55 @@ export class GridRows<TData = any> {
         const keys = (this.#activeEditorCellKeys ??= new Set(
             this.getEditingCells()
                 .filter((c) => c.state === 'editing')
-                .map((c) => `${c.rowIndex}:${c.rowPinned ?? ''}:${c.colId}`)
+                .map((c) => cellKey(c.rowIndex, c.rowPinned, c.colId))
         ));
-        return keys.has(`${row.rowIndex}:${row.rowPinned ?? ''}:${colId}`);
+        return keys.has(cellKey(row.rowIndex, row.rowPinned, colId));
+    }
+
+    /**
+     * Cell keys (`rowIndex:rowPinned:colId`) currently failing cell-level validation. Read, never run: a
+     * snapshot that validated would repopulate the model and refresh the DOM under the test.
+     */
+    #invalidCells(): { model: Set<string>; dom: Set<string>; rows: Set<string> } {
+        if (this.#invalid) {
+            return this.#invalid;
+        }
+        const model = new Set<string>();
+        const rows = new Set<string>();
+        let dom = new Set<string>();
+        if (this.checkEditState) {
+            for (const err of this.api.getEditValidationErrors?.() ?? []) {
+                if (err.messages?.length) {
+                    model.add(cellKey(err.rowIndex, err.rowPinned, err.column.getColId()));
+                    rows.add(rowKey(err.rowIndex, err.rowPinned));
+                }
+            }
+            const gridElement = getGridHTMLElement(this.api);
+            if (gridElement) {
+                dom = captureDomInvalidCellKeys(gridElement);
+            }
+        }
+        this.#invalid = { model, dom, rows };
+        return this.#invalid;
+    }
+
+    /** Whether a specific cell currently has a cell-level validation error. */
+    public isCellInvalid(row: RowNode, colId: string): boolean {
+        return this.#invalidCells().model.has(cellKey(row.rowIndex, row.rowPinned, colId));
+    }
+
+    /**
+     * Whether the cell's editor shows an invalid DOM marker after the validation pass. The DOM
+     * validator cross-checks this against {@link isCellInvalid} to catch a model error whose editor
+     * exposes no markable validation element.
+     */
+    public isCellDomInvalid(row: RowNode, colId: string): boolean {
+        return this.#invalidCells().dom.has(cellKey(row.rowIndex, row.rowPinned, colId));
+    }
+
+    /** Whether any cell in the row currently has a cell-level validation error. */
+    public isRowInvalid(row: RowNode): boolean {
+        return this.#invalidCells().rows.has(rowKey(row.rowIndex, row.rowPinned));
     }
 
     public loadErrors(): this {

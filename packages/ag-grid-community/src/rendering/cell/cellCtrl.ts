@@ -1,6 +1,5 @@
 import {
     AgPromise,
-    KeyCode,
     _addOrRemoveAttribute,
     _findFocusableElements,
     _getActiveDomElement,
@@ -34,6 +33,7 @@ import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { RefreshCellsParams } from '../../interfaces/iCellsParams';
+import type { StartEditParams } from '../../interfaces/iEditService';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
@@ -145,8 +145,8 @@ export class CellCtrl extends BeanStub {
     // this comp used only for custom row drag handle (ie when user calls params.registerRowDragger)
     private customRowDragComp: RowDragComp;
 
-    public onCompAttachedFuncs: (() => void)[] = [];
-    public onEditorAttachedFuncs: (() => void)[] = [];
+    /** A start requested before this cell had a component, replayed by the edit service once it attaches. */
+    public pendingEditStart: StartEditParams | null = null;
 
     private focusEventWhileNotReady: CellFocusedEvent | null = null;
     // if cell has been focused, check if it's focused when destroyed
@@ -290,27 +290,12 @@ export class CellCtrl extends BeanStub {
         this.rangeFeature?.setComp(comp);
         this.rowResizeFeature?.refreshRowResizer();
 
-        const editable = startEditing ? this.isCellEditable() : undefined;
-        const continuingEdit = !editable && this.hasEdit && this.editSvc?.isEditing(this, { withOpenEditor: true });
-
-        if (editable || continuingEdit) {
-            this.editSvc?.startEditing(this, {
-                startedEdit: false,
-                source: 'api',
-                silent: true,
-                continueEditing: true,
-                editable,
-            });
-        } else {
+        if (!this.editSvc?.onCompAttached(this, startEditing)) {
             // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
             this.showValue(false, true);
         }
-
-        if (this.onCompAttachedFuncs.length) {
-            for (const func of this.onCompAttachedFuncs) {
-                func();
-            }
-            this.onCompAttachedFuncs = [];
+        if (this.pendingEditStart) {
+            this.editSvc!.replayPendingStart(this);
         }
     }
 
@@ -521,31 +506,6 @@ export class CellCtrl extends BeanStub {
         const autoHeightChanged = this.isAutoHeight != this.column.isAutoHeight();
 
         return selectionChanged || rowDragChanged || dndSourceChanged || autoHeightChanged;
-    }
-
-    public onPopupEditorClosed(e?: MouseEvent | TouchEvent | KeyboardEvent): void {
-        const { editSvc } = this.beans;
-        if (!editSvc?.isEditing(this, { withOpenEditor: true })) {
-            return;
-        }
-
-        const isKeyboardEvent = e instanceof KeyboardEvent;
-        const isMouseEvent = e instanceof MouseEvent;
-
-        const isEscape = isKeyboardEvent && e.key === KeyCode.ESCAPE;
-
-        // note: this happens because of a click outside of the grid or if the popupEditor
-        // is closed with `Escape` key. if another cell was clicked, then the editing will
-        // have already stopped and returned on the conditional above.
-        editSvc.stopEditing(this, {
-            source: editSvc.isBatchEditing() ? 'ui' : 'api',
-            cancel: isEscape,
-            event: isKeyboardEvent || isMouseEvent ? e : undefined,
-        });
-
-        if (isEscape) {
-            this.focusCell({ forceBrowserFocus: true, sourceEvent: e });
-        }
     }
 
     /**
@@ -1114,8 +1074,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public override destroy(): void {
-        this.onCompAttachedFuncs = [];
-        this.onEditorAttachedFuncs = [];
+        this.editSvc?.onCellDestroyed(this);
 
         // if this was focused; (e.g cell span status changes) then we need to restore focus
         if (this.isCellFocused() && this.hasBrowserFocus()) {
@@ -1195,13 +1154,6 @@ export class CellCtrl extends BeanStub {
         this.beans.context.createBean(rowDragComp);
 
         return rowDragComp;
-    }
-
-    public cellEditorAttached(): void {
-        for (const func of this.onEditorAttachedFuncs) {
-            func();
-        }
-        this.onEditorAttachedFuncs = [];
     }
 
     public setFocusedCellPosition(_cellPosition: CellPosition): void {

@@ -279,10 +279,10 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
         });
         await new GridColumns(api, `data updates with enableCellSpan active are processed without error setup`)
             .checkColumns(`
-            CENTER
-            ├── name "Name" width:200
-            └── value "Value" width:200
-        `);
+                CENTER
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
         await new GridRows(api, `data updates with enableCellSpan active are processed without error setup`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:a name:"a" value:1
@@ -301,11 +301,11 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             api,
             `data updates with enableCellSpan active are processed without error after applyTransaction`
         ).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:a name:"a" value:999
-                ├── LEAF id:b name:"b" value:2
-                └── LEAF id:c name:"c" value:3
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:a name:"a" value:999
+            ├── LEAF id:b name:"b" value:2
+            └── LEAF id:c name:"c" value:3
+        `);
 
         // Allow RowSpanService timeouts and events to process
         await asyncSetTimeout(50);

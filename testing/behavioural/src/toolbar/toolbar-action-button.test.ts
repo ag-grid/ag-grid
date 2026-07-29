@@ -278,10 +278,10 @@ describe('Toolbar action button item with column chooser', () => {
         });
         await new GridColumns(api, `pressing Escape from column chooser returns focus to the toolbar button setup`)
             .checkColumns(`
-            CENTER
-            ├── name "Name" width:200
-            └── country "Country" width:200
-        `);
+                CENTER
+                ├── name "Name" width:200
+                └── country "Country" width:200
+            `);
         await new GridRows(api, `pressing Escape from column chooser returns focus to the toolbar button setup`).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice" country:"Ireland"
@@ -306,8 +306,8 @@ describe('Toolbar action button item with column chooser', () => {
         expect(document.activeElement).toBe(button);
         await new GridRows(api, `pressing Escape from column chooser returns focus to the toolbar button final state`)
             .check(`
-            ROOT id:ROOT_NODE_ID
-            └── LEAF id:0 name:"Alice" country:"Ireland"
-        `);
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice" country:"Ireland"
+            `);
     });
 });

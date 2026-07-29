@@ -115,14 +115,14 @@ describe('Floating filter editing', () => {
         `);
         await new FilterDom(api, 'text floating editable', { mode: 'floating-filter', colId: 'country' })
             .checkFilterDom(`
-            FLOATING FILTER country
-            input: "aus"
-            active: true
-            model:
-              filterType: "text"
-              type: "contains"
-              filter: "aus"
-        `);
+                FLOATING FILTER country
+                input: "aus"
+                active: true
+                model:
+                  filterType: "text"
+                  type: "contains"
+                  filter: "aus"
+            `);
 
         // Clearing the floating input clears the model and restores all rows.
         typeInto(floatingInput(api, 'country'), '');
@@ -175,20 +175,20 @@ describe('Floating filter editing', () => {
         `);
         await new FilterDom(api, 'text floating read-only', { mode: 'floating-filter', colId: 'country' })
             .checkFilterDom(`
-            FLOATING FILTER country
-            input: "ita OR ice" ⊘
-            active: true
-            model:
-              filterType: "text"
-              operator: "OR"
-              conditions:
-                - filterType: "text"
-                  type: "contains"
-                  filter: "ita"
-                - filterType: "text"
-                  type: "contains"
-                  filter: "ice"
-        `);
+                FLOATING FILTER country
+                input: "ita OR ice" ⊘
+                active: true
+                model:
+                  filterType: "text"
+                  operator: "OR"
+                  conditions:
+                    - filterType: "text"
+                      type: "contains"
+                      filter: "ita"
+                    - filterType: "text"
+                      type: "contains"
+                      filter: "ice"
+            `);
     });
 
     // --- Number ---
@@ -265,15 +265,15 @@ describe('Floating filter editing', () => {
         `);
         await new FilterDom(api, 'number floating read-only', { mode: 'floating-filter', colId: 'age' })
             .checkFilterDom(`
-            FLOATING FILTER age
-            input: "20-35" ⊘
-            active: true
-            model:
-              filterType: "number"
-              type: "inRange"
-              filter: 20
-              filterTo: 35
-        `);
+                FLOATING FILTER age
+                input: "20-35" ⊘
+                active: true
+                model:
+                  filterType: "number"
+                  type: "inRange"
+                  filter: 20
+                  filterTo: 35
+            `);
     });
 
     test('number: non-numeric typing produces no model and leaves all rows', async () => {

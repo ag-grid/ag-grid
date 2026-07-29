@@ -49,6 +49,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public colsTree: (AgColumn | AgProvidedColumnGroup)[] = [];
     public colsTreeDepth = 0;
     public colDefList: AgColumn[] = [];
+    /** Invalidation key for anything memoised off the colDefs. Mutating a live colDef in place doesn't register. */
+    public colDefsVersion = 0;
     public colDefTree: (AgColumn | AgProvidedColumnGroup)[] = [];
     public colDefTreeDepth = 0;
     private colDefHasMarryChildren = false;
@@ -220,6 +222,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.colDefTree = tree;
         this.colDefTreeDepth = builder.treeDepth;
         this.colDefList = cols;
+        ++this.colDefsVersion;
         this.colDefHasMarryChildren = builder.marryChildren;
         this.colDefGroupsById = builder.groupsById;
         this.colDefColsByKey = builder.colsByKey;
@@ -491,6 +494,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.refreshColsDerivedState();
             if (colsListChanged) {
                 beans.rowSpanSvc?.refreshCols();
+                // Last: the purge dispatches synchronously, so a listener must not see a half-rebuilt model.
+                beans.editSvc?.releaseColumnsLeaving(finalColsList);
             }
             if (this.colsTree !== prevColTree || colsListChanged) {
                 this.eventSvc.dispatchEvent({ type: 'gridColumnsChanged' });

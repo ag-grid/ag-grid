@@ -149,6 +149,10 @@ export function formatRowColumns(
             result += ' ' + diagramColumnId + ':' + serialiseValue(value);
         }
 
+        if (checkEditState && gridRows.isCellInvalid(row, columnId)) {
+            result += '❌';
+        }
+
         result += gridRows.rowSpanMarker(row, columnId);
 
         const colDef = column.getColDef();

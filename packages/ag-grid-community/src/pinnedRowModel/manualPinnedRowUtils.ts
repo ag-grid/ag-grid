@@ -39,6 +39,7 @@ export class PinnedRows {
     }
 
     public delete(item: RowNode): void {
+        this.beans.editSvc?.releaseRowEdits(item);
         this.all.delete(item);
         this.visible.delete(item);
         this.queued.delete(item.id!);

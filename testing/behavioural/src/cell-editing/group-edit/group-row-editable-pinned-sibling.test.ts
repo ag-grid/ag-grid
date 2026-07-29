@@ -123,10 +123,12 @@ describe('editing with pinned sibling rows', () => {
                     });
                     await asyncSetTimeout(0);
 
+                    // No flag on the body row: the edit is on its pinned sibling, and pinned rows carry no
+                    // row state flags (getRowStateFlags).
                     await new GridRows(api, 'during edit').check(`
                         PINNED_TOP id:t-top-1 country:"France" year:2020 sales:1000 region:"Europe"
                         ROOT id:ROOT_NODE_ID
-                        ├── LEAF 🖍️ id:1 country:"France" year:2020 sales:1000 region:"Europe"
+                        ├── LEAF id:1 country:"France" year:2020 sales:1000 region:"Europe"
                         ├── LEAF id:2 country:"France" year:2021 sales:1200 region:"Europe"
                         ├── LEAF id:3 country:"Germany" year:2020 sales:1500 region:"Europe"
                         ├── LEAF id:4 country:"Germany" year:2021 sales:1800 region:"Europe"

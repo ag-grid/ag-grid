@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi } from 'ag-grid-community';
 
 import { DragEventDispatcher } from '../drag-n-drop/drag-event-dispatcher';
@@ -105,14 +107,17 @@ export class AdvancedFilterBuilderHarness {
             throw new Error('Value pill not found on builder item');
         }
         await firePointerLikeClick(pill);
-        await asyncSetTimeout(0);
-        // The column/operator pills carry hidden rich-select inputs; the value editor is the only visible one.
-        const editor = Array.from(item.querySelectorAll<HTMLInputElement>('input.ag-text-field-input')).find(
-            (input) => !input.closest('.ag-hidden')
-        );
-        if (!editor) {
-            throw new Error('Value editor input did not open');
-        }
+        // The column/operator pills carry hidden rich-select inputs; the value editor is the only
+        // visible one, and it mounts a macrotask or two after the click — poll rather than guess a delay.
+        const editor = await waitFor(() => {
+            const input = Array.from(item.querySelectorAll<HTMLInputElement>('input.ag-text-field-input')).find(
+                (candidate) => !candidate.closest('.ag-hidden')
+            );
+            if (!input) {
+                throw new Error('Value editor input did not open');
+            }
+            return input;
+        });
         const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
         setter.call(editor, value);
         editor.dispatchEvent(new Event('input', { bubbles: true }));
