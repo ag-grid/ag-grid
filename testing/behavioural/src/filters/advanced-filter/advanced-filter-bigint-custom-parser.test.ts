@@ -209,7 +209,17 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
 
         const builder = await AdvancedFilterBuilderHarness.open(api);
         const [condition] = await builder.conditionItems();
+
+        // The builder editor presents the stored operand through the formatter, not as the canonical
+        // decimal it is stored as — assert that here, while the builder is still open, so a
+        // regression showing `1000`/`255` in the editor cannot hide behind the applied expression.
+        expect(valuePillText(condition)).toBe('0x3E8');
+
         await builder.setValue(condition, '255');
+        // Re-query: committing the edit re-renders the condition row, detaching the earlier element.
+        const [editedCondition] = await builder.conditionItems();
+        expect(valuePillText(editedCondition)).toBe('0xFF');
+
         await builder.apply();
         await asyncSetTimeout(0);
 
