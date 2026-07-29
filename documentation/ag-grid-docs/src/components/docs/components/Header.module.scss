@@ -7,10 +7,6 @@
 .docsPageTitle {
     margin-bottom: $spacing-size-1;
 
-    span:nth-of-type(2) {
-        letter-spacing: -1.2px;
-    }
-
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         line-height: var(--line-height-ultra-tight);
     }
@@ -60,8 +56,6 @@
 .version {
     font-size: var(--text-fs-sm);
     font-weight: var(--text-regular);
-    // The header's nth-of-type span rule would otherwise tighten this.
-    letter-spacing: normal;
     color: var(--color-text-tertiary);
 }
 

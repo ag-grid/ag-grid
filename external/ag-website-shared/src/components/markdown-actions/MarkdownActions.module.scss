@@ -1,7 +1,7 @@
 @use 'design-system' as *;
 
-// Matches the height and border treatment of the shared Select trigger (see
-// Select.module.scss) so this sits alongside one as a single control group.
+// Matches the height, spacing and border treatment of the shared Select trigger
+// (see Select.module.scss) so this sits alongside one as a single control group.
 // The segments carry their own corner radii rather than the container clipping
 // them, so the focus ring on the chevron is not cut off.
 $segment-radius: calc(var(--radius-sm) - 1px);
@@ -13,6 +13,8 @@ $segment-radius: calc(var(--radius-sm) - 1px);
     border: 1px solid var(--color-input-border);
     border-radius: var(--radius-sm);
     background-color: var(--color-bg-primary);
+    box-shadow: var(--shadow-xs);
+    transition: border $transition-default-timing;
 
     &:hover {
         border-color: var(--color-input-border-hover);
@@ -23,23 +25,37 @@ $segment-radius: calc(var(--radius-sm) - 1px);
     }
 }
 
-.primaryAction {
-    display: flex;
-    align-items: center;
-    padding: 0 $spacing-size-3;
+@mixin segment {
     border: none;
-    border-radius: $segment-radius 0 0 $segment-radius;
     background-color: transparent;
-    font-size: var(--text-fs-base);
-    font-weight: var(--text-regular);
+    box-shadow: none;
     color: var(--color-fg-primary);
-    white-space: nowrap;
 
-    // Re-assert the colour, otherwise the global button hover style fades the label.
-    &:hover {
+    &:hover,
+    &:active {
         background-color: var(--color-bg-secondary);
         color: var(--color-fg-primary);
     }
+
+    &:focus-visible {
+        #{$selector-darkmode} & {
+            box-shadow:
+                0 0 0 $spacing-size-1 color-mix(in srgb, var(--color-brand-200), var(--color-bg-primary) 60%),
+                var(--shadow-xs);
+        }
+    }
+}
+
+.primaryAction {
+    @include segment;
+
+    display: flex;
+    align-items: center;
+    padding: 0 $spacing-size-4;
+    border-radius: $segment-radius 0 0 $segment-radius;
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-regular);
+    white-space: nowrap;
 }
 
 // Stacks the live label over a hidden copy of the longest one, so the button
@@ -57,21 +73,19 @@ $segment-radius: calc(var(--radius-sm) - 1px);
 }
 
 .trigger {
+    @include segment;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    padding: 0;
-    border: none;
+    padding: 0 $spacing-size-3;
     border-left: 1px solid var(--color-input-border);
     border-radius: 0 $segment-radius $segment-radius 0;
-    background-color: transparent;
-    color: var(--color-fg-primary);
 
-    // Re-assert the colour, otherwise the global button hover style fades the chevron.
-    &:hover {
+    // The open menu takes pointer events, so the segment stops matching :hover while
+    // it is the thing that opened it. Hold the tint until the menu closes.
+    &[data-state='open'] {
         background-color: var(--color-bg-secondary);
-        color: var(--color-fg-primary);
     }
 }
 
@@ -97,6 +111,21 @@ $segment-radius: calc(var(--radius-sm) - 1px);
         background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 12%);
         border: 1px solid color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 22%);
     }
+
+    &[data-state='open'] {
+        animation: menuScaleInDown 150ms cubic-bezier(0.4, 0, 1, 1);
+    }
+}
+
+@keyframes menuScaleInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0px) scale(1);
+    }
 }
 
 .item {
@@ -106,7 +135,6 @@ $segment-radius: calc(var(--radius-sm) - 1px);
     padding: 0 12px;
     border-radius: 3px;
     font-size: var(--text-fs-base);
-    // Pinned so the "View as Markdown" link is not bolder than its sibling items.
     font-weight: var(--text-regular);
     line-height: 1;
     color: var(--color-text-primary);
