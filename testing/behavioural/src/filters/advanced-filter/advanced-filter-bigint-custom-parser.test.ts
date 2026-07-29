@@ -256,6 +256,53 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         expect((await builder.openValueEditor(condition)).value).toBe('0x3E8');
     });
 
+    test('builder keeps the typed operand syntax across apply when no formatter can reproduce it', async () => {
+        const api = gridsManager.createGrid('grid7', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    headerName: 'Value',
+                    cellDataType: 'bigint',
+                    filter: 'agBigIntColumnFilter',
+                    filterParams: { allowedCharPattern: 'n0-9a-fA-FxX+\\-', bigintParser: parseBigInt },
+                },
+            ],
+            rowData: [{ value: 10n }, { value: 255n }, { value: 1000n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        // Without a bigintFormatter the model's canonical `255` cannot be turned back into `0xff`,
+        // so the builder must carry the typed text rather than fall back to the decimal.
+        applyExpression(gridDiv, '[Value] = 0xff');
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+        expect(valuePillText(condition)).toBe('0xff');
+        expect((await builder.openValueEditor(condition)).value).toBe('0xff');
+
+        // Applying from the builder round-trips the operand through the expression text, so the
+        // typed syntax must survive a re-open too - and must still filter on the parsed value.
+        await builder.apply();
+        await asyncSetTimeout(0);
+        await builder.close();
+
+        const reopened = await AdvancedFilterBuilderHarness.open(api);
+        expect(valuePillText((await reopened.conditionItems())[0])).toBe('0xff');
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'bigint',
+            colId: 'value',
+            type: 'equals',
+            filter: '255',
+        });
+        await new GridRows(api, 'typed hex still matches only 255').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 value:"255n"
+        `);
+    });
+
     test('builder value editor opens with the decimal operand when no formatter is provided', async () => {
         const api = gridsManager.createGrid('grid6', {
             columnDefs: [

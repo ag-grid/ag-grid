@@ -275,6 +275,15 @@ class OperandParser implements Parser {
         return this.modelValue;
     }
 
+    /**
+     * The operand the builder should present and edit. A bigint model value is the canonical decimal,
+     * which cannot be turned back into the syntax the user typed unless the column supplies a
+     * `bigintFormatter` - so keep the typed text. Every other type's model value is already in input format.
+     */
+    public getBuilderValue(): string | number {
+        return this.baseCellDataType === 'bigint' ? this.operand : this.modelValue;
+    }
+
     private parseOperand(fromComplete: boolean, position: number): void {
         const { advFilterExpSvc } = this.params;
         this.endPosition = position;
@@ -500,7 +509,7 @@ export class ColFilterExpressionParser {
         return null;
     }
 
-    public getModel(): AdvancedFilterModel {
+    public getModel(forBuilder?: boolean): AdvancedFilterModel {
         const colId = this.columnParser!.getColId();
         const model = {
             filterType: this.columnParser!.baseCellDataType,
@@ -508,7 +517,8 @@ export class ColFilterExpressionParser {
             type: this.operatorParser!.getOperatorKey(),
         };
         if (this.operatorParser!.expectedNumOperands) {
-            (model as any).filter = this.operandParser!.getModelValue();
+            const operandParser = this.operandParser!;
+            (model as any).filter = forBuilder ? operandParser.getBuilderValue() : operandParser.getModelValue();
         }
         return model as AdvancedFilterModel;
     }
