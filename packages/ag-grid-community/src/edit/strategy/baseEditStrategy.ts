@@ -247,11 +247,12 @@ export abstract class BaseEditStrategy extends BeanStub {
         const { beans } = this;
         const cellCtrl = _getCellCtrl(beans, position);
 
-        // Without a controller (cell hidden / virtualised out) the event still has to fire, or an edit
-        // ending off-screen leaves the started/stopped pair unbalanced — read the value from the data.
+        // Without a controller (cell hidden / virtualised out) the event still has to fire, or an edit ending
+        // off-screen leaves the started/stopped pair unbalanced. Resolved through the same read the editor
+        // opened on, since the raw field carries no pending edit and no getter, formula or group value.
         const value = cellCtrl
             ? cellCtrl.value
-            : beans.valueSvc.getValueFromData(position.column as AgColumn, position.rowNode);
+            : beans.valueSvc.getDisplayValue(position.column as AgColumn, position.rowNode, 'edit', false);
 
         this.eventSvc.dispatchEvent({
             ..._createCellEvent(beans, event ?? null, type as T, position, value),

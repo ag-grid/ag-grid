@@ -281,6 +281,50 @@ describe('Cell editing: purging edits on departure', () => {
         `);
     });
 
+    // The removal takes the cell controller with it, so the event's value has to be resolved from the model.
+    // Read as the raw field it would report neither the pending edit nor anything at all for a computed column.
+    test('a column removal reports the value being edited, computed or not', async () => {
+        const rowData = [{ id: '0', a: 'A0' }];
+        const api = await gridsManager.createGridAndWait('purge-computed-value', {
+            columnDefs: [
+                { field: 'a' },
+                {
+                    colId: 'shout',
+                    editable: true,
+                    valueGetter: ({ data }) => (data ? `${data.a}!` : null),
+                    valueSetter: (params) => {
+                        params.data.a = String(params.newValue).replace(/!$/, '');
+                        return true;
+                    },
+                },
+            ],
+            rowData,
+            getRowId: (params) => params.data.id,
+        } satisfies GridOptions);
+
+        const stopped: CellEditingStoppedEvent[] = [];
+        api.addEventListener('cellEditingStopped', (e) => stopped.push(e));
+
+        await type(api, '0', 'shout', 'LOUD');
+
+        await new GridRows(api, 'computed column mid-edit, uncommitted').check(`
+            ROOT id:ROOT_NODE_ID shout:null
+            └── LEAF 🖍️ id:0 a:"A0" shout:🖍️"LOUD" "A0!"
+        `);
+
+        api.setGridOption('columnDefs', [{ field: 'a' }]);
+        await asyncSetTimeout(1);
+
+        expect(stopped).toHaveLength(1);
+        expect(stopped[0].value).toBe('LOUD');
+        expect(rowData[0].a).toBe('A0'); // the purge cancels, so nothing was written
+
+        await new GridRows(api, 'the computed column and its edit are gone').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"A0"
+        `);
+    });
+
     // Tearing the grid down must not surface edit events: listeners are unsubscribing, and a stop reaching
     // a half-destroyed grid has nothing meaningful to report.
     test('destroying the grid mid-edit fires no cellEditingStopped', async () => {

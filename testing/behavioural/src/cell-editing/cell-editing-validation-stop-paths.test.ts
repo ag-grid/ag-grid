@@ -1102,3 +1102,68 @@ describe('Cell editing validation — a full-row popup close only ends its own c
         `);
     });
 });
+
+describe('Cell editing validation — a rule removed while its error is held', () => {
+    // Neither validation hook, so nothing but the row callback can report an error while this editor is open.
+    class PlainEditor implements ICellEditorComp {
+        private eInput!: HTMLInputElement;
+        public init(params: ICellEditorParams): void {
+            this.eInput = document.createElement('input');
+            this.eInput.value = params.value == null ? '' : String(params.value);
+        }
+        public getGui(): HTMLElement {
+            return this.eInput;
+        }
+        public afterGuiAttached(): void {
+            this.eInput.focus();
+        }
+        public getValue(): number | null {
+            const value = this.eInput.value;
+            return value === '' ? null : Number(value);
+        }
+    }
+
+    // Block mode holds the row on an error nothing revisits, so a rule dropped mid-edit would wedge the row:
+    // no rule left to satisfy, and the recorded verdict outliving the rule that formed it.
+    test('removing the last rule releases the row it was holding', async () => {
+        const rowData = [{ name: 'Bob', number: 23 }];
+        const api = await gridsManager.createGridAndWait('rule-removed-mid-edit', {
+            columnDefs: [{ field: 'name' }, { field: 'number', editable: true, cellEditor: PlainEditor }],
+            rowData,
+            editType: 'fullRow',
+            invalidEditValueMode: 'block',
+            getFullRowEditValidationErrors: ({ editorsState }) => {
+                const number = editorsState.find((e) => e.colId === 'number')?.newValue;
+                return number != null && number > 30 ? ['number must not exceed 30'] : [];
+            },
+        } satisfies GridOptions);
+        const grid = getGridElement(api)! as HTMLElement;
+        const user = userEvent.setup();
+        const numberInput = () => grid.querySelector<HTMLInputElement>('[col-id="number"] input')!;
+
+        await user.dblClick(cell(api, 0, 'number'));
+        await user.clear(numberInput());
+        await user.type(numberInput(), '40{Enter}');
+        await asyncSetTimeout(0);
+
+        expect(rowData[0].number).toBe(23); // held by the row rule
+        expect(api.getEditingCells().length).toBeGreaterThan(0);
+
+        await new GridRows(api, 'row held by the rule, 40 not committed').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:0 name:"Bob" number:🖍️40 23
+        `);
+
+        api.setGridOption('getFullRowEditValidationErrors', undefined);
+        await user.type(numberInput(), '{Enter}');
+        await asyncSetTimeout(0);
+
+        expect(rowData[0].number).toBe(40);
+        expect(api.getEditingCells()).toEqual([]);
+
+        await new GridRows(api, 'rule gone, the row it held commits').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Bob" number:40
+        `);
+    });
+});

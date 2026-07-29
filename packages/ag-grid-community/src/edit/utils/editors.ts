@@ -813,7 +813,7 @@ export function _scanEditorsForValidation(beans: BeanCollection): boolean {
 
 export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {
     const editSvc = beans.editSvc;
-    if (!(force || editSvc?.hasValidationRules())) {
+    if (!(force || editSvc?.hasValidationRules() || beans.editModelSvc?.hasValidationErrors())) {
         return;
     }
 
@@ -933,12 +933,7 @@ const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationM
         const errorMessages = getFullRowEditValidationErrors?.({ editorsState }) ?? [];
 
         if (errorMessages.length > 0) {
-            rowValidationModel.setRowValidation(
-                {
-                    rowNode,
-                },
-                { errorMessages }
-            );
+            rowValidationModel.setRowValidation({ rowNode }, { errorMessages });
         }
     }
 
