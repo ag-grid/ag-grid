@@ -1,5 +1,4 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { PRIVACY_POLICY_URL } from '@ag-website-shared/constants';
 import { TRIAL_LICENCE_FORM_URL, ZI_FORM_ID } from '@constants';
 import { trackTrialLicenseFormError, trackTrialLicenseFormSuccess } from '@utils/analytics';
 import classnames from 'classnames';
@@ -283,10 +282,6 @@ export const TrialLicenceFormStudio: FunctionComponent = ({ submitUrl }: Props) 
                     {formState === 'loading' && <span className={styles.submitSpinner} aria-hidden="true" />}
                     Start a free trial
                 </button>
-
-                <p className={styles.privacyMessage}>
-                    By submitting this form you agree to our <a href={PRIVACY_POLICY_URL}>Privacy Policy</a>.
-                </p>
 
                 {formState === 'success' && (
                     <p className={styles.statusMessage}>
