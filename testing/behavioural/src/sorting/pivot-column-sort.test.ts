@@ -344,26 +344,20 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         expect(pivots()).toEqual(ascending);
     });
 
-    const pivotResultColumnCases: [string, ColDef[] | null][] = [
-        ['supplied', [{ headerName: '2022', field: 'pivot_year_2022_sales' }]],
-        ['cleared', null],
-    ];
-    test.each(pivotResultColumnCases)(
-        'setPivotResultColumns (%s) resets pivotSort to no sort',
-        async (_name, colDefs) => {
-            const api = createPivotGrid();
-            await asyncSetTimeout(10);
+    // Ordering of application-supplied pivot result columns is covered in pivot-column-sort-ssrm.test.ts: under
+    // CSRM the pivot stage regenerates them from the row data on the next refresh, so they are transient here.
+    test.each([null, [] as ColDef[]])('setPivotResultColumns (%s) leaves pivotSort alone', async (colDefs) => {
+        const api = createPivotGrid();
+        await asyncSetTimeout(10);
 
-            api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-            await asyncSetTimeout(10);
-            expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        await asyncSetTimeout(10);
 
-            // The app takes ownership of the pivot result columns, so the grid must stop claiming an ordering.
-            api.setPivotResultColumns(colDefs);
-            await asyncSetTimeout(10);
-            expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBeNull();
-        }
-    );
+        // Supplying the columns hands the grid an order to apply pivotSort to - it does not clear the sort.
+        api.setPivotResultColumns(colDefs);
+        await asyncSetTimeout(10);
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+    });
 
     test('grid state captures pivotSort and restores it through initialState', async () => {
         const api = createPivotGrid();

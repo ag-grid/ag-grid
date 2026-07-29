@@ -173,11 +173,12 @@ more complex implementation that creates column groups. Note the following:
 {% gridExampleRunner title="Creating Pivot Result Columns" name="creating_pivot_result_columns"  exampleHeight=605 /%}
 
 {% note %}
-The pivot result columns are displayed in the order they are supplied to `api.setPivotResultColumns(pivotColDefs)`. You can control the order of the columns by sorting the `pivotColDefs` array before passing it to the grid.
-
-Supplying the columns resets [Pivot Column Sorting](./pivoting-column-groups/#sorting-pivot-columns) so the supplied
-order is kept, but sorting a pivot column afterwards - from its pill or with `pivotSort` - reorders the supplied
-columns by group header name.
+You can control the order of the pivot result columns by sorting the `pivotColDefs` array before passing it to
+`api.setPivotResultColumns(pivotColDefs)`. That supplied order is the natural order, used when
+[Pivot Column Sorting](./pivoting-column-groups/#sorting-pivot-columns) is set to no sort (`pivotSort: null`).
+Any other `pivotSort` - including the ascending default - orders the supplied column groups by header name
+instead, so sorting from a pivot column's pill reorders them without the grid asking the server for the columns
+again.
 {% /note %}
 
 ## Example: Pivot Column Groups

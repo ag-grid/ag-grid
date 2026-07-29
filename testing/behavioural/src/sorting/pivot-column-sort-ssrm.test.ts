@@ -129,9 +129,9 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
         const pivots = () => getColumnOrder(api, 'all').filter((id) => id.endsWith('_gold'));
         const supplied = ['2004_gold', '2000_gold', '2008_gold'];
-        // Supplying the columns resets pivotSort, so they keep the supplied order.
-        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBeNull();
-        expect(pivots()).toEqual(supplied);
+        // Supplying the columns leaves pivotSort alone, so its ascending default orders them by header name.
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('asc');
+        expect(pivots()).toEqual(['2000_gold', '2004_gold', '2008_gold']);
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
         await asyncSetTimeout(50);
@@ -152,6 +152,99 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: null }] });
         await asyncSetTimeout(50);
         expect(pivots()).toEqual(supplied);
+    });
+
+    test('sorting supplied pivot result columns does not mutate the application-owned arrays', async () => {
+        const datasource: IServerSideDatasource = {
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
+        };
+        const api = await createPivotGrid(datasource);
+
+        const supplied = [
+            { groupId: '2004', headerName: '2004', children: [{ colId: '2004_gold', field: '2004_gold' }] },
+            { groupId: '2000', headerName: '2000', children: [{ colId: '2000_gold', field: '2000_gold' }] },
+        ];
+        const suppliedOrder = supplied.map((def) => def.groupId);
+        api.setPivotResultColumns(supplied);
+        await asyncSetTimeout(50);
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        await asyncSetTimeout(50);
+
+        // The grid orders a copy: reusing this array in a later setPivotResultColumns call must still express the
+        // application's own order, not whatever the last sort produced.
+        expect(supplied.map((def) => def.groupId)).toEqual(suppliedOrder);
+    });
+
+    test('application-supplied columns survive a pivotSort change after the grid generated columns itself', async () => {
+        // The response carries pivotResultFields, so the grid generates the pivot result columns first and takes
+        // ownership of them. Supplying columns afterwards must transfer that ownership to the application.
+        const { datasource } = countingDatasource();
+        const api = await createPivotGrid(datasource);
+
+        const pivots = () => getColumnOrder(api, 'all').filter((id) => id.endsWith('_gold'));
+        expect(pivots()).toEqual(['2000_gold', '2004_gold', '2008_gold']);
+
+        api.setPivotResultColumns([
+            { groupId: 'sup_2004', headerName: '2004', children: [{ colId: 'sup_2004_gold', field: '2004_gold' }] },
+            { groupId: 'sup_2000', headerName: '2000', children: [{ colId: 'sup_2000_gold', field: '2000_gold' }] },
+        ]);
+        await asyncSetTimeout(50);
+        expect(pivots()).toEqual(['sup_2000_gold', 'sup_2004_gold']);
+
+        // Previously this regenerated the stale server-derived defs, replacing the supplied columns.
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        await asyncSetTimeout(50);
+        expect(pivots()).toEqual(['sup_2004_gold', 'sup_2000_gold']);
+    });
+
+    test('pivotSort orders supplied pivot groups without reordering the measures inside them', async () => {
+        const datasource: IServerSideDatasource = {
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
+        };
+        const api = await gridsManager.createGridAndWait('ssrmFlat', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'sport', pivot: true, hide: true },
+                { field: 'gold', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            rowModelType: 'serverSide',
+            serverSideDatasource: datasource,
+        });
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(50);
+
+        // Two pivot columns, but the supplied groups nest measure leaves directly rather than a second group
+        // level. Those leaves are measures, not pivot keys, so their within-group order must be preserved.
+        api.setPivotResultColumns([
+            {
+                groupId: '2004',
+                headerName: '2004',
+                children: [
+                    { colId: '2004_silver', field: '2004_silver', headerName: 'Silver' },
+                    { colId: '2004_gold', field: '2004_gold', headerName: 'Gold' },
+                ],
+            },
+            {
+                groupId: '2000',
+                headerName: '2000',
+                children: [
+                    { colId: '2000_silver', field: '2000_silver', headerName: 'Silver' },
+                    { colId: '2000_gold', field: '2000_gold', headerName: 'Gold' },
+                ],
+            },
+        ]);
+        await asyncSetTimeout(50);
+
+        const pivots = () => getColumnOrder(api, 'all').filter((id) => /^\d{4}_/.test(id));
+        // Groups ordered by the ascending default; Silver still precedes Gold inside each.
+        expect(pivots()).toEqual(['2000_silver', '2000_gold', '2004_silver', '2004_gold']);
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        await asyncSetTimeout(50);
+        expect(pivots()).toEqual(['2004_silver', '2004_gold', '2000_silver', '2000_gold']);
     });
 
     test('changing the pivot columns still refetches from the server', async () => {

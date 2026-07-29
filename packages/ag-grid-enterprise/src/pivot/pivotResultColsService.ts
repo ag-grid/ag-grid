@@ -15,37 +15,6 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _buildColumnTree, _destroyColumnTreeAll, _destroyColumnTreeUnused } from 'ag-grid-community';
 
-/** A colDef and its children, in supplied order; children `null` for a leaf col. */
-type ColDefOrder = {
-    def: ColDef | ColGroupDef;
-    children: ColDefOrder[] | null;
-};
-
-const captureColDefOrder = (colDefs: (ColDef | ColGroupDef)[]): ColDefOrder[] => {
-    const order: ColDefOrder[] = [];
-    for (let i = 0, len = colDefs.length; i < len; ++i) {
-        const def = colDefs[i];
-        const children = (def as ColGroupDef).children;
-        order.push({ def, children: children ? captureColDefOrder(children) : null });
-    }
-    return order;
-};
-
-/** Restores each level in place, so the colDef objects (and the columns keyed off them) are reused. */
-const restoreColDefOrder = (colDefs: (ColDef | ColGroupDef)[], order: ColDefOrder[]): void => {
-    if (colDefs.length !== order.length) {
-        return; // supplied defs were mutated externally; keep the current order
-    }
-    for (let i = 0, len = order.length; i < len; ++i) {
-        const entry = order[i];
-        colDefs[i] = entry.def;
-        const children = entry.children;
-        if (children) {
-            restoreColDefOrder((entry.def as ColGroupDef).children, children);
-        }
-    }
-};
-
 type SavedPivotCols = {
     tree: (AgColumn | AgProvidedColumnGroup)[];
     cols: AgColumn[] | null;
@@ -81,11 +50,11 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     public pivotAllGroups: AgProvidedColumnGroup[] = [];
     /** Held between clear and the next apply so generated col instances are reused. */
     private savedPivot: SavedPivotCols | null = null;
-    /** Last applied colDefs, kept so {@link resortPivotResultCols} can re-order them on a `pivotSort` change. */
-    private appliedColDefs: (ColDef | ColGroupDef)[] | null = null;
-    /** The order `appliedColDefs` were supplied in. Sorting them is destructive, so each re-sort restores this
-     *  first - otherwise clearing the sort ("no sort") would keep whatever the last direction produced. */
-    private suppliedOrder: ColDefOrder[] | null = null;
+    /** The colDefs last passed to `setPivotResultColumns`, exactly as the application supplied them; `null` when
+     *  the grid generated the current pivot result cols itself. Held so {@link resortPivotResultCols} can re-derive
+     *  the order on a `pivotSort` change, and so `pivotSort: null` resolves back to the supplied order rather than
+     *  to whatever the last direction produced. Never mutated - it is the application's array. */
+    public suppliedColDefs: (ColDef | ColGroupDef)[] | null = null;
 
     /** `undefined` = uncached, `null` = cached-but-empty. */
     private aggOrderedList: AgColumn[] | null | undefined;
@@ -184,19 +153,18 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         if (colDefs) {
             this.processPivotResultColDef(colDefs);
             if (appSupplied) {
-                this.appliedColDefs = colDefs;
-                this.suppliedOrder = captureColDefOrder(colDefs);
-                this.beans.pivotColDefSvc?.sortPivotResultColDefs(colDefs);
+                this.suppliedColDefs = colDefs;
+                this.applyPivotResultColDefs(this.orderColDefs(colDefs), source);
             } else {
                 // Generated colDefs arrive already ordered (row totals included), and own the order from here.
-                this.clearAppliedColDefs();
+                this.suppliedColDefs = null;
+                this.applyPivotResultColDefs(colDefs, source);
             }
-            this.applyPivotResultColDefs(colDefs, source);
         } else if (this.pivotCols != null) {
-            this.clearAppliedColDefs();
+            this.suppliedColDefs = null;
             this.clearPivotResultCols(source);
         } else {
-            this.clearAppliedColDefs();
+            this.suppliedColDefs = null;
             return;
         }
         this.visibleCols.refresh(source, false);
@@ -205,22 +173,18 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     /** Re-order the applied pivot result columns for the pivot columns' current `pivotSort`. Lets pill sorting
      *  reach application-supplied columns, which no `createColDefsFromFields` pass regenerates. */
     public resortPivotResultCols(source: ColumnEventType): void {
-        const colDefs = this.appliedColDefs;
-        const suppliedOrder = this.suppliedOrder;
-        if (!colDefs || !suppliedOrder) {
+        const suppliedColDefs = this.suppliedColDefs;
+        if (!suppliedColDefs) {
             return;
         }
         this.aggOrderedList = undefined;
-        // Sort from the supplied order, so "no sort" resolves to it rather than to the last sorted order.
-        restoreColDefOrder(colDefs, suppliedOrder);
-        this.beans.pivotColDefSvc?.sortPivotResultColDefs(colDefs);
-        this.applyPivotResultColDefs(colDefs, source);
+        // Always re-derived from the supplied order, so "no sort" resolves to it rather than to the last direction.
+        this.applyPivotResultColDefs(this.orderColDefs(suppliedColDefs), source);
         this.visibleCols.refresh(source, false);
     }
 
-    private clearAppliedColDefs(): void {
-        this.appliedColDefs = null;
-        this.suppliedOrder = null;
+    private orderColDefs(colDefs: (ColDef | ColGroupDef)[]): (ColDef | ColGroupDef)[] {
+        return this.beans.pivotColDefSvc?.orderPivotResultColDefs(colDefs) ?? colDefs;
     }
 
     public override destroy(): void {

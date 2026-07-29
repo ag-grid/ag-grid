@@ -15,28 +15,15 @@ const yearGroupOrder = (page: Page) =>
 
 const yearPillFor = (page: Page) => page.locator('.ag-column-drop-horizontal-cell', { hasText: 'Year' });
 
-/** Only the year groups near the viewport are rendered, so assert the shape of the order, not an exact list. */
-const isMonotonic = (years: string[], direction: 'asc' | 'desc') =>
-    years.length > 1 &&
-    years.every((year, i) => {
-        if (i === 0) {
-            return true;
-        }
-        const previous = Number(years[i - 1]);
-        return direction === 'asc' ? previous <= Number(year) : previous >= Number(year);
-    });
-
-/** The pivot groups reorder asynchronously: poll until they are sorted `mode`-wards, or match an exact order. */
-const waitForYears = (page: Page, mode: 'asc' | 'desc' | string[]) =>
+/** The pivot groups reorder asynchronously: poll until they are sorted `mode`-wards. Only the groups near the
+ *  viewport are rendered, so this asserts the shape of the order rather than an exact list. */
+const waitForYears = (page: Page, mode: 'asc' | 'desc') =>
     page.waitForFunction((expected) => {
         const years = Array.from(document.querySelectorAll('.ag-header-group-cell .ag-header-group-text'))
             .map((e) => ({ text: e.textContent!.trim(), left: e.getBoundingClientRect().left }))
             .filter((e) => /^\d{4}$/.test(e.text))
             .sort((a, b) => a.left - b.left)
             .map((e) => e.text);
-        if (Array.isArray(expected)) {
-            return years.join() === expected.join();
-        }
         return (
             years.length > 1 &&
             years.every((year, i) => {
@@ -55,13 +42,6 @@ test.agExample(import.meta, () => {
         async ({ page }) => {
             await waitForGridContent(page);
 
-            // createPivotResultColumns() supplies the years in an arbitrary order, so sort them ascending first
-            // to bring the earliest years into view.
-            const yearPill = yearPillFor(page);
-            await expect(yearPill).toBeVisible();
-            await yearPill.click();
-            await waitForYears(page, 'asc');
-
             const groupRow = (name: string) =>
                 page
                     .locator('.ag-row')
@@ -75,6 +55,7 @@ test.agExample(import.meta, () => {
             // createPivotResultColumns() builds a year column group per distinct year,
             // each nesting gold/silver/bronze value children.
             await expect(page.locator('.ag-header-group-cell').filter({ hasText: '2000' }).first()).toBeVisible();
+            await expect(page.locator('.ag-header-group-cell').filter({ hasText: '2004' }).first()).toBeVisible();
             await expect(page.locator('.ag-header-cell-text').filter({ hasText: 'Gold' }).first()).toBeVisible();
             await expect(page.locator('.ag-header-cell-text').filter({ hasText: 'Silver' }).first()).toBeVisible();
             await expect(page.locator('.ag-header-cell-text').filter({ hasText: 'Bronze' }).first()).toBeVisible();
@@ -87,33 +68,40 @@ test.agExample(import.meta, () => {
     );
 
     test.eachFramework(
-        'The Year pill sorts the supplied pivot result columns, and clearing the sort restores their order',
+        'The Year pill sorts the supplied pivot result columns, and no sort returns them to the supplied order',
         async ({ page }) => {
             await ensureGridReady(page);
             await waitForGridContent(page);
 
-            // Supplying the columns resets pivot sorting, so the scrambled supplied order is displayed as-is.
-            const suppliedOrder = await yearGroupOrder(page);
-            expect(suppliedOrder.length).toBeGreaterThan(1);
-            expect(isMonotonic(suppliedOrder, 'asc')).toBe(false);
-            expect(isMonotonic(suppliedOrder, 'desc')).toBe(false);
-
-            // Activating the pill sorts the supplied columns, even though the grid did not generate them.
-            const yearPill = yearPillFor(page);
-            await expect(yearPill).toBeVisible();
-            await yearPill.click();
-            await expect(yearPill.locator('.ag-sort-ascending-icon')).toBeVisible();
+            // createPivotResultColumns() supplies the years in a scrambled order, but pivotSort defaults to
+            // ascending, so the grid orders the supplied columns rather than displaying them as supplied.
             await waitForYears(page, 'asc');
 
-            // Cycling on to descending, then to no sort, returns the columns to the supplied order.
+            const yearPill = yearPillFor(page);
+            await expect(yearPill).toBeVisible();
+            await expect(yearPill.locator('.ag-sort-ascending-icon')).toBeVisible();
+
+            // Activating the pill reorders the supplied columns, even though the grid did not generate them.
             await yearPill.click();
             await expect(yearPill.locator('.ag-sort-descending-icon')).toBeVisible();
             await waitForYears(page, 'desc');
 
+            // Cycling on to no sort falls back to the order the columns were supplied in. That order is shuffled,
+            // so assert it holds the same years rather than an exact sequence - a shuffle has no fixed result.
+            const sortedYears = (await yearGroupOrder(page)).slice().sort();
             await yearPill.click();
             await expect(yearPill.locator('.ag-sort-descending-icon')).toBeHidden();
             await expect(yearPill.locator('.ag-sort-ascending-icon')).toBeHidden();
-            await waitForYears(page, suppliedOrder);
+            await expect(async () => {
+                const suppliedOrder = await yearGroupOrder(page);
+                expect(suppliedOrder.length).toBeGreaterThan(1);
+                expect(suppliedOrder.slice().sort()).toEqual(sortedYears);
+            }).toPass();
+
+            // And back round to ascending.
+            await yearPill.click();
+            await expect(yearPill.locator('.ag-sort-ascending-icon')).toBeVisible();
+            await waitForYears(page, 'asc');
         }
     );
 });

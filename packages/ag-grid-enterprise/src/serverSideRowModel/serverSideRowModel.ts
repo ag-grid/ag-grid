@@ -279,13 +279,17 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             this.resetRootStore();
             return;
         }
+        const pivotResultCols = this.pivotResultCols;
+        // Application-supplied columns win: `setPivotResultColumns` hands the order to the application, even if
+        // this row model generated columns from `pivotResultFields` earlier. Re-order the applied ones in place.
+        if (pivotResultCols?.suppliedColDefs) {
+            pivotResultCols.resortPivotResultCols(event.source);
+            return;
+        }
         const pivotResultFields = this.pivotResultFields;
         if (this.managingPivotResultColumns && pivotResultFields) {
             this.generateSecondaryColumns(pivotResultFields);
-            return;
         }
-        // Application-supplied pivot result columns: re-order the ones already applied.
-        this.pivotResultCols?.resortPivotResultCols(event.source);
     }
 
     /** True when the active pivot columns, in order, match the ones the current store was built with. */

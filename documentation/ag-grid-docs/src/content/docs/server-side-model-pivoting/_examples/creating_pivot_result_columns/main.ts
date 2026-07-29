@@ -163,22 +163,12 @@ function addColDef(
     return res;
 }
 
-// Stable pseudo-random rank for a pivot key, so the scrambled order is the same on every run.
-function pseudoRandomRank(pivotKey: string): number {
-    let hash = 0;
-    for (let i = 0; i < pivotKey.length; i++) {
-        hash = (hash * 31 + pivotKey.charCodeAt(i)) % 997;
-    }
-    // Keys as similar as consecutive years hash to near-consecutive values, so mix before ranking.
-    return (hash * 7919) % 1000;
-}
-
-// The grid displays the pivot result columns in the order they are supplied, so this example supplies the years
-// in an arbitrary order. Click the YEAR pill in the pivot panel to sort them.
+// The supplied order is the pivot result columns' natural order, used when the YEAR pill in the pivot panel is
+// cycled to no sort. This example supplies the years shuffled so that order is distinguishable from asc/desc.
 function scramblePivotFields(pivotFields: string[]): string[] {
     return pivotFields
-        .map((field, index) => ({ field, index, rank: pseudoRandomRank(field.split('_')[0]) }))
-        .sort((a, b) => a.rank - b.rank || a.index - b.index)
+        .map((field) => ({ field, rank: Math.random() }))
+        .sort((a, b) => a.rank - b.rank)
         .map((entry) => entry.field);
 }
 
