@@ -6,6 +6,25 @@ export const MIGRATION_DOCUMENTATION_NAV_DATA = {
 };
 
 export const RECAPTCHA_URL = 'https://www.google.com/recaptcha/api.js';
+
+/**
+ * Salesforce field identifiers for the web-to-lead consent checkboxes
+ */
+export const CONSENT_FIELD_IDS = {
+    default: {
+        dataProcessingConsentId: '00NQ500000IfxTS',
+        marketingEmailConsentId: '00NS900000KOnU0',
+        emailTrackingConsentId: '00NS900000KQ3GT',
+        franceOrItalyId: '00NS900000KYN3V',
+    },
+    production: {
+        dataProcessingConsentId: '00NQ500000IfxTS',
+        marketingEmailConsentId: '00NQ500000JApXt',
+        emailTrackingConsentId: '00NQ500000JApXs',
+        franceOrItalyId: '00NQ500000JD5zq',
+    },
+};
+
 export const CONTACT_FORM_DATA = {
     default: {
         actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DS9000004CVdh',

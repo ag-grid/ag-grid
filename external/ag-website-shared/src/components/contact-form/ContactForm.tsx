@@ -1,10 +1,15 @@
+import { ConsentCheckbox } from '@ag-website-shared/components/consent-fields/ConsentCheckbox';
+import {
+    CONSENT_LABELS,
+    DATA_PROCESSING_CONSENT_REQUIRED,
+} from '@ag-website-shared/components/consent-fields/consentMessages';
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { CONTACT_FORM_DATA, PRIVACY_POLICY_URL, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
+import { CONSENT_FIELD_IDS, CONTACT_FORM_DATA, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
 import { LIBRARY } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
-import type { FunctionComponent } from 'react';
+import type { ChangeEvent, FunctionComponent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -24,6 +29,10 @@ const {
     captchaSiteKey,
     captchaSettingsKeyName,
 } = getIsProduction() ? contactFormData.production : contactFormData.default;
+
+const { dataProcessingConsentId, marketingEmailConsentId, emailTrackingConsentId, franceOrItalyId } = getIsProduction()
+    ? CONSENT_FIELD_IDS.production
+    : CONSENT_FIELD_IDS.default;
 
 const isDev = getIsDev();
 
@@ -82,13 +91,29 @@ export const ContactForm: FunctionComponent<Props> = ({
     const [isDisabled, setIsDisabled] = useState(false);
     const [captchaError, setCaptchaError] = useState(false);
 
+    const [isFranceOrItaly, setIsFranceOrItaly] = useState(false);
+
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
     } = useForm<FormValues>({
         mode: 'onBlur',
     });
+
+    // Email tracking consent only applies to France and Italy, so hiding it must also
+    // withdraw it — never submit a consent the visitor can no longer see
+    const handleFranceOrItalyChange = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+            const { checked } = e.target;
+            setIsFranceOrItaly(checked);
+            if (!checked) {
+                setValue(emailTrackingConsentId, '');
+            }
+        },
+        [setValue]
+    );
 
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -246,6 +271,44 @@ export const ContactForm: FunctionComponent<Props> = ({
                     </div>
                 </div>
             )}
+            <div className={styles.consents}>
+                <ConsentCheckbox
+                    id={dataProcessingConsentId}
+                    label={CONSENT_LABELS.dataProcessing}
+                    error={(errors as any)[dataProcessingConsentId]?.message as string}
+                    inputProps={{
+                        value: '1',
+                        ...register(dataProcessingConsentId, { required: DATA_PROCESSING_CONSENT_REQUIRED }),
+                    }}
+                />
+
+                <ConsentCheckbox
+                    id={marketingEmailConsentId}
+                    label={CONSENT_LABELS.marketingEmail}
+                    inputProps={{ value: '1', ...register(marketingEmailConsentId) }}
+                />
+
+                <ConsentCheckbox
+                    id={franceOrItalyId}
+                    label={CONSENT_LABELS.franceOrItaly}
+                    inputProps={{
+                        name: franceOrItalyId,
+                        value: '1',
+                        checked: isFranceOrItaly,
+                        onChange: handleFranceOrItalyChange,
+                    }}
+                />
+
+                {isFranceOrItaly && (
+                    <ConsentCheckbox
+                        id={emailTrackingConsentId}
+                        label={CONSENT_LABELS.emailTracking}
+                        nested
+                        inputProps={{ value: '1', ...register(emailTrackingConsentId) }}
+                    />
+                )}
+            </div>
+
             <div className={classnames('input-field', { 'input-error': captchaError })}>
                 <div className="g-recaptcha" data-sitekey={captchaSiteKey} />
                 <div className={styles.errorContainer}>
@@ -258,9 +321,6 @@ export const ContactForm: FunctionComponent<Props> = ({
                 type="submit"
                 value={submitLabel || 'Send us a message'}
             />
-            <p className={styles.privacyMessage}>
-                By submitting this form you agree to our <a href={PRIVACY_POLICY_URL}>Privacy Policy</a>.
-            </p>
             <p>
                 For technical support, visit our{' '}
                 <a
