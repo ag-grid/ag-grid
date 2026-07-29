@@ -5,7 +5,9 @@ import {
     ClientSideRowModelModule,
     GridStateModule,
     NumberEditorModule,
+    NumberFilterModule,
     TextEditorModule,
+    TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
 import {
@@ -37,11 +39,11 @@ describe('calculated columns - grid state persistence', () => {
             RowNumbersModule,
             TextEditorModule,
             NumberEditorModule,
+            TextFilterModule,
+            NumberFilterModule,
             ValidationModule,
         ] as Module[],
     });
-
-    let restoreOffsetParent: (() => void) | undefined;
 
     beforeEach(() => {
         gridsManager.reset();
@@ -49,8 +51,6 @@ describe('calculated columns - grid state persistence', () => {
 
     afterEach(() => {
         gridsManager.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     function createGrid(id: string, opts: Partial<GridOptions>): GridApi {
@@ -66,26 +66,6 @@ describe('calculated columns - grid state persistence', () => {
     }
 
     // --- dialog plumbing (the only public surface that sets an anchor) ---------------------------
-
-    function enableOffsetParentPolyfill(): void {
-        if (restoreOffsetParent) {
-            return;
-        }
-        const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-            configurable: true,
-            get(this: HTMLElement) {
-                return this.parentElement;
-            },
-        });
-        restoreOffsetParent = () => {
-            if (original) {
-                Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
-            } else {
-                delete (HTMLElement.prototype as any).offsetParent;
-            }
-        };
-    }
 
     async function clickColumnMenuItem(name: string): Promise<void> {
         const menuItem = await waitFor(() => {
@@ -119,6 +99,18 @@ describe('calculated columns - grid state persistence', () => {
         input!.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
+    async function selectDataType(label: string): Promise<void> {
+        getDialog()
+            .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
+            .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        await asyncSetTimeout(1);
+        const option = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).find(
+            (element) => element.textContent?.trim() === label
+        );
+        expect(option).toBeTruthy();
+        option!.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    }
+
     function clickDialogButton(label: string): void {
         const button = Array.from(getDialog().querySelectorAll<HTMLButtonElement>('button')).find(
             (element) => element.textContent?.trim() === label
@@ -131,7 +123,6 @@ describe('calculated columns - grid state persistence', () => {
      *  Returns the auto-generated colId of the new column, discovered by diffing the column set. */
     async function addViaDialog(api: GridApi, anchorColId: string, expression: string): Promise<string> {
         const before = new Set(order(api));
-        enableOffsetParentPolyfill();
         api.showColumnMenu(anchorColId);
         await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
@@ -152,7 +143,6 @@ describe('calculated columns - grid state persistence', () => {
         colId: string,
         edits: { expression?: string; title?: string }
     ): Promise<void> {
-        enableOffsetParentPolyfill();
         api.showColumnMenu(colId);
         await asyncSetTimeout(10);
         await clickColumnMenuItem('Edit Calculated Column');
@@ -165,6 +155,15 @@ describe('calculated columns - grid state persistence', () => {
         }
         clickDialogButton('Apply');
         await asyncSetTimeout(40);
+    }
+
+    /** Removes a dynamic calc col through its header menu — dynamic calc cols are not in `columnDefs`,
+     *  so the menu's "Remove Calculated Column" action is the only way a user can drop one. */
+    async function removeViaMenu(api: GridApi, colId: string): Promise<void> {
+        api.showColumnMenu(colId);
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Remove Calculated Column');
+        await asyncSetTimeout(1);
     }
 
     // === core repro: initialState round-trip =====================================================
@@ -356,7 +355,6 @@ describe('calculated columns - grid state persistence', () => {
         });
 
         // Reopen the column menu and edit the expression live (default apply mode).
-        enableOffsetParentPolyfill();
         api.showColumnMenu(calcId);
         await asyncSetTimeout(10);
         await clickColumnMenuItem('Edit Calculated Column');
@@ -574,5 +572,552 @@ describe('calculated columns - grid state persistence', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 revenue:10 ${calcId}:7 cost:3
         `);
+    });
+
+    // === layout sections apply to the recreated col ==============================================
+    // Recreation runs BEFORE the column-state sections precisely so their colIds exist by then. These
+    // tests pin that contract: everything a user can configure on a calc col must come back with it.
+
+    test('width, sort, pinning and filter configured on a dynamic calc col are all restored alongside it', async () => {
+        const rowData = [
+            { id: 'r1', a: 5, b: 2 },
+            { id: 'r2', a: 3, b: 7 },
+        ];
+        const columnDefs = [{ field: 'a' }, { field: 'b' }];
+        const defaultColDef = { filter: true };
+        const api = createGrid('state-layout-source', { rowData, columnDefs, defaultColDef });
+        const calcId = await addViaDialog(api, 'a', '[A] + [B]');
+
+        const filterModel = { filterType: 'text', type: 'notEqual', filter: '99' };
+        api.setColumnWidths([{ key: calcId, newWidth: 320 }]);
+        api.setColumnsPinned([calcId], 'left');
+        api.applyColumnState({ state: [{ colId: calcId, sort: 'desc' }] });
+        await api.setColumnFilterModel(calcId, filterModel);
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel(calcId)).toEqual(filterModel);
+
+        const savedState = api.getState();
+        expect(savedState.sort).toMatchObject({ sortModel: [{ colId: calcId, sort: 'desc' }] });
+        expect(savedState.filter).toMatchObject({ filterModel: { [calcId]: filterModel } });
+
+        const api2 = createGrid('state-layout-target', {
+            rowData,
+            columnDefs,
+            defaultColDef,
+            initialState: savedState,
+        });
+        await waitFor(() => expect(order(api2)).toContain(calcId));
+        const restored = api2.getColumn(calcId)!;
+        expect(restored.getActualWidth()).toBe(320);
+        expect(restored.getPinned()).toBe('left');
+        expect(restored.getSort()).toBe('desc');
+        expect(api2.getColumnFilterModel(calcId)).toEqual(filterModel);
+        await new GridColumns(api2, 'calc col restored with its layout state').checkColumns(`
+            LEFT
+            └── ${calcId} "Untitled" width:320 sort:desc sortIndex:0 ƒ filter
+            CENTER
+            ├── a "A" width:200
+            └── b "B" width:200
+        `);
+        // Sort applies to the restored col, so the higher total (a+b) leads.
+        await new GridRows(api2, 'calc col restored with its layout state - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r2 a:3 ${calcId}:10 b:7
+            └── LEAF id:r1 a:5 ${calcId}:7 b:2
+        `);
+    });
+
+    test('a hidden dynamic calc col is restored still hidden', async () => {
+        const rowData = [{ id: 'r1', a: 5, b: 2 }];
+        const columnDefs = [{ field: 'a' }, { field: 'b' }];
+        const api = createGrid('state-hidden-source', { rowData, columnDefs });
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        api.setColumnsVisible([calcId], false);
+        await asyncSetTimeout(0);
+
+        const savedState = api.getState();
+        expect(savedState.columnVisibility).toEqual({ hiddenColIds: [calcId] });
+
+        const api2 = createGrid('state-hidden-target', { rowData, columnDefs, initialState: savedState });
+        await waitFor(() => expect(api2.getColumn(calcId)).not.toBeNull());
+        // The column exists (so unhiding it in the tool panel brings back a working calc col) but is
+        // not displayed.
+        expect(api2.getColumn(calcId)!.isVisible()).toBe(false);
+        expect(api2.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+    });
+
+    test('a header name override on a dynamic calc col is restored, and layered over the persisted colDef title', async () => {
+        const rowData = [{ id: 'r1', a: 5, b: 2 }];
+        const columnDefs = [{ field: 'a' }, { field: 'b' }];
+        const api = createGrid('state-headername-source', { rowData, columnDefs });
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        setTitle('Double A');
+        await waitFor(() => expect(api.getColumn(calcId)!.getColDef().headerName).toBe('Double A'));
+        api.applyColumnState({ state: [{ colId: calcId, headerName: 'Renamed' }] });
+        await asyncSetTimeout(0);
+
+        const savedState = api.getState();
+        // The dialog title lives in `userColumns` (it is part of the column's definition); the override
+        // lives in `columnHeaderName`. Both must survive, since either can be reverted independently.
+        expect(savedState.userColumns).toMatchObject([{ colId: calcId, headerName: 'Double A' }]);
+        expect(savedState.columnHeaderName).toEqual({ columnHeaderNames: [{ colId: calcId, headerName: 'Renamed' }] });
+
+        const api2 = createGrid('state-headername-target', { rowData, columnDefs, initialState: savedState });
+        await waitFor(() => expect(api2.getColumn(calcId)).not.toBeNull());
+        const restored = api2.getColumn(calcId)!;
+        expect(restored.getColDef().headerName).toBe('Double A');
+        expect(api2.getDisplayNameForColumn(restored, 'header')).toBe('Renamed');
+        // Clearing the override falls back to the persisted dialog title, not to 'Untitled'.
+        api2.applyColumnState({ state: [{ colId: calcId, headerName: null }] });
+        await asyncSetTimeout(0);
+        expect(api2.getDisplayNameForColumn(restored, 'header')).toBe('Double A');
+    });
+
+    // === display order is owned by columnOrder, not by the anchor ================================
+
+    test('a dynamic calc col moved away from its anchor is restored at the moved position, not next to the anchor', async () => {
+        const rowData = [{ id: 'r1', a: 5, b: 2, c: 1 }];
+        const columnDefs = [{ field: 'a' }, { field: 'b' }, { field: 'c' }];
+        const api = createGrid('state-order-moved-source', { rowData, columnDefs });
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        expect(order(api)).toEqual(['a', calcId, 'b', 'c']);
+
+        // Drag the calc col to the front, away from its anchor `a`.
+        api.moveColumns([calcId], 0);
+        await asyncSetTimeout(0);
+        expect(order(api)).toEqual([calcId, 'a', 'b', 'c']);
+
+        const savedState = api.getState();
+        expect(savedState.columnOrder).toEqual({ orderedColIds: [calcId, 'a', 'b', 'c'] });
+
+        const api2 = createGrid('state-order-moved-target', { rowData, columnDefs, initialState: savedState });
+        await waitFor(() => expect(order(api2)).toContain(calcId));
+        // The anchor only decides group membership; `columnOrder` decides the position, so the col must
+        // come back at the front rather than back beside `a`.
+        expect(order(api2)).toEqual([calcId, 'a', 'b', 'c']);
+        await new GridRows(api2, 'moved calc col restored at its moved position - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 ${calcId}:10 a:5 b:2 c:1
+        `);
+    });
+
+    test('a dynamic calc col dragged out of its anchor group round-trips to the same layout it had before the save', async () => {
+        const rowData = [{ id: 'r1', athlete: 'A', gold: 3, silver: 1 }];
+        const columnDefs: GridOptions['columnDefs'] = [
+            { field: 'athlete' },
+            { headerName: 'Medals', groupId: 'medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+        ];
+        const api = createGrid('state-order-outofgroup-source', { rowData, columnDefs });
+        const calcId = await addViaDialog(api, 'gold', '[gold] * 2');
+        expect(api.getColumn(calcId)!.getParent()!.getGroupId()).toBe('medals');
+
+        // Dragging the col to the front keeps its Medals group membership, so the group renders split
+        // across two instances. Whatever that layout is, the round-trip must reproduce it exactly —
+        // the anchor carries group membership and `columnOrder` carries the position, independently.
+        api.moveColumns([calcId], 0);
+        await asyncSetTimeout(0);
+        expect(order(api)).toEqual([calcId, 'athlete', 'gold', 'silver']);
+        const splitGroupLayout = `
+            CENTER
+            ├─┬ "Medals" GROUP
+            │ └── ${calcId} "Untitled" width:200 ƒ
+            ├── athlete "Athlete" width:200
+            └─┬ "Medals" GROUP
+              ├── gold "Gold" width:200
+              └── silver "Silver" width:200
+        `;
+        await new GridColumns(api, 'calc col dragged out of its anchor group - before save').checkColumns(
+            splitGroupLayout
+        );
+
+        const savedState = api.getState();
+        const api2 = createGrid('state-order-outofgroup-target', { rowData, columnDefs, initialState: savedState });
+        await waitFor(() => expect(order(api2)).toContain(calcId));
+        expect(order(api2)).toEqual([calcId, 'athlete', 'gold', 'silver']);
+        await new GridColumns(api2, 'calc col dragged out of its anchor group - after restore').checkColumns(
+            splitGroupLayout
+        );
+    });
+
+    // === non-leaf anchors: generated columns can be anchors but are not columnDefs leaves ========
+
+    test('a calc col anchored on the auto-group column round-trips and comes back beside it', async () => {
+        const rowData = [
+            { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
+            { id: 'r2', region: 'APAC', revenue: 20, cost: 8 },
+        ];
+        const columnDefs: GridOptions['columnDefs'] = [
+            { field: 'region', rowGroup: true, hide: true },
+            { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+            { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+        ];
+        const api = createGrid('state-autogroup-source', { rowData, columnDefs });
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+        const calcId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        expect(order(api)).toEqual(['ag-Grid-AutoColumn', calcId, 'region', 'revenue', 'cost']);
+
+        // The auto-group col is generated, not a columnDefs leaf, but it is still the serialised anchor:
+        // it exists again in the target grid because `region` carries `rowGroup: true` in columnDefs.
+        const savedState = api.getState();
+        expect(savedState.userColumns).toMatchObject([{ colId: calcId, groupAnchorColId: 'ag-Grid-AutoColumn' }]);
+
+        const api2 = createGrid('state-autogroup-target', { rowData, columnDefs, initialState: savedState });
+        await waitFor(() => expect(order(api2)).toContain(calcId));
+        expect(order(api2)).toEqual(['ag-Grid-AutoColumn', calcId, 'region', 'revenue', 'cost']);
+        await new GridColumns(api2, 'calc col anchored on the auto-group column restored').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── ${calcId} "Untitled" width:200 ƒ
+            ├── revenue "Revenue" width:200 aggFunc:sum
+            └── cost "Cost" width:200 aggFunc:sum
+        `);
+    });
+
+    test('a calc col anchored on the auto-group column is restored top-level when the target grid is not grouped', async () => {
+        const rowData = [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }];
+        const groupedColumnDefs: GridOptions['columnDefs'] = [
+            { field: 'region', rowGroup: true, hide: true },
+            { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+            { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+        ];
+        const api = createGrid('state-autogroup-missing-source', { rowData, columnDefs: groupedColumnDefs });
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+        const calcId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        const savedState = api.getState();
+
+        // Restoring into a grid whose columnDefs do not group means the anchor never exists. The calc
+        // col must still be recreated (with its expression working) rather than dropped.
+        const api2 = createGrid('state-autogroup-missing-target', {
+            rowData,
+            columnDefs: [
+                { field: 'region' },
+                { field: 'revenue', headerName: 'Revenue' },
+                { field: 'cost', headerName: 'Cost' },
+            ],
+            initialState: { ...savedState, rowGroup: undefined },
+        });
+        await waitFor(() => expect(order(api2)).toContain(calcId));
+        expect(api2.getColumn(calcId)!.getParent()).toBeNull();
+        // `columnOrder` still seats it where it was saved, ahead of the columns that followed the
+        // now-absent auto-group anchor.
+        expect(order(api2)).toEqual([calcId, 'region', 'revenue', 'cost']);
+        await new GridRows(api2, 'calc col with a missing anchor restored top-level - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 ${calcId}:7 region:"EMEA" revenue:10 cost:3
+        `);
+    });
+
+    // === restoring into a grid whose columnDefs have since changed ================================
+    // A saved state outlives the app's columnDefs, so restore must degrade predictably rather than
+    // throw or silently drop the user's column.
+
+    test('a calc col whose anchor leaf no longer exists is still recreated, at the top level', async () => {
+        const rowData = [{ id: 'r1', athlete: 'A', gold: 3, silver: 1 }];
+        const api = createGrid('state-anchor-gone-source', {
+            rowData,
+            columnDefs: [
+                { field: 'athlete' },
+                { headerName: 'Medals', groupId: 'medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+            ],
+        });
+        const calcId = await addViaDialog(api, 'gold', '34');
+        const savedState = api.getState();
+        expect(savedState.userColumns).toMatchObject([{ colId: calcId, groupAnchorColId: 'gold' }]);
+
+        // The target grid has dropped the `gold` column (and with it the Medals group's first child).
+        const api2 = createGrid('state-anchor-gone-target', {
+            rowData,
+            columnDefs: [
+                { field: 'athlete' },
+                { headerName: 'Medals', groupId: 'medals', children: [{ field: 'silver' }] },
+            ],
+            initialState: savedState,
+        });
+        await waitFor(() => expect(order(api2)).toContain(calcId));
+        // No anchor to inherit from, so it lands at the top level. Its saved neighbour is gone too, so
+        // the order restoration cannot seat it after `athlete` and it falls to the front.
+        expect(api2.getColumn(calcId)!.getParent()).toBeNull();
+        await new GridColumns(api2, 'calc col with a removed anchor leaf restored top-level').checkColumns(`
+            CENTER
+            ├── ${calcId} "Untitled" width:200 ƒ
+            ├── athlete "Athlete" width:200
+            └─┬ "Medals" GROUP
+              └── silver "Silver" width:200
+        `);
+    });
+
+    test('a calc col whose expression references a column missing from the target grid is restored showing an error value', async () => {
+        const api = createGrid('state-missing-ref-source', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const calcId = await addViaDialog(api, 'a', '[A] + [B]');
+        const savedState = api.getState();
+        expect(savedState.userColumns).toMatchObject([{ calculatedExpression: '[a] + [b]' }]);
+
+        // `b` is gone in the target grid, so the persisted expression cannot resolve. The column must
+        // still come back — the user can then edit the expression to fix it.
+        const api2 = createGrid('state-missing-ref-target', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }],
+            initialState: savedState,
+        });
+        await waitFor(() => expect(order(api2)).toContain(calcId));
+        expect(api2.getColumn(calcId)!.getColDef().calculatedExpression).toBe('[a] + [b]');
+        expect(api2.getCellValue({ rowNode: api2.getDisplayedRowAtIndex(0)!, colKey: calcId })).toBe('#PARSE!');
+    });
+
+    test('a calc col whose colId is now taken by a columnDefs column is skipped with a warning', async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const rowData = [{ id: 'r1', a: 5, b: 2, calculated_1: 'taken' }];
+        const api = createGrid('state-collision-source', {
+            rowData,
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        expect(calcId).toBe('calculated_1');
+        const savedState = api.getState();
+
+        // The target grid declares a real column on that colId, so recreating would clobber it.
+        const api2 = createGrid('state-collision-target', {
+            rowData,
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'calculated_1' }],
+            initialState: savedState,
+        });
+        await asyncSetTimeout(0);
+        // `columnOrder` still seats the colId where the calc col used to be, but the column itself is
+        // the declared one, not a calculated column.
+        expect(order(api2)).toEqual(['a', 'calculated_1', 'b']);
+        expect(api2.getColumn('calculated_1')!.getColDef().calculatedExpression).toBeUndefined();
+        expect(warn).toHaveBeenCalledWith(
+            expect.stringContaining(`reconcileUserColumns: colId 'calculated_1' already exists; skipping.`)
+        );
+        await new GridRows(api2, 'calc col colId collision skipped - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 a:5 calculated_1:"taken" b:2
+        `);
+        warn.mockRestore();
+    });
+
+    // === deferred apply mode: only committed columns reach the state ==============================
+
+    test('under deferred apply mode a calc col reaches getState only once Apply is clicked', async () => {
+        const api = createGrid('state-deferred-apply', {
+            calculatedColumns: { applyMode: 'deferred' },
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        api.showColumnMenu('a');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+        setExpression('[A] * 2');
+        // Typing does not commit under deferred mode, so nothing is persisted yet.
+        expect(order(api)).toEqual(['a', 'b']);
+        expect(api.getState().userColumns).toBeUndefined();
+
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+        expect(api.getState().userColumns).toMatchObject([{ colId: 'calculated_1', calculatedExpression: '[a] * 2' }]);
+    });
+
+    test('under deferred apply mode a cancelled dialog leaves the state untouched', async () => {
+        const api = createGrid('state-deferred-cancel', {
+            calculatedColumns: { applyMode: 'deferred' },
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        api.showColumnMenu('a');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+        setExpression('[A] * 2');
+        clickDialogButton('Cancel');
+        await asyncSetTimeout(1);
+
+        expect(order(api)).toEqual(['a', 'b']);
+        expect(api.getState().userColumns).toBeUndefined();
+    });
+
+    test('under deferred apply mode a cancelled edit keeps the previously applied definition in the state', async () => {
+        const api = createGrid('state-deferred-cancel-edit', {
+            calculatedColumns: { applyMode: 'deferred' },
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        api.showColumnMenu('a');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+        setExpression('[A] * 2');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        api.showColumnMenu('calculated_1');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Edit Calculated Column');
+        await asyncSetTimeout(1);
+        setExpression('[A] * 3');
+        clickDialogButton('Cancel');
+        await asyncSetTimeout(1);
+
+        expect(api.getState().userColumns).toMatchObject([{ colId: 'calculated_1', calculatedExpression: '[a] * 2' }]);
+    });
+
+    // === removal through the dialog: the user's own way of dropping a calc col ====================
+
+    test('removing a dynamic calc col through its header menu drops it from getState', async () => {
+        const api = createGrid('state-remove-via-menu', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        const calcId2 = await addViaDialog(api, 'b', '[B] * 3');
+        expect(api.getState().userColumns).toHaveLength(2);
+
+        await removeViaMenu(api, calcId);
+        expect(api.getColumn(calcId)).toBeNull();
+        // Only the removed descriptor goes; the other calc col is untouched.
+        expect(api.getState().userColumns).toMatchObject([{ colId: calcId2 }]);
+
+        await removeViaMenu(api, calcId2);
+        expect(api.getState().userColumns).toBeUndefined();
+        await new GridRows(api, 'calc cols removed via header menu - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 a:5 b:2
+        `);
+    });
+
+    // === cellDataType chosen in the dialog survives the round-trip ================================
+
+    test('a calc col typed as Number in the dialog is restored as a number column, not as text', async () => {
+        const rowData = [{ id: 'r1', a: 5, b: 2 }];
+        const columnDefs = [{ field: 'a' }, { field: 'b' }];
+        const api = createGrid('state-datatype-source', { rowData, columnDefs });
+        const calcId = await addViaDialog(api, 'a', '[A] + [B]');
+        await editViaDialog(api, calcId, {});
+        await selectDataType('Number');
+        clickDialogButton('Apply');
+        await waitFor(() => expect(api.getColumn(calcId)!.getColDef().cellDataType).toBe('number'));
+
+        const savedState = api.getState();
+        expect(savedState.userColumns).toMatchObject([{ colId: calcId, cellDataType: 'number' }]);
+
+        const api2 = createGrid('state-datatype-target', { rowData, columnDefs, initialState: savedState });
+        await waitFor(() => expect(order(api2)).toContain(calcId));
+        expect(api2.getColumn(calcId)!.getColDef().cellDataType).toBe('number');
+        // A number-typed column produces a numeric value, so the restored type is not merely cosmetic.
+        expect(api2.getCellValue({ rowNode: api2.getDisplayedRowAtIndex(0)!, colKey: calcId })).toBe(7);
+    });
+
+    // === empty and no-op state applications =======================================================
+
+    test('an empty userColumns array removes existing calc cols, exactly as an absent section does', async () => {
+        const api = createGrid('state-empty-array', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        const savedState = api.getState();
+
+        api.setState({ ...savedState, userColumns: [] });
+        await waitFor(() => expect(api.getColumn(calcId)).toBeNull());
+        expect(order(api)).toEqual(['a', 'b']);
+        expect(api.getState().userColumns).toBeUndefined();
+    });
+
+    test('re-applying an unchanged state leaves the calc col colDef untouched, but a changed definition re-applies it', async () => {
+        const api = createGrid('state-idempotent', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        const savedState = api.getState();
+        const colDefBefore = api.getColumn(calcId)!.getColDef();
+
+        api.setState(savedState);
+        await asyncSetTimeout(0);
+        api.setState(savedState);
+        await asyncSetTimeout(0);
+        // The persisted definition matched what is already there, so the colDef was never re-applied.
+        expect(api.getColumn(calcId)!.getColDef()).toBe(colDefBefore);
+        expect(order(api)).toEqual(['a', calcId, 'b']);
+        expect(api.getState().userColumns).toEqual(savedState.userColumns);
+
+        // A changed expression must re-apply, otherwise the guard would be swallowing real updates.
+        api.setState({
+            ...savedState,
+            userColumns: [{ ...savedState.userColumns![0], calculatedExpression: '[a] * 3' }],
+        });
+        await waitFor(() => expect(api.getColumn(calcId)!.getColDef().calculatedExpression).toBe('[a] * 3'));
+        expect(api.getColumn(calcId)!.getColDef()).not.toBe(colDefBefore);
+    });
+
+    // === parked columns: resetColumnState / applyColumnState ======================================
+
+    test('resetColumnState drops the calc col from getState, and applyColumnState brings it back', async () => {
+        const api = createGrid('state-parked-roundtrip', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        const savedState = api.getState();
+        const columnStateWithCalc = api.getColumnState();
+
+        // Parked columns are not part of the grid, so they must not be reported as user columns.
+        api.resetColumnState();
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
+        expect(api.getState().userColumns).toBeUndefined();
+
+        // Restoring the column state resurrects the parked col, and the state reports it again.
+        api.applyColumnState({ state: columnStateWithCalc, applyOrder: true });
+        await waitFor(() => expect(order(api)).toEqual(['a', calcId, 'b']));
+        expect(api.getState().userColumns).toEqual(savedState.userColumns);
+        await new GridRows(api, 'parked calc col resurrected by applyColumnState - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 a:5 ${calcId}:10 b:2
+        `);
+    });
+});
+
+// The calculated-columns module being absent is a different grid setup, so it needs its own manager.
+describe('calculated columns - grid state persistence without the calculated columns module', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, GridStateModule, ValidationModule] as Module[],
+    });
+
+    beforeEach(() => {
+        gridsManager.reset();
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('userColumns in initialState are preserved by getState when the module is not registered', () => {
+        const userColumns: GridState['userColumns'] = [
+            {
+                kind: 'calculated',
+                colId: 'calc_1',
+                groupAnchorColId: 'a',
+                calculatedExpression: '[a] * 2',
+                cellDataType: 'text',
+                headerName: 'Double A',
+            },
+        ];
+        const api = gridsManager.createGrid('state-no-module', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            initialState: { userColumns },
+        });
+
+        // No calc col is created, but the descriptors must survive a re-save untouched so the state can
+        // later be restored into a grid that does register the module.
+        expect(api.getAllGridColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+        expect(api.getState().userColumns).toEqual(userColumns);
     });
 });

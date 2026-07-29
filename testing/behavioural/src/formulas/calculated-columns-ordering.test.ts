@@ -45,16 +45,12 @@ describe('calculated columns - display ordering', () => {
         ] as Module[],
     });
 
-    let restoreOffsetParent: (() => void) | undefined;
-
     beforeEach(() => {
         gridsManager.reset();
     });
 
     afterEach(() => {
         gridsManager.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     function createGrid(id: string, opts: Partial<GridOptions>): GridApi {
@@ -91,26 +87,6 @@ describe('calculated columns - display ordering', () => {
     }
 
     // --- dialog plumbing (the only public surface that sets an anchor) ---------------------------
-
-    function enableOffsetParentPolyfill(): void {
-        if (restoreOffsetParent) {
-            return;
-        }
-        const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-            configurable: true,
-            get(this: HTMLElement) {
-                return this.parentElement;
-            },
-        });
-        restoreOffsetParent = () => {
-            if (original) {
-                Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
-            } else {
-                delete (HTMLElement.prototype as any).offsetParent;
-            }
-        };
-    }
 
     async function clickColumnMenuItem(name: string): Promise<void> {
         const menuItem = await waitFor(() => {
@@ -161,7 +137,6 @@ describe('calculated columns - display ordering', () => {
      *  Returns the auto-generated colId of the new column, discovered by diffing the column set. */
     async function addViaDialog(api: GridApi, anchorColId: string, expression: string): Promise<string> {
         const before = new Set(order(api));
-        enableOffsetParentPolyfill();
         api.showColumnMenu(anchorColId);
         await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
@@ -179,7 +154,6 @@ describe('calculated columns - display ordering', () => {
     /** Removes a dynamic (dialog-added) calc col through its header menu — dynamic calc cols are not in
      *  `columnDefs`, so they can only be removed via the menu's "Remove Calculated Column" action. */
     async function removeViaMenu(api: GridApi, colId: string): Promise<void> {
-        enableOffsetParentPolyfill();
         api.showColumnMenu(colId);
         await asyncSetTimeout(10);
         await clickColumnMenuItem('Remove Calculated Column');
@@ -404,7 +378,6 @@ describe('calculated columns - display ordering', () => {
         });
         const before = new Set(order(api));
 
-        enableOffsetParentPolyfill();
         api.showColumnMenu('age');
         await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
@@ -443,7 +416,6 @@ describe('calculated columns - display ordering', () => {
             columnDefs: [{ field: 'age' }],
         });
 
-        enableOffsetParentPolyfill();
         api.showColumnMenu('age');
         await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
