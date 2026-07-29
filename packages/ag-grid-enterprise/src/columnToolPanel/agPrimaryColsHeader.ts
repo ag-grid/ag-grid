@@ -37,6 +37,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     private selectState?: boolean;
 
     private onFilterTextChangedDebounced: () => void;
+    private filterChangePending = false;
 
     private params: ToolPanelColumnCompParams;
 
@@ -122,27 +123,27 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
     private onFilterTextChanged(): void {
         if (!this.onFilterTextChangedDebounced) {
-            this.onFilterTextChangedDebounced = _debounce(
-                this,
-                () => {
-                    const filterText = this.eFilterTextField.getValue();
-                    this.dispatchLocalEvent({ type: 'filterChanged', filterText: filterText });
-                },
-                DEBOUNCE_DELAY
-            );
+            this.onFilterTextChangedDebounced = _debounce(this, () => this.dispatchFilterChanged(), DEBOUNCE_DELAY);
         }
 
+        this.filterChangePending = true;
         this.onFilterTextChangedDebounced();
+    }
+
+    private dispatchFilterChanged(): void {
+        if (!this.filterChangePending) {
+            return;
+        }
+        this.filterChangePending = false;
+        const filterText = this.eFilterTextField.getValue();
+        this.dispatchLocalEvent({ type: 'filterChanged', filterText: filterText });
     }
 
     private onFilterKeyDown(e: KeyboardEvent): void {
         if (e.key === KeyCode.ENTER && !e.isComposing && !this.params.suppressColumnSelectAll) {
-            // The filter is debounced, so defer the toggle until the filtered set has settled.
-            setTimeout(() => {
-                if (this.isAlive()) {
-                    this.onSelectClicked();
-                }
-            }, DEBOUNCE_DELAY);
+            // Flush any pending debounced filter change so the toggle acts on the settled set.
+            this.dispatchFilterChanged();
+            this.onSelectClicked();
         }
     }
 

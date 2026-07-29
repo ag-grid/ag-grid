@@ -1,5 +1,3 @@
-import { waitFor } from '@testing-library/dom';
-
 import type { ColDef, GridApi } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -69,13 +67,6 @@ describe('Columns Tool Panel — Enter in filter input toggles matching columns'
         input.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
-    function displayedItemLabels(api: GridApi): string[] {
-        const gridEl = getGridElement(api)! as HTMLElement;
-        return Array.from(gridEl.querySelectorAll('.ag-column-select-virtual-list-item'), (item) =>
-            (item.getAttribute('aria-label') ?? '').toLowerCase()
-        );
-    }
-
     test('pressing Enter toggles visibility of columns matching the filter text only', async () => {
         const api = await createGrid();
         forceVirtualListRender(api);
@@ -89,24 +80,16 @@ describe('Columns Tool Panel — Enter in filter input toggles matching columns'
         const input = getFilterInput(api);
         setNativeInputValue(input, 'medals');
 
-        // The filter dispatch is debounced — wait until the list reflects the filter
-        // before pressing Enter, otherwise the toggle would run against stale state.
-        await waitFor(() => {
-            const labels = displayedItemLabels(api);
-            expect(labels.some((l) => l.includes('gold medals'))).toBe(true);
-            expect(labels.some((l) => l.includes('silver medals'))).toBe(true);
-            expect(labels.some((l) => l.includes('athlete'))).toBe(false);
-            expect(labels.some((l) => l.includes('country'))).toBe(false);
-        });
-
+        // Press Enter immediately, without waiting for the debounced filter to settle.
+        // Enter must flush the pending filter and then toggle synchronously, so the
+        // visibility change is observable with no await — this is what distinguishes the
+        // event-driven flush from the previous deferred-timer implementation.
         input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 
         // Enter toggles the matching (visible) columns off — equivalent to clicking
         // "Select All" for the filtered set — and leaves non-matching columns alone.
-        await waitFor(() => {
-            expect(api.getColumn('goldMedals')!.isVisible()).toBe(false);
-            expect(api.getColumn('silverMedals')!.isVisible()).toBe(false);
-        });
+        expect(api.getColumn('goldMedals')!.isVisible()).toBe(false);
+        expect(api.getColumn('silverMedals')!.isVisible()).toBe(false);
         expect(api.getColumn('athlete')!.isVisible()).toBe(true);
         expect(api.getColumn('country')!.isVisible()).toBe(true);
     });
@@ -118,17 +101,10 @@ describe('Columns Tool Panel — Enter in filter input toggles matching columns'
         const input = getFilterInput(api);
         setNativeInputValue(input, 'medals');
 
-        await waitFor(() => {
-            const labels = displayedItemLabels(api);
-            expect(labels.some((l) => l.includes('gold medals'))).toBe(true);
-            expect(labels.some((l) => l.includes('silver medals'))).toBe(true);
-        });
-
         input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 
         // Select-all is suppressed, so the Enter shortcut must not perform the bulk
-        // toggle it would otherwise dispatch. Wait past the deferred toggle delay.
-        await new Promise((resolve) => setTimeout(resolve, 400));
+        // toggle it would otherwise dispatch.
         expect(api.getColumn('goldMedals')!.isVisible()).toBe(true);
         expect(api.getColumn('silverMedals')!.isVisible()).toBe(true);
     });
