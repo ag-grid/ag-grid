@@ -99,7 +99,10 @@ export const ContactForm: FunctionComponent<Props> = ({
         setValue,
         formState: { errors },
     } = useForm<FormValues>({
-        mode: 'onBlur',
+        // Validate on first blur, then re-validate on every change, so a message
+        // clears the moment the field is corrected. Plain 'onBlur' only re-validates
+        // on the next blur, which leaves a stale error next to a ticked checkbox.
+        mode: 'onTouched',
     });
 
     // Email tracking consent only applies to France and Italy, so hiding it must also
