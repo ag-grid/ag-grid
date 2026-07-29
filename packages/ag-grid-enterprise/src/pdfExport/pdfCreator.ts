@@ -6,10 +6,14 @@ import { BaseCreator } from 'ag-grid-community';
 import { PdfSerializingSession } from './pdfSerializingSession';
 import {
     getThemePdfColors,
-    mergeDocumentTitleStyle,
-    resolveDocumentTitleStyleColors,
+    mergeDocumentHeadingStyle,
+    mergeHeaderFooterConfig,
+    mergeWatermark,
+    resolveDocumentHeadingStyleColors,
+    resolveHeaderFooterConfigColors,
     resolvePdfColors,
     resolveThemeColorValue,
+    resolveWatermarkColors,
 } from './utils/pdfStyleResolver';
 
 /**
@@ -41,8 +45,20 @@ export class PdfCreator
         if (baseParams?.page && params?.page) {
             merged.page = { ...baseParams.page, ...params.page };
         }
-        const mergedTitleStyle = mergeDocumentTitleStyle(baseParams?.documentTitleStyle, params?.documentTitleStyle);
-        merged.documentTitleStyle = resolveDocumentTitleStyleColors(mergedTitleStyle, resolveColor);
+        const mergedTitleStyle = mergeDocumentHeadingStyle(baseParams?.documentTitleStyle, params?.documentTitleStyle);
+        merged.documentTitleStyle = resolveDocumentHeadingStyleColors(mergedTitleStyle, resolveColor);
+        const mergedSubtitleStyle = mergeDocumentHeadingStyle(
+            baseParams?.documentSubtitleStyle,
+            params?.documentSubtitleStyle
+        );
+        merged.documentSubtitleStyle = resolveDocumentHeadingStyleColors(mergedSubtitleStyle, resolveColor);
+        const mergedHeaderFooterConfig = mergeHeaderFooterConfig(
+            baseParams?.headerFooterConfig,
+            params?.headerFooterConfig
+        );
+        merged.headerFooterConfig = resolveHeaderFooterConfigColors(mergedHeaderFooterConfig, resolveColor);
+        const mergedWatermark = mergeWatermark(baseParams?.watermark, params?.watermark);
+        merged.watermark = resolveWatermarkColors(mergedWatermark, resolveColor);
         return merged;
     }
 

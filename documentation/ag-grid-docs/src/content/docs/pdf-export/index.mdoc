@@ -46,13 +46,13 @@ PDF Export uses the built-in PDF Base 14 fonts with WinAnsi encoding by default.
 
 ## Support And Limitations
 
-| Area       | Supported                                                                                                                                               | Not Supported                                                                                                            |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Grid state | Displayed column order and visibility, sorting, filtering, selected-row export options, grouping, pinned rows, column spans                             | Cell Renderer output or custom HTML                                                                                      |
-| Layout     | Named and custom page sizes, margins, orientation, column widths, text wrapping, automatic row height, repeated table headers                           | Automatic page size, horizontal pagination, page headers and footers                                                     |
-| Styling    | Theme colours, `colors`, supported `rowStyle`, `cellStyle`, and `headerStyle` properties, PDF-specific style callbacks                                  | `cellClass`, `cellClassRules`, arbitrary CSS, automatic browser-font discovery                                           |
-| Content    | Value Getters, Value Formatters, export value callbacks, document title, additional content, external URI hyperlinks                                    | Images, SVG, internal page links, embedded files                                                                         |
-| Text       | Built-in PDF fonts, embedded static TrueType fonts, Unicode characters covered by registered fonts, OpenType shaping, horizontal Arabic and Hebrew text | CFF, variable, WOFF/WOFF2 and collection fonts; vertical writing and bidirectional text across independently styled runs |
+| Area       | Supported                                                                                                                                                       | Not Supported                                                                                                            |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Grid state | Displayed column order and visibility, sorting, filtering, selected-row export options, grouping, pinned rows, column spans                                     | Cell Renderer output or custom HTML                                                                                      |
+| Layout     | Named and custom page sizes, margins, orientation, column widths, text wrapping, automatic row height, repeated table headers, page headers and footers         | Automatic page size and horizontal pagination                                                                            |
+| Styling    | Theme colours, `colors`, supported `rowStyle`, `cellStyle`, and `headerStyle` properties, PDF-specific style callbacks, text watermarks                         | `cellClass`, `cellClassRules`, arbitrary CSS, automatic browser-font discovery                                           |
+| Content    | Value Getters, Value Formatters, export value callbacks, title and subtitle, page headers and footers, cover pages, additional content, external URI hyperlinks | Images, SVG, internal page links, embedded files                                                                         |
+| Text       | Built-in PDF fonts, embedded static TrueType fonts, Unicode characters covered by registered fonts, OpenType shaping, horizontal Arabic and Hebrew text         | CFF, variable, WOFF/WOFF2 and collection fonts; vertical writing and bidirectional text across independently styled runs |
 
 ## PDF Export Sections
 
@@ -60,6 +60,7 @@ PDF Export uses the built-in PDF Base 14 fonts with WinAnsi encoding by default.
 - **[Styles](./pdf-export-styles/)**: Reuse supported grid styles and apply PDF-specific overrides.
 - **[Languages](./pdf-export-languages/)**: Register TrueType font families and export Unicode or right-to-left text.
 - **[Extra Content](./pdf-export-extra-content/)**: Customise exported values, titles, and additional content.
+- **[Watermarks](./pdf-export-watermarks/)**: Add translucent status text across selected pages.
 - **[Rows](./pdf-export-rows/)**: Select rows and configure filtered, sorted, and pinned-row export.
 - **[Columns](./pdf-export-columns/)**: Choose columns, headers, groups, Row Numbers, and widths.
 - **[Hyperlinks](./pdf-export-hyperlinks/)**: Add external URI links to grid cells and custom content.

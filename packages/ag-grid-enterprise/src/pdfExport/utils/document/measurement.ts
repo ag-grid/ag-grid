@@ -1,6 +1,6 @@
 import type {
     PdfCellStyle,
-    PdfDocumentTitleStyle,
+    PdfDocumentHeadingStyle,
     PdfExportParams,
     PdfFontFamily,
     PdfFontStyle,
@@ -24,6 +24,8 @@ import { addTextEllipsis, clipText, normaliseText, truncateText, wrapText } from
 
 const DEFAULT_TITLE_MARGIN: ResolvedMargin = { top: 0, right: 0, bottom: 8, left: 0 };
 const DEFAULT_TITLE_PADDING: ResolvedMargin = { top: 6, right: 6, bottom: 6, left: 6 };
+const DEFAULT_SUBTITLE_MARGIN: ResolvedMargin = { top: 0, right: 0, bottom: 12, left: 0 };
+const DEFAULT_SUBTITLE_PADDING: ResolvedMargin = { top: 3, right: 6, bottom: 3, left: 6 };
 const DEFAULT_TITLE_ALIGNMENT: PdfTextAlignment = 'center';
 const DEFAULT_CELL_ALIGNMENT: PdfTextAlignment = 'left';
 const DEFAULT_CELL_MARGIN: ResolvedMargin = { top: 0, right: 0, bottom: 0, left: 0 };
@@ -55,7 +57,7 @@ export type ResolvedCellStyle = {
     preserveSpaces: boolean;
 };
 
-type ResolvedDocumentTitle = {
+type ResolvedDocumentHeading = {
     text: string;
     style: ResolvedCellStyle;
 };
@@ -111,36 +113,33 @@ export type MeasuredRowFragment = {
 };
 
 /**
- * Resolve document title text and style into measurement-ready values.
- * @param documentTitle - Document title text.
+ * Resolve document heading text and style into measurement-ready values.
+ * @param text - Document heading text.
+ * @param style - Document heading style.
+ * @param type - Heading level.
  * @param params - Export params.
  * @param styleColors - Resolved document colours.
- * @param headerFont - Default header font family.
+ * @param headingFont - Default heading font family.
  * @param defaultHeaderFontSize - Default header font size.
- * @returns Resolved title payload, or `undefined`.
+ * @returns Resolved heading payload, or `undefined`.
  */
-export function resolveDocumentTitle(
-    documentTitle: string,
+export function resolveDocumentHeading(
+    text: string | undefined,
+    style: PdfDocumentHeadingStyle | undefined,
+    type: 'title' | 'subtitle',
     params: PdfExportParams,
     styleColors: PdfStyleColors,
-    headerFont: ResolvedPdfFont,
+    headingFont: ResolvedPdfFont,
     fontRegistry: PdfFontRegistry,
     defaultHeaderFontSize: number
-): ResolvedDocumentTitle | undefined {
-    if (!documentTitle) {
+): ResolvedDocumentHeading | undefined {
+    if (!text) {
         return undefined;
     }
 
     return {
-        text: documentTitle,
-        style: resolveTitleStyle(
-            params.documentTitleStyle,
-            params,
-            styleColors,
-            headerFont,
-            fontRegistry,
-            defaultHeaderFontSize
-        ),
+        text,
+        style: resolveHeadingStyle(style, type, params, styleColors, headingFont, fontRegistry, defaultHeaderFontSize),
     };
 }
 
@@ -538,26 +537,37 @@ function getMinimumRowHeight(rowType: PdfRowType, layout: LayoutOptions): number
     return lineHeight + layout.cellPadding * 2;
 }
 
-function resolveTitleStyle(
-    style: PdfDocumentTitleStyle | undefined,
+function resolveHeadingStyle(
+    style: PdfDocumentHeadingStyle | undefined,
+    type: 'title' | 'subtitle',
     params: PdfExportParams,
     styleColors: PdfStyleColors,
-    headerFont: ResolvedPdfFont,
+    headingFont: ResolvedPdfFont,
     fontRegistry: PdfFontRegistry,
     defaultHeaderFontSize: number
 ): ResolvedCellStyle {
     const headerFontSize = resolveFiniteNumber(params.headerFontSize, defaultHeaderFontSize, Number.EPSILON);
-    const fontSize = resolveFiniteNumber(style?.fontSize, Math.max(headerFontSize + 4, 14), Number.EPSILON);
+    const defaultFontSize = type === 'title' ? Math.max(headerFontSize + 4, 14) : Math.max(headerFontSize + 1, 11);
+    const fontSize = resolveFiniteNumber(style?.fontSize, defaultFontSize, Number.EPSILON);
     const font = fontRegistry.resolve(
         style?.fontFamily,
-        style?.fontWeight ?? headerFont.weight,
-        style?.fontStyle ?? headerFont.style,
-        headerFont.family
+        style?.fontWeight ?? headingFont.weight,
+        style?.fontStyle ?? headingFont.style,
+        headingFont.family
     );
-    const padding = resolveBoxSpacing(style?.padding, DEFAULT_TITLE_PADDING);
-    const margin = resolveBoxSpacing(style?.margin, DEFAULT_TITLE_MARGIN);
+    const padding = resolveBoxSpacing(
+        style?.padding,
+        type === 'title' ? DEFAULT_TITLE_PADDING : DEFAULT_SUBTITLE_PADDING
+    );
+    const margin = resolveBoxSpacing(style?.margin, type === 'title' ? DEFAULT_TITLE_MARGIN : DEFAULT_SUBTITLE_MARGIN);
     const blendWith = styleColors.pageBackground ?? styleColors.dataBackground;
-    const fallbackTextColor = styleColors.headerText ?? styleColors.foreground ?? { r: 0, g: 0, b: 0 };
+    const fallbackTextColor = (type === 'title'
+        ? (styleColors.headerText ?? styleColors.foreground)
+        : styleColors.foreground) ?? {
+        r: 0,
+        g: 0,
+        b: 0,
+    };
     const borderColor = resolveOptionalColor(style?.borderColor, undefined, blendWith);
 
     return {

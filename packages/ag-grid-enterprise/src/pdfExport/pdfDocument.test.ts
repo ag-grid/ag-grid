@@ -456,6 +456,117 @@ describe('createPdfDocument', () => {
         expect(pdf).toContain('/Title (PDF Metadata Title)');
     });
 
+    it('renders a document subtitle below the title', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            documentTitle: 'Quarterly Results',
+            documentSubtitle: 'Prepared for the board',
+        });
+
+        expect(pdf).toContain('(Quarterly Results) Tj');
+        expect(pdf).toContain('(Prepared for the board) Tj');
+        expect(pdf.indexOf('(Quarterly Results) Tj')).toBeLessThan(pdf.indexOf('(Prepared for the board) Tj'));
+    });
+
+    it('renders headings on a separate cover page', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            coverPage: true,
+            documentTitle: 'Quarterly Results',
+            documentSubtitle: 'Prepared for the board',
+        });
+
+        expect(countOccurrences(pdf, '/Type /Page /Parent')).toBe(2);
+        expect(countOccurrences(pdf, '(Quarterly Results) Tj')).toBe(1);
+        expect(countOccurrences(pdf, '(Prepared for the board) Tj')).toBe(1);
+        expect(countOccurrences(pdf, '(Header) Tj')).toBe(1);
+    });
+
+    it('renders page-specific headers, footers, and placeholders', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            coverPage: true,
+            documentTitle: 'Report',
+            headerFooterConfig: {
+                all: {
+                    header: [{ value: 'Standard header', position: 'Center' }],
+                    footer: [{ value: 'Page &[Page] of &[Pages]', position: 'Right' }],
+                },
+                first: {
+                    header: [{ value: 'Cover header', position: 'Center' }],
+                    footer: [{ value: 'Page &[Page] of &[Pages]', position: 'Right' }],
+                },
+                even: {
+                    header: [{ value: 'Even header', position: 'Center' }],
+                    footer: [{ value: '&[Date] &[Time]', position: 'Left' }],
+                },
+            },
+        });
+
+        expect(countOccurrences(pdf, '/Type /Page /Parent')).toBe(2);
+        expect(pdf).toContain('(Cover header) Tj');
+        expect(pdf).toContain('(Even header) Tj');
+        expect(pdf).not.toContain('(Standard header) Tj');
+        expect(pdf).toContain('(Page 1 of 2) Tj');
+        expect(pdf).not.toContain('&[Date]');
+        expect(pdf).not.toContain('&[Time]');
+    });
+
+    it('renders a translucent watermark across page content', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            watermark: { text: 'DRAFT' },
+        });
+
+        expect(pdf).toContain('/Type /ExtGState /ca 0.12 /CA 0.12 /BM /Normal');
+        expect(pdf).toContain('/ExtGState << /GSWatermark');
+        expect(pdf).toContain('/Artifact BMC');
+        expect(pdf).toContain('/GSWatermark gs');
+        expect(pdf).toContain('(DRAFT) Tj');
+        expect(pdf).toContain('0.71 -0.71 0.71 0.71');
+        expect(pdf.indexOf('(DRAFT) Tj')).toBeGreaterThan(pdf.indexOf('(Header) Tj'));
+    });
+
+    it('does not create a transparency resource for opaque watermarks', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            watermark: { text: 'APPROVED', opacity: 1 },
+        });
+
+        expect(pdf).toContain('(APPROVED) Tj');
+        expect(pdf).not.toContain('/Type /ExtGState');
+        expect(pdf).not.toContain('/GSWatermark gs');
+    });
+
+    it('renders watermarks only on the selected pages', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            coverPage: true,
+            documentTitle: 'Report',
+            watermark: { text: 'DRAFT', pages: 'even' },
+        });
+
+        expect(countOccurrences(pdf, '/Type /Page /Parent')).toBe(2);
+        expect(countOccurrences(pdf, '(DRAFT) Tj')).toBe(1);
+    });
+
+    it('omits fully transparent watermarks', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            watermark: { text: 'DRAFT', opacity: 0 },
+        });
+
+        expect(pdf).not.toContain('(DRAFT) Tj');
+        expect(pdf).not.toContain('/Type /ExtGState');
+    });
+
+    it('reserves footer space before rendering table rows', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(80)], {
+            page: { size: { width: 120, height: 100 }, margin: 10 },
+            columnWidth: 80,
+            headerFooterConfig: {
+                all: {
+                    footer: [{ value: 'Page &[Page]' }],
+                },
+            },
+        });
+
+        assertRowRectanglesRespectBottomMargin(pdf, 27);
+    });
+
     it('preserves explicit title line breaks without enabling wrapping', () => {
         const pdf = createPdfDocument([], [], {
             documentTitle: 'First line\nSecond line',

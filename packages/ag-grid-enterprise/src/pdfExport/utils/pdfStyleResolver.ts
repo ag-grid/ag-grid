@@ -1,6 +1,13 @@
 import { paramToVariableName } from 'ag-stack';
 
-import type { PdfColors, PdfDocumentTitleStyle } from 'ag-grid-community';
+import type {
+    PdfColors,
+    PdfDocumentHeadingStyle,
+    PdfHeaderFooter,
+    PdfHeaderFooterConfig,
+    PdfHeaderFooterContent,
+    PdfWatermark,
+} from 'ag-grid-community';
 import { _createElement } from 'ag-grid-community';
 
 import { resolveCssColorValue } from './colors';
@@ -22,10 +29,10 @@ const PDF_COLOR_KEYS: (keyof PdfColors)[] = [
  * @param overrideStyle - Title style from export call params.
  * @returns Merged document title style.
  */
-export function mergeDocumentTitleStyle(
-    baseStyle: PdfDocumentTitleStyle | undefined,
-    overrideStyle: PdfDocumentTitleStyle | undefined
-): PdfDocumentTitleStyle | undefined {
+export function mergeDocumentHeadingStyle(
+    baseStyle: PdfDocumentHeadingStyle | undefined,
+    overrideStyle: PdfDocumentHeadingStyle | undefined
+): PdfDocumentHeadingStyle | undefined {
     if (!baseStyle || !overrideStyle) {
         return overrideStyle ?? baseStyle;
     }
@@ -39,10 +46,10 @@ export function mergeDocumentTitleStyle(
  * @param resolveColorValue - Colour resolver used for theme variables and CSS values.
  * @returns Document title style with resolved colour fields.
  */
-export function resolveDocumentTitleStyleColors(
-    style: PdfDocumentTitleStyle | undefined,
+export function resolveDocumentHeadingStyleColors(
+    style: PdfDocumentHeadingStyle | undefined,
     resolveColorValue: (value?: string) => string | undefined
-): PdfDocumentTitleStyle | undefined {
+): PdfDocumentHeadingStyle | undefined {
     if (!style) {
         return style;
     }
@@ -53,6 +60,131 @@ export function resolveDocumentTitleStyleColors(
         backgroundColor: resolveColorValue(style.backgroundColor),
         borderColor: resolveColorValue(style.borderColor),
     };
+}
+
+/**
+ * Merge default and runtime header/footer rules.
+ * @param baseConfig - Header/footer configuration from default params.
+ * @param overrideConfig - Header/footer configuration from export call params.
+ * @returns Merged header/footer configuration.
+ */
+export function mergeHeaderFooterConfig(
+    baseConfig: PdfHeaderFooterConfig | undefined,
+    overrideConfig: PdfHeaderFooterConfig | undefined
+): PdfHeaderFooterConfig | undefined {
+    if (!baseConfig || !overrideConfig) {
+        return overrideConfig ?? baseConfig;
+    }
+
+    const config: PdfHeaderFooterConfig = {};
+    for (const rule of ['all', 'first', 'even'] as const) {
+        const baseRule = baseConfig[rule];
+        const overrideRule = overrideConfig[rule];
+        if (baseRule || overrideRule) {
+            config[rule] = { ...baseRule, ...overrideRule };
+        }
+    }
+    return config;
+}
+
+/**
+ * Resolve colour properties used by page headers and footers.
+ * @param config - Header/footer configuration.
+ * @param resolveColorValue - Colour resolver used for theme variables and CSS values.
+ * @returns Header/footer configuration with resolved text colours.
+ */
+export function resolveHeaderFooterConfigColors(
+    config: PdfHeaderFooterConfig | undefined,
+    resolveColorValue: (value?: string) => string | undefined
+): PdfHeaderFooterConfig | undefined {
+    if (!config) {
+        return config;
+    }
+
+    const resolved: PdfHeaderFooterConfig = {};
+    for (const rule of ['all', 'first', 'even'] as const) {
+        const value = config[rule];
+        if (value) {
+            resolved[rule] = resolveHeaderFooterColors(value, resolveColorValue);
+        }
+    }
+    return resolved;
+}
+
+/**
+ * Merge default and runtime watermark configuration.
+ * @param baseWatermark - Watermark from default params.
+ * @param overrideWatermark - Watermark from export call params.
+ * @returns Merged watermark configuration.
+ */
+export function mergeWatermark(
+    baseWatermark: PdfWatermark | undefined,
+    overrideWatermark: PdfWatermark | undefined
+): PdfWatermark | undefined {
+    if (!baseWatermark || !overrideWatermark) {
+        return overrideWatermark ?? baseWatermark;
+    }
+
+    return {
+        ...baseWatermark,
+        ...overrideWatermark,
+        style: {
+            ...(baseWatermark.style ?? {}),
+            ...(overrideWatermark.style ?? {}),
+        },
+    };
+}
+
+/**
+ * Resolve the watermark text colour.
+ * @param watermark - Watermark configuration.
+ * @param resolveColorValue - Colour resolver used for theme variables and CSS values.
+ * @returns Watermark with its text colour resolved.
+ */
+export function resolveWatermarkColors(
+    watermark: PdfWatermark | undefined,
+    resolveColorValue: (value?: string) => string | undefined
+): PdfWatermark | undefined {
+    if (!watermark?.style) {
+        return watermark;
+    }
+
+    return {
+        ...watermark,
+        style: {
+            ...watermark.style,
+            color: resolveColorValue(watermark.style.color),
+        },
+    };
+}
+
+function resolveHeaderFooterColors(
+    value: PdfHeaderFooter,
+    resolveColorValue: (value?: string) => string | undefined
+): PdfHeaderFooter {
+    return {
+        header: resolveHeaderFooterContentColors(value.header, resolveColorValue),
+        footer: resolveHeaderFooterContentColors(value.footer, resolveColorValue),
+    };
+}
+
+function resolveHeaderFooterContentColors(
+    content: PdfHeaderFooterContent[] | undefined,
+    resolveColorValue: (value?: string) => string | undefined
+): PdfHeaderFooterContent[] | undefined {
+    if (!content) {
+        return content;
+    }
+
+    return content.map((item) => ({
+        ...item,
+        style: item.style
+            ? {
+                  ...item.style,
+                  color: resolveColorValue(item.style.color),
+              }
+            : undefined,
+    }));
 }
 
 /**

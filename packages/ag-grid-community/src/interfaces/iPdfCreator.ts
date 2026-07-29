@@ -73,7 +73,7 @@ export type PdfColumnWidth = number | 'auto' | 'grid';
 
 export type PdfColumnWidthCallback = (params: ColumnWidthCallbackParams) => PdfColumnWidth | null | undefined;
 
-export interface PdfCellStyle {
+export interface PdfTextStyle {
     /**
      * Font size in points.
      */
@@ -106,6 +106,15 @@ export interface PdfCellStyle {
      * Text colour.
      */
     color?: string;
+    /**
+     * Distance between text baselines in points.
+     * Defaults to the natural line height from the resolved font metrics,
+     * with a minimum of `fontSize`.
+     */
+    lineHeight?: number;
+}
+
+export interface PdfCellStyle extends PdfTextStyle {
     /**
      * Background colour.
      */
@@ -141,12 +150,6 @@ export interface PdfCellStyle {
      * @default false
      */
     preserveSpaces?: boolean;
-    /**
-     * Distance between text baselines in points.
-     * Defaults to the natural line height from the resolved font metrics,
-     * with a minimum of `fontSize`.
-     */
-    lineHeight?: number;
     /**
      * Maximum number of rendered text lines.
      */
@@ -291,11 +294,65 @@ export interface PdfColors {
     borderColor?: string;
 }
 
-export interface PdfDocumentTitleStyle extends PdfCellStyle {
+export interface PdfDocumentHeadingStyle extends PdfCellStyle {
     /**
-     * Margin around the document title in points. A number applies to all sides.
+     * Margin around the document heading in points. A number applies to all sides.
      */
     margin?: number | PdfMargin;
+}
+
+export interface PdfHeaderFooterConfig {
+    /** Header and footer configuration applied to every page unless overridden. */
+    all?: PdfHeaderFooter;
+    /** Header and footer configuration applied to the first page. */
+    first?: PdfHeaderFooter;
+    /** Header and footer configuration applied to even-numbered pages. */
+    even?: PdfHeaderFooter;
+}
+
+export interface PdfHeaderFooter {
+    /** Up to three header entries positioned left, centre, and right. */
+    header?: PdfHeaderFooterContent[];
+    /** Up to three footer entries positioned left, centre, and right. */
+    footer?: PdfHeaderFooterContent[];
+}
+
+export interface PdfHeaderFooterContent {
+    /**
+     * Header or footer text. Supports `&[Page]`, `&[Pages]`, `&[Date]`, and `&[Time]` placeholders.
+     */
+    value: string;
+    /**
+     * Position of the content within the printable page width.
+     * When omitted, array entries default to left, centre, and right in order.
+     */
+    position?: 'Left' | 'Center' | 'Right';
+    /** Text styling for this entry. */
+    style?: PdfTextStyle;
+}
+
+export type PdfWatermarkPageSelection = 'all' | 'first' | 'odd' | 'even';
+
+export interface PdfWatermark {
+    /** Text displayed diagonally across the exported page content. */
+    text: string;
+    /**
+     * Text opacity from `0` (transparent) to `1` (opaque).
+     * @default 0.12
+     */
+    opacity?: number;
+    /**
+     * Rotation in degrees.
+     * @default -45
+     */
+    rotation?: number;
+    /**
+     * Pages on which the watermark is rendered.
+     * @default 'all'
+     */
+    pages?: PdfWatermarkPageSelection;
+    /** Text styling for the watermark. */
+    style?: PdfTextStyle;
 }
 
 export interface PdfPageSetup {
@@ -355,7 +412,29 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
     /**
      * Styling for the visible document title.
      */
-    documentTitleStyle?: PdfDocumentTitleStyle;
+    documentTitleStyle?: PdfDocumentHeadingStyle;
+    /**
+     * A visible subtitle rendered below the document title.
+     */
+    documentSubtitle?: string;
+    /**
+     * Styling for the visible document subtitle.
+     */
+    documentSubtitleStyle?: PdfDocumentHeadingStyle;
+    /**
+     * Set to `true` to render the document title and subtitle on a separate first page.
+     * The exported grid begins on the following page.
+     * @default false
+     */
+    coverPage?: boolean;
+    /**
+     * Page header and footer content.
+     */
+    headerFooterConfig?: PdfHeaderFooterConfig;
+    /**
+     * A text watermark rendered across the content of selected pages.
+     */
+    watermark?: PdfWatermark;
     /**
      * Override PDF colours. Any missing values fall back to the current theme.
      */

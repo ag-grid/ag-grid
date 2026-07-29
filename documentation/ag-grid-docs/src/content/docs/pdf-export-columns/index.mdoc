@@ -76,3 +76,21 @@ Auto widths are measured before page scaling. If the combined widths exceed the 
 PDF layout dimensions use points, where 72 points equal one inch.
 
 {% gridExampleRunner title="Widths And Autosizing" name="pdf-widths-autosizing" exampleHeight=560 /%}
+
+## API
+
+### Export Options
+
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["skipColumnHeaders", "skipColumnGroupHeaders", "allColumns", "columnKeys", "exportRowNumbers", "columnWidth"] config={"description":""} /%}
+
+### ColumnWidthCallbackParams
+
+{% interfaceDocumentation interfaceName="ColumnWidthCallbackParams" /%}
+
+### PdfColumnWidth
+
+{% interfaceDocumentation interfaceName="PdfColumnWidth" config={"asCode":true} /%}
+
+### PdfColumnWidthCallback
+
+{% interfaceDocumentation interfaceName="PdfColumnWidthCallback" config={"asCode":true} /%}

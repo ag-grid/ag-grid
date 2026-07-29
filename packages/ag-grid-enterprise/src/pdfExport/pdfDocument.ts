@@ -17,11 +17,20 @@ import {
     measureClampedRowFragment,
     measureRow,
     measureRowFragment,
-    resolveDocumentTitle,
+    resolveDocumentHeading,
 } from './utils/document/measurement';
 import { resolveFiniteNumber, resolveOptionalFiniteNumber } from './utils/document/numbers';
-import { renderDocumentTitle, renderMeasuredRows, renderRowFragment } from './utils/document/render';
+import { getPageDateTime, getPageFurnitureForPage, resolvePageFurnitureConfig } from './utils/document/pageFurniture';
+import type { ResolvedPageFurniture } from './utils/document/pageFurniture';
+import {
+    renderDocumentHeading,
+    renderMeasuredRows,
+    renderPageFurniture,
+    renderRowFragment,
+    renderWatermark,
+} from './utils/document/render';
 import { fmt } from './utils/document/text';
+import { resolveWatermark, shouldRenderWatermark } from './utils/document/watermark';
 import { PdfFontRegistry } from './utils/fontRegistry';
 import { formatColor, resolvePdfStyleColors } from './utils/pdfColor';
 import type { PdfLinkAnnotation, PdfPageContent } from './utils/pdfObjectStore';
@@ -61,20 +70,36 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         bodyFont.style,
         bodyFont.family
     );
-    const titleData = params.documentTitle
-        ? resolveDocumentTitle(
-              params.documentTitle,
-              params,
-              styleColors,
-              headerFont,
-              fontRegistry,
-              DEFAULTS.headerFontSize
-          )
-        : undefined;
-    const titleStyle = titleData?.style;
+    const titleData = resolveDocumentHeading(
+        params.documentTitle,
+        params.documentTitleStyle,
+        'title',
+        params,
+        styleColors,
+        headerFont,
+        fontRegistry,
+        DEFAULTS.headerFontSize
+    );
+    const subtitleData = resolveDocumentHeading(
+        params.documentSubtitle,
+        params.documentSubtitleStyle,
+        'subtitle',
+        params,
+        styleColors,
+        bodyFont,
+        fontRegistry,
+        DEFAULTS.headerFontSize
+    );
     const documentTitle = titleData?.text ?? '';
-
-    const titleFontKey = titleStyle?.font.key;
+    const pageFurnitureConfig = resolvePageFurnitureConfig(
+        params.headerFooterConfig,
+        params,
+        styleColors,
+        bodyFont,
+        fontRegistry
+    );
+    const pageDateTime = getPageDateTime(new Date(), params.language);
+    const watermark = resolveWatermark(params, pageSize, styleColors, bodyFont, fontRegistry);
 
     const headerRows = repeatHeader ? getRepeatableHeaderRows(rows) : [];
 
@@ -121,17 +146,25 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         }
     }
 
-    const pageContentHeight = Math.max(pageSize.height - margin.top - margin.bottom, 0);
     let repeatedHeaderHeight = 0;
     for (const headerRow of measuredHeaderRows) {
         repeatedHeaderHeight += headerRow.rowHeight;
     }
 
     const pages: PdfPageContent[] = [];
+    const furnitureByPage: ResolvedPageFurniture[] = [];
     let pageParts: string[] = [];
     let pageAnnotations: PdfLinkAnnotation[] = [];
+    let currentPageNumber = 0;
+    let currentPageFurniture: ResolvedPageFurniture = {
+        header: [],
+        footer: [],
+        headerHeight: 0,
+        footerHeight: 0,
+    };
+    let currentLayout = layout;
+    let currentPageContentHeight = Math.max(pageSize.height - margin.top - margin.bottom, 0);
     let cursorY = pageSize.height - margin.top;
-    let isFirstPage = true;
     let hasPageContent = false;
 
     const markPageContentIfRendered = (previousPartCount: number): void => {
@@ -143,8 +176,23 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     const startPage = (includeHeaders: boolean) => {
         if (hasPageContent) {
             pages.push({ content: pageParts.join('\n'), annotations: pageAnnotations });
+            furnitureByPage.push(currentPageFurniture);
         }
 
+        currentPageNumber += 1;
+        currentPageFurniture = getPageFurnitureForPage(pageFurnitureConfig, currentPageNumber);
+        currentLayout = {
+            ...layout,
+            margin: {
+                ...layout.margin,
+                top: layout.margin.top + currentPageFurniture.headerHeight,
+                bottom: layout.margin.bottom + currentPageFurniture.footerHeight,
+            },
+        };
+        currentPageContentHeight = Math.max(
+            pageSize.height - currentLayout.margin.top - currentLayout.margin.bottom,
+            0
+        );
         pageParts = ['0.5 w'];
         pageAnnotations = [];
         hasPageContent = false;
@@ -152,41 +200,70 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
             pageParts.push(`${formatColor(styleColors.pageBackground)} rg`);
             pageParts.push(`0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)} re f`);
         }
-
-        cursorY = pageSize.height - margin.top;
-        if (isFirstPage) {
-            if (titleStyle && titleFontKey && documentTitle) {
+        cursorY = pageSize.height - currentLayout.margin.top;
+        if (currentPageNumber === 1) {
+            if (titleData) {
                 const previousPartCount = pageParts.length;
-                cursorY = renderDocumentTitle(
-                    documentTitle,
+                cursorY = renderDocumentHeading(
+                    titleData.text,
                     cursorY,
                     pageSize,
-                    layout,
+                    currentLayout,
                     pageParts,
-                    titleStyle,
-                    titleFontKey,
+                    titleData.style,
                     fontRegistry
                 );
                 markPageContentIfRendered(previousPartCount);
             }
-            isFirstPage = false;
+            if (subtitleData) {
+                const previousPartCount = pageParts.length;
+                cursorY = renderDocumentHeading(
+                    subtitleData.text,
+                    cursorY,
+                    pageSize,
+                    currentLayout,
+                    pageParts,
+                    subtitleData.style,
+                    fontRegistry
+                );
+                markPageContentIfRendered(previousPartCount);
+            }
         }
 
         if (includeHeaders && measuredHeaderRows.length) {
             const previousPartCount = pageParts.length;
-            cursorY = renderMeasuredRows(measuredHeaderRows, cursorY, layout, pageParts, pageAnnotations, fontRegistry);
+            cursorY = renderMeasuredRows(
+                measuredHeaderRows,
+                cursorY,
+                currentLayout,
+                pageParts,
+                pageAnnotations,
+                fontRegistry
+            );
             markPageContentIfRendered(previousPartCount);
         }
     };
 
     startPage(false);
+    if (params.coverPage && hasPageContent) {
+        startPage(false);
+    }
+
+    const getPageContentHeight = (pageNumber: number): number => {
+        const furniture = getPageFurnitureForPage(pageFurnitureConfig, pageNumber);
+        return Math.max(
+            pageSize.height - margin.top - margin.bottom - furniture.headerHeight - furniture.footerHeight,
+            0
+        );
+    };
 
     const canRepeatHeadersWithFragment = (row: MeasuredRow, state: RowFragmentState | undefined): boolean => {
         if (!repeatHeader || row.type !== 'BODY' || !measuredHeaderRows.length) {
             return false;
         }
-        const availableAfterHeaders = pageContentHeight - repeatedHeaderHeight;
-        if (!state && row.rowHeight <= pageContentHeight && row.rowHeight > availableAfterHeaders) {
+        const nextPageContentHeight = getPageContentHeight(currentPageNumber + 1);
+        const availableAfterHeaders = nextPageContentHeight - repeatedHeaderHeight;
+        if (!state && row.rowHeight <= nextPageContentHeight && row.rowHeight > availableAfterHeaders) {
             return false;
         }
         return availableAfterHeaders > 0 && !!measureRowFragment(row, state, availableAfterHeaders);
@@ -197,23 +274,28 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         let complete = false;
 
         while (!complete) {
-            let availableHeight = Math.max(cursorY - margin.bottom, 0);
-            const freshPageRowHeight = row.fixedHeight ? Math.min(row.rowHeight, pageContentHeight) : row.rowHeight;
+            let availableHeight = Math.max(cursorY - currentLayout.margin.bottom, 0);
+            const freshPageContentHeight = hasPageContent
+                ? getPageContentHeight(currentPageNumber + 1)
+                : currentPageContentHeight;
+            const freshPageRowHeight = row.fixedHeight
+                ? Math.min(row.rowHeight, freshPageContentHeight)
+                : row.rowHeight;
             // keep rows whole when they fit on a fresh page; only oversized automatic rows are fragmented.
             const shouldMoveWholeRow =
                 !state &&
                 hasPageContent &&
-                freshPageRowHeight <= pageContentHeight &&
+                freshPageRowHeight <= freshPageContentHeight &&
                 freshPageRowHeight > availableHeight;
             if (shouldMoveWholeRow) {
                 startPage(canRepeatHeadersWithFragment(row, state));
-                availableHeight = Math.max(cursorY - margin.bottom, 0);
+                availableHeight = Math.max(cursorY - currentLayout.margin.bottom, 0);
             }
 
             let fragment = measureRowFragment(row, state, availableHeight);
             if (!fragment && hasPageContent) {
                 startPage(canRepeatHeadersWithFragment(row, state));
-                availableHeight = Math.max(cursorY - margin.bottom, 0);
+                availableHeight = Math.max(cursorY - currentLayout.margin.bottom, 0);
                 fragment = measureRowFragment(row, state, availableHeight);
             }
             if (!fragment) {
@@ -221,7 +303,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
             }
 
             const previousPartCount = pageParts.length;
-            cursorY = renderRowFragment(fragment, cursorY, layout, pageParts, pageAnnotations, fontRegistry);
+            cursorY = renderRowFragment(fragment, cursorY, currentLayout, pageParts, pageAnnotations, fontRegistry);
             markPageContentIfRendered(previousPartCount);
             complete = fragment.complete;
             state = fragment.nextState;
@@ -234,11 +316,55 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
 
     if (hasPageContent || !pages.length) {
         pages.push({ content: pageParts.join('\n'), annotations: pageAnnotations });
+        furnitureByPage.push(currentPageFurniture);
     }
 
-    if (!pages.length) {
-        pages.push({ content: '', annotations: [] });
+    const totalPages = pages.length;
+    for (let index = 0; index < totalPages; index++) {
+        if (watermark && shouldRenderWatermark(watermark, index + 1)) {
+            const watermarkParts: string[] = [];
+            renderWatermark(watermark, pageSize, watermarkParts, fontRegistry);
+            pages[index].content += `\n${watermarkParts.join('\n')}`;
+        }
+
+        const furniture = furnitureByPage[index];
+        const furnitureParts: string[] = [];
+        const placeholders = {
+            pageNumber: index + 1,
+            totalPages,
+            ...pageDateTime,
+        };
+        renderPageFurniture(
+            furniture.header,
+            pageSize.height - margin.top,
+            furniture.headerHeight,
+            pageSize,
+            layout,
+            furnitureParts,
+            placeholders,
+            fontRegistry
+        );
+        renderPageFurniture(
+            furniture.footer,
+            margin.bottom + furniture.footerHeight,
+            furniture.footerHeight,
+            pageSize,
+            layout,
+            furnitureParts,
+            placeholders,
+            fontRegistry
+        );
+        if (furnitureParts.length) {
+            pages[index].content += `\n${furnitureParts.join('\n')}`;
+        }
     }
 
-    return buildPdf(pages, pageSize, fontRegistry.getUsedFonts(), documentTitle, params.language);
+    return buildPdf(
+        pages,
+        pageSize,
+        fontRegistry.getUsedFonts(),
+        documentTitle,
+        params.language,
+        watermark?.graphicsState ? [watermark.graphicsState] : []
+    );
 }

@@ -19,6 +19,11 @@ export interface PdfPageContent {
     annotations: PdfLinkAnnotation[];
 }
 
+export interface PdfGraphicsState {
+    key: string;
+    opacity: number;
+}
+
 /**
  * Mutable store for PDF indirect objects.
  * Handles object id allocation and final cross-reference generation.
@@ -100,6 +105,8 @@ class PdfObjectStore {
  * @param pageSize - Resolved page size in points.
  * @param fonts - Concrete font resources used by the document.
  * @param documentTitle - Optional metadata title.
+ * @param language - Optional document language.
+ * @param graphicsStates - Optional reusable transparency resources.
  * @returns Complete PDF document string.
  */
 export function buildPdf(
@@ -107,19 +114,30 @@ export function buildPdf(
     pageSize: ResolvedPageSize,
     fonts: ResolvedPdfFont[],
     documentTitle?: string,
-    language?: string
+    language?: string,
+    graphicsStates: PdfGraphicsState[] = []
 ): string {
     const store = new PdfObjectStore();
     const fontResourcesParts: string[] = [];
+    const graphicsStateResourceParts: string[] = [];
 
     for (const font of fonts) {
         const fontId = font.trueType ? addTrueTypeFontResource(store, font) : addBuiltInFontResource(store, font);
         fontResourcesParts.push(`/${font.key} ${fontId} 0 R`);
     }
 
+    for (const graphicsState of graphicsStates) {
+        const opacity = Math.max(0, Math.min(graphicsState.opacity, 1));
+        const graphicsStateId = store.add(`<< /Type /ExtGState /ca ${fmt(opacity)} /CA ${fmt(opacity)} /BM /Normal >>`);
+        graphicsStateResourceParts.push(`/${graphicsState.key} ${graphicsStateId} 0 R`);
+    }
+
     const pagesId = store.reserve();
     const pageIds: number[] = [];
     const fontResources = `<< ${fontResourcesParts.join(' ')} >>`;
+    const graphicsStateResources = graphicsStateResourceParts.length
+        ? ` /ExtGState << ${graphicsStateResourceParts.join(' ')} >>`
+        : '';
 
     for (const page of pages) {
         // each page has its own content stream object and page object.
@@ -138,7 +156,7 @@ export function buildPdf(
             annotationRefs.push(`${annotationId} 0 R`);
         }
         const annotations = annotationRefs.length ? ` /Annots [${annotationRefs.join(' ')}]` : '';
-        const pageObject = `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)}] /Resources << /Font ${fontResources} >> /Contents ${contentId} 0 R${annotations} >>`;
+        const pageObject = `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)}] /Resources << /Font ${fontResources}${graphicsStateResources} >> /Contents ${contentId} 0 R${annotations} >>`;
         const pageId = store.add(pageObject);
         pageIds.push(pageId);
     }

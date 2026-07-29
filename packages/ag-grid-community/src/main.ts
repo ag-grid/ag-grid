@@ -149,7 +149,7 @@ export type {
     PdfColumnWidth,
     PdfColumnWidthCallback,
     PdfCustomContent,
-    PdfDocumentTitleStyle,
+    PdfDocumentHeadingStyle,
     PdfExportParams,
     PdfBuiltInFontFamily,
     PdfFontFace,
@@ -158,6 +158,9 @@ export type {
     PdfFontStyle,
     PdfFontWeight,
     PdfGroupHeaderStyleCallbackParams,
+    PdfHeaderFooter,
+    PdfHeaderFooterConfig,
+    PdfHeaderFooterContent,
     PdfHeaderStyleCallbackParams,
     PdfMargin,
     PdfPageOrientation,
@@ -169,6 +172,9 @@ export type {
     PdfTextAlignment,
     PdfTextDirection,
     PdfTextOverflow,
+    PdfTextStyle,
+    PdfWatermark,
+    PdfWatermarkPageSelection,
 } from './interfaces/iPdfCreator';
 
 // Drag and Drop

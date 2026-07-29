@@ -4,27 +4,28 @@ import type { PdfLinkAnnotation } from '../pdfObjectStore';
 import type { ResolvedPageSize } from './layout';
 import type { LayoutOptions, MeasuredRow, MeasuredRowFragment, ResolvedCellStyle } from './measurement';
 import { constrainTextLines, measureRowFragment, measureTextLines } from './measurement';
+import type { PdfPagePlaceholderValues, ResolvedPageFurnitureContent } from './pageFurniture';
+import { resolvePagePlaceholders } from './pageFurniture';
 import { encodePdfUnicodeString, fmt } from './text';
+import type { ResolvedPdfWatermark } from './watermark';
 
 /**
- * Render the document title box and text at the top of a page.
- * @param title - Normalised title text.
+ * Render a document heading box and text at the top of a page.
+ * @param text - Normalised heading text.
  * @param cursorY - Current page cursor position.
  * @param pageSize - Current page size.
  * @param layout - Layout options.
  * @param pageParts - Mutable page content buffer.
- * @param style - Resolved title style.
- * @param fontKey - Registered PDF font key.
+ * @param style - Resolved heading style.
  * @returns Updated cursor position after rendering.
  */
-export function renderDocumentTitle(
-    title: string,
+export function renderDocumentHeading(
+    text: string,
     cursorY: number,
     pageSize: ResolvedPageSize,
     layout: LayoutOptions,
     pageParts: string[],
     style: ResolvedCellStyle,
-    fontKey: string,
     fontRegistry: PdfFontRegistry
 ): number {
     const availableWidth = Math.max(pageSize.width - layout.margin.left - layout.margin.right, 0);
@@ -38,7 +39,7 @@ export function renderDocumentTitle(
     const availableBoxHeight = Math.max(boxTop - layout.margin.bottom - style.margin.bottom, 0);
     const availableTextHeight = Math.max(availableBoxHeight - style.padding.top - style.padding.bottom, 0);
     const lineLimit = Math.floor(availableTextHeight / style.lineHeight);
-    const lines = constrainTextLines(measureTextLines(title, innerWidth, style), lineLimit, style, innerWidth);
+    const lines = constrainTextLines(measureTextLines(text, innerWidth, style), lineLimit, style, innerWidth);
     if (!lines.length) {
         return cursorY;
     }
@@ -61,7 +62,7 @@ export function renderDocumentTitle(
 
     pageParts.push(`${formatColor(style.textColor)} rg`);
     pageParts.push('BT');
-    pageParts.push(`/${fontKey} ${fmt(style.fontSize)} Tf`);
+    pageParts.push(`/${style.font.key} ${fmt(style.fontSize)} Tf`);
     let textY = boxTop - style.padding.top - fontRegistry.getBaselineOffset(style.fontSize, style.font);
     for (const line of lines) {
         const encoded = fontRegistry.encodeText(line, style.font, style.direction, style.language);
@@ -72,6 +73,111 @@ export function renderDocumentTitle(
     pageParts.push('ET');
 
     return boxBottom - style.margin.bottom;
+}
+
+/**
+ * Render one page header or footer band.
+ * @param content - Resolved left, centre, and right entries.
+ * @param bandTop - Top coordinate of the reserved band.
+ * @param bandHeight - Height of the reserved band.
+ * @param pageSize - Current page size.
+ * @param layout - Layout options containing printable margins.
+ * @param pageParts - Mutable page content buffer.
+ * @param placeholders - Values used to resolve page placeholders.
+ * @param fontRegistry - Font registry used by the document.
+ */
+export function renderPageFurniture(
+    content: ResolvedPageFurnitureContent[],
+    bandTop: number,
+    bandHeight: number,
+    pageSize: ResolvedPageSize,
+    layout: LayoutOptions,
+    pageParts: string[],
+    placeholders: PdfPagePlaceholderValues,
+    fontRegistry: PdfFontRegistry
+): void {
+    if (!content.length || bandHeight <= 0) {
+        return;
+    }
+
+    const availableWidth = Math.max(pageSize.width - layout.margin.left - layout.margin.right, 0);
+    const segmentWidth = availableWidth / 3;
+    if (segmentWidth <= 0) {
+        return;
+    }
+
+    for (const item of content) {
+        const style = item.style;
+        const value = resolvePagePlaceholders(item.value, placeholders);
+        const lines = measureTextLines(value, segmentWidth, style);
+        const line = lines[0];
+        if (!line) {
+            continue;
+        }
+
+        let segmentIndex = 0;
+        if (item.position === 'Center') {
+            segmentIndex = 1;
+        } else if (item.position === 'Right') {
+            segmentIndex = 2;
+        }
+        const boxX = layout.margin.left + segmentWidth * segmentIndex;
+        const encoded = fontRegistry.encodeText(line, style.font, style.direction, style.language);
+        const textX = getTextX(line, boxX, segmentWidth, style, fontRegistry, encoded.direction);
+        const textY =
+            bandTop - (bandHeight - style.lineHeight) / 2 - fontRegistry.getBaselineOffset(style.fontSize, style.font);
+
+        pageParts.push(`${formatColor(style.textColor)} rg`);
+        pageParts.push('BT');
+        pageParts.push(`/${style.font.key} ${fmt(style.fontSize)} Tf`);
+        renderEncodedText(pageParts, encoded, textX, textY, style);
+        pageParts.push('ET');
+    }
+}
+
+/**
+ * Render a centred watermark across the page content.
+ * @param watermark - Resolved watermark configuration.
+ * @param pageSize - Current page size.
+ * @param pageParts - Mutable page content buffer.
+ * @param fontRegistry - Font registry used by the document.
+ */
+export function renderWatermark(
+    watermark: ResolvedPdfWatermark,
+    pageSize: ResolvedPageSize,
+    pageParts: string[],
+    fontRegistry: PdfFontRegistry
+): void {
+    const encoded = fontRegistry.encodeText(watermark.text, watermark.font, watermark.direction, watermark.language);
+    const textWidth = fontRegistry.measureText(
+        watermark.text,
+        watermark.fontSize,
+        watermark.font,
+        watermark.direction,
+        watermark.language
+    );
+    const baselineOffset = fontRegistry.getBaselineOffset(watermark.fontSize, watermark.font);
+    const angle = (watermark.rotation * Math.PI) / 180;
+    const cosine = Math.cos(angle);
+    const sine = Math.sin(angle);
+    const textCenterY = baselineOffset - watermark.lineHeight / 2;
+    const centerX = pageSize.width / 2;
+    const centerY = pageSize.height / 2;
+    const originX = centerX - cosine * (textWidth / 2) + sine * textCenterY;
+    const originY = centerY - sine * (textWidth / 2) - cosine * textCenterY;
+
+    pageParts.push('q');
+    pageParts.push('/Artifact BMC');
+    if (watermark.graphicsState) {
+        pageParts.push(`/${watermark.graphicsState.key} gs`);
+    }
+    pageParts.push(`${formatColor(watermark.color)} rg`);
+    pageParts.push('BT');
+    pageParts.push(`/${watermark.font.key} ${fmt(watermark.fontSize)} Tf`);
+    renderRotatedEncodedText(pageParts, encoded, watermark.fontSize, cosine, sine, originX, originY, watermark);
+    pageParts.push('ET');
+    pageParts.push('EMC');
+    pageParts.push('Q');
 }
 
 /**
@@ -313,4 +419,41 @@ function renderEncodedText(
         cursorY += glyph.yAdvance * scale;
     }
     pageParts.push('EMC');
+}
+
+function renderRotatedEncodedText(
+    pageParts: string[],
+    encoded: EncodedPdfText,
+    fontSize: number,
+    cosine: number,
+    sine: number,
+    originX: number,
+    originY: number,
+    watermark: ResolvedPdfWatermark
+): void {
+    const run = encoded.glyphRun;
+    const cids = encoded.cids;
+    const trueType = watermark.font.trueType;
+    if (!run || !cids || !trueType) {
+        pageParts.push(
+            `${fmt(cosine)} ${fmt(sine)} ${fmt(-sine)} ${fmt(cosine)} ${fmt(originX)} ${fmt(originY)} Tm ${encoded.operatorValue} Tj`
+        );
+        return;
+    }
+
+    const scale = fontSize / trueType.unitsPerEm;
+    let cursorX = 0;
+    let cursorY = 0;
+    for (let index = 0; index < run.glyphs.length; index++) {
+        const glyph = run.glyphs[index];
+        const localX = cursorX + glyph.xOffset * scale;
+        const localY = cursorY + glyph.yOffset * scale;
+        const glyphX = originX + cosine * localX - sine * localY;
+        const glyphY = originY + sine * localX + cosine * localY;
+        pageParts.push(
+            `${fmt(cosine)} ${fmt(sine)} ${fmt(-sine)} ${fmt(cosine)} ${fmt(glyphX)} ${fmt(glyphY)} Tm <${cids[index].toString(16).padStart(4, '0')}> Tj`
+        );
+        cursorX += glyph.xAdvance * scale;
+        cursorY += glyph.yAdvance * scale;
+    }
 }
