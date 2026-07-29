@@ -94,6 +94,31 @@ describe('Columns Tool Panel — Enter in filter input toggles matching columns'
         expect(api.getColumn('country')!.isVisible()).toBe(true);
     });
 
+    test('Enter does not toggle while an IME composition is active (Safari reports isComposing=false)', async () => {
+        const api = await createGrid();
+        forceVirtualListRender(api);
+
+        const input = getFilterInput(api);
+        setNativeInputValue(input, 'medals');
+
+        // Safari fires the composition-confirming Enter keydown with isComposing already
+        // false, before compositionend. Explicit composition tracking must still suppress
+        // the toggle — asserting via isComposing=false here is what discriminates the
+        // tracked-state guard from the isComposing-only guard.
+        input.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }));
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+        expect(api.getColumn('goldMedals')!.isVisible()).toBe(true);
+        expect(api.getColumn('silverMedals')!.isVisible()).toBe(true);
+
+        // Once composition ends, Enter confirms and toggles the matching set as usual.
+        input.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true }));
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+        expect(api.getColumn('goldMedals')!.isVisible()).toBe(false);
+        expect(api.getColumn('silverMedals')!.isVisible()).toBe(false);
+    });
+
     test('Enter does not toggle when suppressColumnSelectAll hides the select-all capability', async () => {
         const api = await createGrid({ suppressColumnSelectAll: true });
         forceVirtualListRender(api);
