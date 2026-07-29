@@ -360,10 +360,10 @@ describe('calculated columns - display ordering', () => {
         expect(c2).toBe('calculated_2');
         await new GridColumns(api, 'unanchored calc col stays top-level, not in group').checkColumns(`
             CENTER
-            ├── calculated_2 "Untitled" width:200 ƒ
-            └─┬ "G" GROUP
-              ├── a "A" width:200
-              └── b "B" width:200
+            ├─┬ "G" GROUP
+            │ ├── a "A" width:200
+            │ └── b "B" width:200
+            └── calculated_2 "Untitled" width:200 ƒ
         `);
     });
 
