@@ -57,13 +57,13 @@ export interface ICalculatedColumnsService extends Bean {
             headerPosition: HeaderPosition | null;
         }
     ): void;
-    /** Build hook for static (user-declared) calc cols: `null` if removed (never build), the replacement
-     *  `ColDef` if updated, `undefined` if unchanged. Applied during the build, so removed cols are never materialised. */
-    overrideFor(colDef: ColDef): ColDef | null | undefined;
-    /** Build-time dynamic calc-col hook: keep owned AgColumns alive and splice them at anchors (`overrideFor` handles static cols). */
+    /** Build-time dynamic calc-col hook: keep owned AgColumns alive and splice them at anchors (the user-column
+     *  layer handles overrides/removals of `columnDefs`-declared cols). */
     contributeTo(build: ColumnTreeBuild): void;
     /** Clear dynamic calc-col state; with `preserveCreatedColumns`, park added cols for `restoreDynamicColumnDefs`, and return whether caller must rebuild. */
     resetDynamicColumnDefs(preserveCreatedColumns?: boolean): boolean;
+    /** Adopt restored user-column layer entries describing calc cols; returns whether the caller must rebuild. */
+    adoptUserColumns(): boolean;
     /** Re-add parked dynamic cols referenced by `state` and return whether any were restored (caller rebuilds). */
     restoreDynamicColumnDefs(state: ColumnState[]): boolean;
     /** Run a suppressed rebuild after calc-col mutation so column-state ops avoid spurious calc lifecycle events. */

@@ -38,8 +38,8 @@ export interface ColumnTreeBuild {
 }
 
 /** Build a balanced column tree from `defs`, reusing cols/groups by colId / field / userColDef ref /
- *  groupId. Id allocation is deterministic (master/slave grids produce identical ids). Static calc-col
- *  overrides ({@link ICalculatedColumnsService.overrideFor}) drop/replace a leaf mid-build, never its group.
+ *  groupId. Id allocation is deterministic (master/slave grids produce identical ids). User-column layer
+ *  entries ({@link UserColumnService.overrideFor}) drop/replace a leaf mid-build, never its group.
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _buildColumnTree(
     beans: BeanCollection,
@@ -53,7 +53,7 @@ export function _buildColumnTree(
     buildToken: number,
     wrapperCache: ColWrapperCache | null
 ): ColumnTreeBuild {
-    const { context, dataTypeSvc, gos, calculatedColsSvc } = beans;
+    const { context, dataTypeSvc, gos, userColumnSvc } = beans;
     const defaultColGroupDef = gos.get('defaultColGroupDef');
     // Stateless padded groups share one colGroupDef ref; the cast is safe (padding owns its own `children`).
     const paddingDef = (defaultColGroupDef ?? null) as ColGroupDef | null;
@@ -214,9 +214,9 @@ export function _buildColumnTree(
      *  `colId` when present (reuse only the same-colId column — a changed colId is a new column even on a
      *  retained colDef ref); without a colId it is the colDef ref, then field/positional in buildKeyedColumn. */
     const buildColumn = (def: ColDef): AgColumn | undefined => {
-        const override = calculatedColsSvc?.overrideFor(def);
+        const override = userColumnSvc.overrideFor(def);
         if (override === null) {
-            return undefined; // dropped (e.g. a calc col the user deleted): never built
+            return undefined; // dropped (e.g. a column the user deleted): never built
         }
         if (override !== undefined) {
             def = override;

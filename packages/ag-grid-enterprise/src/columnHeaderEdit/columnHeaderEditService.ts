@@ -63,9 +63,12 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
     }
 
     private isEditable(target: EditTarget): boolean {
-        return isProvidedColumnGroup(target)
-            ? !!target.colGroupDef?.headerNameEditable
-            : !!target.colDef.headerNameEditable;
+        if (isProvidedColumnGroup(target)) {
+            return !!target.colGroupDef?.headerNameEditable;
+        }
+        // A calculated column's title belongs to its own dialog, which persists it as part of the column's
+        // definition; a second editor for the same field would fight it for ownership.
+        return !target.isCalculatedCol && !!target.colDef.headerNameEditable;
     }
 
     private getEditableHeaderName(target: EditTarget): string {

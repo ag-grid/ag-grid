@@ -18,6 +18,7 @@ import { ColumnModel } from './columns/columnModel';
 import { ColumnFlexModule, DataTypeModule } from './columns/columnModule';
 import { ColumnNameService } from './columns/columnNameService';
 import { ColumnViewportService } from './columns/columnViewportService';
+import { UserColumnService } from './columns/userColumns/userColumnService';
 import { VisibleColsService } from './columns/visibleColsService';
 import { CellRendererFunctionModule } from './components/framework/cellRendererFunctionModule';
 import { Registry } from './components/framework/registry';
@@ -79,6 +80,7 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
         SyncService,
         ColumnNameService,
         ColumnViewportService,
+        UserColumnService,
         IconService,
     ],
     icons: {

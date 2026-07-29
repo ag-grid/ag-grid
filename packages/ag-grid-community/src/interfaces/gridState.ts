@@ -184,6 +184,25 @@ export interface ColumnGroupState {
     headerNames?: ColumnGroupHeaderNameState[];
 }
 
+export interface UserColumnProperty {
+    /** Name of the `ColDef` property. */
+    property: string;
+    value: any;
+}
+
+export interface UserColumnState {
+    colId: string;
+    /** The user created this column; it exists only because of this entry. Without it the entry describes
+     *  changes to a column declared in `columnDefs`, which the developer owns the existence of. */
+    created?: boolean;
+    /** `groupId` of the containing column group; absent or `null` places the column at the top level. */
+    parentGroupId?: string | null;
+    /** The column definition properties the user configured. Absent when `removed` is set. */
+    properties?: UserColumnProperty[];
+    /** The user removed a column declared in `columnDefs`; it stays removed across restores. */
+    removed?: boolean;
+}
+
 export interface ColumnHeaderNameColumnState {
     colId: string;
     headerName: string;
@@ -256,6 +275,12 @@ export interface GridState {
     sort?: SortState;
     /** Includes the per-column "Show Values As" mode (column state) */
     showValuesAs?: ShowValuesAsState;
+    /**
+     * Includes columns the user created at runtime (e.g. via the Calculated Column dialog), and the
+     * properties the user changed on or removals of columns declared in `columnDefs`. Unlike the other
+     * sections, which configure existing columns, this section can create and remove them.
+     */
+    userColumns?: UserColumnState[];
     /**
      * When providing a partial `initialState` with some but not all column state properties, set this to `true`.
      * This controls which top-level sections are supplied, not whether a section may itself be partial:

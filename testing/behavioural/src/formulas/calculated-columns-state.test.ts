@@ -65,6 +65,26 @@ describe('calculated columns - grid state persistence', () => {
         return api.getAllGridColumns()!.map((col) => col.getColId());
     }
 
+    /** A `userColumns` entry's properties as an object — the array is a list, so its order is an
+     *  implementation detail no assertion should depend on. */
+    function propertiesOf(state: GridState, colId: string): Record<string, unknown> | undefined {
+        const entry = state.userColumns?.find((userColumn) => userColumn.colId === colId);
+        if (!entry?.properties) {
+            return undefined;
+        }
+        const result: Record<string, unknown> = {};
+        for (const { property, value } of entry.properties) {
+            result[property] = value;
+        }
+        return result;
+    }
+
+    function entryOf(state: GridState, colId: string): GridState['userColumns'] extends (infer T)[] ? T : never {
+        const entry = state.userColumns?.find((userColumn) => userColumn.colId === colId);
+        expect(entry).toBeTruthy();
+        return entry!;
+    }
+
     // --- dialog plumbing (the only public surface that sets an anchor) ---------------------------
 
     async function clickColumnMenuItem(name: string): Promise<void> {
@@ -178,16 +198,13 @@ describe('calculated columns - grid state persistence', () => {
         await waitFor(() => expect(api.getColumn(calcId)!.getColDef().headerName).toBe('Double A'));
 
         const savedState = api.getState();
-        expect(savedState.userColumns).toEqual([
-            {
-                kind: 'calculated',
-                colId: calcId,
-                groupAnchorColId: 'a',
-                calculatedExpression: '[a] * 2',
-                cellDataType: 'text',
-                headerName: 'Double A',
-            },
-        ]);
+        // A column the user created at top level: no containing group, and only the properties the dialog set.
+        expect(entryOf(savedState, calcId).parentGroupId).toBeNull();
+        expect(propertiesOf(savedState, calcId)).toEqual({
+            calculatedExpression: '[a] * 2',
+            cellDataType: 'text',
+            headerName: 'Double A',
+        });
 
         // Restore into a brand new grid: same columnDefs, but WITHOUT the calc col declared anywhere.
         const api2 = createGrid('state-initial-target', {
@@ -295,7 +312,7 @@ describe('calculated columns - grid state persistence', () => {
         });
         const calcId = await addViaDialog(api, 'a', '[A] * 2');
         const savedState = api.getState();
-        expect(savedState.userColumns).toMatchObject([{ colId: calcId, calculatedExpression: '[a] * 2' }]);
+        expect(propertiesOf(savedState, calcId)).toMatchObject({ calculatedExpression: '[a] * 2' });
 
         // Edit the live column so its definition no longer matches the snapshot.
         await editViaDialog(api, calcId, { expression: '[A] * 3', title: 'Triple A' });
@@ -348,8 +365,7 @@ describe('calculated columns - grid state persistence', () => {
             columnDefs: [{ field: 'a' }, { field: 'b' }],
         });
         const calcId = await addViaDialog(api, 'a', '[A] * 2');
-        expect((api.getState().userColumns as GridState['userColumns'])?.[0]).toMatchObject({
-            colId: calcId,
+        expect(propertiesOf(api.getState(), calcId)).toMatchObject({
             calculatedExpression: '[a] * 2',
             cellDataType: 'text',
         });
@@ -364,10 +380,7 @@ describe('calculated columns - grid state persistence', () => {
         clickDialogButton('Apply');
         await asyncSetTimeout(40);
 
-        expect((api.getState().userColumns as GridState['userColumns'])?.[0]).toMatchObject({
-            colId: calcId,
-            calculatedExpression: '[a] * 3',
-        });
+        expect(propertiesOf(api.getState(), calcId)).toMatchObject({ calculatedExpression: '[a] * 3' });
     });
 
     // === non-lossy when the feature is disabled: provided userColumns survive a re-save ==========
@@ -375,12 +388,14 @@ describe('calculated columns - grid state persistence', () => {
     test('userColumns in initialState are preserved by getState when calculated columns are disabled', async () => {
         const userColumns: GridState['userColumns'] = [
             {
-                kind: 'calculated',
                 colId: 'calc_1',
-                groupAnchorColId: 'a',
-                calculatedExpression: '[a] * 2',
-                cellDataType: 'text',
-                headerName: 'Double A',
+                created: true,
+                parentGroupId: null,
+                properties: [
+                    { property: 'calculatedExpression', value: '[a] * 2' },
+                    { property: 'cellDataType', value: 'text' },
+                    { property: 'headerName', value: 'Double A' },
+                ],
             },
         ];
         const api = createGrid('state-disabled-non-lossy', {
@@ -565,16 +580,13 @@ describe('calculated columns - grid state persistence', () => {
         expect(order(api)).toEqual(['revenue', calcId, 'cost']);
 
         const savedState = api.getState();
-        expect(savedState.userColumns).toEqual([
-            {
-                kind: 'calculated',
-                colId: calcId,
-                groupAnchorColId: 'revenue',
-                calculatedExpression: '[revenue] - [cost]',
-                cellDataType: 'text',
-                headerName: 'Untitled',
-            },
-        ]);
+        // Group membership is recorded against the containing group, not the anchor leaf it was added from.
+        expect(entryOf(savedState, calcId).parentGroupId).toBe('money');
+        expect(propertiesOf(savedState, calcId)).toEqual({
+            calculatedExpression: '[revenue] - [cost]',
+            cellDataType: 'text',
+            headerName: 'Untitled',
+        });
 
         const api2 = createGrid('state-group-target', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
@@ -691,7 +703,7 @@ describe('calculated columns - grid state persistence', () => {
         const savedState = api.getState();
         // The dialog title lives in `userColumns` (it is part of the column's definition); the override
         // lives in `columnHeaderName`. Both must survive, since either can be reverted independently.
-        expect(savedState.userColumns).toMatchObject([{ colId: calcId, headerName: 'Double A' }]);
+        expect(propertiesOf(savedState, calcId)).toMatchObject({ headerName: 'Double A' });
         expect(savedState.columnHeaderName).toEqual({ columnHeaderNames: [{ colId: calcId, headerName: 'Renamed' }] });
 
         const api2 = createGrid('state-headername-target', { rowData, columnDefs, initialState: savedState });
@@ -791,7 +803,8 @@ describe('calculated columns - grid state persistence', () => {
         // The auto-group col is generated, not a columnDefs leaf, but it is still the serialised anchor:
         // it exists again in the target grid because `region` carries `rowGroup: true` in columnDefs.
         const savedState = api.getState();
-        expect(savedState.userColumns).toMatchObject([{ colId: calcId, groupAnchorColId: 'ag-Grid-AutoColumn' }]);
+        // The auto-group column sits at the top level, so the calc col beside it records no parent group.
+        expect(entryOf(savedState, calcId).parentGroupId).toBeNull();
 
         const api2 = createGrid('state-autogroup-target', { rowData, columnDefs, initialState: savedState });
         await waitFor(() => expect(order(api2)).toContain(calcId));
@@ -843,7 +856,7 @@ describe('calculated columns - grid state persistence', () => {
     // A saved state outlives the app's columnDefs, so restore must degrade predictably rather than
     // throw or silently drop the user's column.
 
-    test('a calc col whose anchor leaf no longer exists is still recreated, at the top level', async () => {
+    test('a calc col stays in its column group when the leaf it was added from no longer exists', async () => {
         const rowData = [{ id: 'r1', athlete: 'A', gold: 3, silver: 1 }];
         const api = createGrid('state-anchor-gone-source', {
             rowData,
@@ -854,9 +867,9 @@ describe('calculated columns - grid state persistence', () => {
         });
         const calcId = await addViaDialog(api, 'gold', '34');
         const savedState = api.getState();
-        expect(savedState.userColumns).toMatchObject([{ colId: calcId, groupAnchorColId: 'gold' }]);
+        expect(entryOf(savedState, calcId).parentGroupId).toBe('medals');
 
-        // The target grid has dropped the `gold` column (and with it the Medals group's first child).
+        // The target grid has dropped the `gold` column the calc col was added from, but keeps the group.
         const api2 = createGrid('state-anchor-gone-target', {
             rowData,
             columnDefs: [
@@ -866,14 +879,13 @@ describe('calculated columns - grid state persistence', () => {
             initialState: savedState,
         });
         await waitFor(() => expect(order(api2)).toContain(calcId));
-        // No anchor to inherit from, so it lands at the top level. Its saved neighbour is gone too, so
-        // the order restoration cannot seat it after `athlete` and it falls to the front.
-        expect(api2.getColumn(calcId)!.getParent()).toBeNull();
-        await new GridColumns(api2, 'calc col with a removed anchor leaf restored top-level').checkColumns(`
+        // Placement is recorded against the group, so it survives the loss of the leaf it was added from.
+        expect(api2.getColumn(calcId)!.getParent()!.getGroupId()).toBe('medals');
+        await new GridColumns(api2, 'calc col restored into its group after its anchor leaf went').checkColumns(`
             CENTER
-            ├── ${calcId} "Untitled" width:200 ƒ
             ├── athlete "Athlete" width:200
             └─┬ "Medals" GROUP
+              ├── ${calcId} "Untitled" width:200 ƒ
               └── silver "Silver" width:200
         `);
     });
@@ -885,7 +897,7 @@ describe('calculated columns - grid state persistence', () => {
         });
         const calcId = await addViaDialog(api, 'a', '[A] + [B]');
         const savedState = api.getState();
-        expect(savedState.userColumns).toMatchObject([{ calculatedExpression: '[a] + [b]' }]);
+        expect(propertiesOf(savedState, calcId)).toMatchObject({ calculatedExpression: '[a] + [b]' });
 
         // `b` is gone in the target grid, so the persisted expression cannot resolve. The column must
         // still come back — the user can then edit the expression to fix it.
@@ -922,7 +934,7 @@ describe('calculated columns - grid state persistence', () => {
         expect(order(api2)).toEqual(['a', 'calculated_1', 'b']);
         expect(api2.getColumn('calculated_1')!.getColDef().calculatedExpression).toBeUndefined();
         expect(warn).toHaveBeenCalledWith(
-            expect.stringContaining(`reconcileUserColumns: colId 'calculated_1' already exists; skipping.`)
+            expect.stringContaining(`userColumns: colId 'calculated_1' is declared in columnDefs; skipping.`)
         );
         await new GridRows(api2, 'calc col colId collision skipped - rows').check(`
             ROOT id:ROOT_NODE_ID
@@ -951,7 +963,7 @@ describe('calculated columns - grid state persistence', () => {
 
         clickDialogButton('Apply');
         await asyncSetTimeout(1);
-        expect(api.getState().userColumns).toMatchObject([{ colId: 'calculated_1', calculatedExpression: '[a] * 2' }]);
+        expect(propertiesOf(api.getState(), 'calculated_1')).toMatchObject({ calculatedExpression: '[a] * 2' });
     });
 
     test('under deferred apply mode a cancelled dialog leaves the state untouched', async () => {
@@ -996,7 +1008,7 @@ describe('calculated columns - grid state persistence', () => {
         clickDialogButton('Cancel');
         await asyncSetTimeout(1);
 
-        expect(api.getState().userColumns).toMatchObject([{ colId: 'calculated_1', calculatedExpression: '[a] * 2' }]);
+        expect(propertiesOf(api.getState(), 'calculated_1')).toMatchObject({ calculatedExpression: '[a] * 2' });
     });
 
     // === removal through the dialog: the user's own way of dropping a calc col ====================
@@ -1013,7 +1025,7 @@ describe('calculated columns - grid state persistence', () => {
         await removeViaMenu(api, calcId);
         expect(api.getColumn(calcId)).toBeNull();
         // Only the removed descriptor goes; the other calc col is untouched.
-        expect(api.getState().userColumns).toMatchObject([{ colId: calcId2 }]);
+        expect(api.getState().userColumns!.map((entry) => entry.colId)).toEqual([calcId2]);
 
         await removeViaMenu(api, calcId2);
         expect(api.getState().userColumns).toBeUndefined();
@@ -1036,7 +1048,7 @@ describe('calculated columns - grid state persistence', () => {
         await waitFor(() => expect(api.getColumn(calcId)!.getColDef().cellDataType).toBe('number'));
 
         const savedState = api.getState();
-        expect(savedState.userColumns).toMatchObject([{ colId: calcId, cellDataType: 'number' }]);
+        expect(propertiesOf(savedState, calcId)).toMatchObject({ cellDataType: 'number' });
 
         const api2 = createGrid('state-datatype-target', { rowData, columnDefs, initialState: savedState });
         await waitFor(() => expect(order(api2)).toContain(calcId));
@@ -1080,9 +1092,17 @@ describe('calculated columns - grid state persistence', () => {
         expect(api.getState().userColumns).toEqual(savedState.userColumns);
 
         // A changed expression must re-apply, otherwise the guard would be swallowing real updates.
+        const entry = savedState.userColumns![0];
         api.setState({
             ...savedState,
-            userColumns: [{ ...savedState.userColumns![0], calculatedExpression: '[a] * 3' }],
+            userColumns: [
+                {
+                    ...entry,
+                    properties: entry.properties!.map((property) =>
+                        property.property === 'calculatedExpression' ? { ...property, value: '[a] * 3' } : property
+                    ),
+                },
+            ],
         });
         await waitFor(() => expect(api.getColumn(calcId)!.getColDef().calculatedExpression).toBe('[a] * 3'));
         expect(api.getColumn(calcId)!.getColDef()).not.toBe(colDefBefore);
@@ -1124,13 +1144,9 @@ describe('calculated columns - grid state persistence', () => {
         expect(cellValue(source, 'declared')).toBe(30);
 
         const savedState = source.getState();
-        expect(savedState.userColumns).toEqual([
-            expect.objectContaining({
-                kind: 'calculatedOverride',
-                colId: 'declared',
-                calculatedExpression: '[a] * [b]',
-            }),
-        ]);
+        // An override records only the properties the user changed, against the declared column's colId.
+        expect(propertiesOf(savedState, 'declared')).toMatchObject({ calculatedExpression: '[a] * [b]' });
+        expect(entryOf(savedState, 'declared').parentGroupId).toBeUndefined();
 
         const target = createGrid('state-declared-edit-target', {
             rowData: STATIC_ROW_DATA,
@@ -1153,7 +1169,7 @@ describe('calculated columns - grid state persistence', () => {
         await waitFor(() => expect(order(source)).toEqual(['a', 'b']));
 
         const savedState = source.getState();
-        expect(savedState.userColumns).toEqual([{ kind: 'calculatedOverride', colId: 'declared', removed: true }]);
+        expect(savedState.userColumns).toEqual([{ colId: 'declared', removed: true }]);
 
         const target = createGrid('state-declared-remove-target', {
             rowData: STATIC_ROW_DATA,
@@ -1255,7 +1271,7 @@ describe('calculated columns - grid state persistence', () => {
     // A `columnDefs` change is the developer reasserting which columns exist — it does not speak for the
     // user's calc-col edits and deletions, which are state. They therefore survive `columnDefs` churn and
     // re-apply if the column comes back. Only `resetColumnState` clears them.
-    test('a user deletion of a columnDefs-declared calc col survives the developer dropping and re-declaring it', async () => {
+    test('setting columnDefs reclaims a calc col the user deleted', async () => {
         const api = createGrid('state-declared-live-redeclare', {
             rowData: STATIC_ROW_DATA,
             columnDefs: staticColumnDefs(),
@@ -1264,16 +1280,14 @@ describe('calculated columns - grid state persistence', () => {
         await removeViaMenu(api, 'declared');
         await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
 
-        api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
-        await asyncSetTimeout(0);
+        // Setting `columnDefs` is the developer declaring the column set afresh, so it takes the user's
+        // deletion with it; only restoring grid state brings user changes back.
         api.setGridOption('columnDefs', staticColumnDefs());
-        await asyncSetTimeout(0);
-        // Still deleted: the developer re-declaring the column does not undo the user's deletion.
-        expect(order(api)).toEqual(['a', 'b']);
-        expect(api.getState().userColumns).toEqual([{ kind: 'calculatedOverride', colId: 'declared', removed: true }]);
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b', 'declared']));
+        expect(api.getState().userColumns).toBeUndefined();
     });
 
-    test('a live edit of a columnDefs-declared calc col survives the developer dropping and re-declaring it', async () => {
+    test('setting columnDefs reclaims a calc col the user edited, and the saved state restores the edit', async () => {
         const api = createGrid('state-declared-live-drop', {
             rowData: STATIC_ROW_DATA,
             columnDefs: staticColumnDefs(),
@@ -1281,17 +1295,15 @@ describe('calculated columns - grid state persistence', () => {
         await waitFor(() => expect(cellValue(api, 'declared')).toBe(13));
         await editViaDialog(api, 'declared', { expression: '[a] * [b]' });
         expect(cellValue(api, 'declared')).toBe(30);
-
-        api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
-        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
-        // The edit is still the user's, so it stays saveable while the column is away.
-        expect(api.getState().userColumns).toEqual([
-            expect.objectContaining({ kind: 'calculatedOverride', colId: 'declared' }),
-        ]);
+        const savedState = api.getState();
 
         api.setGridOption('columnDefs', staticColumnDefs());
-        await waitFor(() => expect(order(api)).toEqual(['a', 'b', 'declared']));
-        expect(cellValue(api, 'declared')).toBe(30);
+        await waitFor(() => expect(cellValue(api, 'declared')).toBe(13));
+        expect(api.getState().userColumns).toBeUndefined();
+
+        // State saved before the reset still carries the edit, which is how the user gets it back.
+        api.setState(savedState);
+        await waitFor(() => expect(cellValue(api, 'declared')).toBe(30));
     });
 
     test('resetColumnState clears a user edit of a columnDefs-declared calc col', async () => {
@@ -1309,7 +1321,7 @@ describe('calculated columns - grid state persistence', () => {
         expect(api.getState().userColumns).toBeUndefined();
     });
 
-    test('dropping the group that contains an edited calc col keeps the override for when it returns', async () => {
+    test('a state round-trip restores an edited calc col into its column group', async () => {
         const groupedColumnDefs = (): GridOptions['columnDefs'] => [
             { field: 'a' },
             {
@@ -1326,17 +1338,17 @@ describe('calculated columns - grid state persistence', () => {
         await editViaDialog(api, 'declared', { expression: '[a] * [b]' });
         expect(cellValue(api, 'declared')).toBe(30);
 
-        api.setGridOption('columnDefs', [{ field: 'a' }]);
-        await waitFor(() => expect(order(api)).toEqual(['a']));
-        expect(api.getState().userColumns).toHaveLength(1);
-
-        api.setGridOption('columnDefs', groupedColumnDefs());
-        await waitFor(() => expect(order(api)).toEqual(['a', 'b', 'declared']));
-        expect(cellValue(api, 'declared')).toBe(30);
-        expect(api.getColumn('declared')!.getParent()!.getGroupId()).toBe('derived');
+        const target = createGrid('state-declared-group-target', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: groupedColumnDefs(),
+            initialState: api.getState(),
+        });
+        await waitFor(() => expect(cellValue(target, 'declared')).toBe(30));
+        // The declared column keeps the group the developer put it in — an override changes properties only.
+        expect(target.getColumn('declared')!.getParent()!.getGroupId()).toBe('derived');
     });
 
-    test('a user edit of a columnDefs-declared calc col wins over a later columnDefs expression change', async () => {
+    test('a later columnDefs expression change replaces a user edit of a declared calc col', async () => {
         const api = createGrid('state-declared-vs-coldef', {
             rowData: STATIC_ROW_DATA,
             columnDefs: staticColumnDefs(),
@@ -1345,18 +1357,15 @@ describe('calculated columns - grid state persistence', () => {
         await editViaDialog(api, 'declared', { expression: '[a] * [b]' });
         expect(cellValue(api, 'declared')).toBe(30);
 
-        // The user's edit is authoritative until state says otherwise, so re-declaring the column with a
-        // different expression does NOT take effect. `resetColumnState` is how the developer reclaims it.
+        // Re-declaring the column set is the developer reclaiming it, so their expression takes effect and
+        // the user's edit is not left behind in the state.
         api.setGridOption('columnDefs', [
             { field: 'a' },
             { field: 'b' },
             { colId: 'declared', headerName: 'Declared', calculatedExpression: '[a] - [b]' },
         ]);
-        await asyncSetTimeout(0);
-        expect(cellValue(api, 'declared')).toBe(30);
-
-        api.resetColumnState();
         await waitFor(() => expect(cellValue(api, 'declared')).toBe(7));
+        expect(api.getState().userColumns).toBeUndefined();
     });
 
     // === parked columns: resetColumnState / applyColumnState ======================================
@@ -1403,12 +1412,14 @@ describe('calculated columns - grid state persistence without the calculated col
     test('userColumns in initialState are preserved by getState when the module is not registered', () => {
         const userColumns: GridState['userColumns'] = [
             {
-                kind: 'calculated',
                 colId: 'calc_1',
-                groupAnchorColId: 'a',
-                calculatedExpression: '[a] * 2',
-                cellDataType: 'text',
-                headerName: 'Double A',
+                created: true,
+                parentGroupId: null,
+                properties: [
+                    { property: 'calculatedExpression', value: '[a] * 2' },
+                    { property: 'cellDataType', value: 'text' },
+                    { property: 'headerName', value: 'Double A' },
+                ],
             },
         ];
         const api = gridsManager.createGrid('state-no-module', {
