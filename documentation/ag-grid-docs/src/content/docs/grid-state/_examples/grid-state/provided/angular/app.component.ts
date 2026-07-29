@@ -50,6 +50,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                     [pagination]="true"
                     [rowSelection]="rowSelection"
                     [cellSelection]="true"
+                    [calculatedColumns]="true"
                     [enableRowPinning]="true"
                     [suppressColumnMoveAnimation]="true"
                     [ensureDomOrder]="true"

@@ -45,6 +45,7 @@ const VueExample = defineComponent({
                     :pagination="true"
                     :rowSelection="rowSelection"
                     :cellSelection="true"
+                    :calculatedColumns="true"
                     :enableRowPinning="true"
                     :suppressColumnMoveAnimation="true"
                     :ensureDomOrder="true"
