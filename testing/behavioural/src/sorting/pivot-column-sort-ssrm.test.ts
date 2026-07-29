@@ -247,6 +247,63 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         expect(pivots()).toEqual(['2004_silver', '2004_gold', '2000_silver', '2000_gold']);
     });
 
+    test('pivotSort orders flat supplied pivot columns when pivoting on two columns', async () => {
+        const datasource: IServerSideDatasource = {
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
+        };
+        const api = await gridsManager.createGridAndWait('ssrmTwoLevelFlat', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'sport', pivot: true, hide: true },
+                { field: 'gold', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            rowModelType: 'serverSide',
+            serverSideDatasource: datasource,
+        });
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(50);
+
+        // Two pivot columns, but the supplied result is entirely flat - no groups at all. The top level is still a
+        // pivot-key level, and there is no deeper level to descend into.
+        api.setPivotResultColumns([
+            { colId: '2004_gold', field: '2004_gold', headerName: '2004' },
+            { colId: '2000_gold', field: '2000_gold', headerName: '2000' },
+        ]);
+        await asyncSetTimeout(50);
+
+        const pivots = () => getColumnOrder(api, 'all').filter((id) => /^\d{4}_/.test(id));
+        expect(pivots()).toEqual(['2000_gold', '2004_gold']);
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        await asyncSetTimeout(50);
+        expect(pivots()).toEqual(['2004_gold', '2000_gold']);
+    });
+
+    test('pivotSort pins a supplied non-group column while the groups beside it reorder', async () => {
+        const datasource: IServerSideDatasource = {
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
+        };
+        const api = await createPivotGrid(datasource);
+
+        // A level mixing pivot groups with a standalone colDef - a row total, say. The total is not a pivot key, so
+        // it holds its trailing position while the groups sort around it.
+        api.setPivotResultColumns([
+            { groupId: '2004', headerName: '2004', children: [{ colId: '2004_gold', field: '2004_gold' }] },
+            { groupId: '2000', headerName: '2000', children: [{ colId: '2000_gold', field: '2000_gold' }] },
+            { colId: 'total_gold', field: 'total_gold', headerName: 'Total' },
+        ]);
+        await asyncSetTimeout(50);
+
+        const pivots = () => getColumnOrder(api, 'all').filter((id) => id.endsWith('_gold'));
+        expect(pivots()).toEqual(['2000_gold', '2004_gold', 'total_gold']);
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        await asyncSetTimeout(50);
+        expect(pivots()).toEqual(['2004_gold', '2000_gold', 'total_gold']);
+    });
+
     test('changing the pivot columns still refetches from the server', async () => {
         const { datasource, getRowsCount } = countingDatasource();
         const api = await createPivotGrid(datasource);

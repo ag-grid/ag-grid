@@ -43,53 +43,61 @@ const naturalOrderComparator = (): number => 0;
 
 type ColDefComparator = (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) => number;
 
-/** Whether every entry at a level is a group, every one is a leaf, or the level mixes the two. */
-const levelKind = (colDefs: (ColDef | ColGroupDef)[]): 'groups' | 'leaves' | 'mixed' | 'empty' => {
-    let groups = 0;
-    const len = colDefs.length;
-    for (let i = 0; i < len; ++i) {
-        if ((colDefs[i] as ColGroupDef).children != null) {
-            ++groups;
-        }
-    }
-    if (len === 0) {
-        return 'empty';
-    }
-    if (groups === len) {
-        return 'groups';
-    }
-    return groups === 0 ? 'leaves' : 'mixed';
-};
-
-/** Whether a level of supplied colDefs represents pivot keys, so is ordered by `depth`'s pivot column.
- *
- *  A level of groups always is. A level of leaves only is at the top, where a single pivot column - or
- *  `removePivotHeaderRowWhenSingleValueColumn` - legitimately flattens the pivot keys to plain colDefs. Deeper
- *  down, leaves are the measure columns of one pivot key: ordering those by header name would interleave measures
- *  across pivot keys and destroy their within-key order. A mixed level has no single meaning, so it is left alone. */
-const isPivotKeyLevel = (colDefs: (ColDef | ColGroupDef)[], depth: number): boolean => {
-    const kind = levelKind(colDefs);
-    return kind === 'groups' || (kind === 'leaves' && depth === 0);
-};
-
 /** Returns a reordered copy of `colDefs` for `depth`'s pivot column, or `null` when the supplied order already
  *  matches. Never mutates the supplied array or defs: application-supplied colDefs are owned by the application,
- *  and their order is the natural order that `pivotSort: null` resolves back to. */
+ *  and their order is the natural order that `pivotSort: null` resolves back to.
+ *
+ *  Group entries are this level's pivot keys, and sort among the slots the groups occupy. Plain colDefs sitting
+ *  alongside them - a `pivotRowTotals` total, say - are not pivot keys, so they are pinned to their index and hold
+ *  their configured edge whatever the sort direction.
+ *
+ *  A level that is entirely plain colDefs is ambiguous, and only sorts at the top. There it is a flattened pivot
+ *  level: a single pivot column, or `removePivotHeaderRowWhenSingleValueColumn`. Deeper down it is instead the
+ *  measure columns of one pivot key - a supplied structure may nest measures directly under a group rather than
+ *  spell out every pivot level - and sorting those by header name would interleave measures across pivot keys. */
 const orderColDefLevel = (
     colDefs: (ColDef | ColGroupDef)[],
     depth: number,
     comparators: ColDefComparator[]
 ): (ColDef | ColGroupDef)[] | null => {
-    if (depth >= comparators.length || !isPivotKeyLevel(colDefs, depth)) {
+    const len = colDefs.length;
+    if (depth >= comparators.length || len === 0) {
         return null;
     }
-    const ordered = colDefs.slice().sort(comparators[depth]);
+    const comparator = comparators[depth];
+    const groupIndexes: number[] = [];
+    for (let i = 0; i < len; ++i) {
+        if ((colDefs[i] as ColGroupDef).children != null) {
+            groupIndexes.push(i);
+        }
+    }
+    const groupCount = groupIndexes.length;
+    if (groupCount === 0 && depth !== 0) {
+        return null;
+    }
+    const ordered = colDefs.slice();
+    if (groupCount === 0) {
+        ordered.sort(comparator);
+    } else {
+        const groups: (ColDef | ColGroupDef)[] = [];
+        for (let i = 0; i < groupCount; ++i) {
+            groups.push(colDefs[groupIndexes[i]]);
+        }
+        groups.sort(comparator);
+        for (let i = 0; i < groupCount; ++i) {
+            ordered[groupIndexes[i]] = groups[i];
+        }
+    }
     let changed = false;
-    for (let i = 0, len = ordered.length; i < len; ++i) {
+    for (let i = 0; i < len; ++i) {
         if (ordered[i] !== colDefs[i]) {
             changed = true;
         }
         const groupDef = ordered[i] as ColGroupDef;
+        if (groupDef.children == null) {
+            // A leaf: the pivot keys were flattened to plain colDefs, so there is no deeper level to order.
+            continue;
+        }
         const children = orderColDefLevel(groupDef.children, depth + 1, comparators);
         if (children) {
             // Cloned rather than mutated; `groupId` is carried over, so the built tree reuses the same group.

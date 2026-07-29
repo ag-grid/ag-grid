@@ -165,9 +165,10 @@ function addColDef(
 
 // The supplied order is the pivot result columns' natural order, used when the YEAR pill in the pivot panel is
 // cycled to no sort. This example supplies the years shuffled so that order is distinguishable from asc/desc.
+// `window.agRandom` is the docs' seeded generator, so the shuffle is the same on every run - unlike `Math.random`.
 function scramblePivotFields(pivotFields: string[]): string[] {
     return pivotFields
-        .map((field) => ({ field, rank: Math.random() }))
+        .map((field) => ({ field, rank: window.agRandom() }))
         .sort((a, b) => a.rank - b.rank)
         .map((entry) => entry.field);
 }

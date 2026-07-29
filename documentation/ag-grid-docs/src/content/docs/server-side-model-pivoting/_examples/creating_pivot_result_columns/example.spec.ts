@@ -86,9 +86,12 @@ test.agExample(import.meta, () => {
             await expect(yearPill.locator('.ag-sort-descending-icon')).toBeVisible();
             await waitForYears(page, 'desc');
 
-            // Cycling on to no sort falls back to the order the columns were supplied in. That order is shuffled,
-            // so assert it holds the same years rather than an exact sequence - a shuffle has no fixed result.
-            const sortedYears = (await yearGroupOrder(page)).slice().sort();
+            // Cycling on to no sort falls back to the order the columns were supplied in. The example shuffles that
+            // order with the docs' seeded generator, so rather than pin the exact permutation to the seed, assert
+            // what the example actually claims: it holds the same years, in neither ascending nor descending order.
+            const descendingYears = await yearGroupOrder(page);
+            const ascendingYears = descendingYears.slice().reverse();
+            const sortedYears = descendingYears.slice().sort();
             await yearPill.click();
             await expect(yearPill.locator('.ag-sort-descending-icon')).toBeHidden();
             await expect(yearPill.locator('.ag-sort-ascending-icon')).toBeHidden();
@@ -96,6 +99,8 @@ test.agExample(import.meta, () => {
                 const suppliedOrder = await yearGroupOrder(page);
                 expect(suppliedOrder.length).toBeGreaterThan(1);
                 expect(suppliedOrder.slice().sort()).toEqual(sortedYears);
+                expect(suppliedOrder).not.toEqual(ascendingYears);
+                expect(suppliedOrder).not.toEqual(descendingYears);
             }).toPass();
 
             // And back round to ascending.

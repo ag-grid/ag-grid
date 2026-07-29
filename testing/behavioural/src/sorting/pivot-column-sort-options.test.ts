@@ -173,15 +173,13 @@ describe('pivot column sorting: grid options and column properties', () => {
         expect(pivotsWithRowTotal(api)).toEqual([ROW_TOTAL, ...DESC]);
     });
 
-    // The row total participates in the group sort rather than staying at its edge, so a descending sort moves it
-    // to the front. Recorded as-is: whether it should hold its position is with QA.
-    test('pivotRowTotals: after sorts the row total along with the pivot groups', async () => {
+    test('pivotRowTotals: after keeps the row total rightmost when sorting', async () => {
         const api = await createGrid({ pivotRowTotals: 'after' });
         expect(pivotsWithRowTotal(api)).toEqual([...ASC, ROW_TOTAL]);
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
         await asyncSetTimeout(10);
-        expect(pivotsWithRowTotal(api)).toEqual([ROW_TOTAL, ...DESC]);
+        expect(pivotsWithRowTotal(api)).toEqual([...DESC, ROW_TOTAL]);
     });
 
     test('pivotSort is per pivot column when pivoting on two columns', async () => {
