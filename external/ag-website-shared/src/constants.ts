@@ -15,11 +15,13 @@ export const CONSENT_FIELD_IDS = {
         dataProcessingConsentId: '00NQ500000IfxTS',
         marketingEmailConsentId: '00NS900000KOnU0',
         emailTrackingConsentId: '00NS900000KQ3GT',
+        franceOrItalyId: '00NS900000KYN3V',
     },
     production: {
         dataProcessingConsentId: '00NQ500000IfxTS',
         marketingEmailConsentId: '00NQ500000JApXt',
         emailTrackingConsentId: '00NQ500000JApXs',
+        franceOrItalyId: '00NQ500000JD5zq',
     },
 };
 

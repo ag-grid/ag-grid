@@ -30,7 +30,7 @@ const {
     captchaSettingsKeyName,
 } = getIsProduction() ? contactFormData.production : contactFormData.default;
 
-const { dataProcessingConsentId, marketingEmailConsentId, emailTrackingConsentId } = getIsProduction()
+const { dataProcessingConsentId, marketingEmailConsentId, emailTrackingConsentId, franceOrItalyId } = getIsProduction()
     ? CONSENT_FIELD_IDS.production
     : CONSENT_FIELD_IDS.default;
 
@@ -289,9 +289,14 @@ export const ContactForm: FunctionComponent<Props> = ({
                 />
 
                 <ConsentCheckbox
-                    id="france-or-italy"
+                    id={franceOrItalyId}
                     label={CONSENT_LABELS.franceOrItaly}
-                    inputProps={{ checked: isFranceOrItaly, onChange: handleFranceOrItalyChange }}
+                    inputProps={{
+                        name: franceOrItalyId,
+                        value: '1',
+                        checked: isFranceOrItaly,
+                        onChange: handleFranceOrItalyChange,
+                    }}
                 />
 
                 {isFranceOrItaly && (

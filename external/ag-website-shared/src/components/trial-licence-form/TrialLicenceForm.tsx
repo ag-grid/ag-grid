@@ -119,6 +119,7 @@ async function submitTrialLicenceFormData({
     dataProcessingConsent,
     marketingEmailConsent,
     emailTrackingConsent,
+    franceOrItaly,
 }: {
     submitUrl?: string;
     firstName: string;
@@ -128,6 +129,7 @@ async function submitTrialLicenceFormData({
     dataProcessingConsent: boolean;
     marketingEmailConsent: boolean;
     emailTrackingConsent: boolean;
+    franceOrItaly: boolean;
 }) {
     const response = await fetch(submitUrl, {
         method: 'POST',
@@ -140,6 +142,7 @@ async function submitTrialLicenceFormData({
                 dataProcessingConsent,
                 marketingEmailConsent,
                 emailTrackingConsent,
+                franceOrItaly,
             },
         }),
         headers: {
@@ -221,6 +224,7 @@ function useTrialForm({ submitUrl }: Props) {
                     dataProcessingConsent,
                     marketingEmailConsent,
                     emailTrackingConsent,
+                    franceOrItaly: isFranceOrItaly,
                 });
 
                 if (response.error) {
@@ -260,6 +264,7 @@ function useTrialForm({ submitUrl }: Props) {
             dataProcessingConsent,
             marketingEmailConsent,
             emailTrackingConsent,
+            isFranceOrItaly,
         ]
     );
 
