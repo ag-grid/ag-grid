@@ -112,16 +112,17 @@ export class GridBodyCtrl extends BeanStub {
         this.setGridRole();
         this.onGridColumnsChanged();
         this.addBodyViewportListener();
+        // Mount before setPinnedRowsHeights: the top section has to reserve vertical space for the
+        // advanced filter bar, so its height must be known by the time the section is measured.
+        this.filterManager?.mountAdvFilterTopSectionComp({
+            mountComp: (eGui) => eTopExtraRows.appendChild(eGui),
+            unmountComp: (eGui) => eGui.remove(),
+        });
         this.setPinnedRowsHeights();
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
         this.updatePinnedColumnStickyOffsets();
         this.updateScrollingClasses();
-
-        this.filterManager?.mountAdvFilterTopSectionComp({
-            mountComp: (eGui) => eTopExtraRows.appendChild(eGui),
-            unmountComp: (eGui) => eGui.remove(),
-        });
 
         this.ctrlsSvc.register('gridBodyCtrl', this);
     }
