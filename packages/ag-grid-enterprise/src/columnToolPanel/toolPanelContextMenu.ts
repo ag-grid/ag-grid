@@ -176,7 +176,8 @@ export class ToolPanelContextMenu extends Component {
         const headerNameEditable = isProvidedColumnGroup(column)
             ? !!column.colGroupDef?.headerNameEditable
             : !!column.colDef.headerNameEditable;
-        this.allowEditHeaderName = !!this.beans.colHeaderEditSvc && headerNameEditable;
+        const isCalculatedCol = !isProvidedColumnGroup(column) && column.isCalculatedCol;
+        this.allowEditHeaderName = !!this.beans.colHeaderEditSvc && headerNameEditable && !isCalculatedCol;
     }
 
     private buildMenuItemMap(): void {

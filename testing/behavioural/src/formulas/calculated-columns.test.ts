@@ -19,6 +19,7 @@ import {
 import {
     CalculatedColumnsModule,
     ClipboardModule,
+    ColumnHeaderEditModule,
     ColumnMenuModule,
     ContextMenuModule,
     FormulaModule,
@@ -56,6 +57,7 @@ describe('ag-grid calculated columns', () => {
             ViewportRowModelModule,
             CalculatedColumnsModule,
             ClipboardModule,
+            ColumnHeaderEditModule,
             ColumnMenuModule,
             ContextMenuModule,
             RowGroupingModule,
@@ -872,6 +874,70 @@ describe('ag-grid calculated columns', () => {
                 ├── cost "Cost" width:200
                 └── profit width:200 ƒ
             `);
+    });
+
+    test('calculated column menu omits Edit Column Name even with headerNameEditable', async () => {
+        const api = createGrid('calculated-menu-omits-edit-column-name', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            defaultColDef: { headerNameEditable: true },
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'profit');
+        await asyncSetTimeout(10);
+        const entries = getOpenMenuEntries();
+        expect(entries).not.toContain('Edit Column Name');
+        expect(entries).toEqual(expect.arrayContaining(['Edit Calculated Column', 'Remove Calculated Column']));
+    });
+
+    test('non-calculated column with headerNameEditable still offers Edit Column Name', async () => {
+        const api = createGrid('calculated-menu-keeps-edit-column-name', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            defaultColDef: { headerNameEditable: true },
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        expect(getOpenMenuEntries()).toContain('Edit Column Name');
+    });
+
+    test('dynamically created calculated column omits Edit Column Name', async () => {
+        const api = createGrid('calculated-menu-dynamic-edit-column-name', {
+            calculatedColumns: { applyMode: 'deferred' },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            defaultColDef: { headerNameEditable: true },
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        // defaultColDef.headerNameEditable merges onto the modal-generated calc colDef, so the inline
+        // rename item is eligible here and its absence proves suppression rather than ineligibility.
+        expect(api.getColumn('calculated_1')!.getColDef().headerNameEditable).toBe(true);
+
+        showColumnMenu(api, 'calculated_1');
+        await asyncSetTimeout(10);
+        const entries = getOpenMenuEntries();
+        expect(entries).not.toContain('Edit Column Name');
+        expect(entries).toEqual(expect.arrayContaining(['Edit Calculated Column', 'Remove Calculated Column']));
     });
 
     test('reset column state removes dynamic calculated columns and restores provided calculated columns', async () => {
