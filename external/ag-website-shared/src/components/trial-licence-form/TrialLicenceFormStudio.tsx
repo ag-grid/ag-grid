@@ -1,3 +1,8 @@
+import { ConsentCheckbox } from '@ag-website-shared/components/consent-fields/ConsentCheckbox';
+import {
+    CONSENT_LABELS,
+    DATA_PROCESSING_CONSENT_REQUIRED,
+} from '@ag-website-shared/components/consent-fields/consentMessages';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { TRIAL_LICENCE_FORM_URL, ZI_FORM_ID } from '@constants';
 import { trackTrialLicenseFormError, trackTrialLicenseFormSuccess } from '@utils/analytics';
@@ -90,22 +95,55 @@ function useRequiredValidation(initialValue: string = '') {
     };
 }
 
+function useCheckbox(initialValue: boolean = false) {
+    const [checked, setChecked] = useState<boolean>(initialValue);
+
+    const handleCheckedChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
+        setChecked(e.target.checked);
+    }, []);
+
+    return {
+        checked,
+        setChecked,
+        handleCheckedChange,
+    };
+}
+
 async function submitTrialLicenceFormData({
     submitUrl = TRIAL_LICENCE_FORM_URL,
     firstName,
     lastName,
     email,
     company,
+    dataProcessingConsent,
+    marketingEmailConsent,
+    emailTrackingConsent,
+    franceOrItaly,
 }: {
     submitUrl?: string;
     firstName: string;
     lastName: string;
     email: string;
     company: string;
+    dataProcessingConsent: boolean;
+    marketingEmailConsent: boolean;
+    emailTrackingConsent: boolean;
+    franceOrItaly: boolean;
 }) {
     const response = await fetch(submitUrl, {
         method: 'POST',
-        body: JSON.stringify({ data: { firstName, lastName, email, company } }),
+        body: JSON.stringify({
+            data: {
+                firstName,
+                lastName,
+                email,
+                company,
+                dataProcessingConsent,
+                marketingEmailConsent,
+                emailTrackingConsent,
+                franceOrItaly,
+            },
+        }),
         headers: {
             'Content-Type': 'application/json',
         },
@@ -136,12 +174,35 @@ function useTrialForm({ submitUrl }: Props) {
     } = useRequiredValidation();
     const lastNameError = wasValidated && validatedLastNameError ? validatedLastNameError : '';
 
+    const { checked: dataProcessingConsent, handleCheckedChange: handleDataProcessingConsentChange } = useCheckbox();
+    const dataProcessingConsentError = wasValidated && !dataProcessingConsent ? DATA_PROCESSING_CONSENT_REQUIRED : '';
+
+    const { checked: marketingEmailConsent, handleCheckedChange: handleMarketingEmailConsentChange } = useCheckbox();
+
+    const {
+        checked: emailTrackingConsent,
+        setChecked: setEmailTrackingConsent,
+        handleCheckedChange: handleEmailTrackingConsentChange,
+    } = useCheckbox();
+
+    const { checked: isFranceOrItaly, setChecked: setIsFranceOrItaly } = useCheckbox();
+
+    // Email tracking consent only applies to France and Italy, so hiding it must also
+    // withdraw it — never submit a consent the visitor can no longer see
+    const handleFranceOrItalyChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
+        const { checked } = e.target;
+        setIsFranceOrItaly(checked);
+        if (!checked) {
+            setEmailTrackingConsent(false);
+        }
+    }, []);
+
     const handleFormSubmit: FormEventHandler<HTMLFormElement> = useCallback(
         async (e) => {
             e.preventDefault();
             setWasValidated(true);
 
-            if (validatedEmailError || validatedFirstNameError || validatedLastNameError) {
+            if (validatedEmailError || validatedFirstNameError || validatedLastNameError || !dataProcessingConsent) {
                 setFormState('error');
                 return;
             }
@@ -153,7 +214,17 @@ function useTrialForm({ submitUrl }: Props) {
 
             try {
                 const company = (document.getElementById('company') as HTMLInputElement)?.value || '';
-                const response = await submitTrialLicenceFormData({ submitUrl, firstName, lastName, email, company });
+                const response = await submitTrialLicenceFormData({
+                    submitUrl,
+                    firstName,
+                    lastName,
+                    email,
+                    company,
+                    dataProcessingConsent,
+                    marketingEmailConsent,
+                    emailTrackingConsent,
+                    franceOrItaly: isFranceOrItaly,
+                });
 
                 if (response.error) {
                     setFormState('error');
@@ -182,7 +253,19 @@ function useTrialForm({ submitUrl }: Props) {
                 setFormState('error');
             }
         },
-        [validatedEmailError, validatedFirstNameError, validatedLastNameError, firstName, lastName, email]
+        [
+            submitUrl,
+            validatedEmailError,
+            validatedFirstNameError,
+            validatedLastNameError,
+            firstName,
+            lastName,
+            email,
+            dataProcessingConsent,
+            marketingEmailConsent,
+            emailTrackingConsent,
+            isFranceOrItaly,
+        ]
     );
 
     return {
@@ -197,11 +280,20 @@ function useTrialForm({ submitUrl }: Props) {
         lastName,
         lastNameError,
         handleLastNameChange,
+        dataProcessingConsent,
+        dataProcessingConsentError,
+        handleDataProcessingConsentChange,
+        marketingEmailConsent,
+        handleMarketingEmailConsentChange,
+        emailTrackingConsent,
+        handleEmailTrackingConsentChange,
+        isFranceOrItaly,
+        handleFranceOrItalyChange,
         handleFormSubmit,
     };
 }
 
-export const TrialLicenceFormStudio: FunctionComponent = ({ submitUrl }: Props) => {
+export const TrialLicenceFormStudio: FunctionComponent<Props> = ({ submitUrl }: Props) => {
     const {
         formState,
         formError,
@@ -214,9 +306,18 @@ export const TrialLicenceFormStudio: FunctionComponent = ({ submitUrl }: Props) 
         lastName,
         lastNameError,
         handleLastNameChange,
+        dataProcessingConsent,
+        dataProcessingConsentError,
+        handleDataProcessingConsentChange,
+        marketingEmailConsent,
+        handleMarketingEmailConsentChange,
+        emailTrackingConsent,
+        handleEmailTrackingConsentChange,
+        isFranceOrItaly,
+        handleFranceOrItalyChange,
         handleFormSubmit,
     } = useTrialForm({ submitUrl });
-    const hasFormError = Boolean(emailError || firstNameError || lastNameError);
+    const hasFormError = Boolean(emailError || firstNameError || lastNameError || dataProcessingConsentError);
 
     return (
         <form id={ZI_FORM_ID} noValidate className={styles.trialForm} onSubmit={handleFormSubmit}>
@@ -269,6 +370,53 @@ export const TrialLicenceFormStudio: FunctionComponent = ({ submitUrl }: Props) 
                     />
                 </span>
                 <p className="error">{emailError ? emailError : 'Email required'}</p>
+            </div>
+
+            <div className={styles.consents}>
+                <ConsentCheckbox
+                    id="data-processing-consent"
+                    label={CONSENT_LABELS.dataProcessing}
+                    error={dataProcessingConsentError}
+                    inputProps={{
+                        name: 'data-processing-consent',
+                        checked: dataProcessingConsent,
+                        onChange: handleDataProcessingConsentChange,
+                        required: true,
+                    }}
+                />
+
+                <ConsentCheckbox
+                    id="marketing-email-consent"
+                    label={CONSENT_LABELS.marketingEmail}
+                    inputProps={{
+                        name: 'marketing-email-consent',
+                        checked: marketingEmailConsent,
+                        onChange: handleMarketingEmailConsentChange,
+                    }}
+                />
+
+                <ConsentCheckbox
+                    id="france-or-italy"
+                    label={CONSENT_LABELS.franceOrItaly}
+                    inputProps={{
+                        name: 'france-or-italy',
+                        checked: isFranceOrItaly,
+                        onChange: handleFranceOrItalyChange,
+                    }}
+                />
+
+                {isFranceOrItaly && (
+                    <ConsentCheckbox
+                        id="email-tracking-consent"
+                        label={CONSENT_LABELS.emailTracking}
+                        nested
+                        inputProps={{
+                            name: 'email-tracking-consent',
+                            checked: emailTrackingConsent,
+                            onChange: handleEmailTrackingConsentChange,
+                        }}
+                    />
+                )}
             </div>
 
             <div className={classnames(styles.actions, 'trial-licence-actions')}>
