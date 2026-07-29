@@ -186,9 +186,7 @@ export const TrialLicenceFormEmailOnly: FunctionComponent = ({ submitUrl }: Prop
                             onChange={handleEmailChange}
                         />
                     </span>
-                    <p className={classnames({ [styles.isHidden]: !emailError }, 'error')}>
-                        {emailError ? emailError : 'Email required'}
-                    </p>
+                    <p className="error">{emailError ? emailError : 'Email required'}</p>
                 </div>
             </div>
             <div className={classnames(styles.actions, 'trial-licence-actions')}>
@@ -197,7 +195,9 @@ export const TrialLicenceFormEmailOnly: FunctionComponent = ({ submitUrl }: Prop
                     className={styles.submit}
                     type="submit"
                     disabled={hasFormError || formState === 'loading' || formState === 'success'}
+                    aria-busy={formState === 'loading'}
                 >
+                    {formState === 'loading' && <span className={styles.submitSpinner} aria-hidden="true" />}
                     Request a trial licence
                 </button>
 
