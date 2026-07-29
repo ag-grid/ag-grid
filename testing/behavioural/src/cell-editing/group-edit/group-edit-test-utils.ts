@@ -119,8 +119,8 @@ export async function performEdit(
         await editCell(api, node, colId, `${value}`);
     } else {
         node.setDataValue(colId, typeof value === 'string' ? Number(value) : value, 'ui');
-        await asyncSetTimeout(0);
     }
+    await asyncSetTimeout(0);
 }
 
 export function getGroupColumnDisplayValue(rowNode: IRowNode): string | undefined {
