@@ -141,7 +141,8 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
     private onFilterKeyDown(e: KeyboardEvent): void {
         if (e.key === KeyCode.ENTER && !e.isComposing && !this.params.suppressColumnSelectAll) {
-            // Flush any pending debounced filter change so the toggle acts on the settled set.
+            // Stop Enter from submitting an enclosing form, and flush any pending debounced filter change so the toggle acts on the settled set.
+            e.preventDefault();
             this.dispatchFilterChanged();
             this.onSelectClicked();
         }
