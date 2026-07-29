@@ -341,9 +341,7 @@ export const TrialLicenceForm: FunctionComponent = ({ submitUrl }: Props) => {
                             onChange={handleEmailChange}
                         />
                     </span>
-                    <p className={classnames({ [styles.isHidden]: !emailError }, 'error')}>
-                        {emailError ? emailError : 'Email required'}
-                    </p>
+                    <p className="error">{emailError ? emailError : 'Email required'}</p>
                 </div>
 
                 <div className={classnames('input-field', { 'input-error': firstNameError })}>
@@ -358,16 +356,7 @@ export const TrialLicenceForm: FunctionComponent = ({ submitUrl }: Props) => {
                         required
                     />
 
-                    <p
-                        className={classnames(
-                            {
-                                [styles.isHidden]: !firstNameError,
-                            },
-                            'error'
-                        )}
-                    >
-                        First name required
-                    </p>
+                    <p className="error">First name required</p>
                 </div>
 
                 <div className={classnames('input-field', { 'input-error': lastNameError })}>
@@ -382,7 +371,7 @@ export const TrialLicenceForm: FunctionComponent = ({ submitUrl }: Props) => {
                         required
                     />
 
-                    <p className={classnames({ [styles.isHidden]: !firstNameError }, 'error')}>Last name required</p>
+                    <p className="error">Last name required</p>
                 </div>
             </div>
 
@@ -439,7 +428,9 @@ export const TrialLicenceForm: FunctionComponent = ({ submitUrl }: Props) => {
                     className={styles.submit}
                     type="submit"
                     disabled={hasFormError || formState === 'loading' || formState === 'success'}
+                    aria-busy={formState === 'loading'}
                 >
+                    {formState === 'loading' && <span className={styles.submitSpinner} aria-hidden="true" />}
                     Request a trial licence
                 </button>
 
