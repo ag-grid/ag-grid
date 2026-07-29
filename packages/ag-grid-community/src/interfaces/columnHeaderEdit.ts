@@ -7,6 +7,8 @@ import type { MenuItemDef } from './menuItem';
 export interface IColumnHeaderEditService extends Bean {
     /** The "Edit Column Name" menu item for the column or group, or `null` when it is not editable. */
     getEditColumnNameMenuItem(target: AgColumn | AgProvidedColumnGroup): MenuItemDef | null;
+    /** Whether the column or group's header name can be edited inline. */
+    isEditable(target: AgColumn | AgProvidedColumnGroup): boolean;
     /** Open the header-name editor for the given column or column group. */
     showHeaderNameEditor(target: AgColumn | AgProvidedColumnGroup): void;
     /** Whether the column's header is currently being edited and should be highlighted. */
