@@ -60,6 +60,12 @@ const License: FunctionComponent<LicenseData> = (props: LicenseData) => {
     );
 };
 
+// Only styled below the pricing breakpoint, where the columns stack and the column gradient stops.
+function tierEmphasisClass(id: string) {
+    if (id === 'together') return styles.bundleTier;
+    return id.includes('enterprise') ? styles.enterpriseTier : undefined;
+}
+
 export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked }) => {
     const filteredData = DEV_LICENSE_DATA.filter(
         (data) => data.tabGroup === 'both' || (isChecked ? data.tabGroup === 'charts' : data.tabGroup === 'grid')
@@ -102,14 +108,7 @@ export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked 
                 };
 
                 return (
-                    <div
-                        key={data.id}
-                        id={data.id}
-                        className={classnames(
-                            styles.license,
-                            data.id === 'together' ? styles.chartsLicense : styles.gridLicense
-                        )}
-                    >
+                    <div key={data.id} id={data.id} className={classnames(styles.license, tierEmphasisClass(data.id))}>
                         <License {...data} />
 
                         <span className={styles.toggleFeatureBreakdownButton} onClick={toggleFeatureBreakdown}>
