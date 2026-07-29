@@ -168,6 +168,20 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return this.operandModelValueGetters[baseCellDataType](operand, column, baseCellDataType);
     }
 
+    /**
+     * Whether a stored operand is itself valid input for its data type, i.e. whether feeding the model
+     * value back into the expression or the builder editor yields the same value again.
+     *
+     * True for most types: text and number model values are their input form, and dates store the iso
+     * string the editor expects. It is false only for `bigint`, where the model holds the canonical
+     * decimal while input goes through the column's `bigintParser` - so a parser reading a non-decimal
+     * syntax would reinterpret that decimal as a different number. Those operands have to be presented
+     * through `getOperandDisplayValue` (the `bigintFormatter`) or kept as the text the user typed.
+     */
+    public isOperandModelValueEditable(baseCellDataType: BaseCellDataType): boolean {
+        return baseCellDataType !== 'bigint';
+    }
+
     public getOperandDisplayValue(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
         const { filter, filterType } = model as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>;
 

@@ -196,4 +196,134 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
             └── LEAF id:2 value:"1000n"
         `);
     });
+
+    test('builder decimal operand is stored canonically, matches, and displays via the formatter', async () => {
+        const api = gridsManager.createGrid('grid4', {
+            columnDefs: withParser,
+            rowData: [{ value: 10n }, { value: 255n }, { value: 1000n }, { value: 65535n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        api.setAdvancedFilterModel({ filterType: 'bigint', colId: 'value', type: 'equals', filter: '1000' } as any);
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+
+        // The builder editor presents the stored operand through the formatter, not as the canonical
+        // decimal it is stored as — assert that here, while the builder is still open, so a
+        // regression showing `1000`/`255` in the editor cannot hide behind the applied expression.
+        expect(valuePillText(condition)).toBe('0x3E8');
+
+        await builder.setValue(condition, '255');
+        // Re-query: committing the edit re-renders the condition row, detaching the earlier element.
+        const [editedCondition] = await builder.conditionItems();
+        expect(valuePillText(editedCondition)).toBe('0xFF');
+
+        await builder.apply();
+        await asyncSetTimeout(0);
+
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'bigint',
+            colId: 'value',
+            type: 'equals',
+            filter: '255',
+        });
+        await new GridRows(api, 'builder decimal operand matches only 255').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 value:"255n"
+        `);
+        // The formatter is the canonical presentation of a stored operand, whatever syntax was typed.
+        expect(getService(api).getExpressionDisplayValue()).toBe('[Value] = 0xFF');
+    });
+
+    test('builder value editor opens with the formatted operand, not the underlying decimal', async () => {
+        const api = gridsManager.createGrid('grid5', {
+            columnDefs: withParser,
+            rowData: [{ value: 10n }, { value: 255n }, { value: 1000n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        api.setAdvancedFilterModel({ filterType: 'bigint', colId: 'value', type: 'equals', filter: '1000' } as any);
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+        expect(valuePillText(condition)).toBe('0x3E8');
+
+        // Editing must start from the value shown on the pill (the formatter's output, which the
+        // column's parser accepts), not the canonical decimal the model stores.
+        expect((await builder.openValueEditor(condition)).value).toBe('0x3E8');
+    });
+
+    test('builder keeps the typed operand syntax across apply when no formatter can reproduce it', async () => {
+        const api = gridsManager.createGrid('grid7', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    headerName: 'Value',
+                    cellDataType: 'bigint',
+                    filter: 'agBigIntColumnFilter',
+                    filterParams: { allowedCharPattern: 'n0-9a-fA-FxX+\\-', bigintParser: parseBigInt },
+                },
+            ],
+            rowData: [{ value: 10n }, { value: 255n }, { value: 1000n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        // Without a bigintFormatter the model's canonical `255` cannot be turned back into `0xff`,
+        // so the builder must carry the typed text rather than fall back to the decimal.
+        applyExpression(gridDiv, '[Value] = 0xff');
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+        expect(valuePillText(condition)).toBe('0xff');
+        expect((await builder.openValueEditor(condition)).value).toBe('0xff');
+
+        // Applying from the builder round-trips the operand through the expression text, so the
+        // typed syntax must survive a re-open too - and must still filter on the parsed value.
+        await builder.apply();
+        await asyncSetTimeout(0);
+        await builder.close();
+
+        const reopened = await AdvancedFilterBuilderHarness.open(api);
+        expect(valuePillText((await reopened.conditionItems())[0])).toBe('0xff');
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'bigint',
+            colId: 'value',
+            type: 'equals',
+            filter: '255',
+        });
+        await new GridRows(api, 'typed hex still matches only 255').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 value:"255n"
+        `);
+    });
+
+    test('builder value editor opens with the decimal operand when no formatter is provided', async () => {
+        const api = gridsManager.createGrid('grid6', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    headerName: 'Value',
+                    cellDataType: 'bigint',
+                    filter: 'agBigIntColumnFilter',
+                    filterParams: { allowedCharPattern: 'n0-9a-fA-FxX+\\-', bigintParser: parseBigInt },
+                },
+            ],
+            rowData: [{ value: 10n }, { value: 255n }, { value: 1000n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        api.setAdvancedFilterModel({ filterType: 'bigint', colId: 'value', type: 'equals', filter: '1000' } as any);
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+        expect(valuePillText(condition)).toBe('1000');
+        expect((await builder.openValueEditor(condition)).value).toBe('1000');
+    });
 });

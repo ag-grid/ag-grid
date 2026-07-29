@@ -275,6 +275,16 @@ class OperandParser implements Parser {
         return this.modelValue;
     }
 
+    /**
+     * The operand the builder should present and edit: the model value where that is valid input,
+     * otherwise the text the user typed, which the model value cannot be turned back into.
+     */
+    public getBuilderValue(): string | number {
+        return this.params.advFilterExpSvc.isOperandModelValueEditable(this.baseCellDataType)
+            ? this.modelValue
+            : this.operand;
+    }
+
     private parseOperand(fromComplete: boolean, position: number): void {
         const { advFilterExpSvc } = this.params;
         this.endPosition = position;
@@ -500,7 +510,7 @@ export class ColFilterExpressionParser {
         return null;
     }
 
-    public getModel(): AdvancedFilterModel {
+    public getModel(forBuilder?: boolean): AdvancedFilterModel {
         const colId = this.columnParser!.getColId();
         const model = {
             filterType: this.columnParser!.baseCellDataType,
@@ -508,7 +518,8 @@ export class ColFilterExpressionParser {
             type: this.operatorParser!.getOperatorKey(),
         };
         if (this.operatorParser!.expectedNumOperands) {
-            (model as any).filter = this.operandParser!.getModelValue();
+            const operandParser = this.operandParser!;
+            (model as any).filter = forBuilder ? operandParser.getBuilderValue() : operandParser.getModelValue();
         }
         return model as AdvancedFilterModel;
     }
