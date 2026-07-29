@@ -11,7 +11,6 @@ import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOption
 import type { CellRange } from '../../interfaces/IRangeService';
 import type {
     AggregationState,
-    CalculatedUserColumnState,
     CellSelectionState,
     ColumnGroupState,
     ColumnHeaderNameState,
@@ -32,6 +31,7 @@ import type {
     SideBarState,
     SortState,
 } from '../../interfaces/gridState';
+import type { CalculatedColumnsUserState } from '../../interfaces/iCalculatedColumns';
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from '../../interfaces/iExpansionService';
 import type { FilterModel } from '../../interfaces/iFilter';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
@@ -229,13 +229,15 @@ export class StateService extends BeanStub implements NamedBean {
             return;
         }
         // The incoming state is authoritative: recreate the calc cols it lists and drop any it omits.
-        // An absent/empty section therefore removes every runtime-added calc col.
+        // An absent/empty section therefore removes every runtime-added calc col and reverts every
+        // `columnDefs`-declared one to its declared definition.
         const userColumns = state.userColumns;
-        const calculatedCols: CalculatedUserColumnState[] = [];
+        const calculatedCols: CalculatedColumnsUserState[] = [];
         if (userColumns) {
             for (let i = 0, len = userColumns.length; i < len; ++i) {
                 const userColumn = userColumns[i];
-                if (userColumn.kind === 'calculated') {
+                const kind = userColumn.kind;
+                if (kind === 'calculated' || kind === 'calculatedOverride') {
                     calculatedCols.push(userColumn);
                 }
             }

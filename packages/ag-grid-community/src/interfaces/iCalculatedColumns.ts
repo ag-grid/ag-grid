@@ -4,7 +4,7 @@ import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
-import type { CalculatedUserColumnState } from './gridState';
+import type { CalculatedOverrideUserColumnState, CalculatedUserColumnState } from './gridState';
 import type { HeaderPosition } from './iHeaderPosition';
 
 export type CalculatedColumnExpressionPicker = 'columns' | 'functions' | 'operators';
@@ -47,6 +47,17 @@ export type CalculatedColumnUpdate<TData = any, TValue = any> = Partial<ColDef<T
     calculatedExpression?: string;
 };
 
+export interface CalculatedColumnsResetOptions {
+    /** Park API/dialog-added cols for a later `restoreDynamicColumnDefs` instead of dropping them. */
+    preserveCreatedColumns?: boolean;
+    /** Keep the user's edits and deletions of `columnDefs`-declared calc cols. Set when `columnDefs`
+     *  changes, so a column the user deleted is not resurrected by an unrelated developer change. */
+    preserveDeclaredColOverrides?: boolean;
+}
+
+/** The `GridState.userColumns` members owned by the calculated-columns service. */
+export type CalculatedColumnsUserState = CalculatedUserColumnState | CalculatedOverrideUserColumnState;
+
 export interface ICalculatedColumnsService extends Bean {
     removeCalculatedColumn(column: AgColumn | null | undefined): void;
     openCalculatedColumnDialog(
@@ -63,15 +74,16 @@ export interface ICalculatedColumnsService extends Bean {
     overrideFor(colDef: ColDef): ColDef | null | undefined;
     /** Build-time dynamic calc-col hook: keep owned AgColumns alive and splice them at anchors (`overrideFor` handles static cols). */
     contributeTo(build: ColumnTreeBuild): void;
-    /** Clear dynamic calc-col state; with `preserveCreatedColumns`, park added cols for `restoreDynamicColumnDefs`, and return whether caller must rebuild. */
-    resetDynamicColumnDefs(preserveCreatedColumns?: boolean): boolean;
+    /** Clear dynamic calc-col state and return whether the caller must rebuild. See {@link CalculatedColumnsResetOptions}. */
+    resetDynamicColumnDefs(options?: CalculatedColumnsResetOptions): boolean;
     /** Re-add parked dynamic cols referenced by `state` and return whether any were restored (caller rebuilds). */
     restoreDynamicColumnDefs(state: ColumnState[]): boolean;
-    /** Serialise dynamic (API/dialog-added) calc cols to grid state, in creation order. `undefined` when none. */
-    getUserColumnState(): CalculatedUserColumnState[] | undefined;
-    /** Reconcile dynamic calc cols against authoritative grid state: recreate listed cols, drop any not
-     *  listed. Rebuilds once. */
-    reconcileUserColumns(state: CalculatedUserColumnState[]): void;
+    /** Serialise dynamic (API/dialog-added) calc cols to grid state in creation order, followed by the
+     *  user's edits and deletions of `columnDefs`-declared ones. `undefined` when there are none. */
+    getUserColumnState(): CalculatedColumnsUserState[] | undefined;
+    /** Reconcile calc cols against authoritative grid state: recreate listed dynamic cols and drop any
+     *  not listed, re-apply listed overrides of `columnDefs` cols and revert any not listed. Rebuilds once. */
+    reconcileUserColumns(state: CalculatedColumnsUserState[]): void;
     /** Run a suppressed rebuild after calc-col mutation so column-state ops avoid spurious calc lifecycle events. */
     refreshDynamicColumns(source: ColumnEventType): void;
     isEnabled(): boolean;

@@ -246,6 +246,8 @@ export type {
     CalculatedColumnExpressionPicker,
     CalculatedColumnsGridOption,
     CalculatedColumnsOptions,
+    CalculatedColumnsResetOptions,
+    CalculatedColumnsUserState,
     CalculatedColumnUpdate,
     ICalculatedColumnsService,
 } from './interfaces/iCalculatedColumns';
@@ -615,6 +617,7 @@ export type { GridOptionsService, PropertyChangedEvent, PropertyValueChangedEven
 export type {
     AggregationColumnState,
     AggregationState,
+    CalculatedOverrideUserColumnState,
     CalculatedUserColumnState,
     CellSelectionCellState,
     CellSelectionState,

@@ -591,7 +591,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType) {
-        this.beans.calculatedColsSvc?.resetDynamicColumnDefs();
+        // The user's edits and deletions of declared calc cols survive: they are grid state, so a
+        // `columnDefs` change must not resurrect a column the user deleted. `resetColumnState` clears them.
+        this.beans.calculatedColsSvc?.resetDynamicColumnDefs({ preserveDeclaredColOverrides: true });
         this.colDefs = columnDefs;
         this.buildFromColDefs(source, true);
     }

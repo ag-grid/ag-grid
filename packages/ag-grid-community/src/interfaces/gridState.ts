@@ -1,6 +1,9 @@
+import { ColDef } from 'ag-grid-community';
+
 import type { ShowValuesAs, ShowValuesAsType } from '../entities/colDef-showValuesAs';
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
+import type { ColumnGroupShowType } from './iColumn';
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from './iExpansionService';
 import type { ColumnFilterState, FilterModel } from './iFilter';
 import type { RowPosition } from './iRowPosition';
@@ -189,6 +192,12 @@ export interface ColumnHeaderNameColumnState {
     headerName: string;
 }
 
+export interface ColumnPropertyColumnState<T extends keyof ColDef> {
+    colId: string;
+    propertyName: T;
+    value: ColDef[T];
+}
+
 export interface ColumnHeaderNameState {
     /** User-edited column header names, keyed by column id. */
     columnHeaderNames: ColumnHeaderNameColumnState[];
@@ -204,6 +213,9 @@ export interface UserColumnStateBase {
     /** Leaf `colId` whose column group this column joins; group membership is inherited from that sibling
      *  leaf. `null` when the column sits at the top level (no group). */
     groupAnchorColId: string | null;
+    /** `columnGroupShow` the column was created with (taken from the anchor leaf at creation time).
+     *  Serialised explicitly so restore does not depend on the anchor's current configuration. */
+    columnGroupShow?: ColumnGroupShowType;
 }
 
 export interface CalculatedUserColumnState extends UserColumnStateBase {
@@ -213,8 +225,23 @@ export interface CalculatedUserColumnState extends UserColumnStateBase {
     headerName?: string;
 }
 
-/** Discriminated union of runtime-added columns; grows one member per column kind. */
-export type UserColumnState = CalculatedUserColumnState;
+/** A user change to a calculated column that IS declared in `columnDefs`. The column itself is created by
+ *  `columnDefs`; this only carries what the user changed about it, so that state stays authoritative:
+ *  a listed entry re-applies the change, and an absent one reverts the column to its `columnDefs`
+ *  definition. Position and layout stay owned by `columnDefs` and the other column sections. */
+export interface CalculatedOverrideUserColumnState {
+    kind: 'calculatedOverride';
+    colId: string;
+    /** `true` when the user deleted the column; restore removes it again rather than re-applying a
+     *  definition. Mutually exclusive with the definition properties below. */
+    removed?: boolean;
+    calculatedExpression?: string;
+    cellDataType?: string;
+    headerName?: string;
+}
+
+/** Discriminated union of runtime column additions and overrides; grows one member per column kind. */
+export type UserColumnState = CalculatedUserColumnState | CalculatedOverrideUserColumnState;
 
 export interface RowPinningState {
     /** Row IDs of rows pinned to the top container */
@@ -232,9 +259,10 @@ export interface GridState {
     columnGroup?: ColumnGroupState;
     /** Includes column ordering (column state) */
     columnOrder?: ColumnOrderState;
-    /** Columns added at runtime that are not present in `columnDefs` (e.g. calculated columns).
-     *  Unlike the other column sections (which configure existing columns), this recreates the columns
-     *  themselves when the state is applied. */
+    /** Runtime changes to the set of columns themselves (e.g. calculated columns): columns added by the
+     *  user that are not present in `columnDefs`, plus edits and deletions the user made to `columnDefs`
+     *  ones. Unlike the other column sections (which configure existing columns), applying this creates
+     *  and removes columns. */
     userColumns?: UserColumnState[];
     /** Includes left/right pinned columns (column state) */
     columnPinning?: ColumnPinningState;
