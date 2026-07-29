@@ -94,7 +94,7 @@ export const MarkdownActions: FunctionComponent<Props> = ({ markdownHref }) => {
                 </DropdownMenu.Trigger>
 
                 <DropdownMenu.Portal>
-                    <DropdownMenu.Content className={styles.content} align="end" sideOffset={4}>
+                    <DropdownMenu.Content className={styles.content} align="end" sideOffset={0}>
                         <DropdownMenu.Item className={styles.item} asChild>
                             <a href={markdownHref} data-markdown-link>
                                 View as Markdown
