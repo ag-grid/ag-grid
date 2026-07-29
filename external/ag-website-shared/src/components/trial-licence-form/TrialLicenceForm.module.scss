@@ -73,6 +73,13 @@ $trial-licence-small: 680px;
     }
 }
 
+.consents {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    margin-bottom: $spacing-size-4;
+}
+
 .actions {
     display: flex;
     flex-direction: column;
@@ -96,13 +103,30 @@ $trial-licence-small: 680px;
     }
 }
 
-div p.privacyMessage {
-    font-size: var(--text-fs-xs);
-    line-height: var(--text-lh-xs);
-    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 30%);
+.submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-size-2;
+}
 
-    a {
-        font-weight: var(--text-regular);
+.submitSpinner {
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: trial-form-spinner 0.7s linear infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation-duration: 2.4s;
+    }
+}
+
+@keyframes trial-form-spinner {
+    to {
+        transform: rotate(360deg);
     }
 }
 

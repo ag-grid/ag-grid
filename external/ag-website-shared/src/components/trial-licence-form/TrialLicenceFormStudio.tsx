@@ -1,5 +1,4 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { PRIVACY_POLICY_URL } from '@ag-website-shared/constants';
 import { TRIAL_LICENCE_FORM_URL, ZI_FORM_ID } from '@constants';
 import { trackTrialLicenseFormError, trackTrialLicenseFormSuccess } from '@utils/analytics';
 import classnames from 'classnames';
@@ -236,16 +235,7 @@ export const TrialLicenceFormStudio: FunctionComponent = ({ submitUrl }: Props) 
                         required
                     />
 
-                    <p
-                        className={classnames(
-                            {
-                                [styles.isHidden]: !firstNameError,
-                            },
-                            'error'
-                        )}
-                    >
-                        First name required
-                    </p>
+                    <p className="error">First name required</p>
                 </div>
 
                 <div className={classnames('input-field', { 'input-error': lastNameError })}>
@@ -260,7 +250,7 @@ export const TrialLicenceFormStudio: FunctionComponent = ({ submitUrl }: Props) 
                         required
                     />
 
-                    <p className={classnames({ [styles.isHidden]: !lastNameError }, 'error')}>Last name required</p>
+                    <p className="error">Last name required</p>
                 </div>
             </div>
 
@@ -278,9 +268,7 @@ export const TrialLicenceFormStudio: FunctionComponent = ({ submitUrl }: Props) 
                         onChange={handleEmailChange}
                     />
                 </span>
-                <p className={classnames({ [styles.isHidden]: !emailError }, 'error')}>
-                    {emailError ? emailError : 'Email required'}
-                </p>
+                <p className="error">{emailError ? emailError : 'Email required'}</p>
             </div>
 
             <div className={classnames(styles.actions, 'trial-licence-actions')}>
@@ -289,13 +277,11 @@ export const TrialLicenceFormStudio: FunctionComponent = ({ submitUrl }: Props) 
                     className={styles.submit}
                     type="submit"
                     disabled={hasFormError || formState === 'loading' || formState === 'success'}
+                    aria-busy={formState === 'loading'}
                 >
+                    {formState === 'loading' && <span className={styles.submitSpinner} aria-hidden="true" />}
                     Start a free trial
                 </button>
-
-                <p className={styles.privacyMessage}>
-                    By submitting this form you agree to our <a href={PRIVACY_POLICY_URL}>Privacy Policy</a>.
-                </p>
 
                 {formState === 'success' && (
                     <p className={styles.statusMessage}>
