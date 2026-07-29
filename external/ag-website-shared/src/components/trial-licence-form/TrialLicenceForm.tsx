@@ -254,6 +254,7 @@ function useTrialForm({ submitUrl }: Props) {
             }
         },
         [
+            submitUrl,
             validatedEmailError,
             validatedFirstNameError,
             validatedLastNameError,
@@ -292,7 +293,7 @@ function useTrialForm({ submitUrl }: Props) {
     };
 }
 
-export const TrialLicenceForm: FunctionComponent = ({ submitUrl }: Props) => {
+export const TrialLicenceForm: FunctionComponent<Props> = ({ submitUrl }: Props) => {
     const {
         formState,
         formError,
