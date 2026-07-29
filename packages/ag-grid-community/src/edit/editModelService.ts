@@ -379,6 +379,14 @@ export class EditModelService extends BeanStub implements NamedBean {
         this.editingCount = 0;
     }
 
+    /**
+     * Side-effect-free "is anything invalid?". Scope follows the position: omitted means the whole grid,
+     * a rowNode without a column means that row. Callers that must not repopulate/refresh use this.
+     */
+    public hasValidationErrors(position?: EditPosition): boolean {
+        return this.rowValidations.hasRowValidation(position) || this.cellValidations.hasCellValidation(position);
+    }
+
     public getCellValidationModel(): EditCellValidationModel {
         return this.cellValidations;
     }
@@ -409,11 +417,13 @@ export class EditCellValidationModel {
         return this.cellValidations?.get(rowNode!)?.get(column!);
     }
 
+    /** Scope follows the position: no rowNode means the whole grid, a rowNode without a column means that row. */
     public hasCellValidation(position?: EditPosition): boolean {
-        if (!position?.rowNode || !position.column) {
+        const rowNode = position?.rowNode;
+        if (!rowNode) {
             return this.cellValidations.size > 0;
         }
-        return !!this.getCellValidation(position);
+        return position.column ? !!this.getCellValidation(position) : this.cellValidations.has(rowNode);
     }
 
     public setCellValidation(position: Required<EditPosition>, validation: EditValidation): void {
@@ -426,7 +436,15 @@ export class EditCellValidationModel {
 
     public clearCellValidation(position: Required<EditPosition>): void {
         const { rowNode, column } = position;
-        this.cellValidations.get(rowNode)?.delete(column);
+        const cellValidations = this.cellValidations;
+        const rowValidations = cellValidations.get(rowNode);
+        if (rowValidations) {
+            rowValidations.delete(column);
+            if (rowValidations.size === 0) {
+                // Drop the emptied row so cellValidations.size stays an accurate "has any error" signal.
+                cellValidations.delete(rowNode);
+            }
+        }
     }
 
     public setCellValidationMap(validationMap: EditValidationMap): void {

@@ -10,8 +10,13 @@ import type {
 } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _getCellCtrl } from './utils/controllers';
-import { UNEDITED, _destroyEditors, _sourceAndPendingDiffer, _syncFromEditors } from './utils/editors';
+import {
+    UNEDITED,
+    _flushEditors,
+    _readEditValidationErrors,
+    _sourceAndPendingDiffer,
+    _validateEdit,
+} from './utils/editors';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.undo('api');
@@ -57,24 +62,17 @@ export function getEditingCells(beans: BeanCollection): EditingCellPosition[] {
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
     const { editSvc } = beans;
     if (editSvc?.isBatchEditing()) {
-        if (cancel) {
-            for (const cellPosition of beans.editModelSvc?.getEditPositions() ?? []) {
-                if (cellPosition.state === 'editing') {
-                    editSvc.revertSingleCellEdit(cellPosition);
-                }
-            }
-        } else {
-            _syncFromEditors(beans, { persist: true });
-        }
-        _destroyEditors(beans, undefined, { cancel });
+        editSvc.stopBatchEditors(cancel);
     } else {
         editSvc?.stopEditing(undefined, { cancel, source: 'edit', forceStop: !cancel, forceCancel: cancel });
     }
 }
 
 export function isEditing(beans: BeanCollection, cellPosition: CellPosition): boolean {
-    const cellCtrl = _getCellCtrl(beans, cellPosition);
-    return !!beans.editSvc?.isEditing(cellCtrl);
+    // Resolved from the row model, not a cell controller: an unrendered row has no controller, and an
+    // undefined position makes isEditing answer "is anything editing" — a scroll-dependent wrong answer.
+    const rowNode = _getRowNode(beans, cellPosition);
+    return !!rowNode && !!beans.editSvc?.isEditing({ rowNode, column: cellPosition.column });
 }
 
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
@@ -124,8 +122,12 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 }
 
 export function validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
-    return beans.editSvc?.validateEdit() || null;
+    _flushEditors(beans);
+    return _validateEdit(beans);
 }
+
+export const getEditValidationErrors: (beans: BeanCollection) => ICellEditorValidationError[] | null =
+    _readEditValidationErrors;
 
 export function getCurrentUndoSize(beans: BeanCollection): number {
     return beans.undoRedo?.getCurrentUndoStackSize() ?? 0;

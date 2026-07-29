@@ -1,9 +1,11 @@
 import { KeyCode } from 'ag-stack';
 
 import { BeanStub } from '../../context/beanStub';
-import type { BeanName } from '../../context/context';
+import type { BeanCollection, BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
+import type { RowNode } from '../../entities/rowNode';
+import { _createGlobalRowEvent } from '../../entities/rowNodeUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditMap, EditValue, ReadonlyEditMap, ReadonlyEditRow } from '../../interfaces/iEditModelService';
@@ -17,6 +19,7 @@ import type {
 } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
+import { _createCellEvent } from '../../rendering/cell/cellEvent';
 import type { EditModelService } from '../editModelService';
 import type { EditService } from '../editService';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
@@ -199,6 +202,17 @@ export abstract class BaseEditStrategy extends BeanStub {
         cellCtrl.comp?.getCellEditor()?.focusOut?.();
     }
 
+    /** Pins focus to the cell the user must fix, so blocked navigation can't leak focus to another row. */
+    public focusFirstInvalidCell(cell: CellCtrl, event?: KeyboardEvent): void {
+        const target = findFirstInvalidCell(this.beans, this.model, cell.rowNode) ?? cell;
+
+        // setFocusInOnEditor must run last, or forceBrowserFocus drags the caret back out of the editor.
+        target.focusCell({ forceBrowserFocus: true, sourceEvent: event });
+        if (target.isCellEditable()) {
+            this.setFocusInOnEditor(target);
+        }
+    }
+
     public setFocusInOnEditor(cellCtrl: CellCtrl): void {
         const comp = cellCtrl.comp;
         const editor = comp?.getCellEditor();
@@ -213,7 +227,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
             const isFullRow = this.beans.gos.get('editType') === 'fullRow';
             cellCtrl.focusCell({ forceBrowserFocus: isFullRow });
-            cellCtrl.onEditorAttachedFuncs.push(() => comp?.getCellEditor()?.focusIn?.());
+            this.editSvc.focusEditorOnAttach(cellCtrl, false);
         }
     }
 
@@ -230,11 +244,20 @@ export abstract class BaseEditStrategy extends BeanStub {
         type?: T,
         payload?: any
     ): void {
-        const cellCtrl = _getCellCtrl(this.beans, position);
+        const { beans } = this;
+        const cellCtrl = _getCellCtrl(beans, position);
 
-        if (cellCtrl) {
-            this.eventSvc.dispatchEvent({ ...(cellCtrl.createEvent(event ?? null, type as T) as any), ...payload });
-        }
+        // Without a controller (cell hidden / virtualised out) the event still has to fire, or an edit ending
+        // off-screen leaves the started/stopped pair unbalanced. Resolved through the same read the editor
+        // opened on, since the raw field carries no pending edit and no getter, formula or group value.
+        const value = cellCtrl
+            ? cellCtrl.value
+            : beans.valueSvc.getDisplayValue(position.column as AgColumn, position.rowNode, 'edit', false);
+
+        this.eventSvc.dispatchEvent({
+            ..._createCellEvent(beans, event ?? null, type as T, position, value),
+            ...payload,
+        });
     }
 
     public dispatchRowEvent(
@@ -246,12 +269,16 @@ export abstract class BaseEditStrategy extends BeanStub {
             return;
         }
 
-        const rowCtrl = _getRowCtrl(this.beans, position)!;
-
-        if (rowCtrl) {
-            this.eventSvc.dispatchEvent(rowCtrl.createRowEvent(type));
-        }
+        const rowCtrl = _getRowCtrl(this.beans, position);
+        // The row can outlive its controller (removed, or virtualised out), and a stopped event still
+        // has to balance the started one, so fall back to building it from the node.
+        this.eventSvc.dispatchEvent(
+            rowCtrl ? rowCtrl.createRowEvent(type) : _createGlobalRowEvent(position.rowNode as RowNode, this.gos, type)
+        );
     }
+
+    /** Edits ended outside the stop pipeline (their rows were purged), so drop any per-row bookkeeping. */
+    public abstract releaseRows(rowNodes: Set<IRowNode>): void;
 
     public shouldStop(
         _position?: EditPosition,
@@ -354,3 +381,38 @@ export abstract class BaseEditStrategy extends BeanStub {
         super.destroy();
     }
 }
+
+/**
+ * The cell the user must fix: the row's first invalid cell in visible-column order, scrolled in when its
+ * column is virtualised out. The scroll targets that one column, not every candidate a scan would reject.
+ */
+const findFirstInvalidCell = (
+    beans: BeanCollection,
+    model: EditModelService,
+    rowNode: IRowNode
+): CellCtrl | undefined => {
+    const rowValidations = model.getCellValidationModel().getCellValidationMap().get(rowNode);
+    if (!rowValidations) {
+        return undefined;
+    }
+
+    const cols = beans.visibleCols.allCols;
+    let column: AgColumn | undefined;
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const col = cols[i];
+        if (rowValidations.has(col)) {
+            column = col;
+            break;
+        }
+    }
+    if (!column) {
+        return undefined;
+    }
+
+    const cellCtrl = _getCellCtrl(beans, { rowNode, column });
+    if (cellCtrl) {
+        return cellCtrl;
+    }
+    beans.navigation?.ensureColumnVisible(column);
+    return _getCellCtrl(beans, { rowNode, column });
+};

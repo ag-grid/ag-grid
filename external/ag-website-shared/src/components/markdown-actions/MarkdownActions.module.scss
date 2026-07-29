@@ -1,0 +1,157 @@
+@use 'design-system' as *;
+
+// Matches the height, spacing and border treatment of the shared Select trigger
+// (see Select.module.scss) so this sits alongside one as a single control group.
+// The segments carry their own corner radii rather than the container clipping
+// them, so the focus ring on the chevron is not cut off.
+$segment-radius: calc(var(--radius-sm) - 1px);
+
+.markdownActions {
+    display: flex;
+    align-items: stretch;
+    height: 36px;
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-primary);
+    box-shadow: var(--shadow-xs);
+    transition: border $transition-default-timing;
+
+    &:hover {
+        border-color: var(--color-input-border-hover);
+
+        #{$selector-darkmode} & {
+            border-color: var(--color-brand-200);
+        }
+    }
+}
+
+@mixin segment {
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+    color: var(--color-fg-primary);
+
+    &:hover,
+    &:active {
+        background-color: var(--color-bg-secondary);
+        color: var(--color-fg-primary);
+    }
+
+    &:focus-visible {
+        #{$selector-darkmode} & {
+            box-shadow:
+                0 0 0 $spacing-size-1 color-mix(in srgb, var(--color-brand-200), var(--color-bg-primary) 60%),
+                var(--shadow-xs);
+        }
+    }
+}
+
+.primaryAction {
+    @include segment;
+
+    display: flex;
+    align-items: center;
+    padding: 0 $spacing-size-4;
+    border-radius: $segment-radius 0 0 $segment-radius;
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-regular);
+    white-space: nowrap;
+}
+
+// Stacks the live label over a hidden copy of the longest one, so the button
+// keeps its width when the label changes.
+.labelStack {
+    display: grid;
+
+    > * {
+        grid-area: 1 / 1;
+    }
+}
+
+.labelSizer {
+    visibility: hidden;
+}
+
+.trigger {
+    @include segment;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 $spacing-size-3;
+    border-left: 1px solid var(--color-input-border);
+    border-radius: 0 $segment-radius $segment-radius 0;
+
+    // The open menu takes pointer events, so the segment stops matching :hover while
+    // it is the thing that opened it. Hold the tint until the menu closes.
+    &[data-state='open'] {
+        background-color: var(--color-bg-secondary);
+    }
+}
+
+.chevron {
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+}
+
+.content {
+    min-width: 180px;
+    overflow: hidden;
+    padding: 6px;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+    box-shadow:
+        0px 10px 38px -10px rgba(22, 23, 24, 0.35),
+        0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+    z-index: 1000;
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 12%);
+        border: 1px solid color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 22%);
+    }
+
+    &[data-state='open'] {
+        animation: menuScaleInDown 150ms cubic-bezier(0.4, 0, 1, 1);
+    }
+}
+
+@keyframes menuScaleInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0px) scale(1);
+    }
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 3px;
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-regular);
+    line-height: 1;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+
+    #{$selector-darkmode} & {
+        color: var(--color-fg-white);
+    }
+
+    &[data-highlighted] {
+        outline: none;
+        background-color: var(--color-util-brand-50);
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 20%);
+        }
+    }
+}

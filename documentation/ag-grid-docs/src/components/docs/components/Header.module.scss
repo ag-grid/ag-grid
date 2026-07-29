@@ -7,10 +7,6 @@
 .docsPageTitle {
     margin-bottom: $spacing-size-1;
 
-    span:nth-of-type(2) {
-        letter-spacing: -1.2px;
-    }
-
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         line-height: var(--line-height-ultra-tight);
     }
@@ -20,63 +16,78 @@
     }
 }
 
+// Narrow screens stack the metadata, then the controls, then the title. From the
+// docs-search breakpoint up, the controls move to the top right: they span both
+// rows so they sit level with the metadata without pushing the title down.
 .pageTitleContainer {
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: space-between;
-    align-items: flex-start;
+    display: grid;
     width: 100%;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        'meta'
+        'actions'
+        'title';
+    row-gap: $spacing-size-3;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
-        flex-direction: row;
-    }
-
-    // Prevent framework selector dropdown from appearing off screen
-    @media screen and (min-width: $breakpoint-docs-search-medium) and (max-width: $breakpoint-docs-nav-large) {
-        button {
-            min-width: 140px;
-        }
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            'meta actions'
+            'title actions';
+        column-gap: $spacing-size-4;
     }
 }
 
-.pageTitleGroup {
+// Eyebrow line above the page title, holding the framework name and grid version.
+.titleMeta {
+    grid-area: meta;
     display: flex;
-    flex-direction: column;
-    color: var(--color-fg-primary);
-
-    @media screen and (max-width: $breakpoint-docs-search-medium) {
-        margin-top: $spacing-size-4;
-    }
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: $spacing-size-3;
 }
 
 .headerFramework {
-    display: none;
     font-size: var(--text-fs-base);
     font-weight: var(--text-semibold);
     color: var(--color-text-brand-primary);
-    padding-bottom: $spacing-size-3;
-
-    @media screen and (min-width: $breakpoint-docs-search-medium) {
-        display: block;
-    }
-}
-
-.pageMeta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: $spacing-size-3;
-    margin-top: $spacing-size-2;
-    font-size: var(--text-fs-sm);
-    color: var(--color-text-secondary);
 }
 
 .version {
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-regular);
     color: var(--color-text-tertiary);
 }
 
-.markdownLink {
-    font-weight: var(--text-semibold);
+.headerActions {
+    grid-area: actions;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-self: start;
+    justify-self: start;
+    gap: $spacing-size-3;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        justify-self: end;
+        gap: $spacing-size-2;
+    }
+}
+
+// Narrow screens lead with the framework selector, so it also takes the first row
+// if the two controls are too wide to share one. Wider screens put the markdown
+// actions first, nearest the page content.
+.frameworkSelectorSlot {
+    order: -1;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        order: 0;
+    }
+}
+
+.pageTitle {
+    grid-area: title;
+    color: var(--color-fg-primary);
 }
 
 .enterpriseLabel {

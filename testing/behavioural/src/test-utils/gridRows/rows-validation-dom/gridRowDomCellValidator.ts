@@ -9,9 +9,11 @@ import {
     cellValueMismatchMsg,
     combineGroupValue,
     findCellElement,
+    findEditorInput,
     findGroupRowsWrapper,
     getGroupRowsActualText,
     hasSuppressCount,
+    isAgEditorInput,
     isAutoGroupColumn,
 } from './cell-helpers';
 
@@ -445,13 +447,33 @@ export class GridRowDomCellValidator {
         column: Column<any>,
         rowErrors: GridRowErrors<any>
     ): void {
-        const input = cellElement.querySelector<HTMLInputElement | HTMLTextAreaElement>(
-            '.ag-cell-editor input.ag-input-field-input, .ag-cell-editor textarea'
-        );
-        if (!input) {
-            // Popup/custom editor — input lives outside the cell.
+        const columnId = column.getColId();
+        const modelInvalid = this.gridRows.isCellInvalid(row, columnId);
+
+        // A popup editor's markers live in the popup, which carries nothing tying it back to this cell.
+        if (!cellElement.classList.contains('ag-cell-popup-editing')) {
+            const domInvalid = this.gridRows.isCellDomInvalid(row, columnId);
+            rowErrors.add(
+                modelInvalid &&
+                    !domInvalid &&
+                    `Cell id:"${columnId}" has a validation error in the model but no invalid marker in the DOM (expected aria-invalid="true", a custom validity message, or the "invalid" class)`
+            );
+            rowErrors.add(
+                !modelInvalid &&
+                    domInvalid &&
+                    `Cell id:"${columnId}" shows an invalid marker in the DOM but the model reports no validation error`
+            );
+        }
+
+        // An invalid cell deliberately keeps the rejected value in the editor while the model holds the
+        // last valid one, so the two diverge on purpose and only the markers above are comparable.
+        const input = modelInvalid ? null : findEditorInput(cellElement);
+        // A custom composite editor's getValue() need not map to any single input, so only compare
+        // the DOM value against the model for built-in AG editor inputs.
+        if (!input || !isAgEditorInput(input)) {
             return;
         }
+
         const editValue = this.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false, from: 'edit' });
         const expectedForms = editValueAlternatives(editValue);
         const actualStr = input.value ?? '';
@@ -461,7 +483,6 @@ export class GridRowDomCellValidator {
             return;
         }
 
-        const columnId = column.getColId();
         rowErrors.add(
             !expectedForms.includes(actualStr) &&
                 `Editor input value mismatch for column id:"${columnId}", expected one of ${JSON.stringify(expectedForms)}, got ${JSON.stringify(actualStr)}`

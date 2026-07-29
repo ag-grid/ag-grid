@@ -139,6 +139,11 @@ describe('Advanced Filter Header DOM', () => {
         { field: 'age', filter: true },
     ];
 
+    const athletes = [
+        { athlete: 'Michael Phelps', age: 23 },
+        { athlete: 'Usain Bolt', age: 25 },
+    ];
+
     test('input stays enabled while the grid is still waiting for row data', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: filterableColumnDefs,
@@ -252,5 +257,119 @@ describe('Advanced Filter Header DOM', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 athlete:"Michael Phelps" age:23
         `);
+    });
+
+    test('does not focus the input when the grid initialises without row data', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: filterableColumnDefs,
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+
+        await new FilterDom(api, 'init without row data').checkFilterDom(`
+            ADVANCED FILTER
+            input: ""
+            valid: true
+            buttons: Apply ⊘ | Builder
+            model: null
+        `);
+        await new GridRows(api, 'init without row data').check(`
+            ROOT id:ROOT_NODE_ID
+        `);
+
+        expect(document.activeElement).toBe(document.body);
+    });
+
+    test('does not focus the input when the grid initialises with row data', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: filterableColumnDefs,
+            rowData: athletes,
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+
+        await new FilterDom(api, 'init with row data').checkFilterDom(`
+            ADVANCED FILTER
+            input: ""
+            valid: true
+            buttons: Apply ⊘ | Builder
+            model: null
+        `);
+        await new GridRows(api, 'init with row data').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" age:23
+            └── LEAF id:1 athlete:"Usain Bolt" age:25
+        `);
+
+        expect(document.activeElement).toBe(document.body);
+    });
+
+    test('does not focus the input when the model is set via the API', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: filterableColumnDefs,
+            rowData: athletes,
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+
+        api.setAdvancedFilterModel({ filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Bolt' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await new FilterDom(api, 'model set via API').checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Athlete] contains "Bolt""
+            valid: true
+            buttons: Apply ⊘ | Builder
+            model:
+              filterType: "text"
+              colId: "athlete"
+              type: "contains"
+              filter: "Bolt"
+        `);
+        await new GridRows(api, 'model set via API').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 athlete:"Usain Bolt" age:25
+        `);
+
+        expect(document.activeElement).toBe(document.body);
+    });
+
+    test('restores focus to the input when cleared via the clear button', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: filterableColumnDefs,
+            rowData: athletes,
+            enableAdvancedFilter: true,
+            advancedFilterParams: { buttons: ['apply', 'clear'] },
+        });
+        await asyncSetTimeout(0);
+
+        const harness = AdvancedFilterHarness.get(api);
+        await harness.applyExpression('[Athlete] contains "Bolt"');
+        await asyncSetTimeout(0);
+
+        const eClear = document.querySelector<HTMLElement>('.ag-advanced-filter-buttons [data-ref=clearFilterButton]')!;
+        eClear.focus();
+        eClear.click();
+        await asyncSetTimeout(0);
+
+        // Clear only empties the editor - the applied model (and the filtered rows) stay until Apply.
+        await new FilterDom(api, 'cleared via clear button').checkFilterDom(`
+            ADVANCED FILTER
+            input: ""
+            valid: true
+            buttons: Apply | Clear | Builder
+            model:
+              filterType: "text"
+              colId: "athlete"
+              type: "contains"
+              filter: "Bolt"
+        `);
+        await new GridRows(api, 'cleared via clear button').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 athlete:"Usain Bolt" age:25
+        `);
+
+        expect(document.activeElement).toBe(harness.input);
     });
 });

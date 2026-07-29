@@ -30,21 +30,43 @@ export interface SpannedCellInfo {
     span: number;
 }
 
-/** Parse a `.ag-spanned-row [col-id]` cell. Pinned rows carry a prefixed `row-index` (`t-0`/`b-0`);
- *  the model index (matching `RowNode.rowIndex`) is the trailing number. Returns null if not a real span. */
+/** The cell key shared by the model-side and DOM-side invalid/editing lookups. Both must build it here,
+ *  or a mismatch silently makes the cross-checks pass. */
+export function cellKey(rowIndex: number | null | undefined, pinned: string | null | undefined, colId: string) {
+    return `${rowKey(rowIndex, pinned)}:${colId}`;
+}
+
+/** As {@link cellKey}, for row-scoped lookups. The pinned section is part of the key because a pinned row
+ *  and a body row share a rowIndex. */
+export function rowKey(rowIndex: number | null | undefined, pinned: string | null | undefined) {
+    return `${rowIndex}:${pinned ?? ''}`;
+}
+
+/** Model row index + pinned section of a `[row-index]` element. Pinned rows carry a prefixed `row-index`
+ *  (`t-0`/`b-0`); the model index (matching `RowNode.rowIndex`) is the trailing number. */
+export function parseRowElement(rowElement: Element): { rowIndex: number; pinned: '' | 'top' | 'bottom' } {
+    const raw = rowElement.getAttribute('row-index');
+    const rowIndex = raw != null ? Number(raw.replace(/^\D+/, '')) : NaN;
+    let pinned: '' | 'top' | 'bottom' = '';
+    if (rowElement.closest('.ag-grid-pinned-top-rows')) {
+        pinned = 'top';
+    } else if (rowElement.closest('.ag-grid-pinned-bottom-rows')) {
+        pinned = 'bottom';
+    }
+    return { rowIndex, pinned };
+}
+
+/** Parse a `.ag-spanned-row [col-id]` cell. Returns null if not a real span. */
 export function parseSpannedCell(cell: Element): SpannedCellInfo | null {
     const colId = cell.getAttribute('col-id');
     const span = Number(cell.getAttribute('aria-rowspan'));
-    const raw = cell.closest('[row-index]')?.getAttribute('row-index');
-    const anchorIndex = raw != null ? Number(raw.replace(/^\D+/, '')) : NaN;
-    if (!colId || !Number.isFinite(anchorIndex) || !Number.isFinite(span) || span <= 1) {
+    const rowElement = cell.closest('[row-index]');
+    if (!colId || !rowElement || !Number.isFinite(span) || span <= 1) {
         return null;
     }
-    let pinned: '' | 'top' | 'bottom' = '';
-    if (cell.closest('.ag-grid-pinned-top-rows')) {
-        pinned = 'top';
-    } else if (cell.closest('.ag-grid-pinned-bottom-rows')) {
-        pinned = 'bottom';
+    const { rowIndex: anchorIndex, pinned } = parseRowElement(rowElement);
+    if (!Number.isFinite(anchorIndex)) {
+        return null;
     }
     return { colId, pinned, anchorIndex, span };
 }

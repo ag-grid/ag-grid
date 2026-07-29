@@ -99,7 +99,7 @@ const CellComp = ({
                         cellCtrl.stopEditing(true);
                         cellCtrl.focusCell({ forceBrowserFocus: true });
                     } else {
-                        cellCtrl.cellEditorAttached();
+                        beans.editSvc?.onEditorAttached(cellCtrl);
                         cellCtrl.enableEditorTooltipFeature(cellEditor);
                     }
                 });
@@ -266,7 +266,7 @@ const CellComp = ({
     const init = useCallback(() => {
         const spanReady = !cellCtrl.isCellSpanning() || eWrapper.current;
         const eRef = eGui.current;
-        if (!eRef || !spanReady || !cellCtrl || !cellCtrl.isAlive() || context.isDestroyed()) {
+        if (!eRef || !spanReady || !cellCtrl?.isAlive() || context.isDestroyed()) {
             compBean.current = context.destroyBean(compBean.current);
             return;
         }

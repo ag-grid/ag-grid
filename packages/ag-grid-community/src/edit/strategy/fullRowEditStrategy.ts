@@ -154,7 +154,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             }
         });
 
-        editSvc.populateModelValidationErrors();
         if (editSvc.checkNavWithValidation({ rowNode }) === 'block-stop') {
             return false;
         }
@@ -204,6 +203,18 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         super.onCellFocusChanged(event);
+    }
+
+    public override releaseRows(rowNodes: Set<IRowNode>): void {
+        const { startedRows } = this;
+        for (const rowNode of rowNodes) {
+            if (startedRows.delete(rowNode)) {
+                this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
+            }
+            if (this.rowNode === rowNode) {
+                this.rowNode = undefined;
+            }
+        }
     }
 
     public override cleanupEditors(position: EditRowPosition = {}, includeEditing?: boolean): void {
@@ -302,11 +313,16 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 this.setFocusInOnEditor(nextCell);
                 nextCell.focusCell({ sourceEvent: event });
             }
+        } else if (preventNavigation && !rowsMatch) {
+            // block mode: Tab past the row's last editable cell must not leak focus to another row —
+            // pin the user to the first invalid cell they must correct (or cancel).
+            this.focusFirstInvalidCell(prevCell, event);
         } else {
-            if (nextEditable && preventNavigation) {
+            // Browser focus first: forceBrowserFocus would drag the caret back out of the editor.
+            nextCell.focusCell({ forceBrowserFocus: true, sourceEvent: event });
+            if (nextEditable) {
                 this.setFocusInOnEditor(nextCell);
             }
-            nextCell.focusCell({ forceBrowserFocus: true, sourceEvent: event });
         }
 
         if (!rowsMatch && !preventNavigation) {

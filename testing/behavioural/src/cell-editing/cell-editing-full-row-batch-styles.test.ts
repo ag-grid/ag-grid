@@ -627,9 +627,10 @@ describe('Cell Editing: full-row batch styles', () => {
         const row0Still = cellA0Still.closest('[row-index="0"]');
         expect(row0Still).toHaveClass(/ag-row-batch-edit/);
 
+        // Every editor that opened also closed, Escape included, so the counts match.
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 5,
-            cellEditingStopped: 4,
+            cellEditingStopped: 5,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,

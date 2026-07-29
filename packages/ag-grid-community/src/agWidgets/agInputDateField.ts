@@ -8,6 +8,7 @@ import type {
 import {
     _addOrRemoveAttribute,
     _getActiveDomElement,
+    _isBrowserFirefox,
     _isBrowserSafari,
     _parseDateTimeFromString,
     _serialiseDate,
@@ -147,6 +148,13 @@ export class AgInputDateField<
         return this;
     }
 
+    /** Commits a partially-typed segment before a stop reads the value. A focus-loss stop already blurred. */
+    public flushPendingSegment(): void {
+        if (_isBrowserFirefox() && _getActiveDomElement(this.beans) === this.eInput) {
+            flushFirefoxSegment(this.eInput);
+        }
+    }
+
     public getDate(): Date | undefined {
         if (!this.eInput.validity.valid) {
             return undefined;
@@ -158,6 +166,25 @@ export class AgInputDateField<
         this.setValue(_serialiseDate(date ?? null, this.includeTime), silent);
     }
 }
+
+const swallowEvent = (e: Event) => e.stopImmediatePropagation();
+
+/**
+ * Firefox alone withholds a pending segment from input.value until blur, so flush by blur+refocus. Only
+ * the bubbling pair is swallowed, and it must be: it would otherwise reach stopEditingWhenCellsLoseFocus
+ * with a null relatedTarget and end the edit. `blur`/`focus` need no guard — they reach no ancestor.
+ */
+const flushFirefoxSegment = (eInput: HTMLInputElement): void => {
+    eInput.addEventListener('focusout', swallowEvent, true);
+    eInput.addEventListener('focusin', swallowEvent, true);
+    try {
+        eInput.blur();
+        eInput.focus({ preventScroll: true });
+    } finally {
+        eInput.removeEventListener('focusout', swallowEvent, true);
+        eInput.removeEventListener('focusin', swallowEvent, true);
+    }
+};
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const AgInputDateFieldSelector: AgComponentSelector<AgWidgetSelectorType> = {

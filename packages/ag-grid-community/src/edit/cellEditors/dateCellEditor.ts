@@ -98,6 +98,10 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         return internalErrors;
     }
 
+    public flushInput(): void {
+        this.eEditor.flushPendingSegment();
+    }
+
     public getValue(): Date | null | undefined {
         const { eEditor, params } = this;
         const value = eEditor.getDate();

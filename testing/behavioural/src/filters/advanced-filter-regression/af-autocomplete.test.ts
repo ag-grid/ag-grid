@@ -84,6 +84,33 @@ describe('Advanced Filter — autocomplete completion & editing', () => {
         expect(af.isAutocompleteOpen()).toBe(false);
     });
 
+    test('selecting an entry with the mouse completes it and leaves the caret in the input', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', OPTS);
+        const af = AdvancedFilterHarness.get(api);
+
+        af.input.focus();
+        await af.type('[Ath');
+        expect(af.autocompleteEntries()).toEqual(['Athlete']);
+
+        const eRow = document.querySelector<HTMLElement>('.ag-autocomplete-list .ag-autocomplete-row')!;
+        const mousedown = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+        eRow.dispatchEvent(mousedown);
+        // The list must swallow the default action, otherwise the browser would blur the input and close the list.
+        expect(mousedown.defaultPrevented).toBe(true);
+        eRow.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await asyncSetTimeout(0);
+
+        expect(document.activeElement).toBe(af.input);
+        await new FilterDom(api, 'entry selected with the mouse').checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Athlete] "
+            valid: false — Expression has an error. Option is missing at end of expression.
+            buttons: Apply ⊘ | Builder
+            model: null
+        `);
+        await new GridRows(api, 'entry selected with the mouse').check(UNFILTERED);
+    });
+
     test('an inherited property name in filterOptions is not offered as an operator', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
