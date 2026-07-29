@@ -93,11 +93,19 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         return this.expressionFunction!(this.expressionProxy, node, this.expressionParams!);
     }
 
+    public getModel(): AdvancedFilterModel | null {
+        return this.parseAppliedExpressionModel(false);
+    }
+
     /**
-     * `forBuilder` returns operands as the builder should edit them rather than in canonical model
-     * form, so a value the user typed in a syntax the model cannot reproduce survives a round-trip.
+     * As `getModel`, but with operands in the form the builder should edit rather than canonical model
+     * form, so a value typed in a syntax the model cannot reproduce survives the round-trip.
      */
-    public getModel(forBuilder?: boolean): AdvancedFilterModel | null {
+    public getBuilderModel(): AdvancedFilterModel | null {
+        return this.parseAppliedExpressionModel(true);
+    }
+
+    private parseAppliedExpressionModel(forBuilder: boolean): AdvancedFilterModel | null {
         const expressionParser = this.createExpressionParser(this.appliedExpression);
         expressionParser?.parseExpression();
         return expressionParser?.getModel(forBuilder) ?? null;

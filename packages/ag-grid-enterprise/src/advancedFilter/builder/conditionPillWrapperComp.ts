@@ -126,10 +126,11 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
             // Convert from the input format to display format.
             // Input format matches model format except for numbers, but these get stringified anyway
             valueFormatter,
-            // Bigint operands are stored as canonical decimal but displayed through the column's
-            // `bigintFormatter`, whose output that column's parser accepts - so edit the displayed
-            // text. Other types display their input format already (dates need the iso string).
-            editValueFormatter: this.baseCellDataType === 'bigint' ? valueFormatter : undefined,
+            // Where the stored operand is not valid input for its type, edit the displayed text instead:
+            // the display value is produced by the same formatter whose output that type's parser accepts.
+            editValueFormatter: this.advFilterExpSvc.isOperandModelValueEditable(this.baseCellDataType)
+                ? undefined
+                : valueFormatter,
             baseCellDataType: this.baseCellDataType,
             cssClass: 'ag-advanced-filter-builder-value-pill',
             isSelect: false,

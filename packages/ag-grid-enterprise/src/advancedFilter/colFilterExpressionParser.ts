@@ -276,12 +276,13 @@ class OperandParser implements Parser {
     }
 
     /**
-     * The operand the builder should present and edit. A bigint model value is the canonical decimal,
-     * which cannot be turned back into the syntax the user typed unless the column supplies a
-     * `bigintFormatter` - so keep the typed text. Every other type's model value is already in input format.
+     * The operand the builder should present and edit: the model value where that is valid input,
+     * otherwise the text the user typed, which the model value cannot be turned back into.
      */
     public getBuilderValue(): string | number {
-        return this.baseCellDataType === 'bigint' ? this.operand : this.modelValue;
+        return this.params.advFilterExpSvc.isOperandModelValueEditable(this.baseCellDataType)
+            ? this.modelValue
+            : this.operand;
     }
 
     private parseOperand(fromComplete: boolean, position: number): void {
