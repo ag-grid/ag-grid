@@ -236,4 +236,47 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         // The formatter is the canonical presentation of a stored operand, whatever syntax was typed.
         expect(getService(api).getExpressionDisplayValue()).toBe('[Value] = 0xFF');
     });
+
+    test('builder value editor opens with the formatted operand, not the underlying decimal', async () => {
+        const api = gridsManager.createGrid('grid5', {
+            columnDefs: withParser,
+            rowData: [{ value: 10n }, { value: 255n }, { value: 1000n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        api.setAdvancedFilterModel({ filterType: 'bigint', colId: 'value', type: 'equals', filter: '1000' } as any);
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+        expect(valuePillText(condition)).toBe('0x3E8');
+
+        // Editing must start from the value shown on the pill (the formatter's output, which the
+        // column's parser accepts), not the canonical decimal the model stores.
+        expect((await builder.openValueEditor(condition)).value).toBe('0x3E8');
+    });
+
+    test('builder value editor opens with the decimal operand when no formatter is provided', async () => {
+        const api = gridsManager.createGrid('grid6', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    headerName: 'Value',
+                    cellDataType: 'bigint',
+                    filter: 'agBigIntColumnFilter',
+                    filterParams: { allowedCharPattern: 'n0-9a-fA-FxX+\\-', bigintParser: parseBigInt },
+                },
+            ],
+            rowData: [{ value: 10n }, { value: 255n }, { value: 1000n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        api.setAdvancedFilterModel({ filterType: 'bigint', colId: 'value', type: 'equals', filter: '1000' } as any);
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+        expect(valuePillText(condition)).toBe('1000');
+        expect((await builder.openValueEditor(condition)).value).toBe('1000');
+    });
 });

@@ -119,12 +119,17 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         // Date inputs want iso string, so read straight from model. For numbers, convert to string
         const { filter } = this.filterModel as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>;
         const key = (typeof filter === 'number' || typeof filter === 'bigint' ? _toStringOrNull(filter) : filter) ?? '';
+        const valueFormatter = (value: string) =>
+            this.advFilterExpSvc.getOperandDisplayValue({ ...this.filterModel, filter: value } as any, true);
         this.eOperandPill = this.createPill({
             key,
             // Convert from the input format to display format.
             // Input format matches model format except for numbers, but these get stringified anyway
-            valueFormatter: (value) =>
-                this.advFilterExpSvc.getOperandDisplayValue({ ...this.filterModel, filter: value } as any, true),
+            valueFormatter,
+            // Bigint operands are stored as canonical decimal but displayed through the column's
+            // `bigintFormatter`, whose output that column's parser accepts - so edit the displayed
+            // text. Other types display their input format already (dates need the iso string).
+            editValueFormatter: this.baseCellDataType === 'bigint' ? valueFormatter : undefined,
             baseCellDataType: this.baseCellDataType,
             cssClass: 'ag-advanced-filter-builder-value-pill',
             isSelect: false,
