@@ -97,7 +97,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         };
 
         if (!column) {
-            if (beans.colHeaderEditSvc && columnGroup?.colGroupDef?.headerNameEditable) {
+            if (columnGroup && beans.colHeaderEditSvc?.isEditable(columnGroup)) {
                 result.push('editColumnName');
                 result.push(MENU_ITEM_SEPARATOR);
             }
@@ -179,7 +179,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             result.push(MENU_ITEM_SEPARATOR);
         }
 
-        if (beans.colHeaderEditSvc && colDef.headerNameEditable && !column?.isCalculatedCol) {
+        if (column && beans.colHeaderEditSvc?.isEditable(column)) {
             result.push(MENU_ITEM_SEPARATOR);
             result.push('editColumnName');
             result.push(MENU_ITEM_SEPARATOR);
