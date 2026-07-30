@@ -136,9 +136,26 @@ export class LegendPanel extends Component {
             createSlider('item.marker.size', 'markerSize', 40),
             createSlider('item.marker.strokeWidth', 'markerStroke', 10),
             createSlider('item.marker.padding', 'itemSpacing', 20),
-            createSlider('item.paddingX', 'layoutHorizontalSpacing', 50),
-            createSlider('item.paddingY', 'layoutVerticalSpacing', 50),
+            this.createItemPaddingSlider(chartMenuParamsFactory, 'layoutHorizontalSpacing', ['left', 'right']),
+            this.createItemPaddingSlider(chartMenuParamsFactory, 'layoutVerticalSpacing', ['top', 'bottom']),
         ];
+    }
+
+    /**
+     * Item spacing is a single four-sided `padding` on the legend item, whereas the panel offers one
+     * slider per axis, so each slider reads one side of the pair it owns and writes both.
+     */
+    private createItemPaddingSlider(
+        chartMenuParamsFactory: ChartMenuParamsFactory,
+        labelKey: ChartTranslationKey,
+        sides: [string, string]
+    ): GridSlider {
+        const expressionFor = (side: string) => `${this.key}.item.padding.${side}`;
+        const params = chartMenuParamsFactory.getDefaultSliderParams(expressionFor(sides[0]), labelKey, 50);
+        const chartOptions = chartMenuParamsFactory.getChartOptions();
+        params.onValueChange = (value) =>
+            chartOptions.setValues(sides.map((side) => ({ expression: expressionFor(side), value })));
+        return this.createManagedBean(new AgSlider(params));
     }
 
     private createLabelPanel(chartMenuParamsFactory: ChartMenuParamsFactory): FontPanel {
