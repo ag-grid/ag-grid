@@ -151,10 +151,10 @@
             "id": "AG-17948",
             "title": "AI Coding Skill",
             "q": 3,
-            "status": "in-progress",
+            "status": "shipped",
             "why": "Keeps AI-generated grid code aligned with current APIs instead of outdated training data.",
             "desc": "An installable skill package that gives AI coding assistants up-to-date, official guidance for building AG Grid applications.",
-            "link": null
+            "link": "./skills/"
         },
         {
             "id": "AG-902",
