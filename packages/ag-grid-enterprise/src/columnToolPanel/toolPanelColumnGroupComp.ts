@@ -218,7 +218,7 @@ export class ToolPanelColumnGroupComp extends Component {
         const dragSource: GridDragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
-            dragItemName: this.displayName,
+            dragItemName: () => this.displayName,
             getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
