@@ -1723,6 +1723,35 @@ describe('calculated columns - grid state persistence', () => {
         `);
     });
 
+    test('column state alone cannot restore a calc col into another grid, only grid state can', async () => {
+        const rowData = [{ id: 'r1', a: 5, b: 2 }];
+        const columnDefs: GridOptions['columnDefs'] = [{ field: 'a' }, { field: 'b' }];
+        const api = createGrid('state-colstate-limitation-source', { rowData, columnDefs });
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        const columnStateWithCalc = api.getColumnState();
+        expect(columnStateWithCalc.map((columnState) => columnState.colId)).toContain(calcId);
+
+        // Column state carries layout only — width, sort, order, visibility — never a definition, so it has
+        // no expression to build the column from. Within one grid `applyColumnState` still resurrects the
+        // column because the service parked it, but a grid that never held it has nothing to resurrect.
+        const columnStateOnly = createGrid('state-colstate-limitation-target', { rowData, columnDefs });
+        columnStateOnly.applyColumnState({ state: columnStateWithCalc, applyOrder: true });
+        await waitFor(() => expect(order(columnStateOnly)).toEqual(['a', 'b']));
+        expect(columnStateOnly.getState().userColumns).toBeUndefined();
+
+        // The same journey through grid state does restore it: `userColumns` is what carries the definition.
+        const gridStateTarget = createGrid('state-colstate-limitation-gridstate', {
+            rowData,
+            columnDefs,
+            initialState: api.getState(),
+        });
+        await waitFor(() => expect(order(gridStateTarget)).toEqual(['a', calcId, 'b']));
+        await new GridRows(gridStateTarget, 'calc col restored via grid state, not column state - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 a:5 ${calcId}:10 b:2
+        `);
+    });
+
     test('editing a restored top-level calc col keeps its position and padded header among grouped columns', async () => {
         const rowData = [{ id: 'r1', athlete: 'A', age: 20, gold: 3, silver: 1 }];
         const columnDefs: GridOptions['columnDefs'] = [
