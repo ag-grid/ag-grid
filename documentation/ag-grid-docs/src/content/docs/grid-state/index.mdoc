@@ -62,6 +62,7 @@ The following is captured in the grid state:
 - [Show Values As](./aggregation-show-values-as/) (column state)
 - [Side Bar](./side-bar/)
 - [Sort](./row-sorting/) (column state)
+- [Calculated Columns](./calculated-columns/) added or modified by end users
 
 {% note %}
 When restoring the current page using the [Server Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/),
@@ -83,6 +84,20 @@ The state also contains the grid version number. When applying state with older 
 The grid state is designed to be serialisable, so any functions will be stripped out. For example, aggregation functions should be [Registered as Custom Functions](./aggregation-custom-functions/#registering-custom-functions) to work with state rather than being set as [Directly Applied Functions](./aggregation-custom-functions/#directly-applied-functions).
 
 {% interfaceDocumentation interfaceName="GridState" /%}
+
+## Column and Group IDs
+
+{% warning %}
+Give every column a `colId` or a `field`, and every column group a `groupId`. Without them, state can be restored onto the wrong column.
+{% /warning %}
+
+Columns are identified in the state by their [Column ID](./column-updating-definitions/#matching-columns), and [Column Groups](./column-groups/) by their `groupId`. These IDs are the only link between a saved state and the columns it describes, so they need to mean the same thing when the state is restored as they did when it was saved.
+
+A column that provides neither `colId` nor `field` - one using only a `valueGetter`, for example - is given a positional ID instead. That ID follows the column's position in `columnDefs` rather than the column itself. If the definitions are reordered between saving and restoring, each column's state is applied to whichever column now occupies its old position.
+
+This affects every column state section: sizes, sort, pinning, visibility, order and header names. A restored grid can silently show another column's width, or a header the user renamed on the wrong column.
+
+Column groups behave the same way. A group definition without a `groupId` is given a generated ID which changes when the column definitions change, so the open / closed state of that group may not be restored.
 
 ## Setting State
 

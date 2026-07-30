@@ -68,7 +68,9 @@ The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `202
 
 {% gridExampleRunner title="Column Groups with Duplicate Headers" name="calculated-columns-column-groups" /%}
 
-The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`.
+The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`, or use [Grid State](./grid-state/), which captures them and recreates them on restore.
+
+Grid State also captures user edits to, and removals of, calculated columns declared in `columnDefs`, and re-applies them over the declared definitions on restore — so a stored state takes precedence over a changed declaration.
 
 ## Dialog Options
 

@@ -3751,6 +3751,29 @@ describe('ag-grid calculated columns', () => {
         expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0);
     });
 
+    test('dropping a calculated column from columnDefs closes its open dialog', async () => {
+        const api = createGrid('calculated-column-coldef-drop-open-dialog', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        await openEditDialogViaMenu(api, 'profit');
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
+
+        // The developer removing the column destroys it, so the dialog editing it cannot stay open —
+        // same contract as removing it through the header menu.
+        removeColumnDef(api, 'profit');
+        await asyncSetTimeout(1);
+
+        expect(api.getColumn('profit')).toBeNull();
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0);
+    });
+
     test('unknown references, invalid syntax and cycles surface formula errors', async () => {
         const api = createGrid('calculated-errors', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],

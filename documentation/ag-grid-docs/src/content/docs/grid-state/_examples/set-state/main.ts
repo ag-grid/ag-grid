@@ -18,16 +18,12 @@ const gridOptions: GridOptions<IOlympicData> = {
             field: 'athlete',
             minWidth: 150,
         },
-        { field: 'age', maxWidth: 90 },
+        { field: 'age' },
         { field: 'country', minWidth: 150 },
         {
             headerName: 'Competition',
             groupId: 'competition',
-            children: [
-                { field: 'year', maxWidth: 90 },
-                { field: 'date', minWidth: 150 },
-                { field: 'sport', minWidth: 150 },
-            ],
+            children: [{ field: 'year' }, { field: 'date', minWidth: 150 }, { field: 'sport', minWidth: 150 }],
         },
         {
             headerName: 'Medals',
@@ -47,6 +43,10 @@ const gridOptions: GridOptions<IOlympicData> = {
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
+        headerNameEditable: true,
+    },
+    defaultColGroupDef: {
+        headerNameEditable: true,
     },
     autoGroupColumnDef: {
         minWidth: 200,
@@ -55,6 +55,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     pagination: true,
     rowSelection: { mode: 'multiRow' },
     cellSelection: true,
+    calculatedColumns: true,
     enableRowPinning: true,
     suppressColumnMoveAnimation: true,
     onGridPreDestroyed: onGridPreDestroyed,

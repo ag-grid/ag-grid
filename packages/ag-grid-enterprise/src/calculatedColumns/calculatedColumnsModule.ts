@@ -1,5 +1,5 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
-import { ColumnApiModule, TooltipModule, _PopupModule } from 'ag-grid-community';
+import { ColumnApiModule, TooltipModule, _PopupModule, _UserColumnService } from 'ag-grid-community';
 
 import { FormulaModule } from '../formula/formulaModule';
 import { VERSION } from '../version';
@@ -12,7 +12,7 @@ import { CalculatedColumnsService } from './calculatedColumnsService';
 export const CalculatedColumnsModule: _ModuleWithoutApi = {
     moduleName: 'CalculatedColumns',
     version: VERSION,
-    beans: [CalculatedColumnsService],
+    beans: [CalculatedColumnsService, _UserColumnService],
     dependsOn: [FormulaModule, _PopupModule, ColumnApiModule, TooltipModule],
     icons: {
         calculatedColumnsHeader: 'fx',

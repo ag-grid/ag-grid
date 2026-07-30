@@ -11,8 +11,7 @@ import type {
 import { BaseColsService } from './baseColsService';
 
 /** Index-ordered boolean-activation services (`rowGroupColsSvc`/`pivotColsSvc`); owns shared state-sync,
- *  ordering and hierarchy seating. (`valueColsSvc` uses `aggFunc`, so extends the base directly.)
- *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+ *  ordering and hierarchy seating. (`valueColsSvc` uses `aggFunc`, so extends the base directly.) */
 export abstract class OrderedColsService extends BaseColsService implements IOrderedColsService {
     // ColDef/ColumnState prop names for this role; `initial*` are the new-col fallbacks.
     protected abstract readonly enableProp: 'rowGroup' | 'pivot';

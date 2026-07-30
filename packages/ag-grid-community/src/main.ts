@@ -647,6 +647,9 @@ export type {
     ShowValuesAsState,
     SideBarState,
     SortState,
+    UserColumnProperty,
+    UserColumnPropertyKey,
+    UserColumnState,
 } from './interfaces/gridState';
 export type { RowGroupBulkExpansionState, RowGroupExpansionState } from './interfaces/iExpansionService';
 export type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './interfaces/selectionState';

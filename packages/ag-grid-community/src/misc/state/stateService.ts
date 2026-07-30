@@ -194,6 +194,9 @@ export class StateService extends BeanStub implements NamedBean {
             'sort',
         ]);
         this.updateCachedState('columnGroup', this.getColumnGroupState());
+        // Every user-column mutation rebuilds the column tree, so this covers creation, removal and
+        // property-only edits (e.g. a cell data type change) alike.
+        this.updateCachedState('userColumns', this.beans.userColumnSvc!.getState());
     }
 
     private setColumnsInitialisedState(
@@ -202,10 +205,38 @@ export class StateService extends BeanStub implements NamedBean {
         partialColumnState: boolean,
         ignoreSet?: Set<GridStateKey>
     ): void {
+        // Runs first: the other sections configure columns, so the ones this creates must already exist.
+        this.setUserColumnsState(state, source, ignoreSet);
         this.applyColumnGridState(state, source, partialColumnState, ignoreSet);
         this.setColumnGroupState(state, source, ignoreSet);
 
         this.updateColumnAndGroupState();
+    }
+
+    /** Recreates the user-column layer (columns the user created at runtime, plus their overrides and
+     *  removals of declared columns) and rebuilds the column tree when it changed. */
+    private setUserColumnsState(
+        state: GridState,
+        source: 'gridInitializing' | 'api',
+        ignoreSet?: Set<GridStateKey>
+    ): void {
+        if (ignoreSet?.has('userColumns') || (!state.userColumns && source !== 'api')) {
+            return;
+        }
+        const { userColumnSvc, calculatedColsSvc, colModel } = this.beans;
+        const changed = userColumnSvc!.setState(state.userColumns);
+        // Owning services adopt the restored entries so their existing edit/remove paths keep working, and
+        // discard columns they were holding that the state does not list.
+        const adopted = calculatedColsSvc?.adoptUserColumns() ?? false;
+        if (!changed && !adopted) {
+            return;
+        }
+        if (calculatedColsSvc) {
+            // This calls colModel.rebuildCols as part of refreshDynamicColumns
+            calculatedColsSvc.refreshDynamicColumns(source);
+        } else {
+            colModel.rebuildCols(source);
+        }
     }
 
     private setupStateOnColumnsInitialised(initialState: GridState, partialColumnState: boolean): void {

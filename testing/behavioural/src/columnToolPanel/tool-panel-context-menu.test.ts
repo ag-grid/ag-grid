@@ -574,12 +574,16 @@ describe('ToolPanelContextMenu', () => {
     });
 
     describe('calculated columns', () => {
-        async function createGrid(cols: ColDef[]): Promise<{ gridDiv: HTMLElement; toolPanel: any }> {
+        async function createGrid(
+            cols: ColDef[],
+            extraOptions?: Partial<GridOptions>
+        ): Promise<{ gridApi: GridApi; gridDiv: HTMLElement; toolPanel: any }> {
             const gridApi = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs: cols,
                 rowData,
                 calculatedColumns: true,
                 defaultColDef: { flex: 1, minWidth: 100, enableRowGroup: true, headerNameEditable: true },
+                ...extraOptions,
                 sideBar: {
                     toolPanels: [
                         {
@@ -595,10 +599,26 @@ describe('ToolPanelContextMenu', () => {
             });
             await asyncSetTimeout(1);
             return {
+                gridApi,
                 gridDiv: getGridElement(gridApi)! as HTMLElement,
                 toolPanel: gridApi.getToolPanelInstance('columns') as any,
             };
         }
+
+        const calculatedCols: ColDef[] = [
+            { field: 'athlete', minWidth: 200 },
+            { colId: 'ageDoubled', headerName: 'Age Doubled', calculatedExpression: '[age] * 2' },
+        ];
+
+        /** The tool panel offers no calculated-column items by default, so an application adds them itself.
+         *  `isCalculatedCol` is internal, so the public signal for one is its `calculatedExpression` — set on
+         *  columns created through the dialog as well as declared ones. */
+        const addCalculatedItemsInToolPanel: GridOptions['getColumnMenuItems'] = ({ column, defaultItems, source }) => {
+            if (source !== 'columnsToolPanel' || column?.getColDef().calculatedExpression == null) {
+                return defaultItems;
+            }
+            return ['editCalculatedColumn', 'removeCalculatedColumn', 'separator', ...defaultItems];
+        };
 
         test('tool panel context menu omits Edit Column Name on a calculated column but keeps it elsewhere', async () => {
             const { gridDiv, toolPanel } = await createGrid([
@@ -614,6 +634,63 @@ describe('ToolPanelContextMenu', () => {
             // Non-calculated column with the same headerNameEditable keeps the inline rename item.
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
             await findByText(gridDiv, 'Edit Column Name');
+        });
+
+        test('the tool panel context menu offers no calculated-column items by default', async () => {
+            const { gridDiv, toolPanel } = await createGrid(calculatedCols);
+
+            await openContextMenu(toolPanel, gridDiv, 'Age Doubled');
+            await findByText(gridDiv, 'Group by Age Doubled');
+            expect(queryByText(gridDiv, 'Edit Calculated Column')).toBeNull();
+            expect(queryByText(gridDiv, 'Remove Calculated Column')).toBeNull();
+            expect(queryByText(gridDiv, 'Add Calculated Column')).toBeNull();
+        });
+
+        test('getColumnMenuItems can add Edit and Remove for a calculated column only', async () => {
+            const { gridDiv, toolPanel } = await createGrid(calculatedCols, {
+                getColumnMenuItems: addCalculatedItemsInToolPanel,
+            });
+
+            // The tokens resolve on this surface, and the defaults they were prepended to survive.
+            await openContextMenu(toolPanel, gridDiv, 'Age Doubled');
+            await findByText(gridDiv, 'Edit Calculated Column');
+            await findByText(gridDiv, 'Remove Calculated Column');
+            await findByText(gridDiv, 'Group by Age Doubled');
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+            await findByText(gridDiv, 'Group by Athlete');
+            expect(queryByText(gridDiv, 'Edit Calculated Column')).toBeNull();
+            expect(queryByText(gridDiv, 'Remove Calculated Column')).toBeNull();
+        });
+
+        test('Remove Calculated Column removes the column from the grid and the tool panel', async () => {
+            const { gridApi, gridDiv, toolPanel } = await createGrid(calculatedCols, {
+                getColumnMenuItems: addCalculatedItemsInToolPanel,
+            });
+
+            await openContextMenu(toolPanel, gridDiv, 'Age Doubled');
+            await clickMenuItem(gridDiv, 'Remove Calculated Column');
+
+            expect(gridApi.getColumn('ageDoubled')).toBeNull();
+            expect(
+                toolPanel.primaryColsPanel.primaryColsListPanel
+                    .getDisplayedColsList()
+                    .map((item: any) => item.displayName)
+            ).not.toContain('Age Doubled');
+        });
+
+        test('Edit Calculated Column opens the calculated column dialog for that column', async () => {
+            const { gridDiv, toolPanel } = await createGrid(calculatedCols, {
+                getColumnMenuItems: addCalculatedItemsInToolPanel,
+            });
+
+            await openContextMenu(toolPanel, gridDiv, 'Age Doubled');
+            await clickMenuItem(gridDiv, 'Edit Calculated Column');
+
+            const dialog = document.querySelector('.ag-calculated-column-form');
+            expect(dialog).not.toBeNull();
+            expect(dialog!.querySelector<HTMLInputElement>('input')!.value).toBe('Age Doubled');
+            expect(dialog!.querySelector<HTMLTextAreaElement>('textarea')!.value).toBe('[age] * 2');
         });
     });
 });

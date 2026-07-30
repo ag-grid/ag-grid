@@ -596,7 +596,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType) {
-        this.beans.calculatedColsSvc?.resetDynamicColumnDefs();
+        const beans = this.beans;
+        // Declaring the column set afresh reclaims the columns from the user: the layer goes with it, and
+        // is cleared here rather than by an owning service so it also clears with no owner registered.
+        beans.userColumnSvc?.clear();
+        beans.calculatedColsSvc?.resetDynamicColumnDefs();
         this.colDefs = columnDefs;
         this.buildFromColDefs(source, true);
     }

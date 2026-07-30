@@ -94,10 +94,21 @@ export const appendColumnToTree = (build: ColumnTreeBuild, col: AgColumn, afterC
     prev.next = node;
     next.prev = node;
     nodeById.set(col.colId, node);
-    const parent = anchor ? anchor.col.originalParent : null;
-    col.originalParent = parent;
-    if (build.treeDepth > 0) {
-        edit.affectedParents.add(parent);
+    if (anchor) {
+        const parent = anchor.col.originalParent;
+        col.originalParent = parent;
+        if (build.treeDepth > 0) {
+            edit.affectedParents.add(parent);
+        }
+        return;
+    }
+    col.originalParent = null;
+    const depth = build.treeDepth;
+    if (depth > 0) {
+        // A bare leaf among grouped columns would render at the group header's level instead of the leaf
+        // level, so pad it out to the tree's depth as the service columns are.
+        build.wrapperCache!.wrap(col, depth, build.buildToken);
+        edit.affectedParents.add(null);
     }
 };
 

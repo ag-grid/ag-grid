@@ -27,6 +27,10 @@ type Page = Parameters<typeof serializeGridDom>[0];
 const recreateButton = (page: Page) =>
     page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true });
 
+// Group header cells carry no colId-based test id that survives a rename, so locate them by the
+// name they currently display.
+const groupHeader = (page: Page, name: string) => page.locator('.ag-header-group-cell', { hasText: name });
+
 // Serialise the rendered grid once it has settled: loading is complete, scrolling has stopped
 // (`ag-scrollbar-scrolling` is transient mid-settle), and rows are not mid-animation. A freshly
 // created grid also applies measured scrollbar sizing and header classes over subsequent frames, so
@@ -100,10 +104,86 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('age')).toHaveAttribute('aria-sort', 'ascending');
     });
 
+    test.eachFramework('Recreating the grid restores a runtime-added calculated column', async ({ agIdFor, page }) => {
+        await ensureGridReady(page, GRID_ID);
+        await waitForGridContent(page);
+
+        // Add a calculated column at runtime via the 'age' header menu.
+        const ageHeader = agIdFor.headerCell('age');
+        await ageHeader.hover();
+        await ageHeader.locator('.ag-header-cell-menu-button').click();
+        await page.locator('.ag-menu-option-text', { hasText: 'Add Calculated Column' }).click();
+
+        const form = page.locator('.ag-calculated-column-form');
+        await expect(form).toBeVisible();
+
+        // Live apply (the default) commits the column as the form is edited: set a title,
+        // a numeric type and an expression referencing the Age column.
+        await form.locator('.ag-input-field-input').first().fill('Age Plus Ten');
+        await form.locator('.ag-picker-field').click();
+        await page.locator('.ag-select-list .ag-list-item', { hasText: 'Number' }).click();
+        await form.locator('textarea').fill('[Age] + 10');
+
+        // Close the dialog; the runtime-added column remains.
+        await page.keyboard.press('Escape');
+        await expect(form).toBeHidden();
+
+        // The calculated column renders: Michael Phelps (age 23) => 33.
+        const calculatedHeader = () =>
+            page.locator('.ag-header-cell.ag-calculated-column').filter({ hasText: 'Age Plus Ten' });
+        await expect(calculatedHeader()).toBeVisible();
+        await expect(agIdFor.cell('0', 'age')).toContainText('23');
+        await expect(page.locator('.ag-row[row-id="0"] .ag-cell', { hasText: '33' }).first()).toBeVisible();
+
+        // Recreate destroys the grid and seeds the new one from the previous state.
+        await recreateButton(page).click();
+        await ensureGridReady(page, GRID_ID);
+        await waitForGridContent(page);
+
+        // The calculated column is recreated from the restored userColumns state.
+        await expect(calculatedHeader()).toBeVisible();
+        await expect(page.locator('.ag-row[row-id="0"] .ag-cell', { hasText: '33' }).first()).toBeVisible();
+    });
+
+    test.eachFramework('Recreating the grid restores edited header names', async ({ agIdFor, page }) => {
+        await ensureGridReady(page, GRID_ID);
+        await waitForGridContent(page);
+
+        // Rename a column from its header menu (columnHeaderName state).
+        const athlete = agIdFor.headerCell('athlete');
+        await athlete.hover();
+        await athlete.locator('.ag-header-cell-menu-button').click();
+        await page.getByText('Edit Column Name', { exact: true }).click();
+        const columnInput = page.locator('.ag-column-header-edit-popup-editor input');
+        await expect(columnInput).toHaveValue('Athlete');
+        await columnInput.fill('Competitor');
+        await columnInput.press('Enter');
+        await expect(athlete).toContainText('Competitor');
+
+        // Rename a column group from its header context menu (columnGroup.headerNames state) —
+        // group headers have no menu button, so right-click is the only route.
+        await groupHeader(page, 'Medals').click({ button: 'right' });
+        await page.getByText('Edit Column Name', { exact: true }).click();
+        const groupInput = page.locator('.ag-column-header-edit-popup-editor input');
+        await expect(groupInput).toHaveValue('Medals');
+        await groupInput.fill('Podium');
+        await groupInput.press('Enter');
+        await expect(groupHeader(page, 'Podium')).toBeVisible();
+
+        // Recreate destroys the grid and seeds the new one from the previous state.
+        await recreateButton(page).click();
+        await ensureGridReady(page, GRID_ID);
+        await waitForGridContent(page);
+
+        // Both edited names survive the destroy/recreate cycle via the restored state.
+        await expect(agIdFor.headerCell('athlete')).toContainText('Competitor');
+        await expect(groupHeader(page, 'Podium')).toBeVisible();
+    });
+
     // Drive the grid through as many state sections as can be applied purely through the UI —
-    // sort, row grouping + an expanded group, an opened column group, a pinned column, and an open
-    // side bar with a hidden column — then snapshot the rendered grid, recreate it from the
-    // captured state, and assert it renders identically.
+    // sort, row grouping + an expanded group, an opened column group, a pinned column, a
+    // runtime-added calculated column, and an open side bar with a hidden column — then snapshot
+    // the rendered grid, recreate it from the captured state, and assert it renders identically.
     test.eachFramework('Recreating the grid restores the whole rendered grid', async ({ agIdFor, page }) => {
         await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
@@ -140,6 +220,22 @@ test.agExample(import.meta, () => {
         await page.locator('.ag-menu-option', { hasText: 'Pin Column' }).hover();
         await page.locator('.ag-menu-option-text', { hasText: 'Pin Left' }).click();
         await expect(agIdFor.headerCell('athlete')).toHaveClass(/ag-header-cell-last-left-pinned/);
+
+        // Add a runtime calculated column (userColumns state) via the age header menu.
+        await agIdFor.headerCell('age').hover();
+        await agIdFor.headerCell('age').locator('.ag-header-cell-menu-button').click();
+        await page.locator('.ag-menu-option-text', { hasText: 'Add Calculated Column' }).click();
+        const form = page.locator('.ag-calculated-column-form');
+        await expect(form).toBeVisible();
+        await form.locator('.ag-input-field-input').first().fill('Age Plus Ten');
+        await form.locator('.ag-picker-field').click();
+        await page.locator('.ag-select-list .ag-list-item', { hasText: 'Number' }).click();
+        await form.locator('textarea').fill('[Age] + 10');
+        await page.keyboard.press('Escape');
+        await expect(form).toBeHidden();
+        await expect(
+            page.locator('.ag-header-cell.ag-calculated-column').filter({ hasText: 'Age Plus Ten' })
+        ).toBeVisible();
 
         // Hide the date column (column state) via the Columns tool panel, which the open side bar
         // (side bar state) shows by default.
