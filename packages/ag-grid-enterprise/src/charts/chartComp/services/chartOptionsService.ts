@@ -549,8 +549,14 @@ export class ChartOptionsService extends BeanStub {
         }
         // The processed options carry only what the theme configures. Anything left at an AG Charts
         // property default appears there as undefined, and is only resolved on the live series.
-        const series = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s));
-        return get(series?.properties, expression, undefined) as T;
+        const properties = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s))?.properties;
+        const property = get(properties, expression, undefined) as T | undefined;
+        if (property !== undefined) {
+            return property as T;
+        }
+        // A few options inherit their effective value from a sibling, and the series only applies that
+        // inheritance when it serialises itself (e.g. a box plot whisker's stroke from the series stroke).
+        return get(properties?.toJson(), expression, undefined) as T;
     }
 
     private setSeriesOptions<T = string>(

@@ -135,6 +135,8 @@ export class PolarAxisPanel extends Component {
             labelKey: 'orientation',
             options,
             property: 'label.orientation',
+            // No theme sets an orientation, and an unset one renders the same as `fixed`.
+            valueWhenUnset: 'fixed',
         });
     }
 
@@ -200,11 +202,12 @@ export class PolarAxisPanel extends Component {
         labelKey: ChartTranslationKey;
         options: Array<ListOption>;
         property: string;
+        valueWhenUnset?: string;
     }): GridSelect {
-        const { labelKey, options, property, chartAxisThemeOverrides } = config;
-        return this.createManagedBean(
-            new AgSelect(chartAxisThemeOverrides.getDefaultSelectParams(property, labelKey, options))
-        );
+        const { labelKey, options, property, chartAxisThemeOverrides, valueWhenUnset } = config;
+        const params = chartAxisThemeOverrides.getDefaultSelectParams(property, labelKey, options);
+        params.value ??= valueWhenUnset;
+        return this.createManagedBean(new AgSelect(params));
     }
 
     private translate(key: ChartTranslationKey) {

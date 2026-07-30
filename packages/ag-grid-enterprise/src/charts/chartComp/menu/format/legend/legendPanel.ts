@@ -106,16 +106,19 @@ export class LegendPanel extends Component {
     }
 
     private getItems(chartMenuParamsFactory: ChartMenuParamsFactory): Component<any>[] {
-        const createSlider = (expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number): GridSlider =>
-            this.createManagedBean(
-                new AgSlider(
-                    chartMenuParamsFactory.getDefaultSliderParams(
-                        `${this.key}.${expression}`,
-                        labelKey,
-                        defaultMaxValue
-                    )
-                )
-            );
+        const createSlider = (
+            expression: string,
+            labelKey: ChartTranslationKey,
+            defaultMaxValue: number,
+            valueWhenUnset?: number
+        ): GridSlider => {
+            const fullExpression = `${this.key}.${expression}`;
+            const params = chartMenuParamsFactory.getDefaultSliderParams(fullExpression, labelKey, defaultMaxValue);
+            if (valueWhenUnset != null && chartMenuParamsFactory.getChartOptions().getValue(fullExpression) == null) {
+                params.value = `${valueWhenUnset}`;
+            }
+            return this.createManagedBean(new AgSlider(params));
+        };
         if (this.isGradient) {
             return [
                 this.createManagedBean(
@@ -134,7 +137,9 @@ export class LegendPanel extends Component {
         return [
             createSlider('spacing', 'spacing', 200),
             createSlider('item.marker.size', 'markerSize', 40),
-            createSlider('item.marker.strokeWidth', 'markerStroke', 10),
+            // The legend has no stroke width of its own; left unset each marker takes the series' own
+            // stroke width capped at 2, which is 1 for every series default.
+            createSlider('item.marker.strokeWidth', 'markerStroke', 10, 1),
             createSlider('item.marker.padding', 'itemSpacing', 20),
             this.createItemPaddingSlider(chartMenuParamsFactory, 'layoutHorizontalSpacing', ['left', 'right']),
             this.createItemPaddingSlider(chartMenuParamsFactory, 'layoutVerticalSpacing', ['top', 'bottom']),

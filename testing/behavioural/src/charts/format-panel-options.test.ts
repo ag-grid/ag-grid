@@ -63,12 +63,19 @@ const LEAF_FACTORIES: [string, WidgetKind][] = [
 ];
 
 /**
- * `getDefaultSliderParams` masks a missing read (`getValue(...) ?? 0`) and `addEnableParams` masks it
- * with `?? false`, so for those two the rendered value cannot distinguish "unset" from a real 0/false and
- * the raw proxy read is the only usable signal.
+ * A panel may resolve a value the option itself doesn't hold, in which case the binding is doing its job.
+ * `getDefaultSliderParams` masks a missing read with `?? 0` and `addEnableParams` with `?? false`, so a
+ * widget still showing the masked value proves nothing - anything else was put there by the panel.
  */
-function isLossy(kind: WidgetKind): boolean {
-    return kind === 'slider' || kind === 'enable';
+function hasRecoveredValue(widget: Widget): boolean {
+    const { value } = widget.params;
+    if (value == null || value === '') {
+        return false;
+    }
+    if (widget.kind === 'slider') {
+        return value !== '0';
+    }
+    return widget.kind !== 'enable';
 }
 
 interface Instrumentation {
@@ -364,11 +371,7 @@ describe('chart tool panel options', () => {
                         }
 
                         const value = widget.proxy.getValue(widget.expression);
-                        // A panel may recover a value the option itself doesn't hold, so where the widget
-                        // still carries one the binding is doing its job.
-                        const recovered =
-                            !isLossy(widget.kind) && widget.params.value != null && widget.params.value !== '';
-                        if (value === undefined && !recovered) {
+                        if (value === undefined && !hasRecoveredValue(widget)) {
                             addOccurrence(unresolved, key, chartType);
                         }
 
@@ -408,23 +411,13 @@ describe('chart tool panel options', () => {
             // Any option AG Charts does not recognise is drift, and its own message names the replacement.
             expect(summarise(rejected)).toEqual([]);
 
-            // Bindings whose option the chart theme leaves unset. AG Charts resolves these to its own
-            // internal defaults, which neither `processedOptions` nor the live series exposes, so the
-            // control opens showing 0 or blank and only agrees with the chart once the user touches it.
-            // AG Charts accepts writes to them, so they are presentational rather than dead controls. A
-            // growing list is a regression, and every addition needs a reason.
+            // Bindings whose option the chart theme leaves unset and no panel resolves. The one entry left
+            // is benign: AG Charts treats an unset inner radius ratio as 0, which is what the slider's
+            // `?? 0` already shows, so the control opens agreeing with the chart. Anything joining this
+            // list opens showing 0 or blank while the chart renders something else, and needs a reason.
             expect(summarise(unresolved)).toMatchInlineSnapshot(`
               [
-                "getChartThemeOverridesProxy() -> legend.item.marker.strokeWidth [31 chart types]",
-                "getPolarAxisThemeOverridesProxy(angle,thisAxis) -> label.orientation [5 chart types]",
                 "getPolarAxisThemeOverridesProxy(radius,thisAxis) -> innerRadiusRatio [radarLine, radarArea, nightingale]",
-                "getSeriesOptionsProxy() -> binCount [histogram]",
-                "getSeriesOptionsProxy() -> stageLabel.color [funnel, coneFunnel]",
-                "getSeriesOptionsProxy() -> whisker.lineDash [boxPlot]",
-                "getSeriesOptionsProxy() -> whisker.lineDashOffset [boxPlot]",
-                "getSeriesOptionsProxy() -> whisker.stroke [boxPlot]",
-                "getSeriesOptionsProxy() -> whisker.strokeOpacity [boxPlot]",
-                "getSeriesOptionsProxy() -> whisker.strokeWidth [boxPlot]",
               ]
             `);
         },

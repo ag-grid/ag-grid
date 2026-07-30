@@ -322,7 +322,16 @@ export class SeriesPanel extends Component {
     }
 
     private initStageLabels(): FontPanel {
-        return new FontPanel(this.chartMenuUtils.getDefaultFontPanelParams('stageLabel', stageLabels));
+        const params = this.chartMenuUtils.getDefaultFontPanelParams('stageLabel', stageLabels);
+        // The stage labels are drawn by the category axis, whose labels the theme clones from
+        // `stageLabel`, so the axis carries the effective colour when none has been set here.
+        params.colorWhenUnset = () => {
+            const isHorizontal = this.chartMenuUtils.getChartOptions().getValue('direction') === 'horizontal';
+            return this.options.chartOptionsService
+                .getCartesianAxisThemeOverridesProxy(isHorizontal ? 'xAxis' : 'yAxis')
+                .getValue('label.color');
+        };
+        return new FontPanel(params);
     }
 
     private initBins(): GridSlider {
