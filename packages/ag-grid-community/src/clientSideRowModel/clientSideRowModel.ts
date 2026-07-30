@@ -52,6 +52,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     /** Row nodes used for formula calculations when formula feature is active. */
     private formulaRows: RowNode[] = [];
 
+    /** Rows given a row top by the previous pass — the only rows that can hold a stale one. */
+    private positionedRows: RowNode[] = [];
+
+    /** Buffer the current pass fills, swapped into `positionedRows` once the stale tops are cleared. */
+    private positionedRowsNext: RowNode[] = [];
+
     /** The ordered list of row processing stages: group → filter → pivot → aggregate → filterAggregates → sort → flatten. */
     private stages: IRowNodeStage[] | null = null;
 
@@ -311,7 +317,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return minIndex < stagesLen ? stages[minIndex].step : null;
     }
 
-    private setRowTopAndRowIndex(outputDisplayedRowsMapped?: Set<string>): void {
+    private setRowTopAndRowIndex(): void {
         const { beans, rowsToDisplay } = this;
         const defaultRowHeight = beans.environment.getDefaultRowHeight();
         let nextRowTop = 0;
@@ -320,13 +326,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // with these two layouts.
         const allowEstimate = _isDomLayout(this.gos, 'normal');
 
-        for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
+        const len = rowsToDisplay.length;
+        const positioned = this.positionedRowsNext;
+        for (let i = 0; i < len; ++i) {
             const rowNode = rowsToDisplay[i];
-
-            const id = rowNode.id;
-            if (id != null) {
-                outputDisplayedRowsMapped?.add(id);
-            }
 
             if (rowNode.rowHeight == null) {
                 const rowHeight = _getRowHeightForNode(beans, rowNode, allowEstimate, defaultRowHeight);
@@ -336,9 +339,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             rowNode.setRowTop(nextRowTop);
             rowNode.setRowIndex(i);
             nextRowTop += rowNode.rowHeight!;
+            positioned[i] = rowNode;
         }
+        positioned.length = len;
 
-        if (this.beans.formula?.isEvaluationActive()) {
+        if (beans.formula?.isEvaluationActive()) {
             const formulaRows = this.formulaRows;
             for (let i = 0, len = formulaRows.length; i < len; ++i) {
                 const rowNode = formulaRows[i];
@@ -347,39 +352,22 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private clearRowTopAndRowIndex(changedPath: ChangedPath | undefined, displayedRowsMapped: Set<string>): void {
-        const clearIfNotDisplayed = (rowNode?: RowNode) => {
-            if (rowNode?.id != null && !displayedRowsMapped.has(rowNode.id)) {
+    private clearRowTopAndRowIndex(): void {
+        const { rowsToDisplay, positionedRows } = this;
+
+        // Only a row positioned by the previous pass can hold a stale top, and `setRowTopAndRowIndex`
+        // has just given every currently-displayed row its slot, so a matching slot means still displayed.
+        for (let i = 0, len = positionedRows.length; i < len; ++i) {
+            const rowNode = positionedRows[i];
+            const rowIndex = rowNode.rowIndex;
+            if ((rowIndex == null || rowsToDisplay[rowIndex] !== rowNode) && !rowNode.destroyed) {
                 rowNode.clearRowTopAndRowIndex();
             }
-        };
-
-        const recurse = (rowNode: RowNode) => {
-            clearIfNotDisplayed(rowNode);
-            clearIfNotDisplayed(rowNode.detailNode);
-            clearIfNotDisplayed(rowNode.sibling);
-
-            const childrenAfterGroup = rowNode.childrenAfterGroup;
-            if (!rowNode.hasChildren() || !childrenAfterGroup) {
-                return;
-            }
-
-            // When changedPath is provided, we are here because of a transaction update or
-            // a change detection. Neither of these impacts the open/closed state of groups. So if
-            // a group is not open this time, it was not open last time. So we know all closed groups
-            // already have their top positions cleared — no need to traverse further.
-            if (changedPath && rowNode.level !== -1 && !rowNode.expanded) {
-                return;
-            }
-            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-                recurse(childrenAfterGroup[i]);
-            }
-        };
-
-        const rootNode = this.rootNode;
-        if (rootNode) {
-            recurse(rootNode);
         }
+
+        this.positionedRows = this.positionedRowsNext;
+        positionedRows.length = 0;
+        this.positionedRowsNext = positionedRows;
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -671,11 +659,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
         /* eslint-enable no-fallthrough */
 
-        // set all row tops to null, then set row tops on all visible rows. if we don't do this,
-        // then the algorithm below only sets row tops, old row tops from old rows will still lie around
-        const displayedNodesMapped = new Set<string>();
-        this.setRowTopAndRowIndex(displayedNodesMapped);
-        this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
+        // Position the displayed rows first, then clear stale tops left on rows that dropped out.
+        this.setRowTopAndRowIndex();
+        this.clearRowTopAndRowIndex();
 
         this.updateRefreshParams(params); // Apply forced flags from any nested refresh calls
     }
@@ -1177,20 +1163,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (formula?.active) {
             const unfilteredRows = rootNode?.childrenAfterSort ?? [];
             this.formulaRows = unfilteredRows;
-            this.rowsToDisplay = unfilteredRows.filter((row) => !row.softFiltered);
-
-            for (const row of this.rowsToDisplay) {
-                row.setUiLevel(0);
-            }
+            this.rowsToDisplay = formulaRowsToDisplay(unfilteredRows);
             return;
         }
 
         if (flattenStage) {
             this.rowsToDisplay = flattenStage.execute();
         } else {
-            const rowsToDisplay = this.rootNode!.childrenAfterSort ?? [];
-            for (const row of rowsToDisplay) {
-                row.setUiLevel(0);
+            const rowsToDisplay = rootNode?.childrenAfterSort ?? [];
+            for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
+                rowsToDisplay[i].setUiLevel(0);
             }
             this.rowsToDisplay = rowsToDisplay;
         }
@@ -1257,6 +1239,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.started = false;
         this.rootNode = null;
         this.rowsToDisplay = [];
+        this.positionedRows.length = 0;
+        this.positionedRowsNext.length = 0;
         this.asyncTransactions = null;
         this.stages = null;
         this.stagesRefreshProps.clear();
@@ -1271,6 +1255,34 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.onRowHeightChanged_debounced();
     }
 }
+
+/**
+ * Displayed rows when formulas are active: every row except the soft-filtered ones.
+ * Soft filtering is the exception, so the scan returns `unfilteredRows` itself until one turns up.
+ */
+const formulaRowsToDisplay = (unfilteredRows: RowNode[]): RowNode[] => {
+    for (let i = 0, len = unfilteredRows.length; i < len; ++i) {
+        const row = unfilteredRows[i];
+        if (row.softFiltered) {
+            return collectNotSoftFiltered(unfilteredRows, i, len);
+        }
+        row.setUiLevel(0);
+    }
+    return unfilteredRows;
+};
+
+/** Everything before `from` is displayed and already levelled; `from` itself is soft-filtered. */
+const collectNotSoftFiltered = (unfilteredRows: RowNode[], from: number, len: number): RowNode[] => {
+    const displayed = unfilteredRows.slice(0, from);
+    for (let i = from + 1; i < len; ++i) {
+        const row = unfilteredRows[i];
+        if (!row.softFiltered) {
+            row.setUiLevel(0);
+            displayed.push(row);
+        }
+    }
+    return displayed;
+};
 
 const addAllLeafs = (result: RowNode[], node: RowNode): void => {
     const childrenAfterGroup = node.childrenAfterGroup;
