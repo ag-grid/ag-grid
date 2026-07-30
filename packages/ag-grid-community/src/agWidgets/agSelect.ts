@@ -2,6 +2,7 @@ import type {
     AgComponentSelector,
     AgCoreBean,
     AgCoreBeanCollection,
+    AgEvent,
     BaseEvents,
     BaseProperties,
     IPropertiesService,
@@ -29,6 +30,11 @@ export interface AgSelectParams<TComponentSelectorType extends string, TValue = 
     placeholder?: string;
 }
 type AgSelectEvent = 'selectedItem';
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface AgSelectSelectedItemEvent extends AgEvent<'selectedItem'> {
+    /** The keydown that committed the value, when committed via keyboard. Absent for mouse commits. */
+    keyboardEvent?: KeyboardEvent;
+}
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgSelect<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
@@ -72,6 +78,7 @@ export class AgSelect<
           >
         | undefined;
     private tooltipFeature?: ITooltipFeature;
+    private commitKeyboardEvent?: KeyboardEvent;
 
     constructor(config?: AgSelectParams<TComponentSelectorType, TValue>) {
         super({
@@ -156,7 +163,10 @@ export class AgSelect<
         listComponent.addManagedListeners(listComponent, {
             selectedItem: () => {
                 this.hidePicker();
-                this.dispatchLocalEvent({ type: 'selectedItem' });
+                this.dispatchLocalEvent<AgSelectSelectedItemEvent>({
+                    type: 'selectedItem',
+                    keyboardEvent: this.commitKeyboardEvent,
+                });
             },
             fieldValueChanged: () => {
                 if (!this.listComponent) {
@@ -195,7 +205,11 @@ export class AgSelect<
             case KeyCode.PAGE_END:
                 e.preventDefault();
                 if (this.isPickerDisplayed) {
+                    // handleKeyDown commits synchronously, firing `selectedItem` before it returns, so
+                    // stash the Enter keydown here for that dispatch to forward (e.g. for post-edit nav).
+                    this.commitKeyboardEvent = key === KeyCode.ENTER ? e : undefined;
                     this.listComponent?.handleKeyDown(e);
+                    this.commitKeyboardEvent = undefined;
                 } else {
                     super.onKeyDown(e);
                 }
