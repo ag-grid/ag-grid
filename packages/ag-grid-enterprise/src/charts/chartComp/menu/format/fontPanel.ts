@@ -114,7 +114,9 @@ export class FontPanel extends Component {
         if (params.value == null) {
             const placement = this.chartOptions.getValue<string | undefined>(keyMapper('placement'));
             if (typeof placement === 'string') {
-                const styleKey = placement.startsWith('outside') ? 'outsideStyle' : 'insideStyle';
+                // Mirrors the charts-side predicate: everything that is not `inside-*` is an outside
+                // label, including bar series' `beside-*` placements.
+                const styleKey = placement.startsWith('inside') ? 'insideStyle' : 'outsideStyle';
                 params.value = this.chartOptions.getValue(keyMapper(`${styleKey}.color`));
             }
         }
