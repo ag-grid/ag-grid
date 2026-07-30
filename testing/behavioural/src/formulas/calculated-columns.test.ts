@@ -889,10 +889,12 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         showColumnMenu(api, 'profit');
-        await asyncSetTimeout(10);
-        const entries = getOpenMenuEntries();
-        expect(entries).not.toContain('Edit Column Name');
-        expect(entries).toEqual(expect.arrayContaining(['Edit Calculated Column', 'Remove Calculated Column']));
+        await waitFor(() =>
+            expect(getOpenMenuEntries()).toEqual(
+                expect.arrayContaining(['Edit Calculated Column', 'Remove Calculated Column'])
+            )
+        );
+        expect(getOpenMenuEntries()).not.toContain('Edit Column Name');
     });
 
     test('non-calculated column with headerNameEditable still offers Edit Column Name', async () => {
@@ -908,8 +910,7 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
-        expect(getOpenMenuEntries()).toContain('Edit Column Name');
+        await waitFor(() => expect(getOpenMenuEntries()).toContain('Edit Column Name'));
     });
 
     test('dynamically created calculated column omits Edit Column Name', async () => {
@@ -922,7 +923,6 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
         setExpression('[Revenue] - [Cost]');
@@ -934,10 +934,12 @@ describe('ag-grid calculated columns', () => {
         expect(api.getColumn('calculated_1')!.getColDef().headerNameEditable).toBe(true);
 
         showColumnMenu(api, 'calculated_1');
-        await asyncSetTimeout(10);
-        const entries = getOpenMenuEntries();
+        const entries = await waitFor(() => {
+            const result = getOpenMenuEntries();
+            expect(result).toEqual(expect.arrayContaining(['Edit Calculated Column', 'Remove Calculated Column']));
+            return result;
+        });
         expect(entries).not.toContain('Edit Column Name');
-        expect(entries).toEqual(expect.arrayContaining(['Edit Calculated Column', 'Remove Calculated Column']));
     });
 
     test('explicit mainMenuItems editColumnName is still suppressed on a calculated column', async () => {
@@ -962,16 +964,18 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         showColumnMenu(api, 'profit');
-        await asyncSetTimeout(10);
-        const profitEntries = getOpenMenuEntries();
+        const profitEntries = await waitFor(() => {
+            const result = getOpenMenuEntries();
+            expect(result).toContain('Sentinel');
+            return result;
+        });
         // The menu opened (has the sibling item) but the explicitly-requested rename is gone.
-        expect(profitEntries).toContain('Sentinel');
         expect(profitEntries).not.toContain('Edit Column Name');
 
         // Close the calc-column menu before opening the next — showColumnMenu no-ops while a menu is
         // open, so getOpenMenuEntries would otherwise still read the profit menu.
         api.hidePopupMenu();
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(document.querySelector('.ag-menu')).toBeFalsy());
 
         // Positive control: the same explicit opt-in on a non-calc column does surface the item.
         showColumnMenu(api, 'revenue');
@@ -992,7 +996,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'profit');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
         setExpression('[Profit] / [Revenue]');
@@ -1014,7 +1017,6 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         showColumnMenu(api, 'profit');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Remove Calculated Column');
         await asyncSetTimeout(1);
 
@@ -1952,7 +1954,6 @@ describe('ag-grid calculated columns', () => {
         `);
 
         showColumnMenu(api, revenueColId);
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -1986,7 +1987,6 @@ describe('ag-grid calculated columns', () => {
         expect(api.getCellValue({ rowNode, colKey: 'calculated_1', useFormatter: false })).toBe(7);
 
         showColumnMenu(api, 'calculated_1');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Edit Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2005,7 +2005,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2096,7 +2095,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
         clickDialogButton('Columns');
@@ -2123,7 +2121,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2147,7 +2144,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2210,7 +2206,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2246,7 +2241,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2267,7 +2261,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'age');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2306,7 +2299,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'age');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2338,7 +2330,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'age');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2388,7 +2379,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'revenue_2025');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2442,7 +2432,6 @@ describe('ag-grid calculated columns', () => {
         ]);
 
         showColumnMenu(api, 'ag-Grid-AutoColumn');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2482,7 +2471,6 @@ describe('ag-grid calculated columns', () => {
         `);
 
         showColumnMenu(api, 'ag-Grid-AutoColumn');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
         setExpression('[Revenue] - [Cost]');
@@ -2539,7 +2527,6 @@ describe('ag-grid calculated columns', () => {
         `);
 
         showColumnMenu(api, 'ag-Grid-AutoColumn-productType');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
         setExpression('[Revenue] - [Cost]');
@@ -2598,7 +2585,6 @@ describe('ag-grid calculated columns', () => {
         ]);
 
         showColumnMenu(api, 'ag-Grid-AutoColumn-productType');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2634,7 +2620,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -2691,7 +2676,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'ag-Grid-AutoColumn-productType');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
         setExpression('[Revenue] - [Cost]');
@@ -2700,7 +2684,6 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(40);
 
         showColumnMenu(api, 'ag-Grid-AutoColumn-country');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
         setExpression('[Revenue] + [Cost]');
@@ -3008,7 +2991,6 @@ describe('ag-grid calculated columns', () => {
         `);
 
         showColumnMenu(api, 'profit');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Edit Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3027,7 +3009,6 @@ describe('ag-grid calculated columns', () => {
 
         const removedColumn = api.getColumn('profit');
         showColumnMenu(api, 'profit');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Remove Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3202,7 +3183,6 @@ describe('ag-grid calculated columns', () => {
         `);
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3241,7 +3221,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3269,7 +3248,6 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3303,7 +3281,6 @@ describe('ag-grid calculated columns', () => {
             });
 
             showColumnMenu(api, 'revenue');
-            await asyncSetTimeout(10);
             await clickColumnMenuItem('Add Calculated Column');
             await asyncSetTimeout(1);
 
@@ -3331,7 +3308,6 @@ describe('ag-grid calculated columns', () => {
         `);
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3489,7 +3465,6 @@ describe('ag-grid calculated columns', () => {
         );
 
         showColumnMenu(api, 'profit');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Edit Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3533,7 +3508,6 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         showColumnMenu(api, 'profit');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Edit Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3575,7 +3549,6 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         showColumnMenu(api, 'profit');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Edit Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3597,7 +3570,6 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3700,11 +3672,9 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
         showColumnMenu(api, 'cost');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3742,7 +3712,6 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3750,7 +3719,6 @@ describe('ag-grid calculated columns', () => {
         expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
 
         showColumnMenu(api, 'calculated_1');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Remove Calculated Column');
         await asyncSetTimeout(1);
 
@@ -3776,7 +3744,6 @@ describe('ag-grid calculated columns', () => {
         expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
 
         showColumnMenu(api, 'profit');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Remove Calculated Column');
         await asyncSetTimeout(1);
 
@@ -4089,7 +4056,6 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         showColumnMenu(api, 'country');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
         setExpression('"Foo"');
         await asyncSetTimeout(40);
