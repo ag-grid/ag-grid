@@ -1,5 +1,5 @@
 {
-    "lastUpdated": "2026-07-30",
+    "lastUpdated": "2026-08-05",
     "introTitle": "Q3 2026 focus",
     "introText": "Our Q3 2026 focus expands AG Grid across export, filtering, and developer tooling. PDF export joins CSV and Excel, Set Filter conditions work inside Advanced Filter expressions, and column widths stay accurate as data updates. Documentation now ships in Markdown alongside an installable AI coding skill. Planned items reflect current intent — timing may shift as priorities evolve.",
     "items": [
