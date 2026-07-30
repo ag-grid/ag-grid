@@ -13,7 +13,6 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _dispatchColumnChangedEvent } from 'ag-grid-community';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseColsService extends BeanStub implements IColsService {
     protected colModel: ColumnModel;
 
