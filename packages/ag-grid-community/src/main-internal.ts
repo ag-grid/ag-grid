@@ -39,7 +39,6 @@ export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clien
 export { _dispatchColumnChangedEvent, dispatchColumnVisibleEvent } from './columns/columnEventUtils';
 export { _buildColumnTree } from './columns/buildColumnTree';
 export { _addColumnDefaultAndTypes, _createUserColumn } from './columns/colDefUtils';
-export { _getParentGroupId } from './columns/userColumns/userColumnUtils';
 export { UserColumnService as _UserColumnService } from './columns/userColumns/userColumnService';
 export { _isCalculatedColumnsEnabled, _normaliseCalculatedExpression } from './columns/calculatedColumnUtils';
 export { BaseSingleColService as _BaseSingleColService } from './columns/baseSingleColService';

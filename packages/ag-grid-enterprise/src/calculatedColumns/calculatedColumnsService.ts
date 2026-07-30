@@ -28,7 +28,6 @@ import {
     BeanStub,
     _addColumnDefaultAndTypes,
     _createUserColumn,
-    _getParentGroupId,
     _isCalculatedColumnsEnabled,
     _mergedEqual,
     _normaliseCalculatedExpression,
@@ -66,6 +65,10 @@ type ValidationState = 'valid' | CalculatedColumnValidationReason;
 
 // bounds the parse-error memo; dialog keystrokes feed it one entry per expression variant.
 const FORMULA_ERROR_CACHE_LIMIT = 256;
+
+function getParentGroupId(column: AgColumn | null | undefined): string | null {
+    return column?.getFirstRealParent()?.groupId ?? null;
+}
 
 const BASE_DATA_TYPE_LOCALE_KEYS: Record<string, string> = {
     text: 'dataTypeText',
@@ -393,7 +396,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             anchorColId: anchorColumn?.colId ?? null,
             instance: null,
         });
-        this.recordCreatedColumn(colId, nextColDef, _getParentGroupId(anchorColumn));
+        this.recordCreatedColumn(colId, nextColDef, getParentGroupId(anchorColumn));
         this.refreshDynamicColumns('calculatedColumn');
         const newColumn = this.beans.colModel.colsById[colId];
         if (newColumn) {
@@ -529,7 +532,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         // `resetColumnState` parks added cols for a later `applyColumnState`, dropping the about-to-be-swept instance ref.
         if (preserveCreatedColumns) {
             this.dynamicColumns.forEach((dynamicColumn, colId) => {
-                dynamicColumn.parentGroupId = _getParentGroupId(dynamicColumn.instance);
+                dynamicColumn.parentGroupId = getParentGroupId(dynamicColumn.instance);
                 dynamicColumn.instance = null;
                 this.inactiveDynamicColumns.set(colId, dynamicColumn);
             });
@@ -585,7 +588,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 // `anchorColId` was itself derived from the entry, and re-deriving it from a null instance
                 // would read as a move to the top level.
                 const instance = existing.instance;
-                if (instance !== null && (entry.parentGroupId ?? null) !== _getParentGroupId(instance)) {
+                if (instance !== null && (entry.parentGroupId ?? null) !== getParentGroupId(instance)) {
                     existing.anchorColId = this.findAnchorInGroup(entry.parentGroupId);
                     changed = true;
                 }
@@ -620,7 +623,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const cols = colModel.colDefList;
         for (let i = cols.length - 1; i >= 0; --i) {
             const col = cols[i];
-            if (_getParentGroupId(col) !== groupId) {
+            if (getParentGroupId(col) !== groupId) {
                 continue;
             }
             const colId = col.colId;
