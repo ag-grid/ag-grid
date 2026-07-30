@@ -187,12 +187,6 @@ jobs:
             contents: read
             pull-requests: read
             packages: read
-            # AG-17967: lets the preflight re-run a first-attempt CI failure's
-            # failed jobs (see `run_attempt` on the cifail step below).
-            # `permissions:` REPLACES rather than merges, so the two reads above
-            # must stay — without `pull-requests: read` the preflight's PR
-            # lookup finds nothing and the whole CI-failure path goes silently
-            # ineligible, not just the flake re-run.
             actions: write
         outputs:
             stage: ${{ steps.resume.outputs.stage }}
@@ -233,11 +227,6 @@ jobs:
                   head_branch: ${{ github.event.workflow_run.head_branch }}
                   head_sha: ${{ github.event.workflow_run.head_sha }}
                   run_url: ${{ github.event.workflow_run.html_url }}
-                  # AG-17967: on attempt 1 the preflight re-runs the failed jobs
-                  # instead of dispatching an agent, so a flake costs runner
-                  # minutes rather than an agent round + a unit of RECOVERY_CAP.
-                  # Fails safe: without `actions: write` the rerun 403s, the
-                  # preflight warns, and it dispatches the agent as before.
                   run_attempt: ${{ github.event.workflow_run.run_attempt }}
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
