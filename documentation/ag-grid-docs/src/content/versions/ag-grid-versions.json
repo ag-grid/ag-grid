@@ -1,5 +1,32 @@
 [
     {
+        "version": "36.1.0",
+        "date": "August 5th 2026",
+        "landingPageHighlight": "Column Header Edit, Custom Context Menu Items in Columns Tool Panel, AI Coding Skill, Documentation in markdown format, Quality Improvements",
+        "highlights": [
+            {
+                "text": "Column Header Edit",
+                "path": "./column-headers/#editable-header-name"
+            },
+            {
+                "text": "Custom Context Menu Items in Columns Tool Panel",
+                "path": "./tool-panel-columns/#custom-menu-items"
+            },
+            {
+                "text": "AI Coding Skill",
+                "path": "./skills/#ag-dev"
+            },
+            {
+                "text": "Documentation in markdown format"
+            },
+            {
+                "text": "Quality Improvements"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-36-1",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "36.0.0",
         "date": "June 24th 2026",
         "landingPageHighlight": "Calculated Columns, Show Values As, Automatic Column Generation, Accessibility Improvements, Theming Improvements",
