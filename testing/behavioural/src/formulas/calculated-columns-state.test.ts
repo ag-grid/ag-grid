@@ -1432,6 +1432,51 @@ describe('calculated columns - grid state persistence', () => {
         expect(api.getColumn('calculated_9')!.getParent()!.getGroupId()).toBe('derived');
     });
 
+    // === incoming state is authoritative over an existing dynamic calc col ======================
+
+    // A dynamic calc col only survives `setState` when the incoming entry still describes it as a created
+    // calculated column. An entry of any other kind names the same colId but does not define that column,
+    // so the old one must go rather than linger because an entry happens to exist.
+    test.each([
+        ['a tombstone', { colId: 'calculated_1', removed: true }],
+        ['an override', { colId: 'calculated_1', properties: [{ property: 'headerName', value: 'Renamed' }] }],
+        ['a created entry with no expression', { colId: 'calculated_1', created: true, parentGroupId: null }],
+    ])('api.setState replacing an existing calc col with %s removes it', async (name, entry) => {
+        const api = createGrid(`state-existing-dynamic-vs-${name.replace(/\s+/g, '-')}`, {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const calcId = await addViaDialog(api, 'a', '[a] + [b]');
+        expect(calcId).toBe('calculated_1');
+
+        api.setState({ userColumns: [entry as NonNullable<GridState['userColumns']>[number]] });
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
+    });
+
+    test('api.setState moves an existing calc col into the group its saved entry names', async () => {
+        const api = createGrid('state-existing-dynamic-regroup', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: [{ field: 'a' }, { groupId: 'derived', headerName: 'Derived', children: [{ field: 'b' }] }],
+        });
+        const calcId = await addViaDialog(api, 'a', '[a] + [b]');
+        // Added with no anchor, so it lands at the top level — inside the synthetic root group, not 'derived'.
+        expect(api.getColumn(calcId)!.getParent()!.getGroupId()).not.toBe('derived');
+
+        // Same colId and same properties, but the state places it inside the group: placement is part of
+        // what the entry describes, so adoption must reconcile it and not keep the previous position.
+        api.setState({
+            userColumns: [
+                {
+                    colId: calcId,
+                    created: true,
+                    parentGroupId: 'derived',
+                    properties: [{ property: 'calculatedExpression', value: '[a] + [b]' }],
+                },
+            ],
+        });
+        await waitFor(() => expect(api.getColumn(calcId)!.getParent()!.getGroupId()).toBe('derived'));
+    });
+
     test('applying a state that lists no override reverts a live edit to the declared definition', async () => {
         const clean = createGrid('state-declared-revert-clean', {
             rowData: STATIC_ROW_DATA,
@@ -1909,6 +1954,24 @@ describe('calculated columns - grid state persistence', () => {
             });
         });
     }
+
+    // === colId recycling: `calculated_N` is the lowest free index, so a deleted colId comes back ======
+
+    test('deleting a calc col frees its colId, so the next one added reuses it', async () => {
+        const api = createGrid('state-colid-reuse', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        expect(await addViaDialog(api, 'a', '[A] * 2')).toBe('calculated_1');
+
+        // Removal drops the entry outright (no tombstone: nothing declares the column, so nothing could
+        // resurrect it), which also frees the index for the next allocation.
+        await removeViaMenu(api, 'calculated_1');
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
+        expect(api.getState().userColumns).toBeUndefined();
+
+        expect(await addViaDialog(api, 'a', '[B] * 100')).toBe('calculated_1');
+    });
 });
 
 // The calculated-columns module being absent is a different grid setup, so it needs its own manager.

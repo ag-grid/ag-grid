@@ -545,10 +545,16 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
         const userColumnSvc = this.userColumnSvc;
         const dynamicColumns = this.dynamicColumns;
+        // An entry of any other kind (a tombstone, an override, a created entry without an expression) names
+        // the colId but does not define that column, so it cannot keep the column alive.
+        const describesCalcCol = (colId: string): boolean => {
+            const entry = userColumnSvc.getEntry(colId);
+            return entry?.created === true && entry.properties?.calculatedExpression != null;
+        };
         const deleteStaleColumns = (columns: Map<string, DynamicCalculatedColumn>): boolean => {
             let removed = false;
             columns.forEach((_dc, colId) => {
-                if (userColumnSvc.getEntry(colId) === undefined) {
+                if (!describesCalcCol(colId)) {
                     columns.delete(colId); // safe: Map iteration tolerates deleting the current key
                     removed = true;
                 }
@@ -570,6 +576,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             if (existing) {
                 if (!_mergedEqual(colDef, existing.colDef)) {
                     existing.colDef = colDef;
+                    changed = true;
+                }
+                // Group placement is part of what an entry describes, so a column already held must be
+                // re-seated when the entry names a different group. Only decidable once built; before that
+                // `anchorColId` was itself derived from the entry, and re-deriving it from a null instance
+                // would read as a move to the top level.
+                const instance = existing.instance;
+                if (instance !== null && (entry.parentGroupId ?? null) !== _getParentGroupId(instance)) {
+                    existing.anchorColId = this.findAnchorInGroup(entry.parentGroupId);
                     changed = true;
                 }
                 return;
