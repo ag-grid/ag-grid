@@ -125,6 +125,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private readonly dynamicColumns = new Map<string, DynamicCalculatedColumn>();
     /** Added cols parked by `resetColumnState` so a later `applyColumnState` can restore them, by colId. */
     private readonly inactiveDynamicColumns = new Map<string, DynamicCalculatedColumn>();
+    /** Highest `calculated_N` index handed out to this grid, so {@link createUniqueColId} never reuses one. */
+    private lastCalculatedColIndex = 0;
     private validationStatesByColId = new Map<string, ValidationState>();
     private validationStatesInitialised = false;
     // Guards the first lifecycle pass so the initial column set establishes a baseline without emitting events.
@@ -694,7 +696,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const { colModel } = this.beans;
         const userColumnSvc = this.userColumnSvc;
         const parked = this.inactiveDynamicColumns;
-        let index = 0;
+        // Resume above the highest index handed out: a freed colId is silently satisfied by whatever outlives
+        // the column and names it by id — a saved sort, or another expression (they store colIds, not headers).
+        let index = this.lastCalculatedColIndex;
         let colId: string;
         do {
             colId = `calculated_${++index}`;
@@ -705,6 +709,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             parked.has(colId) ||
             userColumnSvc.getEntry(colId) !== undefined
         );
+        this.lastCalculatedColIndex = index;
         return colId;
     }
 

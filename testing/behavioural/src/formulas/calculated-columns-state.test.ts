@@ -1955,22 +1955,74 @@ describe('calculated columns - grid state persistence', () => {
         });
     }
 
-    // === colId recycling: `calculated_N` is the lowest free index, so a deleted colId comes back ======
+    // === colId allocation: an index handed out is never reused, so nothing can rebind to it ===========
 
-    test('deleting a calc col frees its colId, so the next one added reuses it', async () => {
-        const api = createGrid('state-colid-reuse', {
+    test('deleting a calc col does not free its colId for the next one added', async () => {
+        const api = createGrid('state-colid-no-reuse', {
             rowData: [{ id: 'r1', a: 5, b: 2 }],
             columnDefs: [{ field: 'a' }, { field: 'b' }],
         });
         expect(await addViaDialog(api, 'a', '[A] * 2')).toBe('calculated_1');
 
-        // Removal drops the entry outright (no tombstone: nothing declares the column, so nothing could
-        // resurrect it), which also frees the index for the next allocation.
+        // Removal drops the entry outright — no tombstone, since nothing declares the column and so nothing
+        // could resurrect it — leaving no record of the colId beyond the allocator's own high-water mark.
         await removeViaMenu(api, 'calculated_1');
         await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
         expect(api.getState().userColumns).toBeUndefined();
 
-        expect(await addViaDialog(api, 'a', '[B] * 100')).toBe('calculated_1');
+        expect(await addViaDialog(api, 'a', '[B] * 100')).toBe('calculated_2');
+    });
+
+    test('a sort saved against a since-deleted calc col cannot attach to a later calc col', async () => {
+        const api = createGrid('state-colid-no-reuse-sort', {
+            rowData: [
+                { id: 'r1', a: 5, b: 2 },
+                { id: 'r2', a: 1, b: 9 },
+            ],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const firstId = await addViaDialog(api, 'a', '[A] * 2');
+        api.applyColumnState({ state: [{ colId: firstId, sort: 'desc' }] });
+        const staleSort = api.getState().sort;
+        expect(staleSort).toMatchObject({ sortModel: [{ colId: firstId, sort: 'desc' }] });
+
+        await removeViaMenu(api, firstId);
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
+        const secondId = await addViaDialog(api, 'a', '[B] * 100');
+        expect(secondId).not.toBe(firstId);
+
+        // The stale sort alongside the live column's own entry — what an app gets by keeping a saved sort
+        // across sessions, or by merging sections from two states. It names the deleted column's colId, which
+        // no longer resolves to anything, rather than a column the user never sorted.
+        api.setState({ userColumns: api.getState().userColumns, sort: staleSort });
+        await waitFor(() => expect(order(api)).toContain(secondId));
+        expect(api.getColumn(secondId)!.getSort()).toBeNull();
+    });
+
+    test('an expression referencing a deleted calc col cannot rebind to a later calc col', async () => {
+        const api = createGrid('state-colid-no-reuse-reference', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        const sourceId = await addViaDialog(api, 'a', '[A] * 2');
+        setTitle('Doubled');
+        await waitFor(() => expect(api.getColumn(sourceId)!.getColDef().headerName).toBe('Doubled'));
+
+        // Stored internally against `sourceId`, not against the header text, so the reference outlives the
+        // column it names — which is what a recycled colId would silently satisfy.
+        const dependentId = await addViaDialog(api, 'b', '[Doubled] + 1');
+        const row = () => api.getDisplayedRowAtIndex(0)!;
+        expect(api.getCellValue({ rowNode: row(), colKey: dependentId })).toBe(11);
+
+        await removeViaMenu(api, sourceId);
+        await waitFor(() => expect(order(api)).not.toContain(sourceId));
+
+        const laterId = await addViaDialog(api, 'a', '[B] * 100');
+        expect(laterId).not.toBe(sourceId);
+
+        // The reference stays dangling rather than resolving to unrelated data: 201 would mean the dependent
+        // column silently adopted the new one (b * 100 = 200) in place of what it was written against.
+        await waitFor(() => expect(api.getCellValue({ rowNode: row(), colKey: dependentId })).toBe('#PARSE!'));
     });
 });
 
