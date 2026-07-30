@@ -43,6 +43,10 @@ const gridOptions: GridOptions<IOlympicData> = {
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
+        headerNameEditable: true,
+    },
+    defaultColGroupDef: {
+        headerNameEditable: true,
     },
     autoGroupColumnDef: {
         minWidth: 200,

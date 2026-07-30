@@ -57,7 +57,11 @@ const GridExample = () => {
             enableRowGroup: true,
             enablePivot: true,
             enableValue: true,
+            headerNameEditable: true,
         };
+    }, []);
+    const defaultColGroupDef = useMemo<Partial<ColGroupDef>>(() => {
+        return { headerNameEditable: true };
     }, []);
     const autoGroupColumnDef = useMemo<AutoGroupColumnDef>(() => {
         return { minWidth: 200 };
@@ -115,6 +119,7 @@ const GridExample = () => {
                                 loading={loading}
                                 columnDefs={columnDefs}
                                 defaultColDef={defaultColDef}
+                                defaultColGroupDef={defaultColGroupDef}
                                 autoGroupColumnDef={autoGroupColumnDef}
                                 sideBar={true}
                                 pagination={true}

@@ -42,6 +42,7 @@ const VueExample = defineComponent({
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
+                    :defaultColGroupDef="defaultColGroupDef"
                     :autoGroupColumnDef="autoGroupColumnDef"
                     :sideBar="true"
                     :pagination="true"
@@ -89,7 +90,9 @@ const VueExample = defineComponent({
             enableRowGroup: true,
             enablePivot: true,
             enableValue: true,
+            headerNameEditable: true,
         });
+        const defaultColGroupDef = ref<Partial<ColGroupDef>>({ headerNameEditable: true });
         const autoGroupColumnDef = ref<ColDef>({ minWidth: 200 });
         const rowSelection = ref<RowSelectionOptions>({
             mode: 'multiRow',
@@ -139,6 +142,7 @@ const VueExample = defineComponent({
             columnDefs,
             gridApi,
             defaultColDef,
+            defaultColGroupDef,
             autoGroupColumnDef,
             rowSelection,
             rowData,

@@ -27,6 +27,10 @@ type Page = Parameters<typeof serializeGridDom>[0];
 const recreateButton = (page: Page) =>
     page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true });
 
+// Group header cells carry no colId-based test id that survives a rename, so locate them by the
+// name they currently display.
+const groupHeader = (page: Page, name: string) => page.locator('.ag-header-group-cell', { hasText: name });
+
 // Serialise the rendered grid once it has settled: loading is complete, scrolling has stopped
 // (`ag-scrollbar-scrolling` is transient mid-settle), and rows are not mid-animation. A freshly
 // created grid also applies measured scrollbar sizing and header classes over subsequent frames, so
@@ -139,6 +143,41 @@ test.agExample(import.meta, () => {
         // The calculated column is recreated from the restored userColumns state.
         await expect(calculatedHeader()).toBeVisible();
         await expect(page.locator('.ag-row[row-id="0"] .ag-cell', { hasText: '33' }).first()).toBeVisible();
+    });
+
+    test.eachFramework('Recreating the grid restores edited header names', async ({ agIdFor, page }) => {
+        await ensureGridReady(page, GRID_ID);
+        await waitForGridContent(page);
+
+        // Rename a column from its header menu (columnHeaderName state).
+        const athlete = agIdFor.headerCell('athlete');
+        await athlete.hover();
+        await athlete.locator('.ag-header-cell-menu-button').click();
+        await page.getByText('Edit Column Name', { exact: true }).click();
+        const columnInput = page.locator('.ag-column-header-edit-popup-editor input');
+        await expect(columnInput).toHaveValue('Athlete');
+        await columnInput.fill('Competitor');
+        await columnInput.press('Enter');
+        await expect(athlete).toContainText('Competitor');
+
+        // Rename a column group from its header context menu (columnGroup.headerNames state) —
+        // group headers have no menu button, so right-click is the only route.
+        await groupHeader(page, 'Medals').click({ button: 'right' });
+        await page.getByText('Edit Column Name', { exact: true }).click();
+        const groupInput = page.locator('.ag-column-header-edit-popup-editor input');
+        await expect(groupInput).toHaveValue('Medals');
+        await groupInput.fill('Podium');
+        await groupInput.press('Enter');
+        await expect(groupHeader(page, 'Podium')).toBeVisible();
+
+        // Recreate destroys the grid and seeds the new one from the previous state.
+        await recreateButton(page).click();
+        await ensureGridReady(page, GRID_ID);
+        await waitForGridContent(page);
+
+        // Both edited names survive the destroy/recreate cycle via the restored state.
+        await expect(agIdFor.headerCell('athlete')).toContainText('Competitor');
+        await expect(groupHeader(page, 'Podium')).toBeVisible();
     });
 
     // Drive the grid through as many state sections as can be applied purely through the UI —

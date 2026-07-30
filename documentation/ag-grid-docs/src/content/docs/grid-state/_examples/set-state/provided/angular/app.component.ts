@@ -47,6 +47,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                     gridId="setState"
                     [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef"
+                    [defaultColGroupDef]="defaultColGroupDef"
                     [autoGroupColumnDef]="autoGroupColumnDef"
                     [sideBar]="true"
                     [pagination]="true"
@@ -94,7 +95,9 @@ export class AppComponent {
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
+        headerNameEditable: true,
     };
+    public defaultColGroupDef: Partial<ColGroupDef> = { headerNameEditable: true };
     public autoGroupColumnDef: AutoGroupColumnDef = { minWidth: 200 };
     public rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
