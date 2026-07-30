@@ -37,8 +37,6 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     private selectState?: boolean;
 
     private onFilterTextChangedDebounced: () => void;
-    private filterChangePending = false;
-    private composing = false;
 
     private params: ToolPanelColumnCompParams;
 
@@ -63,18 +61,6 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         this.addManagedPropertyListener('functionsReadOnly', () => this.onFunctionsReadOnlyPropChanged());
 
         this.eFilterTextField.setAutoComplete(false).onValueChange(() => this.onFilterTextChanged());
-        this.addManagedElementListeners(this.eFilterTextField.getInputElement(), {
-            keydown: (e) => this.onFilterKeyDown(e!),
-        });
-        // Safari reports the composition-confirming Enter keydown with isComposing already false, so track composition explicitly.
-        this.addManagedElementListeners(this.eFilterTextField.getInputElement(), {
-            compositionstart: () => {
-                this.composing = true;
-            },
-            compositionend: () => {
-                this.composing = false;
-            },
-        });
 
         this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
 
@@ -133,29 +119,17 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
     private onFilterTextChanged(): void {
         if (!this.onFilterTextChangedDebounced) {
-            this.onFilterTextChangedDebounced = _debounce(this, () => this.dispatchFilterChanged(), DEBOUNCE_DELAY);
+            this.onFilterTextChangedDebounced = _debounce(
+                this,
+                () => {
+                    const filterText = this.eFilterTextField.getValue();
+                    this.dispatchLocalEvent({ type: 'filterChanged', filterText: filterText });
+                },
+                DEBOUNCE_DELAY
+            );
         }
 
-        this.filterChangePending = true;
         this.onFilterTextChangedDebounced();
-    }
-
-    private dispatchFilterChanged(): void {
-        if (!this.filterChangePending) {
-            return;
-        }
-        this.filterChangePending = false;
-        const filterText = this.eFilterTextField.getValue();
-        this.dispatchLocalEvent({ type: 'filterChanged', filterText: filterText });
-    }
-
-    private onFilterKeyDown(e: KeyboardEvent): void {
-        if (e.key === KeyCode.ENTER && !e.isComposing && !this.composing && !this.params.suppressColumnSelectAll) {
-            // Stop Enter from submitting an enclosing form, and flush any pending debounced filter change so the toggle acts on the settled set.
-            e.preventDefault();
-            this.dispatchFilterChanged();
-            this.onSelectClicked();
-        }
     }
 
     private onSelectClicked(): void {
