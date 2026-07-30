@@ -9,6 +9,7 @@ import {
     TextEditorModule,
     TextFilterModule,
     ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     CalculatedColumnsModule,
@@ -19,7 +20,7 @@ import {
     RowNumbersModule,
 } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 // Behavioural spec for PERSISTING runtime-added (dynamic) calculated columns in grid state.
 // A dynamic calc col is added via the header-menu dialog, so it is not present in `columnDefs`.
@@ -1177,6 +1178,54 @@ describe('calculated columns - grid state persistence', () => {
         // The override merges over the declared colDef, so untouched properties survive.
         expect(target.getColumn('declared')!.getColDef().headerName).toBe('Declared');
         expect(target.getState().userColumns).toEqual(savedState.userColumns);
+    });
+
+    test('an edit to a declared calc col with no colId is not applied, and cannot be misapplied to another column', async () => {
+        // `calculatedExpression` without a `colId` is warned against (#319), so this covers what the layer
+        // does when the developer ignores that: identity falls back to the build's positional ids, which
+        // the layer cannot match, so nothing the user does through the dialog takes effect.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
+        const anonymousColumnDefs = (): GridOptions['columnDefs'] => [
+            { field: 'a' },
+            { field: 'b' },
+            { headerName: 'Sum', calculatedExpression: '[a] + [b]' },
+            { headerName: 'Product', calculatedExpression: '[a] * [b]' },
+        ];
+        const headerNames = (api: GridApi): (string | undefined)[] =>
+            order(api).map((colId) => api.getColumn(colId)!.getColDef().headerName);
+
+        const source = createGrid('state-declared-anonymous-source', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: anonymousColumnDefs(),
+        });
+        // With neither colId nor field to key on, both calc cols land on positional ids.
+        await waitFor(() => expect(order(source)).toEqual(['a', 'b', '0', '1']));
+
+        await editViaDialog(source, '0', { title: 'Renamed Sum' });
+        // The rename is dropped by the rebuild the edit triggers: the entry it wrote is keyed by the
+        // positional id, which the build never looks up for a column with no declared key.
+        expect(headerNames(source)).toEqual([undefined, undefined, 'Sum', 'Product']);
+        expect(entryOf(source.getState(), '0').colId).toBe('0');
+
+        // A later `columnDefs` set clears the unmatched entry, so the edit is gone for good.
+        source.setGridOption('columnDefs', anonymousColumnDefs());
+        await asyncSetTimeout(0);
+        expect(source.getState().userColumns).toBeUndefined();
+
+        const savedState = source.getState();
+        const target = createGrid('state-declared-anonymous-target', {
+            rowData: STATIC_ROW_DATA,
+            // Declared in the opposite order, so a positional match would rename the wrong column.
+            columnDefs: [
+                { field: 'a' },
+                { field: 'b' },
+                { headerName: 'Product', calculatedExpression: '[a] * [b]' },
+                { headerName: 'Sum', calculatedExpression: '[a] + [b]' },
+            ],
+            initialState: savedState,
+        });
+        await asyncSetTimeout(0);
+        expect(headerNames(target)).toEqual([undefined, undefined, 'Product', 'Sum']);
     });
 
     test('a columnDefs-declared calc col deleted by the user stays deleted after a state round-trip', async () => {

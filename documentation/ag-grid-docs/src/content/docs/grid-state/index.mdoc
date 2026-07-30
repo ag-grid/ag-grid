@@ -79,6 +79,10 @@ If applying some but not all of the column state properties, then `initialState.
 
 `partialColumnState` controls _which_ column state sections you supply, not whether those sections may themselves be partial. Any section you include must match its documented shape.
 
+{% warning %}
+Every column whose state you want to persist must have a `colId` or a `field`. Columns are identified in the state by their [Column ID](./column-updating-definitions/#matching-columns), and a column that provides neither - for example one using only a `valueGetter` - is given a positional ID instead. Because that ID follows the column's position in `columnDefs` rather than the column itself, reordering the definitions between saving and restoring applies each column's state to whichever column now occupies that position. This affects every column state section, including sizes, sort, pinning, visibility, order and header names, so a restored grid can silently show another column's width or a header renamed by the user on the wrong column.
+{% /warning %}
+
 {% note %}
 [Column Groups](./column-groups/) are identified in the state by their `groupId`. If a group definition does not provide one, the grid generates a positional ID which changes when the column definitions change, so the open / closed state of that group may not be restored. Always set `groupId` on any column group whose state you want to persist.
 {% /note %}

@@ -130,6 +130,8 @@ Given the `field` is not a unique identifier, the grid uses the following rules 
 
 In other words, to have the grid correctly match Columns make sure each Column has either a `field` or `colId`.
 
+Matching by Column Definition instance only works within the lifetime of a grid, so a `field` or `colId` is required if you save and restore [Grid State](./grid-state/) or [Column State](./column-state/). A column with neither is identified by its position, and its state is re-applied to whichever column later occupies that position.
+
 The example below demonstrates the different matching strategies. Note the following:
 
 - All columns, with the exception of Country, are matched correctly. This means any column width, sort etc
