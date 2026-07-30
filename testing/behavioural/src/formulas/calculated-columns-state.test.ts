@@ -1628,6 +1628,47 @@ describe('calculated columns - grid state persistence', () => {
               └── b "B" width:200
         `);
     });
+
+    test('editing a restored top-level calc col keeps its position and padded header among grouped columns', async () => {
+        const rowData = [{ id: 'r1', athlete: 'A', age: 20, gold: 3, silver: 1 }];
+        const columnDefs: GridOptions['columnDefs'] = [
+            { field: 'athlete' },
+            { field: 'age' },
+            { headerName: 'Medals', groupId: 'medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+        ];
+        const api = createGrid('state-toplevel-edit-source', { rowData, columnDefs });
+        const calcId = await addViaDialog(api, 'athlete', '[age] * 2');
+        expect(order(api)).toEqual(['athlete', calcId, 'age', 'gold', 'silver']);
+
+        const savedState = api.getState();
+        const api2 = createGrid('state-toplevel-edit-target', { rowData, columnDefs, initialState: savedState });
+        await waitFor(() => expect(order(api2)).toContain(calcId));
+        expect(order(api2)).toEqual(['athlete', calcId, 'age', 'gold', 'silver']);
+        await new GridColumns(api2, 'restored calc col before edit').checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── ${calcId} "Untitled" width:200 ƒ
+            ├── age "Age" width:200
+            └─┬ "Medals" GROUP
+              ├── gold "Gold" width:200
+              └── silver "Silver" width:200
+        `);
+
+        await editViaDialog(api2, calcId, { title: 'Renamed' });
+        expect(api2.getColumn(calcId)!.getColDef().headerName).toBe('Renamed');
+        expect(order(api2)).toEqual(['athlete', calcId, 'age', 'gold', 'silver']);
+        // The rebuild the edit triggers must keep the column padded to the tree depth: an unpadded leaf
+        // renders at the group header's level and sorts ahead of the grouped columns.
+        await new GridColumns(api2, 'restored calc col edited - layout unchanged').checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── ${calcId} "Renamed" width:200 ƒ
+            ├── age "Age" width:200
+            └─┬ "Medals" GROUP
+              ├── gold "Gold" width:200
+              └── silver "Silver" width:200
+        `);
+    });
 });
 
 // The calculated-columns module being absent is a different grid setup, so it needs its own manager.
