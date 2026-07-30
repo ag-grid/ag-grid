@@ -141,7 +141,7 @@ jobs:
                     
                     // blocks section
                     const content = [];
-                    if (pull_number) {
+                    if (pull_number && moveOrMention === 'move') {
                         const {reviewers, mergedBy} = await getReviewers(pr);
                         
                         const samePerson = reviewers.length === 1 && reviewers[0] === mergedBy;
