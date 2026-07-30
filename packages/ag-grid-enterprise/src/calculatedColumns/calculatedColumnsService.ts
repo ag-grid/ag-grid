@@ -97,6 +97,9 @@ type DynamicCalculatedColumn = {
     anchorColId: string | null;
     /** Owned AgColumn for stable identity across refreshes; `null` until built. The rebuild sweep destroys it. */
     instance: AgColumn | null;
+    /** Group placement captured when `resetColumnState` parks the column (the instance is dropped at that
+     *  point), so a later `applyColumnState` restore persists the column back into its group. */
+    parentGroupId?: string | null;
 };
 
 type OpenCalculatedColumnDialog = {
@@ -520,6 +523,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         // `resetColumnState` parks added cols for a later `applyColumnState`, dropping the about-to-be-swept instance ref.
         if (preserveCreatedColumns) {
             this.dynamicColumns.forEach((dynamicColumn, colId) => {
+                dynamicColumn.parentGroupId = _getParentGroupId(dynamicColumn.instance);
                 dynamicColumn.instance = null;
                 this.inactiveDynamicColumns.set(colId, dynamicColumn);
             });
@@ -638,7 +642,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 this.beans.userColumnSvc.setCreatedColumn(
                     colId,
                     pickUserOwnedProperties(dynamicColumn.colDef),
-                    _getParentGroupId(dynamicColumn.instance)
+                    dynamicColumn.parentGroupId ?? null
                 );
                 restored = true;
             }
@@ -679,13 +683,19 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private createUniqueColId(): string {
-        const { colModel } = this.beans;
+        const { colModel, userColumnSvc } = this.beans;
         const parked = this.inactiveDynamicColumns;
         let index = 0;
         let colId: string;
         do {
             colId = `calculated_${++index}`;
-        } while (colModel.getCol(colId) !== undefined || parked.has(colId));
+            // The layer check covers tombstoned declared columns, which are absent from the built columns
+            // but whose entry a new column with the same colId would overwrite.
+        } while (
+            colModel.getCol(colId) !== undefined ||
+            parked.has(colId) ||
+            userColumnSvc.getEntry(colId) !== undefined
+        );
         return colId;
     }
 

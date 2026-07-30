@@ -1594,6 +1594,40 @@ describe('calculated columns - grid state persistence', () => {
             └── LEAF id:r1 a:5 ${calcId}:10 b:2
         `);
     });
+
+    test('a grouped calc col resurrected by applyColumnState keeps its group in the state round-trip', async () => {
+        const api = createGrid('state-parked-group-roundtrip', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ groupId: 'g', headerName: 'G', children: [{ field: 'a' }, { field: 'b' }] }],
+        });
+        const calcId = await addViaDialog(api, 'a', '[A] * 2');
+        const columnStateWithCalc = api.getColumnState();
+
+        api.resetColumnState();
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
+        expect(api.getState().userColumns).toBeUndefined();
+
+        // The resurrected column must be re-recorded with its group, not just rendered inside it — a
+        // state saved after the resurrection restores the column into the group on another grid.
+        api.applyColumnState({ state: columnStateWithCalc, applyOrder: true });
+        await waitFor(() => expect(order(api)).toEqual(['a', calcId, 'b']));
+        const savedState = api.getState();
+        expect(entryOf(savedState, calcId).parentGroupId).toBe('g');
+
+        const api2 = createGrid('state-parked-group-target', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ groupId: 'g', headerName: 'G', children: [{ field: 'a' }, { field: 'b' }] }],
+            initialState: savedState,
+        });
+        await waitFor(() => expect(order(api2)).toContain(calcId));
+        await new GridColumns(api2, 'parked grouped calc col restored into its group').checkColumns(`
+            CENTER
+            └─┬ "G" GROUP
+              ├── a "A" width:200
+              ├── ${calcId} "Untitled" width:200 ƒ
+              └── b "B" width:200
+        `);
+    });
 });
 
 // The calculated-columns module being absent is a different grid setup, so it needs its own manager.

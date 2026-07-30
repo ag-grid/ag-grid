@@ -29,7 +29,7 @@ This section details how such state items can be manipulated without having to u
 ## Save and Apply State {% #save-and-apply %}
 
 {% note %}
-If you are only interested in restoring Column State on grid initialisation, you should consider using [Initial State](./grid-state/) instead, which contains all of the Column State properties.
+If you want to save and restore the whole grid rather than manipulate individual column attributes, consider [Grid State](./grid-state/) instead. It contains all of the Column State properties alongside the other grid state sections — including [Calculated Columns](./calculated-columns/) added at runtime, which Column State alone cannot recreate — and can be applied on initialisation via `initialState` or at runtime via `api.setState()`.
 {% /note %}
 
 There are two API methods provided for getting and setting Column State. `api.getColumnState()` gets the current
