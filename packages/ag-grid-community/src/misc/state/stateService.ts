@@ -232,6 +232,7 @@ export class StateService extends BeanStub implements NamedBean {
             return;
         }
         if (calculatedColsSvc) {
+            // This calls colModel.rebuildCols as part of refreshDynamicColumns
             calculatedColsSvc.refreshDynamicColumns(source);
         } else {
             colModel.rebuildCols(source);
