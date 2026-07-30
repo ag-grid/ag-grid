@@ -341,10 +341,16 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return;
         }
 
-        const pivotColumnGroupDefs = this.pivotColDefSvc.createColDefsFromFields(pivotFields);
         this.pivotResultFields = pivotFields;
+        const pivotResultCols = this.pivotResultCols;
+        // `setPivotResultColumns` hands the pivot result columns to the application until it clears them again, so
+        // an ordinary refresh, filter, sort or block response must not put server-derived columns back in their place.
+        if (pivotResultCols?.suppliedColDefs) {
+            return;
+        }
+        const pivotColumnGroupDefs = this.pivotColDefSvc.createColDefsFromFields(pivotFields);
         this.managingPivotResultColumns = true;
-        this.pivotResultCols?.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
+        pivotResultCols?.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
     }
 
     public resetRowHeights(): void {

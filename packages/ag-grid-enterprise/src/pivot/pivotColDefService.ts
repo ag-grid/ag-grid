@@ -43,18 +43,34 @@ const naturalOrderComparator = (): number => 0;
 
 type ColDefComparator = (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) => number;
 
+/** Whether an entry is one of `depth`'s pivot keys, and so takes part in that level's ordering.
+ *
+ *  A group entry is always this level's pivot key. A plain colDef is one only when it says so: `pivotKeys` records
+ *  the keys a def sits under, so its length tells which level the def belongs to - `pivotKeys.length > depth` is a
+ *  flattened pivot key of this level, a shorter one is a measure or a `pivotRowTotals` total (`pivotKeys: []`) that
+ *  must hold its position. Supplied defs may carry `pivotKeys` too, and it is the only unambiguous signal there.
+ *
+ *  Without that metadata only the shape is left, and it is ambiguous. Alongside groups, a plain colDef is taken for
+ *  a total and pinned. In a level of nothing but plain colDefs, the top level is a flattened pivot level - a single
+ *  pivot column, or `removePivotHeaderRowWhenSingleValueColumn` - while a deeper one is taken for the measures of
+ *  one pivot key, since sorting those by header name would interleave measures across pivot keys. */
+const isPivotKeyAtLevel = (def: ColDef | ColGroupDef, depth: number, levelHasGroups: boolean): boolean => {
+    if ((def as ColGroupDef).children != null) {
+        return true;
+    }
+    const pivotKeys = (def as ColDef).pivotKeys;
+    if (pivotKeys != null) {
+        return pivotKeys.length > depth;
+    }
+    return !levelHasGroups && depth === 0;
+};
+
 /** Returns a reordered copy of `colDefs` for `depth`'s pivot column, or `null` when the supplied order already
  *  matches. Never mutates the supplied array or defs: application-supplied colDefs are owned by the application,
  *  and their order is the natural order that `pivotSort: null` resolves back to.
  *
- *  Group entries are this level's pivot keys, and sort among the slots the groups occupy. Plain colDefs sitting
- *  alongside them - a `pivotRowTotals` total, say - are not pivot keys, so they are pinned to their index and hold
- *  their configured edge whatever the sort direction.
- *
- *  A level that is entirely plain colDefs is ambiguous, and only sorts at the top. There it is a flattened pivot
- *  level: a single pivot column, or `removePivotHeaderRowWhenSingleValueColumn`. Deeper down it is instead the
- *  measure columns of one pivot key - a supplied structure may nest measures directly under a group rather than
- *  spell out every pivot level - and sorting those by header name would interleave measures across pivot keys. */
+ *  This level's pivot keys (see {@link isPivotKeyAtLevel}) sort among the slots they occupy, so anything else -
+ *  a `pivotRowTotals` total, say - is pinned to its index and holds its configured edge whatever the direction. */
 const orderColDefLevel = (
     colDefs: (ColDef | ColGroupDef)[],
     depth: number,
@@ -64,28 +80,29 @@ const orderColDefLevel = (
     if (depth >= comparators.length || len === 0) {
         return null;
     }
-    const comparator = comparators[depth];
-    const groupIndexes: number[] = [];
+    let levelHasGroups = false;
     for (let i = 0; i < len; ++i) {
         if ((colDefs[i] as ColGroupDef).children != null) {
-            groupIndexes.push(i);
+            levelHasGroups = true;
+            break;
         }
     }
-    const groupCount = groupIndexes.length;
-    if (groupCount === 0 && depth !== 0) {
-        return null;
+    const keyIndexes: number[] = [];
+    for (let i = 0; i < len; ++i) {
+        if (isPivotKeyAtLevel(colDefs[i], depth, levelHasGroups)) {
+            keyIndexes.push(i);
+        }
     }
+    const keyCount = keyIndexes.length;
     const ordered = colDefs.slice();
-    if (groupCount === 0) {
-        ordered.sort(comparator);
-    } else {
-        const groups: (ColDef | ColGroupDef)[] = [];
-        for (let i = 0; i < groupCount; ++i) {
-            groups.push(colDefs[groupIndexes[i]]);
+    if (keyCount > 1) {
+        const keys: (ColDef | ColGroupDef)[] = [];
+        for (let i = 0; i < keyCount; ++i) {
+            keys.push(colDefs[keyIndexes[i]]);
         }
-        groups.sort(comparator);
-        for (let i = 0; i < groupCount; ++i) {
-            ordered[groupIndexes[i]] = groups[i];
+        keys.sort(comparators[depth]);
+        for (let i = 0; i < keyCount; ++i) {
+            ordered[keyIndexes[i]] = keys[i];
         }
     }
     let changed = false;

@@ -164,22 +164,21 @@ function addColDef(
 }
 
 // The supplied order is the pivot result columns' natural order, used when the YEAR pill in the pivot panel is
-// cycled to no sort. This example supplies the years shuffled so that order is distinguishable from asc/desc.
-// `window.agRandom` is the docs' seeded generator, so the shuffle is the same on every run - unlike `Math.random`.
-function scramblePivotFields(pivotFields: string[]): string[] {
-    return pivotFields
-        .map((field) => ({ field, rank: window.agRandom() }))
+// cycled to no sort. This example supplies the year groups shuffled so that order is distinguishable from asc/desc.
+// Only the groups move, so Gold/Silver/Bronze keep their order within each year. `window.agRandom` is the docs'
+// seeded generator, so the shuffle is the same on every run - unlike `Math.random`.
+function shuffleYearGroups(yearGroups: ColGroupDef[]): ColGroupDef[] {
+    return yearGroups
+        .map((group) => ({ group, rank: window.agRandom() }))
         .sort((a, b) => a.rank - b.rank)
-        .map((entry) => entry.field);
+        .map((entry) => entry.group);
 }
 
 function createPivotResultColumns(request: IServerSideGetRowsRequest, pivotFields: string[]): ColGroupDef[] {
     if (request.pivotMode && request.pivotCols.length > 0) {
         const pivotResultCols: ColGroupDef[] = [];
-        scramblePivotFields(pivotFields).forEach((field) =>
-            addColDef(field, field.split('_'), pivotResultCols, request)
-        );
-        return pivotResultCols;
+        pivotFields.forEach((field) => addColDef(field, field.split('_'), pivotResultCols, request));
+        return shuffleYearGroups(pivotResultCols);
     }
 
     return [];

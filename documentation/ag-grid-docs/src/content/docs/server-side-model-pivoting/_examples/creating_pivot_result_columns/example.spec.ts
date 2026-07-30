@@ -2,39 +2,30 @@ import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/t
 
 type Page = import('@playwright/test').Page;
 
-// Header group cells are absolutely positioned, so visual order comes from their `left` offset rather than DOM
-// order. Return the year group header texts, left-to-right.
-const yearGroupOrder = (page: Page) =>
-    page.locator('.ag-header-group-cell .ag-header-group-text').evaluateAll((els) =>
-        els
-            .map((e) => ({ text: e.textContent!.trim(), left: e.getBoundingClientRect().left }))
-            .filter((e) => /^\d{4}$/.test(e.text))
-            .sort((a, b) => a.left - b.left)
-            .map((e) => e.text)
+// Only the header cells near the viewport are rendered, so read the whole column order from the grid API rather
+// than the DOM. Pivot result col ids are `<year>_<medal>`, so the year groups are their distinct year prefixes.
+const yearGroupOrder = async (page: Page): Promise<string[]> => {
+    const colIds: string[] = await page.evaluate(
+        () =>
+            (window as any)
+                .getGridApi('1')
+                .getPivotResultColumns()
+                ?.map((col: any) => col.getColId()) ?? []
     );
+    const years = colIds.map((colId) => colId.split('_')[0]).filter((year) => /^\d{4}$/.test(year));
+    return years.filter((year, i) => years.indexOf(year) === i);
+};
 
 const yearPillFor = (page: Page) => page.locator('.ag-column-drop-horizontal-cell', { hasText: 'Year' });
 
-/** The pivot groups reorder asynchronously: poll until they are sorted `mode`-wards. Only the groups near the
- *  viewport are rendered, so this asserts the shape of the order rather than an exact list. */
+/** The pivot groups reorder asynchronously: poll until they are sorted `mode`-wards. */
 const waitForYears = (page: Page, mode: 'asc' | 'desc') =>
-    page.waitForFunction((expected) => {
-        const years = Array.from(document.querySelectorAll('.ag-header-group-cell .ag-header-group-text'))
-            .map((e) => ({ text: e.textContent!.trim(), left: e.getBoundingClientRect().left }))
-            .filter((e) => /^\d{4}$/.test(e.text))
-            .sort((a, b) => a.left - b.left)
-            .map((e) => e.text);
-        return (
-            years.length > 1 &&
-            years.every((year, i) => {
-                if (i === 0) {
-                    return true;
-                }
-                const previous = Number(years[i - 1]);
-                return expected === 'asc' ? previous <= Number(year) : previous >= Number(year);
-            })
-        );
-    }, mode);
+    expect(async () => {
+        const years = await yearGroupOrder(page);
+        expect(years.length).toBeGreaterThan(1);
+        const ascending = years.slice().sort();
+        expect(years).toEqual(mode === 'asc' ? ascending : ascending.reverse());
+    }).toPass();
 
 test.agExample(import.meta, () => {
     test.eachFramework(
@@ -88,7 +79,7 @@ test.agExample(import.meta, () => {
 
             // Cycling on to no sort falls back to the order the columns were supplied in. The example shuffles that
             // order with the docs' seeded generator, so rather than pin the exact permutation to the seed, assert
-            // what the example actually claims: it holds the same years, in neither ascending nor descending order.
+            // what the example actually claims: the same years, in neither ascending nor descending order.
             const descendingYears = await yearGroupOrder(page);
             const ascendingYears = descendingYears.slice().reverse();
             const sortedYears = descendingYears.slice().sort();
