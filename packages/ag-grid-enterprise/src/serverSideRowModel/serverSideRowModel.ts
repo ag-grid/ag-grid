@@ -1,4 +1,4 @@
-import { _debounce, _jsonEquals } from 'ag-stack';
+import { _areEqual, _debounce, _jsonEquals } from 'ag-stack';
 
 import type {
     AdvancedFilterModel,
@@ -299,17 +299,12 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return false;
         }
         const newCols = this.columnsToValueObjects(this.pivotColsSvc?.columns);
-        if (oldCols.length !== newCols.length) {
-            return false;
-        }
-        for (let i = 0, len = oldCols.length; i < len; ++i) {
-            const oldCol = oldCols[i];
-            const newCol = newCols[i];
-            if (oldCol.id !== newCol.id || oldCol.field !== newCol.field || oldCol.aggFunc !== newCol.aggFunc) {
-                return false;
-            }
-        }
-        return true;
+        return _areEqual(
+            oldCols,
+            newCols,
+            (oldCol, newCol) =>
+                oldCol.id === newCol.id && oldCol.field === newCol.field && oldCol.aggFunc === newCol.aggFunc
+        );
     }
 
     private destroyRootStore(): void {
