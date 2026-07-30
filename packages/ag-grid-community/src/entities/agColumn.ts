@@ -977,6 +977,19 @@ export const _resolvePivotSortFromColDef = (colDef: ColDef): SortDirection | und
     return pivotSortLike === undefined ? undefined : normalizeSortDirection(pivotSortLike);
 };
 
+/** Direction an unset (`undefined`) `pivotSort` resolves to. The grid's own pivot columns are generated
+ *  ascending, so ascending is what the chip and the ordering must report. Application-supplied pivot result
+ *  columns instead arrive in an order the application chose, which the grid must leave alone until the user
+ *  sorts - so there the default is "no sort".
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _defaultPivotSort = (beans: BeanCollection): SortDirection =>
+    beans.pivotResultCols?.suppliedColDefs != null ? null : 'asc';
+
+/** A column's pivot sort with the unset default resolved via {@link _defaultPivotSort}.
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _resolvePivotSort = (beans: BeanCollection, pivotSort: SortDirection | undefined): SortDirection =>
+    pivotSort === undefined ? _defaultPivotSort(beans) : pivotSort;
+
 export const normalizeSortDirection = (sortDirectionLike?: unknown): SortDirection =>
     isSortDirectionValid(sortDirectionLike) ? sortDirectionLike : null;
 

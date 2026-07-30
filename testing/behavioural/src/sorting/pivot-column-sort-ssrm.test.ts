@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 
 import type { ColDef, GridApi, IServerSideDatasource } from 'ag-grid-community';
+import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { createFakeServer, createServerSideDatasource } from '../columnToolPanel/deferredPivotModeFakeServer';
@@ -135,9 +136,9 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
         const pivots = () => pivotsOf(api);
         const supplied = ['2004_gold', '2000_gold', '2008_gold'];
-        // Supplying the columns leaves pivotSort alone, so its ascending default orders them by header name.
-        await waitFor(() => expect(pivots()).toEqual(['2000_gold', '2004_gold', '2008_gold']));
-        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('asc');
+        // The application chose this order, so an unset pivotSort leaves it alone and reports no sort.
+        await waitFor(() => expect(pivots()).toEqual(supplied));
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBeNull();
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
         await waitFor(() => expect(pivots()).toEqual(['2008_gold', '2004_gold', '2000_gold']));
@@ -154,6 +155,83 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         await waitFor(() => expect(pivots()).toEqual(['2008_gold', '2004_gold', '2000_gold']));
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: null }] });
         await waitFor(() => expect(pivots()).toEqual(supplied));
+    });
+
+    test('supplied pivot result columns start unsorted and the first pill click sorts them ascending', async () => {
+        const datasource: IServerSideDatasource = {
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
+        };
+        const api = await createPivotGrid(datasource);
+
+        // Supplied in an order that is neither ascending nor descending, so "no sort" is distinguishable.
+        const supplied = ['2004_gold', '2000_gold', '2008_gold'];
+        api.setPivotResultColumns([
+            { groupId: '2004', headerName: '2004', children: [{ colId: '2004_gold', field: '2004_gold' }] },
+            { groupId: '2000', headerName: '2000', children: [{ colId: '2000_gold', field: '2000_gold' }] },
+            { groupId: '2008', headerName: '2008', children: [{ colId: '2008_gold', field: '2008_gold' }] },
+        ]);
+
+        const pivots = () => pivotsOf(api);
+        await waitFor(() => expect(pivots()).toEqual(supplied));
+
+        const yearCol = api.getColumn('year') as any;
+        const strategy = yearCol.beans.columnStateUpdateStrategy;
+        expect(strategy.getPivotSort(false, yearCol)).toBeUndefined();
+
+        strategy.progressPivotSortFromEvent(false, yearCol);
+        await waitFor(() => {
+            expect(strategy.getPivotSort(false, yearCol)).toBe('asc');
+            expect(pivots()).toEqual(['2000_gold', '2004_gold', '2008_gold']);
+        });
+
+        strategy.progressPivotSortFromEvent(false, yearCol);
+        await waitFor(() => {
+            expect(strategy.getPivotSort(false, yearCol)).toBe('desc');
+            expect(pivots()).toEqual(['2008_gold', '2004_gold', '2000_gold']);
+        });
+
+        strategy.progressPivotSortFromEvent(false, yearCol);
+        await waitFor(() => {
+            expect(strategy.getPivotSort(false, yearCol)).toBeNull();
+            expect(pivots()).toEqual(supplied);
+        });
+    });
+
+    test('the pivot pill shows no sort indicator while supplied pivot result columns are unsorted', async () => {
+        const api = await gridsManager.createGridAndWait('ssrmPill', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'gold', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            pivotPanelShow: 'always',
+            rowModelType: 'serverSide',
+            serverSideDatasource: {
+                getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
+            },
+        });
+        await waitForNoLoadingRows(api);
+
+        api.setPivotResultColumns([
+            { groupId: '2004', headerName: '2004', children: [{ colId: '2004_gold', field: '2004_gold' }] },
+            { groupId: '2000', headerName: '2000', children: [{ colId: '2000_gold', field: '2000_gold' }] },
+        ]);
+        await waitFor(() => expect(pivotsOf(api)).toEqual(['2004_gold', '2000_gold']));
+
+        const pill = getGridElement(api)!.querySelector('.ag-column-drop-horizontal-pivot .ag-column-drop-cell')!;
+        const shown = (selector: string) => {
+            const icon = pill.querySelector(selector);
+            return !!icon && !icon.classList.contains('ag-hidden');
+        };
+        expect(shown('.ag-sort-ascending-icon')).toBe(false);
+        expect(shown('.ag-sort-descending-icon')).toBe(false);
+
+        pill.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+        await waitFor(() => {
+            expect(shown('.ag-sort-ascending-icon')).toBe(true);
+            expect(pivotsOf(api)).toEqual(['2000_gold', '2004_gold']);
+        });
     });
 
     test('sorting supplied pivot result columns does not mutate the application-owned arrays', async () => {
@@ -190,10 +268,10 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
             { groupId: 'sup_2004', headerName: '2004', children: [{ colId: 'sup_2004_gold', field: '2004_gold' }] },
             { groupId: 'sup_2000', headerName: '2000', children: [{ colId: 'sup_2000_gold', field: '2000_gold' }] },
         ]);
-        await waitFor(() => expect(pivots()).toEqual(['sup_2000_gold', 'sup_2004_gold']));
-
-        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
         await waitFor(() => expect(pivots()).toEqual(['sup_2004_gold', 'sup_2000_gold']));
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'asc' }] });
+        await waitFor(() => expect(pivots()).toEqual(['sup_2000_gold', 'sup_2004_gold']));
     });
 
     test('a server refresh does not replace application-supplied pivot result columns', async () => {
@@ -209,12 +287,12 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
             { groupId: 'sup_2004', headerName: '2004', children: [{ colId: 'sup_2004_gold', field: '2004_gold' }] },
             { groupId: 'sup_2000', headerName: '2000', children: [{ colId: 'sup_2000_gold', field: '2000_gold' }] },
         ]);
-        await waitFor(() => expect(pivots()).toEqual(['sup_2000_gold', 'sup_2004_gold']));
+        await waitFor(() => expect(pivots()).toEqual(['sup_2004_gold', 'sup_2000_gold']));
 
         api.refreshServerSide({ purge: true });
         await waitForNoLoadingRows(api);
         await waitFor(() => expect(api.getDisplayedRowCount()).toBeGreaterThan(0));
-        expect(pivots()).toEqual(['sup_2000_gold', 'sup_2004_gold']);
+        expect(pivots()).toEqual(['sup_2004_gold', 'sup_2000_gold']);
 
         // ...and the application keeps the order until it hands the columns back.
         api.setPivotResultColumns(null);
@@ -260,11 +338,11 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         ]);
 
         const pivots = () => pivotsOf(api, /^\d{4}_/);
-        // Groups ordered by the ascending default; Silver still precedes Gold inside each.
-        await waitFor(() => expect(pivots()).toEqual(['2000_silver', '2000_gold', '2004_silver', '2004_gold']));
-
-        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        // Groups keep the supplied order while unsorted; Silver still precedes Gold inside each.
         await waitFor(() => expect(pivots()).toEqual(['2004_silver', '2004_gold', '2000_silver', '2000_gold']));
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'asc' }] });
+        await waitFor(() => expect(pivots()).toEqual(['2000_silver', '2000_gold', '2004_silver', '2004_gold']));
     });
 
     test('pivotKeys mark supplied leaves as a flattened inner pivot level', async () => {
@@ -303,10 +381,10 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         ]);
 
         const pivots = () => pivotsOf(api, /^\d{4}_/);
-        await waitFor(() => expect(pivots()).toEqual(['2000_Diving', '2000_Swimming']));
-
-        api.applyColumnState({ state: [{ colId: 'sport', pivotSort: 'desc' }] });
         await waitFor(() => expect(pivots()).toEqual(['2000_Swimming', '2000_Diving']));
+
+        api.applyColumnState({ state: [{ colId: 'sport', pivotSort: 'asc' }] });
+        await waitFor(() => expect(pivots()).toEqual(['2000_Diving', '2000_Swimming']));
     });
 
     test('pivotSort orders flat supplied pivot columns when pivoting on two columns', async () => {
@@ -334,10 +412,10 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         ]);
 
         const pivots = () => pivotsOf(api, /^\d{4}_/);
-        await waitFor(() => expect(pivots()).toEqual(['2000_gold', '2004_gold']));
-
-        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
         await waitFor(() => expect(pivots()).toEqual(['2004_gold', '2000_gold']));
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'asc' }] });
+        await waitFor(() => expect(pivots()).toEqual(['2000_gold', '2004_gold']));
     });
 
     test('pivotSort pins a supplied non-group column while the groups beside it reorder', async () => {
@@ -355,10 +433,10 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         ]);
 
         const pivots = () => pivotsOf(api);
-        await waitFor(() => expect(pivots()).toEqual(['2000_gold', '2004_gold', 'total_gold']));
-
-        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
         await waitFor(() => expect(pivots()).toEqual(['2004_gold', '2000_gold', 'total_gold']));
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'asc' }] });
+        await waitFor(() => expect(pivots()).toEqual(['2000_gold', '2004_gold', 'total_gold']));
     });
 
     test('a supplied total marked with empty pivotKeys is pinned in a flat level', async () => {
@@ -376,10 +454,10 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         ]);
 
         const pivots = () => pivotsOf(api);
-        await waitFor(() => expect(pivots()).toEqual(['total_gold', '2000_gold', '2004_gold']));
-
-        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
         await waitFor(() => expect(pivots()).toEqual(['total_gold', '2004_gold', '2000_gold']));
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'asc' }] });
+        await waitFor(() => expect(pivots()).toEqual(['total_gold', '2000_gold', '2004_gold']));
     });
 
     test('changing the pivot columns still refetches from the server', async () => {

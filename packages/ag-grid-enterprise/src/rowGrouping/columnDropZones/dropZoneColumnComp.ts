@@ -10,7 +10,7 @@ import type {
     SortDirection,
     SortIndicatorComp,
 } from 'ag-grid-community';
-import { Component, DragSourceType, KeyCode, _createElement } from 'ag-grid-community';
+import { Component, DragSourceType, KeyCode, _createElement, _resolvePivotSort } from 'ag-grid-community';
 
 import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
@@ -200,6 +200,14 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         this.bindSort(this.getPivotSortDefOverride.bind(this), (column) =>
             this.beans.columnStateUpdateStrategy.progressPivotSortFromEvent(this.deferApply, column)
         );
+        // What an unset pivotSort displays depends on whether the pivot result columns are application-supplied,
+        // which `setPivotResultColumns` can change while this pill lives.
+        this.addManagedEventListeners({
+            gridColumnsChanged: () => {
+                this.eSortIndicator.refresh();
+                this.setupAria();
+            },
+        });
     }
 
     private bindSort(
@@ -241,14 +249,18 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         return this.beans.columnStateUpdateStrategy.getSortDef(this.deferApply, this.column);
     }
 
-    // Pivot sort is isolated from the column's own sort. The unset default (`undefined`) and `'asc'` both
-    // show ascending; `null` is an explicit "no sort" and shows no icon. Never falls back to the column's sort.
+    // Pivot sort is isolated from the column's own sort: `null` is an explicit "no sort" and shows no icon,
+    // and the unset default resolves via `_resolvePivotSort`. Never falls back to the column's sort.
     private getPivotSortDefOverride(): SortDef | null {
-        const direction = this.beans.columnStateUpdateStrategy.getPivotSort(this.deferApply, this.column);
+        const beans = this.beans;
+        const direction = _resolvePivotSort(
+            beans,
+            beans.columnStateUpdateStrategy.getPivotSort(this.deferApply, this.column)
+        );
         if (direction === null) {
             return null;
         }
-        return { type: 'default', direction: direction ?? 'asc' };
+        return { type: 'default', direction };
     }
 
     protected override getDefaultIconName(): DragAndDropIcon {

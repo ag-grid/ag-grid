@@ -10,7 +10,7 @@ import type {
     IValueColsService,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _resolvePivotSort } from 'ag-grid-community';
 
 const PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 
@@ -588,12 +588,12 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     }
 
     /** Comparator ordering a pivot column's groups. `pivotSort` is isolated from `colDef.sort`:
-     *  `null` keeps the natural (generated) order, `'desc'` reverses, and the unset default (`undefined`)
-     *  and `'asc'` both sort ascending by the custom `pivotComparator` or header name. */
+     *  `null` keeps the natural (supplied or generated) order, `'desc'` reverses, and `'asc'` sorts ascending by
+     *  the custom `pivotComparator` or header name. The unset default resolves via {@link _resolvePivotSort}. */
     private getPivotGroupComparator(
         primaryColumn: AgColumn
     ): (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) => number {
-        const pivotSort = primaryColumn.pivotSort;
+        const pivotSort = _resolvePivotSort(this.beans, primaryColumn.pivotSort);
         if (pivotSort === null) {
             return naturalOrderComparator;
         }

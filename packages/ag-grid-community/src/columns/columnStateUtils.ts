@@ -4,6 +4,7 @@ import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/col
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import {
+    _defaultPivotSort,
     _normalizeSortType,
     _resolvePivotSortFromColDef,
     getSortDefFromInput,
@@ -803,6 +804,7 @@ export const _getColumnState = (beans: BeanCollection): ColumnState[] => {
         return [];
     }
     const cols = colModel.getColsInStateOrder();
+    const defaultPivotSort = _defaultPivotSort(beans);
     const res = new Array<ColumnState>(cols.length);
     for (let i = 0, len = cols.length; i < len; ++i) {
         const column = cols[i];
@@ -824,7 +826,7 @@ export const _getColumnState = (beans: BeanCollection): ColumnState[] => {
             rowGroupIndex: rowGroupActive ? column.rowGroupActiveIndex : null,
             pivot: pivotActive,
             pivotIndex: pivotActive ? column.pivotActiveIndex : null,
-            pivotSort: column.pivotSort === undefined ? 'asc' : column.pivotSort,
+            pivotSort: column.pivotSort === undefined ? defaultPivotSort : column.pivotSort,
             flex: column.flex ?? null,
             showValuesAs: beans.showValuesAsSvc?.toColState(column) ?? null,
             headerName: column.headerNameOverride,

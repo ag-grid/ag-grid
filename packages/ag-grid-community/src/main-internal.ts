@@ -88,10 +88,12 @@ export type { RowDragComp } from './dragAndDrop/rowDragComp';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
 export {
+    _defaultPivotSort,
     _getAvailableSortTypes,
     _getDisplaySortForColumn,
     _normalizeSortType,
     _resolvePivotColumnForRow,
+    _resolvePivotSort,
     AgColumn,
 } from './entities/agColumn';
 export type { ColKind } from './entities/agColumn';

@@ -738,6 +738,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Sort direction applied to this column's pivot result columns when this column is used to pivot on.
      * Independent of `sort` - pivot sorting does not flow to or from the column's own sort.
+     *
+     * Defaults to `'asc'` for the pivot result columns the grid generates. When the pivot result columns are
+     * supplied by the application via `setPivotResultColumns`, it defaults to `null` so the supplied order is kept
+     * until a sort is applied.
      * @default 'asc'
      * @agModule `PivotModule`
      */
