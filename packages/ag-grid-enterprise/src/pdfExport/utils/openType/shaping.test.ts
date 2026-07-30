@@ -28,9 +28,40 @@ describe('OpenType PDF shaping', () => {
 
         expect(run.glyphs.map((glyph) => glyph.glyphId)).toEqual([1, 3, 2]);
     });
+
+    it('shapes canonically equivalent decomposed text as NFC', () => {
+        const font = createShapingFont();
+
+        expect(shapeTrueTypeText('cafe\u0301', font, 'ltr', 'pt')).toEqual(
+            shapeTrueTypeText('café', font, 'ltr', 'pt')
+        );
+    });
+
+    it('ignores malformed optional GSUB lookups', () => {
+        const malformedGsub = createLigatureGsub();
+        new DataView(malformedGsub.buffer).setUint16(54, 0xfff0, false);
+
+        expect(shapeTrueTypeText('fi', createShapingFont(malformedGsub), 'ltr', 'en').glyphs).toEqual([
+            expect.objectContaining({ glyphId: 1, unicode: 'f' }),
+            expect.objectContaining({ glyphId: 2, unicode: 'i' }),
+        ]);
+    });
+
+    it('ignores malformed optional GPOS lookups', () => {
+        const malformedGpos = createLigatureGsub();
+        writeTag(malformedGpos, 32, 'kern');
+        const view = new DataView(malformedGpos.buffer);
+        view.setUint16(48, 2, false);
+        view.setUint16(54, 0xfff0, false);
+
+        expect(shapeTrueTypeText('fi', createShapingFont(undefined, malformedGpos), 'ltr', 'en').glyphs).toEqual([
+            expect.objectContaining({ glyphId: 1, unicode: 'f', xOffset: 0, yOffset: 0 }),
+            expect.objectContaining({ glyphId: 2, unicode: 'i', xOffset: 0, yOffset: 0 }),
+        ]);
+    });
 });
 
-function createShapingFont(gsub?: Uint8Array): TrueTypeFont {
+function createShapingFont(gsub?: Uint8Array, gpos?: Uint8Array): TrueTypeFont {
     return {
         data: new Uint8Array(),
         postScriptName: 'Test',
@@ -43,7 +74,7 @@ function createShapingFont(gsub?: Uint8Array): TrueTypeFont {
         weight: 400,
         style: 'normal',
         canSubset: true,
-        getTable: (tag) => (tag === 'GSUB' ? gsub : undefined),
+        getTable: (tag) => (tag === 'GSUB' ? gsub : tag === 'GPOS' ? gpos : undefined),
         getGlyphId: (codePoint) => {
             if (codePoint === 0x28 || codePoint === 0x66) {
                 return 1;
@@ -51,7 +82,10 @@ function createShapingFont(gsub?: Uint8Array): TrueTypeFont {
             if (codePoint === 0x29 || codePoint === 0x69) {
                 return 2;
             }
-            return codePoint === 0x05d0 ? 3 : 0;
+            if (codePoint === 0x05d0) {
+                return 3;
+            }
+            return codePoint === 0x00e9 ? 4 : 0;
         },
         getAdvanceWidth: (glyphId) => (glyphId === 3 ? 600 : 400),
         createSubset: () => new Uint8Array(),

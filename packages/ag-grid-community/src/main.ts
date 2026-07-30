@@ -168,7 +168,6 @@ export type {
     PdfPageSize,
     PdfRowStyleCallbackParams,
     PdfStyleCallbackParams,
-    PdfStyleCallbackType,
     PdfTextAlignment,
     PdfTextDirection,
     PdfTextOverflow,

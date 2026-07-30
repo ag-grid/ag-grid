@@ -5,6 +5,8 @@ enterprise: true
 
 PDF Export can add external URI hyperlinks to body cells and custom content. Hyperlinks are written as native PDF link annotations, so they remain clickable when the document is opened in a compatible PDF viewer.
 
+Supported URI schemes are `http`, `https`, `mailto`, and `tel`. Other schemes and relative URLs are omitted from the exported PDF.
+
 ## Grid Cell Hyperlinks
 
 Use `processCellHyperlinkCallback` to return the URI for an exported body cell. The callback receives the final exported text together with its row node and column.

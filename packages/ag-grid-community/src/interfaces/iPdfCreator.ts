@@ -184,8 +184,6 @@ export interface PdfCell {
 
 export type PdfCustomContent = PdfCell[][] | string;
 
-export type PdfStyleCallbackType = 'cell' | 'row' | 'rowgroup' | 'header' | 'groupheader';
-
 interface PdfStyleCallbackParamsBase<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
      * 1-based index of the current exported row.

@@ -181,6 +181,7 @@ function createTrueTypeSubset(
     family: string
 ): Uint8Array {
     const glyphOffsets = readGlyphOffsets(view, loca.offset, glyphCount, indexToLocFormat);
+    validateGlyphOffsets(glyphOffsets, glyf.length, family);
     const includedGlyphs = resolveCompositeGlyphs(view, glyf, glyphOffsets, glyphCount, requestedGlyphIds, family);
     const subsetTables = new Map<string, Uint8Array>();
 
@@ -232,6 +233,21 @@ function readGlyphOffsets(view: DataView, locaOffset: number, glyphCount: number
     return offsets;
 }
 
+function validateGlyphOffsets(glyphOffsets: number[], glyfLength: number, family: string): void {
+    let previousOffset = glyphOffsets[0];
+    if (previousOffset !== 0) {
+        throw new Error(`AG Grid: PDF font "${family}" contains invalid glyph offsets.`);
+    }
+
+    for (let glyphId = 0; glyphId < glyphOffsets.length; glyphId++) {
+        const offset = glyphOffsets[glyphId];
+        if (offset < previousOffset || offset > glyfLength) {
+            throw new Error(`AG Grid: PDF font "${family}" contains invalid glyph offsets.`);
+        }
+        previousOffset = offset;
+    }
+}
+
 function resolveCompositeGlyphs(
     view: DataView,
     glyf: TableRecord,
@@ -255,9 +271,6 @@ function resolveCompositeGlyphs(
         const end = glyphOffsets[glyphId + 1];
         if (start === end) {
             continue;
-        }
-        if (start < 0 || end < start || end > glyf.length) {
-            throw new Error(`AG Grid: PDF font "${family}" contains invalid glyph offsets.`);
         }
         let offset = glyf.offset + start;
         const glyphEnd = glyf.offset + end;

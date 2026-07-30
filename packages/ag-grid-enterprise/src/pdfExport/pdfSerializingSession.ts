@@ -12,7 +12,6 @@ import type {
     PdfCustomContent,
     PdfExportParams,
     PdfStyleCallbackParams,
-    PdfStyleCallbackType,
     RowAccumulator,
     RowNode,
     RowPinnedType,
@@ -28,7 +27,7 @@ import { mergePdfCellStyles } from './utils/styles';
 
 export type PdfRowType = 'HEADER_GROUPING' | 'HEADER' | 'BODY' | 'CUSTOM';
 
-type PdfElementType = PdfStyleCallbackType | 'custom';
+type PdfElementType = 'cell' | 'row' | 'rowgroup' | 'header' | 'groupheader' | 'custom';
 
 interface PdfSerializingCell {
     value: string;

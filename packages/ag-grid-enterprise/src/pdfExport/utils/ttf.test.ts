@@ -93,6 +93,31 @@ describe('PDF TrueType fonts', () => {
             ])
         );
     });
+
+    it('preserves decomposed logical text when the glyph run is normalised', () => {
+        const registry = new PdfFontRegistry([
+            {
+                family: 'Test Sans',
+                faces: [{ data: createTestFont() }],
+            },
+        ]);
+        const font = registry.resolve('Test Sans', 400, 'normal');
+        const encoded = registry.encodeText('A\u0301', font, 'ltr', 'en');
+
+        expect(encoded.logicalText).toBe('A\u0301');
+        expect(encoded.glyphRun?.glyphs).toEqual([expect.objectContaining({ unicode: 'Á' })]);
+    });
+
+    it('rejects an out-of-bounds glyph zero location before copying glyph data', () => {
+        const data = createTestFont();
+        const locaOffset = getTableOffset(data, 'loca');
+        const view = new DataView(data.buffer);
+        view.setUint16(locaOffset + 2, 0xffff, false);
+        view.setUint16(locaOffset + 4, 0xffff, false);
+        const font = parseTrueTypeFont({ data }, 'Corrupt Sans');
+
+        expect(() => font.createSubset([])).toThrow('AG Grid: PDF font "Corrupt Sans" contains invalid glyph offsets.');
+    });
 });
 
 function createTestFont(ascent = 800, descent = -200): Uint8Array {
@@ -194,6 +219,22 @@ function createCmapTable(): Uint8Array {
 
 function alignToFourBytes(value: number): number {
     return (value + 3) & ~3;
+}
+
+function getTableOffset(data: Uint8Array, targetTag: string): number {
+    const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+    const tableCount = view.getUint16(4, false);
+    for (let tableIndex = 0; tableIndex < tableCount; tableIndex++) {
+        const recordOffset = 12 + tableIndex * 16;
+        let tag = '';
+        for (let index = 0; index < 4; index++) {
+            tag += String.fromCharCode(data[recordOffset + index]);
+        }
+        if (tag === targetTag) {
+            return view.getUint32(recordOffset + 8, false);
+        }
+    }
+    throw new Error(`Missing test font table: ${targetTag}`);
 }
 
 function writeTag(data: Uint8Array, offset: number, tag: string): void {

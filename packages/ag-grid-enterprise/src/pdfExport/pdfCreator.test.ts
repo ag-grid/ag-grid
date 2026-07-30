@@ -43,6 +43,7 @@ describe('PdfCreator', () => {
         expect(creator.getMergedParams().direction).toBe('ltr');
         expect(creator.getMergedParams({ direction: 'auto' }).direction).toBe('auto');
         expect(creator.getMergedParams({ direction: 'ltr' }).direction).toBe('ltr');
+        expect(creator.getMergedParams({ direction: 'rtl' }).direction).toBe('rtl');
     });
 
     it('does not return PDF data when PDF export is suppressed', () => {

@@ -100,13 +100,13 @@ const gridOptions = {
 
 {% gridExampleRunner title="PDF Export - Right-To-Left Languages" name="pdf-rtl-languages" exampleHeight=430 /%}
 
-PDF Export shapes registered TrueType fonts using supported OpenType layout tables. This includes contextual Arabic forms, standard and required ligatures, kerning, cursive attachment, mark-to-base positioning, mark-to-mark positioning, and mixed bidirectional text. Text extraction uses the original logical Unicode sequence, including when several characters are rendered as one ligature.
+PDF Export shapes registered TrueType fonts using supported OpenType layout tables. This includes contextual Arabic forms, standard and required ligatures, kerning, cursive attachment, mark-to-base positioning, mark-to-mark positioning, and mixed bidirectional text. Canonically equivalent decomposed text is normalised for rendering, while text extraction uses the original logical Unicode sequence, including when several characters are rendered as one ligature.
 
 The fonts used by the examples are unmodified Noto and IBM Plex files distributed under the SIL Open Font License 1.1. See the included [Noto licence](/fonts/pdf-export/OFL-Noto.license) and [IBM Plex licence](/fonts/pdf-export/OFL-IBM-Plex.license).
 
 ## API
 
-{% interfaceDocumentation interfaceName="PdfExportParams" names=["fonts", "fontFamily", "language"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
+{% interfaceDocumentation interfaceName="PdfExportParams" names=["fonts", "fontFamily", "language", "direction"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
 
 ## Known Limitations
 

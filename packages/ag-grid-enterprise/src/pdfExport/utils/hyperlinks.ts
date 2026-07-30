@@ -1,8 +1,16 @@
+const SUPPORTED_URI_SCHEMES = new Set(['http', 'https', 'mailto', 'tel']);
+
 /**
- * Remove empty hyperlink values while retaining the URI exactly as supplied.
+ * Remove empty or unsupported hyperlink values while retaining accepted URIs exactly as supplied.
  * @param value - User-provided hyperlink.
- * @returns A non-empty URI, or `undefined`.
+ * @returns A supported external URI, or `undefined`.
  */
 export function normaliseHyperlink(value: string | null | undefined): string | undefined {
-    return typeof value === 'string' && value.trim() ? value : undefined;
+    if (typeof value !== 'string') {
+        return undefined;
+    }
+
+    const trimmedValue = value.trim();
+    const scheme = /^([a-z][a-z\d+.-]*):/i.exec(trimmedValue)?.[1].toLowerCase();
+    return scheme && SUPPORTED_URI_SCHEMES.has(scheme) ? value : undefined;
 }
