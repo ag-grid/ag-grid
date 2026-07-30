@@ -21,7 +21,8 @@ interface UserColumnEntry {
  *
  *  Entries are the record of what the user changed — nothing is derived by diffing definitions, and no
  *  marker is stamped on the column. Only serialisable definition properties belong here: properties owned
- *  by other state sections (width, hide, pinned, sort, …) stay with those sections. */
+ *  by other state sections (width, hide, pinned, sort, …) stay with those sections.
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class UserColumnService extends BeanStub implements NamedBean {
     beanName = 'userColumnSvc' as const;
 
