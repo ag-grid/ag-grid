@@ -39,7 +39,7 @@ export interface ColumnTreeBuild {
 
 /** Build a balanced column tree from `defs`, reusing cols/groups by colId / field / userColDef ref /
  *  groupId. Id allocation is deterministic (master/slave grids produce identical ids). User-column layer
- *  entries ({@link UserColumnService.overrideFor}) drop/replace a leaf mid-build, never its group.
+ *  entries (`UserColumnService.overrideFor`) drop/replace a leaf mid-build, never its group.
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _buildColumnTree(
     beans: BeanCollection,
