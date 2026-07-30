@@ -1,6 +1,14 @@
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule, NumberFilterModule, RowApiModule, TextFilterModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ExternalFilterModule,
+    NumberFilterModule,
+    RenderApiModule,
+    RowApiModule,
+    ScrollApiModule,
+    TextFilterModule,
+} from 'ag-grid-community';
 import type { GridOptions, IRowNode, ModelUpdatedEvent } from 'ag-grid-community';
 
 import {
@@ -16,7 +24,15 @@ import {
 
 describe('ag-grid row data', () => {
     const gridsManager = new TestGridsManager({
-        modules: [TextFilterModule, NumberFilterModule, ClientSideRowModelModule, RowApiModule],
+        modules: [
+            TextFilterModule,
+            NumberFilterModule,
+            ExternalFilterModule,
+            ClientSideRowModelModule,
+            RowApiModule,
+            RenderApiModule,
+            ScrollApiModule,
+        ],
     });
     let consoleWarnSpy: MockInstance | undefined;
     let consoleErrorSpy: MockInstance | undefined;
@@ -468,6 +484,190 @@ describe('ag-grid row data', () => {
         expect(topChangedCount).toBe(0);
         expect(rowIndexChangedCount).toBe(0);
         expect(displayedChangedCount).toBe(0);
+    });
+
+    // The row model tracks the rows it positions to know whose top to clear next time. A row event
+    // listener throwing mid-pass must not orphan that tracking, or the row keeps its top for good.
+    test('a row positioned by a pass that throws does not keep its top', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'id', filter: 'agTextColumnFilter' }],
+            rowData: [{ id: 'a' }, { id: 'b' }],
+            getRowId: ({ data }) => data.id,
+        });
+        await asyncSetTimeout(1);
+
+        let failOnTopChanged = false;
+        api.getRowNode('b')!.addEventListener('topChanged', () => {
+            if (failOnTopChanged) {
+                failOnTopChanged = false;
+                throw new Error('topChanged listener failed');
+            }
+        });
+
+        // Adding at the top moves `b` down, so the pass positions `n` before it throws on `b`.
+        failOnTopChanged = true;
+        expect(() => api.applyTransaction({ addIndex: 0, add: [{ id: 'n' }] })).toThrow('topChanged listener failed');
+
+        const n = api.getRowNode('n')!;
+        expect(n.rowTop).not.toBeNull();
+
+        // `n` is filtered out, so the next pass has to recognise it as no longer displayed.
+        api.setFilterModel({ id: { filterType: 'text', type: 'notEqual', filter: 'n' } });
+        await asyncSetTimeout(1);
+
+        expect(n.rowTop).toBeNull();
+        expect(n.rowIndex).toBeNull();
+        expect(n.displayed).toBe(false);
+    });
+
+    // Mirror of the above: the rows a throwing pass never reached still hold the top the previous pass gave
+    // them, so dropping them from the tracking is just as lossy as dropping the ones it did position.
+    test('a row a throwing pass never reached does not keep its top', async () => {
+        let hideAllButA = false;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }],
+            rowData: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+            getRowId: ({ data }) => data.id,
+            isExternalFilterPresent: () => hideAllButA,
+            doesExternalFilterPass: ({ data }) => data.id === 'a',
+        });
+        await asyncSetTimeout(1);
+
+        let failOnTopChanged = false;
+        api.getRowNode('b')!.addEventListener('topChanged', () => {
+            if (failOnTopChanged) {
+                failOnTopChanged = false;
+                throw new Error('topChanged listener failed');
+            }
+        });
+
+        // Growing `a` shifts the tops below it without moving any row, so the pass throws on `b` and leaves
+        // `c` with the top of the previous pass.
+        api.getRowNode('a')!.setRowHeight(100);
+        failOnTopChanged = true;
+        expect(() => api.onRowHeightChanged()).toThrow('topChanged listener failed');
+
+        const c = api.getRowNode('c')!;
+        expect(c.rowTop).not.toBeNull();
+
+        hideAllButA = true;
+        api.onFilterChanged();
+
+        expect(c.rowTop).toBeNull();
+        expect(c.rowIndex).toBeNull();
+        expect(c.displayed).toBe(false);
+    });
+
+    // Clearing a stale top runs row event listeners too, so the clear step can be interrupted the same way.
+    test('a row a throwing clear never reached does not keep its top', async () => {
+        let hideAllButA = false;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }],
+            rowData: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+            getRowId: ({ data }) => data.id,
+            isExternalFilterPresent: () => hideAllButA,
+            doesExternalFilterPass: ({ data }) => data.id === 'a',
+        });
+        await asyncSetTimeout(1);
+
+        let failOnTopChanged = false;
+        api.getRowNode('b')!.addEventListener('topChanged', () => {
+            if (failOnTopChanged) {
+                failOnTopChanged = false;
+                throw new Error('topChanged listener failed');
+            }
+        });
+
+        // `b` and `c` both drop out of display, and clearing `b` throws before `c` is looked at.
+        hideAllButA = true;
+        failOnTopChanged = true;
+        expect(() => api.onFilterChanged()).toThrow('topChanged listener failed');
+
+        const c = api.getRowNode('c')!;
+        expect(c.rowTop).not.toBeNull();
+
+        // Any later pass has to finish the clearing the failed one gave up on.
+        api.onRowHeightChanged();
+
+        expect(c.rowTop).toBeNull();
+        expect(c.rowIndex).toBeNull();
+        expect(c.displayed).toBe(false);
+    });
+
+    // The row being positioned is the one that throws, and it was not displayed before, so neither buffer
+    // holds it unless the pass tracks a row before giving it a top.
+    test('a row that throws while being positioned does not keep its top', async () => {
+        let hideC = true;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }],
+            rowData: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+            getRowId: ({ data }) => data.id,
+            isExternalFilterPresent: () => hideC,
+            doesExternalFilterPass: ({ data }) => data.id !== 'c',
+        });
+        await asyncSetTimeout(1);
+
+        const c = api.getRowNode('c')!;
+        expect(c.rowTop).toBeNull();
+
+        let failOnTopChanged = false;
+        c.addEventListener('topChanged', () => {
+            if (failOnTopChanged) {
+                failOnTopChanged = false;
+                throw new Error('topChanged listener failed');
+            }
+        });
+
+        // `c` comes back into display, and throws as it is given its top.
+        hideC = false;
+        failOnTopChanged = true;
+        expect(() => api.onFilterChanged()).toThrow('topChanged listener failed');
+        expect(c.rowTop).not.toBeNull();
+
+        hideC = true;
+        api.onFilterChanged();
+
+        expect(c.rowTop).toBeNull();
+        expect(c.rowIndex).toBeNull();
+        expect(c.displayed).toBe(false);
+    });
+
+    // Scrolling or redrawing from a row event listener re-enters the model through `ensureRowHeightsValid`,
+    // so a pass can start while another is midway through positioning.
+    test('a pass re-entered from a row listener keeps tracking its rows', async () => {
+        let hideTen = false;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }],
+            rowData: Array.from({ length: 30 }, (_, i) => ({ id: String(i) })),
+            getRowId: ({ data }) => data.id,
+            getRowHeight: () => 30, // Heights are then estimated, so `ensureRowHeightsValid` has work to do.
+            isExternalFilterPresent: () => hideTen,
+            doesExternalFilterPass: ({ data }) => data.id !== '10',
+        });
+        await asyncSetTimeout(1);
+
+        let reenter = false;
+        api.getRowNode('5')!.addEventListener('topChanged', () => {
+            if (reenter) {
+                reenter = false;
+                api.ensureIndexVisible(20);
+                api.redrawRows();
+            }
+        });
+
+        // Adding at the top moves every row, so `5` fires its listener partway through the pass.
+        reenter = true;
+        api.applyTransaction({ addIndex: 0, add: [{ id: 'new' }] });
+        await asyncSetTimeout(1);
+
+        hideTen = true;
+        api.onFilterChanged();
+        await asyncSetTimeout(1);
+
+        const ten = api.getRowNode('10')!;
+        expect(ten.rowTop).toBeNull();
+        expect(ten.rowIndex).toBeNull();
+        expect(ten.displayed).toBe(false);
     });
 
     describe('onModelUpdated event flags', () => {
