@@ -543,7 +543,14 @@ export class ChartOptionsService extends BeanStub {
             const series = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s));
             return get(series, expression, undefined) as T;
         }
-        return this.readProcessed<T>({ kind: 'series', seriesType }, expression) as T;
+        const value = this.readProcessed<T>({ kind: 'series', seriesType }, expression);
+        if (value !== undefined) {
+            return value as T;
+        }
+        // The processed options carry only what the theme configures. Anything left at an AG Charts
+        // property default appears there as undefined, and is only resolved on the live series.
+        const series = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s));
+        return get(series?.properties, expression, undefined) as T;
     }
 
     private setSeriesOptions<T = string>(
