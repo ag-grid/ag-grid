@@ -403,7 +403,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     masterDetailSvc?: IMasterDetailService;
     tooltipSvc?: TooltipService;
     colGroupSvc: ColumnGroupService;
-    userColumnSvc: UserColumnService;
+    userColumnSvc?: UserColumnService;
     rowAutoHeight?: RowAutoHeightService;
     rowChildrenSvc?: IRowChildrenService;
     footerSvc?: IFooterService;

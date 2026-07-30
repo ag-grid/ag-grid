@@ -214,7 +214,7 @@ export function _buildColumnTree(
      *  `colId` when present (reuse only the same-colId column — a changed colId is a new column even on a
      *  retained colDef ref); without a colId it is the colDef ref, then field/positional in buildKeyedColumn. */
     const buildColumn = (def: ColDef): AgColumn | undefined => {
-        const override = userColumnSvc.overrideFor(def);
+        const override = userColumnSvc?.overrideFor(def);
         if (override === null) {
             return undefined; // dropped (e.g. a column the user deleted): never built
         }

@@ -22,6 +22,7 @@ import type {
     HeaderPosition,
     ICalculatedColumnsService,
     NamedBean,
+    _UserColumnService,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -137,9 +138,12 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private readonly pendingLiveApplyUpdatesByColId = new Map<string, PendingLiveApplyUpdate>();
     // Memoised parse results keyed by expression; see getFormulaError.
     private readonly formulaErrorsByExpression = new Map<string, FormulaError | null>();
+    // Guaranteed present: registered by CalculatedColumnsModule alongside this service.
+    private userColumnSvc!: _UserColumnService;
 
     public postConstruct(): void {
-        this.beans.userColumnSvc.registerOwner(() => this.isEnabled(), USER_OWNED_PROPERTIES);
+        this.userColumnSvc = this.beans.userColumnSvc!;
+        this.userColumnSvc.registerOwner(() => this.isEnabled(), USER_OWNED_PROPERTIES);
         this.addManagedEventListeners({
             newColumnsLoaded: (event) => {
                 this.checkColumnLifecycle(event.source);
@@ -226,7 +230,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             const dynamicColumn = this.dynamicColumns.get(targetColId);
             if (dynamicColumn) {
                 dynamicColumn.colDef = nextColDef;
-                const { userColumnSvc } = this.beans;
+                const userColumnSvc = this.userColumnSvc;
                 userColumnSvc.setCreatedColumn(
                     targetColId,
                     pickUserOwnedProperties(nextColDef),
@@ -388,7 +392,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             anchorColId: anchorColumn?.colId ?? null,
             instance: null,
         });
-        this.beans.userColumnSvc.setCreatedColumn(
+        this.userColumnSvc.setCreatedColumn(
             colId,
             pickUserOwnedProperties(nextColDef),
             _getParentGroupId(anchorColumn)
@@ -424,7 +428,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 }
             }
         }
-        this.beans.userColumnSvc.removeColumn(colId, !wasDynamic);
+        this.userColumnSvc.removeColumn(colId, !wasDynamic);
         this.refreshDynamicColumns(source);
         this.dispatchCreatedOrRemovedEvent(
             'calculatedColumnRemoved',
@@ -445,7 +449,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     /** Records the user's changes to a `columnDefs`-declared calc col in the user-column layer. Properties
      *  put back to the declared value are dropped, so reverting an edit persists nothing. */
     private setDeclaredColOverride(column: AgColumn, nextColDef: ColDef): void {
-        const { userColumnSvc } = this.beans;
+        const userColumnSvc = this.userColumnSvc;
         const colId = column.colId;
         // The declaration as the developer wrote it: the built column's own definition already has any
         // previous entry merged in, so diffing against it would drop the properties that entry carries.
@@ -478,7 +482,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             return;
         }
         const { dynamicColumns } = this;
-        const userColumnSvc = this.beans.userColumnSvc;
+        const userColumnSvc = this.userColumnSvc;
         // Overrides/removals of `columnDefs`-declared cols are applied by the build from the user-column
         // layer; here we only splice in dynamic (API/dialog-added) cols, so nothing to do without them.
         if (dynamicColumns.size === 0) {
@@ -539,7 +543,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (!this.isEnabled()) {
             return false;
         }
-        const { userColumnSvc } = this.beans;
+        const userColumnSvc = this.userColumnSvc;
         const dynamicColumns = this.dynamicColumns;
         let changed = false;
         const staleColIds: string[] = [];
@@ -602,7 +606,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (groupId == null) {
             return null;
         }
-        const { colModel, userColumnSvc } = this.beans;
+        const { colModel } = this.beans;
+        const userColumnSvc = this.userColumnSvc;
         const cols = colModel.colDefList;
         for (let i = cols.length - 1; i >= 0; --i) {
             const col = cols[i];
@@ -639,7 +644,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             inactive.delete(colId);
             if (!this.dynamicColumns.has(colId)) {
                 this.dynamicColumns.set(colId, dynamicColumn);
-                this.beans.userColumnSvc.setCreatedColumn(
+                this.userColumnSvc.setCreatedColumn(
                     colId,
                     pickUserOwnedProperties(dynamicColumn.colDef),
                     dynamicColumn.parentGroupId ?? null
@@ -683,7 +688,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private createUniqueColId(): string {
-        const { colModel, userColumnSvc } = this.beans;
+        const { colModel } = this.beans;
+        const userColumnSvc = this.userColumnSvc;
         const parked = this.inactiveDynamicColumns;
         let index = 0;
         let colId: string;
@@ -704,7 +710,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const dynamicColumn = this.dynamicColumns.get(colId);
         const userColDef = column.getUserProvidedColDef();
         // A declared col the user already edited resolves against its entry merged over the declaration.
-        const { userColumnSvc } = this.beans;
+        const userColumnSvc = this.userColumnSvc;
         const override = userColumnSvc.getEntry(colId)?.properties;
         const declaredDef = userColumnSvc.getDeclaredDef(colId) ?? userColDef;
         const declaredColDef = override ? { ...declaredDef, ...override } : declaredDef;

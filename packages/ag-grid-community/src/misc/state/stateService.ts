@@ -196,7 +196,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.updateCachedState('columnGroup', this.getColumnGroupState());
         // Every user-column mutation rebuilds the column tree, so this covers creation, removal and
         // property-only edits (e.g. a cell data type change) alike.
-        this.updateCachedState('userColumns', this.beans.userColumnSvc.getState());
+        this.updateCachedState('userColumns', this.beans.userColumnSvc!.getState());
     }
 
     private setColumnsInitialisedState(
@@ -224,7 +224,7 @@ export class StateService extends BeanStub implements NamedBean {
             return;
         }
         const { userColumnSvc, calculatedColsSvc, colModel } = this.beans;
-        const changed = userColumnSvc.setState(state.userColumns);
+        const changed = userColumnSvc!.setState(state.userColumns);
         // Owning services adopt the restored entries so their existing edit/remove paths keep working, and
         // discard columns they were holding that the state does not list.
         const adopted = calculatedColsSvc?.adoptUserColumns() ?? false;
