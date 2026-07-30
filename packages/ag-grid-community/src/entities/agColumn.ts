@@ -267,6 +267,7 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
+        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
         this.initColDefHotFields();
         this.beans.showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only

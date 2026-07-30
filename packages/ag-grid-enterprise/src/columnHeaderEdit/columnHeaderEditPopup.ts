@@ -5,11 +5,11 @@ import { AgInputTextFieldSelector, BeanStub, Component, KeyCode } from 'ag-grid-
 
 import { Dialog } from '../widgets/dialog';
 
-const WIDTH = 210;
-const MIN_WIDTH = 210;
+const WIDTH = 300;
+const MIN_WIDTH = 300;
 // Deferred mode adds the Apply/Cancel actions row, so the dialog needs more height.
-const LIVE_HEIGHT = 110;
-const DEFERRED_HEIGHT = 160;
+const LIVE_HEIGHT = 130;
+const DEFERRED_HEIGHT = 190;
 
 const ColumnHeaderEditContentElement: ElementParams = {
     tag: 'div',

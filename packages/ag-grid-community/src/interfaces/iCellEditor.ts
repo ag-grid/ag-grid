@@ -63,6 +63,8 @@ export interface BaseCellEditor {
  */
 export interface AgBaseCellEditor<TValue = any> extends ICellEditor<TValue> {
     agSetEditValue(value: TValue | null | undefined): void;
+    /** Commit any buffered input to the value before the grid reads it on stop (e.g. a Firefox date segment). */
+    agFlushInput?(): void;
 }
 
 export interface ICellEditor<TValue = any> extends BaseCellEditor {

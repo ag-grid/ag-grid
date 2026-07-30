@@ -109,6 +109,10 @@ export class SimpleCellEditor<
         inputEl.select();
     }
 
+    public agFlushInput(): void {
+        this.cellEditorInput.flushInput?.();
+    }
+
     public getValue(): TValue | null | undefined {
         return this.cellEditorInput.getValue();
     }

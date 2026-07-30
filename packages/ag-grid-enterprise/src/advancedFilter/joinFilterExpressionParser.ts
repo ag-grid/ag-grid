@@ -360,15 +360,15 @@ export class JoinFilterExpressionParser {
         return updatedExpression;
     }
 
-    public getModel(): AdvancedFilterModel {
+    public getModel(forBuilder?: boolean): AdvancedFilterModel {
         if (this.expressionParsers.length > 1) {
             return {
                 filterType: 'join',
                 type: this.operatorParser.getModel(),
-                conditions: this.expressionParsers.map((parser) => parser.getModel()),
+                conditions: this.expressionParsers.map((parser) => parser.getModel(forBuilder)),
             };
         } else {
-            return this.expressionParsers[0].getModel();
+            return this.expressionParsers[0].getModel(forBuilder);
         }
     }
 

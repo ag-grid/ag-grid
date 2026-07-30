@@ -1,0 +1,25 @@
+@use 'design-system' as *;
+
+.consentLabel {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-size-2;
+    cursor: pointer;
+
+    input[type='checkbox'] {
+        // Keep the box aligned with the first line of the label text
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+}
+
+.errorContainer {
+    display: flex;
+    align-items: flex-start;
+    margin-left: 1.75rem;
+}
+
+// Indents a checkbox that is only revealed by the one above it
+.nested {
+    margin-left: 1.75rem;
+}

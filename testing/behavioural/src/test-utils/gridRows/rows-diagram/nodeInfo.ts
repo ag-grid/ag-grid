@@ -85,6 +85,9 @@ export function getRowStateFlags(gridRows: GridRows, row: RowNode): string {
         if (gridRows.isRowBatchPending(row)) {
             result += ' ⏳';
         }
+        if (gridRows.isRowInvalid(row)) {
+            result += ' ❌';
+        }
     }
     return result;
 }
