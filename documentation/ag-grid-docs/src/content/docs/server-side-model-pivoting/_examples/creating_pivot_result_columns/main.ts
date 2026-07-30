@@ -165,11 +165,10 @@ function addColDef(
 
 // The supplied order is the pivot result columns' natural order, used when the YEAR pill in the pivot panel is
 // cycled to no sort. This example supplies the year groups shuffled so that order is distinguishable from asc/desc.
-// Only the groups move, so Gold/Silver/Bronze keep their order within each year. `window.agRandom` is the docs'
-// seeded generator, so the shuffle is the same on every run - unlike `Math.random`.
+// Only the groups move, so Gold/Silver/Bronze keep their order within each year.
 function shuffleYearGroups(yearGroups: ColGroupDef[]): ColGroupDef[] {
     return yearGroups
-        .map((group) => ({ group, rank: window.agRandom() }))
+        .map((group) => ({ group, rank: Math.random() }))
         .sort((a, b) => a.rank - b.rank)
         .map((entry) => entry.group);
 }
