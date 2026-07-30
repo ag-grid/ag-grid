@@ -3,6 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { ColDef, ColGroupDef } from '../../entities/colDef';
 import type { UserColumnProperty, UserColumnPropertyKey, UserColumnState } from '../../interfaces/gridState';
 import { _mergedEqual } from '../../utils/mergeDeep';
+import { forEachColDef } from '../columnUtils';
 
 /** One column's user-owned layer entry. `properties` holds the definition the user configured; a
  *  `removed` entry is a tombstone for a `columnDefs`-declared column the user deleted. */
@@ -275,18 +276,13 @@ const entriesEqual = (a: Map<string, UserColumnEntry>, b: Map<string, UserColumn
 };
 
 const collectDeclaredDefs = (defs: (ColDef | ColGroupDef)[] | null | undefined, result: Map<string, ColDef>): void => {
-    for (let i = 0, len = defs?.length ?? 0; i < len; ++i) {
-        const def = defs![i];
-        const children = (def as ColGroupDef).children;
-        if (children) {
-            collectDeclaredDefs(children, result);
-            continue;
-        }
-        const colDef = def as ColDef;
-        // Same key the build matches on, before it allocates suffixed ids for duplicates.
-        const colId = colDef.colId ?? colDef.field;
-        if (colId != null && !result.has(colId)) {
-            result.set(colId, colDef);
-        }
+    if (defs) {
+        forEachColDef(defs, (colDef) => {
+            // Same key the build matches on, before it allocates suffixed ids for duplicates.
+            const colId = colDef.colId ?? colDef.field;
+            if (colId != null && !result.has(colId)) {
+                result.set(colId, colDef);
+            }
+        });
     }
 };
