@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
@@ -206,8 +208,10 @@ describe('SSRM cache config', () => {
             }
         }
 
-        // Cap of 1: only a single request may be in-flight at a time.
+        // Cap of 1: only a single request may be in-flight at a time. Poll up to the cap rather than assert after a
+        // fixed delay - a loaded machine may not have issued them all yet - then let any excess request surface.
         makeGrid(1);
+        await waitFor(() => expect(pending.length).toBe(1));
         await asyncSetTimeout(30);
         expect(pending.length).toBe(1);
 
@@ -217,6 +221,7 @@ describe('SSRM cache config', () => {
 
         // Cap of 2: exactly two requests may be in-flight simultaneously.
         makeGrid(2);
+        await waitFor(() => expect(pending.length).toBe(2));
         await asyncSetTimeout(30);
         expect(pending.length).toBe(2);
 

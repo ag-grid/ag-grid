@@ -1,4 +1,4 @@
-import { _debounce, _jsonEquals } from 'ag-stack';
+import { _areEqual, _debounce, _jsonEquals } from 'ag-stack';
 
 import type {
     AdvancedFilterModel,
@@ -6,6 +6,7 @@ import type {
     BeanCollection,
     ColumnModel,
     ColumnNameService,
+    ColumnPivotChangedEvent,
     ColumnVO,
     FilterManager,
     FilterModel,
@@ -97,6 +98,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private managingPivotResultColumns = false;
 
+    private pivotResultFields?: string[];
+
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(): boolean {
         return false;
@@ -126,7 +129,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             newColumnsLoaded: this.onColumnEverything.bind(this),
             storeUpdated: this.onStoreUpdated.bind(this),
             columnValueChanged: resetListener,
-            columnPivotChanged: resetListener,
+            columnPivotChanged: this.onPivotChanged.bind(this),
             columnRowGroupChanged: resetListener,
             columnPivotModeChanged: resetListener,
         });
@@ -269,6 +272,41 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         }
     }
 
+    /** A `pivotSort` toggle reorders the pivot result columns without changing what the server is asked for,
+     *  so re-derive the column defs from the fields already loaded instead of refetching every block. */
+    private onPivotChanged(event: ColumnPivotChangedEvent): void {
+        if (!this.arePivotColsUnchanged()) {
+            this.resetRootStore();
+            return;
+        }
+        const pivotResultCols = this.pivotResultCols;
+        // Application-supplied columns win: `setPivotResultColumns` hands the order to the application, even if
+        // this row model generated columns from `pivotResultFields` earlier. Re-order the applied ones in place.
+        if (pivotResultCols?.suppliedColDefs) {
+            pivotResultCols.resortPivotResultCols(event.source);
+            return;
+        }
+        const pivotResultFields = this.pivotResultFields;
+        if (this.managingPivotResultColumns && pivotResultFields) {
+            this.generateSecondaryColumns(pivotResultFields);
+        }
+    }
+
+    /** True when the active pivot columns, in order, match the ones the current store was built with. */
+    private arePivotColsUnchanged(): boolean {
+        const oldCols = this.storeParams?.pivotCols;
+        if (!oldCols) {
+            return false;
+        }
+        const newCols = this.columnsToValueObjects(this.pivotColsSvc?.columns);
+        return _areEqual(
+            oldCols,
+            newCols,
+            (oldCol, newCol) =>
+                oldCol.id === newCol.id && oldCol.field === newCol.field && oldCol.aggFunc === newCol.aggFunc
+        );
+    }
+
     private destroyRootStore(): void {
         if (!this.rootNode?.childStore) {
             return;
@@ -298,9 +336,16 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return;
         }
 
+        this.pivotResultFields = pivotFields;
+        const pivotResultCols = this.pivotResultCols;
+        // `setPivotResultColumns` hands the pivot result columns to the application until it clears them again, so
+        // an ordinary refresh, filter, sort or block response must not put server-derived columns back in their place.
+        if (pivotResultCols?.suppliedColDefs) {
+            return;
+        }
         const pivotColumnGroupDefs = this.pivotColDefSvc.createColDefsFromFields(pivotFields);
         this.managingPivotResultColumns = true;
-        this.pivotResultCols?.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
+        pivotResultCols?.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
     }
 
     public resetRowHeights(): void {
@@ -361,6 +406,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             // if managing pivot columns, also reset secondary columns.
             this.pivotResultCols?.setPivotResultCols(null, 'api');
             this.managingPivotResultColumns = false;
+            this.pivotResultFields = undefined;
         }
 
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
