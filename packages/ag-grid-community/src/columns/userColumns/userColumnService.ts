@@ -2,6 +2,7 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { ColDef, ColGroupDef } from '../../entities/colDef';
 import type { UserColumnProperty, UserColumnPropertyKey, UserColumnState } from '../../interfaces/gridState';
+import { _mergedEqual } from '../../utils/mergeDeep';
 
 /** One column's user-owned layer entry. `properties` holds the definition the user configured; a
  *  `removed` entry is a tombstone for a `columnDefs`-declared column the user deleted. */
@@ -222,13 +223,11 @@ export class UserColumnService extends BeanStub implements NamedBean {
      *  grid that has the feature is not lossy on one that does not. */
     private acceptProperties(properties: UserColumnProperty[] | undefined): ColDef {
         const owned = this.ownedProperties;
-        if (!owned) {
-            return fromProperties(properties);
-        }
         const result: Record<string, any> = {};
         for (let i = 0, len = properties?.length ?? 0; i < len; ++i) {
             const { property, value } = properties![i];
-            if (owned.has(property) && typeof value !== 'function') {
+            const accept = owned ? owned.has(property) && typeof value !== 'function' : property != null;
+            if (accept) {
                 result[property] = value;
             }
         }
@@ -255,49 +254,19 @@ const toProperties = (properties: ColDef | undefined): UserColumnProperty[] => {
     return result;
 };
 
-const fromProperties = (properties: UserColumnProperty[] | undefined): ColDef => {
-    const result: Record<string, any> = {};
-    for (let i = 0, len = properties?.length ?? 0; i < len; ++i) {
-        const { property, value } = properties![i];
-        if (property != null) {
-            result[property] = value;
-        }
-    }
-    return result as ColDef;
-};
-
 const entriesEqual = (a: Map<string, UserColumnEntry>, b: Map<string, UserColumnEntry>): boolean => {
     if (a.size !== b.size) {
         return false;
     }
-    let equal = true;
-    a.forEach((entry, colId) => {
-        if (!equal) {
-            return;
-        }
+    for (const [colId, entry] of a) {
         const other = b.get(colId);
         if (
             other === undefined ||
             !!entry.removed !== !!other.removed ||
             !!entry.created !== !!other.created ||
             entry.parentGroupId !== other.parentGroupId ||
-            !propertiesEqual(entry.properties, other.properties)
+            !_mergedEqual(entry.properties ?? {}, other.properties ?? {})
         ) {
-            equal = false;
-        }
-    });
-    return equal;
-};
-
-const propertiesEqual = (a: ColDef | undefined, b: ColDef | undefined): boolean => {
-    const aKeys = a ? Object.keys(a) : [];
-    const bKeys = b ? Object.keys(b) : [];
-    if (aKeys.length !== bKeys.length) {
-        return false;
-    }
-    for (let i = 0, len = aKeys.length; i < len; ++i) {
-        const key = aKeys[i];
-        if ((a as Record<string, any>)[key] !== (b as Record<string, any>)[key]) {
             return false;
         }
     }
