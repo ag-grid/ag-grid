@@ -1,16 +1,15 @@
-name: Build v23.2.1 release
+name: Build v23.x release
 
-# Builds ag-grid-community and ag-grid-angular from the v23.2.1 tag and
-# attaches the packed tarballs to a GitHub release.
+# Builds ag-grid-community and ag-grid-angular from the tag of a published
+# GitHub release and attaches the packed tarballs back to that release.
 #
-# Primary trigger: workflow_dispatch (run manually from the Actions tab).
-# The `release: published` trigger is guarded to v23.2.1, but note that
-# GitHub resolves release-event workflows from the tag's commit — since
-# the v23.2.1 tag predates this file, that trigger only fires if the tag
-# is ever recreated on a commit containing this workflow.
+# Trigger: a published GitHub release (release: published). The release's
+# tag (e.g. "v23.2.1") drives the checkout, the artifact name, and the
+# upload target. The build is guarded to v23.x tags because the toolchain
+# below (npm_config_before, Node 12, node-sass) is tuned for that era; a
+# non-v23 release would build against the wrong dependency tree.
 
 on:
-  workflow_dispatch:
   release:
     types: [published]
 
@@ -19,8 +18,8 @@ permissions:
   packages: write
 
 env:
-  RELEASE_TAG: v23.2.1
-  # v23.2.1 was tagged 2020-06-18. Packages here are bootstrapped without a
+  RELEASE_TAG: ${{ github.event.release.tag_name }}
+  # v23.x was tagged in 2020. Packages here are bootstrapped without a
   # lockfile (lerna.json sets --no-package-lock), so unpinned ranges would
   # resolve to today's versions — some incompatible with the era's toolchain
   # (e.g. TypeScript 3.6). npm reads this as the --before flag and resolves
@@ -33,13 +32,13 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Only build when dispatched manually, or when the published release targets v23.2.1
-    if: github.event_name == 'workflow_dispatch' || github.event.release.tag_name == 'v23.2.1'
+    # Only build v23.x releases — the toolchain below is tuned for that era.
+    if: startsWith(github.event.release.tag_name, 'v23.')
     steps:
-      - name: Checkout v23.2.1 tag
+      - name: Checkout release tag
         uses: actions/checkout@v4
         with:
-          ref: v23.2.1
+          ref: ${{ github.event.release.tag_name }}
 
       # Node 12: node-sass ^4.12 (used by @ag-grid-community/core scss build)
       # has no prebuilt bindings beyond Node 14, and Angular 9 targets this era.
@@ -84,7 +83,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ag-grid-v23.2.1-packages
+          name: ag-grid-${{ github.event.release.tag_name }}-packages
           path: release-artifacts/*.tgz
 
       - name: Publish build artifacts to GitHub packages
@@ -95,13 +94,4 @@ jobs:
       - name: Attach tarballs to GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
-            gh release upload "$RELEASE_TAG" release-artifacts/*.tgz --clobber
-          else
-            gh release create "$RELEASE_TAG" \
-              --verify-tag \
-              --title "ag-grid $RELEASE_TAG" \
-              --notes "Custom build of ag-grid-community and ag-grid-angular from tag $RELEASE_TAG." \
-              release-artifacts/*.tgz
-          fi
+        run: gh release upload "$RELEASE_TAG" release-artifacts/*.tgz --clobber
