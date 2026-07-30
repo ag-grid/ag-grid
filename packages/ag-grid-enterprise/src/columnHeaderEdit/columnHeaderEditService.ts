@@ -62,10 +62,13 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
         }
     }
 
-    private isEditable(target: EditTarget): boolean {
-        return isProvidedColumnGroup(target)
-            ? !!target.colGroupDef?.headerNameEditable
-            : !!target.colDef.headerNameEditable;
+    public isEditable(target: EditTarget): boolean {
+        if (isProvidedColumnGroup(target)) {
+            return !!target.colGroupDef?.headerNameEditable;
+        }
+        // Calculated columns are renamed via their own modal, so the inline editor must not be a second
+        // source of truth for the header name.
+        return !!target.colDef.headerNameEditable && !target.isCalculatedCol;
     }
 
     private getEditableHeaderName(target: EditTarget): string {

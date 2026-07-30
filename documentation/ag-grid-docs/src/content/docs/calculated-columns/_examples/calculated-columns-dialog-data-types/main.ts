@@ -1,4 +1,4 @@
-import type { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { ColDef, GridOptions, ValueFormatterLiteParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -26,7 +26,7 @@ type SalesRow = {
     cost: number;
 };
 
-const currencyFormatter = (params: ValueFormatterParams<SalesRow, number>): string => {
+const currencyFormatter = (params: ValueFormatterLiteParams<SalesRow, number>): string => {
     const { value } = params;
     if (value == null) {
         return '';

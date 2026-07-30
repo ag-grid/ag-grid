@@ -398,9 +398,10 @@ describe('Cell Editing: single-cell batch styles', () => {
         expect(cellA0Still).toHaveTextContent('CONFIRMED');
         expect(cellA0Still).toHaveClass(/ag-cell-batch-edit/);
 
+        // Two editors opened (Enter-committed, then Escape-cancelled), so two stopped events.
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 2,
-            cellEditingStopped: 1,
+            cellEditingStopped: 2,
             cellValueChanged: 0,
             rowValueChanged: 0,
             cellEditRequest: 0,

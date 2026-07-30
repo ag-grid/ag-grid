@@ -2,6 +2,7 @@ import { KeyCode, RefPlaceholder, _missing } from 'ag-stack';
 
 import type { ListOption } from '../../agWidgets/agList';
 import { AgSelectSelector } from '../../agWidgets/agSelect';
+import type { AgSelectSelectedItemEvent } from '../../agWidgets/agSelect';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
@@ -87,7 +88,10 @@ export class SelectCellEditor<TValue = any> extends AgAbstractCellEditor<SelectC
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
         if (gos.get('editType') !== 'fullRow') {
-            this.addManagedListeners(this.eEditor, { selectedItem: () => params.stopEditing() });
+            this.addManagedListeners(this.eEditor, {
+                selectedItem: (e: AgSelectSelectedItemEvent) =>
+                    params.stopEditing(e.keyboardEvent == null, e.keyboardEvent),
+            });
         }
     }
 

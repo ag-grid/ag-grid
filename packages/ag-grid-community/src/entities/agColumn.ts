@@ -267,6 +267,7 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
+        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
         this.initColDefHotFields();
         this.beans.showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
@@ -297,6 +298,11 @@ export class AgColumn<TValue = any>
                 merged.flex,
                 source
             );
+            // `initialPivotSort` is create-only, so an update honours an explicit `pivotSort` only.
+            const pivotSort = merged.pivotSort;
+            if (pivotSort !== undefined) {
+                this.pivotSort = normalizeSortDirection(pivotSort);
+            }
             // Read `flex` after the state update so a flex→fixed switch applies before width.
             const colFlex = this.flex;
             if (colFlex == null || colFlex <= 0) {

@@ -16,6 +16,7 @@ import {
     getCurrentRedoSize,
     getCurrentUndoSize,
     getEditRowValues,
+    getEditValidationErrors,
     getEditingCells,
     isEditing,
     redoCellEditing,
@@ -45,6 +46,7 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
         stopEditing,
         isEditing,
         validateEdit,
+        getEditValidationErrors,
     },
     dynamicBeans: {
         singleCell: SingleCellEditStrategy,

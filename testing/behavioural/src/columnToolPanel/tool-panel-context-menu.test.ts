@@ -572,4 +572,48 @@ describe('ToolPanelContextMenu', () => {
             expect(gridApi.getValueColumns().map((col) => col.getColId())).not.toContain('age');
         });
     });
+
+    describe('calculated columns', () => {
+        async function createGrid(cols: ColDef[]): Promise<{ gridDiv: HTMLElement; toolPanel: any }> {
+            const gridApi = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: cols,
+                rowData,
+                calculatedColumns: true,
+                defaultColDef: { flex: 1, minWidth: 100, enableRowGroup: true, headerNameEditable: true },
+                sideBar: {
+                    toolPanels: [
+                        {
+                            id: 'columns',
+                            labelDefault: 'Columns',
+                            labelKey: 'columns',
+                            iconKey: 'columns',
+                            toolPanel: 'agColumnsToolPanel',
+                        },
+                    ],
+                    defaultToolPanel: 'columns',
+                },
+            });
+            await asyncSetTimeout(1);
+            return {
+                gridDiv: getGridElement(gridApi)! as HTMLElement,
+                toolPanel: gridApi.getToolPanelInstance('columns') as any,
+            };
+        }
+
+        test('tool panel context menu omits Edit Column Name on a calculated column but keeps it elsewhere', async () => {
+            const { gridDiv, toolPanel } = await createGrid([
+                { field: 'athlete', minWidth: 200 },
+                { colId: 'ageDoubled', headerName: 'Age Doubled', calculatedExpression: '[age] * 2' },
+            ]);
+
+            // Calculated column: the menu still opens (Group by is offered) but the inline rename is gone.
+            await openContextMenu(toolPanel, gridDiv, 'Age Doubled');
+            await findByText(gridDiv, 'Group by Age Doubled');
+            expect(queryByText(gridDiv, 'Edit Column Name')).toBeNull();
+
+            // Non-calculated column with the same headerNameEditable keeps the inline rename item.
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+            await findByText(gridDiv, 'Edit Column Name');
+        });
+    });
 });

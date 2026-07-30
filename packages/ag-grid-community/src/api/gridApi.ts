@@ -918,6 +918,12 @@ export interface _EditGridApi<TData> {
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     validateEdit(): ICellEditorValidationError[] | null;
+
+    /**
+     * The validation errors the Grid currently holds, without running validation. Use `validateEdit()` to revalidate instead.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
+    getEditValidationErrors(): ICellEditorValidationError[] | null;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -949,6 +955,10 @@ export interface _BatchEditApi {
      *
      * If no cells were edited during the batch session (i.e. `batchEditingStarted` was never
      * fired), `batchEditingStopped` is not fired either.
+     *
+     * With `invalidEditValueMode: 'block'`, a commit is rejected while any edit is invalid: nothing is
+     * written, `batchEditingStopped` does not fire, and the batch and its editors stay open so the value
+     * can be corrected and the commit retried (or `cancelBatchEdit()` called).
      *
      * Only supported with the Client-Side Row Model.
      * @agModule `BatchEditModule`

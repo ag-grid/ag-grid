@@ -100,7 +100,41 @@ export class PivotColsSvc extends OrderedColsService implements NamedBean, IPivo
     }
 }
 
-const pivotGroupKey = (col: AgColumn): string => (col.colDef.pivotKeys ?? []).join('');
+/** Identifies the pivot group a result col belongs to, so cols of one group re-rank together.
+ *
+ *  Generated cols carry `pivotKeys`. Application-supplied colDefs need not, so fall back to the provided-group
+ *  hierarchy, which expresses the same grouping - without it every supplied col keys alike, the re-rank collapses
+ *  to a no-op, and the sticky order silently overrides the `pivotSort` the columns were just ordered by. */
+const pivotGroupKey = (col: AgColumn): string => {
+    const pivotKeys = col.colDef.pivotKeys;
+    if (pivotKeys !== undefined && pivotKeys.length > 0) {
+        return pivotKeys.join('');
+    }
+    if (pivotKeys !== undefined) {
+        // Present but empty: a generated row total, which sits outside every pivot group.
+        return ungroupedKey(col);
+    }
+    let key = '';
+    let parent = col.originalParent;
+    while (parent != null) {
+        if (!parent.isPadding()) {
+            key = `${parent.getGroupId()}\0${key}`;
+        }
+        parent = parent.originalParent;
+    }
+    if (key !== '') {
+        return key;
+    }
+    // No enclosing group either: an ungrouped supplied colDef, or the auto group column.
+    return ungroupedKey(col);
+};
+
+/** Key for a col in no pivot group: a `pivotRowTotals` total, an ungrouped supplied colDef, or the auto group
+ *  column. Each gets a key of its own, so it ranks at its own position in the freshly-built order instead of
+ *  sharing one bucket - sharing it made such a column inherit the auto column's leading rank and jump to the front
+ *  of a descending sort, rather than hold the position the pivot-key ordering left it in. The leading separator
+ *  cannot start a `pivotKeys`-derived or group-derived key, so the two namespaces stay disjoint. */
+const ungroupedKey = (col: AgColumn): string => `\0${col.colId}`;
 
 interface RankedColId {
     id: string;

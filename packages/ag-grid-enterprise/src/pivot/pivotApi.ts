@@ -44,8 +44,10 @@ export function getPivotColumns(beans: BeanCollection): Column[] {
     return beans.pivotColsSvc?.columns ?? [];
 }
 
+/** The supplied order is the natural order that `pivotSort: null` resolves to; any other `pivotSort` - including
+ *  the ascending default - orders the supplied columns by group header name. */
 export function setPivotResultColumns(beans: BeanCollection, colDefs: (ColDef | ColGroupDef)[] | null): void {
-    beans.pivotResultCols?.setPivotResultCols(colDefs, 'api');
+    beans.pivotResultCols?.setPivotResultCols(colDefs, 'api', true);
 }
 
 export function getPivotResultColumns(beans: BeanCollection): Column[] | null {

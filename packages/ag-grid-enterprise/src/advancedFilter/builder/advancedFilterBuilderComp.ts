@@ -290,7 +290,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     }
 
     private setupFilterModel(): AdvancedFilterModel {
-        const filterModel = this.formatFilterModel(this.advancedFilter.getModel());
+        const filterModel = this.formatFilterModel(this.advancedFilter.getBuilderModel());
         this.stringifiedModel = JSON.stringify(filterModel);
         return filterModel;
     }

@@ -1,3 +1,4 @@
+import { EXAMPLE_RELOADING_MESSAGE_TYPE } from '@ag-website-shared/components/loading-logo/messages';
 import { useIntersectionObserver } from '@ag-website-shared/utils/hooks/useIntersectionObserver';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
@@ -59,8 +60,15 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
         if (!isIntersecting || !url || !iFrameRef.current || (currentSrc as URL)?.pathname === url || isScrolling) {
             return;
         }
+
+        if (currentSrc) {
+            // Post before navigating, otherwise the stale example stays visible until the loading
+            // logo island handles the message
+            window.postMessage({ type: EXAMPLE_RELOADING_MESSAGE_TYPE, loadingIFrameId });
+        }
+
         iFrameRef.current.src = url;
-    }, [isIntersecting, url, isScrolling]);
+    }, [isIntersecting, url, isScrolling, loadingIFrameId]);
 
     // when dark mode is changed, applies it to the iframe.
     useEffect(() => {

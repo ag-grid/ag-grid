@@ -201,6 +201,27 @@ describe('EditModelService', () => {
         });
     });
 
+    describe('cell validation map', () => {
+        it('drops an emptied row so size and hasCellValidation stay accurate', () => {
+            const positionSameRow: Required<EditPosition> = { rowNode: rowNode1, column: column2 };
+            const validationModel = editModelService.getCellValidationModel();
+            validationModel.setCellValidation(position1, { errorMessages: ['bad'] });
+            validationModel.setCellValidation(positionSameRow, { errorMessages: ['bad'] });
+            expect(validationModel.getCellValidationMap().size).toBe(1);
+
+            validationModel.clearCellValidation(position1);
+            expect(validationModel.hasCellValidation()).toBe(true);
+            expect(validationModel.hasCellValidation({ rowNode: rowNode1 })).toBe(true);
+            expect(validationModel.hasCellValidation(position1)).toBe(false);
+            expect(validationModel.getCellValidationMap().size).toBe(1);
+
+            validationModel.clearCellValidation(positionSameRow);
+            expect(validationModel.hasCellValidation()).toBe(false);
+            expect(validationModel.hasCellValidation({ rowNode: rowNode1 })).toBe(false);
+            expect(validationModel.getCellValidationMap().size).toBe(0);
+        });
+    });
+
     describe('start', () => {
         // findNextCellToFocusOn suspends the model while it may initialise editors (see singleCellEditStrategy),
         // so start() can run for a row that already has editing entries while suspended.

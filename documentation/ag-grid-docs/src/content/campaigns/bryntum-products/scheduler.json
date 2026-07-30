@@ -113,6 +113,13 @@
             "eyebrow": "Pro Edition",
             "heading": "Want Scheduling Logic Built In?",
             "body_text": "Want Scheduling Logic Built In? Try Scheduler Pro Compare Features",
+            "ctas": [
+                {
+                    "text": "See Scheduler Pro",
+                    "href": "/products/scheduler-pro/",
+                    "title": "See Scheduler Pro"
+                }
+            ],
             "media": []
         },
         {

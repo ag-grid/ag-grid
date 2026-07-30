@@ -187,6 +187,7 @@ jobs:
             contents: read
             pull-requests: read
             packages: read
+            actions: write
         outputs:
             stage: ${{ steps.resume.outputs.stage }}
             prior_pr_outcome: ${{ steps.resume.outputs.prior_pr_outcome }}
@@ -226,6 +227,7 @@ jobs:
                   head_branch: ${{ github.event.workflow_run.head_branch }}
                   head_sha: ${{ github.event.workflow_run.head_sha }}
                   run_url: ${{ github.event.workflow_run.html_url }}
+                  run_attempt: ${{ github.event.workflow_run.run_attempt }}
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}

@@ -1,10 +1,12 @@
-import { cleanup, render, waitFor } from '@testing-library/react';
+import { act, cleanup, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
+
+import { ignoreConsoleLicenseKeyError } from '../test-utils';
 
 /**
  * The column header name refresh lives in the shared `headerCellCtrl`, driven by the grid-level
@@ -18,6 +20,7 @@ describe('editable column header name (react)', () => {
 
     beforeAll(() => {
         ModuleRegistry.registerModules([AllEnterpriseModule]);
+        ignoreConsoleLicenseKeyError();
     });
 
     beforeEach(() => {
@@ -39,7 +42,9 @@ describe('editable column header name (react)', () => {
         const headerText = () => document.querySelector('.ag-header-cell-text')?.textContent;
         await waitFor(() => expect(headerText()).toBe('Athlete'));
 
-        gridApi!.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Competitor' }] });
+        act(() => {
+            gridApi!.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Competitor' }] });
+        });
 
         await waitFor(() => expect(headerText()).toBe('Competitor'));
     });

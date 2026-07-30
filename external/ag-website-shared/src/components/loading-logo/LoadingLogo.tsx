@@ -1,4 +1,5 @@
 import { getLoadingIFrameId } from '@ag-website-shared/components/loading-logo/getElementId';
+import { EXAMPLE_RELOADING_MESSAGE_TYPE } from '@ag-website-shared/components/loading-logo/messages';
 import AgLoadingLogo from '@ag-website-shared/images/inline-svgs/ag-grid-logomark-not-loading.svg?react';
 import {
     type UseIntersectionObserverParams,
@@ -11,6 +12,12 @@ interface Props {
     pageName: string;
     exampleName: string;
 }
+
+/**
+ * An example only becomes visible once it reports back with an `init` message, so one that never
+ * sends it must not leave its iFrame hidden indefinitely.
+ */
+const REVEAL_FALLBACK_TIMEOUT_MS = 15_000;
 
 export const LoadingLogo: FunctionComponent<Props> = ({ pageName, exampleName }) => {
     const loadingLogoRef = useRef<HTMLDivElement>(null);
@@ -39,21 +46,56 @@ export const LoadingLogo: FunctionComponent<Props> = ({ pageName, exampleName })
     });
 
     useEffect(() => {
-        window.addEventListener('message', ({ data }) => {
+        let revealFallbackTimeout: ReturnType<typeof setTimeout> | undefined;
+
+        const eachIFrame = (callback: (iframe: HTMLIFrameElement) => void) => {
+            document.querySelectorAll<HTMLIFrameElement>('#' + loadingIFrameId).forEach(callback);
+        };
+
+        const showExample = () => {
+            clearTimeout(revealFallbackTimeout);
+            setHide(true);
+
+            eachIFrame((iframe) => {
+                iframe.style.visibility = 'visible';
+                if (document.documentElement.dataset['darkMode'] === 'true' && iframe.contentDocument) {
+                    iframe.contentDocument.documentElement.dataset['darkMode'] = 'true';
+                }
+            });
+        };
+
+        const showLoadingLogo = () => {
+            clearTimeout(revealFallbackTimeout);
+            setHide(false);
+            eachIFrame((iframe) => {
+                iframe.style.visibility = 'hidden';
+            });
+
+            revealFallbackTimeout = setTimeout(showExample, REVEAL_FALLBACK_TIMEOUT_MS);
+        };
+
+        const onMessage = ({ data }: MessageEvent) => {
+            if (data?.type === EXAMPLE_RELOADING_MESSAGE_TYPE) {
+                if (data.loadingIFrameId === loadingIFrameId) {
+                    showLoadingLogo();
+                }
+                return;
+            }
+
             const isExample = pageName === data?.pageName && exampleName === data?.exampleName;
             if (!isExample) return;
 
             if (data?.type === 'init') {
-                setHide(true);
-
-                document.querySelectorAll('#' + loadingIFrameId).forEach((iframe) => {
-                    iframe.style.visibility = 'visible';
-                    if (document.documentElement.dataset['darkMode'] === 'true') {
-                        iframe.contentDocument.documentElement.dataset.darkMode = true;
-                    }
-                });
+                showExample();
             }
-        });
+        };
+
+        window.addEventListener('message', onMessage);
+
+        return () => {
+            window.removeEventListener('message', onMessage);
+            clearTimeout(revealFallbackTimeout);
+        };
     }, []);
 
     return (

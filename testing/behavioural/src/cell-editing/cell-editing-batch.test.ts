@@ -341,4 +341,75 @@ describe('Cell Editing Batch', () => {
         expect(stringCell).not.toHaveClass(/ag-cell-batch-edit/);
         expect(api.getDisplayedRowAtIndex(0)?.data?.string1).toBe('test');
     });
+
+    // Mid-batch Escape closes the editor without ending the batch. It is still a close, so it must
+    // balance its cellEditingStarted — listeners tracking open editors otherwise never see it end.
+    test('batch: Escape on an untouched editor still fires cellEditingStopped', async () => {
+        const api = await gridMgr.createGridAndWait('batchEscapeEvents', {
+            columnDefs: [{ field: 'string1' }, { field: 'number' }],
+            rowData: rowDataFactory(),
+            defaultColDef: { editable: true },
+        });
+
+        const started: any[] = [];
+        const stopped: any[] = [];
+        api.addEventListener('cellEditingStarted', (e) => started.push(e));
+        api.addEventListener('cellEditingStopped', (e) => stopped.push(e));
+
+        api.startBatchEdit();
+        await asyncSetTimeout(1);
+
+        api.setFocusedCell(0, 'string1');
+        api.startEditingCell({ rowIndex: 0, colKey: 'string1' });
+        await asyncSetTimeout(1);
+
+        expect(started).toHaveLength(1);
+        expect(stopped).toHaveLength(0);
+
+        await userEvent.keyboard('{Escape}');
+        await asyncSetTimeout(1);
+
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+        expect(stopped).toHaveLength(1);
+    });
+
+    // Reverting mid-batch re-creates the editor before closing it, but the session that fired
+    // cellEditingStarted is the same one: every editor closed here still has to report it.
+    test.each(['singleCell', 'fullRow'] as const)(
+        'batch (%s): api.stopEditing(true) fires cellEditingStopped for every editor it closes',
+        async (editType) => {
+            const api = await gridMgr.createGridAndWait(`batchApiCancel-${editType}`, {
+                columnDefs: [{ field: 'string1' }, { field: 'number' }],
+                rowData: rowDataFactory(),
+                defaultColDef: { editable: true },
+                editType,
+            });
+
+            const started: any[] = [];
+            const stopped: any[] = [];
+            api.addEventListener('cellEditingStarted', (e) => started.push(e));
+            api.addEventListener('cellEditingStopped', (e) => stopped.push(e));
+
+            api.startBatchEdit();
+            await asyncSetTimeout(1);
+
+            const grid = getGridElement(api)! as HTMLElement;
+            const cell = grid.querySelector<HTMLElement>('[row-index="0"] [col-id="string1"]')!;
+            await userEvent.dblClick(cell);
+            const input = await waitForInput(grid, cell);
+            await userEvent.clear(input);
+            await userEvent.type(input, 'typed');
+            await asyncSetTimeout(1);
+
+            expect(started.length).toBeGreaterThan(0);
+            expect(stopped).toHaveLength(0);
+
+            api.stopEditing(true); // cancels the in-flight edits, keeping the batch open
+            await asyncSetTimeout(1);
+
+            expect(api.getCellEditorInstances()).toHaveLength(0);
+            expect(stopped).toHaveLength(started.length);
+            expect(api.getDisplayedRowAtIndex(0)?.data?.string1).toBe('test'); // nothing written
+        }
+    );
 });

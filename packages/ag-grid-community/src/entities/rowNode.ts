@@ -959,11 +959,15 @@ export class RowNode<TData = any>
         }
         this.destroyed = true;
 
+        const beans = this.beans;
+        // Before the position is cleared below: the editor stop reads the row where it actually was.
+        beans.editSvc?.releaseRowEdits(this);
+
         // Unpin my clone if I'm the source. Only clones have rowPinned (see _createPinnedSibling),
         // so this naturally no-ops when the recursive destroy hits the clone.
         const pinnedSibling = this.pinnedSibling;
         if (pinnedSibling?.rowPinned) {
-            this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
+            beans.pinnedRowModel?.pinRow(pinnedSibling, null);
         }
 
         if (fadeOut === true) {

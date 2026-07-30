@@ -966,4 +966,32 @@ describe('Cell Editing: edge cases', () => {
             `);
         });
     });
+
+    // isEditing answers about the cell it is given. A row with no controller (unrendered, or an index
+    // past the end) must report false, not fall back to "is anything in the grid editing".
+    test('isEditing is scoped to the given cell, not the rendered controller', async () => {
+        const api = await gridMgr.createGridAndWait('isEditingScoped', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [
+                { id: 'ROW_0', a: 'A0', b: 'B0' },
+                { id: 'ROW_1', a: 'A1', b: 'B1' },
+            ],
+            defaultColDef: { editable: true },
+            getRowId: (params) => params.data.id,
+        });
+
+        const colA = api.getColumn('a')!;
+        const colB = api.getColumn('b')!;
+
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await asyncSetTimeout(0);
+
+        expect(api.isEditing({ rowIndex: 0, rowPinned: null, column: colA })).toBe(true);
+        // Same row, different column: rendered, so this was always correct.
+        expect(api.isEditing({ rowIndex: 0, rowPinned: null, column: colB })).toBe(false);
+        // Rendered row that is not editing.
+        expect(api.isEditing({ rowIndex: 1, rowPinned: null, column: colA })).toBe(false);
+        // No such row, so no controller — the answer must still be about this cell.
+        expect(api.isEditing({ rowIndex: 900, rowPinned: null, column: colA })).toBe(false);
+    });
 });
