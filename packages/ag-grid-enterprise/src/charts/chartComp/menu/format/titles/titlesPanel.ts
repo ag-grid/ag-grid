@@ -27,7 +27,6 @@ export class TitlesPanel extends Component {
     public postConstruct() {
         const {
             chartMenuParamsFactory,
-            chartAxisMenuParamsFactory,
             chartOptionsService,
             seriesType,
             isExpandedOnInit: expanded = false,
@@ -46,8 +45,12 @@ export class TitlesPanel extends Component {
                 this.createManagedBean(new TitlePanel(createAxisParamsFactory('yAxis'), 'verticalAxisTitle', 'title'))
             );
         } else if (isPolar(seriesType)) {
+            // Of the two polar axes only the radius axis has a title.
+            const radiusAxisParamsFactory = this.createManagedBean(
+                new ChartMenuParamsFactory(chartOptionsService.getPolarAxisThemeOverridesProxy('radius', 'thisAxis'))
+            );
             axisTitlePanels.push(
-                this.createManagedBean(new TitlePanel(chartAxisMenuParamsFactory, 'polarAxisTitle', 'title'))
+                this.createManagedBean(new TitlePanel(radiusAxisParamsFactory, 'polarAxisTitle', 'title'))
             );
         }
         const titleGroupParams: GroupComponentParams = {

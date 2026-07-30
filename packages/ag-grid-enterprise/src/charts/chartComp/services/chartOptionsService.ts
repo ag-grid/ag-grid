@@ -108,12 +108,37 @@ export class ChartOptionsService extends BeanStub {
         };
     }
 
-    public getPolarAxisThemeOverridesProxy(axisType: 'angle' | 'radius'): ChartOptionsProxy {
+    /**
+     * `scope` decides which axes a write lands on. Options both polar axes share - the axis line, the
+     * labels - are written to every axis, so the control styles the chart as a whole. Options only one of
+     * them has must be written to that axis alone, or AG Charts rejects the write on the other and warns.
+     */
+    public getPolarAxisThemeOverridesProxy(
+        axisType: 'angle' | 'radius',
+        scope: 'allAxes' | 'thisAxis' = 'allAxes'
+    ): ChartOptionsProxy {
+        const setValues = <T>(properties: { expression: string; value: T }[]) =>
+            scope === 'allAxes'
+                ? this.setAxisThemeOverrides(properties)
+                : this.setPolarAxisThemeOverrides(axisType, properties);
         return {
             getValue: (expression) => this.getPolarAxisProperty(axisType, expression),
-            setValue: (expression, value) => this.setAxisThemeOverrides([{ expression, value }]),
-            setValues: (properties) => this.setAxisThemeOverrides(properties),
+            setValue: (expression, value) => setValues([{ expression, value }]),
+            setValues,
         };
+    }
+
+    /** Which of the polar axes carries the categories, which is where the group padding options live. */
+    public getPolarCategoryAxisType(): 'angle' | 'radius' | undefined {
+        for (const axis of this.getChartAxes()) {
+            if (axis.type === 'angle-category') {
+                return 'angle';
+            }
+            if (axis.type === 'radius-category') {
+                return 'radius';
+            }
+        }
+        return undefined;
     }
 
     public getSeriesOptionsProxy(getSelectedSeries: () => ChartSeriesType): ChartOptionsProxy {
@@ -351,6 +376,24 @@ export class ChartOptionsService extends BeanStub {
         for (const { expression, value } of properties) {
             for (const axis of Object.values(chart.axes ?? {})) {
                 if (!this.isValidAxisType(axis)) {
+                    continue;
+                }
+                this.assignChartAxisThemeOverride(chartOptions, chartType, axis.type, null, expression, value);
+            }
+        }
+
+        this.applyChartOptions(chartOptions);
+    }
+
+    private setPolarAxisThemeOverrides<T = string>(
+        axisType: 'angle' | 'radius',
+        properties: { expression: string; value: T }[]
+    ): void {
+        const chartType = this.getChartType();
+        const chartOptions = this.createChartOptions();
+        for (const { expression, value } of properties) {
+            for (const axis of this.getChartAxes()) {
+                if (!axis.type.startsWith(axisType) || !this.isValidAxisType(axis)) {
                     continue;
                 }
                 this.assignChartAxisThemeOverride(chartOptions, chartType, axis.type, null, expression, value);

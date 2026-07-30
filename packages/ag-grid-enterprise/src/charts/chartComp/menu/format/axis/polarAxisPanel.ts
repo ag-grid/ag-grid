@@ -62,7 +62,16 @@ export class PolarAxisPanel extends Component {
 
         this.initAxis(chartAxisThemeOverrides);
         this.initAxisLabels(chartAxisThemeOverrides);
-        this.initRadiusAxis(chartAxisThemeOverrides);
+        this.initRadiusAxis();
+    }
+
+    /** Only one of the polar axes carries `axisType`'s options, so reads and writes must target it alone. */
+    private createSingleAxisParamsFactory(axisType: 'angle' | 'radius'): ChartMenuParamsFactory {
+        return this.createManagedBean(
+            new ChartMenuParamsFactory(
+                this.options.chartOptionsService.getPolarAxisThemeOverridesProxy(axisType, 'thisAxis')
+            )
+        );
     }
 
     private initAxis(chartAxisThemeOverrides: ChartMenuParamsFactory) {
@@ -87,7 +96,8 @@ export class PolarAxisPanel extends Component {
         if (chartType !== 'pie') {
             this.axisGroup.addItem(
                 this.createSlider({
-                    chartAxisThemeOverrides,
+                    // The inner radius belongs to the radius axis.
+                    chartAxisThemeOverrides: this.createSingleAxisParamsFactory('radius'),
                     labelKey: 'innerRadius',
                     defaultMaxValue: 1,
                     property: 'innerRadiusRatio',
@@ -106,13 +116,13 @@ export class PolarAxisPanel extends Component {
         };
 
         const labelPanelComp = this.createManagedBean(new FontPanel(params));
-        const labelOrientationComp = this.createOrientationWidget(chartAxisThemeOverrides);
+        const labelOrientationComp = this.createOrientationWidget();
         labelPanelComp.addItem(labelOrientationComp);
 
         this.axisGroup.addItem(labelPanelComp);
     }
 
-    private createOrientationWidget(chartAxisThemeOverrides: ChartMenuParamsFactory): GridSelect {
+    private createOrientationWidget(): GridSelect {
         const options: Array<ListOption> = [
             { value: 'fixed', text: this.translate('fixed') },
             { value: 'parallel', text: this.translate('parallel') },
@@ -120,18 +130,25 @@ export class PolarAxisPanel extends Component {
         ];
 
         return this.createSelect({
-            chartAxisThemeOverrides,
+            // Only the angle axis orients its labels.
+            chartAxisThemeOverrides: this.createSingleAxisParamsFactory('angle'),
             labelKey: 'orientation',
             options,
             property: 'label.orientation',
         });
     }
 
-    private initRadiusAxis(chartAxisThemeOverrides: ChartMenuParamsFactory) {
+    private initRadiusAxis() {
         const chartSeriesType = getSeriesType(this.options.chartController.getChartType());
         if (!isRadial(chartSeriesType)) {
             return;
         }
+        // Which axis holds the categories depends on the chart type, and only that axis is padded.
+        const categoryAxisType = this.options.chartOptionsService.getPolarCategoryAxisType();
+        if (!categoryAxisType) {
+            return;
+        }
+        const chartAxisThemeOverrides = this.createSingleAxisParamsFactory(categoryAxisType);
 
         const items = [
             this.createSlider({
