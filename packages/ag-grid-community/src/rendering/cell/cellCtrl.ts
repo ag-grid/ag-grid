@@ -153,10 +153,13 @@ export class CellCtrl extends BeanStub {
     private hasBeenFocused = false;
 
     private readonly editSvc?: EditService;
-    private readonly hasEdit: boolean = false;
 
     public tooltipFeature: TooltipFeature | undefined = undefined;
     public editorTooltipFeature: TooltipFeature | undefined = undefined;
+    /** Tooltip registered by the live cellRenderer via `params.setTooltip`, read lazily by the tooltip
+     * feature so registering or clearing it never rebuilds the bean. Cleared when that renderer goes. */
+    public rendererTooltipValue: string | undefined = undefined;
+    public rendererTooltipShouldDisplay: (() => boolean) | undefined = undefined;
 
     constructor(
         public readonly column: AgColumn,
@@ -168,7 +171,6 @@ export class CellCtrl extends BeanStub {
         this.beans = beans;
         this.gos = beans.gos;
         this.editSvc = beans.editSvc;
-        this.hasEdit = !!beans.editSvc;
 
         const { colId } = column;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
@@ -216,21 +218,26 @@ export class CellCtrl extends BeanStub {
         this.disableTooltipFeature();
     }
 
-    private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
-        this.tooltipFeature = this.beans.tooltipSvc?.enableCellTooltipFeature(this, value, shouldDisplayTooltip);
+    private enableTooltipFeature(): void {
+        this.tooltipFeature = this.beans.tooltipSvc?.enableCellTooltipFeature(this);
     }
 
     private disableTooltipFeature() {
         this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
+        this.rendererTooltipValue = undefined;
+        this.rendererTooltipShouldDisplay = undefined;
     }
 
+    /** Drops the outgoing renderer's tooltip so the column default applies again. */
     public resetCellRendererTooltip(): void {
-        if (!this.isAlive()) {
+        // Runs for every cell of every repaint, so exit before touching the feature.
+        if (this.rendererTooltipValue == null || !this.isAlive()) {
             return;
         }
 
-        this.disableTooltipFeature();
-        this.enableTooltipFeature();
+        this.rendererTooltipValue = undefined;
+        this.rendererTooltipShouldDisplay = undefined;
+
         this.tooltipFeature?.refreshTooltip();
     }
 
@@ -409,12 +416,9 @@ export class CellCtrl extends BeanStub {
             );
         }
 
-        if (
-            this.hasEdit &&
-            this.editSvc!.isBatchEditing() &&
-            this.editSvc!.isRowEditing(rowNode, { checkSiblings: true })
-        ) {
-            const result = this.editSvc!.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
+        const editSvc = this.editSvc;
+        if (editSvc?.isBatchEditing() && editSvc.isRowEditing(rowNode, { checkSiblings: true })) {
+            const result = editSvc.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
             if (result) {
                 if (result.compDetails) {
                     compDetails = result.compDetails;
@@ -552,10 +556,9 @@ export class CellCtrl extends BeanStub {
             ) => this.registerRowDragger(rowDraggerElement, dragStartPixels, suppressVisibilityChange),
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                 gos.assertModuleRegistered('Tooltip', 3);
-                if (this.tooltipFeature) {
-                    this.disableTooltipFeature();
-                }
-                this.enableTooltipFeature(value, shouldDisplayTooltip);
+                this.rendererTooltipValue = value;
+                this.rendererTooltipShouldDisplay = shouldDisplayTooltip;
+
                 this.tooltipFeature?.refreshTooltip();
             },
         });
@@ -577,12 +580,12 @@ export class CellCtrl extends BeanStub {
             this.refreshCell(params);
         }
 
-        if (this.hasEdit && this.editCompDetails) {
-            const { editSvc, comp } = this;
-
-            if (!comp?.getCellEditor() && editSvc!.isEditing(this, { withOpenEditor: true })) {
+        const editSvc = this.editSvc;
+        if (editSvc && this.editCompDetails) {
+            const comp = this.comp;
+            if (!comp?.getCellEditor() && editSvc.isEditing(this, { withOpenEditor: true })) {
                 // editor was cleaned up by virtualisation, needs to be re-created
-                editSvc!.startEditing(this, { startedEdit: false, source: 'api', silent: true });
+                editSvc.startEditing(this, { startedEdit: false, source: 'api', silent: true });
             }
         }
     }
@@ -1006,10 +1009,8 @@ export class CellCtrl extends BeanStub {
             return;
         }
 
-        this.disableTooltipFeature();
-        if (this.column.isTooltipEnabled()) {
-            this.enableTooltipFeature();
-        }
+        // the feature resolves the colDef on every read, so it never needs rebuilding for a new one
+        this.tooltipFeature?.refreshTooltip();
 
         this.setWrapText();
         this.setCalculatedColumnCss();

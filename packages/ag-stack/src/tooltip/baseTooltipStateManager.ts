@@ -164,6 +164,11 @@ export abstract class BaseTooltipStateManager<
         return TooltipTrigger.FOCUS;
     }
 
+    /** True only once a tooltip is on screen — a show still waiting out its delay is not showing. */
+    public isShowing(): boolean {
+        return this.state === TooltipStates.SHOWING;
+    }
+
     public onMouseEnter(e: MouseEvent): void {
         // if `interactiveTooltipTimeoutId` is set, it means that this cell has a tooltip
         // and we are in the process of moving the cursor from the tooltip back to the cell
