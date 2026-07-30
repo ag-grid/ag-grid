@@ -55,6 +55,7 @@ import {
     translateCalculatedColumnReferenceError,
 } from './calculatedColumnReferenceMapper';
 import {
+    USER_OWNED_PROPERTIES,
     clearStaleDataTypeProperties,
     pickUserOwnedProperties,
     replaceBracketReferences,
@@ -135,7 +136,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private readonly formulaErrorsByExpression = new Map<string, FormulaError | null>();
 
     public postConstruct(): void {
-        this.beans.userColumnSvc.registerOwner(() => this.isEnabled());
+        this.beans.userColumnSvc.registerOwner(() => this.isEnabled(), USER_OWNED_PROPERTIES);
         this.addManagedEventListeners({
             newColumnsLoaded: (event) => {
                 this.checkColumnLifecycle(event.source);

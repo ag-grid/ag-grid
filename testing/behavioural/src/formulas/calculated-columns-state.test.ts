@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 
-import type { GridApi, GridOptions, GridState, Module } from 'ag-grid-community';
+import type { GridApi, GridOptions, GridState, Module, UserColumnProperty } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     GridStateModule,
@@ -79,7 +79,7 @@ describe('calculated columns - grid state persistence', () => {
         return result;
     }
 
-    function entryOf(state: GridState, colId: string): GridState['userColumns'] extends (infer T)[] ? T : never {
+    function entryOf(state: GridState, colId: string): NonNullable<GridState['userColumns']>[number] {
         const entry = state.userColumns?.find((userColumn) => userColumn.colId === colId);
         expect(entry).toBeTruthy();
         return entry!;
@@ -1275,6 +1275,83 @@ describe('calculated columns - grid state persistence', () => {
             expect.stringContaining(`userColumns: colId 'declared' is declared in columnDefs; skipping.`)
         );
         warn.mockRestore();
+    });
+
+    // === the layer only accepts what the owning UI can produce ===================================
+
+    /** State properties as they arrive from outside the type system, which `UserColumnProperty` refuses at
+     *  compile time: a stored JSON payload, or `initialState` hand-authored in plain JavaScript. */
+    const UNTYPED_PROPERTIES = (properties: { property: string; value: unknown }[]): UserColumnProperty[] =>
+        properties as UserColumnProperty[];
+
+    // `userColumns` is a record of the user's own choices, not a second route into `columnDefs`. A
+    // hand-authored entry naming a property no dialog offers is dropped, so state cannot define columns
+    // behind `columnDefs`' back, nor contend with the sections that own width/visibility/sort/order.
+
+    test('an override entry only applies the properties the dialog can produce', async () => {
+        const api = createGrid('state-override-unowned-properties', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: staticColumnDefs(),
+        });
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b', 'declared']));
+
+        api.setState({
+            userColumns: [
+                {
+                    colId: 'declared',
+                    properties: UNTYPED_PROPERTIES([
+                        { property: 'headerName', value: 'Renamed' },
+                        { property: 'editable', value: true },
+                        { property: 'width', value: 400 },
+                        { property: 'valueGetter', value: () => 99 },
+                    ]),
+                },
+            ],
+        });
+
+        const colDef = await waitFor(() => {
+            const declared = api.getColumn('declared')!.getColDef();
+            expect(declared.headerName).toBe('Renamed');
+            return declared;
+        });
+        expect(colDef.editable).toBeUndefined();
+        expect(colDef.valueGetter).toBeUndefined();
+        expect(api.getColumn('declared')!.getActualWidth()).not.toBe(400);
+        expect(cellValue(api, 'declared')).toBe(13);
+        // The dropped properties must not come back on a re-save either.
+        expect(Object.keys(propertiesOf(api.getState(), 'declared')!)).toEqual(['headerName']);
+    });
+
+    test('a created entry only applies the properties the dialog can produce', async () => {
+        const api = createGrid('state-created-unowned-properties', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
+
+        api.setState({
+            userColumns: [
+                {
+                    colId: 'calculated_1',
+                    created: true,
+                    parentGroupId: null,
+                    properties: UNTYPED_PROPERTIES([
+                        { property: 'calculatedExpression', value: '[a] * [b]' },
+                        { property: 'headerName', value: 'Product' },
+                        { property: 'pinned', value: 'left' },
+                        { property: 'rowGroup', value: true },
+                    ]),
+                },
+            ],
+        });
+
+        await waitFor(() => expect(order(api)).toContain('calculated_1'));
+        const colDef = api.getColumn('calculated_1')!.getColDef();
+        expect(colDef.headerName).toBe('Product');
+        expect(cellValue(api, 'calculated_1')).toBe(30);
+        expect(colDef.pinned).toBeUndefined();
+        expect(colDef.rowGroup).toBeUndefined();
+        expect(api.getColumn('calculated_1')!.isRowGroupActive()).toBe(false);
     });
 
     test('replacing a grouped calc col through setState keeps the replacement in the group', async () => {

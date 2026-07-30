@@ -1,3 +1,4 @@
+import type { ColDef } from '../entities/colDef';
 import type { ShowValuesAs, ShowValuesAsType } from '../entities/colDef-showValuesAs';
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
@@ -184,11 +185,18 @@ export interface ColumnGroupState {
     headerNames?: ColumnGroupHeaderNameState[];
 }
 
-export interface UserColumnProperty {
-    /** Name of the `ColDef` property. */
-    property: string;
-    value: any;
-}
+/**
+ * The `ColDef` properties a user can configure through the grid's own UI, and so the only ones the
+ * `userColumns` state section carries. UI that creates or edits columns extends this union as it gains
+ * settings; everything else stays with `columnDefs` and the other state sections.
+ */
+export type UserColumnPropertyKey = 'calculatedExpression' | 'cellDataType' | 'columnGroupShow' | 'headerName';
+
+/** One `ColDef` property the user configured, as a name/value pair. The value is typed by the property it
+ *  names, so an entry cannot pair a property with a value the definition would reject. */
+export type UserColumnProperty = {
+    [K in UserColumnPropertyKey]: { property: K; value: ColDef[K] };
+}[UserColumnPropertyKey];
 
 export interface UserColumnState {
     colId: string;

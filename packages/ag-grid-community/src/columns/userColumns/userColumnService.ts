@@ -1,7 +1,7 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { ColDef, ColGroupDef } from '../../entities/colDef';
-import type { UserColumnProperty, UserColumnState } from '../../interfaces/gridState';
+import type { UserColumnProperty, UserColumnPropertyKey, UserColumnState } from '../../interfaces/gridState';
 
 /** One column's user-owned layer entry. `properties` holds the definition the user configured; a
  *  `removed` entry is a tombstone for a `columnDefs`-declared column the user deleted. */
@@ -28,13 +28,22 @@ export class UserColumnService extends BeanStub implements NamedBean {
     /** Owners' enabled checks. An entry only reaches the built columns while an owner is active, so a
      *  disabled feature (or an unregistered module) preserves state without acting on it. */
     private readonly owners: (() => boolean)[] = [];
+    /** Union of the properties the registered owners' UI can produce, or `null` while none have registered. */
+    private ownedProperties: Set<UserColumnPropertyKey> | null = null;
     /** `colModel.colDefs` the declared lookup was built from; a new array rebuilds it. */
     private declaredDefsSource: (ColDef | ColGroupDef)[] | null | undefined;
     private declaredDefs = new Map<string, ColDef>();
 
-    /** Registers a feature that builds user columns, along with its enabled check. */
-    public registerOwner(isEnabled: () => boolean): void {
+    /** Registers a feature that builds user columns, along with its enabled check and the definition
+     *  properties its UI lets a user configure. Incoming state is filtered to the registered properties, so
+     *  the layer stays a record of user choices rather than a second route into `columnDefs`. */
+    public registerOwner(isEnabled: () => boolean, ownedProperties: readonly UserColumnPropertyKey[]): void {
         this.owners.push(isEnabled);
+        const properties = this.ownedProperties ?? new Set<UserColumnPropertyKey>();
+        for (let i = 0, len = ownedProperties.length; i < len; ++i) {
+            properties.add(ownedProperties[i]);
+        }
+        this.ownedProperties = properties;
     }
 
     public isActive(): boolean {
@@ -184,7 +193,7 @@ export class UserColumnService extends BeanStub implements NamedBean {
                 next.set(colId, { removed: true });
             } else if (state.created) {
                 next.set(colId, {
-                    properties: fromProperties(state.properties),
+                    properties: this.acceptProperties(state.properties),
                     parentGroupId: state.parentGroupId ?? null,
                     created: true,
                 });
@@ -192,7 +201,7 @@ export class UserColumnService extends BeanStub implements NamedBean {
                 // Changes to a column the developer no longer declares are dropped: state configures the
                 // developer's columns, it cannot reinstate one they have taken away. Resolved against the
                 // declarations, not the built columns — a tombstoned column is absent from the build.
-                next.set(colId, { properties: fromProperties(state.properties) });
+                next.set(colId, { properties: this.acceptProperties(state.properties) });
             }
         }
         if (entriesEqual(entries, next)) {
@@ -201,6 +210,29 @@ export class UserColumnService extends BeanStub implements NamedBean {
         entries.clear();
         next.forEach((entry, colId) => entries.set(colId, entry));
         return true;
+    }
+
+    /** Converts a state entry's properties into a definition, keeping only what a registered owner's UI can
+     *  produce with a serialisable value. `UserColumnProperty` already refuses anything else at compile
+     *  time, so what reaches here is untyped state — a stored payload or hand-written JavaScript — and is
+     *  dropped silently rather than merged into the column.
+     *
+     *  With no owner registered the properties pass through untouched: there is nothing to validate against,
+     *  the entries never reach the built columns, and they must re-save unchanged so a state saved on a
+     *  grid that has the feature is not lossy on one that does not. */
+    private acceptProperties(properties: UserColumnProperty[] | undefined): ColDef {
+        const owned = this.ownedProperties;
+        if (!owned) {
+            return fromProperties(properties);
+        }
+        const result: Record<string, any> = {};
+        for (let i = 0, len = properties?.length ?? 0; i < len; ++i) {
+            const { property, value } = properties![i];
+            if (owned.has(property) && typeof value !== 'function') {
+                result[property] = value;
+            }
+        }
+        return result as ColDef;
     }
 }
 
@@ -211,7 +243,9 @@ const toProperties = (properties: ColDef | undefined): UserColumnProperty[] => {
     const keys = Object.keys(properties);
     const result: UserColumnProperty[] = [];
     for (let i = 0, len = keys.length; i < len; ++i) {
-        const property = keys[i];
+        // A creation path can only put an owned property on the definition it hands over, so the key cast
+        // matches what `acceptProperties` enforces on the way back in.
+        const property = keys[i] as UserColumnPropertyKey;
         const value = (properties as Record<string, any>)[property];
         // Functions and components cannot be serialised; a creation path contributing one is a bug there.
         if (typeof value !== 'function') {
