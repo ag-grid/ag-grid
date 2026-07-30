@@ -58,7 +58,9 @@ async function typeIntoEditor(api: GridApi, rowNode: IRowNode, colId: string, ne
         if (cell) {
             const input = await waitForInput(gridDiv, cell);
             await userEvent.clear(input);
-            await userEvent.type(input, newValue);
+            // `delay: null` dispatches the keystrokes back-to-back; the default waits between each one, and a
+            // redraw landing in one of those gaps detaches the input, losing the value typed so far.
+            await userEvent.type(input, newValue, { delay: null });
             if (input.isConnected && input.value === newValue) {
                 return input;
             }
@@ -92,7 +94,10 @@ export async function editCell(api: GridApi, rowNode: IRowNode, colId: string, n
         };
         api.addEventListener('cellEditingStopped', onStopped);
         if (input.isConnected) {
-            await userEvent.type(input, '{Enter}');
+            // Commit with a synchronous keydown rather than `userEvent.type`, which awaits between the events it
+            // dispatches: a redraw landing in one of those gaps detaches the input, so Enter reaches an element the
+            // grid has already discarded and the stale editor value gets committed instead of `newValue`.
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
             await asyncSetTimeout(0);
         }
         api.removeEventListener('cellEditingStopped', onStopped);
