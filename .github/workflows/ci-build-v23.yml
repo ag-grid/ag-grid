@@ -1,0 +1,68 @@
+name: CI build (v23.x)
+
+# Builds the ag-grid-community and ag-grid-angular libraries to verify that
+# the v23.x source compiles. This is a build-only check — it does not pack,
+# publish, or attach any artifacts (see build-v23-release.yml for that).
+#
+# Triggers:
+#   - push to release-23.x.x         (every merge to the release branch)
+#   - pull_request into release-23.x.x
+#   - workflow_dispatch              (run manually from the Actions tab)
+
+on:
+  push:
+    branches: [release-23.x.x]
+  pull_request:
+    branches: [release-23.x.x]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # release-23.x.x is the 2020-era v23.x line. Packages here are bootstrapped
+  # without a lockfile (lerna.json sets --no-package-lock), so unpinned ranges
+  # would resolve to today's versions — some incompatible with the era's
+  # toolchain (e.g. TypeScript 3.6). npm reads this as the --before flag and
+  # resolves every range to the latest version published before this date,
+  # recreating the dependency tree as it existed at release time.
+  npm_config_before: '2020-07-01T00:00:00.000Z'
+  MODULE_SCOPE: >-
+    {@ag-grid-community/core,@ag-grid-community/client-side-row-model,@ag-grid-community/csv-export,@ag-grid-community/infinite-row-model,@ag-grid-community/all-modules}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Node 12: node-sass ^4.12 (used by @ag-grid-community/core scss build)
+      # has no prebuilt bindings beyond Node 14, and Angular 9 targets this era.
+      - name: Setup Node 12
+        uses: actions/setup-node@v4
+        with:
+          node-version: '12'
+
+      - name: Install root dependencies (lerna, rollup, typescript)
+        run: npm install
+
+      - name: Bootstrap scoped packages
+        run: >
+          npx lerna bootstrap --no-ci
+          --scope '${{ env.MODULE_SCOPE }}'
+          --scope '{@ag-grid-community/angular,ag-grid-community,ag-grid-angular}'
+
+      - name: Build community modules (core, row models, csv-export, all-modules)
+        run: npx lerna run build --scope '${{ env.MODULE_SCOPE }}'
+
+      # Produces dist/ag-grid-community*.js UMD bundles that the umbrella
+      # ag-grid-community package copies during its gulp build.
+      - name: Package all-modules UMD bundles
+        run: npx lerna run package --scope @ag-grid-community/all-modules
+
+      - name: Build ag-grid-community
+        run: npx lerna run build --scope ag-grid-community
+
+      - name: Build ag-grid-angular
+        run: npx lerna run build --scope ag-grid-angular
