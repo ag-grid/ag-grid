@@ -1669,6 +1669,197 @@ describe('calculated columns - grid state persistence', () => {
               └── silver "Silver" width:200
         `);
     });
+
+    test('a calc col saved from a grouped grid is editable after restoring into an ungrouped one', async () => {
+        const rowData = [{ id: 'r1', athlete: 'A', age: 20, gold: 3 }];
+        const api = createGrid('state-depth-change-source', {
+            rowData,
+            columnDefs: [
+                { field: 'athlete' },
+                { headerName: 'Medals', groupId: 'medals', children: [{ field: 'gold' }, { field: 'age' }] },
+            ],
+        });
+        const calcId = await addViaDialog(api, 'athlete', '[age] * 2');
+        const savedState = api.getState();
+
+        // The target declares the same fields with no groups, so the tree depth the restored column pads
+        // to changes: it needs no padding at all here.
+        const api2 = createGrid('state-depth-change-target', {
+            rowData,
+            columnDefs: [{ field: 'athlete' }, { field: 'gold' }, { field: 'age' }],
+            initialState: savedState,
+        });
+        await waitFor(() => expect(order(api2)).toContain(calcId));
+        await editViaDialog(api2, calcId, { title: 'Renamed' });
+        expect(api2.getColumn(calcId)!.getColDef().headerName).toBe('Renamed');
+        await new GridColumns(api2, 'calc col restored into an ungrouped grid').checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── ${calcId} "Renamed" width:200 ƒ
+            ├── gold "Gold" width:200
+            └── age "Age" width:200
+        `);
+    });
+
+    // === created / restored parity ==============================================================
+    // A restored calc col is rebuilt from `userColumns` rather than from the dialog bookkeeping that
+    // produced it, so every behaviour has two constructions to keep honest. Each behaviour below runs
+    // against a freshly created col and then against the same col recreated in a new grid from the
+    // state of a destroyed one, and both runs must leave the grid in the same observable place.
+
+    /** Exercises `check` on a calc col the dialog just created, then on the same col recreated from the
+     *  saved state of a destroyed grid, asserting both runs end in an identical column and row layout.
+     *  The state is captured before `check` runs, so the restored col starts where the created one did. */
+    async function checkCreatedAndRestored(
+        id: string,
+        anchorColId: string,
+        check: (api: GridApi, calcId: string) => Promise<void>
+    ): Promise<{ api: GridApi; calcId: string }> {
+        const rowData = [
+            { id: 'r1', athlete: 'A', age: 20, gold: 3, silver: 1 },
+            { id: 'r2', athlete: 'B', age: 30, gold: 1, silver: 2 },
+        ];
+        const columnDefs: GridOptions['columnDefs'] = [
+            { field: 'athlete' },
+            { field: 'age' },
+            { headerName: 'Medals', groupId: 'medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+        ];
+        const layouts: string[] = [];
+        const captureLayout = async (api: GridApi, label: string) => {
+            // `makeDiagram(true)` annotates structural errors, so a restored col that renders wrongly
+            // differs from the created one in the compared text rather than passing quietly.
+            layouts.push(new GridColumns(api, label).makeDiagram(true));
+            layouts.push(new GridRows(api, label).makeDiagram(true));
+        };
+
+        const created = createGrid(`${id}-created`, { rowData, columnDefs });
+        const calcId = await addViaDialog(created, anchorColId, '[age] * 2');
+        const savedState = created.getState();
+        await check(created, calcId);
+        await captureLayout(created, `${id} created`);
+        created.destroy();
+
+        const restored = createGrid(`${id}-restored`, { rowData, columnDefs, initialState: savedState });
+        await waitFor(() => expect(restored.getColumn(calcId)).not.toBeNull());
+        await check(restored, calcId);
+        await captureLayout(restored, `${id} restored`);
+        expect(layouts[2]).toBe(layouts[0]);
+        expect(layouts[3]).toBe(layouts[1]);
+        return { api: restored, calcId };
+    }
+
+    // `athlete` is a top-level leaf and `gold` sits in the Medals group: the two placements take
+    // different restore paths, as only a grouped col has a `parentGroupId` to resolve an anchor from.
+    for (const [placement, anchorColId] of [
+        ['at the top level', 'athlete'],
+        ['inside a column group', 'gold'],
+    ] as const) {
+        describe(`created/restored parity - a calc col ${placement}`, () => {
+            test('renaming it in the dialog updates the header in place', async () => {
+                const { api, calcId } = await checkCreatedAndRestored(
+                    `parity-rename-${anchorColId}`,
+                    anchorColId,
+                    async (gridApi, colId) => {
+                        await editViaDialog(gridApi, colId, { title: 'Renamed' });
+                    }
+                );
+                expect(api.getColumn(calcId)!.getColDef().headerName).toBe('Renamed');
+            });
+
+            test('editing its expression recalculates its values', async () => {
+                const { api, calcId } = await checkCreatedAndRestored(
+                    `parity-expression-${anchorColId}`,
+                    anchorColId,
+                    async (gridApi, colId) => {
+                        await editViaDialog(gridApi, colId, { expression: '[age] * 3' });
+                    }
+                );
+                expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: calcId })).toBe(60);
+            });
+
+            test('changing its data type in the dialog retypes it', async () => {
+                const { api, calcId } = await checkCreatedAndRestored(
+                    `parity-datatype-${anchorColId}`,
+                    anchorColId,
+                    async (gridApi, colId) => {
+                        await editViaDialog(gridApi, colId, {});
+                        await selectDataType('Number');
+                        clickDialogButton('Apply');
+                        await waitFor(() => expect(gridApi.getColumn(colId)!.getColDef().cellDataType).toBe('number'));
+                    }
+                );
+                expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: calcId })).toBe(40);
+            });
+
+            test('a later dialog edit leaves it where it was moved to', async () => {
+                await checkCreatedAndRestored(`parity-moved-${anchorColId}`, anchorColId, async (gridApi, colId) => {
+                    gridApi.moveColumns([colId], 0);
+                    await asyncSetTimeout(0);
+                    await editViaDialog(gridApi, colId, { title: 'Moved' });
+                });
+            });
+
+            test('a later dialog edit leaves it pinned', async () => {
+                const { api, calcId } = await checkCreatedAndRestored(
+                    `parity-pinned-${anchorColId}`,
+                    anchorColId,
+                    async (gridApi, colId) => {
+                        gridApi.setColumnsPinned([colId], 'left');
+                        await asyncSetTimeout(0);
+                        await editViaDialog(gridApi, colId, { title: 'Pinned' });
+                    }
+                );
+                expect(api.getColumn(calcId)!.getPinned()).toBe('left');
+            });
+
+            // Hiding drops the col from the header, so it is re-shown before the dialog edit — the point
+            // is that the round trip through hidden leaves an editable col in its original place.
+            test('a dialog edit after it is hidden and re-shown leaves it in place', async () => {
+                const { api, calcId } = await checkCreatedAndRestored(
+                    `parity-hidden-${anchorColId}`,
+                    anchorColId,
+                    async (gridApi, colId) => {
+                        gridApi.setColumnsVisible([colId], false);
+                        await asyncSetTimeout(0);
+                        gridApi.setColumnsVisible([colId], true);
+                        await asyncSetTimeout(0);
+                        await editViaDialog(gridApi, colId, { title: 'Reshown' });
+                    }
+                );
+                expect(api.getColumn(calcId)!.isVisible()).toBe(true);
+            });
+
+            test('sorting on it orders the rows by its values', async () => {
+                await checkCreatedAndRestored(`parity-sort-${anchorColId}`, anchorColId, async (gridApi, colId) => {
+                    gridApi.applyColumnState({ state: [{ colId, sort: 'desc' }] });
+                    await asyncSetTimeout(0);
+                });
+            });
+
+            test('removing it through its header menu drops it and its state entry', async () => {
+                const { api, calcId } = await checkCreatedAndRestored(
+                    `parity-removed-${anchorColId}`,
+                    anchorColId,
+                    async (gridApi, colId) => {
+                        await removeViaMenu(gridApi, colId);
+                    }
+                );
+                expect(api.getColumn(calcId)).toBeNull();
+                expect(api.getState().userColumns).toBeUndefined();
+            });
+
+            test('a second calc col can be chained onto it', async () => {
+                const { api } = await checkCreatedAndRestored(
+                    `parity-chained-${anchorColId}`,
+                    anchorColId,
+                    async (gridApi, colId) => {
+                        await addViaDialog(gridApi, colId, `[${colId}] + 1`);
+                    }
+                );
+                expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'calculated_2' })).toBe(41);
+            });
+        });
+    }
 });
 
 // The calculated-columns module being absent is a different grid setup, so it needs its own manager.
