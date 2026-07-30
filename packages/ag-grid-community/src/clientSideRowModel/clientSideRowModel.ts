@@ -55,8 +55,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     /** Rows given a row top by the previous pass — the only rows that can hold a stale one. */
     private positionedRows: RowNode[] = [];
 
-    /** Buffer the current pass fills, swapped into `positionedRows` once the stale tops are cleared. */
+    /** Buffer the current pass fills. Handed over to `positionedRows` before the first row is positioned. */
     private positionedRowsNext: RowNode[] = [];
+
+    /** Positioning requests in flight: above 1 when the row events a pass dispatches re-entered the model. */
+    private positioningRows: number = 0;
 
     /** The ordered list of row processing stages: group → filter → pivot → aggregate → filterAggregates → sort → flatten. */
     private stages: IRowNodeStage[] | null = null;
@@ -317,7 +320,60 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return minIndex < stagesLen ? stages[minIndex].step : null;
     }
 
+    /**
+     * Gives every displayed row its top and index, then clears the tops left stale on the rows that
+     * dropped out of display — only a row `positionedRows` tracks can be holding one.
+     */
     private setRowTopAndRowIndex(): void {
+        if (this.positioningRows) {
+            ++this.positioningRows;
+            return; // Re-entrant, so the buffers are mid-handover and the heights it wants applied must wait.
+        }
+
+        this.positioningRows = 1;
+        try {
+            this.positionAndClearRows();
+            if (this.positioningRows > 1) {
+                // Applies the heights a re-entrant call recalculated. Once only: it can re-enter again.
+                this.positionAndClearRows();
+            }
+        } finally {
+            this.positioningRows = 0;
+        }
+    }
+
+    private positionAndClearRows(): void {
+        const stale = this.positionedRows;
+        const positioned = this.positionedRowsNext;
+        // Own the buffer before positioning anything, so a `getRowHeight` or row event handler that
+        // throws mid-pass leaves the rows positioned so far tracked rather than stuck with their top.
+        this.positionedRows = positioned;
+        this.positionedRowsNext = stale;
+        positioned.length = 0;
+
+        try {
+            this.positionRows(positioned);
+            this.updateFormulaRowIndexes();
+            this.clearStaleRowTops(stale);
+        } catch (e) {
+            // A throw leaves rows holding a top the pass never got to check, and a later pass only
+            // looks at the rows it tracks.
+            this.retainStaleRows(stale);
+            throw e;
+        }
+    }
+
+    /** Runs before the stale tops are cleared, as clearing dispatches row events that read these. */
+    private updateFormulaRowIndexes(): void {
+        if (this.beans.formula?.isEvaluationActive()) {
+            const formulaRows = this.formulaRows;
+            for (let i = 0, len = formulaRows.length; i < len; ++i) {
+                formulaRows[i].formulaRowIndex = i;
+            }
+        }
+    }
+
+    private positionRows(positioned: RowNode[]): void {
         const { beans, rowsToDisplay } = this;
         const defaultRowHeight = beans.environment.getDefaultRowHeight();
         let nextRowTop = 0;
@@ -326,10 +382,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // with these two layouts.
         const allowEstimate = _isDomLayout(this.gos, 'normal');
 
-        const len = rowsToDisplay.length;
-        const positioned = this.positionedRowsNext;
-        for (let i = 0; i < len; ++i) {
+        for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
             const rowNode = rowsToDisplay[i];
+            positioned[i] = rowNode;
 
             if (rowNode.rowHeight == null) {
                 const rowHeight = _getRowHeightForNode(beans, rowNode, allowEstimate, defaultRowHeight);
@@ -339,35 +394,35 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             rowNode.setRowTop(nextRowTop);
             rowNode.setRowIndex(i);
             nextRowTop += rowNode.rowHeight!;
-            positioned[i] = rowNode;
-        }
-        positioned.length = len;
-
-        if (beans.formula?.isEvaluationActive()) {
-            const formulaRows = this.formulaRows;
-            for (let i = 0, len = formulaRows.length; i < len; ++i) {
-                const rowNode = formulaRows[i];
-                rowNode.formulaRowIndex = i;
-            }
         }
     }
 
-    private clearRowTopAndRowIndex(): void {
-        const { rowsToDisplay, positionedRows } = this;
-
-        // Only a row positioned by the previous pass can hold a stale top, and `setRowTopAndRowIndex`
-        // has just given every currently-displayed row its slot, so a matching slot means still displayed.
-        for (let i = 0, len = positionedRows.length; i < len; ++i) {
-            const rowNode = positionedRows[i];
+    /** Clears the tops of `stale` rows that are no longer displayed, then empties it. */
+    private clearStaleRowTops(stale: RowNode[]): void {
+        const rowsToDisplay = this.rowsToDisplay;
+        // Every displayed row holds its slot by now, so a row whose slot no longer holds it dropped out.
+        for (let i = 0, len = stale.length; i < len; ++i) {
+            const rowNode = stale[i];
             const rowIndex = rowNode.rowIndex;
             if ((rowIndex == null || rowsToDisplay[rowIndex] !== rowNode) && !rowNode.destroyed) {
                 rowNode.clearRowTopAndRowIndex();
             }
         }
+        stale.length = 0;
+    }
 
-        this.positionedRows = this.positionedRowsNext;
-        positionedRows.length = 0;
-        this.positionedRowsNext = positionedRows;
+    /** Hands the rows an interrupted pass left in `stale` over to the buffer it now tracks, and empties it. */
+    private retainStaleRows(stale: RowNode[]): void {
+        const { rowsToDisplay, positionedRows } = this;
+        const reached = positionedRows.length; // How far `positionRows` got before the throw.
+        for (let i = 0, len = stale.length; i < len; ++i) {
+            const rowNode = stale[i];
+            const rowIndex = rowNode.rowIndex;
+            if (rowIndex == null || rowIndex >= reached || rowsToDisplay[rowIndex] !== rowNode) {
+                positionedRows.push(rowNode);
+            }
+        }
+        stale.length = 0;
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -659,9 +714,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
         /* eslint-enable no-fallthrough */
 
-        // Position the displayed rows first, then clear stale tops left on rows that dropped out.
         this.setRowTopAndRowIndex();
-        this.clearRowTopAndRowIndex();
 
         this.updateRefreshParams(params); // Apply forced flags from any nested refresh calls
     }
