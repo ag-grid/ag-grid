@@ -1,10 +1,9 @@
 .ag-column-header-edit-popup-content {
     display: flex;
     flex-direction: column;
-    gap: var(--ag-widget-vertical-spacing);
-    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    gap: calc(var(--ag-spacing) * 2);
+    padding: calc(var(--ag-spacing) * 2);
     box-sizing: border-box;
-    height: 100%;
 
     /* The panel content wrapper lays out in a row, so grow to claim the dialog's full width. */
     flex: 1 1 auto;
