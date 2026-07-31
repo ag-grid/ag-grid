@@ -25,12 +25,6 @@ type ResolvedCellTooltip = {
     shouldDisplay?: () => boolean;
 };
 
-type CellTooltipDisplayFunctions = {
-    shouldDisplayDefault: () => boolean;
-    shouldDisplayColumnTooltip: () => boolean;
-    shouldDisplayCustomTooltip: () => boolean;
-};
-
 type LocalisableError = Error & {
     getTranslatedMessage?: (translate: LocaleTextFunc) => string;
 };
@@ -96,15 +90,11 @@ const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => b
     return _isElementOverflowingCallback(() => getCellValueOverflowTarget(ctrl));
 };
 
-const buildCellTooltipDisplayFunctions = (
-    beans: BeanCollection,
-    ctrl: CellCtrl,
-    shouldDisplayTooltip?: () => boolean
-): CellTooltipDisplayFunctions => {
+const buildShouldDisplayCellTooltip = (beans: BeanCollection, ctrl: CellCtrl): (() => boolean) => {
     const { editSvc } = beans;
     const { column } = ctrl;
 
-    const shouldDisplayCellTooltip = () => {
+    return () => {
         if (editSvc?.isEditing(ctrl, { withOpenEditor: true })) {
             return false;
         }
@@ -118,12 +108,6 @@ const buildCellTooltipDisplayFunctions = (
             return false;
         }
         return isCellTruncated();
-    };
-
-    return {
-        shouldDisplayDefault: shouldDisplayCellTooltip,
-        shouldDisplayColumnTooltip: shouldDisplayCellTooltip,
-        shouldDisplayCustomTooltip: shouldDisplayTooltip ?? shouldDisplayCellTooltip,
     };
 };
 
@@ -166,14 +150,12 @@ const usesGroupRowAggregatedValue = (beans: BeanCollection, ctrl: CellCtrl): boo
 const resolveCellTooltip = ({
     beans,
     ctrl,
-    value,
-    displayFunctions,
+    shouldDisplayCellTooltip,
     translate,
 }: {
     beans: BeanCollection;
     ctrl: CellCtrl;
-    value?: string;
-    displayFunctions: CellTooltipDisplayFunctions;
+    shouldDisplayCellTooltip: () => boolean;
     translate: LocaleTextFunc;
 }): ResolvedCellTooltip | null => {
     const { editSvc, formula, gos } = beans;
@@ -206,11 +188,14 @@ const resolveCellTooltip = ({
         }
     }
 
-    const { shouldDisplayCustomTooltip, shouldDisplayColumnTooltip } = displayFunctions;
-
     // 3) explicit value from cellRenderer params (setTooltip) wins over colDef tooltips.
-    if (value != null) {
-        return { value, location: 'cell', shouldDisplay: shouldDisplayCustomTooltip };
+    const rendererValue = ctrl.rendererTooltipValue;
+    if (rendererValue != null) {
+        return {
+            value: rendererValue,
+            location: 'cell',
+            shouldDisplay: ctrl.rendererTooltipShouldDisplay ?? shouldDisplayCellTooltip,
+        };
     }
 
     const data = rowNode.data;
@@ -228,14 +213,14 @@ const resolveCellTooltip = ({
                     transformValues: false,
                 }).value,
                 location: 'cell',
-                shouldDisplay: shouldDisplayColumnTooltip,
+                shouldDisplay: shouldDisplayCellTooltip,
             };
         }
         if (_exists(data)) {
             return {
                 value: resolveTooltipFieldValue(beans, column, rowNode, data, colDef.tooltipField),
                 location: 'cell',
-                shouldDisplay: shouldDisplayColumnTooltip,
+                shouldDisplay: shouldDisplayCellTooltip,
             };
         }
     }
@@ -257,7 +242,7 @@ const resolveCellTooltip = ({
                 })
             ),
             location: 'cell',
-            shouldDisplay: shouldDisplayColumnTooltip,
+            shouldDisplay: shouldDisplayCellTooltip,
         };
     }
 
@@ -387,14 +372,10 @@ export class TooltipService extends BeanStub implements NamedBean {
         return tooltipFeature ? ctrl.createBean(tooltipFeature) : tooltipFeature;
     }
 
-    public enableCellTooltipFeature(
-        ctrl: CellCtrl,
-        value?: string,
-        shouldDisplayTooltip?: () => boolean
-    ): TooltipFeature | undefined {
+    public enableCellTooltipFeature(ctrl: CellCtrl): TooltipFeature | undefined {
         const { beans } = this;
         const { column, rowNode } = ctrl;
-        const displayFunctions = buildCellTooltipDisplayFunctions(beans, ctrl, shouldDisplayTooltip);
+        const shouldDisplayCellTooltip = buildShouldDisplayCellTooltip(beans, ctrl);
         const translate = this.getLocaleTextFunc();
         let resolvedTooltip: ResolvedCellTooltip | null = null;
 
@@ -402,8 +383,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             resolvedTooltip = resolveCellTooltip({
                 beans,
                 ctrl,
-                value,
-                displayFunctions,
+                shouldDisplayCellTooltip,
                 translate,
             });
             return resolvedTooltip;
