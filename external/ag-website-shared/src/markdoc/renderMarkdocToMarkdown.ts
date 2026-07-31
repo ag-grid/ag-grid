@@ -87,7 +87,7 @@ export interface RenderMarkdocToMarkdownOptions {
     framework: MarkdownFramework;
     pageName: string;
     /** Pulled from `page.data`; `page.body` does not include frontmatter. */
-    frontmatter?: { title?: string; description?: string };
+    frontmatter?: { title?: string; description?: string; enterprise?: boolean };
     /** Current product version, emitted in the frontmatter so it is machine-readable. */
     version?: string;
     /**
@@ -133,7 +133,12 @@ export async function renderMarkdocToMarkdown(opts: RenderMarkdocToMarkdownOptio
     await prefetchImageSrcs(ast.children, ctx);
     const bodyMarkdown = await renderBlocks(ast.children, ctx);
 
-    const frontmatterBlock = buildFrontmatter({ title: frontmatter.title, framework, version });
+    const frontmatterBlock = buildFrontmatter({
+        title: frontmatter.title,
+        enterprise: frontmatter.enterprise,
+        framework,
+        version,
+    });
     // Just the H1 — the description is intentionally omitted; the page body is the content.
     const opener = frontmatter.title ? `# ${frontmatter.title}` : '';
 
@@ -144,16 +149,22 @@ export async function renderMarkdocToMarkdown(opts: RenderMarkdocToMarkdownOptio
 
 function buildFrontmatter({
     title,
+    enterprise,
     framework,
     version,
 }: {
     title?: string;
+    enterprise?: boolean;
     framework: MarkdownFramework;
     version?: string;
 }): string {
     const lines = ['---'];
     if (title) {
         lines.push(`title: ${JSON.stringify(title)}`);
+    }
+    // Only emitted when the page is Enterprise-only, matching the source frontmatter.
+    if (enterprise) {
+        lines.push('enterprise: true');
     }
     lines.push(`framework: ${framework}`);
     if (version) {
