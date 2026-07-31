@@ -5,6 +5,7 @@ import { ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule, IntegratedChartsModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { ChartMenuParamsFactory } from '../../../../packages/ag-grid-enterprise/src/charts/chartComp/menu/chartMenuParamsFactory';
+import { FontPanel } from '../../../../packages/ag-grid-enterprise/src/charts/chartComp/menu/format/fontPanel';
 import type { ChartOptionsProxy } from '../../../../packages/ag-grid-enterprise/src/charts/chartComp/services/chartOptionsService';
 import { ChartOptionsService } from '../../../../packages/ag-grid-enterprise/src/charts/chartComp/services/chartOptionsService';
 import { canSwitchDirection } from '../../../../packages/ag-grid-enterprise/src/charts/chartComp/utils/seriesTypeMapper';
@@ -17,7 +18,7 @@ import { TestGridsManager, canvasPolyfill } from '../test-utils';
  * both. These tests exercise every binding on every chart type to catch that drift.
  */
 
-type WidgetKind = 'colour' | 'number' | 'slider' | 'boolean' | 'select' | 'enable' | 'value';
+type WidgetKind = 'colour' | 'number' | 'slider' | 'boolean' | 'select' | 'enable' | 'value' | 'font';
 
 interface Widget {
     /** Which `ChartOptionsService` proxy the binding goes through, e.g. `getCartesianAxisOptionsProxy(xAxis)`. */
@@ -69,6 +70,11 @@ const LEAF_FACTORIES: [string, WidgetKind][] = [
  */
 function hasRecoveredValue(widget: Widget): boolean {
     const { value } = widget.params;
+    // `fontStyle` has no widget of its own - the weight/style select folds it into its options and falls
+    // back to `normal`, which is the default AG Charts itself applies, so the control agrees with the chart.
+    if (widget.kind === 'font' && widget.expression.endsWith('.fontStyle')) {
+        return true;
+    }
     if (value == null || value === '') {
         return false;
     }
@@ -140,6 +146,19 @@ function instrumentPanels(): Instrumentation {
             return params;
         };
     }
+
+    // `FontPanel` builds its family, weight and size selects through
+    // `getDefaultSelectParamsWithoutValueParams`, which carries no expression, so the factory hooks below
+    // never see them. Hook the panel's own read instead - it is where the binding actually lives.
+    const originalFontValue = (FontPanel.prototype as any).getInitialFontValue;
+    originals.push([FontPanel.prototype, 'getInitialFontValue', originalFontValue]);
+    (FontPanel.prototype as any).getInitialFontValue = function (fontKey: string) {
+        const value = originalFontValue.call(this, fontKey);
+        if (recording) {
+            record(this.params.chartMenuParamsFactory, this.params.keyMapper(fontKey), 'font', [], { value });
+        }
+        return value;
+    };
 
     for (const [method, kind] of LEAF_FACTORIES) {
         const original = (ChartMenuParamsFactory.prototype as any)[method];
@@ -273,6 +292,18 @@ function probeFor(widget: Widget, current: unknown): unknown {
             return current !== true;
         case 'colour':
             return String(current).toLowerCase() === '#ff00ff' ? '#00ff00' : '#ff00ff';
+        case 'font': {
+            if (/\.fontSize$/.test(widget.expression)) {
+                return current === 12 ? 14 : 12;
+            }
+            if (/\.fontFamily$/.test(widget.expression)) {
+                return 'Arial, sans-serif';
+            }
+            if (/\.fontStyle$/.test(widget.expression)) {
+                return current === 'italic' ? 'normal' : 'italic';
+            }
+            return current === 'bold' ? 'normal' : 'bold';
+        }
         case 'select': {
             const choices = (widget.choices ?? []).filter((choice) => choice !== undefined && choice !== current);
             return choices.length > 0 ? choices[0] : undefined;

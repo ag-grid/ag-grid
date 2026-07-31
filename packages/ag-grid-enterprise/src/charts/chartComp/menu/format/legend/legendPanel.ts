@@ -140,7 +140,8 @@ export class LegendPanel extends Component {
             // The legend has no stroke width of its own; left unset each marker takes the series' own
             // stroke width capped at 2, which is 1 for every series default.
             createSlider('item.marker.strokeWidth', 'markerStroke', 10, 1),
-            createSlider('item.marker.padding', 'itemSpacing', 20),
+            // The marker padding is four-sided; only the side facing the label is the marker-to-label gap.
+            createSlider('item.marker.padding.right', 'itemSpacing', 20),
             this.createItemPaddingSlider(chartMenuParamsFactory, 'layoutHorizontalSpacing', ['left', 'right']),
             this.createItemPaddingSlider(chartMenuParamsFactory, 'layoutVerticalSpacing', ['top', 'bottom']),
         ];

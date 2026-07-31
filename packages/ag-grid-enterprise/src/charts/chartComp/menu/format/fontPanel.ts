@@ -27,8 +27,8 @@ export interface FontPanelParams {
     chartMenuParamsFactory: ChartMenuParamsFactory;
     keyMapper: (key: string) => string;
     cssIdentifier?: string;
-    /** Where the effective colour lives when the label itself holds none. */
-    colorWhenUnset?: () => string | undefined;
+    /** Where the effective value for a font key lives when the label itself holds none. */
+    fontValueWhenUnset?: <K extends keyof Font>(fontKey: K) => Font[K];
 }
 
 export class FontPanel extends Component {
@@ -107,11 +107,9 @@ export class FontPanel extends Component {
     }
 
     private getColorPickerParams(): ColorPickerParams {
-        const { chartMenuParamsFactory, keyMapper, colorWhenUnset } = this.params;
+        const { chartMenuParamsFactory, keyMapper, fontValueWhenUnset } = this.params;
         const params = chartMenuParamsFactory.getDefaultColorPickerParams(keyMapper('color'));
-        if (params.value == null && colorWhenUnset) {
-            params.value = colorWhenUnset();
-        }
+        params.value ??= fontValueWhenUnset?.('color');
         // Series labels have no `color` of their own - the effective colour is resolved onto
         // `insideStyle` / `outsideStyle` according to the label placement. Read the style matching the
         // current placement so the picker has a value to show. Writes still go to `color`, which the
@@ -190,8 +188,8 @@ export class FontPanel extends Component {
         const sizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
         const size = this.getInitialFontValue('fontSize');
 
-        if (!sizes.includes(size!)) {
-            sizes.push(size!);
+        if (size != null && !sizes.includes(size)) {
+            sizes.push(size);
         }
 
         const options = sizes.sort((a, b) => a - b).map((value) => ({ value: `${value}`, text: `${value}` }));
@@ -199,7 +197,7 @@ export class FontPanel extends Component {
         return this.params.chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
             'size',
             options,
-            `${size}`,
+            size == null ? undefined : `${size}`,
             (newValue) => this.setFont({ fontSize: parseInt(newValue, 10) })
         );
     }
@@ -266,8 +264,8 @@ export class FontPanel extends Component {
     }
 
     private getInitialFontValue<K extends keyof Font>(fontKey: K): Font[K] {
-        const { keyMapper } = this.params;
-        return this.chartOptions.getValue(keyMapper(fontKey));
+        const { keyMapper, fontValueWhenUnset } = this.params;
+        return this.chartOptions.getValue<Font[K]>(keyMapper(fontKey)) ?? fontValueWhenUnset?.(fontKey);
     }
 }
 
