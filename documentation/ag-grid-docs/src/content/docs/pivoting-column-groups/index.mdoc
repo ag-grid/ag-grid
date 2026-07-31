@@ -91,9 +91,10 @@ the same way row group columns are sorted from their pills.
 
 `pivotSort` is independent of `sort`: it controls the order of a pivoted column's result columns only, and neither
 direction flows to or from the column's own sort. Pivot columns the grid generates are sorted ascending by default,
-while pivot result columns supplied via [SSRM Pivoting](./server-side-model-pivoting/) default to no sort so their
-supplied order is kept. Clicking a pill cycles through ascending, descending and no sort, where no sort keeps the
-order the columns were generated or supplied in.
+while pivot result columns supplied through
+[`setPivotResultColumns`](./server-side-model-pivoting/#creating-pivot-result-columns-advanced) default to no sort so
+their supplied order is kept. Clicking a pill cycles through ascending, descending and no sort, where no sort keeps
+the order the columns were generated or supplied in.
 When a `pivotComparator` is supplied, ascending uses that comparator's order and descending reverses it.
 
 {% gridExampleRunner title="Sorting Pivot Columns" name="sort-pivot-columns" /%}
