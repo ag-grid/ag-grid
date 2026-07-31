@@ -46,6 +46,28 @@ describe('PdfCreator', () => {
         expect(creator.getMergedParams({ direction: 'rtl' }).direction).toBe('rtl');
     });
 
+    it('resolves theme colour tokens in merged default cell and header styles', () => {
+        const root = document.createElement('div');
+        document.body.appendChild(root);
+        const creator = new PdfCreator() as unknown as {
+            getMergedParams: (params?: PdfExportParams) => PdfExportParams;
+            gos: { get: (key: string) => unknown };
+            beans: { eRootDiv: HTMLElement };
+        };
+        creator.gos = {
+            get: (key: string) =>
+                key === 'defaultPdfExportParams' ? { defaultCellStyle: { color: 'red', padding: 6 } } : undefined,
+        };
+        creator.beans = { eRootDiv: root };
+
+        const merged = creator.getMergedParams({ defaultHeaderStyle: { backgroundColor: '#00ff00' } });
+
+        expect(merged.defaultCellStyle).toEqual({ color: getComputedColor(root, 'red'), padding: 6 });
+        expect(merged.defaultHeaderStyle?.backgroundColor).toBe(getComputedColor(root, '#00ff00'));
+
+        root.remove();
+    });
+
     it('does not return PDF data when PDF export is suppressed', () => {
         const creator = new PdfCreator() as unknown as {
             getDataAsPdf: (params?: PdfExportParams) => Blob | undefined;

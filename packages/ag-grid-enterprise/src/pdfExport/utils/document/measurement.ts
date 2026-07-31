@@ -70,12 +70,11 @@ export type LayoutOptions = {
     fontSize: number;
     headerFontSize: number;
     cellPadding: number;
+    defaultCellStyle?: PdfCellStyle;
+    /** Header defaults pre-merged over `defaultCellStyle`. */
+    defaultHeaderStyle?: PdfCellStyle;
     rowHeight?: number;
     headerRowHeight?: number;
-    wrapText?: boolean;
-    lineHeight?: number;
-    maxLines?: number;
-    overflow?: PdfTextOverflow;
     rowGroupIndentSize?: number;
     fontRegistry?: PdfFontRegistry;
     language?: string;
@@ -166,8 +165,9 @@ export function measureRow(
     const fontRegistry = getFontRegistry(layout);
     const baseFont = resolveFontInput(isHeader ? headerFont : bodyFont, fontRegistry);
     const defaultFontSize = isHeader ? layout.headerFontSize : layout.fontSize;
+    const exportDefaultStyle = isHeader ? layout.defaultHeaderStyle : layout.defaultCellStyle;
     const defaultCellStyle = resolveTableCellStyle(
-        row.style,
+        mergePdfCellStyles(exportDefaultStyle, row.style),
         layout,
         baseFont,
         rowStyles,
@@ -185,7 +185,7 @@ export function measureRow(
         }
 
         const style = resolveTableCellStyle(
-            mergePdfCellStyles(row.style, cell.style),
+            mergePdfCellStyles(exportDefaultStyle, mergePdfCellStyles(row.style, cell.style)),
             layout,
             baseFont,
             rowStyles,
@@ -379,6 +379,7 @@ export function getAutoColumnWidths(
         const fontRegistry = getFontRegistry(layout);
         const baseFont = resolveFontInput(isHeader ? headerFont : bodyFont, fontRegistry);
         const defaultFontSize = isHeader ? layout.headerFontSize : layout.fontSize;
+        const exportDefaultStyle = isHeader ? layout.defaultHeaderStyle : layout.defaultCellStyle;
 
         let columnIndex = 0;
         for (const cell of row.cells) {
@@ -393,7 +394,7 @@ export function getAutoColumnWidths(
             }
 
             const style = resolveTableCellStyle(
-                mergePdfCellStyles(row.style, cell.style),
+                mergePdfCellStyles(exportDefaultStyle, mergePdfCellStyles(row.style, cell.style)),
                 layout,
                 baseFont,
                 rowStyles,
@@ -532,9 +533,17 @@ export function constrainTextLines(
 }
 
 function getMinimumRowHeight(rowType: PdfRowType, layout: LayoutOptions): number {
-    const fontSize = isHeaderRowType(rowType) ? layout.headerFontSize : layout.fontSize;
-    const lineHeight = resolveFiniteNumber(layout.lineHeight, fontSize, Number.EPSILON);
-    return lineHeight + layout.cellPadding * 2;
+    const isHeader = isHeaderRowType(rowType);
+    const defaults = isHeader ? layout.defaultHeaderStyle : layout.defaultCellStyle;
+    const fontSize = isHeader ? layout.headerFontSize : layout.fontSize;
+    const lineHeight = resolveFiniteNumber(defaults?.lineHeight, fontSize, Number.EPSILON);
+    const padding = resolveBoxSpacing(defaults?.padding, {
+        top: layout.cellPadding,
+        right: layout.cellPadding,
+        bottom: layout.cellPadding,
+        left: layout.cellPadding,
+    });
+    return lineHeight + padding.top + padding.bottom;
 }
 
 function resolveHeadingStyle(
@@ -546,7 +555,8 @@ function resolveHeadingStyle(
     fontRegistry: PdfFontRegistry,
     defaultHeaderFontSize: number
 ): ResolvedCellStyle {
-    const headerFontSize = resolveFiniteNumber(params.headerFontSize, defaultHeaderFontSize, Number.EPSILON);
+    const defaultHeaderStyle = mergePdfCellStyles(params.defaultCellStyle, params.defaultHeaderStyle);
+    const headerFontSize = resolveFiniteNumber(defaultHeaderStyle?.fontSize, defaultHeaderFontSize, Number.EPSILON);
     const defaultFontSize = type === 'title' ? Math.max(headerFontSize + 4, 14) : Math.max(headerFontSize + 1, 11);
     const fontSize = resolveFiniteNumber(style?.fontSize, defaultFontSize, Number.EPSILON);
     const font = fontRegistry.resolve(
@@ -580,12 +590,12 @@ function resolveHeadingStyle(
         direction: style?.direction ?? params.direction ?? 'auto',
         language: style?.language ?? params.language,
         lineHeight: resolveFiniteNumber(
-            style?.lineHeight ?? params.lineHeight,
+            style?.lineHeight,
             fontRegistry.getNaturalLineHeight(fontSize, font),
             Number.EPSILON
         ),
-        maxLines: resolveMaxLines(style?.maxLines ?? params.maxLines),
-        overflow: style?.overflow ?? params.overflow ?? DEFAULT_OVERFLOW,
+        maxLines: resolveMaxLines(style?.maxLines),
+        overflow: style?.overflow ?? DEFAULT_OVERFLOW,
         alignment: style?.alignment ?? DEFAULT_TITLE_ALIGNMENT,
         alignmentExplicit: style?.alignment != null,
         padding,
@@ -636,12 +646,12 @@ function resolveTableCellStyle(
         direction: style?.direction ?? layout.direction ?? 'auto',
         language: style?.language ?? layout.language,
         lineHeight: resolveFiniteNumber(
-            style?.lineHeight ?? layout.lineHeight,
+            style?.lineHeight,
             fontRegistry.getNaturalLineHeight(fontSize, font),
             Number.EPSILON
         ),
-        maxLines: resolveMaxLines(style?.maxLines ?? layout.maxLines),
-        overflow: style?.overflow ?? layout.overflow ?? DEFAULT_OVERFLOW,
+        maxLines: resolveMaxLines(style?.maxLines),
+        overflow: style?.overflow ?? DEFAULT_OVERFLOW,
         alignment: style?.alignment ?? DEFAULT_CELL_ALIGNMENT,
         alignmentExplicit: style?.alignment != null,
         padding,
@@ -650,8 +660,8 @@ function resolveTableCellStyle(
         backgroundColor: resolveOptionalColor(style?.backgroundColor, rowStyles.background, blendWith),
         borderColor,
         borderWidth: resolveBorderWidth(style?.borderWidth, borderColor),
-        wrapText: style?.wrapText ?? layout.wrapText ?? false,
-        preserveLineBreaks: style?.preserveLineBreaks ?? style?.wrapText ?? layout.wrapText ?? false,
+        wrapText: style?.wrapText ?? false,
+        preserveLineBreaks: style?.preserveLineBreaks ?? style?.wrapText ?? false,
         preserveSpaces: style?.preserveSpaces ?? false,
     };
 }

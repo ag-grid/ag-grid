@@ -4,6 +4,7 @@ import type { IPdfCreator, NamedBean, PdfCustomContent, PdfExportParams } from '
 import { BaseCreator } from 'ag-grid-community';
 
 import { PdfSerializingSession } from './pdfSerializingSession';
+import { resolvePdfCellStyleColors } from './utils/colors';
 import {
     getThemePdfColors,
     mergeDocumentHeadingStyle,
@@ -15,6 +16,7 @@ import {
     resolveThemeColorValue,
     resolveWatermarkColors,
 } from './utils/pdfStyleResolver';
+import { mergePdfCellStyles } from './utils/styles';
 
 /**
  * Orchestrates PDF export by serialising grid data and downloading a file.
@@ -45,6 +47,14 @@ export class PdfCreator
         if (baseParams?.page && params?.page) {
             merged.page = { ...baseParams.page, ...params.page };
         }
+        merged.defaultCellStyle = resolvePdfCellStyleColors(
+            mergePdfCellStyles(baseParams?.defaultCellStyle, params?.defaultCellStyle),
+            resolveColor
+        );
+        merged.defaultHeaderStyle = resolvePdfCellStyleColors(
+            mergePdfCellStyles(baseParams?.defaultHeaderStyle, params?.defaultHeaderStyle),
+            resolveColor
+        );
         const mergedTitleStyle = mergeDocumentHeadingStyle(baseParams?.documentTitleStyle, params?.documentTitleStyle);
         merged.documentTitleStyle = resolveDocumentHeadingStyleColors(mergedTitleStyle, resolveColor);
         const mergedSubtitleStyle = mergeDocumentHeadingStyle(

@@ -256,7 +256,10 @@ describe('createPdfDocument', () => {
                 cells: [{ value: 'First line\nSecond line' }],
             },
         ];
-        const pdf = createPdfDocument(rows, [stubColumn(100)], { columnWidth: 100, wrapText: true });
+        const pdf = createPdfDocument(rows, [stubColumn(100)], {
+            columnWidth: 100,
+            defaultCellStyle: { wrapText: true },
+        });
         const layout: LayoutOptions = {
             columnCount: 1,
             columnWidths: [100],
@@ -265,7 +268,7 @@ describe('createPdfDocument', () => {
             fontSize: 10,
             headerFontSize: 11,
             cellPadding: 4,
-            wrapText: true,
+            defaultCellStyle: { wrapText: true },
         };
         const rowData = measureRow(rows[0], layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
 
@@ -378,7 +381,7 @@ describe('createPdfDocument', () => {
         ];
         const pdf = createPdfDocument(rows, [stubColumn(100)], {
             columnWidth: 100,
-            wrapText: true,
+            defaultCellStyle: { wrapText: true },
             rowHeight: 28,
         });
 
@@ -577,6 +580,18 @@ describe('createPdfDocument', () => {
         expect(pdf).toMatch(/Tm \(Second line\) Tj/);
     });
 
+    it('does not apply default cell text constraints to document headings', () => {
+        const pdf = createPdfDocument([], [], {
+            documentTitle: 'First line\nSecond line\nThird line',
+            documentTitleStyle: { preserveLineBreaks: true },
+            defaultCellStyle: { maxLines: 1, overflow: 'clip', lineHeight: 4 },
+        });
+
+        expect(pdf).toMatch(/Tm \(First line\) Tj/);
+        expect(pdf).toMatch(/Tm \(Second line\) Tj/);
+        expect(pdf).toMatch(/Tm \(Third line\) Tj/);
+    });
+
     it('constrains a wrapped document title to the printable page height', () => {
         const title = Array.from({ length: 12 }, (_, index) => `Line ${index + 1}`).join('\n');
         const pdf = createPdfDocument([], [], {
@@ -608,8 +623,8 @@ describe('createPdfDocument', () => {
         ] as unknown as PdfRow[];
         const columns = [stubColumn(100)];
         const params = {
-            fontFamily: 'Comic Sans MS',
-            headerFontFamily: 'Papyrus',
+            defaultCellStyle: { fontFamily: 'Comic Sans MS' },
+            defaultHeaderStyle: { fontFamily: 'Papyrus' },
             documentTitle: 'Report',
             documentTitleStyle: { fontFamily: 'Wingdings' },
         } as unknown as PdfExportParams;
@@ -623,6 +638,31 @@ describe('createPdfDocument', () => {
         expect(pdf).not.toContain('Comic Sans MS');
         expect(pdf).not.toContain('Papyrus');
         expect(pdf).not.toContain('Wingdings');
+    });
+
+    it('applies default cell styles to body cells and inherits them for headers', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            defaultCellStyle: { fontFamily: 'Times-Roman', fontSize: 9, backgroundColor: '#112233' },
+        });
+
+        expect(pdf).toContain('/BaseFont /Times-Roman');
+        // headers inherit the body family and keep the derived bold variant.
+        expect(pdf).toContain('/BaseFont /Times-Bold');
+        // headers inherit the body font size, so both rows render at 9 points.
+        expect(countOccurrences(pdf, ' 9 Tf')).toBe(2);
+        expect(pdf).toContain('0.067 0.133 0.200 rg');
+    });
+
+    it('lets default header styles override inherited cell defaults', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            defaultCellStyle: { fontSize: 9 },
+            defaultHeaderStyle: { fontSize: 14, fontWeight: 'normal' },
+        });
+
+        expect(pdf).toContain(' 9 Tf');
+        expect(pdf).toContain(' 14 Tf');
+        // an explicit normal weight suppresses the derived bold header variant.
+        expect(pdf).not.toContain('/BaseFont /Helvetica-Bold');
     });
 
     it('applies bold weight to the inherited font family', () => {
@@ -643,8 +683,8 @@ describe('createPdfDocument', () => {
 
         const rowRenderData = measureRow(row, layout, 'Times-Roman', 'Times-Bold', resolvePdfStyleColors(), 0);
         const pdf = createPdfDocument([row], [stubColumn(100)], {
-            fontFamily: 'Times-Roman',
-            headerFontFamily: 'Times-Roman',
+            defaultCellStyle: { fontFamily: 'Times-Roman' },
+            defaultHeaderStyle: { fontFamily: 'Times-Roman' },
         });
 
         expect(rowRenderData.defaultCellStyle.fontFamily).toBe('Times-Bold');
@@ -655,9 +695,8 @@ describe('createPdfDocument', () => {
     it('does not emit invalid PDF tokens for malformed runtime values', () => {
         const params = {
             page: { size: { width: Number.NaN, height: Number.POSITIVE_INFINITY }, margin: Number.NaN },
-            fontSize: Number.POSITIVE_INFINITY,
-            headerFontSize: Number.NaN,
-            cellPadding: Number.NEGATIVE_INFINITY,
+            defaultCellStyle: { fontSize: Number.POSITIVE_INFINITY, padding: Number.NEGATIVE_INFINITY },
+            defaultHeaderStyle: { fontSize: Number.NaN },
             rowHeight: Number.NaN,
             colors: {
                 headerBackgroundColor: '#ggg',

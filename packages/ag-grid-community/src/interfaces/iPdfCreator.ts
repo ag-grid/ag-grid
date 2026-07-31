@@ -460,30 +460,20 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      */
     page?: PdfPageSetup;
     /**
-     * Base font size for body rows in points.
-     * @default 10
+     * Default style applied to every body cell, including custom content rows.
+     * Grid styles, row and cell styles, and `processStyleCallback` results
+     * override these values.
+     * When no style is provided, body cells use `Helvetica` at 10 points.
      */
-    fontSize?: number;
+    defaultCellStyle?: PdfCellStyle;
     /**
-     * Base font size for header rows in points.
-     * @default 11
+     * Default style applied to header and group-header cells.
+     * Each unset property inherits from `defaultCellStyle`; values set here
+     * take precedence. If neither style sets `fontSize`, headers use 11 points.
+     * If no font weight is inherited or set, headers use the bold variant of
+     * the resolved body font.
      */
-    headerFontSize?: number;
-    /**
-     * Base font family for body rows.
-     * @default 'Helvetica'
-     */
-    fontFamily?: PdfFontFamily;
-    /**
-     * Font family for header rows.
-     * @default derived bold variant of `fontFamily`
-     */
-    headerFontFamily?: PdfFontFamily;
-    /**
-     * Padding inside each cell in points.
-     * @default 4
-     */
-    cellPadding?: number;
+    defaultHeaderStyle?: PdfCellStyle;
     /**
      * Controls exported column widths. Use `auto` to size from exported content, `grid` to use the
      * current grid width, a number for a width in points, or a callback for per-column control.
@@ -492,27 +482,6 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      * from its exported content.
      */
     columnWidth?: PdfColumnWidth | PdfColumnWidthCallback;
-    /**
-     * Whether table cell text should wrap onto multiple lines. This can be overridden for individual
-     * rows or cells with `PdfCellStyle.wrapText`.
-     * @default false
-     */
-    wrapText?: boolean;
-    /**
-     * Default distance between text baselines in points.
-     * Defaults to the natural line height from the resolved font metrics,
-     * with a minimum of `fontSize`.
-     */
-    lineHeight?: number;
-    /**
-     * Default maximum number of rendered text lines.
-     */
-    maxLines?: number;
-    /**
-     * Default policy for text exceeding width, height or line limits.
-     * @default 'ellipsis'
-     */
-    overflow?: PdfTextOverflow;
     /**
      * Horizontal indentation in points for each row-group level.
      * @default 12

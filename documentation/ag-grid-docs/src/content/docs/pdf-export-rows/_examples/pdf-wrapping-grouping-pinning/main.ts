@@ -121,8 +121,10 @@ function getPdfExportParams(): PdfExportParams {
         rowGroupIndentSize: 16,
         skipPinnedTop: !includeTop,
         skipPinnedBottom: !includeBottom,
-        maxLines: limitLines ? 2 : undefined,
-        overflow: 'ellipsis',
+        defaultCellStyle: {
+            maxLines: limitLines ? 2 : undefined,
+            overflow: 'ellipsis',
+        },
         columnWidth: ({ column }) => (column?.getColId() === 'summary' ? 190 : 'auto'),
     };
 }

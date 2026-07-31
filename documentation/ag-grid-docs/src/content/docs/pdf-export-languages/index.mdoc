@@ -7,12 +7,12 @@ PDF Export uses the PDF Base 14 fonts by default. These fonts cover WinAnsi char
 
 ## Non Latin Languages
 
-Start by registering one font family and using it as the default for the whole export. The two font properties have different purposes:
+Start by registering one font family and using it as the default for the whole export. The two font settings have different purposes:
 
 1. `fonts` registers the font families that are available to the exporter. It is an array because an export can make several families available.
-1. `fontFamily` selects one registered family as the default for exported text.
+1. `defaultCellStyle.fontFamily` selects one registered family as the default for exported text. Headers inherit it because properties not set by `defaultHeaderStyle` cascade from `defaultCellStyle`.
 
-The following example exports Japanese text. The `fonts` array contains only `IBM Plex Sans JP`, and `fontFamily` selects that family. No style callback is required because every exported element uses the same family.
+The following example exports Japanese text. The `fonts` array contains only `IBM Plex Sans JP`, and `defaultCellStyle.fontFamily` selects that family. No style callback is required because every exported element uses the same family.
 
 The optional `language` property is a BCP 47 language tag. It enables language-specific OpenType features and is also written to the PDF document metadata.
 
@@ -29,7 +29,7 @@ const japaneseFont = {
 const gridOptions = {
     defaultPdfExportParams: {
         fonts: [japaneseFont],
-        fontFamily: japaneseFont.family,
+        defaultCellStyle: { fontFamily: japaneseFont.family },
         language: 'ja',
     },
 };
@@ -106,7 +106,7 @@ The fonts used by the examples are unmodified Noto and IBM Plex files distribute
 
 ## API
 
-{% interfaceDocumentation interfaceName="PdfExportParams" names=["fonts", "fontFamily", "language", "direction"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
+{% interfaceDocumentation interfaceName="PdfExportParams" names=["fonts", "defaultCellStyle", "language", "direction"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
 
 ## Known Limitations
 

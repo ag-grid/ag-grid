@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 faces: [{ data: japaneseRegular, weight: 400 }],
             },
         ],
-        fontFamily,
+        defaultCellStyle: { fontFamily },
         language: 'ja',
     };
 

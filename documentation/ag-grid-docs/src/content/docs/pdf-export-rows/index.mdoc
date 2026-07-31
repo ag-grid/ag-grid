@@ -17,12 +17,14 @@ api.exportDataAsPdf({
 
 ## Text Wrapping And Row Height
 
-Cells remain on one line by default. Enable wrapping globally with `wrapText`, per column with `colDef.wrapText`, or per element with `processStyleCallback`.
+Cells remain on one line by default. Enable wrapping globally with `defaultCellStyle.wrapText`, per column with `colDef.wrapText`, or per element with `processStyleCallback`.
 
 ```{% frameworkTransform=true %}
 api.exportDataAsPdf({
-    wrapText: true,
-    maxLines: 3,
+    defaultCellStyle: {
+        wrapText: true,
+        maxLines: 3,
+    },
 });
 ```
 
@@ -83,7 +85,7 @@ api.exportDataAsPdf({
 
 ### Export Options
 
-{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["onlySelected", "onlySelectedAllPages", "wrapText", "lineHeight", "maxLines", "overflow", "rowHeight", "headerRowHeight", "exportedRows", "rowGroupIndentSize", "skipRowGroups", "skipPinnedTop", "skipPinnedBottom", "skipPinnedRowDuplicates", "rowPositions", "shouldRowBeSkipped"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["onlySelected", "onlySelectedAllPages", "defaultCellStyle", "rowHeight", "headerRowHeight", "exportedRows", "rowGroupIndentSize", "skipRowGroups", "skipPinnedTop", "skipPinnedBottom", "skipPinnedRowDuplicates", "rowPositions", "shouldRowBeSkipped"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
 
 ### PdfTextOverflow
 

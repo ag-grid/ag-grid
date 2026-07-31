@@ -78,24 +78,31 @@ Styles returned by `processStyleCallback` take precedence over automatic grid st
 
 `PdfCellStyle` supports registered TrueType and built-in PDF fonts, font size, weight and style, text direction, text and background colours, borders, padding, alignment, wrapping, explicit line-break preservation, line height, maximum lines, and overflow behaviour. Margin is supported for the document title only. See [Languages](./pdf-export-languages/) for custom font registration and Unicode text.
 
-Use the top-level export parameters to configure document-wide typography and table boxes:
+Use `defaultCellStyle` and `defaultHeaderStyle` to configure table-wide typography and box styles. `defaultCellStyle` applies to body cells, including [custom content](./pdf-export-extra-content/) rows. Header and group-header cells use `defaultHeaderStyle`, with every unset property inherited from `defaultCellStyle`.
 
 ```{% frameworkTransform=true %}
 api.exportDataAsPdf({
-    fontFamily: 'Times-Roman',
-    headerFontFamily: 'Times-Bold',
-    fontSize: 9,
-    headerFontSize: 10,
-    cellPadding: 4,
+    defaultCellStyle: {
+        fontFamily: 'Times-Roman',
+        fontSize: 9,
+        padding: 4,
+    },
+    defaultHeaderStyle: {
+        fontSize: 10,
+    },
     drawCellBorders: true,
 });
 ```
+
+The cascade is applied separately to each property. For example, if `defaultCellStyle.fontSize` is `9` and `defaultHeaderStyle.fontSize` is not set, both body and header cells use 9pt text. Set the header value explicitly when it should differ.
+
+When neither style sets a font size, body cells use 10pt text and headers use 11pt text. Headers derive a bold face from the resolved body font when no font weight is inherited or set.
 
 ## API
 
 ### Export Options
 
-{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["colors", "skipGridStyles", "processStyleCallback", "fontFamily", "headerFontFamily", "fontSize", "headerFontSize", "cellPadding", "drawCellBorders"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["colors", "skipGridStyles", "processStyleCallback", "defaultCellStyle", "defaultHeaderStyle", "drawCellBorders"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
 
 ### PdfColors
 

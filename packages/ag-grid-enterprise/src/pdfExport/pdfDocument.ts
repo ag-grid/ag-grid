@@ -35,6 +35,7 @@ import { PdfFontRegistry } from './utils/fontRegistry';
 import { formatColor, resolvePdfStyleColors } from './utils/pdfColor';
 import type { PdfLinkAnnotation, PdfPageContent } from './utils/pdfObjectStore';
 import { buildPdf } from './utils/pdfObjectStore';
+import { mergePdfCellStyles } from './utils/styles';
 
 const DEFAULTS = {
     fontSize: 10,
@@ -55,19 +56,25 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     const columnCount = columnsToExport.length || Math.max(getMaxColumnCount(rows), 1);
     const availableWidth = Math.max(pageSize.width - margin.left - margin.right, 0);
 
-    const fontSize = resolveFiniteNumber(params.fontSize, DEFAULTS.fontSize, Number.EPSILON);
-    const headerFontSize = resolveFiniteNumber(params.headerFontSize, DEFAULTS.headerFontSize, Number.EPSILON);
-    const cellPadding = resolveFiniteNumber(params.cellPadding, DEFAULTS.cellPadding);
+    const defaultCellStyle = params.defaultCellStyle;
+    // header defaults inherit cell defaults, with header values taking precedence.
+    const defaultHeaderStyle = mergePdfCellStyles(defaultCellStyle, params.defaultHeaderStyle);
+
+    const fontSize = resolveFiniteNumber(defaultCellStyle?.fontSize, DEFAULTS.fontSize, Number.EPSILON);
+    const headerFontSize = resolveFiniteNumber(defaultHeaderStyle?.fontSize, DEFAULTS.headerFontSize, Number.EPSILON);
     const repeatHeader = params.repeatHeader ?? DEFAULTS.repeatHeader;
     const drawCellBorders = params.drawCellBorders ?? DEFAULTS.drawCellBorders;
-    const wrapText = params.wrapText ?? false;
     const rowGroupIndentSize = resolveFiniteNumber(params.rowGroupIndentSize, DEFAULTS.rowGroupIndentSize);
 
-    const bodyFont = fontRegistry.resolve(params.fontFamily, undefined, undefined);
+    const bodyFont = fontRegistry.resolve(
+        defaultCellStyle?.fontFamily,
+        defaultCellStyle?.fontWeight,
+        defaultCellStyle?.fontStyle
+    );
     const headerFont = fontRegistry.resolve(
-        params.headerFontFamily ?? bodyFont.family,
-        700,
-        bodyFont.style,
+        defaultHeaderStyle?.fontFamily ?? bodyFont.family,
+        defaultHeaderStyle?.fontWeight ?? 700,
+        defaultHeaderStyle?.fontStyle ?? bodyFont.style,
         bodyFont.family
     );
     const titleData = resolveDocumentHeading(
@@ -110,13 +117,11 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         drawCellBorders,
         fontSize,
         headerFontSize,
-        cellPadding,
+        cellPadding: DEFAULTS.cellPadding,
+        defaultCellStyle,
+        defaultHeaderStyle,
         rowHeight: resolveOptionalFiniteNumber(params.rowHeight, Number.EPSILON),
         headerRowHeight: resolveOptionalFiniteNumber(params.headerRowHeight, Number.EPSILON),
-        wrapText,
-        lineHeight: resolveOptionalFiniteNumber(params.lineHeight, Number.EPSILON),
-        maxLines: params.maxLines,
-        overflow: params.overflow,
         rowGroupIndentSize,
         fontRegistry,
         language: params.language,
