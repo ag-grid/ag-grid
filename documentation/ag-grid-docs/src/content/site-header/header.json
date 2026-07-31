@@ -2,11 +2,6 @@
     "header": {
         "items": [
             {
-                "title": "AG Grid",
-                "url": "https://www.ag-grid.com",
-                "isCollapsed": true
-            },
-            {
                 "title": "AG Charts",
                 "url": "https://www.ag-grid.com/charts",
                 "isCollapsed": true
