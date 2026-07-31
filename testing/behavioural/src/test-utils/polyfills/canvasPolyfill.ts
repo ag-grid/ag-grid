@@ -14,12 +14,13 @@ type NodeCanvasInstance = ConfiguredCanvasInstance;
 
 let initialized = false;
 let originalCreateElement: typeof document.createElement | undefined;
-let originalGlobals: { Path2D: unknown; DOMMatrix: unknown; Image: unknown } | undefined;
+let originalGlobals: { Path2D: unknown; DOMMatrix: unknown; Image: unknown; OffscreenCanvas: unknown } | undefined;
 
 /**
  * Opt-in: patches `document.createElement('canvas')` so each canvas element is backed by
  * `skia-canvas` (via `ag-charts-core`'s `ConfiguredCanvasMixin`/`applySkiaPatches`) and provides
- * globals (`Path2D`, `DOMMatrix`, `Image`) AG Charts' rendering layer expects. Mirrors the setup
+ * globals (`Path2D`, `DOMMatrix`, `Image`, `OffscreenCanvas`) AG Charts' rendering layer expects.
+ * Mirrors the setup
  * `ag-charts-server-side` uses for its own SSR and image-snapshot tests — jsdom has no native
  * canvas support, so without this AG Charts can't construct a real chart. Call `init` in
  * `beforeAll` for tests that render real Integrated Charts, and `reset` in `afterAll` to restore
@@ -48,8 +49,15 @@ async function init(): Promise<boolean> {
     NodeCanvas = ConfiguredCanvasMixin(Canvas);
 
     const global = globalThis as unknown as Record<string, unknown>;
-    originalGlobals = { Path2D: global.Path2D, DOMMatrix: global.DOMMatrix, Image: global.Image };
-    Object.assign(global, { Path2D, DOMMatrix, Image });
+    originalGlobals = {
+        Path2D: global.Path2D,
+        DOMMatrix: global.DOMMatrix,
+        Image: global.Image,
+        OffscreenCanvas: global.OffscreenCanvas,
+    };
+    // AG Charts measures text through `new OffscreenCanvas(w, h).getContext('2d')`, which jsdom has no
+    // implementation of - without it every layout pass that measures a label throws.
+    Object.assign(global, { Path2D, DOMMatrix, Image, OffscreenCanvas: NodeCanvas });
 
     const canvases = new WeakMap<HTMLCanvasElement, NodeCanvasInstance>();
     originalCreateElement = document.createElement.bind(document);

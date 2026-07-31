@@ -38,6 +38,11 @@ export interface AgChartActual extends AgChartInstance {
             direction: 'x' | 'y';
         }
     >;
+    ctx: {
+        legendManager: {
+            getData(): { symbol?: { marker?: { strokeWidth?: number } } }[];
+        };
+    };
     canvasElement: HTMLCanvasElement;
     getCanvasDataURL(type?: string): string;
     addEventListener(type: 'click', cb: (even: any) => void): void;
