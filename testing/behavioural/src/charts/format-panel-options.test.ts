@@ -442,12 +442,15 @@ describe('chart tool panel options', () => {
             // Any option AG Charts does not recognise is drift, and its own message names the replacement.
             expect(summarise(rejected)).toEqual([]);
 
-            // Bindings whose option the chart theme leaves unset and no panel resolves. The one entry left
-            // is benign: AG Charts treats an unset inner radius ratio as 0, which is what the slider's
-            // `?? 0` already shows, so the control opens agreeing with the chart. Anything joining this
-            // list opens showing 0 or blank while the chart renders something else, and needs a reason.
+            // Bindings whose option the chart theme leaves unset and no panel resolves. Both entries left
+            // are benign, because on the chart types listed the value the slider's `?? 0` shows is the one
+            // the chart renders: AG Charts treats an unset inner radius ratio as 0, and a legend marker
+            // takes the stroke width of its series, which is 0 for each of these. The panel resolves the
+            // rest from the legend, so a chart type dropping out of the second entry is a fix, not drift.
+            // Anything joining either opens showing 0 or blank while the chart renders something else.
             expect(summarise(unresolved)).toMatchInlineSnapshot(`
               [
+                "getChartThemeOverridesProxy() -> legend.item.marker.strokeWidth [25 chart types]",
                 "getPolarAxisThemeOverridesProxy(radius,thisAxis) -> innerRadiusRatio [radarLine, radarArea, nightingale]",
               ]
             `);

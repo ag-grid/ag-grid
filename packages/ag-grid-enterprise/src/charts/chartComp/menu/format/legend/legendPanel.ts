@@ -18,6 +18,9 @@ import type { FontPanelParams } from '../fontPanel';
 import { FontPanel } from '../fontPanel';
 import type { FormatPanelOptions } from '../formatPanel';
 
+/** The legend caps the marker stroke it takes from the series at this. */
+const MAX_MARKER_STROKE_WIDTH = 2;
+
 export class LegendPanel extends Component {
     private chartTranslation: ChartTranslationService;
     private readonly chartController: ChartController;
@@ -109,14 +112,13 @@ export class LegendPanel extends Component {
         const createSlider = (
             expression: string,
             labelKey: ChartTranslationKey,
-            defaultMaxValue: number,
-            valueWhenUnset?: number
+            defaultMaxValue: number
         ): GridSlider => {
-            const fullExpression = `${this.key}.${expression}`;
-            const params = chartMenuParamsFactory.getDefaultSliderParams(fullExpression, labelKey, defaultMaxValue);
-            if (valueWhenUnset != null && chartMenuParamsFactory.getChartOptions().getValue(fullExpression) == null) {
-                params.value = `${valueWhenUnset}`;
-            }
+            const params = chartMenuParamsFactory.getDefaultSliderParams(
+                `${this.key}.${expression}`,
+                labelKey,
+                defaultMaxValue
+            );
             return this.createManagedBean(new AgSlider(params));
         };
         if (this.isGradient) {
@@ -137,14 +139,40 @@ export class LegendPanel extends Component {
         return [
             createSlider('spacing', 'spacing', 200),
             createSlider('item.marker.size', 'markerSize', 40),
-            // The legend has no stroke width of its own; left unset each marker takes the series' own
-            // stroke width capped at 2, which is 1 for every series default.
-            createSlider('item.marker.strokeWidth', 'markerStroke', 10, 1),
+            this.createMarkerStrokeSlider(chartMenuParamsFactory),
             // The marker padding is four-sided; only the side facing the label is the marker-to-label gap.
             createSlider('item.marker.padding.right', 'itemSpacing', 20),
             this.createItemPaddingSlider(chartMenuParamsFactory, 'layoutHorizontalSpacing', ['left', 'right']),
             this.createItemPaddingSlider(chartMenuParamsFactory, 'layoutVerticalSpacing', ['top', 'bottom']),
         ];
+    }
+
+    /**
+     * The legend has no stroke width of its own, so left unset each marker takes the width the series it
+     * belongs to renders with. The slider is chart-wide and can only show a width every marker agrees on.
+     */
+    private createMarkerStrokeSlider(chartMenuParamsFactory: ChartMenuParamsFactory): GridSlider {
+        const expression = `${this.key}.item.marker.strokeWidth`;
+        const params = chartMenuParamsFactory.getDefaultSliderParams(expression, 'markerStroke', 10);
+        if (chartMenuParamsFactory.getChartOptions().getValue(expression) == null) {
+            const widths = this.getRenderedMarkerStrokeWidths();
+            if (widths.length > 0) {
+                params.value = widths.length === 1 ? `${widths[0]}` : '';
+            }
+        }
+        return this.createManagedBean(new AgSlider(params));
+    }
+
+    private getRenderedMarkerStrokeWidths(): number[] {
+        const legendData = this.chartController.getChartProxy().getChart().ctx.legendManager.getData();
+        const widths = new Set<number>();
+        for (let i = 0, len = legendData.length; i < len; ++i) {
+            const marker = legendData[i].symbol?.marker;
+            if (marker) {
+                widths.add(Math.min(marker.strokeWidth ?? 1, MAX_MARKER_STROKE_WIDTH));
+            }
+        }
+        return [...widths];
     }
 
     /**
