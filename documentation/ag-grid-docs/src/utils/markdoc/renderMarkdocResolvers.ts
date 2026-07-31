@@ -91,7 +91,7 @@ export function createGridMarkdownResolvers({ siteRoot }: { siteRoot?: string } 
         },
 
         renderApiTable: ({ attributes, framework, kind }) =>
-            renderApiReferenceTable({ attributes, framework: framework as Framework, kind }),
+            renderApiReferenceTable({ attributes, framework: framework as Framework, kind, siteRoot }),
 
         renderTag: ({ tag, attributes, framework, pageName }) =>
             renderMarkdocTag({ tag, attributes, framework, pageName, siteRoot }),
