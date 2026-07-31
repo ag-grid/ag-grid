@@ -93,6 +93,10 @@ packages/ag-grid-community/src/
 
 > `./behave.sh` does not type-check (Vitest strips types via esbuild). Before committing, run `yarn nx run ag-behavioural-testing:build:test` to type-check.
 >
+> Invoke `./behave.sh` and `./benches.sh` by absolute path from the repo root — the shell working directory does not persist between commands, so a relative path fails after any `cd`.
+>
+> Some suites run past a two-minute command timeout; `testing/behavioural/src/charts/format-panel-options.test.ts` alone takes ~2.5 minutes. Run those in the background.
+>
 > The workspace membership and shared config live in `vitest.workspace.ts`, `vitest.config.ts`, and `vitest.shared.ts` at the repo root; each project keeps its own `vitest.config.ts`. Runner-global options (reporters, `onConsoleLog`, pool) must live in the **root** config — Vitest ignores them in a project config during a workspace run.
 
 ### Benchmarks
