@@ -37,7 +37,7 @@ const gridOptions = {
 
 {% gridExampleRunner title="PDF Export - Non Latin Language" name="pdf-non-latin-language" exampleHeight=380 /%}
 
-Font files are not fetched by AG Grid. The application is responsible for loading the bytes before starting the export and for complying with the font's licence. PDF Export embeds a subset containing the glyphs used by the document.
+Font files are not fetched by AG Grid. The application is responsible for loading the bytes before starting the export and for complying with the font's licence. When the font's embedding permissions allow it, PDF Export embeds only the characters used by the document instead of the complete font file. This process, known as font subsetting, reduces the size of the exported PDF. Fonts that prohibit subsetting are embedded in full.
 
 Each family can contain Regular, Medium, Bold, Italic, or other faces. PDF Export selects the closest face for the requested `fontWeight` and `fontStyle`.
 

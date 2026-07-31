@@ -176,14 +176,15 @@ function wrapPreformattedText(
             continue;
         }
 
+        const characters = Array.from(paragraph);
         let lineStart = 0;
-        while (lineStart < paragraph.length) {
+        while (lineStart < characters.length) {
             let lineWidth = 0;
             let lastBreak = -1;
             let characterIndex = lineStart;
 
-            while (characterIndex < paragraph.length) {
-                const char = paragraph[characterIndex];
+            while (characterIndex < characters.length) {
+                const char = characters[characterIndex];
                 const nextWidth = lineWidth + measureText(char, fontSize, fontFamily, calculateWidth);
                 if (nextWidth > maxWidth) {
                     break;
@@ -195,8 +196,8 @@ function wrapPreformattedText(
                 }
             }
 
-            if (characterIndex === paragraph.length) {
-                lines.push(paragraph.slice(lineStart));
+            if (characterIndex === characters.length) {
+                lines.push(characters.slice(lineStart).join(''));
                 break;
             }
 
@@ -207,7 +208,7 @@ function wrapPreformattedText(
                 characterIndex = lastBreak;
             }
 
-            lines.push(paragraph.slice(lineStart, characterIndex));
+            lines.push(characters.slice(lineStart, characterIndex).join(''));
             lineStart = characterIndex;
         }
     }

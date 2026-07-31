@@ -49,6 +49,13 @@ describe('PDF text utilities', () => {
         expect(lines.join('')).toBe(value);
     });
 
+    it('does not split supplementary Unicode characters while wrapping preformatted text', () => {
+        const value = '𠀀𠀁';
+        const calculateWidth = (text: string) => Array.from(text).length;
+
+        expect(wrapText(value, 1, 10, 'Helvetica', true, calculateWidth)).toEqual(['𠀀', '𠀁']);
+    });
+
     it('never formats non-finite PDF numeric tokens', () => {
         expect(fmt(Number.NaN)).toBe('0');
         expect(fmt(Number.POSITIVE_INFINITY)).toBe('0');
