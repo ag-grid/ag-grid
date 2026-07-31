@@ -3,6 +3,7 @@ import type {
     CellClassParams,
     CellStyle,
     PdfCellHyperlinkCallbackParams,
+    PdfCellImageCallbackParams,
     PdfCustomContent,
     PdfStyleCallbackParams,
     ProcessCellForExportParams,
@@ -138,6 +139,54 @@ describe('PdfSerializingSession', () => {
             column,
         });
         expect(getRows(session)[0].cells[0].hyperlink).toBe('https://example.com/docs');
+    });
+
+    it('adds an image and replacement text to an exported body cell', () => {
+        let callbackParams: PdfCellImageCallbackParams | undefined;
+        const column = createColumn('Country', 1);
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {},
+            gos: createGridOptionsService(),
+            skipGridStyles: true,
+            addImageToCell: (params: PdfCellImageCallbackParams) => {
+                callbackParams = params;
+                return {
+                    image: {
+                        id: 'uk',
+                        base64: 'image-data',
+                        imageType: 'png',
+                        width: 18,
+                        height: 12,
+                    },
+                    value: 'United Kingdom',
+                };
+            },
+        } as any);
+        const node = { data: { countryCode: 'gb' }, group: false, level: 0, rowIndex: 0 } as RowNode;
+        (session as any).extractRowCellValue = () => ({ value: 'GB' });
+        (session as any).isRowGroupCell = () => false;
+
+        session.prepare([column]);
+        session.onNewBodyRow(node).onColumn(column, 0, node);
+
+        expect(callbackParams).toMatchObject({
+            value: 'GB',
+            accumulatedRowIndex: 1,
+            node,
+            column,
+        });
+        expect(getRows(session)[0].cells[0]).toMatchObject({
+            value: 'United Kingdom',
+            image: {
+                id: 'uk',
+                base64: 'image-data',
+                imageType: 'png',
+                width: 18,
+                height: 12,
+            },
+        });
     });
 
     it('resolves cellStyle with the original value before processing the exported value', () => {

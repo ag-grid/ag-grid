@@ -73,6 +73,51 @@ export type PdfColumnWidth = number | 'auto' | 'grid';
 
 export type PdfColumnWidthCallback = (params: ColumnWidthCallbackParams) => PdfColumnWidth | null | undefined;
 
+export type PdfImageType = 'jpg' | 'jpeg' | 'png';
+
+export type PdfImageAlignment = 'start' | 'end';
+
+export interface PdfImage {
+    /**
+     * Identifier used to embed repeated images only once in the PDF.
+     */
+    id: string;
+    /**
+     * Base64 image data, with or without a data URL prefix.
+     */
+    base64: string;
+    /**
+     * Image format.
+     */
+    imageType: PdfImageType;
+    /**
+     * Alternative text for the image.
+     */
+    altText?: string;
+    /**
+     * Rendered width in points. When omitted, the intrinsic image width is used at 96 DPI.
+     * Setting only one of `width` and `height` preserves the aspect ratio;
+     * setting both stretches the image to those dimensions.
+     */
+    width?: number;
+    /**
+     * Rendered height in points. When omitted, the intrinsic image height is used at 96 DPI.
+     * Setting only one of `width` and `height` preserves the aspect ratio;
+     * setting both stretches the image to those dimensions.
+     */
+    height?: number;
+    /**
+     * Image alignment relative to adjacent text.
+     * @default 'start'
+     */
+    alignment?: PdfImageAlignment;
+    /**
+     * Space between the image and adjacent text in points.
+     * @default 4
+     */
+    gap?: number;
+}
+
 export interface PdfTextStyle {
     /**
      * Font size in points.
@@ -166,6 +211,8 @@ export interface PdfCellData {
     value: string | null;
     /** External URI opened when the exported cell text is selected. */
     hyperlink?: string;
+    /** Image rendered alongside the cell value. */
+    image?: PdfImage;
 }
 
 export interface PdfCell {
@@ -254,6 +301,24 @@ export interface PdfCellHyperlinkCallbackParams<TData = any, TContext = any> ext
     column: Column;
 }
 
+export interface PdfCellImageCallbackParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The final text exported for the cell. */
+    value: string;
+    /** The 1-based index of the current exported row. */
+    accumulatedRowIndex: number;
+    /** The row node for the exported cell. */
+    node: IRowNode<TData>;
+    /** The current column. */
+    column: Column;
+}
+
+export interface PdfCellImageResult {
+    /** Image rendered in the exported cell. */
+    image: PdfImage;
+    /** Text rendered alongside the image. When omitted, the exported cell text is removed. */
+    value?: string | null;
+}
+
 export interface PdfColors {
     /**
      * Background colour for the PDF page.
@@ -315,11 +380,7 @@ export interface PdfHeaderFooter {
     footer?: PdfHeaderFooterContent[];
 }
 
-export interface PdfHeaderFooterContent {
-    /**
-     * Header or footer text. Supports `&[Page]`, `&[Pages]`, `&[Date]`, and `&[Time]` placeholders.
-     */
-    value: string;
+interface PdfHeaderFooterContentBase {
     /**
      * Position of the content within the printable page width.
      * When omitted, array entries default to left, centre, and right in order.
@@ -328,6 +389,26 @@ export interface PdfHeaderFooterContent {
     /** Text styling for this entry. */
     style?: PdfTextStyle;
 }
+
+export interface PdfHeaderFooterTextContent extends PdfHeaderFooterContentBase {
+    /**
+     * Header or footer text. Supports `&[Page]`, `&[Pages]`, `&[Date]`, and `&[Time]` placeholders.
+     */
+    value: string;
+    /** Image rendered alongside the text. */
+    image?: PdfImage;
+}
+
+export interface PdfHeaderFooterImageContent extends PdfHeaderFooterContentBase {
+    /**
+     * Header or footer text. Supports `&[Page]`, `&[Pages]`, `&[Date]`, and `&[Time]` placeholders.
+     */
+    value?: string;
+    /** Image rendered alongside the text. */
+    image: PdfImage;
+}
+
+export type PdfHeaderFooterContent = PdfHeaderFooterTextContent | PdfHeaderFooterImageContent;
 
 export type PdfWatermarkPageSelection = 'all' | 'first' | 'odd' | 'even';
 
@@ -455,6 +536,11 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      * The returned URI is added to the PDF as a clickable link annotation.
      */
     processCellHyperlinkCallback?(params: PdfCellHyperlinkCallbackParams): string | null | undefined;
+    /**
+     * Callback that provides an image for an exported body cell.
+     * Return an optional value to replace the exported cell text.
+     */
+    addImageToCell?(params: PdfCellImageCallbackParams): PdfCellImageResult | null | undefined;
     /**
      * Page size, orientation and margins.
      */

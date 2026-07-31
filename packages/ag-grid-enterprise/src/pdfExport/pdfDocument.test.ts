@@ -10,6 +10,7 @@ import {
 } from './utils/document/layout';
 import type { LayoutOptions } from './utils/document/measurement';
 import { getAutoColumnWidths, measureRow } from './utils/document/measurement';
+import { PdfImageRegistry } from './utils/imageRegistry';
 import { resolvePdfStyleColors } from './utils/pdfColor';
 
 const stubColumn = (width: number, colKind: AgColumn['colKind'] = 'user'): AgColumn =>
@@ -21,6 +22,9 @@ const createRows = (): PdfRow[] => [
 ];
 
 const countOccurrences = (value: string, search: string): number => value.split(search).length - 1;
+
+const redPixelPng =
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAAAAAAAAAAEElEQVR4AQEFAPr/AP8gEIAFAQGwAAAAAAAAAABJRU5EAAAAAA==';
 
 const assertRowRectanglesRespectBottomMargin = (pdf: string, bottomMargin: number): void => {
     const rectanglePattern = /(?:^|\n)-?\d+(?:\.\d+)? (-?\d+(?:\.\d+)?) \d+(?:\.\d+)? \d+(?:\.\d+)? re S/g;
@@ -169,6 +173,109 @@ describe('createPdfDocument', () => {
         expect(pdf).toContain('%%EOF');
         expect(pdf).toContain('/Type /Catalog');
         expect(pdf).toContain('/Type /Page');
+    });
+
+    it('embeds and renders a PNG image in a body cell', () => {
+        const rows: PdfRow[] = [
+            {
+                type: 'BODY',
+                cells: [
+                    {
+                        value: 'United Kingdom',
+                        image: {
+                            id: 'flag',
+                            base64: redPixelPng,
+                            imageType: 'png',
+                            width: 18,
+                            height: 12,
+                            altText: 'United Kingdom flag',
+                        },
+                    },
+                ],
+            },
+        ];
+
+        const pdf = createPdfDocument(rows, [stubColumn(140)], { columnWidth: 140 });
+
+        expect(pdf).toContain('/XObject << /Im1 ');
+        expect(pdf).toContain('/Subtype /Image');
+        expect(pdf).toContain('/SMask');
+        expect(pdf).toContain('/Im1 Do');
+        expect(pdf).toContain(
+            '/ActualText <FEFF0055006E00690074006500640020004B0069006E00670064006F006D00200066006C00610067>'
+        );
+    });
+
+    it('resolves image placement once from the full cell text direction', () => {
+        const layout: LayoutOptions = {
+            columnCount: 1,
+            columnWidths: [140],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+            imageRegistry: new PdfImageRegistry(),
+        };
+        const image = { id: 'flag', base64: redPixelPng, imageType: 'png' as const, width: 12, height: 12 };
+        const rtlRow: PdfRow = { type: 'BODY', cells: [{ value: 'שלום עולם', image }] };
+        const ltrRow: PdfRow = { type: 'BODY', cells: [{ value: 'Hello world', image }] };
+
+        const rtlCell = measureRow(rtlRow, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0).cells[0];
+        const ltrCell = measureRow(ltrRow, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0).cells[0];
+
+        expect(rtlCell.imageOnRight).toBe(true);
+        expect(ltrCell.imageOnRight).toBe(false);
+    });
+
+    it('clamps page furniture bands so table content keeps at least half the printable page', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            page: { size: { width: 200, height: 120 }, margin: 10 },
+            headerFooterConfig: {
+                all: {
+                    header: [
+                        {
+                            image: { id: 'logo', base64: redPixelPng, imageType: 'png', width: 10, height: 500 },
+                            position: 'Left',
+                        },
+                    ],
+                },
+            },
+        });
+
+        expect(countOccurrences(pdf, '(Value) Tj')).toBe(1);
+        assertRowRectanglesRespectBottomMargin(pdf, 10);
+    });
+
+    it('deduplicates images with the same id across cells and page headers', () => {
+        const image = {
+            id: 'company-logo',
+            base64: redPixelPng,
+            imageType: 'png' as const,
+            width: 24,
+            height: 12,
+        };
+        const rows: PdfRow[] = [
+            {
+                type: 'BODY',
+                cells: [
+                    { value: 'First', image },
+                    { value: 'Second', image },
+                ],
+            },
+        ];
+
+        const pdf = createPdfDocument(rows, [stubColumn(100), stubColumn(100)], {
+            headerFooterConfig: {
+                all: {
+                    header: [{ image, position: 'Left' }],
+                },
+            },
+        });
+
+        expect(pdf).toContain('/XObject << /Im1 ');
+        expect(pdf).not.toContain('/Im2 ');
+        expect(countOccurrences(pdf, '/Im1 Do')).toBe(3);
     });
 
     it('adds URI annotations for linked cell text', () => {

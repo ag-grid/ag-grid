@@ -13,6 +13,9 @@ import type {
 import type { PdfRow, PdfRowType } from '../../pdfSerializingSession';
 import type { ResolvedPdfFont } from '../fontRegistry';
 import { PdfFontRegistry } from '../fontRegistry';
+import type { PdfImageRegistry } from '../imageRegistry';
+import { constrainImageWidth } from '../imageRegistry';
+import type { ResolvedPdfImage } from '../images/types';
 import type { PdfRgb, PdfRowStyles, PdfStyleColors } from '../pdfColor';
 import { getRowStyles, resolveOptionalColor } from '../pdfColor';
 import { mergePdfCellStyles } from '../styles';
@@ -79,6 +82,7 @@ export type LayoutOptions = {
     fontRegistry?: PdfFontRegistry;
     language?: string;
     direction?: PdfTextDirection;
+    imageRegistry?: PdfImageRegistry;
 };
 
 export type MeasuredCell = {
@@ -88,6 +92,9 @@ export type MeasuredCell = {
     style: ResolvedCellStyle;
     lines: string[];
     hyperlink?: string;
+    image?: ResolvedPdfImage;
+    /** Resolved once from the full cell text so text and image placement always agree. */
+    imageOnRight?: boolean;
 };
 
 export type MeasuredRow = {
@@ -101,11 +108,12 @@ export type MeasuredRow = {
 
 export type RowFragmentState = {
     lineOffsets: number[];
+    imageRendered: boolean[];
 };
 
 export type MeasuredRowFragment = {
     row: MeasuredRow;
-    cells: Array<{ measurement: MeasuredCell; lines: string[] }>;
+    cells: Array<{ measurement: MeasuredCell; lines: string[]; showImage: boolean }>;
     height: number;
     complete: boolean;
     nextState?: RowFragmentState;
@@ -195,14 +203,18 @@ export function measureRow(
         applyRowGroupIndent(cell, style, layout);
 
         const width = getSpanWidth(layout.columnWidths, columnIndex, span);
-        const textWidth = Math.max(width - style.padding.left - style.padding.right, 0);
+        const contentWidth = Math.max(width - style.padding.left - style.padding.right, 0);
+        const image = cell.image
+            ? constrainImageWidth(getImageRegistry(layout).resolve(cell.image), contentWidth)
+            : undefined;
+        const imageOnRight = image ? isImageOnRight(image, style, cell.value) : undefined;
+        const imageWidth = image ? image.width + (cell.value ? image.gap : 0) : 0;
+        const textWidth = Math.max(contentWidth - imageWidth, 0);
         const lines = measureTextLines(cell.value, textWidth, style);
         const lineCount = Math.max(lines.length, 1);
-        naturalHeight = Math.max(
-            naturalHeight,
-            lineCount * style.lineHeight + style.padding.top + style.padding.bottom
-        );
-        measuredCells.push({ columnIndex, span, width, style, lines, hyperlink: cell.hyperlink });
+        const contentHeight = Math.max(lineCount * style.lineHeight, image?.height ?? 0);
+        naturalHeight = Math.max(naturalHeight, contentHeight + style.padding.top + style.padding.bottom);
+        measuredCells.push({ columnIndex, span, width, style, lines, hyperlink: cell.hyperlink, image, imageOnRight });
         columnIndex += span;
     }
 
@@ -240,7 +252,11 @@ export function measureRowFragment(
         const height = Math.min(row.rowHeight, availableHeight);
         return {
             row,
-            cells: row.cells.map((cell) => ({ measurement: cell, lines: constrainLinesToHeight(cell, height) })),
+            cells: row.cells.map((cell) => ({
+                measurement: cell,
+                lines: constrainLinesToHeight(cell, height),
+                showImage: !!cell.image,
+            })),
             height,
             complete: true,
         };
@@ -248,13 +264,15 @@ export function measureRowFragment(
 
     // each cell advances independently so shorter cells can finish before the tallest cell.
     const offsets = state?.lineOffsets ?? row.cells.map(() => 0);
-    const remainingHeight = getRemainingRowHeight(row, offsets);
+    const imageRendered = state?.imageRendered ?? row.cells.map(() => false);
+    const remainingHeight = getRemainingRowHeight(row, offsets, imageRendered);
     if (remainingHeight <= availableHeight) {
         return {
             row,
             cells: row.cells.map((cell, index) => ({
                 measurement: cell,
                 lines: cell.lines.slice(offsets[index] ?? 0),
+                showImage: !!cell.image && !imageRendered[index],
             })),
             height: remainingHeight,
             complete: true,
@@ -262,6 +280,7 @@ export function measureRowFragment(
     }
 
     const nextOffsets = [...offsets];
+    const nextImageRendered = [...imageRendered];
     const cells: MeasuredRowFragment['cells'] = [];
     let fragmentHeight = Math.min(row.minimumHeight, availableHeight);
     let progressed = false;
@@ -274,6 +293,7 @@ export function measureRowFragment(
         const lineCapacity = Math.floor(contentHeight / cell.style.lineHeight);
         const lineCount = Math.min(remainingLineCount, lineCapacity);
         const lines = cell.lines.slice(offset, offset + lineCount);
+        const showImage = !!cell.image && !imageRendered[i];
 
         if (lineCount > 0) {
             progressed = true;
@@ -283,7 +303,15 @@ export function measureRowFragment(
                 cell.style.padding.top + lineCount * cell.style.lineHeight + cell.style.padding.bottom
             );
         }
-        cells.push({ measurement: cell, lines });
+        if (showImage) {
+            progressed = true;
+            nextImageRendered[i] = true;
+            fragmentHeight = Math.max(
+                fragmentHeight,
+                Math.min(cell.style.padding.top + cell.image!.height + cell.style.padding.bottom, availableHeight)
+            );
+        }
+        cells.push({ measurement: cell, lines, showImage });
     }
 
     if (!progressed) {
@@ -291,13 +319,15 @@ export function measureRowFragment(
     }
 
     // the row is complete only after every cell has consumed all of its measured lines.
-    const complete = row.cells.every((cell, index) => (nextOffsets[index] ?? 0) >= cell.lines.length);
+    const complete = row.cells.every(
+        (cell, index) => (nextOffsets[index] ?? 0) >= cell.lines.length && (!cell.image || nextImageRendered[index])
+    );
     return {
         row,
         cells,
         height: fragmentHeight,
         complete,
-        nextState: complete ? undefined : { lineOffsets: nextOffsets },
+        nextState: complete ? undefined : { lineOffsets: nextOffsets, imageRendered: nextImageRendered },
     };
 }
 
@@ -316,6 +346,7 @@ export function measureClampedRowFragment(
     availableHeight: number
 ): MeasuredRowFragment {
     const offsets = state?.lineOffsets ?? row.cells.map(() => 0);
+    const imageRendered = state?.imageRendered ?? row.cells.map(() => false);
     const resolvedAvailableHeight = Number.isFinite(availableHeight) ? Math.max(availableHeight, 0) : 0;
     const cells: MeasuredRowFragment['cells'] = [];
 
@@ -326,19 +357,18 @@ export function measureClampedRowFragment(
         const lineLimit = Math.max(Math.floor(contentHeight / cell.style.lineHeight), 1);
         cells.push({
             measurement: cell,
-            lines: constrainTextLines(
-                remainingLines,
-                lineLimit,
-                cell.style,
-                cell.width - cell.style.padding.left - cell.style.padding.right
-            ),
+            lines: constrainTextLines(remainingLines, lineLimit, cell.style, getAvailableTextWidth(cell)),
+            showImage: !!cell.image && !imageRendered[i],
         });
     }
 
     return {
         row,
         cells,
-        height: Math.min(getRemainingRowHeight(row, offsets), Math.max(resolvedAvailableHeight, row.minimumHeight)),
+        height: Math.min(
+            getRemainingRowHeight(row, offsets, imageRendered),
+            Math.max(resolvedAvailableHeight, row.minimumHeight)
+        ),
         complete: true,
     };
 }
@@ -403,8 +433,10 @@ export function getAutoColumnWidths(
             );
             applyRowGroupIndent(cell, style, layout);
 
+            const image = cell.image ? getImageRegistry(layout).resolve(cell.image) : undefined;
             const textWidth = getIntrinsicTextWidth(cell.value ?? '', style);
-            const requiredWidth = textWidth + style.padding.left + style.padding.right;
+            const imageWidth = image ? image.width + (cell.value ? image.gap : 0) : 0;
+            const requiredWidth = textWidth + imageWidth + style.padding.left + style.padding.right;
             const currentWidth = getSpanWidth(widths, columnIndex, span);
             if (requiredWidth > currentWidth) {
                 const additionalWidth = (requiredWidth - currentWidth) / span;
@@ -471,7 +503,7 @@ export function measureTextLines(value: string, availableWidth: number, style: R
     return constrainTextLines(lines, style.maxLines, style, availableWidth);
 }
 
-function getRemainingRowHeight(row: MeasuredRow, offsets: number[]): number {
+function getRemainingRowHeight(row: MeasuredRow, offsets: number[], imageRendered: boolean[]): number {
     let height = row.minimumHeight;
     for (let i = 0; i < row.cells.length; i++) {
         const cell = row.cells[i];
@@ -482,6 +514,9 @@ function getRemainingRowHeight(row: MeasuredRow, offsets: number[]): number {
                 cell.style.padding.top + remainingLines * cell.style.lineHeight + cell.style.padding.bottom
             );
         }
+        if (cell.image && !imageRendered[i]) {
+            height = Math.max(height, cell.style.padding.top + cell.image.height + cell.style.padding.bottom);
+        }
     }
     return height;
 }
@@ -489,12 +524,13 @@ function getRemainingRowHeight(row: MeasuredRow, offsets: number[]): number {
 function constrainLinesToHeight(cell: MeasuredCell, height: number): string[] {
     const contentHeight = Math.max(height - cell.style.padding.top - cell.style.padding.bottom, 0);
     const lineLimit = Math.floor(contentHeight / cell.style.lineHeight);
-    return constrainTextLines(
-        cell.lines,
-        lineLimit,
-        cell.style,
-        cell.width - cell.style.padding.left - cell.style.padding.right
-    );
+    return constrainTextLines(cell.lines, lineLimit, cell.style, getAvailableTextWidth(cell));
+}
+
+function getAvailableTextWidth(cell: MeasuredCell): number {
+    const contentWidth = cell.width - cell.style.padding.left - cell.style.padding.right;
+    const imageWidth = cell.image ? cell.image.width + cell.image.gap : 0;
+    return Math.max(contentWidth - imageWidth, 0);
 }
 
 /**
@@ -532,6 +568,23 @@ export function constrainTextLines(
     return visibleLines;
 }
 
+/**
+ * Resolve whether an image renders on the right of its adjacent text.
+ * @param image - Resolved image placement.
+ * @param style - Style carrying the requested text direction.
+ * @param text - Text used to detect the direction when it is `auto`.
+ * @returns `true` when the image belongs on the right.
+ */
+export function isImageOnRight(
+    image: ResolvedPdfImage,
+    style: Pick<ResolvedCellStyle, 'direction'>,
+    text: string
+): boolean {
+    const direction =
+        style.direction === 'auto' ? resolveBidiCharacters(text, style.direction).direction : style.direction;
+    return image.alignment === 'end' ? direction === 'ltr' : direction === 'rtl';
+}
+
 function getMinimumRowHeight(rowType: PdfRowType, layout: LayoutOptions): number {
     const isHeader = isHeaderRowType(rowType);
     const defaults = isHeader ? layout.defaultHeaderStyle : layout.defaultCellStyle;
@@ -544,6 +597,14 @@ function getMinimumRowHeight(rowType: PdfRowType, layout: LayoutOptions): number
         left: layout.cellPadding,
     });
     return lineHeight + padding.top + padding.bottom;
+}
+
+function getImageRegistry(layout: LayoutOptions): PdfImageRegistry {
+    // a locally created registry would render XObject names the document never registers.
+    if (!layout.imageRegistry) {
+        throw new Error('AG Grid: PDF layout options are missing the document image registry.');
+    }
+    return layout.imageRegistry;
 }
 
 function resolveHeadingStyle(

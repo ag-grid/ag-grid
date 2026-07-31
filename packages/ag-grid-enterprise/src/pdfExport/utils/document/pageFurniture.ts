@@ -6,6 +6,8 @@ import type {
 } from 'ag-grid-community';
 
 import type { PdfFontRegistry, ResolvedPdfFont } from '../fontRegistry';
+import type { PdfImageRegistry } from '../imageRegistry';
+import type { ResolvedPdfImage } from '../images/types';
 import type { PdfStyleColors } from '../pdfColor';
 import { resolveOptionalColor } from '../pdfColor';
 import type { ResolvedCellStyle } from './measurement';
@@ -20,6 +22,7 @@ export type ResolvedPageFurnitureContent = {
     value: string;
     position: PdfHeaderFooterPosition;
     style: ResolvedCellStyle;
+    image?: ResolvedPdfImage;
 };
 
 export type ResolvedPageFurniture = {
@@ -49,6 +52,7 @@ export type PdfPagePlaceholderValues = {
  * @param styleColors - Resolved PDF colours.
  * @param bodyFont - Default document font.
  * @param fontRegistry - Font registry used by the document.
+ * @param imageRegistry - Image registry used by the document.
  * @returns Resolved page furniture rules.
  */
 export function resolvePageFurnitureConfig(
@@ -56,7 +60,8 @@ export function resolvePageFurnitureConfig(
     params: PdfExportParams,
     styleColors: PdfStyleColors,
     bodyFont: ResolvedPdfFont,
-    fontRegistry: PdfFontRegistry
+    fontRegistry: PdfFontRegistry,
+    imageRegistry: PdfImageRegistry
 ): ResolvedPageFurnitureConfig {
     const resolved: ResolvedPageFurnitureConfig = {};
     if (!config) {
@@ -66,7 +71,7 @@ export function resolvePageFurnitureConfig(
     for (const rule of ['all', 'first', 'even'] as const) {
         const value = config[rule];
         if (value) {
-            resolved[rule] = resolvePageFurniture(value, params, styleColors, bodyFont, fontRegistry);
+            resolved[rule] = resolvePageFurniture(value, params, styleColors, bodyFont, fontRegistry, imageRegistry);
         }
     }
     return resolved;
@@ -147,10 +152,25 @@ function resolvePageFurniture(
     params: PdfExportParams,
     styleColors: PdfStyleColors,
     bodyFont: ResolvedPdfFont,
-    fontRegistry: PdfFontRegistry
+    fontRegistry: PdfFontRegistry,
+    imageRegistry: PdfImageRegistry
 ): ResolvedPageFurniture {
-    const header = resolvePageFurnitureContent(value.header, params, styleColors, bodyFont, fontRegistry);
-    const footer = resolvePageFurnitureContent(value.footer, params, styleColors, bodyFont, fontRegistry);
+    const header = resolvePageFurnitureContent(
+        value.header,
+        params,
+        styleColors,
+        bodyFont,
+        fontRegistry,
+        imageRegistry
+    );
+    const footer = resolvePageFurnitureContent(
+        value.footer,
+        params,
+        styleColors,
+        bodyFont,
+        fontRegistry,
+        imageRegistry
+    );
 
     return {
         header,
@@ -165,7 +185,8 @@ function resolvePageFurnitureContent(
     params: PdfExportParams,
     styleColors: PdfStyleColors,
     bodyFont: ResolvedPdfFont,
-    fontRegistry: PdfFontRegistry
+    fontRegistry: PdfFontRegistry,
+    imageRegistry: PdfImageRegistry
 ): ResolvedPageFurnitureContent[] {
     if (!content?.length) {
         return [];
@@ -201,8 +222,9 @@ function resolvePageFurnitureContent(
         }
 
         resolved.push({
-            value: item.value,
+            value: item.value ?? '',
             position,
+            image: item.image ? imageRegistry.resolve(item.image) : undefined,
             style: {
                 fontSize,
                 fontFamily: font.family,
@@ -232,9 +254,10 @@ function resolvePageFurnitureContent(
 }
 
 function getPageFurnitureHeight(content: ResolvedPageFurnitureContent[]): number {
-    let lineHeight = 0;
+    let contentHeight = 0;
     for (const item of content) {
-        lineHeight = Math.max(lineHeight, item.style.lineHeight);
+        const textHeight = item.value ? item.style.lineHeight : 0;
+        contentHeight = Math.max(contentHeight, textHeight, item.image?.height ?? 0);
     }
-    return lineHeight ? lineHeight + PAGE_FURNITURE_PADDING * 2 : 0;
+    return contentHeight ? contentHeight + PAGE_FURNITURE_PADDING * 2 : 0;
 }

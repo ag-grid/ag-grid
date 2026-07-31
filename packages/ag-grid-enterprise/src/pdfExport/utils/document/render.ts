@@ -1,9 +1,11 @@
 import type { EncodedPdfText, PdfFontRegistry } from '../fontRegistry';
+import { constrainImageWidth } from '../imageRegistry';
+import type { ResolvedPdfImage } from '../images/types';
 import { formatColor } from '../pdfColor';
 import type { PdfLinkAnnotation } from '../pdfObjectStore';
 import type { ResolvedPageSize } from './layout';
 import type { LayoutOptions, MeasuredRow, MeasuredRowFragment, ResolvedCellStyle } from './measurement';
-import { constrainTextLines, measureRowFragment, measureTextLines } from './measurement';
+import { constrainTextLines, isImageOnRight, measureRowFragment, measureTextLines } from './measurement';
 import type { PdfPagePlaceholderValues, ResolvedPageFurnitureContent } from './pageFurniture';
 import { resolvePagePlaceholders } from './pageFurniture';
 import { encodePdfUnicodeString, fmt } from './text';
@@ -109,9 +111,11 @@ export function renderPageFurniture(
     for (const item of content) {
         const style = item.style;
         const value = resolvePagePlaceholders(item.value, placeholders);
-        const lines = measureTextLines(value, segmentWidth, style);
+        const image = item.image ? constrainImageWidth(item.image, segmentWidth) : undefined;
+        const imageWidth = image ? image.width + (value ? image.gap : 0) : 0;
+        const lines = value ? measureTextLines(value, Math.max(segmentWidth - imageWidth, 0), style) : [];
         const line = lines[0];
-        if (!line) {
+        if (!line && !image) {
             continue;
         }
 
@@ -122,16 +126,34 @@ export function renderPageFurniture(
             segmentIndex = 2;
         }
         const boxX = layout.margin.left + segmentWidth * segmentIndex;
-        const encoded = fontRegistry.encodeText(line, style.font, style.direction, style.language);
-        const textX = getTextX(line, boxX, segmentWidth, style, fontRegistry, encoded.direction);
+        const textWidth = line
+            ? fontRegistry.measureText(line, style.fontSize, style.font, style.direction, style.language)
+            : 0;
+        const groupWidth = Math.min(imageWidth + textWidth, segmentWidth);
+        let groupX = boxX;
+        if (item.position === 'Center') {
+            groupX += (segmentWidth - groupWidth) / 2;
+        } else if (item.position === 'Right') {
+            groupX += segmentWidth - groupWidth;
+        }
+        const imageOnRight = image ? isImageOnRight(image, style, line ?? '') : false;
+        const textX = imageOnRight ? groupX : groupX + imageWidth;
         const textY =
             bandTop - (bandHeight - style.lineHeight) / 2 - fontRegistry.getBaselineOffset(style.fontSize, style.font);
 
-        pageParts.push(`${formatColor(style.textColor)} rg`);
-        pageParts.push('BT');
-        pageParts.push(`/${style.font.key} ${fmt(style.fontSize)} Tf`);
-        renderEncodedText(pageParts, encoded, textX, textY, style);
-        pageParts.push('ET');
+        if (image) {
+            const imageX = imageOnRight ? groupX + textWidth + (line ? image.gap : 0) : groupX;
+            const imageY = bandTop - (bandHeight + image.height) / 2;
+            renderImage(pageParts, image, imageX, imageY);
+        }
+        if (line) {
+            const encoded = fontRegistry.encodeText(line, style.font, style.direction, style.language);
+            pageParts.push(`${formatColor(style.textColor)} rg`);
+            pageParts.push('BT');
+            pageParts.push(`/${style.font.key} ${fmt(style.fontSize)} Tf`);
+            renderEncodedText(pageParts, encoded, textX, textY, style);
+            pageParts.push('ET');
+        }
     }
 }
 
@@ -255,8 +277,22 @@ export function renderRowFragment(
             measurement.style,
             fontRegistry,
             measurement.hyperlink,
-            annotations
+            annotations,
+            measurement.image,
+            measurement.imageOnRight ?? false
         );
+        if (cell.showImage && measurement.image) {
+            renderCellImage(
+                pageParts,
+                measurement.image,
+                x,
+                cursorY,
+                rowBottom,
+                measurement.width,
+                measurement.style,
+                measurement.imageOnRight ?? false
+            );
+        }
         x += measurement.width;
         columnIndex += measurement.span;
     }
@@ -319,10 +355,15 @@ function renderCellText(
     cellStyle: ResolvedCellStyle,
     fontRegistry: PdfFontRegistry,
     hyperlink: string | undefined,
-    annotations: PdfLinkAnnotation[]
+    annotations: PdfLinkAnnotation[],
+    image: ResolvedPdfImage | undefined,
+    imageOnRight: boolean
 ): void {
     const padding = cellStyle.padding;
-    const textWidthAvailable = Math.max(cellWidth - padding.left - padding.right, 0);
+    const imageSpace = image ? image.width + (lines.length ? image.gap : 0) : 0;
+    const textBoxX = imageOnRight ? x : x + imageSpace;
+    const textBoxWidth = Math.max(cellWidth - imageSpace, 0);
+    const textWidthAvailable = Math.max(textBoxWidth - padding.left - padding.right, 0);
     const textHeightAvailable = Math.max(rowHeight - padding.top - padding.bottom, 0);
     if (!lines.length || !textWidthAvailable || !textHeightAvailable) {
         return;
@@ -332,7 +373,7 @@ function renderCellText(
     // constrain fragment text to its cell content box.
     pageParts.push('q');
     pageParts.push(
-        `${fmt(x + padding.left)} ${fmt(rowBottom + padding.bottom)} ${fmt(textWidthAvailable)} ${fmt(textHeightAvailable)} re W n`
+        `${fmt(textBoxX + padding.left)} ${fmt(rowBottom + padding.bottom)} ${fmt(textWidthAvailable)} ${fmt(textHeightAvailable)} re W n`
     );
     pageParts.push('BT');
     pageParts.push(`${formatColor(cellStyle.textColor)} rg`);
@@ -341,7 +382,7 @@ function renderCellText(
     let lineTop = rowTop - padding.top;
     for (const line of lines) {
         const encoded = fontRegistry.encodeText(line, cellStyle.font, cellStyle.direction, cellStyle.language);
-        const textX = getTextX(line, x, cellWidth, cellStyle, fontRegistry, encoded.direction);
+        const textX = getTextX(line, textBoxX, textBoxWidth, cellStyle, fontRegistry, encoded.direction);
         renderEncodedText(pageParts, encoded, textX, textY, cellStyle);
         if (hyperlink && line) {
             const textWidth = Math.min(
@@ -355,7 +396,7 @@ function renderCellText(
                 textWidthAvailable
             );
             const lineBottom = Math.max(lineTop - cellStyle.lineHeight, rowBottom + padding.bottom);
-            const textRight = Math.min(textX + textWidth, x + cellWidth - padding.right);
+            const textRight = Math.min(textX + textWidth, textBoxX + textBoxWidth - padding.right);
             if (textRight > textX && lineTop > lineBottom) {
                 annotations.push({ uri: hyperlink, rect: [textX, lineBottom, textRight, lineTop] });
             }
@@ -364,6 +405,44 @@ function renderCellText(
         lineTop -= cellStyle.lineHeight;
     }
     pageParts.push('ET');
+    pageParts.push('Q');
+}
+
+function renderCellImage(
+    pageParts: string[],
+    image: ResolvedPdfImage,
+    cellX: number,
+    rowTop: number,
+    rowBottom: number,
+    cellWidth: number,
+    style: ResolvedCellStyle,
+    imageOnRight: boolean
+): void {
+    const padding = style.padding;
+    const contentHeight = Math.max(rowTop - rowBottom - padding.top - padding.bottom, 0);
+    const contentWidth = Math.max(cellWidth - padding.left - padding.right, 0);
+    if (!contentHeight || !contentWidth) {
+        return;
+    }
+
+    const imageX = imageOnRight ? cellX + cellWidth - padding.right - image.width : cellX + padding.left;
+    const imageY = rowBottom + padding.bottom + (contentHeight - image.height) / 2;
+
+    pageParts.push('q');
+    pageParts.push(
+        `${fmt(cellX + padding.left)} ${fmt(rowBottom + padding.bottom)} ${fmt(contentWidth)} ${fmt(contentHeight)} re W n`
+    );
+    renderImage(pageParts, image, imageX, imageY);
+    pageParts.push('Q');
+}
+
+function renderImage(pageParts: string[], image: ResolvedPdfImage, x: number, y: number): void {
+    pageParts.push('q');
+    pageParts.push(
+        image.altText ? `/Span << /ActualText ${encodePdfUnicodeString(image.altText)} >> BDC` : '/Artifact BMC'
+    );
+    pageParts.push(`${fmt(image.width)} 0 0 ${fmt(image.height)} ${fmt(x)} ${fmt(y)} cm /${image.resource.key} Do`);
+    pageParts.push('EMC');
     pageParts.push('Q');
 }
 

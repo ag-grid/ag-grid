@@ -32,6 +32,7 @@ import {
 import { fmt } from './utils/document/text';
 import { resolveWatermark, shouldRenderWatermark } from './utils/document/watermark';
 import { PdfFontRegistry } from './utils/fontRegistry';
+import { PdfImageRegistry } from './utils/imageRegistry';
 import { formatColor, resolvePdfStyleColors } from './utils/pdfColor';
 import type { PdfLinkAnnotation, PdfPageContent } from './utils/pdfObjectStore';
 import { buildPdf } from './utils/pdfObjectStore';
@@ -52,6 +53,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     const margin = resolveMargin(pageSetup?.margin);
     const styleColors = resolvePdfStyleColors(params.colors);
     const fontRegistry = new PdfFontRegistry(params.fonts);
+    const imageRegistry = new PdfImageRegistry();
 
     const columnCount = columnsToExport.length || Math.max(getMaxColumnCount(rows), 1);
     const availableWidth = Math.max(pageSize.width - margin.left - margin.right, 0);
@@ -103,7 +105,8 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         params,
         styleColors,
         bodyFont,
-        fontRegistry
+        fontRegistry,
+        imageRegistry
     );
     const pageDateTime = getPageDateTime(new Date(), params.language);
     const watermark = resolveWatermark(params, pageSize, styleColors, bodyFont, fontRegistry);
@@ -126,6 +129,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         fontRegistry,
         language: params.language,
         direction: params.direction,
+        imageRegistry,
     };
     const requestedWidths = resolveRequestedColumnWidths(columnsToExport, columnCount, params.columnWidth);
     const autoWidthColumns = requestedWidths.map(columnNeedsAutoWidth);
@@ -186,6 +190,17 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
 
         currentPageNumber += 1;
         currentPageFurniture = getPageFurnitureForPage(pageFurnitureConfig, currentPageNumber);
+        // tall furniture (for example a large header logo) must not consume the whole content area.
+        const furnitureBudget = Math.max((pageSize.height - margin.top - margin.bottom) / 2, 0);
+        const furnitureHeight = currentPageFurniture.headerHeight + currentPageFurniture.footerHeight;
+        if (furnitureHeight > furnitureBudget) {
+            const furnitureScale = furnitureBudget / furnitureHeight;
+            currentPageFurniture = {
+                ...currentPageFurniture,
+                headerHeight: currentPageFurniture.headerHeight * furnitureScale,
+                footerHeight: currentPageFurniture.footerHeight * furnitureScale,
+            };
+        }
         currentLayout = {
             ...layout,
             margin: {
@@ -370,6 +385,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         fontRegistry.getUsedFonts(),
         documentTitle,
         params.language,
-        watermark?.graphicsState ? [watermark.graphicsState] : []
+        watermark?.graphicsState ? [watermark.graphicsState] : [],
+        imageRegistry.getResources()
     );
 }

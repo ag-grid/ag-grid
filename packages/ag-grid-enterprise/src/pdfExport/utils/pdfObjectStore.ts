@@ -1,7 +1,8 @@
+import { encodeAsciiHex } from './bytes';
 import type { ResolvedPageSize } from './document/layout';
 import { encodePdfUnicodeString, escapePdfString, fmt } from './document/text';
 import type { ResolvedPdfFont } from './fontRegistry';
-import { encodeAsciiHex } from './ttf';
+import type { PdfImageResource } from './images/types';
 
 /**
  * A clickable URI rectangle attached to one PDF page.
@@ -107,6 +108,7 @@ class PdfObjectStore {
  * @param documentTitle - Optional metadata title.
  * @param language - Optional document language.
  * @param graphicsStates - Optional reusable transparency resources.
+ * @param images - Image XObjects used by the document.
  * @returns Complete PDF document string.
  */
 export function buildPdf(
@@ -115,11 +117,13 @@ export function buildPdf(
     fonts: ResolvedPdfFont[],
     documentTitle?: string,
     language?: string,
-    graphicsStates: PdfGraphicsState[] = []
+    graphicsStates: PdfGraphicsState[] = [],
+    images: PdfImageResource[] = []
 ): string {
     const store = new PdfObjectStore();
     const fontResourcesParts: string[] = [];
     const graphicsStateResourceParts: string[] = [];
+    const imageResourceParts: string[] = [];
 
     for (const font of fonts) {
         const fontId = font.trueType ? addTrueTypeFontResource(store, font) : addBuiltInFontResource(store, font);
@@ -132,12 +136,18 @@ export function buildPdf(
         graphicsStateResourceParts.push(`/${graphicsState.key} ${graphicsStateId} 0 R`);
     }
 
+    for (const image of images) {
+        const imageId = addImageResource(store, image);
+        imageResourceParts.push(`/${image.key} ${imageId} 0 R`);
+    }
+
     const pagesId = store.reserve();
     const pageIds: number[] = [];
     const fontResources = `<< ${fontResourcesParts.join(' ')} >>`;
     const graphicsStateResources = graphicsStateResourceParts.length
         ? ` /ExtGState << ${graphicsStateResourceParts.join(' ')} >>`
         : '';
+    const imageResources = imageResourceParts.length ? ` /XObject << ${imageResourceParts.join(' ')} >>` : '';
 
     for (const page of pages) {
         // each page has its own content stream object and page object.
@@ -156,7 +166,7 @@ export function buildPdf(
             annotationRefs.push(`${annotationId} 0 R`);
         }
         const annotations = annotationRefs.length ? ` /Annots [${annotationRefs.join(' ')}]` : '';
-        const pageObject = `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)}] /Resources << /Font ${fontResources}${graphicsStateResources} >> /Contents ${contentId} 0 R${annotations} >>`;
+        const pageObject = `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)}] /Resources << /Font ${fontResources}${graphicsStateResources}${imageResources} >> /Contents ${contentId} 0 R${annotations} >>`;
         const pageId = store.add(pageObject);
         pageIds.push(pageId);
     }
@@ -179,6 +189,27 @@ export function buildPdf(
         : undefined;
 
     return store.build(catalogId, infoId);
+}
+
+function addImageResource(store: PdfObjectStore, image: PdfImageResource): number {
+    let alphaId: number | undefined;
+    if (image.alpha) {
+        const encodedAlpha = encodeAsciiHex(image.alpha);
+        alphaId = store.add(
+            `<< /Type /XObject /Subtype /Image /Width ${image.width} /Height ${image.height} ` +
+                `/ColorSpace /DeviceGray /BitsPerComponent 8 /Filter /ASCIIHexDecode ` +
+                `/Length ${encodedAlpha.length} >>\nstream\n${encodedAlpha}\nendstream`
+        );
+    }
+
+    const encodedImage = encodeAsciiHex(image.data);
+    const filters = image.filter ? `/Filter [/ASCIIHexDecode /${image.filter}]` : '/Filter /ASCIIHexDecode';
+    const softMask = alphaId ? ` /SMask ${alphaId} 0 R` : '';
+    return store.add(
+        `<< /Type /XObject /Subtype /Image /Width ${image.width} /Height ${image.height} ` +
+            `/ColorSpace /${image.colorSpace} /BitsPerComponent ${image.bitsPerComponent} ${filters}` +
+            `${softMask} /Length ${encodedImage.length} >>\nstream\n${encodedImage}\nendstream`
+    );
 }
 
 function encodePdfMetadataString(value: string): string {

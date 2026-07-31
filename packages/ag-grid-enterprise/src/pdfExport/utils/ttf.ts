@@ -148,27 +148,6 @@ export function parseTrueTypeFont(face: PdfFontFace, family: string): TrueTypeFo
     };
 }
 
-/**
- * Convert bytes to an ASCII hexadecimal PDF stream payload.
- * @param data - Binary stream bytes.
- * @returns ASCII hexadecimal data terminated for `ASCIIHexDecode`.
- */
-export function encodeAsciiHex(data: Uint8Array): string {
-    const parts: string[] = [];
-    const chunkSize = 2048;
-
-    for (let start = 0; start < data.length; start += chunkSize) {
-        const end = Math.min(start + chunkSize, data.length);
-        let chunk = '';
-        for (let index = start; index < end; index++) {
-            chunk += data[index].toString(16).padStart(2, '0');
-        }
-        parts.push(chunk);
-    }
-
-    return `${parts.join('\n')}>`;
-}
-
 function createTrueTypeSubset(
     data: Uint8Array,
     view: DataView,

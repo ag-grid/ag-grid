@@ -15,6 +15,7 @@
         "skipGridStyles": {},
         "processStyleCallback": {},
         "processCellHyperlinkCallback": {},
+        "addImageToCell": {},
         "page": {},
         "defaultCellStyle": {},
         "defaultHeaderStyle": {},
@@ -38,7 +39,30 @@
         "value": {
             "isRequired": true
         },
-        "hyperlink": {}
+        "hyperlink": {},
+        "image": {}
+    },
+    "PdfImage": {
+        "id": {
+            "isRequired": true
+        },
+        "base64": {
+            "isRequired": true
+        },
+        "imageType": {
+            "isRequired": true
+        },
+        "altText": {},
+        "width": {},
+        "height": {},
+        "alignment": {},
+        "gap": {}
+    },
+    "PdfCellImageResult": {
+        "image": {
+            "isRequired": true
+        },
+        "value": {}
     },
     "PdfFontFamilyDefinition": {
         "family": {
