@@ -9,9 +9,10 @@ import type {
     IPivotResultColsService,
     NamedBean,
     RowNode,
+    SortDirection,
     _IRowNodePivotStage,
 } from 'ag-grid-community';
-import { BeanStub, _forEachChangedGroupDepthFirst } from 'ag-grid-community';
+import { BeanStub, _defaultPivotSort, _forEachChangedGroupDepthFirst } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -123,7 +124,9 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
         const pivotColumns = pivotColsSvc?.columns ?? [];
         const shouldTrackPivotOrder = pivotColsSvc?.isStrictColumnOrder() ?? false;
-        const pivotOrder = shouldTrackPivotOrder ? computePivotOrder(this.uniqueValues, pivotColumns, 0) : [];
+        const pivotOrder = shouldTrackPivotOrder
+            ? computePivotOrder(this.uniqueValues, pivotColumns, 0, _defaultPivotSort(this.beans))
+            : [];
         const pivotOrderChanged = !_areEqual(pivotOrder, this.pivotOrderLastTime);
         this.pivotOrderLastTime = pivotOrder;
 
@@ -268,13 +271,19 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
  * order changes (e.g. a sort toggle or comparator closure mutation) without relying on function reference or
  * source equality.
  */
-function computePivotOrder(values: Map<string, any>, pivotColumns: AgColumn[], depth: number): string[] {
+function computePivotOrder(
+    values: Map<string, any>,
+    pivotColumns: AgColumn[],
+    depth: number,
+    defaultPivotSort: SortDirection
+): string[] {
     const pivotColumn = pivotColumns[depth];
     const keys = [...values.keys()];
     // Mirror pivotColDefService's ordering so the snapshot tracks the rendered order and a toggle is detected as
-    // an order change: `null` keeps the natural (insertion) key order, `'desc'` reverses, and the unset default
-    // and `'asc'` sort ascending by the custom comparator or string order.
-    const pivotSort = pivotColumn?.pivotSort;
+    // an order change: `null` keeps the natural (insertion) key order, `'desc'` reverses, and `'asc'` sorts
+    // ascending by the custom comparator or string order.
+    const rawPivotSort = pivotColumn?.pivotSort;
+    const pivotSort = rawPivotSort === undefined ? defaultPivotSort : rawPivotSort;
     if (pivotSort !== null) {
         const comparator = pivotColumn?.colDef.pivotComparator;
         if (comparator) {
@@ -296,7 +305,7 @@ function computePivotOrder(values: Map<string, any>, pivotColumns: AgColumn[], d
         const child = values.get(key);
         // child is a nested Map at non-leaf levels; if absent (sparse map), skip its subtree.
         if (child instanceof Map) {
-            const childKeys = computePivotOrder(child, pivotColumns, depth + 1);
+            const childKeys = computePivotOrder(child, pivotColumns, depth + 1, defaultPivotSort);
             for (let j = 0; j < childKeys.length; j++) {
                 result.push(childKeys[j]);
             }
