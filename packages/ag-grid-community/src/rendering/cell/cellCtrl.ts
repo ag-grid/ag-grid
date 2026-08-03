@@ -752,8 +752,8 @@ export class CellCtrl extends BeanStub {
         _onCellKeyDown(this.beans, this, event);
     }
 
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        _onCellMouseEvent(this.beans, this, eventName, mouseEvent);
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, retargeted?: boolean): void {
+        _onCellMouseEvent(this.beans, this, eventName, mouseEvent, retargeted);
     }
 
     public getColSpanningList(): AgColumn[] {

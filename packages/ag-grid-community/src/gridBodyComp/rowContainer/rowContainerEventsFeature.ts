@@ -20,6 +20,13 @@ import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboardEvent';
 import { _selectAllCells } from '../../utils/selection';
 
+interface EventTargetCtrls {
+    cellCtrl: CellCtrl | null;
+    rowCtrl: RowCtrl | null;
+    /** True when the event came from a row animating out and was moved onto the row now owning its slot. */
+    retargeted?: boolean;
+}
+
 export class RowContainerEventsFeature extends BeanStub {
     private editSvc?: EditService;
 
@@ -60,7 +67,7 @@ export class RowContainerEventsFeature extends BeanStub {
             return;
         }
 
-        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(mouseEvent.target);
+        const { cellCtrl, rowCtrl, retargeted } = this.getControlsForEventTarget(mouseEvent.target);
 
         if (eventName === 'contextmenu') {
             if (!cellCtrl && !rowCtrl) {
@@ -72,22 +79,47 @@ export class RowContainerEventsFeature extends BeanStub {
             this.beans.contextMenuSvc?.handleContextMenuMouseEvent(mouseEvent, undefined, rowCtrl, cellCtrl);
         } else {
             if (cellCtrl) {
-                cellCtrl.onMouseEvent(eventName, mouseEvent);
+                cellCtrl.onMouseEvent(eventName, mouseEvent, retargeted);
             }
             if (rowCtrl) {
-                rowCtrl.onMouseEvent(eventName, mouseEvent);
+                rowCtrl.onMouseEvent(eventName, mouseEvent, retargeted);
             }
         }
     }
 
-    public getControlsForEventTarget(target: EventTarget | null): {
-        cellCtrl: CellCtrl | null;
-        rowCtrl: RowCtrl | null;
-    } {
+    public getControlsForEventTarget(target: EventTarget | null): EventTargetCtrls {
         const { gos } = this;
+        const cellCtrl = _getCellCtrlForEventTarget(gos, target);
+        const rowCtrl = _getRowCtrlForEventTarget(gos, target);
+
+        // A row animating out keeps its destroyed ctrls (and dom) until the animation ends, but its node has
+        // already lost its position, so acting on them would focus a cell that is about to be removed.
+        // The row's own dom data goes on destroy, so a stale row is only reachable through its cells.
+        const ownerRowCtrl = cellCtrl?.rowCtrl ?? rowCtrl;
+        if (ownerRowCtrl?.destroyed) {
+            return this.getCtrlsForVacatedSlot(ownerRowCtrl, cellCtrl?.column);
+        }
+
+        return { cellCtrl, rowCtrl };
+    }
+
+    /** The live ctrls for the display slot the given animating-out row is vacating, if it is still rendered. */
+    private getCtrlsForVacatedSlot(staleRowCtrl: RowCtrl, column: AgColumn | undefined): EventTargetCtrls {
+        const { rowModel, rowRenderer } = this.beans;
+        const { oldRowTop, rowPinned } = staleRowCtrl.rowNode;
+
+        // a pinned row's top is in its own model's coordinates, so it cannot be looked up against the body
+        if (oldRowTop == null || rowPinned) {
+            return { cellCtrl: null, rowCtrl: null, retargeted: true };
+        }
+
+        const rowIndex = rowModel.getRowIndexAtPixel(oldRowTop);
+        const rowCtrl = rowRenderer.getRowByPosition({ rowIndex, rowPinned: null });
+
         return {
-            cellCtrl: _getCellCtrlForEventTarget(gos, target),
-            rowCtrl: _getRowCtrlForEventTarget(gos, target),
+            cellCtrl: column && rowCtrl ? rowCtrl.getCellCtrl(column) : null,
+            rowCtrl,
+            retargeted: true,
         };
     }
 

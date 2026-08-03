@@ -12,7 +12,8 @@ export function _onCellMouseEvent(
     beans: BeanCollection,
     cellCtrl: CellCtrl,
     eventName: string,
-    mouseEvent: MouseEvent
+    mouseEvent: MouseEvent,
+    retargeted?: boolean
 ): void {
     if (_isStopPropagationForAgGrid(mouseEvent)) {
         return;
@@ -25,16 +26,16 @@ export function _onCellMouseEvent(
         case 'pointerdown':
         case 'mousedown':
         case 'touchstart':
-            onMouseDown(beans, cellCtrl, mouseEvent);
+            onMouseDown(beans, cellCtrl, mouseEvent, retargeted);
             break;
         case 'dblclick':
             _onCellDoubleClicked(beans, cellCtrl, mouseEvent);
             break;
         case 'mouseout':
-            onMouseOut(beans, cellCtrl, mouseEvent);
+            onMouseOut(beans, cellCtrl, mouseEvent, retargeted);
             break;
         case 'mouseover':
-            onMouseOver(beans, cellCtrl, mouseEvent);
+            onMouseOver(beans, cellCtrl, mouseEvent, retargeted);
             break;
     }
 }
@@ -146,7 +147,12 @@ export function _onCellDoubleClicked(beans: BeanCollection, cellCtrl: CellCtrl, 
     }
 }
 
-function onMouseDown(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: MouseEvent): void {
+function onMouseDown(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: MouseEvent, retargeted?: boolean): void {
+    if (retargeted) {
+        // the event came from a row animating out, so stop the browser focusing that doomed element
+        mouseEvent.preventDefault();
+    }
+
     const { shiftKey } = mouseEvent;
     const target = mouseEvent.target as HTMLElement;
     const { eventSvc, rangeSvc, rowNumbersSvc, focusSvc, gos, editSvc } = beans;
@@ -172,7 +178,8 @@ function onMouseDown(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: Mous
     }
 
     const hasRanges = rangeSvc && !rangeSvc.isEmpty();
-    const containsWidget = cellContainsWidget(target);
+    // a retargeted event's target is the dying row, so any widget under it is not this cell's
+    const containsWidget = !retargeted && cellContainsWidget(target);
 
     const isRowNumberColumn = isRowNumberCol(column);
 
@@ -190,8 +197,11 @@ function onMouseDown(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: Mous
         // however, this should never be true if the mousedown was triggered
         // due to a click on a cell editor for example, otherwise cell selection within
         // an editor would be blocked.
+        // A retargeted event says nothing about this cell (its target is the dying row), and the browser
+        // focus we suppressed above has to be replaced.
         const forceBrowserFocus =
-            (_isBrowserSafari() || shouldFocus) && !editing && !_isFocusableFormField(target) && !containsWidget;
+            !editing &&
+            (retargeted || ((_isBrowserSafari() || shouldFocus) && !_isFocusableFormField(target) && !containsWidget));
 
         cellCtrl.focusCell({ forceBrowserFocus, sourceEvent: mouseEvent });
     }
@@ -259,8 +269,8 @@ function cellContainsWidget(target: HTMLElement): boolean {
     );
 }
 
-function onMouseOut(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: MouseEvent): void {
-    if (mouseStayingInsideCell(cellCtrl, mouseEvent)) {
+function onMouseOut(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: MouseEvent, retargeted?: boolean): void {
+    if (mouseStayingInsideCell(cellCtrl, mouseEvent, retargeted)) {
         return;
     }
     const { eventSvc, colHover } = beans;
@@ -268,8 +278,8 @@ function onMouseOut(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: Mouse
     colHover?.clearMouseOver();
 }
 
-function onMouseOver(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: MouseEvent): void {
-    if (mouseStayingInsideCell(cellCtrl, mouseEvent)) {
+function onMouseOver(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: MouseEvent, retargeted?: boolean): void {
+    if (mouseStayingInsideCell(cellCtrl, mouseEvent, retargeted)) {
         return;
     }
     const { eventSvc, colHover } = beans;
@@ -277,11 +287,15 @@ function onMouseOver(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: Mous
     colHover?.setMouseOver([cellCtrl.column]);
 }
 
-function mouseStayingInsideCell(cellCtrl: CellCtrl, e: MouseEvent): boolean {
+function mouseStayingInsideCell(cellCtrl: CellCtrl, e: MouseEvent, retargeted?: boolean): boolean {
     if (!e.target || !e.relatedTarget) {
         return false;
     }
-    const eCell = cellCtrl.eGui;
+    // a retargeted event's target sits in the dying row, so the pointer's own cell is what we compare against
+    const eCell = retargeted ? (e.target as HTMLElement).closest('.ag-cell') : cellCtrl.eGui;
+    if (!eCell) {
+        return false;
+    }
     const cellContainsTarget = eCell.contains(e.target as Node);
     const cellContainsRelatedTarget = eCell.contains(e.relatedTarget as Node);
     return cellContainsTarget && cellContainsRelatedTarget;

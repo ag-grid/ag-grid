@@ -792,7 +792,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowModeFeature.recreateCell(cellCtrl);
     }
 
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, retargeted?: boolean): void {
         switch (eventName) {
             case 'dblclick':
                 this.onRowDblClick(mouseEvent);
@@ -803,7 +803,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             case 'pointerdown':
             case 'touchstart':
             case 'mousedown':
-                this.onRowMouseDown(mouseEvent);
+                this.onRowMouseDown(mouseEvent, retargeted);
                 break;
         }
     }
@@ -854,8 +854,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.rowModeFeature.getTarget?.(element);
     }
 
-    private onRowMouseDown(mouseEvent: MouseEvent) {
-        this.lastMouseDownOnDragger = _isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
+    private onRowMouseDown(mouseEvent: MouseEvent, retargeted?: boolean) {
+        // a retargeted event's target is the dying row, so any dragger under it is not this row's
+        this.lastMouseDownOnDragger =
+            !retargeted && _isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
         this.rowModeFeature.onRowMouseDown?.(mouseEvent);
     }
 
