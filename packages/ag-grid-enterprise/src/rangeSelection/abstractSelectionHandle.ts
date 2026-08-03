@@ -177,7 +177,7 @@ export abstract class AbstractSelectionHandle extends Component {
             return;
         }
         const { id, type } = this.cellRange;
-        if (!id || id !== event.id) {
+        if (!id || (event.id != null && id !== event.id)) {
             return;
         }
 
