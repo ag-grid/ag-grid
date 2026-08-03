@@ -5,12 +5,7 @@ import type {
     IServerSideDatasource,
     IServerSideGetRowsRequest,
 } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    createGrid,
-    enableDevValidations,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
