@@ -20,8 +20,8 @@ test.agExample(import.meta, () => {
         // The drag handles carry the readonly class so the pills cannot be dragged out of the
         // panel, and are dimmed to show as disabled even though no tool panel is loaded.
         const dragHandles = pills.locator('.ag-column-drop-cell-drag-handle');
-        const handleCount = await dragHandles.count();
-        for (let i = 0; i < handleCount; i++) {
+        await expect(dragHandles).toHaveCount(2);
+        for (let i = 0; i < 2; i++) {
             const handle = dragHandles.nth(i);
             await expect(handle).toHaveClass(/ag-column-select-column-readonly/);
             await expect(handle).toHaveCSS('opacity', '0.5');
