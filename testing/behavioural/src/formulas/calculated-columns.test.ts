@@ -2150,7 +2150,8 @@ describe('ag-grid calculated columns', () => {
         const input = getExpressionInput();
         expect(input).toHaveAttribute('aria-autocomplete', 'list');
         expect(input).toHaveAttribute('aria-haspopup', 'listbox');
-        expect(input).toHaveAttribute('aria-expanded', 'false');
+        // role textbox does not support aria-expanded, and textarea cannot take role combobox
+        expect(input).not.toHaveAttribute('aria-expanded');
 
         input.value = '[Revenue';
         input.setSelectionRange(input.value.length, input.value.length);
@@ -2165,7 +2166,7 @@ describe('ag-grid calculated columns', () => {
         });
         const popup = document.querySelector<HTMLElement>('.ag-autocomplete-list-popup')!;
 
-        expect(input).toHaveAttribute('aria-expanded', 'true');
+        expect(input).not.toHaveAttribute('aria-expanded');
         expect(controlledList).toHaveAttribute('role', 'listbox');
         expect(controlledList).not.toBe(popup);
 
@@ -2194,7 +2195,7 @@ describe('ag-grid calculated columns', () => {
 
         input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 
-        expect(input).toHaveAttribute('aria-expanded', 'false');
+        expect(input).not.toHaveAttribute('aria-expanded');
         expect(input).not.toHaveAttribute('aria-controls');
         expect(input).not.toHaveAttribute('aria-activedescendant');
     });
