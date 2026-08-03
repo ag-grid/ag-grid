@@ -33,7 +33,7 @@
     }
     @include ag.keyboard-focus((ag-menu-option), 1px);
 
-    :where(.ag-menu-list-no-focus-ring) .ag-menu-option:focus-visible::after {
+    .ag-menu-list-no-focus-ring .ag-menu-option:focus-visible::after {
         content: none;
     }
 
