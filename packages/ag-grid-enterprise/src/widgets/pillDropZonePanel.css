@@ -85,6 +85,15 @@
     margin-left: calc(var(--ag-spacing) / 4);
 }
 
+.ag-column-drop-cell-drag-handle.ag-column-select-column-readonly {
+    opacity: 0.5;
+    pointer-events: none;
+
+    :where(.ag-icon) {
+        opacity: 0.35;
+    }
+}
+
 .ag-column-drop-wrapper {
     display: flex;
 }
