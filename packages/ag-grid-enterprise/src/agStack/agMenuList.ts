@@ -6,7 +6,7 @@ import type {
     IPropertiesService,
     WithoutCommon,
 } from 'ag-stack';
-import { AgTabGuardComp, _createAgElement, _focusInto, _getActiveDomElement, _last } from 'ag-stack';
+import { AgTabGuardComp, _createAgElement, _focusInto, _getActiveDomElement, _isNothingFocused, _last } from 'ag-stack';
 
 import { AgPromise, KeyCode } from 'ag-grid-community';
 
@@ -250,13 +250,13 @@ export class AgMenuList<
     public focusInto(): boolean {
         const focused = _focusInto(this.getGui());
         // Framework menu items render asynchronously and may be absent now; retry once they land,
-        // unless focus has since moved to an item or away from the menu entirely. Activating while
-        // nothing is focused would draw a focus ring on a mouse-opened menu.
+        // unless focus has since moved to an item or away from the menu entirely.
         this.itemsReady?.then(() => {
             if (!this.isAlive() || this.activeMenuItem) {
                 return;
             }
-            if (this.getGui().contains(_getActiveDomElement(this.beans))) {
+            const activeElement = _getActiveDomElement(this.beans);
+            if (_isNothingFocused(this.beans) || this.getGui().contains(activeElement)) {
                 this.activateFirstItem();
             }
         });

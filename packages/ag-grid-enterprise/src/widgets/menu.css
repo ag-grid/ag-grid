@@ -59,6 +59,11 @@
     background-color: var(--ag-row-hover-color);
 }
 
+.ag-menu-option-no-focus-ring:focus-visible,
+.ag-compact-menu-option-no-focus-ring:focus-visible {
+    box-shadow: none;
+}
+
 .ag-menu-option-part,
 .ag-compact-menu-option-part {
     line-height: var(--ag-icon-size);

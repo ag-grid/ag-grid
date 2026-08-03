@@ -10,7 +10,14 @@ import type {
     TooltipCtrl,
     WithoutCommon,
 } from 'ag-stack';
-import { AgBeanStub, _setAriaDisabled, _setAriaExpanded, _setAriaHasPopup, _setAriaRole } from 'ag-stack';
+import {
+    AgBeanStub,
+    _isNothingFocused,
+    _setAriaDisabled,
+    _setAriaExpanded,
+    _setAriaHasPopup,
+    _setAriaRole,
+} from 'ag-stack';
 
 import type { AgEvent, AgPromise, IComponent, IMenuConfigParams, IMenuItem, TapEvent } from 'ag-grid-community';
 import { KeyCode, TouchListener, _createElement } from 'ag-grid-community';
@@ -412,6 +419,9 @@ export class AgMenuItemComponent<
         this.isActive = true;
         if (!this.suppressRootStyles) {
             this.eGui.classList.add(`${this.cssClassPrefix}-active`);
+            // Chrome treats a programmatic focus taken while the document has no focused element as
+            // keyboard-driven, so :focus-visible would draw a focus ring on a mouse-opened menu.
+            this.eGui.classList.toggle(`${this.cssClassPrefix}-no-focus-ring`, _isNothingFocused(this.beans));
         }
         this.menuItemComp.setActive?.(true);
         if (!this.suppressFocus) {
@@ -432,7 +442,7 @@ export class AgMenuItemComponent<
     public deactivate() {
         this.cancelDeactivate();
         if (!this.suppressRootStyles) {
-            this.eGui.classList.remove(`${this.cssClassPrefix}-active`);
+            this.eGui.classList.remove(`${this.cssClassPrefix}-active`, `${this.cssClassPrefix}-no-focus-ring`);
         }
         this.menuItemComp.setActive?.(false);
         this.isActive = false;
