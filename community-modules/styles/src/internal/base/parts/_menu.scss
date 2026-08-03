@@ -33,6 +33,10 @@
     }
     @include ag.keyboard-focus((ag-menu-option), 1px);
 
+    :where(.ag-menu-list-no-focus-ring) .ag-menu-option:focus-visible::after {
+        content: none;
+    }
+
     .ag-menu-option-active,
     .ag-compact-menu-option-active {
         background-color: var(--ag-row-hover-color);
