@@ -60,8 +60,6 @@ async function findCandidateFiles(basePath: string): Promise<string[]> {
 }
 
 async function validateExampleDevValidations(): Promise<ValidationResult> {
-    console.log(`🔍 Searching for example source files in: ${DOCS_ROOT}`);
-
     const candidateFiles = await findCandidateFiles(DOCS_ROOT);
 
     const registeringFiles: string[] = [];
@@ -72,18 +70,11 @@ async function validateExampleDevValidations(): Promise<ValidationResult> {
         }
     }
 
-    console.log(`📁 Found ${registeringFiles.length} files calling ModuleRegistry.registerModules`);
-
     const missingGuard: string[] = [];
     for (const file of registeringFiles) {
         const content = await readFile(file, 'utf-8');
-        const relativeFile = relative(DOCS_ROOT, file);
-
-        if (ENABLE_DEV_VALIDATIONS_PATTERN.test(content)) {
-            //   console.log(`✅ ${relativeFile}`);
-        } else {
-            missingGuard.push(relativeFile);
-            console.log(`❌ ${relativeFile} - Missing enableDevValidations() guard`);
+        if (!ENABLE_DEV_VALIDATIONS_PATTERN.test(content)) {
+            missingGuard.push(relative(DOCS_ROOT, file));
         }
     }
 
@@ -94,37 +85,32 @@ async function validateExampleDevValidations(): Promise<ValidationResult> {
 }
 
 async function main() {
-    console.log('🚀 Starting example dev-validations check...\n');
-
     try {
         const result = await validateExampleDevValidations();
 
-        console.log('\n📊 Validation Results:');
         console.log(`Files registering modules: ${result.totalFiles}`);
         console.log(`Missing enableDevValidations guard: ${result.missingGuard.length}`);
 
         if (result.missingGuard.length > 0) {
-            console.log('\n❌ The following files call ModuleRegistry.registerModules without enableDevValidations:');
+            console.log('\nMissing enableDevValidations() in:');
             result.missingGuard.forEach((file) => {
-                console.log(`   - ${file}`);
+                console.log(`  ${file}`);
             });
 
-            console.log(`\n💡 Add the following guard immediately before the ModuleRegistry.registerModules call:`);
+            console.log(`\nAdd this guard immediately before the ModuleRegistry.registerModules call:`);
             console.log(`
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 `);
-            console.log("Also add 'enableDevValidations' to the value import from 'ag-grid-community'.\n");
+            console.log("Also add 'enableDevValidations' to the value import from 'ag-grid-community'.");
 
             process.exit(1);
-        } else {
-            console.log('\n✅ All examples that register modules also enable dev validations! 🎉');
-            process.exit(0);
         }
+
+        process.exit(0);
     } catch (error) {
-        console.error('💥 Error during validation:', error);
+        console.error('Error during validation:', error);
         process.exit(1);
     }
 }
