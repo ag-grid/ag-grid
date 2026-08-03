@@ -94,6 +94,7 @@ export class AgMenuList<
             case KeyCode.DOWN:
             case KeyCode.LEFT:
                 e.preventDefault();
+                this.getGui().classList.remove('ag-menu-list-no-focus-ring');
                 this.handleNavKey(e.key);
                 break;
             case KeyCode.ESCAPE:
@@ -248,6 +249,9 @@ export class AgMenuList<
     }
 
     public focusInto(): boolean {
+        // Chrome reports a programmatic focus taken while the document has no focused element as
+        // :focus-visible, which would draw a keyboard focus ring on a mouse-opened menu.
+        this.getGui().classList.toggle('ag-menu-list-no-focus-ring', _isNothingFocused(this.beans));
         const focused = _focusInto(this.getGui());
         // Framework menu items render asynchronously and may be absent now; retry once they land,
         // unless focus has since moved to an item or away from the menu entirely.
