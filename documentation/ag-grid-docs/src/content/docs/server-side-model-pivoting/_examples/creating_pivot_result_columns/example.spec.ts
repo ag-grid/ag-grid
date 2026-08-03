@@ -23,14 +23,15 @@ const waitForYears = (page: Page, mode: 'asc' | 'desc') =>
     expect(async () => {
         const years = await yearGroupOrder(page);
         expect(years.length).toBeGreaterThan(1);
-        const ascending = years.slice().sort();
-        expect(years).toEqual(mode === 'asc' ? ascending : ascending.reverse());
+        const sorted = years.slice().sort();
+        expect(years).toEqual(mode === 'asc' ? sorted : sorted.reverse());
     }).toPass();
 
 test.agExample(import.meta, () => {
     test.eachFramework(
         'App-built pivot result columns (setPivotResultColumns) render nested year -> medal groups',
         async ({ page }) => {
+            await ensureGridReady(page);
             await waitForGridContent(page);
 
             const groupRow = (name: string) =>
@@ -42,6 +43,13 @@ test.agExample(import.meta, () => {
             // Grid is grouped by Country on the server side.
             await expect(groupRow('United States')).toBeVisible();
             await expect(groupRow('Russia')).toBeVisible();
+
+            // The example supplies the year groups shuffled, so which of them fall inside the rendered header
+            // window varies per load. Sort ascending from the Year pill first so 2000 is leftmost and rendered.
+            const yearPill = yearPillFor(page);
+            await expect(yearPill).toBeVisible();
+            await yearPill.click();
+            await waitForYears(page, 'asc');
 
             // createPivotResultColumns() builds a year column group per distinct year,
             // each nesting gold/silver/bronze value children.
@@ -64,40 +72,34 @@ test.agExample(import.meta, () => {
             await ensureGridReady(page);
             await waitForGridContent(page);
 
-            // createPivotResultColumns() supplies the years in a scrambled order, but pivotSort defaults to
-            // ascending, so the grid orders the supplied columns rather than displaying them as supplied.
-            await waitForYears(page, 'asc');
-
+            // Unlike grid-generated pivot result columns, supplied ones default to no sort, so the grid shows them
+            // in the order createPivotResultColumns() supplied. That order is shuffled, so capture it rather than
+            // pinning a permutation.
             const yearPill = yearPillFor(page);
             await expect(yearPill).toBeVisible();
-            await expect(yearPill.locator('.ag-sort-ascending-icon')).toBeVisible();
+            await expect(yearPill.locator('.ag-sort-ascending-icon')).toBeHidden();
+            await expect(yearPill.locator('.ag-sort-descending-icon')).toBeHidden();
 
-            // Activating the pill reorders the supplied columns, even though the grid did not generate them.
+            const suppliedOrder = await yearGroupOrder(page);
+            expect(suppliedOrder.length).toBeGreaterThan(1);
+
+            // Activating the pill orders the supplied columns by header name, even though the grid did not
+            // generate them, and does so without asking the server for the columns again.
+            await yearPill.click();
+            await expect(yearPill.locator('.ag-sort-ascending-icon')).toBeVisible();
+            await waitForYears(page, 'asc');
+
             await yearPill.click();
             await expect(yearPill.locator('.ag-sort-descending-icon')).toBeVisible();
             await waitForYears(page, 'desc');
 
-            // Cycling on to no sort falls back to the order the columns were supplied in. The example shuffles that
-            // order with the docs' seeded generator, so rather than pin the exact permutation to the seed, assert
-            // what the example actually claims: the same years, in neither ascending nor descending order.
-            const descendingYears = await yearGroupOrder(page);
-            const ascendingYears = descendingYears.slice().reverse();
-            const sortedYears = descendingYears.slice().sort();
+            // Cycling on to no sort falls back to the order the columns were supplied in.
             await yearPill.click();
-            await expect(yearPill.locator('.ag-sort-descending-icon')).toBeHidden();
             await expect(yearPill.locator('.ag-sort-ascending-icon')).toBeHidden();
+            await expect(yearPill.locator('.ag-sort-descending-icon')).toBeHidden();
             await expect(async () => {
-                const suppliedOrder = await yearGroupOrder(page);
-                expect(suppliedOrder.length).toBeGreaterThan(1);
-                expect(suppliedOrder.slice().sort()).toEqual(sortedYears);
-                expect(suppliedOrder).not.toEqual(ascendingYears);
-                expect(suppliedOrder).not.toEqual(descendingYears);
+                expect(await yearGroupOrder(page)).toEqual(suppliedOrder);
             }).toPass();
-
-            // And back round to ascending.
-            await yearPill.click();
-            await expect(yearPill.locator('.ag-sort-ascending-icon')).toBeVisible();
-            await waitForYears(page, 'asc');
         }
     );
 });
