@@ -14,10 +14,16 @@ import {
     SuppressMouseEventHandlingParams,
     TextEditorModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
 
 import { CustomButtonComponent } from './customButtonComponent_typescript';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,

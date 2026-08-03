@@ -1,13 +1,18 @@
 import React, { StrictMode, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ModuleRegistry } from 'ag-grid-community';
+import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 import { type ITransaction, generateTransactions } from './generateTransactions';
 import { gridOptions } from './gridOptions';
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
