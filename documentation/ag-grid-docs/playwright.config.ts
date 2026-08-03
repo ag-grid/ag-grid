@@ -9,6 +9,15 @@ const baseURL = BASE_URL || PREV_URL || PROD_URL || 'https://localhost:4610';
 
 const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
 
+const IGNORED_TESTS = ['**/pdf-export*/**'];
+
+const BROWSER_IGNORED_TESTS = [
+    ...IGNORED_TESTS,
+    '**/async-test/provided/angular/app.component.spec.ts',
+    // page-verification.spec.ts runs in its own dedicated CI job.
+    '**/page-verification.spec.ts',
+];
+
 function isLocalRun(url: string): boolean {
     try {
         return LOCAL_HOSTNAMES.includes(new URL(url).hostname);
@@ -35,8 +44,12 @@ if (process.env.FRAMEWORK) {
 export default defineConfig({
     snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
     testDir: './src/content/docs/',
-    /* PDF Export is not part of the public API yet (release delayed), so its examples cannot load the module. */
-    testIgnore: '**/pdf-export*/**',
+    /**
+     * PDF Export is not part of the public API yet (release delayed), so its examples cannot load the module.
+     * Project-level `testIgnore` replaces this value rather than merging with it, so every project below that
+     * declares its own `testIgnore` must also spread in IGNORED_TESTS.
+     */
+    testIgnore: IGNORED_TESTS,
     /* Run tests in files in parallel */
     fullyParallel: true,
     timeout: process.env.CI ? 60_000 : 20_000,
@@ -86,29 +99,17 @@ export default defineConfig({
         {
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
-            testIgnore: [
-                '**/async-test/provided/angular/app.component.spec.ts',
-                // page-verification.spec.ts runs in its own dedicated CI job.
-                '**/page-verification.spec.ts',
-            ],
+            testIgnore: BROWSER_IGNORED_TESTS,
         },
         {
             name: 'firefox',
             use: { ...devices['Desktop Firefox'] },
-            testIgnore: [
-                '**/async-test/provided/angular/app.component.spec.ts',
-                // page-verification.spec.ts runs in its own dedicated CI job.
-                '**/page-verification.spec.ts',
-            ],
+            testIgnore: BROWSER_IGNORED_TESTS,
         },
         {
             name: 'webkit',
             use: { ...devices['Desktop Safari'] },
-            testIgnore: [
-                '**/async-test/provided/angular/app.component.spec.ts',
-                // page-verification.spec.ts runs in its own dedicated CI job.
-                '**/page-verification.spec.ts',
-            ],
+            testIgnore: BROWSER_IGNORED_TESTS,
         },
         {
             // Dedicated project for post-deploy verification — run via post-deploy-verification.yml.
