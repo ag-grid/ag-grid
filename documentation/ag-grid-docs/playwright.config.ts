@@ -9,6 +9,7 @@ const baseURL = BASE_URL || PREV_URL || PROD_URL || 'https://localhost:4610';
 
 const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
 
+/* PDF Export is not part of the public API yet (release delayed), so its examples cannot load the module. */
 const IGNORED_TESTS = ['**/pdf-export*/**'];
 
 const BROWSER_IGNORED_TESTS = [
@@ -44,12 +45,6 @@ if (process.env.FRAMEWORK) {
 export default defineConfig({
     snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
     testDir: './src/content/docs/',
-    /**
-     * PDF Export is not part of the public API yet (release delayed), so its examples cannot load the module.
-     * Project-level `testIgnore` replaces this value rather than merging with it, so every project below that
-     * declares its own `testIgnore` must also spread in IGNORED_TESTS.
-     */
-    testIgnore: IGNORED_TESTS,
     /* Run tests in files in parallel */
     fullyParallel: true,
     timeout: process.env.CI ? 60_000 : 20_000,
