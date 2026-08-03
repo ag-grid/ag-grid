@@ -1,7 +1,7 @@
 [
     {
         "version": "36.1.0",
-        "date": "August 5th 2026",
+        "date": "5th August 2026",
         "landingPageHighlight": "Column Header Edit, Custom Context Menu Items in Columns Tool Panel, AI Coding Skill, Documentation in markdown format, Quality Improvements",
         "highlights": [
             {
@@ -28,7 +28,7 @@
     },
     {
         "version": "36.0.0",
-        "date": "June 24th 2026",
+        "date": "24th June 2026",
         "landingPageHighlight": "Calculated Columns, Show Values As, Automatic Column Generation, Accessibility Improvements, Theming Improvements",
         "highlights": [
             {
