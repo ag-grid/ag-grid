@@ -16,35 +16,34 @@
     }
 }
 
-// Narrow screens stack the metadata, then the controls, then the title. From the
-// docs-search breakpoint up, the controls move to the top right: they span both
-// rows so they sit level with the metadata without pushing the title down.
+// Narrow screens stack the title block, then the controls. From the docs-search
+// breakpoint up, the controls move to the top right, level with the eyebrow line
+// inside the title rather than pushing the title down.
 .pageTitleContainer {
     display: grid;
     width: 100%;
     grid-template-columns: 1fr;
     grid-template-areas:
-        'meta'
-        'actions'
-        'title';
+        'title'
+        'actions';
     row-gap: $spacing-size-3;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         grid-template-columns: 1fr auto;
-        grid-template-areas:
-            'meta actions'
-            'title actions';
+        grid-template-areas: 'title actions';
         column-gap: $spacing-size-4;
     }
 }
 
 // Eyebrow line above the page title, holding the framework name and grid version.
+// Inside the h1, so it carries its own spacing and opts out of heading line-height.
 .titleMeta {
-    grid-area: meta;
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: $spacing-size-3;
+    margin-bottom: $spacing-size-3;
+    line-height: var(--text-lh-base);
 }
 
 .headerFramework {
@@ -85,8 +84,11 @@
     }
 }
 
+// Spacing below the heading is the grid's row gap; the global heading margin
+// would stack on top of it.
 .pageTitle {
     grid-area: title;
+    margin-bottom: 0;
     color: var(--color-fg-primary);
 }
 

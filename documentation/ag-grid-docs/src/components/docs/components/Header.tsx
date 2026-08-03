@@ -37,14 +37,21 @@ export const Header: FunctionComponent<Props> = ({
         <header className={styles.docsPageHeader}>
             <div id="top" className={styles.docsPageTitle}>
                 <div className={styles.pageTitleContainer}>
-                    <div className={styles.titleMeta}>
-                        {!suppressFrameworkHeader && (
-                            <span className={styles.headerFramework}>
-                                {`${getFrameworkDisplayText(framework)} Data Grid`}
+                    {/* The framework name must stay inside the h1 to count towards it for SEO, and `title`
+                        must stay a direct text node — the Algolia indexer reads only the h1's text nodes. */}
+                    <h1 className={styles.pageTitle}>
+                        {(!suppressFrameworkHeader || version) && (
+                            <span className={styles.titleMeta}>
+                                {!suppressFrameworkHeader && (
+                                    <span className={styles.headerFramework}>
+                                        {`${getFrameworkDisplayText(framework)} Data Grid`}
+                                    </span>
+                                )}
+                                {version && <span className={styles.version}>{`Version ${version}`}</span>}
                             </span>
                         )}
-                        {version && <span className={styles.version}>{`Version ${version}`}</span>}
-                    </div>
+                        {title}
+                    </h1>
 
                     <div className={styles.headerActions}>
                         {markdownHref && <MarkdownActions markdownHref={markdownHref} />}
@@ -56,8 +63,6 @@ export const Header: FunctionComponent<Props> = ({
                             />
                         </div>
                     </div>
-
-                    <h1 className={styles.pageTitle}>{title}</h1>
                 </div>
 
                 {isEnterprise && (
