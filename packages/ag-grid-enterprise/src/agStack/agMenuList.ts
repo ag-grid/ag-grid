@@ -21,6 +21,8 @@ import { AgMenuItemComponent } from './agMenuItemComponent';
 
 type AgMenuListEvent = AgMenuItemComponentEvent;
 
+const NO_FOCUS_RING_CLASS = 'ag-menu-list-no-focus-ring';
+
 export class AgMenuList<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
@@ -94,7 +96,8 @@ export class AgMenuList<
             case KeyCode.DOWN:
             case KeyCode.LEFT:
                 e.preventDefault();
-                this.getGui().classList.remove('ag-menu-list-no-focus-ring');
+                // ancestors too: Left returns focus to the parent menu, which must show its ring again.
+                this.clearNoFocusRing();
                 this.handleNavKey(e.key);
                 break;
             case KeyCode.ESCAPE:
@@ -251,7 +254,7 @@ export class AgMenuList<
     public focusInto(): boolean {
         // Chrome reports a programmatic focus taken while the document has no focused element as
         // :focus-visible, which would draw a keyboard focus ring on a mouse-opened menu.
-        this.getGui().classList.toggle('ag-menu-list-no-focus-ring', _isNothingFocused(this.beans));
+        this.getGui().classList.toggle(NO_FOCUS_RING_CLASS, _isNothingFocused(this.beans));
         const focused = _focusInto(this.getGui());
         // Framework menu items render asynchronously and may be absent now; retry once they land,
         // unless focus has since moved to an item or away from the menu entirely.
@@ -309,6 +312,17 @@ export class AgMenuList<
             this.closeIfIsChild();
         } else {
             this.openChild();
+        }
+    }
+
+    private clearNoFocusRing(): void {
+        this.getGui().classList.remove(NO_FOCUS_RING_CLASS);
+        const parentItem = this.getParentComponent();
+        if (parentItem instanceof AgMenuItemComponent) {
+            const parentList = parentItem.getParentComponent();
+            if (parentList instanceof AgMenuList) {
+                parentList.clearNoFocusRing();
+            }
         }
     }
 
