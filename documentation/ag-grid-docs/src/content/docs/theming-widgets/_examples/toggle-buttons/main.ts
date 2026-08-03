@@ -21,14 +21,14 @@ const myTheme = themeQuartz.withParams({
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 170 },
     { field: 'age' },
-    { field: 'country' },
+    { field: 'country', rowGroup: true },
     { field: 'year' },
     { field: 'date' },
-    { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' },
+    { field: 'sport', pivot: true },
+    { field: 'gold', aggFunc: 'sum' },
+    { field: 'silver', aggFunc: 'sum' },
+    { field: 'bronze', aggFunc: 'sum' },
+    { field: 'total', aggFunc: 'sum' },
 ];
 
 let gridApi: GridApi<IOlympicData>;
