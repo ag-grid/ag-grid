@@ -27,6 +27,14 @@
         "hideBlogPostLink": false
     },
     {
+        "version": "36.0.2",
+        "date": "July 22nd, 2026"
+    },
+    {
+        "version": "36.0.1",
+        "date": "July 15th, 2026"
+    },
+    {
         "version": "36.0.0",
         "date": "June 24th 2026",
         "landingPageHighlight": "Calculated Columns, Show Values As, Automatic Column Generation, Accessibility Improvements, Theming Improvements",
@@ -52,6 +60,10 @@
         ],
         "notesPath": "./upgrading-to-ag-grid-36",
         "hideBlogPostLink": false
+    },
+    {
+        "version": "35.3.1",
+        "date": "June 2nd, 2026"
     },
     {
         "version": "35.3.0",
@@ -461,6 +473,16 @@
         ],
         "notesPath": "./upgrading-to-ag-grid-33",
         "hideBlogPostLink": false
+    },
+    {
+        "version": "32.3.9",
+        "date": "August 13th, 2025",
+        "noDocs": true
+    },
+    {
+        "version": "32.3.8",
+        "date": "June 10th, 2025",
+        "noDocs": true
     },
     {
         "version": "32.3.7",
@@ -1153,7 +1175,8 @@
     },
     {
         "version": "18.1.0",
-        "date": "4th July 2018"
+        "date": "4th July 2018",
+        "noDocs": true
     },
     {
         "version": "17.1.1",
