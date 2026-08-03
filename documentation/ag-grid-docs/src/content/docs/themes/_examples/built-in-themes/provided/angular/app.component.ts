@@ -4,8 +4,20 @@ import { FormsModule } from '@angular/forms';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef } from 'ag-grid-community';
-import { ModuleRegistry, themeAlpine, themeBalham, themeMaterial, themeQuartz } from 'ag-grid-community';
+import {
+    ModuleRegistry,
+    enableDevValidations,
+    themeAlpine,
+    themeBalham,
+    themeMaterial,
+    themeQuartz,
+} from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 

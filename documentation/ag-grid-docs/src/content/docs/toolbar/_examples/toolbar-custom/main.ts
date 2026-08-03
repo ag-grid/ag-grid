@@ -1,8 +1,13 @@
 import type { GridApi, GridOptions, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { ColumnsToolPanelModule, FiltersToolPanelModule, SideBarModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { ToolPanelRadio, WinnersToggle } from './customToolbarItem_typescript';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     AllCommunityModule,

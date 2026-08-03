@@ -19,13 +19,18 @@ import type {
     StatusPanelDef,
     ValueSetterParams,
 } from 'ag-grid-community';
-import { LocaleModule, ModuleRegistry } from 'ag-grid-community';
+import { LocaleModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { CountryCellRenderer } from './country-cell-renderer.component';
 import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule.with(AgChartsEnterpriseModule), LocaleModule]);
 

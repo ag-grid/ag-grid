@@ -1,9 +1,14 @@
 import { createApp, defineComponent } from 'vue';
 
 import type { ColDef } from 'ag-grid-community';
-import { ModuleRegistry, themeQuartz } from 'ag-grid-community';
+import { ModuleRegistry, enableDevValidations, themeQuartz } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 

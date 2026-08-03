@@ -1,9 +1,14 @@
 import type { GridApi } from 'ag-grid-community';
-import { ModuleRegistry, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { type ITransaction, generateTransactions } from './generateTransactions';
 import { gridOptions } from './gridOptions';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 

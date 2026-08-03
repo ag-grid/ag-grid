@@ -4,12 +4,17 @@ import { Component, OnDestroy, OnInit, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { ModuleRegistry } from 'ag-grid-community';
+import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { callChatGPT } from './chatgptApi';
 import { IOlympicData, gridOptions } from './gridOptions';
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 

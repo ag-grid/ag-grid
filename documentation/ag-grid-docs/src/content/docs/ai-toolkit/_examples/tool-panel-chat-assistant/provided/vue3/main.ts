@@ -1,12 +1,17 @@
 import { createApp, ref } from 'vue';
 
-import { ModuleRegistry } from 'ag-grid-community';
+import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import { ITransaction, generateTransactions } from './generateTransactions';
 import { gridOptions } from './gridOptions';
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 

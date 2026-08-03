@@ -1,6 +1,19 @@
 import type { ColDef, GridOptions, Theme } from 'ag-grid-community';
-import { ModuleRegistry, createGrid, themeAlpine, themeBalham, themeMaterial, themeQuartz } from 'ag-grid-community';
+import {
+    ModuleRegistry,
+    createGrid,
+    enableDevValidations,
+    themeAlpine,
+    themeBalham,
+    themeMaterial,
+    themeQuartz,
+} from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
