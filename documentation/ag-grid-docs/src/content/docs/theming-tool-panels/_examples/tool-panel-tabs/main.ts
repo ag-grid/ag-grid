@@ -18,16 +18,16 @@ const myTheme = themeQuartz.withParams({
 });
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', minWidth: 170, enableRowGroup: true, enablePivot: true },
-    { field: 'age', enableRowGroup: true, enablePivot: true },
-    { field: 'country', enableRowGroup: true, enablePivot: true },
-    { field: 'year', enableRowGroup: true, enablePivot: true },
+    { field: 'athlete', minWidth: 170 },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'year' },
     { field: 'date' },
-    { field: 'sport', enableRowGroup: true, enablePivot: true },
-    { field: 'gold', enableValue: true },
-    { field: 'silver', enableValue: true },
-    { field: 'bronze', enableValue: true },
-    { field: 'total', enableValue: true },
+    { field: 'sport' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' },
 ];
 
 let gridApi: GridApi<IOlympicData>;
@@ -38,6 +38,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         editable: true,
         filter: true,
+        enableRowGroup: true,
+        enablePivot: true,
+        enableValue: true,
     },
     sideBar: true,
 };

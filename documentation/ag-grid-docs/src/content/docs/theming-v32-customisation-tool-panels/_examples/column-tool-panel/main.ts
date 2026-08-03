@@ -44,27 +44,18 @@ const gridOptions: GridOptions<IOlympicData> = {
         {
             headerName: 'Athlete',
             children: [
-                { field: 'athlete', minWidth: 170, rowGroup: true, enableRowGroup: true, enablePivot: true },
-                { field: 'age', rowGroup: true, enableRowGroup: true, enablePivot: true },
-                { field: 'country', enableRowGroup: true, enablePivot: true },
+                { field: 'athlete', minWidth: 170, rowGroup: true },
+                { field: 'age', rowGroup: true },
+                { field: 'country' },
             ],
         },
         {
             headerName: 'Event',
-            children: [
-                { field: 'year', enableRowGroup: true, enablePivot: true },
-                { field: 'date' },
-                { field: 'sport', enableRowGroup: true, enablePivot: true },
-            ],
+            children: [{ field: 'year' }, { field: 'date' }, { field: 'sport' }],
         },
         {
             headerName: 'Medals',
-            children: [
-                { field: 'gold', enableValue: true },
-                { field: 'silver', enableValue: true },
-                { field: 'bronze', enableValue: true },
-                { field: 'total', enableValue: true },
-            ],
+            children: [{ field: 'gold' }, { field: 'silver' }, { field: 'bronze' }, { field: 'total' }],
         },
     ],
     defaultColDef: {
