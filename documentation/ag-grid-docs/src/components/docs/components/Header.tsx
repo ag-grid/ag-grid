@@ -37,21 +37,23 @@ export const Header: FunctionComponent<Props> = ({
         <header className={styles.docsPageHeader}>
             <div id="top" className={styles.docsPageTitle}>
                 <div className={styles.pageTitleContainer}>
-                    {/* The framework name must stay inside the h1 to count towards it for SEO, and `title`
-                        must stay a direct text node — the Algolia indexer reads only the h1's text nodes. */}
+                    {/* The framework name must stay inside the h1 to count towards it for SEO. The version
+                        must stay outside it, or it would read as part of the heading too — it only sits
+                        beside the framework name because the h1 is `display: contents`, which lets the two
+                        be laid out together from different parents. `data-page-title` is how the Algolia
+                        indexer finds the page title within the heading. */}
                     <h1 className={styles.pageTitle}>
-                        {(!suppressFrameworkHeader || version) && (
-                            <span className={styles.titleMeta}>
-                                {!suppressFrameworkHeader && (
-                                    <span className={styles.headerFramework}>
-                                        {`${getFrameworkDisplayText(framework)} Data Grid`}
-                                    </span>
-                                )}
-                                {version && <span className={styles.version}>{`Version ${version}`}</span>}
+                        {!suppressFrameworkHeader && (
+                            <span className={styles.headerFramework}>
+                                {`${getFrameworkDisplayText(framework)} Data Grid`}
                             </span>
                         )}
-                        {title}
+                        <span className={styles.titleText} data-page-title>
+                            {title}
+                        </span>
                     </h1>
+
+                    {version && <span className={styles.version}>{`Version ${version}`}</span>}
 
                     <div className={styles.headerActions}>
                         {markdownHref && <MarkdownActions markdownHref={markdownHref} />}

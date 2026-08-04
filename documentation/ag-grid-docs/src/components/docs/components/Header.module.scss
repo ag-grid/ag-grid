@@ -16,45 +16,49 @@
     }
 }
 
-// Narrow screens stack the title block, then the controls. From the docs-search
-// breakpoint up, the controls move to the top right, level with the eyebrow line
-// inside the title rather than pushing the title down.
+// The eyebrow line pairs the framework name, which has to sit inside the h1 for SEO,
+// with the version, which has to sit outside it so it does not read as part of the
+// heading. They can still share a line because the h1 is `display: contents` (see
+// .pageTitle), which makes its children items of this grid alongside the version and
+// the controls. Narrow screens stack eyebrow, controls, then title; from the
+// docs-search breakpoint up the controls move to the top right, level with the eyebrow.
 .pageTitleContainer {
     display: grid;
     width: 100%;
-    grid-template-columns: 1fr;
+    grid-template-columns: auto 1fr;
     grid-template-areas:
-        'title'
-        'actions';
+        'meta version'
+        'actions actions'
+        'title title';
     row-gap: $spacing-size-3;
+    column-gap: $spacing-size-3;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
-        grid-template-columns: 1fr auto;
-        grid-template-areas: 'title actions';
-        column-gap: $spacing-size-4;
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas:
+            'meta version actions'
+            'title title actions';
     }
 }
 
-// Eyebrow line above the page title, holding the framework name and grid version.
-// Inside the h1, so it carries its own spacing and opts out of heading line-height.
-.titleMeta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: $spacing-size-3;
-    margin-bottom: $spacing-size-3;
-    line-height: var(--text-lh-base);
-}
-
+// Framework name, inside the h1, so it opts back out of the heading type it inherits.
 .headerFramework {
+    grid-area: meta;
+    align-self: baseline;
     font-size: var(--text-fs-base);
     font-weight: var(--text-semibold);
+    line-height: var(--text-lh-base);
     color: var(--color-text-brand-primary);
 }
 
+// Sibling of the h1, deliberately — see Header.tsx.
 .version {
+    grid-area: version;
+    align-self: baseline;
+    justify-self: start;
     font-size: var(--text-fs-sm);
     font-weight: var(--text-regular);
+    line-height: var(--text-lh-base);
     color: var(--color-text-tertiary);
 }
 
@@ -84,12 +88,21 @@
     }
 }
 
-// Spacing below the heading is the grid's row gap; the global heading margin
-// would stack on top of it.
+// `display: contents` drops the h1's box so its children — the framework name and the
+// title — are placed in .pageTitleContainer's grid directly, which is what lets the
+// version sit on the eyebrow line without being inside the heading. Inherited styles
+// still reach the children; the box's own margin goes with it, so the grid's row gap
+// alone spaces the header.
 .pageTitle {
-    grid-area: title;
-    margin-bottom: 0;
+    display: contents;
     color: var(--color-fg-primary);
+}
+
+// Carries the heading type the h1's dropped box would have applied. A real element
+// rather than a bare text node so it can be placed in the grid — and so it can span
+// the full width instead of being trapped in the eyebrow's column.
+.titleText {
+    grid-area: title;
 }
 
 .enterpriseLabel {

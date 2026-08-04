@@ -12,8 +12,12 @@ const defaultProps: HeaderProps = {
     menuItems: [],
 };
 
+function renderHeader(props: Partial<HeaderProps> = {}) {
+    return renderToStaticMarkup(<Header {...defaultProps} {...props} />);
+}
+
 function getHeadingHtml(props: Partial<HeaderProps> = {}) {
-    const html = renderToStaticMarkup(<Header {...defaultProps} {...props} />);
+    const html = renderHeader(props);
     const heading = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/);
     if (!heading) {
         throw new Error(`No <h1> rendered in:\n${html}`);
@@ -26,10 +30,6 @@ describe('Header', () => {
         expect(getHeadingHtml()).toContain('React Data Grid');
     });
 
-    it('renders the version inside the h1 when one is given', () => {
-        expect(getHeadingHtml({ version: '36.1.0' })).toContain('Version 36.1.0');
-    });
-
     it('omits the framework name from the h1 when it is suppressed', () => {
         const headingHtml = getHeadingHtml({ suppressFrameworkHeader: true });
 
@@ -37,7 +37,14 @@ describe('Header', () => {
         expect(headingHtml).toContain('Getting Started');
     });
 
-    it('keeps the page title as a direct text node of the h1, as the Algolia indexer reads only those', () => {
-        expect(getHeadingHtml({ version: '36.1.0' })).toMatch(/<\/span>Getting Started$/);
+    it('renders the version outside the h1, so it does not read as part of the heading', () => {
+        const html = renderHeader({ version: '36.1.0' });
+
+        expect(html).toContain('Version 36.1.0');
+        expect(getHeadingHtml({ version: '36.1.0' })).not.toContain('Version 36.1.0');
+    });
+
+    it('marks the page title within the h1, as that is how the Algolia indexer finds it', () => {
+        expect(getHeadingHtml()).toMatch(/<span[^>]*data-page-title[^>]*>Getting Started<\/span>/);
     });
 });
