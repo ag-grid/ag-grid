@@ -125,6 +125,197 @@ describe('buildApiReferenceSection', () => {
         expect(bodyRows(output)[0][4]).toContain('[`RowSelectionModule`]');
     });
 
+    it('links the type to its reference page, as the page does', () => {
+        const output = buildApiReferenceSection(
+            {
+                config: {},
+                properties: {
+                    chartContainer: {
+                        definition: { description: 'Provide to display the chart outside the grid.' },
+                        propertyType: 'HTMLElement',
+                        gridOpProp: { type: { returnType: 'HTMLElement' } },
+                    },
+                    chartThemeOverrides: {
+                        definition: { description: 'Allows chart options to be overridden.' },
+                        propertyType: 'AgChartThemeOverrides',
+                        gridOpProp: { type: { returnType: 'AgChartThemeOverrides' } },
+                    },
+                    columnDefs: {
+                        definition: { type: 'ColDef', description: 'Column definitions.' },
+                        propertyType: 'ColDef',
+                    },
+                    chartType: {
+                        definition: { description: 'The type of chart to create.' },
+                        propertyType: 'ChartType',
+                        gridOpProp: { type: { returnType: 'ChartType' } },
+                    },
+                },
+            },
+            links
+        );
+
+        const [chartContainer, chartThemeOverrides, columnDefs, chartType] = bodyRows(output);
+        // An external type link is left as-is rather than prefixed with the site root.
+        expect(chartContainer[1]).toBe('[`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)');
+        expect(chartThemeOverrides[1]).toBe(
+            '[`AgChartThemeOverrides`](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides)'
+        );
+        expect(columnDefs[1]).toBe('[`ColDef`](https://www.ag-grid.com/javascript-data-grid/column-properties/)');
+        // ChartType has no entry in the type link map, so the page does not link it either.
+        expect(chartType[1]).toBe('`ChartType`');
+    });
+
+    it('escapes the pipe inside a linked union type', () => {
+        const output = buildApiReferenceSection(
+            {
+                config: {},
+                properties: {
+                    aggFunc: {
+                        definition: { description: 'The aggregation function to apply.' },
+                        propertyType: 'string | IAggFunc',
+                        gridOpProp: { type: { returnType: 'string | IAggFunc' } },
+                    },
+                },
+            },
+            links
+        );
+
+        expect(output).toContain(
+            '[`string \\| IAggFunc`](https://www.ag-grid.com/javascript-data-grid/aggregation-custom-functions/)'
+        );
+    });
+
+    it('leaves the type unlinked where the page has no link to give it', () => {
+        const output = buildApiReferenceSection(
+            {
+                config: {},
+                properties: {
+                    createRangeChart: {
+                        definition: {},
+                        propertyType: 'Function',
+                        gridOpProp: { type: { arguments: {}, returnType: 'void' }, meta: { comment: 'Create it.' } },
+                    },
+                    defaultColDef: {
+                        // No description of its own, so this is a parent object — the page
+                        // links its type to an in-page anchor the markdown does not have.
+                        definition: { type: 'ColDef', meta: { description: 'Default column definition.' } },
+                        propertyType: 'ColDef',
+                    },
+                    columnDefs: {
+                        // A union where more than one member is linkable is ambiguous, so
+                        // the page links neither.
+                        definition: { type: 'ColDef | ColGroupDef', description: 'Column definitions.' },
+                        propertyType: 'ColDef | ColGroupDef',
+                    },
+                },
+            },
+            links
+        );
+
+        const [createRangeChart, defaultColDef] = bodyRows(output);
+        expect(createRangeChart[1]).toBe('`Function`');
+        expect(defaultColDef[1]).toBe('`ColDef`');
+        expect(output).not.toContain('#reference-');
+        // bodyRows splits on the pipe, so assert the union against the whole output.
+        expect(output).toContain('| `columnDefs` | `ColDef \\| ColGroupDef` |');
+    });
+
+    it("keeps the property's see-also link, its options and its initial badge", () => {
+        const output = buildApiReferenceSection(
+            {
+                config: {},
+                properties: {
+                    unlinkChart: {
+                        definition: {
+                            default: false,
+                            description: 'When enabled the chart will be unlinked from the grid after creation.',
+                            more: {
+                                name: 'Unlinking Charts',
+                                url: './integrated-charts-menu/#default-chart-menu-items',
+                            },
+                        },
+                        propertyType: 'boolean',
+                        gridOpProp: {
+                            meta: {
+                                tags: [
+                                    { name: 'initial' },
+                                    {
+                                        name: 'agModule',
+                                        comment: '`IntegratedChartsModule`',
+                                        modules: [{ name: 'IntegratedChartsModule', isEnterprise: true }],
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                    chartThemeName: {
+                        definition: {
+                            description: 'The default theme to use for the created chart.',
+                            options: ['ag-default', 'ag-vivid'],
+                        },
+                        propertyType: 'string',
+                    },
+                },
+            },
+            links
+        );
+
+        const [unlinkChart, chartThemeName] = bodyRows(output);
+        // Asserted whole, as the order the page shows these in is part of the behaviour.
+        expect(unlinkChart[4]).toBe(
+            'When enabled the chart will be unlinked from the grid after creation. ' +
+                'See [Unlinking Charts](https://www.ag-grid.com/javascript-data-grid/integrated-charts-menu/#default-chart-menu-items) for more information. ' +
+                'Module: [`IntegratedChartsModule`](https://www.ag-grid.com/javascript-data-grid/modules/). ' +
+                '[Initial](https://www.ag-grid.com/javascript-data-grid/grid-interface/#initial-grid-options).'
+        );
+        expect(chartThemeName[4]).toBe(
+            "The default theme to use for the created chart. Options: `'ag-default'`, `'ag-vivid'`."
+        );
+    });
+
+    it('takes the initial link from the config when the tag overrides it', () => {
+        const output = buildApiReferenceSection(
+            {
+                config: { initialLink: './column-interface/#initial-column-options' },
+                properties: {
+                    sortable: {
+                        definition: { description: 'Set to true to allow sorting.' },
+                        propertyType: 'boolean',
+                        gridOpProp: { meta: { tags: [{ name: 'initial' }] } },
+                    },
+                },
+            },
+            links
+        );
+
+        expect(bodyRows(output)[0][4]).toContain(
+            '[Initial](https://www.ag-grid.com/javascript-data-grid/column-interface/#initial-column-options).'
+        );
+    });
+
+    it('omits the see-also link when the page hides it or it has no target', () => {
+        const properties = {
+            unlinkChart: {
+                definition: {
+                    description: 'Unlink the chart.',
+                    more: { name: 'Unlinking Charts', url: './integrated-charts-menu/' },
+                },
+                propertyType: 'boolean',
+            },
+            chartThemeOverrides: {
+                definition: { description: 'Override the theme.', more: { name: 'Overriding Existing Themes' } },
+                propertyType: 'string',
+            },
+        };
+
+        const hidden = buildApiReferenceSection({ config: { hideMore: true }, properties }, links);
+        expect(hidden).not.toContain('Unlinking Charts');
+
+        const shown = buildApiReferenceSection({ config: {}, properties }, links);
+        expect(shown).toContain('See [Unlinking Charts]');
+        expect(shown).not.toContain('Overriding Existing Themes');
+    });
+
     it('leads with the section copy the page shows, not a fabricated heading', () => {
         const output = buildApiReferenceSection(
             {
