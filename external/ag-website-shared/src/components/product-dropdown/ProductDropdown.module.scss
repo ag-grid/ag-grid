@@ -5,6 +5,9 @@
 // SiteHeader.astro), so it queries the same "site-header" container as the rest of the
 // header rather than the viewport — see ../site-header/_breakpoints.scss for what
 // $switcher-show and $switcher-popup-at control and why.
+//
+// It must also stay out of the containing-block chain — no `position`, no `transform` —
+// so .customContent anchors to .headerInner and can right-align to the content column.
 .customMenu {
     display: none;
     // While the header is a wrapping flex row (below $docs-search-inline) this auto
@@ -13,7 +16,6 @@
     // stranded mid-row or on a line of its own. Inert once the header becomes a grid
     // (the switcher's track is content-sized), where grid-area handles placement.
     margin-left: auto;
-    transform: translateY(1px);
     user-select: none;
     // Direct .headerInner grid child once the header goes fully inline — see
     // SiteHeader.module.scss's .headerInner grid-template-areas.
@@ -21,10 +23,6 @@
 
     @container site-header (min-width: #{$switcher-show}) {
         display: block;
-    }
-
-    @container site-header (min-width: #{$switcher-popup-at}) {
-        position: relative;
     }
 
     @container site-header (min-width: #{$docs-search-inline}) {
@@ -36,6 +34,8 @@
     padding: 12px;
     padding-top: $spacing-size-1;
     padding-bottom: $spacing-size-1;
+    // Optical alignment with the nav links; must stay off .customMenu (see its note).
+    transform: translateY(1px);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -126,11 +126,17 @@
     }
 
     @container site-header (min-width: #{$switcher-popup-at}) {
-        top: 100%;
-        left: 0;
+        // .headerInner is several rows tall in the wrapped states below
+        // $docs-search-inline, so clear one row — the token .headerLogo sizes it by.
+        top: var(--layout-site-header-height);
+        // Right-aligned to the content column, $spacing-size-2 mirroring .mainNav's
+        // trailing margin: the trigger sits too far right for a popup this wide.
+        left: auto;
+        right: $spacing-size-2;
         // Fixed width gives each product row enough room for its title and
         // description without truncation.
         width: 800px;
+        max-width: calc(100% - #{$spacing-size-2} * 2);
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
