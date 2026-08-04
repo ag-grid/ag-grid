@@ -18,6 +18,9 @@ env:
   CTRF_FILE: ./ctrf-report.json
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
+  # Inherited by every job and by the composite action running ./docs-e2e.sh, so Playwright can
+  # send the WAF bypass header without a per-action input.
+  AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
 on:
   schedule:
       - cron: '30 2 * * *' # Run daily at 2:30am UTC. Temporarily enabled until full build is tested
