@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 const isCspIssue = (msg: string) => /Content-Security-Policy|Refused to (load|execute|connect)/i.test(msg);
 // An actual enforced block, as opposed to a report-only policy that's merely being
@@ -215,6 +215,58 @@ test.describe('Page Verification', () => {
             await expect(docsButton, `docs button at ${width}px`).toBeVisible({ visible: expectButton });
             await expect(docsNav, `docs nav at ${width}px`).toBeVisible({ visible: !expectButton });
         }
+
+        expect(cspViolations, 'CSP violations').toEqual([]);
+    });
+
+    // A sticky header that is still showing the hamburger is a trap: the open menu is roughly as
+    // tall as the page, so it could never scroll out of view. 1110px is below $nav-collapse, so
+    // the hamburger is shown; 1250px is above it, where the nav is inline and must still stick.
+    test('header only sticks once the nav is inline, not while the hamburger is shown', async ({ page }) => {
+        const cspViolations = await setupPage(page);
+
+        const header = page.locator('.site-header');
+        const menuButton = page.getByRole('button', { name: 'Toggle navigation' });
+        const boxOf = async (locator: Locator) => {
+            const box = await locator.boundingBox();
+            if (!box) {
+                throw new Error(`no layout box for ${locator}`);
+            }
+            return box;
+        };
+
+        await page.setViewportSize({ width: 1110, height: 900 });
+        await page.goto('/react-data-grid/getting-started/');
+        await expect(menuButton).toBeVisible();
+
+        await page.evaluate(() => window.scrollTo(0, 1200));
+        const closed = await boxOf(header);
+        expect(closed.y + closed.height, 'collapsed header scrolls away with the page').toBeLessThanOrEqual(0);
+        // Nothing is pinned above the left docs nav, so it has nothing to offset itself for.
+        const docsNav = await boxOf(page.locator('#docs-nav-scroll'));
+        expect(docsNav.y, 'left docs nav pinned to the top of the viewport').toBe(0);
+
+        // The header nav is a hydrated island, so a click can land before it is interactive.
+        // Retry, clicking only while the button reports closed so a late click can't undo it.
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await expect(async () => {
+            if ((await menuButton.getAttribute('aria-expanded')) !== 'true') {
+                await menuButton.click();
+            }
+            await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+        }).toPass();
+        await expect(page.locator('#mobile-docs-nav')).toBeVisible();
+
+        await page.evaluate(() => window.scrollTo(0, 1200));
+        const open = await boxOf(header);
+        expect(open.y + open.height, 'open nav scrolls away with the page').toBeLessThanOrEqual(0);
+
+        // Reload rather than just resize: the open nav leaves inline heights on the collapsible.
+        await page.setViewportSize({ width: 1250, height: 900 });
+        await page.goto('/react-data-grid/getting-started/');
+        await expect(menuButton).toBeHidden();
+        await page.evaluate(() => window.scrollTo(0, 1200));
+        expect((await boxOf(header)).y, 'inline header stays pinned to the top').toBe(0);
 
         expect(cspViolations, 'CSP violations').toEqual([]);
     });

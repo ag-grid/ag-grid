@@ -6,7 +6,8 @@
 // controls and why.
 //
 // Exceptions, both @media: .header's own sticky behaviour (a container cannot query its
-// own size) and .mobileNavButton's hide threshold (must match DocsNav's @media query).
+// own size, so $sticky-at can only approximate $nav-collapse) and .mobileNavButton's hide
+// threshold (must match DocsNav's @media query).
 .header {
     display: flex;
     align-items: center;
@@ -21,6 +22,13 @@
         top: 0;
         width: 100%;
         z-index: 10002; // needed in order to prevent grid z-indexes overlapping on small height
+
+        // In the scrollbar-width sliver where $sticky-at has landed but the hamburger is still
+        // shown, a sticky open menu — roughly as tall as the page — could never scroll out of
+        // view. `relative`, not `static`: .mobileMenuButton anchors to this box.
+        &:has(.mobileMenuButton[aria-expanded='true']) {
+            position: relative;
+        }
     }
 
     #{$selector-darkmode}:has([data-is-homepage='false']) &,
