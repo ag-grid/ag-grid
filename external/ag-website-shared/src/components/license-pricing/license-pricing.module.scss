@@ -38,8 +38,8 @@
 
     // Those steps are near-white; the util aliases are the same ramp inverted for a dark page.
     #{$selector-darkmode} & {
-        --pricing-tint-enterprise: var(--color-util-brand-50);
-        --pricing-tint-bundle: var(--color-util-brand-100);
+        --pricing-tint-enterprise: color-mix(in oklch, var(--color-bg-primary), var(--color-gray-700) 10%);
+        --pricing-tint-bundle: color-mix(in oklch, var(--color-bg-primary), var(--color-gray-700) 20%);
     }
 
     width: 100%;
@@ -119,7 +119,7 @@
 .licensesOuter {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    padding-top: $spacing-size-5;
+    margin-top: $spacing-size-5;
 }
 
 // Cards and feature table are separate blocks spanning the same four columns, so one shared gradient

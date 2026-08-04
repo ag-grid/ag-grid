@@ -23,7 +23,7 @@
         align-items: center;
         text-align: center;
         height: 100%;
-        padding: $spacing-size-4;
+        padding: $spacing-size-5 $spacing-size-4 $spacing-size-4;
 
         @media screen and (min-width: $breakpoint-pricing-medium) {
             align-items: flex-start;
