@@ -5,8 +5,8 @@
 // See ./_breakpoints.scss for the single source of truth on what each named threshold
 // controls and why.
 //
-// Exception: .header's own sticky behaviour stays @media — a container cannot query
-// its own size.
+// Exceptions, both @media: .header's own sticky behaviour (a container cannot query its
+// own size) and .mobileNavButton's hide threshold (must match DocsNav's @media query).
 .header {
     display: flex;
     align-items: center;
@@ -149,7 +149,9 @@ button.mobileNavButton {
         max-width: 120px;
     }
 
-    @container site-header (min-width: #{$docs-search-inline}) {
+    // @media, not @container: this must agree to the pixel with DocsNav's own @media
+    // query, and a container query here would measure the viewport minus the scrollbar.
+    @media screen and (min-width: $docs-button-hide-at) {
         display: none;
     }
 

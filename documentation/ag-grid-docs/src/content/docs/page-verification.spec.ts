@@ -196,6 +196,29 @@ test.describe('Page Verification', () => {
         expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
+    // The header's Docs button only toggles the left docs nav, so it must be gone at every
+    // width where DocsNav pins that nav permanently open — from $breakpoint-docs-nav-medium
+    // (1100px). Widths straddle that threshold, plus one well above it.
+    test('docs button and left docs nav are never both visible', async ({ page }) => {
+        const cspViolations = await setupPage(page);
+
+        const docsButton = page.locator('#top-bar-docs-button');
+        const docsNav = page.locator('#docs-mobile-nav-collapser');
+
+        for (const { width, expectButton } of [
+            { width: 1099, expectButton: true },
+            { width: 1100, expectButton: false },
+            { width: 1250, expectButton: false },
+        ]) {
+            await page.setViewportSize({ width, height: 900 });
+            await page.goto('/react-data-grid/getting-started/');
+            await expect(docsButton, `docs button at ${width}px`).toBeVisible({ visible: expectButton });
+            await expect(docsNav, `docs nav at ${width}px`).toBeVisible({ visible: !expectButton });
+        }
+
+        expect(cspViolations, 'CSP violations').toEqual([]);
+    });
+
     // Sense-check the standalone example runner across frameworks by loading a couple of
     // examples directly at their framework-specific URLs and asserting the grid renders. This
     // exercises each framework's example compiler head-on — in particular the vanilla

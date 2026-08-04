@@ -13,4 +13,5 @@
 
 $docs-search-stack: $breakpoint-site-header-extra-small; // docs button + search wrap
 $sticky-at: $breakpoint-docs-nav-medium; // @media, not @container — can't query own size
+$docs-button-hide-at: $breakpoint-docs-nav-medium; // @media — DocsNav pins the nav open here
 $switcher-show: $nav-collapse; // switcher needs room exactly when the nav does
