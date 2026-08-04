@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForChartModels, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // This example customises the chart via `chartThemeOverrides.common` (title, subtitle,
@@ -17,10 +17,9 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-cell', { hasText: 'Ireland' }).first()).toBeVisible();
 
         // A grouped-column range chart is auto-created over the category + three series columns.
-        const models = await remoteGrid(page).getChartModels();
-        expect(models).toHaveLength(1);
-        expect(models![0].chartType).toBe('groupedColumn');
-        expect(models![0].cellRange.columns).toEqual(['country', 'gold', 'silver', 'bronze']);
+        const models = await waitForChartModels(remoteGrid(page));
+        expect(models[0].chartType).toBe('groupedColumn');
+        expect(models[0].cellRange.columns).toEqual(['country', 'gold', 'silver', 'bronze']);
 
         // The chart canvas is rendered (theme overrides themselves are canvas-only).
         await expect(page.locator('.ag-chart-canvas-wrapper canvas').first()).toBeVisible();

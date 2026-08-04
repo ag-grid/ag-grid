@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForChartModels, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // The example demonstrates configuring numeric timestamps to use a time axis by setting
@@ -15,9 +15,8 @@ test.agExample(import.meta, () => {
 
         // An area chart is created over the timestamp + cpuUsage range (the timestamp column is
         // configured with chartDataType: 'time' so the horizontal axis is a time axis).
-        const models = await gridApi.getChartModels();
-        expect(models).toHaveLength(1);
-        expect(models![0].chartType).toBe('area');
+        const models = await waitForChartModels(gridApi);
+        expect(models[0].chartType).toBe('area');
 
         // The chart canvas renders inside the example's #myChart container.
         await expect(page.locator('#myChart canvas').first()).toBeVisible();
