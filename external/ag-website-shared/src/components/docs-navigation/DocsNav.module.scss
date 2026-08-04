@@ -1,4 +1,6 @@
 @use 'design-system' as *;
+// $sticky-at: where the site header pins itself, and so where this nav must leave room for it.
+@use '../site-header/breakpoints' as site-header;
 
 @media screen and (min-width: $breakpoint-docs-nav-medium) {
     :global(#docs-mobile-nav-collapser) {
@@ -38,12 +40,21 @@
 
     position: sticky;
     width: 100%;
-    top: var(--layout-site-header-height);
+    // Below $sticky-at the header scrolls away with the page, leaving nothing to offset for.
+    top: 0;
     overflow-x: hidden;
     overflow-y: auto;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        height: calc(100vh - var(--layout-site-header-height));
+        height: 100vh;
+
+        @media screen and (min-width: site-header.$sticky-at) {
+            height: calc(100vh - var(--layout-site-header-height));
+        }
+    }
+
+    @media screen and (min-width: site-header.$sticky-at) {
+        top: var(--layout-site-header-height);
     }
 
     #{$selector-darkmode} & {
