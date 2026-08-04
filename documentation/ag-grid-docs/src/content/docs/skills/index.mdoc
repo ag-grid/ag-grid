@@ -3,7 +3,7 @@ title: 'AG Grid AI Skills'
 description: 'Install and use the AG Grid AI skills to build and maintain grid applications with coding agents such as Claude and Codex.'
 ---
 
-Our [AI skills](https://github.com/ag-grid/skills) give coding agents such as Claude and Codex the expertise to build and maintain your AG Grid and AG Charts applications from our official guidance.
+Our [AI skills](https://github.com/ag-grid/skills) give coding agents such as Claude and Codex the expertise to build and maintain your AG Grid, AG Charts and AG Studio applications from our official guidance.
 
 {% note %}
 We are actively developing and releasing new versions of our skills. Feedback is welcome — [open an issue](https://github.com/ag-grid/skills/issues) on GitHub.
@@ -31,20 +31,19 @@ npx skills update ag-grid/skills
 
 ## Skills
 
-We currently provide two skills. If there's something else you'd like to see, [open an issue](https://github.com/ag-grid/skills/issues) to suggest a skill.
+We currently provide two skills, `ag-dev` and `ag-update`. If there's something else you'd like to see, [open an issue](https://github.com/ag-grid/skills/issues) to suggest a skill.
 
 ### ag-dev
 
 `ag-dev` is a general development assistant that helps agents write correct code on the first attempt.
 
-Coding harnesses like Claude Code and Codex will often automatically use it when planning or writing code that interacts with our libraries - simply installing the skill will improve the results you get during development. However, because automatic triggering is best-effort, for the most consistent results we recommend explicitly telling your agent to use the ag-dev skill, especially when working on complicated tasks:
+The `ag-dev` skill includes a list of rules for the agent to follow to avoid common LLM pitfalls, debugging guidance, and instructions for accessing version-matched documentation to ensure that your agent uses the APIs for the installed version of the library.
+
+Once the `ag-dev` skill is installed, coding harnesses like Claude Code and Codex will often automatically use it when planning or writing code that interacts with our libraries. Simply installing the skill will improve the results you get during development. However, because automatic triggering is best-effort, for the most consistent results we recommend explicitly telling your agent to use the `ag-dev` skill, especially when working on complicated tasks:
 
 ```bash
-Add a custom context-menu item that copies the names of selected data
-columns (use the ag-dev skill)
+Add a custom context menu item that copies the names of selected data columns (use the ag-dev skill)
 ```
-
-It includes a list of rules for the agent to follow to avoid common LLM pitfalls, debugging guidance, and instructions for accessing version-matched documentation to ensure that your agent uses the APIs for the installed version of the library.
 
 ### ag-update
 
