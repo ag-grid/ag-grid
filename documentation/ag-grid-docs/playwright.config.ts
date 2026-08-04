@@ -84,6 +84,8 @@ export default defineConfig({
         baseURL,
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+        // Keep this off for CI runs that upload reports: a trace records request headers, so it would
+        // capture the WAF bypass credential in an artefact that GitHub's log masking does not cover.
         trace: 'off', // process.env.CI ? 'off' : 'retain-on-first-failure',
     },
 

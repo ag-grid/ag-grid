@@ -18,9 +18,6 @@ env:
   CTRF_FILE: ./ctrf-report.json
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
-  # Inherited by every job and by the composite action running ./docs-e2e.sh, so Playwright can
-  # send the WAF bypass header without a per-action input.
-  AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
 on:
   schedule:
       - cron: '30 2 * * *' # Run daily at 2:30am UTC. Temporarily enabled until full build is tested
@@ -132,6 +129,10 @@ jobs:
     if: ${{ github.event.inputs.skip_vanilla != 'true' }}
     name: Test vanilla Examples
     runs-on: ubuntu-latest
+    # Scoped to the jobs that request the deployed site. At workflow scope the bypass credential would
+    # also be readable by publish-reports and the third-party actions it runs, which have no need for it.
+    env:
+      AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
     strategy:
       fail-fast: false
       matrix:
@@ -151,6 +152,8 @@ jobs:
     if: ${{ github.event.inputs.skip_typescript != 'true' }}
     name: Test typescript Examples
     runs-on: ubuntu-latest
+    env:
+      AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
     strategy:
       fail-fast: false
       matrix:
@@ -170,6 +173,8 @@ jobs:
     if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
     name: Test reactFunctionalTs Examples
     runs-on: ubuntu-latest
+    env:
+      AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
     strategy:
       fail-fast: false
       matrix:
@@ -189,6 +194,8 @@ jobs:
     if: ${{ github.event.inputs.skip_vue3 != 'true' }}
     name: Test vue3 Examples
     runs-on: ubuntu-latest
+    env:
+      AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
     strategy:
       fail-fast: false
       matrix:
@@ -208,6 +215,8 @@ jobs:
     if: ${{ github.event.inputs.skip_angular != 'true' }}
     name: Test angular Examples
     runs-on: ubuntu-latest
+    env:
+      AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
     strategy:
       fail-fast: false
       matrix:
