@@ -1,7 +1,8 @@
 import type { Framework } from '@ag-grid-types';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { AG_MODULE_TAG_NAME } from '@components/reference-documentation/constants';
-import { getInterfaceName } from '@components/reference-documentation/utils/interface-helpers';
+import { getTypeUrl } from '@components/reference-documentation/utils/documentation-helpers';
+import { formatJson, getInterfaceName } from '@components/reference-documentation/utils/interface-helpers';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 /** One section of a reference model — the same shape the site's `Section` component renders. */
@@ -21,6 +22,7 @@ export interface LinkContext {
 interface PropertyRow {
     name: string;
     type: string;
+    typeUrl?: string;
     isRequired: boolean;
     defaultValue: string;
     description: string;
@@ -28,6 +30,9 @@ interface PropertyRow {
 
 /** Docs page listing every module — where the on-page `@agModule` badges link to. */
 const MODULES_URL = './modules';
+
+/** Where the on-page `Initial` badge links to, unless the tag overrides it. */
+const INITIAL_URL = './grid-interface/#initial-grid-options';
 
 /**
  * Render one reference section as the section copy the page leads with followed by a
@@ -39,7 +44,7 @@ export function buildApiReferenceSection(
     { title, meta, config, properties }: ApiReferenceSection,
     links: LinkContext
 ): string {
-    const rows = buildRows(properties, links);
+    const rows = buildRows(properties, config, links);
     if (rows.length === 0) {
         return '';
     }
@@ -70,7 +75,7 @@ function buildSectionHeader({ title, meta, config }: Omit<ApiReferenceSection, '
     return parts.join('\n\n');
 }
 
-function buildRows(properties: Record<string, any>, links: LinkContext): PropertyRow[] {
+function buildRows(properties: Record<string, any>, config: Record<string, any>, links: LinkContext): PropertyRow[] {
     const rows: PropertyRow[] = [];
     const names = Object.keys(properties ?? {});
     for (let i = 0, len = names.length; i < len; ++i) {
@@ -80,24 +85,69 @@ function buildRows(properties: Record<string, any>, links: LinkContext): Propert
             continue;
         }
         const definition = prop.definition ?? {};
+        const { gridOpProp, propertyType } = prop;
+        const comment = gridOpProp?.meta?.comment;
         const definitionType = typeof definition.type === 'string' ? definition.type : undefined;
-        const type = prop.propertyType || definitionType || getInterfaceName(name);
+        const type = propertyType || definitionType || getInterfaceName(name);
         // Mirror the site's getDescription fallback: explicit description, then the
         // resolved code comment, then the parent object's meta description.
-        const rawDescription = definition.description || prop.gridOpProp?.meta?.comment || definition.meta?.description;
-        const tags = prop.gridOpProp?.meta?.tags ?? definition.tags ?? [];
-        // The property's modules are badges in the page's description column, so keep
-        // them with the description rather than giving them a column of their own.
-        const modules = buildModuleLinks(tags, links);
+        const rawDescription = definition.description || comment || definition.meta?.description;
+        // Also getDescription's isObject: a property with no prose of its own is the
+        // parent of a child object, whose type the page links to an in-page anchor the
+        // markdown has no equivalent for — so leave those types unlinked.
+        const isObject = !definition.description && !comment;
+        const tags = gridOpProp?.meta?.tags ?? definition.tags ?? [];
         rows.push({
             name,
             type: String(type ?? ''),
+            typeUrl: isObject ? undefined : buildTypeUrl(definition, gridOpProp, propertyType, links),
             isRequired: Boolean(definition.isRequired),
             defaultValue: buildDefaultValue(definition, tags),
-            description: [toCellText(rawDescription, links), modules].filter(Boolean).join(' '),
+            // The page shows the options, "see also" link, module badges and `Initial`
+            // badge alongside the description, so keep them in that column in that order
+            // rather than giving each one a column of its own.
+            description: [
+                toCellText(rawDescription, links),
+                buildOptions(definition),
+                buildMoreLink(definition, config, links),
+                buildModuleLinks(tags, links),
+                buildInitialLink(tags, config, links),
+            ]
+                .filter(Boolean)
+                .join(' '),
         });
     }
     return rows;
+}
+
+/**
+ * The type badge's link, mirroring Property's getDefinitionTypeUrl: the docs config type
+ * wins over the type resolved from source, and `Function` types are never linked.
+ * getTypeUrl already framework-prefixes the URL, so only the absolute step is left. An
+ * inferred type (the page's last resort) is always a primitive, so there is nothing to
+ * gain from falling back to it here.
+ */
+function buildTypeUrl(
+    definition: Record<string, any>,
+    gridOpProp: Record<string, any> | undefined,
+    propertyType: string | undefined,
+    { framework, siteRoot }: LinkContext
+): string | undefined {
+    if (propertyType === 'Function') {
+        return undefined;
+    }
+    const type = definition.type ?? gridOpProp?.type;
+    if (!type) {
+        return undefined;
+    }
+    try {
+        const typeUrl = getTypeUrl(type, framework);
+        return typeUrl ? toAbsoluteUrl(typeUrl, siteRoot) : undefined;
+    } catch {
+        // Not a doc-relative type link — leave the type unlinked rather than emit a URL
+        // the reader cannot follow.
+        return undefined;
+    }
 }
 
 /** Mirrors Property's getTagsData: an explicit default wins over the `@default` JSDoc tag. */
@@ -111,6 +161,40 @@ function buildDefaultValue(definition: Record<string, any>, tags: { name: string
         ? `[${defaultValue.map((value) => `"${value}"`).join(', ')}]`
         : String(defaultValue);
     return `\`${escapeCell(formatted)}\``;
+}
+
+/** The values the page lists under the description when a property is a fixed set. */
+function buildOptions(definition: Record<string, any>): string {
+    const options = definition.options;
+    if (!Array.isArray(options) || options.length === 0) {
+        return '';
+    }
+    const formatted = options.map((option) => `\`${escapeCell(formatJson(option))}\``).join(', ');
+    return `Options: ${formatted}.`;
+}
+
+/**
+ * The property's "see also" doc link, which the page renders under the description.
+ * `hideMore` mirrors the page suppressing it when a tag picks properties by name, as
+ * those pages are usually the link target themselves.
+ */
+function buildMoreLink(definition: Record<string, any>, config: Record<string, any>, links: LinkContext): string {
+    const more = definition.more;
+    if (!more?.url || !more.name || config.hideMore) {
+        return '';
+    }
+    return `See [${escapeCell(String(more.name))}](${resolveDocUrl(more.url, links)}) for more information.`;
+}
+
+/**
+ * The `@initial` badge as a link to the page explaining initial-only options, matching
+ * the badge the page shows next to the type.
+ */
+function buildInitialLink(tags: Record<string, any>[], config: Record<string, any>, links: LinkContext): string {
+    if (!tags.some((tag) => tag.name === 'initial')) {
+        return '';
+    }
+    return `[Initial](${resolveDocUrl(config.initialLink ?? INITIAL_URL, links)}).`;
 }
 
 /**
@@ -140,10 +224,12 @@ function buildModuleLinks(tags: Record<string, any>[], links: LinkContext): stri
 function buildTable(rows: PropertyRow[]): string {
     const lines = ['| Property | Type | Required | Default | Description |', '| --- | --- | --- | --- | --- |'];
     for (let i = 0, len = rows.length; i < len; ++i) {
-        const { name, type, isRequired, defaultValue, description } = rows[i];
-        lines.push(
-            `| \`${name}\` | \`${escapeCell(type)}\` | ${isRequired ? 'Yes' : ''} | ${defaultValue} | ${description} |`
-        );
+        const { name, type, typeUrl, isRequired, defaultValue, description } = rows[i];
+        // The page makes the type badge itself the link, so keep the code span inside
+        // the label rather than trailing the cell with a separate link.
+        const typeText = `\`${escapeCell(type)}\``;
+        const typeCell = typeUrl ? `[${typeText}](${typeUrl})` : typeText;
+        lines.push(`| \`${name}\` | ${typeCell} | ${isRequired ? 'Yes' : ''} | ${defaultValue} | ${description} |`);
     }
     return lines.join('\n');
 }
