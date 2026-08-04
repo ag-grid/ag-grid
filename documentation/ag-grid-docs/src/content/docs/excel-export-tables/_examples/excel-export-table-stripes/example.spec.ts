@@ -1,4 +1,12 @@
-import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
+import {
+    clickHeaderToSort,
+    ensureGridReady,
+    expect,
+    expectRowIdAtIndex,
+    test,
+    waitForGridContent,
+    waitForRowAnimations,
+} from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Flat columns and data render', async ({ agIdFor, page }) => {
@@ -17,15 +25,16 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         // Dara Torres holds the unique maximum age (33) at data index 7.
-        const daraRow = agIdFor.rowNode('7').first();
-        await expect(daraRow).not.toHaveAttribute('row-index', '0');
+        await expectRowIdAtIndex(page, 0, '7', { not: true });
 
-        await agIdFor.headerCell('age').click();
+        // Ascending by age sorts Dara last, so her row virtualises out of the viewport — assert
+        // on the always-rendered first row rather than on her row's own element.
+        await clickHeaderToSort(agIdFor.headerCell('age'));
         await waitForRowAnimations(page);
-        await expect(daraRow).not.toHaveAttribute('row-index', '0');
+        await expectRowIdAtIndex(page, 0, '7', { not: true });
 
-        await agIdFor.headerCell('age').click();
+        await clickHeaderToSort(agIdFor.headerCell('age'));
         await waitForRowAnimations(page);
-        await expect(daraRow).toHaveAttribute('row-index', '0');
+        await expectRowIdAtIndex(page, 0, '7');
     });
 });

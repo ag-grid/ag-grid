@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForChartModels, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // This example supplies two `customChartThemes` (light/dark) via `chartThemes`. The custom
@@ -14,11 +14,10 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-cell', { hasText: 'Ireland' }).first()).toBeVisible();
 
         // A grouped-bar range chart is auto-created and uses the first supplied custom theme.
-        const models = await remoteGrid(page).getChartModels();
-        expect(models).toHaveLength(1);
-        expect(models![0].chartType).toBe('groupedBar');
-        expect(models![0].chartThemeName).toBe('my-custom-theme-light');
-        expect(models![0].cellRange.columns).toEqual(['country', 'gold', 'silver', 'bronze']);
+        const models = await waitForChartModels(remoteGrid(page));
+        expect(models[0].chartType).toBe('groupedBar');
+        expect(models[0].chartThemeName).toBe('my-custom-theme-light');
+        expect(models[0].cellRange.columns).toEqual(['country', 'gold', 'silver', 'bronze']);
 
         await expect(page.locator('.ag-chart-canvas-wrapper canvas').first()).toBeVisible();
     });

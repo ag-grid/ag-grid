@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForChartModels, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // The example charts average daily temperatures on a line chart with a time axis, and
@@ -14,9 +14,8 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('0', 'avgTemp')).toContainText('8.27');
 
         // A line chart is created over the date + avgTemp range.
-        const models = await gridApi.getChartModels();
-        expect(models).toHaveLength(1);
-        expect(models![0].chartType).toBe('line');
+        const models = await waitForChartModels(gridApi);
+        expect(models[0].chartType).toBe('line');
 
         // The chart canvas renders inside the example's #myChart container.
         await expect(page.locator('#myChart canvas').first()).toBeVisible();
