@@ -4,17 +4,7 @@ import classNames from 'classnames';
 
 import styles from './Quotes.module.scss';
 import type { QuotesData, QuotesDataItem } from './quotesData';
-
-function filterAndSortByKey(data: QuotesData, sortKey: keyof QuotesDataItem) {
-    return Object.values(data)
-        .filter((d) => {
-            const value = d[sortKey];
-            return value !== undefined && (value as number) >= 0;
-        })
-        .sort((a: any, b: any) => {
-            return a[sortKey]! - b[sortKey]!;
-        });
-}
+import { getOrderedQuotes, statsData } from './quotesData';
 
 const QuoteItems = ({ quotes }: { quotes: QuotesDataItem[] }) => {
     return (
@@ -44,28 +34,17 @@ const QuoteItems = ({ quotes }: { quotes: QuotesDataItem[] }) => {
 };
 
 export const Quotes = ({ data }: { data: QuotesData }) => {
-    const quotes = filterAndSortByKey(data, 'order');
+    const quotes = getOrderedQuotes(data);
 
     return (
         <div>
             <div className={styles.statsOuter}>
-                <div className={styles.stat}>
-                    <h4 className="text-2xl"> 90%</h4>
-                    <p>Of the Fortune 500 use AG Grid</p>
-                </div>
-
-                <div className={styles.stat}>
-                    <h4 className="text-2xl"> 5M+</h4>
-                    <p>Weekly NPM downloads</p>
-                </div>
-                <div className={styles.stat}>
-                    <h4 className="text-2xl">13k+</h4>
-                    <p>GitHub Stars</p>
-                </div>
-                <div className={styles.stat}>
-                    <h4 className="text-2xl">40K+</h4>
-                    <p>Commits</p>
-                </div>
+                {statsData.map(({ value, label }) => (
+                    <div className={styles.stat} key={label}>
+                        <h4 className="text-2xl">{value}</h4>
+                        <p>{label}</p>
+                    </div>
+                ))}
             </div>
 
             <ul className={classNames(styles.container, 'list-style-none')}>

@@ -1,5 +1,6 @@
 import { htmlInlineToMarkdown } from '@ag-website-shared/markdoc/htmlInlineToMarkdown';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
+import { getOrderedQuotes, quotesData, statsData } from '@components/quotes/quotesData';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 import faqData from '../../content/faqs/homepage.json';
@@ -65,13 +66,27 @@ function faqSection(): string {
     return (faqData as FaqItem[]).map((item) => `### ${item.question}\n\n${item.answer}`).join('\n\n');
 }
 
+/** The headline metrics shown above the quotes, as a list. */
+function statsBlock(): string {
+    return statsData.map((stat) => `- **${stat.value}** — ${stat.label}`).join('\n');
+}
+
+/** The developer quotes, each as a blockquote with its attribution. */
+function quotesBlock(): string {
+    return getOrderedQuotes(quotesData)
+        .map((quote) => `> ${quote.text}\n>\n> — **${quote.name}**, ${quote.orgRole} ${quote.orgName}`)
+        .join('\n\n');
+}
+
 function sectionBlock(section: HomepageSection, siteRoot?: string): string {
     const heading = section.headingHtml ? htmlInlineToMarkdown(section.headingHtml, siteRoot) : section.heading;
     const subHeading = section.subHeadingHtml
         ? htmlInlineToMarkdown(section.subHeadingHtml, siteRoot)
         : section.subHeading;
 
-    const parts = [`## ${heading}`];
+    // The eyebrow headline labels the section above its heading on the page. Kept as an
+    // emphasised kicker line so it keeps that reading order without adding a heading level.
+    const parts = section.tag ? [`*${section.tag}*`, `## ${heading}`] : [`## ${heading}`];
     if (subHeading) {
         parts.push(subHeading);
     }
@@ -113,6 +128,10 @@ export function buildHomepageMarkdown({ siteRoot }: { siteRoot?: string } = {}):
         `# ${hero.headingPrefix} ${hero.headingSuffix}`,
         hero.subHeading,
         heroLinks,
+        // The customer-logos strip below the hero carries no heading on the page, so its
+        // metrics and quotes follow the hero directly, in page order.
+        statsBlock(),
+        quotesBlock(),
         ...(sections as HomepageSection[]).map((section) => sectionBlock(section, siteRoot)),
     ].join('\n\n');
 
