@@ -109,7 +109,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
             { colId: 'surplus', chartType: 'groupedColumn', secondaryAxis: false },
             { colId: 'efficiency', chartType: 'line', secondaryAxis: true },
         ],
-        chartType: 'columnLineCombo',
+        chartType: 'customCombo',
         chartContainer: document.querySelector('#myChart') as any,
         aggFunc: 'sum',
     });
