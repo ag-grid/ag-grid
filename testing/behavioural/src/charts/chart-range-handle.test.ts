@@ -53,7 +53,14 @@ describe('chart range handle', () => {
             const cellOfRow = (rowIndex: number) =>
                 getByTestId(gridDiv, agTestIdFor.cell(`ROW_${rowIndex}`, 'sunshine'));
 
-            await waitFor(() => expect(gridDiv.querySelector('.ag-range-handle')).toBeTruthy());
+            // Test IDs are stamped on by a debounced pass, so poll until both the handle and the
+            // cells the drag visits are addressable.
+            await waitFor(() => {
+                expect(gridDiv.querySelector('.ag-range-handle')).toBeTruthy();
+                for (let i = 0, len = rowData.length; i < len; ++i) {
+                    cellOfRow(i);
+                }
+            });
 
             gridDiv
                 .querySelector('.ag-range-handle')!
