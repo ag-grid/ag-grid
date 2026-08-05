@@ -87,6 +87,7 @@ function addModuleImports(
     imports.push(getEnableAGTestIdLogic());
 
     if (bindings.moduleRegistration) {
+        imports.push('\n');
         imports.push(bindings.moduleRegistration);
     }
 
