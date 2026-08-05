@@ -64,6 +64,7 @@ export const OpenInCTA: FunctionComponent<Props> = (props) => {
                 <button
                     className="button-style-none"
                     aria-label={DISPLAY_NAME[type]}
+                    tabIndex={0}
                     onClick={(event) => {
                         onClick(event);
                         tracking?.();
@@ -81,6 +82,7 @@ export const OpenInCTA: FunctionComponent<Props> = (props) => {
                 <a
                     href={href}
                     target="_blank"
+                    tabIndex={0}
                     rel="noreferrer"
                     onClick={() => {
                         tracking?.();

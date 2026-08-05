@@ -21,6 +21,10 @@ type SelectProps<O> = {
     isLarge?: boolean;
     constrainHeight?: boolean;
     className?: string;
+    /** Preferred side for popper content. Only applies when isPopper is set. */
+    side?: RadixSelect.SelectContentProps['side'];
+    /** Extra class applied to the popper content (e.g. to match the trigger width). */
+    contentClassName?: string;
 };
 
 export function Select<O>({
@@ -37,6 +41,8 @@ export function Select<O>({
     isLarge,
     constrainHeight,
     className,
+    side,
+    contentClassName,
 }: SelectProps<O>) {
     const getOptionContent = useCallback((option: O) => {
         const key = getKey(option) ?? '';
@@ -93,11 +99,16 @@ export function Select<O>({
             <RadixSelect.Portal>
                 <RadixSelect.Content
                     position={isPopper ? 'popper' : 'item-aligned'}
-                    className={classnames(styles.content, {
-                        [styles.popper]: isPopper,
-                        [styles.large]: isLarge,
-                        [styles.constrainHeight]: constrainHeight,
-                    })}
+                    side={side}
+                    className={classnames(
+                        styles.content,
+                        {
+                            [styles.popper]: isPopper,
+                            [styles.large]: isLarge,
+                            [styles.constrainHeight]: constrainHeight,
+                        },
+                        contentClassName
+                    )}
                 >
                     <RadixSelect.ScrollUpButton className="SelectScrollButton">
                         <ChevronUp />

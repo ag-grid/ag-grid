@@ -7,7 +7,9 @@ import { type ParamType } from './api';
 type InferThemeParams<T> = T extends Theme<infer P> ? P : never;
 
 export type ThemeParams = InferThemeParams<typeof themeQuartz>;
-export type ThemeParam = keyof ThemeParams;
+// Known grid params keep editor autocomplete, but hosts (e.g. Studio) can supply
+// their own param keys via the `(string & {})` widening.
+export type ThemeParam = keyof ThemeParams | (string & {});
 
 export type ThemeImpl = ReturnType<typeof _asThemeImpl>;
 
