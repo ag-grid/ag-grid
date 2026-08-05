@@ -21,3 +21,10 @@
 .no-overflow-anchor {
     overflow-anchor: none; // Prevent expanding sections from moving the page up. E.g. mobile docs nav menu
 }
+
+// Suppress the default root cross-fade so only named transitions animate; otherwise the
+// root and <main> fade simultaneously on every navigation.
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+}

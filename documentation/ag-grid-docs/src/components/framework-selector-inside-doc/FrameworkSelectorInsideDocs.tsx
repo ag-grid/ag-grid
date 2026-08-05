@@ -7,6 +7,7 @@ import { FRAMEWORKS } from '@constants';
 import { getFrameworkDisplayText, getNewFrameworkPath } from '@utils/framework';
 import { getMenuItemFromPageName } from '@utils/getMenuItemFromPageName';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
+import { navigate } from 'astro:transitions/client';
 import { useMemo } from 'react';
 
 import styles from './FrameworkSelectorInsideDocs.module.scss';
@@ -59,7 +60,7 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
             }
         }
 
-        window.location.href = newUrl;
+        navigate(newUrl);
     };
 
     return (

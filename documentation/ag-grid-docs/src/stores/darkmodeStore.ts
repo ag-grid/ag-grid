@@ -41,11 +41,22 @@ const updateHtml = (darkmode: boolean | undefined) => {
 $darkmode.listen(updateHtml);
 
 if (globalThis.window) {
+    // A swap restores <html> to its server-rendered attributes, and $darkmode's listener
+    // only fires on change, so the theme needs re-applying explicitly.
+    document.addEventListener('astro:after-swap', () => {
+        updateHtml($darkmode.get());
+    });
     updateHtml($darkmode.get() ?? window?.matchMedia('(prefers-color-scheme: dark)')?.matches);
 }
 
 export const setDarkmode = (darkmode: boolean) => {
-    $darkmode.set(darkmode);
+    if ('startViewTransition' in document) {
+        document.startViewTransition(() => {
+            $darkmode.set(darkmode);
+        });
+    } else {
+        $darkmode.set(darkmode);
+    }
 };
 
 export const getDarkmode = (): boolean | undefined => {
