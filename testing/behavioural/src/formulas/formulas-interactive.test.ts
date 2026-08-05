@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import type { GridOptions, Module } from 'ag-grid-community';
@@ -16,7 +16,6 @@ import {
     GridColumns,
     GridRows,
     TestGridsManager,
-    asyncSetTimeout,
     clipboardUtils,
     initPointerEventPolyfill,
     waitForEvent,
@@ -82,10 +81,9 @@ describe('ag-grid formulas interactive workflows', () => {
         const pasteEnd = waitForEvent('pasteEnd', api);
         api.pasteFromClipboard();
         await pasteEnd;
-        await asyncSetTimeout(5);
 
         const r2 = api.getRowNode('r2')!;
-        expect(api.getCellValue({ rowNode: r2, colKey: 'out', useFormatter: false })).toBe(12);
+        await waitFor(() => expect(api.getCellValue({ rowNode: r2, colKey: 'out', useFormatter: false })).toBe(12));
 
         const r1 = api.getRowNode('r1')!;
         expect(api.getCellValue({ rowNode: r1, colKey: 'out', useFormatter: false })).toBeNull();
@@ -115,13 +113,15 @@ describe('ag-grid formulas interactive workflows', () => {
 
         api.setFocusedCell(0, 'total');
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['total'] });
-        await asyncSetTimeout(1);
 
-        const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+        const fillHandle = await waitFor(() => {
+            const element = getByTestId(gridDiv, agTestIdFor.fillHandle());
+            expect(element).toBeTruthy();
+            return element;
+        });
         const fillEnd = waitForEvent('fillEnd', api);
         await userEvent.dblClick(fillHandle);
         await fillEnd;
-        await asyncSetTimeout(5);
 
         await new GridRows(api, 'after fill down', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -153,11 +153,9 @@ describe('ag-grid formulas interactive workflows', () => {
 
         api.getRowNode('r1')!.setDataValue('out', '=REF(COLUMN("a"),ROW("r1"))*REF(COLUMN("b"),ROW("r1"))');
         api.getRowNode('r2')!.setDataValue('a', 10);
-        await asyncSetTimeout(1);
 
         api.commitBatchEdit();
         expect(api.isBatchEditing()).toBe(false);
-        await asyncSetTimeout(5);
 
         await new GridRows(api, 'after commit', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -181,10 +179,8 @@ describe('ag-grid formulas interactive workflows', () => {
         api.startBatchEdit();
         api.getRowNode('r1')!.setDataValue('out', '=REF(COLUMN("a"),ROW("r1"))*REF(COLUMN("b"),ROW("r1"))*100');
         api.getRowNode('r1')!.setDataValue('a', 99);
-        await asyncSetTimeout(1);
 
         api.cancelBatchEdit();
-        await asyncSetTimeout(5);
 
         await new GridRows(api, 'after cancel', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -226,10 +222,9 @@ describe('ag-grid formulas interactive workflows', () => {
 
         const contentEl = editor?.getValidationElement?.();
         contentEl?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
-        await asyncSetTimeout(5);
 
         const rowNode = api.getRowNode('r1')!;
-        expect(api.getCellValue({ rowNode, colKey: 'b', useFormatter: false })).toBe(10);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'b', useFormatter: false })).toBe(10));
         expect(api.getFocusedCell()?.column.getColId()).toBe('c');
         await new GridRows(
             api,
@@ -276,10 +271,9 @@ describe('ag-grid formulas interactive workflows', () => {
 
         const contentEl = editor?.getValidationElement?.();
         contentEl?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true }));
-        await asyncSetTimeout(5);
 
         const rowNode = api.getRowNode('r1')!;
-        expect(api.getCellValue({ rowNode, colKey: 'b', useFormatter: false })).toBe(6);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'b', useFormatter: false })).toBe(6));
         expect(api.getFocusedCell()?.column.getColId()).toBe('a');
         await new GridRows(
             api,
@@ -310,7 +304,6 @@ describe('ag-grid formulas interactive workflows', () => {
         let stopped = waitForEvent('cellEditingStopped', api);
         api.stopEditing(false);
         await stopped;
-        await asyncSetTimeout(5);
 
         started = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 1, colKey: 'b' });
@@ -322,7 +315,6 @@ describe('ag-grid formulas interactive workflows', () => {
         stopped = waitForEvent('cellEditingStopped', api);
         api.stopEditing(false);
         await stopped;
-        await asyncSetTimeout(5);
 
         await new GridRows(api, 'both cells edited', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
