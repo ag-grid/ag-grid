@@ -1,4 +1,4 @@
-import type { Page, Route } from '@playwright/test';
+import type { Browser, Page, Route } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { appendFile, mkdir, readFile, readdir, rename, rm, stat, utimes, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -325,14 +325,34 @@ export function warnOnNetworkAccess(): void {
 }
 
 /**
+ * Constant for a browser, so it is read once per worker rather than once per test: asking the page costs a
+ * round trip, and a full run is ten thousand of them.
+ */
+const userAgents = new WeakMap<Browser, Promise<string>>();
+
+function userAgentFor(page: Page): Promise<string> {
+    const read = (): Promise<string> => page.evaluate(() => navigator.userAgent);
+    const browser = page.context().browser();
+    if (!browser) {
+        return read();
+    }
+    let pending = userAgents.get(browser);
+    if (!pending) {
+        pending = read();
+        userAgents.set(browser, pending);
+    }
+    return pending;
+}
+
+/**
  * Mirrors off-origin responses to disk, shared by every worker. Without this a cold run re-fetches the same
  * multi-MB bundles for every test, and under parallel load those requests time tests out.
  */
-export async function routeExternalThroughMirror(page: Page, siteOrigin: string, userAgent: string): Promise<void> {
+export async function routeExternalThroughMirror(page: Page, siteOrigin: string): Promise<void> {
     void sweepMirror();
     await page.route(isExternalTo(siteOrigin), async (route) => {
         const url = route.request().url();
-        const key = mirrorKeyFor(url, userAgent);
+        const key = mirrorKeyFor(url, await userAgentFor(page));
         const entry = await loadMirrorEntry(route, key, mirrorPathFor(url, key));
         if (!entry) {
             // The example page, not the spec: every framework variant shares one spec, so only the URL

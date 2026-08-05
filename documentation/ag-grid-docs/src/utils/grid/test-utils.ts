@@ -254,14 +254,11 @@ export const extended = base.extend<TestFixtures>({
                 await use();
                 return;
             }
-            // Read from the page rather than the project config: only the browser knows the agent string a
-            // negotiating host will actually see, and it is what the mirror keys on.
-            const userAgent = await page.evaluate(() => navigator.userAgent);
             const siteOrigin = new URL(baseURL).origin;
             // Ordered, not concurrent: the later route matches first, and a shipped asset must beat the
             // mirror to it. Registered together, whichever won the race decided whether disk or the CDN
             // served `/example-assets/`.
-            await routeExternalThroughMirror(page, siteOrigin, userAgent);
+            await routeExternalThroughMirror(page, siteOrigin);
             await routeExampleAssetsFromDisk(page);
             await use();
         },
