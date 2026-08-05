@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+import { wafBypassSecret } from './src/utils/grid/test/wafBypass';
+
 const PRE_34_VERSION = process.env.PRE_34_VERSION;
 
 const PREV_URL = PRE_34_VERSION && `https://www.ag-grid.com/archive/${PRE_34_VERSION}/`;
@@ -37,6 +39,10 @@ console.log(`Using base URL: ${baseURL}`);
 if (process.env.FRAMEWORK) {
     // eslint-disable-next-line no-console
     console.log(`Using framework: ${process.env.FRAMEWORK}`);
+}
+if (wafBypassSecret) {
+    // eslint-disable-next-line no-console
+    console.log(`Sending WAF bypass header to ${new URL(baseURL).origin} only`);
 }
 
 /**
@@ -86,6 +92,8 @@ export default defineConfig({
         baseURL,
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+        // Keep this off for CI runs that upload reports: a trace records request headers, so it would
+        // capture the WAF bypass credential in an artefact that GitHub's log masking does not cover.
         trace: 'off', // process.env.CI ? 'off' : 'retain-on-first-failure',
     },
 
