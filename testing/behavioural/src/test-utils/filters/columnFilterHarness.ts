@@ -65,6 +65,15 @@ export class ColumnFilterHarness {
         ).filter((input) => !input.closest('.ag-hidden'));
     }
 
+    /** A filter input, for asserting native validity state (`validity`, `validationMessage`). */
+    public input(type: 'text' | 'number' | 'date', index = 0): HTMLInputElement {
+        const input = this.inputs(type)[index];
+        if (!input) {
+            throw new Error(`No visible ${type} input at index ${index} for "${this.colId}"`);
+        }
+        return input;
+    }
+
     public async setText(value: string, index = 0): Promise<this> {
         setNativeInputValue(this.inputs('text')[index], value);
         await asyncSetTimeout(0);

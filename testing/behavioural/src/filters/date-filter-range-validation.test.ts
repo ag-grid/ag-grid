@@ -427,6 +427,8 @@ describe('Date Range Filter', () => {
         await asyncSetTimeout(600);
 
         expect(toDateInput.validity.valid).toBe(false);
+        // The message names the bound the focused input has to respect: `to` must come after `from`.
+        expect(toDateInput.validationMessage).toMatch(/^Date must be after /);
 
         const reportSpy = vi.spyOn(HTMLInputElement.prototype, 'reportValidity');
 
@@ -439,6 +441,9 @@ describe('Date Range Filter', () => {
 
             expect(reportSpy).toHaveBeenCalled();
             expect(fromDateInput.validity.valid).toBe(false);
+            // Mirrored for the other input: `from` must come before `to`.
+            expect(fromDateInput.validationMessage).toMatch(/^Date must be before /);
+            expect(toDateInput.validationMessage).toBe('');
         } finally {
             reportSpy.mockRestore();
         }
