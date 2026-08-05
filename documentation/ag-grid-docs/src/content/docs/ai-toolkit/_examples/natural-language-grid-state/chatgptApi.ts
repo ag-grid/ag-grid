@@ -1,7 +1,7 @@
 import type { GridApi } from 'ag-grid-community';
 
-export const BASE_URL = '{{EXAMPLE_ENV:AI_API_URL}}';
-export const AI_API_TOKEN = '{{EXAMPLE_ENV:AI_API_TOKEN}}';
+const BASE_URL = '{{EXAMPLE_ENV:AI_API_URL}}';
+const AI_API_TOKEN = '{{EXAMPLE_ENV:AI_API_TOKEN}}';
 
 const ajv = new ajv7({
     validateSchema: true, // Validate schemas against meta-schema

@@ -1,4 +1,4 @@
-import type { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { GridOptions, ValueFormatterParams } from 'ag-grid-community';
 
 import { ChatToolPanel } from './ChatToolPanel';
 import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';

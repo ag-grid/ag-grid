@@ -1,8 +1,8 @@
-import { GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { GridOptions, ValueFormatterParams } from 'ag-grid-community';
 
 import { ChatToolPanel } from './ChatToolPanel';
 import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
-import { ITransaction } from './generateTransactions';
+import type { ITransaction } from './generateTransactions';
 
 export const gridOptions: GridOptions<ITransaction> = {
     columnDefs: [
