@@ -12,6 +12,7 @@ import { AgAbstractLabel, AgInputNumberFieldSelector } from 'ag-grid-community';
 
 import type { AgInputRange } from './agInputRange';
 import { AgInputRangeSelector } from './agInputRange';
+import agSliderCSS from './agSlider.css';
 
 export interface AgSliderParams extends AgLabelParams {
     minValue?: number;
@@ -72,6 +73,7 @@ export class AgSlider<
         </div>`,
             [AgInputRangeSelector, AgInputNumberFieldSelector] as AgComponentSelector<TComponentSelectorType>[]
         );
+        this.registerCSS(agSliderCSS);
     }
 
     public override postConstruct() {
