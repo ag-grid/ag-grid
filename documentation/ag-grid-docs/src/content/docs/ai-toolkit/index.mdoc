@@ -50,6 +50,8 @@ Each feature is only included when the grid can apply it. Pagination is omitted 
 
 Features keyed on rows identify them by row ID, which the schema cannot enumerate. Describe the rows in the prompt, or supply the IDs alongside it, so the model has something to work from.
 
+Columns using a [custom filter](./component-filter/) are left out of the filter schema, since the grid cannot describe a filter model it does not define. `setState` clears any column filter missing from the `filterModel` it receives, so carry the existing models for those columns through when applying the one the LLM returns.
+
 ### Architecture
 
 At a high level, the AI Toolkit works as follows:

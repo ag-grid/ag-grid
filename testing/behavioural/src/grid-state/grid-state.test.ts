@@ -1197,6 +1197,37 @@ describe('StateService - Grid State Management', () => {
             `);
         });
 
+        test('setState with a partial filter model clears filters for columns it omits', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+                defaultColDef: { filter: 'agTextColumnFilter' },
+            });
+
+            api.setFilterModel({
+                name: { filterType: 'text', type: 'startsWith', filter: 'A' },
+                sport: { filterType: 'text', type: 'startsWith', filter: 'F' },
+            });
+            await asyncSetTimeout(50);
+            await new GridRows(api, `both filters active`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+            `);
+
+            // Naming only `name` drops the `sport` filter entirely. Any caller building a filter
+            // model from a subset of columns has to carry the omitted models through itself.
+            api.setState({ filter: { filterModel: { name: { filterType: 'text', type: 'equals', filter: 'Bob' } } } });
+            await asyncSetTimeout(50);
+
+            expect(api.getFilterModel()).toEqual({
+                name: { filterType: 'text', type: 'equals', filter: 'Bob' },
+            });
+            await new GridRows(api, `sport filter dropped by partial filter model`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+            `);
+        });
+
         test('setState with an empty state clears active selectable filters', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: defaultColumnDefs,
