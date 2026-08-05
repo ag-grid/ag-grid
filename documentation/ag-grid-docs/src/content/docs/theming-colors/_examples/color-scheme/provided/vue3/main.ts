@@ -8,9 +8,15 @@ import {
     colorSchemeDarkWarm,
     colorSchemeLightCold,
     colorSchemeLightWarm,
+    enableDevValidations,
     themeQuartz,
 } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

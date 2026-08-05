@@ -8,6 +8,7 @@ import {
     NumberFilterModule,
     RowSelectionModule,
     TextFilterModule,
+    enableDevValidations,
     iconSetMaterial,
     themeQuartz,
 } from 'ag-grid-community';
@@ -15,6 +16,11 @@ import {
 import type { IProduct } from './data';
 import { getData } from './data';
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([RowSelectionModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule]);
 

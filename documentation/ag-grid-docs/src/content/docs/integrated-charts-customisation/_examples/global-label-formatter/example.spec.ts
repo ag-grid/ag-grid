@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForChartModels, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // This example uses a single global `formatter` that prefixes every number label on the chart
@@ -15,10 +15,9 @@ test.agExample(import.meta, () => {
         await expect(page.getByRole('columnheader', { name: 'Individual Sales' })).toBeVisible();
         await expect(page.locator('.ag-cell', { hasText: 'Q1 2021' }).first()).toBeVisible();
 
-        const models = await remoteGrid(page).getChartModels();
-        expect(models).toHaveLength(1);
-        expect(models![0].chartType).toBe('groupedColumn');
-        expect(models![0].cellRange.columns).toEqual(['period', 'recurring', 'individual']);
+        const models = await waitForChartModels(remoteGrid(page));
+        expect(models[0].chartType).toBe('groupedColumn');
+        expect(models[0].cellRange.columns).toEqual(['period', 'recurring', 'individual']);
 
         await expect(page.locator('.ag-chart-canvas-wrapper canvas').first()).toBeVisible();
     });

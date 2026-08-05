@@ -782,3 +782,4 @@ export { ensureGridReady, waitForGridContent } from './test/remoteGridapi';
 export { orderedValues } from './test/orderedValues';
 export { repeat } from './test/repeat';
 export { scrollGridRelative } from './test/scrollGridRelative';
+export { waitForChartModels } from './test/waitForChartModels';

@@ -3,12 +3,18 @@ import {
     AllCommunityModule,
     ModuleRegistry,
     createGrid,
+    enableDevValidations,
     themeAlpine,
     themeBalham,
     themeQuartz,
 } from 'ag-grid-community';
 
 import './style.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

@@ -1,6 +1,11 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ModuleRegistry, createGrid, themeQuartz } from 'ag-grid-community';
+import { ModuleRegistry, createGrid, enableDevValidations, themeQuartz } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
@@ -18,16 +23,16 @@ const myTheme = themeQuartz.withParams({
 });
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', minWidth: 170 },
-    { field: 'age' },
-    { field: 'country' },
-    { field: 'year' },
+    { field: 'athlete', minWidth: 170, enableRowGroup: true, enablePivot: true },
+    { field: 'age', enableRowGroup: true, enablePivot: true },
+    { field: 'country', enableRowGroup: true, enablePivot: true },
+    { field: 'year', enableRowGroup: true, enablePivot: true },
     { field: 'date' },
-    { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' },
+    { field: 'sport', enableRowGroup: true, enablePivot: true },
+    { field: 'gold', enableValue: true },
+    { field: 'silver', enableValue: true },
+    { field: 'bronze', enableValue: true },
+    { field: 'total', enableValue: true },
 ];
 
 let gridApi: GridApi<IOlympicData>;
@@ -38,9 +43,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         editable: true,
         filter: true,
-        enableRowGroup: true,
-        enablePivot: true,
-        enableValue: true,
     },
     sideBar: true,
 };

@@ -5,8 +5,9 @@
 // See ./_breakpoints.scss for the single source of truth on what each named threshold
 // controls and why.
 //
-// Exception: .header's own sticky behaviour stays @media — a container cannot query
-// its own size.
+// Exceptions, both @media: .header's own sticky behaviour (a container cannot query its
+// own size, so $sticky-at can only approximate $nav-collapse) and .mobileNavButton's hide
+// threshold (must match DocsNav's @media query).
 .header {
     display: flex;
     align-items: center;
@@ -21,6 +22,13 @@
         top: 0;
         width: 100%;
         z-index: 10002; // needed in order to prevent grid z-indexes overlapping on small height
+
+        // In the scrollbar-width sliver where $sticky-at has landed but the hamburger is still
+        // shown, a sticky open menu — roughly as tall as the page — could never scroll out of
+        // view. `relative`, not `static`: .mobileMenuButton anchors to this box.
+        &:has(.mobileMenuButton[aria-expanded='true']) {
+            position: relative;
+        }
     }
 
     #{$selector-darkmode}:has([data-is-homepage='false']) &,
@@ -35,6 +43,9 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    // Containing block for the Products switcher's popup, which right-aligns to this
+    // box's trailing edge — see ../product-dropdown/ProductDropdown.module.scss.
+    position: relative;
     width: 100%;
     max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
     margin-left: auto;
@@ -146,7 +157,9 @@ button.mobileNavButton {
         max-width: 120px;
     }
 
-    @container site-header (min-width: #{$docs-search-inline}) {
+    // @media, not @container: this must agree to the pixel with DocsNav's own @media
+    // query, and a container query here would measure the viewport minus the scrollbar.
+    @media screen and (min-width: $docs-button-hide-at) {
         display: none;
     }
 

@@ -14,6 +14,22 @@ export interface QuotesDataItem {
 
 export type QuotesData = Record<string, QuotesDataItem>;
 
+export interface StatsDataItem {
+    value: string;
+    label: string;
+}
+
+/**
+ * Headline metrics shown above the developer quotes. Shared with the markdown twin of the
+ * homepage (see utils/markdown-pages/buildHomepageMarkdown.ts) so the two cannot drift.
+ */
+export const statsData: StatsDataItem[] = [
+    { value: '90%', label: 'Of the Fortune 500 use AG Grid' },
+    { value: '5M+', label: 'Weekly NPM downloads' },
+    { value: '13k+', label: 'GitHub Stars' },
+    { value: '40K+', label: 'Commits' },
+];
+
 export const quotesData: QuotesData = {
     tannerLinsley: {
         name: 'Tanner Linsley',
@@ -43,3 +59,10 @@ export const quotesData: QuotesData = {
         order: 30,
     },
 };
+
+/** The quotes to show, in display order — an entry with no `order` is not shown. */
+export function getOrderedQuotes(data: QuotesData): QuotesDataItem[] {
+    return Object.values(data)
+        .filter((quote) => quote.order !== undefined && quote.order >= 0)
+        .sort((a, b) => a.order! - b.order!);
+}

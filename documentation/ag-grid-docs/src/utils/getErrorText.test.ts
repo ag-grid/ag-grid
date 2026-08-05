@@ -1,4 +1,12 @@
+import { BASE_URL } from '../../../../packages/ag-grid-community/src/baseUrl';
 import { getErrorText } from './getErrorText';
+
+// `BASE_URL` is rewritten at release time — localhost while developing, the archive URL on a
+// `b<major>.<minor>.<patch>` branch — so normalise it out before snapshotting. The docs path is
+// what an error message has to get right; the origin it is served from is not this test's business.
+function withStableBaseUrl(text: string): string {
+    return text.replaceAll(BASE_URL, '<base-url>');
+}
 
 // Params reach the error page as strings from the URL; arrays/objects are JSON-encoded by
 // `stringifyValue` in the grid's logging util. These assert the full reconstructed message so a
@@ -89,7 +97,7 @@ describe('getErrorText param reconstruction', () => {
             },
         });
 
-        expect(text).toMatchInlineSnapshot(`
+        expect(withStableBaseUrl(text)).toMatchInlineSnapshot(`
           "Unable to use \`rowSelection\` as \`RowSelectionModule\` is not registered.
           Unable to use \`enableValue\` as \`RowGroupingModule\` is not registered.
           Check if you have registered the modules:
@@ -99,7 +107,7 @@ describe('getErrorText param reconstruction', () => {
 
           ModuleRegistry.registerModules([ RowSelectionModule, RowGroupingModule ]);
 
-          For more info see: https://localhost:4610/javascript-data-grid/modules/"
+          For more info see: <base-url>/javascript-data-grid/modules/"
         `);
     });
 

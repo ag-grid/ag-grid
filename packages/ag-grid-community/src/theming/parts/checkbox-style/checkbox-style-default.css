@@ -7,6 +7,9 @@
     background-color: var(--ag-checkbox-unchecked-background-color);
     border: solid var(--ag-checkbox-border-width) var(--ag-checkbox-unchecked-border-color);
 
+    /* the box fill and its masked tick are background colours, which must be preserved when printing */
+    print-color-adjust: exact;
+
     &:where(.ag-checked) {
         background-color: var(--ag-checkbox-checked-background-color);
         border-color: var(--ag-checkbox-checked-border-color);

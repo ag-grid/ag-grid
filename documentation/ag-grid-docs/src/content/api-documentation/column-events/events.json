@@ -7,6 +7,15 @@
             "displayName": "Events on Column",
             "isEvent": true
         },
+        "filterChanged": {
+            "description": "The filter value has changed.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnEvent"
+                },
+                "returnType": "void"
+            }
+        },
         "filterActiveChanged": {
             "description": "The filter active value has changed.",
             "type": {
@@ -34,6 +43,24 @@
                 "returnType": "void"
             }
         },
+        "lastLeftPinnedChanged": {
+            "description": "The column is now, or is no longer, the last column pinned to the left.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnEvent"
+                },
+                "returnType": "void"
+            }
+        },
+        "firstRightPinnedChanged": {
+            "description": "The column is now, or is no longer, the first column pinned to the right.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnEvent"
+                },
+                "returnType": "void"
+            }
+        },
         "movingChanged": {
             "description": "The column has started / finished moving (i.e. user is dragging the column to a new location).",
             "type": {
@@ -54,6 +81,42 @@
         },
         "visibleChanged": {
             "description": "The visibility value has changed.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnEvent"
+                },
+                "returnType": "void"
+            }
+        },
+        "headerHighlightChanged": {
+            "description": "The header is now, or is no longer, highlighted.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnEvent"
+                },
+                "returnType": "void"
+            }
+        },
+        "colDefChanged": {
+            "description": "The column definition has changed.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnEvent"
+                },
+                "returnType": "void"
+            }
+        },
+        "headerNameChanged": {
+            "description": "The header name has changed.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnEvent"
+                },
+                "returnType": "void"
+            }
+        },
+        "formulaRefChanged": {
+            "description": "The formula reference has changed.",
             "type": {
                 "arguments": {
                     "event": "ColumnEvent"
@@ -90,6 +153,15 @@
         },
         "columnValueChanged": {
             "description": "The 'value' value has changed.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnEvent"
+                },
+                "returnType": "void"
+            }
+        },
+        "columnStateUpdated": {
+            "description": "The column state has been updated.",
             "type": {
                 "arguments": {
                     "event": "ColumnEvent"

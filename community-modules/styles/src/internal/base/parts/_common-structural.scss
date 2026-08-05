@@ -241,6 +241,10 @@
         display: block;
         min-height: 100%;
         width: 100%;
+
+        // contain the row and cell-lane z-indexes below, so scrolling rows can never paint over the
+        // header or the pinned top/bottom bands.
+        isolation: isolate;
     }
 
     .ag-body-horizontal-scroll-viewport {
@@ -878,6 +882,12 @@
     .ag-row-inline-editing {
         // inline row editors must float above standard rows.
         z-index: 1;
+    }
+
+    .ag-row-dragging {
+        // dragged rows overlap their neighbours mid-animation, so they must sit above every cell lane:
+        // centre 0, centre spans 1, pinned 2, pinned spans 3.
+        z-index: 4;
     }
 
     .ag-stub-cell {

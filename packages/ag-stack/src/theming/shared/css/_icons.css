@@ -26,6 +26,9 @@
     height: var(--ag-icon-size);
     color: var(--ag-icon-color);
 
+    /* icons are drawn as a masked background colour, which must be preserved when printing */
+    print-color-adjust: exact;
+
     /* Background properties to allow apps to set a background-image and have it work */
     background-position: center;
     background-size: contain;

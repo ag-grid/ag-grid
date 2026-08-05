@@ -13,20 +13,33 @@ export interface ModuleNode {
     children?: ModuleNode[];
 }
 
+interface ModuleLeaf {
+    name: string;
+    moduleName: string;
+    path?: string;
+    isEnterprise: boolean;
+}
+
+const MODULE_SELECTOR_URL = './modules/#selecting-modules';
+
 /**
  * Build the `moduleMappings` tag as a flat GFM table of every module (leaf nodes of
  * the module tree): the feature name (linked to its docs when a `path` is set), the
  * module name, and whether it is an Enterprise module. Pure (no `astro:content`) so
- * it is unit-testable; the dispatcher loads the tree and calls this. Interactive
- * selection state from the on-page tree is irrelevant to a static reference.
+ * it is unit-testable; the dispatcher loads the tree and calls this. The table is
+ * preceded by a link to the interactive selector on the HTML page, which generates
+ * the registration code for a chosen set of features.
  */
 export function buildModuleMappingsTable(
     groups: ModuleNode[],
     framework: MarkdownFramework,
     siteRoot?: string
 ): string {
-    const leaves: { name: string; moduleName: string; path?: string; isEnterprise: boolean }[] = [];
+    const leaves: ModuleLeaf[] = [];
     collectLeaves(groups ?? [], false, leaves);
+    if (leaves.length === 0) {
+        return '';
+    }
 
     const rows = leaves.map((leaf) => {
         // Module `path` values are bare (e.g. `grouping`); the on-page renderer prepends
@@ -38,14 +51,16 @@ export function buildModuleMappingsTable(
         return [feature, `\`${leaf.moduleName}\``, leaf.isEnterprise ? 'Enterprise' : ''];
     });
 
-    return markdownTable(['Feature', 'Module', 'Enterprise'], rows);
+    const selectorUrl = toAbsoluteUrl(
+        urlWithPrefix({ url: MODULE_SELECTOR_URL, framework: framework as Framework }),
+        siteRoot
+    );
+    const lead = `[Select modules interactively](${selectorUrl}) to generate the registration code, or work from the full module list below.`;
+
+    return [lead, markdownTable(['Feature', 'Module', 'Enterprise'], rows)].join('\n\n');
 }
 
-function collectLeaves(
-    nodes: ModuleNode[],
-    inheritedEnterprise: boolean,
-    out: { name: string; moduleName: string; path?: string; isEnterprise: boolean }[]
-): void {
+function collectLeaves(nodes: ModuleNode[], inheritedEnterprise: boolean, out: ModuleLeaf[]): void {
     for (let i = 0, len = nodes.length; i < len; ++i) {
         const node = nodes[i];
         if (node.hideFromSelection) {

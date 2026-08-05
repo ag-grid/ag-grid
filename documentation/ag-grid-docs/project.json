@@ -129,7 +129,7 @@
     },
     "test": {
       "executor": "nx:noop",
-      "dependsOn": ["test:vitest", "test:validate-example-specs"],
+      "dependsOn": ["test:vitest", "test:validate-example-specs", "test:validate-example-dev-validations"],
       "inputs": [],
       "outputs": [],
       "options": {
@@ -285,6 +285,14 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": ["npx tsx scripts/validate-example-specs.ts"]
+      }
+    },
+    "test:validate-example-dev-validations": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": ["npx tsx scripts/validate-example-dev-validations.ts"]
       }
     },
     "test:htaccess": {

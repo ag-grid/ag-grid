@@ -12,5 +12,9 @@
 // AnnouncementBanner — why it's owned there rather than aliased like these three.
 
 $docs-search-stack: $breakpoint-site-header-extra-small; // docs button + search wrap
-$sticky-at: $breakpoint-docs-nav-medium; // @media, not @container — can't query own size
+// Sticky is @media (a container cannot query its own size), so this lands a scrollbar's width
+// later than $nav-collapse's container query — see SiteHeader.module.scss's .header for why the
+// header must not stick while the hamburger is shown, and what covers the overlap.
+$sticky-at: $nav-collapse;
+$docs-button-hide-at: $breakpoint-docs-nav-medium; // @media — DocsNav pins the nav open here
 $switcher-show: $nav-collapse; // switcher needs room exactly when the nav does

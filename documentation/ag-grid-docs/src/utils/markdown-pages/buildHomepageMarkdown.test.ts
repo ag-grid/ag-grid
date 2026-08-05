@@ -30,6 +30,27 @@ describe('buildHomepageMarkdown', () => {
         expect(output).toContain('[Create a Custom Theme](https://www.ag-grid.com/theme-builder/)');
     });
 
+    it('renders each section eyebrow headline as a kicker above its heading', () => {
+        expect(output).toContain('*Unbeatable Speed & Performance*\n\n## The Fastest Data Grid In The World');
+        expect(output).toContain('*JavaScript Data Grid FAQs*\n\n## Frequently Asked Questions');
+    });
+
+    it('lists the headline metrics', () => {
+        expect(output).toContain('- **90%** — Of the Fortune 500 use AG Grid');
+        expect(output).toContain('- **5M+** — Weekly NPM downloads');
+        expect(output).toContain('- **13k+** — GitHub Stars');
+        expect(output).toContain('- **40K+** — Commits');
+    });
+
+    it('renders the developer quotes as attributed blockquotes, in display order', () => {
+        expect(output).toContain(
+            '> There are a lot of component-based table libraries out there, but I believe AG Grid is the gold standard'
+        );
+        expect(output).toContain('> — **Tanner Linsley**, Creator TanStack');
+        expect(output).toContain('> — **Brian Love**, Expert at Google Developers');
+        expect(output.indexOf('Tanner Linsley')).toBeLessThan(output.indexOf('Ryan Carniato'));
+    });
+
     it('includes a What is New version highlight and an FAQ question', () => {
         expect(output).toContain('### 36.0.0');
         expect(output).toContain('- Calculated Columns');
