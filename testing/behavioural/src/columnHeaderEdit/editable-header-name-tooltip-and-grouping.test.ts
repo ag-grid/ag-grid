@@ -47,13 +47,11 @@ describe('Editable header name — tooltips', () => {
             () => document.querySelector('.ag-header-cell[col-id="athlete"]') as HTMLElement
         );
         await userEvent.hover(headerCell);
-        await asyncSetTimeout(250);
     }
 
     async function unhoverHeader(): Promise<void> {
         const headerCell = document.querySelector('.ag-header-cell[col-id="athlete"]') as HTMLElement;
         await userEvent.unhover(headerCell);
-        await asyncSetTimeout(250);
         await waitForTooltips(0);
     }
 
@@ -74,11 +72,20 @@ describe('Editable header name — tooltips', () => {
         await unhoverHeader();
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
-        await asyncSetTimeout(1);
+        await waitFor(() =>
+            expect(document.querySelector('.ag-header-cell[col-id="athlete"] .ag-header-cell-text')?.textContent).toBe(
+                'Renamed'
+            )
+        );
 
         await hoverHeader();
-        await waitForTooltips(1);
-        expect(getTooltips()[0]).toHaveTextContent('Renamed');
+        await waitFor(
+            () => {
+                expect(getTooltips().length).toBe(1);
+                expect(getTooltips()[0]).toHaveTextContent('Renamed');
+            },
+            { timeout: 2000 }
+        );
     });
 
     test('a static headerTooltip string is unaffected by a rename', async () => {
@@ -86,9 +93,8 @@ describe('Editable header name — tooltips', () => {
         const { api } = await createGrid([{ field: 'athlete', headerNameEditable: true, headerTooltip: 'Static tip' }]);
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
-        await asyncSetTimeout(1);
         const column = api.getColumn('athlete') as unknown as AgColumn;
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed'));
 
         await hoverHeader();
         await waitForTooltips(1);
@@ -151,10 +157,12 @@ describe('Editable header name — rendered header locations', () => {
             rowData,
             initialState: initialRename,
         });
-        await asyncSetTimeout(1);
 
-        const headerRow = api.getDataAsCsv()!.split('\n')[0];
-        expect(headerRow).toContain(RENAMED);
+        const headerRow = await waitFor(() => {
+            const row = api.getDataAsCsv()!.split('\n')[0];
+            expect(row).toContain(RENAMED);
+            return row;
+        });
         expect(headerRow).not.toContain('From Getter');
     });
 
@@ -266,6 +274,7 @@ describe('Editable header name — integrated charts location', () => {
 
         // The settings panel schedules an unguarded 250ms scroll-into-view; let it run while the chart is
         // still mounted so it does not fire against a torn-down component after this test completes.
+        // eslint-disable-next-line no-restricted-syntax -- 250ms chart settings-panel scroll-into-view timer
         await asyncSetTimeout(300);
     });
 });
@@ -289,7 +298,6 @@ describe('Editable header name — row grouping', () => {
             rowData,
             defaultColDef: { flex: 1, minWidth: 100 },
         });
-        await asyncSetTimeout(1);
         return api;
     }
 
@@ -300,17 +308,14 @@ describe('Editable header name — row grouping', () => {
         const column = api.getColumn('athlete') as unknown as AgColumn;
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
-        await asyncSetTimeout(1);
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed'));
 
         api.addRowGroupColumns(['athlete']);
-        await asyncSetTimeout(1);
-        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['athlete']);
+        await waitFor(() => expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['athlete']));
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
 
         api.removeRowGroupColumns(['athlete']);
-        await asyncSetTimeout(1);
-        expect(api.getRowGroupColumns()).toEqual([]);
+        await waitFor(() => expect(api.getRowGroupColumns()).toEqual([]));
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
     });
 
@@ -319,10 +324,11 @@ describe('Editable header name — row grouping', () => {
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
         api.addRowGroupColumns(['athlete']);
-        await asyncSetTimeout(1);
 
-        expect(api.getState().columnHeaderName?.columnHeaderNames).toEqual([
-            { colId: 'athlete', headerName: 'Renamed' },
-        ]);
+        await waitFor(() =>
+            expect(api.getState().columnHeaderName?.columnHeaderNames).toEqual([
+                { colId: 'athlete', headerName: 'Renamed' },
+            ])
+        );
     });
 });

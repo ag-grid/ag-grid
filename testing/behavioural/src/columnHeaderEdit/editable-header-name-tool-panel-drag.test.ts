@@ -3,7 +3,7 @@ import { waitFor } from '@testing-library/dom';
 import type { GridApi } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { DragEventDispatcher, TestGridsManager } from '../test-utils';
 
 /**
  * The columns tool panel builds its drag source once per rendered item, so the drag-ghost label must be
@@ -42,8 +42,8 @@ describe('Editable header name — columns tool panel drag ghost', () => {
             return label.textContent ?? '';
         } finally {
             await dispatcher.finishDrag(handle);
-            await asyncSetTimeout(10);
             ownerDocument.elementsFromPoint = originalElementsFromPoint as typeof ownerDocument.elementsFromPoint;
+            await waitFor(() => expect(document.querySelector('.ag-dnd-ghost-label')).toBeNull());
         }
     }
 
