@@ -46,9 +46,7 @@ describe('ToolPanelContextMenu', () => {
     async function getColumnEntry(toolPanel: any, gridDiv: HTMLElement, label: string): Promise<HTMLElement> {
         const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
         const rowIndex = await waitFor(() => {
-            const index = (listPanel.getDisplayedColsList() as any[]).findIndex(
-                (item) => item.displayName === label
-            );
+            const index = (listPanel.getDisplayedColsList() as any[]).findIndex((item) => item.displayName === label);
             if (index < 0) {
                 throw new Error(`Tool-panel column entry not found for displayName="${label}"`);
             }
@@ -255,9 +253,7 @@ describe('ToolPanelContextMenu', () => {
 
             getDeferredActionButton(toolPanel, 'Apply').click();
 
-            await waitFor(() =>
-                expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['athlete'])
-            );
+            await waitFor(() => expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['athlete']));
         });
 
         test('row group context menu actions in deferred mode update the tool panel pills immediately', async () => {
@@ -288,9 +284,7 @@ describe('ToolPanelContextMenu', () => {
 
             getDeferredActionButton(toolPanel, 'Cancel').click();
 
-            await waitFor(() =>
-                expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age')
-            );
+            await waitFor(() => expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age'));
             expect(gridApi.getValueColumns()).toEqual([]);
         });
 
@@ -307,9 +301,7 @@ describe('ToolPanelContextMenu', () => {
 
             getDeferredActionButton(toolPanel, 'Cancel').click();
 
-            await waitFor(() =>
-                expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age')
-            );
+            await waitFor(() => expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age'));
             expect(gridApi.getValueColumns()).toEqual([]);
         });
 
