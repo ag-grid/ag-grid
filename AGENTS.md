@@ -23,7 +23,7 @@ This file provides guidance to AI Agents when working with code in this reposito
 
 - **Plugin marketplace:** Shared skills, subagents, commands, and guides are delivered via Claude Code plugins from [`ag-grid/ag-dev-prompts`](https://github.com/ag-grid/ag-dev-prompts) — `ag-core`, `ag-prodeng`, and `ag-grid` (enabled in `.claude/settings.json`). Invoke with the plugin prefix, e.g. `/ag-prodeng:pr-review`, `/ag-core:recall`.
 - **Local overrides:** `.rulesync/` tracks repo-specific content that layers on top of the plugins. See the allowlist in `.rulesync/.gitignore` for what's tracked.
-- **Generated tool configs:** `setup-prompts.sh` (run at `yarn` time) stages plugin content into `.rulesync/` and regenerates `.claude/`, `.cursor/`, `.codex/`, `.gemini/`, `.github/`, `AGENTS.md`, and `CLAUDE.md`. Never hand-edit those — edit `.rulesync/` and re-run.
+- **Generated tool configs:** `./external/ag-shared/scripts/setup-prompts/setup-prompts.sh` (run at `yarn` time, safe to re-run by hand, no network needed) stages plugin content into `.rulesync/` and regenerates `.claude/`, `.cursor/`, `.codex/`, `.gemini/`, `.github/` and `AGENTS.md`. `CLAUDE.md` is a symlink to `AGENTS.md`, so it needs no separate edit. Never hand-edit any of those — change the matching `.rulesync/rules/*.md` and re-run that script.
 
 ---
 
@@ -90,7 +90,7 @@ For detailed information about preferred technologies and architectural constrai
 - `yarn nx format --sort-root-tsconfig-paths=false` – format repo files; run from the project root before committing.
 - `./checks.sh` – the standard pre-commit gate: `build:types`, `lint` and `build:test` across every project that defines them, in one parallel Nx run. Matches CI's lint coverage. Silent on success, prints failing task output otherwise.
 - `./checks.sh --projects <a,b>` / `--targets <x,y>` – narrow the gate to specific projects or targets.
-- `./checks.sh --fresh` – bypass the Nx cache; `--verbose` – stream task output even when passing.
+- `./checks.sh --fresh` – bypass the Nx cache; `--verbose` – print task output even when passing.
 - `yarn nx build <package>` – compile a specific package after code edits.
 - `yarn nx build:types <package>` – regenerate declaration files when touching exported APIs.
 - `yarn nx build:package <package>` – create ESM/CJS bundles to validate publishable output.

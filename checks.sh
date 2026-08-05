@@ -11,7 +11,7 @@
 #   ./checks.sh --targets lint        # Override the target list
 #   ./checks.sh --fresh               # Bypass the Nx cache
 #   ./checks.sh --warn                # Print the warnings a passing run produced
-#   ./checks.sh --verbose             # Stream task output even when everything passes
+#   ./checks.sh --verbose             # Print task output even when everything passes
 #   ./checks.sh <extra nx args...>    # Anything else is forwarded to `nx run-many`
 
 set -uo pipefail
@@ -68,8 +68,8 @@ run() {
         --parallel="$cores" --output-style=stream "${nxArgs[@]+"${nxArgs[@]}"}"
 }
 
-# Kept next to the other tooling scratch (ag-watch-status.json) and overwritten each run, so a passing gate
-# can point at its warnings instead of discarding them with the temp log.
+# Kept next to the other tooling scratch (ag-watch-status.json), so a passing gate can point at its warnings
+# instead of discarding them with the temp log. Rewritten by any run that has warnings to report.
 warningsLog="$SCRIPT_DIR/node_modules/.cache/ag-checks-warnings.log"
 warnings=0
 
@@ -89,23 +89,24 @@ countWarnings() {
 
 start=$SECONDS
 
-if $verbose; then
-    run
-    status=$?
-else
-    # An explicit XXXXXX template: GNU mktemp rejects `-t ag-checks`, and with errexit off that failure
-    # would silently redirect into an empty path and fail the gate before Nx ever runs.
-    log="$(mktemp "${TMPDIR:-/tmp}/ag-checks.XXXXXX")" || exit 1
-    trap 'rm -f "$log"' EXIT
-    run > "$log" 2>&1
-    status=$?
-    if [[ $status -ne 0 ]]; then
-        cat "$log"
-    else
-        warnings="$(countWarnings "$log")"
-        if [[ "$warnings" -gt 0 ]]; then
-            mkdir -p "$(dirname "$warningsLog")" && stripAnsi "$log" > "$warningsLog"
-        fi
+# An explicit XXXXXX template: GNU mktemp rejects `-t ag-checks`, and with errexit off that failure
+# would silently redirect into an empty path and fail the gate before Nx ever runs.
+log="$(mktemp "${TMPDIR:-/tmp}/ag-checks.XXXXXX")" || exit 1
+trap 'rm -f "$log"' EXIT
+
+# Never a pipe: node flushes pipes asynchronously, so nx exits mid-write and loses most of its output.
+run > "$log" 2>&1
+status=$?
+
+if [[ $status -ne 0 ]] || $verbose; then
+    cat "$log"
+fi
+
+if [[ $status -eq 0 ]]; then
+    warnings="$(countWarnings "$log")"
+    # A failed write must not leave the summary pointing at an absent log, or at a previous run's.
+    if [[ "$warnings" -gt 0 ]] && ! { mkdir -p "$(dirname "$warningsLog")" && stripAnsi "$log" > "$warningsLog"; }; then
+        warningsLog=""
     fi
 fi
 
@@ -114,7 +115,9 @@ summary="targets: ${TARGETS} | projects: ${PROJECTS:-all}"
 
 if [[ $status -eq 0 && "$warnings" -gt 0 ]]; then
     echo "CHECKS-PASSED (${elapsed}s) — ${summary}"
-    if $showWarnings; then
+    if [[ -z "$warningsLog" ]]; then
+        echo "  ${warnings} warnings (could not be written to disk)"
+    elif $showWarnings; then
         # Keep the file-path lines ESLint prints above each block, or the rows say nothing about where.
         # Nx prefixes streamed lines with the task name, so the path is not always at the start of a line.
         grep -E '[0-9]+:[0-9]+[[:space:]]+warning|problems? \(|^([^:]+: )?/.*\.(ts|tsx|js|jsx|mjs|cjs|vue|astro)$' "$warningsLog"

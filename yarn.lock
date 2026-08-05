@@ -19105,14 +19105,6 @@ playwright-ctrf-json-reporter@0.0.29:
   dependencies:
     ctrf "^0.2.0"
 
-playwright-network-cache@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.ag-grid.com/playwright-network-cache/-/playwright-network-cache-0.3.0.tgz#f2d7ba5b06c5878fda36b73582fe3a148c41a654"
-  integrity sha512-vvmGLbvl7UVAk5o9HNMyaW6xQJ5bTwFQqtCRyLOiPw45SP9bSx3yASnem65ekbqIf5ToU575Iyu8cJDTe1WIgg==
-  dependencies:
-    debug "^4.4.3"
-    mime-types "^3.0.2"
-
 playwright@1.59.1, playwright@^1.59.1:
   version "1.59.1"
   resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.59.1.tgz#f7b0ca61637ae25264cec370df671bbe1f368a4a"

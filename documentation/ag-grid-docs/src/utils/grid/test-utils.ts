@@ -1,18 +1,14 @@
 /* eslint-disable no-empty-pattern */
-import type { Locator, Page, Response, Route, TestType } from '@playwright/test';
+import type { Locator, Page, Response, TestType } from '@playwright/test';
 import { test as base, expect as playwrightExpect } from '@playwright/test';
-import { createHash } from 'node:crypto';
-import { constants } from 'node:fs';
-import { access, appendFile, mkdir, readFile, readdir, rename, rm, stat, utimes, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { CacheRoute } from 'playwright-network-cache';
 
 import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
 import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
+import { routeExampleAssetsFromDisk, routeExternalThroughMirror, warnOnNetworkAccess } from './test/localSources';
 import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test/remoteGridapi';
 import { shouldBeAsyncGuard } from './test/shouldBeAsyncGuard';
+import { WAF_BYPASS_HEADER, wafBypassSecret } from './test/wafBypass';
 
 type ExtractFixtures<T> = T extends TestType<infer A, infer O> ? A & O : never;
 
@@ -44,7 +40,6 @@ export type AgGridFixtures = {
 };
 
 type CacheFixtures = {
-    cacheRoute?: CacheRoute;
     bypassRequestCache: boolean;
     localSources: void;
     wafBypass: void;
@@ -172,190 +167,6 @@ async function isWafBlockResponse(response: Response | null): Promise<boolean> {
     }
 }
 
-const EXAMPLE_ASSETS_URL_PREFIX = '/example-assets/';
-const EXAMPLE_ASSETS_DIR = fileURLToPath(new URL('../../../public/example-assets/', import.meta.url));
-
-const isReadableFile = (path: string): Promise<boolean> =>
-    access(path, constants.R_OK).then(
-        () => true,
-        () => false
-    );
-
-/**
- * Examples load their data from `www.ag-grid.com`, so a run otherwise depends on the public site being
- * reachable and fast - under parallel load those requests lose races and tests fail. The same files ship in
- * `public/example-assets`, so serve those from disk and leave anything not shipped to the network cache.
- */
-async function routeExampleAssetsFromDisk(page: Page): Promise<void> {
-    await page.route(`https://www.ag-grid.com${EXAMPLE_ASSETS_URL_PREFIX}**`, async (route) => {
-        const { pathname } = new URL(route.request().url());
-        const filePath = join(EXAMPLE_ASSETS_DIR, pathname.slice(EXAMPLE_ASSETS_URL_PREFIX.length));
-        const shipped = filePath.startsWith(EXAMPLE_ASSETS_DIR) && (await isReadableFile(filePath));
-        if (!shipped) {
-            await route.fallback();
-            return;
-        }
-        await waitForTextMeasurable(page);
-        // The page's origin is localhost, so the response needs to allow the cross-origin read.
-        await route.fulfill({ path: filePath, headers: { 'access-control-allow-origin': '*' } });
-    });
-}
-
-/**
- * Examples auto-size columns the first time data renders and those widths stick, so serving data from disk
- * made it beat the webfont and measure text in the fallback. A `fetch` does not hold up `load`, so waiting
- * here cannot deadlock against the resources being waited on.
- */
-async function waitForTextMeasurable(page: Page): Promise<void> {
-    await page
-        .evaluate(() => {
-            const loaded =
-                document.readyState === 'complete'
-                    ? Promise.resolve()
-                    : new Promise<void>((resolve) => window.addEventListener('load', () => resolve(), { once: true }));
-            return loaded.then(() => document.fonts.ready).then(() => undefined);
-        })
-        .catch(() => undefined);
-}
-
-/**
- * Only hosts whose URLs pin the exact bytes: jsdelivr keys on `@version`, gstatic on the font file itself.
- * Nothing here negotiates on the client, so a mirrored copy cannot go stale or answer the wrong browser.
- */
-const MIRRORED_HOSTS = ['cdn.jsdelivr.net', 'fonts.gstatic.com'];
-
-/**
- * Google Fonts CSS is `cache-control: private` and varies by user agent - the same URL answers
- * `font-stretch: 100%` to one browser and `normal` to another - so it is cached with a TTL, never mirrored.
- */
-const CACHED_HOSTS = [...MIRRORED_HOSTS, 'fonts.googleapis.com', 'www.ag-grid.com'];
-
-const MIRROR_DIR = fileURLToPath(new URL('../../../.playwright-network-mirror/', import.meta.url));
-const MIRROR_META_SEPARATOR = 0x0a;
-
-/** Nothing invalidates an immutable entry, so without a sweep every version bump leaks one for ever. */
-const MIRROR_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
-/** A temporary file lives for milliseconds, so anything this old was orphaned by a worker that was killed. */
-const MIRROR_TMP_MAX_AGE_MS = 60 * 60 * 1000;
-
-let mirrorSweep: Promise<void> | undefined;
-
-/** Deleting a live entry only costs one refetch, so age is judged on last use rather than first write. */
-function sweepMirror(): Promise<void> {
-    mirrorSweep ??= (async () => {
-        const now = Date.now();
-        const names = await readdir(MIRROR_DIR).catch(() => [] as string[]);
-        await Promise.all(
-            names.map(async (name) => {
-                const path = join(MIRROR_DIR, name);
-                const maxAge = name.endsWith('.tmp') ? MIRROR_TMP_MAX_AGE_MS : MIRROR_MAX_AGE_MS;
-                const info = await stat(path).catch(() => undefined);
-                if (info && now - info.mtimeMs > maxAge) {
-                    await rm(path, { force: true }).catch(() => undefined);
-                }
-            })
-        );
-    })();
-    return mirrorSweep;
-}
-
-type MirrorMeta = { status: number; headers: Record<string, string> };
-type MirrorEntry = { body: Buffer; meta: MirrorMeta };
-
-/** Bodies are multi-MB (`typescript.min.js` alone is ~6MB) and every test wants them, so resolve each once. */
-const mirrorEntries = new Map<string, Promise<MirrorEntry | undefined>>();
-
-const mirrorPathFor = (url: string): string => join(MIRROR_DIR, createHash('sha1').update(url).digest('hex'));
-
-/** Any read failure - absent, truncated, mid-write - just means "not mirrored yet". */
-async function readMirrorEntry(path: string): Promise<MirrorEntry | undefined> {
-    try {
-        const file = await readFile(path);
-        const split = file.indexOf(MIRROR_META_SEPARATOR);
-        if (split < 0) {
-            return undefined;
-        }
-        // Marks the entry as still in use so the sweep only reclaims what nothing asks for any more.
-        const now = new Date();
-        void utimes(path, now, now).catch(() => undefined);
-        return { meta: JSON.parse(file.subarray(0, split).toString('utf8')), body: file.subarray(split + 1) };
-    } catch {
-        return undefined;
-    }
-}
-
-/**
- * Metadata and body share one file so a single rename publishes the entry whole. Written to a pid-suffixed
- * name first: with a file each, two workers renaming at once can pair one's body with the other's status.
- */
-async function writeMirrorEntry(path: string, { body, meta }: MirrorEntry): Promise<void> {
-    const tmp = `${path}.${process.pid}.tmp`;
-    await mkdir(MIRROR_DIR, { recursive: true });
-    await writeFile(tmp, `${JSON.stringify(meta)}\n`, 'utf8');
-    await appendFile(tmp, body);
-    await rename(tmp, path);
-}
-
-/** Error responses are deliberately not mirrored: replaying one for the rest of the run hides a flaky CDN. */
-async function fetchIntoMirror(route: Route, url: string): Promise<MirrorEntry | undefined> {
-    let entry: MirrorEntry;
-    try {
-        const response = await route.fetch();
-        const meta: MirrorMeta = { status: response.status(), headers: response.headers() };
-        if (meta.status >= 400) {
-            return undefined;
-        }
-        entry = { body: await response.body(), meta };
-    } catch {
-        return undefined;
-    }
-    // Persisting is best effort - a full or read-only disk should not cost us a response already in hand.
-    await writeMirrorEntry(mirrorPathFor(url), entry).catch(() => undefined);
-    return entry;
-}
-
-async function resolveMirrorEntry(route: Route, url: string): Promise<MirrorEntry | undefined> {
-    return (await readMirrorEntry(mirrorPathFor(url))) ?? (await fetchIntoMirror(route, url));
-}
-
-/**
- * Single-flight per worker: concurrent requests for a URL share one in-flight promise, so the origin sees at
- * most one request per worker rather than one per test.
- */
-async function loadMirrorEntry(route: Route, url: string): Promise<MirrorEntry | undefined> {
-    const inFlight = mirrorEntries.get(url);
-    if (inFlight) {
-        return inFlight;
-    }
-    const pending = resolveMirrorEntry(route, url);
-    mirrorEntries.set(url, pending);
-    const entry = await pending;
-    // Never memoize a failure, or one bad fetch is replayed by every later test in this worker.
-    if (!entry) {
-        mirrorEntries.delete(url);
-    }
-    return entry;
-}
-
-/**
- * Mirrors CDN responses to disk, shared by every worker. Without this a cold run re-fetches the same
- * multi-MB bundles for every test, and under parallel load those requests time tests out.
- */
-async function routeCdnThroughMirror(page: Page): Promise<void> {
-    void sweepMirror();
-    await page.route(
-        (url) => MIRRORED_HOSTS.includes(url.hostname),
-        async (route) => {
-            const entry = await loadMirrorEntry(route, route.request().url());
-            if (!entry) {
-                await route.fallback();
-                return;
-            }
-            await route.fulfill({ status: entry.meta.status, headers: entry.meta.headers, body: entry.body });
-        }
-    );
-}
-
 async function loadPage(
     page: Page,
     agExampleUrl: AgExampleUrl,
@@ -403,29 +214,6 @@ async function loadPage(
     return page;
 }
 
-type WafBypass = { WAF_BYPASS_HEADER: string; wafBypassSecret: string | undefined };
-
-// Annotated as `string` so the specifier stays opaque to the compiler: the module carries a shared secret,
-// is absent from every checkout without one, and so must resolve at runtime or not at all.
-const WAF_BYPASS_MODULE: string = './test/wafBypass';
-
-let wafBypassModule: Promise<WafBypass | undefined> | undefined;
-
-const loadWafBypass = (): Promise<WafBypass | undefined> => {
-    wafBypassModule ??= import(WAF_BYPASS_MODULE).then(
-        (module) => module as WafBypass,
-        (error) => {
-            // Absence is the expected case. A syntax or dependency error must not quietly disable the
-            // bypass, or it resurfaces later as an unexplained WAF block.
-            if (error?.code === 'ERR_MODULE_NOT_FOUND' || error?.code === 'MODULE_NOT_FOUND') {
-                return undefined;
-            }
-            throw error;
-        }
-    );
-    return wafBypassModule;
-};
-
 export const extended = base.extend<TestFixtures>({
     agExampleUrl: [({}, use) => use(undefined), { option: true }],
     agFramework: [({}, use) => use(ALL_FRAMEWORKS[0]), { option: true }],
@@ -442,35 +230,6 @@ export const extended = base.extend<TestFixtures>({
     bypassRequestCache: [false, { option: true }],
     loadPageOptions: [({}, use) => use(undefined), { option: true }],
     agModules: [undefined, { option: true }],
-    cacheRoute: [
-        async ({ page, bypassRequestCache }: TestFixtures, use: (r?: CacheRoute) => Promise<void>) => {
-            if (bypassRequestCache) {
-                await use(undefined);
-                return;
-            }
-
-            // Unconditional because bypassRequestCache already returned above without registering a route -
-            // the list is only reached when caching is on. localhost stays out of it: it serves the build
-            // under test, so a cached response would hide the very change a run exists to verify.
-            const cacheRoute = new CacheRoute(page, {
-                baseDir: '.playwright-network-cache',
-                ttlMinutes: 60, // refresh after 60 minutes, long enough for build to complete
-
-                match: (req) => {
-                    try {
-                        return CACHED_HOSTS.includes(new URL(req.url()).hostname);
-                    } catch {
-                        return false;
-                    }
-                },
-            });
-
-            await cacheRoute.ALL('**/*'); // send all requests to cacheRoute handler
-
-            await use(cacheRoute);
-        },
-        { option: true },
-    ],
     remoteGrid: [
         ({ page }, use) => {
             const eventLog: any[] = [];
@@ -487,16 +246,23 @@ export const extended = base.extend<TestFixtures>({
         { option: true },
     ],
     cpuThrottle: [undefined, { option: true }],
-    // Depends on cacheRoute so these routes are registered afterwards and therefore match first, falling
-    // back to the cache for anything they do not serve. A fixture rather than a loadPage call so specs that
-    // navigate themselves get them too.
+    // A fixture rather than a loadPage call so specs that navigate themselves get them too. Declared before
+    // wafBypass, which must register later to run first and pass its header down via fallback.
     localSources: [
-        async ({ page, bypassRequestCache, cacheRoute: _ }, use) => {
-            if (bypassRequestCache) {
+        async ({ page, baseURL, bypassRequestCache }, use) => {
+            if (bypassRequestCache || !baseURL) {
                 await use();
                 return;
             }
-            await Promise.all([routeExampleAssetsFromDisk(page), routeCdnThroughMirror(page)]);
+            // Read from the page rather than the project config: only the browser knows the agent string a
+            // negotiating host will actually see, and it is what the mirror keys on.
+            const userAgent = await page.evaluate(() => navigator.userAgent);
+            const siteOrigin = new URL(baseURL).origin;
+            // Ordered, not concurrent: the later route matches first, and a shipped asset must beat the
+            // mirror to it. Registered together, whichever won the race decided whether disk or the CDN
+            // served `/example-assets/`.
+            await routeExternalThroughMirror(page, siteOrigin, userAgent);
+            await routeExampleAssetsFromDisk(page);
             await use();
         },
         { auto: true },
@@ -504,14 +270,10 @@ export const extended = base.extend<TestFixtures>({
     // Attaches the WAF bypass header to the site's own origin only. Playwright's context-level
     // extraHTTPHeaders would send it with every request an example makes, including third-party CDNs
     // (jsdelivr, Google Fonts), leaving the secret in logs we do not control.
-    //
-    // Depends on cacheRoute so this route is registered afterwards and therefore runs first, passing the
-    // modified headers down to the cache handler via fallback.
     wafBypass: [
-        async ({ page, baseURL, cacheRoute: _ }, use) => {
-            const waf = await loadWafBypass();
-            const secret = waf?.wafBypassSecret;
-            if (!waf || !secret || !baseURL) {
+        async ({ page, baseURL }, use) => {
+            const secret = wafBypassSecret;
+            if (!secret || !baseURL) {
                 await use();
                 return;
             }
@@ -521,7 +283,7 @@ export const extended = base.extend<TestFixtures>({
                 (url) => url.origin === siteOrigin,
                 async (route) => {
                     const headers = route.request().headers();
-                    headers[waf.WAF_BYPASS_HEADER] = secret;
+                    headers[WAF_BYPASS_HEADER] = secret;
                     await route.fallback({ headers });
                 }
             );
@@ -560,7 +322,6 @@ const frameworkTest =
                 page,
                 agExampleUrl,
                 agIdFor,
-                cacheRoute: _,
                 loadPageOptions,
                 remoteGrid,
                 agModules,
@@ -674,8 +435,10 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
         expect(errors.length, errorMessage).toBe(0);
     }
 
-    // Ensure any routes created by the CacheRoute are removed to avoid warnings in the logs
+    // Ensure the routes registered by the fixtures are removed to avoid warnings in the logs
     await page.unrouteAll({ behavior: 'ignoreErrors' });
+
+    warnOnNetworkAccess();
 }
 
 function prev34WrapAdapter(wrap: ReturnType<typeof wrapAgTestIdFor<any>>, page: Page) {
