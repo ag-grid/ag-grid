@@ -309,6 +309,19 @@ A positive signal only works when it provably lands *after* the thing being rule
 
 The way to show a delay is decoration is to delete it and see the test still pass — but **run that probe at whole-file scope at least, never under `-t "<single test>"`**. Vitest isolation changes what has already happened by the time the assertion fires, so a filtered run can pass on a gate that the full file genuinely needs. A green `-t` run is not evidence that a wait is unnecessary; it is evidence of nothing.
 
+#### The poll that was already true
+
+When the sleep you are replacing sits after a mutation, check what the polled condition evaluated to *before* that mutation. If it was already true, `waitFor` resolves on its first tick and the assertion never sees the new state — the test still passes, and it now passes for any implementation.
+
+This bites hardest on "state survives a rebuild" tests, where the state asserted afterwards is the same state that held beforehand. Gate on a signal that can only be true post-mutation — the recreated object is a different instance, a count has changed, a new column has appeared — and then assert:
+
+```typescript
+const groupBeforeRebuild = api.getProvidedColumnGroup(openedIds[0]);
+api.setGridOption('columnDefs', makeDefs());
+await waitFor(() => expect(api.getProvidedColumnGroup(openedIds[0])).not.toBe(groupBeforeRebuild));
+expect(openGroupIds(api)).toEqual(openedIds);
+```
+
 ## Best Practices
 
 1. **Test behaviour, not implementation** - Focus on what the code does, not how
