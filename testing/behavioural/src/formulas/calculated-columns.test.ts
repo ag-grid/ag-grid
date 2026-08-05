@@ -1017,10 +1017,13 @@ describe('ag-grid calculated columns', () => {
         showColumnMenu(api, 'profit');
         await clickColumnMenuItem('Remove Calculated Column');
 
+        // Poll until the event has arrived, then assert the count synchronously — polling the count
+        // itself would resolve as soon as it hit 1, so a duplicate dispatch could never fail this.
         await waitFor(() => {
             expect(api.getColumn('profit')).toBeNull();
-            expect(removed).toHaveBeenCalledTimes(1);
+            expect(removed).toHaveBeenCalled();
         });
+        expect(removed).toHaveBeenCalledTimes(1);
 
         api.resetColumnState();
 
@@ -2775,16 +2778,22 @@ describe('ag-grid calculated columns', () => {
         await waitFor(() => expect(newColumnsLoaded).toHaveBeenCalled());
         newColumnsLoaded.mockClear();
 
+        // Each mutation must dispatch exactly once. Gate on the dispatch arriving, then assert the
+        // count synchronously — polling the count resolves the moment it reaches 1, which would make
+        // a duplicate dispatch unable to fail the test.
         addCalculatedColumnDef(api, { colId: 'profit', calculatedExpression: '[revenue] - [cost]' });
-        await waitFor(() => expect(newColumnsLoaded).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(newColumnsLoaded).toHaveBeenCalled());
+        expect(newColumnsLoaded).toHaveBeenCalledTimes(1);
 
         newColumnsLoaded.mockClear();
         updateCalculatedColumnDef(api, 'profit', { calculatedExpression: '[revenue] * [cost]' });
-        await waitFor(() => expect(newColumnsLoaded).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(newColumnsLoaded).toHaveBeenCalled());
+        expect(newColumnsLoaded).toHaveBeenCalledTimes(1);
 
         newColumnsLoaded.mockClear();
         removeColumnDef(api, 'profit');
-        await waitFor(() => expect(newColumnsLoaded).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(newColumnsLoaded).toHaveBeenCalled());
+        expect(newColumnsLoaded).toHaveBeenCalledTimes(1);
     });
 
     test('removeCalculatedColumn then re-adding the same colId yields a working live column', async () => {
