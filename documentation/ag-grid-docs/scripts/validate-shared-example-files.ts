@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /* eslint-disable no-console */
-import { readFile, stat } from 'fs/promises';
+import { readFile, stat, writeFile } from 'fs/promises';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -17,6 +17,9 @@ import { fileURLToPath } from 'url';
  * This guard closes that gap for the files declared in SHARED_EXAMPLE_FILES below. It is
  * deliberately opt-in per example rather than repo-wide: examples not listed here are unchecked,
  * so a passing run is not a claim that the whole docs tree is drift-free.
+ *
+ * Pass `--fix` to copy the vanilla source over every variant instead of reporting, which is the
+ * intended workflow after editing a shared file: edit the vanilla source, then sync.
  */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -55,6 +58,18 @@ function normalise(source: string): string {
     return source.replace(/<([A-Za-z_$][\w$]*),>/g, '<$1>');
 }
 
+/**
+ * Inverse of `normalise` when writing the vanilla source into a variant. Shared files contain no
+ * JSX by definition, so a bare `<T>(` can only be a generic parameter list needing the trailing
+ * comma that `.tsx` requires.
+ */
+function toVariantSource(source: string, variant: string): string {
+    if (variant === 'reactFunctionalTs') {
+        return source.replace(/<([A-Za-z_$][\w$]*)>\(/g, '<$1,>(');
+    }
+    return source;
+}
+
 async function readIfPresent(path: string): Promise<string | undefined> {
     try {
         const stats = await stat(path);
@@ -74,8 +89,9 @@ function variantFileName(fileName: string, variant: string): string {
     return fileName;
 }
 
-async function validateSharedExampleFiles(): Promise<Drift[]> {
+async function validateSharedExampleFiles(fix = false): Promise<{ drift: Drift[]; fixed: string[] }> {
     const drift: Drift[] = [];
+    const fixed: string[] = [];
     const examples = Object.keys(SHARED_EXAMPLE_FILES);
 
     console.log(`📁 Checking ${examples.length} example(s) with declared shared files\n`);
@@ -109,37 +125,69 @@ async function validateSharedExampleFiles(): Promise<Drift[]> {
                     continue;
                 }
 
-                const variantSource = await readIfPresent(join(variantDir, variantFileName(fileName, variant)));
-                if (variantSource === undefined) {
-                    drift.push({
-                        example,
-                        file: fileName,
-                        variant,
-                        reason: `missing — expected provided/${variant}/${variantFileName(fileName, variant)}`,
-                    });
+                const variantFile = variantFileName(fileName, variant);
+                const variantPath = join(variantDir, variantFile);
+                const variantSource = await readIfPresent(variantPath);
+                const isMissing = variantSource === undefined;
+
+                if (!isMissing && normalise(variantSource) === normalise(rootSource)) {
                     continue;
                 }
 
-                if (normalise(variantSource) !== normalise(rootSource)) {
-                    drift.push({
-                        example,
-                        file: fileName,
-                        variant,
-                        reason: `differs from the vanilla ${fileName}`,
-                    });
+                if (fix) {
+                    await writeFile(variantPath, toVariantSource(rootSource, variant));
+                    fixed.push(`${example}/provided/${variant}/${variantFile}`);
+                    continue;
                 }
+
+                drift.push({
+                    example,
+                    file: fileName,
+                    variant,
+                    reason: isMissing
+                        ? `missing — expected provided/${variant}/${variantFile}`
+                        : `differs from the vanilla ${fileName}`,
+                });
             }
         }
     }
 
-    return drift;
+    return { drift, fixed };
 }
 
 async function main() {
-    console.log('🚀 Validating shared example files across provided/ variants...\n');
+    const fix = process.argv.includes('--fix');
+
+    console.log(
+        fix
+            ? '🚀 Syncing shared example files into provided/ variants...\n'
+            : '🚀 Validating shared example files across provided/ variants...\n'
+    );
 
     try {
-        const drift = await validateSharedExampleFiles();
+        const { drift, fixed } = await validateSharedExampleFiles(fix);
+
+        if (fix) {
+            if (fixed.length > 0) {
+                console.log('🔧 Updated:\n');
+                fixed.forEach((path) => console.log(`   - ${path}`));
+                console.log('');
+            }
+            if (drift.length > 0) {
+                console.log('❌ Could not be fixed automatically:\n');
+                for (const { example, file, variant, reason } of drift) {
+                    console.log(`   - ${example}/${file} [${variant}]: ${reason}`);
+                }
+                console.log('');
+                process.exit(1);
+            }
+            console.log(
+                fixed.length > 0
+                    ? `✅ Synced ${fixed.length} file(s). Run nx format before committing. 🎉`
+                    : '✅ Already in sync, nothing to do. 🎉'
+            );
+            process.exit(0);
+        }
 
         if (drift.length > 0) {
             console.log('❌ Shared example files have drifted:\n');
@@ -148,9 +196,9 @@ async function main() {
             }
             console.log(
                 '\n💡 These files carry no framework-specific content, so every provided/ variant must' +
-                    '\n   match the vanilla root exactly. Copy the vanilla file over each variant (keeping' +
-                    '\n   the .tsx extension for reactFunctionalTs), or remove the file from' +
-                    '\n   SHARED_EXAMPLE_FILES in this script if it has genuinely diverged by design.\n'
+                    '\n   match the vanilla root exactly. Re-run with --fix to copy the vanilla file over' +
+                    '\n   each variant, or remove the file from SHARED_EXAMPLE_FILES in this script if it' +
+                    '\n   has genuinely diverged by design.\n'
             );
             process.exit(1);
         }
