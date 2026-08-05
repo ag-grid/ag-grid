@@ -4,8 +4,8 @@ import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidati
 import type { TAthlete } from './data';
 import { fetchDataAsync } from './data';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

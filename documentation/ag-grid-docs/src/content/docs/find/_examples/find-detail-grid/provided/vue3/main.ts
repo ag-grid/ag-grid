@@ -19,8 +19,8 @@ import { AgGridVue } from 'ag-grid-vue3';
 import { getData } from './data';
 import './styles.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

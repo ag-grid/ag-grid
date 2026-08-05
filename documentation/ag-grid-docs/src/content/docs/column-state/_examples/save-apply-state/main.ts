@@ -16,8 +16,8 @@ import {
 
 declare let window: any;
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

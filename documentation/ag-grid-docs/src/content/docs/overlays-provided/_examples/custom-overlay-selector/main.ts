@@ -4,8 +4,8 @@ import type { IOverlayParams } from 'ag-grid-community';
 
 import { CustomLoadingOverlay } from './customLoadingOverlay_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
