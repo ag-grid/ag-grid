@@ -62,6 +62,9 @@ const createColumnStub = (colId: string, overrides: Record<string, any> = {}) =>
         ...overrides,
     }) as any;
 
+const addColumnHeader = (row: ReturnType<ExcelSerializingSession['onNewHeaderRow']>, column: any, index: number) =>
+    row.onCell({ type: 'column', column, columnIndex: index, columnSpan: 1, rowSpan: 1 });
+
 const rowValueServiceStub = () =>
     ({
         getValueForDisplay: ({ column, node, includeValueFormatted }: any) => {
@@ -302,8 +305,8 @@ describe('excelXlsxFactory Workbook', () => {
         session.prepare([athleteCol, countryCol]);
 
         const headerRow = session.onNewHeaderRow();
-        headerRow.onColumn(athleteCol, 0, undefined as any);
-        headerRow.onColumn(countryCol, 1, undefined as any);
+        addColumnHeader(headerRow, athleteCol, 0);
+        addColumnHeader(headerRow, countryCol, 1);
 
         const rowData = [
             { athlete: 'Natalie Coughlin', country: 'United States' },
@@ -329,6 +332,53 @@ describe('excelXlsxFactory Workbook', () => {
         expect(worksheetXml).not.toMatch(/t="n"[^>]*>\s*<v>\s*<\/v>/);
     });
 
+    it('writes vertical merge ranges for spanning column headers', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    baseExcelStyles: [{ id: 'header', borders: { borderBottom: { color: '#111111' } } }],
+                    styleLinker: () => ['header'],
+                },
+                workbook
+            )
+        );
+        const column = createColumnStub('age');
+        session.prepare([column]);
+
+        session.onNewHeaderGroupingRow().onCell({ type: 'column', column, columnIndex: 0, columnSpan: 1, rowSpan: 2 });
+        session.onNewHeaderRow().onCell({ type: 'covered', columnIndex: 0, columnSpan: 1, rowSpan: 1 });
+
+        const worksheetXml = session.parse();
+        expect(worksheetXml).toContain('<mergeCell ref="A1:A2"/>');
+        expect(worksheetXml).toMatch(/<c r="A2" s="\d+"\/>/);
+    });
+
+    it('centres spanning headers unless an Excel style overrides their vertical alignment', () => {
+        const createSpanningHeaderStyle = (headerStyle?: ExcelStyle): ExcelStyle => {
+            const session = new ExcelSerializingSession(
+                stubParams({
+                    baseExcelStyles: headerStyle ? [headerStyle] : [],
+                    styleLinker: () => (headerStyle ? [headerStyle.id] : []),
+                })
+            );
+            const column = createColumnStub('gold');
+            session.prepare([column]);
+            session
+                .onNewHeaderGroupingRow()
+                .onCell({ type: 'column', column, columnIndex: 0, columnSpan: 1, rowSpan: 2 });
+
+            const rows = (session as unknown as { rows: Array<{ cells: Array<{ styleId?: string }> }> }).rows;
+            const excelStyles = (session as unknown as { excelStyles: ExcelStyle[] }).excelStyles;
+            return excelStyles.find((style) => style.id === rows[0].cells[0].styleId)!;
+        };
+
+        expect(createSpanningHeaderStyle().alignment?.vertical).toBe('Center');
+        expect(
+            createSpanningHeaderStyle({ id: 'bottomHeader', alignment: { vertical: 'Bottom' } }).alignment?.vertical
+        ).toBe('Bottom');
+    });
+
     it('omits trailing blank cells for AG-5330 keyboard navigation semantics', () => {
         const workbook = new Workbook();
         const session = new ExcelSerializingSession(
@@ -348,10 +398,10 @@ describe('excelXlsxFactory Workbook', () => {
         session.prepare([athleteCol, ageCol, countryCol, yearCol]);
 
         const headerRow = session.onNewHeaderRow();
-        headerRow.onColumn(athleteCol, 0, undefined as any);
-        headerRow.onColumn(ageCol, 1, undefined as any);
-        headerRow.onColumn(countryCol, 2, undefined as any);
-        headerRow.onColumn(yearCol, 3, undefined as any);
+        addColumnHeader(headerRow, athleteCol, 0);
+        addColumnHeader(headerRow, ageCol, 1);
+        addColumnHeader(headerRow, countryCol, 2);
+        addColumnHeader(headerRow, yearCol, 3);
 
         const node = { data: { athlete: 'sample' }, group: false, footer: false } as any;
         const row = session.onNewBodyRow(node);
@@ -852,8 +902,12 @@ describe('excel styles', () => {
         session.prepare([colStub]);
 
         // Trigger header rows
-        session.onNewHeaderGroupingRow().onColumn({} as any, 'Group', 0, 1, []);
-        session.onNewHeaderRow().onColumn(colStub, 0, {} as any);
+        const columnGroup = {} as any;
+        (session as any).extractGroupHeaderValue = () => 'Group';
+        session
+            .onNewHeaderGroupingRow()
+            .onCell({ type: 'group', column: columnGroup, columnIndex: 0, columnSpan: 2, rowSpan: 1 });
+        addColumnHeader(session.onNewHeaderRow(), colStub, 0);
 
         const rows = (session as any).rows as any[];
         expect(rows[0].cells[0].styleId).toContain('mixedStyle'); // merged header + headerGroup

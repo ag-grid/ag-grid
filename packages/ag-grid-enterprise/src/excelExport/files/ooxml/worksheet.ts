@@ -1,7 +1,6 @@
 import { _escapeString } from 'ag-stack';
 
 import type {
-    ExcelCell,
     ExcelColumn,
     ExcelFont,
     ExcelHeaderFooterConfig,
@@ -15,7 +14,7 @@ import type {
     XmlElement,
 } from 'ag-grid-community';
 
-import type { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
+import type { ExcelDataTable, ExcelHeaderFooterPosition, InternalExcelCell } from '../../assets/excelInterfaces';
 import { getExcelColumnName } from '../../assets/excelUtils';
 import type { ExcelGridSerializingParams } from '../../excelSerializingSession';
 import {
@@ -42,16 +41,17 @@ const getMergedCellsAndAddColumnGroups = (
         let merges = 0;
         let lastCol: ExcelColumn;
 
-        cells.forEach((currentCell: ExcelCell, cellIdx: number) => {
+        cells.forEach((currentCell: InternalExcelCell, cellIdx: number) => {
             const min = cellIdx + merges + 1;
             const start = getExcelColumnName(min);
             const outputRow = rowIdx + 1;
 
-            if (currentCell.mergeAcross) {
-                merges += currentCell.mergeAcross;
+            const mergeAcross = currentCell.mergeAcross ?? 0;
+            const mergeDown = currentCell.mergeDown ?? 0;
+            if (mergeAcross || mergeDown) {
+                merges += mergeAcross;
                 const end = getExcelColumnName(cellIdx + merges + 1);
-
-                mergedCells.push(`${start}${outputRow}:${end}${outputRow}`);
+                mergedCells.push(`${start}${outputRow}:${end}${outputRow + mergeDown}`);
             }
 
             if (!cols[min - 1]) {

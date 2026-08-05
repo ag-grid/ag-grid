@@ -1,6 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
 import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams, _isFullWidthGroupRow } from '../gridOptionsUtils';
@@ -17,12 +18,13 @@ import type { ValueService } from '../valueService/valueService';
 import type {
     GridSerializingParams,
     GridSerializingSession,
+    HeaderRowAccumulator,
     RowAccumulator,
-    RowSpanningAccumulator,
 } from './iGridSerializer';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
+    public readonly useGridHeaderLayout: boolean = false;
     public colModel: ColumnModel;
     private readonly colNames: ColumnNameService;
     public rowGroupColsSvc?: IRowGroupColsService;
@@ -69,8 +71,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     }
 
     abstract addCustomContent(customContent: T): void;
-    abstract onNewHeaderGroupingRow(): RowSpanningAccumulator;
-    abstract onNewHeaderRow(): RowAccumulator;
+    abstract onNewHeaderGroupingRow(): HeaderRowAccumulator;
+    abstract onNewHeaderRow(): HeaderRowAccumulator;
     abstract onNewBodyRow(node?: RowNode): RowAccumulator;
     abstract parse(): string;
 
@@ -78,6 +80,13 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     public extractHeaderValue(column: AgColumn): string {
         const value = this.getHeaderName(this.processHeaderCallback, column);
+        return value ?? '';
+    }
+
+    public extractGroupHeaderValue(columnGroup: AgColumnGroup): string {
+        const value = this.processGroupHeaderCallback
+            ? this.processGroupHeaderCallback(_addGridCommonParams(this.gos, { columnGroup }))
+            : this.colNames.getDisplayNameForColumnGroup(columnGroup, 'header');
         return value ?? '';
     }
 

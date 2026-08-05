@@ -9,7 +9,7 @@ import {
     resolveRequestedColumnWidths,
 } from './utils/document/layout';
 import type { LayoutOptions } from './utils/document/measurement';
-import { getAutoColumnWidths, measureRow } from './utils/document/measurement';
+import { getAutoColumnWidths, measureRow, resolveHeaderRowSpans } from './utils/document/measurement';
 import { PdfImageRegistry } from './utils/imageRegistry';
 import { resolvePdfStyleColors } from './utils/pdfColor';
 
@@ -22,6 +22,14 @@ const createRows = (): PdfRow[] => [
 ];
 
 const countOccurrences = (value: string, search: string): number => value.split(search).length - 1;
+
+const parseRectangles = (pdf: string): Array<{ x: number; y: number; width: number; height: number }> =>
+    [...pdf.matchAll(/(-?[\d.]+) (-?[\d.]+) ([\d.]+) ([\d.]+) re S/g)].map((match) => ({
+        x: Number(match[1]),
+        y: Number(match[2]),
+        width: Number(match[3]),
+        height: Number(match[4]),
+    }));
 
 const redPixelPng =
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAAAAAAAAAAEElEQVR4AQEFAPr/AP8gEIAFAQGwAAAAAAAAAABJRU5EAAAAAA==';
@@ -36,6 +44,55 @@ const assertRowRectanglesRespectBottomMargin = (pdf: string, bottomMargin: numbe
 };
 
 describe('createPdfDocument', () => {
+    it('resolves the rendered height of vertically spanning header cells', () => {
+        const layout: LayoutOptions = {
+            columnCount: 1,
+            columnWidths: [100],
+            margin: { top: 36, right: 36, bottom: 36, left: 36 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+            headerRowHeight: 20,
+        };
+        const rows: PdfRow[] = [
+            { type: 'HEADER_GROUPING', cells: [{ value: 'Age', mergeDown: 1 }] },
+            { type: 'HEADER', cells: [{ value: '', covered: true }] },
+        ];
+        const measuredRows = rows.map((row) =>
+            measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0)
+        );
+
+        resolveHeaderRowSpans(measuredRows);
+
+        expect(measuredRows[0].cells[0].renderHeight).toBe(40);
+        expect(measuredRows[1].cells[0].covered).toBe(true);
+    });
+
+    it('renders a vertically spanning header as one PDF cell box', () => {
+        const rows: PdfRow[] = [
+            { type: 'HEADER_GROUPING', cells: [{ value: 'Age', mergeDown: 1 }] },
+            { type: 'HEADER', cells: [{ value: '', covered: true }] },
+        ];
+
+        for (const repeatHeader of [true, false]) {
+            const pdf = createPdfDocument(rows, [stubColumn(100)], { headerRowHeight: 20, repeatHeader });
+            expect(pdf).toMatch(/36 -?\d+(?:\.\d+)? 100 40 re S/);
+            expect(pdf).not.toMatch(/36 -?\d+(?:\.\d+)? 100 20 re S/);
+        }
+    });
+
+    it('centres text vertically within a spanning header', () => {
+        const rows: PdfRow[] = [
+            { type: 'HEADER_GROUPING', cells: [{ value: 'Age', mergeDown: 1 }] },
+            { type: 'HEADER', cells: [{ value: '', covered: true }] },
+        ];
+
+        const pdf = createPdfDocument(rows, [stubColumn(100)], { headerRowHeight: 20 });
+
+        expect(pdf).toContain('1 0 0 1 40 536.24 Tm (Age) Tj');
+    });
+
     it('normalises named page sizes to the requested orientation', () => {
         expect(resolvePageSize('A4', 'portrait')).toEqual({ width: 595.28, height: 841.89 });
         expect(resolvePageSize('A4', 'landscape')).toEqual({ width: 841.89, height: 595.28 });
@@ -244,6 +301,76 @@ describe('createPdfDocument', () => {
         });
 
         expect(countOccurrences(pdf, '(Value) Tj')).toBe(1);
+        assertRowRectanglesRespectBottomMargin(pdf, 10);
+    });
+
+    it('sizes vertically spanned header cells to match the header block height', () => {
+        const rows: PdfRow[] = [
+            {
+                type: 'HEADER_GROUPING',
+                cells: [
+                    { value: 'Group', mergeAcross: 1 },
+                    { value: 'A much longer spanning header', mergeDown: 1, style: { wrapText: true } },
+                ],
+            },
+            {
+                type: 'HEADER',
+                cells: [{ value: 'One' }, { value: 'Two' }, { value: '', covered: true }],
+            },
+            { type: 'BODY', cells: [{ value: '1' }, { value: '2' }, { value: '3' }] },
+        ];
+
+        const pdf = createPdfDocument(rows, [stubColumn(60), stubColumn(60), stubColumn(60)], { columnWidth: 60 });
+
+        const spannedColumnX = 36 + 120;
+        const headerRects = parseRectangles(pdf)
+            .filter((rectangle) => rectangle.x === 36)
+            .sort((a, b) => b.y - a.y);
+        const spannedRect = parseRectangles(pdf)
+            .filter((rectangle) => rectangle.x === spannedColumnX)
+            .sort((a, b) => b.height - a.height)[0];
+
+        // the spanned box covers exactly the grouping and header rows, leaving no hole.
+        expect(spannedRect.height).toBeCloseTo(headerRects[0].height + headerRects[1].height, 3);
+        expect(spannedRect.y).toBeCloseTo(headerRects[1].y, 3);
+        assertRowRectanglesRespectBottomMargin(pdf, 36);
+    });
+
+    it('repeats spanned header blocks identically on every page', () => {
+        const rows: PdfRow[] = [
+            {
+                type: 'HEADER_GROUPING',
+                cells: [
+                    { value: 'Group', mergeAcross: 1 },
+                    { value: 'Span\nHeader', mergeDown: 1, style: { preserveLineBreaks: true } },
+                ],
+            },
+            {
+                type: 'HEADER',
+                cells: [{ value: 'One' }, { value: 'Two' }, { value: '', covered: true }],
+            },
+        ];
+        for (let index = 0; index < 20; index++) {
+            rows.push({ type: 'BODY', cells: [{ value: `r${index}` }, { value: 'x' }, { value: 'y' }] });
+        }
+
+        const pdf = createPdfDocument(rows, [stubColumn(60), stubColumn(60), stubColumn(60)], {
+            page: { size: { width: 300, height: 140 }, margin: 10 },
+            columnWidth: 60,
+        });
+
+        const pageCount = countOccurrences(pdf, '/Type /Page /Parent');
+        expect(pageCount).toBeGreaterThan(1);
+        expect(countOccurrences(pdf, '(Group) Tj')).toBe(pageCount);
+        // both lines of the spanning header survive on every repeated page.
+        expect(countOccurrences(pdf, '(Span) Tj')).toBe(pageCount);
+        expect(countOccurrences(pdf, '(Header) Tj')).toBe(pageCount);
+        const spannedHeights = parseRectangles(pdf)
+            .filter((rectangle) => rectangle.x === 130)
+            .map((rectangle) => rectangle.height)
+            .sort((a, b) => b - a)
+            .slice(0, pageCount);
+        expect(new Set(spannedHeights).size).toBe(1);
         assertRowRectanglesRespectBottomMargin(pdf, 10);
     });
 

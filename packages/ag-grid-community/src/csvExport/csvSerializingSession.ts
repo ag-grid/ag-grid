@@ -1,8 +1,12 @@
 import type { AgColumn } from '../entities/agColumn';
-import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import { BaseGridSerializingSession } from '../export/baseGridSerializingSession';
-import type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from '../export/iGridSerializer';
+import type {
+    GridHeaderCell,
+    GridSerializingParams,
+    HeaderRowAccumulator,
+    RowAccumulator,
+} from '../export/iGridSerializer';
 import type { CsvCustomContent } from '../interfaces/exportParams';
 
 const LINE_SEPARATOR = '\r\n';
@@ -54,43 +58,39 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         }
     }
 
-    public onNewHeaderGroupingRow(): RowSpanningAccumulator {
+    public onNewHeaderRow(): HeaderRowAccumulator {
         this.beginNewLine();
 
         return {
-            onColumn: this.onNewHeaderGroupingRowColumn.bind(this),
+            onCell: this.onNewHeaderCell.bind(this),
         };
     }
 
-    private onNewHeaderGroupingRowColumn(columnGroup: AgColumnGroup, header: string, index: number, span: number) {
-        if (index != 0) {
+    public onNewHeaderGroupingRow(): HeaderRowAccumulator {
+        return this.onNewHeaderRow();
+    }
+
+    private onNewHeaderCell(cell: GridHeaderCell): void {
+        if (cell.columnIndex != 0) {
             this.result += this.columnSeparator;
         }
 
-        this.result += this.putInQuotes(header);
+        let value = '';
+        if (cell.type === 'column') {
+            value = this.extractHeaderValue(cell.column);
+        } else if (cell.type !== 'covered' && cell.column) {
+            // padding groups still resolve names via defaultColGroupDef and group header callbacks.
+            value = this.extractGroupHeaderValue(cell.column);
+        }
+        this.result += this.putInQuotes(value);
 
-        this.appendEmptyCells(span);
+        this.appendEmptyCells(cell.columnSpan - 1);
     }
 
     private appendEmptyCells(count: number) {
         for (let i = 1; i <= count; i++) {
             this.result += this.columnSeparator + this.putInQuotes('');
         }
-    }
-
-    public onNewHeaderRow(): RowAccumulator {
-        this.beginNewLine();
-
-        return {
-            onColumn: this.onNewHeaderRowColumn.bind(this),
-        };
-    }
-
-    private onNewHeaderRowColumn(column: AgColumn, index: number): void {
-        if (index != 0) {
-            this.result += this.columnSeparator;
-        }
-        this.result += this.putInQuotes(this.extractHeaderValue(column));
     }
 
     public onNewBodyRow(): RowAccumulator {

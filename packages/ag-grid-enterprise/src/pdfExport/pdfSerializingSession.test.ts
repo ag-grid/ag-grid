@@ -57,6 +57,9 @@ const createSession = (): PdfSerializingSession => {
 
 const getRows = (session: PdfSerializingSession): PdfRow[] => (session as any).rows;
 
+const addColumnHeader = (row: ReturnType<PdfSerializingSession['onNewHeaderRow']>, column: AgColumn, index: number) =>
+    row.onCell({ type: 'column', column, columnIndex: index, columnSpan: 1, rowSpan: 1 });
+
 describe('PdfSerializingSession', () => {
     it('clamps cell spans to the remaining exported columns', () => {
         const session = createSession();
@@ -331,7 +334,7 @@ describe('PdfSerializingSession', () => {
         const node = { data: {}, group: false, level: 0, rowIndex: null } as unknown as RowNode;
 
         session.prepare([column]);
-        session.onNewHeaderRow().onColumn(column, 0);
+        addColumnHeader(session.onNewHeaderRow(), column, 0);
         session.onNewBodyRow(node).onColumn(column, 0, node);
 
         // the header row must not inflate the fallback index reported for the first body row.
@@ -344,8 +347,11 @@ describe('PdfSerializingSession', () => {
         const columnGroup = { getColGroupDef: () => undefined } as any;
         (session as any).extractHeaderValue = () => 'Header';
 
-        session.onNewHeaderGroupingRow().onColumn(columnGroup, 'Group', 0, 1, []);
-        session.onNewHeaderRow().onColumn(column, 0);
+        (session as any).extractGroupHeaderValue = () => 'Group';
+        session
+            .onNewHeaderGroupingRow()
+            .onCell({ type: 'group', column: columnGroup, columnIndex: 0, columnSpan: 2, rowSpan: 1 });
+        addColumnHeader(session.onNewHeaderRow(), column, 0);
 
         const rows = getRows(session);
         expect(rows[0].cells[0]).toMatchObject({
@@ -358,6 +364,19 @@ describe('PdfSerializingSession', () => {
             elementType: 'header',
             sourceColumn: column,
         });
+    });
+
+    it('retains vertical spans and covered cells for PDF header layout', () => {
+        const session = createSession();
+        const column = createColumn('Age', 1);
+        (session as any).extractHeaderValue = () => 'Age';
+
+        session.onNewHeaderGroupingRow().onCell({ type: 'column', column, columnIndex: 0, columnSpan: 1, rowSpan: 2 });
+        session.onNewHeaderRow().onCell({ type: 'covered', columnIndex: 0, columnSpan: 1, rowSpan: 1 });
+
+        const rows = getRows(session);
+        expect(rows[0].cells[0]).toMatchObject({ value: 'Age', mergeDown: 1, elementType: 'header' });
+        expect(rows[1].cells[0]).toMatchObject({ value: '', covered: true });
     });
 
     it('renders columns in right-to-left order for an RTL export', () => {
@@ -375,7 +394,7 @@ describe('PdfSerializingSession', () => {
         session.prepare(columns);
         const accumulator = session.onNewHeaderRow();
         for (const [index, column] of columns.entries()) {
-            accumulator.onColumn(column, index);
+            addColumnHeader(accumulator, column, index);
         }
 
         const pdf = session.parse();
@@ -401,7 +420,7 @@ describe('PdfSerializingSession', () => {
         const node = { data: {}, group: false, level: 0, rowIndex: 0 } as RowNode;
 
         session.prepare([column]);
-        session.onNewHeaderRow().onColumn(column, 0);
+        addColumnHeader(session.onNewHeaderRow(), column, 0);
         session.onNewBodyRow(node).onColumn(column, 0, node);
 
         const rows = getRows(session);
@@ -456,7 +475,7 @@ describe('PdfSerializingSession', () => {
         (session as any).extractHeaderValue = () => 'Header';
 
         session.prepare([column]);
-        session.onNewHeaderRow().onColumn(column, 0);
+        addColumnHeader(session.onNewHeaderRow(), column, 0);
         session.onNewBodyRow(node).onColumn(column, 0, node);
 
         const rows = getRows(session);

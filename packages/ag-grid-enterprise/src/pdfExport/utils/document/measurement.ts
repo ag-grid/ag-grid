@@ -93,6 +93,10 @@ export type MeasuredCell = {
     lines: string[];
     hyperlink?: string;
     image?: ResolvedPdfImage;
+    rowSpan: number;
+    requiredHeight: number;
+    renderHeight?: number;
+    covered: boolean;
     /** Resolved once from the full cell text so text and image placement always agree. */
     imageOnRight?: boolean;
 };
@@ -104,6 +108,8 @@ export type MeasuredRow = {
     rowHeight: number;
     minimumHeight: number;
     fixedHeight: boolean;
+    /** Row belongs to a header block with vertical spans and renders at exactly `rowHeight`. */
+    spanned?: boolean;
 };
 
 export type RowFragmentState = {
@@ -213,8 +219,25 @@ export function measureRow(
         const lines = measureTextLines(cell.value, textWidth, style);
         const lineCount = Math.max(lines.length, 1);
         const contentHeight = Math.max(lineCount * style.lineHeight, image?.height ?? 0);
-        naturalHeight = Math.max(naturalHeight, contentHeight + style.padding.top + style.padding.bottom);
-        measuredCells.push({ columnIndex, span, width, style, lines, hyperlink: cell.hyperlink, image, imageOnRight });
+        const requiredHeight = contentHeight + style.padding.top + style.padding.bottom;
+        const rowSpan = Math.max(Math.floor(cell.mergeDown ?? 0) + 1, 1);
+        const covered = !!cell.covered;
+        if (!covered && rowSpan === 1) {
+            naturalHeight = Math.max(naturalHeight, requiredHeight);
+        }
+        measuredCells.push({
+            columnIndex,
+            span,
+            width,
+            style,
+            lines,
+            hyperlink: cell.hyperlink,
+            image,
+            imageOnRight,
+            rowSpan,
+            requiredHeight,
+            covered,
+        });
         columnIndex += span;
     }
 
@@ -233,6 +256,66 @@ export function measureRow(
 }
 
 /**
+ * Resolve vertical header spans after all participating row heights are known.
+ * @param rows - Consecutive measured header rows.
+ */
+export function resolveHeaderRowSpans(rows: MeasuredRow[]): boolean {
+    let hasSpans = false;
+    for (const row of rows) {
+        for (const cell of row.cells) {
+            if (!cell.covered && cell.rowSpan > 1) {
+                hasSpans = true;
+                break;
+            }
+        }
+    }
+    if (!hasSpans) {
+        return false;
+    }
+
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        const row = rows[rowIndex];
+        // spanned header rows render at exactly their resolved height, so the
+        // painted block always matches the pagination budget.
+        row.spanned = true;
+        if (row.fixedHeight) {
+            continue;
+        }
+        for (const cell of row.cells) {
+            if (cell.covered || cell.rowSpan <= 1) {
+                continue;
+            }
+            const endRowIndex = Math.min(rowIndex + cell.rowSpan, rows.length);
+            let spanHeight = 0;
+            for (let index = rowIndex; index < endRowIndex; index++) {
+                spanHeight += rows[index].rowHeight;
+            }
+            if (spanHeight < cell.requiredHeight) {
+                const topUpPerRow = (cell.requiredHeight - spanHeight) / (endRowIndex - rowIndex);
+                for (let index = rowIndex; index < endRowIndex; index++) {
+                    rows[index].rowHeight += topUpPerRow;
+                }
+            }
+        }
+    }
+
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        for (const cell of rows[rowIndex].cells) {
+            if (cell.covered || cell.rowSpan <= 1) {
+                continue;
+            }
+            const endRowIndex = Math.min(rowIndex + cell.rowSpan, rows.length);
+            let renderHeight = 0;
+            for (let index = rowIndex; index < endRowIndex; index++) {
+                renderHeight += rows[index].rowHeight;
+            }
+            cell.renderHeight = renderHeight;
+        }
+    }
+    return true;
+}
+
+/**
  * Select the next renderable fragment of a measured row.
  * @param row - Measured source row.
  * @param state - Previous fragment continuation state.
@@ -248,13 +331,14 @@ export function measureRowFragment(
         return undefined;
     }
 
-    if (row.fixedHeight) {
+    if (row.fixedHeight || row.spanned) {
         const height = Math.min(row.rowHeight, availableHeight);
         return {
             row,
             cells: row.cells.map((cell) => ({
                 measurement: cell,
-                lines: constrainLinesToHeight(cell, height),
+                // spanning cells lay their text out over the full span, not one row.
+                lines: constrainLinesToHeight(cell, cell.renderHeight ?? height),
                 showImage: !!cell.image,
             })),
             height,

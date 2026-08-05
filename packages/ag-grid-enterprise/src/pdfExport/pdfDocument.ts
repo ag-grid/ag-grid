@@ -18,6 +18,7 @@ import {
     measureRow,
     measureRowFragment,
     resolveDocumentHeading,
+    resolveHeaderRowSpans,
 } from './utils/document/measurement';
 import { resolveFiniteNumber, resolveOptionalFiniteNumber } from './utils/document/numbers';
 import { getPageDateTime, getPageFurnitureForPage, resolvePageFurnitureConfig } from './utils/document/pageFurniture';
@@ -111,7 +112,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     const pageDateTime = getPageDateTime(new Date(), params.language);
     const watermark = resolveWatermark(params, pageSize, styleColors, bodyFont, fontRegistry);
 
-    const headerRows = repeatHeader ? getRepeatableHeaderRows(rows) : [];
+    const headerRows = getRepeatableHeaderRows(rows);
 
     const sizingLayout: LayoutOptions = {
         columnCount,
@@ -154,6 +155,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
             measuredBodyRowIndex += 1;
         }
     }
+    const headerBlockHasSpans = resolveHeaderRowSpans(measuredHeaderRows);
 
     let repeatedHeaderHeight = 0;
     for (const headerRow of measuredHeaderRows) {
@@ -290,6 +292,17 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     };
 
     for (const row of measuredRows) {
+        if (row === measuredHeaderRows[0] && (repeatHeader || headerBlockHasSpans)) {
+            // vertical spans cannot straddle a page break, so keep the header block together.
+            const availableBeforeHeaders = Math.max(cursorY - currentLayout.margin.bottom, 0);
+            if (
+                hasPageContent &&
+                repeatedHeaderHeight > availableBeforeHeaders &&
+                repeatedHeaderHeight <= getPageContentHeight(currentPageNumber + 1)
+            ) {
+                startPage(false);
+            }
+        }
         let state: RowFragmentState | undefined;
         let complete = false;
 

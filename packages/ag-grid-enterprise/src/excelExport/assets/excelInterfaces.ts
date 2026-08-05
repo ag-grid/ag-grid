@@ -1,4 +1,9 @@
-import type { ExcelFont, ExcelHeaderFooterImage, ExcelImage, ExcelNote } from 'ag-grid-community';
+import type { ExcelCell, ExcelFont, ExcelHeaderFooterImage, ExcelImage, ExcelNote } from 'ag-grid-community';
+
+export interface InternalExcelCell extends ExcelCell {
+    /** Number of additional rows a header cell spans vertically. */
+    mergeDown?: number;
+}
 
 export type ImageIdMap = Map</** imageId */ string, { type: 'jpg' | 'png' | 'gif'; index: number }>;
 export type BorderProperty = string | undefined;
