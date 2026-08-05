@@ -436,8 +436,13 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private removeItems(itemsToRemove: TItem[]): void {
         const newItemList = this.getExistingItems().filter((item) => !itemsToRemove.includes(item));
-        this.updateItems(newItemList);
-        this.refreshGui();
+        try {
+            this.updateItems(newItemList);
+        } finally {
+            // `updateItems` commits the column change before it can throw (e.g. in a user callback driven by
+            // the resulting refresh), so the zone must be redrawn either way or it keeps a removed pill.
+            this.refreshGui();
+        }
     }
 
     private addItems(itemsToAdd: TItem[]): void {
