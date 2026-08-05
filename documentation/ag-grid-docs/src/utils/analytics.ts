@@ -9,6 +9,7 @@ const EVENT_NAME = {
     infoEmail: 'Info Email',
     buyButton: 'Buy Button',
     downloadDS: 'Download Figma Design System',
+    markdownActions: 'Markdown Actions',
     page404: '404',
     // React Landing Page Goals
     reactLandingPageGetStarted: 'React Landing Page - Get Started',
@@ -141,6 +142,13 @@ const trackDownloadDS = (props: object) => {
 };
 
 export const trackOnceDownloadDS = createTrackPlausibleOnce(EVENT_NAME.downloadDS, trackDownloadDS);
+
+export const trackMarkdownActions = (props: object) => {
+    trackPlausible({
+        eventName: EVENT_NAME.markdownActions,
+        props,
+    });
+};
 
 export const trackTrialLicenseFormSuccess = (props: object) => {
     trackPlausible({
