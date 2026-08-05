@@ -129,6 +129,8 @@ For detailed information about preferred technologies and architectural constrai
 - `./docs-e2e.sh --ui` – open Playwright UI mode.
 - `yarn nx e2e <package>` – run Playwright flows via Nx when altering website behaviour.
 - `yarn nx lint <package>` – apply ESLint and custom rules before final review.
+- `yarn nx lint:jscpd all` – check duplicate code against `.jscpd-baseline.json`; part of `yarn nx lint` and `./checks.sh`.
+- `yarn nx lint:jscpd:baseline all` – regenerate the duplicate-code baseline after a deliberate change.
 
 ### Slash Commands
 
@@ -193,6 +195,25 @@ Essential practices:
 - Run `yarn nx format --sort-root-tsconfig-paths=false` before committing
 - Self-review your changes before proposing commits
 - Ensure tests exercise real implementations, not test helpers
+
+#### Duplicate and Unused Code Detection
+
+Two static-analysis tools run inside `yarn nx lint`. They cover different problems:
+
+- **knip** — unused files, exports and dependencies.
+- **jscpd** — copy-pasted or structurally duplicated code blocks.
+
+Run jscpd on its own with `yarn nx lint:jscpd all`. Regenerate the baseline with `yarn nx lint:jscpd:baseline all` and commit the result.
+
+The scan is repo-wide for visibility, but the gate is scoped to `packages/**` and fails only when duplication increases against `.jscpd-baseline.json`. Existing duplication does not block PRs.
+
+The gate stops at `packages/**` on purpose. Sibling locale files duplicate each other by nature (`pt-BR` ↔ `pt-PT`, `zh-HK` ↔ `zh-TW`), so a repo-wide gate would fail routine translation work. A clone with one file inside `packages/**` and one outside is still reported, just not gated.
+
+`**/_examples/**` is excluded from the scan entirely, because docs examples are per-framework variants of the same code.
+
+**The fix for a jscpd failure is to extract the shared code, not to widen `ignore` in `.jscpd.json`.** Update the baseline only when the increase is deliberate.
+
+Limitation: the baseline stores aggregate counts plus a fingerprint per gated clone, so a change that removes one clone and adds another of the same size passes.
 
 #### AG Grid Coding Style
 

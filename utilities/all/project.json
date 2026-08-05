@@ -23,12 +23,31 @@
     },
     "lint": {
       "executor": "nx:noop",
-      "dependsOn": ["^lint"],
+      "dependsOn": ["^lint", "lint:jscpd"],
       "inputs": [],
       "outputs": [],
       "cache": false,
       "configurations": {
         "fix": {}
+      }
+    },
+    "lint:jscpd": {
+      "executor": "nx:run-commands",
+      "inputs": [],
+      "outputs": [],
+      "cache": false,
+      "options": {
+        "commands": ["node scripts/ci/jscpd-baseline-check.mjs"]
+      }
+    },
+    "lint:jscpd:baseline": {
+      "executor": "nx:run-commands",
+      "inputs": [],
+      "outputs": [],
+      "cache": false,
+      "options": {
+        "parallel": false,
+        "commands": ["node scripts/ci/jscpd-baseline-check.mjs --update", "prettier --write .jscpd-baseline.json"]
       }
     },
     "sync-readmes": {

@@ -1,0 +1,17 @@
+{
+    "minLines": 10,
+    "minTokens": 50,
+    "reporters": ["json"],
+    "output": "node_modules/.cache/jscpd",
+    "format": ["typescript", "tsx", "javascript", "jsx"],
+    "ignore": [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/.nx/**",
+        "**/_examples/**",
+        "**/*.d.ts",
+        "**/*.{test,spec,bench}.{ts,tsx,js,jsx,mjs,cjs}",
+        "**/*.min.js"
+    ]
+}
