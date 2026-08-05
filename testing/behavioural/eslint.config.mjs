@@ -22,7 +22,7 @@ export default [
                 {
                     selector: "CallExpression[callee.name='asyncSetTimeout'] > Literal[value>0]",
                     message:
-                        'Do not guess how long an async grid update takes. Poll the condition with `waitFor` instead, or delete the sleep if the next call already polls. `asyncSetTimeout(0)` is allowed for a single-tick yield — note that (1) is identical to (0) in Node, so it buys nothing. A genuine timer window needs an eslint-disable naming the window. See .rulesync/rules/testing.md → Waiting for Async Grid Updates.',
+                        'Guessed delay. Poll with waitFor, or drop the sleep if the next call already polls. asyncSetTimeout(0) is allowed; (1) is identical to (0) in Node. A genuine timer window needs an eslint-disable naming it. See .rulesync/rules/testing.md.',
                 },
             ],
         },
