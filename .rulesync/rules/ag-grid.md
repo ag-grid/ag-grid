@@ -17,8 +17,9 @@ This file provides guidance to AI Agents when working with code in this reposito
 
 - **Main branch:** `latest`
 - **Format:** `yarn nx format --sort-root-tsconfig-paths=false` (run before commits)
-- **Type-check:** `yarn nx build:types <package>` (run before commits)
-- **Lint:** `yarn nx lint <package>` (run before commits)
+- **Pre-commit checks:** `./checks.sh` — the preferred gate: type-check + lint + spec type-check across every project in one parallel, cache-aware Nx run. Much faster than chaining separate `yarn nx build:types` / `yarn nx lint` calls.
+- **Type-check (single package):** `yarn nx build:types <package>`
+- **Lint (single package):** `yarn nx lint <package>`
 - **Build:** `yarn nx build <package>`
 - **Test:** `./behave.sh` (whole unit suite — package + behavioural — via the Vitest workspace). Single project: `./behave.sh --project <name>` (e.g. `ag-grid-community`, `behavioural`).
 - **E2E:** `yarn nx e2e ag-grid-docs`
@@ -41,8 +42,8 @@ This file provides guidance to AI Agents when working with code in this reposito
 - **Build monitoring:** Check `node_modules/.cache/ag-watch-status.json` to monitor watch state (`yarn nx dev`) and build health (see [Development Server Guide](.rulesync/rules/dev-server.md)).
 - **Self-review before committing:** Re-read your changes as if reviewing someone else's PR and verify: each new function/class has a single clear responsibility; names are meaningful; no unnecessary complexity; no copy-pasted logic that should be extracted; new code follows the patterns of the surrounding codebase.
 - **Formatting:** Run `yarn nx format --sort-root-tsconfig-paths=false` from the repo root before proposing commits.
-- **Typechecking:** Run `yarn nx build:types <package>` from the repo root before proposing commits.
-- **Linting:** Run `yarn nx lint <package>` from the repo root before proposing commits.
+- **Typechecking and linting:** Run `./checks.sh` from the repo root before proposing commits — never chain separate `yarn nx build:types` / `yarn nx lint` invocations for the standard gate, as each one re-pays Nx startup and forces the tasks to run serially.
+- **Batch Nx work into one invocation:** Whenever more than one target or project is needed, use a single `nx run-many -t <targets> -p <projects> --parallel=<n>` instead of issuing commands one at a time. Every extra `yarn nx …` re-pays Nx startup and project-graph computation, and serialises tasks that Nx would otherwise run concurrently — this applies to builds and any other target, not just the pre-commit gate.
 - **Baseline verification:** Expect to run `./behave.sh` (the merged unit suite) and `yarn nx e2e ag-grid-docs` after meaningful grid changes.
 - **Test verification patterns:** When writing or modifying tests, review similar tests to ensure consistent verification patterns (see [Testing Guide](.rulesync/rules/testing.md)).
 - **Context docs:** Skim [technology-stack.md](.rulesync/rules/technology-stack.md) for stack or architectural decisions before introducing new patterns.
@@ -94,11 +95,15 @@ For detailed information about preferred technologies and architectural constrai
     - `./external/ag-shared/scripts/install-for-cloud/install-for-cloud.sh` – install dependencies and tooling in a remote environment - use this in preference to `yarn install` to ensure all global tools are installed.
 - `yarn nx clean` – purge all dist folders when switching branches or before packaging releases.
 - `yarn nx format --sort-root-tsconfig-paths=false` – format repo files; run from the project root before committing.
+- `./checks.sh` – the standard pre-commit gate: `build:types`, `lint` and `build:test` across every project that defines them, in one parallel Nx run. Matches CI's lint coverage. Silent on success, prints failing task output otherwise.
+- `./checks.sh --projects <a,b>` / `--targets <x,y>` – narrow the gate to specific projects or targets.
+- `./checks.sh --fresh` – bypass the Nx cache; `--verbose` – stream task output even when passing.
 - `yarn nx build <package>` – compile a specific package after code edits.
 - `yarn nx build:types <package>` – regenerate declaration files when touching exported APIs.
 - `yarn nx build:package <package>` – create ESM/CJS bundles to validate publishable output.
 - `yarn nx build:umd <package>` – produce UMD bundles for browser distribution smoke-tests.
 - `yarn nx run-many -t build` – rebuild all packages when changes span the dependency graph.
+- `yarn nx run-many -t <targets> -p <projects> --parallel=<n>` – the preferred way to run any combination of targets/projects; always favour one batched call over several sequential `yarn nx` invocations.
 - `./behave.sh` – run the merged unit suite (package unit tests + behavioural) via the Vitest workspace; the single primary test command.
 - `./behave.sh "<file-pattern>"` – filter to matching test files across every project.
 - `./behave.sh "<file-pattern>" -t "<test-name>"` – run a specific test by name.
@@ -218,7 +223,7 @@ While this transition is in progress, changes made to Theming API should be appl
 - **Bug fix or feature work (community/enterprise)**
     1. Update the affected implementation (typically under `packages/ag-grid-*/src/`).
     2. Sync any dependent docs/examples.
-    3. Run `./behave.sh` (the merged unit suite).
+    3. Run `./behave.sh` (the merged unit suite) and `./checks.sh` (types + lint).
 
 - **Documentation/content update**
     1. Consult the [Documentation Pages Guide](.rulesync/rules/docs-pages.md) for structure and patterns.
