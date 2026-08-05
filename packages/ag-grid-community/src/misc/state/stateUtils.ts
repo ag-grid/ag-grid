@@ -123,6 +123,42 @@ export function convertColumnState(
     };
 }
 
+// Fields of `ColumnState` that `convertColumnState` projects into `GridState` (and that
+// `StateService.applyColumnGridState` reverses on `setState`).
+type ProjectedColumnStateKeys =
+    | 'colId'
+    | 'sort'
+    | 'sortType'
+    | 'sortIndex'
+    | 'rowGroup'
+    | 'rowGroupIndex'
+    | 'aggFunc'
+    | 'valueIndex'
+    | 'showValuesAs'
+    | 'pivot'
+    | 'pivotIndex'
+    | 'pivotSort'
+    | 'pinned'
+    | 'hide'
+    | 'width'
+    | 'flex'
+    | 'headerName';
+
+// Fields intentionally NOT round-tripped through get/setState. Add a key here only with a
+// justification comment for why it is excluded.
+type ExcludedColumnStateKeys = never;
+
+// Completeness guard: a `ColumnState` field that is neither projected nor excluded makes this
+// resolve to the offending key name, so `const` assignment fails `build:types` and names it —
+// forcing an explicit decision rather than a silent drop.
+type ColumnStateKeysAccounted = [
+    Exclude<keyof ColumnState, ProjectedColumnStateKeys | ExcludedColumnStateKeys>,
+] extends [never]
+    ? true
+    : Exclude<keyof ColumnState, ProjectedColumnStateKeys | ExcludedColumnStateKeys>;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _columnStateKeysAccounted: ColumnStateKeysAccounted = true;
+
 // Removes null or undefined values from an array to catch the case where sortIndex, rowGroupIndex or pivotIndex
 // have invalid values resulting in sparse arrays which will break state persistence/restoration.
 // e.g. [ 'colId1', undefined, 'colId3' ] => [ 'colId1', 'colId3' ]
