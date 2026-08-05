@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { ColDef, GridApi } from 'ag-grid-community';
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('column tool panel test IDs with virtualization', () => {
     const gridMgr = new TestGridsManager({
@@ -43,9 +45,13 @@ describe('column tool panel test IDs with virtualization', () => {
         });
     }
 
-    function forceVirtualListRender(gridApi: GridApi): HTMLElement {
+    async function forceVirtualListRender(gridApi: GridApi): Promise<HTMLElement> {
         const gridEl = getGridElement(gridApi)! as HTMLElement;
-        const viewport = gridEl.querySelector('.ag-column-select-virtual-list-viewport') as HTMLElement;
+        const viewport = await waitFor(() => {
+            const el = gridEl.querySelector('.ag-column-select-virtual-list-viewport') as HTMLElement | null;
+            expect(el).not.toBeNull();
+            return el!;
+        });
         // jsdom doesn't have a layout engine so offsetHeight returns 0, which prevents
         // the virtual list from rendering items. Override it on the instance.
         Object.defineProperty(viewport, 'offsetHeight', { value: 200, configurable: true });
@@ -128,12 +134,12 @@ describe('column tool panel test IDs with virtualization', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 col0:"val_col0" col1:"val_col1" col2:"val_col2" col3:"val_col3" col4:"val_col4" col5:"val_col5" col6:"val_col6" col7:"val_col7" col8:"val_col8" col9:"val_col9" col10:"val_col10" col11:"val_col11" col12:"val_col12" col13:"val_col13" col14:"val_col14" col15:"val_col15" col16:"val_col16" col17:"val_col17" col18:"val_col18" col19:"val_col19" col20:"val_col20" col21:"val_col21" col22:"val_col22" col23:"val_col23" col24:"val_col24" col25:"val_col25" col26:"val_col26" col27:"val_col27" col28:"val_col28" col29:"val_col29"
         `);
-        await asyncSetTimeout(50);
 
-        const viewport = forceVirtualListRender(api);
-        await asyncSetTimeout(200);
+        const viewport = await forceVirtualListRender(api);
 
         // Initial state: visible items should have test IDs
+        await waitFor(() => expect(getVisibleItemLabels(api)).toContain('Column 0 Column'));
+
         const initialLabels = getVisibleItemLabels(api);
         expect(initialLabels.length).toBeGreaterThan(0);
         expect(initialLabels).toContain('Column 0 Column');
@@ -144,7 +150,11 @@ describe('column tool panel test IDs with virtualization', () => {
 
         // Scroll down to reveal new items
         viewport.scrollTop = 500;
-        await asyncSetTimeout(200);
+        await waitFor(() => {
+            const labels = getVisibleItemLabels(api);
+            expect(labels.length).toBeGreaterThan(0);
+            expect(labels).not.toContain('Column 0 Column');
+        });
 
         const scrolledLabels = getVisibleItemLabels(api);
         expect(scrolledLabels.length).toBeGreaterThan(0);
@@ -156,7 +166,7 @@ describe('column tool panel test IDs with virtualization', () => {
 
         // Scroll back to top
         viewport.scrollTop = 0;
-        await asyncSetTimeout(200);
+        await waitFor(() => expect(getVisibleItemLabels(api)).toContain('Column 0 Column'));
 
         const scrolledBackLabels = getVisibleItemLabels(api);
         expect(scrolledBackLabels).toContain('Column 0 Column');

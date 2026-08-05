@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions, Params } from 'ag-grid-community';
@@ -8077,9 +8078,8 @@ describe('Row Selection Grid Options', () => {
 
             btn?.click();
 
-            await asyncSetTimeout(5);
-
-            assertSelectableByIndex([0, 2, 3, 4, 5, 6], api);
+            // Poll the selectable transition (index 1 drops out), then assert the pinned mirror synchronously.
+            await waitFor(() => assertSelectableByIndex([0, 2, 3, 4, 5, 6], api));
 
             api.forEachPinnedRow('top', (node) => expect(node.selectable).toBe(false));
         });

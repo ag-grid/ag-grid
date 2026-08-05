@@ -63,6 +63,14 @@ export class ToolPanelHarness {
         return wrapper;
     }
 
+    /** Throws until the panel is open and has rendered its top-level column list. */
+    public assertColumnListRendered(): void {
+        // The `panel` getter throws while the panel element is absent, which is also "not ready yet".
+        if (this.groupWrappers().length === 0) {
+            throw new Error('Filters tool panel has not rendered its column list yet');
+        }
+    }
+
     /** Visible (not search-hidden) top-level group titles, in order. */
     public columnTitles(): string[] {
         return this.groupWrappers()
@@ -82,9 +90,12 @@ export class ToolPanelHarness {
             await firePointerLikeClick(
                 wrapper.querySelector<HTMLElement>('.ag-filter-toolpanel-group-level-0-header')!
             );
-            // Wait for the (async) filter comp to resolve and attach its body, rather than a fixed delay.
+            // Wait for the (async) filter comp to resolve and render into its body, rather than a fixed
+            // delay. Requiring rendered content (not just the empty body element) is what lets callers
+            // read the filter GUI straight after expanding.
             await waitFor(() => {
-                if (!wrapper.querySelector('.ag-filter-toolpanel-instance-body')) {
+                const body = wrapper.querySelector('.ag-filter-toolpanel-instance-body');
+                if (!body?.firstElementChild) {
                     throw new Error(`Filter body for "${title}" has not attached yet`);
                 }
             });
@@ -207,9 +218,14 @@ export class ToolPanelHarness {
         return !!field && !field.classList.contains('ag-hidden');
     }
 
-    /** Types into the column-list search box and waits past the 300ms debounce. */
+    /**
+     * Types into the column-list search box and waits past the 300ms debounce. The search result can
+     * legitimately be "nothing changed" (e.g. clearing a search that matched everything), so there is
+     * no positive signal to poll for here — callers assert the resulting title list themselves.
+     */
     public async search(text: string): Promise<this> {
         setNativeInputValue(this.searchInput(), text);
+        // eslint-disable-next-line no-restricted-syntax -- waits for the 300ms search debounce in agFiltersToolPanelHeader.ts
         await asyncSetTimeout(350);
         return this;
     }
@@ -311,9 +327,12 @@ export class ToolPanelHarness {
 }
 
 export async function openFiltersPanel(api: GridApi): Promise<ToolPanelHarness> {
-    // Panel is lazily initialised on show; let its async filter comps resolve.
-    await asyncSetTimeout(50);
-    return new ToolPanelHarness(api);
+    const harness = new ToolPanelHarness(api);
+    // Panel is lazily initialised on show: poll until it has rendered its column list, rather than
+    // guessing a delay. Filter bodies are created on expand (and destroyed on collapse), so they are
+    // gated by expandGroup's own poll, not here.
+    await waitFor(() => harness.assertColumnListRendered());
+    return harness;
 }
 
 export const FILTERS_SIDEBAR: SideBarDef = { toolPanels: ['filters'], defaultToolPanel: 'filters' };
