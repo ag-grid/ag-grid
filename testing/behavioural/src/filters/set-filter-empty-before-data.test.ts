@@ -63,7 +63,7 @@ describe('Set Filter dropdown opened before data arrives (AG-17369)', () => {
         };
     }
 
-    test('converges on the same Set Filter state regardless of when the dropdown is opened', async () => {
+    test('converges on the same dropdown checkbox state regardless of when the dropdown is opened', async () => {
         const scenarioA = await runScenario('gridA', { openBeforeData: false });
         const scenarioB = await runScenario('gridB', { openBeforeData: true });
 
@@ -147,8 +147,13 @@ describe('Set Filter dropdown opened before data arrives (AG-17369)', () => {
         // must match the run that never opened it early.
         expect(openedEarly).toEqual(notOpenedEarly);
 
-        // Absolute anchor: once the matching row exists, the applied model holds and the one row renders.
+        // Absolute anchors so a same-but-wrong state cannot pass. Removing the sole 'one' row then re-applying
+        // `['one']` (no longer a grid value) reconciles the model away — standard grid-derived refresh-values
+        // behaviour, not the observational defect.
         expect(notOpenedEarly.afterData).toEqual({ model: ['one'], rows: 1 });
+        expect(notOpenedEarly.afterRemove).toEqual({ model: [], rows: 0 });
+        expect(notOpenedEarly.afterReapply).toEqual({ model: [], rows: 0 });
+        expect(notOpenedEarly.finalUi).toEqual({ ticked: [], available: ['two'] });
     });
 
     test('empty-before-data reconciles to the same state as a grid that always had data', async () => {
@@ -176,5 +181,36 @@ describe('Set Filter dropdown opened before data arrives (AG-17369)', () => {
         expect(scenarioB.uiValues).toEqual(['one']);
         expect(scenarioB.modelValues).toEqual(scenarioA.modelValues);
         expect(scenarioB.displayedRowCount).toBe(scenarioA.displayedRowCount);
+    });
+
+    test('explicit filterParams.values is unaffected by dropdown-open timing (provided-list guard)', async () => {
+        const columnDefs: GridOptions<RowData>['columnDefs'] = [
+            { field: 'value', filter: 'agSetColumnFilter', filterParams: { values: ['one', 'two', 'three'] } },
+        ];
+        const scenarioA = await runScenario('gridProvidedA', { openBeforeData: false, columnDefs });
+        const scenarioB = await runScenario('gridProvidedB', { openBeforeData: true, columnDefs });
+
+        // Values are supplied explicitly rather than derived from grid data, so the empty-grid guard never
+        // engages and the model is scenario-independent throughout.
+        expect(scenarioA.uiValues).toEqual(['one']);
+        expect(scenarioB.uiValues).toEqual(['one']);
+        expect(scenarioB.modelValues).toEqual(scenarioA.modelValues);
+        expect(scenarioB.displayedRowCount).toBe(scenarioA.displayedRowCount);
+    });
+
+    test('excelMode keeps the applied model regardless of dropdown-open timing', async () => {
+        const columnDefs: GridOptions<RowData>['columnDefs'] = [
+            { field: 'value', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' } },
+        ];
+        const scenarioA = await runScenario('gridExcelA', { openBeforeData: false, columnDefs });
+        const scenarioB = await runScenario('gridExcelB', { openBeforeData: true, columnDefs });
+
+        // The empty-grid guard returns before the excelMode "no matches ⇒ clear model" branch, so opening the
+        // dropdown while empty must not wipe the applied model in excelMode either.
+        expect(scenarioB.uiValues).toEqual(scenarioA.uiValues);
+        expect(scenarioB.modelValues).toEqual(scenarioA.modelValues);
+        expect(scenarioB.displayedRowCount).toBe(scenarioA.displayedRowCount);
+        expect(scenarioA.uiValues).toEqual(['one']);
+        expect(scenarioA.displayedRowCount).toBe(1);
     });
 });
