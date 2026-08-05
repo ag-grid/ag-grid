@@ -509,6 +509,40 @@ describe('pivot with groupHierarchy (date-time)', () => {
         expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([]);
     });
 
+    test('an explicit setRowGroupColumns list controls the levels of an already-grouped hierarchy col', async () => {
+        const api = gridsManager.createGrid('hierarchyExplicitList', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15) },
+            ],
+            groupDisplayType: 'multipleColumns',
+        });
+        await asyncSetTimeout(0);
+
+        const yearCol = 'ag-Grid-HierarchyColumn-date-year';
+        const monthCol = 'ag-Grid-HierarchyColumn-date-month';
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([yearCol, monthCol, 'date']);
+
+        // Re-applying the current list (the save/restore shape) is a no-op...
+        api.setRowGroupColumns(api.getRowGroupColumns());
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([yearCol, monthCol, 'date']);
+
+        // ...whereas a list that omits the levels of an already-grouped source col drops them, which is
+        // what lets a drop-zone pill (or the tool-panel menu) remove a single level.
+        api.setRowGroupColumns(['date']);
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['date']);
+        expect(api.getColumn(yearCol)!.isRowGroupActive()).toBe(false);
+        expect(api.getColumn(monthCol)!.isRowGroupActive()).toBe(false);
+
+        // Stable under repetition — the levels do not come back.
+        api.setRowGroupColumns(['date']);
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['date']);
+    });
+
     test('hierarchy virtuals inherit enableRowGroup so their row-group-panel chips stay draggable', async () => {
         const api = gridsManager.createGrid('hierarchyEnableRowGroup', {
             columnDefs: [

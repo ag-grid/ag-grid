@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager } from '../test-utils';
 
 describe('removing a row group via the drop-zone pill remove button', () => {
     const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
@@ -39,14 +41,11 @@ describe('removing a row group via the drop-zone pill remove button', () => {
                 { date: '2000-10-01', country: 'Romania', total: 6 },
             ],
         });
-        await asyncSetTimeout(1);
-
-        expect(pillTexts(api)).toEqual(['Date (Year)', 'Date (Month)', 'Date']);
+        await waitFor(() => expect(pillTexts(api)).toEqual(['Date (Year)', 'Date (Month)', 'Date']));
 
         clickRemove(api, 0);
-        await asyncSetTimeout(1);
 
-        expect(pillTexts(api)).toEqual(['Date (Month)', 'Date']);
+        await waitFor(() => expect(pillTexts(api)).toEqual(['Date (Month)', 'Date']));
         expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([
             'ag-Grid-HierarchyColumn-date-month',
             'date',
@@ -56,7 +55,11 @@ describe('removing a row group via the drop-zone pill remove button', () => {
     test('a remove button click never falls through to a sort, even when a column callback throws', async () => {
         // The removed group column becomes visible again over the group rows still on screen, so a
         // non-null-safe valueFormatter (as in the grouping-object-data example) throws mid-update.
-        const swallowError = (event: Event) => event.preventDefault();
+        const errors: (string | undefined)[] = [];
+        const swallowError = (event: ErrorEvent) => {
+            errors.push(event.error?.message ?? event.message);
+            event.preventDefault();
+        };
         window.addEventListener('error', swallowError);
         try {
             const api = await gridMgr.createGridAndWait('object-data-pill-removal', {
@@ -77,13 +80,13 @@ describe('removing a row group via the drop-zone pill remove button', () => {
                     { athlete: { id: 2, name: 'Julian Weber' }, country: 'Romania', year: 2000 },
                 ],
             });
-            await asyncSetTimeout(1);
-
-            expect(pillTexts(api)).toEqual(['Athlete']);
+            await waitFor(() => expect(pillTexts(api)).toEqual(['Athlete']));
+            expect(errors).toEqual([]);
 
             clickRemove(api, 0);
-            await asyncSetTimeout(1);
 
+            // The formatter must actually have thrown, or the test would pass without exercising the fix.
+            await waitFor(() => expect(errors).toContain("Cannot read properties of undefined (reading 'name')"));
             expect(api.getColumnState().find((state) => state.colId === 'athlete')?.sort ?? null).toBeNull();
             expect(api.getRowGroupColumns()).toEqual([]);
             expect(pillTexts(api)).toEqual([]);
