@@ -11,11 +11,7 @@ const baseURL = BASE_URL || PREV_URL || PROD_URL || 'https://localhost:4610';
 
 const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
 
-/* PDF Export is not part of the public API yet (release delayed), so its examples cannot load the module. */
-const IGNORED_TESTS = ['**/pdf-export*/**'];
-
 const BROWSER_IGNORED_TESTS = [
-    ...IGNORED_TESTS,
     '**/async-test/provided/angular/app.component.spec.ts',
     // page-verification.spec.ts runs in its own dedicated CI job.
     '**/page-verification.spec.ts',
