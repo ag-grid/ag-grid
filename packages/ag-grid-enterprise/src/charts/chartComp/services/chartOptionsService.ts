@@ -108,12 +108,37 @@ export class ChartOptionsService extends BeanStub {
         };
     }
 
-    public getPolarAxisThemeOverridesProxy(axisType: 'angle' | 'radius'): ChartOptionsProxy {
+    /**
+     * `scope` decides which axes a write lands on. Options both polar axes share - the axis line, the
+     * labels - are written to every axis, so the control styles the chart as a whole. Options only one of
+     * them has must be written to that axis alone, or AG Charts rejects the write on the other and warns.
+     */
+    public getPolarAxisThemeOverridesProxy(
+        axisType: 'angle' | 'radius',
+        scope: 'allAxes' | 'thisAxis' = 'allAxes'
+    ): ChartOptionsProxy {
+        const setValues = <T>(properties: { expression: string; value: T }[]) =>
+            scope === 'allAxes'
+                ? this.setAxisThemeOverrides(properties)
+                : this.setPolarAxisThemeOverrides(axisType, properties);
         return {
             getValue: (expression) => this.getPolarAxisProperty(axisType, expression),
-            setValue: (expression, value) => this.setAxisThemeOverrides([{ expression, value }]),
-            setValues: (properties) => this.setAxisThemeOverrides(properties),
+            setValue: (expression, value) => setValues([{ expression, value }]),
+            setValues,
         };
+    }
+
+    /** Which of the polar axes carries the categories, which is where the group padding options live. */
+    public getPolarCategoryAxisType(): 'angle' | 'radius' | undefined {
+        for (const axis of this.getChartAxes()) {
+            if (axis.type === 'angle-category') {
+                return 'angle';
+            }
+            if (axis.type === 'radius-category') {
+                return 'radius';
+            }
+        }
+        return undefined;
     }
 
     public getSeriesOptionsProxy(getSelectedSeries: () => ChartSeriesType): ChartOptionsProxy {
@@ -360,6 +385,24 @@ export class ChartOptionsService extends BeanStub {
         this.applyChartOptions(chartOptions);
     }
 
+    private setPolarAxisThemeOverrides<T = string>(
+        axisType: 'angle' | 'radius',
+        properties: { expression: string; value: T }[]
+    ): void {
+        const chartType = this.getChartType();
+        const chartOptions = this.createChartOptions();
+        for (const { expression, value } of properties) {
+            for (const axis of this.getChartAxes()) {
+                if (!axis.type.startsWith(axisType) || !this.isValidAxisType(axis)) {
+                    continue;
+                }
+                this.assignChartAxisThemeOverride(chartOptions, chartType, axis.type, null, expression, value);
+            }
+        }
+
+        this.applyChartOptions(chartOptions);
+    }
+
     private getCartesianAxisProperty<T = string | undefined>(axisType: 'xAxis' | 'yAxis', expression: string): T {
         return this.readProcessed<T>({ kind: 'axis', direction: axisType === 'xAxis' ? 'x' : 'y' }, expression) as T;
     }
@@ -500,7 +543,20 @@ export class ChartOptionsService extends BeanStub {
             const series = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s));
             return get(series, expression, undefined) as T;
         }
-        return this.readProcessed<T>({ kind: 'series', seriesType }, expression) as T;
+        const value = this.readProcessed<T>({ kind: 'series', seriesType }, expression);
+        if (value !== undefined) {
+            return value as T;
+        }
+        // The processed options carry only what the theme configures. Anything left at an AG Charts
+        // property default appears there as undefined, and is only resolved on the live series.
+        const properties = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s))?.properties;
+        const property = get(properties, expression, undefined) as T | undefined;
+        if (property !== undefined) {
+            return property as T;
+        }
+        // A few options inherit their effective value from a sibling, and the series only applies that
+        // inheritance when it serialises itself (e.g. a box plot whisker's stroke from the series stroke).
+        return get(properties?.toJson(), expression, undefined) as T;
     }
 
     private setSeriesOptions<T = string>(

@@ -1,7 +1,42 @@
 [
     {
+        "version": "36.1.0",
+        "date": "5th August 2026",
+        "landingPageHighlight": "Column Header Edit, Custom Context Menu Items in Columns Tool Panel, AI Coding Skill, Documentation in markdown format, Quality Improvements",
+        "highlights": [
+            {
+                "text": "Column Header Edit",
+                "path": "./column-headers/#editable-header-name"
+            },
+            {
+                "text": "Custom Context Menu Items in Columns Tool Panel",
+                "path": "./tool-panel-columns/#custom-menu-items"
+            },
+            {
+                "text": "AI Coding Skill",
+                "path": "./skills/#ag-dev"
+            },
+            {
+                "text": "Documentation in markdown format"
+            },
+            {
+                "text": "Quality Improvements"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-36-1",
+        "hideBlogPostLink": false
+    },
+    {
+        "version": "36.0.2",
+        "date": "July 22nd, 2026"
+    },
+    {
+        "version": "36.0.1",
+        "date": "July 15th, 2026"
+    },
+    {
         "version": "36.0.0",
-        "date": "June 24th 2026",
+        "date": "24th June 2026",
         "landingPageHighlight": "Calculated Columns, Show Values As, Automatic Column Generation, Accessibility Improvements, Theming Improvements",
         "highlights": [
             {
@@ -25,6 +60,10 @@
         ],
         "notesPath": "./upgrading-to-ag-grid-36",
         "hideBlogPostLink": false
+    },
+    {
+        "version": "35.3.1",
+        "date": "June 2nd, 2026"
     },
     {
         "version": "35.3.0",
@@ -434,6 +473,14 @@
         ],
         "notesPath": "./upgrading-to-ag-grid-33",
         "hideBlogPostLink": false
+    },
+    {
+        "version": "32.3.9",
+        "date": "August 13th, 2025"
+    },
+    {
+        "version": "32.3.8",
+        "date": "June 10th, 2025"
     },
     {
         "version": "32.3.7",

@@ -8,11 +8,17 @@ import {
     NumberFilterModule,
     RowSelectionModule,
     TextFilterModule,
+    enableDevValidations,
     themeQuartz,
 } from 'ag-grid-community';
 
 import type { IProduct } from './data';
 import { getData } from './data';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([RowSelectionModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule]);
 

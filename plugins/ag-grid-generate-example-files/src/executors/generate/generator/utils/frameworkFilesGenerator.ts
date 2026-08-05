@@ -98,7 +98,8 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             mainJs = transformEntryFile({ entryFile: mainJs });
         }
 
-        const enableDevValidations = '// Development only — remove for production\nagGrid.enableDevValidations();';
+        const enableDevValidations =
+            '// Enable extended validations only for development\nagGrid.enableDevValidations();';
         mainJs = enableDevValidations + '\n\n' + getEnableAGTestIdLogic(true) + '\n\n' + mainJs;
 
         // remove any leading new lines

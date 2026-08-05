@@ -1,12 +1,17 @@
 import { Component, OnInit, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { ModuleRegistry } from 'ag-grid-community';
+import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { ITransaction, generateTransactions } from './generateTransactions';
 import { gridOptions } from './gridOptions';
 import './styles.css';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 

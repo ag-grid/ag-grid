@@ -24,6 +24,7 @@ import type { ColumnNameService } from '../columns/columnNameService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { SelectionColService } from '../columns/selectionColService';
+import type { UserColumnService } from '../columns/userColumns/userColumnService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
 import type { FrameworkComponentWrapper } from '../components/framework/frameworkComponentWrapper';
@@ -402,6 +403,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     masterDetailSvc?: IMasterDetailService;
     tooltipSvc?: TooltipService;
     colGroupSvc: ColumnGroupService;
+    userColumnSvc?: UserColumnService;
     rowAutoHeight?: RowAutoHeightService;
     rowChildrenSvc?: IRowChildrenService;
     footerSvc?: IFooterService;

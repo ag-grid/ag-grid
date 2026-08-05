@@ -7,8 +7,14 @@ import {
     colorSchemeLightCold,
     colorSchemeLightWarm,
     createGrid,
+    enableDevValidations,
     themeQuartz,
 } from 'ag-grid-community';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

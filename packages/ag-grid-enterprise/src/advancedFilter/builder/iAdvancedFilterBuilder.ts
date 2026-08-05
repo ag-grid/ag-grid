@@ -27,6 +27,8 @@ export type CreatePillParams = CreateInputPillParams | CreateSelectPillParams;
 interface CreateInputPillParams extends BaseCreatePillParams {
     isSelect: false;
     valueFormatter: (value: string) => string;
+    /** Converts the stored value into the text the editor opens with. Defaults to the stored value. */
+    editValueFormatter?: (value: string) => string;
     baseCellDataType: BaseCellDataType;
 }
 

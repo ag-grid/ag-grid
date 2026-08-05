@@ -1,4 +1,4 @@
-import type { ColDef, ColGroupDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridOptions, ValueFormatterLiteParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -8,8 +8,8 @@ import {
 } from 'ag-grid-community';
 import { CalculatedColumnsModule, ColumnMenuModule } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -34,7 +34,10 @@ type QuarterlyRevenueRow = {
 
 type QuarterField = Exclude<keyof QuarterlyRevenueRow, 'product'>;
 
-const formatter = (params: ValueFormatterParams<QuarterlyRevenueRow, number>, formattedString: string): string => {
+const formatter = (
+    params: ValueFormatterLiteParams<QuarterlyRevenueRow, number>,
+    format: (value: number) => string
+): string => {
     const { value } = params;
     if (value == null) {
         return '';
@@ -44,22 +47,21 @@ const formatter = (params: ValueFormatterParams<QuarterlyRevenueRow, number>, fo
         return String(value);
     }
 
-    return formattedString;
+    return format(value);
 };
 
-const currencyFormatter = (params: ValueFormatterParams<QuarterlyRevenueRow, number>) =>
-    formatter(params, `$${(params.value ?? '').toLocaleString()}`);
+const currencyFormatter = (params: ValueFormatterLiteParams<QuarterlyRevenueRow, number>) =>
+    formatter(params, (value) => `$${value.toLocaleString()}`);
 
-const percentageFormatter = (params: ValueFormatterParams<QuarterlyRevenueRow, number>) =>
-    formatter(params, `${(params.value ?? 0).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`);
+const percentageFormatter = (params: ValueFormatterLiteParams<QuarterlyRevenueRow, number>) =>
+    formatter(params, (value) => `${(value * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`);
 
 const quarterColumn = (field: QuarterField): ColDef<QuarterlyRevenueRow, number> => ({
     field,
     colId: field,
     headerName: field.slice(0, 2).toUpperCase(),
     columnGroupShow: 'open',
-    cellDataType: 'number',
-    valueFormatter: currencyFormatter,
+    cellDataType: 'currency',
 });
 
 const columnDefs: (ColDef<QuarterlyRevenueRow> | ColGroupDef<QuarterlyRevenueRow>)[] = [
@@ -77,8 +79,7 @@ const columnDefs: (ColDef<QuarterlyRevenueRow> | ColGroupDef<QuarterlyRevenueRow
                 headerName: 'Total',
                 columnGroupShow: 'closed',
                 calculatedExpression: '[q1_2025] + [q2_2025] + [q3_2025] + [q4_2025]',
-                cellDataType: 'number',
-                valueFormatter: currencyFormatter,
+                cellDataType: 'currency',
             },
         ],
     },
@@ -95,8 +96,7 @@ const columnDefs: (ColDef<QuarterlyRevenueRow> | ColGroupDef<QuarterlyRevenueRow
                 headerName: 'Total',
                 columnGroupShow: 'closed',
                 calculatedExpression: '[q1_2026] + [q2_2026] + [q3_2026] + [q4_2026]',
-                cellDataType: 'number',
-                valueFormatter: currencyFormatter,
+                cellDataType: 'currency',
             },
         ],
     },
@@ -106,21 +106,19 @@ const columnDefs: (ColDef<QuarterlyRevenueRow> | ColGroupDef<QuarterlyRevenueRow
             {
                 colId: 'q4Change',
                 headerName: 'Q4 Change',
-                calculatedExpression: 'ROUND((([q4_2026] - [q4_2025]) / [q4_2025]) * 100, 1)',
-                cellDataType: 'number',
+                calculatedExpression: '([q4_2026] - [q4_2025]) / [q4_2025]',
+                cellDataType: 'percentage',
                 sortable: true,
                 filter: 'agNumberColumnFilter',
-                valueFormatter: percentageFormatter,
             },
             {
                 colId: 'yearChange',
                 headerName: 'Year Change',
                 calculatedExpression:
                     '([q1_2026] + [q2_2026] + [q3_2026] + [q4_2026]) - ([q1_2025] + [q2_2025] + [q3_2025] + [q4_2025])',
-                cellDataType: 'number',
+                cellDataType: 'currency',
                 sortable: true,
                 filter: 'agNumberColumnFilter',
-                valueFormatter: currencyFormatter,
             },
         ],
     },
@@ -352,7 +350,21 @@ const rowData: QuarterlyRevenueRow[] = [
 const gridOptions: GridOptions<QuarterlyRevenueRow> = {
     columnDefs,
     rowData,
-    calculatedColumns: true,
+    dataTypeDefinitions: {
+        currency: {
+            baseDataType: 'number',
+            extendsDataType: 'number',
+            valueFormatter: currencyFormatter,
+        },
+        percentage: {
+            baseDataType: 'number',
+            extendsDataType: 'number',
+            valueFormatter: percentageFormatter,
+        },
+    },
+    calculatedColumns: {
+        dataTypes: ['currency', 'percentage', 'number', 'text', 'boolean'],
+    },
     defaultColDef: {
         minWidth: 120,
         flex: 1,

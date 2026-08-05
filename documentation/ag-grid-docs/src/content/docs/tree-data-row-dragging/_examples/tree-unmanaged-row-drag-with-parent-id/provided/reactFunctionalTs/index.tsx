@@ -19,8 +19,8 @@ import type { IFile } from './fileUtils';
 import { getFileDropPosition, moveFiles } from './fileUtils';
 import './style.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

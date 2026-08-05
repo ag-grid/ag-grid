@@ -29,8 +29,8 @@ describe('Edit API', () => {
         getColDef: () => ({ editable: true }),
         isColumnFunc: () => false,
     } as unknown as Column;
-    const cellCtrl1 = { rowNode: rowNode1, focusCell: vi.fn(), onEditorAttachedFuncs: [] } as unknown as CellCtrl;
-    const cellCtrl2 = { rowNode: rowNode2, focusCell: vi.fn(), onEditorAttachedFuncs: [] } as unknown as CellCtrl;
+    const cellCtrl1 = { rowNode: rowNode1, focusCell: vi.fn() } as unknown as CellCtrl;
+    const cellCtrl2 = { rowNode: rowNode2, focusCell: vi.fn() } as unknown as CellCtrl;
 
     const getCellCtrl = (column: Column) => {
         if (column.getColId() === 'col1') {

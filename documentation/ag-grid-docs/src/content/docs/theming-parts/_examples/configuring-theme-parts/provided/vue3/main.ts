@@ -10,6 +10,7 @@ import {
     colorSchemeLightCold,
     colorSchemeLightWarm,
     colorSchemeVariable,
+    enableDevValidations,
     iconSetAlpine,
     iconSetMaterial,
     iconSetQuartzBold,
@@ -22,6 +23,11 @@ import {
 } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 

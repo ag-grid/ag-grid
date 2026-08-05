@@ -14,6 +14,7 @@ import {
     BeanStub,
     _applyColumnState,
     _dispatchColumnChangedEvent,
+    _resolvePivotSort,
     _setColsVisible,
     isColumnGroupAutoCol,
     isSpecialCol,
@@ -29,8 +30,9 @@ import type {
 const noop = () => {};
 type StrategyBeans = BeanCollection;
 
-/** Cycle: ascending default (`undefined`/`'asc'`) -> descending -> `null` (no sort, natural order) -> ascending. */
-function getNextPivotSort(current: SortDirection | undefined): SortDirection {
+/** Cycle: ascending -> descending -> `null` (no sort, natural order) -> ascending. `current` must already have
+ *  the unset default resolved, so the first click moves away from what the pill actually shows. */
+function getNextPivotSort(current: SortDirection): SortDirection {
     if (current === 'desc') {
         return null;
     }
@@ -256,7 +258,7 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
     }
 
     public progressPivotSortFromEvent(column: AgColumn): void {
-        column.pivotSort = getNextPivotSort(column.pivotSort);
+        column.pivotSort = getNextPivotSort(_resolvePivotSort(this.beans, column.pivotSort));
         // Pivot membership is unchanged, so applyColumnState wouldn't fire this - dispatch it to trigger
         // the pivot refresh (columnPivotChanged → refreshModel step 'pivot') that re-derives column order.
         _dispatchColumnChangedEvent(this.beans.eventSvc, 'columnPivotChanged', [column], 'uiColumnSorted');
@@ -722,7 +724,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     }
 
     public progressPivotSortFromEvent(column: AgColumn): void {
-        const next = getNextPivotSort(this.getPivotSort(column));
+        const next = getNextPivotSort(_resolvePivotSort(this.beans, this.getPivotSort(column)));
         mergeColumnStatePatch(this.state, { colId: column.colId, pivotSort: next });
         const columnState = ensureColumnStateDraft(this.state);
         columnState.seq = nextSeq(this.sequence);

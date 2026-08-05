@@ -13,8 +13,8 @@ import { ColumnMenuModule, ContextMenuModule, ExcelExportModule } from 'ag-grid-
 
 import { MultilineCellRenderer } from './multilineCellRenderer_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

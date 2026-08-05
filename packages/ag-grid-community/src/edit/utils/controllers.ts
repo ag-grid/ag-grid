@@ -8,7 +8,6 @@ import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode, RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { _destroyEditors, _syncFromEditors } from './editors';
 
 type ResolveRowControllerType = {
     rowIndex?: number | null;
@@ -80,9 +79,7 @@ export function _getCellCtrl(beans: BeanCollection, inputs: ResolveControllerTyp
 function _stopEditing(beans: BeanCollection): void {
     const { editSvc } = beans;
     if (editSvc?.isBatchEditing()) {
-        // persist any pending editor values before closing editors on focus loss
-        _syncFromEditors(beans, { persist: true });
-        _destroyEditors(beans);
+        editSvc.stopBatchEditors(false);
     } else {
         editSvc?.stopEditing(undefined, { source: 'api' });
     }

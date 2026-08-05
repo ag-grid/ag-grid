@@ -225,7 +225,6 @@ export class CalculatedColumnForm extends Component {
         const input = this.eExpression.getInputElement();
         _setAriaAutoComplete(input, 'list');
         _setAriaHasPopup(input, 'listbox');
-        _setAriaExpanded(input, false);
 
         const pickerButtons = [this.eColumns, this.eFunctions, this.eOperators];
         for (const button of pickerButtons) {
@@ -508,7 +507,6 @@ export class CalculatedColumnForm extends Component {
         const renderedActiveOptionId =
             activeOptionId && _getDocument(this.beans).getElementById(activeOptionId) ? activeOptionId : null;
 
-        _setAriaExpanded(expressionInputEl, isInline);
         _setAriaControls(expressionInputEl, isInline ? listId : null);
         _setAriaActiveDescendant(expressionInputEl, renderedActiveOptionId);
 
@@ -521,7 +519,6 @@ export class CalculatedColumnForm extends Component {
 
     private clearAriaForSuggestions(): void {
         const expressionInputEl = this.eExpression.getInputElement();
-        _setAriaExpanded(expressionInputEl, false);
         _setAriaControls(expressionInputEl, null);
         _setAriaActiveDescendant(expressionInputEl, null);
 

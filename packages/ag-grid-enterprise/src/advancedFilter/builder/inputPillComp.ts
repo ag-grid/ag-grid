@@ -79,6 +79,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         private readonly params: {
             value: string;
             valueFormatter: (value: string) => string;
+            editValueFormatter?: (value: string) => string;
             cssClass: string;
             type: BaseCellDataType;
             ariaLabel: string;
@@ -128,7 +129,10 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         }
         _setDisplayed(this.ePill, false);
         this.eEditor = this.createEditorComp(this.params.type);
-        this.eEditor.setValue(this.value);
+        const { editValueFormatter } = this.params;
+        // Edit the value as it is displayed, so a formatted operand does not flip back to the raw
+        // model value when the editor opens.
+        this.eEditor.setValue(editValueFormatter?.(this.value) ?? this.value);
         const eEditorGui = this.eEditor.getGui();
         this.eEditor.addManagedElementListeners(eEditorGui, {
             keydown: (event: KeyboardEvent) => {

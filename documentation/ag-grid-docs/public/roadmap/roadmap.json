@@ -1,87 +1,204 @@
 {
-    "lastUpdated": "2026-06-29",
-    "introTitle": "Q2 2026 focus",
-    "introText": "A description of the focus for Q2 2026, including a summary of the key areas of development and strategic initiatives.",
+    "lastUpdated": "2026-08-05",
+    "introTitle": "Q3 2026 focus",
+    "introText": "Our Q3 2026 focus expands AG Grid across export, filtering, and developer tooling. PDF export joins CSV and Excel, Set Filter conditions work inside Advanced Filter expressions, and column widths stay accurate as data updates. Documentation now ships in Markdown alongside an installable AI coding skill. Planned items reflect current intent — timing may shift as priorities evolve.",
     "items": [
         {
-            "id": "AG-00001",
-            "title": "Shipped Feature With Link",
+            "id": "AG-14571",
+            "title": "Relative date range filtering",
             "q": 1,
             "status": "shipped",
-            "why": "Placeholder why text.",
-            "desc": "Placeholder description for a shipped feature that links to a docs page.",
-            "link": "./getting-started"
+            "why": "Supports common time-based filtering tasks that users expect from spreadsheet and BI tools.",
+            "desc": "Filter dates using built-in ranges like Today, This Week, Last Quarter, and Year to Date, without writing custom comparator logic.",
+            "link": "./filter-date/#built-in-named--relative-date-ranges"
         },
         {
-            "id": "AG-00002",
-            "title": "Shipped Feature Without Link",
+            "id": "AG-16430",
+            "title": "Formula editor",
             "q": 1,
             "status": "shipped",
-            "why": "Placeholder why text.",
-            "desc": "Placeholder description for a shipped feature with no docs link.",
-            "link": null
+            "why": "Brings familiar spreadsheet workflows directly into calculation-heavy grid applications.",
+            "desc": "Enter spreadsheet-style formulas into grid cells, with cell references, functions, and an autocomplete-enabled editor.",
+            "link": "./formulas/"
         },
         {
-            "id": "AG-00003",
-            "title": "Another Shipped Feature",
+            "id": "AG-3373",
+            "title": "Editing of Aggregated Values",
             "q": 1,
             "status": "shipped",
-            "why": "Placeholder why text.",
-            "desc": "Placeholder description for another shipped feature in Q1.",
-            "link": null
+            "why": "Supports top-down editing workflows common in budgeting and planning applications.",
+            "desc": "Edit a group or total row's aggregated value directly, automatically distributing the change across its children.",
+            "link": "./grouping-edit/"
         },
         {
-            "id": "AG-00004",
-            "title": "In Progress Feature A",
+            "id": "AG-1190",
+            "title": "Keep Row Group State and Compact Mode",
+            "q": 1,
+            "status": "shipped",
+            "why": "Maintains user context after data refreshes while keeping multi-level grouping views uncluttered.",
+            "desc": "Preserve expanded row groups across grid updates, and hide group columns for levels that haven't been expanded yet.",
+            "link": "./grouping-multiple-group-columns/#hiding-group-columns-until-expanded"
+        },
+        {
+            "id": "AG-3471",
+            "title": "Deferred updates to Columns Tool Panel",
+            "q": 1,
+            "status": "shipped",
+            "why": "Avoids unnecessary recomputation and server requests when making several changes at once.",
+            "desc": "Stage multiple column, group, and pivot changes in the Columns Tool Panel and commit them together with an Apply action.",
+            "link": "./tool-panel-columns/#deferred-updates"
+        },
+        {
+            "id": "AG-17395",
+            "title": "Quick Access Toolbar",
             "q": 2,
-            "status": "in-progress",
-            "why": "Placeholder why text.",
-            "desc": "Placeholder description for a feature currently in development.",
-            "link": null
+            "status": "shipped",
+            "why": "Gives users faster access to common grid actions without opening a menu or side bar.",
+            "desc": "A configurable toolbar above the grid for quick filter, find, export menus, and custom actions.",
+            "link": "./toolbar/"
         },
         {
-            "id": "AG-00005",
-            "title": "In Progress Feature B",
+            "id": "AG-8439",
+            "title": "Grand Total Row for Server-side Row Model",
             "q": 2,
-            "status": "in-progress",
-            "why": "Placeholder why text.",
-            "desc": "Placeholder description for another feature currently in development.",
-            "link": null
+            "status": "shipped",
+            "why": "Extends grand total reporting to large, server-backed datasets that can't be loaded entirely client-side.",
+            "desc": "Display an always-visible grand total row across the full server-side dataset, supplied and updated by the server.",
+            "link": "./server-side-model-grouping/#grand-total-row"
         },
         {
-            "id": "AG-00006",
-            "title": "In Progress Feature C",
+            "id": "AG-3773",
+            "title": "Adding Notes to Grid Cells",
             "q": 2,
-            "status": "in-progress",
-            "why": "Placeholder why text.",
-            "desc": "Placeholder description for a third feature currently in development.",
-            "link": null
+            "status": "shipped",
+            "why": "Supports collaborative review and annotation workflows directly inside the grid.",
+            "desc": "Attach comments to individual cells, viewable on hover or click, without storing note text in row data.",
+            "link": "./notes/"
         },
         {
-            "id": "AG-00007",
-            "title": "Planned Feature A",
+            "id": "AG-6841",
+            "title": "Add Calculated Columns",
+            "q": 2,
+            "status": "shipped",
+            "why": "Enables ad-hoc analysis without requiring changes to the underlying data or application code.",
+            "desc": "Let users add new read-only columns computed from other columns using expressions, directly from the column menu.",
+            "link": "./calculated-columns/"
+        },
+        {
+            "id": "AG-17235",
+            "title": "Automatic Column Generation",
+            "q": 2,
+            "status": "shipped",
+            "why": "Brings zero-configuration setup to grids with dynamic or unknown schemas.",
+            "desc": "Enable automatic column definition generation from row data.",
+            "link": "./auto-generate-columns/"
+        },
+        {
+            "id": "AG-16590",
+            "title": "Improved Option Validation",
+            "q": 2,
+            "status": "shipped",
+            "why": "Reduces setup mistakes and speeds up debugging during development.",
+            "desc": "Clearer, more detailed warnings when grid options or column definitions are misconfigured.",
+            "link": "./dev-validation/"
+        },
+        {
+            "id": "AG-9850",
+            "title": "Aggregated Value Transformations",
+            "q": 2,
+            "status": "shipped",
+            "why": "Supports relative comparisons alongside absolute totals in grouped and pivoted views.",
+            "desc": "Display an aggregated value as a percentage of its grand, column, row, or parent group total.",
+            "link": "./aggregation-show-values-as/"
+        },
+        {
+            "id": "AG-17063",
+            "title": "Markdown versions of documentation",
             "q": 3,
-            "status": "planned",
-            "why": "Placeholder why text.",
-            "desc": "Placeholder description for a planned Q3 feature.",
+            "status": "shipped",
+            "why": "Makes docs easier for AI coding assistants and LLM-based tools to consume accurately.",
+            "desc": "Publish documentation pages in Markdown alongside the standard HTML format.",
             "link": null
         },
         {
-            "id": "AG-00008",
-            "title": "Planned Feature B",
+            "id": "AG-115",
+            "title": "Column Header Editing",
             "q": 3,
-            "status": "planned",
-            "why": "Placeholder why text.",
-            "desc": "Placeholder description for another planned Q3 feature.",
+            "status": "shipped",
+            "why": "Supports spreadsheet-like customisation for end users managing their own views.",
+            "desc": "Let users rename a column's header text directly in the grid, without changing the column definition in code.",
+            "link": "./column-headers/#editable-header-name"
+        },
+        {
+            "id": "AG-12609",
+            "title": "Custom context menu in Columns Tool Panel",
+            "q": 3,
+            "status": "shipped",
+            "why": "Gives developers the same control over this menu as they already have over the grid's main context menu.",
+            "desc": "Customise the items shown in the Columns Tool Panel's right-click context menu.",
+            "link": "./tool-panel-columns/#custom-menu-items"
+        },
+        {
+            "id": "AG-8950",
+            "title": "Set Filter Support in Advanced Filtering",
+            "q": 3,
+            "status": "in-progress",
+            "why": "Simplifies building complex filters that would otherwise need many chained OR conditions.",
+            "desc": "Reference Set Filter-style multi-value lists as a single condition inside Advanced Filter expressions.",
             "link": null
         },
         {
-            "id": "AG-00009",
-            "title": "Planned Feature C",
+            "id": "AG-17948",
+            "title": "AI Coding Skill",
+            "q": 3,
+            "status": "shipped",
+            "why": "Keeps AI-generated grid code aligned with current APIs instead of outdated training data.",
+            "desc": "An installable skill package that gives AI coding assistants up-to-date, official guidance for building AG Grid applications.",
+            "link": "./skills/"
+        },
+        {
+            "id": "AG-902",
+            "title": "PDF Export",
+            "q": 3,
+            "status": "in-progress",
+            "why": "Supports sharing and printing grid data in a fixed, presentation-ready format.",
+            "desc": "Export grid data directly to PDF, alongside the existing CSV and Excel export options.",
+            "link": null
+        },
+        {
+            "id": "AG-4093",
+            "title": "Continuous Column Auto-sizing",
+            "q": 3,
+            "status": "in-progress",
+            "why": "Keeps column widths accurate in grids with changing or incrementally loaded data.",
+            "desc": "Keep columns auto-sized as data updates and new rows scroll into view, rather than sizing once.",
+            "link": null
+        },
+        {
+            "id": "AG-6770",
+            "title": "Multiple Aggregations per Column",
             "q": 4,
             "status": "planned",
-            "why": "Placeholder why text.",
-            "desc": "Placeholder description for a planned Q4 feature.",
+            "why": "Supports richer summary views without duplicating columns for each aggregation function.",
+            "desc": "Show more than one aggregation result, such as sum and average, for the same value column at once.",
+            "link": null
+        },
+        {
+            "id": "AG-2784",
+            "title": "Persistent Set Filter Selections",
+            "q": 4,
+            "status": "planned",
+            "why": "Prevents rows from silently disappearing after data updates change the available filter values.",
+            "desc": "Keep a user's Set Filter selections intact when new distinct values appear in the data.",
+            "link": null
+        },
+        {
+            "id": "AG-9368",
+            "title": "Accessibility for Tooltips",
+            "q": 4,
+            "status": "planned",
+            "why": "Closes a known accessibility gap so tooltip content is available to assistive technology users.",
+            "desc": "Add tooltips on built-in buttons across the grid UI.",
             "link": null
         }
     ]

@@ -153,9 +153,7 @@ function onEnterKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: Keyboa
             return;
         }
 
-        // re-run ALL validations, Enter key is used to commit the edit, so we want to ensure it's valid
-        editSvc?.populateModelValidationErrors();
-
+        // Enter commits, so validity must be current: checkNavWithValidation re-runs ALL validations first.
         if (editSvc?.checkNavWithValidation(undefined, event) === 'block-stop') {
             return;
         }
@@ -175,11 +173,12 @@ function onEnterKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: Keyboa
         const key = event.shiftKey ? KeyCode.UP : KeyCode.DOWN;
         navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
     } else {
-        if (editSvc?.hasValidationErrors()) {
+        if (editSvc?.revalidateAndCheck()) {
             return;
         }
 
-        if (editSvc?.hasValidationErrors(cellCtrl)) {
+        // Already revalidated above; only the scoped answer is still needed.
+        if (editSvc?.checkValidated(cellCtrl)) {
             editSvc.revertSingleCellEdit(cellCtrl, true);
         }
 
@@ -209,10 +208,8 @@ function onF2KeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardE
     }
 
     if (editing) {
-        // re-run ALL validations, F2 is used to initiate a new edit. If we have one already in progress,
-        // we want to ensure it's valid before initiating a new edit cycle
-        editSvc?.populateModelValidationErrors();
-
+        // F2 starts a new edit cycle, so an in-progress one must be checked against fresh validations —
+        // checkNavWithValidation re-runs them all first.
         if (editSvc?.checkNavWithValidation(undefined, event) === 'block-stop') {
             return;
         }
@@ -261,7 +258,7 @@ export function _processCellCharacter(beans: BeanCollection, cellCtrl: CellCtrl,
     if (key === KeyCode.SPACE) {
         onSpaceKeyDown(beans, cellCtrl, event);
     } else if (editSvc?.isCellEditable(cellCtrl, 'ui')) {
-        if (editSvc?.hasValidationErrors() && !editSvc?.hasValidationErrors(cellCtrl)) {
+        if (editSvc?.revalidateAndCheck() && !editSvc.checkValidated(cellCtrl)) {
             return;
         }
 

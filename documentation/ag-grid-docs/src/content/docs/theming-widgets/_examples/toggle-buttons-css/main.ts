@@ -1,6 +1,11 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ModuleRegistry, createGrid, themeQuartz } from 'ag-grid-community';
+import { ModuleRegistry, createGrid, enableDevValidations, themeQuartz } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
@@ -14,14 +19,14 @@ const myTheme = themeQuartz.withParams({
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 170 },
     { field: 'age' },
-    { field: 'country' },
+    { field: 'country', rowGroup: true },
     { field: 'year' },
     { field: 'date' },
-    { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' },
+    { field: 'sport', pivot: true },
+    { field: 'gold', aggFunc: 'sum' },
+    { field: 'silver', aggFunc: 'sum' },
+    { field: 'bronze', aggFunc: 'sum' },
+    { field: 'total', aggFunc: 'sum' },
 ];
 
 let gridApi: GridApi<IOlympicData>;

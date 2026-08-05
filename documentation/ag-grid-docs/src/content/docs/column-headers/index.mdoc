@@ -50,6 +50,8 @@ Editable columns can be renamed via:
 
 Editable column groups can be renamed via the **Edit Column Name** item in the group header right-click menu or the Columns Tool Panel context menu.
 
+The **Edit Column Name** item is never offered for [calculated columns](./calculated-columns/), even when `headerNameEditable` is set; rename a calculated column from its **Edit Calculated Column** dialog instead.
+
 Committing an empty value sets an empty header name; the header reverts to its Column Definition default only when the edit is cleared programmatically, such as `resetColumnState()`. Edited column names are persisted as part of [Column State](./column-state/) and [Grid State](./grid-state/); edited group names are persisted as part of Grid State. Both survive save and restore.
 
 {% note %}

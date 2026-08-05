@@ -59,8 +59,8 @@ export class FilterExpressionParser {
         return this.joinExpressionParser.updateExpression(position, updateEntry, type)!;
     }
 
-    public getModel(): AdvancedFilterModel | null {
-        return this.isValid() ? this.joinExpressionParser.getModel() : null;
+    public getModel(forBuilder?: boolean): AdvancedFilterModel | null {
+        return this.isValid() ? this.joinExpressionParser.getModel(forBuilder) : null;
     }
 
     private createFunctionParams(): FilterExpressionFunctionParams {

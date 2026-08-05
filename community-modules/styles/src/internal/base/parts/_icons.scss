@@ -21,6 +21,8 @@
 
         // ::after used for icon images
         &::after {
+            // background image, which must be preserved when printing
+            print-color-adjust: exact;
             background: transparent var(--ag-icon-image, none) center/contain no-repeat;
             display: var(--ag-icon-image-display);
             opacity: var(--ag-icon-image-opacity, 0.9);

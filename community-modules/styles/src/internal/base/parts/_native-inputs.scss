@@ -15,6 +15,8 @@
         height: 100%;
     }
 
+    // the box fill and its icon are background colours/images, which must be preserved when printing
+    print-color-adjust: exact;
     background-color: var(--ag-checkbox-background-color);
     border-radius: var(--ag-checkbox-border-radius);
     display: inline-block;

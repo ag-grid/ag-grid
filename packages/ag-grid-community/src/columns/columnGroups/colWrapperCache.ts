@@ -4,6 +4,8 @@ import { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 
 interface WrapperEntry {
     wrapper: AgColumn | AgProvidedColumnGroup;
+    /** The chain's innermost group — the leaf's `originalParent` while this entry is in use. */
+    parent: AgProvidedColumnGroup;
     depth: number;
     /** Build that last wrapped this col; `evict` drops entries whose token is stale. */
     buildToken: number;
@@ -25,6 +27,9 @@ export class ColWrapperCache {
         const cached = entries.get(col);
         if (cached?.depth === depth) {
             cached.buildToken = buildToken;
+            // A caller may have detached the leaf since the chain was built (a tree edit reseating it at the
+            // top level), so re-link it: an unparented leaf renders at the group header's level.
+            col.originalParent = cached.parent;
             return cached.wrapper;
         }
         // Depth changed (or first build): drop any stale chain. The leaf `col` survives the destroy.
@@ -53,7 +58,7 @@ export class ColWrapperCache {
             wrapper = autoGroup;
         }
         wrapper.originalParent = null;
-        entries.set(col, { wrapper, depth, buildToken });
+        entries.set(col, { wrapper, parent: col.originalParent!, depth, buildToken });
         return wrapper;
     }
 

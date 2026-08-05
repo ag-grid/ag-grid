@@ -21,8 +21,8 @@ import { getData } from './data';
 import type { IFile } from './fileUtils';
 import { getFileDropPosition, moveFiles } from './fileUtils';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

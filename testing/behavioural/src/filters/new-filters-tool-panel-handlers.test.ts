@@ -1,7 +1,9 @@
+import { waitFor } from '@testing-library/dom';
+
 import { enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { ALL_SEVERITIES, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager } from '../test-utils';
 
 describe('new filters tool panel requires enableFilterHandlers', () => {
     const gridsManager = new TestGridsManager({
@@ -30,9 +32,12 @@ describe('new filters tool panel requires enableFilterHandlers', () => {
             rowData,
             sideBar: 'filters-new',
         });
-        await asyncSetTimeout(50);
-
-        expect(consoleWarnSpy.mock.calls.some((call) => String(call[0]).includes('warning #282'))).toBe(true);
+        // The warning is emitted while the tool panel is created, so poll for it directly.
+        await waitFor(() => {
+            expect(consoleWarnSpy.mock.calls.some((call) => String(call[0]).includes('warning #282'))).toBe(true);
+            // createGrid is not awaited, so also gate on the rows having been processed.
+            expect(api.getDisplayedRowCount()).toBe(2);
+        });
         expect(consoleErrorSpy).not.toHaveBeenCalled();
 
         // grid rendered despite the missing flag
@@ -60,10 +65,16 @@ describe('new filters tool panel requires enableFilterHandlers', () => {
             sideBar: 'filters-new',
             enableFilterHandlers: true,
         });
-        await asyncSetTimeout(50);
+        // The absence of the warning cannot be polled for, so gate on the tool panel having been
+        // created and rendered — the point at which #282 would have been emitted.
+        await waitFor(() => {
+            expect(api.getToolPanelInstance('filters-new')).toBeTruthy();
+            expect(getGridElement(api)!.querySelector('.ag-tool-panel-wrapper')).toBeTruthy();
+            // createGrid is not awaited, so also gate on the rows having been processed.
+            expect(api.getDisplayedRowCount()).toBe(2);
+        });
 
         expect(consoleWarnSpy.mock.calls.some((call) => String(call[0]).includes('warning #282'))).toBe(false);
-        expect(api.getToolPanelInstance('filters-new')).toBeTruthy();
 
         // No filter applied: both data rows render with the handlers-enabled panel.
         expect(api.getDisplayedRowCount()).toBe(2);

@@ -245,7 +245,7 @@ export class ToolPanelColumnComp extends Component {
         const dragSource: GridDragSource = {
             type: DragSourceType.ToolPanel,
             eElement: eDragHandle,
-            dragItemName: this.displayName,
+            dragItemName: () => this.displayName,
             getDefaultIconName: () => (hideColumnOnExit && !isDeferredMode(this.params) ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {

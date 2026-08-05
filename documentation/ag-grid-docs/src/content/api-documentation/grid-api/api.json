@@ -568,6 +568,12 @@
                 "name": "Edit Validation",
                 "url": "./cell-editing-validation"
             }
+        },
+        "getEditValidationErrors": {
+            "more": {
+                "name": "Edit Validation",
+                "url": "./cell-editing-validation"
+            }
         }
     },
     "export": {

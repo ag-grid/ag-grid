@@ -2,8 +2,8 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { CellSelectionModule, RowNumbersModule } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -26,9 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    cellSelection: {
-        enableColumnSelection: true,
-    },
+    cellSelection: true,
     rowNumbers: true,
     columnDefs: columnDefs,
     rowData: null,

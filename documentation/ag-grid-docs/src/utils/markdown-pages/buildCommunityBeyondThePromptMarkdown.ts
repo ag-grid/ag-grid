@@ -1,12 +1,14 @@
-import { SESSIONS } from '@utils/beyondThePromptSessions';
+import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
+import { PAGE_CONTENT, SESSIONS, SPEAKERS } from '@utils/beyondThePromptSessions';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 /**
  * Build the markdown twin of /community/beyond-the-prompt: the AG Grid × Bryntum conference on
- * building AI-assisted applications that hold up in production. The programme is read from the
- * shared SESSIONS data (also used by the page and the per-session recording routes), so the
- * agenda cannot drift; each session lists its speakers and links to its recording.
+ * building AI-assisted applications that hold up in production. The prose, programme and speakers
+ * are read from the shared content the page renders (also used by the per-session recording
+ * routes), so the twin cannot drift; each session lists its speakers and links to its recording.
  */
-export function buildCommunityBeyondThePromptMarkdown(_options: { siteRoot?: string } = {}): string {
+export function buildCommunityBeyondThePromptMarkdown({ siteRoot }: { siteRoot?: string } = {}): string {
     const frontmatter = [
         '---',
         'title: "Beyond the Prompt: AG Grid & Bryntum Conference"',
@@ -14,7 +16,9 @@ export function buildCommunityBeyondThePromptMarkdown(_options: { siteRoot?: str
         '---',
     ].join('\n');
 
-    const programme = SESSIONS.map((session) => {
+    const { intro, programme, notify } = PAGE_CONTENT;
+
+    const sessions = SESSIONS.map((session) => {
         const speakers = (session.speakers ?? []).map((speaker) => `${speaker.name} (${speaker.role})`).join(', ');
         const who = speakers ? ` — ${speakers}` : '';
         const description = session.description ? `: ${session.description}` : '';
@@ -22,11 +26,19 @@ export function buildCommunityBeyondThePromptMarkdown(_options: { siteRoot?: str
         return `- **${session.title}**${who}${description}${recording}`;
     }).join('\n');
 
+    const speakers = SPEAKERS.map((speaker) => `### ${speaker.name} — ${speaker.title}\n\n${speaker.bio}`).join('\n\n');
+
+    // The signup form is a Mailchimp embed; link to the section that hosts it instead.
+    const signupUrl = toAbsoluteUrl(urlWithBaseUrl('/community/beyond-the-prompt/#notify'), siteRoot);
+
     const document = [
         frontmatter,
         '# Beyond the Prompt',
-        'A one-day conference on building applications that hold up in production, hosted by AG Grid and Bryntum. Beyond the Prompt explores the tension between how easy it is to prototype with AI and how hard it is to make that work hold up in production.',
-        `## Programme\n\n${programme}`,
+        `## ${intro.heading}`,
+        ...intro.body,
+        `## Programme\n\n${programme.location}\n\n${sessions}`,
+        `## Speakers\n\n${programme.speakersLead}\n\n${speakers}`,
+        `## ${notify.heading}\n\n${notify.location}\n\n${notify.lead}\n\n[Sign up for updates](${signupUrl})`,
     ].join('\n\n');
 
     return `${document.trimEnd()}\n`;

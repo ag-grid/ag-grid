@@ -417,11 +417,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             });
             return comp;
         } else {
-            const { baseCellDataType, valueFormatter } = params;
+            const { baseCellDataType, valueFormatter, editValueFormatter } = params;
             const comp = this.createBean(
                 new InputPillComp({
                     value: key,
                     valueFormatter,
+                    editValueFormatter,
                     cssClass,
                     type: baseCellDataType,
                     ariaLabel,

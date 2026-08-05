@@ -17,7 +17,7 @@ import type {
     SelectionChangedEvent,
     ValueSetterParams,
 } from 'ag-grid-community';
-import { LocaleModule, ModuleRegistry } from 'ag-grid-community';
+import { LocaleModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
@@ -25,6 +25,11 @@ import CountryCellRenderer from './countryCellRenderer';
 import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
 import './styles.css';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule.with(AgChartsEnterpriseModule), LocaleModule]);
 

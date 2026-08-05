@@ -11,7 +11,7 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { CellEditingStoppedEvent, GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -1756,5 +1756,89 @@ describe('Cell Editing Regression', () => {
             batchEditingStarted: 0,
             batchEditingStopped: 0,
         });
+    });
+
+    // Removing the edited row ends the edit without going through the stop pipeline. The row event pair
+    // must still balance, and the strategy must not keep the detached node alive.
+    test('full-row: removing the edited row fires rowEditingStopped', async () => {
+        const rowData = [
+            { id: 'ROW_0', a: 'A0', b: 'B0' },
+            { id: 'ROW_1', a: 'A1', b: 'B1' },
+        ];
+        const api = await gridMgr.createGridAndWait('fullRowRemoveWhileEditing', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData,
+            defaultColDef: { editable: true },
+            editType: 'fullRow',
+            getRowId: (params) => params.data.id,
+        } satisfies GridOptions);
+
+        const rowStarted: any[] = [];
+        const rowStopped: any[] = [];
+        api.addEventListener('rowEditingStarted', (e) => rowStarted.push(e));
+        api.addEventListener('rowEditingStopped', (e) => rowStopped.push(e));
+
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await asyncSetTimeout(1);
+
+        expect(rowStarted).toHaveLength(1);
+        expect(rowStopped).toHaveLength(0);
+
+        api.applyTransaction({ remove: [rowData[0]] });
+        await asyncSetTimeout(1);
+
+        expect(rowStopped).toHaveLength(1);
+        expect(api.getEditingCells()).toHaveLength(0);
+
+        await new GridRows(api, 'full-row: edited row removed').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_1 a:"A1" b:"B1"
+        `);
+
+        // The strategy released the row, so a fresh edit on the surviving row starts cleanly.
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await asyncSetTimeout(1);
+
+        expect(rowStarted).toHaveLength(2);
+        expect(rowStopped).toHaveLength(1);
+    });
+
+    // The edit dies with its row, so nothing was written anywhere. The stopped event must say so rather
+    // than advertise the in-flight editor value as the cell's new one.
+    test('removing the edited row reports cellEditingStopped with cancel semantics', async () => {
+        const rowData = [
+            { id: 'ROW_0', a: 'A0', b: 'B0' },
+            { id: 'ROW_1', a: 'A1', b: 'B1' },
+        ];
+        const api = await gridMgr.createGridAndWait('removeWhileEditingStoppedArgs', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData,
+            defaultColDef: { editable: true },
+            getRowId: (params) => params.data.id,
+        } satisfies GridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        const stopped: CellEditingStoppedEvent[] = [];
+        api.addEventListener('cellEditingStopped', (e) => stopped.push(e));
+
+        const cell = gridDiv.querySelectorAll('.ag-row')[0].querySelector<HTMLElement>('[col-id="a"]')!;
+        await userEvent.dblClick(cell);
+        const input = await waitForInput(gridDiv, cell);
+        await userEvent.clear(input);
+        await userEvent.type(input, 'CHANGED');
+        await asyncSetTimeout(1);
+
+        api.applyTransaction({ remove: [rowData[0]] });
+        await asyncSetTimeout(1);
+
+        expect(stopped).toHaveLength(1);
+        expect(stopped[0].valueChanged).toBe(false);
+        expect(stopped[0].newValue).toBeUndefined();
+        expect(stopped[0].oldValue).toBe('A0');
+
+        await new GridRows(api, 'edited row removed mid-edit').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_1 a:"A1" b:"B1"
+        `);
     });
 });

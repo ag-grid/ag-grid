@@ -4,8 +4,8 @@ import type { ColDef } from 'ag-grid-community';
 
 import { StatusOverlay } from './statusOverlay_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

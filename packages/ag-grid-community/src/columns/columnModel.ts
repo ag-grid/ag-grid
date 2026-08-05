@@ -49,6 +49,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public colsTree: (AgColumn | AgProvidedColumnGroup)[] = [];
     public colsTreeDepth = 0;
     public colDefList: AgColumn[] = [];
+    /** Invalidation key for anything memoised off the colDefs. Mutating a live colDef in place doesn't register. */
+    public colDefsVersion = 0;
     public colDefTree: (AgColumn | AgProvidedColumnGroup)[] = [];
     public colDefTreeDepth = 0;
     private colDefHasMarryChildren = false;
@@ -220,6 +222,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.colDefTree = tree;
         this.colDefTreeDepth = builder.treeDepth;
         this.colDefList = cols;
+        ++this.colDefsVersion;
         this.colDefHasMarryChildren = builder.marryChildren;
         this.colDefGroupsById = builder.groupsById;
         this.colDefColsByKey = builder.colsByKey;
@@ -491,6 +494,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.refreshColsDerivedState();
             if (colsListChanged) {
                 beans.rowSpanSvc?.refreshCols();
+                // Last: the purge dispatches synchronously, so a listener must not see a half-rebuilt model.
+                beans.editSvc?.releaseColumnsLeaving(finalColsList);
             }
             if (this.colsTree !== prevColTree || colsListChanged) {
                 this.eventSvc.dispatchEvent({ type: 'gridColumnsChanged' });
@@ -591,7 +596,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType) {
-        this.beans.calculatedColsSvc?.resetDynamicColumnDefs();
+        const beans = this.beans;
+        // Declaring the column set afresh reclaims the columns from the user: the layer goes with it, and
+        // is cleared here rather than by an owning service so it also clears with no owner registered.
+        beans.userColumnSvc?.clear();
+        beans.calculatedColsSvc?.resetDynamicColumnDefs();
         this.colDefs = columnDefs;
         this.buildFromColDefs(source, true);
     }

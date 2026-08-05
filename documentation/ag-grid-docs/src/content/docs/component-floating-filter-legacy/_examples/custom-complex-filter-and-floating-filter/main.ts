@@ -21,8 +21,8 @@ import { CustomNumberFilter } from './custom-number-filter_typescript';
 import type { CustomFloatingParams } from './number-floating-filter_typescript';
 import { NumberFloatingFilter } from './number-floating-filter_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

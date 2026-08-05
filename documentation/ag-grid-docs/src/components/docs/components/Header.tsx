@@ -37,17 +37,26 @@ export const Header: FunctionComponent<Props> = ({
         <header className={styles.docsPageHeader}>
             <div id="top" className={styles.docsPageTitle}>
                 <div className={styles.pageTitleContainer}>
-                    <div className={styles.titleMeta}>
+                    {/* The framework name must stay inside the h1 to count towards it for SEO. The version
+                        must stay outside it, or it would read as part of the heading too — it only sits
+                        beside the framework name because the h1 is `display: contents`, which lets the two
+                        be laid out together from different parents. `data-page-title` is how the Algolia
+                        indexer finds the page title within the heading. */}
+                    <h1 className={styles.pageTitle}>
                         {!suppressFrameworkHeader && (
                             <span className={styles.headerFramework}>
                                 {`${getFrameworkDisplayText(framework)} Data Grid`}
                             </span>
                         )}
-                        {version && <span className={styles.version}>{`Version ${version}`}</span>}
-                    </div>
+                        <span className={styles.titleText} data-page-title>
+                            {title}
+                        </span>
+                    </h1>
+
+                    {version && <span className={styles.version}>{`Version ${version}`}</span>}
 
                     <div className={styles.headerActions}>
-                        {markdownHref && <MarkdownActions markdownHref={markdownHref} />}
+                        {markdownHref && <MarkdownActions markdownHref={markdownHref} framework={framework} />}
                         <div className={styles.frameworkSelectorSlot}>
                             <FrameworkSelectorInsideDocs
                                 path={path}
@@ -56,8 +65,6 @@ export const Header: FunctionComponent<Props> = ({
                             />
                         </div>
                     </div>
-
-                    <h1 className={styles.pageTitle}>{title}</h1>
                 </div>
 
                 {isEnterprise && (

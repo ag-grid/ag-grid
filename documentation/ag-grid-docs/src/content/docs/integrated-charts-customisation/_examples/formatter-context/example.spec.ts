@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForChartModels, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // This example uses a global chart `formatter` that reaches back into the grid context to
@@ -21,10 +21,9 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-cell', { hasText: '$237438' }).first()).toBeVisible();
 
         // A grouped-column range chart is created over the three columns.
-        const models = await remoteGrid(page).getChartModels();
-        expect(models).toHaveLength(1);
-        expect(models![0].chartType).toBe('groupedColumn');
-        expect(models![0].cellRange.columns).toEqual(['period', 'recurring', 'individual']);
+        const models = await waitForChartModels(remoteGrid(page));
+        expect(models[0].chartType).toBe('groupedColumn');
+        expect(models[0].cellRange.columns).toEqual(['period', 'recurring', 'individual']);
 
         await expect(page.locator('.ag-chart-canvas-wrapper canvas').first()).toBeVisible();
     });

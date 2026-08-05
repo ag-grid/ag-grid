@@ -196,8 +196,6 @@ export const DEBUG_SCRIPT_FILE_NAME = 'ag-grid-debug.js';
 export const PRODUCTION_CHANGELOG_JSON_URL = 'https://www.ag-grid.com/changelog/changelog.json';
 
 export const ZI_FORM_ID = 'aad0527d-5af6-4263-8dcd-60f3ac998d5d';
-export type TrialLicenceFormType = 'emailOnly' | 'allFields' | 'original';
-export const DEFAULT_TRIAL_LICENSE_FORM: TrialLicenceFormType = 'allFields';
 
 // Google Tag Manager
 export const PUBLIC_GTM_ID = import.meta.env?.PUBLIC_GTM_ID;

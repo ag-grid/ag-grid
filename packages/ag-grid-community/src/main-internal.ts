@@ -39,6 +39,7 @@ export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clien
 export { _dispatchColumnChangedEvent, dispatchColumnVisibleEvent } from './columns/columnEventUtils';
 export { _buildColumnTree } from './columns/buildColumnTree';
 export { _addColumnDefaultAndTypes, _createUserColumn } from './columns/colDefUtils';
+export { UserColumnService as _UserColumnService } from './columns/userColumns/userColumnService';
 export { _isCalculatedColumnsEnabled, _normaliseCalculatedExpression } from './columns/calculatedColumnUtils';
 export { BaseSingleColService as _BaseSingleColService } from './columns/baseSingleColService';
 export type { ColumnModel } from './columns/columnModel';
@@ -88,10 +89,12 @@ export type { RowDragComp } from './dragAndDrop/rowDragComp';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
 export {
+    _defaultPivotSort,
     _getAvailableSortTypes,
     _getDisplaySortForColumn,
     _normalizeSortType,
     _resolvePivotColumnForRow,
+    _resolvePivotSort,
     AgColumn,
 } from './entities/agColumn';
 export type { ColKind } from './entities/agColumn';

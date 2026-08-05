@@ -1,11 +1,11 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { act, cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import React, { useEffect } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle } from 'react';
 
 import { AllCommunityModule, ModuleRegistry, agTestIdFor, setupAgTestIds } from 'ag-grid-community';
 import type { CellRendererSelectorResult, ColDef, GridApi } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { FormulaModule, RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 
@@ -13,7 +13,7 @@ import { asyncSetTimeout, ignoreConsoleLicenseKeyError, mockGridLayout } from '.
 
 describe('Tooltips (React)', () => {
     beforeAll(() => {
-        ModuleRegistry.registerModules([AllCommunityModule, RowGroupingModule]);
+        ModuleRegistry.registerModules([AllCommunityModule, RowGroupingModule, FormulaModule]);
         setupAgTestIds();
     });
     beforeEach(() => ignoreConsoleLicenseKeyError());
@@ -128,6 +128,118 @@ describe('Tooltips (React)', () => {
         expect(hasTooltipText('Cell renderer tooltip')).toBe(false);
         expect(getTooltips().length).toBeLessThanOrEqual(1);
         expect(getTooltips()[0]).toHaveTextContent('ColDef tooltip');
+    });
+
+    test('re-registers the renderer tooltip when refresh() returning false remounts the renderer (React)', async () => {
+        // React answers a refresh() of false by resetting the renderer tooltip and remounting under a new
+        // render key, so the tooltip registered by the outgoing renderer must be replaced, not duplicated.
+        const RefreshingTooltipRenderer = forwardRef<{ refresh: () => boolean }, CustomCellRendererProps>(
+            (props, ref) => {
+                useImperativeHandle(ref, () => ({ refresh: () => false }));
+                useEffect(() => {
+                    props.setTooltip(`Tip ${props.value}`, () => true);
+                }, []);
+                return <span>{String(props.value)}</span>;
+            }
+        );
+
+        let api: GridApi | undefined;
+
+        const rendered = render(
+            <div style={{ height: 400, width: 600 }}>
+                <AgGridReact
+                    columnDefs={[{ field: 'A', cellRenderer: RefreshingTooltipRenderer }]}
+                    rowData={[{ id: 'r1', A: 'a1' }]}
+                    getRowId={(params) => String(params.data.id)}
+                    tooltipShowDelay={200}
+                    onGridReady={(params) => {
+                        api = params.api;
+                    }}
+                />
+            </div>
+        );
+
+        const gridDiv = rendered.container;
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
+
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitFor(() => expect(hasTooltipText('Tip a1')).toBe(true));
+
+        await userEvent.unhover(cell);
+        await asyncSetTimeout(250);
+        await waitFor(() => expect(getTooltips().length).toBe(0));
+
+        act(() => {
+            api!.setGridOption('rowData', [{ id: 'r1', A: 'a2' }]);
+        });
+        await waitFor(() => expect(getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))).toHaveTextContent('a2'));
+
+        await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))));
+        await asyncSetTimeout(250);
+        await waitFor(() => expect(hasTooltipText('Tip a2')).toBe(true));
+        expect(getTooltips()).toHaveLength(1);
+    });
+
+    test('keeps the formula error tooltip after a colDef change on a column with no tooltip config (React)', async () => {
+        // formula and validation error tooltips are not gated by the column's own tooltip config, so a
+        // colDef change must leave every cell with a tooltip feature, not just tooltip-enabled columns.
+        let api: GridApi | undefined;
+
+        const rendered = render(
+            <div style={{ height: 400, width: 600 }}>
+                <AgGridReact
+                    columnDefs={[{ field: 'A' }, { field: 'result' }]}
+                    defaultColDef={{ editable: true, allowFormula: true }}
+                    rowData={[
+                        { id: 'r1', A: 1 },
+                        { id: 'r2', A: 2, result: '=ERRORIFONE(REF(COLUMN("A"),ROW("r1"),COLUMN("A"),ROW("r2")))' },
+                    ]}
+                    getRowId={(params) => String(params.data.id)}
+                    formulaFuncs={{
+                        ERRORIFONE: {
+                            func: (params) => {
+                                for (const value of Array.from(params.values)) {
+                                    if (Number(value) === 1) {
+                                        throw new Error("Error, discovered a '1' in params");
+                                    }
+                                }
+                                return 'SUCCESS';
+                            },
+                        },
+                    }}
+                    tooltipShowDelay={200}
+                    onGridReady={(params) => {
+                        api = params.api;
+                    }}
+                />
+            </div>
+        );
+
+        const gridDiv = rendered.container;
+        const cell = await waitFor(() => {
+            const el = getByTestId(gridDiv, agTestIdFor.cell('r2', 'result'));
+            expect(el).toHaveTextContent('#ERROR!');
+            return el;
+        });
+
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitFor(() => expect(getTooltips()[0]?.classList.contains('ag-cell-formula-tooltip')).toBe(true));
+
+        await userEvent.unhover(cell);
+        await asyncSetTimeout(250);
+        await waitFor(() => expect(getTooltips().length).toBe(0));
+
+        act(() => {
+            api!.setGridOption('columnDefs', [{ field: 'A' }, { field: 'result', headerName: 'Renamed' }]);
+        });
+        await waitFor(() => expect(api!.getColumnDef('result')?.headerName).toBe('Renamed'));
+
+        const renamedCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r2', 'result')));
+        await userEvent.hover(renamedCell);
+        await asyncSetTimeout(250);
+        await waitFor(() => expect(getTooltips()[0]?.classList.contains('ag-cell-formula-tooltip')).toBe(true));
     });
 
     test('AG-5004 aggregated group-row cell tooltips the aggregated value (React)', async () => {

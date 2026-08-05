@@ -2,8 +2,13 @@ import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef } from 'ag-grid-community';
-import { ModuleRegistry, themeQuartz } from 'ag-grid-community';
+import { ModuleRegistry, enableDevValidations, themeQuartz } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 

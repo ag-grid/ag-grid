@@ -2,9 +2,21 @@ import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
+import {
+    AllCommunityModule,
+    ModuleRegistry,
+    enableDevValidations,
+    themeAlpine,
+    themeBalham,
+    themeQuartz,
+} from 'ag-grid-community';
 
 import './styles.css';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

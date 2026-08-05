@@ -1,6 +1,6 @@
 import { userEvent } from '@testing-library/user-event';
 
-import type { ColDef, GridApi, IRowNode } from 'ag-grid-community';
+import type { CellEditingStoppedEvent, ColDef, GridApi, IRowNode } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
 import { RowGroupingEditModule, RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
 
@@ -26,71 +26,89 @@ export type GroupRowValueSetterCallback = Extract<NonNullable<ColDef['groupRowVa
 export type ValueSetterCallback = Extract<NonNullable<ColDef['valueSetter']>, (...args: any[]) => any>;
 export type ValueParserCallback = Extract<NonNullable<ColDef['valueParser']>, (...args: any[]) => any>;
 
-function locateCellElements(api: GridApi, rowNode: IRowNode, colId: string) {
+/**
+ * The cell element of `rowNode`/`colId`, or `null` while a redraw has it detached.
+ *
+ * Matched on `row-id` only: an `aria-rowindex` lookup is offset by the header rows and pinned lanes,
+ * so it silently resolves to a neighbouring row.
+ */
+function locateCell(api: GridApi, rowNode: IRowNode, colId: string) {
     const gridDiv = TestGridsManager.getHTMLElement(api);
     expect(gridDiv).not.toBeNull();
-
-    const rowId = rowNode.id;
-    expect(rowId).toBeDefined();
 
     const rowIndex = rowNode.rowIndex;
     expect(rowIndex).not.toBeNull();
 
-    let cell = gridDiv!.querySelector<HTMLElement>(`[row-id="${rowId}"] [col-id="${colId}"]`);
-    if (!cell && rowIndex != null) {
-        const rowElement = gridDiv!.querySelector<HTMLElement>(`.ag-row[aria-rowindex="${rowIndex + 1}"]`);
-        cell = rowElement?.querySelector<HTMLElement>(`[col-id="${colId}"]`) ?? null;
-    }
-    expect(cell).not.toBeNull();
+    const cell = gridDiv!.querySelector<HTMLElement>(`[row-id="${rowNode.id}"] [col-id="${colId}"]`);
 
-    return { gridDiv: gridDiv!, cell: cell!, rowIndex: rowIndex! };
+    return { gridDiv: gridDiv!, cell, rowIndex: rowIndex! };
 }
-
-const TYPE_ATTEMPTS = 3;
 
 /**
  * Types `newValue` into the open editor of a cell and returns the input it was typed into.
  *
- * A redraw landing part-way through typing replaces the editor input, discarding the keystrokes
- * already dispatched into the now-detached element. Re-query the cell and retry on that, rather
- * than committing a half-typed (or empty) editor and silently dropping the edit.
+ * A redraw part-way through typing replaces the input, discarding the keystrokes dispatched into the
+ * now-detached one, so retry rather than commit a half-typed editor.
  */
 async function typeIntoEditor(api: GridApi, rowNode: IRowNode, colId: string, newValue: string) {
     for (let attempt = 0; attempt < TYPE_ATTEMPTS; ++attempt) {
-        // Re-query the cell each attempt — in jsdom, `ensureIndexVisible` and aggregation-driven
-        // redraws replace cell DOM elements, making an earlier reference stale. Scope the input
-        // lookup to this cell rather than the whole grid: when edits happen in sequence a previous
-        // editor's input can briefly linger in the DOM, and a grid-wide lookup would grab that
-        // stale input instead of the one just opened.
-        const { gridDiv, cell } = locateCellElements(api, rowNode, colId);
-        const input = await waitForInput(gridDiv, cell);
-        await userEvent.clear(input);
-        await userEvent.type(input, newValue);
-        if (input.isConnected && input.value === newValue) {
-            return input;
+        // Re-queried per attempt and cell-scoped: a previous editor's input can linger in the DOM
+        // long enough for a grid-wide lookup to find it instead of the one just opened.
+        const { gridDiv, cell } = locateCell(api, rowNode, colId);
+        if (cell) {
+            const input = await waitForInput(gridDiv, cell);
+            await userEvent.clear(input);
+            // `delay: null` dispatches the keystrokes back-to-back; the default waits between each one, and a
+            // redraw landing in one of those gaps detaches the input, losing the value typed so far.
+            await userEvent.type(input, newValue, { delay: null });
+            if (input.isConnected && input.value === newValue) {
+                return input;
+            }
         }
         await asyncSetTimeout(0);
     }
     throw new Error(`Could not type "${newValue}" into the editor of "${colId}": the input kept being replaced`);
 }
 
+const TYPE_ATTEMPTS = 4;
+
 export async function editCell(api: GridApi, rowNode: IRowNode, colId: string, newValue: string) {
-    // Let a redraw still pending from a previous edit settle before opening this editor, so it
-    // cannot detach this editor's input part-way through typing.
+    // A redraw still pending from a previous edit would detach this editor's input mid-typing.
     await asyncSetTimeout(0);
 
-    const { rowIndex } = locateCellElements(api, rowNode, colId);
-    api.setFocusedCell(rowIndex, colId, rowNode.rowPinned ?? undefined);
-    api.startEditingCell({ rowIndex, rowPinned: rowNode.rowPinned, colKey: colId });
-    await asyncSetTimeout(0);
+    // A stop event is the only proof the Enter keystroke landed, but a redraw tearing the editor down
+    // also stops it — as a cancel that commits nothing — so require this cell and an editor value.
+    for (let attempt = 0; attempt < TYPE_ATTEMPTS; ++attempt) {
+        const { rowIndex } = locateCell(api, rowNode, colId);
+        api.setFocusedCell(rowIndex, colId, rowNode.rowPinned ?? undefined);
+        api.startEditingCell({ rowIndex, rowPinned: rowNode.rowPinned, colKey: colId });
+        await asyncSetTimeout(0);
 
-    const input = await typeIntoEditor(api, rowNode, colId, newValue);
-    await userEvent.type(input, '{Enter}');
-    await asyncSetTimeout(0);
+        const input = await typeIntoEditor(api, rowNode, colId, newValue);
 
-    // Enter dispatched into an input the grid has already discarded commits nothing. Fail here
-    // rather than leaving the test to report a confusing stale value several assertions later.
-    expect(api.getEditingCells()).toEqual([]);
+        let committed = false;
+        const onStopped = ({ node, column, valueChanged, newValue: editorValue }: CellEditingStoppedEvent) => {
+            if (node === rowNode && column.getColId() === colId && (valueChanged || editorValue !== undefined)) {
+                committed = true;
+            }
+        };
+        api.addEventListener('cellEditingStopped', onStopped);
+        if (input.isConnected) {
+            // Commit with a synchronous keydown rather than `userEvent.type`, which awaits between the events it
+            // dispatches: a redraw landing in one of those gaps detaches the input, so Enter reaches an element the
+            // grid has already discarded and the stale editor value gets committed instead of `newValue`.
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+            await asyncSetTimeout(0);
+        }
+        api.removeEventListener('cellEditingStopped', onStopped);
+
+        if (committed) {
+            expect(api.getEditingCells()).toEqual([]);
+            return;
+        }
+        await asyncSetTimeout(attempt * 2);
+    }
+    throw new Error(`The edit of "${colId}" never committed: its editor kept being replaced`);
 }
 
 /**
@@ -108,8 +126,8 @@ export async function performEdit(
         await editCell(api, node, colId, `${value}`);
     } else {
         node.setDataValue(colId, typeof value === 'string' ? Number(value) : value, 'ui');
-        await asyncSetTimeout(0);
     }
+    await asyncSetTimeout(0);
 }
 
 export function getGroupColumnDisplayValue(rowNode: IRowNode): string | undefined {

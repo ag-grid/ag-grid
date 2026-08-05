@@ -1,5 +1,5 @@
 import type { AgComponentPopupPositionParams } from 'ag-stack';
-import { RefPlaceholder, _isNothingFocused, _makeNull } from 'ag-stack';
+import { RefPlaceholder, _makeNull } from 'ag-stack';
 
 import type {
     AgEvent,
@@ -225,8 +225,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
     }
 
     private setCaret(position: number, setFocus?: boolean): void {
-        if (setFocus || _isNothingFocused(this.beans)) {
-            // clicking on the list loses focus, so restore
+        if (setFocus) {
             this.eAutocompleteInput.getFocusableElement().focus();
         }
         const eInput = this.eAutocompleteInput.getInputElement();

@@ -1,8 +1,13 @@
 import { createApp, defineComponent, onMounted, ref } from 'vue';
 
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

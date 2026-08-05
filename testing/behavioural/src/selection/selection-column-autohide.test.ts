@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { RowNumbersModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager } from '../test-utils';
 
 const SELECTION_COL = 'ag-Grid-SelectionColumn';
 const ROW_NUMBERS_COL = 'ag-Grid-RowNumbersColumn';
@@ -41,23 +43,21 @@ describe('selection column auto-hide', () => {
             rowData: [{ a: 1, b: 2 }],
             rowSelection: { mode: 'multiRow' },
         });
-        await asyncSetTimeout(1);
-
-        expect(bodyColIds(api)).toContain(SELECTION_COL);
+        await waitFor(() => expect(bodyColIds(api)).toContain(SELECTION_COL));
         expect(headerColIds(api)).toContain(SELECTION_COL);
 
         api.setColumnsVisible(['a', 'b'], false);
-        await asyncSetTimeout(1);
 
         // Body and header agree: the lone selection col is gone from both.
-        expect(bodyColIds(api)).toHaveLength(0);
+        // Gate on the body transition, then assert the header synchronously — polling the header too
+        // would let a lagging header pass, which is the regression this test exists to catch.
+        await waitFor(() => expect(bodyColIds(api)).toHaveLength(0));
         expect(headerColIds(api)).not.toContain(SELECTION_COL);
 
         api.setColumnsVisible(['a', 'b'], true);
-        await asyncSetTimeout(1);
 
         // Restored to both representations.
-        expect(bodyColIds(api)).toEqual(expect.arrayContaining([SELECTION_COL, 'a', 'b']));
+        await waitFor(() => expect(bodyColIds(api)).toEqual(expect.arrayContaining([SELECTION_COL, 'a', 'b'])));
         expect(headerColIds(api)).toContain(SELECTION_COL);
     });
 
@@ -67,20 +67,17 @@ describe('selection column auto-hide', () => {
             rowData: [{ a: 1, b: 2 }],
             rowSelection: { mode: 'multiRow' },
         });
-        await asyncSetTimeout(1);
-
-        expect(bodyColIds(api)).toContain(SELECTION_COL);
+        await waitFor(() => expect(bodyColIds(api)).toContain(SELECTION_COL));
 
         api.setColumnsVisible(['a', 'b'], false);
-        await asyncSetTimeout(1);
 
-        expect(bodyColIds(api)).toHaveLength(0);
+        // Gate on the body transition, then assert the header synchronously (see above).
+        await waitFor(() => expect(bodyColIds(api)).toHaveLength(0));
         expect(headerColIds(api)).not.toContain(SELECTION_COL);
 
         api.setColumnsVisible(['a', 'b'], true);
-        await asyncSetTimeout(1);
 
-        expect(bodyColIds(api)).toContain(SELECTION_COL);
+        await waitFor(() => expect(bodyColIds(api)).toContain(SELECTION_COL));
     });
 
     test('selection col stays when at least one data col remains (with row-numbers present)', async () => {
@@ -90,20 +87,19 @@ describe('selection column auto-hide', () => {
             rowSelection: { mode: 'multiRow' },
             rowNumbers: true,
         });
-        await asyncSetTimeout(1);
-
-        expect(bodyColIds(api)).toContain(ROW_NUMBERS_COL);
+        await waitFor(() => expect(bodyColIds(api)).toContain(ROW_NUMBERS_COL));
 
         // Hide only one data col — a real col still shows, so the selection col stays.
+        // Gate on 'a' disappearing (a real transition), then assert what must NOT have changed.
         api.setColumnsVisible(['a'], false);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(bodyColIds(api)).not.toContain('a'));
         expect(bodyColIds(api)).toContain(SELECTION_COL);
         expect(bodyColIds(api)).toContain('b');
 
         // Hide the last data col — now only selection + row-numbers would remain → selection auto-hides
         // while the row-numbers col stays.
         api.setColumnsVisible(['b'], false);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(bodyColIds(api)).not.toContain('b'));
         expect(bodyColIds(api)).not.toContain(SELECTION_COL);
         expect(bodyColIds(api)).toContain(ROW_NUMBERS_COL);
     });

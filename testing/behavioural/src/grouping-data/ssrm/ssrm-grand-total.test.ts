@@ -1500,6 +1500,228 @@ describe('SSRM grand total row', () => {
         `);
     });
 
+    // --- Soft refresh (purge: false) ---
+
+    test('grand total updates on soft refresh via grandTotalData field', async () => {
+        let total = 60;
+        let loadCount = 0;
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'bottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    setTimeout(() => {
+                        params.success({
+                            rowData: [...flatRows],
+                            rowCount: flatRows.length,
+                            grandTotalData: { id: GRAND_TOTAL_ID, value: total },
+                        });
+                        loadCount++;
+                    }, 0);
+                },
+            },
+        });
+
+        await new GridRows(api, 'soft refresh via grandTotalData field before load').check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(60);
+        await new GridRows(api, 'soft refresh via grandTotalData field after first load').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+
+        const originalNodeId = api.getRowNode(GRAND_TOTAL_ID)?.id;
+        total = 999;
+        const loadsBeforeRefresh = loadCount;
+        api.refreshServerSide({ purge: false });
+        while (loadCount === loadsBeforeRefresh) {
+            await asyncSetTimeout(1);
+        }
+
+        // The existing node is updated in place, no purge required
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.id).toBe(originalNodeId);
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(999);
+        await new GridRows(api, 'after soft refresh via grandTotalData field').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:999
+        `);
+    });
+
+    test('grand total updates on soft refresh via id in rowData', async () => {
+        let total = 60;
+        let loadCount = 0;
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'bottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    setTimeout(() => {
+                        params.success({
+                            rowData: [...flatRows, { id: GRAND_TOTAL_ID, value: total }],
+                            rowCount: flatRows.length,
+                        });
+                        loadCount++;
+                    }, 0);
+                },
+            },
+        });
+
+        await new GridRows(api, 'soft refresh via id in rowData before load').check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(60);
+        await new GridRows(api, 'soft refresh via id in rowData after first load').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+
+        total = 111;
+        const loadsBeforeRefresh = loadCount;
+        api.refreshServerSide({ purge: false });
+        while (loadCount === loadsBeforeRefresh) {
+            await asyncSetTimeout(1);
+        }
+
+        await new GridRows(api, 'after soft refresh via id in rowData').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:111
+        `);
+    });
+
+    test('pinnedBottom grand total updates on soft refresh', async () => {
+        let total = 60;
+        let loadCount = 0;
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'pinnedBottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    setTimeout(() => {
+                        params.success({
+                            rowData: [...flatRows],
+                            rowCount: flatRows.length,
+                            grandTotalData: { id: GRAND_TOTAL_ID, value: total },
+                        });
+                        loadCount++;
+                    }, 0);
+                },
+            },
+        });
+
+        await new GridRows(api, 'pinnedBottom soft refresh before load').check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(60);
+        await new GridRows(api, 'pinnedBottom soft refresh after first load').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+
+        total = 777;
+        const loadsBeforeRefresh = loadCount;
+        api.refreshServerSide({ purge: false });
+        while (loadCount === loadsBeforeRefresh) {
+            await asyncSetTimeout(1);
+        }
+
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(777);
+        await new GridRows(api, 'after pinnedBottom soft refresh').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:777
+        `);
+    });
+
+    test('grandTotalData: null on soft refresh removes existing grand total', async () => {
+        let loadCount = 0;
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'bottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const isFirstLoad = loadCount === 0;
+                    setTimeout(() => {
+                        params.success({
+                            rowData: [...flatRows],
+                            rowCount: flatRows.length,
+                            grandTotalData: isFirstLoad ? { id: GRAND_TOTAL_ID, value: 60 } : null,
+                        });
+                        loadCount++;
+                    }, 0);
+                },
+            },
+        });
+
+        await new GridRows(api, 'null grandTotalData soft refresh before load').check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getRowNode(GRAND_TOTAL_ID)).toBeDefined();
+        await new GridRows(api, 'null grandTotalData soft refresh after first load').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+
+        const loadsBeforeRefresh = loadCount;
+        api.refreshServerSide({ purge: false });
+        while (loadCount === loadsBeforeRefresh) {
+            await asyncSetTimeout(1);
+        }
+
+        expect(api.getRowNode(GRAND_TOTAL_ID)).toBeUndefined();
+        await new GridRows(api, 'after soft refresh with null grandTotalData').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+        `);
+    });
+
     // --- Dynamic option toggle ---
 
     test('dynamically enabling grandTotalRow uses cached data', async () => {

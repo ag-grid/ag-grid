@@ -4,7 +4,12 @@ import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/c
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, GridReadyEvent, ICellRendererParams, ValueFormatterParams } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

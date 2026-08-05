@@ -14,8 +14,8 @@ import { RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { createDataItem, getData } from './data';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

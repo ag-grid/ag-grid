@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+import { wafBypassSecret } from './src/utils/grid/test/wafBypass';
+
 const PRE_34_VERSION = process.env.PRE_34_VERSION;
 
 const PREV_URL = PRE_34_VERSION && `https://www.ag-grid.com/archive/${PRE_34_VERSION}/`;
@@ -8,6 +10,16 @@ const BASE_URL = process.env.BASE_URL;
 const baseURL = BASE_URL || PREV_URL || PROD_URL || 'https://localhost:4610';
 
 const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
+
+/* PDF Export is not part of the public API yet (release delayed), so its examples cannot load the module. */
+const IGNORED_TESTS = ['**/pdf-export*/**'];
+
+const BROWSER_IGNORED_TESTS = [
+    ...IGNORED_TESTS,
+    '**/async-test/provided/angular/app.component.spec.ts',
+    // page-verification.spec.ts runs in its own dedicated CI job.
+    '**/page-verification.spec.ts',
+];
 
 function isLocalRun(url: string): boolean {
     try {
@@ -27,6 +39,10 @@ console.log(`Using base URL: ${baseURL}`);
 if (process.env.FRAMEWORK) {
     // eslint-disable-next-line no-console
     console.log(`Using framework: ${process.env.FRAMEWORK}`);
+}
+if (wafBypassSecret) {
+    // eslint-disable-next-line no-console
+    console.log(`Sending WAF bypass header to ${new URL(baseURL).origin} only`);
 }
 
 /**
@@ -76,6 +92,8 @@ export default defineConfig({
         baseURL,
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+        // Keep this off for CI runs that upload reports: a trace records request headers, so it would
+        // capture the WAF bypass credential in an artefact that GitHub's log masking does not cover.
         trace: 'off', // process.env.CI ? 'off' : 'retain-on-first-failure',
     },
 
@@ -84,29 +102,17 @@ export default defineConfig({
         {
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
-            testIgnore: [
-                '**/async-test/provided/angular/app.component.spec.ts',
-                // page-verification.spec.ts runs in its own dedicated CI job.
-                '**/page-verification.spec.ts',
-            ],
+            testIgnore: BROWSER_IGNORED_TESTS,
         },
         {
             name: 'firefox',
             use: { ...devices['Desktop Firefox'] },
-            testIgnore: [
-                '**/async-test/provided/angular/app.component.spec.ts',
-                // page-verification.spec.ts runs in its own dedicated CI job.
-                '**/page-verification.spec.ts',
-            ],
+            testIgnore: BROWSER_IGNORED_TESTS,
         },
         {
             name: 'webkit',
             use: { ...devices['Desktop Safari'] },
-            testIgnore: [
-                '**/async-test/provided/angular/app.component.spec.ts',
-                // page-verification.spec.ts runs in its own dedicated CI job.
-                '**/page-verification.spec.ts',
-            ],
+            testIgnore: BROWSER_IGNORED_TESTS,
         },
         {
             // Dedicated project for post-deploy verification — run via post-deploy-verification.yml.

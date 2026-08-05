@@ -59,6 +59,20 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).not.toContain('How to edit cells.');
     });
 
+    it('flags an Enterprise-only page in the frontmatter', async () => {
+        const output = await render('Body paragraph.', {
+            frontmatter: { title: 'Context Menu', enterprise: true },
+        });
+
+        expect(output).toContain('enterprise: true');
+    });
+
+    it('omits the Enterprise flag for a Community page', async () => {
+        const output = await render('Body paragraph.', { frontmatter: { title: 'Row Sorting' } });
+
+        expect(output).not.toContain('enterprise:');
+    });
+
     it('passes through standard markdown (headings, emphasis, links, lists, tables)', async () => {
         const body = [
             '## Heading Two',

@@ -1,7 +1,13 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import type { DefaultMenuItem, GetContextMenuItemsParams, GridApi, GridOptions, MenuItemDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    TooltipModule,
+    createGrid,
+    enableDevValidations,
+} from 'ag-grid-community';
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -11,8 +17,8 @@ import {
     IntegratedChartsModule,
 } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -23,6 +29,7 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     CellSelectionModule,
+    TooltipModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
 ]);
 

@@ -143,7 +143,6 @@ const countingSort = (nodes: IRowNode[], nodesLen: number): RowNode[] => {
  * Returns the input array (mutated in-place) or a new sorted array.
  * The sort is stable: nodes at the same level preserve their input order.
  *
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const _sortNodesByDepthFirst = (nodes: IRowNode[], nodesLen = nodes.length): RowNode[] => {
     // Just two nodes - swap them if we need to, O(1).

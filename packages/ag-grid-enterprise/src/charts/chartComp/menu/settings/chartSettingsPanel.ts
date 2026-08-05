@@ -71,6 +71,9 @@ export class ChartSettingsPanel extends Component {
         // the panel is not immediately visible due to the slide animation, so we add a
         // setTimeout to wait until the panel animation is over and is able to scroll
         setTimeout(() => {
+            if (!this.isAlive()) {
+                return;
+            }
             const isMiniChartsContainerVisible = (miniChartsContainers: MiniChartsContainer) => {
                 return !miniChartsContainers.getGui().classList.contains('ag-hidden');
             };

@@ -726,10 +726,11 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     initialPivotIndex?: number;
     /**
-     * Only for CSRM, see [SSRM Pivoting](https://www.ag-grid.com/javascript-data-grid/server-side-model-pivoting/).
-     *
-     * Comparator to use when ordering the pivot columns, when this column is used to pivot on.
+     * Comparator to use when ordering the pivot result groups generated when this column is used to pivot on.
      * The values will always be strings, as the pivot service uses strings as keys for the pivot groups.
+     *
+     * Defines the ascending order: `pivotSort: 'desc'` reverses it, and `pivotSort: null` bypasses it to keep
+     * the order the groups were generated in. Groups are ordered by header name when this is not supplied.
      * @initial
      * @agModule `PivotModule`
      */
@@ -737,6 +738,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Sort direction applied to this column's pivot result columns when this column is used to pivot on.
      * Independent of `sort` - pivot sorting does not flow to or from the column's own sort.
+     *
+     * Defaults to `'asc'` for the pivot result columns the grid generates. When the pivot result columns are
+     * supplied by the application via `setPivotResultColumns`, it defaults to `null` so the supplied order is kept
+     * until a sort is applied.
      * @default 'asc'
      * @agModule `PivotModule`
      */

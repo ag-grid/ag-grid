@@ -108,6 +108,10 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         return internalErrors;
     }
 
+    public flushInput(): void {
+        this.eEditor.flushPendingSegment();
+    }
+
     public getValue(): string | null | undefined {
         const { params, eEditor } = this;
         // Key the cache on the formatted date string — the exact input to parseValue —

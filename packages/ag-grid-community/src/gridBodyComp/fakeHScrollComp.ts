@@ -111,6 +111,9 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         // a scrollbar, give a little time for the grid to resize, after which a
         // scrollbar may no longer be required
         const apply = () => {
+            if (!this.isAlive()) {
+                return;
+            }
             this.setScrollVisibleDebounce = 0;
             this.toggleCss('ag-scrollbar-invisible', invisibleScrollbar);
             _setFixedHeight(this.getGui(), scrollContainerSize);

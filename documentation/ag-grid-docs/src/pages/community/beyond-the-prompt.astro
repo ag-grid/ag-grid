@@ -6,7 +6,10 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { DISABLE_MARKDOWN_DOCS } from '@constants';
 import {
+    PAGE_CONTENT,
     SESSIONS,
+    SPEAKERS,
+    headSlug,
     sessionDurationMins,
     sessionSlug,
     sessionThumbSlug,
@@ -16,141 +19,6 @@ import CommunityMenu from '@ag-website-shared/components/community/components/Co
 import communityMenu from '@ag-website-shared/content/community/community-menu.json';
 
 const SOCIAL_IMAGE_URL = 'images/campaigns/beyond-the-prompt/social-card.png';
-
-type Speaker = {
-    name: string;
-    title: string;
-    bio: string;
-    image: string;
-    // Re-shaded variant designed for orange backgrounds. The ditherpattern
-    // and knockout values are tuned for #F43800; we crossfade to it on
-    // card hover (Speakers grid) and use it directly in the agenda hover
-    // overlay, where the row turns orange behind the portrait.
-    imageOrange?: string;
-    // Some speaker SVGs are exported as full-figure portraits with very tall,
-    // narrow aspect ratios (e.g. Mats 193×352, John 232×388). Using the
-    // default `object-fit: cover` on a 4:5 box clips ~140px off the bottom.
-    // Setting `imageFit: 'contain'` switches just those cards to fit-the-whole
-    // SVG while staying anchored to the bottom of the frame.
-    imageFit?: 'contain';
-};
-
-const SPEAKERS: Speaker[] = [
-    {
-        name: 'Matt Webb',
-        title: 'Co-founder, Inanimate',
-        bio: "Matt is co-founder of Inanimate, consumer hardware bringing agents into the real world. Previously he has consulted with Google's AI research group, run startup accelerators with R/GA Ventures, and was CEO and co-founder of the design studio BERG which invented some of the world’s first internet-connected consumer products like Little Printer (and has work in the New York MoMA). He is co-author of Mind Hacks (O’Reilly, 2004). Since 2000 Matt has blogged at interconnected.org. He writes weekly+ on computing, design, and speculative futures. He lives in London.",
-        image: 'images/campaigns/beyond-the-prompt/svg/mat-web.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/mat-web-orange-bg.svg',
-    },
-    {
-        name: 'Stephen Cooper',
-        title: 'Team Lead, AG Grid',
-        bio: `Stephen is the Team Lead for AG Grid and loves sharing practical, experience-based tips, tricks, and case studies from years in the codebase. He's gone deep into grid performance and framework integrations, and has spent more time than he'd like profiling render cycles. Outside of work, life revolves around family, four kids and two dogs, and he's happiest when the whole crew is out together exploring in the park.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/stephen.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/stephen-orange-bg.svg',
-    },
-    {
-        name: 'Maggie Appleton',
-        title: 'Staff Research Engineer, GitHub',
-        bio: `Maggie is a Staff Research Engineer at GitHub, where she works on tools for thinking, writing, and building with code. With a background in anthropology, she’s known for her visual essays that explore how developers understand systems, languages, and ideas. She’s a strong advocate for “digital gardens” over traditional publishing, and spends her time mapping out how knowledge grows on the web. Outside of work, she’s usually sketching concepts, writing, or connecting dots between code and culture.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/maggie.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/maggie-orange-bg.svg',
-    },
-    {
-        name: 'Sophie Koonin',
-        title: 'Web Discipline Lead, Monzo',
-        bio: `Sophie leads a team within the Operations collective at Monzo, building the software that powers the bank's award-winning customer experience. She's also Monzo's Web Discipline Lead, advocating for web and empowering others to lead web platform improvements throughout the company. Outside of work, Sophie loves arranging pop songs for her choir Mixtape, playing video games, cooking, and gardening.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/sophie.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/sophie-orange-bg.svg',
-    },
-    {
-        name: 'David Khourshid',
-        title: 'Founder, Stately.ai',
-        bio: `David is the founder of Stately.ai and creator of XState, the most popular open-source state machine & statecharts library. He's a longtime advocate for event-driven modeling and visual diagramming as the foundation for reliable UIs and, increasingly, AI agents. When he's not at a computer keyboard, he's at a piano keyboard.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/david-kourshid.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/david-kourshid-orange-bg.svg',
-    },
-    {
-        name: 'Mats Bryntse',
-        title: 'Founder & CEO, Bryntum',
-        bio: `Mats is the founder and CEO of Bryntum, where he and his team build advanced scheduling and project planning tools for modern web apps. For the past 15 years, he has obsessed over JavaScript performance, developer experience, and making complex UIs feel simple. He used to enjoy chess, badminton, and independent thought, until Claude entered his life and optimized those away.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/mats.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/mats-orange-bg.svg',
-        imageFit: 'contain',
-    },
-    {
-        name: 'Steve Ruiz',
-        title: 'CEO, tldraw',
-        bio: `A developer, designer, and now startup founder in London. With a background in visual art, Steve works primarily in creative tools for the web. He is known for tldraw, and demos of perfect arrows.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/steve-ruiz.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/steve-ruiz-bg.svg',
-    },
-    {
-        name: 'Matt Pocock',
-        title: 'Senior Developer Educator, AI Hero',
-        bio: `Matt is a senior developer educator at AI Hero, a TypeScript author, and an educator passionate about bringing real software engineering rigour to the age of AI. He co-organizes the AI Coding for Real Engineers cohort, a community for experienced developers who want to build with AI tools without throwing away everything they already know. Outside of the keyboard, Matt enjoys long runs through the Oxfordshire countryside, loudly supporting Arsenal, and experimenting with new ways to make complex ideas click for developers everywhere.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/matt-pocock.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/matt-pocock-orange-bg.svg',
-    },
-    {
-        name: 'Bernie Sumption',
-        title: 'Engineer, AG Grid',
-        bio: `Bernie is an engineer at AG Grid specialising in theming. "The other engineers make it work fast and well, I make it look pretty" he likes to say. Outside work he goes hiking, plays with his kids, and once made a tweeting cat flap that has 10x more social media followers than he does.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/bernie.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/bernie-orange-bg.svg',
-    },
-    {
-        name: 'Josh Hobson',
-        title: 'Developer, AG Grid',
-        bio: `Josh is a developer at AG Grid, where he's been building AG Studio, a new dashboard library with multi-agent AI baked in. He's a mathematician by training and a maker by instinct, with a particular love for developer tooling, type systems, and intelligent interfaces. Outside of work, Josh can be found tinkering with 3D printers, ski touring in the Alps, or out on long walks with his dog.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/josh.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/josh-orange-bg.svg',
-    },
-    {
-        name: 'Adam Wang',
-        title: 'AG Studio Product Lead, AG Grid',
-        bio: `Adam is the AG Studio Product Lead at AG Grid, with around 10 years of experience in product management across various disciplines. He previously worked on AG Grid Integrated Charts before focusing on AG Studio. He enjoys the creative process of product management and is keen to solve problems by truly understanding user needs. Outside of work, he's a spin instructor who loves to put together a fire playlist. He also collects coloured vinyl.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/adam.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/adam-orange-bg.svg',
-    },
-    {
-        name: 'Patrick Rau',
-        title: 'Senior Developer, TCS',
-        bio: `Patrick builds and maintains core parts of Team Centric Software's fleetplan platform, specializing in UI integration and complex components like AG Grid, Bryntum's Scheduler Pro, and modules for audit tracking and safety reporting. He's driven by a passion for creating software that makes a real difference for the people who use it. When he's not solving problems at work, you'll find him exploring new technologies through personal projects, gaming, or planning his next trip.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/patrick-rau.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/patrick-rau-bg.svg',
-    },
-    {
-        name: 'Johan Isaksson',
-        title: 'Head of Engineering, Bryntum',
-        bio: `Johan is responsible for architecture, gate keeping, performance and styling across all Bryntum products. When not checking pull requests, recording performance profiles or tweaking CSS he enjoys watching hockey and playing floorball.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/johan.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/johan-orange-bg.svg',
-    },
-    {
-        name: 'John Masterson',
-        title: 'CEO, AG Grid',
-        bio: `John is the CEO of AG Grid, which he first joined in 2016 as employee number two. After a detour as CTO of a London health-tech startup, he returned in 2020 and stepped into the CEO role in 2024. He's spent fifteen years building software and leading engineering teams, and is determined to keep AG Grid the first choice for JavaScript developers. Outside of work, John can be found on his bike, in his headphones listening to a podcast, or picking up a guitar.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/john.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/john-orange-bg.svg',
-        imageFit: 'contain',
-    },
-    {
-        name: 'Phil Hawksworth',
-        title: 'Event MC',
-        bio: `With a passion for browser technologies, and the empowering properties of the web, Phil loves seeking out ingenuity and simplicity, especially in places where over-engineering is common. After 25 years of building web applications for companies such as Google, Apple, Nike, R/GA, and The London Stock Exchange, he has worked to challenge traditional technical architectures in favour of simplicity and effectiveness, working in Developer Experience at Netlify and Deno.`,
-        image: 'images/campaigns/beyond-the-prompt/svg/phil.svg',
-        imageOrange: 'images/campaigns/beyond-the-prompt/svg/phil-orange-bg.svg',
-    },
-];
-
-// Slug for the speaker-head PNGs, e.g. "John Masterson" -> "john-masterson".
-const headSlug = (name: string): string =>
-    name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
 
 // Featured faces for the hero (use the SVG illustrations).
 // Order is intentional: the middle slot drops down in the layout to create a
@@ -326,23 +194,10 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
                 <div class={styles.introGrid}>
                     <div class={styles.introText}>
                         <div class={styles.sectionHeader}>
-                            <h2 class={styles.sectionTitle}>
-                                Getting to a prototype with AI is easy. Production is not.
-                            </h2>
+                            <h2 class={styles.sectionTitle}>{PAGE_CONTENT.intro.heading}</h2>
                         </div>
                         <div class={styles.introBody}>
-                            <p>
-                                Beyond the Prompt is a series of events exploring the tension between how easy it is to
-                                prototype with AI and how hard it is to make that work hold up in production.
-                                Performance degrades, edge cases multiply, and the application you built is not the one
-                                you need. That is the point where AI helps less, and where the real engineering begins.
-                            </p>
-                            <p>
-                                London was the first stop. The day brought together engineers and experts to talk
-                                honestly about what it takes to build applications that hold up in production, with time
-                                to connect with our teams over lunch, coffee, and drinks. The series continues later
-                                this year in New York.
-                            </p>
+                            {PAGE_CONTENT.intro.body.map((paragraph) => <p>{paragraph}</p>)}
                         </div>
                     </div>
                     <img
@@ -357,7 +212,7 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
 
         <section id="programme" class={styles.programmeSection}>
             <div class={styles.sectionRule}>
-                <p class={styles.programmeLocation}>London, May 2026</p>
+                <p class={styles.programmeLocation}>{PAGE_CONTENT.programme.location}</p>
                 <div class={styles.programmeTabs} role="tablist" aria-label="Programme">
                     <button
                         type="button"
@@ -386,10 +241,7 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
 
             <div id="panel-speakers" role="tabpanel" aria-labelledby="tab-speakers" data-panel="speakers" hidden>
                 <div class={styles.container}>
-                    <p class={styles.sectionLead}>
-                        Engineers and experts from AG Grid, Bryntum, and beyond who spoke about what it takes to build
-                        applications that hold up in production.
-                    </p>
+                    <p class={styles.sectionLead}>{PAGE_CONTENT.programme.speakersLead}</p>
 
                     <div class={styles.speakerGrid}>
                         {
@@ -592,13 +444,10 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
                     <div class={styles.sectionHeader}>
                         <p class={styles.eyebrowAccent}>
                             <Icon name="mapPin" />
-                            New York · October 2026
+                            {PAGE_CONTENT.notify.location}
                         </p>
-                        <h2 class={styles.sectionTitle}>Get notified</h2>
-                        <p class={styles.notifyLead}>
-                            The series continues in New York this October. Leave your email and we'll let you know as
-                            soon as registration opens.
-                        </p>
+                        <h2 class={styles.sectionTitle}>{PAGE_CONTENT.notify.heading}</h2>
+                        <p class={styles.notifyLead}>{PAGE_CONTENT.notify.lead}</p>
                     </div>
 
                     <div id="mc_embed_signup">

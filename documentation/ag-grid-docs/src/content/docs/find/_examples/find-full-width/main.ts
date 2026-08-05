@@ -11,8 +11,8 @@ import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 import { getData, getLatinText } from './data';
 import { FullWidthCellRenderer } from './fullWidthCellRenderer';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

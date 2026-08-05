@@ -5,13 +5,7 @@ import type {
     IServerSideDatasource,
     IServerSideGetRowsRequest,
 } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    RowApiModule,
-    createGrid,
-    enableDevValidations,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
@@ -20,13 +14,12 @@ import {
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
 ModuleRegistry.registerModules([
-    RowApiModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     MasterDetailModule,
@@ -75,15 +68,8 @@ const gridOptions: GridOptions = {
             params.successCallback(params.data.callRecords);
         },
     } as IDetailCellRendererParams<IAccount, ICallRecord>,
-    onGridReady: (params) => {
-        setTimeout(() => {
-            // expand some master row
-            const someRow = params.api.getRowNode('1');
-            if (someRow) {
-                someRow.setExpanded(true);
-            }
-        }, 1000);
-    },
+    // expand the first master row once the server has returned it
+    isServerSideGroupOpenByDefault: (params) => params.rowNode.id === '0',
 };
 
 function getServerSideDatasource(server: any): IServerSideDatasource {

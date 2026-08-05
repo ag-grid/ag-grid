@@ -5,8 +5,14 @@ import {
     colorSchemeVariable,
     createGrid,
     createTheme,
+    enableDevValidations,
     iconSetMaterial,
 } from 'ag-grid-community';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

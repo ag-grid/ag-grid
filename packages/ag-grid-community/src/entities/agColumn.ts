@@ -267,6 +267,7 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
+        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
         this.initColDefHotFields();
         this.beans.showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
@@ -297,6 +298,11 @@ export class AgColumn<TValue = any>
                 merged.flex,
                 source
             );
+            // `initialPivotSort` is create-only, so an update honours an explicit `pivotSort` only.
+            const pivotSort = merged.pivotSort;
+            if (pivotSort !== undefined) {
+                this.pivotSort = normalizeSortDirection(pivotSort);
+            }
             // Read `flex` after the state update so a flex→fixed switch applies before width.
             const colFlex = this.flex;
             if (colFlex == null || colFlex <= 0) {
@@ -970,6 +976,19 @@ export const _resolvePivotSortFromColDef = (colDef: ColDef): SortDirection | und
     const pivotSortLike = colDef.pivotSort !== undefined ? colDef.pivotSort : colDef.initialPivotSort;
     return pivotSortLike === undefined ? undefined : normalizeSortDirection(pivotSortLike);
 };
+
+/** Direction an unset (`undefined`) `pivotSort` resolves to. The grid's own pivot columns are generated
+ *  ascending, so ascending is what the chip and the ordering must report. Application-supplied pivot result
+ *  columns instead arrive in an order the application chose, which the grid must leave alone until the user
+ *  sorts - so there the default is "no sort".
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _defaultPivotSort = (beans: BeanCollection): SortDirection =>
+    beans.pivotResultCols?.suppliedColDefs != null ? null : 'asc';
+
+/** A column's pivot sort with the unset default resolved via {@link _defaultPivotSort}.
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _resolvePivotSort = (beans: BeanCollection, pivotSort: SortDirection | undefined): SortDirection =>
+    pivotSort === undefined ? _defaultPivotSort(beans) : pivotSort;
 
 export const normalizeSortDirection = (sortDirectionLike?: unknown): SortDirection =>
     isSortDirectionValid(sortDirectionLike) ? sortDirectionLike : null;

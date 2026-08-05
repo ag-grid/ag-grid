@@ -1,4 +1,4 @@
-import type { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { ColDef, GridOptions, ValueFormatterLiteParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -8,8 +8,8 @@ import {
 } from 'ag-grid-community';
 import { CalculatedColumnsModule, ColumnMenuModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -28,7 +28,7 @@ type SalesRow = {
     cost: number;
 };
 
-const formatter = (params: ValueFormatterParams<SalesRow, number>, formattedString: string): string => {
+const formatter = (params: ValueFormatterLiteParams<SalesRow, number>, format: (value: number) => string): string => {
     const { value } = params;
     if (value == null) {
         return '';
@@ -38,14 +38,14 @@ const formatter = (params: ValueFormatterParams<SalesRow, number>, formattedStri
         return String(value);
     }
 
-    return formattedString;
+    return format(value);
 };
 
-const currencyFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
-    formatter(params, `$${(params.value ?? '').toLocaleString()}`);
+const currencyFormatter = (params: ValueFormatterLiteParams<SalesRow, number>) =>
+    formatter(params, (value) => `$${value.toLocaleString()}`);
 
-const percentageFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
-    formatter(params, `${Math.round((params.value ?? 0) * 100)}%`);
+const percentageFormatter = (params: ValueFormatterLiteParams<SalesRow, number>) =>
+    formatter(params, (value) => `${Math.round(value * 100)}%`);
 
 const columnDefs: ColDef<SalesRow>[] = [
     { field: 'productType', rowGroup: true, hide: true },
@@ -53,12 +53,12 @@ const columnDefs: ColDef<SalesRow>[] = [
     {
         field: 'revenue',
         aggFunc: 'sum',
-        valueFormatter: currencyFormatter,
+        cellDataType: 'currency',
     },
     {
         field: 'cost',
         aggFunc: 'sum',
-        valueFormatter: currencyFormatter,
+        cellDataType: 'currency',
     },
     {
         colId: 'profit',
@@ -66,17 +66,15 @@ const columnDefs: ColDef<SalesRow>[] = [
         calculatedExpression: '[revenue] - [cost]',
         // aggFunc lets the calculated column aggregate its per-leaf results onto group rows.
         aggFunc: 'sum',
-        cellDataType: 'number',
+        cellDataType: 'currency',
         filter: 'agNumberColumnFilter',
-        valueFormatter: currencyFormatter,
     },
     {
         colId: 'margin',
         headerName: 'Margin',
         // No aggFunc: a ratio does not aggregate, so margin evaluates on leaf rows and is blank on groups.
         calculatedExpression: '[profit] / [revenue]',
-        cellDataType: 'number',
-        valueFormatter: percentageFormatter,
+        cellDataType: 'percentage',
     },
 ];
 
@@ -106,7 +104,21 @@ const rowData: SalesRow[] = [
 const gridOptions: GridOptions<SalesRow> = {
     columnDefs,
     rowData,
-    calculatedColumns: true,
+    dataTypeDefinitions: {
+        currency: {
+            baseDataType: 'number',
+            extendsDataType: 'number',
+            valueFormatter: currencyFormatter,
+        },
+        percentage: {
+            baseDataType: 'number',
+            extendsDataType: 'number',
+            valueFormatter: percentageFormatter,
+        },
+    },
+    calculatedColumns: {
+        dataTypes: ['currency', 'percentage', 'number', 'text', 'boolean'],
+    },
     defaultColDef: {
         flex: 1,
         minWidth: 130,

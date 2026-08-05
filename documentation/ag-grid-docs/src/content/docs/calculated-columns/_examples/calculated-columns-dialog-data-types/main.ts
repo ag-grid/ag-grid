@@ -1,4 +1,4 @@
-import type { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { ColDef, GridOptions, ValueFormatterLiteParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -8,8 +8,8 @@ import {
 } from 'ag-grid-community';
 import { CalculatedColumnsModule, ColumnMenuModule } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -26,7 +26,7 @@ type SalesRow = {
     cost: number;
 };
 
-const currencyFormatter = (params: ValueFormatterParams<SalesRow, number>): string => {
+const currencyFormatter = (params: ValueFormatterLiteParams<SalesRow, number>): string => {
     const { value } = params;
     if (value == null) {
         return '';

@@ -7,11 +7,17 @@ import {
     RowSelectionModule,
     TextFilterModule,
     createGrid,
+    enableDevValidations,
     iconSetMaterial,
     themeQuartz,
 } from 'ag-grid-community';
 
 import { type IProduct, getData } from './data';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     CellStyleModule,

@@ -5,11 +5,8 @@ import { AgInputTextFieldSelector, BeanStub, Component, KeyCode } from 'ag-grid-
 
 import { Dialog } from '../widgets/dialog';
 
-const WIDTH = 210;
-const MIN_WIDTH = 210;
-// Deferred mode adds the Apply/Cancel actions row, so the dialog needs more height.
-const LIVE_HEIGHT = 110;
-const DEFERRED_HEIGHT = 160;
+const WIDTH = 300;
+const MIN_WIDTH = 300;
 
 const ColumnHeaderEditContentElement: ElementParams = {
     tag: 'div',
@@ -120,13 +117,12 @@ export class ColumnHeaderEditPopup extends BeanStub {
         this.contentComp = contentComp;
 
         const translate = this.getLocaleTextFunc();
-        const height = liveApply ? LIVE_HEIGHT : DEFERRED_HEIGHT;
         const dialog = this.createManagedBean(
             new Dialog({
                 width: WIDTH,
                 minWidth: MIN_WIDTH,
-                height,
-                minHeight: height,
+                // Opt out of the default minimum so the dialog sizes to its content.
+                minHeight: 0,
                 title: translate('editColumnName', 'Edit Column Name'),
                 component: contentComp,
                 closable: true,

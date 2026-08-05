@@ -13,6 +13,7 @@ import classnames from 'classnames';
 import { useMemo } from 'react';
 import type { FunctionComponent } from 'react';
 
+import { LICENSE_SETUP_COPY, LICENSE_SETUP_HEADINGS } from '../licenseSetupContent';
 import { getBootstrapSnippet, getDependenciesSnippet, getNpmInstallSnippet } from '../utils/getSnippets';
 import { hasValue } from '../utils/hasValue';
 import { useLicenseData } from '../utils/useLicenseData';
@@ -93,27 +94,13 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
             }),
         [seedRepos, framework]
     );
-    const productName = 'AG Grid';
 
     return (
         <>
-            <h2 id="request-trial-licence">
-                Request a Trial Licence
-                <LinkIcon href="#request-trial-licence" />
-            </h2>
-            <Note>
-                You can test AG Grid Enterprise locally without a licence. To test in production, access support and
-                remove the watermark & console warnings,{' '}
-                <a href="../community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence">
-                    request a trial licence
-                </a>
-                .
-            </Note>
-
             <form className={styles.form}>
-                <h2 id="validate-your-license">
-                    Validate Your Licence
-                    <LinkIcon href="#validate-your-license" />
+                <h2 id={LICENSE_SETUP_HEADINGS.validate.id}>
+                    {LICENSE_SETUP_HEADINGS.validate.text}
+                    <LinkIcon href={`#${LICENSE_SETUP_HEADINGS.validate.id}`} />
                 </h2>
 
                 <div className={styles.licenceWrapper}>
@@ -160,9 +147,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                     )}
 
                     <div>
-                        <h3 id="configure-your-application">
-                            Configure Your Application
-                            <LinkIcon href="#configure-your-application" />
+                        <h3 id={LICENSE_SETUP_HEADINGS.configure.id}>
+                            {LICENSE_SETUP_HEADINGS.configure.text}
+                            <LinkIcon href={`#${LICENSE_SETUP_HEADINGS.configure.id}`} />
                         </h3>
 
                         <div className={styles.configureItems}>
@@ -205,9 +192,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                 </div>
 
                 <div className={styles.results}>
-                    <h3 id="add-your-dependencies">
-                        Add Your Dependencies
-                        <LinkIcon href="#add-your-dependencies" />
+                    <h3 id={LICENSE_SETUP_HEADINGS.dependencies.id}>
+                        {LICENSE_SETUP_HEADINGS.dependencies.text}
+                        <LinkIcon href={`#${LICENSE_SETUP_HEADINGS.dependencies.id}`} />
                     </h3>
 
                     {licenseState.chartsNoGridEnterpriseError && (
@@ -222,14 +209,16 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                     )}
 
                     <p>
-                        Copy the following dependencies into your <code>package.json</code>:
+                        {LICENSE_SETUP_COPY.dependenciesLead.before}{' '}
+                        <code>{LICENSE_SETUP_COPY.dependenciesLead.code}</code>
+                        {LICENSE_SETUP_COPY.dependenciesLead.after}
                     </p>
 
                     {dependenciesSnippet && (
                         <Snippet framework="javascript" language="json" content={dependenciesSnippet} copyToClipboard />
                     )}
 
-                    <p>Or install using npm:</p>
+                    <p>{LICENSE_SETUP_COPY.npmLead}</p>
 
                     {npmInstallSnippet && (
                         <Snippet framework={framework} content={npmInstallSnippet} language="bash" copyToClipboard />
@@ -237,9 +226,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
 
                     <br />
 
-                    <h3 id="set-up-your-application">
-                        Set Up Your Application
-                        <LinkIcon href="#set-up-your-application" />
+                    <h3 id={LICENSE_SETUP_HEADINGS.bootstrap.id}>
+                        {LICENSE_SETUP_HEADINGS.bootstrap.text}
+                        <LinkIcon href={`#${LICENSE_SETUP_HEADINGS.bootstrap.id}`} />
                     </h3>
 
                     {licenseState.chartsNoGridEnterpriseError && (
@@ -253,7 +242,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                         </Warning>
                     )}
 
-                    <p>An example of how to set up your {productName} Enterprise License Key:</p>
+                    <p>{LICENSE_SETUP_COPY.bootstrapLead}</p>
 
                     {licenseState.minimalModulesInfo && <Note>{licenseState.minimalModulesInfo}</Note>}
 
@@ -264,44 +253,44 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                     />
 
                     <Note>
-                        To minimise bundle size, only register the modules you want to use. See the{' '}
+                        {LICENSE_SETUP_COPY.selectingModulesNote.before}{' '}
                         <a
                             href={urlWithPrefix({
                                 framework,
-                                url: './modules/#selecting-modules',
+                                url: LICENSE_SETUP_COPY.selectingModulesNote.link.url,
                             })}
                         >
-                            Selecting Modules
+                            {LICENSE_SETUP_COPY.selectingModulesNote.link.text}
                         </a>{' '}
-                        docs for more information.{' '}
-                        {framework === 'javascript'
-                            ? `If you're using the UMD bundle, you do not need to import or
-                                register the modules.`
-                            : ``}
-                        .
+                        {LICENSE_SETUP_COPY.selectingModulesNote.after}
+                        {framework === 'javascript' ? ` ${LICENSE_SETUP_COPY.selectingModulesNote.javascriptOnly}` : ''}
                     </Note>
 
                     <Note>
-                        If you are using an AG Grid version before 33.0.0, please see the documentation for your{' '}
-                        <a href={urlWithBaseUrl('/documentation-archive')}>version</a> for help on installing your
-                        license key.
+                        {LICENSE_SETUP_COPY.olderVersionNote.before}{' '}
+                        <a href={urlWithBaseUrl(LICENSE_SETUP_COPY.olderVersionNote.link.url)}>
+                            {LICENSE_SETUP_COPY.olderVersionNote.link.text}
+                        </a>{' '}
+                        {LICENSE_SETUP_COPY.olderVersionNote.after}
                     </Note>
 
-                    <h2 id="seed-repos">
-                        Seed Repositories
-                        <LinkIcon href="#seed-repos" />
+                    <h2 id={LICENSE_SETUP_HEADINGS.seedRepos.id}>
+                        {LICENSE_SETUP_HEADINGS.seedRepos.text}
+                        <LinkIcon href={`#${LICENSE_SETUP_HEADINGS.seedRepos.id}`} />
                     </h2>
 
                     {selectedSeedRepos.length ? (
                         <>
-                            <p>Here are some seed code repositories to get you started:</p>
+                            <p>{LICENSE_SETUP_COPY.seedReposLead}</p>
 
                             <table className={styles.reposTable} role="grid">
                                 <thead>
                                     <tr>
-                                        <th scope="col">GitHub Repo</th>
-                                        <th scope="col">Framework</th>
-                                        <th scope="col">Development Environment</th>
+                                        {LICENSE_SETUP_COPY.seedReposHeaders.map((header) => (
+                                            <th key={header} scope="col">
+                                                {header}
+                                            </th>
+                                        ))}
                                     </tr>
                                 </thead>
                                 <tbody>

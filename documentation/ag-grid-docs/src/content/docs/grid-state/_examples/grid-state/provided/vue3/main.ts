@@ -16,8 +16,8 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -40,11 +40,13 @@ const VueExample = defineComponent({
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
+                    :defaultColGroupDef="defaultColGroupDef"
                     :autoGroupColumnDef="autoGroupColumnDef"
                     :sideBar="true"
                     :pagination="true"
                     :rowSelection="rowSelection"
                     :cellSelection="true"
+                    :calculatedColumns="true"
                     :enableRowPinning="true"
                     :suppressColumnMoveAnimation="true"
                     :ensureDomOrder="true"
@@ -62,16 +64,12 @@ const VueExample = defineComponent({
     setup(props) {
         const columnDefs = ref<(ColDef | ColGroupDef)[]>([
             { field: 'athlete', minWidth: 150 },
-            { field: 'age', maxWidth: 90 },
+            { field: 'age' },
             { field: 'country', minWidth: 150 },
             {
                 headerName: 'Competition',
                 groupId: 'competition',
-                children: [
-                    { field: 'year', maxWidth: 90 },
-                    { field: 'date', minWidth: 150 },
-                    { field: 'sport', minWidth: 150 },
-                ],
+                children: [{ field: 'year' }, { field: 'date', minWidth: 150 }, { field: 'sport', minWidth: 150 }],
             },
             {
                 // Collapsible group with a stable groupId so open/closed columnGroup state can round-trip.
@@ -93,7 +91,9 @@ const VueExample = defineComponent({
             enableRowGroup: true,
             enablePivot: true,
             enableValue: true,
+            headerNameEditable: true,
         });
+        const defaultColGroupDef = ref<Partial<ColGroupDef>>({ headerNameEditable: true });
         const autoGroupColumnDef = ref<ColDef>({ minWidth: 200 });
         const rowSelection = ref<RowSelectionOptions>({
             mode: 'multiRow',
@@ -136,6 +136,7 @@ const VueExample = defineComponent({
             columnDefs,
             gridApi,
             defaultColDef,
+            defaultColGroupDef,
             autoGroupColumnDef,
             rowSelection,
             rowData,

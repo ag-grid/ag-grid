@@ -5,6 +5,7 @@ import { AgSelectSelector, Component } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../agStack/agGroupComponent';
 import type { GroupComponent, GroupComponentParams } from '../../../../widgets/gridEnterpriseWidgetTypes';
+import type { ColorPickerParams } from '../../../widgets/colorPicker';
 import { ColorPickerSelector } from '../../../widgets/colorPicker';
 import type { ChartOptionsProxy } from '../../services/chartOptionsService';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
@@ -26,6 +27,8 @@ export interface FontPanelParams {
     chartMenuParamsFactory: ChartMenuParamsFactory;
     keyMapper: (key: string) => string;
     cssIdentifier?: string;
+    /** Where the effective value for a font key lives when the label itself holds none. */
+    fontValueWhenUnset?: <K extends keyof Font>(fontKey: K) => Font[K];
 }
 
 export class FontPanel extends Component {
@@ -52,8 +55,6 @@ export class FontPanel extends Component {
             enabled,
             onEnableChange,
             suppressEnabledCheckbox,
-            chartMenuParamsFactory,
-            keyMapper,
         } = this.params;
         const fontGroupParams: GroupComponentParams = {
             cssIdentifier,
@@ -86,7 +87,7 @@ export class FontPanel extends Component {
                 familySelect: this.getFamilySelectParams(),
                 weightStyleSelect: this.getWeightStyleSelectParams(),
                 sizeSelect: this.getSizeSelectParams(),
-                colorPicker: chartMenuParamsFactory.getDefaultColorPickerParams(keyMapper('color')),
+                colorPicker: this.getColorPickerParams(),
             }
         );
         this.toggleCss('ag-font-panel-no-header', !title);
@@ -103,6 +104,26 @@ export class FontPanel extends Component {
 
     public setEnabled(enabled: boolean): void {
         this.fontGroup.setEnabled(enabled);
+    }
+
+    private getColorPickerParams(): ColorPickerParams {
+        const { chartMenuParamsFactory, keyMapper, fontValueWhenUnset } = this.params;
+        const params = chartMenuParamsFactory.getDefaultColorPickerParams(keyMapper('color'));
+        params.value ??= fontValueWhenUnset?.('color');
+        // Series labels have no `color` of their own - the effective colour is resolved onto
+        // `insideStyle` / `outsideStyle` according to the label placement. Read the style matching the
+        // current placement so the picker has a value to show. Writes still go to `color`, which the
+        // chart applies to both styles.
+        if (params.value == null) {
+            const placement = this.chartOptions.getValue<string | undefined>(keyMapper('placement'));
+            if (typeof placement === 'string') {
+                // Mirrors the charts-side predicate: everything that is not `inside-*` is an outside
+                // label, including bar series' `beside-*` placements.
+                const styleKey = placement.startsWith('inside') ? 'insideStyle' : 'outsideStyle';
+                params.value = this.chartOptions.getValue(keyMapper(`${styleKey}.color`));
+            }
+        }
+        return params;
     }
 
     private getFamilySelectParams(): AgSelectParams<AgComponentSelectorType> {
@@ -167,8 +188,8 @@ export class FontPanel extends Component {
         const sizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
         const size = this.getInitialFontValue('fontSize');
 
-        if (!sizes.includes(size!)) {
-            sizes.push(size!);
+        if (size != null && !sizes.includes(size)) {
+            sizes.push(size);
         }
 
         const options = sizes.sort((a, b) => a - b).map((value) => ({ value: `${value}`, text: `${value}` }));
@@ -176,7 +197,7 @@ export class FontPanel extends Component {
         return this.params.chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
             'size',
             options,
-            `${size}`,
+            size == null ? undefined : `${size}`,
             (newValue) => this.setFont({ fontSize: parseInt(newValue, 10) })
         );
     }
@@ -243,8 +264,8 @@ export class FontPanel extends Component {
     }
 
     private getInitialFontValue<K extends keyof Font>(fontKey: K): Font[K] {
-        const { keyMapper } = this.params;
-        return this.chartOptions.getValue(keyMapper(fontKey));
+        const { keyMapper, fontValueWhenUnset } = this.params;
+        return this.chartOptions.getValue<Font[K]>(keyMapper(fontKey)) ?? fontValueWhenUnset?.(fontKey);
     }
 }
 

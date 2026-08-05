@@ -327,6 +327,14 @@ const cleanContents = (contents: string): string => {
 };
 
 const extractTitle = ({ dom, titleTag }: { dom: JSDOM; titleTag: HTMLElement | null }) => {
+    // The h1 also holds the framework name ('React Data Grid'), which is part of the
+    // heading for SEO but not part of the page title, so the title is marked up
+    // explicitly. Fall back to the h1's own text nodes for headings without the marker.
+    const pageTitle = titleTag?.querySelector('[data-page-title]');
+    if (pageTitle) {
+        return pageTitle.textContent?.trim() ?? '';
+    }
+
     let extractedText = '';
 
     // Only extract text node

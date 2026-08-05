@@ -71,4 +71,18 @@ describe('buildModuleMappingsTable', () => {
         const output = buildModuleMappingsTable(groups, 'react', 'https://www.ag-grid.com/');
         expect(output).toContain('(https://www.ag-grid.com/');
     });
+
+    it('leads with a link to the module selector on the HTML page', () => {
+        const output = buildModuleMappingsTable(groups, 'react', 'https://www.ag-grid.com/');
+
+        expect(output.split('\n')[0]).toContain(
+            '[Select modules interactively](https://www.ag-grid.com/react-data-grid/modules/#selecting-modules)'
+        );
+    });
+
+    it('degrades to an empty string when every module is hidden', () => {
+        expect(
+            buildModuleMappingsTable([{ name: 'Hidden', moduleName: 'HiddenModule', hideFromSelection: true }], 'react')
+        ).toBe('');
+    });
 });

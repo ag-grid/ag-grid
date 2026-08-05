@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi } from 'ag-grid-community';
 
 import { DragEventDispatcher } from '../drag-n-drop/drag-event-dispatcher';
@@ -98,21 +100,29 @@ export class AdvancedFilterBuilderHarness {
         return this;
     }
 
-    /** Clicks the value pill on `item`, types `value` into the editor it opens, and commits (Enter). */
-    public async setValue(item: HTMLElement, value: string): Promise<this> {
+    /** Clicks the value pill on `item` and returns the editor input it opens. */
+    public async openValueEditor(item: HTMLElement): Promise<HTMLInputElement> {
         const pill = item.querySelector<HTMLElement>(VALUE_PILL);
         if (!pill) {
             throw new Error('Value pill not found on builder item');
         }
         await firePointerLikeClick(pill);
-        await asyncSetTimeout(0);
-        // The column/operator pills carry hidden rich-select inputs; the value editor is the only visible one.
-        const editor = Array.from(item.querySelectorAll<HTMLInputElement>('input.ag-text-field-input')).find(
-            (input) => !input.closest('.ag-hidden')
-        );
-        if (!editor) {
-            throw new Error('Value editor input did not open');
-        }
+        // The column/operator pills carry hidden rich-select inputs; the value editor is the only
+        // visible one, and it mounts a macrotask or two after the click — poll rather than guess a delay.
+        return waitFor(() => {
+            const input = Array.from(item.querySelectorAll<HTMLInputElement>('input.ag-text-field-input')).find(
+                (candidate) => !candidate.closest('.ag-hidden')
+            );
+            if (!input) {
+                throw new Error('Value editor input did not open');
+            }
+            return input;
+        });
+    }
+
+    /** Clicks the value pill on `item`, types `value` into the editor it opens, and commits (Enter). */
+    public async setValue(item: HTMLElement, value: string): Promise<this> {
+        const editor = await this.openValueEditor(item);
         const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
         setter.call(editor, value);
         editor.dispatchEvent(new Event('input', { bubbles: true }));

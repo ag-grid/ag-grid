@@ -18,8 +18,8 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import type { IOlympicData } from './interfaces';
 import './styles.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -32,16 +32,12 @@ const GridExample = () => {
     const [rowData, setRowData] = useState<IOlympicData[]>();
     const [columnDefs, setColumnDefs] = useState<(ColDef | ColGroupDef)[]>([
         { field: 'athlete', minWidth: 150 },
-        { field: 'age', maxWidth: 90 },
+        { field: 'age' },
         { field: 'country', minWidth: 150 },
         {
             headerName: 'Competition',
             groupId: 'competition',
-            children: [
-                { field: 'year', maxWidth: 90 },
-                { field: 'date', minWidth: 150 },
-                { field: 'sport', minWidth: 150 },
-            ],
+            children: [{ field: 'year' }, { field: 'date', minWidth: 150 }, { field: 'sport', minWidth: 150 }],
         },
         {
             headerName: 'Medals',
@@ -62,7 +58,11 @@ const GridExample = () => {
             enableRowGroup: true,
             enablePivot: true,
             enableValue: true,
+            headerNameEditable: true,
         };
+    }, []);
+    const defaultColGroupDef = useMemo<Partial<ColGroupDef>>(() => {
+        return { headerNameEditable: true };
     }, []);
     const autoGroupColumnDef = useMemo<AutoGroupColumnDef>(() => {
         return { minWidth: 200 };
@@ -137,11 +137,13 @@ const GridExample = () => {
                                 rowData={rowData}
                                 columnDefs={columnDefs}
                                 defaultColDef={defaultColDef}
+                                defaultColGroupDef={defaultColGroupDef}
                                 autoGroupColumnDef={autoGroupColumnDef}
                                 sideBar={true}
                                 pagination={true}
                                 rowSelection={rowSelection}
                                 cellSelection={true}
+                                calculatedColumns={true}
                                 enableRowPinning={true}
                                 suppressColumnMoveAnimation={true}
                                 onGridReady={onGridReady}

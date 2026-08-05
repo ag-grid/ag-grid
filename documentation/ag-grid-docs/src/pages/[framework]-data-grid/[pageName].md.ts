@@ -38,7 +38,11 @@ export async function GET({
         body: page.body ?? '',
         framework,
         pageName,
-        frontmatter: { title: page.data.title, description: page.data.description },
+        frontmatter: {
+            title: page.data.title,
+            description: page.data.description,
+            enterprise: page.data.enterprise,
+        },
         // Release version only — drop the beta/build suffix (e.g. 36.0.0-beta.2026… → 36.0.0).
         version: agGridVersion.split('-')[0],
         // Per-page Markdoc variables the site injects via <Content> props, so tags like

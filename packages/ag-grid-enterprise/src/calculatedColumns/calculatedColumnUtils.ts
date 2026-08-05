@@ -1,5 +1,28 @@
-import type { ColDef } from 'ag-grid-community';
+import type { ColDef, UserColumnPropertyKey } from 'ag-grid-community';
 import { _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from 'ag-grid-community';
+
+/** The definition properties the Calculated Column dialog lets a user choose. Only these are recorded in
+ *  the user-column layer: the rest of a calc col's definition is derived on build (`editable`,
+ *  `suppressPaste`, the data-type properties), or owned by another grid state section (width, sort, …). */
+export const USER_OWNED_PROPERTIES: readonly UserColumnPropertyKey[] = [
+    'headerName',
+    'cellDataType',
+    'calculatedExpression',
+    'columnGroupShow',
+];
+
+/** Projects a calc col's definition onto the properties a user configured, for persisting in grid state.
+ *  `undefined` values are kept: they record a property the user cleared. */
+export function pickUserOwnedProperties(colDef: ColDef): ColDef {
+    const result: ColDef = {};
+    for (let i = 0, len = USER_OWNED_PROPERTIES.length; i < len; ++i) {
+        const property = USER_OWNED_PROPERTIES[i];
+        if (property in colDef) {
+            (result as Record<string, any>)[property] = colDef[property];
+        }
+    }
+    return result;
+}
 
 /**
  * When `cellDataType` changes on a calculated column (e.g. via the Edit dialog moving Boolean →

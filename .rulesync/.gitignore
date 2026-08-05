@@ -35,6 +35,7 @@ mcp.json
 !/rules/examples.md
 !/rules/framework-view-layers.md
 !/rules/grid-code-conventions.md
+!/rules/integrated-charts.md
 !/rules/testing.md
 # docs-review-testing.md ships as a sibling asset of the ag-prodeng docs-review
 # skill config (at skills/docs-review/ag-grid/), not as a top-level rule, so no

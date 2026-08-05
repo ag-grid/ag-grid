@@ -93,6 +93,10 @@ packages/ag-grid-community/src/
 
 > `./behave.sh` does not type-check (Vitest strips types via esbuild). Before committing, run `yarn nx run ag-behavioural-testing:build:test` to type-check.
 >
+> `./behave.sh` and `./benches.sh` resolve only from the repository root, so an agent whose shell has changed directory — earlier in the same command, or carried over from a previous one — will not find them. Prefix with `cd "$(git rev-parse --show-toplevel)" &&` rather than hardcoding a machine-specific path.
+>
+> Some suites take several minutes; `testing/behavioural/src/charts/format-panel-options.test.ts` alone runs ~2.5 minutes. Allow a timeout of at least five minutes, and wait for the run to finish and report its exit status — if the runner detaches the command, collect the result rather than treating silence as success.
+>
 > The workspace membership and shared config live in `vitest.workspace.ts`, `vitest.config.ts`, and `vitest.shared.ts` at the repo root; each project keeps its own `vitest.config.ts`. Runner-global options (reporters, `onConsoleLog`, pool) must live in the **root** config — Vitest ignores them in a project config during a workspace run.
 
 ### Benchmarks
@@ -253,9 +257,33 @@ api.setGridOption('rowData', ATHLETES);
 await waitFor(() => expect(panel.setFilterItemLabels('Athlete')).toEqual(LI_MATCHES));
 ```
 
-**Do not** `await asyncSetTimeout(<fixed n>)` and then assert. A guessed delay is flaky (too short under load) and slow (always waits the full time). Nonzero fixed delays scattered through the suite are legacy, not the pattern to copy.
+**Do not** `await asyncSetTimeout(<fixed n>)` and then assert. A guessed delay is flaky (too short under load) and slow (always waits the full time). Nonzero fixed delays scattered through the suite are legacy, not the pattern to copy. A `no-restricted-syntax` ESLint rule in `testing/behavioural/eslint.config.mjs` flags every `asyncSetTimeout(n)` where `n > 0`.
 
 `await asyncSetTimeout(0)` is fine for its distinct purpose: flushing a single microtask/event-loop tick after a synchronous action (e.g. after setting a native input value) before reading the result.
+
+**`asyncSetTimeout(1)` is the same call as `asyncSetTimeout(0)`.** Node clamps a `0` delay to 1ms, so a `(1)` buys no extra safety over a `(0)` — and no safety at all when the update needs more than one tick. Most of the suite's nonzero delays are spelled `(1)` for this reason. Judge such a site by what follows it, not by the number: if the next line reads async state, it needs `waitFor`.
+
+#### The sleep that looks safe
+
+A fixed sleep placed *before* a call that already polls internally, or before a raw state read, reads as a safety margin and is not one. Both shapes appear here:
+
+```typescript
+async function clickColumnMenuItem(name: string): Promise<void> {
+    const menuItem = await waitFor(() => { /* ... */ }); // already polls
+    menuItem.click();
+}
+
+async function openEditDialogViaMenu(api: GridApi, colKey: string): Promise<void> {
+    showColumnMenu(api, colKey);
+    await asyncSetTimeout(10); // redundant — the callee already polls
+    await clickColumnMenuItem('Edit Calculated Column');
+    await asyncSetTimeout(1); // a guess gating whatever the caller asserts next
+}
+```
+
+Delete the first sleep: `clickColumnMenuItem` polls, so waiting before it adds latency and no determinism. Delete the second too, and have the caller poll its own assertion with `waitFor` — a trailing sleep in a helper silently becomes the caller's synchronisation, which is exactly the guess this section forbids.
+
+A genuine timer window the grid debounces on (see `waitForMissingModuleReports`) is the rare exception. Keep the delay and add `// eslint-disable-next-line no-restricted-syntax -- <the window it waits on>`.
 
 ## Best Practices
 

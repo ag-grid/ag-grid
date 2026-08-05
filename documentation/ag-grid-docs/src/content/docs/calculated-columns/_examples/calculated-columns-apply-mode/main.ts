@@ -1,4 +1,4 @@
-import type { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { ColDef, GridOptions, ValueFormatterLiteParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -9,8 +9,8 @@ import {
 } from 'ag-grid-community';
 import { CalculatedColumnsModule, ColumnMenuModule } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -28,7 +28,7 @@ type SalesRow = {
     cost: number;
 };
 
-const formatter = (params: ValueFormatterParams<SalesRow, number>, formattedString: string): string => {
+const currencyFormatter = (params: ValueFormatterLiteParams<SalesRow, number>): string => {
     const { value } = params;
     if (value == null) {
         return '';
@@ -38,32 +38,28 @@ const formatter = (params: ValueFormatterParams<SalesRow, number>, formattedStri
         return String(value);
     }
 
-    return formattedString;
+    return `$${value.toLocaleString()}`;
 };
-
-const currencyFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
-    formatter(params, `$${(params.value ?? '').toLocaleString()}`);
 
 const columnDefs: ColDef<SalesRow>[] = [
     { field: 'product', flex: 1 },
     {
         field: 'revenue',
         editable: true,
-        valueFormatter: currencyFormatter,
+        cellDataType: 'currency',
     },
     {
         field: 'cost',
         editable: true,
-        valueFormatter: currencyFormatter,
+        cellDataType: 'currency',
     },
     {
         colId: 'profit',
         headerName: 'Profit',
         calculatedExpression: '[revenue] - [cost]',
-        cellDataType: 'number',
+        cellDataType: 'currency',
         sortable: true,
         filter: 'agNumberColumnFilter',
-        valueFormatter: currencyFormatter,
     },
 ];
 
@@ -93,8 +89,16 @@ const rowData: SalesRow[] = [
 const gridOptions: GridOptions<SalesRow> = {
     columnDefs,
     rowData,
+    dataTypeDefinitions: {
+        currency: {
+            baseDataType: 'number',
+            extendsDataType: 'number',
+            valueFormatter: currencyFormatter,
+        },
+    },
     calculatedColumns: {
         applyMode: 'deferred',
+        dataTypes: ['currency', 'number', 'text', 'boolean'],
     },
     defaultColDef: {
         flex: 1,

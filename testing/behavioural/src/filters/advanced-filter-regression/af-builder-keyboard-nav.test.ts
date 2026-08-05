@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { AdvancedFilterModel, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
@@ -91,25 +93,23 @@ describe('Advanced Filter — builder keyboard navigation & reorder', () => {
 
         // Focusing the row highlights it.
         wrapper.focus();
-        await asyncSetTimeout(0);
-        expect(wrapper.classList.contains(HIGHLIGHT)).toBe(true);
+        await waitFor(() => expect(wrapper.classList.contains(HIGHLIGHT)).toBe(true));
 
         // Enter moves focus into the row's editable pills.
         wrapper.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-        await asyncSetTimeout(0);
-        expect(document.activeElement).not.toBe(wrapper);
-        expect(condition.contains(document.activeElement)).toBe(true);
+        await waitFor(() => {
+            expect(document.activeElement).not.toBe(wrapper);
+            expect(condition.contains(document.activeElement)).toBe(true);
+        });
 
         // Escape returns focus to the row wrapper.
         document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-        await asyncSetTimeout(0);
-        expect(document.activeElement).toBe(wrapper);
+        await waitFor(() => expect(document.activeElement).toBe(wrapper));
 
         // Moving focus away removes the highlight.
         wrapper.blur();
         wrapper.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
-        await asyncSetTimeout(0);
-        expect(wrapper.classList.contains(HIGHLIGHT)).toBe(false);
+        await waitFor(() => expect(wrapper.classList.contains(HIGHLIGHT)).toBe(false));
     });
 
     test('the Move Down button reorders sibling conditions (keyboard Enter)', async () => {
@@ -125,17 +125,18 @@ describe('Advanced Filter — builder keyboard navigation & reorder', () => {
         // Move the first (Athlete) condition down via the keyboard, then commit.
         await builder.moveWithKeyboard(conditions[0], 'down');
         await builder.apply();
-        await asyncSetTimeout(0);
 
         // Order flips in the persisted model; AND is commutative so the rows are unchanged.
-        expect(api.getAdvancedFilterModel()).toEqual({
-            filterType: 'join',
-            type: 'AND',
-            conditions: [
-                { filterType: 'number', colId: 'age', type: 'greaterThan', filter: 26 },
-                { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'B' },
-            ],
-        });
+        await waitFor(() =>
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'join',
+                type: 'AND',
+                conditions: [
+                    { filterType: 'number', colId: 'age', type: 'greaterThan', filter: 26 },
+                    { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'B' },
+                ],
+            })
+        );
         // contains 'B' AND age>26 ⇒ Bond only.
         await new GridRows(api, 'after keyboard move down').check(`
             ROOT id:ROOT_NODE_ID
@@ -154,16 +155,17 @@ describe('Advanced Filter — builder keyboard navigation & reorder', () => {
         // Move the second (Age) condition up above the first.
         await builder.move(conditions[1], 'up');
         await builder.apply();
-        await asyncSetTimeout(0);
 
-        expect(api.getAdvancedFilterModel()).toEqual({
-            filterType: 'join',
-            type: 'AND',
-            conditions: [
-                { filterType: 'number', colId: 'age', type: 'greaterThan', filter: 26 },
-                { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'B' },
-            ],
-        });
+        await waitFor(() =>
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'join',
+                type: 'AND',
+                conditions: [
+                    { filterType: 'number', colId: 'age', type: 'greaterThan', filter: 26 },
+                    { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'B' },
+                ],
+            })
+        );
         await new GridRows(api, 'after click move up').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:1 athlete:"Bond" age:40

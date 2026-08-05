@@ -85,6 +85,8 @@ const gridOptions = {
 }
 ```
 
+### Initial Attributes
+
 The example below shows Column Definitions using **initial attributes**. Note the following:
 
 - The `initialWidth`, `initialSort` and `initialPinned` are applied only when the columns are created.
@@ -92,6 +94,8 @@ The example below shows Column Definitions using **initial attributes**. Note th
 - Removing the columns first and then setting them again will use the initial values again.
 
 {% gridExampleRunner title="Updating Column Initial Attributes" name="changing-default" /%}
+
+### Stateful Attributes
 
 The following example shows Column Definitions using **stateful attributes**. Note the following:
 
@@ -129,6 +133,8 @@ Given the `field` is not a unique identifier, the grid uses the following rules 
 1. Otherwise match using object equality on Column Definition instance
 
 In other words, to have the grid correctly match Columns make sure each Column has either a `field` or `colId`.
+
+Matching by Column Definition instance only works within the lifetime of a grid, so a `field` or `colId` is required if you save and restore [Grid State](./grid-state/) or [Column State](./column-state/). A column with neither is identified by its position, and its state is re-applied to whichever column later occupies that position.
 
 The example below demonstrates the different matching strategies. Note the following:
 

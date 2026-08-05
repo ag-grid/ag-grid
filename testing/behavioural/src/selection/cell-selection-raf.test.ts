@@ -245,7 +245,11 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             api.applyTransaction({
                 update: [{ name: 'a', value: i }],
             });
-            // Allow debounced RowSpanService timeouts to dispatch spannedCellsUpdated
+            // RowSpanService chains two 0-delay timers (modelTimeout -> buildModelCaches ->
+            // debounceModelEvent -> spannedCellsUpdated), so a single tick is not enough. With
+            // enableCellSpan off there is no event to poll for — and if the chain never runs, no RAFs
+            // are scheduled and the accumulation assertion below passes vacuously.
+            // eslint-disable-next-line no-restricted-syntax -- waits out RowSpanService's chained 0-delay timers
             await asyncSetTimeout(5);
             // Flush animation frame tasks (simulates what happens during scroll/focus)
             api.flushAllAnimationFrames();
@@ -279,10 +283,10 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
         });
         await new GridColumns(api, `data updates with enableCellSpan active are processed without error setup`)
             .checkColumns(`
-            CENTER
-            ├── name "Name" width:200
-            └── value "Value" width:200
-        `);
+                CENTER
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
         await new GridRows(api, `data updates with enableCellSpan active are processed without error setup`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:a name:"a" value:1
@@ -301,14 +305,14 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             api,
             `data updates with enableCellSpan active are processed without error after applyTransaction`
         ).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:a name:"a" value:999
-                ├── LEAF id:b name:"b" value:2
-                └── LEAF id:c name:"c" value:3
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:a name:"a" value:999
+            ├── LEAF id:b name:"b" value:2
+            └── LEAF id:c name:"c" value:3
+        `);
 
-        // Allow RowSpanService timeouts and events to process
-        await asyncSetTimeout(50);
+        // Yield a tick so RowSpanService's 0-delay timeouts and events process
+        await asyncSetTimeout(0);
 
         // The grid should not have errored — spans are being processed
         expect(api.getDisplayedRowCount()).toBe(3);

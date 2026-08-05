@@ -1,3 +1,4 @@
+import type { ColDef } from '../entities/colDef';
 import type { ShowValuesAs, ShowValuesAsType } from '../entities/colDef-showValuesAs';
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
@@ -184,6 +185,32 @@ export interface ColumnGroupState {
     headerNames?: ColumnGroupHeaderNameState[];
 }
 
+/**
+ * The `ColDef` properties a user can configure through the grid's own UI, and so the only ones the
+ * `userColumns` state section carries. UI that creates or edits columns extends this union as it gains
+ * settings; everything else stays with `columnDefs` and the other state sections.
+ */
+export type UserColumnPropertyKey = 'calculatedExpression' | 'cellDataType' | 'columnGroupShow' | 'headerName';
+
+/** One `ColDef` property the user configured, as a name/value pair. The value is typed by the property it
+ *  names, so an entry cannot pair a property with a value the definition would reject. */
+export type UserColumnProperty = {
+    [K in UserColumnPropertyKey]: { property: K; value: ColDef[K] };
+}[UserColumnPropertyKey];
+
+export interface UserColumnState {
+    colId: string;
+    /** The user created this column; it exists only because of this entry. Without it the entry describes
+     *  changes to a column declared in `columnDefs`, which the developer owns the existence of. */
+    created?: boolean;
+    /** `groupId` of the containing column group; absent or `null` places the column at the top level. */
+    parentGroupId?: string | null;
+    /** The column definition properties the user configured. Absent when `removed` is set. */
+    properties?: UserColumnProperty[];
+    /** The user removed a column declared in `columnDefs`; it stays removed across restores. */
+    removed?: boolean;
+}
+
 export interface ColumnHeaderNameColumnState {
     colId: string;
     headerName: string;
@@ -256,6 +283,12 @@ export interface GridState {
     sort?: SortState;
     /** Includes the per-column "Show Values As" mode (column state) */
     showValuesAs?: ShowValuesAsState;
+    /**
+     * Includes columns the user created at runtime (e.g. via the Calculated Column dialog), and the
+     * properties the user changed on or removals of columns declared in `columnDefs`. Unlike the other
+     * sections, which configure existing columns, this section can create and remove them.
+     */
+    userColumns?: UserColumnState[];
     /**
      * When providing a partial `initialState` with some but not all column state properties, set this to `true`.
      * This controls which top-level sections are supplied, not whether a section may itself be partial:

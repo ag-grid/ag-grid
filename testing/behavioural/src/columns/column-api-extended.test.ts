@@ -340,13 +340,13 @@ describe('Column API — extended coverage', () => {
             api.setColumnAggFunc('gold', null);
             await new GridColumns(api, `setColumnAggFunc deactivates gold → pivot result columns lose the measure`)
                 .checkColumns(`
-                CENTER
-                ├── ag-Grid-AutoColumn "Group" width:200
-                ├─┬ "2000" GROUP
-                │ └── pivot_year_2000_ "-" width:200
-                └─┬ "2004" GROUP
-                  └── pivot_year_2004_ "-" width:200
-            `);
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├─┬ "2000" GROUP
+                    │ └── pivot_year_2000_ "-" width:200
+                    └─┬ "2004" GROUP
+                      └── pivot_year_2004_ "-" width:200
+                `);
         });
 
         test('changing the aggFunc of an active value column re-aggregates without a column rebuild', async () => {

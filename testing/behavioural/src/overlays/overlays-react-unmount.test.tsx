@@ -6,8 +6,6 @@ import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import type { AgGridReactProps } from 'ag-grid-react';
 
-import { asyncSetTimeout } from '../test-utils';
-
 describe('ag-grid custom overlay react unmount', () => {
     const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
 
@@ -62,7 +60,7 @@ describe('ag-grid custom overlay react unmount', () => {
 
             await waitFor(() => expect(screen.queryByText('Custom Overlay')).not.toBeInTheDocument());
 
-            await asyncSetTimeout(1); // unmount will be called on the next tick
+            await waitFor(() => expect(unmounts).toBe(1)); // unmount happens on a later tick
 
             expect(mounts).toBe(1);
             expect(unmounts).toBe(1);
@@ -91,7 +89,7 @@ describe('ag-grid custom overlay react unmount', () => {
 
             await waitFor(() => expect(screen.queryByText('Custom Overlay')).not.toBeInTheDocument());
 
-            await asyncSetTimeout(1); // unmount will be called on the next tick
+            await waitFor(() => expect(unmounts).toBe(1)); // unmount happens on a later tick
 
             expect(mounts).toBe(1);
             expect(unmounts).toBe(1);
@@ -113,7 +111,7 @@ describe('ag-grid custom overlay react unmount', () => {
 
             await waitFor(() => expect(screen.queryByText('Custom Overlay')).not.toBeInTheDocument());
 
-            await asyncSetTimeout(1); // unmount will be called on the next tick
+            await waitFor(() => expect(unmounts).toBe(1)); // unmount happens on a later tick
 
             expect(mounts).toBe(1);
             expect(unmounts).toBe(1);
@@ -174,12 +172,7 @@ describe('ag-grid custom overlay react unmount', () => {
 
         await waitFor(() => expect(screen.queryByText('Custom Overlay')).not.toBeInTheDocument());
 
-        for (let retry = 0; retry < 100; ++retry) {
-            await asyncSetTimeout(1);
-            if (mounts - unmounts === 0) {
-                break;
-            }
-        }
+        await waitFor(() => expect(mounts - unmounts).toBe(0));
 
         expect(mounts - unmounts).toBe(0);
 
