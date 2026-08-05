@@ -322,6 +322,23 @@ await waitFor(() => expect(api.getProvidedColumnGroup(openedIds[0])).not.toBe(gr
 expect(openGroupIds(api)).toEqual(openedIds);
 ```
 
+#### Test IDs land on a debounce
+
+`TestIdService` stamps `data-testid` attributes in a debounced pass off grid events, so a freshly rendered cell carries no test ID until a macrotask has elapsed. A sleep that a `*ByTestId` query depends on is therefore load-bearing, and gating on some *other* condition — the range handle existing, a row count, an API value — does not replace it: `waitFor` resolves without yielding a macrotask when its callback passes on the first tick.
+
+Poll the lookup itself, so the gate covers what the test actually reads:
+
+```typescript
+const cellOfRow = (rowIndex: number) => getByTestId(gridDiv, agTestIdFor.cell(`ROW_${rowIndex}`, 'sunshine'));
+
+await waitFor(() => {
+    expect(gridDiv.querySelector('.ag-range-handle')).toBeTruthy();
+    for (let i = 0, len = rowData.length; i < len; ++i) {
+        cellOfRow(i);
+    }
+});
+```
+
 ## Best Practices
 
 1. **Test behaviour, not implementation** - Focus on what the code does, not how
