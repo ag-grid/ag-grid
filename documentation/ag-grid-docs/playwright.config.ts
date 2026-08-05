@@ -60,8 +60,9 @@ export default defineConfig({
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : localRetries,
-    /* Limit parallel tests on CI. */
-    workers: process.env.CI ? 4 : undefined,
+    /* Limit parallel tests on CI. Locally Playwright's default is half the cores, which measured ~49% idle
+       on a 16-core machine - the browsers are the load and they do not saturate it, so take more of it. */
+    workers: process.env.CI ? 4 : '75%',
     // Stop running tests if lots of errors as likely configuration issues
     maxFailures: process.env.CI ? 200 : undefined,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */

@@ -1,11 +1,11 @@
 /* eslint-disable no-empty-pattern */
 import type { Locator, Page, Response, TestType } from '@playwright/test';
 import { test as base, expect as playwrightExpect } from '@playwright/test';
-import { CacheRoute } from 'playwright-network-cache';
 
 import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
 import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
+import { routeExampleAssetsFromDisk, routeExternalThroughMirror, warnOnNetworkAccess } from './test/localSources';
 import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test/remoteGridapi';
 import { shouldBeAsyncGuard } from './test/shouldBeAsyncGuard';
 import { WAF_BYPASS_HEADER, wafBypassSecret } from './test/wafBypass';
@@ -40,8 +40,8 @@ export type AgGridFixtures = {
 };
 
 type CacheFixtures = {
-    cacheRoute?: CacheRoute;
     bypassRequestCache: boolean;
+    localSources: void;
     wafBypass: void;
 };
 
@@ -230,45 +230,6 @@ export const extended = base.extend<TestFixtures>({
     bypassRequestCache: [false, { option: true }],
     loadPageOptions: [({}, use) => use(undefined), { option: true }],
     agModules: [undefined, { option: true }],
-    cacheRoute: [
-        async ({ page, bypassRequestCache }: TestFixtures, use: (r?: CacheRoute) => Promise<void>) => {
-            if (bypassRequestCache) {
-                await use(undefined);
-                return;
-            }
-
-            const cdnPatterns = bypassRequestCache
-                ? []
-                : [
-                      /* jsdelivr */ /cdn\.jsdelivr\.net/,
-                      /* fonts.googleapis */ /fonts\.googleapis\.com/,
-                      /* fonts.gstatic */ /fonts\.gstatic\.com/,
-                      /* ag-grid */ /www\.ag-grid\.com/,
-
-                      // No localhost caching due to known issues with Playwright and localhost caching
-                      // https://github.com/vitalets/playwright-network-cache/issues/6
-                      // https://github.com/microsoft/playwright/issues/12148
-                  ];
-
-            const cacheRoute = new CacheRoute(page, {
-                baseDir: '.playwright-network-cache',
-                ttlMinutes: 60, // refresh after 60 minutes, long enough for build to complete
-
-                match: (req) => {
-                    try {
-                        return cdnPatterns.some((re) => re.test(new URL(req.url()).hostname));
-                    } catch {
-                        return false;
-                    }
-                },
-            });
-
-            await cacheRoute.ALL('**/*'); // send all requests to cacheRoute handler
-
-            await use(cacheRoute);
-        },
-        { option: true },
-    ],
     remoteGrid: [
         ({ page }, use) => {
             const eventLog: any[] = [];
@@ -285,14 +246,29 @@ export const extended = base.extend<TestFixtures>({
         { option: true },
     ],
     cpuThrottle: [undefined, { option: true }],
+    // A fixture rather than a loadPage call so specs that navigate themselves get them too. Declared before
+    // wafBypass, which must register later to run first and pass its header down via fallback.
+    localSources: [
+        async ({ page, baseURL, bypassRequestCache }, use) => {
+            if (bypassRequestCache || !baseURL) {
+                await use();
+                return;
+            }
+            const siteOrigin = new URL(baseURL).origin;
+            // Ordered, not concurrent: the later route matches first, and a shipped asset must beat the
+            // mirror to it. Registered together, whichever won the race decided whether disk or the CDN
+            // served `/example-assets/`.
+            await routeExternalThroughMirror(page, siteOrigin);
+            await routeExampleAssetsFromDisk(page);
+            await use();
+        },
+        { auto: true },
+    ],
     // Attaches the WAF bypass header to the site's own origin only. Playwright's context-level
     // extraHTTPHeaders would send it with every request an example makes, including third-party CDNs
     // (jsdelivr, Google Fonts), leaving the secret in logs we do not control.
-    //
-    // Depends on cacheRoute so this route is registered afterwards and therefore runs first, passing the
-    // modified headers down to the cache handler via fallback.
     wafBypass: [
-        async ({ page, baseURL, cacheRoute: _ }, use) => {
+        async ({ page, baseURL }, use) => {
             const secret = wafBypassSecret;
             if (!secret || !baseURL) {
                 await use();
@@ -343,7 +319,6 @@ const frameworkTest =
                 page,
                 agExampleUrl,
                 agIdFor,
-                cacheRoute: _,
                 loadPageOptions,
                 remoteGrid,
                 agModules,
@@ -457,8 +432,10 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
         expect(errors.length, errorMessage).toBe(0);
     }
 
-    // Ensure any routes created by the CacheRoute are removed to avoid warnings in the logs
+    // Ensure the routes registered by the fixtures are removed to avoid warnings in the logs
     await page.unrouteAll({ behavior: 'ignoreErrors' });
+
+    warnOnNetworkAccess();
 }
 
 function prev34WrapAdapter(wrap: ReturnType<typeof wrapAgTestIdFor<any>>, page: Page) {
