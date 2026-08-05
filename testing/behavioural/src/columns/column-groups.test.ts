@@ -109,17 +109,21 @@ describe('Column Groups', () => {
             expect(openedIds.length).toBeGreaterThan(0);
 
             // Rebuild from fresh (structurally identical) colDefs — recreates the generated-id group.
+            const groupBeforeRebuild = api.getProvidedColumnGroup(openedIds[0]);
             api.setGridOption('columnDefs', makeDefs());
 
+            // The open state we assert below is also the pre-rebuild state, so it would pass vacuously if
+            // read before the rebuild landed. Gate on the group instance having been recreated (today that
+            // happens synchronously inside setGridOption; poll so a deferred rebuild stays covered).
+            await waitFor(() => expect(api.getProvidedColumnGroup(openedIds[0])).not.toBe(groupBeforeRebuild));
+
             // Its expand state must survive: the rebuild must not collapse it.
-            await waitFor(() =>
-                expect(
-                    api
-                        .getColumnGroupState()
-                        .filter((s) => s.open)
-                        .map((s) => s.groupId)
-                ).toEqual(openedIds)
-            );
+            expect(
+                api
+                    .getColumnGroupState()
+                    .filter((s) => s.open)
+                    .map((s) => s.groupId)
+            ).toEqual(openedIds);
         });
     });
 
