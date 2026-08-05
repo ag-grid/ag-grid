@@ -313,7 +313,7 @@ The way to show a delay is decoration is to delete it and see the test still pas
 
 When the sleep you are replacing sits after a mutation, check what the polled condition evaluated to *before* that mutation. If it was already true, `waitFor` resolves on its first tick and the assertion never sees the new state — the test still passes, and it now passes for any implementation.
 
-This bites hardest on "state survives a rebuild" tests, where the state asserted afterwards is the same state that held beforehand. Gate on a signal that can only be true post-mutation — the recreated object is a different instance, a count has changed, a new column has appeared — and then assert:
+This bites hardest on "state survives a rebuild" tests, where the state asserted afterwards is the same state that held beforehand. Gate on a signal that can only be true post-mutation — the recreated object is a different instance, a count has changed, a new column has appeared — and then assert. The gate's job is to establish that the mutation landed, not to buy time: if the mutation is synchronous the gate resolves immediately and costs nothing, and it still keeps the assertion falsifiable if the work is later deferred.
 
 ```typescript
 const groupBeforeRebuild = api.getProvidedColumnGroup(openedIds[0]);
