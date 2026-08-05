@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import {
     ClientSideRowModelModule,
     GridStateModule,
@@ -194,7 +196,11 @@ describe('row drag state persistence', () => {
         // Is possible that the mechanism got broken during the last releases adding the expandAll feature.
         // The complete lack of pre-existing automated behavioural tests for this specific scenario didn't help catching this.
         api.expandAll();
-        await asyncSetTimeout(50);
+        await waitFor(() =>
+            expect(api.getState().rowGroupExpansion?.expandedRowGroupIds).toContain(
+                'row-group-region-EU-country-FR-year-2012'
+            )
+        );
 
         const savedState = api.getState();
 

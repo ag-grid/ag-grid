@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 import { ColumnMenuModule } from 'ag-grid-enterprise';
@@ -184,8 +186,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
 
             let touch = touchStart(touchTarget);
             touchEnd(touch);
-            await asyncSetTimeout(10);
-            expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
+            await waitFor(() => expect(document.querySelectorAll('.ag-popup')).toHaveLength(1));
 
             touch = touchStart(touchTarget);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
@@ -209,8 +210,10 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             const button = eGridDiv.querySelector<HTMLElement>('.ag-floating-filter-button-button')!;
 
             mouseDown(button);
-            await asyncSetTimeout(10);
             expect(document.querySelector('.ag-popup')?.contains(document.activeElement)).toBe(true);
+            // The popup registers its close-on-Escape document listener in a setTimeout(0), so the
+            // Escape must be dispatched after that tick or it is ignored.
+            await asyncSetTimeout(0);
 
             document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
             await asyncSetTimeout(0);
@@ -296,7 +299,9 @@ describe('column header popup toggle buttons (AG-16350)', () => {
 
         mouseDown(button);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
-        await asyncSetTimeout(10);
+        // The popup registers its document mousedown listener in a setTimeout(0), so the right-click
+        // must land after that tick for the close-then-reopen path to run.
+        await asyncSetTimeout(0);
 
         mouseDown(button, 2);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);

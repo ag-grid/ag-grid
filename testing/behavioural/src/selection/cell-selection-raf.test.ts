@@ -311,8 +311,12 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             └── LEAF id:c name:"c" value:3
         `);
 
-        // Yield a tick so RowSpanService's 0-delay timeouts and events process
-        await asyncSetTimeout(0);
+        // Negative assertion: the test exists to prove the span cycle completes without error, so it
+        // needs the whole chain to run. A single tick can return before RowSpanService's second
+        // 0-delay timer fires, leaving the cycle half-done and the assertion vacuous — there is no
+        // positive signal that follows "nothing went wrong", so this is the observation window.
+        // eslint-disable-next-line no-restricted-syntax -- waits out RowSpanService's chained 0-delay timers
+        await asyncSetTimeout(5);
 
         // The grid should not have errored — spans are being processed
         expect(api.getDisplayedRowCount()).toBe(3);

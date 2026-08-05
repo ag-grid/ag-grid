@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { ColDef, ColGroupDef, ColumnGroup } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
@@ -21,14 +23,13 @@ describe('Column Groups', () => {
                 )[],
                 rowData: [{ a: 1 }],
             });
-            await asyncSetTimeout(1);
 
             // An explicitly declared (even empty) group is not silently dropped: it stays findable.
+            await waitFor(() => expect(api.getProvidedColumnGroup('emptyDeclared')).not.toBeNull());
             const group = api.getProvidedColumnGroup('emptyDeclared') as unknown as {
                 isAlive(): boolean;
                 children: unknown[];
             } | null;
-            expect(group === null).toBe(false);
             expect(group!.isAlive()).toBe(true);
             expect(group!.children.length).toBe(0);
             expect(api.getColumnGroupState().some((s) => s.groupId === 'emptyDeclared')).toBe(true);
@@ -46,18 +47,16 @@ describe('Column Groups', () => {
                 )[],
                 rowData: [{ a: 1, b: 2 }],
             });
-            await asyncSetTimeout(1);
-            expect(api.getProvidedColumnGroup('g2') === null).toBe(false);
+            await waitFor(() => expect(api.getProvidedColumnGroup('g2')).not.toBeNull());
 
             api.setGridOption('columnDefs', [{ field: 'a' }, { headerName: 'G', groupId: 'g2', children: [] }] as (
                 | ColDef
                 | ColGroupDef
             )[]);
-            await asyncSetTimeout(1);
-
-            const group = api.getProvidedColumnGroup('g2') as unknown as { children: unknown[] } | null;
-            expect(group === null).toBe(false);
-            expect(group!.children.length).toBe(0);
+            await waitFor(() => {
+                const emptied = api.getProvidedColumnGroup('g2') as unknown as { children: unknown[] } | null;
+                expect(emptied?.children.length).toBe(0);
+            });
             expect(api.getColumnGroupState().some((s) => s.groupId === 'g2')).toBe(true);
             await new GridColumns(api, 'group emptied via setColumnDefs kept').checkColumns(`
                 CENTER
@@ -73,9 +72,11 @@ describe('Column Groups', () => {
                 ] as (ColDef | ColGroupDef)[],
                 rowData: [{ a: 1, b: 2, c: 3 }],
             });
-            await asyncSetTimeout(1);
-
-            const state = api.getColumnGroupState();
+            const state = await waitFor(() => {
+                const groupState = api.getColumnGroupState();
+                expect(groupState.length).toBe(2);
+                return groupState;
+            });
             expect(state.some((s) => s.groupId === 'G')).toBe(true);
             expect(state.some((s) => s.groupId !== 'G')).toBe(true); // the synthetic padding group for `c`
             expect(state.length).toBe(2);
@@ -93,10 +94,13 @@ describe('Column Groups', () => {
                 columnDefs: makeDefs(),
                 rowData: [{ a: 1, b: 2, c: 3 }],
             });
-            await asyncSetTimeout(1);
 
             // Expand the (generated-id) expandable group.
-            const initial = api.getColumnGroupState();
+            const initial = await waitFor(() => {
+                const groupState = api.getColumnGroupState();
+                expect(groupState.length).toBeGreaterThan(0);
+                return groupState;
+            });
             api.setColumnGroupState(initial.map((s) => ({ groupId: s.groupId, open: true })));
             const openedIds = api
                 .getColumnGroupState()
@@ -105,8 +109,13 @@ describe('Column Groups', () => {
             expect(openedIds.length).toBeGreaterThan(0);
 
             // Rebuild from fresh (structurally identical) colDefs — recreates the generated-id group.
+            const groupBeforeRebuild = api.getProvidedColumnGroup(openedIds[0]);
             api.setGridOption('columnDefs', makeDefs());
-            await asyncSetTimeout(1);
+
+            // The open state we assert below is also the pre-rebuild state, so it would pass vacuously if
+            // read before the rebuild landed. Gate on the group instance having been recreated (today that
+            // happens synchronously inside setGridOption; poll so a deferred rebuild stays covered).
+            await waitFor(() => expect(api.getProvidedColumnGroup(openedIds[0])).not.toBe(groupBeforeRebuild));
 
             // Its expand state must survive: the rebuild must not collapse it.
             expect(
@@ -1470,12 +1479,11 @@ describe('Column Groups', () => {
                     },
                 ],
             });
-            await asyncSetTimeout(1);
 
             // No partId resolves to the documented primary instance (partId 0 = the first/left section),
             // not an arbitrary section, so the lookup is deterministic for multi-instance groups.
+            await waitFor(() => expect(api.getColumnGroup('g')).not.toBeNull());
             const primary = api.getColumnGroup('g');
-            expect(primary).not.toBeNull();
             expect(primary).toBe(api.getColumnGroup('g', 0));
             expect(primary!.getLeafColumns().map((col) => col.getColId())).toEqual(['l']);
         });
@@ -1914,7 +1922,6 @@ describe('Column Groups', () => {
                 ] as (ColDef | ColGroupDef)[],
                 rowData: [{ a: 1, b: 2 }],
             });
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'collapsed group: empty center part').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1931,7 +1938,6 @@ describe('Column Groups', () => {
             expect(emptyCenterPart!.getDisplayedChildren()).toEqual([]);
 
             api.setColumnGroupOpened('g', true);
-            await asyncSetTimeout(1);
             await new GridColumns(api, 'expanded group: center part with b').checkColumns(`
                 LEFT
                 └─┬ "G" GROUP open

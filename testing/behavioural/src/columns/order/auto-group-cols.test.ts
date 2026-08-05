@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
 import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
-import { DragEventDispatcher, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { DragEventDispatcher, GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 import {
     GROUP_AUTO_COLUMN_ID,
     getAutoGroupColumnIds,
@@ -813,7 +815,7 @@ describe('Auto Group Column Order', () => {
 
             await dragHeaderToRowGroupPanel(gridApi, 'b');
 
-            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+            await waitFor(() => expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b']));
             expect(getColumnOrder(gridApi, 'center')).toEqual([
                 `${GROUP_AUTO_COLUMN_ID}-a`,
                 `${GROUP_AUTO_COLUMN_ID}-b`,
@@ -1745,7 +1747,6 @@ async function dragHeaderToRowGroupPanel(api: GridApi, colId: string): Promise<v
         await dispatcher.movePointer(panel, 50, 10);
         await dispatcher.movePointer(panel, 90, 10);
         await dispatcher.finishDrag(panel);
-        await asyncSetTimeout(50);
     } finally {
         ownerDocument.elementsFromPoint = original as typeof ownerDocument.elementsFromPoint;
     }

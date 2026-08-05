@@ -285,6 +285,60 @@ Delete the first sleep: `clickColumnMenuItem` polls, so waiting before it adds l
 
 A genuine timer window the grid debounces on (see `waitForMissingModuleReports`) is the rare exception. Keep the delay and add `// eslint-disable-next-line no-restricted-syntax -- <the window it waits on>`.
 
+#### Negative assertions
+
+`waitFor` cannot express "this never happened". It resolves the moment its callback stops throwing, so a poll for something that is already true passes on tick 0 and the test becomes unfalsifiable. When the assertion is that a call was *not* made, or that no *second* event arrived, the delay is not a guessed wait — it is the observation window, and converting it to a poll removes the coverage.
+
+Look for a positive signal first, and only fall back to the window when none exists:
+
+```typescript
+// Preferred — poll a positive signal, then assert the negative over the settled state.
+await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+expect(errorSpy).not.toHaveBeenCalled();
+
+// Fallback — nothing positive follows the event that must not arrive.
+await waitFor(() => expect(events.length).toBeGreaterThan(0)); // the first, expected event
+// eslint-disable-next-line no-restricted-syntax -- window in which a second, redundant columnEverythingChanged would arrive
+await asyncSetTimeout(10);
+expect(events).toHaveLength(1);
+```
+
+A positive signal only works when it provably lands *after* the thing being ruled out. If it can settle first, it shrinks the window towards zero and is worse than the sleep it replaced — keep the window and say in the disable comment what it is observing.
+
+#### Proving a wait is necessary
+
+The way to show a delay is decoration is to delete it and see the test still pass — but **run that probe at whole-file scope at least, never under `-t "<single test>"`**. Vitest isolation changes what has already happened by the time the assertion fires, so a filtered run can pass on a gate that the full file genuinely needs. A green `-t` run is not evidence that a wait is unnecessary; it is evidence of nothing.
+
+#### The poll that was already true
+
+When the sleep you are replacing sits after a mutation, check what the polled condition evaluated to *before* that mutation. If it was already true, `waitFor` resolves on its first tick and the assertion never sees the new state — the test still passes, and it now passes for any implementation.
+
+This bites hardest on "state survives a rebuild" tests, where the state asserted afterwards is the same state that held beforehand. Gate on a signal that can only be true post-mutation — the recreated object is a different instance, a count has changed, a new column has appeared — and then assert. The gate's job is to establish that the mutation landed, not to buy time: if the mutation is synchronous the gate resolves immediately and costs nothing, and it still keeps the assertion falsifiable if the work is later deferred.
+
+```typescript
+const groupBeforeRebuild = api.getProvidedColumnGroup(openedIds[0]);
+api.setGridOption('columnDefs', makeDefs());
+await waitFor(() => expect(api.getProvidedColumnGroup(openedIds[0])).not.toBe(groupBeforeRebuild));
+expect(openGroupIds(api)).toEqual(openedIds);
+```
+
+#### Test IDs land on a debounce
+
+`TestIdService` stamps `data-testid` attributes in a debounced pass off grid events, so a freshly rendered cell carries no test ID until a macrotask has elapsed. A sleep that a `*ByTestId` query depends on is therefore load-bearing, and gating on some *other* condition — the range handle existing, a row count, an API value — does not replace it: `waitFor` resolves without yielding a macrotask when its callback passes on the first tick.
+
+Poll the lookup itself, so the gate covers what the test actually reads:
+
+```typescript
+const cellOfRow = (rowIndex: number) => getByTestId(gridDiv, agTestIdFor.cell(`ROW_${rowIndex}`, 'sunshine'));
+
+await waitFor(() => {
+    expect(gridDiv.querySelector('.ag-range-handle')).toBeTruthy();
+    for (let i = 0, len = rowData.length; i < len; ++i) {
+        cellOfRow(i);
+    }
+});
+```
+
 ## Best Practices
 
 1. **Test behaviour, not implementation** - Focus on what the code does, not how

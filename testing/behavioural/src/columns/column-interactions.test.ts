@@ -56,8 +56,6 @@ describe('Column Interactions', () => {
             const nameHeader = getByTestId(gridDiv, agTestIdFor.headerCell('name'));
             const label = nameHeader.querySelector('.ag-header-cell-label')!;
             await user.click(label);
-            await asyncSetTimeout(1);
-
             await new GridColumns(api, 'sorted asc').checkColumns(`
                 CENTER
                 ├── name "Name" width:200 sort:asc sortIndex:0
@@ -74,8 +72,6 @@ describe('Column Interactions', () => {
 
             // Click again to sort descending
             await user.click(label);
-            await asyncSetTimeout(1);
-
             await new GridColumns(api, 'sorted desc').checkColumns(`
                 CENTER
                 ├── name "Name" width:200 sort:desc sortIndex:0
@@ -96,7 +92,6 @@ describe('Column Interactions', () => {
             const nameHeader = getByTestId(gridDiv, agTestIdFor.headerCell('name'));
             const label = nameHeader.querySelector('.ag-header-cell-label')!;
             await user.click(label);
-            await asyncSetTimeout(1);
 
             // Should remain unsorted
             await new GridColumns(api, 'still unsorted').checkColumns(`
@@ -141,7 +136,6 @@ describe('Column Interactions', () => {
             const expandedIcon = gridDiv.querySelector('.ag-header-expand-icon-expanded');
             if (expandedIcon) {
                 await user.click(expandedIcon);
-                await asyncSetTimeout(1);
 
                 // Should now be closed
                 await new GridColumns(api, 'closed after click').checkColumns(`
@@ -344,8 +338,6 @@ describe('Column Interactions', () => {
             // Click a to sort asc
             const headerA = getByTestId(gridDiv, agTestIdFor.headerCell('a'));
             await user.click(headerA.querySelector('.ag-header-cell-label')!);
-            await asyncSetTimeout(1);
-
             await new GridColumns(api, 'a sorted').checkColumns(`
                 CENTER
                 ├── a "A" width:200 sort:asc sortIndex:0
@@ -357,8 +349,6 @@ describe('Column Interactions', () => {
             await user.keyboard('{Shift>}');
             await user.click(headerB.querySelector('.ag-header-cell-label')!);
             await user.keyboard('{/Shift}');
-            await asyncSetTimeout(1);
-
             await new GridColumns(api, 'multi-sort').checkColumns(`
                 CENTER
                 ├── a "A" width:200 sort:asc sortIndex:0
