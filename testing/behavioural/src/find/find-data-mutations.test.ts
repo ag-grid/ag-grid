@@ -1,7 +1,9 @@
+import { waitFor } from '@testing-library/dom';
+
 import { TextEditorModule } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /**
  * Tests for find with data mutations and cell updates.
@@ -45,8 +47,7 @@ describe('Find Data Mutations', () => {
                     └── LEAF id:1 value:"banana"
                 `
             );
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             // Replace all row data
             api.setGridOption('rowData', [{ value: 'orange' }, { value: 'apple' }, { value: 'apple' }]);
@@ -56,9 +57,7 @@ describe('Find Data Mutations', () => {
                 ├── LEAF id:1 value:"apple"
                 └── LEAF id:2 value:"apple"
             `);
-            await asyncSetTimeout(10);
-
-            expect(api.findGetTotalMatches()).toBe(2);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(2));
         });
 
         test('find updates when rows are added via transaction', async () => {
@@ -91,8 +90,7 @@ describe('Find Data Mutations', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:1 value:"apple"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             // Add more rows with matching values
             api.applyTransaction({
@@ -109,9 +107,7 @@ describe('Find Data Mutations', () => {
                     └── LEAF id:3 value:"apple"
                 `
             );
-            await asyncSetTimeout(10);
-
-            expect(api.findGetTotalMatches()).toBe(3);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(3));
         });
 
         test('find updates when rows are removed via transaction', async () => {
@@ -152,8 +148,7 @@ describe('Find Data Mutations', () => {
                 ├── LEAF id:2 value:"apple"
                 └── LEAF id:3 value:"banana"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(2);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(2));
 
             // Remove one apple row
             api.applyTransaction({ remove: [{ id: '1' }] });
@@ -164,9 +159,7 @@ describe('Find Data Mutations', () => {
                     └── LEAF id:3 value:"banana"
                 `
             );
-            await asyncSetTimeout(10);
-
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
         });
 
         test('find updates when rows are updated via transaction', async () => {
@@ -204,8 +197,7 @@ describe('Find Data Mutations', () => {
                 ├── LEAF id:1 value:"apple"
                 └── LEAF id:2 value:"banana"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(0);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(0));
 
             // Update a row to have matching value
             api.applyTransaction({ update: [{ id: '2', value: 'orange' }] });
@@ -216,9 +208,7 @@ describe('Find Data Mutations', () => {
                     └── LEAF id:2 value:"orange"
                 `
             );
-            await asyncSetTimeout(10);
-
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
         });
     });
 
@@ -253,15 +243,12 @@ describe('Find Data Mutations', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:1 value:"apple"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(0);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(0));
 
             // Change cell value
             const rowNode = api.getRowNode('1')!;
             rowNode.setDataValue('value', 'orange');
-            await asyncSetTimeout(10);
-
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
         });
     });
 
@@ -306,7 +293,7 @@ describe('Find Data Mutations', () => {
                 ├── LEAF id:2 value:"apple"
                 └── LEAF id:3 value:"apple"
             `);
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(3));
 
             // Navigate to second match
             api.findNext();
@@ -324,9 +311,7 @@ describe('Find Data Mutations', () => {
                     ├── LEAF id:3 value:"apple"
                     └── LEAF id:4 value:"apple"
                 `);
-            await asyncSetTimeout(10);
-
-            expect(api.findGetTotalMatches()).toBe(4);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(4));
             // Active match should still be on the same row
             expect(api.findGetActiveMatch()!.node.data.id).toBe('2');
         });
@@ -366,7 +351,7 @@ describe('Find Data Mutations', () => {
                 ├── LEAF id:1 value:"apple"
                 └── LEAF id:2 value:"apple"
             `);
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(2));
 
             // Navigate to first match
             api.findNext();
@@ -379,10 +364,8 @@ describe('Find Data Mutations', () => {
                     ROOT id:ROOT_NODE_ID
                     └── LEAF id:2 value:"apple"
                 `);
-            await asyncSetTimeout(10);
-
             // Active match should be cleared or moved
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
         });
 
         test('active match is cleared when cell value no longer matches', async () => {
@@ -422,7 +405,7 @@ describe('Find Data Mutations', () => {
                 ├── LEAF id:1 value:"apple"
                 └── LEAF id:2 value:"banana"
             `);
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             api.findNext();
             expect(api.findGetActiveMatch()!.node.data.id).toBe('1');
@@ -430,9 +413,8 @@ describe('Find Data Mutations', () => {
             // Change the value so it no longer matches
             const rowNode = api.getRowNode('1')!;
             rowNode.setDataValue('value', 'orange');
-            await asyncSetTimeout(10);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(0));
 
-            expect(api.findGetTotalMatches()).toBe(0);
             expect(api.findGetActiveMatch()).toBeUndefined();
         });
     });

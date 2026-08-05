@@ -1,10 +1,10 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, FindModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForInput } from '../test-utils';
 
 /**
  * Tests for find functionality using batch values (AG-16448).
@@ -71,27 +71,24 @@ describe('Find with Batch Values', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
 
         // Edit the first cell via UI to change 'apple' to 'orange'
         await userEvent.dblClick(cellA);
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'orange{Enter}');
-        await asyncSetTimeout(10); // Wait for debounced refresh
 
-        // The data should still be 'apple' (not committed)
-        const rowNode = api.getDisplayedRowAtIndex(0)!;
-        expect(rowNode.data.a).toBe('apple');
-
-        // But getCellValue with from: 'batch' should return the pending value
-        expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('orange');
-
-        // Find should automatically update - 'orange' should now be found
-        // WITHOUT manually clearing the search value
-        // The find service should listen to cellEditingStopped and refresh when batch editing is active
-        expect(api.findGetTotalMatches()).toBe(1);
+        // The data should still be 'apple' (not committed), and find should automatically update -
+        // 'orange' should now be found WITHOUT manually clearing the search value. The find service
+        // listens to cellEditingStopped and refreshes (debounced) when batch editing is active.
+        await waitFor(() => {
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            expect(rowNode.data.a).toBe('apple');
+            // getCellValue with from: 'batch' should return the pending value
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('orange');
+            expect(api.findGetTotalMatches()).toBe(1);
+        });
 
         // Now search for 'apple' - should no longer be found
         api.setGridOption('findSearchValue', 'apple');
@@ -110,15 +107,13 @@ describe('Find with Batch Values', () => {
             ├── LEAF ⏳ id:0 a:⏳"orange" "apple"
             └── LEAF id:1 a:"banana"
         `);
-        await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
 
         // Cancel the batch edit
         api.cancelBatchEdit();
-        await asyncSetTimeout(10); // Wait for refresh after cancel
 
-        // After cancel, find should automatically reflect the original committed values
-        expect(api.findGetTotalMatches()).toBe(1);
+        // After cancel, find should automatically reflect the original committed values (debounced refresh)
+        await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
         api.setGridOption('findSearchValue', 'orange');
         await new GridColumns(
@@ -136,7 +131,6 @@ describe('Find with Batch Values', () => {
             ├── LEAF id:0 a:"apple"
             └── LEAF id:1 a:"banana"
         `);
-        await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
     });
 
@@ -186,23 +180,20 @@ describe('Find with Batch Values', () => {
 
         // Start batch edit
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         // Change value via setDataValue API (not UI editing)
         // Use 'paste' as eventSource to ensure it's treated as an API call during batch mode
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'orange', 'paste');
-        await asyncSetTimeout(10); // Wait for debounced refresh
 
-        // The data should still be 'apple' (not committed)
-        expect(rowNode.data.a).toBe('apple');
-
-        // But getCellValue with from: 'batch' should return the pending value
-        expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('orange');
-
-        // Find should automatically update - 'orange' should now be found
-        // WITHOUT manually clearing the search value
-        expect(api.findGetTotalMatches()).toBe(1);
+        // The data should still be 'apple' (not committed), and find should automatically update -
+        // 'orange' should now be found WITHOUT manually clearing the search value (debounced refresh).
+        await waitFor(() => {
+            expect(rowNode.data.a).toBe('apple');
+            // getCellValue with from: 'batch' should return the pending value
+            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('orange');
+            expect(api.findGetTotalMatches()).toBe(1);
+        });
 
         // Now search for 'apple' - should no longer be found
         api.setGridOption('findSearchValue', 'apple');
@@ -221,15 +212,13 @@ describe('Find with Batch Values', () => {
             ├── LEAF ⏳ id:0 a:⏳"orange" "apple"
             └── LEAF id:1 a:"banana"
         `);
-        await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
 
         // Cancel the batch edit
         api.cancelBatchEdit();
-        await asyncSetTimeout(10); // Wait for refresh after cancel
 
-        // After cancel, find should automatically reflect the original committed values
-        expect(api.findGetTotalMatches()).toBe(1);
+        // After cancel, find should automatically reflect the original committed values (debounced refresh)
+        await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
         api.setGridOption('findSearchValue', 'orange');
         await new GridColumns(
@@ -247,7 +236,6 @@ describe('Find with Batch Values', () => {
             ├── LEAF id:0 a:"apple"
             └── LEAF id:1 a:"banana"
         `);
-        await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
     });
 
@@ -269,14 +257,19 @@ describe('Find with Batch Values', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
 
         await userEvent.dblClick(cellA);
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'changed{Enter}');
-        await asyncSetTimeout(10); // Wait for debounced refresh
+
+        // Wait for the debounced refresh to pick up the new batch pending value before reading it.
+        await waitFor(() =>
+            expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'a', from: 'batch' })).toBe(
+                'changed'
+            )
+        );
 
         // During batch edit, find should use batch values - automatically updated
         api.setGridOption('findSearchValue', 'changed');
@@ -294,7 +287,6 @@ describe('Find with Batch Values', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF ⏳ id:0 a:⏳"changed" "initial"
         `);
-        await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(1);
 
         api.setGridOption('findSearchValue', 'initial');
@@ -312,12 +304,13 @@ describe('Find with Batch Values', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF ⏳ id:0 a:⏳"changed" "initial"
         `);
-        await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
 
         // Commit the batch edit
         api.commitBatchEdit();
-        await asyncSetTimeout(10); // Wait for refresh after commit
+
+        // Wait for the debounced refresh to pick up the committed value before reading it.
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe('changed'));
 
         // After commit, find should still find 'changed' (now the committed value)
         api.setGridOption('findSearchValue', 'changed');
@@ -335,7 +328,6 @@ describe('Find with Batch Values', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 a:"changed"
         `);
-        await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(1);
 
         api.setGridOption('findSearchValue', 'initial');
@@ -353,7 +345,6 @@ describe('Find with Batch Values', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 a:"changed"
         `);
-        await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
     });
 
@@ -396,14 +387,19 @@ describe('Find with Batch Values', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
 
         await userEvent.dblClick(cellA);
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'newvalue{Enter}');
-        await asyncSetTimeout(10); // Wait for debounced refresh
+
+        // Wait for the debounced refresh to pick up the new (unformatted) batch pending value.
+        await waitFor(() =>
+            expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'a', from: 'batch' })).toBe(
+                'newvalue'
+            )
+        );
 
         // Find should use the formatted batch value - automatically updated
         api.setGridOption('findSearchValue', 'formatted:newvalue');
@@ -419,7 +415,6 @@ describe('Find with Batch Values', () => {
                 ROOT id:ROOT_NODE_ID a:"formatted:undefined"
                 └── LEAF ⏳ id:0 a:⏳"formatted:newvalue" "formatted:test"
             `);
-        await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(1);
 
         // The old formatted value should not be found
@@ -436,7 +431,6 @@ describe('Find with Batch Values', () => {
                 ROOT id:ROOT_NODE_ID a:"formatted:undefined"
                 └── LEAF ⏳ id:0 a:⏳"formatted:newvalue" "formatted:test"
             `);
-        await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
 
         api.cancelBatchEdit();
