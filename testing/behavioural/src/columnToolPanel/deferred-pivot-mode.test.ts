@@ -163,12 +163,17 @@ describe('deferred column tool panel pivot mode', () => {
 
         // The panel is ready once the primary column list is populated and the row group drop zone
         // has drawn a pill for every row-group column the supplied colDefs declare.
+        // The header controls carry their test IDs only once the header has rendered, which is after the
+        // column list populates — so gate on those too, or a caller's getByTestId can miss them.
         const toolPanel = await waitFor(() => {
             const panel = gridApi.getToolPanelInstance('columns') as any;
             expect(panel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
             expect(
                 (panel.rowGroupDropZonePanel.getGui() as HTMLElement).querySelectorAll('.ag-column-drop-cell').length
             ).toBe(gridApi.getRowGroupColumns().length);
+            const gui = panel.getGui() as HTMLElement;
+            getByTestId(gui, agTestIdFor.pivotModeSelect());
+            getByTestId(gui, agTestIdFor.columnPanelSelectHeaderCheckbox());
             return panel;
         });
 

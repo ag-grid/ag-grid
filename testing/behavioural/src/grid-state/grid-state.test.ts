@@ -1274,11 +1274,11 @@ describe('StateService - Grid State Management', () => {
             api.setState({
                 filter: { filterModel: { name: { filterType: 'text', type: 'startsWith', filter: 'A' } } },
             } as GridState);
-            // The restored filter reaching the row model is strictly downstream of every filter event
-            // it triggers, so gating on it cannot truncate the events being asserted on.
+            // Gate on the first filter event arriving — the row count cannot be used here, as it can
+            // already be 1 before the restore lands, which would make the gate resolve on tick 0.
+            await waitFor(() => expect(sources.length).toBeGreaterThan(0));
             await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
 
-            expect(sources.length).toBeGreaterThan(0);
             expect(sources.every((s) => s === 'api')).toBe(true);
         });
 
@@ -1293,11 +1293,11 @@ describe('StateService - Grid State Management', () => {
                 },
                 onFilterChanged: (e) => sources.push(e.source),
             });
-            // The restored filter reaching the row model is strictly downstream of every filter event
-            // it triggers, so gating on it cannot truncate the events being asserted on.
+            // Gate on the first filter event arriving — the row count cannot be used here, as it can
+            // already be 1 before the restore lands, which would make the gate resolve on tick 0.
+            await waitFor(() => expect(sources.length).toBeGreaterThan(0));
             await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
 
-            expect(sources.length).toBeGreaterThan(0);
             expect(sources.every((s) => s === 'columnFilter')).toBe(true);
         });
     });
@@ -2162,10 +2162,12 @@ describe('StateService - Grid State Management', () => {
             });
             await waitForNoLoadingRows(api);
 
-            // The cached state is seeded from initialState, so wait for the pivot result columns to
-            // exist (which refreshes the cached column-group state) before asserting on it.
-            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')).toBeTruthy());
-            expect(api.getState().columnGroup).toEqual({ openColumnGroupIds: ['pivotGroup_year_2000'] });
+            // The cached column-group state is refreshed once the pivot result columns exist, which is
+            // strictly after the column itself appears — so poll the state, not the column. It starts
+            // out undefined, so this cannot pass on tick 0.
+            await waitFor(() =>
+                expect(api.getState().columnGroup).toEqual({ openColumnGroupIds: ['pivotGroup_year_2000'] })
+            );
         });
     });
 
