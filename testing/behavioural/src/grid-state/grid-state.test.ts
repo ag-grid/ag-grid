@@ -1278,6 +1278,10 @@ describe('StateService - Grid State Management', () => {
             // already be 1 before the restore lands, which would make the gate resolve on tick 0.
             await waitFor(() => expect(sources.length).toBeGreaterThan(0));
             await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+            // Negative assertion over the event *tail*: no positive signal can prove a later filter
+            // event carrying the wrong source will not arrive, so hold an observation window open.
+            // eslint-disable-next-line no-restricted-syntax -- window in which a late, wrongly-sourced onFilterChanged would arrive
+            await asyncSetTimeout(10);
 
             expect(sources.every((s) => s === 'api')).toBe(true);
         });
@@ -1297,6 +1301,9 @@ describe('StateService - Grid State Management', () => {
             // already be 1 before the restore lands, which would make the gate resolve on tick 0.
             await waitFor(() => expect(sources.length).toBeGreaterThan(0));
             await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+            // Negative assertion over the event *tail* — see the setState twin above.
+            // eslint-disable-next-line no-restricted-syntax -- window in which a late, wrongly-sourced onFilterChanged would arrive
+            await asyncSetTimeout(10);
 
             expect(sources.every((s) => s === 'columnFilter')).toBe(true);
         });
