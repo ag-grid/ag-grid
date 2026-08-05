@@ -20,8 +20,10 @@ export async function callChatGPT(userRequest: string, currentState: any, gridAp
         },
     });
 
-    const { aggregation, showValuesAs, rowGroup, columnSizing, columnVisibility, sort, filter, pivot } = currentState;
-    const state = { aggregation, showValuesAs, rowGroup, columnSizing, columnVisibility, sort, filter, pivot };
+    // Driving both the current state and the ignore list off the schema keeps them in step with
+    // whichever features the toolkit surfaced for this grid.
+    const schemaFeatures = Object.keys(structuredSchema.properties);
+    const state = Object.fromEntries(schemaFeatures.map((feature) => [feature, currentState[feature]]));
 
     const schema = {
         type: 'object',
@@ -32,16 +34,7 @@ export async function callChatGPT(userRequest: string, currentState: any, gridAp
                 type: 'array',
                 items: {
                     type: 'string',
-                    enum: [
-                        'aggregation',
-                        'showValuesAs',
-                        'filter',
-                        'sort',
-                        'pivot',
-                        'columnVisibility',
-                        'columnSizing',
-                        'rowGroup',
-                    ],
+                    enum: schemaFeatures,
                 },
                 description: 'List of grid state properties to ignore when applying the new state',
             },

@@ -8,7 +8,10 @@
     "pivot",
     "columnVisibility",
     "columnSizing",
-    "rowGroup"
+    "rowGroup",
+    "pagination",
+    "sideBar",
+    "focusedCell"
   ],
   "additionalProperties": false,
   "properties": {
@@ -671,6 +674,106 @@
               "currency"
             ]
           }
+        }
+      }
+    },
+    "pagination": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Pagination configuration for the grid",
+      "required": [
+        "page",
+        "pageSize"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "type": "number",
+          "description": "Zero-based index of the page to display",
+          "minimum": 0
+        },
+        "pageSize": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Number of rows per page",
+          "minimum": 1
+        }
+      }
+    },
+    "sideBar": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Side bar configuration for the grid",
+      "required": [
+        "visible",
+        "position",
+        "openToolPanel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "visible": {
+          "type": "boolean",
+          "description": "Whether the side bar is shown"
+        },
+        "position": {
+          "type": "string",
+          "description": "Which side of the grid the side bar is docked to",
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "openToolPanel": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ID of the tool panel to open, or null to close the open panel",
+          "enum": [
+            "columns",
+            "filters-new",
+            "chatPanel"
+          ]
+        }
+      }
+    },
+    "focusedCell": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Focused cell for the grid",
+      "required": [
+        "colId",
+        "rowIndex",
+        "rowPinned"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "colId": {
+          "$ref": "#/$defs/allColumnIds"
+        },
+        "rowIndex": {
+          "type": "number",
+          "description": "Zero-based index of the row to focus",
+          "minimum": 0
+        },
+        "rowPinned": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Pinned row container holding the row, or null for a regular row",
+          "enum": [
+            "top",
+            "bottom"
+          ]
         }
       }
     }

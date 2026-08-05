@@ -6,7 +6,11 @@ export type StructuredSchemaFeature =
     | 'pivot'
     | 'columnVisibility'
     | 'columnSizing'
-    | 'rowGroup';
+    | 'rowGroup'
+    | 'columnGroup'
+    | 'pagination'
+    | 'sideBar'
+    | 'focusedCell';
 
 export const STRUCTURED_SCHEMA_FEATURES: StructuredSchemaFeature[] = [
     'aggregation',
@@ -17,6 +21,10 @@ export const STRUCTURED_SCHEMA_FEATURES: StructuredSchemaFeature[] = [
     'columnVisibility',
     'columnSizing',
     'rowGroup',
+    'columnGroup',
+    'pagination',
+    'sideBar',
+    'focusedCell',
 ];
 
 export type StructuredSchemaColumnParams = {

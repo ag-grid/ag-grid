@@ -2,12 +2,16 @@ import type { BeanCollection, StructuredSchemaFeature, StructuredSchemaParams } 
 import { STRUCTURED_SCHEMA_FEATURES } from 'ag-grid-community';
 
 import { buildAggregationFeatureSchema } from './features/aggregationFeatureSchema';
+import { buildColumnGroupFeatureSchema } from './features/columnGroupFeatureSchema';
 import { buildColumnSizingFeatureSchema } from './features/columnSizingFeatureSchema';
 import { buildColumnVisibilityFeatureSchema } from './features/columnVisibilityFeatureSchema';
 import { buildFilterFeatureSchema } from './features/filterFeatureSchema';
+import { buildFocusedCellFeatureSchema } from './features/focusedCellFeatureSchema';
+import { buildPaginationFeatureSchema } from './features/paginationFeatureSchema';
 import { buildPivotFeatureSchema } from './features/pivotFeatureSchema';
 import { buildRowGroupFeatureSchema } from './features/rowGroupFeatureSchema';
 import { buildShowValuesAsFeatureSchema } from './features/showValuesAsFeatureSchema';
+import { buildSideBarFeatureSchema } from './features/sideBarFeatureSchema';
 import { buildSortFeatureSchema } from './features/sortFeatureSchema';
 import type { SchemaBuilder } from './schemaBuilder';
 import { s } from './schemaBuilder';
@@ -25,6 +29,10 @@ const StructuredSchemaBuilderMap: Record<
     columnVisibility: buildColumnVisibilityFeatureSchema,
     columnSizing: buildColumnSizingFeatureSchema,
     rowGroup: buildRowGroupFeatureSchema,
+    columnGroup: buildColumnGroupFeatureSchema,
+    pagination: buildPaginationFeatureSchema,
+    sideBar: buildSideBarFeatureSchema,
+    focusedCell: buildFocusedCellFeatureSchema,
 } as const;
 
 export function getStructuredSchema(beans: BeanCollection, params?: StructuredSchemaParams): JSONSchema | undefined {

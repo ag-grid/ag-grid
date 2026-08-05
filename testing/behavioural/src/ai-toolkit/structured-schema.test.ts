@@ -3,17 +3,22 @@ import {
     CustomFilterModule,
     DateFilterModule,
     NumberFilterModule,
+    PaginationModule,
+    STRUCTURED_SCHEMA_FEATURES,
     TextFilterModule,
 } from 'ag-grid-community';
 import {
     AdvancedFilterModule,
     AggregationModule,
     AiToolkitModule,
+    ColumnsToolPanelModule,
     MultiFilterModule,
     PivotModule,
     RowGroupingModule,
+    ServerSideRowModelModule,
     SetFilterModule,
     ShowValuesAsModule,
+    SideBarModule,
 } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
@@ -153,20 +158,7 @@ describe('getStructuredSchema', () => {
                 ROOT id:ROOT_NODE_ID
             `);
 
-            const schema = toJSON(
-                api.getStructuredSchema({
-                    exclude: [
-                        'aggregation',
-                        'showValuesAs',
-                        'filter',
-                        'sort',
-                        'pivot',
-                        'columnVisibility',
-                        'columnSizing',
-                        'rowGroup',
-                    ],
-                })
-            );
+            const schema = toJSON(api.getStructuredSchema({ exclude: STRUCTURED_SCHEMA_FEATURES }));
 
             expect(schema.properties).toEqual({});
             await new GridRows(api, `excludes all features when all are listed final state`).check(`
@@ -1307,6 +1299,189 @@ describe('getStructuredSchema - enterprise features', () => {
             await new GridRows(api, `omits rowGroup when no columns allow grouping final state`).check(`
                 ROOT id:ROOT_NODE_ID
             `);
+        });
+    });
+
+    describe('columnGroup feature', () => {
+        const gridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, AiToolkitModule],
+        });
+        afterEach(() => gridsManager.reset());
+
+        test('includes openable column group ids with header name descriptions', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        headerName: 'Athlete Details',
+                        groupId: 'athleteGroup',
+                        children: [{ field: 'athlete' }, { field: 'country', columnGroupShow: 'open' }],
+                    },
+                    {
+                        headerName: 'Medals',
+                        groupId: 'medalGroup',
+                        children: [{ field: 'gold' }, { field: 'silver', columnGroupShow: 'open' }],
+                    },
+                ],
+                rowData: [],
+            });
+            await new GridRows(api, `includes openable column group ids setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const columnGroup = schema.properties.columnGroup;
+            expect(columnGroup).toBeDefined();
+
+            const groupIds = columnGroup.properties.openColumnGroupIds.items.enum;
+            expect(groupIds).toEqual(['athleteGroup', 'medalGroup']);
+            expect(columnGroup.properties.openColumnGroupIds.items.description).toBe(
+                'athleteGroup: Athlete Details\nmedalGroup: Medals'
+            );
+        });
+
+        test('omits columnGroup when no columns are grouped', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }, { field: 'country' }],
+                rowData: [],
+            });
+            await new GridRows(api, `omits columnGroup when no columns are grouped setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            expect(schema.properties.columnGroup).toBeUndefined();
+        });
+    });
+
+    describe('pagination feature', () => {
+        const gridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, AiToolkitModule, PaginationModule],
+        });
+        afterEach(() => gridsManager.reset());
+
+        test('includes page and pageSize when pagination is enabled', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }],
+                rowData: [],
+                pagination: true,
+            });
+            await new GridRows(api, `includes page and pageSize setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const pagination = schema.properties.pagination;
+            expect(pagination).toBeDefined();
+            expect(pagination.properties.page.minimum).toBe(0);
+            expect(pagination.properties.pageSize.type).toEqual(['number', 'null']);
+        });
+
+        test('omits pagination when the module is registered but paging is off', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }],
+                rowData: [],
+            });
+            await new GridRows(api, `omits pagination when paging is off setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            expect(schema.properties.pagination).toBeUndefined();
+        });
+
+        test('omits pageSize when paginationAutoPageSize derives it from the viewport', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }],
+                rowData: [],
+                pagination: true,
+                paginationAutoPageSize: true,
+            });
+            await new GridRows(api, `omits pageSize when paginationAutoPageSize setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const pagination = schema.properties.pagination;
+            expect(pagination).toBeDefined();
+            expect(pagination.properties.page).toBeDefined();
+            expect(pagination.properties.pageSize).toBeUndefined();
+        });
+    });
+
+    describe('sideBar feature', () => {
+        const gridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, AiToolkitModule, SideBarModule, ColumnsToolPanelModule],
+        });
+        afterEach(() => gridsManager.reset());
+
+        test('includes visibility, position and the available tool panel ids', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }],
+                rowData: [],
+                sideBar: { toolPanels: ['columns'] },
+            });
+            await new GridRows(api, `includes side bar tool panel ids setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const sideBar = schema.properties.sideBar;
+            expect(sideBar).toBeDefined();
+            expect(sideBar.properties.visible.type).toBe('boolean');
+            expect(sideBar.properties.position.enum).toEqual(['left', 'right']);
+            expect(sideBar.properties.openToolPanel.enum).toEqual(['columns']);
+            expect(sideBar.properties.openToolPanel.type).toEqual(['string', 'null']);
+        });
+
+        test('omits sideBar when the grid has no side bar', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }],
+                rowData: [],
+            });
+            await new GridRows(api, `omits sideBar when the grid has no side bar setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            expect(schema.properties.sideBar).toBeUndefined();
+        });
+    });
+
+    describe('focusedCell feature', () => {
+        const gridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, AiToolkitModule, ServerSideRowModelModule],
+        });
+        afterEach(() => gridsManager.reset());
+
+        test('includes colId, rowIndex and rowPinned for the client-side row model', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }, { field: 'country' }],
+                rowData: [],
+            });
+            await new GridRows(api, `includes focusedCell for client-side row model setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const focusedCell = schema.properties.focusedCell;
+            expect(focusedCell).toBeDefined();
+            expect(focusedCell.properties.colId.$ref).toBe('#/$defs/allColumnIds');
+            expect(focusedCell.properties.rowIndex.minimum).toBe(0);
+            expect(focusedCell.properties.rowPinned.enum).toEqual(['top', 'bottom']);
+            expect(focusedCell.properties.rowPinned.type).toEqual(['string', 'null']);
+        });
+
+        test('omits focusedCell when the row model cannot restore focus by index', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }],
+                rowModelType: 'serverSide',
+                serverSideDatasource: {
+                    getRows: (params) => params.success({ rowData: [], rowCount: 0 }),
+                },
+            });
+
+            const schema = toJSON(api.getStructuredSchema());
+            expect(schema.properties.focusedCell).toBeUndefined();
         });
     });
 });

@@ -12,13 +12,15 @@ export const callChatGPT = async (
     gridApi: GridApi,
     conversationHistory: ChatMessage[] = []
 ): Promise<any> => {
-    // Extract relevant parts of the current grid state
-    const { aggregation, showValuesAs, rowGroup, columnSizing, columnVisibility, sort, filter, pivot } =
-        gridApi.getState();
-    const currentState = { aggregation, showValuesAs, rowGroup, columnSizing, columnVisibility, sort, filter, pivot };
-
     // Build LLM Schema from Grid API Structured Schema
     const schema = buildLLMSchema(gridApi);
+
+    // Send only the state the schema covers, so the two stay in step as toolkit features change.
+    const schemaFeatures: string[] = Object.keys(schema.properties.gridState.properties);
+    const gridState = gridApi.getState();
+    const currentState = Object.fromEntries(
+        schemaFeatures.map((feature) => [feature, gridState[feature as keyof GridState]])
+    );
 
     // Build conversation history with system prompt, previous messages, and user request
     const messages: ChatMessage[] = [
@@ -45,6 +47,8 @@ export const callChatGPT = async (
 const buildLLMSchema = (gridApi: GridApi): any => {
     // Generate structured schema from grid API
     const { $defs, ...structuredSchema } = gridApi.getStructuredSchema({
+        // This assistant lives in a tool panel, so it must not be able to close its own side bar.
+        exclude: ['sideBar'],
         columns: {
             category: {
                 includeSetValues: true,
@@ -80,16 +84,7 @@ const buildLLMSchema = (gridApi: GridApi): any => {
                 type: 'array',
                 items: {
                     type: 'string',
-                    enum: [
-                        'aggregation',
-                        'showValuesAs',
-                        'filter',
-                        'sort',
-                        'pivot',
-                        'columnVisibility',
-                        'columnSizing',
-                        'rowGroup',
-                    ],
+                    enum: Object.keys(structuredSchema.properties),
                 },
                 description: 'List of grid state properties to ignore when applying the new state',
             },

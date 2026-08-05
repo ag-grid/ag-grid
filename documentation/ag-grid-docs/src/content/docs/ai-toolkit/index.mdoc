@@ -32,10 +32,17 @@ The schema is made up of a series of "features", each representing a different a
 - [Filtering](./filtering/)
 - [Sorting](./row-sorting/)
 - [Aggregation](./aggregation/)
+- [Show Values As](./aggregation-show-values-as/)
 - [Pivoting](./pivoting/)
 - [Row Grouping](./grouping/)
 - [Column Visibility](./column-properties/#reference-display-hide/)
 - [Column Sizing](./column-sizing/)
+- [Column Groups](./column-groups/)
+- [Pagination](./row-pagination/)
+- [Side Bar](./side-bar/)
+- [Focused Cell](./keyboard-navigation/)
+
+Each feature is only included when the grid can apply it. Pagination is omitted unless paging is enabled, the side bar unless one is configured, and the focused cell for row models that cannot restore focus by row index.
 
 ### Architecture
 
@@ -88,7 +95,7 @@ const schema = {
             type: 'array',
             items: {
                 type: 'string',
-                enum: ['aggregation', 'filter', 'sort', 'pivot', 'columnVisibility', 'columnSizing', 'rowGroup'],
+                enum: Object.keys(gridStateStructuredSchema.properties),
             },
             description: 'List of grid state properties to ignore when applying the new state',
         },

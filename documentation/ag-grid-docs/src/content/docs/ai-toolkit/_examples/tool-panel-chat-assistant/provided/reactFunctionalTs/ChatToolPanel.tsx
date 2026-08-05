@@ -71,7 +71,9 @@ export const ChatToolPanel = (props: CustomToolPanelProps & IToolPanelParams) =>
 
                 // Apply grid state changes if any
                 if (response.gridState && Object.keys(response.gridState).length > 0) {
-                    gridApi.setState(response.gridState, response.propertiesToIgnore);
+                    // Any state key left out of both the new state and the ignore list is reset,
+                    // which for the side bar would tear down the panel this assistant runs in.
+                    gridApi.setState(response.gridState, [...(response.propertiesToIgnore ?? []), 'sideBar']);
                 }
             } catch (error) {
                 const errorMessage = `Error: ${error instanceof Error ? error.message : String(error)}`;

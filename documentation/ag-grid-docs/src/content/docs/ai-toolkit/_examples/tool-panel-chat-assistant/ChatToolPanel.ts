@@ -134,7 +134,9 @@ export class ChatToolPanel implements IToolPanel {
             // Apply grid state changes if any (this will destroy and recreate the tool panel)
             // Messages will be automatically added when the tool panel reloads
             if (response.gridState && Object.keys(response.gridState).length > 0) {
-                this.gridApi.setState(response.gridState, response.propertiesToIgnore);
+                // Any state key left out of both the new state and the ignore list is reset, which
+                // for the side bar would tear down the panel this assistant is running in.
+                this.gridApi.setState(response.gridState, [...(response.propertiesToIgnore ?? []), 'sideBar']);
             } else {
                 // If no state change, manually render the response
                 this.renderMessage('assistant', response.explanation);
