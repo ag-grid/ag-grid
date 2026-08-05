@@ -1,6 +1,8 @@
+import { waitFor } from '@testing-library/dom';
+
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 import { VERSION } from '../version';
 
 describe('Grid State Full Snapshot', () => {
@@ -46,66 +48,67 @@ describe('Grid State Full Snapshot', () => {
             ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
             └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
         `);
-        await asyncSetTimeout(1);
 
-        expect(api.getState()).toEqual({
-            aggregation: undefined,
-            cellSelection: undefined,
-            columnGroup: undefined,
-            columnOrder: {
-                orderedColIds: ['id', 'name', 'age', 'sport'],
-            },
-            columnPinning: undefined,
-            columnSizing: {
-                columnSizingModel: [
-                    {
-                        colId: 'id',
-                        flex: undefined,
-                        width: 200,
-                    },
-                    {
-                        colId: 'name',
-                        flex: undefined,
-                        width: 200,
-                    },
-                    {
-                        colId: 'age',
-                        flex: undefined,
-                        width: 200,
-                    },
-                    {
-                        colId: 'sport',
-                        flex: undefined,
-                        width: 200,
-                    },
-                ],
-            },
-            columnVisibility: undefined,
-            filter: undefined,
-            focusedCell: undefined,
-            pagination: {
-                page: 0,
-                pageSize: 100,
-            },
-            pivot: undefined,
-            rangeSelection: undefined,
-            rowGroup: undefined,
-            rowGroupExpansion: {
-                collapsedRowGroupIds: [],
-                expandedRowGroupIds: [],
-            },
-            rowSelection: undefined,
-            scroll: undefined,
-            sideBar: {
-                openToolPanel: null,
-                position: undefined,
-                toolPanels: {},
-                visible: false,
-            },
-            sort: undefined,
-            ssrmRowGroupExpansion: undefined,
-            version: VERSION,
-        });
+        await waitFor(() =>
+            expect(api.getState()).toEqual({
+                aggregation: undefined,
+                cellSelection: undefined,
+                columnGroup: undefined,
+                columnOrder: {
+                    orderedColIds: ['id', 'name', 'age', 'sport'],
+                },
+                columnPinning: undefined,
+                columnSizing: {
+                    columnSizingModel: [
+                        {
+                            colId: 'id',
+                            flex: undefined,
+                            width: 200,
+                        },
+                        {
+                            colId: 'name',
+                            flex: undefined,
+                            width: 200,
+                        },
+                        {
+                            colId: 'age',
+                            flex: undefined,
+                            width: 200,
+                        },
+                        {
+                            colId: 'sport',
+                            flex: undefined,
+                            width: 200,
+                        },
+                    ],
+                },
+                columnVisibility: undefined,
+                filter: undefined,
+                focusedCell: undefined,
+                pagination: {
+                    page: 0,
+                    pageSize: 100,
+                },
+                pivot: undefined,
+                rangeSelection: undefined,
+                rowGroup: undefined,
+                rowGroupExpansion: {
+                    collapsedRowGroupIds: [],
+                    expandedRowGroupIds: [],
+                },
+                rowSelection: undefined,
+                scroll: undefined,
+                sideBar: {
+                    openToolPanel: null,
+                    position: undefined,
+                    toolPanels: {},
+                    visible: false,
+                },
+                sort: undefined,
+                ssrmRowGroupExpansion: undefined,
+                version: VERSION,
+            })
+        );
         await new GridRows(api, `validate no unexpected changes to State shape final state`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"

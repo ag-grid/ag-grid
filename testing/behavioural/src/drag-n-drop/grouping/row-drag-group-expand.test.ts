@@ -37,6 +37,7 @@ describe('row drag nudger group expansion', () => {
             const rect = targetElement.getBoundingClientRect();
             const clientX = rect.left + rect.width / 2;
             const clientY = rect.top + rect.height / 2;
+            // eslint-disable-next-line no-restricted-syntax -- re-hovers every 25ms to keep the 30ms rowDragInsertDelay nudger armed
             await asyncSetTimeout(25);
             await rowDragDispatcher.move(targetRowId, { clientX, clientY });
         }

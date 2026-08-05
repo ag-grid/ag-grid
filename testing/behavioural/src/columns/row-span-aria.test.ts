@@ -12,7 +12,7 @@ import { TestGridsManager, asyncSetTimeout, nextAnimationFrame } from '../test-u
  */
 
 const settle = async (): Promise<void> => {
-    await asyncSetTimeout(10);
+    await asyncSetTimeout(0);
     await nextAnimationFrame();
     await nextAnimationFrame();
 };
