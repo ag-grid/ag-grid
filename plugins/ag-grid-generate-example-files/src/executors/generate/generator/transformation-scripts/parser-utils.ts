@@ -555,7 +555,7 @@ export function removeModuleRegistration(code: string) {
     // Strip the dev-only validations guard (the vanilla/UMD generator re-injects a plain
     // agGrid.enableDevValidations() call — process.env is not defined in the browser bundle).
     code = code.replace(
-        /(\/\/[^\n]*\n)?if \(process\.env\.NODE_ENV !== 'production'\) \{\s*(agGrid\.)?enableDevValidations\(\);\s*\}\n?/g,
+        /(\/\/[^\n]*\n)?if \(process\.env\.NODE_ENV !== 'production'\) \{\s*(\/\/[^\n]*\n\s*)?(agGrid\.)?enableDevValidations\(\);\s*\}\n?/g,
         ''
     );
     return code.replace(/\b(agGrid\.)?ModuleRegistry\.registerModules(.|\n)*?]\)(;)/g, '');

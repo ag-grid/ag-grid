@@ -4,8 +4,8 @@ import type { ColDef, GridReadyEvent, ValueFormatterParams, ValueGetterParams } 
 import { AllCommunityModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

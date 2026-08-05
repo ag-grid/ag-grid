@@ -21,8 +21,8 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import CustomStatsToolPanel from './customStatsToolPanel';
 import type { IOlympicData } from './interfaces';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

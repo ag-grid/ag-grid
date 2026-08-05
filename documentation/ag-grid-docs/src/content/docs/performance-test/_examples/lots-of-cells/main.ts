@@ -5,8 +5,8 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 // Fallback for Safari and other browsers that do not support requestIdleCallback
 const _requestIdleCallback = window.requestIdleCallback ?? setTimeout;
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

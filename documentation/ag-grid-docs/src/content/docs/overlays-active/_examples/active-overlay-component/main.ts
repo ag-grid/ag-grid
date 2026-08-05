@@ -4,8 +4,8 @@ import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidati
 import type { CustomParams } from './customOverlay_typescript';
 import { CustomOverlay } from './customOverlay_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

@@ -4,8 +4,8 @@ import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { FindRenderer } from './findRenderer';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

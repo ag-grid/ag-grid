@@ -21,8 +21,8 @@ import type { IOlympicData } from './interfaces';
 import MenuItem from './menuItem';
 import './style.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

@@ -6,8 +6,8 @@ import { CustomLoadingCellRenderer } from './customLoadingCellRenderer_typescrip
 import { FastRenderer } from './fastRenderer_typescript';
 import { SlowRenderer } from './slowRenderer_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
