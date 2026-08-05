@@ -256,12 +256,21 @@ export function renderRowFragment(
 
     for (const cell of fragment.cells) {
         const measurement = cell.measurement;
+        if (measurement.covered) {
+            x += measurement.width;
+            columnIndex += measurement.span;
+            continue;
+        }
+        // spanned cells never paint past the page bottom, even when the block is clamped.
+        const maximumCellHeight = Math.max(cursorY - layout.margin.bottom, fragment.height);
+        const cellHeight = Math.min(measurement.renderHeight ?? fragment.height, maximumCellHeight);
+        const cellBottom = cursorY - cellHeight;
         currentLineWidth = renderCellBox(
             pageParts,
             x,
-            rowBottom,
+            cellBottom,
             measurement.width,
-            fragment.height,
+            cellHeight,
             measurement.style,
             layout.drawCellBorders,
             currentLineWidth
@@ -271,15 +280,16 @@ export function renderRowFragment(
             cell.lines,
             x,
             cursorY,
-            rowBottom,
+            cellBottom,
             measurement.width,
-            fragment.height,
+            cellHeight,
             measurement.style,
             fontRegistry,
             measurement.hyperlink,
             annotations,
             measurement.image,
-            measurement.imageOnRight ?? false
+            measurement.imageOnRight ?? false,
+            measurement.rowSpan > 1
         );
         if (cell.showImage && measurement.image) {
             renderCellImage(
@@ -287,7 +297,7 @@ export function renderRowFragment(
                 measurement.image,
                 x,
                 cursorY,
-                rowBottom,
+                cellBottom,
                 measurement.width,
                 measurement.style,
                 measurement.imageOnRight ?? false
@@ -357,7 +367,8 @@ function renderCellText(
     hyperlink: string | undefined,
     annotations: PdfLinkAnnotation[],
     image: ResolvedPdfImage | undefined,
-    imageOnRight: boolean
+    imageOnRight: boolean,
+    centreVertically: boolean
 ): void {
     const padding = cellStyle.padding;
     const imageSpace = image ? image.width + (lines.length ? image.gap : 0) : 0;
@@ -378,8 +389,10 @@ function renderCellText(
     pageParts.push('BT');
     pageParts.push(`${formatColor(cellStyle.textColor)} rg`);
     pageParts.push(`/${fontKey} ${fmt(cellStyle.fontSize)} Tf`);
-    let textY = rowTop - padding.top - fontRegistry.getBaselineOffset(cellStyle.fontSize, cellStyle.font);
-    let lineTop = rowTop - padding.top;
+    const textBlockHeight = lines.length * cellStyle.lineHeight;
+    const verticalOffset = centreVertically ? Math.max((textHeightAvailable - textBlockHeight) / 2, 0) : 0;
+    let lineTop = rowTop - padding.top - verticalOffset;
+    let textY = lineTop - fontRegistry.getBaselineOffset(cellStyle.fontSize, cellStyle.font);
     for (const line of lines) {
         const encoded = fontRegistry.encodeText(line, cellStyle.font, cellStyle.direction, cellStyle.language);
         const textX = getTextX(line, textBoxX, textBoxWidth, cellStyle, fontRegistry, encoded.direction);

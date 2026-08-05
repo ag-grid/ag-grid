@@ -2,7 +2,6 @@ import { _isExpressionString, _last } from 'ag-stack';
 
 import type {
     AgColumn,
-    AgColumnGroup,
     Column,
     ColumnGroup,
     ExcelCell,
@@ -15,7 +14,9 @@ import type {
     ExcelStyle,
     ExcelWorksheet,
     ExcelWorksheetConfigParams,
+    GridHeaderCell,
     GridSerializingParams,
+    HeaderRowAccumulator,
     IFormulaService,
     INotesService,
     Note,
@@ -23,12 +24,14 @@ import type {
     RowAccumulator,
     RowHeightCallbackParams,
     RowNode,
-    RowSpanningAccumulator,
 } from 'ag-grid-community';
 import { BaseGridSerializingSession, _addGridCommonParams, _mergeDeep } from 'ag-grid-community';
 
+import type { InternalExcelCell } from './assets/excelInterfaces';
 import { getHeightFromProperty } from './assets/excelUtils';
 import type { Workbook } from './excelXlsxFactory';
+
+const SPANNING_HEADER_STYLE_ID = '_agSpanningHeader';
 
 export interface StyleLinkerInterface {
     rowType: 'HEADER_GROUPING' | 'HEADER' | 'BODY';
@@ -45,6 +48,11 @@ interface ExcelMixedStyle {
     result: ExcelStyle;
 }
 
+interface VerticallySpannedHeaderStyle {
+    styleId: string | undefined;
+    remainingRows: number;
+}
+
 export interface ExcelGridSerializingParams extends ExcelWorksheetConfigParams, GridSerializingParams {
     formulaSvc?: IFormulaService;
     baseExcelStyles: ExcelStyle[];
@@ -58,6 +66,7 @@ export interface ExcelGridSerializingParams extends ExcelWorksheetConfigParams, 
 }
 
 export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow[]> {
+    public override readonly useGridHeaderLayout: boolean = true;
     private readonly config: ExcelGridSerializingParams & ExcelExportParams;
     private readonly stylesByIds: { [key: string]: ExcelStyle };
     private readonly formulaSvc?: IFormulaService;
@@ -70,9 +79,12 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private readonly workbook: Workbook;
 
     private readonly rows: ExcelRow[] = [];
+    private readonly verticallySpannedHeaderStyles = new Map<number, VerticallySpannedHeaderStyle>();
     private cols: ExcelColumn[];
     private columnsToExport: AgColumn[];
     private frozenRowCount: number = 0;
+    private emittedHeaderRowCount: number = 0;
+    private spanningHeaderStyleRegistered = false;
     private skipFrozenRows = false;
     private frozenColumnCount: number = 0;
     private skipFrozenColumns = false;
@@ -91,6 +103,12 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
         const quotePrefixStyle = { id: '_quotePrefix', quotePrefix: 1 } as const;
         this.stylesByIds[quotePrefixStyle.id] = quotePrefixStyle;
+        const spanningHeaderStyle: ExcelStyle = {
+            id: SPANNING_HEADER_STYLE_ID,
+            alignment: { vertical: 'Center' },
+        };
+        this.stylesByIds[spanningHeaderStyle.id] = spanningHeaderStyle;
+        // registered lazily so workbooks without spanned headers keep their existing style indexes.
         this.excelStyles = [...this.config.baseExcelStyles, quotePrefixStyle];
     }
 
@@ -149,9 +167,18 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         }
     }
 
-    public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        const currentCells: ExcelCell[] = [];
+    public onNewHeaderGroupingRow(): HeaderRowAccumulator {
+        return this.createHeaderRow();
+    }
+
+    public onNewHeaderRow(): HeaderRowAccumulator {
+        return this.createHeaderRow();
+    }
+
+    private createHeaderRow(): HeaderRowAccumulator {
+        const currentCells: InternalExcelCell[] = [];
         const { freezeRows, headerRowHeight } = this.config;
+        this.emittedHeaderRowCount += 1;
 
         this.rows.push({
             cells: currentCells,
@@ -163,13 +190,52 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         }
 
         return {
-            onColumn: (
-                columnGroup: AgColumnGroup,
-                header: string,
-                index: number,
-                span: number,
-                collapsibleGroupRanges: number[][]
-            ) => {
+            onCell: (cell: GridHeaderCell) => {
+                const { columnSpan, rowSpan } = cell;
+                if (cell.type === 'covered') {
+                    const spanningStyle = this.verticallySpannedHeaderStyles.get(cell.columnIndex);
+                    currentCells.push({
+                        styleId: spanningStyle?.styleId,
+                        data: { type: 'empty', value: null },
+                    });
+                    if (spanningStyle) {
+                        spanningStyle.remainingRows -= 1;
+                        if (!spanningStyle.remainingRows) {
+                            this.verticallySpannedHeaderStyles.delete(cell.columnIndex);
+                        }
+                    }
+                    return;
+                }
+
+                if (cell.type === 'column') {
+                    const column = cell.column;
+                    const header = this.extractHeaderValue(column);
+                    const styleIds = this.config.styleLinker({
+                        rowType: 'HEADER',
+                        rowIndex: this.rows.length,
+                        value: header,
+                        column,
+                    });
+                    if (rowSpan > 1) {
+                        this.registerSpanningHeaderStyle();
+                    }
+                    const resolvedStyleIds = rowSpan > 1 ? [SPANNING_HEADER_STYLE_ID, ...styleIds] : styleIds;
+                    const styleId = this.getStyleId(resolvedStyleIds) ?? undefined;
+                    currentCells.push({
+                        ...this.createCell(styleId, this.getDataTypeForValue('string'), header),
+                        mergeDown: rowSpan > 1 ? rowSpan - 1 : undefined,
+                    });
+                    if (rowSpan > 1) {
+                        this.verticallySpannedHeaderStyles.set(cell.columnIndex, {
+                            styleId,
+                            remainingRows: rowSpan - 1,
+                        });
+                    }
+                    return;
+                }
+
+                const columnGroup = cell.column;
+                const header = columnGroup ? this.extractGroupHeaderValue(columnGroup) : '';
                 const styleIds: string[] = this.config.styleLinker({
                     rowType: 'HEADER_GROUPING',
                     rowIndex: 1,
@@ -181,22 +247,12 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                         this.getStyleId(styleIds),
                         this.getDataTypeForValue('string'),
                         header,
-                        span
+                        columnSpan - 1
                     ),
-                    collapsibleRanges: collapsibleGroupRanges,
+                    collapsibleRanges: cell.collapsibleGroupRanges,
                 });
             },
         };
-    }
-
-    public onNewHeaderRow(): RowAccumulator {
-        const { freezeRows, headerRowHeight } = this.config;
-
-        if (freezeRows) {
-            this.frozenRowCount++;
-        }
-
-        return this.onNewRow(this.onNewHeaderColumn, headerRowHeight);
     }
 
     public onNewBodyRow(node?: RowNode): RowAccumulator {
@@ -227,11 +283,21 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     public override prepare(columnsToExport: AgColumn[]): void {
         super.prepare(columnsToExport);
+        this.emittedHeaderRowCount = 0;
         this.columnsToExport = [...columnsToExport];
         this.cols = columnsToExport.map((col, i) => this.convertColumnToExcel(col, i));
     }
 
+    private registerSpanningHeaderStyle(): void {
+        if (!this.spanningHeaderStyleRegistered) {
+            this.excelStyles.push(this.stylesByIds[SPANNING_HEADER_STYLE_ID]);
+            this.spanningHeaderStyleRegistered = true;
+        }
+    }
+
     public parse(): string {
+        // hand the emitted count to the workbook factory in one place, after all rows exist.
+        this.config.headerRowCount = this.emittedHeaderRowCount;
         // adding custom content might have made some rows wider than the grid, so add new columns
         const longestRow = this.rows.reduce((a, b) => Math.max(a, b.cells.length), 0);
         while (this.cols.length < longestRow) {
@@ -335,24 +401,6 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return {
             displayName,
             filterAllowed,
-        };
-    }
-
-    private onNewHeaderColumn(
-        rowIndex: number,
-        currentCells: ExcelCell[]
-    ): (column: AgColumn, index: number, node: RowNode) => void {
-        return (column) => {
-            const nameForCol = this.extractHeaderValue(column);
-            const styleIds: string[] = this.config.styleLinker({
-                rowType: 'HEADER',
-                rowIndex,
-                value: nameForCol,
-                column,
-            });
-            currentCells.push(
-                this.createCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), nameForCol)
-            );
         };
     }
 

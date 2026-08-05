@@ -443,7 +443,12 @@ export { AgSelect, AgSelectSelector } from './agWidgets/agSelect';
 export type { AgSelectParams } from './agWidgets/agSelect';
 export { AgToggleButton, AgToggleButtonSelector } from './agWidgets/agToggleButton';
 export type { AgToggleButtonParams } from './agWidgets/agToggleButton';
-export type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from './export/iGridSerializer';
+export type {
+    GridHeaderCell,
+    GridSerializingParams,
+    HeaderRowAccumulator,
+    RowAccumulator,
+} from './export/iGridSerializer';
 
 // These should have been exported with _ as only used in SSRM and end users should be using them via the gridApi
 export { onRowHeightChanged, resetRowHeights } from './api/rowModelSharedApi';

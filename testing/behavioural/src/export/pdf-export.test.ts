@@ -90,6 +90,60 @@ describe('PDF export', () => {
         expect(exportedAthletes).toEqual(['Amy', 'Zoe', 'Cara']);
         await expectPdf(pdf);
     });
+
+    test('exports default and suppressed column header height spanning', async () => {
+        const createHeaderGrid = (id: string, suppressSpanHeaderHeight: boolean) =>
+            gridsManager.createGrid(id, {
+                columnDefs: [
+                    {
+                        headerName: 'Athlete Details',
+                        children: [{ field: 'athlete' }, { field: 'country' }],
+                    },
+                    { field: 'age', suppressSpanHeaderHeight },
+                ],
+                rowData: [],
+            });
+
+        const spanningApi = createHeaderGrid('pdf-spanning-header', false);
+        const spanningPdf = await readBlobAsText(spanningApi.getDataAsPdf({ headerRowHeight: 20 })!);
+        expect(spanningPdf).toMatch(/436 -?\d+(?:\.\d+)? 200 40 re S/);
+
+        const paddedApi = createHeaderGrid('pdf-padded-header', true);
+        const paddedPdf = await readBlobAsText(paddedApi.getDataAsPdf({ headerRowHeight: 20 })!);
+        expect(paddedPdf).not.toMatch(/436 -?\d+(?:\.\d+)? 200 40 re S/);
+        expect(paddedPdf).toMatch(/436 -?\d+(?:\.\d+)? 200 20 re S/);
+    });
+
+    test('omits header rows containing only padding groups when configured', async () => {
+        const createHeaderGrid = (id: string, hidePaddedHeaderRows: boolean) =>
+            gridsManager.createGrid(id, {
+                columnDefs: [
+                    {
+                        headerName: 'Athlete Details',
+                        children: [
+                            { field: 'athlete' },
+                            {
+                                headerName: 'Meta Data',
+                                columnGroupShow: 'open',
+                                children: [{ field: 'country' }],
+                            },
+                        ],
+                    },
+                    { field: 'gold' },
+                ],
+                hidePaddedHeaderRows,
+                rowData: [],
+            });
+
+        const paddedApi = createHeaderGrid('pdf-visible-padding-rows', false);
+        const paddedPdf = await readBlobAsText(paddedApi.getDataAsPdf({ headerRowHeight: 20 })!);
+        expect(paddedPdf).toMatch(/236 -?\d+(?:\.\d+)? 200 60 re S/);
+
+        const compactApi = createHeaderGrid('pdf-hidden-padding-rows', true);
+        const compactPdf = await readBlobAsText(compactApi.getDataAsPdf({ headerRowHeight: 20 })!);
+        expect(compactPdf).not.toMatch(/236 -?\d+(?:\.\d+)? 200 60 re S/);
+        expect(compactPdf).toMatch(/236 -?\d+(?:\.\d+)? 200 40 re S/);
+    });
 });
 
 async function expectPdf(pdf: Blob | undefined): Promise<void> {
