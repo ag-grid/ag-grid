@@ -3,6 +3,7 @@ import { defineComponent, nextTick, onMounted, ref } from 'vue';
 import { GridApi, IToolPanelParams } from 'ag-grid-community';
 
 import { callChatGPT } from './chatgptApi';
+import { applyColumnDefOperations } from './columnDefOperations';
 import { ChatMessage } from './types';
 
 export interface ChatMessage {
@@ -68,6 +69,8 @@ export const ChatToolPanel = defineComponent({
                     { role: 'user', content: userMessage },
                     { role: 'assistant', content: response.explanation }
                 );
+
+                applyColumnDefOperations(gridApi.value, response.columnDefOperations);
 
                 // Apply grid state changes if any (this will destroy and recreate the tool panel)
                 // Messages will be automatically added when the tool panel reloads

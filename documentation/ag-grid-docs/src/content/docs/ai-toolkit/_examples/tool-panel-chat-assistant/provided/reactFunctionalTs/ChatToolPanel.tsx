@@ -4,6 +4,7 @@ import type { IToolPanelParams } from 'ag-grid-community';
 import type { CustomToolPanelProps } from 'ag-grid-react';
 
 import { callChatGPT } from './chatgptApi';
+import { applyColumnDefOperations } from './columnDefOperations';
 import type { ChatMessage } from './types';
 
 export interface ChatMessage {
@@ -62,6 +63,8 @@ export const ChatToolPanel = (props: CustomToolPanelProps & IToolPanelParams) =>
                     { role: 'user', content: userMessage },
                     { role: 'assistant', content: response.explanation }
                 );
+
+                applyColumnDefOperations(gridApi, response.columnDefOperations);
 
                 // Always update messages state to render the assistant response
                 setMessages([...conversationHistory]);

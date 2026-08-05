@@ -5,6 +5,7 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { callChatGPT } from './chatgptApi';
+import { applyColumnDefOperations } from './columnDefOperations';
 import { type IOlympicData, gridOptions } from './gridOptions';
 import './styles.css';
 import { useFetchJson } from './useFetchJson';
@@ -70,6 +71,8 @@ const GridExample = () => {
 
             try {
                 const response = await callChatGPT(userRequest, currentGridState, gridRef.current.api);
+
+                applyColumnDefOperations(gridRef.current.api, response.columnDefOperations);
 
                 if (response.gridState && Object.keys(response.gridState).length > 0) {
                     gridRef.current.api.setState(response.gridState, response.propertiesToIgnore);

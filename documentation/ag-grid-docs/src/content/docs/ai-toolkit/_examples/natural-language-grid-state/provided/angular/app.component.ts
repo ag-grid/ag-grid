@@ -8,6 +8,7 @@ import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { callChatGPT } from './chatgptApi';
+import { applyColumnDefOperations } from './columnDefOperations';
 import { IOlympicData, gridOptions } from './gridOptions';
 import './styles.css';
 
@@ -151,6 +152,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
         try {
             const response = await callChatGPT(userRequest, currentGridState, this.gridRef.api);
+
+            applyColumnDefOperations(this.gridRef.api, response.columnDefOperations);
 
             if (response.gridState && Object.keys(response.gridState).length > 0) {
                 this.gridRef.api.setState(response.gridState, response.propertiesToIgnore);

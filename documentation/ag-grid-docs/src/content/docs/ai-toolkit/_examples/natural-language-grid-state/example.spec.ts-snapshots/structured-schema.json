@@ -2,6 +2,7 @@
   "type": "object",
   "required": [
     "aggregation",
+    "showValuesAs",
     "filter",
     "sort",
     "pivot",
@@ -173,6 +174,167 @@
                       "count",
                       "first",
                       "last"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "showValuesAs": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Show Values As configuration for value columns",
+      "required": [
+        "showValuesAsModel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "showValuesAsModel": {
+          "type": "array",
+          "description": "Array of per-column Show Values As modes. Omit a column to clear its mode.",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "showValuesAs"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "age"
+                    ]
+                  },
+                  "showValuesAs": {
+                    "type": "string",
+                    "description": "Show this value relative to a total",
+                    "enum": [
+                      "percentOfGrandTotal",
+                      "percentOfColumnTotal",
+                      "percentOfRowTotal",
+                      "percentOfParentRowTotal",
+                      "percentOfParentColumnTotal"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "showValuesAs"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "gold"
+                    ]
+                  },
+                  "showValuesAs": {
+                    "type": "string",
+                    "description": "Show this value relative to a total",
+                    "enum": [
+                      "percentOfGrandTotal",
+                      "percentOfColumnTotal",
+                      "percentOfRowTotal",
+                      "percentOfParentRowTotal",
+                      "percentOfParentColumnTotal"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "showValuesAs"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "silver"
+                    ]
+                  },
+                  "showValuesAs": {
+                    "type": "string",
+                    "description": "Show this value relative to a total",
+                    "enum": [
+                      "percentOfGrandTotal",
+                      "percentOfColumnTotal",
+                      "percentOfRowTotal",
+                      "percentOfParentRowTotal",
+                      "percentOfParentColumnTotal"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "showValuesAs"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "bronze"
+                    ]
+                  },
+                  "showValuesAs": {
+                    "type": "string",
+                    "description": "Show this value relative to a total",
+                    "enum": [
+                      "percentOfGrandTotal",
+                      "percentOfColumnTotal",
+                      "percentOfRowTotal",
+                      "percentOfParentRowTotal",
+                      "percentOfParentColumnTotal"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "showValuesAs"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "total"
+                    ]
+                  },
+                  "showValuesAs": {
+                    "type": "string",
+                    "description": "Show this value relative to a total",
+                    "enum": [
+                      "percentOfGrandTotal",
+                      "percentOfColumnTotal",
+                      "percentOfRowTotal",
+                      "percentOfParentRowTotal",
+                      "percentOfParentColumnTotal"
                     ]
                   }
                 }
