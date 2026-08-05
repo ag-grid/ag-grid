@@ -541,6 +541,13 @@ describe('pivot with groupHierarchy (date-time)', () => {
         api.setRowGroupColumns(['date']);
         await asyncSetTimeout(0);
         expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['date']);
+
+        // A column-state restore is not an explicit list, so it still seats the levels.
+        api.setRowGroupColumns([]);
+        await asyncSetTimeout(0);
+        api.applyColumnState({ state: [{ colId: 'date', rowGroup: true }] });
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([yearCol, monthCol, 'date']);
     });
 
     test('hierarchy virtuals inherit enableRowGroup so their row-group-panel chips stay draggable', async () => {
