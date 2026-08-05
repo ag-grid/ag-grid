@@ -947,6 +947,10 @@ export const AG_GRID_ERRORS = {
     },
     325: ({ property, value }: { property: string; value?: unknown }) =>
         `\`${property}\` must be an array with at least one element, currently it is \`[${String(value)}]\``,
+    326: ({ events }: { events?: string[] }) =>
+        `\`autoSizeStrategy\` stopped re-running: the events \`[${(events ?? []).join(', ')}]\` are being dispatched by the auto-sizing itself. Remove the events which auto-sizing causes, such as \`virtualColumnsChanged\`.`,
+    327: () =>
+        '`autoSizeStrategy` timed out waiting for a sizing pass to complete, so later events may not have re-applied it.' as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

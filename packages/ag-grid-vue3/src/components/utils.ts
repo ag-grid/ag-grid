@@ -514,7 +514,7 @@ export interface Props<TData> {
          */
     skipHeaderOnAutoSize?: boolean,
     /** Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents.
-         * @initial
+         * Provide `events` to re-run the strategy when those grid events fire, and use `api.applyAutoSizeStrategy()` to re-run it on demand.
          * @agModule `ColumnAutoSizeModule`
          */
     autoSizeStrategy?: AutoSizeStrategy,

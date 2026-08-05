@@ -181,7 +181,9 @@ Just like Excel, each column can also be auto-resized by double clicking the rig
 
 ### Auto-Sizing from the Menus
 
-By default the **Autosize This Column** and **Autosize All Columns** actions in the [Column Menu](./column-menu/) and [Context Menu](./context-menu/) size columns to their contents with default options, ignoring the configured `autoSizeStrategy`. Set `applyToUiActions = true` to have them reuse the strategy's options instead, such as `scaleUpToFitGridWidth` and `skipHeader`. Double-clicking a header edge follows the same setting.
+By default the **Autosize This Column** and **Autosize All Columns** actions in the [Column Menu](./column-menu/) and [Context Menu](./context-menu/) size columns to their contents with default options, ignoring the configured `autoSizeStrategy`. Set `applyToUiActions = true` to have them reuse the strategy's options instead, such as `skipHeader` and the width limits. Double-clicking a header edge, or a column group's edge, follows the same setting.
+
+`scaleUpToFitGridWidth` applies only to **Autosize All Columns**. The single-column and column-group actions never stretch a column to fill the grid.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -205,12 +207,12 @@ const gridOptions = {
 const gridOptions = {
     autoSizeStrategy: {
         type: 'fitCellContents',
-        events: ['paginationChanged', 'columnVisible', 'virtualColumnsChanged'],
+        events: ['paginationChanged', 'columnVisible'],
     }
 }
 ```
 
-Events fired in the same frame are coalesced into one auto-size pass. Columns the user has resized by hand keep their width, so a re-run does not undo a manual drag.
+Events fired in the same tick are coalesced into one auto-size pass, and events that auto-sizing itself dispatches are ignored. Columns the user has resized by hand keep their width, so a re-run does not undo a manual drag.
 
 {% gridExampleRunner title="Re-Applying the Auto-Size Strategy" name="auto-size-strategy-events" /%}
 

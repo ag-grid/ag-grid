@@ -30,21 +30,9 @@ export interface ISizeColumnsToFitParams extends DefaultWidthLimits {
  * Excludes events which auto-sizing itself dispatches unconditionally (such as `columnResized`),
  * as those would re-trigger the strategy indefinitely.
  */
-export type AutoSizeStrategyEvent =
-    | 'cellValueChanged'
-    | 'columnGroupOpened'
-    | 'columnVisible'
-    | 'displayedColumnsChanged'
-    | 'firstDataRendered'
-    | 'gridColumnsChanged'
-    | 'modelUpdated'
-    | 'paginationChanged'
-    | 'rowDataUpdated'
-    | 'rowGroupOpened'
-    | 'viewportChanged'
-    | 'virtualColumnsChanged';
+export type AutoSizeStrategyEvent = (typeof AUTO_SIZE_STRATEGY_EVENTS)[number];
 
-/** Keep in step with {@link AutoSizeStrategyEvent} — used to validate user-provided event names. */
+/** Also validates user-provided event names, so it must list every allowed event. */
 export const AUTO_SIZE_STRATEGY_EVENTS = [
     'cellValueChanged',
     'columnGroupOpened',
@@ -58,7 +46,7 @@ export const AUTO_SIZE_STRATEGY_EVENTS = [
     'rowGroupOpened',
     'viewportChanged',
     'virtualColumnsChanged',
-] as const satisfies readonly AutoSizeStrategyEvent[];
+] as const;
 
 interface AutoSizeStrategyEvents {
     /**

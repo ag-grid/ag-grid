@@ -21,9 +21,8 @@ import {
 } from 'ag-grid-community';
 import { ColumnsToolPanelModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { ALL_SEVERITIES, TestGridsManager } from '../test-utils';
+import { ALL_SEVERITIES, TestGridsManager, mockGridLayout } from '../test-utils';
 
-const GRID_WIDTH = 1000;
 const NUDGED_WIDTH = 220;
 
 describe('autoSizeStrategy events', () => {
@@ -227,12 +226,12 @@ describe('autoSizeStrategy events', () => {
                 rowData,
                 autoSizeStrategy: { type: 'fitGridWidth', events: ['paginationChanged'] },
             });
-            await waitFor(() => expect(totalWidth(api)).toBe(GRID_WIDTH));
+            await waitFor(() => expect(totalWidth(api)).toBe(mockGridLayout.gridWidth));
 
             nudge(api, 'a');
             api.setGridOption('pagination', true);
 
-            await waitFor(() => expect(totalWidth(api)).toBe(GRID_WIDTH));
+            await waitFor(() => expect(totalWidth(api)).toBe(mockGridLayout.gridWidth));
         });
     });
 
@@ -252,17 +251,20 @@ describe('autoSizeStrategy events', () => {
             api.setColumnsVisible(['b'], false);
             api.setColumnsVisible(['b'], true);
 
-            await waitFor(() => expect(sources).toContain('autoSizeStrategy'));
-            await waitFor(() => expect(sources.filter((source) => source === 'autoSizeStrategy')).toHaveLength(1));
+            await waitFor(() => expect(sources).toContain('autosizeStrategy'));
+            await waitFor(() => expect(sources.filter((source) => source === 'autosizeStrategy')).toHaveLength(1));
         });
 
-        test('self-dispatched events settle instead of looping', async () => {
+        test('self-dispatched events run exactly once, then the next real trigger still runs', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
                 columnDefs,
                 rowData,
+                pagination: true,
+                paginationPageSize: 1,
                 autoSizeStrategy: {
                     type: 'fitCellContents',
-                    events: ['displayedColumnsChanged', 'virtualColumnsChanged', 'modelUpdated'],
+                    // every one of these is dispatched by auto-sizing itself
+                    events: ['displayedColumnsChanged', 'virtualColumnsChanged', 'modelUpdated', 'paginationChanged'],
                 },
             });
             await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(100));
@@ -270,12 +272,45 @@ describe('autoSizeStrategy events', () => {
             const sources = captureResizeSources(api);
             api.setColumnsVisible(['b'], false);
 
-            await waitFor(() => expect(sources).toContain('autoSizeStrategy'));
+            await waitFor(() => expect(sources).toContain('autosizeStrategy'));
             // give any feedback loop several ticks to run away
             for (let i = 0; i < 5; ++i) {
                 await new Promise((resolve) => setTimeout(resolve));
             }
-            expect(sources.filter((source) => source === 'autoSizeStrategy').length).toBeLessThan(3);
+            // a run dispatches `columnResized` whether or not it changed a width, so an echoed run counts
+            expect(sources.filter((source) => source === 'autosizeStrategy')).toHaveLength(1);
+
+            // the fence must not outlive the run it guards
+            nudge(api, 'a');
+            api.paginationGoToNextPage();
+
+            await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(100));
+            expect(sources.filter((source) => source === 'autosizeStrategy')).toHaveLength(2);
+        });
+
+        test('a runaway re-run loop is capped and warns', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [326] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                autoSizeStrategy: { type: 'fitCellContents', events: ['columnVisible'] },
+            });
+            await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(100));
+
+            const sources = captureResizeSources(api);
+            // stand in for a grid whose own sizing re-dispatches a configured event forever; deferring
+            // to the next tick puts the echo past the run's re-entrancy fence, as a queued run would
+            api.addEventListener('columnResized', ({ finished, source }) => {
+                if (finished && source === 'autosizeStrategy') {
+                    setTimeout(() => api.setColumnsVisible(['b'], !api.getColumn('b')!.isVisible()));
+                }
+            });
+            api.setColumnsVisible(['c'], false);
+
+            await waitFor(() => expect(warn.mock.calls.flat().join(' ')).toContain('stopped re-running'));
+            expect(sources.filter((source) => source === 'autosizeStrategy').length).toBeLessThanOrEqual(11);
         });
     });
 
@@ -294,6 +329,41 @@ describe('autoSizeStrategy events', () => {
             api.setGridOption('pagination', true);
 
             await waitFor(() => expect(api.getColumn('b')!.getActualWidth()).toBe(100));
+            expect(api.getColumn('a')!.getActualWidth()).toBe(320);
+        });
+
+        test('a column dropped from the column defs stops being excluded when its id comes back', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                autoSizeStrategy: { type: 'fitCellContents', events: ['paginationChanged'] },
+            });
+            await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(100));
+
+            api.setColumnWidths([{ key: 'a', newWidth: 320 }], true, 'uiColumnResized');
+            // 'a' leaves and comes back, so it is a new column that nobody has resized
+            api.setGridOption('columnDefs', [{ colId: 'b', field: 'b', minWidth: 100 }]);
+            api.setGridOption('columnDefs', [{ colId: 'a', field: 'a', minWidth: 140 }]);
+
+            nudge(api, 'a');
+            api.setGridOption('pagination', true);
+
+            await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(140));
+        });
+
+        test('updating the option re-applies the strategy without discarding manual widths', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 150 },
+            });
+            await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(150));
+
+            api.setColumnWidths([{ key: 'a', newWidth: 320 }], true, 'uiColumnResized');
+            nudge(api, 'b');
+            api.setGridOption('autoSizeStrategy', { type: 'fitCellContents', defaultMinWidth: 180 });
+
+            await waitFor(() => expect(api.getColumn('b')!.getActualWidth()).toBe(180));
             expect(api.getColumn('a')!.getActualWidth()).toBe(320);
         });
 
@@ -367,17 +437,17 @@ describe('autoSizeStrategy events', () => {
             await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(NUDGED_WIDTH));
         });
 
-        test('re-passing an equal strategy object does not re-apply', async () => {
+        test('re-passing an equal strategy object does not re-apply, whatever the key order', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
                 columnDefs,
                 rowData,
-                autoSizeStrategy: { type: 'fitCellContents' },
+                autoSizeStrategy: { type: 'fitCellContents', skipHeader: true, defaultMinWidth: 120 },
             });
-            await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(100));
+            await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(120));
 
             nudge(api, 'a');
-            // frameworks re-pass an inline options object on every render
-            api.setGridOption('autoSizeStrategy', { type: 'fitCellContents' });
+            // frameworks re-pass an inline options object on every render, in no guaranteed order
+            api.setGridOption('autoSizeStrategy', { defaultMinWidth: 120, type: 'fitCellContents', skipHeader: true });
 
             await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(NUDGED_WIDTH));
         });

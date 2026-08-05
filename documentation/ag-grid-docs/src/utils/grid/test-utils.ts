@@ -601,6 +601,40 @@ export async function waitForRowAnimations(page: Page) {
     });
 }
 
+export async function getWidth(locator: Locator): Promise<number> {
+    return (await locator.boundingBox())?.width ?? 0;
+}
+
+/** The class the grid body carries while column widths are animating to their new values. */
+export const WIDTH_ANIMATION_CLASS = 'ag-animate-autosize';
+
+/**
+ * Wait until column widths stop changing, so an auto-size or resize has fully landed.
+ *
+ * Asserting the animation class is absent is not enough on its own: it passes when nothing matches,
+ * which is also true before the resize has started. Two consecutive identical samples of the header
+ * widths, with no animation in progress, mean the sizing is finished.
+ */
+export async function waitForColumnWidthsToSettle(page: Page) {
+    await page.waitForFunction(
+        ({ animationClass, stateKey }) => {
+            const state = window as unknown as Record<string, string | undefined>;
+            const header = document.querySelector('.ag-header-row');
+            if (!header || document.querySelector(`.${animationClass}`)) {
+                state[stateKey] = undefined;
+                return false;
+            }
+            const widths = Array.from(header.querySelectorAll('.ag-header-cell'))
+                .map((cell) => Math.round(cell.getBoundingClientRect().width))
+                .join(',');
+            const settled = state[stateKey] === widths;
+            state[stateKey] = widths;
+            return settled;
+        },
+        { animationClass: WIDTH_ANIMATION_CLASS, stateKey: '__agHeaderWidthSample' }
+    );
+}
+
 /**
  * Assert which row-id occupies a given `row-index` once the grid has settled after a sort.
  *

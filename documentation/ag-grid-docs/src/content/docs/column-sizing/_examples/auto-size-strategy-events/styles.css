@@ -11,9 +11,8 @@
     align-items: center;
 }
 
-.toggle-button,
-.reapply-button {
-    margin: 0px !important;
+.interaction-bar button {
+    margin: 0 !important;
 }
 
 #myGrid {

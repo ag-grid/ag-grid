@@ -23,9 +23,15 @@ import {
 } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
 
-import { ALL_SEVERITIES, GridColumns, TestGridsManager, openMenuOption, polyfillOffsetParent } from '../test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    TestGridsManager,
+    mockGridLayout,
+    openMenuOption,
+    polyfillOffsetParent,
+} from '../test-utils';
 
-const GRID_WIDTH = 1000;
 const RESET_WIDTH = 220;
 
 describe('autoSizeStrategy applyToUiActions', () => {
@@ -81,7 +87,7 @@ describe('autoSizeStrategy applyToUiActions', () => {
             await userEvent.click(await openMenuOption('Autosize All Columns'));
 
             // the content pass shrinks each col to its 100 px minWidth, then the scale-up pass fills the grid
-            await waitFor(() => expect(totalWidth(api)).toBe(GRID_WIDTH));
+            await waitFor(() => expect(totalWidth(api)).toBe(mockGridLayout.gridWidth));
             await new GridColumns(api, 'column menu autosize all scaled up to grid width').checkColumns(`
                 CENTER
                 ├── a "A" width:334
@@ -133,6 +139,23 @@ describe('autoSizeStrategy applyToUiActions', () => {
             await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(250));
             expect(api.getColumn('b')!.getActualWidth()).toBe(RESET_WIDTH);
             expect(api.getColumn('c')!.getActualWidth()).toBe(RESET_WIDTH);
+        });
+
+        test('Autosize This Column does not absorb the grid width', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                autoSizeStrategy: { type: 'fitCellContents', scaleUpToFitGridWidth: true, applyToUiActions: true },
+            });
+            await waitFor(() => expect(totalWidth(api)).toBe(mockGridLayout.gridWidth));
+            resetWidths(api);
+
+            api.showColumnMenu('a');
+            await userEvent.click(await openMenuOption('Autosize This Column'));
+
+            // sized to its content, not stretched over the space the other columns leave
+            await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(100));
+            expect(api.getColumn('b')!.getActualWidth()).toBe(RESET_WIDTH);
         });
 
         test('widths match the default auto-size when applyToUiActions is not set', async () => {
@@ -212,8 +235,8 @@ describe('autoSizeStrategy applyToUiActions', () => {
 
     describe('validation', () => {
         test('applyToUiActions on a non-fitCellContents strategy warns and leaves UI actions alone', async () => {
-            // this test deliberately misconfigures the strategy, which warns #322
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
+            // this test deliberately misconfigures the strategy, which warns #318
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [318] });
             const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
             const api = await gridsManager.createGridAndWait('myGrid', {

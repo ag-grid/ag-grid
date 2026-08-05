@@ -768,12 +768,21 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
                 }
-                if (type !== 'fitCellContents' && 'applyToUiActions' in autoSizeStrategy) {
-                    return `\`applyToUiActions\` is only supported by the 'fitCellContents' auto-size strategy, as the built-in auto-size actions size columns to their contents. You provided '${type}'.`;
+                if (
+                    type !== 'fitCellContents' &&
+                    'applyToUiActions' in autoSizeStrategy &&
+                    autoSizeStrategy.applyToUiActions != null
+                ) {
+                    return _createValidationWarning(318, {
+                        feature: '`applyToUiActions`',
+                        conflictsWith: `the '${type}' auto-size strategy`,
+                        advice: 'The built-in auto-size actions size columns to their contents.',
+                    });
                 }
                 const events = autoSizeStrategy.events;
                 if (events) {
-                    for (const event of events) {
+                    for (let i = 0, len = events.length; i < len; ++i) {
+                        const event = events[i];
                         if (!AUTO_SIZE_STRATEGY_EVENTS.includes(event)) {
                             return _createValidationWarning(320, {
                                 property: 'autoSizeStrategy.events',

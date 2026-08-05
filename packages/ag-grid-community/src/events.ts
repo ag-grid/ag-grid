@@ -1040,7 +1040,7 @@ export interface ExpandOrCollapseAllEvent<TData = any, TContext = any> extends A
 export type ColumnEventType =
     | 'sizeColumnsToFit'
     | 'autosizeColumns'
-    | 'autoSizeStrategy'
+    | 'autosizeStrategy'
     | 'autosizeColumnHeaderHeight'
     | 'alignedGridChanged'
     | 'filterChanged'
