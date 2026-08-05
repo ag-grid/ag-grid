@@ -306,6 +306,7 @@ describe('ag-grid calculated columns', () => {
             if (api.getDisplayedRowAtIndex(0)?.data != null) {
                 return;
             }
+            // eslint-disable-next-line no-restricted-syntax -- retry interval of this poll loop, not a gate
             await asyncSetTimeout(10);
         }
         throw new Error('Timed out waiting for first row to load');
@@ -1147,8 +1148,9 @@ describe('ag-grid calculated columns', () => {
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
         });
         addCalculatedColumnDef(api, { colId: 'sum', calculatedExpression: '[a] + [b]' });
-        // eslint-disable-next-line no-restricted-syntax -- past the default cellFlashDuration (500ms), so any
-        // incidental flash triggered by adding the calculated column has faded before the baseline is asserted.
+        // Any incidental flash triggered by adding the calculated column must have faded before the
+        // baseline is asserted, and no positive signal marks a flash ending.
+        // eslint-disable-next-line no-restricted-syntax -- past the default cellFlashDuration (500ms)
         await asyncSetTimeout(600);
 
         const gridDiv = getGridElement(api)!;
@@ -2319,27 +2321,27 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'age');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
 
         clickDialogButton('Operators');
-        await asyncSetTimeout(1);
-
-        expect(document.querySelector('.ag-autocomplete-list-popup')).toBeTruthy();
-        expect(document.querySelector('.ag-select-list')).toBeFalsy();
+        await waitFor(() => {
+            expect(document.querySelector('.ag-autocomplete-list-popup')).toBeTruthy();
+            expect(document.querySelector('.ag-select-list')).toBeFalsy();
+        });
 
         getCalculatedColumnDialog()
             .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
             .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-        await asyncSetTimeout(1);
-
-        expect(document.querySelector('.ag-autocomplete-list-popup')).toBeFalsy();
-        expect(document.querySelector('.ag-select-list')).toBeTruthy();
+        await waitFor(() => {
+            expect(document.querySelector('.ag-autocomplete-list-popup')).toBeFalsy();
+            expect(document.querySelector('.ag-select-list')).toBeTruthy();
+        });
 
         clickDialogButton('Operators');
-        await asyncSetTimeout(1);
-
-        expect(document.querySelector('.ag-autocomplete-list-popup')).toBeTruthy();
-        expect(document.querySelector('.ag-select-list')).toBeFalsy();
+        await waitFor(() => {
+            expect(document.querySelector('.ag-autocomplete-list-popup')).toBeTruthy();
+            expect(document.querySelector('.ag-select-list')).toBeFalsy();
+        });
     });
 
     test('dialog adds calculated columns inside groups without mutating provided column definitions', async () => {
@@ -2368,11 +2370,13 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'revenue_2025');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
 
         setExpression('[2025 Revenue] - [2025 Cost]');
         clickDialogButton('Apply');
-        await asyncSetTimeout(1);
+        await waitFor(() =>
+            expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBeTruthy()
+        );
 
         expect(columnDefs).toEqual([year2025, year2026]);
         expect(year2025.children).toHaveLength(2);
@@ -2421,11 +2425,13 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'ag-Grid-AutoColumn');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
 
         setExpression('[Revenue] - [Cost]');
         clickDialogButton('Apply');
-        await asyncSetTimeout(1);
+        await waitFor(() =>
+            expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe('[revenue] - [cost]')
+        );
 
         expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
             'ag-Grid-AutoColumn',
@@ -2433,7 +2439,6 @@ describe('ag-grid calculated columns', () => {
             'revenue',
             'cost',
         ]);
-        expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe('[revenue] - [cost]');
         await new GridColumns(
             api,
             'dialog inserts calculated columns after generated auto group columns in visible order'
@@ -2460,11 +2465,9 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'ag-Grid-AutoColumn');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
         setExpression('[Revenue] - [Cost]');
         clickDialogButton('Apply');
-        // Wait past the live-apply animation frame so no flush is in flight during the toggles below.
-        await asyncSetTimeout(40);
         await new GridColumns(api, 'auto-group toggle - after add').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
@@ -2474,7 +2477,6 @@ describe('ag-grid calculated columns', () => {
         `);
 
         api.setRowGroupColumns([]);
-        await asyncSetTimeout(1);
         await new GridColumns(api, 'auto-group toggle - ungrouped').checkColumns(`
             CENTER
             ├── calculated_1 "Untitled" width:200 ƒ
@@ -2484,7 +2486,6 @@ describe('ag-grid calculated columns', () => {
         `);
 
         api.setRowGroupColumns(['productType']);
-        await asyncSetTimeout(1);
         await new GridColumns(api, 'auto-group toggle - re-grouped').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
@@ -2516,10 +2517,9 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'ag-Grid-AutoColumn-productType');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
         setExpression('[Revenue] - [Cost]');
         clickDialogButton('Apply');
-        await asyncSetTimeout(1);
         await new GridColumns(api, 'two auto-group toggle - after add').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn-productType "Product Type" width:200
@@ -2530,7 +2530,6 @@ describe('ag-grid calculated columns', () => {
         `);
 
         api.setRowGroupColumns([]);
-        await asyncSetTimeout(1);
         await new GridColumns(api, 'two auto-group toggle - ungrouped').checkColumns(`
             CENTER
             ├── calculated_1 "Untitled" width:200 ƒ
@@ -2541,7 +2540,6 @@ describe('ag-grid calculated columns', () => {
         `);
 
         api.setRowGroupColumns(['productType', 'country']);
-        await asyncSetTimeout(1);
         await new GridColumns(api, 'two auto-group toggle - re-grouped').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn-productType "Product Type" width:200
@@ -2574,11 +2572,13 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'ag-Grid-AutoColumn-productType');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
 
         setExpression('[Revenue] - [Cost]');
         clickDialogButton('Apply');
-        await asyncSetTimeout(1);
+        await waitFor(() =>
+            expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe('[revenue] - [cost]')
+        );
 
         expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
             'ag-Grid-AutoColumn-productType',
@@ -2587,7 +2587,6 @@ describe('ag-grid calculated columns', () => {
             'revenue',
             'cost',
         ]);
-        expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe('[revenue] - [cost]');
         await new GridColumns(
             api,
             'dialog inserts calculated columns after the clicked generated auto group column in multiple-columns mode'
@@ -2609,36 +2608,35 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'revenue');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
 
         setExpression('[Revenue] - [Cost]');
         clickDialogButton('Apply');
-        // Wait past the live-apply animation frame so no flush is in flight during the moves below.
-        await asyncSetTimeout(40);
 
         // Placed immediately after its anchor on creation.
-        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
-            'revenue',
-            'calculated_1',
-            'cost',
-            'other',
-        ]);
+        await waitFor(() =>
+            expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+                'revenue',
+                'calculated_1',
+                'cost',
+                'other',
+            ])
+        );
 
         api.moveColumns(['calculated_1'], 3);
-        await asyncSetTimeout(1);
 
         // A subsequent column refresh must not snap it back to the anchor.
         api.setColumnsVisible(['other'], false);
-        await asyncSetTimeout(1);
         api.setColumnsVisible(['other'], true);
-        await asyncSetTimeout(1);
 
-        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
-            'revenue',
-            'cost',
-            'other',
-            'calculated_1',
-        ]);
+        await waitFor(() =>
+            expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+                'revenue',
+                'cost',
+                'other',
+                'calculated_1',
+            ])
+        );
         await new GridColumns(
             api,
             'dialog-anchored calculated column can be moved away from its anchor and stays moved across refreshes'
@@ -2665,28 +2663,30 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'ag-Grid-AutoColumn-productType');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
         setExpression('[Revenue] - [Cost]');
         clickDialogButton('Apply');
-        // Wait past the live-apply animation frame so each add's flush lands before the next step.
-        await asyncSetTimeout(40);
+        await waitFor(() =>
+            expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBeTruthy()
+        );
 
         showColumnMenu(api, 'ag-Grid-AutoColumn-country');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
         setExpression('[Revenue] + [Cost]');
         clickDialogButton('Apply');
-        await asyncSetTimeout(40);
 
         // Adding the second column must not displace the first from its own anchor.
-        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
-            'ag-Grid-AutoColumn-productType',
-            'calculated_1',
-            'ag-Grid-AutoColumn-country',
-            'calculated_2',
-            'revenue',
-            'cost',
-        ]);
+        await waitFor(() =>
+            expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+                'ag-Grid-AutoColumn-productType',
+                'calculated_1',
+                'ag-Grid-AutoColumn-country',
+                'calculated_2',
+                'revenue',
+                'cost',
+            ])
+        );
         await new GridColumns(api, 'dialog columns from different auto group columns each stay under their own anchor')
             .checkColumns(`
                 CENTER
@@ -2721,39 +2721,42 @@ describe('ag-grid calculated columns', () => {
         `);
 
         addCalculatedColumnDef(api, { colId: 'profit', calculatedExpression: '[revenue] - [cost]' });
-        await asyncSetTimeout(1);
-        expect(created).toHaveBeenCalledWith(
-            expect.objectContaining({
-                column: api.getColumn('profit'),
-                expression: '[revenue] - [cost]',
-                source: 'api',
-            })
+        await waitFor(() =>
+            expect(created).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: api.getColumn('profit'),
+                    expression: '[revenue] - [cost]',
+                    source: 'api',
+                })
+            )
         );
 
         updateCalculatedColumnDef(api, 'profit', { headerName: 'Profit' });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getColumn('profit')!.getColDef().headerName).toBe('Profit'));
         expect(changed).not.toHaveBeenCalled();
 
         updateCalculatedColumnDef(api, 'profit', { calculatedExpression: '[revenue] * [cost]' });
-        await asyncSetTimeout(1);
-        expect(changed).toHaveBeenCalledWith(
-            expect.objectContaining({
-                column: api.getColumn('profit'),
-                oldExpression: '[revenue] - [cost]',
-                expression: '[revenue] * [cost]',
-                source: 'api',
-            })
+        await waitFor(() =>
+            expect(changed).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: api.getColumn('profit'),
+                    oldExpression: '[revenue] - [cost]',
+                    expression: '[revenue] * [cost]',
+                    source: 'api',
+                })
+            )
         );
 
         const removedColumn = api.getColumn('profit');
         removeColumnDef(api, 'profit');
-        await asyncSetTimeout(1);
-        expect(removed).toHaveBeenCalledWith(
-            expect.objectContaining({
-                column: removedColumn,
-                expression: '[revenue] * [cost]',
-                source: 'api',
-            })
+        await waitFor(() =>
+            expect(removed).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: removedColumn,
+                    expression: '[revenue] * [cost]',
+                    source: 'api',
+                })
+            )
         );
         await new GridRows(api, `dispatches calculated column columnDefs lifecycle events final state`).check(`
             ROOT id:ROOT_NODE_ID
@@ -2769,22 +2772,19 @@ describe('ag-grid calculated columns', () => {
             onNewColumnsLoaded: newColumnsLoaded,
         });
         // Initial grid setup dispatches it once; clear so we count subsequent triggers cleanly.
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(newColumnsLoaded).toHaveBeenCalled());
         newColumnsLoaded.mockClear();
 
         addCalculatedColumnDef(api, { colId: 'profit', calculatedExpression: '[revenue] - [cost]' });
-        await asyncSetTimeout(1);
-        expect(newColumnsLoaded).toHaveBeenCalledTimes(1);
+        await waitFor(() => expect(newColumnsLoaded).toHaveBeenCalledTimes(1));
 
         newColumnsLoaded.mockClear();
         updateCalculatedColumnDef(api, 'profit', { calculatedExpression: '[revenue] * [cost]' });
-        await asyncSetTimeout(1);
-        expect(newColumnsLoaded).toHaveBeenCalledTimes(1);
+        await waitFor(() => expect(newColumnsLoaded).toHaveBeenCalledTimes(1));
 
         newColumnsLoaded.mockClear();
         removeColumnDef(api, 'profit');
-        await asyncSetTimeout(1);
-        expect(newColumnsLoaded).toHaveBeenCalledTimes(1);
+        await waitFor(() => expect(newColumnsLoaded).toHaveBeenCalledTimes(1));
     });
 
     test('removeCalculatedColumn then re-adding the same colId yields a working live column', async () => {
@@ -2797,24 +2797,21 @@ describe('ag-grid calculated columns', () => {
         });
 
         addCalculatedColumnDef(api, { colId: 'profit', calculatedExpression: '[revenue] - [cost]' });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getColumn('profit')).toBeTruthy());
 
         removeColumnDef(api, 'profit');
-        await asyncSetTimeout(1);
-        expect(api.getColumn('profit')).toBeNull();
+        await waitFor(() => expect(api.getColumn('profit')).toBeNull());
 
         // Re-add the SAME colId. Must NOT resurrect the destroyed AgColumn from the first add.
         addCalculatedColumnDef(api, { colId: 'profit', calculatedExpression: '[revenue] - [cost]' });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getColumn('profit')).toBeTruthy());
 
-        expect(api.getColumn('profit')).toBeTruthy();
         expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: false })).toBe(7);
         expect(api.getCellValue({ rowNode: api.getRowNode('r2')!, colKey: 'profit', useFormatter: false })).toBe(12);
 
         // It must behave as a live column: sorting through it must work.
         api.applyColumnState({ state: [{ colId: 'profit', sort: 'desc' }] });
-        await asyncSetTimeout(1);
-        expect(api.getDisplayedRowAtIndex(0)?.data.id).toBe('r2');
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(0)?.data.id).toBe('r2'));
         expect(api.getDisplayedRowAtIndex(1)?.data.id).toBe('r1');
         await new GridColumns(api, 'removeCalculatedColumn then re-adding the same colId yields a working live column')
             .checkColumns(`
@@ -2834,18 +2831,14 @@ describe('ag-grid calculated columns', () => {
                 { colId: 'result', calculatedExpression: '[revenue] - [cost]' },
             ],
         });
-        await asyncSetTimeout(1);
-
         const rowNode = api.getRowNode('r1')!;
-        expect(api.getCellValue({ rowNode, colKey: 'result', useFormatter: false })).toBe(7);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'result', useFormatter: false })).toBe(7));
 
         updateCalculatedColumnDef(api, 'result', { calculatedExpression: '[revenue] * [cost]' });
-        await asyncSetTimeout(1);
-        expect(api.getCellValue({ rowNode, colKey: 'result', useFormatter: false })).toBe(30);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'result', useFormatter: false })).toBe(30));
 
         updateCalculatedColumnDef(api, 'result', { calculatedExpression: '[revenue] + [cost]' });
-        await asyncSetTimeout(1);
-        expect(api.getCellValue({ rowNode, colKey: 'result', useFormatter: false })).toBe(13);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'result', useFormatter: false })).toBe(13));
     });
 
     test('calculated column columnDefs updates apply column-state changes (width, pinned, hide) to the live column', async () => {
@@ -2857,32 +2850,23 @@ describe('ag-grid calculated columns', () => {
                 { colId: 'profit', calculatedExpression: '[revenue] - [cost]', width: 100 },
             ],
         });
-        await asyncSetTimeout(1);
-
+        await waitFor(() => expect(api.getColumn('profit')!.getActualWidth()).toBe(100));
         const profit = api.getColumn('profit')!;
-        expect(profit.getActualWidth()).toBe(100);
         expect(profit.isPinned()).toBe(false);
         expect(profit.isVisible()).toBe(true);
 
         updateCalculatedColumnDef(api, 'profit', { width: 250, pinned: 'left', hide: true });
-        await asyncSetTimeout(1);
-
+        await waitFor(() => expect(api.getColumn('profit')!.getActualWidth()).toBe(250));
         const updatedProfit = api.getColumn('profit')!;
-        expect(updatedProfit.getActualWidth()).toBe(250);
         expect(updatedProfit.getPinned()).toBe('left');
         expect(updatedProfit.isVisible()).toBe(false);
 
         addCalculatedColumnDef(api, { colId: 'margin', calculatedExpression: '[revenue] - [cost]', width: 120 });
-        await asyncSetTimeout(1);
-
-        const margin = api.getColumn('margin')!;
-        expect(margin.getActualWidth()).toBe(120);
+        await waitFor(() => expect(api.getColumn('margin')!.getActualWidth()).toBe(120));
 
         updateCalculatedColumnDef(api, 'margin', { width: 260, pinned: 'right' });
-        await asyncSetTimeout(1);
-
+        await waitFor(() => expect(api.getColumn('margin')!.getActualWidth()).toBe(260));
         const updatedMargin = api.getColumn('margin')!;
-        expect(updatedMargin.getActualWidth()).toBe(260);
         expect(updatedMargin.getPinned()).toBe('right');
         await new GridColumns(
             api,
@@ -2926,23 +2910,26 @@ describe('ag-grid calculated columns', () => {
 
         addCalculatedColumnDef(api, { colId: 'bad', calculatedExpression: '[missing] + 1' });
         updateCalculatedColumnDef(api, 'profit', { calculatedExpression: '[missing] + 1' });
-        await asyncSetTimeout(1);
 
-        expect(api.getColumn('bad')).toBeTruthy();
-        expect(created).toHaveBeenCalledWith(
-            expect.objectContaining({
-                column: api.getColumn('bad'),
-                expression: '[missing] + 1',
-                source: 'api',
-            })
-        );
-        expect(changed).toHaveBeenCalledWith(
-            expect.objectContaining({
-                column: api.getColumn('profit'),
-                oldExpression: '[revenue] - [cost]',
-                expression: '[missing] + 1',
-                source: 'api',
-            })
+        await waitFor(() => {
+            expect(api.getColumn('bad')).toBeTruthy();
+            expect(created).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: api.getColumn('bad'),
+                    expression: '[missing] + 1',
+                    source: 'api',
+                })
+            );
+        });
+        await waitFor(() =>
+            expect(changed).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: api.getColumn('profit'),
+                    oldExpression: '[revenue] - [cost]',
+                    expression: '[missing] + 1',
+                    source: 'api',
+                })
+            )
         );
         await new GridRows(
             api,
@@ -2980,32 +2967,34 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'profit');
         await clickColumnMenuItem('Edit Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
 
         setExpression('[Revenue] * [Cost]');
         clickDialogButton('Apply');
-        await asyncSetTimeout(1);
 
-        expect(changed).toHaveBeenCalledWith(
-            expect.objectContaining({
-                column: api.getColumn('profit'),
-                oldExpression: '[revenue] - [cost]',
-                expression: '[revenue] * [cost]',
-                source: 'calculatedColumn',
-            })
+        await waitFor(() =>
+            expect(changed).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: api.getColumn('profit'),
+                    oldExpression: '[revenue] - [cost]',
+                    expression: '[revenue] * [cost]',
+                    source: 'calculatedColumn',
+                })
+            )
         );
 
         const removedColumn = api.getColumn('profit');
         showColumnMenu(api, 'profit');
         await clickColumnMenuItem('Remove Calculated Column');
-        await asyncSetTimeout(1);
 
-        expect(removed).toHaveBeenCalledWith(
-            expect.objectContaining({
-                column: removedColumn,
-                expression: '[revenue] * [cost]',
-                source: 'calculatedColumn',
-            })
+        await waitFor(() =>
+            expect(removed).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: removedColumn,
+                    expression: '[revenue] * [cost]',
+                    source: 'calculatedColumn',
+                })
+            )
         );
         await new GridRows(api, `dispatches calculated column UI update and remove events final state`).check(`
             ROOT id:ROOT_NODE_ID
@@ -3041,20 +3030,22 @@ describe('ag-grid calculated columns', () => {
             └── LEAF id:r1 revenue:10 cost:3 profit:7
         `);
 
-        await asyncSetTimeout(1);
+        // Flush the batched public-event queue after the initial setup above.
+        await asyncSetTimeout(0);
         expect(validationStateChanged).not.toHaveBeenCalled();
 
         api.updateGridOptions({
             columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue] - [cost]' }],
         });
-        await asyncSetTimeout(1);
 
-        expect(validationStateChanged).toHaveBeenCalledWith(
-            expect.objectContaining({
-                column: api.getColumn('profit'),
-                valid: false,
-                reason: 'unknownReference',
-            })
+        await waitFor(() =>
+            expect(validationStateChanged).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: api.getColumn('profit'),
+                    valid: false,
+                    reason: 'unknownReference',
+                })
+            )
         );
 
         validationStateChanged.mockClear();
@@ -3065,13 +3056,14 @@ describe('ag-grid calculated columns', () => {
                 { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
             ],
         });
-        await asyncSetTimeout(1);
 
-        expect(validationStateChanged).toHaveBeenCalledWith(
-            expect.objectContaining({
-                column: api.getColumn('profit'),
-                valid: true,
-            })
+        await waitFor(() =>
+            expect(validationStateChanged).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: api.getColumn('profit'),
+                    valid: true,
+                })
+            )
         );
         expect(validationStateChanged.mock.calls[0][0].reason).toBeUndefined();
         await new GridRows(
@@ -3091,7 +3083,8 @@ describe('ag-grid calculated columns', () => {
             onCalculatedColumnValidationStateChanged: validationStateChanged,
         });
 
-        await asyncSetTimeout(1);
+        // Flush the batched public-event queue so a missed dispatch would have landed by now.
+        await asyncSetTimeout(0);
         expect(validationStateChanged).not.toHaveBeenCalled();
     });
 
@@ -3172,13 +3165,13 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'revenue');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getCalculatedColumnDialog());
 
         getCalculatedColumnDialog()
             .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
             .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-        await asyncSetTimeout(1);
 
+        await waitFor(() => expect(document.querySelectorAll<HTMLElement>('.ag-list-item').length).toBeGreaterThan(0));
         const typeOptions = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).map((element) =>
             element.textContent?.trim()
         );
@@ -3210,13 +3203,13 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'revenue');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getCalculatedColumnDialog());
 
         getCalculatedColumnDialog()
             .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
             .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-        await asyncSetTimeout(1);
 
+        await waitFor(() => expect(document.querySelectorAll<HTMLElement>('.ag-list-item').length).toBeGreaterThan(0));
         const typeOptions = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).map((element) =>
             element.textContent?.trim()
         );
@@ -3237,7 +3230,7 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'revenue');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
 
         const dialog = getCalculatedColumnDialog();
         expect(getDialogButton('Columns')).toBeVisible();
@@ -3248,10 +3241,9 @@ describe('ag-grid calculated columns', () => {
         input.value = '[Rev';
         input.setSelectionRange(input.value.length, input.value.length);
         input.dispatchEvent(new Event('input', { bubbles: true }));
-        await asyncSetTimeout(1);
 
+        await waitFor(() => expect(getSuggestionLabels()).toEqual(expect.arrayContaining(['Revenue'])));
         expect(dialog).toBeTruthy();
-        expect(getSuggestionLabels()).toEqual(expect.arrayContaining(['Revenue']));
     });
 
     test.each([
@@ -3270,7 +3262,7 @@ describe('ag-grid calculated columns', () => {
 
             showColumnMenu(api, 'revenue');
             await clickColumnMenuItem('Add Calculated Column');
-            await asyncSetTimeout(1);
+            await waitFor(() => getExpressionInput());
 
             expect(getDialogButton('Columns')).toHaveClass('ag-hidden');
             expect(getDialogButton('Functions')).toHaveClass('ag-hidden');
@@ -3297,7 +3289,7 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'revenue');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
 
         setExpression('[Revenue] +');
         expect(getExpressionInput()).toHaveClass('invalid');
@@ -3322,9 +3314,8 @@ describe('ag-grid calculated columns', () => {
         expect(getExpressionInput()).not.toHaveClass('invalid');
         expect(getExpressionInput().validationMessage).toBe('');
         clickDialogButton('Apply');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getColumn('calculated_1')).toBeTruthy());
 
-        expect(api.getColumn('calculated_1')).toBeTruthy();
         await new GridRows(api, `dialog validates formula syntax and function names before apply final state`).check(
             `
                 ROOT id:ROOT_NODE_ID
@@ -3434,11 +3425,12 @@ describe('ag-grid calculated columns', () => {
                 },
             ],
         });
-        await asyncSetTimeout(1);
 
         const gridDiv = document.querySelector('#calculated-column-classes')!;
+        await waitFor(() =>
+            expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass('ag-calculated-column')
+        );
         expect(gridDiv.querySelector('[col-id="revenue"].ag-header-cell')).not.toHaveClass('ag-calculated-column');
-        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass('ag-calculated-column');
         expect(gridDiv.querySelector('[col-id="profit"].ag-floating-filter')).toHaveClass('ag-calculated-column');
         expect(gridDiv.querySelector('[row-index="0"] [col-id="revenue"]')).not.toHaveClass('ag-calculated-column');
         expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).toHaveClass('ag-calculated-column');
@@ -3454,9 +3446,8 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'profit');
         await clickColumnMenuItem('Edit Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(document.activeElement?.closest('.ag-dialog')).toBeTruthy());
 
-        expect(document.activeElement?.closest('.ag-dialog')).toBeTruthy();
         expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass(
             'ag-calculated-column-highlighted'
         );
@@ -3468,7 +3459,6 @@ describe('ag-grid calculated columns', () => {
         );
 
         clickDialogButton('Cancel');
-        await asyncSetTimeout(1);
 
         await waitFor(() => {
             expect(document.activeElement?.closest('[col-id="profit"].ag-header-cell')).toBeTruthy();
@@ -3493,11 +3483,10 @@ describe('ag-grid calculated columns', () => {
                 { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
             ],
         });
-        await asyncSetTimeout(1);
 
         showColumnMenu(api, 'profit');
         await clickColumnMenuItem('Edit Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
 
         const gridDiv = document.querySelector('#calculated-column-highlight-toggle')!;
         const header = () => gridDiv.querySelector('[col-id="profit"].ag-header-cell');
@@ -3509,13 +3498,11 @@ describe('ag-grid calculated columns', () => {
 
         // Suppressing it removes the highlight without closing the dialog.
         api.setGridOption('calculatedColumns', { suppressColumnHighlighting: true });
-        await asyncSetTimeout(1);
-        expect(header()).not.toHaveClass('ag-calculated-column-highlighted');
+        await waitFor(() => expect(header()).not.toHaveClass('ag-calculated-column-highlighted'));
         expect(cell()).not.toHaveClass('ag-calculated-column-highlighted');
 
         api.setGridOption('calculatedColumns', { suppressColumnHighlighting: false });
-        await asyncSetTimeout(1);
-        expect(header()).toHaveClass('ag-calculated-column-highlighted');
+        await waitFor(() => expect(header()).toHaveClass('ag-calculated-column-highlighted'));
         expect(cell()).toHaveClass('ag-calculated-column-highlighted');
     });
 
@@ -3534,11 +3521,10 @@ describe('ag-grid calculated columns', () => {
                 },
             ],
         });
-        await asyncSetTimeout(1);
 
         showColumnMenu(api, 'profit');
         await clickColumnMenuItem('Edit Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
 
         const gridDiv = document.querySelector('#calculated-column-highlight-disabled')!;
         expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
@@ -3555,15 +3541,16 @@ describe('ag-grid calculated columns', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        await asyncSetTimeout(1);
 
         showColumnMenu(api, 'revenue');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
 
         setExpression('[Revenue] - [Cost]');
         clickDialogButton('Apply');
-        await asyncSetTimeout(1);
+        await waitFor(() =>
+            expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBeTruthy()
+        );
 
         const gridDiv = document.querySelector('#calculated-column-add-no-highlight')!;
         expect(gridDiv.querySelector('[col-id="calculated_1"].ag-header-cell')).not.toHaveClass(
@@ -3593,16 +3580,17 @@ describe('ag-grid calculated columns', () => {
                 },
             ],
         });
-        await asyncSetTimeout(1);
 
         await openEditDialogViaMenu(api, 'profit');
         await openEditDialogViaMenu(api, 'margin');
 
         const gridDiv = document.querySelector('#calculated-column-multi-highlight')!;
-        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass(
-            'ag-calculated-column-highlighted'
+        await waitFor(() =>
+            expect(gridDiv.querySelector('[col-id="margin"].ag-header-cell')).toHaveClass(
+                'ag-calculated-column-highlighted'
+            )
         );
-        expect(gridDiv.querySelector('[col-id="margin"].ag-header-cell')).toHaveClass(
+        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass(
             'ag-calculated-column-highlighted'
         );
         expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).toHaveClass(
@@ -3618,10 +3606,11 @@ describe('ag-grid calculated columns', () => {
             (button) => button.textContent?.trim() === 'Cancel'
         )!;
         profitCancel.click();
-        await asyncSetTimeout(1);
 
-        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
-            'ag-calculated-column-highlighted'
+        await waitFor(() =>
+            expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
+                'ag-calculated-column-highlighted'
+            )
         );
         expect(gridDiv.querySelector('[col-id="margin"].ag-header-cell')).toHaveClass(
             'ag-calculated-column-highlighted'
@@ -3640,7 +3629,6 @@ describe('ag-grid calculated columns', () => {
                 { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
             ],
         });
-        await asyncSetTimeout(1);
 
         await openEditDialogViaMenu(api, 'profit');
         await openEditDialogViaMenu(api, 'profit');
@@ -3657,14 +3645,13 @@ describe('ag-grid calculated columns', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        await asyncSetTimeout(1);
 
         showColumnMenu(api, 'revenue');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getExpressionInput());
         showColumnMenu(api, 'cost');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(2));
 
         const dialogs = Array.from(document.querySelectorAll<HTMLElement>('.ag-calculated-column-form'));
         expect(dialogs).toHaveLength(2);
@@ -3672,7 +3659,7 @@ describe('ag-grid calculated columns', () => {
         dialogs[0]
             .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
             .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(document.querySelectorAll<HTMLElement>('.ag-list-item').length).toBeGreaterThan(0));
         const typeOption = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).find(
             (element) => element.textContent?.trim() === 'Text'
         );
@@ -3682,13 +3669,11 @@ describe('ag-grid calculated columns', () => {
         let closeButton = document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button');
         expect(closeButton).toBeTruthy();
         closeButton!.click();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1));
         closeButton = document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button');
         expect(closeButton).toBeTruthy();
         closeButton!.click();
-        await asyncSetTimeout(1);
-
-        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0);
+        await waitFor(() => expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0));
     });
 
     test('removing a live calculated column closes its open dialog', async () => {
@@ -3697,20 +3682,16 @@ describe('ag-grid calculated columns', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        await asyncSetTimeout(1);
 
         showColumnMenu(api, 'revenue');
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
-
-        expect(api.getColumn('calculated_1')).toBeTruthy();
+        await waitFor(() => expect(api.getColumn('calculated_1')).toBeTruthy());
         expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
 
         showColumnMenu(api, 'calculated_1');
         await clickColumnMenuItem('Remove Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getColumn('calculated_1')).toBeNull());
 
-        expect(api.getColumn('calculated_1')).toBeNull();
         expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0);
     });
 
@@ -3724,7 +3705,6 @@ describe('ag-grid calculated columns', () => {
                 { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
             ],
         });
-        await asyncSetTimeout(1);
 
         await openEditDialogViaMenu(api, 'profit');
 
@@ -3733,9 +3713,8 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'profit');
         await clickColumnMenuItem('Remove Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getColumn('profit')).toBeNull());
 
-        expect(api.getColumn('profit')).toBeNull();
         expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0);
     });
 
@@ -3748,7 +3727,6 @@ describe('ag-grid calculated columns', () => {
                 { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
             ],
         });
-        await asyncSetTimeout(1);
 
         await openEditDialogViaMenu(api, 'profit');
         expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
@@ -3756,9 +3734,8 @@ describe('ag-grid calculated columns', () => {
         // The developer removing the column destroys it, so the dialog editing it cannot stay open —
         // same contract as removing it through the header menu.
         removeColumnDef(api, 'profit');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getColumn('profit')).toBeNull());
 
-        expect(api.getColumn('profit')).toBeNull();
         expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0);
     });
 
@@ -4064,30 +4041,31 @@ describe('ag-grid calculated columns', () => {
                 },
             ],
         });
-        await asyncSetTimeout(1);
 
         showColumnMenu(api, 'country');
         await clickColumnMenuItem('Add Calculated Column');
         setExpression('"Foo"');
-        await asyncSetTimeout(40);
+        // Wait past the live-apply animation frame so the expression flush lands before the dialog closes.
+        await nextAnimationFrame();
 
         const closeButton = document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button');
         expect(closeButton).toBeTruthy();
         closeButton!.click();
         api.moveColumns(['calculated_1'], 2);
-        await asyncSetTimeout(1);
 
         const gridEl = getGridElement(api)!;
         const calculatedColumn = api.getColumn('calculated_1')!;
-        const calculatedCell = gridEl.querySelector<HTMLElement>('[row-index="0"] [col-id="calculated_1"]');
 
-        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
-            'athlete',
-            'age',
-            'calculated_1',
-            'country',
-            'year',
-        ]);
+        await waitFor(() =>
+            expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+                'athlete',
+                'age',
+                'calculated_1',
+                'country',
+                'year',
+            ])
+        );
+        const calculatedCell = gridEl.querySelector<HTMLElement>('[row-index="0"] [col-id="calculated_1"]');
         expect(calculatedCell).toBeTruthy();
         expect(calculatedCell!.style.left).toBe(`${calculatedColumn.getLeft()}px`);
         expect(calculatedCell!.textContent).toBe('Foo');
