@@ -10,7 +10,12 @@ export type StructuredSchemaFeature =
     | 'columnGroup'
     | 'pagination'
     | 'sideBar'
-    | 'focusedCell';
+    | 'focusedCell'
+    | 'cellSelection'
+    | 'rowSelection'
+    | 'rowPinning'
+    | 'rowGroupExpansion'
+    | 'ssrmRowGroupExpansion';
 
 export const STRUCTURED_SCHEMA_FEATURES: StructuredSchemaFeature[] = [
     'aggregation',
@@ -25,6 +30,11 @@ export const STRUCTURED_SCHEMA_FEATURES: StructuredSchemaFeature[] = [
     'pagination',
     'sideBar',
     'focusedCell',
+    'cellSelection',
+    'rowSelection',
+    'rowPinning',
+    'rowGroupExpansion',
+    'ssrmRowGroupExpansion',
 ];
 
 export type StructuredSchemaColumnParams = {

@@ -4,6 +4,8 @@ import {
     DateFilterModule,
     NumberFilterModule,
     PaginationModule,
+    PinnedRowModule,
+    RowSelectionModule,
     STRUCTURED_SCHEMA_FEATURES,
     TextFilterModule,
 } from 'ag-grid-community';
@@ -11,6 +13,7 @@ import {
     AdvancedFilterModule,
     AggregationModule,
     AiToolkitModule,
+    CellSelectionModule,
     ColumnsToolPanelModule,
     MultiFilterModule,
     PivotModule,
@@ -1482,6 +1485,168 @@ describe('getStructuredSchema - enterprise features', () => {
 
             const schema = toJSON(api.getStructuredSchema());
             expect(schema.properties.focusedCell).toBeUndefined();
+        });
+    });
+
+    describe('rowPinning feature', () => {
+        const gridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, AiToolkitModule, PinnedRowModule],
+        });
+        afterEach(() => gridsManager.reset());
+
+        test('includes top and bottom row id arrays when row pinning is enabled', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }],
+                rowData: [],
+                enableRowPinning: true,
+            });
+            await new GridRows(api, `includes rowPinning setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const rowPinning = schema.properties.rowPinning;
+            expect(rowPinning).toBeDefined();
+            // Row ids are data-dependent and unbounded, so they must not be enumerated.
+            expect(rowPinning.properties.top.items.type).toBe('string');
+            expect(rowPinning.properties.top.items.enum).toBeUndefined();
+            expect(rowPinning.properties.bottom.items.type).toBe('string');
+        });
+
+        test('omits rowPinning when the module is registered but pinning is off', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }],
+                rowData: [],
+            });
+            await new GridRows(api, `omits rowPinning when pinning is off setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            expect(schema.properties.rowPinning).toBeUndefined();
+        });
+    });
+
+    describe('rowSelection feature', () => {
+        const gridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, AiToolkitModule, RowSelectionModule],
+        });
+        afterEach(() => gridsManager.reset());
+
+        test('is a plain row id array for the client-side row model', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }],
+                rowData: [],
+                rowSelection: { mode: 'multiRow' },
+            });
+            await new GridRows(api, `includes rowSelection for csrm setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const rowSelection = schema.properties.rowSelection;
+            expect(rowSelection).toBeDefined();
+            expect(rowSelection.type).toEqual(['array', 'null']);
+            expect(rowSelection.items.type).toBe('string');
+            expect(rowSelection.items.enum).toBeUndefined();
+        });
+
+        test('omits rowSelection when the module is registered but selection is off', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }],
+                rowData: [],
+            });
+            await new GridRows(api, `omits rowSelection when selection is off setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            expect(schema.properties.rowSelection).toBeUndefined();
+        });
+    });
+
+    describe('rowGroupExpansion feature', () => {
+        const gridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, AiToolkitModule, RowGroupingModule, ServerSideRowModelModule],
+        });
+        afterEach(() => gridsManager.reset());
+
+        test('includes expanded group row ids, and omits the ssrm variant', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'country', rowGroup: true }, { field: 'gold' }],
+                rowData: [],
+            });
+            await new GridRows(api, `includes rowGroupExpansion setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const expansion = schema.properties.rowGroupExpansion;
+            expect(expansion).toBeDefined();
+            expect(expansion.properties.expandedRowGroupIds.items.type).toBe('string');
+            expect(expansion.properties.expandedRowGroupIds.items.enum).toBeUndefined();
+            expect(schema.properties.ssrmRowGroupExpansion).toBeUndefined();
+        });
+
+        test('swaps to the ssrm bulk shape when expand all affects all rows', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'country', rowGroup: true }, { field: 'gold' }],
+                rowModelType: 'serverSide',
+                ssrmExpandAllAffectsAllRows: true,
+                getRowId: ({ data }) => data.country,
+                serverSideDatasource: {
+                    getRows: (params) => params.success({ rowData: [], rowCount: 0 }),
+                },
+            });
+
+            const schema = toJSON(api.getStructuredSchema());
+            expect(schema.properties.rowGroupExpansion).toBeUndefined();
+
+            const ssrmExpansion = schema.properties.ssrmRowGroupExpansion;
+            expect(ssrmExpansion).toBeDefined();
+            expect(ssrmExpansion.properties.expandAll.type).toEqual(['boolean', 'null']);
+            expect(ssrmExpansion.properties.invertedRowGroupIds.items.type).toBe('string');
+        });
+    });
+
+    describe('cellSelection feature', () => {
+        const gridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, AiToolkitModule, CellSelectionModule],
+        });
+        afterEach(() => gridsManager.reset());
+
+        test('includes cell ranges keyed by column id and row position', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }, { field: 'gold' }],
+                rowData: [],
+                cellSelection: true,
+            });
+            await new GridRows(api, `includes cellSelection setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const cellSelection = schema.properties.cellSelection;
+            expect(cellSelection).toBeDefined();
+
+            const range = cellSelection.properties.cellRanges.items;
+            expect(range.properties.colIds.items.$ref).toBe('#/$defs/allColumnIds');
+            expect(range.properties.startColId.$ref).toBe('#/$defs/allColumnIds');
+            expect(range.properties.startRow.properties.rowIndex.minimum).toBe(0);
+            expect(range.properties.endRow.properties.rowPinned.type).toEqual(['string', 'null']);
+        });
+
+        test('omits cellSelection when cell selection is not enabled', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }],
+                rowData: [],
+            });
+            await new GridRows(api, `omits cellSelection setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            expect(schema.properties.cellSelection).toBeUndefined();
         });
     });
 });

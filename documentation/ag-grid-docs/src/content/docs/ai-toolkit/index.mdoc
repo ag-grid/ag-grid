@@ -41,8 +41,14 @@ The schema is made up of a series of "features", each representing a different a
 - [Pagination](./row-pagination/)
 - [Side Bar](./side-bar/)
 - [Focused Cell](./keyboard-navigation/)
+- [Cell Selection](./cell-selection/)
+- [Row Selection](./row-selection/)
+- [Row Pinning](./row-pinning/)
+- [Expanded Row Groups](./grouping-opening-groups/)
 
-Each feature is only included when the grid can apply it. Pagination is omitted unless paging is enabled, the side bar unless one is configured, and the focused cell for row models that cannot restore focus by row index.
+Each feature is only included when the grid can apply it. Pagination is omitted unless paging is enabled, the side bar unless one is configured, and the focused cell for row models that cannot restore focus by row index. Row selection is a list of row IDs for the Client-Side Row Model, and a select-all flag with exceptions for the Server-Side Row Model.
+
+Features keyed on rows identify them by row ID, which the schema cannot enumerate. Describe the rows in the prompt, or supply the IDs alongside it, so the model has something to work from.
 
 ### Architecture
 

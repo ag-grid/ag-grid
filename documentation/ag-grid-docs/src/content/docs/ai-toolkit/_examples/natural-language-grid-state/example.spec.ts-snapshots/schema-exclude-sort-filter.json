@@ -8,7 +8,8 @@
     "columnSizing",
     "rowGroup",
     "sideBar",
-    "focusedCell"
+    "focusedCell",
+    "rowGroupExpansion"
   ],
   "additionalProperties": false,
   "properties": {
@@ -547,6 +548,27 @@
             "top",
             "bottom"
           ]
+        }
+      }
+    },
+    "rowGroupExpansion": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Expanded row groups for the grid. Omit a group to collapse it.",
+      "required": [
+        "expandedRowGroupIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "expandedRowGroupIds": {
+          "type": "array",
+          "description": "Row IDs of the groups to expand",
+          "items": {
+            "type": "string",
+            "description": "Row ID of a group row"
+          }
         }
       }
     }

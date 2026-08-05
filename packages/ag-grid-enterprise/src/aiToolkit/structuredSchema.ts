@@ -2,6 +2,7 @@ import type { BeanCollection, StructuredSchemaFeature, StructuredSchemaParams } 
 import { STRUCTURED_SCHEMA_FEATURES } from 'ag-grid-community';
 
 import { buildAggregationFeatureSchema } from './features/aggregationFeatureSchema';
+import { buildCellSelectionFeatureSchema } from './features/cellSelectionFeatureSchema';
 import { buildColumnGroupFeatureSchema } from './features/columnGroupFeatureSchema';
 import { buildColumnSizingFeatureSchema } from './features/columnSizingFeatureSchema';
 import { buildColumnVisibilityFeatureSchema } from './features/columnVisibilityFeatureSchema';
@@ -9,10 +10,14 @@ import { buildFilterFeatureSchema } from './features/filterFeatureSchema';
 import { buildFocusedCellFeatureSchema } from './features/focusedCellFeatureSchema';
 import { buildPaginationFeatureSchema } from './features/paginationFeatureSchema';
 import { buildPivotFeatureSchema } from './features/pivotFeatureSchema';
+import { buildRowGroupExpansionFeatureSchema } from './features/rowGroupExpansionFeatureSchema';
 import { buildRowGroupFeatureSchema } from './features/rowGroupFeatureSchema';
+import { buildRowPinningFeatureSchema } from './features/rowPinningFeatureSchema';
+import { buildRowSelectionFeatureSchema } from './features/rowSelectionFeatureSchema';
 import { buildShowValuesAsFeatureSchema } from './features/showValuesAsFeatureSchema';
 import { buildSideBarFeatureSchema } from './features/sideBarFeatureSchema';
 import { buildSortFeatureSchema } from './features/sortFeatureSchema';
+import { buildSsrmRowGroupExpansionFeatureSchema } from './features/ssrmRowGroupExpansionFeatureSchema';
 import type { SchemaBuilder } from './schemaBuilder';
 import { s } from './schemaBuilder';
 import type { JSONSchema } from './schemaTypes';
@@ -33,6 +38,11 @@ const StructuredSchemaBuilderMap: Record<
     pagination: buildPaginationFeatureSchema,
     sideBar: buildSideBarFeatureSchema,
     focusedCell: buildFocusedCellFeatureSchema,
+    cellSelection: buildCellSelectionFeatureSchema,
+    rowSelection: buildRowSelectionFeatureSchema,
+    rowPinning: buildRowPinningFeatureSchema,
+    rowGroupExpansion: buildRowGroupExpansionFeatureSchema,
+    ssrmRowGroupExpansion: buildSsrmRowGroupExpansionFeatureSchema,
 } as const;
 
 export function getStructuredSchema(beans: BeanCollection, params?: StructuredSchemaParams): JSONSchema | undefined {
