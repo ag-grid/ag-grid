@@ -3,7 +3,6 @@
     "project": ["./src/**"],
     "ignore": [
         "./src/typings.ts",
-        "./src/pdfExport/**",
         "./src/charts/chartComp/menu/settings/miniCharts/**",
         "./src/excelExport/**/*.ts",
         "./src/main-umd-styles.ts",

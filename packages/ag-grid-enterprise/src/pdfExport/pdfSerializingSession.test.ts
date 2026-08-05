@@ -3,6 +3,7 @@ import type {
     CellClassParams,
     CellStyle,
     PdfCellHyperlinkCallbackParams,
+    PdfCellImageCallbackParams,
     PdfCustomContent,
     PdfStyleCallbackParams,
     ProcessCellForExportParams,
@@ -23,7 +24,9 @@ const createColumn = (
         __value: value,
         getColSpan: () => colSpan,
         getColDef: () => ({ cellStyle, wrapText, wrapHeaderText }),
+        getActualWidth: () => 100,
         isRowGroupDisplayed: () => false,
+        colKind: 'user',
     }) as any;
 
 const createGridOptionsService = (treeData = false) => ({
@@ -136,6 +139,54 @@ describe('PdfSerializingSession', () => {
             column,
         });
         expect(getRows(session)[0].cells[0].hyperlink).toBe('https://example.com/docs');
+    });
+
+    it('adds an image and replacement text to an exported body cell', () => {
+        let callbackParams: PdfCellImageCallbackParams | undefined;
+        const column = createColumn('Country', 1);
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {},
+            gos: createGridOptionsService(),
+            skipGridStyles: true,
+            addImageToCell: (params: PdfCellImageCallbackParams) => {
+                callbackParams = params;
+                return {
+                    image: {
+                        id: 'uk',
+                        base64: 'image-data',
+                        imageType: 'png',
+                        width: 18,
+                        height: 12,
+                    },
+                    value: 'United Kingdom',
+                };
+            },
+        } as any);
+        const node = { data: { countryCode: 'gb' }, group: false, level: 0, rowIndex: 0 } as RowNode;
+        (session as any).extractRowCellValue = () => ({ value: 'GB' });
+        (session as any).isRowGroupCell = () => false;
+
+        session.prepare([column]);
+        session.onNewBodyRow(node).onColumn(column, 0, node);
+
+        expect(callbackParams).toMatchObject({
+            value: 'GB',
+            accumulatedRowIndex: 1,
+            node,
+            column,
+        });
+        expect(getRows(session)[0].cells[0]).toMatchObject({
+            value: 'United Kingdom',
+            image: {
+                id: 'uk',
+                base64: 'image-data',
+                imageType: 'png',
+                width: 18,
+                height: 12,
+            },
+        });
     });
 
     it('resolves cellStyle with the original value before processing the exported value', () => {
@@ -307,6 +358,34 @@ describe('PdfSerializingSession', () => {
             elementType: 'header',
             sourceColumn: column,
         });
+    });
+
+    it('renders columns in right-to-left order for an RTL export', () => {
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {},
+            gos: createGridOptionsService(),
+            direction: 'rtl',
+            skipGridStyles: true,
+        } as any);
+        const columns = [createColumn('First', 1), createColumn('Second', 1), createColumn('Third', 1)];
+        (session as any).extractHeaderValue = (column: AgColumn) => (column as any).__value;
+
+        session.prepare(columns);
+        const accumulator = session.onNewHeaderRow();
+        for (const [index, column] of columns.entries()) {
+            accumulator.onColumn(column, index);
+        }
+
+        const pdf = session.parse();
+        const firstPosition = pdf.indexOf('(First) Tj');
+        const secondPosition = pdf.indexOf('(Second) Tj');
+        const thirdPosition = pdf.indexOf('(Third) Tj');
+
+        expect(thirdPosition).toBeGreaterThan(-1);
+        expect(thirdPosition).toBeLessThan(secondPosition);
+        expect(secondPosition).toBeLessThan(firstPosition);
     });
 
     it('maps column and header wrapping into automatic PDF styles', () => {

@@ -22,6 +22,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     Menu: 1,
     MultiFilter: 1,
     NewFiltersToolPanel: 1,
+    PdfExport: 1,
     Pivot: 1,
     RangeSelection: 1,
     RichSelect: 1,

@@ -210,6 +210,13 @@
         "viewport": "data on screen"
     },
     {
+        "feature": "[PDF Export](./pdf-export)",
+        "clientSide": true,
+        "infinite": "data on screen",
+        "serverSide": "data on screen",
+        "viewport": "data on screen"
+    },
+    {
         "feature": "[Clipboard Copy & Paste](./clipboard)",
         "clientSide": true,
         "infinite": true,

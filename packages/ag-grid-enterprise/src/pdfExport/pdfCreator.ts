@@ -4,13 +4,19 @@ import type { IPdfCreator, NamedBean, PdfCustomContent, PdfExportParams } from '
 import { BaseCreator } from 'ag-grid-community';
 
 import { PdfSerializingSession } from './pdfSerializingSession';
+import { resolvePdfCellStyleColors } from './utils/colors';
 import {
     getThemePdfColors,
-    mergeDocumentTitleStyle,
-    resolveDocumentTitleStyleColors,
+    mergeDocumentHeadingStyle,
+    mergeHeaderFooterConfig,
+    mergeWatermark,
+    resolveDocumentHeadingStyleColors,
+    resolveHeaderFooterConfigColors,
     resolvePdfColors,
     resolveThemeColorValue,
+    resolveWatermarkColors,
 } from './utils/pdfStyleResolver';
+import { mergePdfCellStyles } from './utils/styles';
 
 /**
  * Orchestrates PDF export by serialising grid data and downloading a file.
@@ -28,9 +34,10 @@ export class PdfCreator
      * @returns The merged params with resolved theme styles applied.
      */
     protected getMergedParams(params?: PdfExportParams): PdfExportParams {
-        const baseParams = {} as PdfExportParams;
+        const baseParams = this.gos.get('defaultPdfExportParams');
         const resolveColor = this.getResolveColorValueFn();
         const merged: PdfExportParams = { ...(baseParams ?? {}), ...(params ?? {}) };
+        merged.direction ??= this.gos.get('enableRtl') ? 'rtl' : 'ltr';
         merged.colors = resolvePdfColors(
             getThemePdfColors(this.beans.eRootDiv),
             baseParams?.colors,
@@ -40,8 +47,28 @@ export class PdfCreator
         if (baseParams?.page && params?.page) {
             merged.page = { ...baseParams.page, ...params.page };
         }
-        const mergedTitleStyle = mergeDocumentTitleStyle(baseParams?.documentTitleStyle, params?.documentTitleStyle);
-        merged.documentTitleStyle = resolveDocumentTitleStyleColors(mergedTitleStyle, resolveColor);
+        merged.defaultCellStyle = resolvePdfCellStyleColors(
+            mergePdfCellStyles(baseParams?.defaultCellStyle, params?.defaultCellStyle),
+            resolveColor
+        );
+        merged.defaultHeaderStyle = resolvePdfCellStyleColors(
+            mergePdfCellStyles(baseParams?.defaultHeaderStyle, params?.defaultHeaderStyle),
+            resolveColor
+        );
+        const mergedTitleStyle = mergeDocumentHeadingStyle(baseParams?.documentTitleStyle, params?.documentTitleStyle);
+        merged.documentTitleStyle = resolveDocumentHeadingStyleColors(mergedTitleStyle, resolveColor);
+        const mergedSubtitleStyle = mergeDocumentHeadingStyle(
+            baseParams?.documentSubtitleStyle,
+            params?.documentSubtitleStyle
+        );
+        merged.documentSubtitleStyle = resolveDocumentHeadingStyleColors(mergedSubtitleStyle, resolveColor);
+        const mergedHeaderFooterConfig = mergeHeaderFooterConfig(
+            baseParams?.headerFooterConfig,
+            params?.headerFooterConfig
+        );
+        merged.headerFooterConfig = resolveHeaderFooterConfigColors(mergedHeaderFooterConfig, resolveColor);
+        const mergedWatermark = mergeWatermark(baseParams?.watermark, params?.watermark);
+        merged.watermark = resolveWatermarkColors(mergedWatermark, resolveColor);
         return merged;
     }
 
@@ -128,7 +155,7 @@ export class PdfCreator
      * @returns True when export is disabled, otherwise false.
      */
     public isExportSuppressed(): boolean {
-        return true;
+        return this.gos.get('suppressPdfExport');
     }
 
     private getResolveColorValueFn(): (value?: string) => string | undefined {

@@ -45,3 +45,21 @@ Custom content uses the master table's exported column layout. Build a compact d
 The example below exports a heading, column headers and all call records below each master account row. The duration formatting used by the detail grid is reproduced when the PDF content is created.
 
 {% gridExampleRunner title="PDF Export - Master Detail" name="pdf-export-master-detail" exampleHeight=550 /%}
+
+## API
+
+### Export Options
+
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["getCustomContentBelowRow"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
+
+### PdfCell
+
+{% interfaceDocumentation interfaceName="PdfCell" overrideSrc="pdf-export/pdf.json" /%}
+
+### PdfCellData
+
+{% interfaceDocumentation interfaceName="PdfCellData" overrideSrc="pdf-export/pdf.json" /%}
+
+### ProcessRowGroupForExportParams
+
+{% interfaceDocumentation interfaceName="ProcessRowGroupForExportParams" /%}

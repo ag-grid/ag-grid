@@ -10,6 +10,7 @@ import {
 } from './utils/document/layout';
 import type { LayoutOptions } from './utils/document/measurement';
 import { getAutoColumnWidths, measureRow } from './utils/document/measurement';
+import { PdfImageRegistry } from './utils/imageRegistry';
 import { resolvePdfStyleColors } from './utils/pdfColor';
 
 const stubColumn = (width: number, colKind: AgColumn['colKind'] = 'user'): AgColumn =>
@@ -21,6 +22,9 @@ const createRows = (): PdfRow[] => [
 ];
 
 const countOccurrences = (value: string, search: string): number => value.split(search).length - 1;
+
+const redPixelPng =
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAAAAAAAAAAEElEQVR4AQEFAPr/AP8gEIAFAQGwAAAAAAAAAABJRU5EAAAAAA==';
 
 const assertRowRectanglesRespectBottomMargin = (pdf: string, bottomMargin: number): void => {
     const rectanglePattern = /(?:^|\n)-?\d+(?:\.\d+)? (-?\d+(?:\.\d+)?) \d+(?:\.\d+)? \d+(?:\.\d+)? re S/g;
@@ -171,6 +175,109 @@ describe('createPdfDocument', () => {
         expect(pdf).toContain('/Type /Page');
     });
 
+    it('embeds and renders a PNG image in a body cell', () => {
+        const rows: PdfRow[] = [
+            {
+                type: 'BODY',
+                cells: [
+                    {
+                        value: 'United Kingdom',
+                        image: {
+                            id: 'flag',
+                            base64: redPixelPng,
+                            imageType: 'png',
+                            width: 18,
+                            height: 12,
+                            altText: 'United Kingdom flag',
+                        },
+                    },
+                ],
+            },
+        ];
+
+        const pdf = createPdfDocument(rows, [stubColumn(140)], { columnWidth: 140 });
+
+        expect(pdf).toContain('/XObject << /Im1 ');
+        expect(pdf).toContain('/Subtype /Image');
+        expect(pdf).toContain('/SMask');
+        expect(pdf).toContain('/Im1 Do');
+        expect(pdf).toContain(
+            '/ActualText <FEFF0055006E00690074006500640020004B0069006E00670064006F006D00200066006C00610067>'
+        );
+    });
+
+    it('resolves image placement once from the full cell text direction', () => {
+        const layout: LayoutOptions = {
+            columnCount: 1,
+            columnWidths: [140],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+            imageRegistry: new PdfImageRegistry(),
+        };
+        const image = { id: 'flag', base64: redPixelPng, imageType: 'png' as const, width: 12, height: 12 };
+        const rtlRow: PdfRow = { type: 'BODY', cells: [{ value: 'שלום עולם', image }] };
+        const ltrRow: PdfRow = { type: 'BODY', cells: [{ value: 'Hello world', image }] };
+
+        const rtlCell = measureRow(rtlRow, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0).cells[0];
+        const ltrCell = measureRow(ltrRow, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0).cells[0];
+
+        expect(rtlCell.imageOnRight).toBe(true);
+        expect(ltrCell.imageOnRight).toBe(false);
+    });
+
+    it('clamps page furniture bands so table content keeps at least half the printable page', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            page: { size: { width: 200, height: 120 }, margin: 10 },
+            headerFooterConfig: {
+                all: {
+                    header: [
+                        {
+                            image: { id: 'logo', base64: redPixelPng, imageType: 'png', width: 10, height: 500 },
+                            position: 'Left',
+                        },
+                    ],
+                },
+            },
+        });
+
+        expect(countOccurrences(pdf, '(Value) Tj')).toBe(1);
+        assertRowRectanglesRespectBottomMargin(pdf, 10);
+    });
+
+    it('deduplicates images with the same id across cells and page headers', () => {
+        const image = {
+            id: 'company-logo',
+            base64: redPixelPng,
+            imageType: 'png' as const,
+            width: 24,
+            height: 12,
+        };
+        const rows: PdfRow[] = [
+            {
+                type: 'BODY',
+                cells: [
+                    { value: 'First', image },
+                    { value: 'Second', image },
+                ],
+            },
+        ];
+
+        const pdf = createPdfDocument(rows, [stubColumn(100), stubColumn(100)], {
+            headerFooterConfig: {
+                all: {
+                    header: [{ image, position: 'Left' }],
+                },
+            },
+        });
+
+        expect(pdf).toContain('/XObject << /Im1 ');
+        expect(pdf).not.toContain('/Im2 ');
+        expect(countOccurrences(pdf, '/Im1 Do')).toBe(3);
+    });
+
     it('adds URI annotations for linked cell text', () => {
         const rows: PdfRow[] = [
             {
@@ -256,7 +363,10 @@ describe('createPdfDocument', () => {
                 cells: [{ value: 'First line\nSecond line' }],
             },
         ];
-        const pdf = createPdfDocument(rows, [stubColumn(100)], { columnWidth: 100, wrapText: true });
+        const pdf = createPdfDocument(rows, [stubColumn(100)], {
+            columnWidth: 100,
+            defaultCellStyle: { wrapText: true },
+        });
         const layout: LayoutOptions = {
             columnCount: 1,
             columnWidths: [100],
@@ -265,7 +375,7 @@ describe('createPdfDocument', () => {
             fontSize: 10,
             headerFontSize: 11,
             cellPadding: 4,
-            wrapText: true,
+            defaultCellStyle: { wrapText: true },
         };
         const rowData = measureRow(rows[0], layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
 
@@ -347,6 +457,28 @@ describe('createPdfDocument', () => {
         expect(measuredRow.cells[1].lines.length).toBeGreaterThan(1);
     });
 
+    it('allows a cell direction to override the export direction', () => {
+        const row: PdfRow = {
+            type: 'BODY',
+            cells: [{ value: 'Inherited' }, { value: 'Detected', style: { direction: 'auto' } }],
+        };
+        const layout: LayoutOptions = {
+            columnCount: 2,
+            columnWidths: [100, 100],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+            direction: 'rtl',
+        };
+
+        const measuredRow = measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
+
+        expect(measuredRow.cells[0].style.direction).toBe('rtl');
+        expect(measuredRow.cells[1].style.direction).toBe('auto');
+    });
+
     it('treats explicit row height as a clipping constraint', () => {
         const rows: PdfRow[] = [
             {
@@ -356,7 +488,7 @@ describe('createPdfDocument', () => {
         ];
         const pdf = createPdfDocument(rows, [stubColumn(100)], {
             columnWidth: 100,
-            wrapText: true,
+            defaultCellStyle: { wrapText: true },
             rowHeight: 28,
         });
 
@@ -434,6 +566,117 @@ describe('createPdfDocument', () => {
         expect(pdf).toContain('/Title (PDF Metadata Title)');
     });
 
+    it('renders a document subtitle below the title', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            documentTitle: 'Quarterly Results',
+            documentSubtitle: 'Prepared for the board',
+        });
+
+        expect(pdf).toContain('(Quarterly Results) Tj');
+        expect(pdf).toContain('(Prepared for the board) Tj');
+        expect(pdf.indexOf('(Quarterly Results) Tj')).toBeLessThan(pdf.indexOf('(Prepared for the board) Tj'));
+    });
+
+    it('renders headings on a separate cover page', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            coverPage: true,
+            documentTitle: 'Quarterly Results',
+            documentSubtitle: 'Prepared for the board',
+        });
+
+        expect(countOccurrences(pdf, '/Type /Page /Parent')).toBe(2);
+        expect(countOccurrences(pdf, '(Quarterly Results) Tj')).toBe(1);
+        expect(countOccurrences(pdf, '(Prepared for the board) Tj')).toBe(1);
+        expect(countOccurrences(pdf, '(Header) Tj')).toBe(1);
+    });
+
+    it('renders page-specific headers, footers, and placeholders', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            coverPage: true,
+            documentTitle: 'Report',
+            headerFooterConfig: {
+                all: {
+                    header: [{ value: 'Standard header', position: 'Center' }],
+                    footer: [{ value: 'Page &[Page] of &[Pages]', position: 'Right' }],
+                },
+                first: {
+                    header: [{ value: 'Cover header', position: 'Center' }],
+                    footer: [{ value: 'Page &[Page] of &[Pages]', position: 'Right' }],
+                },
+                even: {
+                    header: [{ value: 'Even header', position: 'Center' }],
+                    footer: [{ value: '&[Date] &[Time]', position: 'Left' }],
+                },
+            },
+        });
+
+        expect(countOccurrences(pdf, '/Type /Page /Parent')).toBe(2);
+        expect(pdf).toContain('(Cover header) Tj');
+        expect(pdf).toContain('(Even header) Tj');
+        expect(pdf).not.toContain('(Standard header) Tj');
+        expect(pdf).toContain('(Page 1 of 2) Tj');
+        expect(pdf).not.toContain('&[Date]');
+        expect(pdf).not.toContain('&[Time]');
+    });
+
+    it('renders a translucent watermark across page content', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            watermark: { text: 'DRAFT' },
+        });
+
+        expect(pdf).toContain('/Type /ExtGState /ca 0.12 /CA 0.12 /BM /Normal');
+        expect(pdf).toContain('/ExtGState << /GSWatermark');
+        expect(pdf).toContain('/Artifact BMC');
+        expect(pdf).toContain('/GSWatermark gs');
+        expect(pdf).toContain('(DRAFT) Tj');
+        expect(pdf).toContain('0.71 -0.71 0.71 0.71');
+        expect(pdf.indexOf('(DRAFT) Tj')).toBeGreaterThan(pdf.indexOf('(Header) Tj'));
+    });
+
+    it('does not create a transparency resource for opaque watermarks', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            watermark: { text: 'APPROVED', opacity: 1 },
+        });
+
+        expect(pdf).toContain('(APPROVED) Tj');
+        expect(pdf).not.toContain('/Type /ExtGState');
+        expect(pdf).not.toContain('/GSWatermark gs');
+    });
+
+    it('renders watermarks only on the selected pages', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            coverPage: true,
+            documentTitle: 'Report',
+            watermark: { text: 'DRAFT', pages: 'even' },
+        });
+
+        expect(countOccurrences(pdf, '/Type /Page /Parent')).toBe(2);
+        expect(countOccurrences(pdf, '(DRAFT) Tj')).toBe(1);
+    });
+
+    it('omits fully transparent watermarks', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            watermark: { text: 'DRAFT', opacity: 0 },
+        });
+
+        expect(pdf).not.toContain('(DRAFT) Tj');
+        expect(pdf).not.toContain('/Type /ExtGState');
+    });
+
+    it('reserves footer space before rendering table rows', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(80)], {
+            page: { size: { width: 120, height: 100 }, margin: 10 },
+            columnWidth: 80,
+            headerFooterConfig: {
+                all: {
+                    footer: [{ value: 'Page &[Page]' }],
+                },
+            },
+        });
+
+        assertRowRectanglesRespectBottomMargin(pdf, 27);
+    });
+
     it('preserves explicit title line breaks without enabling wrapping', () => {
         const pdf = createPdfDocument([], [], {
             documentTitle: 'First line\nSecond line',
@@ -442,6 +685,18 @@ describe('createPdfDocument', () => {
 
         expect(pdf).toMatch(/Tm \(First line\) Tj/);
         expect(pdf).toMatch(/Tm \(Second line\) Tj/);
+    });
+
+    it('does not apply default cell text constraints to document headings', () => {
+        const pdf = createPdfDocument([], [], {
+            documentTitle: 'First line\nSecond line\nThird line',
+            documentTitleStyle: { preserveLineBreaks: true },
+            defaultCellStyle: { maxLines: 1, overflow: 'clip', lineHeight: 4 },
+        });
+
+        expect(pdf).toMatch(/Tm \(First line\) Tj/);
+        expect(pdf).toMatch(/Tm \(Second line\) Tj/);
+        expect(pdf).toMatch(/Tm \(Third line\) Tj/);
     });
 
     it('constrains a wrapped document title to the printable page height', () => {
@@ -475,8 +730,8 @@ describe('createPdfDocument', () => {
         ] as unknown as PdfRow[];
         const columns = [stubColumn(100)];
         const params = {
-            fontFamily: 'Comic Sans MS',
-            headerFontFamily: 'Papyrus',
+            defaultCellStyle: { fontFamily: 'Comic Sans MS' },
+            defaultHeaderStyle: { fontFamily: 'Papyrus' },
             documentTitle: 'Report',
             documentTitleStyle: { fontFamily: 'Wingdings' },
         } as unknown as PdfExportParams;
@@ -490,6 +745,31 @@ describe('createPdfDocument', () => {
         expect(pdf).not.toContain('Comic Sans MS');
         expect(pdf).not.toContain('Papyrus');
         expect(pdf).not.toContain('Wingdings');
+    });
+
+    it('applies default cell styles to body cells and inherits them for headers', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            defaultCellStyle: { fontFamily: 'Times-Roman', fontSize: 9, backgroundColor: '#112233' },
+        });
+
+        expect(pdf).toContain('/BaseFont /Times-Roman');
+        // headers inherit the body family and keep the derived bold variant.
+        expect(pdf).toContain('/BaseFont /Times-Bold');
+        // headers inherit the body font size, so both rows render at 9 points.
+        expect(countOccurrences(pdf, ' 9 Tf')).toBe(2);
+        expect(pdf).toContain('0.067 0.133 0.200 rg');
+    });
+
+    it('lets default header styles override inherited cell defaults', () => {
+        const pdf = createPdfDocument(createRows(), [stubColumn(100)], {
+            defaultCellStyle: { fontSize: 9 },
+            defaultHeaderStyle: { fontSize: 14, fontWeight: 'normal' },
+        });
+
+        expect(pdf).toContain(' 9 Tf');
+        expect(pdf).toContain(' 14 Tf');
+        // an explicit normal weight suppresses the derived bold header variant.
+        expect(pdf).not.toContain('/BaseFont /Helvetica-Bold');
     });
 
     it('applies bold weight to the inherited font family', () => {
@@ -510,8 +790,8 @@ describe('createPdfDocument', () => {
 
         const rowRenderData = measureRow(row, layout, 'Times-Roman', 'Times-Bold', resolvePdfStyleColors(), 0);
         const pdf = createPdfDocument([row], [stubColumn(100)], {
-            fontFamily: 'Times-Roman',
-            headerFontFamily: 'Times-Roman',
+            defaultCellStyle: { fontFamily: 'Times-Roman' },
+            defaultHeaderStyle: { fontFamily: 'Times-Roman' },
         });
 
         expect(rowRenderData.defaultCellStyle.fontFamily).toBe('Times-Bold');
@@ -522,9 +802,8 @@ describe('createPdfDocument', () => {
     it('does not emit invalid PDF tokens for malformed runtime values', () => {
         const params = {
             page: { size: { width: Number.NaN, height: Number.POSITIVE_INFINITY }, margin: Number.NaN },
-            fontSize: Number.POSITIVE_INFINITY,
-            headerFontSize: Number.NaN,
-            cellPadding: Number.NEGATIVE_INFINITY,
+            defaultCellStyle: { fontSize: Number.POSITIVE_INFINITY, padding: Number.NEGATIVE_INFINITY },
+            defaultHeaderStyle: { fontSize: Number.NaN },
             rowHeight: Number.NaN,
             colors: {
                 headerBackgroundColor: '#ggg',
@@ -697,6 +976,29 @@ describe('createPdfDocument', () => {
         const rowRenderData = measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
 
         expect(rowRenderData.cells[0].style.padding.left).toBe(28);
+    });
+
+    it('indents RTL row-group cells from the right edge', () => {
+        const row: PdfRow = {
+            type: 'BODY',
+            cells: [{ value: 'مجموعة متداخلة', elementType: 'rowgroup', groupLevel: 2 }],
+        };
+        const layout: LayoutOptions = {
+            columnCount: 1,
+            columnWidths: [200],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+            rowGroupIndentSize: 12,
+            direction: 'rtl',
+        };
+
+        const rowRenderData = measureRow(row, layout, 'Helvetica', 'Helvetica-Bold', resolvePdfStyleColors(), 0);
+
+        expect(rowRenderData.cells[0].style.padding.left).toBe(4);
+        expect(rowRenderData.cells[0].style.padding.right).toBe(28);
     });
 
     it('treats alpha-zero cell colours as transparent', () => {

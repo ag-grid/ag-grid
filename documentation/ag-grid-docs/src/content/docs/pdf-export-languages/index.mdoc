@@ -1,0 +1,119 @@
+---
+title: "PDF Export - Languages"
+enterprise: true
+---
+
+PDF Export uses the PDF Base 14 fonts by default. These fonts cover WinAnsi characters, including common Western European text such as `praça`, `Casé`, and `robô`. Register a static TrueType font when the document needs characters that the built-in fonts do not contain.
+
+## Non Latin Languages
+
+Start by registering one font family and using it as the default for the whole export. The two font settings have different purposes:
+
+1. `fonts` registers the font families that are available to the exporter. It is an array because an export can make several families available.
+1. `defaultCellStyle.fontFamily` selects one registered family as the default for exported text. Headers inherit it because properties not set by `defaultHeaderStyle` cascade from `defaultCellStyle`.
+
+The following example exports Japanese text. The `fonts` array contains only `IBM Plex Sans JP`, and `defaultCellStyle.fontFamily` selects that family. No style callback is required because every exported element uses the same family.
+
+The optional `language` property is a BCP 47 language tag. It enables language-specific OpenType features and is also written to the PDF document metadata.
+
+```ts
+const japaneseFontData = await fetch('/fonts/pdf-export/IBMPlexSansJP-Regular.ttf')
+    .then((response) => response.arrayBuffer()
+);
+
+const japaneseFont = {
+    family: 'IBM Plex Sans JP',
+    faces: [{ data: japaneseFontData, weight: 400 }],
+};
+
+const gridOptions = {
+    defaultPdfExportParams: {
+        fonts: [japaneseFont],
+        defaultCellStyle: { fontFamily: japaneseFont.family },
+        language: 'ja',
+    },
+};
+```
+
+{% gridExampleRunner title="PDF Export - Non Latin Language" name="pdf-non-latin-language" exampleHeight=380 /%}
+
+Font files are not fetched by AG Grid. The application is responsible for loading the bytes before starting the export and for complying with the font's licence. When the font's embedding permissions allow it, PDF Export embeds only the characters used by the document instead of the complete font file. This process, known as font subsetting, reduces the size of the exported PDF. Fonts that prohibit subsetting are embedded in full.
+
+Each family can contain Regular, Medium, Bold, Italic, or other faces. PDF Export selects the closest face for the requested `fontWeight` and `fontStyle`.
+
+## Multiple Languages
+
+One registered family is sufficient when it contains every character used by the document. When different text requires different families, register all the families through `fonts`, then select the appropriate `fontFamily` for each element using `processStyleCallback` or a PDF style. This differs from the previous example, where one default family could be used for every cell.
+
+The following example uses the built-in Helvetica family for Portuguese and registers IBM Plex Sans families for Greek, Bulgarian Cyrillic, Japanese, Simplified Chinese, and Traditional Chinese. Each row stores its required family and language tag. `processStyleCallback` reads those values and selects the family for each exported cell. The Text and Text Bold columns also demonstrate face selection within each family. The configuration builds on the same font-loading pattern as the previous example.
+
+```ts
+const gridOptions = {
+    defaultPdfExportParams: {
+        fonts: [japaneseFont, simplifiedChineseFont, traditionalChineseFont],
+        processStyleCallback: (params) => {
+            if (params.type !== 'cell' || !params.node?.data) {
+                return undefined;
+            }
+
+            return {
+                fontFamily: params.node.data.fontFamily,
+                fontWeight: params.column?.getColId() === 'boldText' ? 700 : 400,
+                language: params.node.data.languageTag,
+            };
+        },
+    },
+};
+```
+
+{% gridExampleRunner title="PDF Export - International Characters" name="pdf-international-characters" exampleHeight=460 /%}
+
+## Right-To-Left Languages
+
+PDF Export inherits `enableRtl` from the grid, using `rtl` for a right-to-left grid and `ltr` otherwise. An RTL export renders the table columns from right to left and anchors its text accordingly. Set `direction` on `PdfExportParams` to override the inherited direction for the whole export, or on an individual `PdfCellStyle` to override the text direction for one element. Set it to `auto` to determine the text direction from the first strong directional character.
+
+The export-level `language` can be overridden on an individual `PdfCellStyle`. This is useful when an export contains languages such as Arabic (`ar`), Persian (`fa`), and Hebrew (`he`) that require different font families or language-specific shaping.
+
+The following example configures the grid with `enableRtl: true` and registers fonts for Arabic, Persian, and Hebrew text using the same pattern as the previous examples. The PDF inherits the grid direction, while the Text and Text Bold columns demonstrate Regular and Bold face selection.
+
+The callback selects an embedded font only for body cells. The English headers continue to use the built-in PDF font, while each body row uses a font containing the characters for its language.
+
+```ts
+const gridOptions = {
+    enableRtl: true,
+    defaultPdfExportParams: {
+        fonts: [arabicFont, hebrewFont],
+        processStyleCallback: (params) => {
+            if (params.type !== 'cell' || !params.node?.data) {
+                return undefined;
+            }
+
+            return {
+                fontFamily: params.node.data.fontFamily,
+                fontWeight: params.column?.getColId() === 'boldText' ? 700 : 400,
+                language: params.node.data.languageTag,
+            };
+        },
+    },
+};
+```
+
+{% gridExampleRunner title="PDF Export - Right-To-Left Languages" name="pdf-rtl-languages" exampleHeight=430 /%}
+
+PDF Export shapes registered TrueType fonts using supported OpenType layout tables. This includes contextual Arabic forms, standard and required ligatures, kerning, cursive attachment, mark-to-base positioning, mark-to-mark positioning, and mixed bidirectional text. Canonically equivalent decomposed text is normalised for rendering, while text extraction uses the original logical Unicode sequence, including when several characters are rendered as one ligature.
+
+The fonts used by the examples are unmodified Noto and IBM Plex files distributed under the SIL Open Font License 1.1. See the included [Noto licence](/fonts/pdf-export/OFL-Noto.license) and [IBM Plex licence](/fonts/pdf-export/OFL-IBM-Plex.license).
+
+## API
+
+{% interfaceDocumentation interfaceName="PdfExportParams" names=["fonts", "defaultCellStyle", "language", "direction"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
+
+## Known Limitations
+
+- The built-in PDF fonts support WinAnsi characters only. Register an appropriate TrueType font to export other characters.
+- PDF Export does not discover or load browser and system fonts. Applications must load the font data and register each required family and face before exporting.
+- Automatic font fallback is not supported. The selected font must contain every character used by the exported element, or `processStyleCallback` must select an appropriate registered family.
+- Only static TrueType fonts with `glyf` outlines are supported. OpenType fonts with CFF outlines, variable fonts, TrueType Collections, WOFF, and WOFF2 are not supported.
+- GPOS mark-to-ligature positioning (lookup type 5) is not supported. OpenType lookup filtering flags, including `IgnoreMarks` and mark-filtering sets, are also not supported. Diacritics attached to ligatures may therefore be positioned incorrectly.
+- Vertical writing is not supported.
+- Bidirectional text spanning multiple independently styled runs is not supported.

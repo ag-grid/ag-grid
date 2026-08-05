@@ -8,11 +8,13 @@ import type {
     HeaderStyle,
     HeaderStyleFunc,
     PdfCellHyperlinkCallbackParams,
+    PdfCellImageCallbackParams,
+    PdfCellImageResult,
     PdfCellStyle,
     PdfCustomContent,
     PdfExportParams,
+    PdfImage,
     PdfStyleCallbackParams,
-    PdfStyleCallbackType,
     RowAccumulator,
     RowNode,
     RowPinnedType,
@@ -28,11 +30,12 @@ import { mergePdfCellStyles } from './utils/styles';
 
 export type PdfRowType = 'HEADER_GROUPING' | 'HEADER' | 'BODY' | 'CUSTOM';
 
-type PdfElementType = PdfStyleCallbackType | 'custom';
+type PdfElementType = 'cell' | 'row' | 'rowgroup' | 'header' | 'groupheader' | 'custom';
 
 interface PdfSerializingCell {
     value: string;
     hyperlink?: string;
+    image?: PdfImage;
     mergeAcross?: number;
     style?: PdfCellStyle;
     elementType?: PdfElementType;
@@ -113,6 +116,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 row.cells.push({
                     value: String(cell?.data?.value ?? ''),
                     hyperlink: normaliseHyperlink(cell?.data?.hyperlink),
+                    image: cell?.data?.image,
                     mergeAcross: mergeAcross || undefined,
                     style: resolvePdfCellStyleColors(cell?.style, this.config.resolveColor),
                     elementType: 'custom',
@@ -222,7 +226,9 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                     isFullWidthGroup
                 );
 
-                const value = String(rowCellValue.valueFormatted ?? rowCellValue.value ?? '');
+                const processedValue = String(rowCellValue.valueFormatted ?? rowCellValue.value ?? '');
+                const imageResult = this.resolveCellImage(processedValue, column, activeNode, rowIndex);
+                const value = imageResult ? String(imageResult.value ?? '') : processedValue;
                 const style = mergePdfCellStyles(
                     automaticCellStyle,
                     this.resolveCallbackPdfStyle({
@@ -243,6 +249,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 row.cells.push({
                     value,
                     hyperlink: this.resolveCellHyperlink(value, column, activeNode, rowIndex),
+                    image: imageResult?.image,
                     mergeAcross,
                     style,
                     elementType: isRowGroupCell ? 'rowgroup' : 'cell',
@@ -255,7 +262,14 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
     }
 
     public parse(): string {
-        return createPdfDocument(this.rows, this.columnsToExport, this.config);
+        if (this.config.direction !== 'rtl') {
+            return createPdfDocument(this.rows, this.columnsToExport, this.config);
+        }
+
+        const rows = this.rows.map((row) => ({ ...row, cells: [...row.cells].reverse() }));
+        const columnsToExport = [...this.columnsToExport].reverse();
+
+        return createPdfDocument(rows, columnsToExport, this.config);
     }
 
     private createRow(type: PdfRowType, sourceNode?: RowNode): PdfRow {
@@ -432,6 +446,26 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
             column,
         };
         return normaliseHyperlink(callback(_addGridCommonParams(this.gos, params) as PdfCellHyperlinkCallbackParams));
+    }
+
+    private resolveCellImage(
+        value: string,
+        column: AgColumn,
+        node: RowNode,
+        accumulatedRowIndex: number
+    ): PdfCellImageResult | undefined {
+        const callback = this.config.addImageToCell;
+        if (!callback) {
+            return undefined;
+        }
+
+        const params: Omit<PdfCellImageCallbackParams, 'api' | 'context'> = {
+            value,
+            accumulatedRowIndex,
+            node,
+            column,
+        };
+        return callback(_addGridCommonParams(this.gos, params) as PdfCellImageCallbackParams) ?? undefined;
     }
 
     private isRowGroupCell(column: AgColumn, node: RowNode, isFullWidthGroup: boolean): boolean {

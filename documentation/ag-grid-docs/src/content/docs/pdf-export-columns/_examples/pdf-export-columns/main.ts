@@ -1,13 +1,13 @@
 import type { GridApi, GridOptions, PdfExportParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
-import { PdfExportModule, RowNumbersModule } from 'ag-grid-enterprise';
+import { ContextMenuModule, PdfExportModule, RowNumbersModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowNumbersModule, PdfExportModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ContextMenuModule, RowNumbersModule, PdfExportModule]);
 
 interface OrderData {
     customer: string;
@@ -82,7 +82,7 @@ function isChecked(id: string): boolean {
     return document.querySelector<HTMLInputElement>(`#${id}`)!.checked;
 }
 
-function onBtExport() {
+function getPdfExportParams(): PdfExportParams {
     const columnSet = document.querySelector<HTMLSelectElement>('#columnSet')!.value;
     const params: PdfExportParams = {
         skipColumnGroupHeaders: isChecked('skipColumnGroupHeaders'),
@@ -97,9 +97,22 @@ function onBtExport() {
         params.columnKeys = ['customer', 'product', 'total'];
     }
 
-    gridApi.exportDataAsPdf(params);
+    return params;
+}
+
+function updateDefaultPdfExportParams() {
+    gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+}
+
+function onBtExport() {
+    updateDefaultPdfExportParams();
+    gridApi.exportDataAsPdf();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
+    updateDefaultPdfExportParams();
+    for (const id of ['columnSet', 'skipColumnGroupHeaders', 'skipColumnHeaders', 'exportRowNumbers']) {
+        document.querySelector(`#${id}`)!.addEventListener('change', updateDefaultPdfExportParams);
+    }
 });

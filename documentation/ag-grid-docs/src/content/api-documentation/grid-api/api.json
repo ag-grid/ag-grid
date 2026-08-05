@@ -620,6 +620,18 @@
                 "name": "Excel Export - Multiple Sheets",
                 "url": "./excel-export-multiple-sheets/"
             }
+        },
+        "exportDataAsPdf": {
+            "more": {
+                "name": "Enabling PDF Export",
+                "url": "./pdf-export/#enabling-pdf-export"
+            }
+        },
+        "getDataAsPdf": {
+            "more": {
+                "name": "PDF Export",
+                "url": "./pdf-export/"
+            }
         }
     },
     "ai-toolkit": {

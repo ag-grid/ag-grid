@@ -1917,6 +1917,80 @@
                         },
                         {
                             "type": "item",
+                            "title": "PDF Export",
+                            "path": "pdf-export",
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "API Reference",
+                                    "path": "pdf-export-api",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Styles",
+                                    "path": "pdf-export-styles",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Languages",
+                                    "path": "pdf-export-languages",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Extra Content",
+                                    "path": "pdf-export-extra-content",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Images",
+                                    "path": "pdf-export-images",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Watermarks",
+                                    "path": "pdf-export-watermarks",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Rows",
+                                    "path": "pdf-export-rows",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Columns",
+                                    "path": "pdf-export-columns",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Hyperlinks",
+                                    "path": "pdf-export-hyperlinks",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Master Detail",
+                                    "path": "pdf-export-master-detail",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Page Setup",
+                                    "path": "pdf-export-page-setup",
+                                    "isEnterprise": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "item",
                             "title": "Clipboard",
                             "path": "clipboard",
                             "isEnterprise": true

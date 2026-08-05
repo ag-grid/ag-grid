@@ -42,23 +42,26 @@ Reorder columns or apply filtering and sorting in the following example, then ex
 
 By default, regular columns use their current grid widths and the Row Numbers column is sized from its exported content. Columns are proportionally reduced when their combined width exceeds the printable page width. Cells remain on one line unless wrapping is enabled, and table headers repeat when a table continues onto another page.
 
-PDF Export uses the built-in PDF Base 14 fonts with WinAnsi encoding. Characters outside the supported WinAnsi character set are replaced with `?`.
+PDF Export uses the built-in PDF Base 14 fonts with WinAnsi encoding by default. Register static TrueType font families to export Unicode text or use right-to-left text layout.
 
 ## Support And Limitations
 
-| Area       | Supported                                                                                                                     | Not Supported                                                        |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Grid state | Displayed column order and visibility, sorting, filtering, selected-row export options, grouping, pinned rows, column spans   | Cell Renderer output or custom HTML                                  |
-| Layout     | Named and custom page sizes, margins, orientation, column widths, text wrapping, automatic row height, repeated table headers | Automatic page size, horizontal pagination, page headers and footers |
-| Styling    | Theme colours, `colors`, supported `rowStyle`, `cellStyle`, and `headerStyle` properties, PDF-specific style callbacks        | `cellClass`, `cellClassRules`, arbitrary CSS, browser fonts          |
-| Content    | Value Getters, Value Formatters, export value callbacks, document title, additional content, external URI hyperlinks          | Images, SVG, internal page links, embedded files                     |
-| Text       | Built-in Helvetica, Times, and Courier families; WinAnsi characters                                                           | Embedded custom fonts, full Unicode, RTL layout                      |
+| Area       | Supported                                                                                                                                                                            | Not Supported                                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| Grid state | Displayed column order and visibility, sorting, filtering, selected-row export options, grouping, pinned rows, column spans                                                          | Cell Renderer output or custom HTML                                                                                      |
+| Layout     | Named and custom page sizes, margins, orientation, column widths, text wrapping, automatic row height, repeated table headers, page headers and footers                              | Automatic page size and horizontal pagination                                                                            |
+| Styling    | Theme colours, `colors`, supported `rowStyle`, `cellStyle`, and `headerStyle` properties, PDF-specific style callbacks, text watermarks                                              | `cellClass`, `cellClassRules`, arbitrary CSS, automatic browser-font discovery                                           |
+| Content    | Value Getters, Value Formatters, export value callbacks, title and subtitle, page headers and footers, cover pages, additional content, JPEG and PNG images, external URI hyperlinks | SVG, GIF, internal page links, embedded files                                                                            |
+| Text       | Built-in PDF fonts, embedded static TrueType fonts, Unicode characters covered by registered fonts, OpenType shaping, horizontal Arabic and Hebrew text                              | CFF, variable, WOFF/WOFF2 and collection fonts; vertical writing and bidirectional text across independently styled runs |
 
 ## PDF Export Sections
 
 - **[API Reference](./pdf-export-api/)**: PDF export methods, grid options, interfaces, and types.
 - **[Styles](./pdf-export-styles/)**: Reuse supported grid styles and apply PDF-specific overrides.
+- **[Languages](./pdf-export-languages/)**: Register TrueType font families and export Unicode or right-to-left text.
 - **[Extra Content](./pdf-export-extra-content/)**: Customise exported values, titles, and additional content.
+- **[Images](./pdf-export-images/)**: Embed JPEG and PNG images in grid cells, page headers, and page footers.
+- **[Watermarks](./pdf-export-watermarks/)**: Add translucent status text across selected pages.
 - **[Rows](./pdf-export-rows/)**: Select rows and configure filtered, sorted, and pinned-row export.
 - **[Columns](./pdf-export-columns/)**: Choose columns, headers, groups, Row Numbers, and widths.
 - **[Hyperlinks](./pdf-export-hyperlinks/)**: Add external URI links to grid cells and custom content.
