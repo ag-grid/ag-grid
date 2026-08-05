@@ -179,6 +179,45 @@ Just like Excel, each column can also be auto-resized by double clicking the rig
 
 {% /note %}
 
+### Auto-Sizing from the Menus
+
+By default the **Autosize This Column** and **Autosize All Columns** actions in the [Column Menu](./column-menu/) and [Context Menu](./context-menu/) size columns to their contents with default options, ignoring the configured `autoSizeStrategy`. Set `applyToUiActions = true` to have them reuse the strategy's options instead, such as `scaleUpToFitGridWidth` and `skipHeader`. Double-clicking a header edge follows the same setting.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoSizeStrategy: {
+        type: 'fitCellContents',
+        scaleUpToFitGridWidth: true,
+        applyToUiActions: true,
+    }
+}
+```
+
+{% gridExampleRunner title="Auto-Sizing from the Menus" name="auto-size-ui-actions" /%}
+
+`applyToUiActions` is only supported by the `fitCellContents` strategy, since the built-in actions size columns to their contents.
+
+### Re-Applying the Auto-Size Strategy
+
+`autoSizeStrategy` is applied when the grid first renders. To re-apply it when the grid changes, list the [Grid Events](./grid-events/) that should trigger it:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoSizeStrategy: {
+        type: 'fitCellContents',
+        events: ['paginationChanged', 'columnVisible', 'virtualColumnsChanged'],
+    }
+}
+```
+
+Events fired in the same frame are coalesced into one auto-size pass. Columns the user has resized by hand keep their width, so a re-run does not undo a manual drag.
+
+{% gridExampleRunner title="Re-Applying the Auto-Size Strategy" name="auto-size-strategy-events" /%}
+
+The strategy can also be re-applied on demand, which sizes every column including any the user has resized:
+
+{% apiDocumentation source="grid-api/api.json" section="columnSizing" names=["applyAutoSizeStrategy"] /%}
+
 ## Resize via Keyboard
 
 Column headers can be resized using the keyboard. When a column header is focused, press {% kbd "⌥ Alt" /%} + {% kbd "←" /%} / {% kbd "→" /%} to resize the column in that direction.

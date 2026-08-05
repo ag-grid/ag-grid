@@ -1,5 +1,6 @@
 import { getSortDefFromInput } from '../../entities/agColumn';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
+import { AUTO_SIZE_STRATEGY_EVENTS } from '../../interfaces/autoSize';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
@@ -766,6 +767,21 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 }
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
+                }
+                if (type !== 'fitCellContents' && 'applyToUiActions' in autoSizeStrategy) {
+                    return `\`applyToUiActions\` is only supported by the 'fitCellContents' auto-size strategy, as the built-in auto-size actions size columns to their contents. You provided '${type}'.`;
+                }
+                const events = autoSizeStrategy.events;
+                if (events) {
+                    for (const event of events) {
+                        if (!AUTO_SIZE_STRATEGY_EVENTS.includes(event)) {
+                            return _createValidationWarning(320, {
+                                property: 'autoSizeStrategy.events',
+                                allowed: [...AUTO_SIZE_STRATEGY_EVENTS],
+                                value: event,
+                            });
+                        }
+                    }
                 }
                 return null;
             },

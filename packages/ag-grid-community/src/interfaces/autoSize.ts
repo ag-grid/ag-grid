@@ -24,20 +24,64 @@ export interface ISizeColumnsToFitParams extends DefaultWidthLimits {
     columnLimits?: IColumnLimit[];
 }
 
+/**
+ * Grid events which can re-apply the configured `autoSizeStrategy`.
+ *
+ * Excludes events which auto-sizing itself dispatches unconditionally (such as `columnResized`),
+ * as those would re-trigger the strategy indefinitely.
+ */
+export type AutoSizeStrategyEvent =
+    | 'cellValueChanged'
+    | 'columnGroupOpened'
+    | 'columnVisible'
+    | 'displayedColumnsChanged'
+    | 'firstDataRendered'
+    | 'gridColumnsChanged'
+    | 'modelUpdated'
+    | 'paginationChanged'
+    | 'rowDataUpdated'
+    | 'rowGroupOpened'
+    | 'viewportChanged'
+    | 'virtualColumnsChanged';
+
+/** Keep in step with {@link AutoSizeStrategyEvent} — used to validate user-provided event names. */
+export const AUTO_SIZE_STRATEGY_EVENTS = [
+    'cellValueChanged',
+    'columnGroupOpened',
+    'columnVisible',
+    'displayedColumnsChanged',
+    'firstDataRendered',
+    'gridColumnsChanged',
+    'modelUpdated',
+    'paginationChanged',
+    'rowDataUpdated',
+    'rowGroupOpened',
+    'viewportChanged',
+    'virtualColumnsChanged',
+] as const satisfies readonly AutoSizeStrategyEvent[];
+
+interface AutoSizeStrategyEvents {
+    /**
+     * Grid events which re-apply this auto-size strategy when fired. Columns the user has resized
+     * manually since the strategy last ran are left at their manual width.
+     */
+    events?: AutoSizeStrategyEvent[];
+}
+
 /** Limit a column width when auto-sizing to fit grid width. */
 export interface SizeColumnsToFitGridColumnLimits extends WidthLimits {
     colId: string;
 }
 
 /** Auto-size columns to fit the grid width. */
-export interface SizeColumnsToFitGridStrategy extends DefaultWidthLimits {
+export interface SizeColumnsToFitGridStrategy extends DefaultWidthLimits, AutoSizeStrategyEvents {
     type: 'fitGridWidth';
     /** Provide to limit specific column widths when sizing. */
     columnLimits?: SizeColumnsToFitGridColumnLimits[];
 }
 
 /** Auto-size columns to fit a provided width. */
-export interface SizeColumnsToFitProvidedWidthStrategy {
+export interface SizeColumnsToFitProvidedWidthStrategy extends AutoSizeStrategyEvents {
     type: 'fitProvidedWidth';
     width: number;
 }
@@ -51,8 +95,14 @@ export interface SizeColumnsToContentColumnLimits extends WidthLimits {
  *
  * Not supported by the Viewport Row Model
  */
-export interface SizeColumnsToContentStrategy extends ISizeAllColumnsToContentParams {
+export interface SizeColumnsToContentStrategy extends ISizeAllColumnsToContentParams, AutoSizeStrategyEvents {
     type: 'fitCellContents';
+    /**
+     * If true, the auto-size actions in the column menu and context menu, and header double-click,
+     * reuse this strategy's options instead of auto-sizing with default options.
+     * @default false
+     */
+    applyToUiActions?: boolean;
 }
 
 export interface ISizeAllColumnsToContentParams extends DefaultWidthLimits {

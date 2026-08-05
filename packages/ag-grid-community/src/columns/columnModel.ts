@@ -283,7 +283,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         eventSvc.dispatchEvent({ type: 'newColumnsLoaded', source });
 
         if (source === 'gridInitializing') {
-            colAutosize?.applyAutosizeStrategy();
+            colAutosize?.applyInitialAutoSizeStrategy();
         }
     }
 

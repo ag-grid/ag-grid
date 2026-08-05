@@ -1,0 +1,22 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.interaction-bar {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 1em;
+    align-items: center;
+}
+
+.toggle-button,
+.reapply-button {
+    margin: 0px !important;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}

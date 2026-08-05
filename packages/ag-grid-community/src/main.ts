@@ -12,6 +12,7 @@ export { isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 
 export type {
     AutoSizeStrategy,
+    AutoSizeStrategyEvent,
     IColumnLimit,
     ISizeAllColumnsToContentParams,
     ISizeColumnsToContentParams,

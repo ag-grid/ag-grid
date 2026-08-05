@@ -6,6 +6,10 @@ import type {
     ISizeColumnsToFitParams,
 } from '../interfaces/autoSize';
 
+export function applyAutoSizeStrategy(beans: BeanCollection): void {
+    beans.colAutosize?.applyAutoSizeStrategy();
+}
+
 export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
     if (typeof paramsOrGridWidth === 'number') {
         beans.colAutosize?.sizeColumnsToFit(paramsOrGridWidth, 'api');

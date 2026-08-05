@@ -649,6 +649,13 @@ export interface _ColumnAutosizeApi {
      * @agModule `ColumnAutoSizeModule`
      */
     autoSizeAllColumns(params: ISizeAllColumnsToContentParams): void;
+
+    /**
+     * Re-applies the configured `autoSizeStrategy`, including to columns the user has resized by hand.
+     * Does nothing if no `autoSizeStrategy` is configured.
+     * @agModule `ColumnAutoSizeModule`
+     */
+    applyAutoSizeStrategy(): void;
 }
 
 export interface _ColumnResizeApi {

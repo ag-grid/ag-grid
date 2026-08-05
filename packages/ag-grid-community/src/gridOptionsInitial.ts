@@ -9,7 +9,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     defaultColGroupDef: true,
     suppressAutoSize: true,
     skipHeaderOnAutoSize: true,
-    autoSizeStrategy: true,
     components: true,
     stopEditingWhenCellsLoseFocus: true,
     undoRedoCellEditing: true,

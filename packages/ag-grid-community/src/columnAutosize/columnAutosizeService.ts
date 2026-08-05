@@ -1,4 +1,4 @@
-import { _getInnerWidth, _removeFromArray } from 'ag-stack';
+import { _debounce, _getInnerWidth, _jsonEquals, _removeFromArray } from 'ag-stack';
 
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import { getWidthOfColsInList, isSpecialCol } from '../columns/columnUtils';
@@ -8,11 +8,14 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
-import type { ColumnEventType } from '../events';
+import type { AgEventTypeParams, ColumnEventType } from '../events';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type {
+    AutoSizeStrategy,
+    AutoSizeStrategyEvent,
     IColumnLimit,
+    ISizeAllColumnsToContentParams,
     ISizeColumnsToFitParams,
     SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
@@ -31,7 +34,21 @@ interface AutoSizeColumnParams {
     columnLimits?: SizeColumnsToContentColumnLimits[];
     scaleUpToFitGridWidth?: boolean;
     source?: ColumnEventType;
+    /** Source reported by the resulting `columnResized` event. Defaults to `autosizeColumns`. */
+    eventSource?: ColumnEventType;
 }
+
+type UiActionAutoSizeParams = Omit<ISizeAllColumnsToContentParams, 'colIds'>;
+
+type AutoSizeAllColumnsParams = UiActionAutoSizeParams & Pick<AutoSizeColumnParams, 'source' | 'eventSource'>;
+
+type SizeColumnsToFitGridBodyParams = ISizeColumnsToFitParams & { colKeys?: ColKey[] };
+
+/** Width changes from this source mean the user has taken manual control of a column's width. */
+const USER_RESIZE_SOURCE: ColumnEventType = 'uiColumnResized';
+const STRATEGY_SOURCE: ColumnEventType = 'autoSizeStrategy';
+/** Sources that mean a sizing pass caused the event, so a strategy re-run would chase its own tail. */
+const SIZING_SOURCES = new Set<string>([STRATEGY_SOURCE, 'autosizeColumns', 'sizeColumnsToFit']);
 
 export class ColumnAutosizeService extends BeanStub implements NamedBean {
     beanName = 'colAutosize' as const;
@@ -41,6 +58,31 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     /** when we're waiting for cell data types to be inferred, we need to defer column resizing */
     public shouldQueueResizeOperations: boolean = false;
     private resizeOperationQueue: (() => void)[] = [];
+
+    /** Columns the user has resized by hand, which strategy re-runs leave at their manual width. */
+    private readonly userResizedColIds = new Set<string>();
+    /** Non-zero while strategy runs are in flight; a run can be queued, so this outlives the tick. */
+    private strategyRunsInFlight = 0;
+    /** A trigger that arrived while a run was still in flight, to be honoured once it finishes. */
+    private strategyRerunPending = false;
+    private removeStrategyEventListeners?: () => void;
+
+    private readonly scheduleStrategyRerun = _debounce(
+        this,
+        () => {
+            // a run whose sizing is still to come (queued, or awaiting a render) would not observe the
+            // change that triggered us, so hold the trigger rather than dropping it
+            if (this.strategyRunsInFlight > 0) {
+                this.strategyRerunPending = true;
+                return;
+            }
+            const strategy = this.gos.get('autoSizeStrategy');
+            if (strategy) {
+                this.applyStrategy(strategy, STRATEGY_SOURCE);
+            }
+        },
+        0
+    );
 
     public postConstruct(): void {
         const { gos } = this;
@@ -62,16 +104,176 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 this.beans.colDelayRenderSvc?.hideColumns(type);
             }
         }
+
+        this.setupStrategyRerun(autoSizeStrategy);
+
+        this.addManagedEventListeners({
+            columnResized: ({ finished, source, columns }) => {
+                if (!finished || source !== USER_RESIZE_SOURCE || !columns) {
+                    return;
+                }
+                const userResizedColIds = this.userResizedColIds;
+                for (const column of columns) {
+                    userResizedColIds.add(column.getColId());
+                }
+            },
+        });
+
+        this.addManagedPropertyListener('autoSizeStrategy', ({ currentValue, previousValue }) => {
+            // object-valued options re-fire on every framework re-render, so only act on a real change
+            if (_jsonEquals(currentValue, previousValue)) {
+                return;
+            }
+            this.setupStrategyRerun(currentValue);
+            this.applyAutoSizeStrategy();
+        });
     }
 
-    public autoSizeCols(params: AutoSizeColumnParams): void {
+    private setupStrategyRerun(strategy: AutoSizeStrategy | undefined): void {
+        this.removeStrategyEventListeners?.();
+        this.removeStrategyEventListeners = undefined;
+
+        const events = strategy?.events;
+        if (!events?.length) {
+            return;
+        }
+
+        const handlers: { [K in AutoSizeStrategyEvent]?: (event: AgEventTypeParams[K]) => void } = {};
+        const onEvent = (event: AgEventTypeParams[AutoSizeStrategyEvent]) => {
+            // a run re-dispatches column events long after it finishes; re-running for those never settles
+            if ('source' in event && event.source != null && SIZING_SOURCES.has(event.source)) {
+                return;
+            }
+            this.scheduleStrategyRerun();
+        };
+        for (let i = 0, len = events.length; i < len; ++i) {
+            handlers[events[i]] = onEvent;
+        }
+
+        const destroyFuncs = this.addManagedEventListeners(handlers);
+        this.removeStrategyEventListeners = () => {
+            for (let i = 0, len = destroyFuncs.length; i < len; ++i) {
+                destroyFuncs[i]();
+            }
+        };
+    }
+
+    /** Re-applies the configured strategy, reclaiming columns the user had resized by hand. */
+    public applyAutoSizeStrategy(): void {
+        const strategy = this.gos.get('autoSizeStrategy');
+        if (!strategy) {
+            return;
+        }
+        this.userResizedColIds.clear();
+        this.applyStrategy(strategy, STRATEGY_SOURCE);
+    }
+
+    /**
+     * Sizes columns per the given strategy. `eventSource` is only set for re-runs, so the initial
+     * application keeps reporting the sources it always has.
+     */
+    private applyStrategy(strategy: AutoSizeStrategy, eventSource?: ColumnEventType): void {
+        this.strategyRunsInFlight++;
+        const release = () => this.finishStrategyRun();
+
+        const type = strategy.type;
+        if (type === 'fitCellContents') {
+            const { colIds, skipHeader, columnLimits, defaultMinWidth, defaultMaxWidth, scaleUpToFitGridWidth } =
+                strategy;
+            const params: AutoSizeAllColumnsParams = {
+                skipHeader,
+                columnLimits,
+                defaultMinWidth,
+                defaultMaxWidth,
+                scaleUpToFitGridWidth,
+                source: 'autosizeColumns',
+                eventSource,
+            };
+            // autoSizeAllColumns resolves the column list after any deferred resize queue drains
+            const sized =
+                colIds || this.userResizedColIds.size
+                    ? this.autoSizeCols({ ...params, colKeys: this.strategyColKeys(colIds) })
+                    : this.autoSizeAllColumns(params);
+            sized.then(release, release);
+            return;
+        }
+
+        const source = eventSource ?? 'sizeColumnsToFit';
+        const colKeys = this.userResizedColIds.size ? this.strategyColKeys() : undefined;
+        if (type === 'fitGridWidth') {
+            const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = strategy;
+            this.sizeColumnsToFitGridBody(
+                {
+                    defaultMinWidth,
+                    defaultMaxWidth,
+                    columnLimits: propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
+                        key,
+                        minWidth,
+                        maxWidth,
+                    })),
+                    colKeys,
+                },
+                undefined,
+                source
+            );
+        } else {
+            this.sizeColumnsToFit(strategy.width, source, false, { colKeys });
+        }
+        release();
+    }
+
+    /**
+     * Ends a run, then honours any trigger held while it was in flight — a run whose sizing was
+     * queued never observed the change that held the trigger, so it needs a run of its own.
+     */
+    private finishStrategyRun(): void {
+        this.strategyRunsInFlight--;
+        if (this.strategyRerunPending && this.strategyRunsInFlight === 0) {
+            this.strategyRerunPending = false;
+            this.scheduleStrategyRerun();
+        }
+    }
+
+    /** The columns a strategy targets, minus any the user has since resized by hand. */
+    private strategyColKeys(colIds?: string[]): AgColumn[] {
+        const { colModel, visibleCols } = this.beans;
+        const cols = colIds
+            ? colIds.map((colId) => colModel.getCol(colId)).filter((col): col is AgColumn => col != null)
+            : visibleCols.allCols;
+        const userResizedColIds = this.userResizedColIds;
+        return userResizedColIds.size ? cols.filter((col) => !userResizedColIds.has(col.colId)) : cols;
+    }
+
+    /**
+     * Auto-size params for the built-in UI actions — the column and context menu items, and header
+     * double-click. These reuse `autoSizeStrategy` only when it has opted in via `applyToUiActions`.
+     */
+    public getUiActionAutoSizeParams(): UiActionAutoSizeParams {
+        const { gos } = this;
+        const skipHeader = gos.get('skipHeaderOnAutoSize');
+        const strategy = gos.get('autoSizeStrategy');
+        if (strategy?.type !== 'fitCellContents' || !strategy.applyToUiActions) {
+            return { skipHeader };
+        }
+
+        const { columnLimits, defaultMinWidth, defaultMaxWidth, scaleUpToFitGridWidth } = strategy;
+        return {
+            skipHeader: strategy.skipHeader ?? skipHeader,
+            columnLimits,
+            defaultMinWidth,
+            defaultMaxWidth,
+            scaleUpToFitGridWidth,
+        };
+    }
+
+    public autoSizeCols(params: AutoSizeColumnParams): Promise<void> {
         const { eventSvc, colModel } = this.beans;
 
         setWidthAnimation(this.beans, true);
 
-        this.innerAutoSizeCols(params).then((columnsAutoSized) => {
+        return this.innerAutoSizeCols(params).then((columnsAutoSized) => {
             const dispatch = (cols: Set<AgColumn>) =>
-                dispatchColumnResizedEvent(eventSvc, Array.from(cols), true, 'autosizeColumns');
+                dispatchColumnResizedEvent(eventSvc, Array.from(cols), true, params.eventSource ?? 'autosizeColumns');
 
             if (!params.scaleUpToFitGridWidth) {
                 setWidthAnimation(this.beans, false);
@@ -216,8 +418,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         });
     }
 
-    public autoSizeColumn(key: ColKey, source: ColumnEventType, skipHeader?: boolean): void {
-        this.autoSizeCols({ colKeys: [key], skipHeader, skipHeaderGroups: true, source });
+    /** Auto-sizes a single column for a built-in UI action. */
+    public autoSizeColumn(key: ColKey, source: ColumnEventType): void {
+        this.autoSizeCols({ ...this.getUiActionAutoSizeParams(), colKeys: [key], skipHeaderGroups: true, source });
     }
 
     private autoSizeColumnGroupsByColumns(keys: ColKey[], source: ColumnEventType, stopAtGroup?: AgColumnGroup): void {
@@ -248,26 +451,19 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
     }
 
-    public autoSizeAllColumns(params: {
-        skipHeader?: boolean;
-        defaultMinWidth?: number;
-        defaultMaxWidth?: number;
-        columnLimits?: SizeColumnsToContentColumnLimits[];
-        source?: ColumnEventType;
-    }): void {
+    public autoSizeAllColumns(params: AutoSizeAllColumnsParams): Promise<void> {
         if (this.shouldQueueResizeOperations) {
-            this.pushResizeOperation(() => this.autoSizeAllColumns(params));
-            return;
+            return new Promise((resolve, reject) => {
+                this.pushResizeOperation(() => this.autoSizeAllColumns(params).then(resolve, reject));
+            });
         }
 
-        this.autoSizeCols({ colKeys: this.beans.visibleCols.allCols, ...params });
+        return this.autoSizeCols({ colKeys: this.beans.visibleCols.allCols, ...params });
     }
 
     public addColumnAutosizeListeners(element: HTMLElement, column: AgColumn): () => void {
-        const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
-
         const autoSizeColListener = () => {
-            this.autoSizeColumn(column, 'uiColumnResized', skipHeaderOnAutoSize);
+            this.autoSizeColumn(column, 'uiColumnResized');
         };
 
         element.addEventListener('dblclick', autoSizeColListener);
@@ -281,8 +477,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public addColumnGroupResize(element: HTMLElement, columnGroup: AgColumnGroup, callback: () => void): () => void {
-        const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
-
         const listener = () => {
             // get list of all the column keys we are responsible for
             const keys: string[] = [];
@@ -297,8 +491,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
             if (keys.length > 0) {
                 this.autoSizeCols({
+                    ...this.getUiActionAutoSizeParams(),
                     colKeys: keys,
-                    skipHeader: skipHeaderOnAutoSize,
                     stopAtGroup: columnGroup,
                     source: 'uiColumnResized',
                 });
@@ -314,7 +508,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
-    public sizeColumnsToFitGridBody(params?: ISizeColumnsToFitParams, nextTimeout?: number): void {
+    public sizeColumnsToFitGridBody(
+        params?: SizeColumnsToFitGridBodyParams,
+        nextTimeout?: number,
+        source: ColumnEventType = 'sizeColumnsToFit'
+    ): void {
         if (!this.isAlive()) {
             return;
         }
@@ -329,24 +527,24 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
 
         if (availableWidth > 0) {
-            this.sizeColumnsToFit(availableWidth, 'sizeColumnsToFit', false, params);
+            this.sizeColumnsToFit(availableWidth, source, false, params);
             return;
         }
 
         if (nextTimeout === undefined) {
             window.setTimeout(() => {
-                this.sizeColumnsToFitGridBody(params, 100);
+                this.sizeColumnsToFitGridBody(params, 100, source);
             }, 0);
         } else if (nextTimeout === 100) {
             window.setTimeout(() => {
-                this.sizeColumnsToFitGridBody(params, 500);
+                this.sizeColumnsToFitGridBody(params, 500, source);
             }, 100);
         } else if (nextTimeout === 500) {
             // IMPORTANT! in gridCtrl we add content-visibility:auto `contentVisibilityAutoDelay` ms (default 1000) after
             // first rendering data to avoid breaking size-to-fit. We're relying on the maximum timeout here being less
             // than the default 1000ms. If you increase this timeout, update the default `contentVisibilityAutoDelay` too.
             window.setTimeout(() => {
-                this.sizeColumnsToFitGridBody(params, -1);
+                this.sizeColumnsToFitGridBody(params, -1, source);
             }, 500);
         } else {
             // Grid coming back with zero width, maybe the grid is not visible yet on the screen?
@@ -380,7 +578,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // avoid divide by zero
         const allDisplayedColumns = beans.visibleCols.allCols;
 
-        if (gridWidth <= 0 || !allDisplayedColumns.length) {
+        // a non-finite width comes from an unmeasurable grid body, and would spread NaN column widths
+        if (gridWidth <= 0 || !Number.isFinite(gridWidth) || !allDisplayedColumns.length) {
             return;
         }
 
@@ -524,10 +723,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
     }
 
-    public applyAutosizeStrategy(): void {
-        const { gos, colDelayRenderSvc } = this.beans;
-        const autoSizeStrategy = gos.get('autoSizeStrategy');
-        if (autoSizeStrategy?.type !== 'fitGridWidth' && autoSizeStrategy?.type !== 'fitProvidedWidth') {
+    public applyInitialAutoSizeStrategy(): void {
+        const strategy = this.gos.get('autoSizeStrategy');
+        if (!strategy) {
+            return;
+        }
+        const type = strategy.type;
+        if (type !== 'fitGridWidth' && type !== 'fitProvidedWidth') {
             return;
         }
 
@@ -536,40 +738,19 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (!this.isAlive()) {
                 return;
             }
-            const type = autoSizeStrategy.type;
-            if (type === 'fitGridWidth') {
-                const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = autoSizeStrategy;
-                const columnLimits = propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
-                    key,
-                    minWidth,
-                    maxWidth,
-                }));
-                this.sizeColumnsToFitGridBody({
-                    defaultMinWidth,
-                    defaultMaxWidth,
-                    columnLimits,
-                });
-            } else if (type === 'fitProvidedWidth') {
-                this.sizeColumnsToFit(autoSizeStrategy.width, 'sizeColumnsToFit');
-            }
-            colDelayRenderSvc?.revealColumns(type);
+            this.applyStrategy(strategy);
+            this.beans.colDelayRenderSvc?.revealColumns(type);
         });
     }
 
-    private onFirstDataRendered({ colIds: colKeys, ...params }: SizeColumnsToContentStrategy): void {
+    private onFirstDataRendered(strategy: SizeColumnsToContentStrategy): void {
         // ensure render has finished
         setTimeout(() => {
             if (!this.isAlive()) {
                 return;
             }
-            const source = 'autosizeColumns';
-
-            if (colKeys) {
-                this.autoSizeCols({ ...params, source, colKeys });
-            } else {
-                this.autoSizeAllColumns({ ...params, source });
-            }
-            this.beans.colDelayRenderSvc?.revealColumns(params.type);
+            this.applyStrategy(strategy);
+            this.beans.colDelayRenderSvc?.revealColumns(strategy.type);
         });
     }
 
@@ -615,7 +796,8 @@ function normaliseColumnWidth(
 function getAvailableWidth({ ctrlsSvc, scrollVisibleSvc }: BeanCollection): number {
     const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
     const removeScrollWidth = scrollVisibleSvc.isVerticalScrollShowing();
-    const scrollWidthToRemove = removeScrollWidth ? scrollVisibleSvc.getScrollbarWidth() : 0;
+    // the scrollbar width is unknown until the DOM can be measured; subtracting it then would give NaN
+    const scrollWidthToRemove = removeScrollWidth ? (scrollVisibleSvc.getScrollbarWidth() ?? 0) : 0;
     // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
     // because we change the width of the bodyViewport to hide the real browser scrollbar
     const bodyViewportWidth = _getInnerWidth(gridBodyCtrl.eGridBody);
