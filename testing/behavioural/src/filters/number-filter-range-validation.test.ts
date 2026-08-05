@@ -12,7 +12,7 @@ import {
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
-describe('Date Range Filter', () => {
+describe('Number Range Filter', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, TextFilterModule, NumberFilterModule],
     });
