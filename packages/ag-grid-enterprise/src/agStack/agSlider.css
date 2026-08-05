@@ -1,0 +1,11 @@
+.ag-slider-wrapper {
+    display: flex;
+
+    :where(.ag-input-field) {
+        flex: 1 1 auto;
+    }
+}
+
+.ag-slider-field {
+    margin-right: calc(var(--ag-spacing) * 2);
+}
