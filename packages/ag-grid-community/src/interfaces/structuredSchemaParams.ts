@@ -1,5 +1,6 @@
 export type StructuredSchemaFeature =
     | 'aggregation'
+    | 'showValuesAs'
     | 'filter'
     | 'sort'
     | 'pivot'
@@ -9,6 +10,7 @@ export type StructuredSchemaFeature =
 
 export const STRUCTURED_SCHEMA_FEATURES: StructuredSchemaFeature[] = [
     'aggregation',
+    'showValuesAs',
     'filter',
     'sort',
     'pivot',

@@ -13,6 +13,7 @@ import {
     PivotModule,
     RowGroupingModule,
     SetFilterModule,
+    ShowValuesAsModule,
 } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
@@ -154,7 +155,16 @@ describe('getStructuredSchema', () => {
 
             const schema = toJSON(
                 api.getStructuredSchema({
-                    exclude: ['aggregation', 'filter', 'sort', 'pivot', 'columnVisibility', 'columnSizing', 'rowGroup'],
+                    exclude: [
+                        'aggregation',
+                        'showValuesAs',
+                        'filter',
+                        'sort',
+                        'pivot',
+                        'columnVisibility',
+                        'columnSizing',
+                        'rowGroup',
+                    ],
                 })
             );
 
@@ -1110,6 +1120,72 @@ describe('getStructuredSchema - enterprise features', () => {
             const schema = toJSON(api.getStructuredSchema());
             expect(schema.properties.aggregation).toBeUndefined();
             await new GridRows(api, `omits aggregation when no columns allow values final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+        });
+    });
+
+    describe('showValuesAs feature', () => {
+        const gridsManager = new TestGridsManager({
+            modules: [
+                ClientSideRowModelModule,
+                AiToolkitModule,
+                AggregationModule,
+                ShowValuesAsModule,
+                RowGroupingModule,
+            ],
+        });
+        afterEach(() => gridsManager.reset());
+
+        test('includes per-column showValuesAs modes for value columns', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', enableRowGroup: true },
+                    { field: 'gold', enableValue: true, aggFunc: 'sum' },
+                    { field: 'silver', enableValue: true, aggFunc: 'avg' },
+                ],
+                rowData: [],
+            });
+            await new GridColumns(api, `includes per-column showValuesAs modes for value columns setup`).checkColumns(`
+                CENTER
+                ├── country "Country" width:200
+                ├── gold "Gold" width:200 aggFunc:sum
+                └── silver "Silver" width:200 aggFunc:avg
+            `);
+            await new GridRows(api, `includes per-column showValuesAs modes for value columns setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const showValuesAs = resolveNullable(schema.properties.showValuesAs);
+            expect(showValuesAs).toBeDefined();
+
+            const unionItems = showValuesAs.properties.showValuesAsModel.items.anyOf;
+            const goldItem = unionItems.find((item: any) => item.properties.colId.enum[0] === 'gold');
+            expect(goldItem).toBeDefined();
+            expect(goldItem.properties.showValuesAs.enum).toContain('percentOfGrandTotal');
+            expect(goldItem.properties.showValuesAs.enum).toContain('percentOfColumnTotal');
+            await new GridRows(api, `includes per-column showValuesAs modes for value columns final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+        });
+
+        test('omits showValuesAs when no columns allow values', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [],
+            });
+            await new GridColumns(api, `omits showValuesAs when no columns allow values setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `omits showValuesAs when no columns allow values setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            expect(schema.properties.showValuesAs).toBeUndefined();
+            await new GridRows(api, `omits showValuesAs when no columns allow values final state`).check(`
                 ROOT id:ROOT_NODE_ID
             `);
         });

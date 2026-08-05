@@ -7,6 +7,7 @@ import { buildColumnVisibilityFeatureSchema } from './features/columnVisibilityF
 import { buildFilterFeatureSchema } from './features/filterFeatureSchema';
 import { buildPivotFeatureSchema } from './features/pivotFeatureSchema';
 import { buildRowGroupFeatureSchema } from './features/rowGroupFeatureSchema';
+import { buildShowValuesAsFeatureSchema } from './features/showValuesAsFeatureSchema';
 import { buildSortFeatureSchema } from './features/sortFeatureSchema';
 import type { SchemaBuilder } from './schemaBuilder';
 import { s } from './schemaBuilder';
@@ -17,6 +18,7 @@ const StructuredSchemaBuilderMap: Record<
     (beans: BeanCollection, params?: StructuredSchemaParams) => SchemaBuilder | undefined
 > = {
     aggregation: buildAggregationFeatureSchema,
+    showValuesAs: buildShowValuesAsFeatureSchema,
     filter: buildFilterFeatureSchema,
     sort: buildSortFeatureSchema,
     pivot: buildPivotFeatureSchema,
