@@ -27,7 +27,7 @@ await waitFor(() => expect(panel.setFilterItemLabels('Athlete')).toEqual(LI_MATC
 
 `asyncSetTimeout(0)` is fine for flushing a single tick after a synchronous action. `asyncSetTimeout(1)` is the *same call* — Node clamps 0 to 1ms — so it buys nothing.
 
-Four traps that make a `waitFor` unfalsifiable or a sleep load-bearing (negative assertions, polls that were already true, test IDs landing on a debounce, and sleeps that only look like safety margins) are covered in the skill. **Load it before converting any timing-dependent test.**
+The skill covers the traps that make a `waitFor` unfalsifiable or a sleep load-bearing — negative assertions, polls that were already true, test IDs landing on a debounce, and sleeps that only look like safety margins — plus how to prove a wait is genuinely necessary. **Load it before converting any timing-dependent test.**
 
 ## Regression tests: cover every reproduction path
 

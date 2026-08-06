@@ -390,13 +390,20 @@ def _read_prior_staged() -> set[Path]:
     The manifest-diff candidate set only covers items the manifest still
     declares, so an item removed from a plugin's entry would otherwise never be
     considered for cleanup. Empty for a first run, or for a marker predating
-    this record — both carry no path lines."""
+    this record — both carry no path lines.
+
+    These paths feed the deletion pass, so anything that does not resolve inside
+    .rulesync/ is discarded rather than trusted."""
     if not MARKER.is_file():
         return set()
     out: set[Path] = set()
     for line in MARKER.read_text().splitlines():
         line = line.strip()
         if not line or line.startswith("#"):
+            continue
+        candidate = (REPO_ROOT / line).resolve()
+        if candidate == RULESYNC.resolve() or RULESYNC.resolve() not in candidate.parents:
+            print(f"  WARN: ignoring out-of-tree marker entry: {line}", file=sys.stderr)
             continue
         out.add(REPO_ROOT / line)
     return out
