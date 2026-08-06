@@ -2,22 +2,14 @@ const esbuild = require('esbuild');
 const { umdWrapper } = require('esbuild-plugin-umd-wrapper');
 const fs = require('fs/promises');
 const path = require('path');
-const postcss = require('postcss');
-const postcssPlugins = require('./postcss-plugins.cjs');
+const { compileCssToText } = require('./esbuild-css-text.cjs');
 
 /** @type {import('esbuild').Plugin} */
 const cssPlugin = {
     name: 'css-plugin',
     setup(build) {
         build.onLoad({ filter: /\.css$/ }, async (args) => {
-            const rawCSS = await fs.readFile(args.path, 'utf8');
-            const isLegacyCSS = !args.path.includes('/src/');
-
-            // Legacy theme CSS is already processed through Sass, only source
-            // CSS (Theming API) needs PostCSS.
-            const outputCSS = isLegacyCSS
-                ? rawCSS
-                : (await postcss(postcssPlugins).process(rawCSS, { from: args.path, to: args.path })).css;
+            const { css: outputCSS, isLegacy: isLegacyCSS } = await compileCssToText(args.path);
 
             // UMD builds: non-source CSS (legacy themes) gets injected as <style> tags
             const isUmd = /:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '');

@@ -26,6 +26,16 @@
       "configurations": {
         "ci": {}
       }
+    },
+    "test:scope-hoisting": {
+      "executor": "nx:run-script",
+      "dependsOn": ["ag-grid-community:build:package", "ag-grid-enterprise:build:package"],
+      "options": {
+        "script": "test:scope-hoisting"
+      },
+      "configurations": {
+        "ci": {}
+      }
     }
   },
   "tags": ["module-size", "sharding"],

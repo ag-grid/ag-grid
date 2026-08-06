@@ -121,6 +121,11 @@ jobs:
               - 'yarn.lock'
               - 'nx.json'
               - 'tsconfig.*.json'
+              # build configuration decides the shape of the published output,
+              # which is what determines whether consumers can tree shake it
+              - 'esbuild.config.cjs'
+              - 'esbuild-*.cjs'
+              - 'postcss-plugins.cjs'
               # module-size measurement infrastructure
               - 'testing/module-size/**'
               - 'testing/module-size-angular/**'
@@ -194,6 +199,38 @@ jobs:
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-pr
           artifact-suffix: ${{ needs.prepare.outputs.pr-number }}
+
+  # A pass/fail gate on a single invariant rather than a measurement to be merged
+  # across shards, so unlike the jobs above it runs once and is not sharded. It needs
+  # no merge-base comparison either: the thresholds live in the check itself.
+  scope-hoisting:
+    name: Scope Hoisting
+    runs-on: ubuntu-latest
+    needs: [prepare, detect-changes]
+    if: needs.prepare.outputs.is-draft != 'true' && needs.detect-changes.outputs.relevant == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.head-sha }}
+          fetch-depth: 1
+
+      - name: Setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      # The target builds ag-grid-community and ag-grid-enterprise through dependsOn.
+      - name: Check tree shaking without scope hoisting
+        run: yarn nx run ag-grid-module-size:test:scope-hoisting --configuration=ci
+
+      - name: Persist test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: module-size-scope-hoisting-${{ needs.prepare.outputs.pr-number }}
+          path: reports/
+          retention-days: 1
 
   # Build and run module size tests on the merge base (sharded) - only if cache miss
   module-size-base:
@@ -391,7 +428,7 @@ jobs:
   status:
     name: Module Size Status
     runs-on: ubuntu-latest
-    needs: [prepare, detect-changes, check-base-cache, module-size-pr, module-size-base, compare-and-report]
+    needs: [prepare, detect-changes, check-base-cache, module-size-pr, module-size-base, compare-and-report, scope-hoisting]
     if: always() && needs.prepare.outputs.is-draft != 'true'
     steps:
       - name: Check job results
@@ -442,6 +479,12 @@ jobs:
           # compare-and-report must succeed
           if [[ "${{ needs.compare-and-report.result }}" != "success" ]]; then
             echo "::error::compare-and-report job failed"
+            exit 1
+          fi
+
+          # scope-hoisting must succeed
+          if [[ "${{ needs.scope-hoisting.result }}" != "success" ]]; then
+            echo "::error::scope-hoisting job failed"
             exit 1
           fi
 

@@ -122,7 +122,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build:types", "chartsPackages"],
+      "dependsOn": ["^build:types", "chartsPackages", "build:package:esm"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -135,7 +135,13 @@
           "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{projectRoot}/dist/package/*.cjs.js",
+        "{projectRoot}/dist/package/*.cjs.js.map",
+        "{projectRoot}/dist/package/*.cjs.min.js",
+        "{projectRoot}/dist/package/*.cjs.min.js.map",
+        "{projectRoot}/dist/package/package.json"
+      ],
       "options": {
         "outputPath": "{projectRoot}/dist/package",
         "main": "{projectRoot}/src/main.ts",
@@ -144,9 +150,10 @@
         "external": ["ag-grid-community", "ag-stack"],
         "platform": "browser",
         "target": "es2020",
-        "format": ["cjs", "esm"],
+        "format": ["cjs"],
         "sourcemap": true,
-        "metafile": false
+        "metafile": false,
+        "deleteOutputPath": false
       },
       "configurations": {
         "watch": {
@@ -161,6 +168,50 @@
           "metafile": false
         }
       }
+    },
+    "build:package:esm": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": ["^build:types", "chartsPackages"],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        "chartsPackages",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": ["{projectRoot}/dist/package/**/*.mjs", "{projectRoot}/dist/package/**/*.mjs.map"],
+      "options": {
+        "outputPath": "{projectRoot}/dist/package",
+        "main": "{projectRoot}/src/main.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
+        "esbuildConfig": "packages/ag-grid-enterprise/esbuildPackageEsm.cjs",
+        "platform": "browser",
+        "target": "es2020",
+        "format": ["esm"],
+        "sourcemap": true,
+        "metafile": false,
+        "bundle": false,
+        "deleteOutputPath": false
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "{projectRoot}/tsconfig.watch.json"
+        },
+        "staging": {
+          "sourcemap": false,
+          "metafile": false
+        },
+        "production": {
+          "sourcemap": false,
+          "metafile": false
+        }
+      },
+      "cache": true
     },
     "build:package:watch": {
       "executor": "@nx/esbuild:esbuild",
