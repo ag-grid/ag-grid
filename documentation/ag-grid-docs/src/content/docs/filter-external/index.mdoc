@@ -26,7 +26,7 @@ The example below shows external filters in action. There are two methods on `gr
 
 Both callbacks are reactive grid properties. The grid re-runs external filtering when you ask it to, and also when you hand it a new callback reference.
 
-**Keep the callbacks stable and call `api.onFilterChanged()`.** Your filter state lives outside the grid, so change it and then tell the grid to filter again. This is what the example below does.
+**Keep the callbacks stable and call `api.onFilterChanged()`.** Your filter state lives outside the grid, so change it and then tell the grid to filter again.
 
 ```js
 ageType = 'below25';
@@ -70,19 +70,32 @@ doesExternalFilterPass.value = (node) => node.data.age > minAge.value;
 
 {% /if %}
 
+`doesExternalFilterPass` is only called while `isExternalFilterPresent` returns `true`, so the presence check must already reflect the new state — replacing the pass callback on its own filters nothing while the presence check still returns `false`.
+
 Pick one of the two. A new callback reference _and_ a call to `api.onFilterChanged()` in the same update runs the filter twice.
+
+{% if isFramework("javascript", "angular", "vue") %}
+
+The example below takes the first route: the callbacks are stable, and each change to the filter state calls `api.onFilterChanged()`.
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+The example below takes the second route: `ageType` is component state, and both callbacks list it as a dependency.
+
+{% /if %}
 
 {% if isFramework("angular") %}
 
 ### Unstable Callback References
 
-An Angular template binding is re-evaluated on every change-detection run. Any of these bindings creates a new function each time, so the grid re-filters on every cycle:
+An Angular template binding is re-evaluated on every change-detection run. `.bind(this)` returns a new function each time it is evaluated, and a method call does the same whenever the method itself returns a function — so the grid re-filters on every cycle:
 
 ```html
 <!-- each of these re-filters on every change-detection run -->
 <ag-grid-angular [isExternalFilterPresent]="isExternalFilterPresent.bind(this)" />
 <ag-grid-angular [isExternalFilterPresent]="getIsExternalFilterPresent()" />
-<ag-grid-angular [doesExternalFilterPass]="(node) => node.data.age > minAge" />
 ```
 
 Use an arrow class field instead and bind the field itself. The reference then stays the same for the lifetime of the component:
@@ -113,21 +126,22 @@ An inline lambda is a new function on every render, so the grid re-filters every
 
 `useCallback` only helps if its dependency array covers the state the callback reads. A callback that reads a value missing from the array keeps the stale value, and one that lists a value it does not read churns its reference for no reason.
 
-Where the filter state is held in a `useRef`, reads are always current, so the correct dependency array is empty and the reference never changes:
-
-```jsx
-const ageType = useRef('everyone');
-
-const isExternalFilterPresent = useCallback(() => ageType.current !== 'everyone', []);
-const doesExternalFilterPass = useCallback((node) => node.data.age > 50 || ageType.current === 'everyone', []);
-```
-
-Where it is held in `useState`, list that state, and accept a new reference each time it changes:
+Where the filter state is held in `useState`, list that state on every callback that reads it. Each change then hands the grid new references and filtering re-runs, with no `api.onFilterChanged()` call:
 
 ```jsx
 const [ageType, setAgeType] = useState('everyone');
 
 const isExternalFilterPresent = useCallback(() => ageType !== 'everyone', [ageType]);
+const doesExternalFilterPass = useCallback((node) => ageType === 'everyone' || node.data.age > 50, [ageType]);
+```
+
+Where it is held in a `useRef`, reads are always current, so the correct dependency array is empty and the reference never changes. Call `api.onFilterChanged()` after updating the ref:
+
+```jsx
+const ageType = useRef('everyone');
+
+const isExternalFilterPresent = useCallback(() => ageType.current !== 'everyone', []);
+const doesExternalFilterPass = useCallback((node) => ageType.current === 'everyone' || node.data.age > 50, []);
 ```
 
 {% /if %}
