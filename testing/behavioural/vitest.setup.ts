@@ -5,6 +5,7 @@ import { afterAll, beforeEach, expect, vitest } from 'vitest';
 // `ag-grid-community` at runtime, which would defeat the lazy `ag`-import guard below. This module is
 // type-only besides the constant, so it pulls in nothing at runtime.
 import { ALL_SEVERITIES } from './src/test-utils/dev-validations';
+import { ignoreConsoleLicenseKeyError } from './src/test-utils/ignoreConsoleLicenseKeyError';
 
 // Register all jest-dom matchers globally.
 expect.extend(jestDomMatchers);
@@ -19,6 +20,7 @@ expect.extend(jestDomMatchers);
 beforeEach(async () => {
     const { enableDevValidations } = await import('ag-grid-community');
     enableDevValidations({ throwOn: ALL_SEVERITIES });
+    ignoreConsoleLicenseKeyError();
 });
 
 // Shim for code that references `jest` — redirect to vitest.

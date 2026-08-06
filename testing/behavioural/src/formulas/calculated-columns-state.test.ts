@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import { vi } from 'vitest';
 
 import type { GridApi, GridOptions, GridState, Module, UserColumnProperty } from 'ag-grid-community';
 import {
@@ -1193,6 +1194,8 @@ describe('calculated columns - grid state persistence', () => {
         // does when the developer ignores that: identity falls back to the build's positional ids, which
         // the layer cannot match, so nothing the user does through the dialog takes effect.
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
+        // Suppression stops the throw but not the log, by design, so hold the console and assert #319 fires.
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const anonymousColumnDefs = (): GridOptions['columnDefs'] => [
             { field: 'a' },
             { field: 'b' },
@@ -1208,6 +1211,8 @@ describe('calculated columns - grid state persistence', () => {
         });
         // With neither colId nor field to key on, both calc cols land on positional ids.
         await waitFor(() => expect(order(source)).toEqual(['a', 'b', '0', '1']));
+        expect(warn.mock.calls.flat().join(' ')).toContain('#319');
+        warn.mockRestore();
 
         await editViaDialog(source, '0', { title: 'Renamed Sum' });
         // The rename is dropped by the rebuild the edit triggers: the entry it wrote is keyed by the

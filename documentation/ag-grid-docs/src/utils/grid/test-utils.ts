@@ -6,6 +6,7 @@ import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
 import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
 import { routeExampleAssetsFromDisk, routeExternalThroughMirror, warnOnNetworkAccess } from './test/localSources';
+import { routeExampleModulesTranspiled } from './test/localTranspile';
 import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test/remoteGridapi';
 import { shouldBeAsyncGuard } from './test/shouldBeAsyncGuard';
 import { WAF_BYPASS_HEADER, wafBypassSecret } from './test/wafBypass';
@@ -60,6 +61,15 @@ const ALL_FRAMEWORKS = [
 ] as const;
 type AgFramework = (typeof ALL_FRAMEWORKS)[number];
 
+/**
+ * React is the only framework declared twice - once on the production build, once forcing the development
+ * one - so this only ever drops a React variant. That is a sixth of the suite, and locally the development
+ * build is the one worth the wall clock, so CI runs both and a local run does not.
+ */
+const runAllFrameworkVariants = !!process.env.CI || process.env.ALL_FRAMEWORK_VARIANTS === 'true';
+
+const PROD_VARIANT_FRAMEWORK = 'reactFunctionalTs';
+
 // Filter frameworks based on FRAMEWORK environment variable
 function getFilteredFrameworks(): readonly AgFramework[] {
     const frameworkFilter = process.env.FRAMEWORK;
@@ -73,10 +83,23 @@ function getFilteredFrameworks(): readonly AgFramework[] {
             );
         }
     }
+    if (!runAllFrameworkVariants) {
+        return ALL_FRAMEWORKS.filter((framework) => framework !== PROD_VARIANT_FRAMEWORK);
+    }
     return ALL_FRAMEWORKS;
 }
 
 const FILTERED_FRAMEWORKS = getFilteredFrameworks();
+
+// One worker, so a run says once what it is doing rather than once per worker.
+if (process.env.TEST_WORKER_INDEX === '0' && !process.env.FRAMEWORK) {
+    // eslint-disable-next-line no-console
+    console.log(
+        runAllFrameworkVariants
+            ? `Running all framework variants: ${FILTERED_FRAMEWORKS.join(', ')}`
+            : `Skipping the ${PROD_VARIANT_FRAMEWORK} variant - set ALL_FRAMEWORK_VARIANTS=true to include it`
+    );
+}
 
 const licenseTexts = [
     '****************************************************************************************************************************',
@@ -178,7 +201,9 @@ async function loadPage(
         enableTestIds: 'true',
     };
 
-    if (loadPageOptions?.prod) {
+    // Stated rather than left to the boilerplate, whose default is the development build - so the two React
+    // variants both loaded it and the production build was never actually exercised.
+    if (loadPageOptions?.prod || (loadPageOptions?.prod === undefined && agFramework === PROD_VARIANT_FRAMEWORK)) {
         queryOptions.prod = 'true';
     } else if (loadPageOptions?.prod === false || agFramework === reactFunctionalTsDev) {
         queryOptions.prod = 'false';
@@ -260,6 +285,7 @@ export const extended = base.extend<TestFixtures>({
             // served `/example-assets/`.
             await routeExternalThroughMirror(page, siteOrigin);
             await routeExampleAssetsFromDisk(page);
+            await routeExampleModulesTranspiled(page, siteOrigin);
             await use();
         },
         { auto: true },
@@ -412,13 +438,13 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
         errors = [];
     }
 
-    let exampleRemoved = false;
-    await page.evaluate(() => {
+    const exampleRemoved = await page.evaluate(() => {
         const win: any = window;
-        if (win.tearDownExample) {
-            win.tearDownExample();
-            exampleRemoved = true;
+        if (!win.tearDownExample) {
+            return false;
         }
+        win.tearDownExample();
+        return true;
     });
     if (exampleRemoved) {
         const root = page.locator('.ag-root-wrapper');
