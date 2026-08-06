@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import {
@@ -11,7 +11,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForInput } from '../test-utils';
 
 describe('Cell Editing Batch', () => {
     const gridMgr = new TestGridsManager({
@@ -74,17 +74,15 @@ describe('Cell Editing Batch', () => {
         expect(api.isBatchEditing()).toBe(true);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'number'));
-        const cell2 = getByTestId(gridDiv, agTestIdFor.cell('1', 'number'));
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'number')));
+        const cell2 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('1', 'number')));
 
         // Phase A: edit adds pending decoration, only on edited cell
         await userEvent.dblClick(cell);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
         await userEvent.keyboard('100{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
-        expect(api.getCellEditorInstances()).toHaveLength(0);
         expect(cell).toHaveTextContent('100');
         expect(cell).toHaveClass(/ag-cell-batch-edit/);
         expect(cell2).not.toHaveClass(/ag-cell-batch-edit/);
@@ -97,10 +95,9 @@ describe('Cell Editing Batch', () => {
 
         // Phase B: commit removes decoration, value is retained
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cell).not.toHaveClass(/ag-cell-batch-edit/));
 
         expect(cell).toHaveTextContent('100');
-        expect(cell).not.toHaveClass(/ag-cell-batch-edit/);
 
         await new GridRows(api, 'after commit — row 0 committed to 100').check(`
             ROOT id:ROOT_NODE_ID
@@ -111,9 +108,9 @@ describe('Cell Editing Batch', () => {
         // Phase C: cancel reverts value to sourceValue and removes decoration
         api.startBatchEdit();
         await userEvent.dblClick(cell);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
         await userEvent.keyboard('200{Enter}');
-        await asyncSetTimeout(1);
+        // GridRows.check() below already polls/retries internally on mismatch.
 
         await new GridRows(api, 'after typing 200 in second batch — pending 200, source 100').check(`
             ROOT id:ROOT_NODE_ID
@@ -122,10 +119,9 @@ describe('Cell Editing Batch', () => {
         `);
 
         api.cancelBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cell).not.toHaveClass(/ag-cell-batch-edit/));
 
         expect(cell).toHaveTextContent('100');
-        expect(cell).not.toHaveClass(/ag-cell-batch-edit/);
 
         await new GridRows(api, 'after cancel — reverted to 100').check(`
             ROOT id:ROOT_NODE_ID
@@ -155,17 +151,16 @@ describe('Cell Editing Batch', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'number'));
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'number')));
 
         const commitButton = document.createElement('button');
         document.body.appendChild(commitButton);
         commitButton.addEventListener('click', () => api.commitBatchEdit());
 
         await userEvent.dblClick(cell);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
         await userEvent.keyboard('123');
-        await asyncSetTimeout(1);
+        // GridRows.check() below already polls/retries internally on mismatch.
 
         // While editing: editor is open (🖍️), data still shows 10
         await new GridRows(api, 'while editor open — live typing 123').check(`
@@ -175,7 +170,7 @@ describe('Cell Editing Batch', () => {
         `);
 
         await userEvent.click(commitButton);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
         expect(cell).toHaveTextContent('123');
         expect(cell).not.toHaveClass(/ag-cell-batch-edit/);
@@ -211,9 +206,8 @@ describe('Cell Editing Batch', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
-        const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
+        const cellB = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'b')));
         expect(cellB).toHaveTextContent('initial');
 
         await new GridRows(api, 'initial state').check(`
@@ -222,14 +216,10 @@ describe('Cell Editing Batch', () => {
         `);
 
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
-        const editor = gridDiv.querySelector<HTMLInputElement>('input');
-        if (!editor) {
-            throw new Error('Editor input not found');
-        }
+        const editor = await waitForInput(gridDiv, cellA);
         await userEvent.clear(editor);
         await userEvent.keyboard('xx{Enter}');
-        await asyncSetTimeout(1);
+        // GridRows.check() below already polls/retries internally on mismatch.
 
         // After editing: a is pending 'xx', b still sees 'initial' (valueGetter uses committed data)
         await new GridRows(api, 'after editing a to xx — b still shows initial').check(`
@@ -238,16 +228,13 @@ describe('Cell Editing Batch', () => {
         `);
 
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
 
         // valueGetter sees committed data, not pending value
         expect(cellB).toHaveTextContent('initial');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
-
-        // After commit, valueGetter sees the newly committed value
-        expect(cellB).toHaveTextContent('xx');
+        // After commit, valueGetter sees the newly committed value.
+        await waitFor(() => expect(cellB).toHaveTextContent('xx'));
 
         await new GridRows(api, 'after commit — a and b both show xx').check(`
             ROOT id:ROOT_NODE_ID
@@ -260,7 +247,7 @@ describe('Cell Editing Batch', () => {
         const editor2 = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor2);
         await userEvent.type(editor2, 'yy{Enter}');
-        await asyncSetTimeout(1);
+        // GridRows.check() below already polls/retries internally on mismatch.
 
         // Second batch: a pending 'yy', b still sees 'xx' (committed)
         await new GridRows(api, 'second batch — a pending yy, b still shows xx').check(`
@@ -269,13 +256,11 @@ describe('Cell Editing Batch', () => {
         `);
 
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
 
         // valueGetter sees committed data (xx), not pending value (yy)
         expect(cellB).toHaveTextContent('xx');
 
         api.cancelBatchEdit();
-        await asyncSetTimeout(1);
 
         // After cancel, still shows committed value (xx)
         expect(cellB).toHaveTextContent('xx');
@@ -304,21 +289,20 @@ describe('Cell Editing Batch', () => {
         `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const numberCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'number'));
-        const stringCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'string1'));
+        const numberCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'number')));
+        const stringCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'string1')));
 
         await userEvent.dblClick(numberCell);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
         await userEvent.keyboard('100{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
         expect(numberCell).toHaveTextContent('100');
         expect(numberCell).toHaveClass(/ag-cell-batch-edit/);
 
         const rowNode = api.getDisplayedRowAtIndex(0);
         rowNode?.setDataValue('string1', 'pending', 'ui');
-        await asyncSetTimeout(1);
+        // GridRows.check() below already polls/retries internally on mismatch.
 
         await new GridRows(api, 'after batch setDataValue ui').check(`
             ROOT id:ROOT_NODE_ID
@@ -328,7 +312,7 @@ describe('Cell Editing Batch', () => {
         expect(stringCell).toHaveTextContent('pending');
 
         api.cancelBatchEdit();
-        await asyncSetTimeout(1);
+        // GridRows.check() below already polls/retries internally on mismatch.
 
         await new GridRows(api, 'after cancel batch setDataValue').check(`
             ROOT id:ROOT_NODE_ID
@@ -357,20 +341,17 @@ describe('Cell Editing Batch', () => {
         api.addEventListener('cellEditingStopped', (e) => stopped.push(e));
 
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         api.setFocusedCell(0, 'string1');
         api.startEditingCell({ rowIndex: 0, colKey: 'string1' });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(started).toHaveLength(1));
 
-        expect(started).toHaveLength(1);
         expect(stopped).toHaveLength(0);
 
         await userEvent.keyboard('{Escape}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(stopped).toHaveLength(1));
 
         expect(api.getCellEditorInstances()).toHaveLength(0);
-        expect(stopped).toHaveLength(1);
     });
 
     // Reverting mid-batch re-creates the editor before closing it, but the session that fired
@@ -391,7 +372,6 @@ describe('Cell Editing Batch', () => {
             api.addEventListener('cellEditingStopped', (e) => stopped.push(e));
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
 
             const grid = getGridElement(api)! as HTMLElement;
             const cell = grid.querySelector<HTMLElement>('[row-index="0"] [col-id="string1"]')!;
@@ -399,16 +379,14 @@ describe('Cell Editing Batch', () => {
             const input = await waitForInput(grid, cell);
             await userEvent.clear(input);
             await userEvent.type(input, 'typed');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(started.length).toBeGreaterThan(0));
 
-            expect(started.length).toBeGreaterThan(0);
             expect(stopped).toHaveLength(0);
 
             api.stopEditing(true); // cancels the in-flight edits, keeping the batch open
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(stopped).toHaveLength(started.length));
 
             expect(api.getCellEditorInstances()).toHaveLength(0);
-            expect(stopped).toHaveLength(started.length);
             expect(api.getDisplayedRowAtIndex(0)?.data?.string1).toBe('test'); // nothing written
         }
     );

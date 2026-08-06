@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import {
@@ -11,7 +11,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule, PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForInput } from '../test-utils';
 
 describe('Cell Editing: change detection', () => {
     const gridMgr = new TestGridsManager({
@@ -516,7 +516,6 @@ describe('Cell Editing: change detection', () => {
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'initial').check(`
                 ROOT id:ROOT_NODE_ID value:30
@@ -529,21 +528,25 @@ describe('Cell Editing: change detection', () => {
 
             // setDataValue on a leaf row — grand total row cell should get batch style
             api.getRowNode('1')!.setDataValue('value', 100, 'batch');
-            await asyncSetTimeout(1);
 
             // Leaf cell gets batch style
-            const leafCell = getByTestId(gridDiv, agTestIdFor.cell('1', 'value'));
-            expect(leafCell).toHaveClass('ag-cell-batch-edit');
+            await waitFor(() => {
+                const leafCell = getByTestId(gridDiv, agTestIdFor.cell('1', 'value'));
+                expect(leafCell).toHaveClass('ag-cell-batch-edit');
+            });
 
             // Grand total row cell should also get batch style
-            const footerCell = getByTestId(gridDiv, agTestIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'value'));
-            expect(footerCell).toHaveClass('ag-cell-batch-edit');
+            await waitFor(() => {
+                const footerCell = getByTestId(gridDiv, agTestIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'value'));
+                expect(footerCell).toHaveClass('ag-cell-batch-edit');
+            });
 
             api.cancelBatchEdit();
-            await asyncSetTimeout(1);
 
             // After cancel, batch styles should be removed
-            expect(getByTestId(gridDiv, agTestIdFor.cell('1', 'value'))).not.toHaveClass('ag-cell-batch-edit');
+            await waitFor(() => {
+                expect(getByTestId(gridDiv, agTestIdFor.cell('1', 'value'))).not.toHaveClass('ag-cell-batch-edit');
+            });
             expect(getByTestId(gridDiv, agTestIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'value'))).not.toHaveClass(
                 'ag-cell-batch-edit'
             );
@@ -575,22 +578,24 @@ describe('Cell Editing: change detection', () => {
                 `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
             api.startBatchEdit();
 
-            // Edit via UI
-            const leafCell = getByTestId(gridDiv, agTestIdFor.cell('1', 'value'));
+            // Edit via UI. `data-testid` lands on a debounced pass, so poll for the cell.
+            let leafCell!: HTMLElement;
+            await waitFor(() => {
+                leafCell = getByTestId(gridDiv, agTestIdFor.cell('1', 'value'));
+            });
             await userEvent.dblClick(leafCell);
-            await asyncSetTimeout(1);
 
             const editor = await waitForInput(gridDiv, leafCell, { popup: false });
             await userEvent.clear(editor);
             await userEvent.keyboard('100{Enter}');
-            await asyncSetTimeout(1);
 
             // Leaf cell gets batch style
-            expect(getByTestId(gridDiv, agTestIdFor.cell('1', 'value'))).toHaveClass('ag-cell-batch-edit');
+            await waitFor(() => {
+                expect(getByTestId(gridDiv, agTestIdFor.cell('1', 'value'))).toHaveClass('ag-cell-batch-edit');
+            });
 
             // Grand total row cell should also get batch style
             const footerCell = getByTestId(gridDiv, agTestIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'value'));

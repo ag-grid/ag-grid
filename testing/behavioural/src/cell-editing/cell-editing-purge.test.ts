@@ -1,4 +1,4 @@
-import { findByTestId } from '@testing-library/dom';
+import { findByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import type { CellEditingStoppedEvent, GridApi, GridOptions } from 'ag-grid-community';
@@ -14,7 +14,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule, PivotModule, RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridRows, TestGridsManager, waitForInput } from '../test-utils';
 
 /**
  * A row or column leaving the grid ends its own edits rather than a sweep noticing later. These cover the
@@ -51,7 +51,6 @@ describe('Cell editing: purging edits on departure', () => {
         const input = await waitForInput(gridDiv, target);
         await userEvent.clear(input);
         await userEvent.type(input, value);
-        await asyncSetTimeout(1);
     };
 
     /** Types `value` into the cell and commits with Enter, staging it as a pending batch edit. */
@@ -81,7 +80,6 @@ describe('Cell editing: purging edits on departure', () => {
         api.addEventListener('cellEditingStopped', (e) => stopped.push(e));
 
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         await new GridRows(api, 'pivot: grouped rows before any edit').check(`
             ROOT id:ROOT_NODE_ID
@@ -93,8 +91,10 @@ describe('Cell editing: purging edits on departure', () => {
 
         await stage(api, '1', 'note', 'EDITED');
 
-        expect(api.getEditingCells()).toHaveLength(1);
-        expect(stopped).toHaveLength(1); // the editor closed as it staged
+        await waitFor(() => {
+            expect(api.getEditingCells()).toHaveLength(1);
+            expect(stopped).toHaveLength(1); // the editor closed as it staged
+        });
 
         await new GridRows(api, 'pivot: note staged as pending on the primary column').check(`
             ROOT id:ROOT_NODE_ID
@@ -105,11 +105,12 @@ describe('Cell editing: purging edits on departure', () => {
         `);
 
         api.setGridOption('pivotMode', true);
-        await asyncSetTimeout(1);
 
         // The primary column is parked, so its staged edit went with it rather than lingering unreachable.
-        expect(api.getEditingCells()).toHaveLength(0);
-        expect(stopped).toHaveLength(1); // already stopped once; the purge must not fire a second
+        await waitFor(() => {
+            expect(api.getEditingCells()).toHaveLength(0);
+            expect(stopped).toHaveLength(1); // already stopped once; the purge must not fire a second
+        });
 
         await new GridRows(api, 'pivot: primaries parked, staged edit purged').check(`
             ROOT id:ROOT_NODE_ID pivot_sport_Gymnastics_gold:3 pivot_sport_Swimming_gold:2
@@ -139,7 +140,6 @@ describe('Cell editing: purging edits on departure', () => {
         } satisfies GridOptions);
 
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         await new GridRows(api, 'pivot round trip: grouped rows before the edit').check(`
             ROOT id:ROOT_NODE_ID
@@ -150,13 +150,12 @@ describe('Cell editing: purging edits on departure', () => {
         `);
 
         await stage(api, '1', 'note', 'EDITED');
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1)); // staged, before pivot parks it
 
         api.setGridOption('pivotMode', true);
-        await asyncSetTimeout(1);
-        expect(api.getEditingCells()).toHaveLength(0);
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
 
         api.setGridOption('pivotMode', false);
-        await asyncSetTimeout(1);
 
         await new GridRows(api, 'pivot round trip: purged edit did not come back').check(`
             ROOT id:ROOT_NODE_ID
@@ -168,7 +167,7 @@ describe('Cell editing: purging edits on departure', () => {
 
         // The column survived its own purge, so it still stages and commits normally.
         await stage(api, '1', 'note', 'AGAIN');
-        expect(api.getEditingCells()).toHaveLength(1);
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
 
         await new GridRows(api, 'pivot round trip: fresh edit staged after the purge').check(`
             ROOT id:ROOT_NODE_ID
@@ -179,7 +178,6 @@ describe('Cell editing: purging edits on departure', () => {
         `);
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
 
         await new GridRows(api, 'pivot round trip: fresh edit committed').check(`
             ROOT id:ROOT_NODE_ID
@@ -205,7 +203,6 @@ describe('Cell editing: purging edits on departure', () => {
         api.addEventListener('cellEditingStopped', (e) => stopped.push(e));
 
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         await new GridRows(api, 'pinned row present before the edit').check(`
             PINNED_TOP id:PIN a:"PIN-A" b:"PIN-B"
@@ -215,8 +212,10 @@ describe('Cell editing: purging edits on departure', () => {
 
         await stage(api, 'PIN', 'a', 'EDITED');
 
-        expect(api.getEditingCells()).toHaveLength(1);
-        expect(stopped).toHaveLength(1);
+        await waitFor(() => {
+            expect(api.getEditingCells()).toHaveLength(1);
+            expect(stopped).toHaveLength(1);
+        });
 
         await new GridRows(api, 'pinned row edit staged as pending').check(`
             PINNED_TOP id:PIN a:⏳"EDITED" "PIN-A" b:"PIN-B"
@@ -225,10 +224,11 @@ describe('Cell editing: purging edits on departure', () => {
         `);
 
         api.setGridOption('pinnedTopRowData', [{ id: 'OTHER', a: 'OTHER-A', b: 'OTHER-B' }]);
-        await asyncSetTimeout(1);
 
-        expect(api.getEditingCells()).toHaveLength(0);
-        expect(stopped).toHaveLength(1);
+        await waitFor(() => {
+            expect(api.getEditingCells()).toHaveLength(0);
+            expect(stopped).toHaveLength(1);
+        });
 
         await new GridRows(api, 'pinned row replaced, its staged edit purged').check(`
             PINNED_TOP id:OTHER a:"OTHER-A" b:"OTHER-B"
@@ -269,9 +269,9 @@ describe('Cell editing: purging edits on departure', () => {
         `);
 
         api.applyTransaction({ remove: [rowData[1]] });
-        await asyncSetTimeout(1);
 
-        expect(stopped).toHaveLength(1);
+        // cellEditingStopped flushes off the async event queue, not synchronously with the transaction.
+        await waitFor(() => expect(stopped).toHaveLength(1));
         expect(stopped[0].rowIndex).toBe(1);
         expect(stopped[0].node.id).toBe('1');
 
@@ -313,9 +313,9 @@ describe('Cell editing: purging edits on departure', () => {
         `);
 
         api.setGridOption('columnDefs', [{ field: 'a' }]);
-        await asyncSetTimeout(1);
 
-        expect(stopped).toHaveLength(1);
+        // cellEditingStopped flushes off the async event queue, not synchronously with the column rebuild.
+        await waitFor(() => expect(stopped).toHaveLength(1));
         expect(stopped[0].value).toBe('LOUD');
         expect(rowData[0].a).toBe('A0'); // the purge cancels, so nothing was written
 
@@ -355,8 +355,9 @@ describe('Cell editing: purging edits on departure', () => {
             └── LEAF 🖍️ id:0 a:🖍️"CHANGED" "A0" b:"B0"
         `);
 
+        // destroy() checks its own destroyCalled flag synchronously before the purge would fire, so no
+        // event escapes it — nothing async to wait on for a call that never happens.
         api.destroy();
-        await asyncSetTimeout(1);
 
         expect(stopped).toHaveLength(0);
     });
@@ -389,10 +390,10 @@ describe('Cell editing: purging edits on departure', () => {
         `);
 
         api.setGridOption('columnDefs', [{ field: 'b', editable: true }]);
-        await asyncSetTimeout(1);
 
+        // cellEditingStopped flushes off the async event queue, not synchronously with the column rebuild.
+        await waitFor(() => expect(colsDuringStop).toEqual([['b']])); // 'a' already out of colsList when the stop was observed
         expect(api.getEditingCells()).toHaveLength(0);
-        expect(colsDuringStop).toEqual([['b']]); // 'a' already out of colsList when the stop was observed
         expect(displayedColsDuringStop).toEqual([['b']]); // ...and out of the derived state, not just colsList
 
         await new GridRows(api, 'column a removed, its edit purged').check(`
@@ -428,11 +429,10 @@ describe('Cell editing: purging edits on departure', () => {
         `);
 
         api.setGridOption('columnDefs', [{ field: 'b', editable: true }]);
-        await asyncSetTimeout(1);
 
         // The row edit carries on through column b, so the stale error would still be styling it as invalid.
+        await waitFor(() => expect(rowElement().classList.contains('ag-row-editing-invalid')).toBe(false));
         expect(api.getEditingCells()).toHaveLength(1);
-        expect(rowElement().classList.contains('ag-row-editing-invalid')).toBe(false);
 
         await new GridRows(api, 'column a gone: the row error went with its edit').check(`
             ROOT id:ROOT_NODE_ID
@@ -469,10 +469,11 @@ describe('Cell editing: purging edits on departure', () => {
         `);
 
         api.setGridOption('columnDefs', [{ field: 'b', editable: true }]);
-        await asyncSetTimeout(1);
+
+        // column a's editing cell drops out of the count once the rebuild lands; b's stays.
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
 
         // b is still BAD, so the row is still invalid — and still blocked from committing.
-        expect(api.getEditingCells()).toHaveLength(1);
         expect(rowElement().classList.contains('ag-row-editing-invalid')).toBe(true);
 
         await new GridRows(api, 'column a gone: the remaining edit still breaks the row rule').check(`
