@@ -29,10 +29,8 @@ Both callbacks are reactive grid properties. The grid re-runs external filtering
 **Keep the callbacks stable and call `api.onFilterChanged()`.** Your filter state lives outside the grid, so change it and then tell the grid to filter again. This is what the example below does.
 
 ```js
-function onAgeTypeChanged(newValue) {
-    ageType = newValue;
-    api.onFilterChanged();
-}
+ageType = 'below25';
+api.onFilterChanged();
 ```
 
 **Or supply a new callback reference.** `isExternalFilterPresent` and `doesExternalFilterPass` are reactive, so replacing either one with a new function re-runs filtering without an API call. Changing one is enough; you do not need to change both. See [Updating Grid Options](./grid-interface/#updating-grid-options) for how reactive properties are applied.
