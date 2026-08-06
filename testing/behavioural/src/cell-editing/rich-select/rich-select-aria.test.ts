@@ -4,13 +4,7 @@ import { getGridElement } from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
-import {
-    TestGridsManager,
-    asyncSetTimeout,
-    fakeElementAttribute,
-    firePointerLikeClick,
-    waitForPopup,
-} from '../../test-utils';
+import { TestGridsManager, fakeElementAttribute, firePointerLikeClick, waitForPopup } from '../../test-utils';
 
 /**
  * The Rich Select combobox must not carry a dangling `aria-controls` idref (WCAG 4.1.2). The list is
@@ -54,10 +48,15 @@ describe('Rich Select combobox aria-controls (WCAG 4.1.2)', () => {
 
         // The picker opens with the editor; its aria element (wrapper or input) carries aria-expanded.
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
         await waitForPopup(gridDiv);
 
-        const ariaEl = gridDiv.querySelector<HTMLElement>('[aria-expanded="true"]')!;
+        const ariaEl = await waitFor(() => {
+            const el = gridDiv.querySelector<HTMLElement>('[aria-expanded="true"]');
+            if (!el) {
+                throw new Error('No expanded combobox element found');
+            }
+            return el;
+        });
         const controlsId = ariaEl.getAttribute('aria-controls');
         expect(controlsId).toBeTruthy();
         expect(document.getElementById(controlsId!)).not.toBeNull();

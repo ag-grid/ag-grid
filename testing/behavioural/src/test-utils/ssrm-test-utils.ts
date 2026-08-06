@@ -18,7 +18,8 @@ export function countLoadingRows(api: GridApi): number {
 export async function waitForNoLoadingRows(api: GridApi) {
     await asyncSetTimeout(0);
     while (countLoadingRows(api) > 0) {
-        await asyncSetTimeout(1);
+        // Poll-loop yield, not a guessed delay: the condition is re-read synchronously on every iteration.
+        await asyncSetTimeout(0);
     }
 }
 
@@ -50,13 +51,16 @@ export async function ssrmExpandAndLoadAll(api: GridApi) {
 
     while (true) {
         if (expandAllGroupsFromNodes()) {
-            await asyncSetTimeout(1);
+            // Fixpoint-loop yield after a mutating action: lets the datasource respond before the next
+            // synchronous re-scan of the row model. Not a wait for a fixed duration.
+            await asyncSetTimeout(0);
             continue;
         }
 
         const loading = countLoadingRows(api);
         if (loading > 0) {
-            await asyncSetTimeout(1);
+            // Poll-loop yield, not a guessed delay: countLoadingRows is re-read synchronously each iteration.
+            await asyncSetTimeout(0);
             continue;
         }
 

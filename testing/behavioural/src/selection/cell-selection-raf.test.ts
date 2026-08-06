@@ -249,8 +249,11 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             // debounceModelEvent -> spannedCellsUpdated), so a single tick is not enough. With
             // enableCellSpan off there is no event to poll for — and if the chain never runs, no RAFs
             // are scheduled and the accumulation assertion below passes vacuously.
-            // eslint-disable-next-line no-restricted-syntax -- waits out RowSpanService's chained 0-delay timers
-            await asyncSetTimeout(5);
+            // Both links are 0-delay (rowSpanService `modelTimeout` then the `_debounce(…, 0)`), so
+            // draining them is a fixed number of ticks, not a guessed window.
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
             // Flush animation frame tasks (simulates what happens during scroll/focus)
             api.flushAllAnimationFrames();
         }
@@ -313,10 +316,12 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
 
         // Negative assertion: the test exists to prove the span cycle completes without error, so it
         // needs the whole chain to run. A single tick can return before RowSpanService's second
-        // 0-delay timer fires, leaving the cycle half-done and the assertion vacuous — there is no
-        // positive signal that follows "nothing went wrong", so this is the observation window.
-        // eslint-disable-next-line no-restricted-syntax -- waits out RowSpanService's chained 0-delay timers
-        await asyncSetTimeout(5);
+        // 0-delay timer fires, leaving the cycle half-done and the assertion vacuous. Both links are
+        // 0-delay (rowSpanService `modelTimeout` then the `_debounce(…, 0)`), so draining them is a
+        // fixed number of ticks rather than a guessed window.
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
 
         // The grid should not have errored — spans are being processed
         expect(api.getDisplayedRowCount()).toBe(3);
