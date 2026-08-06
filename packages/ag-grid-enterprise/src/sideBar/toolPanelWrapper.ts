@@ -145,7 +145,10 @@ export class ToolPanelWrapper extends Component {
     }
 
     public refresh(): void {
-        this.toolPanelCompInstance?.refresh(this.params);
+        // Strip initialState: a plain refresh (e.g. api.refreshToolPanel) must not re-apply the
+        // construction-time saved expansion and clobber the user's live expand/collapse. setState
+        // restore is unaffected — it calls the panel's refresh with fresh params directly, not via here.
+        this.toolPanelCompInstance?.refresh({ ...this.params, initialState: undefined });
     }
 
     public animateDisplayed(displayed: boolean): void {
