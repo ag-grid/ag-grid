@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
@@ -924,9 +925,10 @@ describe('ag-grid rows-ordering', () => {
             getRowId: (params) => params.data.id,
         });
 
-        // Await the async events are executed
+        // Await the async events are executed. The last chained update (rowData3) is the
+        // only one that introduces id '7', so poll for that node rather than sleeping.
         await asyncSetTimeout(0);
-        await asyncSetTimeout(2);
+        await waitFor(() => expect(api.getRowNode('7')).toBeDefined());
 
         await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID

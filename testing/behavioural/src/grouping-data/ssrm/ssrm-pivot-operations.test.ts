@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { ScrollApiModule, TextFilterModule } from 'ag-grid-community';
 import {
@@ -202,7 +204,9 @@ describe('SSRM pivot-mode operations (characterization)', () => {
         });
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(50);
+        // The pivot result columns only exist once the initial response has been applied, so this
+        // gates the request-count snapshot below on a settled initial load.
+        await waitFor(() => expect(pivotCols(api)).toEqual(['2000_gold', '2004_gold']));
 
         const requestsBeforeSort = requests.length;
 
@@ -211,19 +215,21 @@ describe('SSRM pivot-mode operations (characterization)', () => {
         // client-side re-sort from a no-op.
         api.applyColumnState({ state: [{ colId: '2004_gold', sort: 'asc' }] });
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(50);
 
-        // Pin whether sorting a pivot value column re-requests from the server or sorts client-side:
-        // no new request is issued (serverSideEnableClientSideSort keeps the sort on the client).
-        const requestsAfterSort = requests.length;
-        expect(requestsAfterSort).toBe(requestsBeforeSort);
-
+        // Positive control before the negative assertion: this polling check only passes once the
+        // re-sort has been applied (USA ahead of Russia). A server round-trip would have recorded its
+        // request well before the rows could settle, so reaching here is a real observation window.
         // Pin the resulting group row order after client-side sorting the pivot value column ascending.
         await new GridRows(api, '3. client-side sort on pivot value column').check(`
             ROOT id:<no-id>
             ├── GROUP-leafGroup collapsed id:1 ag-Grid-AutoColumn:"USA" 2000_gold:1 2004_gold:2
             └── GROUP-leafGroup collapsed id:0 ag-Grid-AutoColumn:"Russia" 2000_gold:3 2004_gold:4
         `);
+
+        // Pin whether sorting a pivot value column re-requests from the server or sorts client-side:
+        // no new request is issued (serverSideEnableClientSideSort keeps the sort on the client).
+        const requestsAfterSort = requests.length;
+        expect(requestsAfterSort).toBe(requestsBeforeSort);
     });
 
     test('4. filter in pivot mode — re-request preserves pivot flags and carries filterModel', async () => {
@@ -245,10 +251,9 @@ describe('SSRM pivot-mode operations (characterization)', () => {
 
         api.setFilterModel({ country: { filterType: 'text', type: 'equals', filter: 'USA' } });
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(50);
-
-        // A filter triggers a fresh server request in pivot mode.
-        expect(requests.length).toBeGreaterThan(requestsBeforeFilter);
+        // A filter triggers a fresh server request in pivot mode — which is also the gate, being the
+        // one thing that provably changes across the filter.
+        await waitFor(() => expect(requests.length).toBeGreaterThan(requestsBeforeFilter));
         // Pivot-specific: the re-request still carries the pivot metadata AND the applied filterModel.
         const filterRequest = requests[requests.length - 1];
         expect(filterRequest.pivotMode).toBe(true);
@@ -290,10 +295,8 @@ describe('SSRM pivot-mode operations (characterization)', () => {
 
         api.refreshServerSide({ purge: true });
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(50);
-
-        // Purge re-requests from the server.
-        expect(requests.length).toBeGreaterThan(requestsBeforeRefresh);
+        // Purge re-requests from the server — the request count is the gate as well as the assertion.
+        await waitFor(() => expect(requests.length).toBeGreaterThan(requestsBeforeRefresh));
         // Pivot-specific: the purge re-request carries pivot metadata and pivot columns are regenerated.
         const refreshRequest = requests[requests.length - 1];
         expect(refreshRequest.pivotMode).toBe(true);
@@ -336,7 +339,9 @@ describe('SSRM pivot-mode operations (characterization)', () => {
         // Recovery: a purge refresh re-requests successfully and regenerates pivot columns.
         api.refreshServerSide({ purge: true });
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(50);
+        // Pivot columns were EMPTY after the failed load, so this gate can only pass once the
+        // recovery round-trip has been applied.
+        await waitFor(() => expect(pivotCols(api)).toEqual(['2000_gold', '2004_gold']));
 
         const recoveryRequest = requests[requests.length - 1];
         expect(recoveryRequest.pivotMode).toBe(true);

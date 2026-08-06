@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { ScrollApiModule, TextFilterModule } from 'ag-grid-community';
 import {
@@ -10,7 +12,6 @@ import {
 import { createFakeServer, createServerSideDatasource } from '../../columnToolPanel/deferredPivotModeFakeServer';
 import { getColumnOrder } from '../../columns/column-test-utils';
 import { GridRows, TestGridsManager, waitForEvent } from '../../test-utils';
-import { asyncSetTimeout } from '../../test-utils/node-utils';
 import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
@@ -112,7 +113,9 @@ describe('SSRM pivot-mode sort and expand/collapse (characterization)', () => {
         });
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(50);
+        // The pivot result columns only exist once the initial response has been applied, so this
+        // gates the request-count snapshot below on a settled initial load.
+        await waitFor(() => expect(pivotCols(api)).toEqual(['2000_gold', '2004_gold']));
 
         const requestsBeforeSort = requests.length;
 
@@ -120,10 +123,9 @@ describe('SSRM pivot-mode sort and expand/collapse (characterization)', () => {
         // must round-trip to the server rather than sorting in place on the client.
         api.applyColumnState({ state: [{ colId: '2004_gold', sort: 'asc' }] });
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(50);
-
-        // Distinguishing behaviour vs the client-side case: a NEW server request is issued.
-        expect(requests.length).toBeGreaterThan(requestsBeforeSort);
+        // Distinguishing behaviour vs the client-side case: a NEW server request is issued — that is
+        // also the gate, since it is the one thing that provably changes across the sort.
+        await waitFor(() => expect(requests.length).toBeGreaterThan(requestsBeforeSort));
         const sortRequest = requests[requests.length - 1];
         // The re-request carries the sortModel...
         expect(sortRequest.sortModel).toEqual([{ colId: '2004_gold', sort: 'asc' }]);
@@ -175,9 +177,8 @@ describe('SSRM pivot-mode sort and expand/collapse (characterization)', () => {
         const beforeExpand = requests.length;
         api.getRowNode('USA')!.setExpanded(true);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(50);
+        await waitFor(() => expect(requests.length).toBeGreaterThan(beforeExpand));
 
-        expect(requests.length).toBeGreaterThan(beforeExpand);
         const expandRequest = requests[requests.length - 1];
         expect(expandRequest.pivotMode).toBe(true);
         expect(expandRequest.groupKeys).toEqual(['USA']);
@@ -193,18 +194,20 @@ describe('SSRM pivot-mode sort and expand/collapse (characterization)', () => {
         `);
 
         // Collapse USA. With purgeClosedRowNodes the loaded children are discarded...
+        // Both child nodes existed before the collapse (see 2b), so polling for their disappearance
+        // cannot pass on the pre-collapse state.
         api.getRowNode('USA')!.setExpanded(false);
-        await asyncSetTimeout(50);
-        expect(!!api.getRowNode('USA-Swimming')).toBe(false);
-        expect(!!api.getRowNode('USA-Athletics')).toBe(false);
+        await waitFor(() => {
+            expect(!!api.getRowNode('USA-Swimming')).toBe(false);
+            expect(!!api.getRowNode('USA-Athletics')).toBe(false);
+        });
 
         // ...so re-expanding must issue ANOTHER fresh server request to reload them.
         const beforeReExpand = requests.length;
         api.getRowNode('USA')!.setExpanded(true);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(50);
+        await waitFor(() => expect(requests.length).toBeGreaterThan(beforeReExpand));
 
-        expect(requests.length).toBeGreaterThan(beforeReExpand);
         const reExpandRequest = requests[requests.length - 1];
         expect(reExpandRequest.pivotMode).toBe(true);
         expect(reExpandRequest.groupKeys).toEqual(['USA']);

@@ -2,7 +2,7 @@ import { ClientSideRowModelModule, PaginationModule, PinnedRowModule } from 'ag-
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 function assertPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>, ids: any[]): void {
     const pinnedNodes: RowNode[] = [];
@@ -77,7 +77,6 @@ describe('ag-grid grouping pinned rows', () => {
         api.applyTransaction({
             remove: [{ id: 'fr-paris' }, { id: 'fr-lyon' }],
         });
-        await asyncSetTimeout(10);
 
         // France group should be destroyed, and pinned row should be removed
         await new GridRows(api, 'after remove').check(`
@@ -134,7 +133,6 @@ describe('ag-grid grouping pinned rows', () => {
         api.applyTransaction({
             remove: [{ id: 'fr-paris' }],
         });
-        await asyncSetTimeout(10);
 
         // France group should still exist and be pinned
         await new GridRows(api, 'after remove').check(`
@@ -206,7 +204,6 @@ describe('ag-grid grouping pinned rows', () => {
         api.applyTransaction({
             remove: [{ id: 'fr-paris' }, { id: 'fr-lyon' }, { id: 'de-berlin' }, { id: 'de-hamburg' }],
         });
-        await asyncSetTimeout(10);
 
         // Both pinned rows should be removed
         await new GridRows(api, 'after remove').check(`
@@ -252,7 +249,6 @@ describe('ag-grid grouping pinned rows', () => {
             'rowData',
             rowData.filter((r) => r.country !== 'France')
         );
-        await asyncSetTimeout(10);
 
         // France group should be destroyed and pinned row removed
         await new GridRows(api, 'after setRowData').check(`
@@ -336,7 +332,6 @@ describe('ag-grid grouping pinned rows', () => {
         api.applyTransaction({
             remove: [{ id: 'de-berlin' }, { id: 'de-hamburg' }],
         });
-        await asyncSetTimeout(10);
 
         // The Germany group should be destroyed, but the pinned France should remain
         await new GridRows(api, 'after Germany removal').check(`

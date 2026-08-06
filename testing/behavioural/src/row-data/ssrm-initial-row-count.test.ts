@@ -1,9 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridOptions, IServerSideGetRowsParams, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
-import { asyncSetTimeout } from '../test-utils/node-utils';
 import { countLoadingRows } from '../test-utils/ssrm-test-utils';
 
 /**
@@ -63,12 +64,15 @@ describe('SSRM initial row count (characterization)', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
-        // Let the initial block dispatch without resolving it.
-        await asyncSetTimeout(30);
 
-        // The grid sizes itself to the configured initial row count before any block
-        // resolves, and every one of those rows is a loading/stub row.
-        expect(api.getDisplayedRowCount()).toBe(initialCount);
+        // Gate on the initial block having been dispatched without resolving it (pending
+        // goes 0 -> 1) rather than on a fixed delay: the grid sizes itself to the configured
+        // initial row count before any block resolves, and every one of those rows is a
+        // loading/stub row.
+        await waitFor(() => {
+            expect(pending.length).toBe(1);
+            expect(api.getDisplayedRowCount()).toBe(initialCount);
+        });
         expect(countLoadingRows(api)).toBe(initialCount);
 
         // The first (and only) server request so far is for the block starting at row 0.
@@ -176,11 +180,14 @@ describe('SSRM initial row count (characterization)', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
-        await asyncSetTimeout(30);
 
         // Contrast with the initial-count cases: without serverSideInitialRowCount the
-        // grid shows a single filler/stub row before the first block resolves.
-        expect(api.getDisplayedRowCount()).toBe(1);
+        // grid shows a single filler/stub row before the first block resolves. Gate on the
+        // first block having been dispatched (pending goes 0 -> 1), not on a fixed delay.
+        await waitFor(() => {
+            expect(pending.length).toBe(1);
+            expect(api.getDisplayedRowCount()).toBe(1);
+        });
         expect(countLoadingRows(api)).toBe(1);
 
         const modelUpdated = waitForEvent('modelUpdated', api);

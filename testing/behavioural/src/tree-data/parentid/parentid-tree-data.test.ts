@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
@@ -76,10 +77,8 @@ describe('ag-grid tree data parent id', () => {
 
         setRowDataChecked(api, []);
 
-        await asyncSetTimeout(10);
-
+        await waitFor(() => expect(hasNoRowsOverlay()).toBe(true));
         expect(hasLoadingOverlay()).toBe(false);
-        expect(hasNoRowsOverlay()).toBe(true);
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
@@ -241,7 +240,9 @@ describe('ag-grid tree data parent id', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        await asyncSetTimeout(1);
+        // Single-tick yield: the assertion is negative (the events must NOT have fired yet), so
+        // this is an observation window rather than a wait for state to appear.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
@@ -256,7 +257,9 @@ describe('ag-grid tree data parent id', () => {
             { id: 'd', parentId: 'c', x: 8 },
         ]);
 
-        await asyncSetTimeout(1);
+        // Single-tick yield: the assertion is negative (the events must NOT have fired yet), so
+        // this is an observation window rather than a wait for state to appear.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
@@ -264,7 +267,10 @@ describe('ag-grid tree data parent id', () => {
 
         api.setGridOption('columnDefs', [{ field: 'xid', valueGetter: (params) => params.data?.id }, { field: 'x' }]);
 
-        await asyncSetTimeout(1);
+        // Poll for the update, then yield one macrotask so a later duplicate would also be
+        // counted, before asserting the exact counts.
+        await waitFor(() => expect(rowDataUpdated).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 

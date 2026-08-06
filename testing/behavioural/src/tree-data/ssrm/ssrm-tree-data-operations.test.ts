@@ -90,7 +90,6 @@ describe('ag-grid SSRM treeData operations (characterization)', () => {
             })
         );
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
 
         // Expand the deep path 101 -> 102 to create a nested child block, then collapse 102.
@@ -98,7 +97,9 @@ describe('ag-grid SSRM treeData operations (characterization)', () => {
         await expandById(api, '102');
         const node102 = api.getRowNode('102')!;
         node102.setExpanded(false);
-        await asyncSetTimeout(1);
+        // One macrotask yield: SSRM dispatches block loads off the load queue on the next
+        // macrotask, so any collapse-triggered fetch would be recorded by now.
+        await asyncSetTimeout(0);
 
         const requestsBeforeReExpand = requests.length;
 
@@ -144,7 +145,6 @@ describe('ag-grid SSRM treeData operations (characterization)', () => {
             })
         );
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
 
         // Expand 101 -> 102 -> 108 to get a leaf-ish level (sales execs) with distinct jobTitles.
@@ -198,7 +198,6 @@ describe('ag-grid SSRM treeData operations (characterization)', () => {
             })
         );
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
         await expandById(api, '101');
         await expandById(api, '102');
@@ -247,7 +246,6 @@ describe('ag-grid SSRM treeData operations (characterization)', () => {
             })
         );
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
         await expandById(api, '101');
         await expandById(api, '102');
@@ -294,7 +292,6 @@ describe('ag-grid SSRM treeData operations (characterization)', () => {
             })
         );
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
         await expandById(api, '101');
         await expandById(api, '102');
@@ -323,7 +320,9 @@ describe('ag-grid SSRM treeData operations (characterization)', () => {
             rowCount: 2,
         };
         api.applyServerSideRowData({ route: ['101', '102'], successParams });
-        await asyncSetTimeout(1);
+        // One macrotask yield: this is the window in which a spurious server request would be
+        // dispatched off the SSRM load queue. A waitFor would pass on tick 0 and observe nothing.
+        await asyncSetTimeout(0);
 
         // Tree-specific: no server fetch fired — the children were set directly on the route.
         expect(requests.length).toBe(requestsBeforeApply);

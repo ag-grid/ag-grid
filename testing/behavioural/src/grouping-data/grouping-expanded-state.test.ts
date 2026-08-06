@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
@@ -850,7 +852,8 @@ describe('ag-grid grouping expanded state', () => {
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
-        await asyncSetTimeout(1);
+        // Let the grid's initial modelUpdated events fire before the event log is cleared below.
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'initial - all collapsed').check(`
             ROOT id:ROOT_NODE_ID
@@ -866,7 +869,10 @@ describe('ag-grid grouping expanded state', () => {
 
         // Expand a group - this triggers rowExpansionStateChanged → onRowGroupOpened → refreshModel
         api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
-        await asyncSetTimeout(1);
+
+        // One macrotask after the mutation: the observation window in which a second,
+        // redundant modelUpdated event would arrive.
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'after expansion').check(`
             ROOT id:ROOT_NODE_ID
@@ -923,7 +929,8 @@ describe('ag-grid grouping expanded state', () => {
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
-        await asyncSetTimeout(1);
+        // Let the grid's initial modelUpdated events fire before the event log is cleared below.
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'initial - all collapsed').check(`
             ROOT id:ROOT_NODE_ID
@@ -956,7 +963,10 @@ describe('ag-grid grouping expanded state', () => {
                 { id: '4', country: 'Italy', year: 2021, athlete: 'Luigi Verdi 1' },
             ])
         );
-        await asyncSetTimeout(1);
+
+        // One macrotask after the mutation: the observation window in which a second,
+        // redundant modelUpdated event would arrive.
+        await asyncSetTimeout(0);
 
         // After the refresh, all groups should be expanded because expandAll was called
         await new GridRows(api, 'after expandAll during refresh').check(`
@@ -1026,7 +1036,8 @@ describe('ag-grid grouping expanded state', () => {
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
-        await asyncSetTimeout(1);
+        // Let the grid's initial modelUpdated events fire before the event log is cleared below.
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'initial - all collapsed').check(`
             ROOT id:ROOT_NODE_ID
@@ -1063,7 +1074,6 @@ describe('ag-grid grouping expanded state', () => {
                 { id: '4', country: 'Italy', year: 2021, athlete: 'Luigi Verdi' },
             ])
         );
-        await asyncSetTimeout(1);
 
         // After the refresh, all groups should be expanded and the autoGroupColumnDef should be updated
         await new GridRows(api, 'after autoGroupColumnDef update and expandAll during refresh').check(`
@@ -1103,7 +1113,6 @@ describe('ag-grid grouping expanded state', () => {
         // Verify individual row collapse works - this is the key test for the broken state bug
         // where some rows couldn't expand/collapse after the nested refresh
         api.setRowNodeExpanded(irelandNode!, false, false, true);
-        await asyncSetTimeout(1);
 
         await new GridRows(api, 'after collapsing Ireland individually').check(`
             ROOT id:ROOT_NODE_ID
@@ -1123,14 +1132,13 @@ describe('ag-grid grouping expanded state', () => {
 
         // Verify we can expand the collapsed node again
         api.setRowNodeExpanded(irelandNode!, true, false, true);
-        await asyncSetTimeout(1);
+        // 6 rows were displayed while Ireland was collapsed, so this cannot pass before the expansion lands.
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(10));
 
         expect(irelandNode!.expanded).toBe(true);
-        expect(api.getDisplayedRowCount()).toBe(10);
 
         // Now collapse a nested year group to verify nested expand/collapse works
         api.setRowNodeExpanded(ireland2020Node!, false, false, true);
-        await asyncSetTimeout(1);
 
         await new GridRows(api, 'after collapsing Ireland 2020 year group').check(`
             ROOT id:ROOT_NODE_ID
@@ -1150,7 +1158,6 @@ describe('ag-grid grouping expanded state', () => {
 
         // Verify we can still interact with the grid - collapseAll
         api.collapseAll();
-        await asyncSetTimeout(1);
 
         await new GridRows(api, 'after collapseAll').check(`
             ROOT id:ROOT_NODE_ID
@@ -1191,7 +1198,8 @@ describe('ag-grid grouping expanded state', () => {
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
-        await asyncSetTimeout(1);
+        // Let the grid's initial modelUpdated events fire before the event log is cleared below.
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'initial - all expanded').check(`
             ROOT id:ROOT_NODE_ID
@@ -1209,7 +1217,10 @@ describe('ag-grid grouping expanded state', () => {
         applyTransactionChecked(api, {
             add: [{ id: '4', country: 'France', athlete: 'Jean Dupont' }],
         });
-        await asyncSetTimeout(1);
+
+        // One macrotask after the mutation: the observation window in which a second,
+        // redundant modelUpdated event would arrive.
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'after transaction').check(`
             ROOT id:ROOT_NODE_ID
@@ -1235,7 +1246,10 @@ describe('ag-grid grouping expanded state', () => {
         // Collapse a group
         const irelandNode = api.getRowNode('row-group-country-Ireland');
         api.setRowNodeExpanded(irelandNode!, false, false, true);
-        await asyncSetTimeout(1);
+
+        // One macrotask after the mutation: the observation window in which a second,
+        // redundant modelUpdated event would arrive.
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'after collapse').check(`
             ROOT id:ROOT_NODE_ID
@@ -1310,7 +1324,10 @@ describe('ag-grid grouping expanded state', () => {
         applyTransactionChecked(api, {
             remove: [{ id: '3' }],
         });
-        await asyncSetTimeout(1);
+
+        // One macrotask after the mutation: the observation window in which a second,
+        // redundant modelUpdated event would arrive.
+        await asyncSetTimeout(0);
 
         // The Italy group should be destroyed, but the pinned Ireland should remain
         await new GridRows(api, 'after Italy removal').check(`
@@ -1341,7 +1358,10 @@ describe('ag-grid grouping expanded state', () => {
         applyTransactionChecked(api, {
             remove: [{ id: '1' }, { id: '2' }],
         });
-        await asyncSetTimeout(1);
+
+        // One macrotask after the mutation: the observation window in which a second,
+        // redundant modelUpdated event would arrive.
+        await asyncSetTimeout(0);
 
         // Ireland group should be destroyed and pinned row removed
         await new GridRows(api, 'after Ireland removal').check(`

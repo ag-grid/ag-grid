@@ -1,7 +1,9 @@
+import { waitFor } from '@testing-library/dom';
+
 import { ClientSideRowModelModule, NumberEditorModule } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager } from '../test-utils';
 
 describe('showValuesAs with batch editing', () => {
     const gridsManager = new TestGridsManager({
@@ -36,7 +38,8 @@ describe('showValuesAs with batch editing', () => {
 
         api.startBatchEdit();
         rowNode.setDataValue('amount', 200);
-        await asyncSetTimeout(1);
+        // The cell rendered "75.00%" before the staged edit, so this cannot pass before it lands.
+        await waitFor(() => expect(cell()).toHaveTextContent('100.00%'));
 
         // Batch edit stages the value without re-aggregating: the transform divides the pending 200 by the
         // original grand total of 200 → 1.0 (100%).
@@ -47,7 +50,8 @@ describe('showValuesAs with batch editing', () => {
         expect(cell()).toHaveClass('ag-cell-batch-edit');
 
         api.cancelBatchEdit();
-        await asyncSetTimeout(1);
+        // The cell rendered "100.00%" while the edit was staged, so this cannot pass before the cancel lands.
+        await waitFor(() => expect(cell()).toHaveTextContent('75.00%'));
 
         expect(api.getCellValue({ rowNode, colKey: 'amount', from: 'data' })).toBe(150);
         expect(api.getCellValue({ rowNode, colKey: 'amount', transformValues: true })).toBe(0.75);
