@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import {
@@ -44,20 +44,23 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
+        const cellB = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'b')));
         getByTestId(gridDiv, agTestIdFor.cell('0', 'a')); // cell exists
-        const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
         expect(cellB).toHaveTextContent('initial');
 
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
-        const editor = gridDiv.querySelector<HTMLInputElement>('input');
-        if (!editor) {
-            throw new Error('Editor input not found');
-        }
+        const editor = await waitFor(() => {
+            const input = gridDiv.querySelector<HTMLInputElement>('input');
+            if (!input) {
+                throw new Error('Editor input not found');
+            }
+            return input;
+        });
         await userEvent.clear(editor);
         await userEvent.keyboard('xx{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() =>
+            expect(api.getCellValue({ rowNode: api.getRowNode('0')!, colKey: 'a', from: 'batch' })).toBe('xx')
+        );
 
         await new GridRows(api, 'batch pending before commit').check(`
             ROOT id:ROOT_NODE_ID
@@ -65,14 +68,12 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         `);
 
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         expect(cellB).toHaveTextContent('initial');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
-
-        expect(cellB).toHaveTextContent('xx');
+        await waitFor(() => expect(cellB).toHaveTextContent('xx'));
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
@@ -97,23 +98,22 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
 
         await userEvent.dblClick(cellA);
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'changed{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellA).toHaveTextContent('changed'));
 
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         expect(cellB).toHaveTextContent('initial');
 
         api.cancelBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellA).toHaveTextContent('initial'));
 
         expect(cellB).toHaveTextContent('initial');
 
@@ -151,8 +151,7 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
 
         // First edit
@@ -160,10 +159,10 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         let editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'first{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellA).toHaveTextContent('first'));
 
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         expect(cellB).toHaveTextContent('initial');
 
@@ -172,17 +171,16 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'second{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellA).toHaveTextContent('second'));
 
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         expect(cellB).toHaveTextContent('initial');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellB).toHaveTextContent('second'));
 
-        expect(cellB).toHaveTextContent('second');
         await new GridRows(api, `re-edit and commit batch edit updates valueGetter correctly final state`).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 a:"second" b:"second"
@@ -212,8 +210,7 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
 
         // First batch session - commit
@@ -222,14 +219,13 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         let editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'batch1{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellA).toHaveTextContent('batch1'));
 
         api.refreshCells({ columns: ['b'], force: true });
         expect(cellB).toHaveTextContent('initial');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
-        expect(cellB).toHaveTextContent('batch1');
+        await waitFor(() => expect(cellB).toHaveTextContent('batch1'));
 
         // Second batch session - cancel
         api.startBatchEdit();
@@ -237,13 +233,13 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'batch2{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellA).toHaveTextContent('batch2'));
 
         api.refreshCells({ columns: ['b'], force: true });
         expect(cellB).toHaveTextContent('batch1');
 
         api.cancelBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellA).toHaveTextContent('batch1'));
         expect(cellB).toHaveTextContent('batch1');
 
         // Third batch session - commit different value
@@ -252,14 +248,13 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'batch3{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellA).toHaveTextContent('batch3'));
 
         api.refreshCells({ columns: ['b'], force: true });
         expect(cellB).toHaveTextContent('batch1');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
-        expect(cellB).toHaveTextContent('batch3');
+        await waitFor(() => expect(cellB).toHaveTextContent('batch3'));
         await new GridRows(api, `multiple batch sessions work correctly final state`).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 a:"batch3" b:"batch3"
@@ -282,15 +277,15 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
 
         await userEvent.dblClick(cellA);
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'pending');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('pending'));
 
         await new GridRows(api, 'editor open with typed value').check(`
             ROOT id:ROOT_NODE_ID
@@ -298,7 +293,7 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         `);
 
         await userEvent.keyboard('{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('pending'));
 
         await new GridRows(api, 'batch pending before commit').check(`
             ROOT id:ROOT_NODE_ID
@@ -309,14 +304,13 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         expect(cellA).toHaveClass(/ag-cell-batch-edit/);
 
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
         expect(cellB).toHaveTextContent('initial');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellB).toHaveTextContent('pending'));
 
         expect(cellA).toHaveTextContent('pending');
-        expect(cellB).toHaveTextContent('pending');
         expect(cellA).not.toHaveClass(/ag-cell-batch-edit/);
     });
 
@@ -330,21 +324,19 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
 
         await userEvent.dblClick(cellA);
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'typing'); // Don't press Enter yet - still editing
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('typing'));
 
         await new GridRows(api, 'editor open while typing').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF 🖍️ id:0 a:🖍️"typing" "initial"
         `);
-
-        const rowNode = api.getDisplayedRowAtIndex(0)!;
 
         // While actively typing (editor still open):
         expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('typing'); // 'edit' includes live typing
@@ -356,7 +348,7 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
 
         // Press Enter to close editor and create pending value
         await userEvent.keyboard('{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('typing'));
 
         expect(rowNode.data.a).toBe('initial');
 
@@ -374,11 +366,10 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         expect(rowNode.getDataValue('a')).toBe('initial');
 
         api.cancelBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('initial'));
 
         expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('initial');
         expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('initial');
-        expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('initial');
         expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('initial');
 
         expect(rowNode.getDataValue('a')).toBe('initial');
@@ -414,8 +405,7 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
         expect(cellB).toHaveTextContent('Computed: initial');
 
@@ -424,23 +414,20 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'batch-pending{Enter}');
-        await asyncSetTimeout(1);
-
-        expect(cellA).toHaveTextContent('batch-pending');
+        await waitFor(() => expect(cellA).toHaveTextContent('batch-pending'));
 
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         expect(cellB).toHaveTextContent('Computed: initial');
 
         const duringBatchCallCount = valueGetterCallCount;
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellB).toHaveTextContent('Computed: batch-pending'));
 
-        expect(cellB).toHaveTextContent('Computed: batch-pending');
         expect(valueGetterCallCount).toBeGreaterThanOrEqual(duringBatchCallCount);
         await new GridRows(api, `valueCache works correctly with batch edit final state`).check(`
             ROOT id:ROOT_NODE_ID b:"Computed: undefined"
@@ -476,32 +463,28 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         api.startBatchEdit();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
 
         // Edit cell A
         await userEvent.dblClick(cellA);
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
         await userEvent.type(editor, 'pending{Enter}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellA).toHaveTextContent('pending'));
 
-        const rowNode = api.getDisplayedRowAtIndex(0)!;
-
-        expect(cellA).toHaveTextContent('pending');
         expect(api.getCellValue({ rowNode, colKey: 'a' })).toBe('pending');
 
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
         expect(cellB).toHaveTextContent('committed');
         expect(rowNode.data.a).toBe('committed');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellB).toHaveTextContent('pending'));
 
         expect(cellA).toHaveTextContent('pending');
-        expect(cellB).toHaveTextContent('pending');
         expect(rowNode.data.a).toBe('pending');
         await new GridRows(api, `edited cell shows pending value while valueGetter sees committed data final state`)
             .check(`

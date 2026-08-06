@@ -25,7 +25,6 @@ import {
     GridColumns,
     GridRows,
     TestGridsManager,
-    asyncSetTimeout,
     fakeElementAttribute,
     getAllRows,
     getRowHtmlElement,
@@ -77,12 +76,9 @@ describe('Cell Editing Regression', () => {
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', field!));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', field!)));
             await userEvent.dblClick(cell);
-
-            await asyncSetTimeout(1);
 
             const inputElement = await waitForInput(gridDiv, cell, { popup });
             expect(inputElement.value).toBe(expected);
@@ -109,9 +105,8 @@ describe('Cell Editing Regression', () => {
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
-        const makeCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        const makeCellRow0 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'make')));
         await userEvent.dblClick(makeCellRow0);
         await waitForInput(gridDiv, makeCellRow0, { popup: false });
 
@@ -123,9 +118,8 @@ describe('Cell Editing Regression', () => {
         `);
 
         await userEvent.keyboard('{Tab}{Tab}');
-        await asyncSetTimeout(1);
 
-        const modelCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'model'));
+        const modelCellRow1 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('1', 'model')));
         const editor = await waitForInput(gridDiv, modelCellRow1, { popup: false });
 
         // Mid-edit: row 1 is now being edited after tabbing from row 0
@@ -192,16 +186,14 @@ describe('Cell Editing Regression', () => {
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
-        const makeCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        const makeCellRow0 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'make')));
         await userEvent.dblClick(makeCellRow0);
         await waitForInput(gridDiv, makeCellRow0, { popup: false });
 
         api.stopEditing();
-        await asyncSetTimeout(1);
 
-        expect(onRowEditingStopped).toHaveBeenCalledTimes(1);
+        await waitFor(() => expect(onRowEditingStopped).toHaveBeenCalledTimes(1));
         expect(onRowEditingStopped.mock.calls[0][0].rowIndex).toBe(0);
 
         // 2 editors started (make, model), 2 editors stopped
@@ -238,9 +230,8 @@ describe('Cell Editing Regression', () => {
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
-        const makeCellRow0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        const makeCellRow0 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'make')));
         await userEvent.dblClick(makeCellRow0);
         await waitForInput(gridDiv, makeCellRow0, { popup: false });
         expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(true);
@@ -308,9 +299,8 @@ describe('Cell Editing Regression', () => {
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
-        const makeCellRow1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'make'));
+        const makeCellRow1 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('1', 'make')));
         await userEvent.dblClick(makeCellRow1);
         await waitForInput(gridDiv, makeCellRow1, { popup: false });
         expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(true);
@@ -403,7 +393,6 @@ describe('Cell Editing Regression', () => {
         });
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
         await new GridRows(api, 'initial state').check(`
             ROOT id:ROOT_NODE_ID
@@ -412,10 +401,10 @@ describe('Cell Editing Regression', () => {
         `);
 
         // FIRST EDIT
-        const cell0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'code'));
+        const cell0 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'code')));
         await userEvent.dblClick(cell0);
 
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
 
         // Row 0 has a 🖍️ active popup editor (agRichSelectCellEditor is a popup editor).
         // The cell shows the committed value, not a live editor value.
@@ -441,9 +430,8 @@ describe('Cell Editing Regression', () => {
         );
 
         await userEvent.click(option0);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(getAllRows(api)[0].data.code).toBe(1));
 
-        expect(getAllRows(api)[0].data.code).toBe(1);
         expect(getAllRows(api)[1].data.code).toBe(2);
         expect(cell0).toHaveTextContent('1 - one');
 
@@ -455,10 +443,10 @@ describe('Cell Editing Regression', () => {
         `);
 
         // SECOND EDIT
-        const cell1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'code'));
+        const cell1 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('1', 'code')));
         await userEvent.dblClick(cell1);
 
-        await asyncSetTimeout(100);
+        await waitFor(() => expect(api.getEditingCells().some((cell) => cell.rowIndex === 1)).toBe(true));
 
         // Row 1 now has a 🖍️ active popup editor
         await new GridRows(api, 'row 1 rich select editor open').check(`
@@ -483,10 +471,9 @@ describe('Cell Editing Regression', () => {
         );
 
         await userEvent.click(option1);
-        await asyncSetTimeout(100);
+        await waitFor(() => expect(getAllRows(api)[1].data.code).toBe(3));
 
         expect(getAllRows(api)[0].data.code).toBe(1);
-        expect(getAllRows(api)[1].data.code).toBe(3);
         expect(cell1).toHaveTextContent('3 - three');
 
         // After second edit committed: code changed from 2 to 3 (AG-15698 regression: cell was not refreshed)
@@ -529,11 +516,9 @@ describe('Cell Editing Regression', () => {
         );
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
-        const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'value'));
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'value')));
         await userEvent.dblClick(cell);
-        await asyncSetTimeout(1);
 
         // Editor popup should open without error
         await waitForPopup(gridDiv);
@@ -611,13 +596,10 @@ describe('Cell Editing Regression', () => {
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
         // FIRST EDIT
-        const cell0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'code'));
+        const cell0 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'code')));
         await userEvent.dblClick(cell0);
-
-        await asyncSetTimeout(1);
 
         const popup0 = await waitForPopup(gridDiv);
         const option0 = await waitFor(() => within(popup0).getByRole('option', { name: '1' }));
@@ -635,13 +617,11 @@ describe('Cell Editing Regression', () => {
         );
 
         await userEvent.click(option0);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(onCellEditRequest).toHaveBeenCalledTimes(1));
 
         // // SECOND EDIT
-        const cell1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'code'));
+        const cell1 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('1', 'code')));
         await userEvent.dblClick(cell1);
-
-        await asyncSetTimeout(100);
 
         const popup1 = await waitForPopup(gridDiv);
         const option1 = await waitFor(() => within(popup1).getByRole('option', { name: '3' }));
@@ -659,9 +639,8 @@ describe('Cell Editing Regression', () => {
         );
 
         await userEvent.click(option1);
-        await asyncSetTimeout(100);
+        await waitFor(() => expect(onCellEditRequest).toHaveBeenCalledTimes(2));
 
-        expect(onCellEditRequest).toHaveBeenCalledTimes(2);
         expect(onCellEditRequest).toHaveBeenNthCalledWith(1, 'edit');
         expect(onCellEditRequest).toHaveBeenNthCalledWith(2, 'edit');
         // 2 editors started/stopped, no value changes (readOnlyEdit mode)
@@ -700,9 +679,8 @@ describe('Cell Editing Regression', () => {
         });
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
-        const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field'));
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'field')));
         await userEvent.click(cell);
 
         await userEvent.keyboard('1');
@@ -755,9 +733,8 @@ describe('Cell Editing Regression', () => {
                 const eventTracker = new EditEventTracker(api);
 
                 const gridDiv = getGridElement(api)! as HTMLElement;
-                await asyncSetTimeout(1);
 
-                const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field'));
+                const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'field')));
                 await userEvent.dblClick(cell);
 
                 const inputElement = await waitForInput(gridDiv, cell, { popup: false });
@@ -811,9 +788,8 @@ describe('Cell Editing Regression', () => {
                 const eventTracker = new EditEventTracker(api);
 
                 const gridDiv = getGridElement(api)! as HTMLElement;
-                await asyncSetTimeout(1);
 
-                const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field'));
+                const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'field')));
                 await userEvent.dblClick(cell);
 
                 const inputElement = await waitForInput(gridDiv, cell, { popup: false });
@@ -825,11 +801,10 @@ describe('Cell Editing Regression', () => {
 
                 await userEvent.type(inputElement, '{Escape}');
 
-                await asyncSetTimeout(1);
+                await waitFor(() => expect(onCellEditingStopped).toHaveBeenCalledTimes(1));
 
                 expect(cell).toHaveTextContent('A Value');
 
-                expect(onCellEditingStopped).toHaveBeenCalledTimes(1);
                 expect(onCellEditingStopped).toHaveBeenCalledWith(expected);
                 // 1 editor started/stopped, no value changes (Escape cancels)
                 expect(eventTracker.counts).toEqual({
@@ -879,8 +854,7 @@ describe('Cell Editing Regression', () => {
             const eventTracker = new EditEventTracker(api);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field'));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'field')));
             await editAction(api, gridDiv, cell);
             return { api, eventTracker, onCellValueChanged, onCellValueChangedColDef };
         };
@@ -933,7 +907,6 @@ describe('Cell Editing Regression', () => {
                     await user.dblClick(cell);
                     const inputElement = await waitForInput(gridDiv, cell);
                     await user.type(inputElement, '15');
-                    await asyncSetTimeout(10);
 
                     const target = getByTestId(gridDiv, agTestIdFor.cell('1', 'field'));
                     await user.click(target);
@@ -978,8 +951,9 @@ describe('Cell Editing Regression', () => {
                     api.setFocusedCell(1, 'field');
                     await user.keyboard('{Control>}v{/Control}');
 
-                    // give the grid time to re-render
-                    await asyncSetTimeout(1);
+                    await waitFor(() =>
+                        expect(api.getCellValue({ rowNode: api.getRowNode('1')!, colKey: 'field' })).toBe('A Value')
+                    );
 
                     expect(target).toHaveTextContent('A Value');
                 },
@@ -987,7 +961,7 @@ describe('Cell Editing Regression', () => {
                 jest.fn()
             );
 
-            expect(onCellValueChanged).toHaveBeenCalledTimes(1);
+            await waitFor(() => expect(onCellValueChanged).toHaveBeenCalledTimes(1));
             expect(onCellValueChanged).toHaveBeenCalledWith({
                 newValue: 'A Value',
                 oldValue: 'A 2nd Value',
@@ -1012,14 +986,13 @@ describe('Cell Editing Regression', () => {
                     await userEvent.keyboard('1');
                     const input = await waitForInput(gridDiv, source);
                     await userEvent.type(input, '5');
-                    await asyncSetTimeout(1);
-                    expect(api.getEditingCells()).toHaveLength(1);
+                    await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
                     await userEvent.keyboard('{Control>}{Enter}{/Control}');
-                    await asyncSetTimeout(100);
+                    // Wait on the fill target (row 1), not the edited source row: row 0 already
+                    // reads back "15" from the live editor before Ctrl+Enter is pressed.
+                    await waitFor(() => expect(target).toHaveTextContent('15'));
 
                     expect(source).toHaveTextContent('15');
-                    expect(target).toHaveTextContent('15');
-
                     expect(api.getCellValue({ rowNode: api.getRowNode('0')!, colKey: 'field' })).toEqual('15');
                     expect(api.getCellValue({ rowNode: api.getRowNode('1')!, colKey: 'field' })).toEqual('15');
                 },
@@ -1061,10 +1034,9 @@ describe('Cell Editing Regression', () => {
                     api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['field'] });
 
                     await userEvent.keyboard('{Control>}d{/Control}');
-                    await asyncSetTimeout(1);
+                    await waitFor(() => expect(target).toHaveTextContent('A Value'));
 
                     expect(source).toHaveTextContent('A Value');
-                    expect(target).toHaveTextContent('A Value');
 
                     expect(api.getCellValue({ rowNode: api.getRowNode('0')!, colKey: 'field' })).toEqual('A Value');
                     expect(api.getCellValue({ rowNode: api.getRowNode('1')!, colKey: 'field' })).toEqual('A Value');
@@ -1156,20 +1128,17 @@ describe('Cell Editing Regression', () => {
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
         // Test object valueGetter
-        const medalsCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'totalMedals'));
+        const medalsCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'totalMedals')));
         expect(medalsCell).toHaveTextContent('10');
 
         await userEvent.click(medalsCell);
-        await asyncSetTimeout(1);
         expect(api.getEditingCells()).toHaveLength(0);
 
         await userEvent.keyboard('{Delete}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(valueSetterCalls).toHaveLength(1));
 
-        expect(valueSetterCalls).toHaveLength(1);
         expect(valueSetterCalls[0].newValue).toBeNull();
         expect(valueSetterCalls[0].oldValue).toEqual({ gold: 8, silver: 2, bronze: 0 });
         expect(medalsCell).toHaveTextContent('0');
@@ -1179,13 +1148,11 @@ describe('Cell Editing Regression', () => {
         expect(scoreCell).toHaveTextContent('42');
 
         await userEvent.click(scoreCell);
-        await asyncSetTimeout(1);
         expect(api.getEditingCells()).toHaveLength(0);
 
         await userEvent.keyboard('{Delete}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(valueSetterCalls).toHaveLength(2));
 
-        expect(valueSetterCalls).toHaveLength(2);
         expect(valueSetterCalls[1].newValue).toBeNull();
         expect(valueSetterCalls[1].oldValue).toBe(42);
         expect(scoreCell).toHaveTextContent('0');
@@ -1243,23 +1210,21 @@ describe('Cell Editing Regression', () => {
             const eventTracker = new EditEventTracker(api);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
             if (source === 'ui') {
                 // Edit via UI: double-click and type
-                const athleteCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'athlete'));
+                const athleteCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'athlete')));
                 await userEvent.dblClick(athleteCell);
-                await asyncSetTimeout(1);
 
                 const input = await waitForInput(gridDiv, athleteCell, { popup: false });
                 await userEvent.clear(input);
                 await userEvent.type(input, 'usain bolt{Enter}');
-                await asyncSetTimeout(1);
+                await waitFor(() => expect(cellValueChangedEvents).toHaveLength(1));
             } else {
                 // Edit via data: use rowNode.setDataValue
                 const rowNode = api.getDisplayedRowAtIndex(0)!;
                 rowNode.setDataValue('athlete', 'usain bolt');
-                await asyncSetTimeout(1);
+                await waitFor(() => expect(cellValueChangedEvents).toHaveLength(1));
             }
 
             // Verify the grid state with GridRows snapshot
@@ -1329,23 +1294,21 @@ describe('Cell Editing Regression', () => {
             const eventTracker = new EditEventTracker(api);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
             if (source === 'ui') {
                 // Edit via UI: double-click and type
-                const countryCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'country'));
+                const countryCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'country')));
                 await userEvent.dblClick(countryCell);
-                await asyncSetTimeout(1);
 
                 const input = await waitForInput(gridDiv, countryCell, { popup: false });
                 await userEvent.clear(input);
                 await userEvent.type(input, 'Canada{Enter}');
-                await asyncSetTimeout(1);
+                await waitFor(() => expect(cellValueChangedEvents).toHaveLength(1));
             } else {
                 // Edit via data: use rowNode.setDataValue
                 const rowNode = api.getDisplayedRowAtIndex(0)!;
                 rowNode.setDataValue('country', 'Canada');
-                await asyncSetTimeout(1);
+                await waitFor(() => expect(cellValueChangedEvents).toHaveLength(1));
             }
 
             // Verify the grid state with GridRows snapshot
@@ -1413,24 +1376,21 @@ describe('Cell Editing Regression', () => {
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
         // Step 1: Start editing the 'Tesla' cell (top-left)
-        const makeCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        const makeCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'make')));
         await userEvent.dblClick(makeCell);
         await waitForInput(gridDiv, makeCell, { popup: false });
         expect(api.getCellEditorInstances()).toHaveLength(1);
 
         // Step 2: Press Tab twice to navigate to the empty price cell
         await userEvent.keyboard('{Tab}');
-        await asyncSetTimeout(1);
-        const modelCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'model'));
+        const modelCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'model')));
         await waitForInput(gridDiv, modelCell, { popup: false });
         expect(api.getCellEditorInstances()).toHaveLength(1);
 
         await userEvent.keyboard('{Tab}');
-        await asyncSetTimeout(1);
-        const priceCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'price'));
+        const priceCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'price')));
         await waitForInput(gridDiv, priceCell, { popup: false });
         expect(api.getCellEditorInstances()).toHaveLength(1);
 
@@ -1438,7 +1398,7 @@ describe('Cell Editing Regression', () => {
         // setFocusedCell triggers focus change which should stop editing through
         // the focus change handler. Then startEditingCell begins editing the new cell.
         api.setFocusedCell(1, 'make');
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(eventTracker.counts.cellEditingStopped).toBe(3));
 
         // Verify that the orphan editor from row 0 price cell is closed after focus change
         expect(api.getCellEditorInstances()).toHaveLength(0);
@@ -1458,19 +1418,18 @@ describe('Cell Editing Regression', () => {
 
         // Start editing on the new cell (simulates what happens when clicking an editable cell)
         api.startEditingCell({ rowIndex: 1, colKey: 'make' });
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
 
         // Step 4: Verify the editor is closed
         // The input field from price cell should be removed after clicking another cell
         // Row 1 make should be the only editing cell now
-        expect(api.getCellEditorInstances()).toHaveLength(1);
         expect(priceCell.querySelector('input[type="text"]')).toBeNull();
         expect(api.getEditingCells()).toHaveLength(1);
         expect(api.getEditingCells()[0].rowIndex).toBe(1);
 
         // Stop editing to clean up
         api.stopEditing();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(eventTracker.counts.cellEditingStopped).toBe(4));
 
         // Verify events: 4 starts (make, model, price in row 0, then make in row 1)
         // and 4 stops (make, model, price in row 0, then make in row 1)
@@ -1531,10 +1490,9 @@ describe('Cell Editing Regression', () => {
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
         // Step 1: Start editing the 'Tesla' row by double-clicking the make cell
-        const makeCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'make'));
+        const makeCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'make')));
         await userEvent.dblClick(makeCell);
         await waitForInput(gridDiv, makeCell, { popup: false });
         // Full row edit should have editors for all 4 columns
@@ -1543,18 +1501,16 @@ describe('Cell Editing Regression', () => {
 
         // Step 2: Press Tab twice to navigate to the empty price cell
         await userEvent.keyboard('{Tab}');
-        await asyncSetTimeout(1);
-        const modelCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'model'));
+        const modelCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'model')));
         await waitForInput(gridDiv, modelCell, { popup: false });
 
         await userEvent.keyboard('{Tab}');
-        await asyncSetTimeout(1);
-        const priceCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'price'));
+        const priceCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'price')));
         await waitForInput(gridDiv, priceCell, { popup: false });
 
         // Step 3: Click on another row (Ford's make cell in row 1)
         api.setFocusedCell(1, 'make');
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(eventTracker.counts.cellEditingStopped).toBe(4));
 
         // Verify that row 0 editors are closed after focus change
         expect(api.getCellEditorInstances()).toHaveLength(0);
@@ -1575,12 +1531,11 @@ describe('Cell Editing Regression', () => {
 
         // Start editing on the new row
         api.startEditingCell({ rowIndex: 1, colKey: 'make' });
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(true));
 
         // Step 4: Verify row 0 editors are closed
         // Row 0 should no longer be in edit mode
         expect(getRowHtmlElement(api, '0')?.classList.contains('ag-row-editing')).toBe(false);
-        expect(getRowHtmlElement(api, '1')?.classList.contains('ag-row-editing')).toBe(true);
 
         // Row 0 price cell should not have an input anymore
         expect(priceCell.querySelector('input')).toBeNull();
@@ -1592,7 +1547,7 @@ describe('Cell Editing Regression', () => {
 
         // Stop editing to clean up
         api.stopEditing();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(eventTracker.counts.cellEditingStopped).toBe(8));
 
         // Verify events: row 0 starts 4 editors, row 0 stops 4 editors, row 1 starts 4 editors, row 1 stops 4 editors
         expect(eventTracker.counts).toEqual({
@@ -1660,7 +1615,6 @@ describe('Cell Editing Regression', () => {
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
         const gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
@@ -1670,23 +1624,20 @@ describe('Cell Editing Regression', () => {
         `);
 
         // Step 1: Focus on a cell that has a value and create a cell range
-        const countryCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'country'));
+        const countryCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'country')));
         expect(countryCell).toHaveTextContent('United States');
 
         await userEvent.click(countryCell);
         // Create a cell range for the clicked cell (simulating proper cell selection)
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['country'] });
-        await asyncSetTimeout(1);
 
         // Verify we are not in edit mode
         expect(api.getEditingCells()).toHaveLength(0);
 
         // Step 2: Press DELETE - the valueSetter should be called but return false
         await userEvent.keyboard('{Delete}');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(valueSetterCalls).toHaveLength(1));
 
-        // Verify valueSetter was called with correct values
-        expect(valueSetterCalls).toHaveLength(1);
         expect(valueSetterCalls[0].newValue).toBeNull();
         expect(valueSetterCalls[0].oldValue).toBe('United States');
 
@@ -1705,9 +1656,9 @@ describe('Cell Editing Regression', () => {
         expect(eventTracker.counts.cellValueChanged).toBe(0);
 
         // Step 3: Double-click another cell to enter edit mode
-        const sportCell = getByTestId(gridDiv, agTestIdFor.cell('1', 'sport'));
+        const sportCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('1', 'sport')));
         await userEvent.dblClick(sportCell);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
 
         // Verify we are now in edit mode on the sport cell
         const editingCells = api.getEditingCells();
@@ -1724,10 +1675,7 @@ describe('Cell Editing Regression', () => {
 
         // Step 4: Press ESC to exit edit mode (cancel edit)
         await userEvent.keyboard('{Escape}');
-        await asyncSetTimeout(1);
-
-        // Verify we exited edit mode
-        expect(api.getEditingCells()).toHaveLength(0);
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
 
         // Step 5: The value in the initial cell should NOT have changed
         // Since valueSetter returned false, the original value should persist
@@ -1779,15 +1727,13 @@ describe('Cell Editing Regression', () => {
         api.addEventListener('rowEditingStopped', (e) => rowStopped.push(e));
 
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(rowStarted).toHaveLength(1));
 
-        expect(rowStarted).toHaveLength(1);
         expect(rowStopped).toHaveLength(0);
 
         api.applyTransaction({ remove: [rowData[0]] });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(rowStopped).toHaveLength(1));
 
-        expect(rowStopped).toHaveLength(1);
         expect(api.getEditingCells()).toHaveLength(0);
 
         await new GridRows(api, 'full-row: edited row removed').check(`
@@ -1797,9 +1743,8 @@ describe('Cell Editing Regression', () => {
 
         // The strategy released the row, so a fresh edit on the surviving row starts cleanly.
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(rowStarted).toHaveLength(2));
 
-        expect(rowStarted).toHaveLength(2);
         expect(rowStopped).toHaveLength(1);
     });
 
@@ -1826,12 +1771,10 @@ describe('Cell Editing Regression', () => {
         const input = await waitForInput(gridDiv, cell);
         await userEvent.clear(input);
         await userEvent.type(input, 'CHANGED');
-        await asyncSetTimeout(1);
 
         api.applyTransaction({ remove: [rowData[0]] });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(stopped).toHaveLength(1));
 
-        expect(stopped).toHaveLength(1);
         expect(stopped[0].valueChanged).toBe(false);
         expect(stopped[0].newValue).toBeUndefined();
         expect(stopped[0].oldValue).toBe('A0');

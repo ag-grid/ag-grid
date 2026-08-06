@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { vi } from 'vitest';
 
@@ -13,7 +13,7 @@ import {
 } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForInput } from '../test-utils';
 
 /**
  * AG-15846 regression: column `valueParser` should not be called repeatedly with the
@@ -60,18 +60,16 @@ describe('Cell Editing — valueParser cache (AG-15846)', () => {
             const api = await gridMgr.createGridAndWait('myGrid', { columnDefs, rowData: [{ [field]: initial }] });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', field));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', field)));
             await userEvent.dblClick(cell);
-            await asyncSetTimeout(1);
 
             await waitForInput(gridDiv, cell, { popup });
 
             // Commit unchanged: opening + closing the editor should not cause repeated parser calls
             // for the same raw input across the validation / sync / commit passes.
             await userEvent.keyboard('{Enter}');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
 
             expectNoRepeatedRawInputs(valueParser);
         });
@@ -93,19 +91,16 @@ describe('Cell Editing — valueParser cache (AG-15846)', () => {
             `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await userEvent.dblClick(cell);
-            await asyncSetTimeout(1);
 
             const input = await waitForInput(gridDiv, cell);
             await userEvent.clear(input);
             await userEvent.keyboard('hi');
-            await asyncSetTimeout(1);
 
             await userEvent.keyboard('{Enter}');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
 
             const rawInputs = expectNoRepeatedRawInputs(valueParser);
 
@@ -138,20 +133,17 @@ describe('Cell Editing — valueParser cache (AG-15846)', () => {
             `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'numberGood'));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'numberGood')));
             await userEvent.click(cell);
             await userEvent.keyboard('{Enter}'); // start edit (Enter on a focused cell)
-            await asyncSetTimeout(1);
 
             const input = await waitForInput(gridDiv, cell);
             await userEvent.clear(input);
             await userEvent.keyboard('0');
-            await asyncSetTimeout(1);
 
             await userEvent.keyboard('{Enter}'); // commit
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
 
             const rawInputs = expectNoRepeatedRawInputs(valueParser);
             expect(rawInputs).toContain('0');
@@ -192,19 +184,16 @@ describe('Cell Editing — valueParser cache (AG-15846)', () => {
             `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await userEvent.dblClick(cell);
-            await asyncSetTimeout(1);
 
             const input = await waitForInput(gridDiv, cell);
             await userEvent.clear(input);
             await userEvent.keyboard('typed');
-            await asyncSetTimeout(1);
 
             await userEvent.keyboard('{Enter}');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
 
             expectNoRepeatedRawInputs(valueParser);
             await new GridRows(api, `text editor with maxLength validation final state`).check(`

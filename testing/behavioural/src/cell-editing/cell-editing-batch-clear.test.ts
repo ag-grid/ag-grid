@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { NumberEditorModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
@@ -166,13 +166,11 @@ describe('Cell Editing: batch clear bugs', () => {
         // Step 1: Select ROW_0 and dblClick fill handle to fill down
         api.setFocusedCell(0, 'a');
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['a'] });
-        await asyncSetTimeout(1);
 
-        const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
         const fillEnd = waitForEvent('fillEnd', api);
         await userEvent.dblClick(fillHandle);
         await fillEnd;
-        await asyncSetTimeout(0);
 
         const afterFill = new GridRows(api, 'after fill extend via dblClick');
         await afterFill.check(`
@@ -187,22 +185,20 @@ describe('Cell Editing: batch clear bugs', () => {
         // the full filled range explicitly so the fill handle is at ROW_2.
         api.clearCellSelection();
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 2, columns: ['a'] });
-        await asyncSetTimeout(10);
-        const fillHandle2 = getByTestId(gridDiv, agTestIdFor.fillHandle());
+        const fillHandle2 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
 
         const drag = new DragEventDispatcher('pointer', null, /* html5DragDrop */ false);
 
         // pointerdown on fill handle — DragService starts immediately (dragStartPixels: 0)
         await drag.startDrag(fillHandle2, 50, 100);
-        await asyncSetTimeout(1);
 
         // Drag upward through ROW_1 then to ROW_0 so fill handle detects vertical reduction
-        const cellR1 = getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a'));
-        const cellR0After = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+        const cellR1 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a')));
+        const cellR0After = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
 
         await drag.movePointer(cellR1, 50, 50);
         await drag.movePointer(cellR0After, 50, 0);
-        await asyncSetTimeout(1);
+        // waitForEvent below already resolves precisely on the 'fillEnd' event — no fixed sleep needed.
 
         // Release — triggers onDragEnd → performFill → handleValueChanged → clearCellsInRange
         const fillEnd2 = waitForEvent('fillEnd', api);
@@ -325,13 +321,11 @@ describe('Cell Editing: batch clear bugs', () => {
         // Fill down from ROW_0
         api.setFocusedCell(0, 'a');
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['a'] });
-        await asyncSetTimeout(1);
 
-        const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
         const fillEnd = waitForEvent('fillEnd', api);
         await userEvent.dblClick(fillHandle);
         await fillEnd;
-        await asyncSetTimeout(0);
 
         const afterFill = new GridRows(api, 'after fill extend via dblClick');
         await afterFill.check(`
@@ -344,20 +338,18 @@ describe('Cell Editing: batch clear bugs', () => {
         // Drag fill handle upward to reduce back to ROW_0
         api.clearCellSelection();
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 2, columns: ['a'] });
-        await asyncSetTimeout(10);
-        const fillHandle2 = getByTestId(gridDiv, agTestIdFor.fillHandle());
+        const fillHandle2 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
 
         const drag = new DragEventDispatcher('pointer', null, /* html5DragDrop */ false);
 
         await drag.startDrag(fillHandle2, 50, 100);
-        await asyncSetTimeout(1);
 
-        const cellR1 = getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a'));
-        const cellR0After = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+        const cellR1 = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a')));
+        const cellR0After = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
 
         await drag.movePointer(cellR1, 50, 50);
         await drag.movePointer(cellR0After, 50, 0);
-        await asyncSetTimeout(1);
+        // waitForEvent below already resolves precisely on the 'fillEnd' event — no fixed sleep needed.
 
         const fillEnd2 = waitForEvent('fillEnd', api);
         await drag.finishDrag();
