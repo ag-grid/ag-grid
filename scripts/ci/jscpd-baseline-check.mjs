@@ -8,9 +8,11 @@ import { pathToFileURL } from 'node:url';
 /**
  * Compare the current jscpd duplication report against the committed baseline.
  *
- * The scan is repo-wide, but only clones with *both* files inside `gate.scope` can fail the
- * check: gating on repo-wide totals would fail routine work such as adding a locale file,
- * which necessarily duplicates its sibling language variants.
+ * The scan covers `SCAN_ROOT` only, and `gate.scope` narrows it further to shipped source.
+ * Duplication elsewhere either ships to nobody (docs, tooling, tests) or is inherent: sibling
+ * locale files duplicate their language variants by nature.
+ *
+ * Only clones with *both* files inside `gate.scope` can fail the check.
  *
  * Check mode never writes, because it runs inside `yarn nx lint` and `./checks.sh` — an
  * auto-tightened baseline would appear as a surprise edit in unrelated diffs.
@@ -22,7 +24,21 @@ const REPORT_PATH = 'node_modules/.cache/jscpd/jscpd-report.json';
 const BASELINE_PATH = '.jscpd-baseline.json';
 const JSCPD_BIN = path.join('node_modules', '.bin', 'jscpd');
 const CONFIG_PATH = '.jscpd.json';
-const DEFAULT_SCOPE = ['packages/**'];
+/** The only tree handed to jscpd. Keep in step with DEFAULT_SCOPE: the gate cannot see what is not scanned. */
+const SCAN_ROOT = 'packages';
+/**
+ * Only the grid cores count: that is where duplication translates into bundle bytes a user
+ * downloads. `ag-stack` is in scope because it is bundled into those cores — a helper reinvented
+ * in `ag-grid-community` that already exists in `ag-stack` is exactly what this should catch.
+ * The framework wrappers are largely generated property and import lists, so their clones are not
+ * something a developer can extract; `.jscpd.json` skips those packages outright, and this scope
+ * is the durable backstop for anything that slips past those globs.
+ */
+const DEFAULT_SCOPE = [
+    'packages/ag-grid-community/src/**',
+    'packages/ag-grid-enterprise/src/**',
+    'packages/ag-stack/src/**',
+];
 const MAX_LISTED_CLONES = 10;
 const UPDATE_COMMAND = 'yarn nx lint:jscpd:baseline all';
 /** `gate.scope` supports only `*` and `**`; brace and character-class syntax would match nothing. */
@@ -53,6 +69,34 @@ function globToRegExp(glob) {
 function inScope(name, scopeMatchers) {
     const normalised = String(name ?? '').replace(/\\/g, '/');
     return scopeMatchers.some((matcher) => matcher.test(normalised));
+}
+
+/**
+ * jscpd names files relative to the path it was given, so a scan of `packages` reports
+ * `ag-grid-community/src/...`. Re-root them so `gate.scope` globs stay workspace-relative and
+ * the printed labels are paths a developer can open.
+ *
+ * The reporter also resolves each clone's `fragment` against the working directory, which a
+ * non-`.` scan root defeats — it emits an empty string. Re-read the fragment from the rebased
+ * path, otherwise every fingerprint collapses to the hash of "" and the multiset check is blind.
+ */
+export function rebaseReportPaths(report, scanRoot, readLines = (name) => fs.readFileSync(name, 'utf8').split('\n')) {
+    const rebase = (file) => {
+        if (file?.name) {
+            file.name = `${scanRoot}/${String(file.name).replace(/\\/g, '/')}`;
+        }
+    };
+    for (const clone of report.duplicates ?? []) {
+        rebase(clone.firstFile);
+        rebase(clone.secondFile);
+        const { name, startLoc, endLoc } = clone.firstFile ?? {};
+        if (!clone.fragment && name && startLoc?.line && endLoc?.line) {
+            clone.fragment = readLines(name)
+                .slice(startLoc.line - 1, endLoc.line)
+                .join('\n');
+        }
+    }
+    return report;
 }
 
 /** The gated subset: clones with both files in scope, including intra-file clones. */
@@ -109,13 +153,17 @@ function defaultScan() {
     // Delete the previous report first: otherwise a failed scan silently re-reads stale numbers.
     fs.rmSync(REPORT_PATH, { force: true });
     // `shell` on Windows: the bin entry there is a `.cmd` shim, which execFileSync cannot launch.
-    execFileSync(JSCPD_BIN, ['.', '--config', CONFIG_PATH], {
+    execFileSync(JSCPD_BIN, [SCAN_ROOT, '--config', CONFIG_PATH], {
         stdio: 'inherit',
         shell: process.platform === 'win32',
     });
     if (!fs.existsSync(REPORT_PATH)) {
         throw new Error(`jscpd produced no report at ${REPORT_PATH}`);
     }
+    // Rewrite in place so everything downstream — this check and anyone reading the report by
+    // hand — sees workspace-relative paths rather than paths relative to the scan root.
+    const report = rebaseReportPaths(JSON.parse(fs.readFileSync(REPORT_PATH, 'utf8')), SCAN_ROOT);
+    fs.writeFileSync(REPORT_PATH, JSON.stringify(report));
 }
 
 function defaultReadJson(filePath) {
@@ -218,6 +266,7 @@ export function main(argv = [], deps = {}) {
     if (unsupported.length > 0) {
         logError(`gate.scope supports only the * and ** wildcards. Unsupported: ${unsupported.join(', ')}`);
         logError('Widen the scope by listing one glob per directory tree, for example ["packages/**", "testing/**"].');
+        logError('Widening the scope also needs SCAN_ROOT in this script to cover the extra tree.');
         return 1;
     }
 
@@ -254,8 +303,8 @@ export function main(argv = [], deps = {}) {
     const linesDelta = gate.duplicatedLines - baseline.gate.duplicatedLines;
 
     log(
-        `jscpd: ${total.clones} clones repo-wide (${round2(total.percentage)}% of ${total.lines} lines); ` +
-            `${gate.clones} gated in ${scope.join(', ')}.`
+        `jscpd: ${total.clones} clones across ${SCAN_ROOT} ` +
+            `(${round2(total.percentage)}% of ${total.lines} lines); ${gate.clones} gated in ${scope.join(', ')}.`
     );
 
     if (clonesDelta > 0 || linesDelta > 0) {

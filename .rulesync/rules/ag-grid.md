@@ -205,9 +205,9 @@ Two static-analysis tools run inside `yarn nx lint`. They cover different proble
 
 Run jscpd on its own with `yarn nx lint:jscpd all`. Regenerate the baseline with `yarn nx lint:jscpd:baseline all` and commit the result.
 
-The scan is repo-wide for visibility, but the gate is scoped to `packages/**` and fails only when duplication increases against `.jscpd-baseline.json`. Existing duplication does not block PRs.
+Both the scan and the gate are scoped to `packages/ag-grid-community/src/**`, `packages/ag-grid-enterprise/src/**` and `packages/ag-stack/src/**` — the grid cores and the shared code bundled into them, where duplication costs users bundle bytes. `ag-stack` is in scope so that a helper reinvented in a core that already exists there gets caught. The check fails only when duplication increases against `.jscpd-baseline.json`. Existing duplication does not block PRs.
 
-The gate stops at `packages/**` on purpose. Sibling locale files duplicate each other by nature (`pt-BR` ↔ `pt-PT`, `zh-HK` ↔ `zh-TW`), so a repo-wide gate would fail routine translation work. A clone with one file inside `packages/**` and one outside is still reported, just not gated.
+It stops there on purpose. Duplication elsewhere either ships to nobody (docs, build scripts, test utilities, config) or is not something a developer can extract: the framework wrappers are largely generated property and import lists, and sibling locale files duplicate each other by nature (`pt-BR` ↔ `pt-PT`, `zh-HK` ↔ `zh-TW`), so a repo-wide scan would fail routine translation work. Everything outside the two cores is excluded by `ignore` globs in `.jscpd.json`, with `gate.scope` as the backstop. Widening coverage means changing both — the `ignore` globs and `gate.scope` in the baseline (and `SCAN_ROOT` in `scripts/ci/jscpd-baseline-check.mjs` to leave `packages`).
 
 `**/_examples/**` is excluded from the scan entirely, because docs examples are per-framework variants of the same code.
 

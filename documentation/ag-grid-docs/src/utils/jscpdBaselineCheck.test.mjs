@@ -4,6 +4,7 @@ import {
     findUnaccountedClones,
     fingerprint,
     main,
+    rebaseReportPaths,
 } from '../../../../scripts/ci/jscpd-baseline-check.mjs';
 
 // The unit under test is the workspace-root CI script. It lives here because `scripts/` is not an
@@ -107,6 +108,32 @@ describe('jscpd-baseline-check', () => {
             ]);
 
             expect(computeGate(report, ['packages/**']).clones).toBe(1);
+        });
+    });
+
+    describe('rebaseReportPaths', () => {
+        test('re-roots the scan-relative paths jscpd emits', () => {
+            const report = makeReport([
+                makeClone('ag-grid-community/src/a.ts', 'ag-grid-enterprise/src/b.ts', 12, 'x'),
+            ]);
+
+            rebaseReportPaths(report, 'packages');
+
+            expect(computeGate(report, ['packages/**']).clones).toBe(1);
+        });
+
+        test('re-reads the fragment jscpd leaves empty on a non-root scan', () => {
+            const clone = makeClone('ag-grid-community/src/a.ts', 'ag-grid-community/src/b.ts', 2, '');
+            clone.firstFile.startLoc = { line: 2 };
+            clone.firstFile.endLoc = { line: 3 };
+            const report = makeReport([clone]);
+
+            rebaseReportPaths(report, 'packages', (name) => {
+                expect(name).toBe('packages/ag-grid-community/src/a.ts');
+                return ['one', 'two', 'three', 'four'];
+            });
+
+            expect(clone.fragment).toBe('two\nthree');
         });
     });
 
@@ -319,7 +346,11 @@ describe('jscpd-baseline-check', () => {
             const result = run(['--update'], { report: baseFixture(), baseline: undefined });
 
             expect(result.exitCode).toBe(0);
-            expect(result.writes[0].value.gate.scope).toEqual(['packages/**']);
+            expect(result.writes[0].value.gate.scope).toEqual([
+                'packages/ag-grid-community/src/**',
+                'packages/ag-grid-enterprise/src/**',
+                'packages/ag-stack/src/**',
+            ]);
         });
 
         test('rejects unknown arguments without running a scan', () => {

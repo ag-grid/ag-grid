@@ -12,6 +12,17 @@
         "**/_examples/**",
         "**/*.d.ts",
         "**/*.{test,spec,bench}.{ts,tsx,js,jsx,mjs,cjs}",
-        "**/*.min.js"
+        "**/*.min.js",
+        "**/*.config.ts",
+        "**/*.config.js",
+        "**/*.config.mjs",
+        "**/*.config.cjs",
+        "**/vitest.setup.ts",
+        "**/.dependency-cruiser.js",
+        "**/esbuildBuild.cjs",
+        "**/src/test-utils/**",
+        "packages/ag-grid-angular/**",
+        "packages/ag-grid-react/**",
+        "packages/ag-grid-vue3/**"
     ]
 }
