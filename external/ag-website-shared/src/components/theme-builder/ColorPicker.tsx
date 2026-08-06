@@ -175,7 +175,7 @@ const DropdownArea = styled('div')`
         animation: scaleInUp 0.1s;
     }
 
-    z-index: 1000;
+    z-index: 10010; // above a sticky site header (e.g. Studio's z-index:10002) so the picker isn't hidden
     position: absolute;
     pointer-events: all;
     max-height: calc(100vh - 16px);

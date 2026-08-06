@@ -250,7 +250,7 @@ const EmphasiseMatches = ({ matcher, text }: EmphasiseMatchesProps) => {
 };
 
 const FullHeightDropdown = styled('div')`
-    z-index: 1000;
+    z-index: 10010; // above a sticky site header (e.g. Studio's z-index:10002) so the popup isn't hidden
     position: absolute;
     pointer-events: all;
     height: calc(100vh);

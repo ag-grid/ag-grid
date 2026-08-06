@@ -68,7 +68,7 @@ describe('renderMarkdocToMarkdown', () => {
     });
 
     it('omits the Enterprise flag for a Community page', async () => {
-        const output = await render('Body paragraph.', { frontmatter: { title: 'Row Sorting' } });
+        const output = await render('Body paragraph.', { frontmatter: { title: 'Bar Series' } });
 
         expect(output).not.toContain('enterprise:');
     });

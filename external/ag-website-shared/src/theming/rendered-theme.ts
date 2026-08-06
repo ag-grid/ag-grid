@@ -15,13 +15,35 @@ export type RenderedThemeInfo = {
     usedParts: PartModel[];
 };
 
+let baseTheme: Theme = themeQuartz;
+
+/**
+ * Hosts supply the base theme the preview renders from (e.g. Studio's
+ * studioTheme). Defaults to grid's themeQuartz.
+ */
+export const setBaseTheme = (theme: Theme) => {
+    baseTheme = theme;
+};
+
+let renderedFeatureNames: string[] = ['iconSet'];
+
+/**
+ * Hosts supply which swappable-part features feed into the rendered preview
+ * theme. Defaults to grid's ['iconSet']. Hosts without parts supply [].
+ */
+export const setRenderedFeatures = (featureNames: string[]) => {
+    renderedFeatureNames = featureNames;
+};
+
+let previousStyleSheet: CSSStyleSheet | null = null;
+
 const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
     const enabledAdvancedParams = get(enabledAdvancedParamsAtom);
 
-    let theme = themeQuartz;
+    let theme = baseTheme;
 
     const usedParts: PartModel[] = [];
-    for (const featureName of ['iconSet']) {
+    for (const featureName of renderedFeatureNames) {
         const feature = FeatureModel.for(featureName);
         const partModel = get(feature.selectedPartAtom);
         if (partModel.part !== feature.defaultPart.part) {
@@ -45,7 +67,16 @@ const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
     const themeImpl = _asThemeImpl(theme);
     const stylesheet = new CSSStyleSheet();
     stylesheet.replaceSync(themeImpl._getParamsCss());
-    document.adoptedStyleSheets = [stylesheet];
+
+    const previousStyleSheetIndex =
+        previousStyleSheet != null ? document.adoptedStyleSheets.indexOf(previousStyleSheet) : -1;
+    if (previousStyleSheetIndex !== -1) {
+        document.adoptedStyleSheets.splice(previousStyleSheetIndex, 1);
+    }
+
+    previousStyleSheet = stylesheet;
+
+    document.adoptedStyleSheets.push(stylesheet);
     getReinterpretationElement().className = themeImpl._getParamsClassName();
 
     return {

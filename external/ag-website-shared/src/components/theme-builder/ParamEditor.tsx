@@ -26,6 +26,9 @@ export type ParamEditorProps = {
     icon?: ReactNode;
     swipeAdjustmentDivisor?: number;
     isAdvancedSection?: boolean;
+    // Optional clamp for numeric (length) params; ignored by other editor types.
+    min?: number;
+    max?: number;
 };
 
 export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
@@ -66,6 +69,8 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
                 onChange={(v) => setValue(v ?? undefined)}
                 icon={props.icon}
                 swipeAdjustmentDivisor={props.swipeAdjustmentDivisor}
+                min={props.min}
+                max={props.max}
             />
         </FormField>
     );

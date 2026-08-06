@@ -10,8 +10,9 @@ import { type ThemeParam, getThemeDefaultParams, memoize, titleCase } from './ut
 
 const paramModels: Record<string, unknown> = {};
 
-// Params that are editable in the UI immediately without adding as an advanced param
-const nonAdvancedParams = new Set([
+// Params that are editable in the UI immediately without adding as an advanced param.
+// Grid's default set; hosts can override the whole set via setNonAdvancedParams.
+const gridNonAdvancedParams = new Set([
     'fontFamily',
     'fontSize',
     'backgroundColor',
@@ -38,6 +39,31 @@ const nonAdvancedParams = new Set([
     'cellHorizontalPaddingScale',
     'iconSize',
 ]);
+
+let nonAdvancedParams = gridNonAdvancedParams;
+
+/**
+ * Hosts can supply the set of params that are editable directly (not only as an
+ * advanced param). Defaults to grid's set. Must be called before any ParamModel
+ * is used, since onlyEditableAsAdvancedParam is read against this set.
+ */
+export const setNonAdvancedParams = (params: Iterable<string>) => {
+    nonAdvancedParams = new Set(params);
+};
+
+type ThemeParamSource = () => Record<string, unknown>;
+
+let themeParamSource: ThemeParamSource = () => getThemeDefaultParams(themeQuartz);
+
+/**
+ * Hosts can supply the source of "all params" the builder knows about (e.g.
+ * Studio's studioTheme default params rather than grid's themeQuartz). Defaults
+ * to grid's themeQuartz. Must be called before allParamModels() is first
+ * evaluated, since that result is memoized.
+ */
+export const setThemeParamSource = (source: ThemeParamSource) => {
+    themeParamSource = source;
+};
 
 type ParamDocsProvider = (property: string) => string | undefined;
 
@@ -88,7 +114,7 @@ export const useParamAtom = <T>(model: ParamModel<T>) => useAtom(model.valueAtom
 export const useParam = <T>(model: ParamModel<T>) => useAtomValue(model.valueAtom);
 
 export const allParamModels = memoize(() => {
-    const defaultModeParams = getThemeDefaultParams(themeQuartz);
+    const defaultModeParams = themeParamSource();
     const allParams = Array.from(Object.keys(defaultModeParams)) as ThemeParam[];
     return allParams.map(ParamModel.for).sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
 });

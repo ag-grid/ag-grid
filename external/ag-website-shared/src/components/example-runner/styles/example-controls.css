@@ -212,6 +212,25 @@ body > #highlighter {
     outline: none;
 }
 
+/* Groups controls (e.g. a label, input and value) so they can be enabled/disabled together
+   without affecting the row layout. */
+.example-controls fieldset.control-group {
+    display: contents;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+/* Disabled controls, including any labels/values grouped in a disabled control-group */
+.example-controls button:disabled,
+.example-controls select:disabled,
+.example-controls textarea:disabled,
+.example-controls input:disabled,
+.example-controls fieldset:disabled :is(label, span) {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
 .controls-row {
     display: flex;
     align-items: center;

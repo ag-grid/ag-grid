@@ -1,8 +1,10 @@
 import {
+    $copyFrameworkAgnosticLinks,
     $devTools,
     $exampleDevToolbar,
     $fpsMonitor,
     $openLinksInNewTab,
+    toggleCopyFrameworkAgnosticLinks,
     toggleDevTools,
     toggleExampleDevToolbar,
     toggleFpsMonitor,
@@ -51,6 +53,7 @@ export const DevTools: FunctionComponent = () => {
     const devTools = useStoreSsr($devTools, false);
     const exampleDevToolbar = useStoreSsr($exampleDevToolbar, false);
     const openLinksInNewTab = useStoreSsr($openLinksInNewTab, false);
+    const copyFrameworkAgnosticLinks = useStoreSsr($copyFrameworkAgnosticLinks, false);
     const fpsMonitor = useStoreSsr($fpsMonitor, false);
 
     useEffect(() => {
@@ -90,6 +93,16 @@ export const DevTools: FunctionComponent = () => {
                         defaultChecked={openLinksInNewTab}
                         onClick={() => {
                             toggleOpenLinksInNewTab();
+                        }}
+                    />
+                </div>
+                <div>
+                    <label>Copy Framework Agnostic Links:</label>
+                    <input
+                        type="checkbox"
+                        defaultChecked={copyFrameworkAgnosticLinks}
+                        onClick={() => {
+                            toggleCopyFrameworkAgnosticLinks();
                         }}
                     />
                 </div>

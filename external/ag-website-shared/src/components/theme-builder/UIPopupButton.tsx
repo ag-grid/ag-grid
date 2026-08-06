@@ -111,6 +111,7 @@ const Button = styled('button')`
     gap: 8px;
     box-shadow: 0px 3.76px 3.76px 0px hsla(0, 0%, 0%, 0.06);
     width: 100%;
+    box-sizing: border-box;
 
     &.variant-secondary {
         background-color: var(--color-button-tertiary-bg);
@@ -125,7 +126,7 @@ const Button = styled('button')`
 `;
 
 const DropdownArea = styled(Card)`
-    z-index: 1000;
+    z-index: 10010; // above a sticky site header (e.g. Studio's z-index:10002) so the dropdown isn't hidden
     position: absolute;
     pointer-events: all;
     max-height: calc(100vh - 16px);
