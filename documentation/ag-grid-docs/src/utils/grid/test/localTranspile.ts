@@ -58,7 +58,7 @@ function withoutUnusedEnterprise(source: string): string {
 const transpiled = new Map<string, string>();
 
 function transpile(source: string, fileName: string, framework: string): string {
-    const key = createHash('sha1').update(framework).update(source).digest('hex');
+    const key = createHash('sha1').update(framework).update(fileName).update(source).digest('hex');
     let output = transpiled.get(key);
     if (output === undefined) {
         output = ts.transpileModule(source, { fileName, compilerOptions: compilerOptionsFor(framework) }).outputText;
@@ -76,8 +76,18 @@ const ESM_BUNDLE = /\/fesm20\d\d\/|\.esm-browser\.js$|\.mjs$/;
 /** ESNext because only the module wrapper needs changing - downlevelling a framework build would not. */
 const ESM_TO_SYSTEM: ts.CompilerOptions = { module: ts.ModuleKind.System, target: ts.ScriptTarget.ESNext };
 
-const transpileEsm = (source: string): string =>
-    ts.transpileModule(source, { compilerOptions: ESM_TO_SYSTEM }).outputText;
+/** Content-addressed, and shared with the same-origin route: those bundles are asked for by every test. */
+const convertedEsm = new Map<string, string>();
+
+function transpileEsm(source: string): string {
+    const key = createHash('sha1').update(source).digest('hex');
+    let output = convertedEsm.get(key);
+    if (output === undefined) {
+        output = ts.transpileModule(source, { compilerOptions: ESM_TO_SYSTEM }).outputText;
+        convertedEsm.set(key, output);
+    }
+    return output;
+}
 
 /** Bumped when the emit changes, so cached bundles from an older converter are not reused. */
 const CONVERTER = 'v1';
@@ -107,7 +117,8 @@ export function systemRegisterFor(url: string, mirrorPath: string, body: Buffer)
     if (!ESM_BUNDLE.test(new URL(url).pathname)) {
         return undefined;
     }
-    const path = `${mirrorPath}.${CONVERTER}.system`;
+    const digest = createHash('sha1').update(body).digest('hex').slice(0, 12);
+    const path = `${mirrorPath}.${CONVERTER}.${digest}.system`;
     let pending = converted.get(path);
     if (!pending) {
         pending = convertBundle(path, body);
