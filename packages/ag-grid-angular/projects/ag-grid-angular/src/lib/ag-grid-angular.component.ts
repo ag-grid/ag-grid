@@ -1581,6 +1581,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public suppressGroupRowsSticky: boolean | undefined = undefined;
+    /** Maximum share of the viewport height that each sticky row section (top or bottom) may occupy, as a number between 0 and 1.
+     * Rows that do not fit within the resulting height budget do not stick and scroll normally instead.
+     * @default 0.5
+     * @agModule `RowGroupingModule` / `TreeDataModule` / `ServerSideRowModelModule`
+     */
+    @Input() public stickyRowsMaxViewportRatio: number | undefined = undefined;
     /** Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
      * @agModule `RowGroupingModule`
      */

@@ -31,6 +31,11 @@ export const mockGridLayout = {
      * such as page-key navigation. */
     useRealOffsetDimensions: false,
 
+    /** Optional per-element measured-height override, e.g. to simulate wrapped text driving an
+     * autoHeight cell wrapper taller. Return undefined to fall back to the standard mock layout.
+     * Combine with `useRealOffsetDimensions` when the code under test reads `offsetHeight`. */
+    elementHeightOverride: undefined as ((el: HTMLElement) => number | undefined) | undefined,
+
     init,
     getBoundingClientRect,
 };
@@ -201,6 +206,11 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
     const styleHeight = parseFloat(this.style?.height);
     if (!isNaN(styleHeight) && styleHeight > 0) {
         height = styleHeight;
+    }
+
+    const overrideHeight = mockGridLayout.elementHeightOverride?.(this);
+    if (overrideHeight != null) {
+        height = overrideHeight;
     }
 
     const offsetParent = this.offsetParent ?? this.parentElement;

@@ -98,6 +98,17 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             ? rowRenderer.firstVisibleVPixel - this.extraTopHeight
             : rowRenderer.lastVisibleVPixel - this.extraTopHeight;
 
+        // sticky rows overlay the viewport instead of consuming layout space, so each sticky
+        // section is capped to a share of the viewport; rows that don't fit (e.g. autoHeight
+        // rows taller than the grid) scroll normally instead of covering rows and header.
+        // a non-positive viewport height means the grid is hidden or not laid out yet, so
+        // no meaningful cap can be derived from it - skip capping rather than evict everything
+        const visibleViewportHeight = rowRenderer.lastVisibleVPixel - rowRenderer.firstVisibleVPixel;
+        const maxStickyHeight =
+            visibleViewportHeight > 0
+                ? visibleViewportHeight * this.gos.get('stickyRowsMaxViewportRatio')
+                : Number.MAX_SAFE_INTEGER;
+
         const divStretchOffset = rowContainerHeight.divStretchOffset ?? 0;
         const pageFirstPixelWithOffset = pageFirstPixel + divStretchOffset;
         const pageLastPixelWithOffset = pageLastPixel + divStretchOffset;
@@ -141,6 +152,10 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
         let stickyBoundaryPixel = pixelAtContainerBoundary;
         const isRowSticky = (row: RowNode) => {
             if (!row.displayed) {
+                return false;
+            }
+
+            if (row.rowHeight! > maxStickyHeight) {
                 return false;
             }
 
@@ -245,6 +260,9 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
                     (isTop ? parent.rowIndex! < firstIndex : parent.rowIndex! > firstIndex) && isRowSticky(parent)
             );
             if (firstMissingParent) {
+                if (newStickyContainerHeight + firstMissingParent.rowHeight! > maxStickyHeight) {
+                    break;
+                }
                 addStickyRow(firstMissingParent);
                 continue;
             }
@@ -255,6 +273,9 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             // if first row is an open group, and partially shown, it needs
             // to be stuck
             if (isFirstRowOutsideViewport && isRowSticky(firstRow)) {
+                if (newStickyContainerHeight + firstRow.rowHeight! > maxStickyHeight) {
+                    break;
+                }
                 addStickyRow(firstRow);
                 continue;
             }

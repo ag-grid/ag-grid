@@ -126,7 +126,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
         });
 
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
-        this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], () => this.redraw());
+        this.addManagedPropertyListeners(
+            ['suppressMaxRenderedRowRestriction', 'rowBuffer', 'stickyRowsMaxViewportRatio'],
+            () => this.redraw()
+        );
         this.addManagedPropertyListener('suppressCellFocus', (e) => this.onSuppressCellFocusChanged(e.currentValue));
         this.addManagedPropertyListeners(
             [
