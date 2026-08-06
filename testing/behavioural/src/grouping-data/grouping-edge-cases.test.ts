@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, test } from 'vitest';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping edge cases', () => {
     const gridsManager = new TestGridsManager({
@@ -194,7 +194,6 @@ describe('ag-grid grouping edge cases', () => {
             rowData,
             getRowId: (params) => params.data.id,
         });
-        await asyncSetTimeout(10);
         await new GridColumns(
             api,
             `showRowGroup column getDataValue: null on shallower group rows, undefined on lea setup`

@@ -1,9 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { IServerSideGetRowsParams } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, waitForEvent } from '../../test-utils';
-import { asyncSetTimeout } from '../../test-utils/node-utils';
 import { countLoadingRows, waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
@@ -68,12 +69,15 @@ describe('SSRM grouped initial row count (characterization)', () => {
                 },
             },
         });
-        // Let the initial block dispatch without resolving it.
-        await asyncSetTimeout(30);
+        // Let the initial block dispatch without resolving it: gate on the request having been made
+        // (the array is empty until then) and on the padded top level being sized to the guess.
+        await waitFor(() => {
+            expect(requests).toHaveLength(1);
+            expect(api.getDisplayedRowCount()).toBe(5);
+        });
 
         // Before the root resolves the grid sizes the top level to the configured
         // initial row count: 5 loading/stub group rows displayed.
-        expect(api.getDisplayedRowCount()).toBe(5);
         expect(countLoadingRows(api)).toBe(5);
 
         // First (and only) request so far is the root route: empty groupKeys, with
@@ -211,14 +215,18 @@ describe('SSRM grouped initial row count (characterization)', () => {
         expect(api.getDisplayedRowCount()).toBe(3);
 
         // Expand UK (2 children); the child block dispatches but stays in-flight.
+        // Gate on the child request having been dispatched and the expanded group's padding row
+        // having appeared: both were absent (0 pending, 3 displayed rows) before the expand.
         api.getRowNode('group-UK')?.setExpanded(true);
-        await asyncSetTimeout(30);
+        await waitFor(() => {
+            expect(pendingChild).toHaveLength(1);
+            expect(api.getDisplayedRowCount()).toBe(4);
+        });
 
         // CHARACTERIZATION: pin how many loading child rows appear under the expanded
         // group before the child block resolves — i.e. whether serverSideInitialRowCount
         // pads the child level too, or only the root.
         expect(countLoadingRows(api)).toBe(1);
-        expect(api.getDisplayedRowCount()).toBe(4);
 
         await new GridRows(api, 'grouped initial row count child level before resolve').check(`
             ROOT id:<no-id>

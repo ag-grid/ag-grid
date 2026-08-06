@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type {
     GetRowIdParams,
     GridApi,
@@ -869,7 +871,6 @@ describe('SSRM grand total row', () => {
 
         // bottom → pinnedBottom
         api.setGridOption('grandTotalRow', 'pinnedBottom');
-        await asyncSetTimeout(10);
 
         await new GridRows(api, 'pinnedBottom').check(unindentText`
             ROOT id:<no-id>
@@ -886,7 +887,6 @@ describe('SSRM grand total row', () => {
         // pinnedBottom → pinnedTop: the previous pinned-bottom sibling must be destroyed,
         // not orphaned in the bottom container.
         api.setGridOption('grandTotalRow', 'pinnedTop');
-        await asyncSetTimeout(10);
 
         await new GridRows(api, 'pinnedTop').check(unindentText`
             PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
@@ -897,14 +897,15 @@ describe('SSRM grand total row', () => {
         `);
         expect(api.getPinnedTopRowCount()).toBe(1);
         expect(api.getPinnedBottomRowCount()).toBe(0);
-        expect(pinnedBottomNode.destroyed).toBe(true);
+        // The node was alive before the switch, so this poll cannot pass on the pre-switch state.
+        await waitFor(() => expect(pinnedBottomNode.destroyed).toBe(true));
         const pinnedTopNode = api.getPinnedTopRow(0)!;
         expect(pinnedTopNode.destroyed).toBe(false);
 
         // pinnedTop → top (back to inline). The pinned-top sibling must be destroyed.
         api.setGridOption('grandTotalRow', 'top');
-        await asyncSetTimeout(10);
-        expect(pinnedTopNode.destroyed).toBe(true);
+        // The node was alive before the switch, so this poll cannot pass on the pre-switch state.
+        await waitFor(() => expect(pinnedTopNode.destroyed).toBe(true));
 
         await new GridRows(api, 'top').check(unindentText`
             ROOT id:<no-id>
@@ -918,7 +919,6 @@ describe('SSRM grand total row', () => {
 
         // top → pinnedBottom
         api.setGridOption('grandTotalRow', 'pinnedBottom');
-        await asyncSetTimeout(10);
 
         await new GridRows(api, 'pinnedBottom again').check(unindentText`
             ROOT id:<no-id>
@@ -932,7 +932,6 @@ describe('SSRM grand total row', () => {
         // pinnedBottom → undefined (grand total removed). The pinned sibling must be destroyed.
         const lastPinnedBottomNode = api.getPinnedBottomRow(0)!;
         api.setGridOption('grandTotalRow', undefined);
-        await asyncSetTimeout(10);
 
         await new GridRows(api, 'disabled').check(unindentText`
             ROOT id:<no-id>
@@ -942,7 +941,8 @@ describe('SSRM grand total row', () => {
         `);
         expect(api.getPinnedBottomRowCount()).toBe(0);
         expect(api.getPinnedTopRowCount()).toBe(0);
-        expect(lastPinnedBottomNode.destroyed).toBe(true);
+        // The node was alive before the option was cleared, so this poll is falsifiable.
+        await waitFor(() => expect(lastPinnedBottomNode.destroyed).toBe(true));
     });
 
     test('pinned grand total updates when value changes via transaction', async () => {
@@ -961,9 +961,8 @@ describe('SSRM grand total row', () => {
         api.applyServerSideTransaction({
             update: [{ id: GRAND_TOTAL_ID, value: 999 }],
         });
-        await asyncSetTimeout(10);
-
-        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(999);
+        // The pinned value was 60 before the transaction, so this poll cannot pass on the old state.
+        await waitFor(() => expect(api.getPinnedBottomRow(0)?.data?.value).toBe(999));
         await new GridRows(api, 'after pinned grand total update').check(unindentText`
             ROOT id:<no-id>
             ├── LEAF id:1 id:"1" value:10
@@ -1115,7 +1114,6 @@ describe('SSRM grand total row', () => {
             ├── LEAF id:2 id:"2" value:20
             └── LEAF id:3 id:"3" value:30
         `);
-        await asyncSetTimeout(10);
 
         expect(api.getPinnedTopRow(0)?.data?.value).toBe(321);
         expect(api.getPinnedTopRowCount()).toBe(1);
@@ -1260,9 +1258,9 @@ describe('SSRM grand total row', () => {
         groupKeysCalls.length = 0;
         api.getRowNode('category:A')?.setExpanded(true);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(10);
-
-        expect(groupKeysCalls).toEqual([['A']]);
+        // groupKeysCalls was emptied just above, so this poll can only pass once the expand has
+        // actually issued its child request.
+        await waitFor(() => expect(groupKeysCalls).toEqual([['A']]));
         // The root's grand total is the same instance with the same data
         expect(api.getRowNode(GRAND_TOTAL_ID)?.id).toBe(grandTotalNodeId);
         expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(60);
@@ -1286,10 +1284,10 @@ describe('SSRM grand total row', () => {
 
         const originalNodeId = api.getRowNode(GRAND_TOTAL_ID)?.id;
         api.applyServerSideTransaction({ update: [{ id: GRAND_TOTAL_ID, value: 999 }] });
-        await asyncSetTimeout(10);
+        // The grand total was 60 before the transaction, so this poll cannot pass on the old state.
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(999));
 
         expect(api.getRowNode(GRAND_TOTAL_ID)?.id).toBe(originalNodeId);
-        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(999);
         await new GridRows(api, 'after inline transaction update').check(unindentText`
             ROOT id:<no-id>
             ├── LEAF id:1 id:"1" value:10
@@ -1545,7 +1543,7 @@ describe('SSRM grand total row', () => {
         const loadsBeforeRefresh = loadCount;
         api.refreshServerSide({ purge: false });
         while (loadCount === loadsBeforeRefresh) {
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
         }
 
         // The existing node is updated in place, no purge required
@@ -1601,7 +1599,7 @@ describe('SSRM grand total row', () => {
         const loadsBeforeRefresh = loadCount;
         api.refreshServerSide({ purge: false });
         while (loadCount === loadsBeforeRefresh) {
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
         }
 
         await new GridRows(api, 'after soft refresh via id in rowData').check(unindentText`
@@ -1655,7 +1653,7 @@ describe('SSRM grand total row', () => {
         const loadsBeforeRefresh = loadCount;
         api.refreshServerSide({ purge: false });
         while (loadCount === loadsBeforeRefresh) {
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
         }
 
         expect(api.getPinnedBottomRowCount()).toBe(1);
@@ -1710,7 +1708,7 @@ describe('SSRM grand total row', () => {
         const loadsBeforeRefresh = loadCount;
         api.refreshServerSide({ purge: false });
         while (loadCount === loadsBeforeRefresh) {
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
         }
 
         expect(api.getRowNode(GRAND_TOTAL_ID)).toBeUndefined();
@@ -1898,7 +1896,6 @@ describe('SSRM grand total row', () => {
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(20);
 
         const gridRows = new GridRows(api, 'after async grand total applied');
         await gridRows.check(unindentText`
@@ -1962,7 +1959,9 @@ describe('SSRM grand total row', () => {
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(20);
+        // The datasource removes the grand total and re-adds it a tick later, so poll for the
+        // re-added node before asserting: it is absent until the async transaction lands.
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(expectedTotal));
 
         expect(getRowsCalls[0].needsGrandTotal).toBe(true);
         for (let i = 1; i < getRowsCalls.length; i++) {
@@ -2215,10 +2214,10 @@ describe('SSRM grand total row', () => {
 
         api.setFilterModel({ value: { type: 'greaterThan', filter: 15 } });
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(50);
+        // The pinned total was 60 before the filter, so this poll cannot pass on the pre-filter state.
+        await waitFor(() => expect(api.getPinnedBottomRow(0)?.data?.value).toBe(50));
 
         expect(api.getPinnedBottomRowCount()).toBe(1);
-        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(50);
 
         await new GridRows(api, 'pinnedBottom after filter').check(unindentText`
             ROOT id:<no-id>
@@ -2276,14 +2275,17 @@ describe('SSRM grand total row', () => {
             └── filler id:rowIndex:0
         `);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(20);
+        // The pinned total was 60 before the filter, so this poll cannot pass on the pre-filter state.
+        await waitFor(() => expect(api.getPinnedTopRow(0)?.data?.value).toBe(50));
 
         expect(api.getPinnedTopRowCount()).toBe(1);
         expect(api.getPinnedBottomRowCount()).toBe(0);
-        expect(api.getPinnedTopRow(0)?.data?.value).toBe(50);
     });
 
     test('pinnedBottom grand total survives repeated filter changes', async () => {
+        // Incremented once each getRows round-trip RESOLVES: two of the expected totals below repeat
+        // the previous one, so only a load counter gives a non-vacuous gate for every iteration.
+        let loadCount = 0;
         const api: GridApi<RowData> = gridManager.createGrid(null, {
             columnDefs: [{ field: 'id' }, { field: 'value', filter: 'agNumberColumnFilter' }],
             rowModelType: 'serverSide',
@@ -2299,7 +2301,10 @@ describe('SSRM grand total row', () => {
                         const total = filtered.reduce((s, r) => s + r.value, 0);
                         rowData.push({ id: GRAND_TOTAL_ID, value: total });
                     }
-                    setTimeout(() => params.success({ rowData, rowCount: filtered.length }), 0);
+                    setTimeout(() => {
+                        params.success({ rowData, rowCount: filtered.length });
+                        loadCount++;
+                    }, 0);
                 },
             },
         });
@@ -2320,9 +2325,10 @@ describe('SSRM grand total row', () => {
         const expectedValues = [50, 30, 60, 60, 50];
         for (let i = 0; i < thresholds.length; i++) {
             const t = thresholds[i];
+            const loadsBeforeFilter = loadCount;
             api.setFilterModel(t === undefined ? null : { value: { type: 'greaterThan', filter: t } });
             await waitForNoLoadingRows(api);
-            await asyncSetTimeout(10);
+            await waitFor(() => expect(loadCount).toBeGreaterThan(loadsBeforeFilter));
 
             expect(api.getPinnedBottomRowCount()).toBe(1);
             expect(api.getPinnedBottomRow(0)?.data?.value).toBe(expectedValues[i]);
@@ -2359,6 +2365,10 @@ describe('SSRM grand total row', () => {
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
         expect(api.getPinnedBottomRowCount()).toBe(1);
+        // The count asserted at the end of this test is 1 both before and after the aggregation
+        // change, so gate on the OLD pinned node being torn down — the "replaced" half of the pin.
+        const pinnedBeforeAggChange = api.getPinnedBottomRow(0)!;
+        expect(pinnedBeforeAggChange.destroyed).toBe(false);
 
         api.setColumnAggFunc('value', 'avg');
         await new GridColumns(
@@ -2375,7 +2385,7 @@ describe('SSRM grand total row', () => {
                 └── filler id:rowIndex:0
             `);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(20);
+        await waitFor(() => expect(pinnedBeforeAggChange.destroyed).toBe(true));
 
         expect(api.getPinnedBottomRowCount()).toBe(1);
     });
@@ -2419,10 +2429,10 @@ describe('SSRM grand total row', () => {
         total = 123;
         api.refreshServerSide({ purge: true });
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(20);
+        // The pinned total was 60 before the refresh, so this poll cannot pass on the pre-refresh state.
+        await waitFor(() => expect(api.getPinnedBottomRow(0)?.data?.value).toBe(123));
 
         expect(api.getPinnedBottomRowCount()).toBe(1);
-        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(123);
         await new GridRows(
             api,
             `pinnedBottom grand total is replaced after refreshServerSide({ purge: true }) final state`
@@ -2521,10 +2531,10 @@ describe('SSRM grand total row', () => {
             └── LEAF_GROUP collapsed id:rowIndex:0
         `);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(20);
+        // The pinned total was 60 before the filter, so this poll cannot pass on the pre-filter state.
+        await waitFor(() => expect(api.getPinnedBottomRow(0)?.data?.value).toBe(30));
 
         expect(api.getPinnedBottomRowCount()).toBe(1);
-        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(30);
     });
 
     test('switching from pinnedBottom to bottom after filter change leaves no orphan pinned row', async () => {
@@ -2553,13 +2563,13 @@ describe('SSRM grand total row', () => {
 
         api.setFilterModel({ value: { type: 'greaterThan', filter: 15 } });
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(20);
+        // The pinned total was 60 before the filter, so this poll cannot pass on the pre-filter state.
+        await waitFor(() => expect(api.getPinnedBottomRow(0)?.data?.value).toBe(50));
         expect(api.getPinnedBottomRowCount()).toBe(1);
 
+        // A pinned row existed before the switch, so polling for its removal is falsifiable.
         api.setGridOption('grandTotalRow', 'bottom');
-        await asyncSetTimeout(20);
-
-        expect(api.getPinnedBottomRowCount()).toBe(0);
+        await waitFor(() => expect(api.getPinnedBottomRowCount()).toBe(0));
         expect(api.getPinnedTopRowCount()).toBe(0);
 
         await new GridRows(api, 'after switch to inline bottom').check(unindentText`
@@ -2601,7 +2611,6 @@ describe('SSRM grand total row', () => {
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(20);
 
         const gridRows1 = new GridRows(api, 'initial');
         await gridRows1.check(unindentText`
@@ -2614,7 +2623,6 @@ describe('SSRM grand total row', () => {
 
         api.setFilterModel({ value: { type: 'greaterThan', filter: 15 } });
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(20);
 
         const gridRows2 = new GridRows(api, 'after filter');
         await gridRows2.check(unindentText`

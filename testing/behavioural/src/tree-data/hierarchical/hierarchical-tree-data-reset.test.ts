@@ -102,7 +102,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await asyncSetTimeout(1); // Simulate async loading
+        await asyncSetTimeout(0); // Simulate async loading
 
         setRowDataChecked(api, rowData1);
 
@@ -112,7 +112,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             · └── B LEAF id:B ag-Grid-AutoColumn:"B"
         `);
 
-        await asyncSetTimeout(1); // Simulate async re-loading
+        await asyncSetTimeout(0); // Simulate async re-loading
 
         setRowDataChecked(api, rowData2);
 
@@ -626,7 +626,6 @@ describe('ag-grid hierarchical tree data reset', () => {
             └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2"
             · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3"
         `);
-        await asyncSetTimeout(1);
 
         const fillers: IRowNode[] = [];
         api.forEachNode((n) => {
@@ -664,7 +663,10 @@ describe('ag-grid hierarchical tree data reset', () => {
             { name: 'A', children: [{ name: 'A.1' }] },
             { name: 'B', children: [{ name: 'B.1' }] },
         ]);
-        await asyncSetTimeout(1);
+        // Single-tick yield: the assertions below are negative (no topChanged / rowIndexChanged /
+        // displayedChanged must fire on the destroyed fillers), so this is an observation window,
+        // not a wait for something to appear. waitFor cannot express it.
+        await asyncSetTimeout(0);
 
         for (const f of fillers) {
             expect(f.destroyed).toBe(true);

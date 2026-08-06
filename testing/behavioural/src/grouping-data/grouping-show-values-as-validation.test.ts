@@ -1,10 +1,11 @@
+import { waitFor } from '@testing-library/dom';
 import { vi } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager } from '../test-utils';
 
 /**
  * Show Values As is clientSide-only. On other row models the property is inert, and the user must be told the
@@ -44,13 +45,13 @@ describe('showValuesAs row-model validation', () => {
             ...ssrmOptions(),
             columnDefs: [{ field: 'amount', showValuesAs: 'percentOfGrandTotal' }],
         });
-        await asyncSetTimeout(1);
-
         // The accurate row-model message fires (note the value-name → message text in validationService).
-        expect(warnSpy).toHaveBeenCalledWith(
-            expect.stringContaining('warning #309'),
-            expect.stringContaining('`showValuesAs` is not supported with the `serverSide` row model'),
-            expect.any(String)
+        await waitFor(() =>
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #309'),
+                expect.stringContaining('`showValuesAs` is not supported with the `serverSide` row model'),
+                expect.any(String)
+            )
         );
     });
 
@@ -62,7 +63,14 @@ describe('showValuesAs row-model validation', () => {
                 { field: 'units', initialShowValuesAs: 'percentOfGrandTotal' },
             ],
         });
-        await asyncSetTimeout(1);
+        // The row-model warning is the positive signal that validation has run for these columns.
+        await waitFor(() =>
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #309'),
+                expect.any(String),
+                expect.any(String)
+            )
+        );
 
         // No console.error should mention the ShowValuesAs module — the gate skips the registration check off CSRM.
         for (const call of errorSpy.mock.calls) {

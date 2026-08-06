@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import {
@@ -289,30 +289,35 @@ describe('RowNode.getDataValue', () => {
             api.startBatchEdit();
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            // Test IDs are stamped in a debounced pass off grid events, so poll the lookup itself.
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
 
             await userEvent.dblClick(cellA);
             const editor = await waitForInput(gridDiv, cellA, { popup: false });
             await userEvent.clear(editor);
             await userEvent.type(editor, 'typing');
-            await asyncSetTimeout(1);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+            // Gate on the editor value having landed: asserting that the committed data is
+            // unchanged is vacuous until the edit has provably reached the edit pipeline.
+            await waitFor(() => expect(rowNode.getDataValue('a', 'edit')).toBe('typing'));
 
             // getDataValue always returns committed data, ignoring pending edits
             expect(rowNode.getDataValue('a')).toBe('initial');
 
             // Press Enter to close editor and create pending value
             await userEvent.keyboard('{Enter}');
-            await asyncSetTimeout(1);
+
+            // Gate on the pending batch value existing before asserting the committed data
+            // is untouched by it.
+            await waitFor(() => expect(rowNode.getDataValue('a', 'batch')).toBe('typing'));
 
             // Still returns committed data (not pending batch value)
             expect(rowNode.data.a).toBe('initial');
             expect(rowNode.getDataValue('a')).toBe('initial');
 
             api.cancelBatchEdit();
-            await asyncSetTimeout(1);
 
             expect(rowNode.getDataValue('a')).toBe('initial');
             await new GridRows(api, `getDataValue returns committed data during batch edit final state`).check(`
@@ -339,25 +344,27 @@ describe('RowNode.getDataValue', () => {
             api.startBatchEdit();
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            // Test IDs are stamped in a debounced pass off grid events, so poll the lookup itself.
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
 
             await userEvent.dblClick(cellA);
             const editor = await waitForInput(gridDiv, cellA, { popup: false });
             await userEvent.clear(editor);
             await userEvent.type(editor, 'committed{Enter}');
-            await asyncSetTimeout(1);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+            // Gate on the pending batch value having landed, so the "still original" assertion
+            // below is made against a grid that has provably staged the edit.
+            await waitFor(() => expect(rowNode.getDataValue('a', 'batch')).toBe('committed'));
 
             // Before commit, getDataValue returns original data
             expect(rowNode.getDataValue('a')).toBe('initial');
 
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
             // After commit, getDataValue returns committed value
-            expect(rowNode.getDataValue('a')).toBe('committed');
+            await waitFor(() => expect(rowNode.getDataValue('a')).toBe('committed'));
             expect(rowNode.data.a).toBe('committed');
             await new GridRows(api, `getDataValue reflects committed batch edit final state`).check(`
                 ROOT id:ROOT_NODE_ID
@@ -394,8 +401,6 @@ describe('RowNode.getDataValue', () => {
                 └─┬ LEAF_GROUP id:row-group-country-UK ag-Grid-AutoColumn:"UK" value:300
                 · └── LEAF id:3 country:"UK" value:300
             `);
-
-            await asyncSetTimeout(1);
 
             // Get group node for Ireland
             let irelandGroup: ReturnType<typeof api.getRowNode>;
@@ -446,8 +451,6 @@ describe('RowNode.getDataValue', () => {
                 · └── LEAF id:2 country:"Ireland" value:200
             `);
 
-            await asyncSetTimeout(1);
-
             let irelandGroup: ReturnType<typeof api.getRowNode>;
             api.forEachNode((node) => {
                 if (node.group && node.key === 'Ireland') {
@@ -493,8 +496,6 @@ describe('RowNode.getDataValue', () => {
                 └─┬ LEAF_GROUP id:row-group-country-UK ag-Grid-AutoColumn:"UK" value:300
                 · └── LEAF id:3 country:"UK" value:300
             `);
-
-            await asyncSetTimeout(1);
 
             // Get auto-group column
             const autoGroupCol = api.getColumn('ag-Grid-AutoColumn')!;
@@ -565,8 +566,6 @@ describe('RowNode.getDataValue', () => {
                 · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"Child 2" value:30
             `);
 
-            await asyncSetTimeout(1);
-
             const parentNode = api.getRowNode('1')!;
             const child1Node = api.getRowNode('1-1')!;
 
@@ -618,8 +617,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"ChildA" shouted:"CHILDA"
                 · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"ChildB" shouted:"CHILDB"
             `);
-
-            await asyncSetTimeout(1);
 
             // Parent (group row) — valueGetter executes against the row's own data
             expect(api.getRowNode('1')!.getDataValue('shouted')).toBe('PARENT');
@@ -1309,8 +1306,6 @@ describe('RowNode.getDataValue', () => {
                 · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
             `);
 
-            await asyncSetTimeout(1);
-
             // Get pivot columns
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
@@ -1369,8 +1364,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
                 · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
             `);
-
-            await asyncSetTimeout(1);
 
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
@@ -1446,8 +1439,6 @@ describe('RowNode.getDataValue', () => {
                 · · └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
             `);
 
-            await asyncSetTimeout(1);
-
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
             const pivotCol2021 = pivotColumns?.find((col) => col.getColId().includes('2021_sales'));
@@ -1519,8 +1510,6 @@ describe('RowNode.getDataValue', () => {
                 · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
             `);
 
-            await asyncSetTimeout(1);
-
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
 
@@ -1577,8 +1566,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
                 · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
             `);
-
-            await asyncSetTimeout(1);
 
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
@@ -1651,8 +1638,6 @@ describe('RowNode.getDataValue', () => {
                 · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
             `);
 
-            await asyncSetTimeout(1);
-
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
             expect(pivotCol2020).toBeDefined();
@@ -1715,8 +1700,6 @@ describe('RowNode.getDataValue', () => {
                 · └── LEAF id:3 category:"B" value:300 min:20
             `);
 
-            await asyncSetTimeout(1);
-
             // Find group A
             let groupA: ReturnType<typeof api.getRowNode>;
             api.forEachNode((node) => {
@@ -1770,8 +1753,6 @@ describe('RowNode.getDataValue', () => {
                 · └── LEAF id:3 group:"X" quantity:2 revenue:40 cost:12
             `);
 
-            await asyncSetTimeout(1);
-
             let groupX: ReturnType<typeof api.getRowNode>;
             api.forEachNode((node) => {
                 if (node.group && node.key === 'X') {
@@ -1817,8 +1798,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 type:"Income" amount:1000
                 · └── LEAF id:2 type:"Income" amount:500
             `);
-
-            await asyncSetTimeout(1);
 
             let incomeGroup: ReturnType<typeof api.getRowNode>;
             api.forEachNode((node) => {
@@ -1876,7 +1855,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:10
                 · └── LEAF id:2 cat:"A" v:20
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const val = group.getDataValue('v');
@@ -1915,7 +1893,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:10
                 · └── LEAF id:2 cat:"A" v:20
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const val = group.getDataValue('v');
@@ -1954,7 +1931,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:10
                 · └── LEAF id:2 cat:"A" v:20
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const val = group.getDataValue('v');
@@ -1993,7 +1969,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:"alpha"
                 · └── LEAF id:2 cat:"A" v:"beta"
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const val = group.getDataValue('v');
@@ -2032,7 +2007,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:"alpha"
                 · └── LEAF id:2 cat:"A" v:"beta"
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const val = group.getDataValue('v');
@@ -2075,7 +2049,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:2 cat:"A" v:20
                 · └── LEAF id:3 cat:"A" v:30
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const val = group.getDataValue('v');
@@ -2127,7 +2100,6 @@ describe('RowNode.getDataValue', () => {
                 └─┬ LEAF_GROUP id:row-group-cat-B ag-Grid-AutoColumn:"B" v:{"value":1}
                 · └── LEAF id:3 cat:"B" v:"z"
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const val = group.getDataValue('v');
@@ -2182,7 +2154,6 @@ describe('RowNode.getDataValue', () => {
                 · · ├── LEAF id:3 region:"EU" country:"DE" v:30
                 · · └── LEAF id:4 region:"EU" country:"DE" v:40
             `);
-            await asyncSetTimeout(1);
 
             let euGroup: any, frGroup: any;
             api.forEachNode((node: any) => {
@@ -2276,7 +2247,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:100
                 · └── LEAF id:2 cat:"A" v:200
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const val = group.getDataValue('v') as CustomAggResult;
@@ -2353,7 +2323,6 @@ describe('RowNode.getDataValue', () => {
                     · ├── LEAF id:1 cat:"A" v:10
                     · └── LEAF id:2 cat:"A" v:20
                 `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const val = group.getDataValue('v');
@@ -2416,7 +2385,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:"hello"
                 · └── LEAF id:2 cat:"A" v:"world"
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const val = group.getDataValue('v');
@@ -2666,7 +2634,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"Child 1" v:20
                 · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"Child 2" v:40
             `);
-            await asyncSetTimeout(1);
 
             const parent = api.getRowNode('1')!;
             const child = api.getRowNode('1-1')!;
@@ -2720,7 +2687,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"A" v:20
                 · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"B" v:30
             `);
-            await asyncSetTimeout(1);
 
             const parent = api.getRowNode('1')!;
             const parentVal = parent.getDataValue('v');
@@ -2778,7 +2744,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"A" v:10
                 · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"B" v:20
             `);
-            await asyncSetTimeout(1);
 
             const root = api.getRowNode('1')!;
             const val = root.getDataValue('v');
@@ -2832,7 +2797,6 @@ describe('RowNode.getDataValue', () => {
                     · ├── LEAF id:1 cat:"A" v:10
                     · └── LEAF id:2 cat:"A" v:30
                 `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const dataVal = group.getDataValue('v');
@@ -2896,7 +2860,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:2 cat:"A" v:30
                 · └─ footer id:rowGroupFooter_row-group-cat-A ag-Grid-AutoColumn:"Total A" v:{"count":2,"value":20}
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             expect(group.expanded).toBe(true);
@@ -2965,7 +2928,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:2 cat:"A" v:30
                 · └─ footer id:rowGroupFooter_row-group-cat-A ag-Grid-AutoColumn:"Total A" v:{"count":2,"value":20}
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             expect(group.expanded).toBe(true);
@@ -3024,7 +2986,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF hidden id:2 pivot_year_2020_score:30 pivot_year_2021_score:30
                 · └── LEAF hidden id:3 pivot_year_2020_score:50 pivot_year_2021_score:50
             `);
-            await asyncSetTimeout(1);
 
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col: any) => col.getColId().includes('2020'));
@@ -3085,7 +3046,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF hidden id:1 pivot_year_2020_score:10 pivot_year_2021_score:10
                 · └── LEAF hidden id:2 pivot_year_2020_score:50 pivot_year_2021_score:50
             `);
-            await asyncSetTimeout(1);
 
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col: any) => col.getColId().includes('2020'));
@@ -3136,7 +3096,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:"x"
                 · └── LEAF id:2 cat:"A" v:"y"
             `);
-            await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
             const dataVal = group.getDataValue('v');
@@ -3244,20 +3203,19 @@ describe('RowNode.getDataValue', () => {
             `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            // Test IDs are stamped in a debounced pass off grid events, so poll the lookup itself.
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
 
             // Start editing
             await userEvent.dblClick(cellA);
             const editor = await waitForInput(gridDiv, cellA, { popup: false });
             await userEvent.clear(editor);
             await userEvent.type(editor, 'typing');
-            await asyncSetTimeout(1);
 
             const rowNode = api.getRowNode('0')!;
 
             // from: 'edit' returns live editor value
-            expect(rowNode.getDataValue('a', 'edit')).toBe('typing');
+            await waitFor(() => expect(rowNode.getDataValue('a', 'edit')).toBe('typing'));
 
             // from: 'data' returns committed
             expect(rowNode.getDataValue('a', 'data')).toBe('original');
@@ -3346,7 +3304,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:10
                 · └── LEAF id:2 cat:"A" v:30
             `);
-            await asyncSetTimeout(1);
 
             let group: any;
             api.forEachNode((node: any) => {
@@ -3396,7 +3353,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:10
                 · └── LEAF id:2 cat:"A" v:30
             `);
-            await asyncSetTimeout(1);
 
             let group: any;
             api.forEachNode((node: any) => {
@@ -3450,7 +3406,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:10
                 · └── LEAF id:2 cat:"A" v:30
             `);
-            await asyncSetTimeout(1);
 
             let group: any;
             api.forEachNode((node: any) => {
@@ -3499,7 +3454,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:2 cat:"A" v:"y"
                 · └── LEAF id:3 cat:"A" v:"z"
             `);
-            await asyncSetTimeout(1);
 
             let group: any;
             api.forEachNode((node: any) => {
@@ -3548,7 +3502,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:10
                 · └── LEAF id:2 cat:"A" v:20
             `);
-            await asyncSetTimeout(1);
 
             let group: any;
             api.forEachNode((node: any) => {
@@ -3618,7 +3571,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:10
                 · └── LEAF id:2 cat:"A" v:30
             `);
-            await asyncSetTimeout(1);
 
             let group: any;
             api.forEachNode((node: any) => {
@@ -3670,7 +3622,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:"x"
                 · └── LEAF id:2 cat:"A" v:"y"
             `);
-            await asyncSetTimeout(1);
 
             let group: any;
             api.forEachNode((node: any) => {
@@ -3839,7 +3790,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 cat:"A" v:100
                 · └── LEAF id:2 cat:"A" v:200
             `);
-            await asyncSetTimeout(1);
 
             let group: any;
             api.forEachNode((node: any) => {
@@ -3895,7 +3845,6 @@ describe('RowNode.getDataValue', () => {
                     · └── LEAF id:2 cat:"A" v:30
                 `
             );
-            await asyncSetTimeout(1);
 
             let group: any;
             api.forEachNode((node: any) => {
@@ -3981,7 +3930,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"Child 1" v:20
                 · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"Child 2" v:30
             `);
-            await asyncSetTimeout(1);
 
             const parent = api.getRowNode('1')!;
 
@@ -4074,8 +4022,6 @@ describe('RowNode.getDataValue', () => {
                     · └── LEAF id:2 cat:"A" v:20 label:"item-20"
                 `
             );
-
-            await asyncSetTimeout(1);
 
             // Leaf row: data-raw still calls the valueGetter
             const leaf = api.getRowNode('1')!;
@@ -4201,7 +4147,6 @@ describe('RowNode.getDataValue', () => {
                     · · └── LEAF id:2 country:"USA" athlete:"Ryan" gold:2
                 `
             );
-            await asyncSetTimeout(1);
 
             // Country group node (level 0)
             const countryGroup = api.getRowNode('row-group-country-USA')!;
@@ -4276,7 +4221,6 @@ describe('RowNode.getDataValue', () => {
                 · ├── LEAF id:1 country:"USA" gold:8 notes:"leaf note"
                 · └── LEAF id:2 country:"USA" gold:2 notes:""
             `);
-            await asyncSetTimeout(1);
 
             const countryGroup = api.getRowNode('row-group-country-USA')!;
             expect(countryGroup.group).toBe(true);
@@ -4361,7 +4305,6 @@ describe('RowNode.getDataValue', () => {
                 · └─┬ LEAF_GROUP id:row-group-country-USA-athlete-Ryan athleteGroupCol:"Ryan" gold:2
                 · · └── LEAF id:2 countryGroupCol:"getter:USA" athleteGroupCol:"getter:athlete" country:"USA" athlete:"Ryan" gold:2
             `);
-            await asyncSetTimeout(1);
 
             const countryGroup = api.getRowNode('row-group-country-USA')!;
             const athleteGroup = api.getRowNode('row-group-country-USA-athlete-Michael')!;
@@ -4437,7 +4380,6 @@ describe('RowNode.getDataValue', () => {
                     · ├── 2 LEAF id:2 ag-Grid-AutoColumn:"2" regionGroupCol:"2" name:"Child1" region:"East" value:20
                     · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" regionGroupCol:"3" name:"Child2" region:"West" value:30
                 `);
-            await asyncSetTimeout(1);
 
             const parent = api.getRowNode('1')!;
             expect(parent.group).toBe(true);

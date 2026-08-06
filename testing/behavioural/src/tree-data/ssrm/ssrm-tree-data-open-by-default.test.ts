@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridOptions, IsServerSideGroupOpenByDefaultParams } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
@@ -52,7 +54,8 @@ describe('ag-grid SSRM treeData open-by-default loads children', () => {
 
         const api = gridsManager.createGrid('ssrmOpenDefault', gridOptions);
 
-        await asyncSetTimeout(1);
+        // One macrotask yield so the grid finishes initialising before the datasource is attached.
+        await asyncSetTimeout(0);
 
         const data = getSmallTreeDataSet();
         const fakeServer = createFakeServer(data);
@@ -60,10 +63,8 @@ describe('ag-grid SSRM treeData open-by-default loads children', () => {
 
         api!.setGridOption('serverSideDatasource', datasource);
 
-        for (let repeat = 0; fakeServer.loadsCount < 4 && repeat < 500; ++repeat) {
-            await asyncSetTimeout(1);
-        }
-
+        // The two open-by-default levels require four server round-trips (root, 101, 102, 113).
+        await waitFor(() => expect(fakeServer.loadsCount).toBeGreaterThanOrEqual(4));
         await waitForNoLoadingRows(api);
 
         const gridRows = new GridRows(api, 'ssrm open by default');

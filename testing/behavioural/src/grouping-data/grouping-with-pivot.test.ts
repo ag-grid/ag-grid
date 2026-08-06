@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { vi } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
@@ -98,17 +99,20 @@ describe('ag-grid grouping with pivot', () => {
             pivotMode: true,
             suppressColumnMoveAnimation: true,
         });
-        await asyncSetTimeout(10);
+        // The pivot columns do not exist until the initial pivot pass has run.
+        await waitFor(() => expect(api.getColumn('pivot_year_2020_gold')).toBeTruthy());
 
         api.addValueColumns(['silver']);
-        await asyncSetTimeout(10);
+        const silverCell = await waitFor(() => {
+            const cell = getGridElement(api)!.querySelector<HTMLElement>(
+                '[row-index="0"] [col-id="pivot_year_2020_silver"]'
+            );
+            expect(cell).toBeTruthy();
+            return cell!;
+        });
 
         const silverColumn = api.getColumn('pivot_year_2020_silver')!;
-        const silverCell = getGridElement(api)!.querySelector<HTMLElement>(
-            '[row-index="0"] [col-id="pivot_year_2020_silver"]'
-        );
-        expect(silverCell).toBeTruthy();
-        expect(silverCell!.style.left).toBe(`${silverColumn.getLeft()}px`);
+        expect(silverCell.style.left).toBe(`${silverColumn.getLeft()}px`);
 
         api.setColumnWidths([{ key: 'pivot_year_2020_gold', newWidth: 300 }]);
         await asyncSetTimeout(0);
@@ -1093,7 +1097,6 @@ describe('ag-grid grouping with pivot', () => {
             { id: '3', country: 'United Kingdom', athlete: 'Chris', year: 2008, gold: 3 },
             { id: '4', country: 'United Kingdom', athlete: 'Mo', year: 2012, gold: 2 },
         ]);
-        await asyncSetTimeout(10);
 
         await vi.waitFor(async () => {
             await new GridRows(api, 'custom group columns before pivot').check(`
@@ -1130,7 +1133,6 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         api.setGridOption('pivotMode', false);
-        await asyncSetTimeout(10);
 
         await vi.waitFor(async () => {
             await new GridRows(api, 'custom group columns after pivot disabled').check(`

@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
 import { FindModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridRows, TestGridsManager } from '../test-utils';
 
 /**
  * Find must match what the user sees. For a column with an active Show Values As mode the cell shows the
@@ -18,10 +20,10 @@ describe('showValuesAs + Find', () => {
         gridsManager.reset();
     });
 
-    async function search(api: GridApi, value: string): Promise<number> {
+    /** Sets the find value and polls until the match count settles on the expected figure. */
+    async function search(api: GridApi, value: string, expectedMatches: number): Promise<void> {
         api.setGridOption('findSearchValue', value);
-        await asyncSetTimeout(1);
-        return api.findGetTotalMatches();
+        await waitFor(() => expect(api.findGetTotalMatches()).toBe(expectedMatches));
     }
 
     test('Find matches the transformed value, not the raw value, for a showValuesAs column', async () => {
@@ -44,9 +46,9 @@ describe('showValuesAs + Find', () => {
         `);
 
         // The transformed string is present...
-        expect(await search(api, '25.00%')).toBe(1);
+        await search(api, '25.00%', 1);
         // ...and the raw underlying number is NOT what Find sees (no transformed cell contains "20").
-        expect(await search(api, '20')).toBe(0);
+        await search(api, '20', 0);
     });
 
     test('Find still searches the raw value for ordinary (non-showValuesAs) columns', async () => {
@@ -70,7 +72,7 @@ describe('showValuesAs + Find', () => {
         `);
 
         // The plain `units` column still matches its raw value (20), while `amount` does not.
-        expect(await search(api, '20')).toBe(1);
+        await search(api, '20', 1);
     });
 
     test('Find matches transformed group and leaf cells across a row grouping', async () => {
@@ -98,9 +100,9 @@ describe('showValuesAs + Find', () => {
         `);
 
         // "60.00%" appears on group B and on leaf 3 → two matches; the raw 60 is never what Find sees.
-        expect(await search(api, '60.00%')).toBe(2);
+        await search(api, '60.00%', 2);
         // Group A's transformed total "40.00%" matches; no raw cell holds 40.
-        expect(await search(api, '40.00%')).toBe(1);
+        await search(api, '40.00%', 1);
     });
 
     test('Find renders the transformed value in matched cells, not the raw underlying value', async () => {
@@ -122,7 +124,7 @@ describe('showValuesAs + Find', () => {
             └── LEAF id:2 country:"B" amount:"75.00%"
         `);
 
-        await search(api, '25.00%');
+        await search(api, '25.00%', 1);
 
         // While Find is active the cell renders through the find cell renderer: it must show the transformed
         // text (with the match highlighted), never the raw underlying "20".

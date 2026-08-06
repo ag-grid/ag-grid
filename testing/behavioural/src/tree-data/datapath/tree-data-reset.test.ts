@@ -92,7 +92,7 @@ describe('ag-grid tree data reset', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await asyncSetTimeout(1); // Simulate async loading
+        await asyncSetTimeout(0); // Simulate async loading
 
         setRowDataChecked(api, rowData1);
 
@@ -102,7 +102,7 @@ describe('ag-grid tree data reset', () => {
             · └── B LEAF id:1 ag-Grid-AutoColumn:"B"
         `);
 
-        await asyncSetTimeout(1); // Simulate async re-loading
+        await asyncSetTimeout(0); // Simulate async re-loading
 
         setRowDataChecked(api, rowData2);
 

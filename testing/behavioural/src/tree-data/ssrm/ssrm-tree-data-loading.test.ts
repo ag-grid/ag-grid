@@ -2,7 +2,7 @@ import type { GridOptions, IServerSideDatasource, IServerSideGetRowsParams } fro
 import { TextFilterModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridRows, TestGridsManager } from '../../test-utils';
 import { ssrmExpandAndLoadAll, waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 import { createFakeServer, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
 
@@ -86,7 +86,6 @@ describe('ag-grid SSRM treeData lazy loading (characterization)', () => {
     test('initial load requests the root children (groupKeys: []) and marks groups expandable', async () => {
         const { api, requests } = createTreeGrid('ssrmInitial');
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
 
         // Only the root children are requested on initial load.
@@ -106,7 +105,6 @@ describe('ag-grid SSRM treeData lazy loading (characterization)', () => {
     test("expanding a group node lazily requests ONLY that node's children", async () => {
         const { api, requests } = createTreeGrid('ssrmExpandOne');
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
         requests.length = 0; // discard the initial root request
 
@@ -127,7 +125,6 @@ describe('ag-grid SSRM treeData lazy loading (characterization)', () => {
     test('expanding a nested node requests its full groupKeys path', async () => {
         const { api, requests } = createTreeGrid('ssrmExpandNested');
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
 
         api.getRowNode('101')!.setExpanded(true);
@@ -158,7 +155,6 @@ describe('ag-grid SSRM treeData lazy loading (characterization)', () => {
     test('applying a sort re-requests loaded blocks from the server', async () => {
         const { api, requests } = createTreeGrid('ssrmSort');
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
         api.getRowNode('101')!.setExpanded(true);
         await waitForNoLoadingRows(api);
@@ -186,7 +182,6 @@ describe('ag-grid SSRM treeData lazy loading (characterization)', () => {
     test('applying a filter re-requests from the server', async () => {
         const { api, requests } = createTreeGrid('ssrmFilter');
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
         requests.length = 0; // discard initial load
 
@@ -208,7 +203,6 @@ describe('ag-grid SSRM treeData lazy loading (characterization)', () => {
     test('expand-and-load-all walks the whole tree, one request per group node', async () => {
         const { api, requests } = createTreeGrid('ssrmExpandAll');
 
-        await asyncSetTimeout(1);
         await ssrmExpandAndLoadAll(api);
 
         // Every group node in the dataset produces exactly one children request.

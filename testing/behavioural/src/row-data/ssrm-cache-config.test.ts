@@ -56,12 +56,14 @@ describe('SSRM cache config', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
-        // Let the initial block dispatch without resolving it.
-        await asyncSetTimeout(30);
 
         // Before any block resolves the grid sizes itself to the configured
-        // initial row count — 42 filler rows are displayed.
-        expect(api.getDisplayedRowCount()).toBe(42);
+        // initial row count — 42 filler rows are displayed. Gate on the initial block
+        // having been dispatched (pending goes 0 -> 1) rather than on a fixed delay.
+        await waitFor(() => {
+            expect(pending.length).toBe(1);
+            expect(api.getDisplayedRowCount()).toBe(42);
+        });
 
         // Register the listener BEFORE draining — success() dispatches modelUpdated
         // synchronously, so attaching after would miss it and hang.
@@ -152,7 +154,10 @@ describe('SSRM cache config', () => {
         api.ensureIndexVisible(1500);
 
         // Sample the request count while still inside the debounce window: the
-        // intermediate blocks have NOT been fetched yet.
+        // intermediate blocks have NOT been fetched yet. This is a negative assertion —
+        // waitFor cannot express "no request has been issued", so the delay IS the
+        // observation window and must stay.
+        // eslint-disable-next-line no-restricted-syntax -- observation window inside the 200ms blockLoadDebounceMillis
         await asyncSetTimeout(50);
         const requestsDuringWindow = requests.length - requestsAfterInitial;
         expect(requestsDuringWindow).toBe(0);
@@ -161,9 +166,7 @@ describe('SSRM cache config', () => {
         // recorded request stream directly rather than a fixed sleep or a modelUpdated
         // event — the event can race with viewport rendering on a congested CI box,
         // whereas a new request is exactly the observable this test asserts on.
-        while (requests.length === requestsAfterInitial) {
-            await asyncSetTimeout(5);
-        }
+        await waitFor(() => expect(requests.length).toBeGreaterThan(requestsAfterInitial), { timeout: 2000 });
         const requestsAfterWindow = requests.length - requestsAfterInitial;
         expect(requestsAfterWindow).toBeGreaterThan(0);
         // The debounce coalesced the three rapid hops into far fewer than three
@@ -212,6 +215,9 @@ describe('SSRM cache config', () => {
         // fixed delay - a loaded machine may not have issued them all yet - then let any excess request surface.
         makeGrid(1);
         await waitFor(() => expect(pending.length).toBe(1));
+        // Negative assertion: no SECOND request may appear. waitFor cannot express that, so
+        // this delay is the observation window in which an over-cap request would surface.
+        // eslint-disable-next-line no-restricted-syntax -- observation window for an over-cap concurrent getRows
         await asyncSetTimeout(30);
         expect(pending.length).toBe(1);
 
@@ -222,6 +228,7 @@ describe('SSRM cache config', () => {
         // Cap of 2: exactly two requests may be in-flight simultaneously.
         makeGrid(2);
         await waitFor(() => expect(pending.length).toBe(2));
+        // eslint-disable-next-line no-restricted-syntax -- observation window for an over-cap concurrent getRows
         await asyncSetTimeout(30);
         expect(pending.length).toBe(2);
 
@@ -246,10 +253,10 @@ describe('SSRM cache config', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
-        await asyncSetTimeout(30);
 
         // The initial rows are filler/stub rows awaiting their block. Pin the
-        // pre-load model shape via GridRows.
+        // pre-load model shape via GridRows — which retries internally, so no sleep
+        // is needed for the grid to reach the pre-load state.
         await new GridRows(api, 'ssrm initial row count before load').check(`
             ROOT id:<no-id>
             ├── filler id:rowIndex:0

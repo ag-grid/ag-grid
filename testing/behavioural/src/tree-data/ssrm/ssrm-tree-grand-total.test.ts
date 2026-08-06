@@ -7,7 +7,7 @@ import {
     TreeDataModule,
 } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridRows, TestGridsManager } from '../../test-utils';
 import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
@@ -110,7 +110,6 @@ describe('ag-grid SSRM treeData grand total / footer (characterization)', () => 
     test('grandTotalRow:bottom renders a footer at the bottom with the summed leaf total', async () => {
         const { api, requests } = createTreeGrid('ssrmTreeGtBottom', { grandTotalRow: 'bottom' });
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
 
         // Only the root store requests the grand total.
@@ -132,7 +131,6 @@ describe('ag-grid SSRM treeData grand total / footer (characterization)', () => 
     test('grandTotalRow:top renders the footer at the top', async () => {
         const { api } = createTreeGrid('ssrmTreeGtTop', { grandTotalRow: 'top' });
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
 
         expect(api.getRowNode(GRAND_TOTAL_ROW_ID)?.data?.value).toBe(60);
@@ -148,7 +146,6 @@ describe('ag-grid SSRM treeData grand total / footer (characterization)', () => 
     test('grand total stays pinned and unchanged when a tree group is expanded', async () => {
         const { api, requests } = createTreeGrid('ssrmTreeGtExpand', { grandTotalRow: 'bottom' });
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
 
         const grandTotalIdBefore = api.getRowNode(GRAND_TOTAL_ROW_ID)?.id;
@@ -157,7 +154,6 @@ describe('ag-grid SSRM treeData grand total / footer (characterization)', () => 
 
         api.getRowNode('A')!.setExpanded(true);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(10);
 
         // Expanding a group loads only that group's children — needsGrandTotal is
         // NOT requested again, and the root grand-total node is the same instance
@@ -182,12 +178,10 @@ describe('ag-grid SSRM treeData grand total / footer (characterization)', () => 
             groupTotalRow: 'bottom',
         });
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
 
         api.getRowNode('A')!.setExpanded(true);
         await waitForNoLoadingRows(api);
-        await asyncSetTimeout(10);
 
         // DIVERGENCE (pinned, not fixed): despite aggFunc:'sum', neither the tree
         // group rows (A / B) nor the per-group footer (rowGroupFooter_A) carry an
@@ -209,7 +203,6 @@ describe('ag-grid SSRM treeData grand total / footer (characterization)', () => 
     test('MODEL-VS-DOM: grand-total value is on the model node; displayed count includes the footer', async () => {
         const { api } = createTreeGrid('ssrmTreeGtDivergence', { grandTotalRow: 'bottom' });
 
-        await asyncSetTimeout(1);
         await waitForNoLoadingRows(api);
 
         // The footer's aggregated value lives on the model node's raw data.
