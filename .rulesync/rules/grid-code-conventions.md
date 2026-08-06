@@ -8,6 +8,22 @@ globs: ['packages/*/src/**/*.ts', 'community-modules/*/src/**/*.ts', 'enterprise
 
 Grid-specific rules for runtime source, layered on top of the shared [Code Quality Guide](code-quality.md). Scoped to `src` so it loads only when editing grid source, not into the always-on project context.
 
+## Coding style
+
+Enforced by ESLint plus team preferences.
+
+- Always use braces for `if/else/for/while/do`.
+- Cache repeated field access in a local — performance requirement.
+- Canonical array loop: `for (let i = 0, len = a.length; i < len; ++i)`. No `Array.forEach`. `Map.forEach` is fine.
+- No lonely `if` — use guard returns, `if/else if`, or ternaries. Applies to loops too.
+- No nested ternaries — extract to a named variable.
+- No short-circuit side effects (`cond && fn()`). No assignments in expressions.
+- No `for...in`. Use `Object.keys()` + index loops; prefer `Object.keys()` over `Object.entries()` when values aren't needed.
+- No static class properties — use module-level constants.
+- Explicit access modifiers on every class member; `readonly` when not reassigned.
+- Destructure only for 2+ fields; single field uses dot access.
+- `import type` for compile-time-only imports; separate `import type { Foo }` statements, no inline `{ type Foo, Bar }`.
+
 ## Prefer inline null checks over `_exists` / `_missing`
 
 Do not use `_exists` / `_missing` in new code. They wrap a cheap null check in a function call and add a `!== ''` empty-string test that is usually unwanted:

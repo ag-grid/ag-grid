@@ -9,6 +9,7 @@ mcp.json
 /skills/*
 !/skills/technology-stack/
 !/skills/docs-e2e-tests/
+!/skills/testing/
 
 # Plugin-delivered agents — all agents live in plugins
 /subagents/*.md
@@ -35,6 +36,7 @@ mcp.json
 !/rules/examples.md
 !/rules/framework-view-layers.md
 !/rules/grid-code-conventions.md
+!/rules/grid-styling.md
 !/rules/integrated-charts.md
 !/rules/testing.md
 # docs-review-testing.md ships as a sibling asset of the ag-prodeng docs-review
