@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import type { BatchEditingStoppedEvent } from 'ag-grid-community';
@@ -419,13 +419,15 @@ describe('Cell Editing: full-row batch', () => {
 
             // Push a new value via 'edit' source — only cell 'a' is updated
             rowNode.setDataValue('a', 'PUSHED', 'edit');
-            await asyncSetTimeout(1);
 
             // Editor 'a' should reflect pushed value; editor 'b' unchanged
+            await waitFor(() => {
+                const inputsAfter = gridDiv.querySelectorAll<HTMLInputElement>('input');
+                const inputAAfter = Array.from(inputsAfter).find((i) => i.value === 'PUSHED');
+                expect(inputAAfter).toBeInTheDocument();
+            });
             const inputsAfter = gridDiv.querySelectorAll<HTMLInputElement>('input');
-            const inputAAfter = Array.from(inputsAfter).find((i) => i.value === 'PUSHED');
             const inputBStillOriginal = Array.from(inputsAfter).find((i) => i.value === 'B0');
-            expect(inputAAfter).toBeInTheDocument();
             expect(inputBStillOriginal).toBeInTheDocument();
 
             // Data still unchanged until commit
