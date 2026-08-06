@@ -916,10 +916,13 @@ describe('ag-grid formulas filtering', () => {
         const [editor] = api.getCellEditorInstances() as unknown as [
             { agSetEditValue?: (v: unknown) => void; getValue?: () => unknown },
         ];
-        editor?.agSetEditValue?.('=A1');
+        // Positive control first: "=A5" references formula row 5, which IS visible at display index 0.
+        // It proves range processing runs synchronously within agSetEditValue for this grid, so the
+        // negative assertion below cannot pass merely because nothing has been processed yet.
+        editor?.agSetEditValue?.('=A5');
+        expect((api.getCellRanges() ?? []).map((r) => r.startRow?.rowIndex)).toEqual([0]);
 
-        // Wait for the typed value to land before inspecting range state it may have driven.
-        await waitFor(() => expect(editor?.getValue?.()).toEqual('=A1'));
+        editor?.agSetEditValue?.('=A1');
 
         // A1 references a filtered-out row, so no cell range should be created.
         const ranges = api.getCellRanges() ?? [];
@@ -1050,10 +1053,13 @@ describe('ag-grid formulas filtering', () => {
         const [editor] = api.getCellEditorInstances() as unknown as [
             { agSetEditValue?: (v: unknown) => void; getValue?: () => unknown },
         ];
-        editor?.agSetEditValue?.('=A2');
+        // Positive control first: "=A1" is formula row 1 (id:5), which IS visible at display index 0.
+        // It proves range processing runs synchronously within agSetEditValue for this grid, so the
+        // negative assertion below cannot pass merely because nothing has been processed yet.
+        editor?.agSetEditValue?.('=A1');
+        expect((api.getCellRanges() ?? []).map((r) => r.startRow?.rowIndex)).toEqual([0]);
 
-        // Wait for the typed value to land before inspecting range state it may have driven.
-        await waitFor(() => expect(editor?.getValue?.()).toEqual('=A2'));
+        editor?.agSetEditValue?.('=A2');
 
         // No range should highlight display index 0 (which would mean A2 incorrectly
         // mapped to the first visible row).

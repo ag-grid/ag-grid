@@ -1010,7 +1010,10 @@ describe('calculated columns - grid state persistence', () => {
         setExpression('[A] * 2');
         clickDialogButton('Cancel');
 
-        await waitFor(() => expect(order(api)).toEqual(['a', 'b']));
+        // Gate on the cancellation completing (the dialog closing), not on the pre-cancel column order —
+        // that already held, so polling it would let a delayed erroneous commit slip through.
+        await waitFor(() => expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0));
+        expect(order(api)).toEqual(['a', 'b']);
         expect(api.getState().userColumns).toBeUndefined();
     });
 

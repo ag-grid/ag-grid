@@ -50,6 +50,10 @@ describe('calculated columns - pivot mode', () => {
         return api.getAllGridColumns()!.map((col) => col.getColId());
     }
 
+    function displayed(api: GridApi): string[] {
+        return api.getAllDisplayedColumns().map((col) => col.getColId());
+    }
+
     const rowData = [
         { id: 'r1', country: 'US', year: 2020, revenue: 10, cost: 3 },
         { id: 'r2', country: 'UK', year: 2020, revenue: 20, cost: 5 },
@@ -83,22 +87,34 @@ describe('calculated columns - pivot mode', () => {
         await waitFor(() => expect(profit()).toBe(7));
         expect(warn).not.toHaveBeenCalled();
 
-        // Turning pivot mode on without assigning a pivot column does not activate a pivot.
+        // Turning pivot mode on without assigning a pivot column does not activate a pivot: the display
+        // narrows to the value columns, but no pivot result columns are generated.
         api.setGridOption('pivotMode', true);
-        await waitFor(() => expect(profit()).toBe(7));
+        await waitFor(() => expect(displayed(api)).toEqual(['revenue', 'cost']));
+        expect(api.getPivotResultColumns()).toBeFalsy();
+        expect(profit()).toBe(7);
         expect(warn).not.toHaveBeenCalled();
 
         // Assigning a pivot column at runtime activates the pivot. The calc col (no aggFunc, not the pivot
         // dimension) stays active: it keeps evaluating against the primary columns on leaf rows.
         api.applyColumnState({ state: [{ colId: 'country', pivot: true }] });
-        await waitFor(() => expect(profit()).toBe(7));
+        await waitFor(() =>
+            expect(displayed(api)).toEqual([
+                'pivot_country_UK_revenue',
+                'pivot_country_UK_cost',
+                'pivot_country_US_revenue',
+                'pivot_country_US_cost',
+            ])
+        );
+        expect(profit()).toBe(7);
         expect(warn).not.toHaveBeenCalled();
         expect(api.getColumn('profit')).toBeTruthy();
 
-        // Removing the pivot column leaves calc evaluation unchanged.
+        // Removing the pivot column leaves calc evaluation unchanged: the primary columns come back.
         api.applyColumnState({ state: [{ colId: 'country', pivot: false }] });
         api.setGridOption('pivotMode', false);
-        await waitFor(() => expect(profit()).toBe(7));
+        await waitFor(() => expect(displayed(api)).toEqual(['country', 'year', 'revenue', 'cost', 'profit']));
+        expect(profit()).toBe(7);
         expect(warn).not.toHaveBeenCalled();
     });
 
