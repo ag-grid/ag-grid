@@ -342,9 +342,8 @@ def stage(dry_run: bool = False) -> set[Path]:
         # authoritative source for whichever product tracks it; staging should
         # never clobber it. The `tracked` snapshot is reused from the write
         # guard above.
-        # Union the manifest-derived candidates with what the previous run
-        # actually staged, so an item dropped from the manifest between plugin
-        # releases is still a cleanup candidate rather than a permanent orphan.
+        # The prior-run record covers items dropped from the manifest, which the
+        # manifest diff alone cannot see.
         all_possible = _stageable_paths(manifest["plugins"]) | _read_prior_staged()
         for stale in sorted(all_possible - staged):
             rel = stale.relative_to(REPO_ROOT) if stale.is_absolute() else stale
@@ -388,11 +387,10 @@ def _tracked_files() -> set[Path]:
 def _read_prior_staged() -> set[Path]:
     """Return the absolute paths recorded by the previous run's marker file.
 
-    Needed because the manifest-diff candidate set only covers items the
-    manifest still declares. An item removed from a plugin's manifest entry
-    disappears from that set, so without this record it would never be
-    considered for cleanup. Returns an empty set for a first run, or for a
-    marker written before this record existed, which carries no path lines."""
+    The manifest-diff candidate set only covers items the manifest still
+    declares, so an item removed from a plugin's entry would otherwise never be
+    considered for cleanup. Empty for a first run, or for a marker predating
+    this record — both carry no path lines."""
     if not MARKER.is_file():
         return set()
     out: set[Path] = set()
