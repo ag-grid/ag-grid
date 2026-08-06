@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { RenderApiModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
@@ -260,10 +260,9 @@ describe('Cell Editing: setDataValue', () => {
             `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(5);
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field'));
+            // TestIdService stamps data-testid on a debounced pass, so poll the lookup itself.
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field')));
             await userEvent.click(cell);
-            await asyncSetTimeout(3);
             api.startEditingCell({ rowIndex: 0, colKey: 'field' });
             const input = await waitForInput(gridDiv, cell);
             await userEvent.clear(input);
@@ -318,10 +317,9 @@ describe('Cell Editing: setDataValue', () => {
                 });
 
                 const gridDiv = getGridElement(api)! as HTMLElement;
-                await asyncSetTimeout(5);
-                const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field'));
+                // TestIdService stamps data-testid on a debounced pass, so poll the lookup itself.
+                const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field')));
                 await userEvent.click(cell);
-                await asyncSetTimeout(3);
                 api.startEditingCell({ rowIndex: 0, colKey: 'field' });
                 const input = await waitForInput(gridDiv, cell);
                 await userEvent.clear(input);

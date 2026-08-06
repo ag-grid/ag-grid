@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { ClientSideRowModelModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
@@ -49,10 +50,8 @@ describe('cell editing with refreshAfterGroupEdit', () => {
         expect(rowNode).toBeDefined();
         rowNode!.setDataValue('group', 'B');
 
-        await asyncSetTimeout(2);
-
         // Note - we are following _leafs order after the refresh
-        expect(snapshot()).toEqual(['GROUP:A', 'ROW:1', 'GROUP:B', 'ROW:2', 'ROW:3']);
+        await waitFor(() => expect(snapshot()).toEqual(['GROUP:A', 'ROW:1', 'GROUP:B', 'ROW:2', 'ROW:3']));
 
         expect(api.getRowNode('2')?.parent?.key).toBe('B');
         expect(api.getRowNode('1')?.parent?.key).toBe('A');
@@ -129,13 +128,10 @@ describe('cell editing with refreshAfterGroupEdit', () => {
         api.commitBatchEdit();
         expect(api.isBatchEditing()).toBe(false);
 
-        for (let i = 0; i < 10 && batchStoppedEvents.length === 0; i += 1) {
-            await asyncSetTimeout(5);
-        }
-
-        for (let i = 0; i < 10 && modelUpdatedEvents.length === 0; i += 1) {
-            await asyncSetTimeout(5);
-        }
+        await waitFor(() => expect(batchStoppedEvents.length).toBeGreaterThanOrEqual(1));
+        await waitFor(() => expect(modelUpdatedEvents.length).toBeGreaterThanOrEqual(1));
+        // one macrotask, the window in which a second, redundant event would arrive
+        await asyncSetTimeout(0);
 
         expect(api.getRowNode('2')?.data.group).toBe('B');
         expect(api.getRowNode('3')?.data.group).toBe('A');
@@ -232,7 +228,6 @@ describe('cell editing with refreshAfterGroupEdit', () => {
         await new GridRows(api, 'aggregation initial', { useFormatter: false }).check(initialSnapshot);
 
         await editGroupCell('2', 'B');
-        await asyncSetTimeout(2);
 
         await new GridRows(api, 'aggregation after edit', { useFormatter: false }).check(afterEditSnapshot);
     });

@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 
 import type { BatchEditingStartedEvent, BatchEditingStoppedEvent, CellValueChangedEvent } from 'ag-grid-community';
 import {
@@ -77,11 +77,11 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             const eventTracker = new EditEventTracker(api);
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             rowNode.setDataValue('a', 'changed');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(batchStartedEvents.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
 
             // Before commit/cancel: no cellValueChanged, batchEditingStarted fires on first edit
             expect(cellValueChangedEvents).toHaveLength(0);
@@ -93,7 +93,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             } else {
                 api.cancelBatchEdit();
             }
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(batchStoppedEvents.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
 
             expect(eventTracker.counts).toEqual({
                 cellEditingStarted: 0,
@@ -172,18 +173,19 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         const eventTracker = new EditEventTracker(api);
 
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'a-new', 'batch');
         rowNode.setDataValue('b', 'b-new', 'batch');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(eventTracker.counts.batchEditingStarted).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         // No events yet
         expect(cellValueChangedEvents).toHaveLength(0);
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(batchStoppedEvents.length).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         expect(eventTracker.counts).toEqual({
             cellEditingStarted: 0,
@@ -253,11 +255,11 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         const eventTracker = new EditEventTracker(api);
 
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'direct', 'data');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellValueChangedEvents.length).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         // 'data' bypasses batch — fires immediately
         expect(cellValueChangedEvents).toHaveLength(1);
@@ -322,19 +324,19 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
 
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         // Open editor
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(eventTracker.counts.cellEditingStarted).toBe(1));
         const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
         await waitForInput(gridDiv, cellA, { popup: false });
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
 
-        // Push via 'edit' — no cellValueChanged
+        // Push via 'edit' — no cellValueChanged. The tick is the window in which a cellValueChanged
+        // would arrive if the push were not deferred by the batch.
         rowNode.setDataValue('a', 'pushed', 'edit');
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         expect(cellValueChangedEvents).toHaveLength(0);
         expect(eventTracker.counts.cellValueChanged).toBe(0);
@@ -342,13 +344,15 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
 
         // Stop editing, then commit
         api.stopEditing();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(eventTracker.counts.cellEditingStopped).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         // cellValueChanged still deferred (batch active)
         expect(cellValueChangedEvents).toHaveLength(0);
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellValueChangedEvents.length).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         // Now cellValueChanged fires
         expect(cellValueChangedEvents).toHaveLength(1);
@@ -407,7 +411,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'direct', 'edit');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellValueChangedEvents.length).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         // No batch — fires immediately
         expect(cellValueChangedEvents).toHaveLength(1);
@@ -474,7 +479,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'changed');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellValueChangedEvents.length).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         expect(cellValueChangedEvents).toHaveLength(1);
         expect(cellValueChangedEvents[0]).toEqual(
@@ -535,7 +541,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'changed', 'batch');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellValueChangedEvents.length).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         expect(cellValueChangedEvents).toHaveLength(1);
         expect(cellValueChangedEvents[0]).toEqual(
@@ -599,18 +606,19 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         const eventTracker = new EditEventTracker(api);
 
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'first');
         rowNode.setDataValue('a', 'second');
         rowNode.setDataValue('a', 'third');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(eventTracker.counts.batchEditingStarted).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         expect(cellValueChangedEvents).toHaveLength(0);
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellValueChangedEvents.length).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         // Only one cellValueChanged with oldValue=initial and newValue=third
         expect(cellValueChangedEvents).toHaveLength(1);
@@ -667,7 +675,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         const eventTracker = new EditEventTracker(api);
 
         api.startBatchEdit();
-        await asyncSetTimeout(1);
+        // tick in which a premature batchEditingStarted would arrive
+        await asyncSetTimeout(0);
 
         // batchEditingStarted has NOT fired yet — no edits made
         expect(batchStartedEvents).toHaveLength(0);
@@ -676,7 +685,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         // Make the first edit
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'changed');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(batchStartedEvents.length).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         // Now it fires
         expect(batchStartedEvents).toHaveLength(1);
@@ -684,7 +694,8 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
 
         // A second edit should NOT fire batchEditingStarted again
         rowNode.setDataValue('a', 'changed2');
-        await asyncSetTimeout(1);
+        // tick in which a duplicate batchEditingStarted would arrive
+        await asyncSetTimeout(0);
 
         expect(batchStartedEvents).toHaveLength(1);
         expect(eventTracker.counts.batchEditingStarted).toBe(1);
@@ -736,18 +747,19 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         const eventTracker = new EditEventTracker(api);
 
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         const row0 = api.getDisplayedRowAtIndex(0)!;
         const row1 = api.getDisplayedRowAtIndex(1)!;
         row0.setDataValue('a', 'a0-new');
         row1.setDataValue('b', 'b1-new');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(eventTracker.counts.batchEditingStarted).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
 
         expect(cellValueChangedEvents).toHaveLength(0);
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellValueChangedEvents.length).toBeGreaterThanOrEqual(2));
+        await asyncSetTimeout(0);
 
         // 2 cells changed across 2 rows
         expect(eventTracker.counts).toEqual({
