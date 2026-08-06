@@ -67,8 +67,12 @@ export const DARK_MODE_INIT_SCRIPT = `
     // does not hide future ones. Evaluated here (at request time) rather than in the Astro
     // build so the window applies to a static deployment without a redeploy. Dates are read
     // from <html> data attributes (YYYY-MM-DD); absent bounds are open-ended.
-    const announcementId = htmlEl.dataset.announcementId || '';
-    if (localStorage.getItem('documentation:announcement-banner-dismissed:' + announcementId) !== 'true') {
+    const applyAnnouncementVisibility = () => {
+        const announcementId = htmlEl.dataset.announcementId || '';
+        if (localStorage.getItem('documentation:announcement-banner-dismissed:' + announcementId) === 'true') {
+            return;
+        }
+
         const today = new Date().toISOString().slice(0, 10);
         const showDate = htmlEl.dataset.announcementShowDate;
         const untilDate = htmlEl.dataset.announcementUntilDate;
@@ -77,7 +81,13 @@ export const DARK_MODE_INIT_SCRIPT = `
         if (withinWindow) {
             htmlEl.dataset.showAnnouncement = 'true';
         }
-    }
+    };
+
+    applyAnnouncementVisibility();
+
+    // A client-side navigation restores <html> to its server-rendered attributes and never
+    // re-executes a <body> script, so the flag has to be re-derived after every swap.
+    document.addEventListener('astro:after-swap', applyAnnouncementVisibility);
 `;
 
 // Sets html[data-os="mac"] so the CSS in _inline.scss can show "⌘ Command" instead of
@@ -89,7 +99,15 @@ export const DARK_MODE_INIT_SCRIPT = `
 export const KBD_PLATFORM_INIT_SCRIPT = `
     const platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
     if (/mac/i.test(platform)) {
-        document.documentElement.dataset.os = 'mac';
+        const applyMacPlatform = () => {
+            document.documentElement.dataset.os = 'mac';
+        };
+
+        applyMacPlatform();
+
+        // A client-side navigation restores <html> to its server-rendered attributes and never
+        // re-executes a <body> script, so the flag has to be re-applied after every swap.
+        document.addEventListener('astro:after-swap', applyMacPlatform);
     }
 `;
 

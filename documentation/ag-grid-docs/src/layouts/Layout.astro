@@ -358,5 +358,12 @@ const announcementBannerProps = {
         (like gtm-init.js) to stay off the CSP hash list. No-ops when OneTrust is absent. */
         }
         <script is:inline src={urlWithBaseUrl('/scripts/neutralise-onetrust-headings.js')} defer></script>
+
+        {
+            /* Keep the AG libraries' runtime-injected <style> elements alive across a client-side
+        navigation. Externalised to a 'self' script to stay off the CSP hash list; see
+        public/scripts/persist-injected-styles.js for the mechanism. */
+        }
+        <script is:inline src={urlWithBaseUrl('/scripts/persist-injected-styles.js')}></script>
     </body>
 </html>
