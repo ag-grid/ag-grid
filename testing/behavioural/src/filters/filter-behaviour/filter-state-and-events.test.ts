@@ -622,7 +622,7 @@ describe('Filter State & Events', () => {
         });
     });
 
-    test('repeated api.setState restores interleaved with refreshToolPanel each apply cleanly', async () => {
+    test('distinct api.setState restores interleaved with refreshToolPanel each apply cleanly', async () => {
         // Capture two states from a source grid: Athlete expanded, and Athlete collapsed.
         const source: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: filterCols,

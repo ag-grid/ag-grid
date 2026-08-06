@@ -28,6 +28,11 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
     private initialised = false;
 
+    // The last initialState we actually restored from. A fresh api.setState (or construction) supplies a
+    // new object to restore; internal recreates reuse the same one, so comparing against this snapshot
+    // tells the two apart without mutating the incoming params. Must survive init() across refreshes.
+    private appliedInitialState?: FiltersToolPanelState;
+
     private params: ToolPanelFiltersCompParams;
     private filterGroupComps: ToolPanelFilterGroupComp[] = [];
 
@@ -149,9 +154,12 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             activeElement.focus();
         }
 
-        // initialState is a one-shot "apply now" signal: consume it so later internal recreates
-        // (newColumnsLoaded / columnMoved) keep the user's live expansion instead of re-applying it.
-        this.params.initialState = undefined;
+        // Remember what we just restored from so subsequent internal recreates (newColumnsLoaded /
+        // columnMoved), which reuse this same object, keep the user's live expansion.
+        const { initialState } = this.params;
+        if (initialState != null) {
+            this.appliedInitialState = initialState;
+        }
         this.refreshAriaLabel();
     }
 
@@ -249,7 +257,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         this.createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
         const expansionStateValue = expansionState.get(filterGroupComp.getFilterGroupId());
-        if ((this.params.initialState && !expansionStateValue) || expansionStateValue === false) {
+        if ((this.isRestoringInitialState() && !expansionStateValue) || expansionStateValue === false) {
             // Default state on creation is expanded. Desired initial state is expanded. Only collapse if collapsed before or using initial state.
             filterGroupComp.collapse();
         }
@@ -271,10 +279,17 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         return column.isFilterAllowed() && !suppressFiltersToolPanel;
     }
 
+    // True while we are restoring a not-yet-applied initialState (construction or a fresh api.setState).
+    // Internal recreates reuse the already-applied object, so they fall through to the live-expansion branch.
+    private isRestoringInitialState(): boolean {
+        const { initialState } = this.params;
+        return initialState != null && initialState !== this.appliedInitialState;
+    }
+
     private getExpansionState(): Map<string, boolean> {
         const expansionState: Map<string, boolean> = new Map();
 
-        if (this.params.initialState) {
+        if (this.isRestoringInitialState()) {
             const { expandedColIds, expandedGroupIds } = this.params.initialState as FiltersToolPanelState;
             for (const id of expandedColIds) {
                 expansionState.set(id, true);

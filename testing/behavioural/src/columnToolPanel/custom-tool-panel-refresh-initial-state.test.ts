@@ -33,12 +33,12 @@ class RecordingToolPanel implements IToolPanelComp {
     }
 }
 
-describe('custom tool panel refresh does not re-apply construction-time initialState', () => {
+describe('custom tool panel refresh keeps receiving its initialState', () => {
     const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
 
     afterEach(() => gridsManager.reset());
 
-    test('api.refreshToolPanel refreshes a reused custom panel without its saved initialState', async () => {
+    test('api.refreshToolPanel refreshes a reused custom panel with its saved initialState (non-breaking)', async () => {
         instances.length = 0;
         const sideBar: SideBarDef = {
             toolPanels: [
@@ -75,12 +75,14 @@ describe('custom tool panel refresh does not re-apply construction-time initialS
         // A live edit the user could have made after the panel restored.
         panel.liveValue = 'user-edited';
 
-        // A plain refresh must NOT re-present the construction-time initialState — otherwise a custom
-        // panel that rebuilds from initialState would clobber the user's live state on every refresh.
+        // A plain refresh must keep handing the custom panel its params.initialState: a custom component
+        // may legitimately read it on refresh, so the grid must not silently strip it (non-breaking). It
+        // stays the panel's own responsibility whether to re-apply — the grid never clobbers live state.
         api.refreshToolPanel();
 
         await waitFor(() => expect(panel.refreshInitialStates.length).toBeGreaterThan(0));
-        expect(panel.refreshInitialStates.every((state) => state === undefined)).toBe(true);
+        expect(panel.refreshInitialStates.every((state) => state !== undefined)).toBe(true);
+        expect(panel.refreshInitialStates.at(-1)).toEqual({ marker: 'saved' });
         expect(panel.liveValue).toBe('user-edited');
     });
 });
