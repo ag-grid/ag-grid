@@ -1868,10 +1868,12 @@ export interface Props<TData> {
          */
     processDataFromClipboard?: ProcessDataFromClipboard<TData>,
     /** Grid calls this method to know if an external filter is present.
+         * Supplying a new function reference re-runs external filtering.
          * @agModule `ExternalFilterModule`
          */
     isExternalFilterPresent?: IsExternalFilterPresent<TData>,
     /** Should return `true` if external filter passes, otherwise `false`.
+         * Supplying a new function reference re-runs external filtering.
          * @agModule `ExternalFilterModule`
          */
     doesExternalFilterPass?: DoesExternalFilterPass<TData>,

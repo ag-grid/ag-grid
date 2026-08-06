@@ -591,14 +591,12 @@
             }
         },
         "isExternalFilterPresent": {
-            "description": "Grid calls this method to know if an external filter is present. This property is reactive: supplying a new function reference re-runs external filtering.",
             "more": {
                 "name": "External Filter",
                 "url": "./filter-external/"
             }
         },
         "doesExternalFilterPass": {
-            "description": "Should return `true` if external filter passes, otherwise `false`. This property is reactive: supplying a new function reference re-runs external filtering.",
             "more": {
                 "name": "External Filter",
                 "url": "./filter-external/"
