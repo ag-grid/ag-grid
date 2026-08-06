@@ -118,8 +118,7 @@ export class AppComponent {
         filter: true,
     };
 
-    // Arrow class fields, so the grid always sees the same function reference and only
-    // re-filters when onAgeTypeChanged() asks it to.
+    // Arrow class fields: the grid sees the same reference on every change-detection run.
     public isExternalFilterPresent = (): boolean => this.ageType !== 'everyone';
 
     public doesExternalFilterPass = (node: IRowNode<IOlympicData>): boolean => {

@@ -96,8 +96,7 @@ const VueExample = defineComponent({
         'ag-grid-vue': AgGridVue,
     },
     setup() {
-        // The filter state is a ref, so the two callbacks below can be created once in setup()
-        // and keep the same reference for the lifetime of the component.
+        // A ref, so the callbacks below can be created once in setup() and keep their reference.
         const ageType = ref('everyone');
         const rowData = ref<IOlympicData[] | null>(null);
         const gridApi = shallowRef<GridApi<IOlympicData> | null>(null);

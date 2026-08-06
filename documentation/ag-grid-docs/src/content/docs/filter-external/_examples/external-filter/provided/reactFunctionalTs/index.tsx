@@ -76,8 +76,7 @@ const columnDefs: ColDef<IOlympicData>[] = [
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact<IOlympicData>>(null);
-    // The filter state lives in a ref, so the callbacks below always read the current
-    // value and never need to be recreated.
+    // A ref, so the callbacks below read the current value with an empty dependency array.
     const ageType = useRef('everyone');
 
     const defaultColDef = useMemo<ColDef>(() => ({ flex: 1, minWidth: 120, filter: true }), []);
