@@ -4,7 +4,7 @@ import type { IServerSideGetRowsParams } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, waitForEvent } from '../../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from '../../test-utils';
 import { countLoadingRows, waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
@@ -80,8 +80,12 @@ describe('SSRM grouped initial row count (characterization)', () => {
         // initial row count: 5 loading/stub group rows displayed.
         expect(countLoadingRows(api)).toBe(5);
 
-        // First (and only) request so far is the root route: empty groupKeys, with
-        // the rowGroupCols carrying the grouped 'country' column.
+        // First (and ONLY) request so far is the root route: empty groupKeys, with the rowGroupCols
+        // carrying the grouped 'country' column. The "only" half is a negative assertion — the poll
+        // above resolves the moment the first request lands, so it cannot rule out a second one.
+        // This delay is the observation window in which an extra block load would surface.
+        // eslint-disable-next-line no-restricted-syntax -- observation window for a second, unexpected block load
+        await asyncSetTimeout(30);
         expect(requests).toEqual([{ groupKeys: [], rowGroupColIds: ['country'], range: [0, 100] }]);
 
         await new GridRows(api, 'grouped initial row count before root resolves').check(`
