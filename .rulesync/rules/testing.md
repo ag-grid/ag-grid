@@ -285,6 +285,8 @@ Delete the first sleep: `clickColumnMenuItem` polls, so waiting before it adds l
 
 A genuine timer window the grid debounces on (see `waitForMissingModuleReports`) is the rare exception. Keep the delay and add `// eslint-disable-next-line no-restricted-syntax -- <the window it waits on>`.
 
+**Per line is the default; per file needs an owner's ruling.** Occasionally a whole file is about a timer the grid owns, and every delay in it is that timer's observation window rather than a guess — `tooltip/tooltip.test.ts` is the worked example: the tooltip appears and disappears on `tooltipShowDelay`/`tooltipHideDelay`, so ~90 of its waits are load-bearing and `waitFor` cannot express the "not shown yet" half at all. Such a file carries a single file-level `/* eslint-disable no-restricted-syntax -- … */` naming the mechanism, instead of ~90 near-identical per-line disables. Treat this as rare and deliberate: it is a decision for the suite's owner, not a way out of a hard conversion, and a file that carries one is **not** an invitation to add unjustified sleeps to it later.
+
 #### Negative assertions
 
 `waitFor` cannot express "this never happened". It resolves the moment its callback stops throwing, so a poll for something that is already true passes on tick 0 and the test becomes unfalsifiable. When the assertion is that a call was *not* made, or that no *second* event arrived, the delay is not a guessed wait — it is the observation window, and converting it to a poll removes the coverage.

@@ -1,3 +1,9 @@
+/* eslint-disable no-restricted-syntax -- AG-18026 file-level exemption, ruled by the owner rather than
+   swept site-by-site. Nearly every delay here is a genuine timer window the grid owns: the tooltip is
+   shown and hidden on `tooltipShowDelay`/`tooltipHideDelay` timers (200ms/300ms in these tests), so the
+   waits are the observation window for "the tooltip has/has not appeared yet" and are not guesses.
+   Polling with `waitFor` cannot express the "not yet shown" half of that, and would make ~90 sites
+   unfalsifiable. Do NOT convert this file. New tests added here must still justify their own delays. */
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
