@@ -6,6 +6,7 @@ import {
     GridStateModule,
     NumberFilterModule,
     TextFilterModule,
+    getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
 import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
@@ -469,5 +470,155 @@ describe('Filter State & Events', () => {
         await waitFor(() => expect(filter.setFilterItemLabels()).toEqual(LI_MATCHES));
         const noMatches = document.querySelector('.ag-filter-menu .ag-filter-no-matches');
         expect(noMatches?.classList.contains('ag-hidden')).toBe(true);
+    });
+
+    // ===== STATE: api.setState() restore of the Filters Tool Panel expansion =====
+
+    test('api.setState restores an expanded Filters Tool Panel column filter (expandedColIds)', async () => {
+        // grid1: expand the Athlete column filter, then capture the state (save side works).
+        const api1: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: filterCols,
+            rowData: ATHLETES,
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel1 = await openFiltersPanel(api1);
+        await panel1.expandGroup('Athlete');
+
+        const state = api1.getState();
+        expect(state.sideBar?.toolPanels?.filters?.expandedColIds).toContain('athlete');
+
+        // grid2: a fresh grid with NO initial state. Opening its panel initialises the tool panel
+        // (this sets the internal one-time initial-state latch) with every filter collapsed.
+        const api2: GridApi = await gridsManager.createGridAndWait('grid2', {
+            columnDefs: filterCols,
+            rowData: ATHLETES,
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel2 = await openFiltersPanel(api2);
+        expect(panel2.isGroupExpandedByTitle('Athlete')).toBe(false);
+
+        // Restore the captured state through the api.setState path (the reported failing path).
+        api2.setState(state);
+
+        // The Athlete filter must now be expanded on grid2: its filter body is revealed. Scope the
+        // body query to grid2 (grid1 is still alive with its own expanded Athlete filter).
+        const grid2Root = getGridElement(api2) as HTMLElement;
+        await waitFor(() => {
+            expect(grid2Root.querySelector('.ag-filter-toolpanel-instance-body .ag-filter-wrapper')).not.toBeNull();
+            expect(panel2.isGroupExpandedByTitle('Athlete')).toBe(true);
+        });
+        // Lossless round-trip (secondary check — the derived state value the restore drives).
+        expect(api2.getState().sideBar?.toolPanels?.filters?.expandedColIds).toContain('athlete');
+    });
+
+    test('api.setState restores an expanded Filters Tool Panel column group (expandedGroupIds)', async () => {
+        const groupCols = [
+            {
+                headerName: 'Group A',
+                groupId: 'groupA',
+                children: [
+                    { field: 'athlete', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } },
+                    { field: 'age', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } },
+                ],
+            },
+        ];
+
+        // grid1: a real column group is expanded by default; capture the state (save side works).
+        const api1: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: groupCols,
+            rowData: ATHLETES,
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel1 = await openFiltersPanel(api1);
+        expect(panel1.isGroupExpandedByTitle('Group A')).toBe(true);
+
+        const state = api1.getState();
+        const savedGroupIds = state.sideBar?.toolPanels?.filters?.expandedGroupIds ?? [];
+        expect(savedGroupIds.length).toBeGreaterThan(0);
+
+        // grid2: a real group defaults to expanded, so live-collapse it first — this makes the
+        // assertion discriminate (without the fix the live-collapsed state wins and it stays collapsed).
+        const api2: GridApi = await gridsManager.createGridAndWait('grid2', {
+            columnDefs: groupCols,
+            rowData: ATHLETES,
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel2 = await openFiltersPanel(api2);
+        await panel2.collapseGroup('Group A');
+        expect(panel2.isGroupExpandedByTitle('Group A')).toBe(false);
+
+        // Restore via api.setState: the group must be re-expanded from expandedGroupIds.
+        api2.setState(state);
+        await waitFor(() => expect(panel2.isGroupExpandedByTitle('Group A')).toBe(true));
+    });
+
+    test('api.setState restore of the Filters Tool Panel is authoritative (empty ids collapse a live-expanded filter)', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: filterCols,
+            rowData: ATHLETES,
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.expandGroup('Athlete');
+
+        // Precondition: the Athlete filter is genuinely live-expanded (body revealed).
+        const gridRoot = getGridElement(api) as HTMLElement;
+        expect(gridRoot.querySelector('.ag-filter-toolpanel-instance-body .ag-filter-wrapper')).not.toBeNull();
+        expect(panel.isGroupExpandedByTitle('Athlete')).toBe(true);
+
+        // Restore a state derived from the current one but with no expanded filters. Keep the rest of
+        // the sideBar slice (visible/openToolPanel) so the panel stays open and the assertion is not
+        // satisfied trivially by the panel closing.
+        const state = api.getState();
+        const collapsedState: GridState = {
+            ...state,
+            sideBar: {
+                ...state.sideBar!,
+                toolPanels: {
+                    ...state.sideBar!.toolPanels,
+                    filters: { expandedColIds: [], expandedGroupIds: [] },
+                },
+            },
+        };
+        api.setState(collapsedState);
+
+        await waitFor(() => {
+            expect(panel.columnTitles()).toContain('Athlete'); // panel still open
+            expect(panel.isGroupExpandedByTitle('Athlete')).toBe(false);
+            expect(gridRoot.querySelector('.ag-filter-toolpanel-instance-body .ag-filter-wrapper')).toBeNull();
+        });
+    });
+
+    test('refreshToolPanel keeps live expansion on an initialState-built grid', async () => {
+        const cols = [
+            { field: 'athlete', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } },
+            { field: 'age', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } },
+        ];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: cols,
+            rowData: ATHLETES,
+            sideBar: FILTERS_SIDEBAR,
+            initialState: {
+                sideBar: {
+                    visible: true,
+                    position: 'right',
+                    openToolPanel: 'filters',
+                    toolPanels: { filters: { expandedGroupIds: [], expandedColIds: ['athlete'] } },
+                },
+            },
+        });
+        const panel = await openFiltersPanel(api);
+        // initialState expanded athlete. Now change it live: collapse athlete, expand age.
+        await panel.collapseGroup('Athlete');
+        await panel.expandGroup('Age');
+        expect(panel.isGroupExpandedByTitle('Athlete')).toBe(false);
+        expect(panel.isGroupExpandedByTitle('Age')).toBe(true);
+
+        // refreshToolPanel must NOT revert to the construction-time initialState.
+        api.refreshToolPanel();
+        await waitFor(() => {
+            expect(panel.isGroupExpandedByTitle('Age')).toBe(true);
+            expect(panel.isGroupExpandedByTitle('Athlete')).toBe(false);
+        });
     });
 });
