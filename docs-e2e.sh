@@ -34,6 +34,8 @@ Options:
   --framework <name>      Set FRAMEWORK env var. Valid: typescript, vanilla,
                           reactFunctionalTs, reactFunctionalTs_Dev, angular, vue3
   --url <url>             Set BASE_URL env var (default: https://localhost:4610)
+  --all-variants          Also run the production React variant (or ALL_FRAMEWORK_VARIANTS=true).
+                          CI runs both; locally only the development one runs.
   --help                  Show this help message
 
 Playwright options (forwarded as-is):
@@ -90,6 +92,10 @@ while [[ $# -gt 0 ]]; do
         --url)
             export BASE_URL="$2"
             shift 2
+            ;;
+        --all-variants)
+            export ALL_FRAMEWORK_VARIANTS=true
+            shift
             ;;
         *)
             args+=("$1")

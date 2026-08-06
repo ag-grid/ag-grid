@@ -4,6 +4,9 @@ import { appendFile, mkdir, readFile, readdir, rename, rm, stat, utimes, writeFi
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { GOOGLE_FONTS_CSS, localFontStylesheet } from './localFonts';
+import { systemRegisterFor } from './localTranspile';
+
 const EXAMPLE_ASSETS_URL_PREFIX = '/example-assets/';
 const EXAMPLE_ASSETS_DIR = fileURLToPath(new URL('../../../../public/example-assets/', import.meta.url));
 
@@ -18,8 +21,8 @@ const isFile = (path: string): Promise<boolean> =>
 const TEXT_MEASURABLE_RESOURCE_TYPES = ['fetch', 'xhr'];
 
 /**
- * Examples auto-size columns the first time data renders and those widths stick, so serving data from disk
- * made it beat the webfont and measure text in the fallback.
+ * Inlined faces cover the families examples measure, but not every one they can ask for, so serving data
+ * from disk can still let it beat a font that is still arriving and be measured in the fallback.
  */
 async function waitForTextMeasurable(page: Page): Promise<void> {
     await page
@@ -55,26 +58,71 @@ export async function routeExampleAssetsFromDisk(page: Page): Promise<void> {
     });
 }
 
-/**
- * Everything off the site's own origin is mirrored. An allowlist of known CDNs leaves every host nobody
- * thought of reaching the public internet - `flags.fmcdn.net` and `cdn.cookielaw.org` already needed their
- * own per-spec stubs - so the default is "mirror it" and only the build under test is exempt.
- */
-const isExternalTo =
-    (siteOrigin: string) =>
-    (url: URL): boolean =>
-        url.origin !== siteOrigin && (url.protocol === 'https:' || url.protocol === 'http:');
-
 const MIRROR_DIR = fileURLToPath(new URL('../../../../.playwright-network-mirror/', import.meta.url));
-const MIRROR_META_SEPARATOR = 0x0a;
+
+/** One file per entry so a single rename publishes it whole; the first newline ends the metadata. */
+const META_SEPARATOR = 0x0a;
+
+type MirrorMeta = { status: number; headers: Record<string, string>; bytes: number; fetchedAt: number };
+type MirrorEntry = { body: Buffer; meta: MirrorMeta };
+
+/** What identifies an entry to this run, and where it lives. */
+type MirrorId = { key: string; path: string };
+
+/**
+ * Keyed by user agent as well as URL, so a host that negotiates cannot answer the wrong browser: Google
+ * Fonts serves `font-stretch: 100%` to one and `normal` to another. A browser upgrade earns a fresh key.
+ * The digest keeps paths unique; the readable stem is so an entry can be identified and deleted by hand.
+ */
+function mirrorIdFor(url: string, userAgent: string): MirrorId {
+    const key = `${userAgent}\n${url}`;
+    const { hostname, pathname } = new URL(url);
+    const stem = `${hostname}${pathname}`.replace(/[^a-zA-Z0-9._-]+/g, '-').slice(0, 100);
+    const digest = createHash('sha1').update(key).digest('hex').slice(0, 12);
+    return { key, path: join(MIRROR_DIR, `${stem}-${digest}`) };
+}
+
+/** Any read failure - absent, truncated, mid-write - just means "not mirrored yet". */
+async function readEntry(path: string): Promise<MirrorEntry | undefined> {
+    try {
+        const file = await readFile(path);
+        const split = file.indexOf(META_SEPARATOR);
+        if (split < 0) {
+            return undefined;
+        }
+        const meta: MirrorMeta = JSON.parse(file.subarray(0, split).toString('utf8'));
+        const body = file.subarray(split + 1);
+        // The rename publishes a whole entry, so a short body means the file was damaged afterwards -
+        // serving it would fail as a corrupt bundle rather than as a cache miss.
+        if (body.length !== meta.bytes) {
+            return undefined;
+        }
+        // Marks the entry as still in use so the sweep only reclaims what nothing asks for any more.
+        const now = new Date();
+        void utimes(path, now, now).catch(() => undefined);
+        return { meta, body };
+    } catch {
+        return undefined;
+    }
+}
+
+/** Written to a pid-suffixed name first: two workers renaming at once must not interleave one entry. */
+async function writeEntry(path: string, { body, meta }: MirrorEntry): Promise<void> {
+    const tmp = `${path}.${process.pid}.tmp`;
+    await mkdir(MIRROR_DIR, { recursive: true });
+    await writeFile(tmp, `${JSON.stringify(meta)}\n`, 'utf8');
+    await appendFile(tmp, body);
+    await rename(tmp, path);
+}
 
 /**
  * Housekeeping, not invalidation: a read renews the entry, so anything still wanted never ages out and this
  * only reclaims what nothing asks for any more - the superseded URL after a version bump, say.
  */
 const MIRROR_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+
 /** A temporary file lives for milliseconds, so anything this old was orphaned by a worker that was killed. */
-const MIRROR_TMP_MAX_AGE_MS = 60 * 60 * 1000;
+const TMP_MAX_AGE_MS = 60 * 60 * 1000;
 
 let mirrorSweep: Promise<void> | undefined;
 
@@ -86,7 +134,7 @@ function sweepMirror(): Promise<void> {
         await Promise.all(
             names.map(async (name) => {
                 const path = join(MIRROR_DIR, name);
-                const maxAge = name.endsWith('.tmp') ? MIRROR_TMP_MAX_AGE_MS : MIRROR_MAX_AGE_MS;
+                const maxAge = name.endsWith('.tmp') ? TMP_MAX_AGE_MS : MIRROR_MAX_AGE_MS;
                 const info = await stat(path).catch(() => undefined);
                 if (info && now - info.mtimeMs > maxAge) {
                     await rm(path, { force: true }).catch(() => undefined);
@@ -96,8 +144,6 @@ function sweepMirror(): Promise<void> {
     })();
     return mirrorSweep;
 }
-
-type MirrorMeta = { status: number; headers: Record<string, string>; bytes: number; fetchedAt: number };
 
 const IMMUTABLE = /\bimmutable\b/;
 const NO_REUSE = /\bno-(store|cache)\b/;
@@ -128,59 +174,6 @@ function freshnessMs(meta: MirrorMeta): number {
  * a run never re-checks something it has already answered, however long it runs.
  */
 const isFresh = (meta: MirrorMeta): boolean => Date.now() - meta.fetchedAt < freshnessMs(meta);
-type MirrorEntry = { body: Buffer; meta: MirrorMeta };
-
-/** Bodies are multi-MB (`typescript.min.js` alone is ~6MB) and every test wants them, so resolve each once. */
-const mirrorEntries = new Map<string, Promise<MirrorEntry | undefined>>();
-
-/**
- * Keyed by user agent as well as URL, so a host that negotiates cannot answer the wrong browser: Google
- * Fonts serves `font-stretch: 100%` to one and `normal` to another. A browser upgrade earns a fresh key.
- */
-const mirrorKeyFor = (url: string, userAgent: string): string => `${userAgent}\n${url}`;
-
-/** The digest keeps entries unique; the readable stem is so one can be identified and deleted by hand. */
-function mirrorPathFor(url: string, key: string): string {
-    const { hostname, pathname } = new URL(url);
-    const stem = `${hostname}${pathname}`.replace(/[^a-zA-Z0-9._-]+/g, '-').slice(0, 100);
-    return join(MIRROR_DIR, `${stem}-${createHash('sha1').update(key).digest('hex').slice(0, 12)}`);
-}
-
-/** Any read failure - absent, truncated, mid-write - just means "not mirrored yet". */
-async function readMirrorEntry(path: string): Promise<MirrorEntry | undefined> {
-    try {
-        const file = await readFile(path);
-        const split = file.indexOf(MIRROR_META_SEPARATOR);
-        if (split < 0) {
-            return undefined;
-        }
-        const meta: MirrorMeta = JSON.parse(file.subarray(0, split).toString('utf8'));
-        const body = file.subarray(split + 1);
-        // The rename publishes a whole entry, so a short body means the file was damaged afterwards -
-        // serving it would fail as a corrupt bundle rather than as a cache miss.
-        if (body.length !== meta.bytes) {
-            return undefined;
-        }
-        // Marks the entry as still in use so the sweep only reclaims what nothing asks for any more.
-        const now = new Date();
-        void utimes(path, now, now).catch(() => undefined);
-        return { meta, body };
-    } catch {
-        return undefined;
-    }
-}
-
-/**
- * Metadata and body share one file so a single rename publishes the entry whole. Written to a pid-suffixed
- * name first: with a file each, two workers renaming at once can pair one's body with the other's status.
- */
-async function writeMirrorEntry(path: string, { body, meta }: MirrorEntry): Promise<void> {
-    const tmp = `${path}.${process.pid}.tmp`;
-    await mkdir(MIRROR_DIR, { recursive: true });
-    await writeFile(tmp, `${JSON.stringify(meta)}\n`, 'utf8');
-    await appendFile(tmp, body);
-    await rename(tmp, path);
-}
 
 function withoutHeaders(headers: Record<string, string>, drop: string[]): Record<string, string> {
     const kept = { ...headers };
@@ -218,14 +211,15 @@ const settledFailures = new Set<string>();
  */
 async function fetchIntoMirror(
     route: Route,
-    key: string,
-    path: string,
+    url: string,
+    id: MirrorId,
     stored: MirrorEntry | undefined
 ): Promise<MirrorEntry | undefined> {
     let entry: MirrorEntry;
     try {
         const sent = withoutHeaders(route.request().headers(), CONDITIONAL_HEADERS);
         const response = await route.fetch({
+            url,
             headers: stored ? { ...sent, ...validatorsFor(stored.meta.headers) } : sent,
         });
         const status = response.status();
@@ -234,7 +228,7 @@ async function fetchIntoMirror(
         } else if (status < 200 || status >= 300) {
             // `route.fetch` has already followed any redirect, so nothing here carries the bytes.
             if (status >= 400 && status < 500 && !stored) {
-                settledFailures.add(key);
+                settledFailures.add(id.key);
             }
             return stored;
         } else {
@@ -253,30 +247,33 @@ async function fetchIntoMirror(
         return stored;
     }
     // Persisting is best effort - a full or read-only disk should not cost us a response already in hand.
-    await writeMirrorEntry(path, entry).catch(() => undefined);
+    await writeEntry(id.path, entry).catch(() => undefined);
     return entry;
 }
+
+/** Bodies are multi-MB (`typescript.min.js` alone is ~6MB) and every test wants them, so resolve each once. */
+const mirrorEntries = new Map<string, Promise<MirrorEntry | undefined>>();
 
 /**
  * Single-flight per worker, and the reason a run never re-checks a URL: the first request resolves it and
  * every later one awaits the same promise, so freshness is judged once however long the run lasts.
  */
-async function loadMirrorEntry(route: Route, key: string, path: string): Promise<MirrorEntry | undefined> {
-    if (settledFailures.has(key)) {
+async function loadMirrorEntry(route: Route, url: string, id: MirrorId): Promise<MirrorEntry | undefined> {
+    if (settledFailures.has(id.key)) {
         return undefined;
     }
-    const inFlight = mirrorEntries.get(key);
+    const inFlight = mirrorEntries.get(id.key);
     if (inFlight) {
         return inFlight;
     }
-    const pending = readMirrorEntry(path).then((stored) =>
-        stored && isFresh(stored.meta) ? stored : fetchIntoMirror(route, key, path, stored)
+    const pending = readEntry(id.path).then((stored) =>
+        stored && isFresh(stored.meta) ? stored : fetchIntoMirror(route, url, id, stored)
     );
-    mirrorEntries.set(key, pending);
+    mirrorEntries.set(id.key, pending);
     const entry = await pending;
     // Never memoize a transient failure, or one bad fetch is replayed by every later test in this worker.
     if (!entry) {
-        mirrorEntries.delete(key);
+        mirrorEntries.delete(id.key);
     }
     return entry;
 }
@@ -301,12 +298,6 @@ async function claimMissReport(url: string): Promise<boolean> {
         return true;
     } catch {
         return false;
-    }
-}
-
-async function recordNetworkMiss(url: string, requestedBy: string): Promise<void> {
-    if (await claimMissReport(url)) {
-        unreportedMisses.push(`${url}\n   requested by ${requestedBy}`);
     }
 }
 
@@ -345,6 +336,16 @@ function userAgentFor(page: Page): Promise<string> {
 }
 
 /**
+ * Everything off the site's own origin is mirrored. An allowlist of known CDNs leaves every host nobody
+ * thought of reaching the public internet - `flags.fmcdn.net` and `cdn.cookielaw.org` already needed their
+ * own per-spec stubs - so the default is "mirror it" and only the build under test is exempt.
+ */
+const isExternalTo =
+    (siteOrigin: string) =>
+    (url: URL): boolean =>
+        url.origin !== siteOrigin && (url.protocol === 'https:' || url.protocol === 'http:');
+
+/**
  * Mirrors off-origin responses to disk, shared by every worker. Without this a cold run re-fetches the same
  * multi-MB bundles for every test, and under parallel load those requests time tests out.
  */
@@ -352,15 +353,23 @@ export async function routeExternalThroughMirror(page: Page, siteOrigin: string)
     void sweepMirror();
     await page.route(isExternalTo(siteOrigin), async (route) => {
         const url = route.request().url();
-        const key = mirrorKeyFor(url, await userAgentFor(page));
-        const entry = await loadMirrorEntry(route, key, mirrorPathFor(url, key));
+        const fontCss = url.startsWith(GOOGLE_FONTS_CSS) ? await localFontStylesheet(url) : undefined;
+        if (fontCss) {
+            await route.fulfill({ contentType: 'text/css', body: fontCss });
+            return;
+        }
+        const id = mirrorIdFor(url, await userAgentFor(page));
+        const entry = await loadMirrorEntry(route, url, id);
         if (!entry) {
             // The example page, not the spec: every framework variant shares one spec, so only the URL
             // identifies which example asked for it.
-            await recordNetworkMiss(url, page.url());
+            if (await claimMissReport(url)) {
+                unreportedMisses.push(`${url}\n   requested by ${page.url()}`);
+            }
             await route.fallback();
             return;
         }
-        await route.fulfill({ status: entry.meta.status, headers: entry.meta.headers, body: entry.body });
+        const body = (await systemRegisterFor(url, id.path, entry.body)) ?? entry.body;
+        await route.fulfill({ status: entry.meta.status, headers: entry.meta.headers, body });
     });
 }

@@ -99,6 +99,36 @@ describe('Row Selection Grid Options', () => {
     });
 
     describe('deselection when rows leave the model', () => {
+        test('a second delivery of equal rowData discards selection unless getRowId identifies the rows', () => {
+            const olympics = (): any[] => [
+                { id: '1', sport: 'football' },
+                { id: '2', sport: 'rugby' },
+                { id: '3', sport: 'tennis' },
+            ];
+
+            const anonymous = gridMgr.createGrid('anonymousGrid', {
+                columnDefs,
+                rowSelection: { mode: 'multiRow' },
+                rowData: olympics(),
+            });
+            anonymous.setNodesSelected({ nodes: [anonymous.getDisplayedRowAtIndex(1)!], newValue: true });
+            expect(anonymous.getSelectedNodes()).toHaveLength(1);
+            anonymous.setGridOption('rowData', olympics());
+
+            const identified = gridMgr.createGrid('identifiedGrid', {
+                columnDefs,
+                rowSelection: { mode: 'multiRow' },
+                getRowId: (p) => p.data.id,
+                rowData: olympics(),
+            });
+            identified.setNodesSelected({ nodes: [identified.getDisplayedRowAtIndex(1)!], newValue: true });
+            expect(identified.getSelectedNodes()).toHaveLength(1);
+            identified.setGridOption('rowData', olympics());
+
+            expect(anonymous.getSelectedNodes()).toHaveLength(0);
+            expect(identified.getSelectedNodes().map((node) => node.id)).toEqual(['2']);
+        });
+
         // Immutable rowData removal destroys the dropped node (deleteUnusedNodes); it must leave the
         // selection, while the surviving selected row stays selected.
         test('selected row dropped from selection on immutable rowData removal', async () => {
