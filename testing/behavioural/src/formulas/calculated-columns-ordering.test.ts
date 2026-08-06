@@ -985,8 +985,11 @@ describe('calculated columns - display ordering', () => {
         api.setColumnsVisible(['b'], false);
         await waitFor(() => expect(api.getColumn('b')!.isVisible()).toBe(false));
         api.setColumnsVisible(['b'], true);
+        // Gate on the re-show landing — the order below is unchanged throughout, so polling it would
+        // resolve immediately and prove nothing about the refresh having run.
+        await waitFor(() => expect(api.getColumn('b')!.isVisible()).toBe(true));
         // Stays exactly where its anchor placed it — mid-list, never at the end.
-        await waitFor(() => expect(order(api)).toEqual(['a', 'revenue', calc, 'cost', 'b']));
+        expect(order(api)).toEqual(['a', 'revenue', calc, 'cost', 'b']);
         await new GridColumns(api, 'mid-list calc stays across dynamic refreshes').checkColumns(`
             CENTER
             ├── a "A" width:200 sort:asc
@@ -1012,7 +1015,10 @@ describe('calculated columns - display ordering', () => {
 
         // recreateColumnDefs-style refresh (defaultColDef change); calc not moved → stays mid-list.
         api.setGridOption('defaultColDef', { resizable: false });
-        await waitFor(() => expect(order(api)).toEqual(['revenue', calc, 'cost', 'qty']));
+        // Gate on the defaultColDef change taking effect — the order is unchanged by it, so polling the
+        // order would resolve before the columns were recreated.
+        await waitFor(() => expect(api.getColumn('revenue')!.isResizable()).toBe(false));
+        expect(order(api)).toEqual(['revenue', calc, 'cost', 'qty']);
         await new GridColumns(api, 'mid-list calc preserved with maintainColumnOrder').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200 !resizable
