@@ -99,7 +99,8 @@ describe('showValuesAs column menu', () => {
             api.showColumnMenu(colId);
             await waitFor(() => expect(captured[colId]).toBeTruthy());
             api.hidePopupMenu();
-            await asyncSetTimeout(10);
+            // basePopupService tears the popup down off a setTimeout, so yield one macrotask before reopening.
+            await asyncSetTimeout(0);
         }
 
         expect(captured['score']).toContain('showValuesAsSubMenu'); // numeric — supported
@@ -138,7 +139,8 @@ describe('showValuesAs column menu', () => {
             api.showColumnMenu(colId);
             await waitFor(() => expect(captured[colId]).toBeTruthy());
             api.hidePopupMenu();
-            await asyncSetTimeout(10);
+            // basePopupService tears the popup down off a setTimeout, so yield one macrotask before reopening.
+            await asyncSetTimeout(0);
         }
 
         expect(captured['a']).toContain('showValuesAsSubMenu'); // inherits the mode → offered
@@ -185,7 +187,8 @@ describe('showValuesAs column menu', () => {
             api.showColumnMenu(colId);
             await waitFor(() => expect(captured[colId]).toBeTruthy());
             api.hidePopupMenu();
-            await asyncSetTimeout(10);
+            // basePopupService tears the popup down off a setTimeout, so yield one macrotask before reopening.
+            await asyncSetTimeout(0);
         }
 
         expect(captured['a']).not.toContain('showValuesAsSubMenu'); // inherited enableShowValuesAs:false → hidden
@@ -228,7 +231,8 @@ describe('showValuesAs column menu', () => {
             api.showColumnMenu(colId);
             await waitFor(() => expect(captured[colId]).toBeTruthy());
             api.hidePopupMenu();
-            await asyncSetTimeout(10);
+            // basePopupService tears the popup down off a setTimeout, so yield one macrotask before reopening.
+            await asyncSetTimeout(0);
         }
 
         expect(captured['shown']).toContain('showValuesAsSubMenu'); // enabled → menu offered
@@ -254,10 +258,10 @@ describe('showValuesAs column menu', () => {
 
         await openShowValuesAsSubmenu(api, 'amount');
         (await openMenuOption('% of Grand Total')).click();
-        await asyncSetTimeout(10);
+        // `amount` had no aggFunc before the click, so this cannot pass before the promotion lands.
+        await waitFor(() => expect(api.getColumn('amount')!.isValueActive()).toBe(true));
 
         // Promoted to a value column (default sum), showing the grand-total percentage.
-        expect(api.getColumn('amount')!.isValueActive()).toBe(true);
         expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', transformValues: true })).toBeCloseTo(0.3);
 
         await new GridColumns(api, 'promote percentOfGrandTotal').checkColumns(`
@@ -275,14 +279,16 @@ describe('showValuesAs column menu', () => {
         `);
 
         api.hidePopupMenu();
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(menuOption('Show Values As')).toBeNull());
         await openShowValuesAsSubmenu(api, 'amount');
         (await openMenuOption('None')).click();
-        await asyncSetTimeout(10);
+        // The cell read 0.3 (30%) under the previous mode, so this cannot pass before None lands.
+        await waitFor(() =>
+            expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', transformValues: true })).toBe(30)
+        );
 
         // None keeps the field a value column (Excel "No Calculation"), showing the raw aggregate.
         expect(api.getColumn('amount')!.isValueActive()).toBe(true);
-        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', transformValues: true })).toBe(30);
 
         await new GridColumns(api, 'promote None').checkColumns(`
             CENTER
@@ -335,7 +341,6 @@ describe('showValuesAs column menu', () => {
 
         enableOffsetParentPolyfill();
         api.showColumnMenu('amount');
-        await asyncSetTimeout(10);
 
         // Open the "Show Values As" submenu and confirm the active mode is checked.
         const parent = await openMenuOption('Show Values As');
@@ -347,13 +352,16 @@ describe('showValuesAs column menu', () => {
 
         // Switch to "% of Parent Total".
         (await openMenuOption('% of Parent Row Total')).click();
-        await asyncSetTimeout(10);
-
-        // Redraw only — the aggFunc was not invoked again — but the cell now shows the parent-relative value.
-        expect(aggCalls).toBe(callsBefore);
-        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', transformValues: true })).toBeCloseTo(
-            0.75
+        // The cell read 0.3 under percentOfGrandTotal, so this cannot pass before the switch lands — and any
+        // re-aggregation would have happened by the time it does.
+        await waitFor(() =>
+            expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', transformValues: true })).toBeCloseTo(
+                0.75
+            )
         );
+
+        // Redraw only — the aggFunc was not invoked again.
+        expect(aggCalls).toBe(callsBefore);
 
         await new GridColumns(api, 'switch to percentOfParentRowTotal').checkColumns(`
             CENTER
@@ -394,6 +402,7 @@ describe('showValuesAs column menu', () => {
 
         // Clicking it does nothing — an inapplicable, non-active mode cannot be selected.
         parentRow!.click();
+        // eslint-disable-next-line no-restricted-syntax -- window in which a mode change from the disabled option would land
         await asyncSetTimeout(10);
         expect(api.getColumnState().find((s) => s.colId === 'amount')?.showValuesAs).toBe('percentOfGrandTotal');
     });
@@ -420,6 +429,7 @@ describe('showValuesAs column menu', () => {
 
         // Clicking the active inapplicable mode does nothing — it stays put, to be changed away from.
         active!.click();
+        // eslint-disable-next-line no-restricted-syntax -- window in which a mode change from the disabled option would land
         await asyncSetTimeout(10);
         expect(api.getColumnState().find((s) => s.colId === 'amount')?.showValuesAs).toBe('percentOfParentRowTotal');
     });
@@ -479,10 +489,12 @@ describe('showValuesAs column menu', () => {
 
         // Clear it via the always-enabled "None"; reopening, the now-inactive mode is fully omitted.
         (await openMenuOption('None')).click();
-        await asyncSetTimeout(10);
-        expect(api.getColumnState().find((s) => s.colId === 'amount')?.showValuesAs ?? null).toBeNull();
+        // percentOfColumnTotal was active before the click, so this cannot pass before None lands.
+        await waitFor(() =>
+            expect(api.getColumnState().find((s) => s.colId === 'amount')?.showValuesAs ?? null).toBeNull()
+        );
         api.hidePopupMenu();
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(menuOption('Show Values As')).toBeNull());
         await openShowValuesAsSubmenu(api, 'amount');
         expect(menuOption('% of Column Total')).toBeNull();
     });
@@ -571,7 +583,7 @@ describe('showValuesAs column menu', () => {
         parent.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
         expect(await openMenuOption('% of Grand Total')).toBeTruthy(); // initial label
         api.hidePopupMenu();
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(menuOption('Show Values As')).toBeNull());
 
         // The locale resolves to new text; reopening the menu re-resolves the label (not the old baked one).
         pctLabel = 'Pourcentage du total';

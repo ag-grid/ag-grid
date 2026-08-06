@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, ColGroupDef, Column } from 'ag-grid-community';
@@ -597,9 +598,8 @@ describe('Column lookup', () => {
             });
 
             api.applyColumnState({ state: columnDefs.map((cd) => ({ colId: cd.colId!, width: 333 })) });
-            await asyncSetTimeout(10);
+            await waitFor(() => expect(resizedEvents.length).toBeGreaterThan(0));
 
-            expect(resizedEvents.length).toBeGreaterThan(0);
             const lastEvent = resizedEvents[resizedEvents.length - 1];
             // Display order is preserved. The old `Object.values` bug would yield ['1','2','3','10','z'].
             expect(lastEvent).toEqual(['z', '3', '1', '10', '2']);

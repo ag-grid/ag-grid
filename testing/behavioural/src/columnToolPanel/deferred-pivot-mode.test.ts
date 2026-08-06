@@ -1,4 +1,4 @@
-import { fireEvent, getByTestId } from '@testing-library/dom';
+import { fireEvent, getByTestId, waitFor } from '@testing-library/dom';
 
 import type { AgColumn, ColDef, ColGroupDef, GridApi, IColumnStateUpdateStrategy } from 'ag-grid-community';
 import { DragSourceType, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
@@ -10,6 +10,7 @@ import {
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
+    nextAnimationFrame,
     waitForNoLoadingRows,
 } from '../test-utils';
 import { createFakeServer, createServerSideDatasource } from './deferredPivotModeFakeServer';
@@ -116,9 +117,19 @@ describe('deferred column tool panel pivot mode', () => {
         });
 
         await waitForNoLoadingRows(gridApi);
-        await asyncSetTimeout(50);
 
-        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+        // The panel is ready once it has drawn the initial pills for the configured row groups and
+        // values, and populated the primary column list.
+        const toolPanel = await waitFor(() => {
+            const panel = gridApi.getToolPanelInstance('columns') as any;
+            const rowGroupText = getDropZoneText(panel.rowGroupDropZonePanel);
+            expect(rowGroupText).toContain('Country');
+            expect(rowGroupText).toContain('Sport');
+            expect(getDropZoneText(panel.valuesDropZonePanel)).toContain('Silver');
+            expect(panel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+            return panel;
+        });
+
         return {
             gridApi,
             toolPanel,
@@ -150,9 +161,22 @@ describe('deferred column tool panel pivot mode', () => {
             },
         });
 
-        await asyncSetTimeout(50);
+        // The panel is ready once the primary column list is populated and the row group drop zone
+        // has drawn a pill for every row-group column the supplied colDefs declare.
+        // The header controls carry their test IDs only once the header has rendered, which is after the
+        // column list populates — so gate on those too, or a caller's getByTestId can miss them.
+        const toolPanel = await waitFor(() => {
+            const panel = gridApi.getToolPanelInstance('columns') as any;
+            expect(panel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+            expect(
+                (panel.rowGroupDropZonePanel.getGui() as HTMLElement).querySelectorAll('.ag-column-drop-cell').length
+            ).toBe(gridApi.getRowGroupColumns().length);
+            const gui = panel.getGui() as HTMLElement;
+            getByTestId(gui, agTestIdFor.pivotModeSelect());
+            getByTestId(gui, agTestIdFor.columnPanelSelectHeaderCheckbox());
+            return panel;
+        });
 
-        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
         return {
             gridApi,
             toolPanel,
@@ -181,12 +205,13 @@ describe('deferred column tool panel pivot mode', () => {
             },
         });
 
-        await asyncSetTimeout(50);
+        const toolPanel = await waitFor(() => {
+            const panel = gridApi.getToolPanelInstance('columns') as any;
+            expect(panel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+            return panel;
+        });
 
-        return {
-            gridApi,
-            toolPanel: gridApi.getToolPanelInstance('columns') as any,
-        };
+        return { gridApi, toolPanel };
     }
 
     async function createRowGroupingOnlyGrid(): Promise<GridApi> {
@@ -200,7 +225,12 @@ describe('deferred column tool panel pivot mode', () => {
             rowGroupPanelShow: 'always',
         });
 
-        await asyncSetTimeout(50);
+        // `rowGroupPanelShow: 'always'` renders the header row-group drop zone — wait for its pill.
+        await waitFor(() =>
+            expect(
+                getGridElement(gridApi)!.querySelector('.ag-column-drop-horizontal-rowgroup .ag-column-drop-cell')
+            ).toBeTruthy()
+        );
         return gridApi;
     }
 
@@ -250,7 +280,9 @@ describe('deferred column tool panel pivot mode', () => {
         ] as ColGroupDef[]);
 
         gridApi.setGridOption('pivotMode', true);
-        await asyncSetTimeout(50);
+        // Consumers only read the synchronous `colModel` column order; yield a single tick so the
+        // pivot-mode switch has flushed its events.
+        await asyncSetTimeout(0);
 
         return { gridApi, toolPanel };
     }
@@ -287,12 +319,14 @@ describe('deferred column tool panel pivot mode', () => {
         });
 
         await waitForNoLoadingRows(gridApi);
-        await asyncSetTimeout(50);
 
-        return {
-            gridApi,
-            toolPanel: gridApi.getToolPanelInstance('columns') as any,
-        };
+        const toolPanel = await waitFor(() => {
+            const panel = gridApi.getToolPanelInstance('columns') as any;
+            expect(panel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+            return panel;
+        });
+
+        return { gridApi, toolPanel };
     }
 
     function getApplyButton(toolPanelGui: HTMLElement): HTMLButtonElement {
@@ -382,7 +416,8 @@ describe('deferred column tool panel pivot mode', () => {
         expect(rowIndex).toBeGreaterThanOrEqual(0);
 
         listPanel['virtualList'].ensureIndexVisible(rowIndex);
-        await asyncSetTimeout(50);
+        // Scrolling the virtual list redraws its rows on the next animation frame.
+        await nextAnimationFrame();
 
         let columnElement = (listPanel['virtualList'].getComponentAt(rowIndex) as any)?.getGui() as
             | HTMLElement
@@ -403,7 +438,13 @@ describe('deferred column tool panel pivot mode', () => {
 
     async function addPrimaryColumnBackToRowGroups(toolPanel: any, gridApi: GridApi, colId: string): Promise<void> {
         toolPanel.rowGroupDropZonePanel.addItem(gridApi.getColumn(colId)!);
-        await asyncSetTimeout(50);
+        await waitFor(() =>
+            expect(
+                getUpdateStrategy(toolPanel)
+                    .getRowGroupColumns(true)
+                    .map((col) => col.getColId())
+            ).toContain(colId)
+        );
     }
 
     async function dragRenderedPrimaryColumnToRowGroups(
@@ -428,8 +469,9 @@ describe('deferred column tool panel pivot mode', () => {
         try {
             await dispatcher.startDrag(dragHandle, dragRect.left + 2, dragRect.top + 2);
             await dispatcher.movePointer(dropZoneGui, dropRect.left + 10, dropRect.top + 10);
+            // The drop is handled synchronously by the drag-and-drop service; callers poll for any
+            // resulting state change themselves.
             await dispatcher.finishDrag(dropZoneGui);
-            await asyncSetTimeout(50);
         } finally {
             ownerDocument.elementsFromPoint = originalElementsFromPoint as typeof ownerDocument.elementsFromPoint;
             dragHandle.getBoundingClientRect = originalDragRect;
@@ -455,7 +497,8 @@ describe('deferred column tool panel pivot mode', () => {
         expect(movingItem).toBeTruthy();
 
         virtualList.ensureIndexVisible(lastIndex);
-        await asyncSetTimeout(50);
+        // Scrolling the virtual list redraws its rows on the next animation frame.
+        await nextAnimationFrame();
 
         const updateStrategy = toolPanel.beans.columnStateUpdateStrategy;
         const deferMode = true;
@@ -472,7 +515,6 @@ describe('deferred column tool panel pivot mode', () => {
 
         updateStrategy.moveColumns(deferMode, [movingColumn], targetIndex, 'toolPanelUi');
         toolPanel.refreshDeferredUi?.();
-        await asyncSetTimeout(50);
     }
 
     test('adding aggregation values in non-pivot mode applies only after commit', async () => {
@@ -533,13 +575,14 @@ describe('deferred column tool panel pivot mode', () => {
         expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
 
         getCancelButton(toolPanelGui).click();
-        await asyncSetTimeout(50);
 
-        expect(
-            getUpdateStrategy(toolPanel)
-                .getRowGroupColumns(true)
-                .map((col) => col.getColId())
-        ).toEqual(['country', 'sport']);
+        await waitFor(() =>
+            expect(
+                getUpdateStrategy(toolPanel)
+                    .getRowGroupColumns(true)
+                    .map((col) => col.getColId())
+            ).toEqual(['country', 'sport'])
+        );
         expect(createPrimaryColumnComp(toolPanel, 'Athlete').isSelected()).toBe(false);
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).not.toContain('Athlete');
     });
@@ -700,21 +743,26 @@ describe('deferred column tool panel pivot mode', () => {
             └─┬ LEAF_GROUP collapsed id:"row-group-athlete-Julian Weber" ag-Grid-AutoColumn:"Julian Weber" pivot_year_2000_gold:2 pivot_year_2004_gold:null pivot_year_2008_gold:null
             · └── LEAF hidden id:2 pivot_year_2000_gold:2 pivot_year_2004_gold:2 pivot_year_2008_gold:2
         `);
-        await asyncSetTimeout(50);
-
-        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+        // The panel is ready once it has drawn the pill for the configured pivot column.
+        const toolPanel = await waitFor(() => {
+            const panel = gridApi.getToolPanelInstance('columns') as any;
+            expect(getDropZoneText(panel.pivotDropZonePanel)).toContain('Year');
+            expect(panel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+            return panel;
+        });
         expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
         expect(getDropZoneText(toolPanel.pivotDropZonePanel)).not.toContain('Date');
 
         createPrimaryColumnComp(toolPanel, 'Date')['onChangeCommon'](true);
-        await asyncSetTimeout(50);
 
+        await waitFor(() =>
+            expect(
+                getUpdateStrategy(toolPanel)
+                    .getPivotColumns(true)
+                    .map((col) => col.getColId())
+            ).toEqual(['year', 'date'])
+        );
         expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
-        expect(
-            getUpdateStrategy(toolPanel)
-                .getPivotColumns(true)
-                .map((col) => col.getColId())
-        ).toEqual(['year', 'date']);
         expect(getDropZoneText(toolPanel.pivotDropZonePanel)).toContain('Date');
 
         cancelDeferredChanges(toolPanel);
@@ -741,15 +789,16 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).not.toContain('Athlete');
 
         createPrimaryColumnComp(toolPanel, 'Athlete')['onChangeCommon'](true);
-        await asyncSetTimeout(50);
 
+        await waitFor(() =>
+            expect(
+                getUpdateStrategy(toolPanel)
+                    .getRowGroupColumns(true)
+                    .map((col) => col.getColId())
+                    .sort()
+            ).toEqual(['athlete', 'country', 'sport'])
+        );
         expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
-        expect(
-            getUpdateStrategy(toolPanel)
-                .getRowGroupColumns(true)
-                .map((col) => col.getColId())
-                .sort()
-        ).toEqual(['athlete', 'country', 'sport']);
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Athlete');
 
         cancelDeferredChanges(toolPanel);
@@ -764,14 +813,15 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age');
 
         createPrimaryColumnComp(toolPanel, 'Age')['onChangeCommon'](true);
-        await asyncSetTimeout(50);
 
+        await waitFor(() =>
+            expect(
+                getUpdateStrategy(toolPanel)
+                    .getValueColumns(true)
+                    .map((col) => col.getColId())
+            ).toEqual(['silver', 'bronze', 'age'])
+        );
         expect(getValueColumnIds(gridApi)).toEqual(['silver', 'bronze']);
-        expect(
-            getUpdateStrategy(toolPanel)
-                .getValueColumns(true)
-                .map((col) => col.getColId())
-        ).toEqual(['silver', 'bronze', 'age']);
         expect(getDropZoneText(toolPanel.valuesDropZonePanel)).toContain('Age');
 
         cancelDeferredChanges(toolPanel);
@@ -815,6 +865,7 @@ describe('deferred column tool panel pivot mode', () => {
         getUpdateStrategy(toolPanel).setPivotMode(true, false, 'toolPanelUi');
         commitChanges(toolPanel);
 
+        // eslint-disable-next-line no-restricted-syntax -- waits a macrotask for any second (redundant) columnEverythingChanged to arrive; polling would pass on the first event and never catch the duplicate
         await asyncSetTimeout(1);
 
         // Turning pivot off applies state in a single batch — exactly one `columnEverythingChanged`.
@@ -880,13 +931,15 @@ describe('deferred column tool panel pivot mode', () => {
             toolPanel.rowGroupDropZonePanel.getGui()
         );
 
+        await waitFor(() =>
+            expect(
+                getUpdateStrategy(toolPanel)
+                    .getRowGroupColumns(true)
+                    .map((col) => col.getColId())
+                    .sort()
+            ).toEqual(['athlete', 'country', 'sport'])
+        );
         expect(createPrimaryColumnComp(toolPanel, 'Athlete').isSelected()).toBe(true);
-        expect(
-            getUpdateStrategy(toolPanel)
-                .getRowGroupColumns(true)
-                .map((col) => col.getColId())
-                .sort()
-        ).toEqual(['athlete', 'country', 'sport']);
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Athlete');
         expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
     });
@@ -1002,7 +1055,7 @@ describe('deferred column tool panel pivot mode', () => {
         expect(headerRowGroupDropZone).toBeTruthy();
         await dragRenderedPrimaryColumnToRowGroups(toolPanel, toolPanelGui, 'Athlete', headerRowGroupDropZone);
 
-        expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toContain('athlete');
+        await waitFor(() => expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toContain('athlete'));
     });
 
     test('dragging into column groups is allowed after clearing groups, labels and aggregations then committing non-pivot mode', async () => {
@@ -1034,8 +1087,8 @@ describe('deferred column tool panel pivot mode', () => {
 
         getPivotModeToggle(toolPanelGui).click();
         getApplyButton(toolPanelGui).click();
-        await asyncSetTimeout(50);
 
+        await waitFor(() => expect(gridApi.isPivotMode()).toBe(true));
         expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
         expect(createPrimaryColumnComp(toolPanel, 'Year').isSelected()).toBe(true);
 
@@ -1135,14 +1188,15 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Sport');
 
         removeDropZonePill(toolPanelGui, 'Country');
-        await asyncSetTimeout(50);
 
+        await waitFor(() =>
+            expect(
+                getUpdateStrategy(toolPanel)
+                    .getRowGroupColumns(true)
+                    .map((col) => col.getColId())
+            ).toEqual(['sport'])
+        );
         expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
-        expect(
-            getUpdateStrategy(toolPanel)
-                .getRowGroupColumns(true)
-                .map((col) => col.getColId())
-        ).toEqual(['sport']);
         expect(refreshDeferredUiSpy).toHaveBeenCalled();
         expect(createPrimaryColumnComp(toolPanel, 'Country').isSelected()).toBe(false);
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).not.toContain('Country');
@@ -1304,18 +1358,20 @@ describe('deferred column tool panel pivot mode', () => {
 
         await dragRenderedPrimaryColumnToEndOfPrimaryList(toolPanel, 'Athlete');
 
-        expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual([
-            'age',
-            'country',
-            'year',
-            'date',
-            'sport',
-            'gold',
-            'silver',
-            'bronze',
-            'total',
-            'athlete',
-        ]);
+        await waitFor(() =>
+            expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual([
+                'age',
+                'country',
+                'year',
+                'date',
+                'sport',
+                'gold',
+                'silver',
+                'bronze',
+                'total',
+                'athlete',
+            ])
+        );
         expect(getPrimaryColumnOrder(toolPanel)).toEqual([
             'athlete',
             'age',
@@ -1545,13 +1601,14 @@ describe('deferred column tool panel pivot mode', () => {
         const { toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
 
         removeDropZonePill(toolPanelGui, 'Sport');
-        await asyncSetTimeout(50);
 
-        expect(
-            getUpdateStrategy(toolPanel)
-                .getRowGroupColumns(true)
-                .map((col) => col.getColId())
-        ).toEqual(['country']);
+        await waitFor(() =>
+            expect(
+                getUpdateStrategy(toolPanel)
+                    .getRowGroupColumns(true)
+                    .map((col) => col.getColId())
+            ).toEqual(['country'])
+        );
         expect(createPrimaryColumnComp(toolPanel, 'Sport').isSelected()).toBe(false);
         expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).not.toContain('Sport');
 
@@ -1742,21 +1799,22 @@ describe('deferred column tool panel pivot mode', () => {
 
         gridApi.closeToolPanel();
         gridApi.openToolPanel('columns');
-        await asyncSetTimeout(50);
 
-        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
-        expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual([
-            'athlete',
-            'age',
-            'country',
-            'year',
-            'date',
-            'sport',
-            'gold',
-            'silver',
-            'bronze',
-            'total',
-        ]);
+        await waitFor(() => {
+            const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+            expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual([
+                'athlete',
+                'age',
+                'country',
+                'year',
+                'date',
+                'sport',
+                'gold',
+                'silver',
+                'bronze',
+                'total',
+            ]);
+        });
     });
 
     test('turning pivot mode off and cancelling should keep pivot mode on', async () => {
@@ -1788,7 +1846,10 @@ describe('deferred column tool panel pivot mode', () => {
         getPivotModeToggle(toolPanelGui).click();
         getApplyButton(toolPanelGui).click();
         await waitForNoLoadingRows(gridApi);
-        await asyncSetTimeout(50);
+        await waitFor(() => {
+            expect(gridApi.isPivotMode()).toBe(false);
+            expect(toolPanel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+        });
 
         getCancelButton(toolPanelGui).click();
 
@@ -2028,9 +2089,11 @@ describe('deferred column tool panel pivot mode', () => {
                 defaultToolPanel: 'columns',
             },
         });
-        await asyncSetTimeout(50);
-
-        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+        const toolPanel = await waitFor(() => {
+            const panel = gridApi.getToolPanelInstance('columns') as any;
+            expect(panel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+            return panel;
+        });
         const silver = gridApi.getColumn('silver')! as AgColumn;
         const bronze = gridApi.getColumn('bronze')! as AgColumn;
         const strategy = getUpdateStrategy(toolPanel);
@@ -2074,9 +2137,11 @@ describe('deferred column tool panel pivot mode', () => {
                 defaultToolPanel: 'columns',
             },
         });
-        await asyncSetTimeout(50);
-
-        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+        const toolPanel = await waitFor(() => {
+            const panel = gridApi.getToolPanelInstance('columns') as any;
+            expect(panel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+            return panel;
+        });
         const gold = gridApi.getColumn('gold')! as AgColumn;
         const strategy = getUpdateStrategy(toolPanel);
 
@@ -2121,8 +2186,12 @@ describe('deferred column tool panel pivot mode', () => {
                 defaultToolPanel: 'columns',
             },
         });
-        await asyncSetTimeout(50);
-        return { gridApi, toolPanel: gridApi.getToolPanelInstance('columns') as any };
+        const toolPanel = await waitFor(() => {
+            const panel = gridApi.getToolPanelInstance('columns') as any;
+            expect(panel.primaryColsPanel.primaryColsListPanel.getDisplayedColsList().length).toBeGreaterThan(0);
+            return panel;
+        });
+        return { gridApi, toolPanel };
     }
 
     function getPivotColumnOrder(gridApi: GridApi): string[] {
@@ -2143,15 +2212,13 @@ describe('deferred column tool panel pivot mode', () => {
 
         // Unset default cycles to descending; the change is staged, the grid is untouched.
         strategy.progressPivotSortFromEvent(true, year);
-        await asyncSetTimeout(50);
-        expect(strategy.getPivotSort(true, year)).toBe('desc');
+        await waitFor(() => expect(strategy.getPivotSort(true, year)).toBe('desc'));
         expect(year.pivotSort).toBeUndefined();
         expect(getPivotColumnOrder(gridApi)).toEqual(ascending);
 
         commitChanges(toolPanel);
-        await asyncSetTimeout(50);
 
-        expect(getPivotColumnOrder(gridApi)).toEqual(descending);
+        await waitFor(() => expect(getPivotColumnOrder(gridApi)).toEqual(descending));
         expect(gridApi.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
     });
 
@@ -2162,13 +2229,12 @@ describe('deferred column tool panel pivot mode', () => {
         const ascending = ['pivot_year_2020_sales', 'pivot_year_2021_sales', 'pivot_year_2022_sales'];
 
         strategy.progressPivotSortFromEvent(true, year);
-        await asyncSetTimeout(50);
-        expect(strategy.getPivotSort(true, year)).toBe('desc');
+        await waitFor(() => expect(strategy.getPivotSort(true, year)).toBe('desc'));
 
         cancelDeferredChanges(toolPanel);
-        await asyncSetTimeout(50);
 
-        expect(strategy.getPivotSort(true, year)).toBeUndefined();
+        // A real transition back from the staged 'desc', so polling cannot pass vacuously.
+        await waitFor(() => expect(strategy.getPivotSort(true, year)).toBeUndefined());
         expect(year.pivotSort).toBeUndefined();
         expect(getPivotColumnOrder(gridApi)).toEqual(ascending);
     });

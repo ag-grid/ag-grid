@@ -32,13 +32,40 @@ const WIN_ANSI_CODEPOINT_MAP = new Map<number, number>([
     [0x0178, 0x9f],
 ]);
 
+type TextWidthCalculator = (text: string) => number;
+
+/**
+ * Encode Unicode text as a UTF-16BE hexadecimal PDF string.
+ * @param value - Logical Unicode text.
+ * @param includeByteOrderMark - Whether to prefix the UTF-16 byte-order marker.
+ * @returns PDF hexadecimal string operand.
+ */
+export function encodePdfUnicodeString(value: string, includeByteOrderMark = true): string {
+    let encoded = includeByteOrderMark ? 'FEFF' : '';
+    for (const char of value) {
+        encoded += encodeCodePointAsUtf16Be(char.codePointAt(0) ?? 0xfffd);
+    }
+    return `<${encoded}>`;
+}
+
+function encodeCodePointAsUtf16Be(codePoint: number): string {
+    if (codePoint <= 0xffff) {
+        return codePoint.toString(16).toUpperCase().padStart(4, '0');
+    }
+    const value = codePoint - 0x10000;
+    const high = 0xd800 + (value >>> 10);
+    const low = 0xdc00 + (value & 0x3ff);
+    return `${high.toString(16).toUpperCase().padStart(4, '0')}${low.toString(16).toUpperCase().padStart(4, '0')}`;
+}
+
 /**
  * Replace non-WinAnsi characters and normalise new lines for PDF text streams.
  * @param value - Source text.
  * @param preserveLineBreaks - Whether normalised line breaks should be retained.
- * @returns WinAnsi-safe text.
+ * @param preserveUnicode - Whether characters outside WinAnsi should be retained.
+ * @returns Normalised text.
  */
-export function normaliseText(value: string, preserveLineBreaks = false): string {
+export function normaliseText(value: string, preserveLineBreaks = false, preserveUnicode = false): string {
     const normalisedLineBreaks = value.replace(/\r\n?/g, '\n');
     const source = preserveLineBreaks ? normalisedLineBreaks : normalisedLineBreaks.replace(/\n/g, ' ');
     let output = '';
@@ -50,7 +77,7 @@ export function normaliseText(value: string, preserveLineBreaks = false): string
         }
 
         const codePoint = char.codePointAt(0) ?? 0;
-        output += toWinAnsiByte(codePoint) == null ? '?' : char;
+        output += preserveUnicode || toWinAnsiByte(codePoint) != null ? char : '?';
     }
 
     return output;
@@ -71,14 +98,15 @@ export function wrapText(
     maxWidth: number,
     fontSize: number,
     fontFamily: PdfFontFamily,
-    preserveSpaces = false
+    preserveSpaces = false,
+    calculateWidth?: TextWidthCalculator
 ): string[] {
     if (!text || !Number.isFinite(maxWidth) || maxWidth <= 0 || !Number.isFinite(fontSize) || fontSize <= 0) {
         return [];
     }
 
     if (preserveSpaces) {
-        return wrapPreformattedText(text, maxWidth, fontSize, fontFamily);
+        return wrapPreformattedText(text, maxWidth, fontSize, fontFamily, calculateWidth);
     }
 
     const lines: string[] = [];
@@ -93,10 +121,10 @@ export function wrapText(
         const words = paragraph.trim().split(/\s+/);
         let currentLine = '';
         let currentLineWidth = 0;
-        const spaceWidth = estimateTextWidth(' ', fontSize, fontFamily);
+        const spaceWidth = measureText(' ', fontSize, fontFamily, calculateWidth);
 
         for (const word of words) {
-            const wordWidth = estimateTextWidth(word, fontSize, fontFamily);
+            const wordWidth = measureText(word, fontSize, fontFamily, calculateWidth);
             const candidateWidth = currentLine ? currentLineWidth + spaceWidth + wordWidth : wordWidth;
             if (candidateWidth <= maxWidth) {
                 currentLine = currentLine ? `${currentLine} ${word}` : word;
@@ -108,13 +136,13 @@ export function wrapText(
                 lines.push(currentLine);
             }
 
-            const wordParts = splitWordToWidth(word, maxWidth, fontSize, fontFamily);
+            const wordParts = splitWordToWidth(word, maxWidth, fontSize, fontFamily, calculateWidth);
             const lastPartIndex = wordParts.length - 1;
             for (let i = 0; i < lastPartIndex; i++) {
                 lines.push(wordParts[i]);
             }
             currentLine = wordParts[lastPartIndex] ?? '';
-            currentLineWidth = estimateTextWidth(currentLine, fontSize, fontFamily);
+            currentLineWidth = measureText(currentLine, fontSize, fontFamily, calculateWidth);
         }
 
         if (currentLine) {
@@ -133,7 +161,13 @@ export function wrapText(
  * @param fontFamily - Active font family.
  * @returns Wrapped text lines retaining every source space.
  */
-function wrapPreformattedText(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string[] {
+function wrapPreformattedText(
+    text: string,
+    maxWidth: number,
+    fontSize: number,
+    fontFamily: PdfFontFamily,
+    calculateWidth?: TextWidthCalculator
+): string[] {
     const lines: string[] = [];
 
     for (const paragraph of text.split('\n')) {
@@ -142,15 +176,16 @@ function wrapPreformattedText(text: string, maxWidth: number, fontSize: number, 
             continue;
         }
 
+        const characters = Array.from(paragraph);
         let lineStart = 0;
-        while (lineStart < paragraph.length) {
+        while (lineStart < characters.length) {
             let lineWidth = 0;
             let lastBreak = -1;
             let characterIndex = lineStart;
 
-            while (characterIndex < paragraph.length) {
-                const char = paragraph[characterIndex];
-                const nextWidth = lineWidth + estimateTextWidth(char, fontSize, fontFamily);
+            while (characterIndex < characters.length) {
+                const char = characters[characterIndex];
+                const nextWidth = lineWidth + measureText(char, fontSize, fontFamily, calculateWidth);
                 if (nextWidth > maxWidth) {
                     break;
                 }
@@ -161,8 +196,8 @@ function wrapPreformattedText(text: string, maxWidth: number, fontSize: number, 
                 }
             }
 
-            if (characterIndex === paragraph.length) {
-                lines.push(paragraph.slice(lineStart));
+            if (characterIndex === characters.length) {
+                lines.push(characters.slice(lineStart).join(''));
                 break;
             }
 
@@ -173,7 +208,7 @@ function wrapPreformattedText(text: string, maxWidth: number, fontSize: number, 
                 characterIndex = lastBreak;
             }
 
-            lines.push(paragraph.slice(lineStart, characterIndex));
+            lines.push(characters.slice(lineStart, characterIndex).join(''));
             lineStart = characterIndex;
         }
     }
@@ -216,7 +251,7 @@ export function escapePdfString(value: string): string {
  * @param fontFamily - Active font family.
  * @returns Estimated width in points.
  */
-export function estimateTextWidth(text: string, fontSize: number, fontFamily: PdfFontFamily): number {
+function estimateTextWidth(text: string, fontSize: number, fontFamily: PdfFontFamily): number {
     if (!Number.isFinite(fontSize) || fontSize <= 0) {
         return 0;
     }
@@ -237,7 +272,13 @@ export function estimateTextWidth(text: string, fontSize: number, fontFamily: Pd
  * @param fontFamily - Active font family.
  * @returns Truncated text.
  */
-export function truncateText(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string {
+export function truncateText(
+    text: string,
+    maxWidth: number,
+    fontSize: number,
+    fontFamily: PdfFontFamily,
+    calculateWidth?: TextWidthCalculator
+): string {
     if (!text) {
         return '';
     }
@@ -246,19 +287,19 @@ export function truncateText(text: string, maxWidth: number, fontSize: number, f
         return '';
     }
 
-    if (estimateTextWidth(text, fontSize, fontFamily) <= maxWidth) {
+    if (measureText(text, fontSize, fontFamily, calculateWidth) <= maxWidth) {
         return text;
     }
 
     const ellipsis = '...';
-    const ellipsisWidth = estimateTextWidth(ellipsis, fontSize, fontFamily);
+    const ellipsisWidth = measureText(ellipsis, fontSize, fontFamily, calculateWidth);
     const ellipsisFits = ellipsisWidth <= maxWidth;
     const widthBudget = ellipsisFits ? maxWidth - ellipsisWidth : maxWidth;
     let truncated = '';
     let truncatedWidth = 0;
 
     for (const char of text) {
-        const charWidth = estimateTextWidth(char, fontSize, fontFamily);
+        const charWidth = measureText(char, fontSize, fontFamily, calculateWidth);
         if (truncatedWidth + charWidth > widthBudget) {
             break;
         }
@@ -277,7 +318,13 @@ export function truncateText(text: string, maxWidth: number, fontSize: number, f
  * @param fontFamily - Active font family.
  * @returns The widest source prefix that fits.
  */
-export function clipText(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string {
+export function clipText(
+    text: string,
+    maxWidth: number,
+    fontSize: number,
+    fontFamily: PdfFontFamily,
+    calculateWidth?: TextWidthCalculator
+): string {
     if (!text || !Number.isFinite(maxWidth) || maxWidth <= 0 || !Number.isFinite(fontSize) || fontSize <= 0) {
         return '';
     }
@@ -285,7 +332,7 @@ export function clipText(text: string, maxWidth: number, fontSize: number, fontF
     let clipped = '';
     let clippedWidth = 0;
     for (const char of text) {
-        const charWidth = estimateTextWidth(char, fontSize, fontFamily);
+        const charWidth = measureText(char, fontSize, fontFamily, calculateWidth);
         if (clippedWidth + charWidth > maxWidth) {
             break;
         }
@@ -304,8 +351,14 @@ export function clipText(text: string, maxWidth: number, fontSize: number, fontF
  * @param fontFamily - Active font family.
  * @returns Ellipsised line.
  */
-export function addTextEllipsis(text: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string {
-    return truncateText(`${text}...`, maxWidth, fontSize, fontFamily);
+export function addTextEllipsis(
+    text: string,
+    maxWidth: number,
+    fontSize: number,
+    fontFamily: PdfFontFamily,
+    calculateWidth?: TextWidthCalculator
+): string {
+    return truncateText(`${text}...`, maxWidth, fontSize, fontFamily, calculateWidth);
 }
 
 /**
@@ -347,13 +400,19 @@ function toWinAnsiByte(codePoint: number): number | undefined {
  * @param fontFamily - Active font family.
  * @returns One or more chunks containing every source character.
  */
-function splitWordToWidth(word: string, maxWidth: number, fontSize: number, fontFamily: PdfFontFamily): string[] {
+function splitWordToWidth(
+    word: string,
+    maxWidth: number,
+    fontSize: number,
+    fontFamily: PdfFontFamily,
+    calculateWidth?: TextWidthCalculator
+): string[] {
     const parts: string[] = [];
     let part = '';
     let partWidth = 0;
 
     for (const char of word) {
-        const charWidth = estimateTextWidth(char, fontSize, fontFamily);
+        const charWidth = measureText(char, fontSize, fontFamily, calculateWidth);
         if (part && partWidth + charWidth > maxWidth) {
             parts.push(part);
             part = '';
@@ -369,4 +428,13 @@ function splitWordToWidth(word: string, maxWidth: number, fontSize: number, font
     }
 
     return parts;
+}
+
+function measureText(
+    text: string,
+    fontSize: number,
+    fontFamily: PdfFontFamily,
+    calculateWidth?: TextWidthCalculator
+): number {
+    return calculateWidth ? calculateWidth(text) : estimateTextWidth(text, fontSize, fontFamily);
 }

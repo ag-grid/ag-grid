@@ -11,7 +11,7 @@ import {
     RowNumbersModule,
 } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from '../test-utils';
 
 // Behavioural spec for calculated-column DISPLAY ORDERING. The expectations encode the intended
 // behaviour of this branch's column model. Rules 3 and 4 intentionally diverge from the stale
@@ -163,14 +163,14 @@ describe('calculated columns - display ordering', () => {
         const before = new Set(order(api));
         enableOffsetParentPolyfill();
         api.showColumnMenu(anchorColId);
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getDialog());
         setExpression(expression);
         clickDialogButton('Apply');
         // Wait past the live-apply animation frame so no expression flush is in flight when the
         // caller starts toggling columns (under the default 'live' mode Apply is a no-op).
-        await asyncSetTimeout(40);
+        await nextAnimationFrame();
+        await nextAnimationFrame();
         const added = order(api).filter((id) => !before.has(id));
         expect(added).toHaveLength(1);
         return added[0];
@@ -181,9 +181,7 @@ describe('calculated columns - display ordering', () => {
     async function removeViaMenu(api: GridApi, colId: string): Promise<void> {
         enableOffsetParentPolyfill();
         api.showColumnMenu(colId);
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Remove Calculated Column');
-        await asyncSetTimeout(1);
     }
 
     // === Rule 6: static calc cols keep their declared columnDefs position ========================
@@ -278,11 +276,12 @@ describe('calculated columns - display ordering', () => {
         expect(order(api)).toEqual(['revenue', 'profit', 'cost']);
 
         removeColumnDef(api, 'profit');
-        await asyncSetTimeout(1);
 
         // The group's only child is gone — the group must be pruned, not left empty in the colId tree.
-        expect(order(api)).toEqual(['revenue', 'cost']);
-        expect(api.getColumnDefs()!.some((d) => 'groupId' in d && d.groupId === 'derived')).toBe(false);
+        await waitFor(() => {
+            expect(order(api)).toEqual(['revenue', 'cost']);
+            expect(api.getColumnDefs()!.some((d) => 'groupId' in d && d.groupId === 'derived')).toBe(false);
+        });
         await new GridColumns(api, 'group pruned after its sole static calc child is removed').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200
@@ -306,8 +305,7 @@ describe('calculated columns - display ordering', () => {
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         });
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['revenue', 'cost', 'profit']);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost', 'profit']));
         await new GridColumns(api, 'addCalculatedColumn appends to the end of the tree').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200
@@ -326,14 +324,13 @@ describe('calculated columns - display ordering', () => {
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(order(api)).toContain('profit'));
         addCalculatedColumnDef(api, {
             colId: 'margin',
             calculatedExpression: '[profit] / [revenue]',
             cellDataType: 'number',
         });
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['revenue', 'cost', 'profit', 'margin']);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost', 'profit', 'margin']));
         await new GridColumns(api, 'two addCalculatedColumn calls append in call order').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200
@@ -355,7 +352,7 @@ describe('calculated columns - display ordering', () => {
         // Removing c1 nulls c2's anchor → c2 becomes truly unanchored (no order-restoration anchor). The last
         // displayed leaf is inside group 'G', so the unanchored re-append must NOT smuggle c2 into 'G'.
         await removeViaMenu(api, c1);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(order(api)).not.toContain(c1));
 
         expect(c2).toBe('calculated_2');
         await new GridColumns(api, 'unanchored calc col stays top-level, not in group').checkColumns(`
@@ -375,8 +372,7 @@ describe('calculated columns - display ordering', () => {
         api.moveColumns(['c'], 0);
         expect(order(api)).toEqual(['c', 'a', 'b']);
         addCalculatedColumnDef(api, { colId: 'sum', calculatedExpression: '[a] + [b]', cellDataType: 'number' });
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['c', 'a', 'b', 'sum']);
+        await waitFor(() => expect(order(api)).toEqual(['c', 'a', 'b', 'sum']));
         await new GridColumns(api, 'addCalculatedColumn appends after a manual reorder, preserving the reorder')
             .checkColumns(`
                 CENTER
@@ -406,9 +402,8 @@ describe('calculated columns - display ordering', () => {
 
         enableOffsetParentPolyfill();
         api.showColumnMenu('age');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getDialog());
 
         const added = order(api).filter((id) => !before.has(id));
         expect(added).toEqual(['calculated_1']);
@@ -422,7 +417,9 @@ describe('calculated columns - display ordering', () => {
         expect(visibleButtonLabels).toEqual(['Columns', 'Functions', 'Operators']);
         expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('');
         expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'calculated_1' })).toBe('');
-        expect(events).toEqual([{ type: 'calculatedColumnCreated', expression: '' }]);
+        // `onCalculatedColumnCreated` is a public gridOptions callback, dispatched through the grid's
+        // async global-listener queue (batched via a single `setTimeout(0)`, not delivered inline).
+        await waitFor(() => expect(events).toEqual([{ type: 'calculatedColumnCreated', expression: '' }]));
 
         setTitle('Double Age');
         setExpression('[Age] * 2');
@@ -445,9 +442,8 @@ describe('calculated columns - display ordering', () => {
 
         enableOffsetParentPolyfill();
         api.showColumnMenu('age');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getDialog());
 
         setExpression('[Age] +');
         await waitFor(() => expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('[age] +'));
@@ -499,13 +495,13 @@ describe('calculated columns - display ordering', () => {
         `);
 
         api.showColumnMenu('age');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getDialog());
 
         setExpression('[Age] * 2');
         clickDialogButton('Apply');
-        await asyncSetTimeout(40);
+        await nextAnimationFrame();
+        await nextAnimationFrame();
 
         await new GridColumns(api, 'dialog add preserves unpinned state after calculated column add').checkColumns(`
             CENTER
@@ -737,8 +733,7 @@ describe('calculated columns - display ordering', () => {
         expect(order(api)).toEqual(['c', 'a', first, second, 'b']);
 
         await removeViaMenu(api, first);
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['c', 'a', second, 'b']);
+        await waitFor(() => expect(order(api)).toEqual(['c', 'a', second, 'b']));
         await new GridColumns(api, 'removing an anchor preserves the user reorder and keeps the dependent in place')
             .checkColumns(`
                 CENTER
@@ -783,8 +778,7 @@ describe('calculated columns - display ordering', () => {
         expect(order(api)).toEqual(['revenue', first, 'cost']);
 
         api.moveColumns(['revenue'], 1);
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual([first, 'revenue', 'cost']);
+        await waitFor(() => expect(order(api)).toEqual([first, 'revenue', 'cost']));
 
         const second = await addViaDialog(api, first, '[Revenue] - [Cost]');
         // `second` chains after `first` (its anchor), and the user's move of `revenue` is preserved.
@@ -838,9 +832,8 @@ describe('calculated columns - display ordering', () => {
                 { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
             ],
         });
-        await asyncSetTimeout(1);
         // `getAllGridColumns` includes the hidden rowGroup `region` col.
-        expect(order(api)).toEqual(['ag-Grid-AutoColumn', 'region', 'revenue', 'cost']);
+        await waitFor(() => expect(order(api)).toEqual(['ag-Grid-AutoColumn', 'region', 'revenue', 'cost']));
         const id = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
         // The auto-group col isn't a leaf in the column tree, so the calc col is re-seated after it
         // in display order (via the anchor pass) rather than falling to the end.
@@ -863,7 +856,7 @@ describe('calculated columns - display ordering', () => {
                 { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
             ],
         });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
 
         const first = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
         const second = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
@@ -888,14 +881,13 @@ describe('calculated columns - display ordering', () => {
                 { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
             ],
         });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
 
         const first = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
         expect(order(api)).toEqual(['ag-Grid-AutoColumn', first, 'region', 'revenue', 'cost']);
 
         api.moveColumns(['ag-Grid-AutoColumn'], 1);
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual([first, 'ag-Grid-AutoColumn', 'region', 'revenue', 'cost']);
+        await waitFor(() => expect(order(api)).toEqual([first, 'ag-Grid-AutoColumn', 'region', 'revenue', 'cost']));
 
         const second = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
         // `first` stays at its moved position (preserved); `second` seats after the moved auto col.
@@ -925,16 +917,16 @@ describe('calculated columns - display ordering', () => {
 
         // User reorders: move the calc col to the end, and a normal col to the front.
         api.moveColumns([calc], 4);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(order(api)).toEqual(['region', 'revenue', 'cost', 'qty', calc]));
         api.moveColumns(['qty'], 0);
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['qty', 'region', 'revenue', 'cost', calc]);
+        await waitFor(() => expect(order(api)).toEqual(['qty', 'region', 'revenue', 'cost', calc]));
 
         // Structural change: activate row grouping (auto-group col appears, region hides). The user's
         // reorder — calc col last, qty first — is preserved; the new auto col slots in at the head.
         api.applyColumnState({ state: [{ colId: 'region', rowGroup: true, hide: true }] });
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['ag-Grid-AutoColumn', 'qty', 'region', 'revenue', 'cost', calc]);
+        await waitFor(() =>
+            expect(order(api)).toEqual(['ag-Grid-AutoColumn', 'qty', 'region', 'revenue', 'cost', calc])
+        );
         await new GridColumns(api, 'moved calc col survives grouping + reorder').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
@@ -957,14 +949,12 @@ describe('calculated columns - display ordering', () => {
         });
         const calc = await addViaDialog(api, 'revenue', '[Revenue] - [Cost]');
         api.moveColumns([calc], 3);
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['revenue', 'cost', 'qty', calc]);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost', 'qty', calc]));
 
         // A recreateColumnDefs-style refresh (defaultColDef change). With maintainColumnOrder the moved
         // calc col is preserved exactly like a normal column.
         api.setGridOption('defaultColDef', { resizable: false });
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['revenue', 'cost', 'qty', calc]);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost', 'qty', calc]));
         await new GridColumns(api, 'moved calc col preserved with maintainColumnOrder').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200 !resizable
@@ -991,11 +981,13 @@ describe('calculated columns - display ordering', () => {
 
         // Dynamic refreshes that don't touch the calc col: sort one column, hide+show another.
         api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getColumn('a')!.getSort()).toBe('asc'));
         api.setColumnsVisible(['b'], false);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getColumn('b')!.isVisible()).toBe(false));
         api.setColumnsVisible(['b'], true);
-        await asyncSetTimeout(1);
+        // Gate on the re-show landing — the order below is unchanged throughout, so polling it would
+        // resolve immediately and prove nothing about the refresh having run.
+        await waitFor(() => expect(api.getColumn('b')!.isVisible()).toBe(true));
         // Stays exactly where its anchor placed it — mid-list, never at the end.
         expect(order(api)).toEqual(['a', 'revenue', calc, 'cost', 'b']);
         await new GridColumns(api, 'mid-list calc stays across dynamic refreshes').checkColumns(`
@@ -1023,7 +1015,9 @@ describe('calculated columns - display ordering', () => {
 
         // recreateColumnDefs-style refresh (defaultColDef change); calc not moved → stays mid-list.
         api.setGridOption('defaultColDef', { resizable: false });
-        await asyncSetTimeout(1);
+        // Gate on the defaultColDef change taking effect — the order is unchanged by it, so polling the
+        // order would resolve before the columns were recreated.
+        await waitFor(() => expect(api.getColumn('revenue')!.isResizable()).toBe(false));
         expect(order(api)).toEqual(['revenue', calc, 'cost', 'qty']);
         await new GridColumns(api, 'mid-list calc preserved with maintainColumnOrder').checkColumns(`
             CENTER
@@ -1049,8 +1043,7 @@ describe('calculated columns - display ordering', () => {
         // Activate grouping on region (auto col appears, region hides). The calc col is not moved and
         // stays right after its `revenue` anchor.
         api.applyColumnState({ state: [{ colId: 'region', rowGroup: true, hide: true }] });
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['ag-Grid-AutoColumn', 'region', 'revenue', calc, 'cost']);
+        await waitFor(() => expect(order(api)).toEqual(['ag-Grid-AutoColumn', 'region', 'revenue', calc, 'cost']));
         await new GridColumns(api, 'mid-list calc stays after anchor on grouping').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
@@ -1075,10 +1068,9 @@ describe('calculated columns - display ordering', () => {
         expect(order(api)).toEqual(['revenue', first, second, 'cost']);
 
         await removeViaMenu(api, first);
-        await asyncSetTimeout(1);
         // Only `first` is removed; `second` lost its anchor but keeps its displayed slot (order
         // maintained) rather than jumping to the end.
-        expect(order(api)).toEqual(['revenue', second, 'cost']);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', second, 'cost']));
         await new GridColumns(api, 'removing the anchor calc col keeps its orphaned dependent in place').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200
@@ -1101,10 +1093,9 @@ describe('calculated columns - display ordering', () => {
         expect(order(api)).toEqual(['revenue', first, second, 'cost', 'tax']);
 
         await removeViaMenu(api, first);
-        await asyncSetTimeout(1);
         // `second` is in the MIDDLE (cost + tax follow it) — it stays between revenue and cost, and the
         // trailing columns are untouched.
-        expect(order(api)).toEqual(['revenue', second, 'cost', 'tax']);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', second, 'cost', 'tax']));
         await new GridColumns(api, 'removing the anchor calc col keeps a mid-list dependent between its neighbours')
             .checkColumns(`
                 CENTER
@@ -1127,18 +1118,16 @@ describe('calculated columns - display ordering', () => {
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(order(api)).toContain('profit'));
         addCalculatedColumnDef(api, {
             colId: 'margin',
             calculatedExpression: '[profit] / [revenue]',
             cellDataType: 'number',
         });
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['revenue', 'cost', 'profit', 'margin']);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost', 'profit', 'margin']));
 
         removeColumnDef(api, 'profit');
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['revenue', 'cost', 'margin']);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost', 'margin']));
         await new GridColumns(api, 'removing a dynamic calc col leaves the remaining order intact').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200
@@ -1158,8 +1147,7 @@ describe('calculated columns - display ordering', () => {
         });
         expect(order(api)).toEqual(['revenue', 'profit', 'cost']);
         removeColumnDef(api, 'profit');
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['revenue', 'cost']);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost']));
         await new GridColumns(api, 'removing a static calc col (suppression) leaves the remaining order intact')
             .checkColumns(`
                 CENTER
@@ -1181,12 +1169,10 @@ describe('calculated columns - display ordering', () => {
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         });
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['revenue', 'cost', 'profit']);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost', 'profit']));
 
         api.setGridOption('columnDefs', baseDefs.slice());
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['revenue', 'cost']);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost']));
         await new GridColumns(api, 'updateGridOptions({ columnDefs }) clears dynamic calc cols').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200
@@ -1204,8 +1190,7 @@ describe('calculated columns - display ordering', () => {
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         });
-        await asyncSetTimeout(1);
-        expect(order(api)).toEqual(['revenue', 'cost', 'profit']);
+        await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost', 'profit']));
 
         // Documented persistence pattern: read getColumnDefs() and seed a fresh grid with them.
         const persisted = api.getColumnDefs()!;
@@ -1213,8 +1198,7 @@ describe('calculated columns - display ordering', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: persisted,
         });
-        await asyncSetTimeout(1);
-        expect(order(api2)).toEqual(['revenue', 'cost', 'profit']);
+        await waitFor(() => expect(order(api2)).toEqual(['revenue', 'cost', 'profit']));
         await new GridColumns(api, 'getColumnDefs persists a dynamic calc col at its position into a fresh grid')
             .checkColumns(`
                 CENTER
@@ -1232,16 +1216,17 @@ describe('calculated columns - display ordering', () => {
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
             rowNumbers: true,
         });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-RowNumbersColumn'));
         addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         });
-        await asyncSetTimeout(1);
-        const cols = order(api);
-        expect(cols[0]).toBe('ag-Grid-RowNumbersColumn');
-        expect(cols[cols.length - 1]).toBe('profit');
+        await waitFor(() => {
+            const cols = order(api);
+            expect(cols[0]).toBe('ag-Grid-RowNumbersColumn');
+            expect(cols[cols.length - 1]).toBe('profit');
+        });
         await new GridColumns(api, 'rowNumbers column stays first when a calc col is appended').checkColumns(`
             LEFT
             └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left

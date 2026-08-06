@@ -30,11 +30,15 @@ export async function waitForInput(
 }
 
 export async function waitForPopup(gridDiv: HTMLElement, options?: waitForOptions): Promise<HTMLElement> {
-    const dialog = await waitFor(() => gridDiv.querySelector('.ag-popup') as HTMLElement, options);
-    if (!dialog) {
-        throw new Error('Popup dialog not found');
-    }
-    return dialog!;
+    // The check must be inside the callback: waitFor only retries when its callback throws, so
+    // returning a null query result resolves on tick 0 and this never actually waits for the popup.
+    return await waitFor(() => {
+        const dialog = gridDiv.querySelector<HTMLElement>('.ag-popup');
+        if (!dialog) {
+            throw new Error('Popup dialog not found');
+        }
+        return dialog;
+    }, options);
 }
 
 export function fakeElementAttribute<K extends keyof HTMLElement, S extends string>(

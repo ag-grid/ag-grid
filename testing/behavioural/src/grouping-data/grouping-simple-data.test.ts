@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { ColDef, GridOptions, IRowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
@@ -473,7 +475,9 @@ describe('ag-grid grouping simple data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which a further, unwanted
+        // rowDataUpdated/modelUpdated would arrive.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
@@ -483,7 +487,9 @@ describe('ag-grid grouping simple data', () => {
             { id: '3', value: 3, x: 30 },
         ]);
 
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which a further, unwanted
+        // rowDataUpdated/modelUpdated would arrive.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
@@ -491,7 +497,9 @@ describe('ag-grid grouping simple data', () => {
 
         api.setGridOption('columnDefs', [{ field: 'value' }]);
 
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which a further, unwanted
+        // rowDataUpdated/modelUpdated would arrive.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
@@ -504,7 +512,9 @@ describe('ag-grid grouping simple data', () => {
 
         api.setGridOption('columnDefs', [{ field: 'value' }, { field: 'x' }]);
 
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which a further, unwanted
+        // rowDataUpdated/modelUpdated would arrive.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(2);
 
@@ -520,13 +530,17 @@ describe('ag-grid grouping simple data', () => {
             { id: '4', value: 4, x: 40 },
         ]);
 
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which a further, unwanted
+        // rowDataUpdated/modelUpdated would arrive.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(2);
         expect(modelUpdated).toBe(3);
 
         api.setGridOption('columnDefs', [{ field: 'x' }, { field: 'value' }]);
 
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which a further, unwanted
+        // rowDataUpdated/modelUpdated would arrive.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(2);
         expect(modelUpdated).toBe(4);
 
@@ -549,7 +563,9 @@ describe('ag-grid grouping simple data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which a further, unwanted
+        // rowDataUpdated/modelUpdated would arrive.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
@@ -561,7 +577,9 @@ describe('ag-grid grouping simple data', () => {
             { id: '4', country: 'Italy', year: '2001', sport: 'Football', athlete: 'Marvin Minsky' },
         ]);
 
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which a further, unwanted
+        // rowDataUpdated/modelUpdated would arrive.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
@@ -573,7 +591,9 @@ describe('ag-grid grouping simple data', () => {
             { field: 'athlete' },
         ]);
 
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which a further, unwanted
+        // rowDataUpdated/modelUpdated would arrive.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
@@ -705,7 +725,9 @@ describe('ag-grid grouping simple data', () => {
             add: [{ id: '3', value: 3 }],
         });
 
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which a further, unwanted
+        // rowDataUpdated/modelUpdated would arrive.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
@@ -713,7 +735,9 @@ describe('ag-grid grouping simple data', () => {
 
         api.setGridOption('columnDefs', [{ field: 'value' }, { field: 'value' }]);
 
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which a further, unwanted
+        // rowDataUpdated/modelUpdated would arrive.
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
@@ -908,7 +932,8 @@ describe('ag-grid grouping simple data', () => {
             └─┬ LEAF_GROUP id:row-group-country-IT ag-Grid-AutoColumn:"IT"
             · └── LEAF id:1 name:"Bob" country:"IT"
         `);
-        await asyncSetTimeout(1);
+        // One macrotask so any deferred model work has settled before this synchronous read.
+        await asyncSetTimeout(0);
 
         const fillers: IRowNode[] = [];
         api.forEachNode((n) => {
@@ -945,7 +970,9 @@ describe('ag-grid grouping simple data', () => {
             { name: 'Alice', country: 'IE' },
             { name: 'Bob', country: 'IT' },
         ]);
-        await asyncSetTimeout(1);
+        // One macrotask after the mutation: the window in which the position events asserted
+        // below as never-fired would arrive.
+        await asyncSetTimeout(0);
 
         for (const f of fillers) {
             expect(f.destroyed).toBe(true);
@@ -987,7 +1014,8 @@ describe('ag-grid grouping simple data', () => {
                 · └── LEAF id:Bob name:"Bob" country:"IT"
             `
         );
-        await asyncSetTimeout(1);
+        // One macrotask so any deferred model work has settled before this synchronous read.
+        await asyncSetTimeout(0);
 
         const itFiller = api.getRowNode('row-group-country-IT');
         expect(itFiller).toBeTruthy();
@@ -1010,9 +1038,9 @@ describe('ag-grid grouping simple data', () => {
             └─┬ LEAF_GROUP id:row-group-country-IE ag-Grid-AutoColumn:"IE"
             · └── LEAF id:Alice name:"Alice" country:"IE"
         `);
-        await asyncSetTimeout(1);
+        // The filler was alive before the transaction, so this cannot pass before the removal lands.
+        await waitFor(() => expect(itFiller!.destroyed).toBe(true));
 
-        expect(itFiller!.destroyed).toBe(true);
         expect(topChangedCount).toBeGreaterThan(0);
         expect(rowIndexChangedCount).toBeGreaterThan(0);
     });

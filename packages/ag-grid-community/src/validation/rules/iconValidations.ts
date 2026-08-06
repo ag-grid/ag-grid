@@ -155,6 +155,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     rowDrag: ['RowDrag', 'DragAndDrop'],
     csvExport: 'MenuCore',
     excelExport: 'MenuCore',
+    pdfExport: 'MenuCore',
     smallDown: 'CommunityCore',
     selectOpen: 'CommunityCore',
     richSelectOpen: 'RichSelect',

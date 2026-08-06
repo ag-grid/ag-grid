@@ -2,7 +2,7 @@ import { ClientSideRowModelModule, PaginationModule, PinnedRowModule } from 'ag-
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 function assertPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>, ids: any[]): void {
     const pinnedNodes: RowNode[] = [];
@@ -80,7 +80,6 @@ describe('ag-grid tree data pinned rows', () => {
         api.applyTransaction({
             remove: [{ id: 'france' }, { id: 'paris' }, { id: 'lyon' }],
         });
-        await asyncSetTimeout(10);
 
         // France node should be destroyed, and pinned row should be removed
         await new GridRows(api, 'after remove').check(`
@@ -141,7 +140,6 @@ describe('ag-grid tree data pinned rows', () => {
         api.applyTransaction({
             remove: [{ id: 'paris' }],
         });
-        await asyncSetTimeout(10);
 
         await new GridRows(api, 'after remove paris').check(`
             PINNED_TOP id:t-top-france ag-Grid-AutoColumn:"France" name:"France" amount:200 path:["Europe","France"]
@@ -212,7 +210,6 @@ describe('ag-grid tree data pinned rows', () => {
         api.applyTransaction({
             remove: [{ id: 'france' }, { id: 'paris' }, { id: 'lyon' }, { id: 'japan' }, { id: 'tokyo' }],
         });
-        await asyncSetTimeout(10);
 
         // Both pinned rows should be removed
         await new GridRows(api, 'after remove').check(`
@@ -270,7 +267,6 @@ describe('ag-grid tree data pinned rows', () => {
             'rowData',
             rowData.filter((r) => !r.path.includes('France'))
         );
-        await asyncSetTimeout(10);
 
         // France node should be destroyed and pinned row removed
         await new GridRows(api, 'after setRowData').check(`
@@ -326,7 +322,6 @@ describe('ag-grid tree data pinned rows', () => {
         api.applyTransaction({
             remove: [{ id: 'paris' }],
         });
-        await asyncSetTimeout(10);
 
         // Paris should be destroyed and pinned row removed
         await new GridRows(api, 'after remove').check(`

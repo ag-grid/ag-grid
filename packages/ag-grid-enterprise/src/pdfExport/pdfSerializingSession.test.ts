@@ -3,6 +3,7 @@ import type {
     CellClassParams,
     CellStyle,
     PdfCellHyperlinkCallbackParams,
+    PdfCellImageCallbackParams,
     PdfCustomContent,
     PdfStyleCallbackParams,
     ProcessCellForExportParams,
@@ -23,7 +24,9 @@ const createColumn = (
         __value: value,
         getColSpan: () => colSpan,
         getColDef: () => ({ cellStyle, wrapText, wrapHeaderText }),
+        getActualWidth: () => 100,
         isRowGroupDisplayed: () => false,
+        colKind: 'user',
     }) as any;
 
 const createGridOptionsService = (treeData = false) => ({
@@ -53,6 +56,9 @@ const createSession = (): PdfSerializingSession => {
 };
 
 const getRows = (session: PdfSerializingSession): PdfRow[] => (session as any).rows;
+
+const addColumnHeader = (row: ReturnType<PdfSerializingSession['onNewHeaderRow']>, column: AgColumn, index: number) =>
+    row.onCell({ type: 'column', column, columnIndex: index, columnSpan: 1, rowSpan: 1 });
 
 describe('PdfSerializingSession', () => {
     it('clamps cell spans to the remaining exported columns', () => {
@@ -136,6 +142,54 @@ describe('PdfSerializingSession', () => {
             column,
         });
         expect(getRows(session)[0].cells[0].hyperlink).toBe('https://example.com/docs');
+    });
+
+    it('adds an image and replacement text to an exported body cell', () => {
+        let callbackParams: PdfCellImageCallbackParams | undefined;
+        const column = createColumn('Country', 1);
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {},
+            gos: createGridOptionsService(),
+            skipGridStyles: true,
+            addImageToCell: (params: PdfCellImageCallbackParams) => {
+                callbackParams = params;
+                return {
+                    image: {
+                        id: 'uk',
+                        base64: 'image-data',
+                        imageType: 'png',
+                        width: 18,
+                        height: 12,
+                    },
+                    value: 'United Kingdom',
+                };
+            },
+        } as any);
+        const node = { data: { countryCode: 'gb' }, group: false, level: 0, rowIndex: 0 } as RowNode;
+        (session as any).extractRowCellValue = () => ({ value: 'GB' });
+        (session as any).isRowGroupCell = () => false;
+
+        session.prepare([column]);
+        session.onNewBodyRow(node).onColumn(column, 0, node);
+
+        expect(callbackParams).toMatchObject({
+            value: 'GB',
+            accumulatedRowIndex: 1,
+            node,
+            column,
+        });
+        expect(getRows(session)[0].cells[0]).toMatchObject({
+            value: 'United Kingdom',
+            image: {
+                id: 'uk',
+                base64: 'image-data',
+                imageType: 'png',
+                width: 18,
+                height: 12,
+            },
+        });
     });
 
     it('resolves cellStyle with the original value before processing the exported value', () => {
@@ -280,7 +334,7 @@ describe('PdfSerializingSession', () => {
         const node = { data: {}, group: false, level: 0, rowIndex: null } as unknown as RowNode;
 
         session.prepare([column]);
-        session.onNewHeaderRow().onColumn(column, 0);
+        addColumnHeader(session.onNewHeaderRow(), column, 0);
         session.onNewBodyRow(node).onColumn(column, 0, node);
 
         // the header row must not inflate the fallback index reported for the first body row.
@@ -293,8 +347,11 @@ describe('PdfSerializingSession', () => {
         const columnGroup = { getColGroupDef: () => undefined } as any;
         (session as any).extractHeaderValue = () => 'Header';
 
-        session.onNewHeaderGroupingRow().onColumn(columnGroup, 'Group', 0, 1, []);
-        session.onNewHeaderRow().onColumn(column, 0);
+        (session as any).extractGroupHeaderValue = () => 'Group';
+        session
+            .onNewHeaderGroupingRow()
+            .onCell({ type: 'group', column: columnGroup, columnIndex: 0, columnSpan: 2, rowSpan: 1 });
+        addColumnHeader(session.onNewHeaderRow(), column, 0);
 
         const rows = getRows(session);
         expect(rows[0].cells[0]).toMatchObject({
@@ -307,6 +364,47 @@ describe('PdfSerializingSession', () => {
             elementType: 'header',
             sourceColumn: column,
         });
+    });
+
+    it('retains vertical spans and covered cells for PDF header layout', () => {
+        const session = createSession();
+        const column = createColumn('Age', 1);
+        (session as any).extractHeaderValue = () => 'Age';
+
+        session.onNewHeaderGroupingRow().onCell({ type: 'column', column, columnIndex: 0, columnSpan: 1, rowSpan: 2 });
+        session.onNewHeaderRow().onCell({ type: 'covered', columnIndex: 0, columnSpan: 1, rowSpan: 1 });
+
+        const rows = getRows(session);
+        expect(rows[0].cells[0]).toMatchObject({ value: 'Age', mergeDown: 1, elementType: 'header' });
+        expect(rows[1].cells[0]).toMatchObject({ value: '', covered: true });
+    });
+
+    it('renders columns in right-to-left order for an RTL export', () => {
+        const session = new PdfSerializingSession({
+            colModel: { pivotMode: false },
+            colNames: {},
+            valueSvc: {},
+            gos: createGridOptionsService(),
+            direction: 'rtl',
+            skipGridStyles: true,
+        } as any);
+        const columns = [createColumn('First', 1), createColumn('Second', 1), createColumn('Third', 1)];
+        (session as any).extractHeaderValue = (column: AgColumn) => (column as any).__value;
+
+        session.prepare(columns);
+        const accumulator = session.onNewHeaderRow();
+        for (const [index, column] of columns.entries()) {
+            addColumnHeader(accumulator, column, index);
+        }
+
+        const pdf = session.parse();
+        const firstPosition = pdf.indexOf('(First) Tj');
+        const secondPosition = pdf.indexOf('(Second) Tj');
+        const thirdPosition = pdf.indexOf('(Third) Tj');
+
+        expect(thirdPosition).toBeGreaterThan(-1);
+        expect(thirdPosition).toBeLessThan(secondPosition);
+        expect(secondPosition).toBeLessThan(firstPosition);
     });
 
     it('maps column and header wrapping into automatic PDF styles', () => {
@@ -322,7 +420,7 @@ describe('PdfSerializingSession', () => {
         const node = { data: {}, group: false, level: 0, rowIndex: 0 } as RowNode;
 
         session.prepare([column]);
-        session.onNewHeaderRow().onColumn(column, 0);
+        addColumnHeader(session.onNewHeaderRow(), column, 0);
         session.onNewBodyRow(node).onColumn(column, 0, node);
 
         const rows = getRows(session);
@@ -377,7 +475,7 @@ describe('PdfSerializingSession', () => {
         (session as any).extractHeaderValue = () => 'Header';
 
         session.prepare([column]);
-        session.onNewHeaderRow().onColumn(column, 0);
+        addColumnHeader(session.onNewHeaderRow(), column, 0);
         session.onNewBodyRow(node).onColumn(column, 0, node);
 
         const rows = getRows(session);

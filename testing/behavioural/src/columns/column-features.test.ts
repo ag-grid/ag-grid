@@ -10,6 +10,8 @@
  * - defaultColDef and defaultColGroupDef
  * - Column types
  */
+import { waitFor } from '@testing-library/dom';
+
 import type { ColDef, GridApi } from 'ag-grid-community';
 import {
     AlignedGridsModule,
@@ -926,12 +928,8 @@ describe('Column Features', () => {
                 expect(autoCol.isAutoHeaderHeight()).toBe(true);
                 expect(normalCol.isAutoHeaderHeight()).toBe(false);
 
-                // Drain rAFs so the measurement callback can run.
-                for (let i = 0; i < 8; ++i) {
-                    await asyncSetTimeout(20);
-                }
-                // After measurement, the auto-header col has a non-null height.
-                expect(autoCol.getAutoHeaderHeight()).not.toBeNull();
+                // After measurement (driven by animation frames), the auto-header col has a non-null height.
+                await waitFor(() => expect(autoCol.getAutoHeaderHeight()).not.toBeNull());
                 // Non-auto col is never measured.
                 expect(normalCol.getAutoHeaderHeight()).toBeNull();
             } finally {
@@ -953,25 +951,22 @@ describe('Column Features', () => {
                 const autoCol = api.getColumn('auto')!;
                 expect(autoCol.isAutoHeaderHeight()).toBe(true);
 
-                // Drain rAFs so the measurement callback can run.
-                for (let i = 0; i < 8; ++i) {
-                    await asyncSetTimeout(20);
-                }
-                const measured = autoCol.getAutoHeaderHeight();
-                expect(measured).not.toBeNull();
+                // Measurement is driven by animation frames: poll until it lands on the column.
+                const measured = await waitFor(() => {
+                    const height = autoCol.getAutoHeaderHeight();
+                    expect(height).not.toBeNull();
+                    return height!;
+                });
                 // Auto measurement has widened the rendered header beyond the configured headerHeight.
                 expect(getHeaderRowHeight(api)).toBe(measured);
 
                 // Toggle autoHeaderHeight off via columnDefs.
                 api.setGridOption('columnDefs', [{ colId: 'auto', headerName: 'Auto' }, { colId: 'normal' }]);
-                for (let i = 0; i < 8; ++i) {
-                    await asyncSetTimeout(20);
-                }
 
                 expect(autoCol.isAutoHeaderHeight()).toBe(false);
                 // Stale measured height is cleared and the rendered header contracts to headerHeight.
+                await waitFor(() => expect(getHeaderRowHeight(api)).toBe(10));
                 expect(autoCol.getAutoHeaderHeight()).toBeNull();
-                expect(getHeaderRowHeight(api)).toBe(10);
             } finally {
                 mockGridLayout.useRealOffsetDimensions = false;
             }
@@ -987,17 +982,20 @@ describe('Column Features', () => {
                 });
 
                 const autoCol = api.getColumn('auto')!;
-                for (let i = 0; i < 8; ++i) {
-                    await asyncSetTimeout(20);
-                }
-                const measured = autoCol.getAutoHeaderHeight();
-                expect(measured).not.toBeNull();
+                const measured = await waitFor(() => {
+                    const height = autoCol.getAutoHeaderHeight();
+                    expect(height).not.toBeNull();
+                    return height!;
+                });
                 expect(getHeaderRowHeight(api)).toBe(measured);
 
                 // Hiding tears down the header cell but the column is still auto-height, so
                 // the measured height must be kept and the rendered header must not contract.
                 api.setColumnsVisible(['auto'], false);
+                // Negative assertion (the height must NOT be cleared), so there is no positive signal to
+                // poll for: hold open the animation-frame window in which a stale clear would land.
                 for (let i = 0; i < 8; ++i) {
+                    // eslint-disable-next-line no-restricted-syntax -- drains the animation-frame window in which an (incorrect) auto-header-height clear would land after hiding the column
                     await asyncSetTimeout(20);
                 }
 

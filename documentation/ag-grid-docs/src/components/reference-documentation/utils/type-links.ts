@@ -61,6 +61,7 @@ const TYPE_LINKS: Record<string, string> = {
     ExcelSheetPageSetup: './excel-export-api/#excelsheetpagesetup',
     ExcelSheetMargin: './excel-export-api/#excelsheetmargin',
     ExcelTableConfig: './excel-export-api/#exceltableconfig',
+    PdfExportParams: './pdf-export-api/#pdfexportparams',
     GridApi: './grid-api/',
     GridOptions: './grid-options/',
     AgPublicEventType: './grid-events/',

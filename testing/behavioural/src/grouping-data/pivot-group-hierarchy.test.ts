@@ -120,7 +120,6 @@ describe('pivot with groupHierarchy (date-time)', () => {
                 { id: 'oct', date: new Date(2020, 9, 1), v: 1 }, // month 10 → Q4
             ],
         });
-        await asyncSetTimeout(1);
 
         // Quarter is derived from the 1-based month: Q1=1-3, Q2=4-6, Q3=7-9, Q4=10-12.
         // March → Q1, July → Q3, October → Q4 (the months that the old `/4` math mis-bucketed).

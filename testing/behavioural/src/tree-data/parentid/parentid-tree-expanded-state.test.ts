@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, setRowDataChecked } from '../../test-utils';
+import { GridRows, TestGridsManager, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid parentId tree expanded state', () => {
     const gridsManager = new TestGridsManager({
@@ -50,8 +50,6 @@ describe('ag-grid parentId tree expanded state', () => {
             },
         });
 
-        await asyncSetTimeout(1);
-
         await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"
             └─┬ 0 GROUP collapsed id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
@@ -70,8 +68,6 @@ describe('ag-grid parentId tree expanded state', () => {
 
         api.getRowNode('0')!.setExpanded(true, undefined, true);
         api.getRowNode('1')!.setExpanded(true, undefined, true);
-
-        await asyncSetTimeout(1);
 
         await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"
@@ -93,8 +89,6 @@ describe('ag-grid parentId tree expanded state', () => {
 
         api.getRowNode('7')!.setExpanded(true, undefined, true);
         api.getRowNode('2')!.setExpanded(true, undefined, true);
-
-        await asyncSetTimeout(1);
 
         await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"

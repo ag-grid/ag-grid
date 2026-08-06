@@ -245,7 +245,11 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             api.applyTransaction({
                 update: [{ name: 'a', value: i }],
             });
-            // Allow debounced RowSpanService timeouts to dispatch spannedCellsUpdated
+            // RowSpanService chains two 0-delay timers (modelTimeout -> buildModelCaches ->
+            // debounceModelEvent -> spannedCellsUpdated), so a single tick is not enough. With
+            // enableCellSpan off there is no event to poll for — and if the chain never runs, no RAFs
+            // are scheduled and the accumulation assertion below passes vacuously.
+            // eslint-disable-next-line no-restricted-syntax -- waits out RowSpanService's chained 0-delay timers
             await asyncSetTimeout(5);
             // Flush animation frame tasks (simulates what happens during scroll/focus)
             api.flushAllAnimationFrames();
@@ -307,8 +311,12 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             └── LEAF id:c name:"c" value:3
         `);
 
-        // Allow RowSpanService timeouts and events to process
-        await asyncSetTimeout(50);
+        // Negative assertion: the test exists to prove the span cycle completes without error, so it
+        // needs the whole chain to run. A single tick can return before RowSpanService's second
+        // 0-delay timer fires, leaving the cycle half-done and the assertion vacuous — there is no
+        // positive signal that follows "nothing went wrong", so this is the observation window.
+        // eslint-disable-next-line no-restricted-syntax -- waits out RowSpanService's chained 0-delay timers
+        await asyncSetTimeout(5);
 
         // The grid should not have errored — spans are being processed
         expect(api.getDisplayedRowCount()).toBe(3);

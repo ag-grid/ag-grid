@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import { ClientSideRowModelModule, CsvExportModule, PaginationModule, PinnedRowModule } from 'ag-grid-community';
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
@@ -124,8 +126,6 @@ describe('Manual pinned rows', () => {
 
         api.setGridOption('grandTotalRow', 'top');
 
-        await asyncSetTimeout(5);
-
         // After changing grandTotalRow to 'top', footer moves to top but is not shown in DOM
         await new GridRows(api, 'after grandTotalRow change').check(`
             PINNED_TOP id:t-top-0-rugby sport:"rugby"
@@ -197,9 +197,7 @@ describe('Manual pinned rows', () => {
 
         api.setGridOption('grandTotalRow', 'pinnedTop');
 
-        await asyncSetTimeout(10);
-
-        assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID', 't-top-0-rugby']);
+        await waitFor(() => assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID', 't-top-0-rugby']));
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
@@ -346,11 +344,11 @@ describe('Manual pinned rows', () => {
             ├── LEAF id:"0-swimming" sport:"swimming"
             └── LEAF id:"0-rowing" sport:"rowing"
         `);
-        await asyncSetTimeout(10);
-
-        assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID', 't-top-0-rugby']);
-        assertPinnedRows(api, 'bottom', []);
-        expect(oldPinnedBottom.destroyed).toBe(true);
+        await waitFor(() => {
+            assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID', 't-top-0-rugby']);
+            assertPinnedRows(api, 'bottom', []);
+            expect(oldPinnedBottom.destroyed).toBe(true);
+        });
     });
 
     test('cycle through grandTotalRow positions including pinned', async () => {
@@ -406,10 +404,11 @@ describe('Manual pinned rows', () => {
             ├── LEAF id:"0-swimming" sport:"swimming"
             └── LEAF id:"0-rowing" sport:"rowing"
         `);
-        await asyncSetTimeout(10);
-        assertPinnedRows(api, 'top', []);
-        assertPinnedRows(api, 'bottom', []);
-        expect(topPinnedNode.destroyed).toBe(true);
+        await waitFor(() => {
+            assertPinnedRows(api, 'top', []);
+            assertPinnedRows(api, 'bottom', []);
+            expect(topPinnedNode.destroyed).toBe(true);
+        });
 
         api.setGridOption('grandTotalRow', 'pinnedBottom');
         await new GridColumns(
@@ -433,9 +432,10 @@ describe('Manual pinned rows', () => {
             └── LEAF id:"0-rowing" sport:"rowing"
             PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID
         `);
-        await asyncSetTimeout(10);
-        assertPinnedRows(api, 'top', []);
-        assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+        await waitFor(() => {
+            assertPinnedRows(api, 'top', []);
+            assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+        });
 
         const bottomNode = getPinnedRows(api, 'bottom')[0];
         expect(bottomNode.rowPinned).toBe('bottom');
@@ -463,10 +463,11 @@ describe('Manual pinned rows', () => {
             ├── LEAF id:"0-swimming" sport:"swimming"
             └── LEAF id:"0-rowing" sport:"rowing"
         `);
-        await asyncSetTimeout(10);
-        assertPinnedRows(api, 'top', []);
-        assertPinnedRows(api, 'bottom', []);
-        expect(bottomNode.destroyed).toBe(true);
+        await waitFor(() => {
+            assertPinnedRows(api, 'top', []);
+            assertPinnedRows(api, 'bottom', []);
+            expect(bottomNode.destroyed).toBe(true);
+        });
     });
 
     test('pinned row is unpinned when source row is destroyed via transaction remove', async () => {
@@ -505,7 +506,6 @@ describe('Manual pinned rows', () => {
 
         // Remove the source row via transaction
         api.applyTransaction({ remove: [{ sport: 'rugby' }] });
-        await asyncSetTimeout(10);
 
         // Verify final state - rugby is removed
         await new GridRows(api, 'after remove').check(`
@@ -518,11 +518,11 @@ describe('Manual pinned rows', () => {
             └── LEAF id:"0-rowing" sport:"rowing"
         `);
 
-        // Pinned row should be removed
-        assertPinnedRows(api, 'top', []);
-
-        // Source row should be destroyed
-        expect(sourceRow!.destroyed).toBe(true);
+        // Pinned row should be removed and its source row destroyed
+        await waitFor(() => {
+            assertPinnedRows(api, 'top', []);
+            expect(sourceRow!.destroyed).toBe(true);
+        });
     });
 
     test('pinned row is unpinned when source row is destroyed via setRowData', async () => {
@@ -558,7 +558,6 @@ describe('Manual pinned rows', () => {
             'rowData',
             rowData.filter((r) => r.sport !== 'rugby')
         );
-        await asyncSetTimeout(10);
 
         // Verify final state - rugby is removed
         await new GridRows(api, 'after setRowData').check(`
@@ -571,11 +570,11 @@ describe('Manual pinned rows', () => {
             └── LEAF id:"0-rowing" sport:"rowing"
         `);
 
-        // Pinned row should be removed
-        assertPinnedRows(api, 'top', []);
-
-        // Source row should be destroyed
-        expect(sourceRow!.destroyed).toBe(true);
+        // Pinned row should be removed and its source row destroyed
+        await waitFor(() => {
+            assertPinnedRows(api, 'top', []);
+            expect(sourceRow!.destroyed).toBe(true);
+        });
     });
 
     test('pinnedSibling references are correctly set up', async () => {
@@ -661,7 +660,6 @@ describe('Manual pinned rows', () => {
         api.applyTransaction({
             remove: [{ sport: 'rugby' }, { sport: 'tennis' }, { sport: 'golf' }],
         });
-        await asyncSetTimeout(10);
 
         // Verify final state - all pinned rows removed
         await new GridRows(api, 'after remove').check(`
@@ -711,7 +709,8 @@ describe('Manual pinned rows', () => {
 
         // Trigger re-evaluation by updating the row data for rugby
         api.applyTransaction({ update: [{ sport: 'rugby' }] });
-        await asyncSetTimeout(10);
+        // Flush the transaction before teardown; this test makes no assertion about the outcome.
+        await asyncSetTimeout(0);
 
         // The row should now be pinned to bottom (after isRowPinned is re-evaluated)
         // Note: isRowPinned is only called on firstDataRendered, so we need to test via setGridOption
@@ -770,13 +769,13 @@ describe('Manual pinned rows', () => {
             ├── LEAF id:"0-swimming" sport:"swimming"
             └── LEAF id:"0-rowing" sport:"rowing"
         `);
-        await asyncSetTimeout(10);
-
         // The previously-pinned row should be unpinned (rowNodeDataChanged listener handles it).
-        assertPinnedRows(api, 'top', []);
+        await waitFor(() => {
+            assertPinnedRows(api, 'top', []);
+            expect(pinnedRugby.destroyed).toBe(true);
+            expect(sourceRugby.pinnedSibling).toBeUndefined();
+        });
         expect(sourceRugby.destroyed).toBe(false); // source row stays alive
-        expect(sourceRugby.pinnedSibling).toBeUndefined();
-        expect(pinnedRugby.destroyed).toBe(true);
     });
 
     test('sort change re-sorts pinned containers', async () => {
@@ -832,8 +831,7 @@ describe('Manual pinned rows', () => {
             ├── LEAF id:"0-swimming" sport:"swimming"
             └── LEAF id:"0-tennis" sport:"tennis"
         `);
-        await asyncSetTimeout(10);
-        assertPinnedRows(api, 'top', ['t-top-0-cricket', 't-top-0-football', 't-top-0-tennis']);
+        await waitFor(() => assertPinnedRows(api, 'top', ['t-top-0-cricket', 't-top-0-football', 't-top-0-tennis']));
 
         // Sort descending
         api.applyColumnState({ state: [{ colId: 'sport', sort: 'desc' }] });
@@ -854,8 +852,7 @@ describe('Manual pinned rows', () => {
             ├── LEAF id:"0-football" sport:"football"
             └── LEAF id:"0-cricket" sport:"cricket"
         `);
-        await asyncSetTimeout(10);
-        assertPinnedRows(api, 'top', ['t-top-0-tennis', 't-top-0-football', 't-top-0-cricket']);
+        await waitFor(() => assertPinnedRows(api, 'top', ['t-top-0-tennis', 't-top-0-football', 't-top-0-cricket']));
 
         // Clear sort — falls back to source row order
         api.applyColumnState({ state: [{ colId: 'sport', sort: null }] });
@@ -876,8 +873,7 @@ describe('Manual pinned rows', () => {
             ├── LEAF id:"0-swimming" sport:"swimming"
             └── LEAF id:"0-rowing" sport:"rowing"
         `);
-        await asyncSetTimeout(10);
-        assertPinnedRows(api, 'top', ['t-top-0-football', 't-top-0-tennis', 't-top-0-cricket']);
+        await waitFor(() => assertPinnedRows(api, 'top', ['t-top-0-football', 't-top-0-tennis', 't-top-0-cricket']));
     });
 
     test('pivotMode toggle hides pinned leaf clones and shows them again on toggle off', async () => {
@@ -962,11 +958,11 @@ describe('Manual pinned rows', () => {
             └─┬ LEAF_GROUP collapsed id:row-group-country-B ag-Grid-AutoColumn:"B" pivot_year_2024_value:3
             · └── LEAF hidden id:leaf-B-rugby pivot_year_2024_value:3
         `);
-        await asyncSetTimeout(10);
-
-        const afterPivot = getPinnedRows(api, 'top');
-        expect(afterPivot.every((n) => n.group)).toBe(true); // only groups visible
-        expect(afterPivot.length).toBeLessThan(initialCount);
+        await waitFor(() => {
+            const afterPivot = getPinnedRows(api, 'top');
+            expect(afterPivot.length).toBeLessThan(initialCount);
+            expect(afterPivot.every((n) => n.group)).toBe(true); // only groups visible
+        });
 
         // Source nodes for hidden leaves should NOT be destroyed — they're still pinned, just hidden.
         for (const leaf of leafClones) {
@@ -998,10 +994,7 @@ describe('Manual pinned rows', () => {
             └─┬ LEAF_GROUP id:row-group-country-B ag-Grid-AutoColumn:"B" value:3
             · └── LEAF id:leaf-B-rugby country:"B" year:2024 sport:"rugby" value:3
         `);
-        await asyncSetTimeout(10);
-
-        const afterToggleOff = getPinnedRows(api, 'top');
-        expect(afterToggleOff.length).toBe(initialCount);
+        await waitFor(() => expect(getPinnedRows(api, 'top').length).toBe(initialCount));
     });
 
     test('pinned rows survive data updates to other rows', async () => {
@@ -1032,7 +1025,6 @@ describe('Manual pinned rows', () => {
 
         // Update a different row
         api.applyTransaction({ update: [{ sport: 'tennis' }] });
-        await asyncSetTimeout(10);
 
         // Rugby should still be pinned
         await new GridRows(api, 'after update tennis').check(`
@@ -1051,7 +1043,6 @@ describe('Manual pinned rows', () => {
 
         // Add a new row
         api.applyTransaction({ add: [{ sport: 'hockey' }] });
-        await asyncSetTimeout(10);
 
         // Rugby should still be pinned
         await new GridRows(api, 'after add hockey').check(`

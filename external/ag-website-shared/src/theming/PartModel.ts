@@ -99,7 +99,19 @@ export class PartModel {
 
 const allFeatureNames = ['colorScheme', 'iconSet', 'tabStyle', 'inputStyle'];
 
-export const allFeatureModels = memoize(() => allFeatureNames.map(FeatureModel.for));
+let featureModelsSource: () => FeatureModel[] = () => allFeatureNames.map(FeatureModel.for);
+
+/**
+ * Hosts can supply the set of swappable-part features the builder exposes.
+ * Defaults to grid's features (colorScheme/iconSet/tabStyle/inputStyle). Hosts
+ * without swappable parts (e.g. Studio) supply `() => []`. Must be called before
+ * allFeatureModels() is first evaluated, since that result is memoized.
+ */
+export const setFeatureModels = (source: () => FeatureModel[]) => {
+    featureModelsSource = source;
+};
+
+export const allFeatureModels = memoize(() => featureModelsSource());
 
 const featureModels: Record<string, FeatureModel | undefined> = {
     colorScheme: new FeatureModel('colorScheme', {

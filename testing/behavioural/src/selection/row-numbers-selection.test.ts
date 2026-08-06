@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
@@ -895,6 +895,10 @@ describe('Row Numbers Keyboard Navigation', () => {
         const rowNumberHeader = getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID));
         rowNumberHeader.dispatchEvent(new Event('focus'));
 
+        // Asserting that NOTHING is announced, so we must let the announcement window pass: the aria
+        // service debounces 200ms and then applies the text on a further 50ms timer. Polling would
+        // pass on the first tick and prove nothing.
+        // eslint-disable-next-line no-restricted-syntax -- waits out the 200ms aria debounce + 50ms apply timer
         await asyncSetTimeout(300);
 
         expect(getAriaAnnouncementText(gridDiv)).toBe('');
@@ -939,10 +943,12 @@ describe('Row Numbers Keyboard Navigation', () => {
         const rowNumberHeader = getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID));
         rowNumberHeader.dispatchEvent(new Event('focus'));
 
-        await asyncSetTimeout(300);
-
-        const announcement = getAriaAnnouncementText(gridDiv);
-        expect(announcement).toContain('Press Space or Enter to select all cells');
+        // Poll for the (debounced) announcement, then assert what it must not contain synchronously.
+        const announcement = await waitFor(() => {
+            const text = getAriaAnnouncementText(gridDiv);
+            expect(text).toContain('Press Space or Enter to select all cells');
+            return text;
+        });
         expect(announcement).not.toContain('Press Enter to toggle selection for all visible cells in this column');
         await new GridRows(api, `Row number header focus does not announce column selection hint final state`).check(
             `
@@ -1195,9 +1201,10 @@ describe('Row Numbers Keyboard Navigation', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
 
         api.setFocusedCell(1, ROW_NUMBERS_COLUMN_ID);
-        await asyncSetTimeout(300);
 
-        expect(getAriaAnnouncementText(gridDiv)).toContain('Press Enter to select all cells on this row');
+        await waitFor(() =>
+            expect(getAriaAnnouncementText(gridDiv)).toContain('Press Enter to select all cells on this row')
+        );
         await new GridRows(api, `Row number cell focus announces select-row-cells hint final state`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
@@ -1713,6 +1720,12 @@ describe('Row Numbers refresh coalescing', () => {
         const counts = countRefreshes(api);
 
         api.setGridOption('rowNumbers', { width: 90 });
+        // `displayedColumnsChanged` lags the column-model update, so poll for the first refresh
+        // rather than guessing when it lands...
+        await waitFor(() => expect(counts.displayed).toBe(1));
+        // ...then hold a real window open: "once, not twice" is a negative assertion, and the
+        // absence of a second refresh has no positive signal to poll for.
+        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a second (redundant) displayedColumnsChanged
         await asyncSetTimeout(20);
         await new GridColumns(api, 'rowNumbers width 90').checkColumns(`
             LEFT
@@ -1736,6 +1749,10 @@ describe('Row Numbers refresh coalescing', () => {
 
         const counts = countRefreshes(api);
         api.setGridOption('rowNumbers', true);
+        // Poll for the refresh event itself (it lags the column-model update), then hold a window
+        // open to catch a redundant second one — a negative with no positive signal to poll.
+        await waitFor(() => expect(counts.displayed).toBe(1));
+        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a second (redundant) displayedColumnsChanged
         await asyncSetTimeout(20);
         expect(api.getColumn(ROW_NUMBERS_COLUMN_ID)).not.toBeNull();
         expect(counts.displayed).toBe(1);
@@ -1748,6 +1765,8 @@ describe('Row Numbers refresh coalescing', () => {
         `);
 
         api.setGridOption('rowNumbers', false);
+        await waitFor(() => expect(counts.displayed).toBe(2));
+        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a second (redundant) displayedColumnsChanged
         await asyncSetTimeout(20);
         expect(api.getColumn(ROW_NUMBERS_COLUMN_ID)).toBeNull();
         // Exactly one displayed-cols refresh per toggle (2 total).

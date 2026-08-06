@@ -31,5 +31,12 @@ export const $openLinksInNewTab = persistentAtom<boolean>(
 );
 export const toggleOpenLinksInNewTab = createToggleBoolean($openLinksInNewTab);
 
+export const $copyFrameworkAgnosticLinks = persistentAtom<boolean>(
+    `${LOCALSTORAGE_PREFIX}:copyFrameworkAgnosticLinks`,
+    false,
+    parseBoolean
+);
+export const toggleCopyFrameworkAgnosticLinks = createToggleBoolean($copyFrameworkAgnosticLinks);
+
 export const $fpsMonitor = persistentAtom<boolean>(`${LOCALSTORAGE_PREFIX}:fpsMonitor`, false, parseBoolean);
 export const toggleFpsMonitor = createToggleBoolean($fpsMonitor);

@@ -47,7 +47,6 @@ const isRedirectPage = (page: string) => {
  */
 const isNonPublicContent = (page: string) => {
     return (
-        page.includes('pdf-export') ||
         page.endsWith('/style-guide/') ||
         // Contact form result pages
         page.endsWith('/contact/failure/') ||

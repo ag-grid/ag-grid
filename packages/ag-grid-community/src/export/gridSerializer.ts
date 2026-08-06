@@ -1,5 +1,3 @@
-import { _last } from 'ag-stack';
-
 import type { ColumnModel } from '../columns/columnModel';
 import { isColumnGroupAutoCol, isColumnSelectionCol, isRowNumberCol } from '../columns/columnUtils';
 import { GroupInstanceIdCreator } from '../columns/groupInstanceIdCreator';
@@ -9,7 +7,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
-import { isColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import {
     _addGridCommonParams,
@@ -17,16 +14,11 @@ import {
     _isClientSideRowModel,
     _isServerSideRowModel,
 } from '../gridOptionsUtils';
-import type {
-    ExportParams,
-    ProcessGroupHeaderForExportParams,
-    ShouldRowBeSkippedParams,
-} from '../interfaces/exportParams';
+import type { ExportParams, ShouldRowBeSkippedParams } from '../interfaces/exportParams';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './iGridSerializer';
-
-type ProcessGroupHeaderCallback = (params: ProcessGroupHeaderForExportParams) => string;
+import { createExportHeaderLayout } from './exportHeaderLayout';
+import type { GridHeaderCell, GridSerializingSession, RowAccumulator } from './iGridSerializer';
 
 export class GridSerializer extends BeanStub implements NamedBean {
     beanName = 'gridSerializer' as const;
@@ -56,7 +48,6 @@ export class GridSerializer extends BeanStub implements NamedBean {
             // first pass, put in the header names of the cols
             this.prepareSession(columnsToExport),
             this.prependContent(params),
-            this.exportColumnGroups(params, columnsToExport),
             this.exportHeaders(params, columnsToExport),
             this.processPinnedTopRows(params, columnsToExport),
             this.processRows(params, columnsToExport),
@@ -156,41 +147,39 @@ export class GridSerializer extends BeanStub implements NamedBean {
         };
     }
 
-    private exportColumnGroups<T>(
-        params: ExportParams<T>,
-        columnsToExport: AgColumn[]
-    ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
-        return (gridSerializingSession) => {
-            if (!params.skipColumnGroupHeaders) {
-                const idCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
-                const displayedGroups: (AgColumn | AgColumnGroup)[] = this.beans.colGroupSvc.createGroups(
-                    columnsToExport,
-                    idCreator,
-                    null,
-                    /* buildToken */ undefined,
-                    /* isStandaloneStructure */ true
-                );
-
-                this.recursivelyAddHeaderGroups(
-                    displayedGroups,
-                    gridSerializingSession,
-                    params.processGroupHeaderCallback
-                );
-            }
-            return gridSerializingSession;
-        };
-    }
-
     private exportHeaders<T>(
         params: ExportParams<T>,
         columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
-            if (!params.skipColumnHeaders) {
-                const gridRowIterator = gridSerializingSession.onNewHeaderRow();
-                columnsToExport.forEach((column, index) => {
-                    gridRowIterator.onColumn(column, index, undefined);
-                });
+            if (params.skipColumnGroupHeaders && params.skipColumnHeaders) {
+                return gridSerializingSession;
+            }
+
+            let displayedGroups: (AgColumn | AgColumnGroup)[] = [];
+            if (!params.skipColumnGroupHeaders) {
+                displayedGroups = this.beans.colGroupSvc.createGroups(
+                    columnsToExport,
+                    new GroupInstanceIdCreator(),
+                    null,
+                    /* buildToken */ undefined,
+                    /* isStandaloneStructure */ true
+                );
+            }
+            const rows = createExportHeaderLayout(
+                displayedGroups,
+                columnsToExport,
+                gridSerializingSession.useGridHeaderLayout && !!this.gos.get('hidePaddedHeaderRows'),
+                !params.skipColumnHeaders,
+                gridSerializingSession.useGridHeaderLayout
+            );
+            for (const row of rows) {
+                const accumulator = row.grouping
+                    ? gridSerializingSession.onNewHeaderGroupingRow()
+                    : gridSerializingSession.onNewHeaderRow();
+                for (const cell of row.cells) {
+                    accumulator.onCell(this.withCollapsibleGroupRanges(cell, columnsToExport));
+                }
             }
             return gridSerializingSession;
         };
@@ -399,86 +388,28 @@ export class GridSerializer extends BeanStub implements NamedBean {
         return columnsToExport;
     }
 
-    private recursivelyAddHeaderGroups<T>(
-        displayedGroups: (AgColumn | AgColumnGroup)[],
-        gridSerializingSession: GridSerializingSession<T>,
-        processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined
-    ): void {
-        const directChildrenHeaderGroups: (AgColumn | AgColumnGroup)[] = [];
-        for (const columnGroupChild of displayedGroups) {
-            if (!isColumnGroup(columnGroupChild)) {
-                continue;
+    private withCollapsibleGroupRanges(cell: GridHeaderCell, columnsToExport: AgColumn[]): GridHeaderCell {
+        if (cell.type !== 'group' && cell.type !== 'padding') {
+            return cell;
+        }
+        if (!cell.column?.isExpandable()) {
+            return cell;
+        }
+
+        // ranges are offsets within this cell's own span, matching how merge
+        // references are resolved from the cell's first output column.
+        const collapsibleGroupRanges: number[][] = [];
+        let openStart = -1;
+        for (let offset = 0; offset <= cell.columnSpan; offset++) {
+            const column = offset < cell.columnSpan ? columnsToExport[cell.columnIndex + offset] : undefined;
+            const isOpen = column?.getColumnGroupShow() === 'open';
+            if (isOpen && openStart < 0) {
+                openStart = offset;
+            } else if (!isOpen && openStart >= 0) {
+                collapsibleGroupRanges.push([openStart, offset - 1]);
+                openStart = -1;
             }
-            for (const it of columnGroupChild.children ?? []) {
-                directChildrenHeaderGroups.push(it);
-            }
         }
-
-        if (displayedGroups.length > 0 && isColumnGroup(displayedGroups[0])) {
-            this.doAddHeaderHeader(gridSerializingSession, displayedGroups, processGroupHeaderCallback);
-        }
-
-        if (directChildrenHeaderGroups && directChildrenHeaderGroups.length > 0) {
-            this.recursivelyAddHeaderGroups(
-                directChildrenHeaderGroups,
-                gridSerializingSession,
-                processGroupHeaderCallback
-            );
-        }
-    }
-
-    private doAddHeaderHeader<T>(
-        gridSerializingSession: GridSerializingSession<T>,
-        displayedGroups: (AgColumn | AgColumnGroup)[],
-        processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined
-    ) {
-        const gridRowIterator: RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
-        let columnIndex: number = 0;
-        for (const columnGroupChild of displayedGroups) {
-            const columnGroup: AgColumnGroup = columnGroupChild as AgColumnGroup;
-
-            let name: string;
-            if (processGroupHeaderCallback) {
-                name = processGroupHeaderCallback(
-                    _addGridCommonParams(this.gos, {
-                        columnGroup: columnGroup,
-                    })
-                );
-            } else {
-                name = this.beans.colNames.getDisplayNameForColumnGroup(columnGroup, 'header')!;
-            }
-
-            const columnsToCalculateRange = columnGroup.isExpandable() ? columnGroup.getLeafColumns() : [];
-            const collapsibleGroupRanges = columnsToCalculateRange.reduce(
-                (collapsibleGroups: number[][], currentColumn, currentIdx, arr) => {
-                    let lastGroup = _last(collapsibleGroups);
-                    const groupShow = currentColumn.getColumnGroupShow() === 'open';
-
-                    if (!groupShow) {
-                        if (lastGroup && lastGroup[1] == null) {
-                            lastGroup[1] = currentIdx - 1;
-                        }
-                    } else if (!lastGroup || lastGroup[1] != null) {
-                        lastGroup = [currentIdx];
-                        collapsibleGroups.push(lastGroup);
-                    }
-
-                    if (currentIdx === arr.length - 1 && lastGroup && lastGroup[1] == null) {
-                        lastGroup[1] = currentIdx;
-                    }
-
-                    return collapsibleGroups;
-                },
-                []
-            );
-
-            gridRowIterator.onColumn(
-                columnGroup,
-                name || '',
-                columnIndex++,
-                columnGroup.getLeafColumns().length - 1,
-                collapsibleGroupRanges
-            );
-        }
+        return { ...cell, collapsibleGroupRanges };
     }
 }

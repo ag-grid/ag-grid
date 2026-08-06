@@ -207,6 +207,118 @@ describe('Set Filter — tree list with dates', () => {
     });
 });
 
+describe('Set Filter — dates before 1000AD', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [SetFilterModule, ClientSideRowModelModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+        installFilterLayoutMock();
+    });
+    afterAll(() => uninstallFilterLayoutMock());
+    afterEach(() => gridsManager.reset());
+
+    /** `new Date(87, ...)` maps 0-99 into the 1900s, so the year has to be applied separately. */
+    function dateInYear(year: number, month: number, day: number): Date {
+        const date = new Date(2000, month, day);
+        date.setFullYear(year);
+        return date;
+    }
+
+    const EARLY_DATE_ROWS = [
+        { when: dateInYear(87, 0, 1) },
+        { when: dateInYear(987, 5, 15) },
+        { when: new Date(2020, 0, 5) },
+    ];
+
+    test('set filter keys zero-pad the year to four digits', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            // Date columns default to a tree list; flat keys are what the model stores either way.
+            columnDefs: [{ field: 'when', filter: 'agSetColumnFilter', filterParams: { treeList: false } }],
+            rowData: EARLY_DATE_ROWS,
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'when');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '0087-01-01', '0987-06-15', '2020-01-05']);
+
+        // The padded key is what the model stores, and filtering by it matches the row.
+        await api.setColumnFilterModel('when', { filterType: 'set', values: ['0087-01-01'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'filtered to the year 87 row').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 when:"0087-01-01"
+        `);
+    });
+
+    test('an unpadded year key matches nothing', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'when', filter: 'agSetColumnFilter' }],
+            rowData: EARLY_DATE_ROWS,
+        });
+
+        // Set filter keys are matched by string equality, never re-parsed, so a model saved before
+        // the year was padded no longer lines up with the key derived from the same date.
+        await api.setColumnFilterModel('when', { filterType: 'set', values: ['87-01-01'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'unpadded key matches no rows').check(`
+            ROOT id:ROOT_NODE_ID
+        `);
+    });
+
+    test('tree list groups a Date under its real year, not the 1900s equivalent', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'when', filter: 'agSetColumnFilter', filterParams: { treeList: true } }],
+            rowData: EARLY_DATE_ROWS,
+        });
+
+        await ColumnFilterHarness.open(api, 'when');
+        // Year group labels come from `_getDateParts`, which does not pad — unlike the leaf keys above.
+        expect(setItemLabels()).toEqual(['(Select All)', '87', '987', '2020']);
+
+        await toggleGroupExpand('87');
+        expect(setItemLabels()).toEqual(['(Select All)', '87', 'January', '987', '2020']);
+
+        await toggleGroupExpand('January');
+        expect(setItemLabels()).toEqual(['(Select All)', '87', 'January', '01', '987', '2020']);
+    });
+
+    test('tree list groups a date string under its real year, not the 1900s equivalent', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'when', filter: 'agSetColumnFilter', filterParams: { treeList: true } }],
+            rowData: [{ when: '0087-01-01' }, { when: '0987-06-15' }, { when: '2020-01-05' }],
+        });
+
+        await ColumnFilterHarness.open(api, 'when');
+        expect(setItemLabels()).toEqual(['(Select All)', '87', '987', '2020']);
+
+        await toggleGroupExpand('87');
+        expect(setItemLabels()).toEqual(['(Select All)', '87', 'January', '987', '2020']);
+    });
+
+    test('selecting a leaf under an early year filters to that row', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'when', filter: 'agSetColumnFilter', filterParams: { treeList: true } }],
+            rowData: EARLY_DATE_ROWS,
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'when');
+        await filter.toggleSetItem('987');
+        await filter.toggleSetItem('2020');
+        await asyncSetTimeout(0);
+
+        expect(filter.getModel()).toEqual({ filterType: 'set', values: ['0087-01-01'] });
+        await new GridRows(api, 'tree list early year selection rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 when:"0087-01-01"
+        `);
+    });
+});
+
 describe('Set Filter — treeListPathGetter and treeListFormatter', () => {
     const gridsManager = new TestGridsManager({
         modules: [SetFilterModule, ClientSideRowModelModule],

@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import type { CellValueChangedEvent, ColDef, NewValueParams } from 'ag-grid-community';
@@ -122,13 +122,10 @@ describe('Cell Editing Start', () => {
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', field!));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', field!)));
             await userEvent.click(cell);
             await userEvent.keyboard(input);
-
-            await asyncSetTimeout(1);
 
             // get input element inside the cell and check text contents, don't use agTestIdFor
             // as it might not be available for all cell editors, use testing-library
@@ -167,12 +164,9 @@ describe('Cell Editing Start', () => {
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', field!));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', field!)));
             await userEvent.dblClick(cell);
-
-            await asyncSetTimeout(1);
 
             const inputElement = await waitForInput(gridDiv, cell, { popup });
             expectInputValue(inputElement, expected);
@@ -212,13 +206,10 @@ describe('Cell Editing Start', () => {
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', field!));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', field!)));
             await userEvent.click(cell);
             await userEvent.keyboard(`{F2}`);
-
-            await asyncSetTimeout(1);
 
             const inputElement = await waitForInput(gridDiv, cell, { popup });
             expectInputValue(inputElement, expected);
@@ -249,15 +240,12 @@ describe('Cell Editing Start', () => {
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', field!));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', field!)));
             await userEvent.click(cell);
             await userEvent.keyboard(`{Backspace}`);
 
-            await asyncSetTimeout(1);
-
-            expect(api.getCellEditorInstances()).toHaveLength(1);
+            await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
 
             // Row 0 shows 🖍️ (row is editing) but column values still show committed data —
             // Backspace clears the editor input without changing the data model until editing stops.
@@ -293,17 +281,16 @@ describe('Cell Editing Start', () => {
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', field!));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', field!)));
             await userEvent.click(cell);
             await userEvent.keyboard(`{Delete}`);
 
-            await asyncSetTimeout(1);
+            // Delete clears the rendered cell text synchronously with the keypress; gate on that
+            // change before asserting the editor never opened for this key.
+            await waitFor(() => expect(cell).toHaveTextContent(expectedText as any));
 
             expect(api.getCellEditorInstances()).toHaveLength(0);
-
-            expect(cell).toHaveTextContent(expectedText as any);
         });
     });
 
@@ -320,11 +307,10 @@ describe('Cell Editing Start', () => {
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'string2'));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'string2')));
             await userEvent.dblClick(cell);
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
 
             // Editor is open — the row has a 🖍️ editing indicator.
             // The cell value shows the committed value (popup editors render outside the cell,
@@ -339,7 +325,15 @@ describe('Cell Editing Start', () => {
             const textarea = await waitForInput(gridDiv, cell, { popup: true });
             await userEvent.clear(textarea);
             await userEvent.type(textarea, 'updated text');
-            await asyncSetTimeout(1);
+
+            // Wait for the grid to sync the typed value into the edit model (GridRows reads the
+            // live edit value via getCellValue(from: 'edit'), not the popup editor's DOM text).
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+            await waitFor(() =>
+                expect(api.getCellValue({ rowNode, colKey: 'string2', useFormatter: false, from: 'edit' })).toBe(
+                    'updated text'
+                )
+            );
 
             // Editor still open — row shows 🖍️, and the cell value shows 🖍️editValue dataValue
             // because the grid has synced the typed value with the edit model
@@ -351,7 +345,7 @@ describe('Cell Editing Start', () => {
 
             // Commit by stopping editing programmatically (avoids starting a new edit on the next cell)
             api.stopEditing();
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
             // After commit: string2 is updated, no more editing indicator
             await new GridRows(api, 'after large text popup edit committed').check(`
@@ -382,11 +376,10 @@ describe('Cell Editing Start', () => {
             const eventTracker = new EditEventTracker(api);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'number'));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'number')));
             await userEvent.dblClick(cell);
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
 
             await new GridRows(api, 'during edit, dblClick opened editor').check(`
                 ROOT id:ROOT_NODE_ID
@@ -396,7 +389,7 @@ describe('Cell Editing Start', () => {
 
             await userEvent.keyboard('12{Enter}');
 
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(cell).toHaveTextContent('12'));
 
             await new GridRows(api, 'after edit committed').check(`
                 ROOT id:ROOT_NODE_ID
@@ -447,12 +440,11 @@ describe('Cell Editing Start', () => {
             const eventTracker = new EditEventTracker(api);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
 
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'number'));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'number')));
             await userEvent.dblClick(cell);
 
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
 
             await new GridRows(api, 'during edit with valueSetter, dblClick opened editor').check(`
                 ROOT id:ROOT_NODE_ID
@@ -462,7 +454,7 @@ describe('Cell Editing Start', () => {
 
             await userEvent.keyboard('12{Enter}');
 
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(cell).toHaveTextContent('12'));
 
             await new GridRows(api, 'after edit with valueSetter committed').check(`
                 ROOT id:ROOT_NODE_ID
@@ -518,49 +510,46 @@ describe('Cell Editing Start', () => {
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
         expect(cellB).toHaveTextContent('initial');
 
         await userEvent.dblClick(cellA);
-        await asyncSetTimeout(1);
 
         const input = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(input);
         await userEvent.type(input, 'xx');
-        await asyncSetTimeout(1);
 
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
 
         // AG-16448: valueGetter should NOT see live editing value - should still show original value
+        // (refreshCells is synchronous, and this value never changes across the edit - nothing to poll)
         expect(cellB).toHaveTextContent('initial');
 
         // Commit first edit and start a new edit session to test cancel
         await userEvent.keyboard('{Enter}');
-        await asyncSetTimeout(1);
 
         // After commit, cellB should update to the committed value
-        expect(cellB).toHaveTextContent('xx');
+        await waitFor(() => expect(cellB).toHaveTextContent('xx'));
 
         await userEvent.dblClick(cellA);
-        await asyncSetTimeout(1);
         const input2 = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(input2);
         await userEvent.type(input2, 'yy');
-        await asyncSetTimeout(1);
 
         api.refreshCells({ columns: ['b'], force: true });
-        await asyncSetTimeout(1);
 
         // AG-16448: valueGetter should NOT see live editing value - should show last committed value
+        // (refreshCells is synchronous, and this value never changes across the edit - nothing to poll)
         expect(cellB).toHaveTextContent('xx');
 
         // Cancel edit by pressing ESC, should stay at last committed value
         await userEvent.keyboard('{Escape}');
-        await asyncSetTimeout(1);
+
+        // Editor closing is the genuine signal that the cancel has taken effect; cellB's value is
+        // unchanged either side of it, so gate on the editor count rather than the unchanging text.
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
         expect(cellB).toHaveTextContent('xx');
 
@@ -626,9 +615,8 @@ describe('Cell Editing Start', () => {
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const cellComputed = getByTestId(gridDiv, agTestIdFor.cell('0', 'computed'));
 
         // Initial state
@@ -640,50 +628,55 @@ describe('Cell Editing Start', () => {
 
         // Phase A: during edit, valueGetter never receives the editing value
         await userEvent.dblClick(cellA);
-        await asyncSetTimeout(1);
         const input = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(input);
         await userEvent.type(input, 'typing');
-        await asyncSetTimeout(1);
+
+        // Single-tick yield after setting the native input's value before reading it back.
+        await asyncSetTimeout(0);
 
         // The editor input itself shows the live typing value
         expect(input.value).toBe('typing');
 
         // Multiple refreshes during edit — valueGetter should never see the typing value
         api.refreshCells({ columns: ['computed'], force: true });
-        await asyncSetTimeout(1);
         api.refreshCells({ columns: ['computed'], force: true });
-        await asyncSetTimeout(1);
 
-        expect(valueGetterValues.every((v) => v === 'initial')).toBe(true);
-        expect(cellComputed).toHaveTextContent('Echo: initial');
+        await waitFor(() => {
+            expect(valueGetterValues.every((v) => v === 'initial')).toBe(true);
+            expect(cellComputed).toHaveTextContent('Echo: initial');
+        });
 
         // Phase B: cancel — should not leak a cached editing value
         await userEvent.keyboard('{Escape}');
-        await asyncSetTimeout(1);
+
+        // Editor closing is the genuine signal that the cancel has landed.
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
         api.refreshCells({ columns: ['computed'], force: true });
-        await asyncSetTimeout(1);
 
+        // refreshCells is synchronous; this value is unchanged from before the cancel, so there is
+        // nothing new to poll for here (the editor-close wait above is the real gate).
         expect(cellComputed).toHaveTextContent('Echo: initial');
 
         // Phase C: commit — cache expires on data change; dependent column updates
         await userEvent.dblClick(cellA);
-        await asyncSetTimeout(1);
         const input2 = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(input2);
         await userEvent.type(input2, 'committed');
-        await asyncSetTimeout(1);
 
         await userEvent.keyboard('{Enter}');
-        await asyncSetTimeout(1);
 
-        expect(cellA).toHaveTextContent('committed');
-        expect(cellComputed).toHaveTextContent('Echo: committed');
+        await waitFor(() => {
+            expect(cellA).toHaveTextContent('committed');
+            expect(cellComputed).toHaveTextContent('Echo: committed');
+        });
 
         // Refresh again — cached value should be correct post-commit
         api.refreshCells({ columns: ['computed'], force: true });
-        await asyncSetTimeout(1);
+
+        // refreshCells is synchronous, and the value is unchanged from the commit above — nothing
+        // new to poll for; this re-checks the cache stays consistent, not a new async transition.
         expect(cellComputed).toHaveTextContent('Echo: committed');
 
         // 2 sessions: first cancelled (no value change), second committed (1 value change)
@@ -736,16 +729,14 @@ describe('Cell Editing Start', () => {
         `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
-        const cellComputed = getByTestId(gridDiv, agTestIdFor.cell('0', 'computed'));
+        const cellComputed = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'computed')));
         const initialCallCount = valueGetterCallCount;
 
-        // Multiple refreshes should use cached value (no new calls)
+        // Multiple refreshes should use cached value (no new calls). refreshCells is synchronous,
+        // so there is nothing to poll between the two calls.
         api.refreshCells({ columns: ['computed'], force: true });
-        await asyncSetTimeout(1);
         api.refreshCells({ columns: ['computed'], force: true });
-        await asyncSetTimeout(1);
 
         // With valueCache enabled, the call count should NOT have increased
         // because the cached value is being reused
@@ -757,13 +748,11 @@ describe('Cell Editing Start', () => {
         // Now expire the cache by making a data change
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'changed');
-        await asyncSetTimeout(1);
 
         // After data change, cache should expire and valueGetter should be called again
         api.refreshCells({ columns: ['computed'], force: true });
-        await asyncSetTimeout(1);
 
-        expect(valueGetterCallCount).toBeGreaterThan(initialCallCount);
+        await waitFor(() => expect(valueGetterCallCount).toBeGreaterThan(initialCallCount));
         await new GridRows(api, `valueCache is actually caching values final state`).check(`
             ROOT id:ROOT_NODE_ID computed:"call-4"
             └── LEAF id:0 a:"changed" computed:"call-3"
@@ -808,9 +797,8 @@ describe('Cell Editing Start', () => {
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'changed');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellValueChangedEvents).toHaveLength(1));
 
-        expect(cellValueChangedEvents).toHaveLength(1);
         expect(cellValueChangedEvents[0]).toEqual({
             oldValue: 'prefix_initial',
             newValue: 'prefix_changed',
@@ -851,9 +839,8 @@ describe('Cell Editing Start', () => {
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'changed');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(cellValueChangedEvents).toHaveLength(1));
 
-        expect(cellValueChangedEvents).toHaveLength(1);
         expect(cellValueChangedEvents[0]).toEqual({
             oldValue: 'initial',
             newValue: 'changed',
@@ -900,9 +887,8 @@ describe('Cell Editing Start', () => {
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'changed');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(colDefEvents).toHaveLength(1));
 
-        expect(colDefEvents).toHaveLength(1);
         expect(colDefEvents[0]).toEqual({
             oldValue: 'prefix_initial',
             newValue: 'prefix_changed',

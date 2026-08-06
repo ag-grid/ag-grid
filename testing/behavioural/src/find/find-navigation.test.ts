@@ -1,6 +1,6 @@
 import { FindModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /**
  * Tests for find navigation functionality (next, previous, goTo).
@@ -46,7 +46,6 @@ describe('Find Navigation', () => {
                 ├── LEAF id:2 value:"car"
                 └── LEAF id:3 value:"cup"
             `);
-        await asyncSetTimeout(1);
 
         // 'cat', 'car', 'cup' contain 'c', so 3 matches
         expect(api.findGetTotalMatches()).toBe(3);
@@ -113,7 +112,6 @@ describe('Find Navigation', () => {
             ├── LEAF id:1 value:"dog"
             └── LEAF id:2 value:"car"
         `);
-        await asyncSetTimeout(1);
 
         expect(api.findGetTotalMatches()).toBe(2); // 'cat' and 'car'
 
@@ -167,7 +165,6 @@ describe('Find Navigation', () => {
             ├── LEAF id:2 value:"xthree"
             └── LEAF id:3 value:"xfour"
         `);
-        await asyncSetTimeout(1);
 
         // Each row has one 'x'
         expect(api.findGetTotalMatches()).toBe(4);
@@ -228,7 +225,6 @@ describe('Find Navigation', () => {
             ├── LEAF id:0 value:"test"
             └── LEAF id:1 value:"other"
         `);
-        await asyncSetTimeout(1);
 
         api.findGoTo(1);
         expect(api.findGetActiveMatch()!.numOverall).toBe(1);
@@ -271,7 +267,6 @@ describe('Find Navigation', () => {
                 └── LEAF id:1 value:"xtwo"
             `
         );
-        await asyncSetTimeout(1);
 
         expect(api.findGetTotalMatches()).toBe(2);
 
@@ -319,7 +314,6 @@ describe('Find Navigation', () => {
                 ├── LEAF id:0 value:"aaa"
                 └── LEAF id:1 value:"bbb"
             `);
-        await asyncSetTimeout(1);
 
         // 'aaa' has 3 matches of 'a'
         expect(api.findGetTotalMatches()).toBe(3);
@@ -379,7 +373,6 @@ describe('Find Navigation', () => {
             ├── LEAF id:0 a:"find" b:"no" c:"find"
             └── LEAF id:1 a:"no" b:"find" c:"no"
         `);
-        await asyncSetTimeout(1);
 
         expect(api.findGetTotalMatches()).toBe(3);
 

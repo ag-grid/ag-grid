@@ -1,0 +1,22 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.controls {
+    margin-bottom: 8px;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}
+
+.country-flag {
+    height: 14px;
+    margin-right: 8px;
+    object-fit: contain;
+    vertical-align: middle;
+    width: 21px;
+}

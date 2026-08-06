@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import {
@@ -142,8 +142,7 @@ describe('Cell change flashing after undo and redo', () => {
         expect(api.getDisplayedRowAtIndex(0)?.data?.make).toBe('Honda');
 
         // Wait for flash to complete before testing undo flash
-        await asyncSetTimeout(600);
-        expect(cell).not.toHaveClass(FLASH_CSS_CLASS);
+        await waitFor(() => expect(cell).not.toHaveClass(FLASH_CSS_CLASS));
 
         // Undo the edit
         api.undoCellEditing();
@@ -198,15 +197,14 @@ describe('Cell change flashing after undo and redo', () => {
         await user.keyboard('{Enter}');
         await asyncSetTimeout(0);
 
-        // Undo
-        await asyncSetTimeout(600);
+        // Undo — wait for the edit flash to complete first, so it isn't conflated with the undo flash
+        await waitFor(() => expect(cell).not.toHaveClass(FLASH_CSS_CLASS));
         api.undoCellEditing();
         await asyncSetTimeout(0);
         expect(api.getDisplayedRowAtIndex(0)?.data?.make).toBe('Toyota');
 
         // Wait for undo flash to complete
-        await asyncSetTimeout(600);
-        expect(cell).not.toHaveClass(FLASH_CSS_CLASS);
+        await waitFor(() => expect(cell).not.toHaveClass(FLASH_CSS_CLASS));
 
         // Redo
         api.redoCellEditing();
@@ -289,8 +287,7 @@ describe('Cell change flashing suppressed when value not committed', () => {
         expect(api.getDisplayedRowAtIndex(0)?.data?.make).toBe('Honda');
 
         // Wait for edit flash to complete
-        await asyncSetTimeout(600);
-        expect(cell).not.toHaveClass(FLASH_CSS_CLASS);
+        await waitFor(() => expect(cell).not.toHaveClass(FLASH_CSS_CLASS));
 
         // Undo — valueSetter rejects (callCount > 1)
         api.undoCellEditing();
@@ -422,10 +419,12 @@ describe('Cell change flashing after fill handle', () => {
         const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
         sourceCell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
         await cellSelectionChanged;
-        await asyncSetTimeout(1);
 
         // Double-click fill handle to fill down
-        const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+        let fillHandle!: HTMLElement;
+        await waitFor(() => {
+            fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+        });
         const fillEnd = waitForEvent('fillEnd', api);
         await userEvent.dblClick(fillHandle);
         await fillEnd;

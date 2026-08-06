@@ -1,0 +1,64 @@
+---
+title: "PDF Export - Watermarks"
+enterprise: true
+---
+
+PDF watermarks display translucent status text, such as **DRAFT** or **CONFIDENTIAL**, across the exported page content. Watermarks do not affect table measurement or pagination.
+
+## Adding Watermarks
+
+Set `watermark.text` in the PDF export parameters. The default watermark is centred on every page, rotated by `-45` degrees, and rendered with low opacity.
+
+```ts
+const defaultPdfExportParams = {
+    watermark: {
+        text: 'DRAFT',
+    },
+};
+```
+
+The following example exports a multi-page report with a customised watermark:
+
+- `opacity` controls transparency from `0` to `1`.
+- `rotation` controls the text angle in degrees.
+- `pages` can be `'all'`, `'first'`, `'odd'`, or `'even'`.
+- `style` controls the text colour, font, size, weight, and other supported text properties.
+
+```ts
+const defaultPdfExportParams = {
+    watermark: {
+        text: 'DRAFT',
+        opacity: 0.12,
+        rotation: -45,
+        pages: 'all',
+        style: {
+            color: '#6b7280',
+            fontSize: 92,
+            fontWeight: 'bold',
+        },
+    },
+};
+```
+
+{% gridExampleRunner title="PDF Text Watermark" name="pdf-text-watermark" exampleHeight=500 /%}
+
+The watermark is marked as a PDF artefact, so assistive technologies do not announce it as document content on every page.
+
+## API
+
+### Export Options
+
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["watermark"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
+
+### PdfWatermark
+
+{% interfaceDocumentation interfaceName="PdfWatermark" /%}
+
+### PdfWatermarkPageSelection
+
+{% interfaceDocumentation interfaceName="PdfWatermarkPageSelection" config={"asCode":true} /%}
+
+## Known Limitations
+
+- Watermarks support text only. Image watermarks are not supported.
+- One watermark configuration can be applied to an export.

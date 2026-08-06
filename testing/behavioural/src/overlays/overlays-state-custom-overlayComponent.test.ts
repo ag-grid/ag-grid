@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { OverlayType } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
@@ -930,6 +932,7 @@ describe('ag-grid overlayComponent', () => {
             },
         });
 
+        // eslint-disable-next-line no-restricted-syntax -- negative assertion: needs a real settling window to observe a spurious selector call
         await asyncSetTimeout(10);
 
         expect(capturedCallbacks).toEqual({
@@ -951,6 +954,7 @@ describe('ag-grid overlayComponent', () => {
             },
         });
 
+        // eslint-disable-next-line no-restricted-syntax -- negative assertion: needs a real settling window to observe a spurious selector call
         await asyncSetTimeout(10);
 
         expect(capturedCallbacks).toEqual({
@@ -972,7 +976,7 @@ describe('ag-grid overlayComponent', () => {
             },
         });
 
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(capturedCallbacks.loading).toBe(1));
 
         expect(capturedCallbacks).toEqual({
             loading: 1,
@@ -993,7 +997,7 @@ describe('ag-grid overlayComponent', () => {
             },
         });
 
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(capturedCallbacks.loading).toBe(1));
 
         expect(capturedCallbacks).toEqual({
             loading: 1,

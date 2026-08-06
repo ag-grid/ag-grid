@@ -31,9 +31,11 @@ export function _serialiseDate(date: Date | null, includeTime = true, separator 
         return null;
     }
 
-    let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()]
-        .map((part) => _padStartWidthZeros(part, 2))
-        .join('-');
+    let serialised = [
+        _padStartWidthZeros(date.getFullYear(), 4),
+        _padStartWidthZeros(date.getMonth() + 1, 2),
+        _padStartWidthZeros(date.getDate(), 2),
+    ].join('-');
 
     if (includeTime) {
         serialised +=
@@ -196,6 +198,11 @@ export function _parseDateTimeFromString(
 
     const [year, month, day] = fields;
     const date = new Date(year, month - 1, day);
+
+    if (year >= 0 && year < 100) {
+        // new Date(0..99, ...) maps the year into the 1900s; re-set the whole date so early-AD leap days (e.g. year 0) survive
+        date.setFullYear(year, month - 1, day);
+    }
 
     if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
         // date was not parsed as expected so must have been invalid

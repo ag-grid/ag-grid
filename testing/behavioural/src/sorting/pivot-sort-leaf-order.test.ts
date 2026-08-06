@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 // Characterizes sort behaviour when sorting BY A PIVOT RESULT COLUMN in pivot mode.
 // UX contract: the visible group rows reorder by that pivot column's aggregate.
@@ -35,11 +37,12 @@ describe('pivot: sorting by a pivot result column', () => {
                 { id: 'de', country: 'Germany', year: 2020, sales: 1500 },
             ],
         });
-        await asyncSetTimeout(10);
 
         // Sort by the 2020 sales pivot result column, descending.
         api.applyColumnState({ state: [{ colId: 'pivot_year_2020_sales', sort: 'desc' }] });
-        await asyncSetTimeout(10);
+        // Pre-sort order is USA, Ireland, Germany (group creation order); post-sort by aggregate is
+        // USA, Germany, Ireland — polling index 1 proves the sort landed before reading the snapshot.
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(1)?.key).toBe('Germany'));
 
         // Group rows are ordered by the pivot aggregate; USA's leaves keep insertion order (u1 before u2).
         await new GridRows(api, `sorted by pivot result column desc`).check(`

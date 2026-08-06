@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 
 import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
-import type { GridOptions, IRowNode } from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import {
@@ -239,7 +239,6 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
         expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
-        let expandedBeforeDrop = false;
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRowId);
         await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Tasks'));
@@ -254,14 +253,8 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
 
         await dispatcher.move(targetRowId, { clientX, clientY });
 
-        for (let i = 0; i < 30 && !expandedBeforeDrop; ++i) {
-            await asyncSetTimeout(20);
-            api.forEachNode((node: IRowNode) => {
-                if (node.id === 'root-ops') {
-                    expandedBeforeDrop = !!node.expanded;
-                }
-            });
-        }
+        // the nudger must expand the collapsed parent before the drop happens
+        await waitFor(() => expect(api.getRowNode('root-ops')?.expanded).toBe(true));
 
         if (suppressMoveWhenRowDragging) {
             await waitFor(() => {
@@ -271,12 +264,10 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
             });
         }
 
-        await asyncSetTimeout(10);
         await dispatcher.move(targetRowId, { clientX, clientY });
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        expect(expandedBeforeDrop).toBe(true);
         expect(api.getRowNode('root-ops')?.expanded).toBe(true);
 
         const finalRows = new GridRows(api, 'insert delay after');
@@ -393,6 +384,7 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         await dispatcher.start(sourceRowId);
         await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Incoming'));
         await dispatcher.move(targetRowId, { yOffsetPercent: 0.45 });
+        // eslint-disable-next-line no-restricted-syntax -- waits out this test's 80ms rowDragInsertDelay before the nudging move
         await asyncSetTimeout(80);
         await dispatcher.move(targetRowId, { center: true });
 

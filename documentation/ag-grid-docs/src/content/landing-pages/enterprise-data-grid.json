@@ -138,6 +138,33 @@
                     "docsLink": "./data-grid/excel-export/"
                 },
                 {
+                    "id": "pdf-export",
+                    "title": "PDF Export",
+                    "isEnterprise": true,
+                    "example": {
+                        "pageName": "pdf-export",
+                        "exampleName": "pdf-default-export"
+                    },
+                    "features": [
+                        {
+                            "heading": "Built-in PDF Files",
+                            "detail": "Export grid data to PDF using the built-in exporter with no third party libraries.",
+                            "link": "./data-grid/pdf-export/"
+                        },
+                        {
+                            "heading": "Page Layout Control",
+                            "detail": "Customise page size, orientation, margins, and repeated table headers to match your report layout.",
+                            "link": "./data-grid/pdf-export-page-setup/"
+                        },
+                        {
+                            "heading": "Context Menu & API",
+                            "detail": "Offer one-click exports from the context menu or call the API to automate PDF generation.",
+                            "link": "./data-grid/pdf-export/#enabling-pdf-export"
+                        }
+                    ],
+                    "docsLink": "./data-grid/pdf-export/"
+                },
+                {
                     "id": "ai-toolkit",
                     "title": "AI Toolkit",
                     "isEnterprise": true,

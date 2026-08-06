@@ -2,9 +2,10 @@ import { Markdoc } from '@astrojs/markdoc/config';
 import type { Render } from '@astrojs/markdoc/config';
 import type { Config, Schema } from '@markdoc/markdoc';
 
-// Labels that read differently on a Mac keyboard. The grid treats `ctrlKey` and
-// `metaKey` as interchangeable for every shortcut (see e.g. navigationService.ts),
-// so swapping the displayed label for Mac users doesn't change what the shortcut does.
+// Labels that read differently on a Mac keyboard. Grid, Charts and Studio all treat
+// `ctrlKey` and `metaKey` as interchangeable for their keyboard shortcuts (see e.g.
+// navigationService.ts, keyBindings.ts), so swapping the displayed label for Mac
+// users doesn't change what the shortcut does.
 const MAC_LABEL: Record<string, string> = {
     '^ Ctrl': '⌘ Command',
 };

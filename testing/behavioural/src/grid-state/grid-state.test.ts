@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi, GridState, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -1134,20 +1136,20 @@ describe('StateService - Grid State Management', () => {
                 └── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
             `);
 
-            await asyncSetTimeout(50);
-
-            expect(api.getState().filter).toEqual({
-                advancedFilterModel: undefined,
-                columnFilterState: undefined,
-                filterModel: {
-                    name: {
-                        filter: 'A',
-                        filterType: 'text',
-                        type: 'startsWith',
+            await waitFor(() =>
+                expect(api.getState().filter).toEqual({
+                    advancedFilterModel: undefined,
+                    columnFilterState: undefined,
+                    filterModel: {
+                        name: {
+                            filter: 'A',
+                            filterType: 'text',
+                            type: 'startsWith',
+                        },
                     },
-                },
-                selectableFilters: undefined,
-            });
+                    selectableFilters: undefined,
+                })
+            );
         });
 
         test('setState with an empty filter state clears active filters', async () => {
@@ -1159,18 +1161,25 @@ describe('StateService - Grid State Management', () => {
 
             // Apply a filter and capture the state with filters active
             api.setFilterModel({ name: { filterType: 'text', type: 'startsWith', filter: 'A' } });
-            await asyncSetTimeout(50);
-            const stateWithFilter = api.getState();
+            const stateWithFilter = await waitFor(() => {
+                const state = api.getState();
+                expect(state.filter?.filterModel).toEqual({
+                    name: { filterType: 'text', type: 'startsWith', filter: 'A' },
+                });
+                return state;
+            });
 
             // Clear filters and capture the state with no filters
             api.setFilterModel(null);
-            await asyncSetTimeout(50);
-            const stateWithoutFilter = api.getState();
+            const stateWithoutFilter = await waitFor(() => {
+                const state = api.getState();
+                expect(state.filter).toBeUndefined();
+                return state;
+            });
             expect(stateWithoutFilter.filter).toBeUndefined();
 
             // Restore the filtered state
             api.setState(stateWithFilter);
-            await asyncSetTimeout(50);
             await new GridRows(api, `setState restores filter`).check(`
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
@@ -1178,7 +1187,6 @@ describe('StateService - Grid State Management', () => {
 
             // Restoring the empty state must clear the active filters
             api.setState(stateWithoutFilter);
-            await asyncSetTimeout(50);
             await new GridRows(api, `setState clears filter`).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
@@ -1197,17 +1205,14 @@ describe('StateService - Grid State Management', () => {
                 sideBar: 'filters-new',
                 enableFilterHandlers: true,
             });
-            await asyncSetTimeout(50);
 
             // Activate a selectable filter via state restore
             api.setState({ filter: { selectableFilters: { name: 0 } } });
-            await asyncSetTimeout(50);
-            expect(api.getState().filter?.selectableFilters).toEqual({ name: 0 });
+            await waitFor(() => expect(api.getState().filter?.selectableFilters).toEqual({ name: 0 }));
 
             // Restoring a state without a filter section must clear the active selectable filter
             api.setState({});
-            await asyncSetTimeout(50);
-            expect(api.getState().filter).toBeUndefined();
+            await waitFor(() => expect(api.getState().filter).toBeUndefined());
         });
 
         test('should serialise bigint filter state and rehydrate on setState', async () => {
@@ -1241,10 +1246,11 @@ describe('StateService - Grid State Management', () => {
                 └── LEAF id:1 id:"2n"
             `);
 
-            await asyncSetTimeout(20);
-
-            const savedState = api.getState();
-            expect(savedState.filter?.filterModel?.id?.filter).toBe('2n');
+            const savedState = await waitFor(() => {
+                const state = api.getState();
+                expect(state.filter?.filterModel?.id?.filter).toBe('2n');
+                return state;
+            });
 
             const api2 = gridsManager.createGrid('bigIntStateTarget', {
                 columnDefs,
@@ -1253,10 +1259,7 @@ describe('StateService - Grid State Management', () => {
 
             api2.setState(savedState as GridState);
 
-            await asyncSetTimeout(20);
-
-            const restoredFilterModel = api2.getFilterModel();
-            expect(restoredFilterModel?.id?.filter).toBe('2n');
+            await waitFor(() => expect(api2.getFilterModel()?.id?.filter).toBe('2n'));
         });
 
         test('setState filter restore fires onFilterChanged with source "api", not "columnFilter"', async () => {
@@ -1271,15 +1274,21 @@ describe('StateService - Grid State Management', () => {
             api.setState({
                 filter: { filterModel: { name: { filterType: 'text', type: 'startsWith', filter: 'A' } } },
             } as GridState);
-            await asyncSetTimeout(50);
+            // Gate on the first filter event arriving — the row count cannot be used here, as it can
+            // already be 1 before the restore lands, which would make the gate resolve on tick 0.
+            await waitFor(() => expect(sources.length).toBeGreaterThan(0));
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+            // Negative assertion over the event *tail*: no positive signal can prove a later filter
+            // event carrying the wrong source will not arrive, so hold an observation window open.
+            // eslint-disable-next-line no-restricted-syntax -- window in which a late, wrongly-sourced onFilterChanged would arrive
+            await asyncSetTimeout(10);
 
-            expect(sources.length).toBeGreaterThan(0);
             expect(sources.every((s) => s === 'api')).toBe(true);
         });
 
         test('initialState filter restore fires onFilterChanged with source "columnFilter"', async () => {
             const sources: (string | undefined)[] = [];
-            gridsManager.createGrid('myGrid', {
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs: defaultColumnDefs,
                 rowData: defaultRowData,
                 defaultColDef: { filter: 'agTextColumnFilter' },
@@ -1288,9 +1297,14 @@ describe('StateService - Grid State Management', () => {
                 },
                 onFilterChanged: (e) => sources.push(e.source),
             });
-            await asyncSetTimeout(50);
+            // Gate on the first filter event arriving — the row count cannot be used here, as it can
+            // already be 1 before the restore lands, which would make the gate resolve on tick 0.
+            await waitFor(() => expect(sources.length).toBeGreaterThan(0));
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+            // Negative assertion over the event *tail* — see the setState twin above.
+            // eslint-disable-next-line no-restricted-syntax -- window in which a late, wrongly-sourced onFilterChanged would arrive
+            await asyncSetTimeout(10);
 
-            expect(sources.length).toBeGreaterThan(0);
             expect(sources.every((s) => s === 'columnFilter')).toBe(true);
         });
     });
@@ -1318,18 +1332,16 @@ describe('StateService - Grid State Management', () => {
                 └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
             `);
 
-            await asyncSetTimeout(20);
-
             // Focus a cell
             api.setFocusedCell(0, 'name');
 
-            await asyncSetTimeout(50);
-
-            expect(api.getState().focusedCell).toEqual({
-                colId: 'name',
-                rowIndex: 0,
-                rowPinned: null,
-            });
+            await waitFor(() =>
+                expect(api.getState().focusedCell).toEqual({
+                    colId: 'name',
+                    rowIndex: 0,
+                    rowPinned: null,
+                })
+            );
             await new GridRows(api, `should capture focused cell state final state`).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
@@ -1364,26 +1376,26 @@ describe('StateService - Grid State Management', () => {
 
             api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['name'] });
 
-            await asyncSetTimeout(50);
-
-            expect(api.getState().cellSelection).toEqual({
-                cellRanges: [
-                    {
-                        colIds: ['name'],
-                        endRow: {
-                            rowIndex: 1,
-                            rowPinned: undefined,
+            await waitFor(() =>
+                expect(api.getState().cellSelection).toEqual({
+                    cellRanges: [
+                        {
+                            colIds: ['name'],
+                            endRow: {
+                                rowIndex: 1,
+                                rowPinned: undefined,
+                            },
+                            id: undefined,
+                            startColId: 'name',
+                            startRow: {
+                                rowIndex: 0,
+                                rowPinned: undefined,
+                            },
+                            type: undefined,
                         },
-                        id: undefined,
-                        startColId: 'name',
-                        startRow: {
-                            rowIndex: 0,
-                            rowPinned: undefined,
-                        },
-                        type: undefined,
-                    },
-                ],
-            });
+                    ],
+                })
+            );
 
             api.clearCellSelection();
 
@@ -1455,12 +1467,12 @@ describe('StateService - Grid State Management', () => {
 
             api.ensureIndexVisible(20);
 
-            await asyncSetTimeout(50);
-
-            expect(api.getState().scroll).toEqual({
-                left: 0,
-                top: 840,
-            });
+            await waitFor(() =>
+                expect(api.getState().scroll).toEqual({
+                    left: 0,
+                    top: 840,
+                })
+            );
             await new GridRows(api, `should capture scroll state final state`).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
@@ -1612,10 +1624,12 @@ describe('StateService - Grid State Management', () => {
             };
 
             api.setState(stateToApply);
-            await asyncSetTimeout(50);
 
-            const state = api.getState();
-            expect(state.sort?.sortModel).toHaveLength(1);
+            const state = await waitFor(() => {
+                const currentState = api.getState();
+                expect(currentState.sort?.sortModel).toHaveLength(1);
+                return currentState;
+            });
             expect(state.columnVisibility?.hiddenColIds).toContain('age');
             expect(state.pagination?.page).toBe(1);
             await new GridRows(api, `should set state and apply all features final state`).check(`
@@ -1663,10 +1677,14 @@ describe('StateService - Grid State Management', () => {
 
             // Apply state but ignore rowSelection
             api.setState(stateToApply, ['rowSelection']);
-            await asyncSetTimeout(50);
 
-            const state = api.getState();
-            expect(state.sort?.sortModel).toHaveLength(1);
+            // setState applies every section in one pass, so once the sort has landed the
+            // (ignored) row selection can be asserted synchronously.
+            const state = await waitFor(() => {
+                const currentState = api.getState();
+                expect(currentState.sort?.sortModel).toHaveLength(1);
+                return currentState;
+            });
             // Row selection should not have changed
             if (Array.isArray(state.rowSelection)) {
                 expect(state.rowSelection).toContain('1');
@@ -1717,10 +1735,8 @@ describe('StateService - Grid State Management', () => {
             });
 
             api2.setState(savedState);
-            await asyncSetTimeout(50);
 
-            const restoredState = api2.getState();
-            expect(restoredState).toEqual(savedState);
+            await waitFor(() => expect(api2.getState()).toEqual(savedState));
         });
 
         test('should preserve absolute sort type when restoring state via setState', async () => {
@@ -1801,9 +1817,10 @@ describe('StateService - Grid State Management', () => {
             expect(api.getState().sort?.sortModel ?? []).toHaveLength(0);
 
             api.setState(savedState);
-            await asyncSetTimeout(50);
 
-            expect(api.getState().sort?.sortModel).toEqual([{ colId: 'age', sort: 'asc', type: 'absolute' }]);
+            await waitFor(() =>
+                expect(api.getState().sort?.sortModel).toEqual([{ colId: 'age', sort: 'asc', type: 'absolute' }])
+            );
         });
 
         test('should clear absolute sort from a column not present in the restored sort state', async () => {
@@ -1869,9 +1886,10 @@ describe('StateService - Grid State Management', () => {
 
             // Restore a state that only sorts 'name' — 'age' absolute sort should be cleared
             api.setState({ sort: { sortModel: [{ colId: 'name', sort: 'asc', type: 'default' }] } });
-            await asyncSetTimeout(50);
 
-            expect(api.getState().sort?.sortModel).toEqual([{ colId: 'name', sort: 'asc', type: 'default' }]);
+            await waitFor(() =>
+                expect(api.getState().sort?.sortModel).toEqual([{ colId: 'name', sort: 'asc', type: 'default' }])
+            );
         });
 
         test('should initialize grid with initial state', async () => {
@@ -1963,8 +1981,6 @@ describe('StateService - Grid State Management', () => {
                 └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
             `);
 
-            await asyncSetTimeout(20);
-
             let eventFired = false;
             let eventState: any;
 
@@ -1992,9 +2008,8 @@ describe('StateService - Grid State Management', () => {
                     └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
                 `
             );
-            await asyncSetTimeout(50);
+            await waitFor(() => expect(eventFired).toBe(true));
 
-            expect(eventFired).toBe(true);
             expect(eventState?.sort).toBeDefined();
         });
     });
@@ -2022,15 +2037,18 @@ describe('StateService - Grid State Management', () => {
                 ...pivotState,
                 filter: { filterModel: { pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 } } },
             } as GridState);
-            await asyncSetTimeout(50);
 
-            expect(api.getFilterModel()).toEqual({
-                pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
-            });
+            await waitFor(() =>
+                expect(api.getFilterModel()).toEqual({
+                    pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+                })
+            );
             // Print State must report the restored filter, not undefined.
-            expect(api.getState().filter?.filterModel).toEqual({
-                pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
-            });
+            await waitFor(() =>
+                expect(api.getState().filter?.filterModel).toEqual({
+                    pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+                })
+            );
             await new GridRows(api, `setState restores a filter on a pivot result column`).check(`
                 ROOT id:ROOT_NODE_ID pivot_year_2000_gold:106 pivot_year_2004_gold:30
                 └─┬ LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_year_2000_gold:66 pivot_year_2004_gold:10
@@ -2051,14 +2069,17 @@ describe('StateService - Grid State Management', () => {
                 } as GridState,
             });
             await waitForNoLoadingRows(api);
-            await asyncSetTimeout(50);
 
-            expect(api.getFilterModel()).toEqual({
-                pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
-            });
-            expect(api.getState().filter?.filterModel).toEqual({
-                pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
-            });
+            await waitFor(() =>
+                expect(api.getFilterModel()).toEqual({
+                    pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+                })
+            );
+            await waitFor(() =>
+                expect(api.getState().filter?.filterModel).toEqual({
+                    pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+                })
+            );
             await new GridRows(api, `initialState restores a filter on a pivot result column`).check(`
                 ROOT id:ROOT_NODE_ID pivot_year_2000_gold:106 pivot_year_2004_gold:30
                 └─┬ LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_year_2000_gold:66 pivot_year_2004_gold:10
@@ -2077,12 +2098,13 @@ describe('StateService - Grid State Management', () => {
                 } as GridState,
             });
             await waitForNoLoadingRows(api);
-            await asyncSetTimeout(50);
 
-            expect(api.getColumn('pivot_year_2000_gold')?.getSort()).toBe('desc');
-            expect(api.getState().sort).toEqual({
-                sortModel: [{ colId: 'pivot_year_2000_gold', sort: 'desc', type: 'default' }],
-            });
+            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.getSort()).toBe('desc'));
+            await waitFor(() =>
+                expect(api.getState().sort).toEqual({
+                    sortModel: [{ colId: 'pivot_year_2000_gold', sort: 'desc', type: 'default' }],
+                })
+            );
         });
 
         test('initialState restores column sizing on a pivot result column', async () => {
@@ -2095,9 +2117,8 @@ describe('StateService - Grid State Management', () => {
                 } as GridState,
             });
             await waitForNoLoadingRows(api);
-            await asyncSetTimeout(50);
 
-            expect(api.getColumn('pivot_year_2000_gold')?.getActualWidth()).toBe(333);
+            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.getActualWidth()).toBe(333));
         });
 
         test('initialState restores column visibility on a pivot result column', async () => {
@@ -2110,9 +2131,9 @@ describe('StateService - Grid State Management', () => {
                 } as GridState,
             });
             await waitForNoLoadingRows(api);
-            await asyncSetTimeout(50);
 
-            expect(api.getColumn('pivot_year_2000_gold')?.isVisible()).toBe(false);
+            // Poll the live column (absent until the pivot result columns exist), then the cached state.
+            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.isVisible()).toBe(false));
             expect(api.getState().columnVisibility).toEqual({ hiddenColIds: ['pivot_year_2000_gold'] });
         });
 
@@ -2123,10 +2144,9 @@ describe('StateService - Grid State Management', () => {
                 initialState: { ...pivotState, columnPinning: { leftColIds: ['pivot_year_2000_gold'] } } as GridState,
             });
             await waitForNoLoadingRows(api);
-            await asyncSetTimeout(50);
 
-            expect(api.getColumn('pivot_year_2000_gold')?.getPinned()).toBe('left');
-            expect(api.getState().columnPinning?.leftColIds).toEqual(['pivot_year_2000_gold']);
+            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.getPinned()).toBe('left'));
+            await waitFor(() => expect(api.getState().columnPinning?.leftColIds).toEqual(['pivot_year_2000_gold']));
         });
 
         test('initialState restores an open pivot column group', async () => {
@@ -2148,9 +2168,13 @@ describe('StateService - Grid State Management', () => {
                 } as GridState,
             });
             await waitForNoLoadingRows(api);
-            await asyncSetTimeout(50);
 
-            expect(api.getState().columnGroup).toEqual({ openColumnGroupIds: ['pivotGroup_year_2000'] });
+            // The cached column-group state is refreshed once the pivot result columns exist, which is
+            // strictly after the column itself appears — so poll the state, not the column. It starts
+            // out undefined, so this cannot pass on tick 0.
+            await waitFor(() =>
+                expect(api.getState().columnGroup).toEqual({ openColumnGroupIds: ['pivotGroup_year_2000'] })
+            );
         });
     });
 

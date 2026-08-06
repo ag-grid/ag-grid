@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
@@ -18,6 +20,8 @@ describe('pivot column sorting: grid options and column properties', () => {
     // Insertion order is deliberately neither ascending nor descending, so "no sort" is distinguishable.
     const NATURAL = ['pivot_year_2022_sales', 'pivot_year_2020_sales', 'pivot_year_2021_sales'];
 
+    const pivots = (api: GridApi) => getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'));
+
     async function createGrid(options?: Partial<GridOptions>, yearColDef?: Partial<ColDef>): Promise<GridApi> {
         const api = gridsManager.createGrid('pivotSortOptions', {
             columnDefs: [
@@ -37,11 +41,12 @@ describe('pivot column sorting: grid options and column properties', () => {
                 { id: 'c', country: 'USA', year: 2021, sales: 1 },
             ],
         });
-        await asyncSetTimeout(10);
+        // Pivot mode off never generates pivot result columns, so there is nothing to wait for.
+        if (options?.pivotMode !== false) {
+            await waitFor(() => expect(pivots(api)).toHaveLength(3));
+        }
         return api;
     }
-
-    const pivots = (api: GridApi) => getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'));
 
     /** The Year pill in the pivot ("Column Labels") panel above the grid. */
     function yearPill(api: GridApi): HTMLElement {
@@ -76,25 +81,31 @@ describe('pivot column sorting: grid options and column properties', () => {
         expect(pillSortIcon(api)).toBe('asc');
 
         clickPill(api);
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(DESC);
-        expect(pillSortIcon(api)).toBe('desc');
+        await waitFor(() => {
+            expect(pivots(api)).toEqual(DESC);
+            expect(pillSortIcon(api)).toBe('desc');
+        });
 
         clickPill(api);
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(NATURAL);
-        expect(pillSortIcon(api)).toBeNull();
+        await waitFor(() => {
+            expect(pivots(api)).toEqual(NATURAL);
+            expect(pillSortIcon(api)).toBeNull();
+        });
 
         clickPill(api);
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(ASC);
-        expect(pillSortIcon(api)).toBe('asc');
+        await waitFor(() => {
+            expect(pivots(api)).toEqual(ASC);
+            expect(pillSortIcon(api)).toBe('asc');
+        });
     });
 
     test('pivotPanelSuppressSort makes the pill inert but leaves applyColumnState working', async () => {
         const api = await createGrid({ pivotPanelSuppressSort: true });
 
+        // A suppressed pill click has no observable effect at all, so there is no positive signal to poll for -
+        // this is the window in which a (wrongly) un-suppressed click would have reordered the columns.
         clickPill(api);
+        // eslint-disable-next-line no-restricted-syntax -- window in which a suppressed pill click would wrongly reorder the columns
         await asyncSetTimeout(10);
         expect(pivots(api)).toEqual(ASC);
         expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('asc');
@@ -103,30 +114,30 @@ describe('pivot column sorting: grid options and column properties', () => {
 
         // Only the panel interaction is suppressed - the API still sorts.
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(DESC);
+        await waitFor(() => expect(pivots(api)).toEqual(DESC));
     });
 
     test('sortable: false makes the pill inert but leaves applyColumnState working', async () => {
         const api = await createGrid(undefined, { sortable: false });
 
         clickPill(api);
+        // eslint-disable-next-line no-restricted-syntax -- window in which a click on a non-sortable pill would wrongly reorder the columns
         await asyncSetTimeout(10);
         expect(pivots(api)).toEqual(ASC);
         expect(pillSortIcon(api)).toBeNull();
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(DESC);
+        await waitFor(() => expect(pivots(api)).toEqual(DESC));
     });
 
     test('functionsReadOnly locks the pill in place but still allows sorting it', async () => {
         const api = await createGrid({ functionsReadOnly: true });
 
         clickPill(api);
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(DESC);
-        expect(pillSortIcon(api)).toBe('desc');
+        await waitFor(() => {
+            expect(pivots(api)).toEqual(DESC);
+            expect(pillSortIcon(api)).toBe('desc');
+        });
     });
 
     test.each([true, false])('pivot sorting works with enableStrictPivotColumnOrder: %s', async (strict) => {
@@ -134,12 +145,10 @@ describe('pivot column sorting: grid options and column properties', () => {
         expect(pivots(api)).toEqual(ASC);
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(DESC);
+        await waitFor(() => expect(pivots(api)).toEqual(DESC));
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: null }] });
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(NATURAL);
+        await waitFor(() => expect(pivots(api)).toEqual(NATURAL));
     });
 
     test('pivotComparator defines the ascending order, desc reverses it and null bypasses it', async () => {
@@ -150,13 +159,11 @@ describe('pivot column sorting: grid options and column properties', () => {
         expect(pivots(api)).toEqual(DESC);
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(ASC);
+        await waitFor(() => expect(pivots(api)).toEqual(ASC));
 
         // No sort bypasses the comparator entirely.
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: null }] });
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(NATURAL);
+        await waitFor(() => expect(pivots(api)).toEqual(NATURAL));
     });
 
     const ROW_TOTAL = 'PivotRowTotal_pivot_year__sales';
@@ -169,8 +176,7 @@ describe('pivot column sorting: grid options and column properties', () => {
         expect(pivotsWithRowTotal(api)).toEqual([ROW_TOTAL, ...ASC]);
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
-        expect(pivotsWithRowTotal(api)).toEqual([ROW_TOTAL, ...DESC]);
+        await waitFor(() => expect(pivotsWithRowTotal(api)).toEqual([ROW_TOTAL, ...DESC]));
     });
 
     test('pivotRowTotals: after keeps the row total rightmost when sorting', async () => {
@@ -178,8 +184,7 @@ describe('pivot column sorting: grid options and column properties', () => {
         expect(pivotsWithRowTotal(api)).toEqual([...ASC, ROW_TOTAL]);
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
-        expect(pivotsWithRowTotal(api)).toEqual([...DESC, ROW_TOTAL]);
+        await waitFor(() => expect(pivotsWithRowTotal(api)).toEqual([...DESC, ROW_TOTAL]));
     });
 
     test('pivotSort is per pivot column when pivoting on two columns', async () => {
@@ -204,82 +209,83 @@ describe('pivot column sorting: grid options and column properties', () => {
                 { id: 'd', country: 'USA', year: 2021, half: 'H2', sales: 1 },
             ],
         });
-        await asyncSetTimeout(10);
         const leaves = () => getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'));
 
-        expect(leaves()).toEqual([
-            'pivot_year-half_2020-H1_sales',
-            'pivot_year-half_2020-H2_sales',
-            'pivot_year-half_2021-H1_sales',
-            'pivot_year-half_2021-H2_sales',
-        ]);
+        await waitFor(() =>
+            expect(leaves()).toEqual([
+                'pivot_year-half_2020-H1_sales',
+                'pivot_year-half_2020-H2_sales',
+                'pivot_year-half_2021-H1_sales',
+                'pivot_year-half_2021-H2_sales',
+            ])
+        );
 
         // Sorting the inner pivot column reverses only within each year group.
         api.applyColumnState({ state: [{ colId: 'half', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
-        expect(leaves()).toEqual([
-            'pivot_year-half_2020-H2_sales',
-            'pivot_year-half_2020-H1_sales',
-            'pivot_year-half_2021-H2_sales',
-            'pivot_year-half_2021-H1_sales',
-        ]);
+        await waitFor(() =>
+            expect(leaves()).toEqual([
+                'pivot_year-half_2020-H2_sales',
+                'pivot_year-half_2020-H1_sales',
+                'pivot_year-half_2021-H2_sales',
+                'pivot_year-half_2021-H1_sales',
+            ])
+        );
 
         // Sorting the outer pivot column reverses the year groups, keeping the inner sort.
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
-        expect(leaves()).toEqual([
-            'pivot_year-half_2021-H2_sales',
-            'pivot_year-half_2021-H1_sales',
-            'pivot_year-half_2020-H2_sales',
-            'pivot_year-half_2020-H1_sales',
-        ]);
-
-        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
-        expect(api.getColumnState().find((s) => s.colId === 'half')!.pivotSort).toBe('desc');
+        await waitFor(() => {
+            expect(leaves()).toEqual([
+                'pivot_year-half_2021-H2_sales',
+                'pivot_year-half_2021-H1_sales',
+                'pivot_year-half_2020-H2_sales',
+                'pivot_year-half_2020-H1_sales',
+            ]);
+            expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+            expect(api.getColumnState().find((s) => s.colId === 'half')!.pivotSort).toBe('desc');
+        });
     });
 
     test('pivotSort set while pivot mode is off applies when pivot mode is turned on', async () => {
         const api = await createGrid({ pivotMode: false });
         expect(pivots(api)).toEqual([]);
 
+        // pivotSort takes effect immediately, but pivotMode is off so there are no pivot columns to reorder yet -
+        // gate on the stored pivotSort value (the only thing this call actually changes) rather than the
+        // (unchanged) empty column list.
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc'));
         expect(pivots(api)).toEqual([]);
 
         api.setGridOption('pivotMode', true);
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(DESC);
+        await waitFor(() => expect(pivots(api)).toEqual(DESC));
     });
 
     test('pivotSort survives a pivot mode round trip', async () => {
         const api = await createGrid();
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(DESC);
+        await waitFor(() => expect(pivots(api)).toEqual(DESC));
 
         api.setGridOption('pivotMode', false);
-        await asyncSetTimeout(10);
-        api.setGridOption('pivotMode', true);
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(pivots(api)).toEqual([]));
 
-        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
-        expect(pivots(api)).toEqual(DESC);
+        api.setGridOption('pivotMode', true);
+        await waitFor(() => {
+            expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+            expect(pivots(api)).toEqual(DESC);
+        });
     });
 
     test('removing then re-adding the pivot column keeps its pivotSort', async () => {
         const api = await createGrid();
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(DESC);
+        await waitFor(() => expect(pivots(api)).toEqual(DESC));
 
         api.removePivotColumns(['year']);
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual([]);
+        await waitFor(() => expect(pivots(api)).toEqual([]));
 
         api.addPivotColumns(['year']);
-        await asyncSetTimeout(10);
-        expect(pivots(api)).toEqual(DESC);
+        await waitFor(() => expect(pivots(api)).toEqual(DESC));
     });
 });

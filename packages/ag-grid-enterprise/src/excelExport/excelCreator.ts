@@ -17,7 +17,6 @@ import {
     _addGridCommonParams,
     _clamp,
     _getHeaderClassesFromColDef,
-    _getHeaderRowCount,
     _warnForGrid,
     _warnWithoutAttribution,
 } from 'ag-grid-community';
@@ -484,7 +483,6 @@ export class ExcelCreator
             baseExcelStyles,
             rightToLeft: params.rightToLeft ?? gos.get('enableRtl'),
             styleLinker,
-            headerRowCount: _getHeaderRowCount(colModel),
             notesSvc,
             pivotModeActive: colModel.isPivotActive(),
             workbook: this.workbook,

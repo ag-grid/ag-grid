@@ -36,6 +36,7 @@ import type {
     _NotesGridApi,
     _OverlayGridApi,
     _PaginationGridApi,
+    _PdfExportGridApi,
     _PinnedRowGridApi,
     _PivotGridApi,
     _QuickFilterGridApi,
@@ -366,6 +367,11 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getSheetDataForExcel: 0,
         getMultipleSheetsAsExcel: 0,
         exportMultipleSheetsAsExcel: 0,
+    }),
+
+    ...mod<_PdfExportGridApi>('PdfExport', {
+        getDataAsPdf: 0,
+        exportDataAsPdf: 0,
     }),
 
     ...mod<_MasterDetailGridApi>('SharedMasterDetail', {

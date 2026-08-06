@@ -407,7 +407,8 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
         await dispatcher1.start('user-auth');
         await waitFor(() => expect(dispatcher1.getDragGhostLabel()).toBe('User Auth'));
         await dispatcher1.move('payment', { center: true });
-        await asyncSetTimeout(10); // Wait for rowDragInsertDelay timer to fire and nudge
+        // eslint-disable-next-line no-restricted-syntax -- waits for the 1ms rowDragInsertDelay timer to fire and nudge
+        await asyncSetTimeout(10);
         await dispatcher1.finish();
         await asyncSetTimeout(0);
 

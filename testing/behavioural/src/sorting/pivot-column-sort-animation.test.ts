@@ -39,27 +39,23 @@ describe('pivot: interactive pivot column sort animation', () => {
 
     test('applies the column-move animation when sorting and when clearing the sort', async () => {
         const api = createPivotGrid();
-        await asyncSetTimeout(10);
         expect(isAnimating()).toBe(false);
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
         expect(isAnimating()).toBe(true);
 
         // Clearing the last sort (desc → null) reorders back to default, so it must animate too.
+        // eslint-disable-next-line no-restricted-syntax -- ColumnAnimationService removes the `ag-column-moving` class on a hardcoded 200ms setTimeout
         await asyncSetTimeout(200);
         expect(isAnimating()).toBe(false);
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: null }] });
-        await asyncSetTimeout(10);
         expect(isAnimating()).toBe(true);
     });
 
     test('suppressColumnMoveAnimation skips the pivot-sort animation', async () => {
         const api = createPivotGrid({ suppressColumnMoveAnimation: true });
-        await asyncSetTimeout(10);
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await asyncSetTimeout(10);
         expect(isAnimating()).toBe(false);
     });
 });

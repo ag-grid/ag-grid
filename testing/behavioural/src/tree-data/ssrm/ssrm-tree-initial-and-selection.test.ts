@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { ALL_SEVERITIES, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager } from '../../test-utils';
 import { countLoadingRows, waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 import { createFakeServer, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
 
@@ -94,16 +96,18 @@ describe('ag-grid SSRM treeData initial-load & selection (characterization)', ()
                 })
             );
 
-            // Let the root request dispatch without resolving it.
-            await asyncSetTimeout(30);
-
-            // The grid sizes its top level to the configured initial row count before the
-            // root store resolves, and every one of those rows is a loading/stub row.
-            expect(api.getDisplayedRowCount()).toBe(initialCount);
-            expect(countLoadingRows(api)).toBe(initialCount);
+            // Wait for the root request to dispatch, but never resolve it. `requests.length`
+            // is the signal that provably transitions here (0 -> 1); the stub counts are
+            // asserted in the same poll once that has landed.
+            await waitFor(() => {
+                expect(requests.length).toBe(1);
+                // The grid sizes its top level to the configured initial row count before the
+                // root store resolves, and every one of those rows is a loading/stub row.
+                expect(api.getDisplayedRowCount()).toBe(initialCount);
+                expect(countLoadingRows(api)).toBe(initialCount);
+            });
 
             // The first (and only) request so far is for the root children: empty groupKeys.
-            expect(requests.length).toBe(1);
             expect(requests[0].groupKeys).toEqual([]);
 
             // Drain the in-flight request so the deferred datasource does not leak past the test.
@@ -135,7 +139,6 @@ describe('ag-grid SSRM treeData initial-load & selection (characterization)', ()
                 })
             );
 
-            await asyncSetTimeout(1);
             await waitForNoLoadingRows(api);
 
             // Reconciliation: the dataset has a single root (id 101), so the initial guess of 7
@@ -180,19 +183,22 @@ describe('ag-grid SSRM treeData initial-load & selection (characterization)', ()
                 })
             );
 
-            await asyncSetTimeout(1);
             await waitForNoLoadingRows(api);
 
             // Expand 101 but hold the child request in-flight to observe the child level's pre-resolve size.
             deferChild = true;
             api.getRowNode('101')!.setExpanded(true);
-            await asyncSetTimeout(30);
 
-            // Child-level finding: serverSideInitialRowCount does NOT apply to child stores. While
-            // 101's children load, exactly ONE loading row shows under it (not `initialCount`), so
-            // the displayed count is the root (1) + a single child placeholder (1) = 2.
-            expect(countLoadingRows(api)).toBe(1);
-            expect(api.getDisplayedRowCount()).toBe(2);
+            // `pendingChild.length` is the clause that provably transitions (0 -> 1) once the
+            // child request has been dispatched and held; the counts are read in the same poll.
+            await waitFor(() => {
+                expect(pendingChild.length).toBe(1);
+                // Child-level finding: serverSideInitialRowCount does NOT apply to child stores. While
+                // 101's children load, exactly ONE loading row shows under it (not `initialCount`), so
+                // the displayed count is the root (1) + a single child placeholder (1) = 2.
+                expect(countLoadingRows(api)).toBe(1);
+                expect(api.getDisplayedRowCount()).toBe(2);
+            });
 
             // Resolve the deferred child request.
             for (let i = 0, len = pendingChild.length; i < len; ++i) {
@@ -259,7 +265,6 @@ describe('ag-grid SSRM treeData initial-load & selection (characterization)', ()
         test('selecting a fully-loaded group selects the group and all its loaded descendants', async () => {
             const { api } = createSelectionGrid('ssrmTreeSelectLoadedGroup');
 
-            await asyncSetTimeout(1);
             await waitForNoLoadingRows(api);
             // Expand the branch 101 -> 102 -> 108 so all of 108's descendants (leaves) are loaded.
             await expandById(api, '101');
@@ -281,7 +286,6 @@ describe('ag-grid SSRM treeData initial-load & selection (characterization)', ()
         test('selecting a group BEFORE its descendants are loaded: only the group is selected now; children get selected once later loaded on expand', async () => {
             const { api } = createSelectionGrid('ssrmTreeSelectUnloadedGroup');
 
-            await asyncSetTimeout(1);
             await waitForNoLoadingRows(api);
             await expandById(api, '101');
             // 102 is loaded (child of 101) but NOT expanded, so 102's own descendants are unloaded.
@@ -315,7 +319,6 @@ describe('ag-grid SSRM treeData initial-load & selection (characterization)', ()
         test('selecting a leaf selects only that leaf (no descendants, no ancestor cascade)', async () => {
             const { api } = createSelectionGrid('ssrmTreeSelectLeaf');
 
-            await asyncSetTimeout(1);
             await waitForNoLoadingRows(api);
             await expandById(api, '101');
             await expandById(api, '102');

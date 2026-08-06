@@ -1,11 +1,11 @@
-import type { PdfFontFamily } from 'ag-grid-community';
+import type { PdfBuiltInFontFamily, PdfFontFamily } from 'ag-grid-community';
 
 const FIRST_PRINTABLE_ASCII = 32;
 const LAST_PRINTABLE_ASCII = 126;
 const DEFAULT_GLYPH_WIDTH = 500;
 const COURIER_GLYPH_WIDTH = 600;
 
-const FONT_VERTICAL_METRICS: Record<PdfFontFamily, { ascent: number; descent: number }> = {
+const FONT_VERTICAL_METRICS: Record<PdfBuiltInFontFamily, { ascent: number; descent: number }> = {
     Helvetica: { ascent: 718, descent: 207 },
     'Helvetica-Bold': { ascent: 718, descent: 207 },
     'Times-Roman': { ascent: 683, descent: 217 },
@@ -79,7 +79,7 @@ const EXTENDED_GLYPH_WIDTHS = new Map<number, [number, number, number, number]>(
     [0x0178, [667, 667, 722, 722]], // Ÿ
 ]);
 
-const EXTENDED_WIDTH_FAMILY_INDEX: Record<PdfFontFamily, 0 | 1 | 2 | 3> = {
+const EXTENDED_WIDTH_FAMILY_INDEX: Record<PdfBuiltInFontFamily, 0 | 1 | 2 | 3> = {
     Helvetica: 0,
     'Helvetica-Bold': 1,
     'Times-Roman': 2,
@@ -109,11 +109,12 @@ const SPECIAL_GLYPH_BASES = new Map<string, string>([
  * @returns Glyph advance width.
  */
 export function getBase14GlyphWidth(char: string, fontFamily: PdfFontFamily): number {
-    if (fontFamily === 'Courier' || fontFamily === 'Courier-Bold') {
+    const resolvedFamily = resolveBase14FontFamily(fontFamily);
+    if (resolvedFamily === 'Courier' || resolvedFamily === 'Courier-Bold') {
         return COURIER_GLYPH_WIDTH;
     }
 
-    const metrics = getFontWidths(fontFamily);
+    const metrics = getFontWidths(resolvedFamily);
     const codePoint = char.codePointAt(0) ?? 0;
     if (codePoint >= FIRST_PRINTABLE_ASCII && codePoint <= LAST_PRINTABLE_ASCII) {
         return metrics[codePoint - FIRST_PRINTABLE_ASCII] ?? DEFAULT_GLYPH_WIDTH;
@@ -121,7 +122,7 @@ export function getBase14GlyphWidth(char: string, fontFamily: PdfFontFamily): nu
 
     const extendedWidths = EXTENDED_GLYPH_WIDTHS.get(codePoint);
     if (extendedWidths) {
-        return extendedWidths[EXTENDED_WIDTH_FAMILY_INDEX[fontFamily]];
+        return extendedWidths[EXTENDED_WIDTH_FAMILY_INDEX[resolvedFamily]];
     }
 
     const baseCodePoint = resolveBaseCharacter(char).codePointAt(0) ?? 0;
@@ -139,11 +140,11 @@ export function getBase14GlyphWidth(char: string, fontFamily: PdfFontFamily): nu
  * @returns Baseline offset in points.
  */
 export function getBase14BaselineOffset(fontSize: number, fontFamily: PdfFontFamily): number {
-    const metrics = FONT_VERTICAL_METRICS[fontFamily] ?? FONT_VERTICAL_METRICS.Helvetica;
+    const metrics = FONT_VERTICAL_METRICS[resolveBase14FontFamily(fontFamily)];
     return (metrics.ascent / (metrics.ascent + metrics.descent)) * fontSize;
 }
 
-function getFontWidths(fontFamily: PdfFontFamily): number[] {
+function getFontWidths(fontFamily: PdfBuiltInFontFamily): number[] {
     switch (fontFamily) {
         case 'Helvetica-Bold':
             return HELVETICA_BOLD_WIDTHS;
@@ -154,6 +155,12 @@ function getFontWidths(fontFamily: PdfFontFamily): number[] {
         default:
             return HELVETICA_WIDTHS;
     }
+}
+
+function resolveBase14FontFamily(fontFamily: PdfFontFamily): PdfBuiltInFontFamily {
+    return Object.prototype.hasOwnProperty.call(FONT_VERTICAL_METRICS, fontFamily)
+        ? (fontFamily as PdfBuiltInFontFamily)
+        : 'Helvetica';
 }
 
 function resolveBaseCharacter(char: string): string {

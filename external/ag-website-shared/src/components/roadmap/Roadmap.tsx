@@ -18,7 +18,7 @@ interface RoadmapProps {
     };
     versionData: {
         date: string;
-        notesPath: string;
+        notesPath?: string;
     };
 }
 
@@ -41,13 +41,15 @@ export const Roadmap: React.FC<RoadmapProps> = ({ roadmapData, versionData }) =>
                                 {roadmapData?.lastUpdated ? formatLastUpdated(roadmapData.lastUpdated) : null}
                             </span>
                             <span className={styles.seperator}>|</span>
-                            <a
-                                href={urlWithPrefix({ url: versionData?.notesPath, framework })}
-                                target="_blank"
-                                className={styles.heroCta}
-                            >
-                                Release Notes <Icon name="chevronRight" />
-                            </a>
+                            {versionData?.notesPath && (
+                                <a
+                                    href={urlWithPrefix({ url: versionData.notesPath, framework })}
+                                    target="_blank"
+                                    className={styles.heroCta}
+                                >
+                                    Release Notes <Icon name="chevronRight" />
+                                </a>
+                            )}
                             <a href={urlWithBaseUrl('./whats-new')} target="_blank" className={styles.heroCta}>
                                 What's New <Icon name="chevronRight" />
                             </a>

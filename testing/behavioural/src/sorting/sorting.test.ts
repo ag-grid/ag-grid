@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
@@ -73,8 +73,11 @@ describe('Sorting', () => {
 
         // Single-column sort: no ordinal badge (the lone sorted column needs no priority number).
         api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }], defaultState: { sort: null } });
-        await asyncSetTimeout(1);
-        expect(sortOrderEl('a')?.classList.contains('ag-hidden')).toBe(true);
+        // The badge stays hidden either way, so gate on the sort actually landing before checking it.
+        await waitFor(() => {
+            expect(api.getColumnState().find((s) => s.colId === 'a')?.sort).toBe('asc');
+            expect(sortOrderEl('a')?.classList.contains('ag-hidden')).toBe(true);
+        });
 
         // Multi-column sort: every sorted column shows its 1-based priority.
         api.applyColumnState({
@@ -83,10 +86,11 @@ describe('Sorting', () => {
                 { colId: 'b', sort: 'asc', sortIndex: 1 },
             ],
         });
-        await asyncSetTimeout(1);
-        expect(sortOrderEl('a')?.classList.contains('ag-hidden')).toBe(false);
-        expect(sortOrderEl('a')?.textContent).toBe('1');
-        expect(sortOrderEl('b')?.textContent).toBe('2');
+        await waitFor(() => {
+            expect(sortOrderEl('a')?.classList.contains('ag-hidden')).toBe(false);
+            expect(sortOrderEl('a')?.textContent).toBe('1');
+            expect(sortOrderEl('b')?.textContent).toBe('2');
+        });
     });
 
     const columnDefs = [{ field: 'sport', sortable: false }, { field: 'year' }, { field: 'amount' }, { field: 'day' }];
@@ -118,6 +122,9 @@ describe('Sorting', () => {
         const header = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
 
         await userSession.click(header.querySelector('.ag-header-cell-label')!);
+        // No positive signal exists for "sort was never applied" — a non-sortable column's click handler
+        // never fires sortChanged, so there is nothing to poll for. Keep the window a sortChanged would land in.
+        // eslint-disable-next-line no-restricted-syntax -- window in which a click-triggered sortChanged would have fired, had the column been sortable
         await asyncSetTimeout(1);
 
         expect(listener).not.toHaveBeenCalled();
@@ -530,23 +537,25 @@ describe('Sorting', () => {
             // Sort year (single), then shift-add the group column via its header → multi-sort; the group
             // column joins the sort and shows an ordinal badge + a sort arrow.
             api.applyColumnState({ state: [{ colId: 'year', sort: 'asc' }], defaultState: { sort: null } });
-            await asyncSetTimeout(1);
             shiftClick(groupHeaderLabel());
-            await asyncSetTimeout(1);
-            expect(shown(groupSortOrderEl())).toBe(true);
-            expect(groupSortOrderEl()?.textContent).toMatch(/^\d+$/);
-            expect(groupArrowShown()).toBe(true);
+            await waitFor(() => {
+                expect(shown(groupSortOrderEl())).toBe(true);
+                expect(groupSortOrderEl()?.textContent).toMatch(/^\d+$/);
+                expect(groupArrowShown()).toBe(true);
+            });
 
             // Shift-click the country chip once: cycles the group column's sort asc → desc; still sorted, still badged.
             shiftClick(countryChip());
-            await asyncSetTimeout(1);
+            // Gate on the group column's own sort direction flipping (asc → desc) — the badge/arrow assertions
+            // below stay unchanged either side of this click, so they can't prove the click landed on their own.
+            await waitFor(() => expect(api.getColumn('ag-Grid-AutoColumn')!.getSort()).toBe('desc'));
             expect(shown(groupSortOrderEl())).toBe(true);
             expect(groupSortOrderEl()?.textContent).toMatch(/^\d+$/);
 
             // Shift-click again: cycles desc → none. With the group column's sort cleared, its header must show
             // neither the sort-order index badge (AC1) nor a sort arrow (AC2), while year stays sorted.
             shiftClick(countryChip());
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getColumn('ag-Grid-AutoColumn')!.getSort()).toBeFalsy());
             expect(shown(groupSortOrderEl())).toBe(false);
             expect(groupArrowShown()).toBe(false);
             expect(yearSort()).toBe('asc');
@@ -590,10 +599,9 @@ describe('Sorting', () => {
             // Single-sort the coupled group column to 'desc' via its header (two clicks). Both source
             // columns (country, sport) and the display column end up sorted 'desc'.
             click(groupHeaderLabel());
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(groupCol().getSort()).toBe('asc'));
             click(groupHeaderLabel());
-            await asyncSetTimeout(1);
-            expect(groupCol().getSort()).toBe('desc');
+            await waitFor(() => expect(groupCol().getSort()).toBe('desc'));
             expect(api.getColumn('country')!.getSort()).toBe('desc');
             expect(api.getColumn('sport')!.getSort()).toBe('desc');
 
@@ -601,8 +609,7 @@ describe('Sorting', () => {
             // clears the still-sorted sibling 'sport'. With every source now unsorted, the group column
             // must not read the about-to-be-cleared 'sport' sort — its own sort/index must clear too.
             click(chipByText(/country/i));
-            await asyncSetTimeout(1);
-            expect(api.getColumn('country')!.getSort()).toBeFalsy();
+            await waitFor(() => expect(api.getColumn('country')!.getSort()).toBeFalsy());
             expect(api.getColumn('sport')!.getSort()).toBeFalsy();
             expect(groupCol().getSort()).toBeFalsy();
             expect(groupCol().getSortIndex()).toBeFalsy();
@@ -642,21 +649,18 @@ describe('Sorting', () => {
             // Multi-sort both group sources via their chips: country asc, then sport asc (shift-add). Both
             // sources and the coupled display column are sorted.
             shiftClick(chipByText(/country/i));
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getColumn('country')!.getSort()).toBe('asc'));
             shiftClick(chipByText(/sport/i));
-            await asyncSetTimeout(1);
-            expect(api.getColumn('country')!.getSort()).toBe('asc');
-            expect(api.getColumn('sport')!.getSort()).toBe('asc');
+            await waitFor(() => expect(api.getColumn('sport')!.getSort()).toBe('asc'));
             expect(groupCol().getSort()).toBe('asc');
 
             // Shift-click the country chip twice: cycles country asc → desc → none, clearing only that source
             // (multi-sort leaves siblings alone). country is the FIRST source, so the display column must skip
             // it and read the still-sorted sport sibling — staying sorted rather than clearing.
             shiftClick(chipByText(/country/i));
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getColumn('country')!.getSort()).toBe('desc'));
             shiftClick(chipByText(/country/i));
-            await asyncSetTimeout(1);
-            expect(api.getColumn('country')!.getSort()).toBeFalsy();
+            await waitFor(() => expect(api.getColumn('country')!.getSort()).toBeFalsy());
             expect(api.getColumn('sport')!.getSort()).toBe('asc');
             expect(groupCol().getSort()).toBe('asc');
         });
