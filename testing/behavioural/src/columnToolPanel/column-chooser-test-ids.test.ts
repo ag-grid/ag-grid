@@ -138,9 +138,7 @@ describe('column tool panel test IDs with virtualization', () => {
         // separate passes, so poll until both are in place.
         await waitFor(() => {
             expect(getVisibleItemLabels(api)).toContain('Column 0 Column');
-            expect(getVisibleCheckboxTestIds(api)[0]).toBe(
-                agTestIdFor.columnSelectListItemCheckbox('Column 0 Column')
-            );
+            expect(getVisibleCheckboxTestIds(api)[0]).toBe(agTestIdFor.columnSelectListItemCheckbox('Column 0 Column'));
             expect(countCheckboxesWithoutTestId(api)).toEqual([]);
         });
         expect(getVisibleItemLabels(api).length).toBeGreaterThan(0);
@@ -163,9 +161,7 @@ describe('column tool panel test IDs with virtualization', () => {
 
         await waitFor(() => {
             expect(getVisibleItemLabels(api)).toContain('Column 0 Column');
-            expect(getVisibleCheckboxTestIds(api)[0]).toBe(
-                agTestIdFor.columnSelectListItemCheckbox('Column 0 Column')
-            );
+            expect(getVisibleCheckboxTestIds(api)[0]).toBe(agTestIdFor.columnSelectListItemCheckbox('Column 0 Column'));
             expect(countCheckboxesWithoutTestId(api)).toEqual([]);
         });
         await new GridRows(api, `should maintain checkbox test IDs after scrolling the virtual list final state`).check(
