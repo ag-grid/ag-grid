@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -10,14 +12,7 @@ import {
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { SetFilter } from 'ag-grid-enterprise';
 
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    applyTransactionChecked,
-    asyncSetTimeout,
-    waitForEvent,
-} from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, waitForEvent } from '../test-utils';
 
 describe('ag-grid formulas filtering', () => {
     const gridsManager = new TestGridsManager({
@@ -155,8 +150,6 @@ describe('ag-grid formulas filtering', () => {
         const editingStopped = waitForEvent('cellEditingStopped', api);
         api.stopEditing(true);
         await editingStopped;
-
-        await asyncSetTimeout(10);
 
         await new GridColumns(api, 'columns').checkColumns(`
             LEFT
@@ -806,17 +799,17 @@ describe('ag-grid formulas filtering', () => {
         const editingStarted = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 0, colKey: 'B' });
         await editingStarted;
-        await asyncSetTimeout(5);
 
         // Simulate clicking on cell A at display index 2 (actual row 5, formula row index 5).
         api.addCellRange({ rowStartIndex: 2, rowEndIndex: 2, columns: ['A'] });
-        await asyncSetTimeout(10);
 
         // The editor should reference A5 (the actual formula row), not A3 (display index 2+1).
-        const [editor] = api.getCellEditorInstances();
-        const editorValue = String(editor?.getValue() ?? '');
-        expect(editorValue).toContain('A5');
-        expect(editorValue).not.toContain('A3');
+        await waitFor(() => {
+            const [editor] = api.getCellEditorInstances();
+            const editorValue = String(editor?.getValue() ?? '');
+            expect(editorValue).toContain('A5');
+            expect(editorValue).not.toContain('A3');
+        });
 
         api.stopEditing(true);
     });
@@ -868,17 +861,17 @@ describe('ag-grid formulas filtering', () => {
         const editingStarted = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 0, colKey: 'B' });
         await editingStarted;
-        await asyncSetTimeout(5);
 
         // Select a range spanning display indices 0-2 (formula rows 3, 5, 6 with a gap at row 4).
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 2, columns: ['A'] });
-        await asyncSetTimeout(10);
 
         // The range ref should be A3:A6 (formula rows 3 through 6), not A1:A3 (display indices).
-        const [editor] = api.getCellEditorInstances();
-        const editorValue = String(editor?.getValue() ?? '');
-        expect(editorValue).toContain('A3:A6');
-        expect(editorValue).not.toContain('A1:A3');
+        await waitFor(() => {
+            const [editor] = api.getCellEditorInstances();
+            const editorValue = String(editor?.getValue() ?? '');
+            expect(editorValue).toContain('A3:A6');
+            expect(editorValue).not.toContain('A1:A3');
+        });
 
         api.stopEditing(true);
     });
@@ -918,12 +911,18 @@ describe('ag-grid formulas filtering', () => {
         const editingStarted = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 0, colKey: 'B' });
         await editingStarted;
-        await asyncSetTimeout(5);
 
         // Simulate typing "=A1" — A1 references formula row 1 which is filtered out.
-        const [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
+        const [editor] = api.getCellEditorInstances() as unknown as [
+            { agSetEditValue?: (v: unknown) => void; getValue?: () => unknown },
+        ];
+        // Positive control first: "=A5" references formula row 5, which IS visible at display index 0.
+        // It proves range processing runs synchronously within agSetEditValue for this grid, so the
+        // negative assertion below cannot pass merely because nothing has been processed yet.
+        editor?.agSetEditValue?.('=A5');
+        expect((api.getCellRanges() ?? []).map((r) => r.startRow?.rowIndex)).toEqual([0]);
+
         editor?.agSetEditValue?.('=A1');
-        await asyncSetTimeout(10);
 
         // A1 references a filtered-out row, so no cell range should be created.
         const ranges = api.getCellRanges() ?? [];
@@ -993,17 +992,17 @@ describe('ag-grid formulas filtering', () => {
         const editingStarted = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 0, colKey: 'B' });
         await editingStarted;
-        await asyncSetTimeout(5);
 
         // Click cell A at display index 2 (row id:1, formula row index 4 → ref A5).
         // Old bug would give A3 (display index 2+1).
         api.addCellRange({ rowStartIndex: 2, rowEndIndex: 2, columns: ['A'] });
-        await asyncSetTimeout(10);
 
-        const [editor] = api.getCellEditorInstances();
-        const editorValue = String(editor?.getValue() ?? '');
-        expect(editorValue).toContain('A5');
-        expect(editorValue).not.toContain('A3');
+        await waitFor(() => {
+            const [editor] = api.getCellEditorInstances();
+            const editorValue = String(editor?.getValue() ?? '');
+            expect(editorValue).toContain('A5');
+            expect(editorValue).not.toContain('A3');
+        });
 
         api.stopEditing(true);
     });
@@ -1049,12 +1048,18 @@ describe('ag-grid formulas filtering', () => {
         const editingStarted = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 0, colKey: 'B' });
         await editingStarted;
-        await asyncSetTimeout(5);
 
         // Type "=A2" — A2 is formula row 1 (id:4, A=20) which is filtered out.
-        const [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
+        const [editor] = api.getCellEditorInstances() as unknown as [
+            { agSetEditValue?: (v: unknown) => void; getValue?: () => unknown },
+        ];
+        // Positive control first: "=A1" is formula row 1 (id:5), which IS visible at display index 0.
+        // It proves range processing runs synchronously within agSetEditValue for this grid, so the
+        // negative assertion below cannot pass merely because nothing has been processed yet.
+        editor?.agSetEditValue?.('=A1');
+        expect((api.getCellRanges() ?? []).map((r) => r.startRow?.rowIndex)).toEqual([0]);
+
         editor?.agSetEditValue?.('=A2');
-        await asyncSetTimeout(10);
 
         // No range should highlight display index 0 (which would mean A2 incorrectly
         // mapped to the first visible row).
@@ -1102,23 +1107,23 @@ describe('ag-grid formulas filtering', () => {
         const editingStarted = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 2, colKey: 'B' });
         await editingStarted;
-        await asyncSetTimeout(5);
 
         // Type "=A1:A5" — rows 1-2 are filtered out, rows 3-5 are visible.
         const [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
         editor?.agSetEditValue?.('=A1:A5');
-        await asyncSetTimeout(10);
 
         // A range should be created for the visible portion (display indices 0-2 = rows 3-5).
-        const ranges = api.getCellRanges() ?? [];
-        const formulaRanges = ranges.filter((r) => r.startRow != null && r.endRow != null);
-        expect(formulaRanges.length).toBeGreaterThan(0);
+        await waitFor(() => {
+            const ranges = api.getCellRanges() ?? [];
+            const formulaRanges = ranges.filter((r) => r.startRow != null && r.endRow != null);
+            expect(formulaRanges.length).toBeGreaterThan(0);
 
-        const range = formulaRanges[0];
-        const startDisplay = Math.min(range.startRow!.rowIndex, range.endRow!.rowIndex);
-        const endDisplay = Math.max(range.startRow!.rowIndex, range.endRow!.rowIndex);
-        expect(startDisplay).toBe(0);
-        expect(endDisplay).toBe(2);
+            const range = formulaRanges[0];
+            const startDisplay = Math.min(range.startRow!.rowIndex, range.endRow!.rowIndex);
+            const endDisplay = Math.max(range.startRow!.rowIndex, range.endRow!.rowIndex);
+            expect(startDisplay).toBe(0);
+            expect(endDisplay).toBe(2);
+        });
 
         api.stopEditing(true);
     });
@@ -1167,24 +1172,24 @@ describe('ag-grid formulas filtering', () => {
         const editingStarted = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 0, colKey: 'B' });
         await editingStarted;
-        await asyncSetTimeout(5);
 
         // Type "=A3:A5" — both endpoints are visible, row 4 in the middle is filtered out.
         const [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
         editor?.agSetEditValue?.('=A3:A5');
-        await asyncSetTimeout(10);
 
         // A range should be created spanning the display indices of rows 3 and 5.
-        const ranges = api.getCellRanges() ?? [];
-        const formulaRanges = ranges.filter((r) => r.startRow != null && r.endRow != null);
-        expect(formulaRanges.length).toBeGreaterThan(0);
+        await waitFor(() => {
+            const ranges = api.getCellRanges() ?? [];
+            const formulaRanges = ranges.filter((r) => r.startRow != null && r.endRow != null);
+            expect(formulaRanges.length).toBeGreaterThan(0);
 
-        const range = formulaRanges[0];
-        // Display index 0 = row 3, display index 1 = row 5.
-        const startDisplay = Math.min(range.startRow!.rowIndex, range.endRow!.rowIndex);
-        const endDisplay = Math.max(range.startRow!.rowIndex, range.endRow!.rowIndex);
-        expect(startDisplay).toBe(0);
-        expect(endDisplay).toBe(1);
+            const range = formulaRanges[0];
+            // Display index 0 = row 3, display index 1 = row 5.
+            const startDisplay = Math.min(range.startRow!.rowIndex, range.endRow!.rowIndex);
+            const endDisplay = Math.max(range.startRow!.rowIndex, range.endRow!.rowIndex);
+            expect(startDisplay).toBe(0);
+            expect(endDisplay).toBe(1);
+        });
 
         api.stopEditing(true);
     });

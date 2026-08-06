@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { _doOnce } from 'ag-stack';
 import { vi } from 'vitest';
 
@@ -5,7 +6,7 @@ import type { ColDef, GridApi, GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { CalculatedColumnsModule, FormulaModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 // Calculated-column behaviour in PIVOT mode. A calculated column stays active under pivot, evaluating
 // against the primary columns on leaf rows, and works in every pivot role: as a non-value primary column
@@ -49,6 +50,10 @@ describe('calculated columns - pivot mode', () => {
         return api.getAllGridColumns()!.map((col) => col.getColId());
     }
 
+    function displayed(api: GridApi): string[] {
+        return api.getAllDisplayedColumns().map((col) => col.getColId());
+    }
+
     const rowData = [
         { id: 'r1', country: 'US', year: 2020, revenue: 10, cost: 3 },
         { id: 'r2', country: 'UK', year: 2020, revenue: 20, cost: 5 },
@@ -77,30 +82,38 @@ describe('calculated columns - pivot mode', () => {
         });
         const profit = () =>
             api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: false });
-        await asyncSetTimeout(10);
 
         // enablePivot only allows pivoting; with no active pivot column the calc col evaluates.
-        expect(profit()).toBe(7);
+        await waitFor(() => expect(profit()).toBe(7));
         expect(warn).not.toHaveBeenCalled();
 
-        // Turning pivot mode on without assigning a pivot column does not activate a pivot.
+        // Turning pivot mode on without assigning a pivot column does not activate a pivot: the display
+        // narrows to the value columns, but no pivot result columns are generated.
         api.setGridOption('pivotMode', true);
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(displayed(api)).toEqual(['revenue', 'cost']));
+        expect(api.getPivotResultColumns()).toBeFalsy();
         expect(profit()).toBe(7);
         expect(warn).not.toHaveBeenCalled();
 
         // Assigning a pivot column at runtime activates the pivot. The calc col (no aggFunc, not the pivot
         // dimension) stays active: it keeps evaluating against the primary columns on leaf rows.
         api.applyColumnState({ state: [{ colId: 'country', pivot: true }] });
-        await asyncSetTimeout(10);
+        await waitFor(() =>
+            expect(displayed(api)).toEqual([
+                'pivot_country_UK_revenue',
+                'pivot_country_UK_cost',
+                'pivot_country_US_revenue',
+                'pivot_country_US_cost',
+            ])
+        );
         expect(profit()).toBe(7);
         expect(warn).not.toHaveBeenCalled();
         expect(api.getColumn('profit')).toBeTruthy();
 
-        // Removing the pivot column leaves calc evaluation unchanged.
+        // Removing the pivot column leaves calc evaluation unchanged: the primary columns come back.
         api.applyColumnState({ state: [{ colId: 'country', pivot: false }] });
         api.setGridOption('pivotMode', false);
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(displayed(api)).toEqual(['country', 'year', 'revenue', 'cost', 'profit']));
         expect(profit()).toBe(7);
         expect(warn).not.toHaveBeenCalled();
     });
@@ -114,12 +127,11 @@ describe('calculated columns - pivot mode', () => {
             ],
             pivotMode: true,
         });
-        await asyncSetTimeout(10);
 
         // A calc col is a primary (non-value) column, so the pivot cross-tab has no cell for it: it is
         // NOT shown in the pivot display — consistent with every other primary column that isn't a
         // pivot result. It stays a real, resolvable column and reappears when pivot is turned off.
-        expect(api.getColumn('profit')).toBeTruthy();
+        await waitFor(() => expect(api.getColumn('profit')).toBeTruthy());
         await new GridColumns(api, 'pivot: calc col absent from display').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
@@ -134,7 +146,7 @@ describe('calculated columns - pivot mode', () => {
 
     test('calculated value column in pivot mode produces no incompatibility or validation warnings', async () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        createGrid('pivot-calc-warning-text', {
+        const api = createGrid('pivot-calc-warning-text', {
             rowData: [
                 { id: 'r1', country: 'US', year: 2020, gold: 1, silver: 2 },
                 { id: 'r2', country: 'UK', year: 2020, gold: 3, silver: 4 },
@@ -159,11 +171,12 @@ describe('calculated columns - pivot mode', () => {
             ],
             pivotMode: true,
         });
-        await asyncSetTimeout(10);
 
         // A calc value column aggregates under pivot like a valueGetter column, so no incompatibility or
         // validation warning fires at all (the old "not supported with Column Pivoting", misleading
-        // allowFormula, and value-source messages are all gone).
+        // allowFormula, and value-source messages are all gone). Gate on the pivot cross-tab having been
+        // built — the same column-processing pass that would emit the warning.
+        await waitFor(() => expect(api.getColumn('pivot_year_2020_gold')).toBeTruthy());
         expect(warn).not.toHaveBeenCalled();
     });
 
@@ -188,12 +201,11 @@ describe('calculated columns - pivot mode', () => {
                 },
             ],
         });
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
 
         // Enable pivot mode and drag YEAR into the pivot at runtime (the column-tool-panel path).
         api.setGridOption('pivotMode', true);
         api.applyColumnState({ state: [{ colId: 'year', pivot: true }] });
-        await asyncSetTimeout(10);
 
         // The calc value column's per-year pivot result aggregates its per-leaf (gold+silver), matching the
         // valueGetter column under every year — and no incompatibility/validation warning fires.
@@ -217,7 +229,6 @@ describe('calculated columns - pivot mode', () => {
             ],
             pivotMode: true,
         });
-        await asyncSetTimeout(10);
 
         // The calc col's per-leaf result (High/Low) is used as the pivot key, exactly like pivoting by a
         // valueGetter column: revenue aggregates into a result column per distinct band. No warning fires.
@@ -247,7 +258,7 @@ describe('calculated columns - pivot mode', () => {
             columnDefs: pivotColumnDefs,
             pivotMode: true,
         });
-        await asyncSetTimeout(10);
+        await waitFor(() => expect(order(api).some((c) => c.startsWith('pivot_year_2020'))).toBe(true));
         const before = order(api);
 
         addCalculatedColumnDef(api, {
@@ -255,13 +266,14 @@ describe('calculated columns - pivot mode', () => {
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         });
-        await asyncSetTimeout(10);
 
-        expect(api.getColumn('profit')).toBeTruthy();
-        // Pivot result cols + auto-group col are all still present after the calc-col add.
-        for (const id of before) {
-            expect(order(api)).toContain(id);
-        }
+        await waitFor(() => {
+            expect(api.getColumn('profit')).toBeTruthy();
+            // Pivot result cols + auto-group col are all still present after the calc-col add.
+            for (const id of before) {
+                expect(order(api)).toContain(id);
+            }
+        });
     });
 
     test('pivot mode off then on restores the calc col among the primary cols', async () => {
@@ -273,11 +285,9 @@ describe('calculated columns - pivot mode', () => {
             ],
             pivotMode: true,
         });
-        await asyncSetTimeout(10);
-        expect(api.getColumn('profit')).toBeTruthy();
+        await waitFor(() => expect(api.getColumn('profit')).toBeTruthy());
 
         api.setGridOption('pivotMode', false);
-        await asyncSetTimeout(10);
         // Out of pivot mode, the primary tree is the display tree: the auto-group col (country is
         // rowGroup+hide), the `year` pivot col (visible when pivot is inactive), the value cols, and
         // the calc col.
@@ -291,10 +301,11 @@ describe('calculated columns - pivot mode', () => {
         `);
 
         api.setGridOption('pivotMode', true);
-        await asyncSetTimeout(10);
         // Back in pivot mode the calc col is still resolvable and the pivot result is rebuilt.
-        expect(api.getColumn('profit')).toBeTruthy();
-        expect(order(api).some((c) => c.startsWith('pivot_year_2020'))).toBe(true);
+        await waitFor(() => {
+            expect(api.getColumn('profit')).toBeTruthy();
+            expect(order(api).some((c) => c.startsWith('pivot_year_2020'))).toBe(true);
+        });
     });
 
     test('calc col referencing primary columns evaluates on leaf rows under an active pivot', async () => {
@@ -310,11 +321,12 @@ describe('calculated columns - pivot mode', () => {
             ],
             pivotMode: true,
         });
-        await asyncSetTimeout(10);
 
-        expect(
-            api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'doubledRevenue', useFormatter: false })
-        ).toBe(20);
+        await waitFor(() =>
+            expect(
+                api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'doubledRevenue', useFormatter: false })
+            ).toBe(20)
+        );
     });
 
     test('calc col referencing a pivot result column id is bucket-aware on leaves; blank on group rows', async () => {
@@ -331,17 +343,18 @@ describe('calculated columns - pivot mode', () => {
             ],
             pivotMode: true,
         });
-        await asyncSetTimeout(10);
 
         const ref2020 = (id: string) =>
             api.getCellValue({ rowNode: api.getRowNode(id)!, colKey: 'ref2020', useFormatter: false });
         // Group rows have no data of their own, so the calc col stays blank there. On a leaf the reference
         // is its contribution to the 2020 bucket: a leaf in the bucket reads its source revenue (r1 = 10);
         // a leaf outside it (r3 is a 2021 row) is blank.
-        expect(ref2020('row-group-country-US')).toBeUndefined();
-        expect(ref2020('row-group-country-UK')).toBeUndefined();
-        expect(ref2020('r1')).toBe(10);
-        expect(ref2020('r3')).toBeUndefined();
+        await waitFor(() => {
+            expect(ref2020('row-group-country-US')).toBeUndefined();
+            expect(ref2020('row-group-country-UK')).toBeUndefined();
+            expect(ref2020('r1')).toBe(10);
+            expect(ref2020('r3')).toBeUndefined();
+        });
         expect(warn).not.toHaveBeenCalled();
     });
 
@@ -359,14 +372,15 @@ describe('calculated columns - pivot mode', () => {
             ],
             pivotMode: true,
         });
-        await asyncSetTimeout(10);
 
-        // The result column of an ordinary formula-enabled value column keeps allowFormula...
-        expect(api.getColumn('pivot_year_2020_revenue')!.isAllowFormula()).toBe(true);
-        // ...while the calc column's result column is a plain aggregation: no allowFormula, no expression.
-        const calcResult = api.getColumn('pivot_year_2020_calc')!;
-        expect(calcResult.isAllowFormula()).toBe(false);
-        expect(calcResult.getColDef().calculatedExpression).toBeUndefined();
+        await waitFor(() => {
+            // The result column of an ordinary formula-enabled value column keeps allowFormula...
+            expect(api.getColumn('pivot_year_2020_revenue')!.isAllowFormula()).toBe(true);
+            // ...while the calc column's result column is a plain aggregation: no allowFormula, no expression.
+            const calcResult = api.getColumn('pivot_year_2020_calc')!;
+            expect(calcResult.isAllowFormula()).toBe(false);
+            expect(calcResult.getColDef().calculatedExpression).toBeUndefined();
+        });
 
         // The calc source under Row Groups is unsupported, so #295 fires and turns its formula off —
         // the observable cause of the dropped calc fields asserted above.
