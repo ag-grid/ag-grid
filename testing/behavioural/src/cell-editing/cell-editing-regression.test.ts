@@ -988,12 +988,12 @@ describe('Cell Editing Regression', () => {
                     await userEvent.type(input, '5');
                     await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
                     await userEvent.keyboard('{Control>}{Enter}{/Control}');
-                    await waitFor(() =>
-                        expect(api.getCellValue({ rowNode: api.getRowNode('0')!, colKey: 'field' })).toEqual('15')
-                    );
+                    // Wait on the fill target (row 1), not the edited source row: row 0 already
+                    // reads back "15" from the live editor before Ctrl+Enter is pressed.
+                    await waitFor(() => expect(target).toHaveTextContent('15'));
 
                     expect(source).toHaveTextContent('15');
-                    expect(target).toHaveTextContent('15');
+                    expect(api.getCellValue({ rowNode: api.getRowNode('0')!, colKey: 'field' })).toEqual('15');
                     expect(api.getCellValue({ rowNode: api.getRowNode('1')!, colKey: 'field' })).toEqual('15');
                 },
                 jest.fn(),
