@@ -267,7 +267,11 @@ describe('ag-grid tree data parent id', () => {
 
         api.setGridOption('columnDefs', [{ field: 'xid', valueGetter: (params) => params.data?.id }, { field: 'x' }]);
 
-        await waitFor(() => expect(rowDataUpdated).toBe(1));
+        // Poll for the update, then yield one macrotask so a later duplicate would also be
+        // counted, before asserting the exact counts.
+        await waitFor(() => expect(rowDataUpdated).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
+        expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
         await new GridRows(api, 'data').check(`

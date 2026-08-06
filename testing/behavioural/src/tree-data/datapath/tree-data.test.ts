@@ -288,7 +288,11 @@ describe('ag-grid tree data', () => {
             { field: 'groupType', valueGetter: (params) => (params.data ? 'Provided' : 'Filler') },
         ]);
 
-        await waitFor(() => expect(rowDataUpdated).toBe(1));
+        // Poll for the update, then yield one macrotask so a later duplicate would also be
+        // counted, before asserting the exact counts.
+        await waitFor(() => expect(rowDataUpdated).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
+        expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
         await new GridRows(api, 'data').check(`
@@ -350,7 +354,11 @@ describe('ag-grid tree data', () => {
             { field: 'groupType', valueGetter: (params) => (params.data ? 'Provided' : 'Filler') },
         ]);
 
-        await waitFor(() => expect(rowDataUpdated).toBe(1));
+        // Poll for the update, then yield one macrotask so a later duplicate would also be
+        // counted, before asserting the exact counts.
+        await waitFor(() => expect(rowDataUpdated).toBeGreaterThanOrEqual(1));
+        await asyncSetTimeout(0);
+        expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
         await new GridRows(api, 'data').check(`

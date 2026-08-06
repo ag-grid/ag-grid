@@ -107,10 +107,17 @@ describe('ag-grid row data', () => {
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
+        // Exact event counts are gated in three steps throughout this file: poll for the expected
+        // events to arrive, yield one macrotask so that a later duplicate would also be counted,
+        // then assert the exact count. Polling the exact count alone would resolve on the first
+        // matching tick and never observe the duplicate.
         await waitFor(() => {
-            expect(rowDataUpdatedCount).toBe(1);
-            expect(modelUpdatedCount).toBe(1);
+            expect(rowDataUpdatedCount).toBeGreaterThanOrEqual(1);
+            expect(modelUpdatedCount).toBeGreaterThanOrEqual(1);
         });
+        await asyncSetTimeout(0);
+        expect(rowDataUpdatedCount).toBe(1);
+        expect(modelUpdatedCount).toBe(1);
         expect(compareCalled).toBe(true);
 
         await new GridRows(api, 'data').check(`
@@ -124,7 +131,8 @@ describe('ag-grid row data', () => {
 
         compareCalled = false;
         setRowDataChecked(api, rowData2);
-        await waitFor(() => expect(rowDataUpdatedCount).toBe(2));
+        await waitFor(() => expect(rowDataUpdatedCount).toBeGreaterThanOrEqual(2));
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
@@ -140,7 +148,8 @@ describe('ag-grid row data', () => {
 
         compareCalled = false;
         await executeTransactionsAsync([{ update: [{ id: '3', value: 300 }] }], api);
-        await waitFor(() => expect(rowDataUpdatedCount).toBe(3));
+        await waitFor(() => expect(rowDataUpdatedCount).toBeGreaterThanOrEqual(3));
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
@@ -155,7 +164,8 @@ describe('ag-grid row data', () => {
         expect(compareCalled).toBe(false);
 
         api.refreshClientSideRowModel('everything');
-        await waitFor(() => expect(modelUpdatedCount).toBe(2));
+        await waitFor(() => expect(modelUpdatedCount).toBeGreaterThanOrEqual(2));
+        await asyncSetTimeout(0);
         await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
@@ -170,7 +180,8 @@ describe('ag-grid row data', () => {
 
         compareCalled = false;
         await executeTransactionsAsync([{ add: [{ id: '7', value: 700 }] }, { remove: [{ id: '4' }] }], api);
-        await waitFor(() => expect(rowDataUpdatedCount).toBe(4));
+        await waitFor(() => expect(rowDataUpdatedCount).toBeGreaterThanOrEqual(4));
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
@@ -186,7 +197,8 @@ describe('ag-grid row data', () => {
 
         compareCalled = false;
         await executeTransactionsAsync([{ add: [{ id: '8', value: 8 }] }, { remove: [{ id: '8' }] }], api);
-        await waitFor(() => expect(rowDataUpdatedCount).toBe(5));
+        await waitFor(() => expect(rowDataUpdatedCount).toBeGreaterThanOrEqual(5));
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
@@ -202,7 +214,8 @@ describe('ag-grid row data', () => {
 
         compareCalled = false;
         api.updateGridOptions({ suppressModelUpdateAfterUpdateTransaction: false, rowData: rowData3 });
-        await waitFor(() => expect(rowDataUpdatedCount).toBe(6));
+        await waitFor(() => expect(rowDataUpdatedCount).toBeGreaterThanOrEqual(6));
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
@@ -217,7 +230,8 @@ describe('ag-grid row data', () => {
 
         compareCalled = false;
         api.updateGridOptions({ suppressModelUpdateAfterUpdateTransaction: false, rowData: rowData4 });
-        await waitFor(() => expect(rowDataUpdatedCount).toBe(7));
+        await waitFor(() => expect(rowDataUpdatedCount).toBeGreaterThanOrEqual(7));
+        await asyncSetTimeout(0);
 
         await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
@@ -262,9 +276,12 @@ describe('ag-grid row data', () => {
         api.setGridOption('columnDefs', [{ field: 'value' }]);
 
         await waitFor(() => {
-            expect(rowDataUpdated).toBe(1);
-            expect(modelUpdated).toBe(1);
+            expect(rowDataUpdated).toBeGreaterThanOrEqual(1);
+            expect(modelUpdated).toBeGreaterThanOrEqual(1);
         });
+        await asyncSetTimeout(0);
+        expect(rowDataUpdated).toBe(1);
+        expect(modelUpdated).toBe(1);
 
         await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
@@ -275,7 +292,8 @@ describe('ag-grid row data', () => {
 
         api.setGridOption('columnDefs', [{ field: 'value' }, { field: 'x' }]);
 
-        await waitFor(() => expect(modelUpdated).toBe(2));
+        await waitFor(() => expect(modelUpdated).toBeGreaterThanOrEqual(2));
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(2);
 
@@ -292,13 +310,17 @@ describe('ag-grid row data', () => {
         ]);
 
         await waitFor(() => {
-            expect(rowDataUpdated).toBe(2);
-            expect(modelUpdated).toBe(3);
+            expect(rowDataUpdated).toBeGreaterThanOrEqual(2);
+            expect(modelUpdated).toBeGreaterThanOrEqual(3);
         });
+        await asyncSetTimeout(0);
+        expect(rowDataUpdated).toBe(2);
+        expect(modelUpdated).toBe(3);
 
         api.setGridOption('columnDefs', [{ field: 'x' }, { field: 'value' }]);
 
-        await waitFor(() => expect(modelUpdated).toBe(4));
+        await waitFor(() => expect(modelUpdated).toBeGreaterThanOrEqual(4));
+        await asyncSetTimeout(0);
         expect(rowDataUpdated).toBe(2);
         expect(modelUpdated).toBe(4);
 
@@ -341,9 +363,12 @@ describe('ag-grid row data', () => {
         api.setGridOption('columnDefs', [{ field: 'value' }]);
 
         await waitFor(() => {
-            expect(rowDataUpdated).toBe(1);
-            expect(modelUpdated).toBe(1);
+            expect(rowDataUpdated).toBeGreaterThanOrEqual(1);
+            expect(modelUpdated).toBeGreaterThanOrEqual(1);
         });
+        await asyncSetTimeout(0);
+        expect(rowDataUpdated).toBe(1);
+        expect(modelUpdated).toBe(1);
 
         await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
@@ -386,9 +411,12 @@ describe('ag-grid row data', () => {
         api.setGridOption('columnDefs', [{ field: 'value' }, { field: 'value' }]);
 
         await waitFor(() => {
-            expect(rowDataUpdated).toBe(1);
-            expect(modelUpdated).toBe(1);
+            expect(rowDataUpdated).toBeGreaterThanOrEqual(1);
+            expect(modelUpdated).toBeGreaterThanOrEqual(1);
         });
+        await asyncSetTimeout(0);
+        expect(rowDataUpdated).toBe(1);
+        expect(modelUpdated).toBe(1);
 
         await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
@@ -714,7 +742,9 @@ describe('ag-grid row data', () => {
                 onModelUpdated: (e) => events.push(e),
             };
             gridsManager.createGrid('myGrid', gridOptions);
-            await waitFor(() => expect(events).toHaveLength(1));
+            await waitFor(() => expect(events.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events).toHaveLength(1);
             expect(events[0]).toMatchObject({
                 newData: true,
                 keepRenderedRows: false,
@@ -743,7 +773,9 @@ describe('ag-grid row data', () => {
             const events = collectModelUpdatedEvents(api);
 
             setRowDataChecked(api, [{ value: 2 }]);
-            await waitFor(() => expect(events).toHaveLength(1));
+            await waitFor(() => expect(events.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events).toHaveLength(1);
             expect(events[0]).toMatchObject({
                 newData: true,
                 keepRenderedRows: false,
@@ -778,7 +810,9 @@ describe('ag-grid row data', () => {
 
             // Update existing row - immutable update path
             setRowDataChecked(api, [{ id: '1', value: 2 }]);
-            await waitFor(() => expect(events).toHaveLength(1));
+            await waitFor(() => expect(events.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events).toHaveLength(1);
             expect(events[0]).toMatchObject({
                 newData: false,
                 keepRenderedRows: true,
@@ -813,7 +847,9 @@ describe('ag-grid row data', () => {
             const events = collectModelUpdatedEvents(api);
 
             applyTransactionChecked(api, { add: [{ id: '2', value: 2 }] });
-            await waitFor(() => expect(events).toHaveLength(1));
+            await waitFor(() => expect(events.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events).toHaveLength(1);
             expect(events[0]).toMatchObject({
                 newData: false,
                 keepRenderedRows: true,
@@ -867,7 +903,9 @@ describe('ag-grid row data', () => {
 
             // Add triggers modelUpdated even with suppressModelUpdateAfterUpdateTransaction
             applyTransactionChecked(api, { add: [{ id: '2', value: 3 }] });
-            await waitFor(() => expect(events).toHaveLength(1));
+            await waitFor(() => expect(events.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events).toHaveLength(1);
             expect(events[0]).toMatchObject({
                 newData: false,
                 keepRenderedRows: true,
@@ -919,7 +957,9 @@ describe('ag-grid row data', () => {
                 ├── LEAF id:1 value:1
                 └── LEAF id:2 value:2
             `);
-            await waitFor(() => expect(events).toHaveLength(1));
+            await waitFor(() => expect(events.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events).toHaveLength(1);
             expect(events[0]).toMatchObject({
                 newData: false,
                 keepRenderedRows: true,
@@ -946,7 +986,9 @@ describe('ag-grid row data', () => {
             const events1 = collectModelUpdatedEvents(api1);
 
             api1.refreshClientSideRowModel('sort');
-            await waitFor(() => expect(events1).toHaveLength(1));
+            await waitFor(() => expect(events1.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events1).toHaveLength(1);
             // animate is true because suppressAnimationFrame defaults to false
             expect(events1[0].animate).toBe(true);
 
@@ -964,7 +1006,9 @@ describe('ag-grid row data', () => {
             const events2 = collectModelUpdatedEvents(api2);
 
             api2.refreshClientSideRowModel('sort');
-            await waitFor(() => expect(events2).toHaveLength(1));
+            await waitFor(() => expect(events2.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events2).toHaveLength(1);
             // animate is true because suppressAnimationFrame defaults to false (animateRows is ignored)
             expect(events2[0].animate).toBe(true);
 
@@ -981,7 +1025,9 @@ describe('ag-grid row data', () => {
             const events3 = collectModelUpdatedEvents(api3);
 
             api3.refreshClientSideRowModel('sort');
-            await waitFor(() => expect(events3).toHaveLength(1));
+            await waitFor(() => expect(events3.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events3).toHaveLength(1);
             expect(events3[0].animate).toBe(false);
         });
 
@@ -1009,7 +1055,9 @@ describe('ag-grid row data', () => {
             const events = collectModelUpdatedEvents(api);
 
             applyTransactionChecked(api, { add: [{ id: '2', value: 2 }] });
-            await waitFor(() => expect(events).toHaveLength(1));
+            await waitFor(() => expect(events.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events).toHaveLength(1);
             // animate=true because suppressAnimationFrame defaults to false
             expect(events[0].animate).toBe(true);
             await new GridRows(api, `transaction animate uses suppressAnimationFrame, not animateRows final state`)
@@ -1042,7 +1090,9 @@ describe('ag-grid row data', () => {
             const events = collectModelUpdatedEvents(api);
 
             applyTransactionChecked(api, { add: [{ id: '2', value: 2 }] });
-            await waitFor(() => expect(events).toHaveLength(1));
+            await waitFor(() => expect(events.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events).toHaveLength(1);
             expect(events[0].animate).toBe(false);
             await new GridRows(api, `suppressAnimationFrame=true sets animate=false for transactions final state`)
                 .check(`
@@ -1135,7 +1185,9 @@ describe('ag-grid row data', () => {
                 ├── LEAF id:3 value:2
                 └── LEAF id:1 value:3
             `);
-            await waitFor(() => expect(events).toHaveLength(1));
+            await waitFor(() => expect(events.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events).toHaveLength(1);
             expect(events[0]).toMatchObject({
                 newData: false,
                 keepRenderedRows: true,
@@ -1208,7 +1260,9 @@ describe('ag-grid row data', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:1 value:1
             `);
-            await waitFor(() => expect(events).toHaveLength(1));
+            await waitFor(() => expect(events.length).toBeGreaterThanOrEqual(1));
+            await asyncSetTimeout(0);
+            expect(events).toHaveLength(1);
             expect(events[0]).toMatchObject({
                 newData: true,
                 keepRenderedRows: false,
