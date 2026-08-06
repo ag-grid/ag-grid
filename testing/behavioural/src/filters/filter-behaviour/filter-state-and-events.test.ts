@@ -621,4 +621,37 @@ describe('Filter State & Events', () => {
             expect(panel.isGroupExpandedByTitle('Athlete')).toBe(false);
         });
     });
+
+    test('repeated api.setState restores interleaved with refreshToolPanel each apply cleanly', async () => {
+        // Capture two states from a source grid: Athlete expanded, and Athlete collapsed.
+        const source: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: filterCols,
+            rowData: ATHLETES,
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const sourcePanel = await openFiltersPanel(source);
+        await sourcePanel.expandGroup('Athlete');
+        const expandedState = source.getState();
+        expect(expandedState.sideBar?.toolPanels?.filters?.expandedColIds).toContain('athlete');
+        await sourcePanel.collapseGroup('Athlete');
+        const collapsedState = source.getState();
+        expect(collapsedState.sideBar?.toolPanels?.filters?.expandedColIds ?? []).not.toContain('athlete');
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid2', {
+            columnDefs: filterCols,
+            rowData: ATHLETES,
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+
+        // First restore expands Athlete; a refresh in between must not disturb it.
+        api.setState(expandedState);
+        await waitFor(() => expect(panel.isGroupExpandedByTitle('Athlete')).toBe(true));
+        api.refreshToolPanel();
+        await waitFor(() => expect(panel.isGroupExpandedByTitle('Athlete')).toBe(true));
+
+        // Second restore (authoritative) collapses it — the one-shot signal must fire again.
+        api.setState(collapsedState);
+        await waitFor(() => expect(panel.isGroupExpandedByTitle('Athlete')).toBe(false));
+    });
 });
