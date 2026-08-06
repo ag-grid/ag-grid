@@ -347,7 +347,7 @@ def stage(dry_run: bool = False) -> set[Path]:
         all_possible = _stageable_paths(manifest["plugins"]) | _read_prior_staged()
         for stale in sorted(all_possible - staged):
             rel = stale.relative_to(REPO_ROOT) if stale.is_absolute() else stale
-            if rel in tracked:
+            if rel in tracked or _has_tracked_descendant(rel, tracked):
                 print(f"  keeping tracked {rel} (not a stage-leftover)", file=sys.stderr)
                 continue
             if stale.is_symlink() or stale.is_file():
@@ -382,6 +382,16 @@ def _tracked_files() -> set[Path]:
     except (subprocess.CalledProcessError, FileNotFoundError):
         return set()
     return {Path(line) for line in result.stdout.splitlines() if line}
+
+
+def _has_tracked_descendant(rel: Path, tracked: set[Path]) -> bool:
+    """Whether any tracked file lives under ``rel``.
+
+    Skills stage as directories, and git tracks files rather than directories, so
+    a membership test against ``tracked`` alone never matches a skill directory.
+    Without this, dropping a plugin skill whose name collides with a tracked
+    local skill (e.g. .rulesync/skills/testing/) would rmtree the local one."""
+    return any(rel in candidate.parents for candidate in tracked)
 
 
 def _read_prior_staged() -> set[Path]:
