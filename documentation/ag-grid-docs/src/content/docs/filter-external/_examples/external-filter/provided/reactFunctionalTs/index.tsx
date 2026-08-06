@@ -1,6 +1,6 @@
 'use client';
 
-import React, { StrictMode, useCallback, useMemo, useRef } from 'react';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, IDateFilterParams, IRowNode } from 'ag-grid-community';
@@ -75,38 +75,35 @@ const columnDefs: ColDef<IOlympicData>[] = [
 ];
 
 const GridExample = () => {
-    const gridRef = useRef<AgGridReact<IOlympicData>>(null);
-    // A ref, so the callbacks below read the current value with an empty dependency array.
-    const ageType = useRef('everyone');
+    const [ageType, setAgeType] = useState('everyone');
 
     const defaultColDef = useMemo<ColDef>(() => ({ flex: 1, minWidth: 120, filter: true }), []);
 
     const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
-    const isExternalFilterPresent = useCallback((): boolean => ageType.current !== 'everyone', []);
+    // Both callbacks depend on ageType, so changing it hands the grid new references and filtering re-runs.
+    const isExternalFilterPresent = useCallback((): boolean => ageType !== 'everyone', [ageType]);
 
-    const doesExternalFilterPass = useCallback((node: IRowNode<IOlympicData>): boolean => {
-        if (node.data) {
-            switch (ageType.current) {
-                case 'below25':
-                    return node.data.age < 25;
-                case 'between25and50':
-                    return node.data.age >= 25 && node.data.age <= 50;
-                case 'above50':
-                    return node.data.age > 50;
-                case 'dateAfter2008':
-                    return asDate(node.data.date) > new Date(2008, 0, 1);
-                default:
-                    return true;
+    const doesExternalFilterPass = useCallback(
+        (node: IRowNode<IOlympicData>): boolean => {
+            if (node.data) {
+                switch (ageType) {
+                    case 'below25':
+                        return node.data.age < 25;
+                    case 'between25and50':
+                        return node.data.age >= 25 && node.data.age <= 50;
+                    case 'above50':
+                        return node.data.age > 50;
+                    case 'dateAfter2008':
+                        return asDate(node.data.date) > new Date(2008, 0, 1);
+                    default:
+                        return true;
+                }
             }
-        }
-        return true;
-    }, []);
-
-    const onAgeTypeChanged = useCallback((newValue: string) => {
-        ageType.current = newValue;
-        gridRef.current!.api.onFilterChanged();
-    }, []);
+            return true;
+        },
+        [ageType]
+    );
 
     return (
         <AgGridProvider modules={modules}>
@@ -118,12 +115,12 @@ const GridExample = () => {
                             name="filter"
                             id="everyone"
                             defaultChecked
-                            onChange={() => onAgeTypeChanged('everyone')}
+                            onChange={() => setAgeType('everyone')}
                         />
                         Everyone
                     </label>
                     <label>
-                        <input type="radio" name="filter" id="below25" onChange={() => onAgeTypeChanged('below25')} />
+                        <input type="radio" name="filter" id="below25" onChange={() => setAgeType('below25')} />
                         Below 25
                     </label>
                     <label>
@@ -131,12 +128,12 @@ const GridExample = () => {
                             type="radio"
                             name="filter"
                             id="between25and50"
-                            onChange={() => onAgeTypeChanged('between25and50')}
+                            onChange={() => setAgeType('between25and50')}
                         />
                         Between 25 and 50
                     </label>
                     <label>
-                        <input type="radio" name="filter" id="above50" onChange={() => onAgeTypeChanged('above50')} />
+                        <input type="radio" name="filter" id="above50" onChange={() => setAgeType('above50')} />
                         Above 50
                     </label>
                     <label>
@@ -144,14 +141,13 @@ const GridExample = () => {
                             type="radio"
                             name="filter"
                             id="dateAfter2008"
-                            onChange={() => onAgeTypeChanged('dateAfter2008')}
+                            onChange={() => setAgeType('dateAfter2008')}
                         />
                         After 01/01/2008
                     </label>
                 </div>
                 <div style={{ height: '100%' }}>
                     <AgGridReact<IOlympicData>
-                        ref={gridRef}
                         rowData={data}
                         loading={loading}
                         columnDefs={columnDefs}
