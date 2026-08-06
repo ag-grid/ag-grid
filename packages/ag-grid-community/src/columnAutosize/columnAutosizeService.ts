@@ -56,6 +56,20 @@ type SizeColumnsToFitParams = ISizeColumnsToFitParams & {
 
 type SizeColumnsToFitGridBodyParams = ISizeColumnsToFitParams & Pick<SizeColumnsToFitParams, 'colKeys' | 'onComplete'>;
 
+/** Per-column width limits for a `sizeColumnsToFit` run, keyed by col id. */
+type ColumnLimitsMap = { [colId: string]: Omit<IColumnLimit, 'key'> };
+
+interface SpreadColsParams {
+    gridWidth: number;
+    colsToSpread: AgColumn[];
+    colsToNotSpread: AgColumn[];
+    /** Widths captured before the reset, acting as minimums when `onlyScaleUp` is set. */
+    currentWidths: Partial<Record<string, number>>;
+    limitsMap: ColumnLimitsMap;
+    params: SizeColumnsToFitParams | undefined;
+    source: ColumnEventType;
+}
+
 /** The source a resize driven from the header UI reports; a finished one is a manual column width. */
 const UI_RESIZE_SOURCE: ColumnEventType = 'uiColumnResized';
 const STRATEGY_SOURCE: ColumnEventType = 'autosizeStrategy';
@@ -698,10 +712,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             setWidthAnimation(beans, true);
         }
 
-        const limitsMap: { [colId: string]: Omit<IColumnLimit, 'key'> } = Object.create(null);
-        for (const { key, ...dimensions } of params?.columnLimits ?? []) {
-            limitsMap[typeof key === 'string' ? key : key.getColId()] = dimensions;
-        }
+        const limitsMap = buildColumnLimitsMap(params?.columnLimits);
 
         // avoid divide by zero
         const allDisplayedColumns = beans.visibleCols.allCols;
@@ -717,122 +728,21 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
+        // if all columns fit, check they are within the min and max widths - if so, can quit early.
         const doColumnsAlreadyFit = gridWidth === currentTotalColumnWidth;
-        if (doColumnsAlreadyFit) {
-            // if all columns fit, check they are within the min and max widths - if so, can quit early.
-            const doAllColumnsSatisfyConstraints = allDisplayedColumns.every((column) => {
-                if (column.colDef.suppressSizeToFit) {
-                    return true;
-                }
-                const widthOverride = limitsMap?.[column.getId()];
-                const minWidth = widthOverride?.minWidth ?? params?.defaultMinWidth;
-                const maxWidth = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
-                const colWidth = column.getActualWidth();
-                return (minWidth == null || colWidth >= minWidth) && (maxWidth == null || colWidth <= maxWidth);
-            });
-            if (doAllColumnsSatisfyConstraints) {
-                return;
-            }
+        if (doColumnsAlreadyFit && allColsWithinLimits(allDisplayedColumns, limitsMap, params)) {
+            return;
         }
 
-        const colsToSpread: AgColumn[] = [];
-        const colsToNotSpread: AgColumn[] = [];
-
-        for (const column of allDisplayedColumns) {
-            const isIncluded = params?.colKeys?.some((key) => columnsMatch(column, key)) ?? true;
-            if (column.colDef.suppressSizeToFit || !isIncluded) {
-                colsToNotSpread.push(column);
-            } else {
-                colsToSpread.push(column);
-            }
-        }
+        const { colsToSpread, colsToNotSpread } = partitionColsToSpread(allDisplayedColumns, params);
 
         // make a copy of the cols that are going to be resized
         const colsToDispatchEventFor = colsToSpread.slice(0);
-        let finishedResizing = false;
 
-        const moveToNotSpread = (column: AgColumn) => {
-            _removeFromArray(colsToSpread, column);
-            colsToNotSpread.push(column);
-        };
+        const currentWidths = resetColsToLimits(colsToSpread, limitsMap, params, source);
+        spreadColsToFit({ gridWidth, colsToSpread, colsToNotSpread, currentWidths, limitsMap, params, source });
 
-        const currentWidths: Partial<Record<string, number>> = Object.create(null);
-
-        // resetting cols to their original width makes the sizeColumnsToFit more deterministic,
-        // rather than depending on the current size of the columns. most users call sizeColumnsToFit
-        // immediately after grid is created, so will make no difference. however if application is calling
-        // sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
-        // the columns to start shrinking / growing over time.
-        for (const column of colsToSpread) {
-            if (params?.onlyScaleUp) {
-                // When `onlyScaleUp`, we store the current widths to act as a true minimum because we don't
-                // want any columns to get smaller
-                currentWidths[column.colId] = column.getActualWidth();
-            }
-            column.resetActualWidth(source);
-
-            const widthOverride = limitsMap?.[column.getId()];
-            const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? -Infinity;
-            const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth ?? Infinity;
-
-            const colWidth = column.getActualWidth();
-            const targetWidth = _clamp(colWidth, minOverride, maxOverride);
-
-            // NOTE: we assign values to `this.actualWidth` of each column without firing events
-            // for this reason we need to manually dispatch resize events after the resize has been done for each column.
-            if (targetWidth != colWidth) {
-                column.setActualWidth(targetWidth, source, true);
-            }
-        }
-
-        while (!finishedResizing) {
-            finishedResizing = true;
-            const availablePixels = gridWidth - getWidthOfColsInList(colsToNotSpread);
-            if (availablePixels <= 0) {
-                // no width, set everything to minimum
-                for (const column of colsToSpread) {
-                    const newWidth =
-                        limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth ?? column.minWidth;
-                    column.setActualWidth(newWidth, source, true);
-                }
-            } else {
-                const scale = availablePixels / getWidthOfColsInList(colsToSpread);
-                // we set the pixels for the last col based on what's left, as otherwise
-                // we could be a pixel or two short or extra because of rounding errors.
-                let pixelsForLastCol = availablePixels;
-                // backwards through loop, as we are removing items as we go
-                for (let i = colsToSpread.length - 1; i >= 0; i--) {
-                    const column = colsToSpread[i];
-
-                    const id = column.colId;
-                    const prevWidth = currentWidths[id];
-                    const widthOverride = limitsMap?.[id];
-                    const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? prevWidth;
-                    const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
-                    const minWidth = Math.max(minOverride ?? -Infinity, column.getMinWidth());
-                    const maxWidth = Math.min(maxOverride ?? Infinity, column.getMaxWidth());
-                    let newWidth = Math.round(column.getActualWidth() * scale);
-
-                    if (newWidth < minWidth) {
-                        newWidth = minWidth;
-                        moveToNotSpread(column);
-                        finishedResizing = false;
-                    } else if (newWidth > maxWidth) {
-                        newWidth = maxWidth;
-                        moveToNotSpread(column);
-                        finishedResizing = false;
-                    } else if (i === 0) {
-                        // if this is the last column
-                        newWidth = pixelsForLastCol;
-                    }
-
-                    column.setActualWidth(newWidth, source, true);
-                    pixelsForLastCol -= newWidth;
-                }
-            }
-        }
-
-        // see NOTE above
+        // see NOTE in resetColsToLimits
         for (const col of colsToDispatchEventFor) {
             col.fireColumnWidthChangedEvent(source);
         }
@@ -995,6 +905,164 @@ function setWidthAnimation({ ctrlsSvc, gos }: BeanCollection, enable: boolean): 
     } else {
         classList.remove(WIDTH_ANIMATION_CLASS);
     }
+}
+
+function buildColumnLimitsMap(columnLimits?: IColumnLimit[]): ColumnLimitsMap {
+    const limitsMap: ColumnLimitsMap = Object.create(null);
+    for (const { key, ...dimensions } of columnLimits ?? []) {
+        limitsMap[typeof key === 'string' ? key : key.getColId()] = dimensions;
+    }
+    return limitsMap;
+}
+
+/** The limits applying to a column, combining its own entry in `limitsMap` with the run-wide defaults. */
+function getColLimits(
+    limitsMap: ColumnLimitsMap,
+    params: SizeColumnsToFitParams | undefined,
+    colId: string
+): { minWidth?: number; maxWidth?: number } {
+    const widthOverride = limitsMap[colId];
+    return {
+        minWidth: widthOverride?.minWidth ?? params?.defaultMinWidth,
+        maxWidth: widthOverride?.maxWidth ?? params?.defaultMaxWidth,
+    };
+}
+
+function allColsWithinLimits(
+    columns: AgColumn[],
+    limitsMap: ColumnLimitsMap,
+    params: SizeColumnsToFitParams | undefined
+): boolean {
+    return columns.every((column) => {
+        if (column.colDef.suppressSizeToFit) {
+            return true;
+        }
+        const { minWidth, maxWidth } = getColLimits(limitsMap, params, column.getId());
+        const colWidth = column.getActualWidth();
+        const aboveMin = minWidth == null || colWidth >= minWidth;
+        return aboveMin && (maxWidth == null || colWidth <= maxWidth);
+    });
+}
+
+function partitionColsToSpread(
+    columns: AgColumn[],
+    params: SizeColumnsToFitParams | undefined
+): { colsToSpread: AgColumn[]; colsToNotSpread: AgColumn[] } {
+    const colsToSpread: AgColumn[] = [];
+    const colsToNotSpread: AgColumn[] = [];
+
+    for (const column of columns) {
+        const isIncluded = params?.colKeys?.some((key) => columnsMatch(column, key)) ?? true;
+        if (column.colDef.suppressSizeToFit || !isIncluded) {
+            colsToNotSpread.push(column);
+        } else {
+            colsToSpread.push(column);
+        }
+    }
+
+    return { colsToSpread, colsToNotSpread };
+}
+
+/**
+ * Resetting cols to their original width makes the sizeColumnsToFit more deterministic,
+ * rather than depending on the current size of the columns. most users call sizeColumnsToFit
+ * immediately after grid is created, so will make no difference. however if application is calling
+ * sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
+ * the columns to start shrinking / growing over time.
+ *
+ * NOTE: we assign values to `this.actualWidth` of each column without firing events,
+ * for this reason we need to manually dispatch resize events after the resize has been done for each column.
+ *
+ * @returns the widths held before the reset, populated only when `onlyScaleUp` is set.
+ */
+function resetColsToLimits(
+    colsToSpread: AgColumn[],
+    limitsMap: ColumnLimitsMap,
+    params: SizeColumnsToFitParams | undefined,
+    source: ColumnEventType
+): Partial<Record<string, number>> {
+    const currentWidths: Partial<Record<string, number>> = Object.create(null);
+
+    for (const column of colsToSpread) {
+        if (params?.onlyScaleUp) {
+            // When `onlyScaleUp`, we store the current widths to act as a true minimum because we don't
+            // want any columns to get smaller
+            currentWidths[column.colId] = column.getActualWidth();
+        }
+        column.resetActualWidth(source);
+
+        const { minWidth, maxWidth } = getColLimits(limitsMap, params, column.getId());
+        const colWidth = column.getActualWidth();
+        const targetWidth = _clamp(colWidth, minWidth ?? -Infinity, maxWidth ?? Infinity);
+
+        if (targetWidth != colWidth) {
+            column.setActualWidth(targetWidth, source, true);
+        }
+    }
+
+    return currentWidths;
+}
+
+/** Grows / shrinks `colsToSpread` until every column is within its limits and they fill `gridWidth`. */
+function spreadColsToFit(spreadParams: SpreadColsParams): void {
+    const { gridWidth, colsToNotSpread } = spreadParams;
+    let finishedResizing = false;
+
+    while (!finishedResizing) {
+        const availablePixels = gridWidth - getWidthOfColsInList(colsToNotSpread);
+        finishedResizing =
+            availablePixels <= 0 ? setColsToMinWidth(spreadParams) : scaleColsToFit(spreadParams, availablePixels);
+    }
+}
+
+/** No width available, so set everything to minimum. */
+function setColsToMinWidth({ colsToSpread, limitsMap, params, source }: SpreadColsParams): boolean {
+    for (const column of colsToSpread) {
+        const newWidth = getColLimits(limitsMap, params, column.getId()).minWidth ?? column.minWidth;
+        column.setActualWidth(newWidth, source, true);
+    }
+    return true;
+}
+
+/**
+ * Scales the spreadable columns to fill `availablePixels`, moving any column that hits a limit out of
+ * `colsToSpread`.
+ *
+ * @returns whether all columns landed within their limits, i.e. no further pass is needed.
+ */
+function scaleColsToFit(spreadParams: SpreadColsParams, availablePixels: number): boolean {
+    const { colsToSpread, colsToNotSpread, currentWidths, limitsMap, params, source } = spreadParams;
+    const scale = availablePixels / getWidthOfColsInList(colsToSpread);
+    // we set the pixels for the last col based on what's left, as otherwise
+    // we could be a pixel or two short or extra because of rounding errors.
+    let pixelsForLastCol = availablePixels;
+    let finishedResizing = true;
+
+    // backwards through loop, as we are removing items as we go
+    for (let i = colsToSpread.length - 1; i >= 0; i--) {
+        const column = colsToSpread[i];
+
+        const limits = getColLimits(limitsMap, params, column.colId);
+        const minWidth = Math.max(limits.minWidth ?? currentWidths[column.colId] ?? -Infinity, column.getMinWidth());
+        const maxWidth = Math.min(limits.maxWidth ?? Infinity, column.getMaxWidth());
+        let newWidth = Math.round(column.getActualWidth() * scale);
+
+        const isOutsideLimits = newWidth < minWidth || newWidth > maxWidth;
+        if (isOutsideLimits) {
+            newWidth = newWidth < minWidth ? minWidth : maxWidth;
+            _removeFromArray(colsToSpread, column);
+            colsToNotSpread.push(column);
+            finishedResizing = false;
+        } else if (i === 0) {
+            // if this is the last column
+            newWidth = pixelsForLastCol;
+        }
+
+        column.setActualWidth(newWidth, source, true);
+        pixelsForLastCol -= newWidth;
+    }
+
+    return finishedResizing;
 }
 
 function columnsMatch(column: AgColumn, key: ColKey): boolean {
