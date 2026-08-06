@@ -5,14 +5,7 @@ import { getGridElement } from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
-import {
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    fakeElementAttribute,
-    getAllRows,
-    waitForPopup,
-} from '../../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, fakeElementAttribute, getAllRows } from '../../test-utils';
 
 /**
  * End-to-end behavioural coverage for the Rich Select cell editor (`agRichSelectCellEditor`).
@@ -27,8 +20,15 @@ import {
 
 async function openEditor(api: GridApi, gridDiv: HTMLElement, rowIndex: number, colKey: string): Promise<HTMLElement> {
     api.startEditingCell({ rowIndex, colKey });
-    await asyncSetTimeout(1);
-    return waitForPopup(gridDiv);
+    // Poll until the picker is actually mounted — `waitForPopup` resolves with `null` on the first
+    // tick if `.ag-popup` is not there yet, so it cannot gate the editor opening on its own.
+    return waitFor(() => {
+        const popup = gridDiv.querySelector<HTMLElement>('.ag-popup');
+        if (!popup || !gridDiv.querySelector('.ag-rich-select-list')) {
+            throw new Error('Rich Select picker did not open');
+        }
+        return popup;
+    });
 }
 
 function getRows(popup: HTMLElement): HTMLElement[] {
@@ -42,16 +42,18 @@ function getRowLabels(popup: HTMLElement): string[] {
 /** Commits a Rich Select row by clicking it. The editor reads the row from `clientY`, so a plain
  * click always lands on row 0 — we compute a `clientY` inside the target row's band. */
 async function commitByClick(popup: HTMLElement, label: string): Promise<void> {
-    const rows = getRows(popup);
-    const index = rows.findIndex((row) => row.textContent?.trim() === label);
-    if (index < 0) {
-        throw new Error(`Rich Select row "${label}" not found. Available: ${getRowLabels(popup).join(', ')}`);
-    }
-    const target = rows[index];
+    // The row list renders asynchronously (and re-renders on filter/selection), so poll for the row.
+    const { target, index } = await waitFor(() => {
+        const rows = getRows(popup);
+        const rowIndex = rows.findIndex((row) => row.textContent?.trim() === label);
+        if (rowIndex < 0) {
+            throw new Error(`Rich Select row "${label}" not found. Available: ${getRowLabels(popup).join(', ')}`);
+        }
+        return { target: rows[rowIndex], index: rowIndex };
+    });
     const rowHeight = target.getBoundingClientRect().height || 20;
     const clientY = rowHeight * index + rowHeight / 2;
     fireEvent(target, new MouseEvent('click', { bubbles: true, clientY }));
-    await asyncSetTimeout(1);
 }
 
 /** Fires a keydown on the picker aria/wrapper element (the element the editor listens on). */
@@ -96,12 +98,12 @@ describe('Rich Select cell editor', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
 
         const popup = await openEditor(api, gridDiv, 0, 'a');
-        expect(getRowLabels(popup)).toEqual(['Alpha', 'Beta', 'Gamma']);
+        await waitFor(() => expect(getRowLabels(popup)).toEqual(['Alpha', 'Beta', 'Gamma']));
 
         await commitByClick(popup, 'Gamma');
 
-        expect(getAllRows(api)[0].data.a).toBe('Gamma');
-        expect(gridDiv.querySelector('.ag-popup')).toBeNull();
+        await waitFor(() => expect(getAllRows(api)[0].data.a).toBe('Gamma'));
+        await waitFor(() => expect(gridDiv.querySelector('.ag-popup')).toBeNull());
         await new GridRows(api, 'after commit Gamma').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 a:"Gamma"
@@ -119,19 +121,17 @@ describe('Rich Select cell editor', () => {
         const popup = await openEditor(api, gridDiv, 0, 'a');
 
         pressKey(gridDiv, 'G');
-        await asyncSetTimeout(1);
-        expect(getRowLabels(popup)).toEqual(['Gamma', 'Gadget']);
+        await waitFor(() => expect(getRowLabels(popup)).toEqual(['Gamma', 'Gadget']));
 
         // ArrowDown moves the highlight down the filtered list; commit whichever row it lands on.
         pressKey(gridDiv, 'ArrowDown');
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
         const highlighted = getHighlightedRow(popup)?.textContent?.trim();
         expect(['Gamma', 'Gadget']).toContain(highlighted);
 
         pressKey(gridDiv, 'Enter');
-        await asyncSetTimeout(1);
-        expect(getAllRows(api)[0].data.a).toBe(highlighted);
-        expect(gridDiv.querySelector('.ag-popup')).toBeNull();
+        await waitFor(() => expect(getAllRows(api)[0].data.a).toBe(highlighted));
+        await waitFor(() => expect(gridDiv.querySelector('.ag-popup')).toBeNull());
     });
 
     // 2b. Escape cancels without committing.
@@ -145,12 +145,12 @@ describe('Rich Select cell editor', () => {
         await openEditor(api, gridDiv, 0, 'a');
 
         pressKey(gridDiv, 'ArrowDown');
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
         pressKey(gridDiv, 'Escape');
-        await asyncSetTimeout(1);
 
+        // The picker teardown can only be observed after Escape, so gate the negative on it.
+        await waitFor(() => expect(gridDiv.querySelector('.ag-rich-select-list')).toBeNull());
         expect(getAllRows(api)[0].data.a).toBe('Alpha');
-        expect(gridDiv.querySelector('.ag-rich-select-list')).toBeNull();
         expect(gridDiv.querySelector('.ag-popup')).toBeNull();
     });
 
@@ -202,10 +202,10 @@ describe('Rich Select cell editor', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
         const popup = await openEditor(api, gridDiv, 0, 'a');
 
-        expect(getRowLabels(popup)).toEqual(['Ireland', 'France', 'Germany']);
+        await waitFor(() => expect(getRowLabels(popup)).toEqual(['Ireland', 'France', 'Germany']));
 
         await commitByClick(popup, 'France');
-        expect(getAllRows(api)[0].data.a).toEqual({ code: 'FR', name: 'France' });
+        await waitFor(() => expect(getAllRows(api)[0].data.a).toEqual({ code: 'FR', name: 'France' }));
     });
 
     // 5. Async values promise populates the list.
@@ -226,7 +226,7 @@ describe('Rich Select cell editor', () => {
         await waitFor(() => expect(getRowLabels(popup)).toEqual(['One', 'Two', 'Three']));
 
         await commitByClick(popup, 'Two');
-        expect(getAllRows(api)[0].data.a).toBe('Two');
+        await waitFor(() => expect(getAllRows(api)[0].data.a).toBe('Two'));
     });
 
     // 6. Paged/lazy loading: valuesPage loads the initial page and renders its rows.
@@ -265,6 +265,8 @@ describe('Rich Select cell editor', () => {
         expect(rendered[0]).toBe('Item-0');
 
         await commitByClick(popup, 'Item-0');
+        // The cell already held 'Item-0', so gate on the editor closing — only true post-commit.
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
         expect(getAllRows(api)[0].data.a).toBe('Item-0');
     });
 
@@ -290,10 +292,10 @@ describe('Rich Select cell editor', () => {
         await commitByClick(popup, 'Gamma');
 
         api.stopEditing();
-        await asyncSetTimeout(1);
 
-        const committed = getAllRows(api)[0].data.a as string[];
-        expect([...committed].sort()).toEqual(['Alpha', 'Beta', 'Gamma']);
+        await waitFor(() =>
+            expect([...(getAllRows(api)[0].data.a as string[])].sort()).toEqual(['Alpha', 'Beta', 'Gamma'])
+        );
     });
 
     // 8. filterList + searchType 'match' filters on a leading-substring match.
@@ -314,9 +316,8 @@ describe('Rich Select cell editor', () => {
 
         pressKey(gridDiv, 'A');
         pressKey(gridDiv, 'p');
-        await asyncSetTimeout(1);
 
-        expect(getRowLabels(popup)).toEqual(['Apple', 'Apricot']);
+        await waitFor(() => expect(getRowLabels(popup)).toEqual(['Apple', 'Apricot']));
     });
 
     // 9. allowTyping: false blocks free-text entry; there is no typing input, selection is list-only.
@@ -335,7 +336,7 @@ describe('Rich Select cell editor', () => {
         expect(inputField?.classList.contains('ag-hidden')).toBe(true);
 
         await commitByClick(popup, 'Beta');
-        expect(getAllRows(api)[0].data.a).toBe('Beta');
+        await waitFor(() => expect(getAllRows(api)[0].data.a).toBe('Beta'));
     });
 
     // 10. highlightMatch marks matched substrings in filtered results.
@@ -357,10 +358,8 @@ describe('Rich Select cell editor', () => {
 
         pressKey(gridDiv, 'A');
         pressKey(gridDiv, 'p');
-        await asyncSetTimeout(1);
 
-        const highlight = popup.querySelector('.ag-rich-select-row-text-highlight');
-        expect(highlight?.textContent).toBe('Ap');
+        await waitFor(() => expect(popup.querySelector('.ag-rich-select-row-text-highlight')?.textContent).toBe('Ap'));
     });
 
     // 11. Clicking outside the picker closes it.
@@ -379,7 +378,6 @@ describe('Rich Select cell editor', () => {
         document.body.appendChild(outside);
         try {
             await userEvent.click(outside);
-            await asyncSetTimeout(1);
             await waitFor(() => expect(gridDiv.querySelector('.ag-rich-select-list')).toBeNull());
         } finally {
             outside.remove();
@@ -396,10 +394,11 @@ describe('Rich Select cell editor', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
         const popup = await openEditor(api, gridDiv, 0, 'a');
 
+        await waitFor(() => expect(getRows(popup).length).toBeGreaterThan(0));
         expect(getRows(popup).some((row) => row.classList.contains('ag-rich-select-row-selected'))).toBe(false);
 
         await commitByClick(popup, 'Alpha');
-        expect(getAllRows(api)[0].data.a).toBe('Alpha');
+        await waitFor(() => expect(getAllRows(api)[0].data.a).toBe('Alpha'));
     });
 
     // 13. Navigation keys while the picker is open drive the list, not grid cell navigation.
@@ -417,7 +416,7 @@ describe('Rich Select cell editor', () => {
 
         pressKey(gridDiv, 'ArrowDown');
         pressKey(gridDiv, 'ArrowDown');
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         // Highlight moved within the list; the editing cell is still row 0 (grid did not navigate).
         expect(getHighlightedRow(popup)).toBeTruthy();
