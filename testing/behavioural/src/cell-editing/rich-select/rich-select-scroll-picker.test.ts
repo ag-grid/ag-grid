@@ -4,7 +4,7 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ScrollApiModule, getGridElement } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, fakeElementAttribute } from '../../test-utils';
+import { TestGridsManager, fakeElementAttribute } from '../../test-utils';
 
 const LANGUAGES = ['English', 'Spanish', 'French', 'Portuguese', '(other)'];
 
@@ -57,7 +57,6 @@ describe('Rich Select cell editor — picker opens for a scrolled-into-view edit
 
         // c8 sits outside the 1000px viewport; startEditingCell scrolls it into view as part of the start.
         api.startEditingCell({ rowIndex: 0, colKey: 'c8' });
-        await asyncSetTimeout(1);
 
         // The Rich Select picker must be shown for the freshly-started edit.
         await waitFor(() => expect(pickerExpanded(gridDiv)).toBe(true));

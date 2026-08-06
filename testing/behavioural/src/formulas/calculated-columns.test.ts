@@ -302,14 +302,7 @@ describe('ag-grid calculated columns', () => {
     // setViewportRange at all); polling on the actual row data is the one signal every row
     // model exposes consistently.
     async function waitForFirstRow(api: { getDisplayedRowAtIndex(index: number): any }): Promise<void> {
-        for (let i = 0; i < 50; i++) {
-            if (api.getDisplayedRowAtIndex(0)?.data != null) {
-                return;
-            }
-            // eslint-disable-next-line no-restricted-syntax -- retry interval of this poll loop, not a gate
-            await asyncSetTimeout(10);
-        }
-        throw new Error('Timed out waiting for first row to load');
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(0)?.data ?? null).not.toBeNull());
     }
 
     function findColumnDef(columnDefs: (ColDef | ColGroupDef)[], colId: string): ColDef | undefined {
