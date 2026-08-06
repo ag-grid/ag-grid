@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { ColDef, GridApi } from 'ag-grid-community';
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('column tool panel test IDs with virtualization', () => {
     const gridMgr = new TestGridsManager({
@@ -128,43 +130,44 @@ describe('column tool panel test IDs with virtualization', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 col0:"val_col0" col1:"val_col1" col2:"val_col2" col3:"val_col3" col4:"val_col4" col5:"val_col5" col6:"val_col6" col7:"val_col7" col8:"val_col8" col9:"val_col9" col10:"val_col10" col11:"val_col11" col12:"val_col12" col13:"val_col13" col14:"val_col14" col15:"val_col15" col16:"val_col16" col17:"val_col17" col18:"val_col18" col19:"val_col19" col20:"val_col20" col21:"val_col21" col22:"val_col22" col23:"val_col23" col24:"val_col24" col25:"val_col25" col26:"val_col26" col27:"val_col27" col28:"val_col28" col29:"val_col29"
         `);
-        await asyncSetTimeout(50);
+        // The tool panel viewport is created asynchronously, so poll until it exists before
+        // forcing the virtual list to render.
+        const viewport = await waitFor(() => forceVirtualListRender(api));
 
-        const viewport = forceVirtualListRender(api);
-        await asyncSetTimeout(200);
-
-        // Initial state: visible items should have test IDs
-        const initialLabels = getVisibleItemLabels(api);
-        expect(initialLabels.length).toBeGreaterThan(0);
-        expect(initialLabels).toContain('Column 0 Column');
-
-        const initialTestIds = getVisibleCheckboxTestIds(api);
-        expect(initialTestIds.length).toBeGreaterThan(0);
-        expect(initialTestIds[0]).toBe(agTestIdFor.columnSelectListItemCheckbox('Column 0 Column'));
+        // Initial state: visible items should have test IDs. The items and their test IDs land in
+        // separate passes, so poll until both are in place.
+        await waitFor(() => {
+            expect(getVisibleItemLabels(api)).toContain('Column 0 Column');
+            expect(getVisibleCheckboxTestIds(api)[0]).toBe(
+                agTestIdFor.columnSelectListItemCheckbox('Column 0 Column')
+            );
+            expect(countCheckboxesWithoutTestId(api)).toEqual([]);
+        });
+        expect(getVisibleItemLabels(api).length).toBeGreaterThan(0);
+        expect(getVisibleCheckboxTestIds(api).length).toBeGreaterThan(0);
 
         // Scroll down to reveal new items
         viewport.scrollTop = 500;
-        await asyncSetTimeout(200);
 
-        const scrolledLabels = getVisibleItemLabels(api);
-        expect(scrolledLabels.length).toBeGreaterThan(0);
-        expect(scrolledLabels).not.toContain('Column 0 Column');
+        // Poll until the list has redrawn for the new scroll position and every checkbox in the
+        // redrawn window has its test ID. 'Column 0 Column' and a test ID for every checkbox were
+        // both asserted above, so this is a real state transition, not a tick-0 pass.
+        await waitFor(() => {
+            expect(getVisibleItemLabels(api)).not.toContain('Column 0 Column');
+            expect(countCheckboxesWithoutTestId(api)).toEqual([]);
+        });
+        expect(getVisibleItemLabels(api).length).toBeGreaterThan(0);
 
-        // Every visible checkbox should have a test ID
-        const missingAfterScrollDown = countCheckboxesWithoutTestId(api);
-        expect(missingAfterScrollDown).toEqual([]);
-
-        // Scroll back to top
+        // Scroll back to top - checkboxes should still have test IDs
         viewport.scrollTop = 0;
-        await asyncSetTimeout(200);
 
-        const scrolledBackLabels = getVisibleItemLabels(api);
-        expect(scrolledBackLabels).toContain('Column 0 Column');
-
-        // Checkboxes should still have test IDs after scrolling back
-        const missingAfterScrollBack = countCheckboxesWithoutTestId(api);
-        expect(missingAfterScrollBack).toEqual([]);
-        expect(getVisibleCheckboxTestIds(api)[0]).toBe(agTestIdFor.columnSelectListItemCheckbox('Column 0 Column'));
+        await waitFor(() => {
+            expect(getVisibleItemLabels(api)).toContain('Column 0 Column');
+            expect(getVisibleCheckboxTestIds(api)[0]).toBe(
+                agTestIdFor.columnSelectListItemCheckbox('Column 0 Column')
+            );
+            expect(countCheckboxesWithoutTestId(api)).toEqual([]);
+        });
         await new GridRows(api, `should maintain checkbox test IDs after scrolling the virtual list final state`).check(
             `
                 ROOT id:ROOT_NODE_ID
