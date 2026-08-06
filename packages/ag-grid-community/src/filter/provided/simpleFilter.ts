@@ -42,7 +42,7 @@ import {
 } from './simpleFilterUtils';
 
 /** temporary type until `SimpleFilterParams` is updated as breaking change */
-type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
+export type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
     FilterDisplayParams<any, any, M | ICombinedSimpleModel<M>>;
 
 type FilterModelOrCombined<M extends ISimpleFilterModel> = M | ICombinedSimpleModel<M> | null;
