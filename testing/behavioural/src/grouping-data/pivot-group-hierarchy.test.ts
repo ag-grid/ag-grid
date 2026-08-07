@@ -562,6 +562,32 @@ describe('pivot with groupHierarchy (date-time)', () => {
         expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['date']);
     });
 
+    test('removePivotColumns drops one hierarchy level without disturbing the rest', async () => {
+        const api = gridsManager.createGrid('hierarchyRemovePivotLevel', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'date', pivot: true, groupHierarchy: ['year', 'month'] },
+                { field: 'total', aggFunc: 'sum' },
+            ],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1), total: 1 },
+                { country: 'UK', date: new Date(2021, 5, 15), total: 2 },
+            ],
+            pivotMode: true,
+        });
+        await asyncSetTimeout(0);
+
+        expect(api.getPivotColumns().map((c) => c.getColId())).toEqual([YEAR_COL, MONTH_COL, 'date']);
+
+        api.removePivotColumns([YEAR_COL]);
+        await asyncSetTimeout(0);
+        expect(api.getPivotColumns().map((c) => c.getColId())).toEqual([MONTH_COL, 'date']);
+
+        api.removePivotColumns([MONTH_COL]);
+        await asyncSetTimeout(0);
+        expect(api.getPivotColumns().map((c) => c.getColId())).toEqual(['date']);
+    });
+
     test('hierarchy virtuals inherit enableRowGroup so their row-group-panel chips stay draggable', async () => {
         const api = gridsManager.createGrid('hierarchyEnableRowGroup', {
             columnDefs: [
