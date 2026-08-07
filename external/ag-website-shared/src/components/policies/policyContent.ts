@@ -72,17 +72,6 @@ export const POLICY_CONTENT = {
         ],
         intro: [],
     },
-    'your-choice': {
-        heading: 'Your request has been received',
-        metaTitle: 'Opt Out Request Received',
-        description:
-            "We've noted your request to opt out and will remove your details from our records within 5 working days",
-        meta: [],
-        intro: [
-            "Thank you. We've noted your request to opt out and will remove your details from our records within 5 working days. You'll receive a confirmation email once this is done.",
-            'If you have any questions in the meantime, please contact <br /><a href="mailto:privacy@ag-grid.com">privacy@ag-grid.com</a>.',
-        ],
-    },
 } as const satisfies Record<string, PolicyContent>;
 
 export type PolicyName = keyof typeof POLICY_CONTENT;

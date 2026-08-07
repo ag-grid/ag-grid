@@ -10,21 +10,17 @@ import markdocConfig from '../../../markdoc.config';
 
 const SITE_ROOT = 'https://www.ag-grid.com/';
 
-// Only the policies that ship a twin. /privacy/your-choice has none: it is the opt-out
-// confirmation page, disallowed in robots.txt and excluded from the sitemap.
-const BODIES = {
+const BODIES: Record<PolicyName, string> = {
     privacy: privacyBody,
     cookies: cookiesBody,
     'modern-slavery': modernSlaveryBody,
-} as const satisfies Partial<Record<PolicyName, string>>;
+};
 
-type TwinnedPolicy = keyof typeof BODIES;
-
-const build = (policy: TwinnedPolicy) =>
+const build = (policy: PolicyName) =>
     buildPolicyMarkdown({ policy, name: 'AG Grid', body: BODIES[policy], markdocConfig, siteRoot: SITE_ROOT });
 
 describe('buildPolicyMarkdown', () => {
-    describe.each(Object.keys(BODIES) as TwinnedPolicy[])('%s', (policy) => {
+    describe.each(Object.keys(BODIES) as PolicyName[])('%s', (policy) => {
         it('emits frontmatter, then exactly one H1 matching the page heading', async () => {
             const output = await build(policy);
             expect(output.startsWith('---\n')).toBe(true);
