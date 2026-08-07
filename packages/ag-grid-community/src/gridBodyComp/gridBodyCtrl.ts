@@ -210,17 +210,17 @@ export class GridBodyCtrl extends BeanStub {
             return 0;
         }
 
+        return this.getColumnsWidth() + this.getVerticalScrollbarWidth(verticalScrollShowing);
+    }
+
+    /** Raw width of the displayed columns, without the scroll-range adjustments of `getHorizontalContentWidth`. */
+    public getColumnsWidth(): number {
         const { visibleCols } = this.beans;
-        const baseWidth =
+        return (
             visibleCols.bodyWidth +
             visibleCols.getLeftStickyColumnContainerWidth() +
-            visibleCols.getRightStickyColumnContainerWidth();
-
-        if (!verticalScrollShowing) {
-            return baseWidth;
-        }
-
-        return baseWidth + this.getVerticalScrollbarWidth(verticalScrollShowing);
+            visibleCols.getRightStickyColumnContainerWidth()
+        );
     }
 
     public isPinnedWidthOverflowingViewport(
