@@ -1,3 +1,5 @@
+import type { AgPromise } from 'ag-stack';
+
 import type { IToolPanel, IToolPanelParams } from 'ag-grid-community';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
@@ -9,6 +11,11 @@ export class ToolPanelComponentWrapper
 {
     private state: any;
     private readonly onStateChange = (state: any) => this.updateState(state);
+
+    public override init(params: IToolPanelParams): AgPromise<void> {
+        this.state = params.initialState;
+        return super.init(params);
+    }
 
     public refresh(params: IToolPanelParams): boolean {
         this.sourceParams = params;
