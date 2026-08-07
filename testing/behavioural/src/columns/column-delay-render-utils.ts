@@ -33,8 +33,10 @@ export function recordHideClassMutations(): HideClassRecorder {
         }
         return remove.apply(this, tokens);
     };
-    DOMTokenList.prototype.toggle = function recordToggle(token: string, force?: boolean) {
-        const result = toggle.call(this, token, force);
+    // Forward the force argument only when the caller supplied one, so a one-argument call still
+    // toggles rather than being reinterpreted against an explicit undefined.
+    DOMTokenList.prototype.toggle = function recordToggle(token: string, ...force: [boolean?]) {
+        const result = toggle.call(this, token, ...force);
         if (token === HIDE_CLASS) {
             events.push(result ? 'add' : 'remove');
         }
