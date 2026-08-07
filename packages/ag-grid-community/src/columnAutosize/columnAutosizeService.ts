@@ -65,6 +65,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
      */
     private strategyAppliedOnSetup = 0;
     private strategyRunRequestedAt = -1;
+    /** A re-run the grid was too narrow to serve, waiting for a width to become available. */
+    private strategyRunDeferredForWidth = false;
     private readonly reRunStrategyDebounced = _debounce(this, () => this.reRunStrategy(), STRATEGY_RERUN_DEBOUNCE_MS);
 
     /** when we're waiting for cell data types to be inferred, we need to defer column resizing */
@@ -115,6 +117,17 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             handlers[events[i]] = onEvent;
         }
         this.addManagedEventListeners(handlers);
+
+        // a re-run the grid was too narrow to serve is held rather than dropped - a grid in a
+        // hidden tab reports no width, and the request would otherwise be lost until the next
+        // configured event happened to fire
+        this.addManagedEventListeners({
+            gridSizeChanged: () => {
+                if (this.strategyRunDeferredForWidth && getAvailableWidth(this.beans) > 0) {
+                    this.reRunStrategy();
+                }
+            },
+        });
     }
 
     private reRunStrategy(): void {
@@ -129,10 +142,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
         const strategy = this.gos.get('autoSizeStrategy');
         // a re-run against a grid with no width would collapse the columns onto their minimums, and
-        // `sizeColumnsToFitGridBody` would start its own retry cascade for every run that piles up
+        // `sizeColumnsToFitGridBody` would start its own retry cascade for every run that piles up.
+        // The request is held instead, for `gridSizeChanged` to serve once there is a width.
         if (strategy?.type === 'fitGridWidth' && getAvailableWidth(this.beans) <= 0) {
+            this.strategyRunDeferredForWidth = true;
             return;
         }
+        this.strategyRunDeferredForWidth = false;
         this.strategyRunPending = true;
         // wait a frame so frameworks which render asynchronously have painted the changes
         // caused by the triggering event before we measure
