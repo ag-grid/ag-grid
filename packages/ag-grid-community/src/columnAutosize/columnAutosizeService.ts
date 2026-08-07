@@ -34,7 +34,7 @@ interface AutoSizeColumnParams {
 }
 
 /** Sources used by the built-in Column Menu and Context Menu auto-size actions. */
-const UI_MENU_SOURCES: ColumnEventType[] = ['columnMenu', 'contextMenu'];
+const UI_MENU_SOURCES: ReadonlySet<ColumnEventType> = new Set(['columnMenu', 'contextMenu']);
 
 export class ColumnAutosizeService extends BeanStub implements NamedBean {
     beanName = 'colAutosize' as const;
@@ -75,7 +75,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
      */
     private withUiActionStrategyParams(params: AutoSizeColumnParams): AutoSizeColumnParams {
         const { source } = params;
-        if (!source || !UI_MENU_SOURCES.includes(source)) {
+        if (!source || !UI_MENU_SOURCES.has(source)) {
             return params;
         }
 
