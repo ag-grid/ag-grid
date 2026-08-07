@@ -295,7 +295,6 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.gstatic.com', // reCAPTCHA
             'https://apis.google.com', // Firebase Auth (ecommerce checkout): GAPI client loads the auth iframe
             'https://www.youtube.com', // YouTube iframe JS API (loads into the page)
-            'https://cdn.cookielaw.org', // OneTrust cookie-consent SDK (GTM-injected, prod-only)
             ENZUZO_APP_HOST, // Enzuzo cookie-consent banner (GTM-injected), replacing OneTrust
             'blob:', // ZoomInfo zi-tag.js bootstraps a blob: URL script
             WASM_UNSAFE_EVAL,
@@ -342,7 +341,6 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
             'https://www.google.com', // reCAPTCHA (api2/clr XHR)
-            'https://cdn.cookielaw.org', // OneTrust config/JSON/asset XHR (GTM-injected, prod-only)
             'https://*.onetrust.com', // OneTrust geolocation + consent-receipt endpoints
             ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
             ENZUZO_GVL_HOST, // Enzuzo-hosted IAB TCF Global Vendor List
