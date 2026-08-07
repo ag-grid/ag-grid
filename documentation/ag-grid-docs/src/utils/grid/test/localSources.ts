@@ -337,8 +337,8 @@ function userAgentFor(page: Page): Promise<string> {
 
 /**
  * Everything off the site's own origin is mirrored. An allowlist of known CDNs leaves every host nobody
- * thought of reaching the public internet - `flags.fmcdn.net` and `cdn.cookielaw.org` already needed their
- * own per-spec stubs - so the default is "mirror it" and only the build under test is exempt.
+ * thought of reaching the public internet - `flags.fmcdn.net` already needed its own per-spec stub - so
+ * the default is "mirror it" and only the build under test is exempt.
  */
 const isExternalTo =
     (siteOrigin: string) =>

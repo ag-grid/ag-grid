@@ -1,6 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import { Content as CookiesPolicies } from '@ag-website-shared/content/policies/cookies.mdoc';
+import CookiesTable from '../components/CookiesTable.astro';
 import styles from '../policyPage.module.scss';
 
 interface Props {
@@ -32,9 +33,6 @@ const { name } = Astro.props;
                             <a href="#">Cookies Guide</a>
                         </li>
                         <li>
-                            <a href="#manage-your-cookie-consent">Manage Cookie Consent</a>
-                        </li>
-                        <li>
                             <a href="#intro-privacy">What is a Cookie?</a>
                         </li>
                         <li>
@@ -43,6 +41,9 @@ const { name } = Astro.props;
                         <li>
                             <a href="#third-party-cookies">Third-party Cookies</a>
                         </li>
+                        <li>
+                            <a href="#cookies-we-use">Cookies We Use</a>
+                        </li>
                     </ul>
                 </nav>
             </header>
@@ -50,6 +51,13 @@ const { name } = Astro.props;
             <div class={styles.policyList}>
                 <CookiesPolicies />
             </div>
+
+            <section>
+                <h3 id="cookies-we-use">Cookies We Use</h3>
+                <hr />
+                <p>The cookies listed below were last reviewed on 7 August 2026.</p>
+                <CookiesTable />
+            </section>
         </div>
     </div>
 </Layout>

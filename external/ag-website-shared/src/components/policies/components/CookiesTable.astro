@@ -1,0 +1,39 @@
+---
+import cookiesData from '@ag-website-shared/content/policies/cookies-data-07-08-26.json';
+import styles from './CookiesTable.module.scss';
+---
+
+{
+    cookiesData.categories.map(({ name: categoryName, description, cookies }) => (
+        <div class={styles.category}>
+            <h4>{categoryName}</h4>
+            <p>{description}</p>
+
+            <div class={styles.tableContainer}>
+                <table class={styles.cookiesTable}>
+                    <thead>
+                        <tr>
+                            <th scope="col">Cookie Subgroup</th>
+                            <th scope="col">Cookies</th>
+                            <th scope="col">Cookies used</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {cookies.map(({ name, subgroup, party, moreInfo }) => {
+                            // A few entries cover a whole domain rather than a named cookie.
+                            const label = name ?? '—';
+
+                            return (
+                                <tr>
+                                    <td data-column="Cookie Subgroup">{subgroup}</td>
+                                    <td data-column="Cookies">{moreInfo ? <a href={moreInfo}>{label}</a> : label}</td>
+                                    <td data-column="Cookies used">{party}</td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    ))
+}
