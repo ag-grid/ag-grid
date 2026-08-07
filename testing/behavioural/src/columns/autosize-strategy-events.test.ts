@@ -16,13 +16,19 @@
 import { waitFor } from '@testing-library/dom';
 
 import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnAutoSizeModule, PaginationModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    ColumnAutoSizeModule,
+    EventApiModule,
+    PaginationModule,
+} from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
 
 describe('autoSizeStrategy events', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnAutoSizeModule, PaginationModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, EventApiModule, PaginationModule],
     });
 
     afterEach(() => {
@@ -240,6 +246,27 @@ describe('autoSizeStrategy events', () => {
             expect(resizeBatches()).toBe(2);
         });
 
+        test('an autoSizeColumns API call is not treated as a trigger', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ a: 'x', b: 'y', c: 'z' }],
+                autoSizeStrategy: {
+                    type: 'fitCellContents',
+                    skipHeader: true,
+                    defaultMinWidth: 100,
+                    events: ['columnResized'],
+                },
+            });
+            await waitFor(() => expect(widths(api)).toEqual([100, 100, 100]));
+
+            // a wider floor than the strategy uses, so a strategy re-run would undo it
+            api.autoSizeColumns({ colIds: ['a'], defaultMinWidth: 250 });
+            await waitFor(() => expect(widthOf(api, 'a')).toBe(250));
+            await settleStrategyWindow();
+
+            expect(widthOf(api, 'a')).toBe(250);
+        });
+
         test('debounces rapid events into a single run', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
@@ -256,6 +283,36 @@ describe('autoSizeStrategy events', () => {
             await settleStrategyWindow();
 
             expect(resizeBatches()).toBe(1);
+        });
+    });
+
+    describe('startup', () => {
+        test('a lifecycle event fired during setup does not size the columns twice', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ a: 'x', b: 'y', c: 'z' }],
+                autoSizeStrategy: { type: 'fitCellContents', skipHeader: true, events: ['modelUpdated'] },
+            });
+            const resizeBatches = countResizeBatches(api);
+
+            await waitFor(() => expect(widths(api)).toEqual([100, 100, 100]));
+            await settleStrategyWindow();
+
+            expect(resizeBatches()).toBe(1);
+        });
+
+        test('an event after setup still re-runs the strategy', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ a: 'x', b: 'y', c: 'z' }],
+                autoSizeStrategy: { type: 'fitCellContents', skipHeader: true, events: ['modelUpdated'] },
+            });
+            await waitFor(() => expect(widths(api)).toEqual([100, 100, 100]));
+
+            api.setColumnWidths([{ key: 'a', newWidth: 400 }]);
+            api.applyTransaction({ add: [{ a: 'x2', b: 'y2', c: 'z2' }] });
+
+            await waitFor(() => expect(widthOf(api, 'a')).toBe(100));
         });
     });
 

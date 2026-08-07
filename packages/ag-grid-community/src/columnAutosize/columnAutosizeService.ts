@@ -58,6 +58,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private timesDelayed = 0;
 
     private strategyRunPending = false;
+    /**
+     * Bumped when the strategy is applied as part of grid setup. A re-run requested before that
+     * point is superseded by it, so lifecycle events in `events` - the initial `modelUpdated`, say -
+     * do not size the columns a second time during startup.
+     */
+    private strategyAppliedOnSetup = 0;
+    private strategyRunRequestedAt = -1;
     private readonly reRunStrategyDebounced = _debounce(this, () => this.reRunStrategy(), STRATEGY_RERUN_DEBOUNCE_MS);
 
     /** when we're waiting for cell data types to be inferred, we need to defer column resizing */
@@ -100,6 +107,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (event.source && STRATEGY_SOURCES.has(event.source)) {
                 return;
             }
+            this.strategyRunRequestedAt = this.strategyAppliedOnSetup;
             this.reRunStrategyDebounced();
         };
         const handlers: Partial<Record<AgPublicEventType, (event: StrategyTriggerEvent) => void>> = {};
@@ -110,9 +118,19 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     private reRunStrategy(): void {
+        // the setup application has run since this was requested, and covers it
+        if (this.strategyRunRequestedAt !== this.strategyAppliedOnSetup) {
+            return;
+        }
         // a background tab never services its animation frames, so without this every debounce
         // window spent hidden would queue another run, all firing at once when the tab is revealed
         if (this.strategyRunPending) {
+            return;
+        }
+        const strategy = this.gos.get('autoSizeStrategy');
+        // a re-run against a grid with no width would collapse the columns onto their minimums, and
+        // `sizeColumnsToFitGridBody` would start its own retry cascade for every run that piles up
+        if (strategy?.type === 'fitGridWidth' && getAvailableWidth(this.beans) <= 0) {
             return;
         }
         this.strategyRunPending = true;
@@ -666,6 +684,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 return;
             }
             this.applyStrategy(strategy);
+            this.strategyAppliedOnSetup++;
             this.beans.colDelayRenderSvc?.revealColumns(strategy.type);
         });
     }
