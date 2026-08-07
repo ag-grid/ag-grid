@@ -357,7 +357,7 @@ AddCharset utf-8 .md
     # is left untouched. Placed after host/https canonicalization but before the
     # trailing-slash 301 so the canonical (slashed) docs URL negotiates in one hop.
     RewriteCond %{HTTP_ACCEPT} text/markdown
-    RewriteCond %{REQUEST_URI} ^/((?:react|angular|vue|javascript)-data-grid/[^/.]+|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|modern-slavery|privacy(?:/your-choice)?|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$
+    RewriteCond %{REQUEST_URI} ^/((?:react|angular|vue|javascript)-data-grid/[^/.]+|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|modern-slavery|privacy|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$
     RewriteCond %{DOCUMENT_ROOT}/%1.md -f
     RewriteRule ^ /%1.md [L]
 
@@ -2743,7 +2743,7 @@ Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
 # SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|modern-slavery|privacy(?:/your-choice)?|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$# || %{REQUEST_URI} == '/'">
+<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|modern-slavery|privacy|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$# || %{REQUEST_URI} == '/'">
     Header append Vary Accept
 </If>
 
@@ -2816,7 +2816,7 @@ AddCharset utf-8 .md
 
     # SE-80: content-negotiate docs pages to their markdown variant on Accept: text/markdown.
     RewriteCond %{HTTP_ACCEPT} text/markdown
-    RewriteCond %{REQUEST_URI} ^/((?:react|angular|vue|javascript)-data-grid/[^/.]+|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|modern-slavery|privacy(?:/your-choice)?|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$
+    RewriteCond %{REQUEST_URI} ^/((?:react|angular|vue|javascript)-data-grid/[^/.]+|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|modern-slavery|privacy|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$
     RewriteCond %{DOCUMENT_ROOT}/%1.md -f
     RewriteRule ^ /%1.md [L]
 
@@ -2830,7 +2830,7 @@ AddCharset utf-8 .md
 
 # SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|modern-slavery|privacy(?:/your-choice)?|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$# || %{REQUEST_URI} == '/'">
+<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|modern-slavery|privacy|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$# || %{REQUEST_URI} == '/'">
     Header append Vary Accept
 </If>
 

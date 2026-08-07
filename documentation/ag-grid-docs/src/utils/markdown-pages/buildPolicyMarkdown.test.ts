@@ -10,18 +10,21 @@ import markdocConfig from '../../../markdoc.config';
 
 const SITE_ROOT = 'https://www.ag-grid.com/';
 
-const BODIES: Record<PolicyName, string | undefined> = {
+// Only the policies that ship a twin. /privacy/your-choice has none: it is the opt-out
+// confirmation page, disallowed in robots.txt and excluded from the sitemap.
+const BODIES = {
     privacy: privacyBody,
     cookies: cookiesBody,
     'modern-slavery': modernSlaveryBody,
-    'your-choice': undefined,
-};
+} as const satisfies Partial<Record<PolicyName, string>>;
 
-const build = (policy: PolicyName) =>
+type TwinnedPolicy = keyof typeof BODIES;
+
+const build = (policy: TwinnedPolicy) =>
     buildPolicyMarkdown({ policy, name: 'AG Grid', body: BODIES[policy], markdocConfig, siteRoot: SITE_ROOT });
 
 describe('buildPolicyMarkdown', () => {
-    describe.each(Object.keys(BODIES) as PolicyName[])('%s', (policy) => {
+    describe.each(Object.keys(BODIES) as TwinnedPolicy[])('%s', (policy) => {
         it('emits frontmatter, then exactly one H1 matching the page heading', async () => {
             const output = await build(policy);
             expect(output.startsWith('---\n')).toBe(true);
@@ -67,11 +70,5 @@ describe('buildPolicyMarkdown', () => {
         expect(output).toContain('**For the Financial Year Ending 31 December 2026**');
         expect(output).toContain('**Effective Date:** 01 January 2026');
         expect(output).toContain('Organisation Structure and Supply Chain');
-    });
-
-    it('renders the body-less opt-out page from its intro copy alone', async () => {
-        const output = await build('your-choice');
-        expect(output).toContain('# Your request has been received');
-        expect(output).toContain('[privacy@ag-grid.com](mailto:privacy@ag-grid.com)');
     });
 });

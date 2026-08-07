@@ -10,19 +10,25 @@ import { createGridMarkdownResolvers } from '@utils/markdoc/renderMarkdocResolve
 
 import markdocConfig from '../../../markdoc.config';
 
-// `your-choice` is intro prose only — it has no numbered policy body.
-const POLICY_BODIES: Record<PolicyName, string | undefined> = {
+/**
+ * The policies that ship a markdown twin, and the raw `.mdoc` body each renders from.
+ *
+ * `your-choice` is absent by design: it is the opt-out confirmation page, disallowed in robots.txt
+ * and excluded from the sitemap (like the /contact result pages), so it has no twin.
+ */
+const POLICY_BODIES = {
     privacy: privacyBody,
     cookies: cookiesBody,
     'modern-slavery': modernSlaveryBody,
-    'your-choice': undefined,
-};
+} as const satisfies Partial<Record<PolicyName, string>>;
+
+export type TwinnedPolicy = keyof typeof POLICY_BODIES;
 
 /**
  * Shared body of the policy `.md` endpoints. Each renders the same shared preamble and the same
  * `.mdoc` body its page renders, so only the policy name differs between endpoints.
  */
-export async function policyMarkdownResponse(policy: PolicyName): Promise<Response> {
+export async function policyMarkdownResponse(policy: TwinnedPolicy): Promise<Response> {
     if (DISABLE_MARKDOWN_DOCS) {
         return new Response(null, { status: 404 });
     }

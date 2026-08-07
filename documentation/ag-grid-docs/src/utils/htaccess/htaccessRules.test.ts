@@ -595,7 +595,6 @@ describe('htaccessRules', () => {
             '/cookies/',
             '/modern-slavery/',
             '/privacy/',
-            '/privacy/your-choice/',
             '/example-finance/',
             '/example-hr/',
             '/example-inventory/',
@@ -615,6 +614,7 @@ describe('htaccessRules', () => {
             '/react-data-grid/errors/123/', // sitemap-excluded
             '/data-grid/cell-editing/', // framework-agnostic redirect stub
             '/contact/success/', // form result, sitemap-excluded
+            '/privacy/your-choice/', // opt-out confirmation, robots-disallowed and sitemap-excluded
             '/examples/cell-editing/component-editor/reactFunctionalTs/',
             '/debug/files/',
             '/sitemap-0.xml',

@@ -10,11 +10,8 @@ export interface BuildPolicyMarkdownOptions {
     policy: PolicyName;
     /** Product name substituted into the heading, e.g. `AG Grid`. */
     name: string;
-    /**
-     * Raw `.mdoc` source for the policy body, or undefined for a policy with no numbered body
-     * (`your-choice` is intro prose only). Import it with Vite's `?raw` suffix.
-     */
-    body?: string;
+    /** Raw `.mdoc` source for the policy body. Import it with Vite's `?raw` suffix. */
+    body: string;
     /** The product's Markdoc config, so tags and functions resolve exactly as on the page. */
     markdocConfig: MarkdocConfigLike;
     resolvers?: MarkdownResolvers;
@@ -43,15 +40,13 @@ export async function buildPolicyMarkdown({
 
     // The policy body carries its own numbered `###` headings, so render it without a frontmatter
     // title and prepend the shared preamble here — otherwise the twin would have two H1s.
-    const renderedBody = body
-        ? await renderMarkdocToMarkdown({
-              body,
-              framework: 'javascript',
-              pageName: policy,
-              markdocConfig,
-              resolvers,
-          })
-        : '';
+    const renderedBody = await renderMarkdocToMarkdown({
+        body,
+        framework: 'javascript',
+        pageName: policy,
+        markdocConfig,
+        resolvers,
+    });
     // Strip the frontmatter block the renderer emits; this page supplies its own below.
     const policyBody = renderedBody.replace(/^---\n[\s\S]*?\n---\n+/, '').trim();
 
