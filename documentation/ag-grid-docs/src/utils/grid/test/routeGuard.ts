@@ -5,9 +5,11 @@ import type { Route } from '@playwright/test';
  * example reloaded, or the test ended with the fetch still in flight. Matched on the message because these
  * arrive as plain errors, and only these - anything else is a real fault in a handler and must still fail.
  */
-const ABANDONED = /has been disposed|Target page, context or browser has been closed|Request context disposed/;
+const ABANDONED =
+    /has been disposed|Target (page, context or browser )?(has been )?closed|Request context disposed|Test ended/;
 
-const isAbandoned = (error: unknown): boolean => ABANDONED.test(error instanceof Error ? error.message : '');
+/** Exported for `page.evaluate`, which rejects the same way once the page is gone. */
+export const isAbandoned = (error: unknown): boolean => ABANDONED.test(error instanceof Error ? error.message : '');
 
 /**
  * Runs a route handler, abandoning it if the request stops mattering part-way through. A `test.skip` or

@@ -58,16 +58,15 @@ export async function clickSelectOption(label: string, root: ParentNode = docume
 export async function selectRichSelectRow(label: string, root: ParentNode = document): Promise<void> {
     let rows: HTMLElement[] = [];
     let index = -1;
-    // Polled, not awaited once: the picker mounts its list a macrotask after the click, and the rows
-    // only exist once the nudge has run against the mounted viewport.
+    // Polled on a time budget, not a tick count: the list mounts a macrotask after the click, and a fixed
+    // number of ticks flakes under full-suite load.
     await waitFor(() => {
         nudgeVirtualList(RICH_SELECT_VIEWPORT, root);
         rows = Array.from(root.querySelectorAll<HTMLElement>('.ag-rich-select-row'));
         index = rows.findIndex((r) => r.textContent?.trim() === label);
         if (index < 0) {
-            throw new Error(
-                `AgRichSelect row "${label}" not found. Available: ${rows.map((r) => r.textContent?.trim()).join(', ')}`
-            );
+            const available = rows.map((r) => r.textContent?.trim()).join(', ');
+            throw new Error(`AgRichSelect row "${label}" not found. Available: ${available}`);
         }
     });
 

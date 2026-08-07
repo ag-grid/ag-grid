@@ -11,6 +11,7 @@ import { nudgeVirtualList, openPicker, selectRichSelectRow } from '../widgets/dr
 const BUILDER_ROW_HEIGHT = 40;
 
 const BUILDER = '.ag-advanced-filter-builder';
+const VIRTUAL_LIST_ITEM = '.ag-advanced-filter-builder-virtual-list-item';
 const ITEM_WRAPPER = '.ag-advanced-filter-builder-item-wrapper';
 const COLUMN_PILL = '.ag-advanced-filter-builder-column-pill';
 const OPTION_PILL = '.ag-advanced-filter-builder-option-pill';
@@ -83,15 +84,34 @@ export class AdvancedFilterBuilderHarness {
     }
 
     private async selectPill(item: HTMLElement, pillSelector: string, displayName: string): Promise<void> {
-        const pill = item.querySelector<HTMLElement>(pillSelector);
-        if (!pill) {
-            throw new Error(`Pill "${pillSelector}" not found on builder item`);
-        }
-        await openPicker(pill);
-        // The builder pill defers showPicker() by a macrotask; wait for the list to mount.
-        await asyncSetTimeout(0);
-        await this.ensureItemsRendered();
+        await this.openPillPicker(item, pillSelector);
         await selectRichSelectRow(displayName);
+    }
+
+    /** Opens the pill's rich-select and waits for its rows to render. */
+    private async openPillPicker(item: HTMLElement, pillSelector: string): Promise<void> {
+        // The row's own identity, not the caller's element or its DOM index: a re-render replaces the row
+        // (leaving a detached tree that can be clicked forever) and only renders the rows in view.
+        const posInSet = item.closest(VIRTUAL_LIST_ITEM)?.getAttribute('aria-posinset');
+        if (!posInSet) {
+            throw new Error('Builder item is not one of the rendered rows');
+        }
+        // Re-clicked, not just awaited: the pill defers showPicker(), so a click swallowed by a re-render
+        // needs another - waiting alone never opens a picker that was never told to open.
+        await waitFor(async () => {
+            if (document.querySelector('.ag-rich-select-list')) {
+                return;
+            }
+            const livePill = document.querySelector<HTMLElement>(
+                `${VIRTUAL_LIST_ITEM}[aria-posinset="${posInSet}"] ${pillSelector}`
+            );
+            if (!livePill) {
+                throw new Error(`Pill "${pillSelector}" not found on builder item`);
+            }
+            await openPicker(livePill);
+            await this.ensureItemsRendered();
+            throw new Error(`Picker for "${pillSelector}" did not open`);
+        });
     }
 
     /** Adds a new condition via the builder add-item button. */
@@ -117,7 +137,7 @@ export class AdvancedFilterBuilderHarness {
         // The column/operator pills carry hidden rich-select inputs; the value editor is the only
         // visible one, and it mounts a macrotask or two after the click — poll rather than guess a delay.
         return waitFor(() => {
-            const input = Array.from(item.querySelectorAll<HTMLInputElement>('input.ag-text-field-input')).find(
+            const input = Array.from(item.querySelectorAll<HTMLInputElement>('input.ag-input-field-input')).find(
                 (candidate) => !candidate.closest('.ag-hidden')
             );
             if (!input) {
