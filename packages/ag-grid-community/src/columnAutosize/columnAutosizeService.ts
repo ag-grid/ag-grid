@@ -1,4 +1,4 @@
-import { _getInnerWidth, _removeFromArray } from 'ag-stack';
+import { _debounce, _getInnerWidth, _removeFromArray, _requestAnimationFrame } from 'ag-stack';
 
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import { getWidthOfColsInList, isSpecialCol } from '../columns/columnUtils';
@@ -8,10 +8,12 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
+import type { AgPublicEventType } from '../eventTypes';
 import type { ColumnEventType } from '../events';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type {
+    AutoSizeStrategy,
     IColumnLimit,
     ISizeColumnsToFitParams,
     SizeColumnsToContentColumnLimits,
@@ -38,6 +40,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     private timesDelayed = 0;
 
+    /** listeners for the `events` of the current `autoSizeStrategy`, re-registered whenever it changes */
+    private readonly strategyEventListeners: (() => null)[] = [];
+    private readonly reRunStrategyDebounced = _debounce(this, () => this.reRunStrategy(), 50);
+
     /** when we're waiting for cell data types to be inferred, we need to defer column resizing */
     public shouldQueueResizeOperations: boolean = false;
     private resizeOperationQueue: (() => void)[] = [];
@@ -60,6 +66,69 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }
             if (shouldHideColumns) {
                 this.beans.colDelayRenderSvc?.hideColumns(type);
+            }
+        }
+
+        this.setupStrategyEventListeners();
+        this.addManagedPropertyListener('autoSizeStrategy', () => this.setupStrategyEventListeners());
+    }
+
+    private setupStrategyEventListeners(): void {
+        const listeners = this.strategyEventListeners;
+        for (let i = 0, len = listeners.length; i < len; ++i) {
+            listeners[i]();
+        }
+        listeners.length = 0;
+
+        const events = this.gos.get('autoSizeStrategy')?.events;
+        if (!events?.length) {
+            return;
+        }
+
+        const handlers: Partial<Record<AgPublicEventType, () => void>> = {};
+        for (let i = 0, len = events.length; i < len; ++i) {
+            handlers[events[i]] = this.reRunStrategyDebounced;
+        }
+        listeners.push(...this.addManagedEventListeners(handlers));
+    }
+
+    private reRunStrategy(): void {
+        const strategy = this.gos.get('autoSizeStrategy');
+        if (!strategy) {
+            return;
+        }
+        // wait a frame so frameworks which render asynchronously have painted the changes
+        // caused by the triggering event before we measure
+        _requestAnimationFrame(this.beans, () => {
+            if (this.isAlive()) {
+                this.applyStrategy(strategy);
+            }
+        });
+    }
+
+    private applyStrategy(strategy: AutoSizeStrategy): void {
+        const type = strategy.type;
+        if (type === 'fitGridWidth') {
+            const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = strategy;
+            const columnLimits = propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
+                key,
+                minWidth,
+                maxWidth,
+            }));
+            this.sizeColumnsToFitGridBody({
+                defaultMinWidth,
+                defaultMaxWidth,
+                columnLimits,
+            });
+        } else if (type === 'fitProvidedWidth') {
+            this.sizeColumnsToFit(strategy.width, 'sizeColumnsToFit');
+        } else {
+            const { colIds: colKeys, ...params } = strategy;
+            const source = 'autosizeColumns';
+            if (colKeys) {
+                this.autoSizeCols({ ...params, source, colKeys });
+            } else {
+                this.autoSizeAllColumns({ ...params, source });
             }
         }
     }
@@ -536,40 +605,19 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (!this.isAlive()) {
                 return;
             }
-            const type = autoSizeStrategy.type;
-            if (type === 'fitGridWidth') {
-                const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = autoSizeStrategy;
-                const columnLimits = propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
-                    key,
-                    minWidth,
-                    maxWidth,
-                }));
-                this.sizeColumnsToFitGridBody({
-                    defaultMinWidth,
-                    defaultMaxWidth,
-                    columnLimits,
-                });
-            } else if (type === 'fitProvidedWidth') {
-                this.sizeColumnsToFit(autoSizeStrategy.width, 'sizeColumnsToFit');
-            }
-            colDelayRenderSvc?.revealColumns(type);
+            this.applyStrategy(autoSizeStrategy);
+            colDelayRenderSvc?.revealColumns(autoSizeStrategy.type);
         });
     }
 
-    private onFirstDataRendered({ colIds: colKeys, ...params }: SizeColumnsToContentStrategy): void {
+    private onFirstDataRendered(strategy: SizeColumnsToContentStrategy): void {
         // ensure render has finished
         setTimeout(() => {
             if (!this.isAlive()) {
                 return;
             }
-            const source = 'autosizeColumns';
-
-            if (colKeys) {
-                this.autoSizeCols({ ...params, source, colKeys });
-            } else {
-                this.autoSizeAllColumns({ ...params, source });
-            }
-            this.beans.colDelayRenderSvc?.revealColumns(params.type);
+            this.applyStrategy(strategy);
+            this.beans.colDelayRenderSvc?.revealColumns(strategy.type);
         });
     }
 

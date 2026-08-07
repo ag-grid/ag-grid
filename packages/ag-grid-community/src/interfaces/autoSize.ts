@@ -1,4 +1,13 @@
+import type { AgPublicEventType } from '../eventTypes';
 import type { Column } from './iColumn';
+
+interface AutoSizeStrategyEvents {
+    /**
+     * Grid events which re-run this auto-size strategy. Events are debounced.
+     * If not provided, the strategy is only applied when the grid is initialised.
+     */
+    events?: AgPublicEventType[];
+}
 
 interface WidthLimits {
     /** Defines a minimum width for this column (does not override the column minimum width) */
@@ -30,14 +39,14 @@ export interface SizeColumnsToFitGridColumnLimits extends WidthLimits {
 }
 
 /** Auto-size columns to fit the grid width. */
-export interface SizeColumnsToFitGridStrategy extends DefaultWidthLimits {
+export interface SizeColumnsToFitGridStrategy extends DefaultWidthLimits, AutoSizeStrategyEvents {
     type: 'fitGridWidth';
     /** Provide to limit specific column widths when sizing. */
     columnLimits?: SizeColumnsToFitGridColumnLimits[];
 }
 
 /** Auto-size columns to fit a provided width. */
-export interface SizeColumnsToFitProvidedWidthStrategy {
+export interface SizeColumnsToFitProvidedWidthStrategy extends AutoSizeStrategyEvents {
     type: 'fitProvidedWidth';
     width: number;
 }
@@ -51,7 +60,7 @@ export interface SizeColumnsToContentColumnLimits extends WidthLimits {
  *
  * Not supported by the Viewport Row Model
  */
-export interface SizeColumnsToContentStrategy extends ISizeAllColumnsToContentParams {
+export interface SizeColumnsToContentStrategy extends ISizeAllColumnsToContentParams, AutoSizeStrategyEvents {
     type: 'fitCellContents';
 }
 

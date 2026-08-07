@@ -179,6 +179,21 @@ Just like Excel, each column can also be auto-resized by double clicking the rig
 
 {% /note %}
 
+### Re-Running the Auto-Size Strategy
+
+By default the auto-size strategy is applied once, when the grid is first loaded. To re-apply it later, list the [Grid Events](./grid-events/) that should trigger it in `events`. This works with any of the three strategy types.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoSizeStrategy: {
+        type: 'fitCellContents',
+        events: ['paginationChanged', 'columnVisible']
+    }
+}
+```
+
+The strategy runs after the grid has rendered the changes the event describes, and rapid bursts of events are debounced into a single run.
+
 ## Resize via Keyboard
 
 Column headers can be resized using the keyboard. When a column header is focused, press {% kbd "⌥ Alt" /%} + {% kbd "←" /%} / {% kbd "→" /%} to resize the column in that direction.
