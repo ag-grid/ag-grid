@@ -28,7 +28,8 @@ export type TooltipLocation =
 export interface ITooltipParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */
     location: TooltipLocation;
-    /** The value to be rendered by the tooltip. */
+    /** The value to be rendered by the tooltip. May be `null` or `undefined` — for example on group rows or when
+     *  the `field` is absent from the row data; the tooltip component must handle this. */
     value?: TValue | null;
     /** The formatted value to be rendered by the tooltip. */
     valueFormatted?: string | null;

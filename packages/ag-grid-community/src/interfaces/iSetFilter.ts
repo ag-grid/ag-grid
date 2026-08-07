@@ -230,7 +230,8 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     treeList?: boolean;
     /**
      * Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.
-     * Each row must map to a leaf value in the tree.
+     * Each row must map to a leaf value in the tree. The `value` argument may be `null` — for example on group
+     * rows or when the `field` is absent from the row data; the callback must handle this.
      */
     treeListPathGetter?: (value: V | null) => string[] | null;
     /**
