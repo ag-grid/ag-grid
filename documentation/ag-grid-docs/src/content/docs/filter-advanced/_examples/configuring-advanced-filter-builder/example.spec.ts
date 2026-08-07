@@ -50,9 +50,8 @@ test.agExample(import.meta, () => {
 
         // Move buttons should be visible (showMoveButtons: true).
         // They have the icon classes ag-icon-up and ag-icon-down inside the button items.
-        const moveUpIcons = builderDialog.locator('.ag-icon-up');
-        const moveDownIcons = builderDialog.locator('.ag-icon-down');
-        const moveIconCount = (await moveUpIcons.count()) + (await moveDownIcons.count());
-        expect(moveIconCount).toBeGreaterThan(0);
+        // The dialog becomes visible before its rows render, so this has to retry rather than
+        // take a single count of what is there the moment the dialog appears.
+        await expect(builderDialog.locator('.ag-icon-up, .ag-icon-down')).not.toHaveCount(0);
     });
 });

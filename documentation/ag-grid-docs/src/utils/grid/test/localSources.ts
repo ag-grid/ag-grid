@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { GOOGLE_FONTS_CSS, localFontStylesheet } from './localFonts';
 import { systemRegisterFor } from './localTranspile';
+import { whileTheRequestMatters } from './routeGuard';
 
 const EXAMPLE_ASSETS_URL_PREFIX = '/example-assets/';
 const EXAMPLE_ASSETS_DIR = fileURLToPath(new URL('../../../../public/example-assets/', import.meta.url));
@@ -42,20 +43,23 @@ async function waitForTextMeasurable(page: Page): Promise<void> {
  * `public/example-assets`, so serve those from disk and leave anything not shipped to the mirror.
  */
 export async function routeExampleAssetsFromDisk(page: Page): Promise<void> {
-    await page.route(`https://www.ag-grid.com${EXAMPLE_ASSETS_URL_PREFIX}**`, async (route) => {
-        const { pathname } = new URL(route.request().url());
-        const filePath = join(EXAMPLE_ASSETS_DIR, pathname.slice(EXAMPLE_ASSETS_URL_PREFIX.length));
-        const shipped = filePath.startsWith(EXAMPLE_ASSETS_DIR) && (await isFile(filePath));
-        if (!shipped) {
-            await route.fallback();
-            return;
-        }
-        if (TEXT_MEASURABLE_RESOURCE_TYPES.includes(route.request().resourceType())) {
-            await waitForTextMeasurable(page);
-        }
-        // The page's origin is localhost, so the response needs to allow the cross-origin read.
-        await route.fulfill({ path: filePath, headers: { 'access-control-allow-origin': '*' } });
-    });
+    await page.route(
+        `https://www.ag-grid.com${EXAMPLE_ASSETS_URL_PREFIX}**`,
+        whileTheRequestMatters(async (route) => {
+            const { pathname } = new URL(route.request().url());
+            const filePath = join(EXAMPLE_ASSETS_DIR, pathname.slice(EXAMPLE_ASSETS_URL_PREFIX.length));
+            const shipped = filePath.startsWith(EXAMPLE_ASSETS_DIR) && (await isFile(filePath));
+            if (!shipped) {
+                await route.fallback();
+                return;
+            }
+            if (TEXT_MEASURABLE_RESOURCE_TYPES.includes(route.request().resourceType())) {
+                await waitForTextMeasurable(page);
+            }
+            // The page's origin is localhost, so the response needs to allow the cross-origin read.
+            await route.fulfill({ path: filePath, headers: { 'access-control-allow-origin': '*' } });
+        })
+    );
 }
 
 const MIRROR_DIR = fileURLToPath(new URL('../../../../.playwright-network-mirror/', import.meta.url));
@@ -186,6 +190,13 @@ function withoutHeaders(headers: Record<string, string>, drop: string[]): Record
 /** `route.fetch` hands back a decoded body, so the origin's framing headers no longer describe it. */
 const BODY_FRAMING_HEADERS = ['content-encoding', 'content-length'];
 
+/**
+ * `route.fetch` only decodes the encodings it knows, and zstd is not one of them - a body negotiated that
+ * way arrives compressed, is then stored with its `content-encoding` dropped, and replays as bytes the
+ * browser reads as text. Firefox is the one that asks for zstd, so only its stylesheets and scripts broke.
+ */
+const DECODABLE_ENCODINGS = 'gzip, deflate, br';
+
 /** The browser's own, which would earn a 304 with no body on a cold fetch. Ours are sent deliberately. */
 const CONDITIONAL_HEADERS = ['if-none-match', 'if-modified-since'];
 
@@ -217,7 +228,10 @@ async function fetchIntoMirror(
 ): Promise<MirrorEntry | undefined> {
     let entry: MirrorEntry;
     try {
-        const sent = withoutHeaders(route.request().headers(), CONDITIONAL_HEADERS);
+        const sent = {
+            ...withoutHeaders(route.request().headers(), CONDITIONAL_HEADERS),
+            'accept-encoding': DECODABLE_ENCODINGS,
+        };
         const response = await route.fetch({
             url,
             headers: stored ? { ...sent, ...validatorsFor(stored.meta.headers) } : sent,
@@ -351,25 +365,28 @@ const isExternalTo =
  */
 export async function routeExternalThroughMirror(page: Page, siteOrigin: string): Promise<void> {
     void sweepMirror();
-    await page.route(isExternalTo(siteOrigin), async (route) => {
-        const url = route.request().url();
-        const fontCss = url.startsWith(GOOGLE_FONTS_CSS) ? await localFontStylesheet(url) : undefined;
-        if (fontCss) {
-            await route.fulfill({ contentType: 'text/css', body: fontCss });
-            return;
-        }
-        const id = mirrorIdFor(url, await userAgentFor(page));
-        const entry = await loadMirrorEntry(route, url, id);
-        if (!entry) {
-            // The example page, not the spec: every framework variant shares one spec, so only the URL
-            // identifies which example asked for it.
-            if (await claimMissReport(url)) {
-                unreportedMisses.push(`${url}\n   requested by ${page.url()}`);
+    await page.route(
+        isExternalTo(siteOrigin),
+        whileTheRequestMatters(async (route) => {
+            const url = route.request().url();
+            const fontCss = url.startsWith(GOOGLE_FONTS_CSS) ? await localFontStylesheet(url) : undefined;
+            if (fontCss) {
+                await route.fulfill({ contentType: 'text/css', body: fontCss });
+                return;
             }
-            await route.fallback();
-            return;
-        }
-        const body = (await systemRegisterFor(url, id.path, entry.body)) ?? entry.body;
-        await route.fulfill({ status: entry.meta.status, headers: entry.meta.headers, body });
-    });
+            const id = mirrorIdFor(url, await userAgentFor(page));
+            const entry = await loadMirrorEntry(route, url, id);
+            if (!entry) {
+                // The example page, not the spec: every framework variant shares one spec, so only the URL
+                // identifies which example asked for it.
+                if (await claimMissReport(url)) {
+                    unreportedMisses.push(`${url}\n   requested by ${page.url()}`);
+                }
+                await route.fallback();
+                return;
+            }
+            const body = (await systemRegisterFor(url, id.path, entry.body)) ?? entry.body;
+            await route.fulfill({ status: entry.meta.status, headers: entry.meta.headers, body });
+        })
+    );
 }

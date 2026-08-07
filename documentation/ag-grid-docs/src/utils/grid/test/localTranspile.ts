@@ -3,6 +3,8 @@ import { createHash } from 'node:crypto';
 import { readFile, rename, writeFile } from 'node:fs/promises';
 import ts from 'typescript';
 
+import { whileTheRequestMatters } from './routeGuard';
+
 /**
  * The example runner transpiles TypeScript in the browser, which costs every test a 3.3MB download of
  * `typescript.min.js` plus the compile itself - the same work, repeated once per test, in the slowest
@@ -138,7 +140,7 @@ export async function routeExampleModulesTranspiled(page: Page, siteOrigin: stri
 
     await page.route(
         (url) => url.origin === siteOrigin && (isExampleModule(url.pathname) || ESM_BUNDLE.test(url.pathname)),
-        async (route) => {
+        whileTheRequestMatters(async (route) => {
             const { pathname } = new URL(route.request().url());
             const response = await route.fetch();
             if (!response.ok()) {
@@ -155,6 +157,6 @@ export async function routeExampleModulesTranspiled(page: Page, siteOrigin: stri
             const source = needsEnterprise ? raw : withoutUnusedEnterprise(raw);
             const body = transpile(source, pathname.split('/').pop()!, frameworkFor(pathname));
             await route.fulfill({ contentType: 'application/javascript', body });
-        }
+        })
     );
 }

@@ -12,9 +12,11 @@ test.agExample(import.meta, () => {
 
         // Scrolling down forces a later block to be fetched (its cache block enters the
         // loading state, showing a placeholder) which then resolves to real data.
-        await page.locator('.ag-grid-viewport').evaluate((el) => {
-            el.scrollTop = 6000;
-        });
+        const scrollToDeepRows = () =>
+            page.locator('.ag-grid-viewport').evaluate((el) => {
+                el.scrollTop = 6000;
+            });
+        await scrollToDeepRows();
 
         await expect(page.locator('.ag-row-loading').first()).toBeVisible({ timeout: 3000 });
         await expect(page.locator('.ag-row-loading')).toHaveCount(0, { timeout: 10000 });
@@ -29,10 +31,12 @@ test.agExample(import.meta, () => {
                 return deep[0];
             });
 
-        // The scrolled-to block resolves asynchronously, so retry until a deep row is rendered.
-        let renderedIndex = await readDeepRowIndex();
+        // The scrolled-to block resolves asynchronously, and a scroll issued while the viewport is
+        // still sizing does not move it - so each attempt scrolls again rather than only re-reading.
+        let renderedIndex = -1;
         await expect(async () => {
-            renderedIndex = await readDeepRowIndex();
+            await scrollToDeepRows();
+            renderedIndex = (await readDeepRowIndex()) ?? -1;
             expect(renderedIndex).toBeGreaterThanOrEqual(100);
         }).toPass();
         await expect(dataRow(renderedIndex).locator('[col-id="id"]')).toContainText(String(renderedIndex));
