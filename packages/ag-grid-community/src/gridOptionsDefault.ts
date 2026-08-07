@@ -66,6 +66,7 @@ export const GRID_OPTION_DEFAULTS = {
     detailRowAutoHeight: false,
     tabIndex: 0,
     rowBuffer: 10,
+    stickyRowsMaxViewportRatio: 0.5,
     valueCache: false,
     valueCacheNeverExpires: false,
     enableCellExpressions: false,

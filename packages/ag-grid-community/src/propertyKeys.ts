@@ -141,6 +141,7 @@ export const _NUMBER_GRID_OPTIONS: KeysWithType<number>[] = [
     'rowHeight',
     'detailRowHeight',
     'rowBuffer',
+    'stickyRowsMaxViewportRatio',
     'headerHeight',
     'groupHeaderHeight',
     'groupLockGroupColumns',
