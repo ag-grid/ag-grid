@@ -132,6 +132,33 @@ const SITE_SCRIPT_HASHES = [
     GTM_ZOOMINFO_HASH,
 ];
 
+// Enzuzo, the cookie-consent banner that replaces OneTrust. Like OneTrust before it,
+// the loader is a tag in the shared Google Tag Manager container rather than markup in
+// this repo, so nothing here references these origins directly — the CSP is the only
+// place the site declares them.
+//
+//  - app.enzuzo.com serves the banner bundle (/scripts/cookiebar/<uuid>) and is also the
+//    banner's apiHost: once loaded it XHRs its config, the cookie list and consent
+//    analytics from /api/public/... on the same origin.
+//  - gvl.enzuzo.com serves the IAB TCF Global Vendor List, fetched only when TCF mode is
+//    switched on in the Enzuzo console. Allowed up front so enabling TCF later is a
+//    console-only change; the TCF library itself comes from cdn.jsdelivr.net, already
+//    allowed above.
+//
+// No script-src hash is needed: GTM injects the banner as an external <script src>, not
+// an inline snippet (contrast GTM_ZOOMINFO_HASH). The banner's CSS is injected as inline
+// <style>, which style-src 'unsafe-inline' already covers, and its logo image falls under
+// the permissive img-src.
+//
+// NB the banner has three `new Function` paths — templated banner text, "display fields",
+// and string-valued integration onConsent handlers — which throw under a policy without
+// 'unsafe-eval'. The first two are caught internally and degrade to empty output; the
+// third throws uncaught. We are not granting 'unsafe-eval' site-wide for a consent
+// banner, so keep the Enzuzo console configuration free of template placeholders and
+// string-bodied event handlers.
+const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
+const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
+
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
 // demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
 // bryntum.com. Allowed only in the 'campaigns' scope so the rest of the site does
@@ -263,7 +290,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.gstatic.com', // reCAPTCHA
             'https://apis.google.com', // Firebase Auth (ecommerce checkout): GAPI client loads the auth iframe
             'https://www.youtube.com', // YouTube iframe JS API (loads into the page)
-            'https://cdn.cookielaw.org', // OneTrust cookie-consent SDK (GTM-injected, prod-only)
+            ENZUZO_APP_HOST, // Enzuzo cookie-consent banner (GTM-injected)
             'blob:', // ZoomInfo zi-tag.js bootstraps a blob: URL script
             WASM_UNSAFE_EVAL,
             // 'unsafe-inline' (examples/campaigns/dev) or SHA-256 hashes (site) added per scope below.
@@ -309,8 +336,8 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
             'https://www.google.com', // reCAPTCHA (api2/clr XHR)
-            'https://cdn.cookielaw.org', // OneTrust config/JSON/asset XHR (GTM-injected, prod-only)
-            'https://*.onetrust.com', // OneTrust geolocation + consent-receipt endpoints
+            ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
+            ENZUZO_GVL_HOST, // Enzuzo-hosted IAB TCF Global Vendor List
             'https://www.googleapis.com', // Firebase Auth (ecommerce checkout): identitytoolkit REST
             'https://securetoken.googleapis.com', // Firebase Auth ID-token refresh
             trialFormOrigin,

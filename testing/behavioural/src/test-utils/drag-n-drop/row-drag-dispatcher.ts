@@ -1,9 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi, RowDragCancelEvent, RowDragEndEvent, RowDragEvent, RowDragMoveEvent } from 'ag-grid-community';
 
 import { DestroyedRowNodesChecker } from '../grid-test-utils';
 import type { RowElementReference } from '../gridRows/gridHtmlRows';
 import { getGridOwnerDocument, getRowHtmlElement } from '../gridRows/gridHtmlRows';
-import { asyncSetTimeout } from '../node-utils';
 import { mockGridLayout } from '../polyfills/mockGridLayout';
 import { initPointerEventPolyfill } from '../polyfills/pointerEvent';
 import { TestGridsManager } from '../testGridsManager';
@@ -291,8 +292,12 @@ export class RowDragDispatcher {
     }
 
     private async waitForSettle(): Promise<void> {
-        for (let repeat = 0; !this.settlePromise && repeat < 50; repeat += 1) {
-            await asyncSetTimeout(2);
+        try {
+            // Best-effort: a drag that recorded no completing event never creates a settle promise,
+            // so a timeout here is a legitimate outcome rather than a failure.
+            await waitFor(() => expect(this.settlePromise).toBeDefined(), { timeout: 100, interval: 2 });
+        } catch {
+            // no completing drag event arrived - fall through and let the caller assert
         }
         if (this.settlePromise) {
             await this.settlePromise;

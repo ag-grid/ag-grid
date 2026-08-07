@@ -17,6 +17,13 @@ const OPTION_PILL = '.ag-advanced-filter-builder-option-pill';
 const VALUE_PILL = '.ag-advanced-filter-builder-value-pill';
 const JOIN_PILL = '.ag-advanced-filter-builder-join-pill';
 
+/** Column-pill captions in rendered order — the observable signature of the builder's item list. */
+function columnPillOrder(): string {
+    return Array.from(document.querySelectorAll<HTMLElement>(`${ITEM_WRAPPER} ${COLUMN_PILL}`))
+        .map((pill) => pill.textContent)
+        .join('|');
+}
+
 /**
  * Drives the Advanced Filter Builder dialog through public DOM. Requires the layout mock
  * (`installFilterLayoutMock`) so the builder VirtualList and pill rich-select popups render rows in jsdom.
@@ -204,6 +211,7 @@ export class AdvancedFilterBuilderHarness {
             throw new Error('drag handle or builder container not found');
         }
         const toClientY = targetRow * BUILDER_ROW_HEIGHT + Math.round(BUILDER_ROW_HEIGHT * 0.75);
+        const orderBeforeDrop = columnPillOrder();
         const doc = handle.ownerDocument;
         const originalElementsFromPoint = doc.elementsFromPoint?.bind(doc);
         // The drop target resolves via elementsFromPoint; point it at the builder container.
@@ -214,7 +222,14 @@ export class AdvancedFilterBuilderHarness {
             await dispatcher.movePointer(container, 10, BUILDER_ROW_HEIGHT + 5);
             await dispatcher.movePointer(container, 10, toClientY);
             await dispatcher.finishDrag(container);
-            await asyncSetTimeout(50);
+            // The drop re-renders the builder list asynchronously. Poll for the reordered pills
+            // rather than guessing a delay — a drop that never lands must fail here, not silently
+            // in the caller's assertion.
+            await waitFor(() => {
+                if (columnPillOrder() === orderBeforeDrop) {
+                    throw new Error('builder rows did not reorder after drop');
+                }
+            });
         } finally {
             doc.elementsFromPoint = originalElementsFromPoint as typeof doc.elementsFromPoint;
         }
@@ -227,10 +242,19 @@ export class AdvancedFilterBuilderHarness {
      * assigns its drag feature, so the first-render rows have no drag source.
      */
     public async forceReRender(): Promise<this> {
+        const rowsBefore = Array.from(document.querySelectorAll<HTMLElement>(ITEM_WRAPPER));
         this.api.setAdvancedFilterModel(this.api.getAdvancedFilterModel());
         this.api.onFilterChanged();
-        await asyncSetTimeout(10);
-        await this.ensureItemsRendered();
+        // Recreating the rows is the whole point of this helper, so poll until the rendered rows are
+        // new element instances — the only signal that can distinguish a rebuild from the original render.
+        await waitFor(() => {
+            nudgeVirtualList('.ag-advanced-filter-builder-virtual-list-viewport');
+            nudgeVirtualList('.ag-rich-select-virtual-list-viewport');
+            const rowsNow = Array.from(document.querySelectorAll<HTMLElement>(ITEM_WRAPPER));
+            if (rowsNow.length === 0 || rowsNow.some((row) => rowsBefore.includes(row))) {
+                throw new Error('builder item rows were not recreated');
+            }
+        });
         return this;
     }
 }

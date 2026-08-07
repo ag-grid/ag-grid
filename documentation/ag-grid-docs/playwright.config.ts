@@ -88,6 +88,11 @@ export default defineConfig({
         /* Base URL to use in actions like `await page.goto('/')`. */
         baseURL,
 
+        // The dev server's certificate is self-signed. Chromium waives that for localhost but Node does not,
+        // so route handlers that re-request a URL fail without this. Left on for a deployed run, whose
+        // certificate is real and should still be checked.
+        ignoreHTTPSErrors: isLocalRun(baseURL),
+
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         // Keep this off for CI runs that upload reports: a trace records request headers, so it would
         // capture the WAF bypass credential in an artefact that GitHub's log masking does not cover.

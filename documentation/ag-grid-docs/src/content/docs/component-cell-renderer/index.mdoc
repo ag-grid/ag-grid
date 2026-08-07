@@ -49,6 +49,8 @@ The grid comes with some built in Cell Components that cover some common cell re
 
 To render custom content in a grid cell, first define the custom cell component and then configure the column definition to use the component via `cellRenderer` or `cellRendererSelector`, passing custom parameters via `cellRendererParams` as required.
 
+`params.value` passed to a Cell Component may be `null` or `undefined`, e.g. for group rows or rows whose data has not loaded, so custom components must handle this themselves. See [TypeScript Generics](./typescript-generics/) for how typing `ICellRendererParams<TData, TValue>` surfaces this at compile time.
+
 ### Creating Custom Components
 
 {% partial file="./_component-interface-angular.mdoc" /%}

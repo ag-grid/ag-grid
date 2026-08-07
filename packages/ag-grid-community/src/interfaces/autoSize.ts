@@ -62,6 +62,11 @@ export interface SizeColumnsToContentColumnLimits extends WidthLimits {
  */
 export interface SizeColumnsToContentStrategy extends ISizeAllColumnsToContentParams, AutoSizeStrategyEvents {
     type: 'fitCellContents';
+    /**
+     * If `true`, the Column Menu and Context Menu auto-size actions reuse this strategy's options.
+     * @default false
+     */
+    applyToUiActions?: boolean;
 }
 
 export interface ISizeAllColumnsToContentParams extends DefaultWidthLimits {

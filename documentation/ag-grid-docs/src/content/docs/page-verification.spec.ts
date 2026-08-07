@@ -61,10 +61,6 @@ async function setupPage(page: Page): Promise<string[]> {
         handle(msg.text(), '[Console]');
     });
 
-    // Fulfill rather than abort so the browser doesn't log net::ERR_FAILED to the console.
-    await page.route('**://cdn.cookielaw.org/**', (route) =>
-        route.fulfill({ status: 200, contentType: 'application/javascript', body: '' })
-    );
     page.on('pageerror', (error) => {
         handle(`Uncaught exception: ${error.message}`, '[Exception]');
     });

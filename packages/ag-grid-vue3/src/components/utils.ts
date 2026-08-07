@@ -1405,6 +1405,12 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     suppressGroupRowsSticky?: boolean,
+    /** Maximum share of the viewport height that each sticky row section (top or bottom) may occupy, as a number between 0 and 1.
+         * Rows that do not fit within the resulting height budget do not stick and scroll normally instead.
+         * @default 0.5
+         * @agModule `RowGroupingModule` / `TreeDataModule` / `ServerSideRowModelModule`
+         */
+    stickyRowsMaxViewportRatio?: number,
     /** Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
          * @agModule `RowGroupingModule`
          */
@@ -2400,6 +2406,7 @@ export function getProps() {
         rowGroupPanelSuppressSort: undefined,
         pivotPanelSuppressSort: undefined,
         suppressGroupRowsSticky: undefined,
+        stickyRowsMaxViewportRatio: undefined,
         groupHierarchyConfig: undefined,
         pinnedTopRowData: undefined,
         pinnedBottomRowData: undefined,

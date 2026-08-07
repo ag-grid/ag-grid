@@ -52,6 +52,10 @@ const VueExample = defineComponent({
                     field: 'size',
                     aggFunc: 'sum',
                     valueFormatter: (params: ValueFormatterParams) => {
+                        if (params.value == null) {
+                            return ''; // params.value can be null/undefined here (e.g. no size for this row)
+                        }
+
                         const sizeInKb = params.value / 1024;
 
                         if (sizeInKb > 1024) {

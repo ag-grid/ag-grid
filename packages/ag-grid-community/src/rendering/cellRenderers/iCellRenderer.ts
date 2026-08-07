@@ -7,7 +7,12 @@ import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IRowNode } from '../../interfaces/iRowNode';
 
 export interface ICellRendererParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** Value to be rendered. */
+    /**
+     * Value to be rendered. May be `null` or `undefined`, so the renderer must handle this. Common causes:
+     * - Group rows
+     * - Rows whose data has not loaded
+     * - The `field` is absent from the row data
+     */
     value: TValue | null | undefined;
     /** Formatted value to be rendered. */
     valueFormatted: string | null | undefined;
@@ -29,9 +34,9 @@ export interface ICellRendererParams<TData = any, TValue = any, TContext = any> 
     eParentOfValue: HTMLElement;
     /** Convenience function to get most recent up to data value. */
     getValue?: () => TValue | null | undefined;
-    /** Convenience function to set the value. */
+    /** Convenience function to set the value. The `value` argument may be `null` or `undefined`; callers should handle this. */
     setValue?: (value: TValue | null | undefined) => void;
-    /** Convenience function to format a value using the column's formatter. */
+    /** Convenience function to format a value using the column's formatter. The `value` argument may be `null` or `undefined`; callers should handle this. */
     formatValue?: (value: TValue | null | undefined) => string;
     /** Convenience function to refresh the cell. */
     refreshCell?: () => void;

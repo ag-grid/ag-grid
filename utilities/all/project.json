@@ -245,6 +245,13 @@
         "cwd": "{workspaceRoot}"
       }
     },
+    "security:update": {
+      "cache": false,
+      "command": "npx tsx ./external/ag-shared/scripts/security/update-security-versions.ts",
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
+    },
     "snyk:test": {
       "command": "npx snyk test --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=high --exclude=.nx,project.json,dist,.claude --remote-repo-url=https://github.com/ag-grid/ag-grid",
       "options": {

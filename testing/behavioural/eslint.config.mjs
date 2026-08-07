@@ -15,10 +15,11 @@ export default [
             '@typescript-eslint/no-floating-promises': 2,
             'no-unassigned-vars': 0,
             'no-useless-assignment': 0,
-            // Severity is `warn` while the existing backlog is swept (AG-18026); it becomes `error`
-            // once the sweep completes.
+            // The backlog is swept (AG-18026), so this is now an `error`: a new guessed delay fails
+            // the build. The remaining legitimate waits carry documented `eslint-disable` comments
+            // naming the product timer window they wait on.
             'no-restricted-syntax': [
-                'warn',
+                'error',
                 {
                     selector: "CallExpression[callee.name='asyncSetTimeout'] > Literal[value>0]",
                     message:
