@@ -58,6 +58,8 @@ describe('Column delay render (React)', () => {
             rowData,
         });
 
+        // The reveal is deferred under React rather than landing with the flex pass, hence the poll.
+        // The retry loop it goes through is covered in columnDelayRenderService.test.ts.
         await waitFor(() => expect(recorder.events).toEqual(['add', 'remove']));
         expect(isHidden()).toBe(false);
     });
