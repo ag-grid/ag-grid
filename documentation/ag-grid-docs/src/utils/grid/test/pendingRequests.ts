@@ -17,11 +17,21 @@ async function flushPageTasks(page: Page): Promise<void> {
     try {
         // `react-test/test-tear-down` deliberately sets `window.setTimeout = undefined` to simulate
         // vitest removing the DOM API between tests, so this cannot assume the timer globals exist.
+        // `MessageChannel` is the fallback rather than `requestAnimationFrame`: a message task is
+        // still a macrotask but is delivered regardless of frame scheduling, so it cannot stall on a
+        // backgrounded page - and `page.evaluate` has no timeout to rescue us if it did.
         await page.evaluate(
             () =>
                 new Promise<void>((resolve) => {
                     if (typeof setTimeout === 'function') {
                         setTimeout(resolve);
+                    } else if (typeof MessageChannel === 'function') {
+                        const { port1, port2 } = new MessageChannel();
+                        port1.onmessage = () => {
+                            port1.close();
+                            resolve();
+                        };
+                        port2.postMessage(undefined);
                     } else {
                         resolve();
                     }
