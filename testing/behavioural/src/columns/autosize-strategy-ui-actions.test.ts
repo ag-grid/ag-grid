@@ -3,9 +3,12 @@
  * the configured strategy's options.
  *
  * jsdom reports 0 px for the autosize measuring container, so a content fit lands each column on
- * its effective minimum. That makes the strategy's `defaultMinWidth` and `columnLimits` the
- * observable difference between an opted-in action and the default one, which sizes to the
- * column's own `minWidth`.
+ * its effective minimum: `defaultMinWidth` and `columnLimits` are what separates an opted-in
+ * action from the default one, which sizes to the column's own `minWidth`.
+ *
+ * Options derived from the grid's own width — `scaleUpToFitGridWidth`, and the width-based
+ * strategies — need `mockGridLayout.useRealOffsetDimensions`, otherwise they resolve a zero width
+ * and do nothing.
  */
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
