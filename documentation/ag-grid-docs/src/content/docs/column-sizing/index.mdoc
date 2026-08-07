@@ -162,22 +162,6 @@ const gridOptions = {
 
 {% apiDocumentation source="grid-options/properties.json" section="columnSizing" names=["autoSizeStrategy", "animateColumnResizing"] /%}
 
-By default the **Autosize This Column** and **Autosize All Columns** actions in the [Column Menu](./column-menu/) size to cell contents without the strategy's options. Set `applyToUiActions` to have them reuse the strategy instead, including `scaleUpToFitGridWidth`, `skipHeader` and any column limits.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    autoSizeStrategy: {
-        type: 'fitCellContents',
-        scaleUpToFitGridWidth: true,
-        applyToUiActions: true
-    }
-}
-```
-
-In the example below, narrow the columns and then run **Autosize All Columns** from the column menu. The columns scale back up to fill the grid, as the strategy specifies.
-
-{% gridExampleRunner title="Auto-Size Actions Respecting the Strategy" name="auto-size-ui-actions" /%}
-
 This can also be performed on demand via the following API methods:
 
 {% apiDocumentation source="grid-api/api.json" section="columnSizing" names=["autoSizeColumns", "autoSizeAllColumns"] /%}
@@ -194,6 +178,26 @@ Just like Excel, each column can also be auto-resized by double clicking the rig
 - Note that [Pinned Columns](./column-pinning), the [Selection Column](./row-selection-multi-row/#customising-the-checkbox-column) and the [Row Numbers](./row-numbers) column will not be scaled up to fill any empty space when using `scaleUpToFitGridWidth`.
 
 {% /note %}
+
+### Applying the Strategy to Column Menu Actions
+
+The **Autosize This Column** and **Autosize All Columns** actions in the [Column Menu](./column-menu/) size to cell contents. They ignore the rest of the strategy, so a column the strategy would have widened to fill the grid, or measured without its header, is sized differently once the user runs the action.
+
+Set `applyToUiActions` to have those actions reuse the strategy, including `scaleUpToFitGridWidth`, `skipHeader` and any column limits.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoSizeStrategy: {
+        type: 'fitCellContents',
+        scaleUpToFitGridWidth: true,
+        applyToUiActions: true
+    }
+}
+```
+
+In the example below the strategy fills the grid width on load. Narrow the columns, then run **Autosize All Columns** from the column menu: the columns scale back up to fill the grid, matching the load-time sizing. Without `applyToUiActions` they would stop at their content width, leaving empty space to the right.
+
+{% gridExampleRunner title="Auto-Size Actions Respecting the Strategy" name="auto-size-ui-actions" /%}
 
 ## Resize via Keyboard
 
