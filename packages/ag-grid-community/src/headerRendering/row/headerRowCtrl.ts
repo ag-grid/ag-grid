@@ -169,8 +169,9 @@ export class HeaderRowCtrl extends BeanStub {
 
     private getWidthForRow(): number {
         const { visibleCols } = this.beans;
-        const contentWidth = visibleCols.totalWidth;
-        const eGridViewport = this.beans.ctrlsSvc.getGridBodyCtrl()?.eGridViewport;
+        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+        const contentWidth = gridBodyCtrl?.getHorizontalContentWidth() ?? visibleCols.totalWidth;
+        const eGridViewport = gridBodyCtrl?.eGridViewport;
         const viewportWidth = eGridViewport ? eGridViewport.getBoundingClientRect().width : 0;
 
         return Math.max(contentWidth, viewportWidth);
