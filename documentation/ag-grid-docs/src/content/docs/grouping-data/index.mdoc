@@ -64,8 +64,8 @@ const gridOptions = {
             field: 'athlete',
             rowGroup: true,
             // params.value is undefined for group rows, so check before reading `id`/`name`
-            keyCreator: (params) => params.value == null ? '' : params.value.id,
-            valueFormatter: (params) => params.value == null ? '' : params.value.name,
+            keyCreator: (params) => params.value?.id ?? '',
+            valueFormatter: (params) => params.value?.name ?? '',
         },
         // ...other column definitions
     ],

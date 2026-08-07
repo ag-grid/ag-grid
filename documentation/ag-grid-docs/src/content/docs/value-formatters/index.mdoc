@@ -18,7 +18,7 @@ const gridOptions = {
         // simple currency formatter
         { field: 'price', valueFormatter: params => params.value == null ? '' : '$' + params.value },
         // simple UPPER CASE formatter
-        { field: 'code', valueFormatter: params => params.value == null ? '' : params.value.toUpperCase() }
+        { field: 'code', valueFormatter: params => params.value?.toUpperCase() ?? '' }
     ]
 }
 ```

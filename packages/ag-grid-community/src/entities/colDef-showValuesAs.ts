@@ -109,7 +109,7 @@ export interface ShowValuesAsFormatterParams<
     TOut extends ShowValuesAsResult = ShowValuesAsResult,
 > extends Omit<ValueFormatterParams<TData, TValue>, 'value'> {
     /** The transformed value being formatted. May be `null` or `undefined` — for example when the transform did
-     *  not run ({@link notApplicable}) and the underlying raw value is itself absent; the formatter must handle
+     *  not run (`notApplicable`) and the underlying raw value is itself absent; the formatter must handle
      *  this. */
     value: TOut | null | undefined;
     /** The active mode's name. */
