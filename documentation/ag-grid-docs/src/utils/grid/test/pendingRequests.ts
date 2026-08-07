@@ -15,7 +15,18 @@ const DATA_RESOURCE_TYPES = ['fetch', 'xhr'];
 /** Yields a macrotask inside the page, which flushes the promise chain a delivered response resolves. */
 async function flushPageTasks(page: Page): Promise<void> {
     try {
-        await page.evaluate(() => new Promise<void>((resolve) => setTimeout(resolve)));
+        // `react-test/test-tear-down` deliberately sets `window.setTimeout = undefined` to simulate
+        // vitest removing the DOM API between tests, so this cannot assume the timer globals exist.
+        await page.evaluate(
+            () =>
+                new Promise<void>((resolve) => {
+                    if (typeof setTimeout === 'function') {
+                        setTimeout(resolve);
+                    } else {
+                        resolve();
+                    }
+                })
+        );
     } catch (error) {
         if (!isAbandoned(error)) {
             throw error;
