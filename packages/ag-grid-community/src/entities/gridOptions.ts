@@ -548,6 +548,7 @@ export interface GridOptions<TData = any> {
     /**
      * Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents.
      * Set `events` to also re-run the strategy when those grid events fire.
+     * @initial
      * @agModule `ColumnAutoSizeModule`
      */
     autoSizeStrategy?: AutoSizeStrategy;

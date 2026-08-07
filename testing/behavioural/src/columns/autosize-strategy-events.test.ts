@@ -2,8 +2,8 @@
  * `autoSizeStrategy.events` — re-running the configured auto-size strategy when grid events fire.
  *
  * The re-run goes through the same code path as the initial application, so these tests cover the
- * wiring only: a configured event triggers a re-run, an unconfigured grid is untouched, rapid
- * events collapse into one run, and updating `autoSizeStrategy` re-registers the listeners.
+ * wiring only: a configured event triggers a re-run, an unconfigured grid is untouched, and rapid
+ * events collapse into one run.
  *
  * jsdom reports 0 px for the autosize measuring container, so `fitCellContents` lands every column
  * on its `minWidth`. That makes a content re-run observable: widen a column by hand, fire the
@@ -272,79 +272,6 @@ describe('autoSizeStrategy events', () => {
 
             expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
             expect(widths(api)).toEqual([200, 200]);
-        });
-    });
-
-    describe('runtime updates', () => {
-        test('setting autoSizeStrategy at runtime registers its events', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs,
-                rowData: [{ a: 'x', b: 'y', c: 'z' }],
-            });
-            await settleStrategyWindow();
-            expect(widthOf(api, 'a')).toBe(200);
-
-            api.setGridOption('autoSizeStrategy', {
-                type: 'fitCellContents',
-                skipHeader: true,
-                events: ['columnVisible'],
-            });
-            api.setColumnsVisible(['c'], false);
-
-            await waitFor(() => expect(widthOf(api, 'a')).toBe(100));
-        });
-
-        test('a run queued before a replacement applies the new strategy, not the old one', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs,
-                rowData: [{ a: 'x', b: 'y', c: 'z' }],
-                autoSizeStrategy: { type: 'fitCellContents', skipHeader: true, events: ['columnVisible'] },
-            });
-            await waitFor(() => expect(widths(api)).toEqual([100, 100, 100]));
-
-            // queue a re-run, then swap the strategy before the debounce has fired
-            api.setColumnsVisible(['c'], false);
-            api.setGridOption('autoSizeStrategy', { type: 'fitProvidedWidth', width: 900 });
-
-            await waitFor(() => expect(totalWidth(api)).toBe(900));
-        });
-
-        test('replacing autoSizeStrategy before first data render applies the new strategy', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs,
-                rowData: [{ a: 'x', b: 'y', c: 'z' }],
-                autoSizeStrategy: { type: 'fitCellContents', skipHeader: true },
-            });
-            api.setGridOption('autoSizeStrategy', { type: 'fitProvidedWidth', width: 900 });
-
-            await waitFor(() => expect(totalWidth(api)).toBe(900));
-        });
-
-        test('replacing a width strategy with a content one before first data render applies the new strategy', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs,
-                rowData: [{ a: 'x', b: 'y', c: 'z' }],
-                autoSizeStrategy: { type: 'fitProvidedWidth', width: 900 },
-            });
-            api.setGridOption('autoSizeStrategy', { type: 'fitCellContents', skipHeader: true });
-
-            await waitFor(() => expect(widths(api)).toEqual([100, 100, 100]));
-        });
-
-        test('replacing autoSizeStrategy tears down the previous events', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs,
-                rowData: [{ a: 'x', b: 'y', c: 'z' }],
-                autoSizeStrategy: { type: 'fitCellContents', skipHeader: true, events: ['columnVisible'] },
-            });
-            await waitFor(() => expect(widths(api)).toEqual([100, 100, 100]));
-
-            api.setGridOption('autoSizeStrategy', { type: 'fitCellContents', skipHeader: true });
-            api.setColumnWidths([{ key: 'a', newWidth: 400 }]);
-            api.setColumnsVisible(['c'], false);
-            await settleStrategyWindow();
-
-            expect(widthOf(api, 'a')).toBe(400);
         });
     });
 });
