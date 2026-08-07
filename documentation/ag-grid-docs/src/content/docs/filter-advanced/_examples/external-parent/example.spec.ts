@@ -31,10 +31,12 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Escape');
         await page.locator('.ag-advanced-filter-buttons').getByText('Apply').click();
 
-        // Phelps rows remain and every other athlete goes. Both assertions retry, so a snapshot
-        // taken while the filtered rows are still being rendered costs a retry rather than a
-        // failure - reading the cells once, however the wait before it is written, does not.
-        await expect(athleteCells.filter({ hasNotText: /phelps/i })).toHaveCount(0);
-        await expect(athleteCells).not.toHaveCount(0);
+        // Phelps rows remain and every other athlete goes. Both conditions are checked inside one
+        // retry so they describe the same render: separately, the emptiness check passes during a
+        // transitional empty grid and the non-empty check then passes for rows nothing vetted.
+        await expect(async () => {
+            await expect(athleteCells).not.toHaveCount(0);
+            await expect(athleteCells.filter({ hasNotText: /phelps/i })).toHaveCount(0);
+        }).toPass();
     });
 });

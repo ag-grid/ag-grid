@@ -29,12 +29,14 @@ test.agExample(import.meta, () => {
         const filterInput = page.locator('.ag-advanced-filter input[type=text]');
         await expect(filterInput).toHaveValue(/Gold/);
 
-        // Every remaining row won gold. This retries, so a snapshot taken while the filtered rows
-        // are still being rendered costs a retry rather than a failure - reading the cells once,
-        // however the wait before it is written, does not.
+        // Every remaining row won gold. Both conditions are checked inside one retry so they
+        // describe the same render: separately, the zero-count check passes during a transitional
+        // empty grid and the non-empty check then passes for rows nothing vetted.
         const goldCells = page.locator('.ag-row [col-id="gold"]');
-        await expect(goldCells.filter({ hasText: /^0$/ })).toHaveCount(0);
-        await expect(goldCells).not.toHaveCount(0);
+        await expect(async () => {
+            await expect(goldCells).not.toHaveCount(0);
+            await expect(goldCells.filter({ hasText: /^0$/ })).toHaveCount(0);
+        }).toPass();
     });
 
     test.eachFramework('should clear filter via button', async ({ page }) => {
