@@ -263,6 +263,32 @@ describe('autoSizeStrategy events', () => {
             await waitFor(() => expect(widthOf(api, 'a')).toBe(100));
         });
 
+        test('a run queued before a replacement applies the new strategy, not the old one', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ a: 'x', b: 'y', c: 'z' }],
+                autoSizeStrategy: { type: 'fitCellContents', skipHeader: true, events: ['columnVisible'] },
+            });
+            await waitFor(() => expect(widths(api)).toEqual([100, 100, 100]));
+
+            // queue a re-run, then swap the strategy before the debounce has fired
+            api.setColumnsVisible(['c'], false);
+            api.setGridOption('autoSizeStrategy', { type: 'fitProvidedWidth', width: 900 });
+
+            await waitFor(() => expect(totalWidth(api)).toBe(900));
+        });
+
+        test('replacing autoSizeStrategy before first data render applies the new strategy', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ a: 'x', b: 'y', c: 'z' }],
+                autoSizeStrategy: { type: 'fitCellContents', skipHeader: true },
+            });
+            api.setGridOption('autoSizeStrategy', { type: 'fitProvidedWidth', width: 900 });
+
+            await waitFor(() => expect(totalWidth(api)).toBe(900));
+        });
+
         test('replacing autoSizeStrategy tears down the previous events', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,

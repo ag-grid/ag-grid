@@ -194,6 +194,10 @@ const gridOptions = {
 
 The strategy runs after the grid has rendered the changes the event describes, and rapid bursts of events are debounced into a single run.
 
+In the example below the columns re-size when a hidden column is shown, when the page changes, and when a row is added.
+
+{% gridExampleRunner title="Re-Running the Auto-Size Strategy on Grid Events" name="auto-size-strategy-events" /%}
+
 ## Resize via Keyboard
 
 Column headers can be resized using the keyboard. When a column header is focused, press {% kbd "⌥ Alt" /%} + {% kbd "←" /%} / {% kbd "→" /%} to resize the column in that direction.

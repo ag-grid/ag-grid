@@ -6,6 +6,7 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
+    EventApiModule,
     ModuleRegistry,
     RowApiModule,
     ValidationModule,
@@ -27,6 +28,7 @@ describe('autoSizeStrategy events (React)', () => {
             ClientSideRowModelModule,
             ColumnApiModule,
             ColumnAutoSizeModule,
+            EventApiModule,
             RowApiModule,
             RowGroupingModule,
             ValidationModule,
@@ -65,11 +67,23 @@ describe('autoSizeStrategy events (React)', () => {
         const api = await ready;
         await waitFor(() => expect(api.getColumn('value')!.getActualWidth()).toBe(120));
 
+        // Record how many leaf cells React had committed at the moment each re-run measured.
+        // A run that fired before the commit would see only the collapsed group row.
+        const leafCellsAtRun: number[] = [];
+        api.addEventListener('columnResized', (e) => {
+            if (e.finished && e.source === 'autosizeColumns') {
+                leafCellsAtRun.push(document.querySelectorAll('.ag-row:not(.ag-row-group) [col-id="value"]').length);
+            }
+        });
+
         api.setColumnWidths([{ key: 'value', newWidth: 400 }]);
         await act(async () => {
             api.getDisplayedRowAtIndex(0)!.setExpanded(true);
         });
 
         await waitFor(() => expect(api.getColumn('value')!.getActualWidth()).toBe(120));
+
+        // both leaf rows of the expanded group were rendered before the strategy measured
+        expect(leafCellsAtRun).toEqual([2]);
     });
 });

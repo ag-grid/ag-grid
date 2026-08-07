@@ -93,14 +93,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     private reRunStrategy(): void {
-        const strategy = this.gos.get('autoSizeStrategy');
-        if (!strategy) {
-            return;
-        }
         // wait a frame so frameworks which render asynchronously have painted the changes
         // caused by the triggering event before we measure
         _requestAnimationFrame(this.beans, () => {
-            if (this.isAlive()) {
+            // resolved here rather than when the event fired: `autoSizeStrategy` may have been
+            // replaced in between, and the current one is what should be applied
+            const strategy = this.gos.get('autoSizeStrategy');
+            if (strategy && this.isAlive()) {
                 this.applyStrategy(strategy);
             }
         });
@@ -616,7 +615,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (!this.isAlive()) {
                 return;
             }
-            this.applyStrategy(strategy);
+            // `autoSizeStrategy` is updatable, so it may have been replaced since the grid
+            // initialised. Columns are still revealed for the type that hid them.
+            const current = this.gos.get('autoSizeStrategy');
+            if (current) {
+                this.applyStrategy(current);
+            }
             this.beans.colDelayRenderSvc?.revealColumns(strategy.type);
         });
     }
