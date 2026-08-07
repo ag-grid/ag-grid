@@ -29,20 +29,6 @@ await waitFor(() => expect(panel.setFilterItemLabels('Athlete')).toEqual(LI_MATC
 
 The skill covers the traps that make a `waitFor` unfalsifiable or a sleep load-bearing — negative assertions, polls that were already true, test IDs landing on a debounce, and sleeps that only look like safety margins — plus how to prove a wait is genuinely necessary. **Load it before converting any timing-dependent test.**
 
-## Testing widths and other measured dimensions
-
-jsdom reports `0` for `offset*` / `client*`, so anything deriving a size from the DOM — `sizeColumnsToFit`, `scaleUpToFitGridWidth`, the `fitGridWidth` auto-size strategy, viewport-aware navigation — silently does nothing by default. Set `mockGridLayout.useRealOffsetDimensions = true` to have those properties come from the mocked `getBoundingClientRect()` (grid `1000 × 800`, columns `150` — see `testing/behavioural/src/test-utils/polyfills/mockGridLayout.ts`). Reach for it before concluding a width behaviour "can't be tested in jsdom".
-
-It is module-level state shared by every test in the run, so reset it in `beforeEach`/`afterEach` rather than only in a `try/finally` — a leaked `true` changes what unrelated tests measure.
-
-```typescript
-beforeEach(() => {
-    mockGridLayout.useRealOffsetDimensions = true;
-});
-```
-
-**Beware the settle assertion that is already true.** Waiting for a post-sizing width that happens to equal the column's configured width makes `waitFor` return immediately, before the sizing has run, and the late run then lands mid-test. Pick a settle value the initial state cannot produce.
-
 ## Regression tests: cover every reproduction path
 
 A bug rarely has one trigger. Enumerate the reproduction paths named in the ticket and add a test for each — a programmatic API call, a panel drag and a tool-panel drop are three tests, not one. Test the plural case, not just N=1, and assert the observable end state for every path.
