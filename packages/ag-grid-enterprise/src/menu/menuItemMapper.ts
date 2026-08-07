@@ -8,12 +8,10 @@ import type {
     DefaultColumnMenuItem,
     DefaultMenuItem,
     GetNoteParams,
-    GridOptionsService,
     IAggFuncService,
     IMenuActionParams,
     INoteAccess,
     INotesService,
-    ISizeAllColumnsToContentParams,
     IValueColsService,
     MenuItemDef,
     NamedBean,
@@ -28,19 +26,6 @@ import type { ColumnChooserFactory } from './columnChooserFactory';
 import { PIVOT_TOKEN, SCROLL_INTO_VIEW_TOKEN, VALUE_TOKEN, columnMenuTokenLabel } from './columnMenuTokenLabels';
 import { validateMenuItem } from './menuItemValidations';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuSeparators';
-
-/**
- * The `autoSizeStrategy` options that built-in UI auto-size actions should reuse, or null when the
- * grid is not opted in. `colIds` is dropped: it scopes the initial application, not a UI action.
- */
-function getUiActionStrategyParams(gos: GridOptionsService): ISizeAllColumnsToContentParams | null {
-    const strategy = gos.get('autoSizeStrategy');
-    if (strategy?.type !== 'fitCellContents' || !strategy.applyToUiActions) {
-        return null;
-    }
-    const { skipHeader, defaultMinWidth, defaultMaxWidth, columnLimits, scaleUpToFitGridWidth } = strategy;
-    return { skipHeader, defaultMinWidth, defaultMaxWidth, columnLimits, scaleUpToFitGridWidth };
-}
 
 const SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS: Record<
     string,
@@ -247,22 +232,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return colAutosize
                         ? {
                               name: localeTextFunc('autosizeThisColumn', 'Autosize This Column'),
-                              action: () => {
-                                  if (!column) {
-                                      return;
-                                  }
-                                  const strategyParams = getUiActionStrategyParams(gos);
-                                  if (strategyParams) {
-                                      colAutosize.autoSizeCols({
-                                          colKeys: [column],
-                                          skipHeaderGroups: true,
-                                          source,
-                                          ...strategyParams,
-                                      });
-                                  } else {
-                                      colAutosize.autoSizeColumn(column, source, gos.get('skipHeaderOnAutoSize'));
-                                  }
-                              },
+                              action: () =>
+                                  column && colAutosize.autoSizeColumn(column, source, gos.get('skipHeaderOnAutoSize')),
                           }
                         : null;
                 case 'autoSizeAll':
@@ -273,7 +244,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                   colAutosize.autoSizeAllColumns({
                                       source,
                                       skipHeader: gos.get('skipHeaderOnAutoSize'),
-                                      ...getUiActionStrategyParams(gos),
                                   }),
                           }
                         : null;

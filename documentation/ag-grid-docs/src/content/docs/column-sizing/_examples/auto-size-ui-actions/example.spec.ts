@@ -53,16 +53,4 @@ test.agExample(import.meta, () => {
 
         await expectColumnsFillGrid(page);
     });
-
-    test.eachFramework('context menu Autosize All Columns reuses the strategy', async ({ page, agIdFor }) => {
-        await waitForGridContent(page);
-        await waitForWidths(page);
-        await narrowColumns(page);
-
-        await agIdFor.cell('0', 'athlete').click({ button: 'right' });
-        await page.locator('.ag-menu-option-text', { hasText: 'Autosize All Columns' }).first().click();
-        await waitForWidths(page);
-
-        await expectColumnsFillGrid(page);
-    });
 });

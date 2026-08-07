@@ -13,20 +13,25 @@ import userEvent from '@testing-library/user-event';
 import type { GridApi } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, openMenuOption, polyfillOffsetParent } from '../test-utils';
+import { TestGridsManager, mockGridLayout, openMenuOption, polyfillOffsetParent } from '../test-utils';
 
 describe('autoSizeStrategy applyToUiActions', () => {
     const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
 
     let restoreOffsetParent: (() => void) | undefined;
 
+    beforeEach(() => {
+        mockGridLayout.useRealOffsetDimensions = false;
+    });
+
     afterEach(() => {
         gridsManager.reset();
         restoreOffsetParent?.();
         restoreOffsetParent = undefined;
+        mockGridLayout.useRealOffsetDimensions = false;
     });
 
-    const columnDefs = [
+    const makeColumnDefs = () => [
         { field: 'athlete', minWidth: 100, width: 300 },
         { field: 'country', minWidth: 100, width: 300 },
     ];
@@ -34,6 +39,8 @@ describe('autoSizeStrategy applyToUiActions', () => {
     const rowData = [{ athlete: 'Michael Phelps', country: 'United States' }];
 
     const widths = (api: GridApi): number[] => api.getAllDisplayedColumns().map((col) => col.getActualWidth());
+
+    const totalWidth = (api: GridApi): number => widths(api).reduce((sum, w) => sum + w, 0);
 
     /**
      * Every strategy also applies on first data render. Wait for that to land, then reset widths,
@@ -52,7 +59,7 @@ describe('autoSizeStrategy applyToUiActions', () => {
     describe('fitCellContents', () => {
         test('column menu autosize-all reuses the strategy when opted in', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
+                columnDefs: makeColumnDefs(),
                 rowData,
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250, applyToUiActions: true },
             });
@@ -67,7 +74,7 @@ describe('autoSizeStrategy applyToUiActions', () => {
 
         test('column menu autosize-all ignores the strategy by default', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
+                columnDefs: makeColumnDefs(),
                 rowData,
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250 },
             });
@@ -82,7 +89,7 @@ describe('autoSizeStrategy applyToUiActions', () => {
 
         test('column menu autosize-this reuses the strategy when opted in', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
+                columnDefs: makeColumnDefs(),
                 rowData,
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250, applyToUiActions: true },
             });
@@ -97,7 +104,7 @@ describe('autoSizeStrategy applyToUiActions', () => {
 
         test('column menu autosize-this ignores the strategy by default', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
+                columnDefs: makeColumnDefs(),
                 rowData,
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250 },
             });
@@ -112,7 +119,7 @@ describe('autoSizeStrategy applyToUiActions', () => {
 
         test('context menu autosize-all reuses the strategy when opted in', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
+                columnDefs: makeColumnDefs(),
                 rowData,
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250, applyToUiActions: true },
                 getContextMenuItems: () => ['autoSizeAll'],
@@ -133,7 +140,7 @@ describe('autoSizeStrategy applyToUiActions', () => {
 
         test('context menu autosize-all ignores the strategy by default', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
+                columnDefs: makeColumnDefs(),
                 rowData,
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250 },
                 getContextMenuItems: () => ['autoSizeAll'],
@@ -154,7 +161,7 @@ describe('autoSizeStrategy applyToUiActions', () => {
 
         test('per-column limits from the strategy are honoured', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
+                columnDefs: makeColumnDefs(),
                 rowData,
                 autoSizeStrategy: {
                     type: 'fitCellContents',
@@ -172,9 +179,74 @@ describe('autoSizeStrategy applyToUiActions', () => {
             expect(widths(api)).toEqual([250, 400]);
         });
 
+        test('scaleUpToFitGridWidth from the strategy is honoured', async () => {
+            mockGridLayout.useRealOffsetDimensions = true;
+            {
+                const api = await gridsManager.createGridAndWait('myGrid', {
+                    columnDefs: makeColumnDefs(),
+                    rowData,
+                    autoSizeStrategy: {
+                        type: 'fitCellContents',
+                        scaleUpToFitGridWidth: true,
+                        applyToUiActions: true,
+                    },
+                });
+                restoreOffsetParent = polyfillOffsetParent();
+                await waitFor(() => expect(totalWidth(api)).toBeGreaterThan(mockGridLayout.gridWidth * 0.9));
+
+                api.setColumnWidths(api.getAllDisplayedColumns().map((col) => ({ key: col, newWidth: 100 })));
+                expect(totalWidth(api)).toBe(200);
+
+                api.showColumnMenu('athlete');
+                await clickMenuOption('Autosize All Columns');
+
+                // scaled back up to fill the grid rather than left at the content width
+                await waitFor(() => expect(totalWidth(api)).toBeGreaterThan(mockGridLayout.gridWidth * 0.9));
+            }
+        });
+
+        test('skipHeaderOnAutoSize still applies when the strategy does not set skipHeader', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: makeColumnDefs(),
+                rowData,
+                skipHeaderOnAutoSize: true,
+                autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250, applyToUiActions: true },
+            });
+            restoreOffsetParent = polyfillOffsetParent();
+            await settleThenReset(api, [250, 250]);
+
+            api.showColumnMenu('athlete');
+            await clickMenuOption('Autosize All Columns');
+
+            // the strategy contributes defaultMinWidth without clobbering skipHeaderOnAutoSize
+            expect(widths(api)).toEqual([250, 250]);
+            expect(api.getGridOption('skipHeaderOnAutoSize')).toBe(true);
+        });
+
+        test('the strategy skipHeader takes precedence over skipHeaderOnAutoSize', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: makeColumnDefs(),
+                rowData,
+                skipHeaderOnAutoSize: true,
+                autoSizeStrategy: {
+                    type: 'fitCellContents',
+                    skipHeader: false,
+                    defaultMinWidth: 250,
+                    applyToUiActions: true,
+                },
+            });
+            restoreOffsetParent = polyfillOffsetParent();
+            await settleThenReset(api, [250, 250]);
+
+            api.showColumnMenu('athlete');
+            await clickMenuOption('Autosize All Columns');
+
+            expect(widths(api)).toEqual([250, 250]);
+        });
+
         test('the strategy colIds do not restrict which columns a UI action sizes', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
+                columnDefs: makeColumnDefs(),
                 rowData,
                 autoSizeStrategy: {
                     type: 'fitCellContents',
@@ -195,15 +267,21 @@ describe('autoSizeStrategy applyToUiActions', () => {
 
     // The flag lives on `fitCellContents`, the only strategy whose options the menus can reuse.
     // These assert the width-based strategies leave the menu actions exactly as they are today.
+    // Real offset dimensions are needed so the width-based strategies actually resolve a grid
+    // width, rather than sizing to nothing and leaving the columns at their configured width.
     describe('width-based strategies', () => {
+        beforeEach(() => {
+            mockGridLayout.useRealOffsetDimensions = true;
+        });
+
         test('fitGridWidth leaves the menu action at default content sizing', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
+                columnDefs: makeColumnDefs(),
                 rowData,
                 autoSizeStrategy: { type: 'fitGridWidth', defaultMinWidth: 250 },
             });
             restoreOffsetParent = polyfillOffsetParent();
-            await settleThenReset(api, [300, 300]);
+            await settleThenReset(api, [500, 500]);
 
             api.showColumnMenu('athlete');
             await clickMenuOption('Autosize All Columns');
@@ -213,7 +291,7 @@ describe('autoSizeStrategy applyToUiActions', () => {
 
         test('fitProvidedWidth leaves the menu action at default content sizing', async () => {
             const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
+                columnDefs: makeColumnDefs(),
                 rowData,
                 autoSizeStrategy: { type: 'fitProvidedWidth', width: 900 },
             });

@@ -7,20 +7,14 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
+import { ColumnMenuModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([
-    ColumnApiModule,
-    ColumnAutoSizeModule,
-    ClientSideRowModelModule,
-    ColumnMenuModule,
-    ContextMenuModule,
-]);
+ModuleRegistry.registerModules([ColumnApiModule, ColumnAutoSizeModule, ClientSideRowModelModule, ColumnMenuModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete' },
@@ -39,7 +33,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         scaleUpToFitGridWidth: true,
         applyToUiActions: true,
     },
-    getContextMenuItems: (params) => [...(params.defaultItems ?? []), 'autoSizeAll'],
 };
 
 function narrowColumns() {
