@@ -87,17 +87,11 @@ function getPdfExportParams(): PdfExportParams {
     return params;
 }
 
-function updateDefaultPdfExportParams() {
-    gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
-}
-
 function onBtExport() {
-    updateDefaultPdfExportParams();
+    gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
     gridApi.exportDataAsPdf();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
-    updateDefaultPdfExportParams();
-    document.querySelector('#widthMode')!.addEventListener('change', updateDefaultPdfExportParams);
 });

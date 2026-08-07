@@ -61,6 +61,13 @@ describe('convertTemplate', () => {
         expect(converted).toBe('<input type="text" defaultValue="foo" maxLength="20" />');
     });
 
+    it('ensures the checked attribute becomes uncontrolled', () => {
+        const template = '<input type="checkbox" checked="">';
+        const converted = convertTemplate(template);
+
+        expect(converted).toBe('<input type="checkbox" defaultChecked />');
+    });
+
     it('does not change value attributes for other elements', () => {
         const template = '<option value="bob">';
         const converted = convertTemplate(template);

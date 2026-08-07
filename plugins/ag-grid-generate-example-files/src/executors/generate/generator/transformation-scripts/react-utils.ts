@@ -44,6 +44,7 @@ export function convertTemplate(template: string) {
         .replace(/,\s+event([),])/g, '$1')
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
         .replace(/<input (.*)value=/g, '<input $1defaultValue=')
+        .replace(/<input ([^>]*?)\bchecked\b(?:="")?/g, '<input $1defaultChecked')
         .replace(/ class=/g, ' className=')
         .replace(/ for=/g, ' htmlFor=')
         .replace(/ <option (.*)selected=""/g, '<option $1selected={true}');
@@ -84,6 +85,7 @@ export function convertFunctionalTemplate(template: string) {
         .replace(/,\s+event([),])/g, '$1')
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
         .replace(/<input (.*)value=/g, '<input $1defaultValue=')
+        .replace(/<input ([^>]*?)\bchecked\b(?:="")?/g, '<input $1defaultChecked')
         .replace(/ class=/g, ' className=')
         .replace(/ for=/g, ' htmlFor=')
         .replace(/ <option (.*)selected=""/g, '<option $1selected={true}');

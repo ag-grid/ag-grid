@@ -7,7 +7,7 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         await expect(agIdFor.cell('0', 'text')).toContainText('praça');
-        await expect(agIdFor.cell('2', 'text')).toContainText('東京');
+        await expect(agIdFor.cell('3', 'text')).toContainText('広場');
 
         const [download] = await Promise.all([
             page.waitForEvent('download'),
