@@ -30,6 +30,11 @@ import type {
 const noop = () => {};
 type StrategyBeans = BeanCollection;
 
+function withoutColumns(columns: AgColumn[], toRemove: AgColumn[]): AgColumn[] {
+    const removed = new Set(toRemove);
+    return columns.filter((column) => !removed.has(column));
+}
+
 /** Cycle: ascending -> descending -> `null` (no sort, natural order) -> ascending. `current` must already have
  *  the unset default resolved, so the first click moves away from what the pill actually shows. */
 function getNextPivotSort(current: SortDirection): SortDirection {
@@ -76,6 +81,9 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     public setRowGroupColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
         this.getUpdateStrategy(deferMode).setRowGroupColumns(columns, eventType);
     }
+    public removeRowGroupColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
+        this.getUpdateStrategy(deferMode).removeRowGroupColumns(columns, eventType);
+    }
     public getRowGroupColumns(deferMode: boolean): AgColumn[] {
         return this.getUpdateStrategy(deferMode).getRowGroupColumns();
     }
@@ -104,6 +112,9 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     }
     public setPivotColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
         this.getUpdateStrategy(deferMode).setPivotColumns(columns, eventType);
+    }
+    public removePivotColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
+        this.getUpdateStrategy(deferMode).removePivotColumns(columns, eventType);
     }
     public getPivotColumns(deferMode: boolean): AgColumn[] {
         return this.getUpdateStrategy(deferMode).getPivotColumns();
@@ -172,6 +183,10 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
         this.beans.rowGroupColsSvc?.setColumns(columns, eventType); // computes which columns actually changed + dispatchEvent
     }
 
+    public removeRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void {
+        this.beans.rowGroupColsSvc?.removeColumns(columns, eventType);
+    }
+
     public getRowGroupColumns(): AgColumn[] {
         return this.beans.rowGroupColsSvc?.columns ?? [];
     }
@@ -199,6 +214,12 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
     public setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
         this.lastPivotColIds = columns.map((column) => column.colId);
         this.beans.pivotColsSvc?.setColumns(columns, eventType); // computes which columns actually changed + dispatchEvent
+    }
+
+    public removePivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
+        const pivotColsSvc = this.beans.pivotColsSvc;
+        pivotColsSvc?.removeColumns(columns, eventType);
+        this.lastPivotColIds = pivotColsSvc?.columns.map((column) => column.colId) ?? [];
     }
 
     public getPivotColumns(): AgColumn[] {
@@ -545,6 +566,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         };
     }
 
+    public removeRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void {
+        this.setRowGroupColumns(withoutColumns(this.getRowGroupColumns(), columns), eventType);
+    }
+
     public setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void {
         clearDeferredFunctionPatches(this.state, 'aggFunc');
         const liveValueColIds = new Set((this.beans.valueColsSvc?.columns ?? []).map((col) => col.colId));
@@ -641,6 +666,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             eventType,
             seq,
         };
+    }
+
+    public removePivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
+        this.setPivotColumns(withoutColumns(this.getPivotColumns(), columns), eventType);
     }
 
     public setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void {

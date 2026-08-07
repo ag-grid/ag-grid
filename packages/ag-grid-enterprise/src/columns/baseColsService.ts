@@ -214,19 +214,11 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         res.add(col);
     }
 
-    /**
-     * Seat a col that came from an explicitly-provided {@link setColumns} list, rather than from colDefs.
-     * `OrderedColsService` treats such a list as authoritative about an already-active col's hierarchy levels.
-     */
-    protected seatProvidedCol(res: Set<AgColumn>, col: AgColumn): void {
-        this.seatActiveCol(res, col);
-    }
-
-    /** Expand to active order via {@link seatProvidedCol}; dedupes into a fresh Set (insertion order = active order). */
+    /** Expand to active order via {@link seatActiveCol}; dedupes into a fresh Set (insertion order = active order). */
     private expandActiveCols(cols: AgColumn[]): Set<AgColumn> {
         const res = new Set<AgColumn>();
         for (let i = 0, len = cols.length; i < len; ++i) {
-            this.seatProvidedCol(res, cols[i]);
+            this.seatActiveCol(res, cols[i]);
         }
         return res;
     }

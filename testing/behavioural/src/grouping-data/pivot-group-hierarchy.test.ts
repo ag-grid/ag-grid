@@ -508,8 +508,11 @@ describe('pivot with groupHierarchy (date-time)', () => {
         expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([]);
     });
 
-    test('an explicit setRowGroupColumns list controls the levels of an already-grouped hierarchy col', async () => {
-        const api = gridsManager.createGrid('hierarchyExplicitList', {
+    const YEAR_COL = 'ag-Grid-HierarchyColumn-date-year';
+    const MONTH_COL = 'ag-Grid-HierarchyColumn-date-month';
+
+    const createHierarchyGrid = (id: string) =>
+        gridsManager.createGrid(id, {
             columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
             rowData: [
                 { country: 'USA', date: new Date(2020, 0, 1) },
@@ -517,36 +520,46 @@ describe('pivot with groupHierarchy (date-time)', () => {
             ],
             groupDisplayType: 'multipleColumns',
         });
+
+    test('setRowGroupColumns gives the same groups whatever the current hierarchy state', async () => {
+        const api = createHierarchyGrid('hierarchyExplicitList');
         await asyncSetTimeout(0);
 
-        const yearCol = 'ag-Grid-HierarchyColumn-date-year';
-        const monthCol = 'ag-Grid-HierarchyColumn-date-month';
-        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([yearCol, monthCol, 'date']);
+        const seated = [YEAR_COL, MONTH_COL, 'date'];
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(seated);
 
-        // Re-applying the current list (the save/restore shape) is a no-op...
-        api.setRowGroupColumns(api.getRowGroupColumns());
-        await asyncSetTimeout(0);
-        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([yearCol, monthCol, 'date']);
-
-        // ...whereas a list that omits the levels of an already-grouped source col drops them, which is
-        // what lets a drop-zone pill (or the tool-panel menu) remove a single level.
+        // From fully grouped, the source col alone still seats its levels...
         api.setRowGroupColumns(['date']);
         await asyncSetTimeout(0);
-        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['date']);
-        expect(api.getColumn(yearCol)!.isRowGroupActive()).toBe(false);
-        expect(api.getColumn(monthCol)!.isRowGroupActive()).toBe(false);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(seated);
 
-        // Stable under repetition — the levels do not come back.
-        api.setRowGroupColumns(['date']);
-        await asyncSetTimeout(0);
-        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['date']);
-
-        // A column-state restore is not an explicit list, so it still seats the levels.
+        // ...and so does the identical call from nothing grouped.
         api.setRowGroupColumns([]);
         await asyncSetTimeout(0);
-        api.applyColumnState({ state: [{ colId: 'date', rowGroup: true }] });
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([]);
+        api.setRowGroupColumns(['date']);
         await asyncSetTimeout(0);
-        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([yearCol, monthCol, 'date']);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(seated);
+
+        // Re-applying the current list (the save/restore shape) is a no-op.
+        api.setRowGroupColumns(api.getRowGroupColumns());
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(seated);
+    });
+
+    test('removeRowGroupColumns drops one hierarchy level without disturbing the rest', async () => {
+        const api = createHierarchyGrid('hierarchyRemoveLevel');
+        await asyncSetTimeout(0);
+
+        api.removeRowGroupColumns([YEAR_COL]);
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([MONTH_COL, 'date']);
+        expect(api.getColumn(YEAR_COL)!.isRowGroupActive()).toBe(false);
+
+        // Removing the last remaining level leaves only the source col.
+        api.removeRowGroupColumns([MONTH_COL]);
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['date']);
     });
 
     test('hierarchy virtuals inherit enableRowGroup so their row-group-panel chips stay draggable', async () => {

@@ -11,6 +11,9 @@ export interface ColumnStateConcreteUpdateStrategy {
     setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
     isColumnVisibleInToolPanel(column: AgColumn): boolean;
     setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    /** Deactivate just these cols, leaving the rest of the active list alone — unlike
+     *  {@link setRowGroupColumns}, which re-derives the list and so re-seats hierarchy levels. */
+    removeRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getRowGroupColumns(): AgColumn[];
     getPrimaryColumns(): AgColumn[];
     hasDeferredColumnOrder(): boolean;
@@ -19,6 +22,8 @@ export interface ColumnStateConcreteUpdateStrategy {
     setColumnAggFunc(column: AgColumn, aggFunc: ColAggFunc, eventType: ColumnEventType): void;
     getColumnAggFunc(column: AgColumn): ColAggFunc;
     setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    /** Pivot counterpart of {@link removeRowGroupColumns}. */
+    removePivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getPivotColumns(): AgColumn[];
     setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void;
     getPivotMode(): boolean;

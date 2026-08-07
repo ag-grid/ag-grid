@@ -79,16 +79,6 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
         res.add(col);
     }
 
-    protected override seatProvidedCol(res: Set<AgColumn>, col: AgColumn): void {
-        // An already-active source col means the provided list is authoritative over which of its hierarchy
-        // levels it wants, so an omitted virtual must stay omitted. Only a newly-added source seats its levels.
-        if (this.activeColSet.has(col)) {
-            res.add(col);
-            return;
-        }
-        this.seatActiveCol(res, col);
-    }
-
     /** Incremental activate also seats (and flags) the col's hierarchy virtuals before it. */
     protected override setColActive(
         col: AgColumn,
