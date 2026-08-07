@@ -44,6 +44,10 @@ const gridOptions: GridOptions = {
             filter: 'agSetColumnFilter',
             filterParams: {
                 valueFormatter: (params: ValueFormatterParams) => {
+                    if (params.value == null) {
+                        return ''; // params.value can be null/undefined here (e.g. no size for this row)
+                    }
+
                     const sizeInKb = params.value / 1024;
 
                     if (sizeInKb > 1024) {
@@ -54,6 +58,10 @@ const gridOptions: GridOptions = {
                 },
             },
             valueFormatter: (params) => {
+                if (params.value == null) {
+                    return ''; // params.value can be null/undefined here (e.g. no size for this row)
+                }
+
                 const sizeInKb = params.value / 1024;
 
                 if (sizeInKb > 1024) {

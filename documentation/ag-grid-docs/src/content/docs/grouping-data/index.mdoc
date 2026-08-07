@@ -63,13 +63,19 @@ const gridOptions = {
         {
             field: 'athlete',
             rowGroup: true,
-            keyCreator: (params) => params.value.id,
-            valueFormatter: (params) => params.value.name,
+            // params.value is undefined for group rows, so check before reading `id`/`name`
+            keyCreator: (params) => params.value == null ? '' : params.value.id,
+            valueFormatter: (params) => params.value == null ? '' : params.value.name,
         },
         // ...other column definitions
     ],
 };
 ```
+
+`keyCreator` and `valueFormatter` are called for group rows as well as leaf rows. A group row has no row `data`
+of its own, so `params.value` is `undefined` there even for the grouped column itself. See
+[TypeScript Generics](./typescript-generics/) for how typing these callbacks' params surfaces this case at
+compile time.
 
 ## Grouping by Dates and Times
 

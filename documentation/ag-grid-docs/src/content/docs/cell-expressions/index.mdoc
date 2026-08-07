@@ -19,7 +19,7 @@ const gridOptions = {
         {
             field: 'employee',
             valueGetter: params => params.data.firstName,
-            valueFormatter: params => params.value.toUpperCase(),
+            valueFormatter: params => params.value == null ? '' : params.value.toUpperCase(),
         },
         // column definition using expressions
         {

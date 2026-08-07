@@ -3,7 +3,9 @@ import { expect, test } from '@utils/grid/test-utils';
 import { GROUP_AUTO_COLUMN_ID } from 'ag-grid-community';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ agIdFor }) => {
+    test.eachFramework('Example', async ({ agIdFor, page, remoteGrid }) => {
+        const remoteApi = remoteGrid(page, '1');
+
         // Grouped by the `athlete` object, keyed by `id`, displayed via the `name` valueFormatter.
         // Usain Bolt (id 1) has three leaf rows in the data.
         const boltGroupId = 'row-group-athlete-1';
@@ -23,5 +25,12 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.autoGroupCell('row-group-athlete-2')).toContainText('Michael Phelps (3)', {
             useInnerText: true,
         });
+
+        // AG-18094: removing then re-adding the row group re-runs `keyCreator`/`valueFormatter`
+        // against the (re-created) group rows, which have no leaf `athlete` value of their own -
+        // this is the reproduction path for the callbacks dereferencing `params.value` directly.
+        await remoteApi.removeRowGroupColumns(['athlete']);
+        await remoteApi.addRowGroupColumns(['athlete']);
+        await expect(agIdFor.autoGroupCell(boltGroupId)).toContainText('Usain Bolt (3)', { useInnerText: true });
     });
 });

@@ -44,7 +44,7 @@ Below are some simple examples of Cell Components provided as simple functions:
 
 ```js
 // uppercase the value
-colDef.cellRenderer = params => `${params.value.toUpperCase()}`;
+colDef.cellRenderer = params => params.value == null ? '' : `${params.value.toUpperCase()}`;
 
 // put a tooltip on the value
 colDef.cellRenderer = params => `<span title="the tooltip">${params.value}</span>`;
