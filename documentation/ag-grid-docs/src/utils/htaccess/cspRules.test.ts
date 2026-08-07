@@ -125,6 +125,36 @@ describe('cspRules', () => {
         });
     });
 
+    describe('Enzuzo cookie-consent banner (replaces OneTrust)', () => {
+        it('allows the banner bundle in script-src and its APIs in connect-src', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            // GTM injects the loader as an external <script src>, so the origin is enough
+            // — no inline hash, unlike the ZoomInfo bootstrap.
+            expect(site['script-src']).toContain('https://app.enzuzo.com');
+            // Same origin serves the banner config, cookie list and consent analytics...
+            expect(site['connect-src']).toContain('https://app.enzuzo.com');
+            // ...and the IAB TCF Global Vendor List comes from a sibling host.
+            expect(site['connect-src']).toContain('https://gvl.enzuzo.com');
+        });
+
+        it("does not need 'unsafe-eval' in the site scope", () => {
+            // The banner's new Function paths degrade rather than justify re-opening eval
+            // site-wide; see the note above ENZUZO_APP_HOST in cspRules.ts.
+            expect(getCspDirectives({ env: 'production', scope: 'site' })['script-src']).not.toContain("'unsafe-eval'");
+        });
+
+        it('applies on every page, not just the ones that render a cookies table', () => {
+            // The banner loads site-wide, including under /examples/ and /ecommerce/, so
+            // the origins live in the base directives rather than a scope override.
+            const scopes = ['site', 'examples', 'campaigns', 'ecommerce'] as const;
+            for (let i = 0, len = scopes.length; i < len; ++i) {
+                const directives = getCspDirectives({ env: 'production', scope: scopes[i] });
+                expect(directives['script-src']).toContain('https://app.enzuzo.com');
+                expect(directives['connect-src']).toContain('https://app.enzuzo.com');
+            }
+        });
+    });
+
     describe('RTI-3353: campaigns path matching covers archived campaign pages', () => {
         // The live campaign page and its archived snapshots both embed the Bryntum
         // demo, so both must resolve to the campaigns scope. An archived campaign path
