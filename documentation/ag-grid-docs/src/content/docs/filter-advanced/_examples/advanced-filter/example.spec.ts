@@ -36,18 +36,12 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Escape');
         await page.locator('.ag-advanced-filter-buttons').getByText('Apply').click();
 
-        // Wait for filter to apply — Phelps should appear and non-Phelps should disappear
-        // Use page.waitForFunction to wait for the grid to settle with only Phelps rows
-        await page.waitForFunction(() => {
-            const cells = document.querySelectorAll('.ag-row [col-id="athlete"]');
-            return cells.length > 0 && Array.from(cells).every((c) => c.textContent?.toLowerCase().includes('phelps'));
-        });
-
-        // Every visible athlete cell should contain "Phelps"
-        const athletesAfter = await athleteCells.allTextContents();
-        expect(athletesAfter.length).toBeGreaterThan(0);
-        for (const text of athletesAfter) {
-            expect(text.toLowerCase()).toContain('phelps');
-        }
+        // Phelps rows remain and every other athlete goes. Both conditions are checked inside one
+        // retry so they describe the same render: separately, the emptiness check passes during a
+        // transitional empty grid and the non-empty check then passes for rows nothing vetted.
+        await expect(async () => {
+            await expect(athleteCells).not.toHaveCount(0);
+            await expect(athleteCells.filter({ hasNotText: /phelps/i })).toHaveCount(0);
+        }).toPass();
     });
 });

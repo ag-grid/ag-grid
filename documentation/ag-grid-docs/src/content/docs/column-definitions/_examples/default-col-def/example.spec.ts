@@ -15,9 +15,12 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const firstRow = agIdFor.rowNode('0'); // Michael Phelps (age 23), initially at the top
-        await expect(firstRow).toHaveAttribute('row-index', '0');
+        // Assert on whichever row is at the top rather than following the Michael Phelps node:
+        // sorting by age ascending moves him far enough down that he is virtualised out of the DOM,
+        // and an assertion against a removed element fails on the element rather than the ordering.
+        const topAthlete = page.locator('.ag-row[row-index="0"]').locator('[col-id="athlete"]');
+        await expect(topAthlete).toHaveText('Michael Phelps'); // age 23
         await agIdFor.headerCell('age').click(); // ascending
-        await expect(firstRow).not.toHaveAttribute('row-index', '0');
+        await expect(topAthlete).not.toHaveText('Michael Phelps');
     });
 });

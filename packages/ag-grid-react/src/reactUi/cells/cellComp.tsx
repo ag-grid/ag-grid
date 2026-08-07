@@ -94,6 +94,11 @@ const CellComp = ({
             if (cellEditor) {
                 const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
                 setTimeout(() => {
+                    // The grid can be destroyed between the ref callback and this turn, and every
+                    // branch below reaches beans that are gone by then.
+                    if (!cellCtrl.isAlive() || context.isDestroyed()) {
+                        return;
+                    }
                     // we cannot set state inside render, so hack is to do it in next VM turn
                     if (editingCancelledByUserComp) {
                         cellCtrl.stopEditing(true);

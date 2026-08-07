@@ -29,18 +29,14 @@ test.agExample(import.meta, () => {
         const filterInput = page.locator('.ag-advanced-filter input[type=text]');
         await expect(filterInput).toHaveValue(/Gold/);
 
-        // Wait for the filter to take effect — all visible gold values should be >= 1
-        await page.waitForFunction(() => {
-            const cells = document.querySelectorAll('.ag-row [col-id="gold"]');
-            return cells.length > 0 && Array.from(cells).every((c) => parseInt(c.textContent || '0', 10) >= 1);
-        });
-
-        // Verify all visible gold values
+        // Every remaining row won gold. Both conditions are checked inside one retry so they
+        // describe the same render: separately, the zero-count check passes during a transitional
+        // empty grid and the non-empty check then passes for rows nothing vetted.
         const goldCells = page.locator('.ag-row [col-id="gold"]');
-        const visibleGold = await goldCells.allTextContents();
-        for (const text of visibleGold) {
-            expect(parseInt(text, 10)).toBeGreaterThanOrEqual(1);
-        }
+        await expect(async () => {
+            await expect(goldCells).not.toHaveCount(0);
+            await expect(goldCells.filter({ hasText: /^0$/ })).toHaveCount(0);
+        }).toPass();
     });
 
     test.eachFramework('should clear filter via button', async ({ page }) => {

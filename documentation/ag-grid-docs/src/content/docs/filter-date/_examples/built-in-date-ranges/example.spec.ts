@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('exposes the built-in named & relative date ranges', async ({ page, agIdFor }) => {
@@ -16,6 +16,11 @@ test.agExample(import.meta, () => {
     test.eachFramework('selecting a relative range activates the filter', async ({ page, agIdFor }) => {
         const dateHeader = agIdFor.headerCell('date');
         await expect(dateHeader).not.toHaveClass(/ag-header-cell-filtered/);
+
+        // The example fetches its rows, so the baseline has to be read after they arrive - taken
+        // before the load it is zero, and no filtered count is ever less than that.
+        await ensureGridReady(page);
+        await waitForGridContent(page);
 
         // Total row count before filtering, read from the grid's aria-rowcount (not the
         // virtualised DOM rows).
