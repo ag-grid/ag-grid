@@ -1,28 +1,18 @@
 ---
 import Layout from '@layouts/Layout.astro';
+import { POLICY_CONTENT, policyHeading } from '@ag-website-shared/components/policies/policyContent';
 import styles from '@pages-styles/your-choice.module.scss';
+
+// Copy is shared with the /privacy/your-choice.md twin so the two cannot drift.
+const content = POLICY_CONTENT['your-choice'];
 ---
 
-<Layout
-    title={`Opt Out Request Received`}
-    description="We've noted your request to opt out and will remove your details from our records within 5 working days"
-    showSearchBar={true}
-    showDocsNav={false}
->
+<Layout title={content.metaTitle} description={content.description} showSearchBar={true} showDocsNav={false}>
     <div class:list={styles.optOutRequestPage}>
         <div class="layout-max-width-small columns-1-4">
-            <h1>Your request has been received</h1>
+            <h1>{policyHeading('your-choice', 'AG Grid')}</h1>
 
-            <p>
-                Thank you. We've noted your request to opt out and will remove your details from our records within 5
-                working days. You'll receive a confirmation email once this is done.
-            </p>
-
-            <p>
-                If you have any questions in the meantime, please contact <br /><a href="mailto:privacy@ag-grid.com"
-                    >privacy@ag-grid.com</a
-                >.
-            </p>
+            {content.intro.map((line) => <p set:html={line} />)}
         </div>
     </div>
 </Layout>

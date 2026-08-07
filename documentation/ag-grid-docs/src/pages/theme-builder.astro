@@ -6,20 +6,18 @@ import { ThemeBuilder } from '@ag-website-shared/components/theme-builder-grid/T
 
 import { getDocsPages } from '../components/docs/utils/pageData';
 import Layout from '../layouts/Layout.astro';
+import { STATIC_PAGE_CONTENT } from '@utils/markdown-pages/staticPageContent';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
     return getDocsPages(pages);
 }
+
+// Metadata is shared with the /theme-builder.md twin so the two cannot drift.
+const content = STATIC_PAGE_CONTENT['theme-builder'];
 ---
 
-<Layout
-    title="AG Grid Theme Builder"
-    description={'Easily build and customise themes for AG Grid with our interactive tool. Use our templates or create your own style from scratch. Export styles to AG Grid compatible themes.'}
-    showDocsNav={false}
-    showSearchBar={true}
-    hideFooter
->
+<Layout title={content.title} description={content.description} showDocsNav={false} showSearchBar={true} hideFooter>
     <div class:list={['contentViewport layout-grid']}>
         <ThemeBuilder client:only="react" />
         <EmptyState />

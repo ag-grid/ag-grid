@@ -1,3 +1,6 @@
+// Relative rather than aliased: this module is pulled in by the agHtaccessGen integration, which
+// astro.config.mjs bundles without tsconfig path resolution (as with plugins/agDevMarkdownNegotiation).
+import { markdownPathAlternation } from '../markdownPages';
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import type { CspEnv } from './cspRules';
 import {
@@ -83,10 +86,13 @@ const modDeflateRules = `
 // on `Accept: text/markdown`, shared by the production and staging .htaccess so the
 // rule can't drift between them. Indented 4 spaces for use inside a mod_rewrite block.
 // The negotiation is an internal rewrite (no redirect, URL unchanged), gated by an
-// on-disk check so a path without a .md is left untouched. %1 is the docs path
+// on-disk check so a path without a .md is left untouched. %1 is the page path
 // captured below, reused in both the -f test and the rewrite target.
+//
+// The path alternation is derived from GRID_MARKDOWN_PAGE_GROUPS — the same registry the
+// dev-server plugin uses — so the two can't disagree about what is negotiable.
 const markdownNegotiationRules = `    RewriteCond %{HTTP_ACCEPT} text/markdown
-    RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$
+    RewriteCond %{REQUEST_URI} ^/(${markdownPathAlternation()})/?$
     RewriteCond %{DOCUMENT_ROOT}/%1.md -f
     RewriteRule ^ /%1.md [L]
 
@@ -106,13 +112,14 @@ const markdownNegotiationBlock = `<IfModule mod_rewrite.c>
 ${markdownNegotiationRules}
 </IfModule>`;
 
-// SE-80: docs pages content-negotiate on the Accept header (see the markdown rewrite
+// SE-80: negotiated pages content-negotiate on the Accept header (see the markdown rewrite
 // above), so shared caches must key on it — otherwise they could serve the markdown
-// variant to a browser, or HTML to an agent. Scoped to the docs paths so the rest of
-// the site keeps its default (URL-only) cache key.
-const markdownVaryHeader = `# SE-80: docs pages content-negotiate on Accept (see the markdown rewrite), so shared
+// variant to a browser, or HTML to an agent. Scoped to the negotiated paths so the rest of
+// the site keeps its default (URL-only) cache key. Derived from the same registry as the
+// rewrite rule, so the two stay in lockstep.
+const markdownVaryHeader = `# SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/]+|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$# || %{REQUEST_URI} == '/'">
+<If "%{REQUEST_URI} =~ m#^/(?:${markdownPathAlternation()})/?$# || %{REQUEST_URI} == '/'">
     Header append Vary Accept
 </If>`;
 

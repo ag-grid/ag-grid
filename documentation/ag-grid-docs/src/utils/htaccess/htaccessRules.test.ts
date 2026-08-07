@@ -556,34 +556,87 @@ describe('htaccessRules', () => {
     });
 
     describe('SE-80: Accept: text/markdown content negotiation', () => {
-        const negotiationRules = [
-            'RewriteCond %{HTTP_ACCEPT} text/markdown',
-            // Captures a docs path or a top-level md page, reused (%1) in the -f test and rewrite target.
-            'RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$',
-            'RewriteCond %{DOCUMENT_ROOT}/%1.md -f',
-            'RewriteRule ^ /%1.md [L]',
+        // The negotiated path list is derived from GRID_MARKDOWN_PAGE_GROUPS, so asserting the
+        // literal regex here would just restate the registry. Instead, pull the generated
+        // pattern back out and check which URLs it actually matches — that catches a broken
+        // pattern, which a string comparison against a hand-copied regex never would.
+        const extractNegotiationPattern = (content: string) => {
+            const match = content.match(/RewriteCond %\{REQUEST_URI\} \^\/\((.+)\)\/\?\$/);
+            expect(match).not.toBeNull();
+            return new RegExp(`^/(${match![1]})/?$`);
+        };
+
+        const extractVaryPattern = (content: string) => {
+            const match = content.match(/<If "%\{REQUEST_URI\} =~ m#\^\/\(\?:(.+)\)\/\?\$#/);
+            expect(match).not.toBeNull();
+            return new RegExp(`^/(?:${match![1]})/?$`);
+        };
+
+        // One representative URL per group in the registry. Every URL in the sitemap must
+        // negotiate, so a group added without a matching pattern shows up here.
+        const negotiablePaths = [
+            '/react-data-grid/cell-editing/',
+            '/javascript-data-grid/getting-started/',
+            '/about/',
+            '/changelog/',
+            '/documentation-archive/',
+            '/example/',
+            '/license-pricing/',
+            '/pipeline/',
+            '/roadmap/',
+            '/whats-new/',
+            '/community/',
+            '/community/events/',
+            '/community/beyond-the-prompt/',
+            '/session/opening-keynote/',
+            '/campaigns/bryntum-gantt/',
+            '/landing-pages/react-data-grid/',
+            '/react-table/',
+            '/cookies/',
+            '/modern-slavery/',
+            '/privacy/',
+            '/privacy/your-choice/',
+            '/example-finance/',
+            '/example-hr/',
+            '/example-inventory/',
+            '/contact/',
+            '/niall/',
+            '/licensing/',
+            '/reference/',
+            '/sitemap/',
+            '/theme-builder/',
         ];
 
-        // The homepage twin is a separate stanza: the root URL has no path segment to capture.
-        const homepageNegotiationRules = [
-            'RewriteCond %{REQUEST_URI} ^/$',
-            'RewriteCond %{DOCUMENT_ROOT}/index.md -f',
-            'RewriteRule ^ /index.md [L]',
+        // Paths that must NOT negotiate: they have no `.md` twin, and rewriting them would
+        // either 404 or (for the `.md` itself) loop into `.md.md`.
+        const nonNegotiablePaths = [
+            '/react-data-grid/cell-editing.md', // the twin itself — final segments exclude dots
+            '/react-data-grid/', // framework landing page, redirect stub
+            '/react-data-grid/errors/123/', // sitemap-excluded
+            '/data-grid/cell-editing/', // framework-agnostic redirect stub
+            '/contact/success/', // form result, sitemap-excluded
+            '/examples/cell-editing/component-editor/reactFunctionalTs/',
+            '/debug/files/',
+            '/sitemap-0.xml',
+            '/sitemap-index.xml',
         ];
 
         it('serves the per-page .md variant when Accept: text/markdown, gated by an on-disk check', () => {
-            for (const rule of negotiationRules) {
-                expect(productionContent).toContain(rule);
-            }
+            expect(productionContent).toContain('RewriteCond %{HTTP_ACCEPT} text/markdown');
+            expect(productionContent).toContain('RewriteCond %{DOCUMENT_ROOT}/%1.md -f');
+            expect(productionContent).toContain('RewriteRule ^ /%1.md [L]');
         });
 
         it('applies the same negotiation rules on staging, in its own mod_rewrite block', () => {
             // Staging has no redirect rewrites, so negotiation gets a dedicated block.
             expect(stagingContent).toContain('mod_rewrite.c');
             expect(stagingContent).toContain('RewriteEngine On');
-            for (const rule of negotiationRules) {
-                expect(stagingContent).toContain(rule);
-            }
+            expect(stagingContent).toContain('RewriteCond %{HTTP_ACCEPT} text/markdown');
+            expect(stagingContent).toContain('RewriteRule ^ /%1.md [L]');
+            // Both envs must negotiate exactly the same set of paths.
+            expect(extractNegotiationPattern(stagingContent).source).toBe(
+                extractNegotiationPattern(productionContent).source
+            );
         });
 
         it('runs the negotiation before the trailing-slash 301 so the canonical URL negotiates in one hop', () => {
@@ -594,33 +647,52 @@ describe('htaccessRules', () => {
             expect(negotiationIndex).toBeLessThan(trailingSlashIndex);
         });
 
-        it('adds Vary: Accept for negotiated paths (both envs) so shared caches key on the negotiated representation', () => {
+        it('negotiates every page group in the registry, with and without a trailing slash', () => {
+            const pattern = extractNegotiationPattern(productionContent);
+            for (const path of negotiablePaths) {
+                expect(pattern.test(path), `${path} should negotiate`).toBe(true);
+                expect(pattern.test(path.replace(/\/$/, '')), `${path} (no trailing slash)`).toBe(true);
+            }
+        });
+
+        it('leaves pages without a .md twin untouched', () => {
+            const pattern = extractNegotiationPattern(productionContent);
+            for (const path of nonNegotiablePaths) {
+                expect(pattern.test(path), `${path} should not negotiate`).toBe(false);
+            }
+        });
+
+        it('captures the page path in %1 so the -f guard and rewrite target resolve to /<page>.md', () => {
+            const pattern = extractNegotiationPattern(productionContent);
+            // %1 is the first capture group, reused as `%1.md` in both the guard and the target.
+            expect('/community/events/'.match(pattern)?.[1]).toBe('community/events');
+            expect('/react-data-grid/cell-editing/'.match(pattern)?.[1]).toBe('react-data-grid/cell-editing');
+            expect('/license-pricing'.match(pattern)?.[1]).toBe('license-pricing');
+        });
+
+        it('adds Vary: Accept for exactly the negotiated paths (both envs) so shared caches key on the negotiated representation', () => {
             for (const content of [productionContent, stagingContent]) {
-                expect(content).toContain(
-                    `<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/]+|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$# || %{REQUEST_URI} == '/'">`
-                );
                 expect(content).toContain('Header append Vary Accept');
-            }
-        });
-
-        it('negotiates the top-level standalone pages to their .md', () => {
-            // %1 captures each page name, so the -f guard and rewrite target resolve to /<page>.md.
-            for (const content of [productionContent, stagingContent]) {
-                expect(content).toContain('|license-pricing|changelog|pipeline|about|community');
-                expect(content).toContain('|documentation-archive|example)/?$');
-            }
-        });
-
-        it('negotiates the community subpages to their .md', () => {
-            // e.g. /community/events -> %1 = community/events -> /community/events.md
-            for (const content of [productionContent, stagingContent]) {
-                expect(content).toContain(
-                    'community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?'
-                );
+                // The Vary scope must cover the negotiated set exactly — narrower and a cache
+                // could serve markdown to a browser; wider and unrelated pages lose cache keying.
+                const varyPattern = extractVaryPattern(content);
+                for (const path of negotiablePaths) {
+                    expect(varyPattern.test(path), `${path} should carry Vary: Accept`).toBe(true);
+                }
+                for (const path of nonNegotiablePaths) {
+                    expect(varyPattern.test(path), `${path} should not carry Vary: Accept`).toBe(false);
+                }
+                expect(content).toContain(`%{REQUEST_URI} == '/'`);
             }
         });
 
         it('negotiates the homepage (/) to /index.md via a dedicated stanza in both envs', () => {
+            // The homepage twin is a separate stanza: the root URL has no path segment to capture.
+            const homepageNegotiationRules = [
+                'RewriteCond %{REQUEST_URI} ^/$',
+                'RewriteCond %{DOCUMENT_ROOT}/index.md -f',
+                'RewriteRule ^ /index.md [L]',
+            ];
             for (const content of [productionContent, stagingContent]) {
                 for (const rule of homepageNegotiationRules) {
                     expect(content).toContain(rule);
