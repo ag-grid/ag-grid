@@ -146,9 +146,10 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         const horizontalViewportWidth = gridBodyCtrl.getViewportWidthWithoutScrollbar(verticalScrollShowing);
         const verticalContentHeight = rowContainerHeight.getAdjustedUiContainerHeight() ?? 0;
         const verticalViewportHeight = gridBodyCtrl.getBodyViewportHeight(gridBodyCtrl.eGridViewport.clientHeight);
+        const pinnedColumnsOverflowing = gridBodyCtrl.isPinnedWidthOverflowingViewport(verticalScrollShowing);
 
         return {
-            horizontalScrollGap: horizontalContentWidth < horizontalViewportWidth - 0.5,
+            horizontalScrollGap: !pinnedColumnsOverflowing && horizontalContentWidth < horizontalViewportWidth - 0.5,
             verticalScrollGap: verticalContentHeight < verticalViewportHeight - 0.5,
         };
     }

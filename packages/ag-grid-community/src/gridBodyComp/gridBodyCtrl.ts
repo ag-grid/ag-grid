@@ -226,7 +226,7 @@ export class GridBodyCtrl extends BeanStub {
     public isPinnedWidthOverflowingViewport(
         verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing
     ): boolean {
-        if (!_isDomLayout(this.gos, 'normal')) {
+        if (_isDomLayout(this.gos, 'print')) {
             return false;
         }
 

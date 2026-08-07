@@ -67,6 +67,7 @@ describe('Pinned columns wider than the viewport', () => {
         expect(viewport.scrollLeft).toBe(0);
         expect(query<HTMLElement>('.ag-grid-scrollable-area').style.width).toBe('600px');
         expect(query<HTMLElement>('.ag-body-horizontal-scroll-container').style.width).toBe('1px');
+        expect(query<HTMLElement>('.ag-root').classList.contains('ag-body-horizontal-content-no-gap')).toBe(true);
 
         const headerRows = document.querySelectorAll<HTMLElement>('.ag-header-row');
         expect(headerRows.length).toBeGreaterThan(0);
@@ -109,6 +110,25 @@ describe('Pinned columns wider than the viewport', () => {
         expect(viewport.classList.contains('ag-pinned-columns-overflow')).toBe(true);
         expect(query<HTMLElement>('.ag-grid-scrollable-area').style.width).toBe('600px');
         expect(query<HTMLElement>('.ag-body-horizontal-scroll-container').style.width).toBe('1px');
+    });
+
+    test('clips overflowing pinned columns in autoHeight layout', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: overflowingColumnDefs,
+            rowData,
+            domLayout: 'autoHeight',
+            processUnpinnedColumns: () => [],
+        });
+
+        await asyncSetTimeout(0);
+
+        const viewport = query<HTMLElement>('.ag-grid-viewport');
+        expect(viewport.classList.contains('ag-pinned-columns-overflow')).toBe(true);
+        expect(query<HTMLElement>('.ag-grid-scrollable-area').style.width).toBe('600px');
+        expect(query<HTMLElement>('.ag-body-horizontal-scroll-container').style.width).toBe('1px');
+
+        api.ensureColumnVisible('g');
+        expect(viewport.scrollLeft).toBe(0);
     });
 
     test('keeps the normal scroll range while pinned columns fit in the viewport', async () => {
