@@ -52,15 +52,15 @@ const gridOptions: GridOptions = {
 };
 
 function showCountry() {
-    gridApi!.setColumnsVisible(['country'], true);
+    gridApi.setColumnsVisible(['country'], true);
 }
 
 function widenAthlete() {
-    gridApi!.applyColumnState({ state: [{ colId: 'athlete', width: 400 }] });
+    gridApi.applyColumnState({ state: [{ colId: 'athlete', width: 400 }] });
 }
 
 function addLongRow() {
-    gridApi!.applyTransaction({
+    gridApi.applyTransaction({
         add: [{ athlete: 'Bartholomew Montgomery-Fitzwilliam', country: 'Estonia', sport: 'Fencing', year: 2024 }],
         addIndex: 0,
     });

@@ -210,6 +210,10 @@ const gridOptions = {
 
 The strategy runs after the grid has rendered the changes the event describes, and rapid bursts of events are debounced into a single run.
 
+Sizing the grid itself triggers events, so a run never re-triggers itself: events raised by the strategy's own resize are ignored. For the same reason, resizing via the sizing API methods `sizeColumnsToFit` and `autoSizeColumns` does not re-run the strategy.
+
+Changing `autoSizeStrategy` at runtime re-registers the listeners for the new `events`, and any subsequent run uses the new strategy. It does not re-apply the strategy on the spot — the strategy is applied when the grid loads and whenever a configured event fires.
+
 In the example below the columns re-size when a hidden column is shown, when the page changes, and when a row is added.
 
 {% gridExampleRunner title="Re-Running the Auto-Size Strategy on Grid Events" name="auto-size-strategy-events" /%}

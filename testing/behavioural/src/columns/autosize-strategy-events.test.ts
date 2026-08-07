@@ -320,6 +320,17 @@ describe('autoSizeStrategy events', () => {
             await waitFor(() => expect(totalWidth(api)).toBe(900));
         });
 
+        test('replacing a width strategy with a content one before first data render applies the new strategy', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ a: 'x', b: 'y', c: 'z' }],
+                autoSizeStrategy: { type: 'fitProvidedWidth', width: 900 },
+            });
+            api.setGridOption('autoSizeStrategy', { type: 'fitCellContents', skipHeader: true });
+
+            await waitFor(() => expect(widths(api)).toEqual([100, 100, 100]));
+        });
+
         test('replacing autoSizeStrategy tears down the previous events', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,

@@ -36,7 +36,30 @@ interface AutoSizeColumnParams {
 }
 
 /** the event sources an auto-size strategy run produces itself */
-const STRATEGY_SOURCES: string[] = ['autosizeColumns', 'sizeColumnsToFit'];
+const STRATEGY_SOURCES: ReadonlySet<string> = new Set<ColumnEventType>(['autosizeColumns', 'sizeColumnsToFit']);
+
+const STRATEGY_RERUN_DEBOUNCE_MS = 50;
+
+/**
+ * Only `source` is read - the strategy re-runs whatever the triggering event was. `type` is here
+ * because an all-optional shape is a weak type, which no concrete event would be assignable to.
+ */
+interface StrategyTriggerEvent {
+    type: string;
+    source?: string;
+}
+
+function sameEvents(a: AgPublicEventType[], b: AgPublicEventType[]): boolean {
+    if (a.length !== b.length) {
+        return false;
+    }
+    for (let i = 0, len = a.length; i < len; ++i) {
+        if (a[i] !== b[i]) {
+            return false;
+        }
+    }
+    return true;
+}
 
 /** Sources used by the built-in Column Menu and Context Menu auto-size actions. */
 const UI_MENU_SOURCES: ReadonlySet<ColumnEventType> = new Set(['columnMenu', 'contextMenu']);
@@ -48,7 +71,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     /** listeners for the `events` of the current `autoSizeStrategy`, re-registered whenever it changes */
     private readonly strategyEventListeners: (() => null)[] = [];
-    private readonly reRunStrategyDebounced = _debounce(this, () => this.reRunStrategy(), 50);
+    /** the `events` the listeners above were registered for, so an unchanged list can skip re-registration */
+    private strategyEvents: AgPublicEventType[] = [];
+    private strategyRunPending = false;
+    private readonly reRunStrategyDebounced = _debounce(this, () => this.reRunStrategy(), STRATEGY_RERUN_DEBOUNCE_MS);
 
     /** when we're waiting for cell data types to be inferred, we need to defer column resizing */
     public shouldQueueResizeOperations: boolean = false;
@@ -80,27 +106,35 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     private setupStrategyEventListeners(): void {
+        const events = this.gos.get('autoSizeStrategy')?.events ?? [];
+        // frameworks re-supply an inline `autoSizeStrategy` object on every render, so the property
+        // listener fires constantly with an unchanged event list - re-registering there would churn
+        // a listener per event, per render, forever
+        if (sameEvents(events, this.strategyEvents)) {
+            return;
+        }
+        this.strategyEvents = events;
+
         const listeners = this.strategyEventListeners;
         for (let i = 0, len = listeners.length; i < len; ++i) {
             listeners[i]();
         }
         listeners.length = 0;
 
-        const events = this.gos.get('autoSizeStrategy')?.events;
-        if (!events?.length) {
+        if (!events.length) {
             return;
         }
 
-        const handlers: Partial<Record<AgPublicEventType, (event: { type: string; source?: string }) => void>> = {};
-        const onEvent = (event: { type: string; source?: string }) => {
+        const onEvent = (event: StrategyTriggerEvent) => {
             // a strategy run resizes columns, which re-enters this listener when the configured
             // events include a sizing event such as `columnResized` - ignoring the sources the
             // strategy itself uses stops that feedback loop
-            if (event.source && STRATEGY_SOURCES.includes(event.source)) {
+            if (event.source && STRATEGY_SOURCES.has(event.source)) {
                 return;
             }
             this.reRunStrategyDebounced();
         };
+        const handlers: Partial<Record<AgPublicEventType, (event: StrategyTriggerEvent) => void>> = {};
         for (let i = 0, len = events.length; i < len; ++i) {
             handlers[events[i]] = onEvent;
         }
@@ -108,9 +142,16 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     private reRunStrategy(): void {
+        // a background tab never services its animation frames, so without this every debounce
+        // window spent hidden would queue another run, all firing at once when the tab is revealed
+        if (this.strategyRunPending) {
+            return;
+        }
+        this.strategyRunPending = true;
         // wait a frame so frameworks which render asynchronously have painted the changes
         // caused by the triggering event before we measure
         _requestAnimationFrame(this.beans, () => {
+            this.strategyRunPending = false;
             // resolved here rather than when the event fired: `autoSizeStrategy` may have been
             // replaced in between, and the current one is what should be applied
             const strategy = this.gos.get('autoSizeStrategy');
@@ -638,35 +679,36 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public applyAutosizeStrategy(): void {
-        const { gos, colDelayRenderSvc } = this.beans;
-        const autoSizeStrategy = gos.get('autoSizeStrategy');
+        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
         if (autoSizeStrategy?.type !== 'fitGridWidth' && autoSizeStrategy?.type !== 'fitProvidedWidth') {
             return;
         }
 
         // ensure things like aligned grids have linked first
-        setTimeout(() => {
-            if (!this.isAlive()) {
-                return;
-            }
-            this.applyStrategy(autoSizeStrategy);
-            colDelayRenderSvc?.revealColumns(autoSizeStrategy.type);
-        });
+        this.applyStrategyWhenSettled(autoSizeStrategy.type);
     }
 
     private onFirstDataRendered(strategy: SizeColumnsToContentStrategy): void {
         // ensure render has finished
+        this.applyStrategyWhenSettled(strategy.type);
+    }
+
+    /**
+     * Applies the strategy once the grid has settled, revealing the columns `hiddenForType` hid.
+     * `autoSizeStrategy` is updatable, so the strategy is resolved here rather than captured by the
+     * caller - it may have been replaced in between. The reveal still uses the type that hid the
+     * columns, which is the only key `colDelayRenderSvc` will accept for them.
+     */
+    private applyStrategyWhenSettled(hiddenForType: AutoSizeStrategy['type']): void {
         setTimeout(() => {
             if (!this.isAlive()) {
                 return;
             }
-            // `autoSizeStrategy` is updatable, so it may have been replaced since the grid
-            // initialised. Columns are still revealed for the type that hid them.
-            const current = this.gos.get('autoSizeStrategy');
-            if (current) {
-                this.applyStrategy(current);
+            const strategy = this.gos.get('autoSizeStrategy');
+            if (strategy) {
+                this.applyStrategy(strategy);
             }
-            this.beans.colDelayRenderSvc?.revealColumns(strategy.type);
+            this.beans.colDelayRenderSvc?.revealColumns(hiddenForType);
         });
     }
 

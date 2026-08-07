@@ -1,5 +1,6 @@
 import { getSortDefFromInput } from '../../entities/agColumn';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
+import { _PUBLIC_EVENTS } from '../../eventTypes';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
@@ -774,6 +775,13 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 }
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
+                }
+                const events = autoSizeStrategy.events;
+                if (events) {
+                    const unknown = events.filter((event) => !(_PUBLIC_EVENTS as readonly string[]).includes(event));
+                    if (unknown.length) {
+                        return `\`autoSizeStrategy.events\` contains events which do not exist: [${unknown.join(', ')}]. The strategy will not re-run for them.`;
+                    }
                 }
                 return null;
             },

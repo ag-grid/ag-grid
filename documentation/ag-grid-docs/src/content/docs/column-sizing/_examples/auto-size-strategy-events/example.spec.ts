@@ -9,18 +9,14 @@ function headerWidth(page: Page, colId: string): Promise<number> {
     return width(page.locator(`.ag-header-cell[col-id="${colId}"]`).first());
 }
 
-/** Settle the width animation so measurements are stable. */
-async function waitForWidths(page: Page): Promise<void> {
-    await expect(page.locator('.ag-animate-autosize')).toHaveCount(0);
-}
+/** The configured width of every column, so a content fit having run means a column is narrower. */
+const CONFIGURED_WIDTH = 300;
 
-/** Columns start at 300px, so a content fit having run means every column is narrower. */
 async function waitForInitialFit(page: Page): Promise<void> {
     await waitForGridContent(page);
     await expect(async () => {
-        expect(await headerWidth(page, 'athlete')).toBeLessThan(300);
+        expect(await headerWidth(page, 'athlete')).toBeLessThan(CONFIGURED_WIDTH);
     }).toPass();
-    await waitForWidths(page);
 }
 
 test.agExample(import.meta, () => {
@@ -29,13 +25,12 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-header-cell[col-id="country"]')).toHaveCount(0);
 
         await page.locator('button.show-country-button').click();
-        await waitForWidths(page);
 
-        // sized to content rather than left at its 300px configured width
+        // sized to content rather than left at its configured width
         await expect(async () => {
             const countryWidth = await headerWidth(page, 'country');
             expect(countryWidth).toBeGreaterThan(0);
-            expect(countryWidth).toBeLessThan(300);
+            expect(countryWidth).toBeLessThan(CONFIGURED_WIDTH);
         }).toPass();
     });
 
@@ -48,7 +43,6 @@ test.agExample(import.meta, () => {
         }).toPass();
 
         await page.locator('.ag-paging-button[data-ref="btNext"]').click();
-        await waitForWidths(page);
 
         await expect(async () => {
             expect(await headerWidth(page, 'athlete')).toBeLessThan(400);
@@ -60,7 +54,6 @@ test.agExample(import.meta, () => {
         const before = await headerWidth(page, 'athlete');
 
         await page.locator('button.add-row-button').click();
-        await waitForWidths(page);
 
         // the added athlete name is far longer than any already in the grid
         await expect(async () => {
