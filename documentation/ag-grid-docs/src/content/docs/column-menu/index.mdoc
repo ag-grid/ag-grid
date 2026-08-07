@@ -66,26 +66,74 @@ The full order of precedence is `colDef.columnMenuItems`, then `getColumnMenuIte
 
 {% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getMainMenuItems"] /%}
 
-### Built-In Menu Items
+## Built-In Menu Items
 
-The following is a list of all the default built-in menu items with the rules about when they are shown.
+The following is a list of all the default built-in menu items with the rules about when they are shown. Menu items are only displayed when the [Module](./modules/) they require is loaded.
 
-- `sortAscending`: Sort the column in ascending order. Not shown when `columnMenu = 'legacy'` or the column is already sorted in ascending order.
-- `sortDescending`: Sort the column in descending order. Not shown when `columnMenu = 'legacy'` or the column is already sorted in descending order.
-- `sortUnSort`: Clear the sort on the column. Not shown when `columnMenu = 'legacy'` or the column is not sorted.
-- `calculatedColumn`: Show the Calculated Columns options. If the column selected is a Calculated Column, the menu will show options to edit and remove the column.
-- `editColumnName`: Rename the column header. Only shown when `headerNameEditable` is set on the column, and never on a calculated column, which is renamed via its **Edit Calculated Column** dialog instead.
-- `columnFilter`: Show the column filter. Not shown when `columnMenu = 'legacy'`, a filter is not enabled, or the header filter button or floating filter button are displayed.
-- `columnChooser`: Show the column chooser. Not shown when `columnMenu = 'legacy'`.
-- `pinSubMenu`: Sub-menu for pinning. Always shown.
-- `valueAggSubMenu`: Sub-menu for value aggregation. Always shown.
-- `autoSizeThis`: Auto-size the current column. Always shown.
-- `autoSizeAll`: Auto-size all columns. Always shown.
-- `rowGroup`: Group by this column. Only shown if column is not grouped. Note this will appear once there is row grouping.
-- `rowUnGroup`: Un-group by this column. Only shown if column is grouped. Note this will appear once there is row grouping.
-- `resetColumns`: Reset column details. Always shown.
-- `expandAll`: Expand all groups. Only shown if grouping by at least one column.
-- `contractAll`: Collapse all groups. Only shown if grouping by at least one column.
+#### Sorting
+
+Needs no additional module.
+
+| Item             | Description                          | Shown                                                                                                    |
+| ---------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `sortAscending`  | Sort the column in ascending order.  | Only on a sortable column. Not when `columnMenu = 'legacy'`, or the column is already sorted ascending.  |
+| `sortDescending` | Sort the column in descending order. | Only on a sortable column. Not when `columnMenu = 'legacy'`, or the column is already sorted descending. |
+| `sortUnSort`     | Clear the sort on the column.        | Only on a sortable column that is currently sorted. Not when `columnMenu = 'legacy'`.                    |
+
+#### Filtering
+
+Requires a [Column Filter](./filtering/).
+
+| Item           | Description             | Shown                                                                                                                           |
+| -------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `columnFilter` | Show the column filter. | Not when `columnMenu = 'legacy'`, a filter is not enabled, or the header filter button or floating filter button are displayed. |
+
+#### Columns
+
+`columnChooser` needs no module beyond the Column Menu itself. `resetColumns` and `pinSubMenu` need no additional module.
+
+| Item            | Description                                       | Shown                                     |
+| --------------- | ------------------------------------------------- | ----------------------------------------- |
+| `columnChooser` | Show the [column chooser](./tool-panel-columns/). | Not when `columnMenu = 'legacy'`.         |
+| `resetColumns`  | Reset column details.                             | Always.                                   |
+| `pinSubMenu`    | Sub-menu for [pinning](./column-pinning/).        | Unless `lockPinned` is set on the column. |
+
+#### Column Sizing
+
+Requires [Column Auto Size](./column-sizing/).
+
+| Item           | Description                   | Shown                                           |
+| -------------- | ----------------------------- | ----------------------------------------------- |
+| `autoSizeThis` | Auto-size the current column. | Unless `suppressAutoSize` is set on the column. |
+| `autoSizeAll`  | Auto-size all columns.        | Always.                                         |
+
+#### Row Grouping and Aggregation
+
+`rowGroup` and `rowUnGroup` require [Row Grouping](./grouping/) or [SSRM](./server-side-model/). `valueAggSubMenu`, `expandAll` and `contractAll` require [Row Grouping](./grouping/), [Pivot](./pivoting/), [Tree Data](./tree-data/) or [SSRM](./server-side-model/).
+
+| Item              | Description                                       | Shown                                                                                                                                       |
+| ----------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rowGroup`        | Group by this column.                             | Only on a primary column that allows row grouping and is not already grouped.                                                               |
+| `rowUnGroup`      | Un-group by this column.                          | Only when the column is grouped, and the row group is not locked.                                                                           |
+| `valueAggSubMenu` | Sub-menu for [value aggregation](./aggregation/). | Always on pivot value columns. Otherwise only on value columns, when grouping, using Tree Data, or showing a grand total row.               |
+| `expandAll`       | Expand all groups.                                | Only when grouping by at least one column, or two when in Pivot Mode. Requires the Client-Side Row Model, or `ssrmExpandAllAffectsAllRows`. |
+| `contractAll`     | Collapse all groups.                              | Only when grouping by at least one column, or two when in Pivot Mode. Requires the Client-Side Row Model, or `ssrmExpandAllAffectsAllRows`. |
+
+#### Calculated Columns
+
+Requires [Calculated Columns](./calculated-columns/).
+
+| Item               | Description                                                                                       | Shown                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `calculatedColumn` | Show the Calculated Columns options. On a Calculated Column, shows options to edit and remove it. | Only when Calculated Columns are enabled, on a primary column, and not in Pivot Mode. |
+
+#### Column Headers
+
+Requires [Column Header Edit](./column-headers/).
+
+| Item             | Description               | Shown                                                                                                                                                      |
+| ---------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `editColumnName` | Rename the column header. | Only when `headerNameEditable` is set on the column, and never on a calculated column, which is renamed via its **Edit Calculated Column** dialog instead. |
 
 The `defaultItems` list will change on different calls, depending on, for example, which columns are currently used for grouping.
 
@@ -93,7 +141,7 @@ If you do not override the list of menu items, then the items displayed will be 
 
 [Columns Tool Panel](./tool-panel-columns/#context-menu) tokens such as `value` can also be returned here, and are shown where they apply to the column.
 
-### Menu Item Separators
+## Menu Item Separators
 
 Menu items can be grouped together by adding separators between groups. Separators are defined by the string value `'separator'`. For example, you could add menu item separators as follows:
 
@@ -101,7 +149,7 @@ Menu items can be grouped together by adding separators between groups. Separato
 menuItems.push('separator')
 ```
 
-### Custom Menu Item Components
+## Custom Menu Item Components
 
 In addition to the provided menu items, it is also possible to create custom menu item components.
 
