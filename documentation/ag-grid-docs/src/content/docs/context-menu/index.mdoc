@@ -34,6 +34,8 @@ If you want to turn off the context menu completely, set the grid property `supp
 
 The following is a list of all the default built in menu items with the rules about when they are shown.
 
+Menu items also require the relevant [Module](./modules/) to be loaded in order to be displayed.
+
 - `autoSizeAll`: Auto-size all columns. Not shown by default.
 - `expandAll`: When set, it's only shown if grouping by at least one column. Not shown by default.
 - `contractAll`: Collapse all groups. When set, it's only shown if grouping by at least one column. Not shown by default.
@@ -54,8 +56,6 @@ The following is a list of all the default built in menu items with the rules ab
 - `pinTop`: Pin a row to the top of the grid. Shown when [Row Pinning](./row-pinning) is enabled.
 - `pinBottom`: Pin a row to the botom of the grid. Shown when [Row Pinning](./row-pinning) is enabled.
 - `unpinRow`: Unpin a row from the top or bottom of the grid. Shown for pinned rows when [Row Pinning](./row-pinning) is enabled.
-
-Menu items also require the relevant [Module](./modules/) to be loaded in order to be displayed.
 
 {% note %}
 The 'paste' operation in the context menu uses the [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API). This means
