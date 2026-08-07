@@ -35,6 +35,9 @@ interface AutoSizeColumnParams {
     source?: ColumnEventType;
 }
 
+/** the event sources an auto-size strategy run produces itself */
+const STRATEGY_SOURCES: string[] = ['autosizeColumns', 'sizeColumnsToFit'];
+
 export class ColumnAutosizeService extends BeanStub implements NamedBean {
     beanName = 'colAutosize' as const;
 
@@ -85,9 +88,18 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        const handlers: Partial<Record<AgPublicEventType, () => void>> = {};
+        const handlers: Partial<Record<AgPublicEventType, (event: { type: string; source?: string }) => void>> = {};
+        const onEvent = (event: { type: string; source?: string }) => {
+            // a strategy run resizes columns, which re-enters this listener when the configured
+            // events include a sizing event such as `columnResized` - ignoring the sources the
+            // strategy itself uses stops that feedback loop
+            if (event.source && STRATEGY_SOURCES.includes(event.source)) {
+                return;
+            }
+            this.reRunStrategyDebounced();
+        };
         for (let i = 0, len = events.length; i < len; ++i) {
-            handlers[events[i]] = this.reRunStrategyDebounced;
+            handlers[events[i]] = onEvent;
         }
         listeners.push(...this.addManagedEventListeners(handlers));
     }

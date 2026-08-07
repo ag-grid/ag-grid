@@ -18,10 +18,7 @@ import { waitFor } from '@testing-library/dom';
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnAutoSizeModule, PaginationModule } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-
-/** Comfortably longer than the strategy's internal debounce plus the deferred run. */
-const SETTLE_MS = 100;
+import { TestGridsManager } from '../test-utils';
 
 describe('autoSizeStrategy events', () => {
     const gridsManager = new TestGridsManager({
@@ -53,6 +50,24 @@ describe('autoSizeStrategy events', () => {
             }
         });
         return () => count;
+    };
+
+    /**
+     * Positive signal that a re-run scheduled before this call has had its chance to run.
+     * A control grid, created after that point, is driven through a full debounce plus deferred
+     * run — it cannot complete before the earlier-scheduled run would have, so any assertion made
+     * afterwards sees a settled grid without guessing at a delay.
+     */
+    let controlGridCount = 0;
+    const settleStrategyWindow = async (): Promise<void> => {
+        const control = gridsManager.createGrid(`controlGrid${controlGridCount++}`, {
+            columnDefs,
+            autoSizeStrategy: { type: 'fitProvidedWidth', width: 900, events: ['columnVisible'] },
+        });
+        await waitFor(() => expect(widths(control)).toEqual([300, 300, 300]));
+
+        control.setColumnsVisible(['c'], false);
+        await waitFor(() => expect(widths(control)).toEqual([450, 450]));
     };
 
     const paginatedGridOptions = {
@@ -90,9 +105,25 @@ describe('autoSizeStrategy events', () => {
 
             api.setColumnWidths([{ key: 'a', newWidth: 400 }]);
             api.paginationGoToNextPage();
-            await asyncSetTimeout(SETTLE_MS);
+            await settleStrategyWindow();
 
             expect(widthOf(api, 'a')).toBe(400);
+        });
+
+        test('a sizing event in the list settles instead of looping', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                ...paginatedGridOptions,
+                autoSizeStrategy: { type: 'fitProvidedWidth', width: 900, events: ['columnResized'] },
+            });
+            await waitFor(() => expect(widths(api)).toEqual([300, 300, 300]));
+
+            const resizeBatches = countResizeBatches(api);
+
+            api.setColumnWidths([{ key: 'a', newWidth: 400 }]);
+            await settleStrategyWindow();
+
+            expect(widths(api)).toEqual([300, 300, 300]);
+            expect(resizeBatches()).toBe(2);
         });
     });
 
@@ -123,7 +154,7 @@ describe('autoSizeStrategy events', () => {
 
             api.setColumnWidths([{ key: 'a', newWidth: 400 }]);
             api.setColumnsVisible(['c'], false);
-            await asyncSetTimeout(SETTLE_MS);
+            await settleStrategyWindow();
 
             expect(widthOf(api, 'a')).toBe(400);
         });
@@ -201,10 +232,10 @@ describe('autoSizeStrategy events', () => {
             const resizeBatches = countResizeBatches(api);
 
             api.setColumnWidths([{ key: 'a', newWidth: 400 }]);
-            await asyncSetTimeout(SETTLE_MS);
+            await settleStrategyWindow();
 
-            // The user resize triggers one re-run. That run's own resize re-enters the listener,
-            // but finds nothing left to change, so the feedback stops there.
+            // The user resize triggers one re-run. That run's own resize is not fed back in, so
+            // there are exactly two batches: the user's and the strategy's.
             expect(widthOf(api, 'a')).toBe(100);
             expect(resizeBatches()).toBe(2);
         });
@@ -222,7 +253,7 @@ describe('autoSizeStrategy events', () => {
             api.setColumnsVisible(['c'], false);
             api.setColumnsVisible(['c'], true);
             api.setColumnsVisible(['c'], false);
-            await asyncSetTimeout(SETTLE_MS);
+            await settleStrategyWindow();
 
             expect(resizeBatches()).toBe(1);
         });
@@ -234,10 +265,10 @@ describe('autoSizeStrategy events', () => {
                 columnDefs,
                 autoSizeStrategy: { type: 'fitGridWidth', defaultMinWidth: 100, events: ['columnVisible'] },
             });
-            await asyncSetTimeout(SETTLE_MS);
+            await settleStrategyWindow();
 
             api.setColumnsVisible(['c'], false);
-            await asyncSetTimeout(SETTLE_MS);
+            await settleStrategyWindow();
 
             expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
             expect(widths(api)).toEqual([200, 200]);
@@ -250,7 +281,7 @@ describe('autoSizeStrategy events', () => {
                 columnDefs,
                 rowData: [{ a: 'x', b: 'y', c: 'z' }],
             });
-            await asyncSetTimeout(SETTLE_MS);
+            await settleStrategyWindow();
             expect(widthOf(api, 'a')).toBe(200);
 
             api.setGridOption('autoSizeStrategy', {
@@ -300,7 +331,7 @@ describe('autoSizeStrategy events', () => {
             api.setGridOption('autoSizeStrategy', { type: 'fitCellContents', skipHeader: true });
             api.setColumnWidths([{ key: 'a', newWidth: 400 }]);
             api.setColumnsVisible(['c'], false);
-            await asyncSetTimeout(SETTLE_MS);
+            await settleStrategyWindow();
 
             expect(widthOf(api, 'a')).toBe(400);
         });
