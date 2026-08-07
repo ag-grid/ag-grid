@@ -2,13 +2,13 @@
  * `autoSizeStrategy.applyToUiActions` — the Column Menu and Context Menu auto-size actions reusing
  * the configured strategy's options.
  *
- * jsdom reports 0 px for the autosize measuring container, so a content fit lands each column on
- * its effective minimum: `defaultMinWidth` and `columnLimits` are what separates an opted-in
+ * Cell content is measured in a container jsdom sizes at 0 px, so a content fit lands each column
+ * on its effective minimum: `defaultMinWidth` and `columnLimits` are what separates an opted-in
  * action from the default one, which sizes to the column's own `minWidth`.
  *
  * Options derived from the grid's own width — `scaleUpToFitGridWidth`, and the width-based
- * strategies — need `mockGridLayout.useRealOffsetDimensions`, otherwise they resolve a zero width
- * and do nothing.
+ * strategies — resolve zero without `mockGridLayout.useRealOffsetDimensions`, so those cases turn
+ * it on. It stays scoped to them: enabling it for the whole file leaks into other suites.
  */
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
@@ -184,28 +184,26 @@ describe('autoSizeStrategy applyToUiActions', () => {
 
         test('scaleUpToFitGridWidth from the strategy is honoured', async () => {
             mockGridLayout.useRealOffsetDimensions = true;
-            {
-                const api = await gridsManager.createGridAndWait('myGrid', {
-                    columnDefs: makeColumnDefs(),
-                    rowData,
-                    autoSizeStrategy: {
-                        type: 'fitCellContents',
-                        scaleUpToFitGridWidth: true,
-                        applyToUiActions: true,
-                    },
-                });
-                restoreOffsetParent = polyfillOffsetParent();
-                await waitFor(() => expect(totalWidth(api)).toBeGreaterThan(mockGridLayout.gridWidth * 0.9));
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: makeColumnDefs(),
+                rowData,
+                autoSizeStrategy: {
+                    type: 'fitCellContents',
+                    scaleUpToFitGridWidth: true,
+                    applyToUiActions: true,
+                },
+            });
+            restoreOffsetParent = polyfillOffsetParent();
+            await waitFor(() => expect(totalWidth(api)).toBeGreaterThan(mockGridLayout.gridWidth * 0.9));
 
-                api.setColumnWidths(api.getAllDisplayedColumns().map((col) => ({ key: col, newWidth: 100 })));
-                expect(totalWidth(api)).toBe(200);
+            api.setColumnWidths(api.getAllDisplayedColumns().map((col) => ({ key: col, newWidth: 100 })));
+            expect(totalWidth(api)).toBe(200);
 
-                api.showColumnMenu('athlete');
-                await clickMenuOption('Autosize All Columns');
+            api.showColumnMenu('athlete');
+            await clickMenuOption('Autosize All Columns');
 
-                // scaled back up to fill the grid rather than left at the content width
-                await waitFor(() => expect(totalWidth(api)).toBeGreaterThan(mockGridLayout.gridWidth * 0.9));
-            }
+            // scaled back up to fill the grid rather than left at the content width
+            await waitFor(() => expect(totalWidth(api)).toBeGreaterThan(mockGridLayout.gridWidth * 0.9));
         });
 
         test('skipHeaderOnAutoSize still applies when the strategy does not set skipHeader', async () => {
@@ -270,8 +268,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
 
     // The flag lives on `fitCellContents`, the only strategy whose options the menus can reuse.
     // These assert the width-based strategies leave the menu actions exactly as they are today.
-    // Real offset dimensions are needed so the width-based strategies actually resolve a grid
-    // width, rather than sizing to nothing and leaving the columns at their configured width.
     describe('width-based strategies', () => {
         beforeEach(() => {
             mockGridLayout.useRealOffsetDimensions = true;

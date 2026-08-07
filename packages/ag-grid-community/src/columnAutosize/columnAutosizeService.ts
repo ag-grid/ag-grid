@@ -80,6 +80,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
 
         const strategy = this.gos.get('autoSizeStrategy');
+        // the type check narrows the union: every option read below, `applyToUiActions` included,
+        // lives on the content strategy only
         if (strategy?.type !== 'fitCellContents' || !strategy.applyToUiActions) {
             return params;
         }
