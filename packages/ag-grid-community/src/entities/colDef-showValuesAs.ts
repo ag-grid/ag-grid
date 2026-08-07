@@ -62,7 +62,9 @@ export interface ShowValuesAsTransformParams<TData = any, TValue = any, TParams 
     TData,
     any
 > {
-    /** The cell's value (the numerator), resolved to a scalar - agg wrappers (e.g. `avg`) unwrapped. */
+    /** The cell's value (the numerator), resolved to a scalar - agg wrappers (e.g. `avg`) unwrapped. May be `null`
+     *  or `undefined` — for example on group rows or when the `field` is absent from the row data; the transform
+     *  must handle this. */
     rawValue: TValue | null | undefined;
     /** The raw aggregation value before unwrapping (e.g. `{ value, count }` for `avg`); else equal to `rawValue`. */
     aggValue: any;
@@ -106,11 +108,14 @@ export interface ShowValuesAsFormatterParams<
     TValue = any,
     TOut extends ShowValuesAsResult = ShowValuesAsResult,
 > extends Omit<ValueFormatterParams<TData, TValue>, 'value'> {
-    /** The transformed value being formatted. */
+    /** The transformed value being formatted. May be `null` or `undefined` — for example when the transform did
+     *  not run (`notApplicable`) and the underlying raw value is itself absent; the formatter must handle
+     *  this. */
     value: TOut | null | undefined;
     /** The active mode's name. */
     showValuesAsType: ShowValuesAsType;
-    /** The pre-transform value, resolved to a scalar. */
+    /** The pre-transform value, resolved to a scalar. May be `null` or `undefined` — for example on group rows or
+     *  when the `field` is absent from the row data; the formatter must handle this. */
     rawValue: TValue | null | undefined;
     /** The raw aggregation value before unwrapping; else equal to `rawValue`. */
     aggValue: any;

@@ -48,7 +48,7 @@ export interface ChangedValueParams<TData, TValueOld, TValueNew, TContext = any>
     TValueOld,
     TContext
 > {
-    /** The value before the change */
+    /** The value before the change. May be `null` or `undefined` — for example on group rows or rows whose data has not loaded; the callback must handle this. */
     oldValue: TValueOld;
     /** The value after the change */
     newValue: TValueNew;

@@ -1,0 +1,20 @@
+.outer-div {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.interaction-bar {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 1em;
+    align-items: center;
+}
+
+.narrow-button {
+    margin: 0px !important;
+}
+
+.grid-wrapper {
+    flex: 1 1 auto;
+}

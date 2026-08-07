@@ -8,6 +8,8 @@ export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRender
 }
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgComponentSelectorType> {
+    /** The current value(s) of the picker. May be `null` or `undefined` — for example when no value has been
+     *  selected; consumers must handle this. */
     value?: TValue[] | TValue | null;
     valueList?: TValue[];
     onSearch?: (search?: string) => void;
@@ -173,7 +175,8 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      */
     valueListMaxWidth?: number | string;
 
-    /** A callback function that allows you to change the displayed value for simple data. */
+    /** A callback function that allows you to change the displayed value for simple data. The `value` argument
+     *  may be `null` or `undefined`; the callback must handle this. */
     formatValue?: (value: TValue | null | undefined) => string;
 
     /**

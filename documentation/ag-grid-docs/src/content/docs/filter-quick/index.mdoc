@@ -67,7 +67,7 @@ const gridOptions = {
         {
             field: 'country',
             getQuickFilterText: params => {
-                return params.value.name;
+                return params.value?.name ?? '';
             }
         }
     ]

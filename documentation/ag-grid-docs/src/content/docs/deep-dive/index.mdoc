@@ -621,7 +621,7 @@ columnDefs: [
     {
         field: "price",
         // Return formatted value
-        valueFormatter: (params) => { return '£' + params.value.toLocaleString(); }
+        valueFormatter: (params) => { return params.value == null ? '' : '£' + params.value.toLocaleString(); }
     },
 ],
 ```
@@ -647,7 +647,7 @@ const [colDefs] = useState([
     {
         field: "price",
         // Return a formatted string for this column
-        valueFormatter: params => { return '£' + params.value.toLocaleString(); }
+        valueFormatter: params => { return params.value == null ? '' : '£' + params.value.toLocaleString(); }
     },
     // ...
 ]);
@@ -673,7 +673,7 @@ The data supplied to the grid usually requires some degree of formatting. For ba
 colDefs: ColDef[] = [
     {
         field: "price",
-        valueFormatter: params => { return '£' + params.value.toLocaleString(); } // Format with inline function
+        valueFormatter: params => { return params.value == null ? '' : '£' + params.value.toLocaleString(); } // Format with inline function
     },
     // ...
 ];
@@ -697,7 +697,7 @@ The data supplied to the grid usually requires some degree of formatting. For ba
 
 ```jsx
 const colDefs = ref([
-    { field: "price", valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } },
+    { field: "price", valueFormatter: (params) => { return params.value == null ? '' : '£' + params.value.toLocaleString(); } },
     // ...
 ]);
 ```
@@ -728,10 +728,12 @@ class CompanyLogoRenderer {
     // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
     init(params) {
         let companyLogo = document.createElement('img');
-        companyLogo.src = `https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`
+        if (params.value != null) {
+            companyLogo.src = `https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`
+        }
         companyLogo.setAttribute('style', 'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)');
         let companyName = document.createElement('p');
-        companyName.textContent = params.value;
+        companyName.textContent = params.value ?? '';
         companyName.setAttribute('style', 'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;');
         this.eGui = document.createElement('span');
         this.eGui.setAttribute('style', 'display: flex; height: 100%; width: 100%; align-items: center')

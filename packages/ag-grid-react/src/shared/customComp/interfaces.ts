@@ -42,9 +42,11 @@ export interface CustomCellEditorProps<TData = any, TValue = any, TContext = any
     TValue,
     TContext
 > {
-    /** The value in the cell when editing started. */
+    /** The value in the cell when editing started. May be `null` or `undefined` — for example on group rows or
+     *  when the `field` is absent from the row data; the component must handle this. */
     initialValue: TValue | null | undefined;
-    /** The current value for the editor. */
+    /** The current value for the editor. May be `null` or `undefined` if the editor has been cleared; the
+     *  component must handle this. */
     value: TValue | null | undefined;
     /** Callback that should be called every time the value in the editor changes. */
     onValueChange: (value: TValue | null | undefined) => void;

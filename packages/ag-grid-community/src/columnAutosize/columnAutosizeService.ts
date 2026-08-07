@@ -33,6 +33,9 @@ interface AutoSizeColumnParams {
     source?: ColumnEventType;
 }
 
+/** Sources used by the built-in Column Menu and Context Menu auto-size actions. */
+const UI_MENU_SOURCES: ReadonlySet<ColumnEventType> = new Set(['columnMenu', 'contextMenu']);
+
 export class ColumnAutosizeService extends BeanStub implements NamedBean {
     beanName = 'colAutosize' as const;
 
@@ -64,7 +67,37 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
     }
 
-    public autoSizeCols(params: AutoSizeColumnParams): void {
+    /**
+     * Built-in menu auto-size actions reuse the configured `autoSizeStrategy` when it opts in with
+     * `applyToUiActions`. Each strategy option only applies where it is set, so anything the
+     * strategy leaves out — `skipHeader` in particular — keeps falling back to the caller's value
+     * and then to `skipHeaderOnAutoSize`.
+     */
+    private withUiActionStrategyParams(params: AutoSizeColumnParams): AutoSizeColumnParams {
+        const { source } = params;
+        if (!source || !UI_MENU_SOURCES.has(source)) {
+            return params;
+        }
+
+        const strategy = this.gos.get('autoSizeStrategy');
+        // the type check narrows the union: every option read below, `applyToUiActions` included,
+        // lives on the content strategy only
+        if (strategy?.type !== 'fitCellContents' || !strategy.applyToUiActions) {
+            return params;
+        }
+
+        return {
+            ...params,
+            skipHeader: strategy.skipHeader ?? params.skipHeader,
+            defaultMinWidth: strategy.defaultMinWidth ?? params.defaultMinWidth,
+            defaultMaxWidth: strategy.defaultMaxWidth ?? params.defaultMaxWidth,
+            columnLimits: strategy.columnLimits ?? params.columnLimits,
+            scaleUpToFitGridWidth: strategy.scaleUpToFitGridWidth ?? params.scaleUpToFitGridWidth,
+        };
+    }
+
+    public autoSizeCols(paramsInput: AutoSizeColumnParams): void {
+        const params = this.withUiActionStrategyParams(paramsInput);
         const { eventSvc, colModel } = this.beans;
 
         setWidthAnimation(this.beans, true);
