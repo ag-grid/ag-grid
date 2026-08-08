@@ -13,27 +13,20 @@ test.agExample(import.meta, () => {
         await expect(dataRow(0).locator('[col-id="b"]')).toContainText('B1 = 18');
     });
 
-    test.eachFramework('scrolling to the bottom reveals the last generated rows', async ({ page, remoteGrid }) => {
+    test.eachFramework('scrolling to the bottom reveals the last generated rows', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         // rowCount is a known 100, so scrolling to the bottom renders the final rows (index 99).
         // Under the infinite row model the last block loads asynchronously, so re-issue the
         // scroll on each retry until the last block has loaded and its rows have rendered.
-        const api = remoteGrid(page);
+        const viewport = page.locator('.ag-grid-viewport');
         const lastCell = page.locator('.ag-row[row-index="99"]').locator('[col-id="a"]');
 
         await expect(async () => {
-            // Scroll through the API rather than by assigning scrollTop: where the browser renders
-            // overlay scrollbars the grid drives the viewport from its own scroll element and the
-            // assignment is synced back away, so the next block is never requested. Only the loaded
-            // blocks are displayed, so ask for the last row the grid currently knows about -
-            // `ensureIndexVisible(99)` warns until the final block has arrived - and let the retry
-            // walk down to row 99 block by block.
-            const displayed = (await api.getDisplayedRowCount()) ?? 0;
-            if (displayed > 0) {
-                await api.ensureIndexVisible(displayed - 1, 'bottom');
-            }
+            await viewport.evaluate((el) => {
+                el.scrollTop = el.scrollHeight;
+            });
             // Row 99 (the last row): column A => 'A100 = 116' (17 + 99 + 0).
             // Short timeout so a scroll that lands mid-load costs one retry rather than the whole
             // budget - at the default this assertion only ever gets a single attempt.
