@@ -20,16 +20,16 @@ test.agExample(import.meta, () => {
         // rowCount is a known 100, so scrolling to the bottom renders the final rows (index 99).
         // Under the infinite row model the last block loads asynchronously, so re-issue the
         // scroll on each retry until the last block has loaded and its rows have rendered.
-        // Scroll through the API rather than by setting scrollTop: where the browser renders
-        // overlay scrollbars the grid drives the viewport from its own scroll element, and a
-        // directly-assigned scrollTop is synced back away before the next block is requested.
         const api = remoteGrid(page);
         const lastCell = page.locator('.ag-row[row-index="99"]').locator('[col-id="a"]');
 
         await expect(async () => {
-            // Under the infinite row model only the loaded blocks are displayed, so ask for the
-            // last row the grid currently knows about - `ensureIndexVisible(99)` warns until the
-            // final block has arrived - and let the retry walk down to row 99 block by block.
+            // Scroll through the API rather than by assigning scrollTop: where the browser renders
+            // overlay scrollbars the grid drives the viewport from its own scroll element and the
+            // assignment is synced back away, so the next block is never requested. Only the loaded
+            // blocks are displayed, so ask for the last row the grid currently knows about -
+            // `ensureIndexVisible(99)` warns until the final block has arrived - and let the retry
+            // walk down to row 99 block by block.
             const displayed = (await api.getDisplayedRowCount()) ?? 0;
             if (displayed > 0) {
                 await api.ensureIndexVisible(displayed - 1, 'bottom');
