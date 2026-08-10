@@ -54,16 +54,36 @@ async function collectFiles(dir, match, found = []) {
 }
 
 /**
- * Matches the files this build owns in the output tree: the emitted modules, and
- * optionally their sourcemaps.
+ * Matches the modules this build emits.
  *
  * @param {string} outExtension
- * @param {boolean} [withMaps]
  * @returns {RegExp}
  */
-function outputFileMatcher(outExtension, withMaps = false) {
-    const escaped = outExtension.replaceAll('.', '\\.');
-    return new RegExp(`${escaped}${withMaps ? '(\\.map)?' : ''}$`);
+function outputFileMatcher(outExtension) {
+    return new RegExp(`${escapeExtension(outExtension)}$`);
+}
+
+/**
+ * Matches everything this build owns in the output tree, which is what cleanup has to
+ * remove: the emitted modules, the minified bundle a later plugin derives from them —
+ * `.min` sits before the final extension, so `main.esm.mjs` becomes `main.esm.min.mjs`
+ * and the module matcher above would miss it — and the sourcemaps of both.
+ *
+ * @param {string} outExtension
+ * @returns {RegExp}
+ */
+function ownedFileMatcher(outExtension) {
+    const ext = path.extname(outExtension);
+    const base = outExtension.slice(0, -ext.length);
+    return new RegExp(`${escapeExtension(base)}(\\.min)?${escapeExtension(ext)}(\\.map)?$`);
+}
+
+/**
+ * @param {string} extension
+ * @returns {string}
+ */
+function escapeExtension(extension) {
+    return extension.replaceAll('.', '\\.');
 }
 
 /**
@@ -108,7 +128,7 @@ async function removeMatchingFiles(dir, match) {
  */
 async function cleanEsmTree(outdir, outExtension) {
     try {
-        return await removeMatchingFiles(outdir, outputFileMatcher(outExtension, true));
+        return await removeMatchingFiles(outdir, ownedFileMatcher(outExtension));
     } catch (error) {
         if (error.code === 'ENOENT') {
             return 0; // Nothing built here yet.

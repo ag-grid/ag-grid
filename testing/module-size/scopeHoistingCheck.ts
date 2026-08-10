@@ -152,12 +152,15 @@ const EXPECTED_ROWS = 3;
  * of whether the grid is healthy. `getDisplayedRowCount()` exercises the row model
  * end to end, which is the thing worth proving.
  */
-function runBundle(bundlePath: string): { rowCount: number; columnCount: number; rendered: boolean } {
+async function runBundle(bundlePath: string): Promise<{ rowCount: number; columnCount: number; rendered: boolean }> {
     // Drop the grid's own console output — the unlicensed-trial banner is six lines per
-    // run — while still surfacing errors jsdom raises asynchronously, which a thrown
-    // exception from `eval` would not cover.
+    // run — while collecting the errors jsdom raises asynchronously, which a thrown
+    // exception from `eval` would not cover. Collected rather than logged: a bundle that
+    // creates the API and then throws during scheduled work would otherwise satisfy every
+    // assertion below and pass.
+    const jsdomErrors: Error[] = [];
     const virtualConsole = new VirtualConsole();
-    virtualConsole.on('jsdomError', (e: Error) => console.error(`    jsdom error: ${e.message}`));
+    virtualConsole.on('jsdomError', (e: Error) => jsdomErrors.push(e));
 
     const dom = new JSDOM('<!doctype html><html><body></body></html>', {
         runScripts: 'outside-only',
@@ -166,6 +169,18 @@ function runBundle(bundlePath: string): { rowCount: number; columnCount: number;
     });
 
     dom.window.eval(fs.readFileSync(bundlePath, 'utf-8'));
+
+    // `pretendToBeVisual` runs requestAnimationFrame callbacks off a ~16ms timer, so the
+    // grid's post-init work lands after `eval` returns. There is no positive signal to
+    // poll for here — the assertion is that nothing blew up — so this window is the
+    // observation itself, not a guess at how long the work takes.
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    if (jsdomErrors.length > 0) {
+        throw new Error(
+            `jsdom reported ${jsdomErrors.length} error(s): ${jsdomErrors.map((e) => e.message).join('; ')}`
+        );
+    }
 
     const api = (dom.window as unknown as { __agScopeHoistingApi?: any }).__agScopeHoistingApi;
     if (!api) {
@@ -219,7 +234,7 @@ async function validateScopeHoisting() {
             const variant = concatenateModules ? 'concat' : 'noconcat';
             const bundle = bundlePath(entry, concatenateModules);
             try {
-                const { rowCount, columnCount, rendered } = runBundle(bundle);
+                const { rowCount, columnCount, rendered } = await runBundle(bundle);
                 console.log(
                     `    ${variant} runs: ${rowCount} rows, ${columnCount} columns, root ${rendered ? 'ok' : 'MISSING'}`
                 );

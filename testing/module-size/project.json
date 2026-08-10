@@ -29,7 +29,7 @@
     },
     "test:scope-hoisting": {
       "executor": "nx:run-script",
-      "dependsOn": ["ag-grid-community:build:package", "ag-grid-enterprise:build:package"],
+      "dependsOn": ["ag-grid-community:build:package", "ag-grid-enterprise:build:package", "ag-shared:build"],
       "options": {
         "script": "test:scope-hoisting"
       },

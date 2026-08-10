@@ -176,6 +176,7 @@
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
         "{projectRoot}/tsconfig.*.json",
+        "{projectRoot}/esbuild*.cjs",
         "tsDeclarations",
         "sharedGlobals",
         "defaultExcludes",
