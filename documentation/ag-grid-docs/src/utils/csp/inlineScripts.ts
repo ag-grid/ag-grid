@@ -91,14 +91,16 @@ export const DARK_MODE_INIT_SCRIPT = `
 `;
 
 // Sets html[data-os="mac"] so the CSS in _inline.scss can show "⌘ Command" instead of
-// "^ Ctrl" in {% kbd %} tags for Mac visitors. There's no build-time (nor pure-CSS) way
-// to know the visitor's OS, so this runs render-blocking at the top of <body> — same
-// spot as the dark-mode script — to avoid a flash of the wrong label. Feature-detects
-// the Chromium-only User-Agent Client Hints API first, then falls back to the older
-// (deprecated but universally supported) navigator.platform.
+// "^ Ctrl" in {% kbd %} tags, and the search bar can show "⌘ K" instead of "Ctrl K".
+// There's no build-time (nor pure-CSS) way to know the visitor's OS, so this runs
+// render-blocking at the top of <body> — same spot as the dark-mode script — to avoid a
+// flash of the wrong label. Feature-detects the Chromium-only User-Agent Client Hints
+// API first, then falls back to the older (deprecated but universally supported)
+// navigator.platform. iOS is matched too: those devices report "iPhone"/"iPad" rather
+// than "MacIntel" on older versions, and an attached Apple keyboard still uses Command.
 export const KBD_PLATFORM_INIT_SCRIPT = `
     const platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
-    if (/mac/i.test(platform)) {
+    if (/(mac|iphone|ipod|ipad)/i.test(platform)) {
         const applyMacPlatform = () => {
             document.documentElement.dataset.os = 'mac';
         };
