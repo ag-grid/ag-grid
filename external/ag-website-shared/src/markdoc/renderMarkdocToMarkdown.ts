@@ -111,12 +111,6 @@ interface RenderContext {
     imageSrc: Map<string, string>;
 }
 
-// Tags with no meaningful Markdown representation (a cookie-consent widget). They
-// are dropped outright; their children are not rendered. Every other unhandled tag
-// is offered to the product's `renderTag` resolver, and only rendered as a
-// transparent wrapper (children) if the resolver declines it.
-const DROPPED_TAGS = new Set(['oneTrustCookies']);
-
 export async function renderMarkdocToMarkdown(opts: RenderMarkdocToMarkdownOptions): Promise<string> {
     const { body, framework, pageName, frontmatter = {}, version, variables, markdocConfig, resolvers = {} } = opts;
 
@@ -266,9 +260,6 @@ async function renderBlock(node: Node, ctx: RenderContext): Promise<string> {
 
 async function renderTagBlock(node: Node, ctx: RenderContext): Promise<string> {
     const tag = node.tag;
-    if (tag && DROPPED_TAGS.has(tag)) {
-        return '';
-    }
 
     switch (tag) {
         case 'if':

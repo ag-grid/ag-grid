@@ -137,15 +137,6 @@ describe('cspRules', () => {
             expect(site['connect-src']).toContain('https://gvl.enzuzo.com');
         });
 
-        it('keeps OneTrust allowed alongside it until the GTM cutover', () => {
-            // The GTM container is shared across grid/charts/studio, so one tag flip
-            // switches every site while their deploys land separately — both banners must
-            // stay loadable across that window.
-            const site = getCspDirectives({ env: 'production', scope: 'site' });
-            expect(site['script-src']).toContain('https://cdn.cookielaw.org');
-            expect(site['connect-src']).toContain('https://cdn.cookielaw.org');
-        });
-
         it("does not need 'unsafe-eval' in the site scope", () => {
             // The banner's new Function paths degrade rather than justify re-opening eval
             // site-wide; see the note above ENZUZO_APP_HOST in cspRules.ts.

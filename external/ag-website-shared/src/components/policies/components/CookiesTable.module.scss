@@ -1,0 +1,15 @@
+@use 'design-system' as *;
+
+.category {
+    margin-bottom: $spacing-size-8;
+}
+
+.tableContainer {
+    container-type: inline-size;
+}
+
+.cookiesTable {
+    @container (max-width: #{$breakpoint-table-small}) {
+        @include stack-table();
+    }
+}
