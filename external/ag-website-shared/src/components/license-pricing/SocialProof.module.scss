@@ -130,7 +130,7 @@
     justify-content: space-between;
     width: 50%;
     font-size: var(--text-fs-base);
-    line-height: var(--text-lh-2xl);
+    line-height: 24px;
 
     @media screen and (max-width: $breakpoint-pricing-medium) {
         width: 100%;

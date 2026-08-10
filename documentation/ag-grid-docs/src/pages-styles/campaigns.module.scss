@@ -419,7 +419,7 @@
     justify-content: space-between;
     width: 33.33%;
     font-size: var(--text-fs-base);
-    line-height: var(--text-lh-2xl);
+    line-height: 24px;
     padding: $spacing-size-10;
 
     @media screen and (max-width: $breakpoint-pricing-medium) {
@@ -437,6 +437,7 @@
 
     blockquote {
         font-size: var(--text-fs-lg);
+        line-height: 30px;
         font-weight: var(--text-semibold);
         margin-bottom: $spacing-size-6;
         color: var(--color-fg-primary);

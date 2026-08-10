@@ -359,6 +359,6 @@ const ItemLabel = styled('div')`
 
 const ItemDocs = styled('div')`
     font-size: var(--text-fs-xs);
-    line-height: var(--text-lh-tight);
+    line-height: 14px;
     color: var(--color-fg-secondary);
 `;

@@ -43,13 +43,14 @@
 .heroHeading {
     font-size: 36px;
     font-weight: var(--text-bold);
-    line-height: var(--text-lh-tight);
+    line-height: 43px;
     margin: 0;
     color: var(--color-fg-primary);
 
     letter-spacing: -1px;
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         font-size: 48px;
+        line-height: 58px;
     }
 }
 
