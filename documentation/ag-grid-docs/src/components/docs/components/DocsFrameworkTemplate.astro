@@ -17,17 +17,24 @@ interface Props {
      */
     addInitMessageScript?: boolean;
     /**
-     * Whether to not include system js code
+     * Whether to skip the example module loader (import map + entry module)
      */
-    ignoreSystemJs?: boolean;
+    ignoreModuleLoader?: boolean;
     /**
      * Extra styles to add to HTML
      */
     extraStyles?: string;
 }
 
-const { internalFramework, pageName, exampleName, relativePath, addInitMessageScript, ignoreSystemJs, extraStyles } =
-    Astro.props as Props;
+const {
+    internalFramework,
+    pageName,
+    exampleName,
+    relativePath,
+    addInitMessageScript,
+    ignoreModuleLoader,
+    extraStyles,
+} = Astro.props as Props;
 
 const contentParams = {
     framework: internalFramework,
@@ -63,7 +70,7 @@ const exampleUrl = getExampleUrl({
             generatedContents={generatedContents!}
             relativePath={relativePath}
             addInitMessageScript={addInitMessageScript}
-            ignoreSystemJs={ignoreSystemJs}
+            ignoreModuleLoader={ignoreModuleLoader}
             extraStyles={extraStyles}
             nonce={generatedContents?.scriptNonce}
         />

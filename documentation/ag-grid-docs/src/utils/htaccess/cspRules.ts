@@ -56,10 +56,9 @@ const UNSAFE_INLINE = "'unsafe-inline'";
 // (see CodeShiki.tsx). Browsers that predate this token fall back to requiring
 // 'unsafe-eval' for WASM.
 const WASM_UNSAFE_EVAL = "'wasm-unsafe-eval'";
-// Allowed only in the 'examples' scope: the standalone example-runner documents
-// load modules with legacy SystemJS (fetches source over XHR and evals it), and
-// the Angular (JIT compiler) and Vue (runtime template compiler) examples also
-// compile code in the browser. Archived doc versions ship the same runner.
+// Allowed only in the 'examples' scope: the Angular (JIT compiler) and Vue (runtime
+// template compiler) examples compile code in the browser. Archived doc versions
+// additionally load modules with legacy SystemJS, which evals fetched source.
 // Ordinary site pages do not need it — the theme builder's CSS parser used to,
 // but now unescapes string literals without eval (see unescapeStringLiteral).
 const UNSAFE_EVAL = "'unsafe-eval'";
@@ -156,6 +155,10 @@ const SITE_SCRIPT_HASHES = [
 // third throws uncaught. We are not granting 'unsafe-eval' site-wide for a consent
 // banner, so keep the Enzuzo console configuration free of template placeholders and
 // string-bodied event handlers.
+// React and React DOM have no ES module build on npm, so the example runner's import map
+// resolves them through esm.sh. Everything else it loads comes from jsdelivr or our own origin.
+const ESM_SH_HOST = 'https://esm.sh';
+
 const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
 const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
 
@@ -283,6 +286,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.googletagmanager.com',
             'https://www.google-analytics.com', // Universal Analytics analytics.js (GTM-injected after cookie consent)
             'https://cdn.jsdelivr.net',
+            ESM_SH_HOST, // example-runner: React's ES module build (npm ships CJS only)
             'https://cdnjs.cloudflare.com',
             'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
             'https://*.zoominfo.com', // ZoomInfo FormComplete
@@ -331,7 +335,8 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://stats.g.doubleclick.net',
             'https://flagcdn.com',
             'https://www.googletagmanager.com',
-            'https://cdn.jsdelivr.net', // example-runner SystemJS fetches modules as text (XHR)
+            'https://cdn.jsdelivr.net', // example-runner: framework and library ES modules
+            ESM_SH_HOST, // example-runner: React's ES module build
             'https://cdnjs.cloudflare.com', // example-runner legacy deps (XHR)
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
@@ -473,8 +478,8 @@ export function getExamplesCspIfOverride(options: Omit<CspOptions, 'scope'>, mod
         EXAMPLES_PATH_CONDITION,
         [
             "# Example-runner documents and archived doc versions additionally need 'unsafe-eval'",
-            '# (SystemJS eval-loads modules; the Angular JIT and Vue runtime template compilers',
-            '# also compile in the browser).',
+            '# (the Angular JIT and Vue runtime template compilers compile in the browser;',
+            '# archived versions additionally eval-load modules with SystemJS).',
         ],
         { ...options, scope: 'examples' },
         mode

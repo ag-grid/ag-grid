@@ -21,7 +21,7 @@ export const partial = !getIsDev();
 
 const { internalFramework, pageName, exampleName } = Astro.params;
 
-const ignoreSystemJs = isReactInternalFramework(internalFramework);
+const ignoreModuleLoader = isReactInternalFramework(internalFramework);
 /**
  * Hide highlighter element that gets added by code sandbox
  */
@@ -37,6 +37,6 @@ body > #highlighter {
     pageName={pageName!}
     exampleName={exampleName!}
     relativePath={true}
-    ignoreSystemJs={ignoreSystemJs}
+    ignoreModuleLoader={ignoreModuleLoader}
     extraStyles={extraStyles}
 />

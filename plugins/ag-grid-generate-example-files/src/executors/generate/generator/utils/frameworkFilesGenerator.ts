@@ -242,7 +242,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
     }) => {
         const internalFramework: InternalFramework = 'angular';
         const entryFileName = getEntryFileName(internalFramework)!;
-        const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
+        const boilerPlateFiles = await getBoilerPlateFiles(internalFramework);
 
         const componentNames = getComponentName(componentScriptFiles);
         let appComponent = vanillaToAngular(

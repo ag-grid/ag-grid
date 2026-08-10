@@ -177,7 +177,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             throw new Error(`No entry file config generator for '${internalFramework}'`);
         }
 
-        const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
+        const boilerPlateFiles = await getBoilerPlateFiles(internalFramework);
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
         const scriptNonce = getScriptNonce(htmlFiles)!;

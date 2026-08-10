@@ -41,11 +41,11 @@ describe('getBoilerPlateName', () => {
         ${undefined}           | ${undefined}
         ${'other'}             | ${undefined}
         ${'vanilla'}           | ${undefined}
-        ${'typescript'}        | ${'grid-typescript-boilerplate'}
-        ${'reactFunctional'}   | ${'grid-react-boilerplate'}
-        ${'reactFunctionalTs'} | ${'grid-react-ts-boilerplate'}
+        ${'typescript'}        | ${undefined}
+        ${'reactFunctional'}   | ${undefined}
+        ${'reactFunctionalTs'} | ${undefined}
         ${'angular'}           | ${'grid-angular-boilerplate'}
-        ${'vue3'}              | ${'grid-vue3-boilerplate'}
+        ${'vue3'}              | ${undefined}
     `('$internalFramework is $expected', ({ internalFramework, expected }) => {
         expect(getBoilerPlateName(internalFramework)).toEqual(expected);
     });

@@ -1,5 +1,4 @@
 ---
-import { getBoilerPlateUrl } from '@utils/pages';
 import type { InternalFramework } from '@ag-grid-types';
 import JavascriptTemplate from '../framework-templates/JavascriptTemplate.astro';
 import TypescriptTemplate from '../framework-templates/TypescriptTemplate.astro';
@@ -26,9 +25,9 @@ interface Props {
      */
     addInitMessageScript?: boolean;
     /**
-     * Whether to not include system js code
+     * Whether to skip the example module loader (import map + entry module)
      */
-    ignoreSystemJs?: boolean;
+    ignoreModuleLoader?: boolean;
     /**
      * Extra styles to add to HTML
      */
@@ -48,26 +47,18 @@ const {
     generatedContents,
     relativePath,
     addInitMessageScript,
-    ignoreSystemJs,
+    ignoreModuleLoader,
     extraStyles,
     nonce,
 } = Astro.props as Props;
 
 const isDev = getIsDev();
 
-const library = 'grid';
-
 const { entryFileName, files, scriptFiles, styleFiles, isEnterprise, isIntegratedCharts, isLocale, extras } =
     generatedContents || {};
 const indexFragment = files['index.html'] ?? '';
 const headFragment = files?.['head.html'] ?? '';
 const appLocation = relativePath ? '' : exampleUrl;
-const boilerPlateUrl = relativePath
-    ? ''
-    : getBoilerPlateUrl({
-          library,
-          internalFramework,
-      });
 
 const timeNow = Date.now();
 const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
@@ -135,9 +126,9 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             styleFiles={styleFiles}
             indexFragment={indexFragment!}
             appLocation={appLocation}
-            boilerplatePath={boilerPlateUrl}
             extraStyles={extraStyles}
             isEnterprise={isEnterprise}
+            isIntegratedCharts={!!isIntegratedCharts}
             extras={extras}
             headFragment={headFragment}
             usesMathRandom={usesMathRandom}
@@ -160,10 +151,10 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             scriptFiles={scriptFiles}
             styleFiles={styleFiles}
             appLocation={appLocation}
-            boilerplatePath={boilerPlateUrl}
-            ignoreSystemJs={ignoreSystemJs}
+            ignoreModuleLoader={ignoreModuleLoader}
             extraStyles={extraStyles}
             isEnterprise={isEnterprise}
+            isIntegratedCharts={!!isIntegratedCharts}
             internalFramework={internalFramework}
             extras={extras}
             headFragment={headFragment}
@@ -183,12 +174,12 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             isDev={isDev}
             title={title}
             isEnterprise={isEnterprise}
+            isIntegratedCharts={!!isIntegratedCharts}
             modifiedTimeMs={timeNow}
             entryFileName={entryFileName!}
             styleFiles={styleFiles}
             scriptFiles={scriptFiles}
             appLocation={appLocation}
-            boilerplatePath={boilerPlateUrl}
             extraStyles={extraStyles}
             extras={extras}
             headFragment={headFragment}
@@ -208,12 +199,12 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             isDev={isDev}
             title={title}
             isEnterprise={isEnterprise}
+            isIntegratedCharts={!!isIntegratedCharts}
             modifiedTimeMs={timeNow}
             entryFileName={entryFileName!}
             scriptFiles={scriptFiles}
             styleFiles={styleFiles}
             appLocation={appLocation}
-            boilerplatePath={boilerPlateUrl}
             extraStyles={extraStyles}
             extras={extras}
             headFragment={headFragment}

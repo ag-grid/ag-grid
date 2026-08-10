@@ -2,12 +2,14 @@ import type { InternalFramework } from '@ag-grid-types';
 import { OpenInCodeSandbox } from '@ag-website-shared/components/codeSandbox/components/OpenInCodeSandbox';
 import { OpenInPlunkr } from '@ag-website-shared/components/plunkr/components/OpenInPlunkr';
 import type { FileContents } from '@components/example-generator/types';
+import { toModuleFileName } from '@utils/exampleModules/transformExampleModule';
+import { isReactInternalFramework } from '@utils/framework';
 
 export function ExternalLinks({
     title,
     internalFramework,
     exampleFiles,
-    exampleBoilerPlateFiles,
+    exampleModuleFiles,
     packageJson,
     initialSelectedFile,
     plunkrHtmlUrl,
@@ -17,7 +19,10 @@ export function ExternalLinks({
     title: string;
     internalFramework: InternalFramework;
     exampleFiles?: FileContents;
-    exampleBoilerPlateFiles?: FileContents;
+    /**
+     * `exampleFiles` transpiled to plain ES modules, for targets that have no build step
+     */
+    exampleModuleFiles?: FileContents;
     packageJson?: Record<string, any>;
     initialSelectedFile?: string;
 
@@ -25,30 +30,35 @@ export function ExternalLinks({
     codeSandboxHtmlUrl?: string;
     isDev: boolean;
 }) {
+    // Plunker serves static files, so it always needs the transpiled modules. CodeSandbox only
+    // does for the frameworks it runs on the `static` template -- its React templates build
+    // the TypeScript sources themselves.
+    const staticFiles = exampleModuleFiles ?? exampleFiles;
+    const codeSandboxFiles = isReactInternalFramework(internalFramework) ? exampleFiles : staticFiles;
+    const plunkrFileToOpen = staticFiles && initialSelectedFile && toModuleFileName(initialSelectedFile);
+
     return (
         <>
-            {codeSandboxHtmlUrl && exampleFiles ? (
+            {codeSandboxHtmlUrl && codeSandboxFiles ? (
                 <li>
                     <OpenInCodeSandbox
                         title={title}
-                        files={exampleFiles}
+                        files={codeSandboxFiles}
                         htmlUrl={codeSandboxHtmlUrl}
                         internalFramework={internalFramework}
-                        boilerPlateFiles={exampleBoilerPlateFiles}
                         packageJson={packageJson!}
                         isDev={isDev}
                     />
                 </li>
             ) : undefined}
-            {plunkrHtmlUrl && exampleFiles ? (
+            {plunkrHtmlUrl && staticFiles ? (
                 <li>
                     <OpenInPlunkr
                         title={title}
-                        files={exampleFiles}
+                        files={staticFiles}
                         htmlUrl={plunkrHtmlUrl}
-                        boilerPlateFiles={exampleBoilerPlateFiles}
                         packageJson={packageJson!}
-                        fileToOpen={initialSelectedFile!}
+                        fileToOpen={plunkrFileToOpen!}
                         isDev={isDev}
                     />
                 </li>

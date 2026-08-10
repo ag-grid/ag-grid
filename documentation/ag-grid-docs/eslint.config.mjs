@@ -17,8 +17,6 @@ export default [
             '**/_examples/',
             'scripts/showcase-github/tmp/',
             '**/.angular',
-            '**/systemjs.config.js',
-            '**/systemjs.config.dev.js',
             '.playwright-network-cache/',
             '**/*.ics',
             'public/**/*.css',
@@ -56,11 +54,9 @@ export default [
         languageOptions: {
             globals: {
                 System: 'readonly',
-                systemJsPaths: 'readonly',
                 boilerplatePath: 'readonly',
                 startFile: 'readonly',
                 appLocation: 'readonly',
-                systemJsMap: 'readonly',
             },
         },
     },

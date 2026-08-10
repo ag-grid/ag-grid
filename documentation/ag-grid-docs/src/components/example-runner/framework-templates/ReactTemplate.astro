@@ -3,15 +3,15 @@ import { MetaData } from './lib/MetaData';
 import ExampleStyle from './lib/ExampleStyle.astro';
 import Styles from './lib/Styles.astro';
 import Extras from './lib/Extras.astro';
-import { SystemJs } from './lib/SystemJs';
+import { ExampleModules } from './lib/ExampleModules';
 import { Scripts } from './lib/Scripts';
-import { pathJoin } from '@utils/pathJoin';
 import type { InternalFramework } from '@ag-grid-types';
 
 interface Props {
     isDev: boolean;
     title: string;
     isEnterprise: boolean;
+    isIntegratedCharts?: boolean;
     internalFramework: InternalFramework;
 
     modifiedTimeMs: number;
@@ -22,8 +22,7 @@ interface Props {
     scriptFiles?: string[];
     styleFiles?: string[];
     appLocation: string;
-    boilerplatePath: string;
-    ignoreSystemJs?: boolean;
+    ignoreModuleLoader?: boolean;
     extraStyles?: string;
     headFragment?: string;
     extras?: string[];
@@ -35,22 +34,20 @@ const {
     title,
     isDev,
     isEnterprise,
+    isIntegratedCharts,
     internalFramework,
     modifiedTimeMs,
     appLocation,
     entryFileName,
     scriptFiles = [],
     styleFiles = [],
-    boilerplatePath,
-    ignoreSystemJs,
+    ignoreModuleLoader,
     extraStyles,
     headFragment,
     extras,
     usesMathRandom,
     nonce,
 } = Astro.props as Props;
-
-const startFile = pathJoin(appLocation, entryFileName);
 ---
 
 <html lang="en">
@@ -76,14 +73,13 @@ const startFile = pathJoin(appLocation, entryFileName);
 
         {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />}
         {
-            !ignoreSystemJs && (
-                <SystemJs
-                    isDev={isDev}
-                    boilerplatePath={boilerplatePath}
+            !ignoreModuleLoader && (
+                <ExampleModules
                     appLocation={appLocation}
-                    startFile={startFile}
+                    entryFileName={entryFileName}
                     internalFramework={internalFramework}
                     isEnterprise={isEnterprise}
+                    isIntegratedCharts={isIntegratedCharts}
                     usesMathRandom={usesMathRandom}
                     nonce={nonce}
                 />

@@ -5,7 +5,6 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { GOOGLE_FONTS_CSS, localFontStylesheet } from './localFonts';
-import { systemRegisterFor } from './localTranspile';
 import { whileTheRequestMatters } from './routeGuard';
 
 const EXAMPLE_ASSETS_URL_PREFIX = '/example-assets/';
@@ -385,8 +384,7 @@ export async function routeExternalThroughMirror(page: Page, siteOrigin: string)
                 await route.fallback();
                 return;
             }
-            const body = (await systemRegisterFor(url, id.path, entry.body)) ?? entry.body;
-            await route.fulfill({ status: entry.meta.status, headers: entry.meta.headers, body });
+            await route.fulfill({ status: entry.meta.status, headers: entry.meta.headers, body: entry.body });
         })
     );
 }

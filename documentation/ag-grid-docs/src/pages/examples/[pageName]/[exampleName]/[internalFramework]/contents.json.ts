@@ -4,6 +4,7 @@ import { hasExampleFolder } from '@components/docs/utils/filesData';
 import { getDocsExamplePages } from '@components/docs/utils/pageData';
 import { getGeneratedContents, hasGeneratedContents } from '@components/example-generator';
 import { getIsDev } from '@utils/env';
+import { getModuleFiles } from '@utils/exampleModules/getModuleFiles';
 import type { APIContext } from 'astro';
 import { getCollection } from 'astro:content';
 
@@ -62,7 +63,10 @@ export async function GET(context: APIContext) {
         );
     }
 
-    return new Response(JSON.stringify(generatedContents), {
+    // Exports without a build step need the transpiled modules, not the TypeScript sources
+    const moduleFiles = getModuleFiles(generatedContents.files);
+
+    return new Response(JSON.stringify({ ...generatedContents, moduleFiles }), {
         status: 200,
         headers: {
             'Content-Type': 'application/json',

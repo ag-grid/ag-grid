@@ -8,6 +8,11 @@ export type FileContents = Record<string, string>;
 
 export interface GeneratedContents {
     files: FileContents;
+    /**
+     * `files` with the TypeScript sources replaced by the transpiled modules the browser
+     * loads. Only present on the contents endpoint, for exports without a build step.
+     */
+    moduleFiles?: FileContents;
     entryFileName: string;
     mainFileName: string;
     sourceFileList: string[];
