@@ -17,7 +17,14 @@ export async function getStaticPaths() {
 const content = STATIC_PAGE_CONTENT['theme-builder'];
 ---
 
-<Layout title={content.title} description={content.description} showDocsNav={false} showSearchBar={true} hideFooter>
+<Layout
+    title={content.title}
+    description={content.description}
+    showDocsNav={false}
+    showSearchBar={true}
+    hideFooter
+    noMainTransition={true}
+>
     <div class:list={['contentViewport layout-grid']}>
         <ThemeBuilder client:only="react" />
         <EmptyState />

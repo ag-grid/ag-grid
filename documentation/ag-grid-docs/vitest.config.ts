@@ -19,6 +19,9 @@ export default defineConfig({
     },
     resolve: {
         alias: {
+            // Astro-plugin virtual module that vitest does not load; see the stub for why.
+            'astro:transitions/client': resolvePath('testing/stubs/astro-transitions-client.ts'),
+
             '@ag-website-shared': resolvePath('../../external/ag-website-shared/src'),
 
             // Matches `tsconfig.json`
