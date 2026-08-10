@@ -319,6 +319,26 @@ describe('autoSizeStrategy events', () => {
             expect(resizeBatches()).toBe(1);
         });
 
+        test('data arriving at a grid which started empty sizes the columns once', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                // `rowData: []` renders no rows, so the setup application waits on data arriving
+                columnDefs,
+                rowData: [],
+                autoSizeStrategy: { type: 'fitCellContents', skipHeader: true, events: ['modelUpdated'] },
+            });
+            const resizeBatches = countResizeBatches(api);
+            await settleStrategyWindow();
+
+            // the `modelUpdated` this raises and the setup application it leads to are the same
+            // sizing, not two - the request is held for that application rather than run on its own
+            api.setGridOption('rowData', [{ a: 'x', b: 'y', c: 'z' }]);
+
+            await waitFor(() => expect(widths(api)).toEqual([100, 100, 100]));
+            await settleStrategyWindow();
+
+            expect(resizeBatches()).toBe(1);
+        });
+
         test('an event after setup still re-runs the strategy', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,

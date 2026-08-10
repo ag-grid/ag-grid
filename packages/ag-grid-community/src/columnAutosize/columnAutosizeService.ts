@@ -59,15 +59,21 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     private strategyRunPending = false;
     /**
-     * True while a setup application of the strategy is still expected. That application runs after
-     * anything happening now, so it supersedes a re-run requested while it is outstanding - lifecycle
-     * events in `events` - the initial `modelUpdated`, say - do not size the columns a second time
-     * during startup. Tracking the outstanding application rather than comparing timers keeps this
-     * correct however long setup takes.
+     * True until the setup application of the strategy has run - the width strategies are applied once
+     * the initial columns are loaded, `fitCellContents` on `firstDataRendered`. A re-run requested while
+     * that application is still to come is held for it rather than run,
+     * so lifecycle events in `events` - the initial `modelUpdated`, say - do not size the columns a
+     * second time during startup. Tracking the outstanding application rather than comparing timers
+     * keeps that correct however long setup takes.
      */
     private strategySetupPending = false;
-    /** A re-run the grid was too narrow to serve, waiting for a width to become available. */
-    private strategyRunDeferredForWidth = false;
+    /**
+     * A re-run which is wanted but has not been applied: held until the setup application covers it,
+     * or until the grid has a width to serve it with. Held rather than dropped because a grid in a
+     * hidden tab reports no width, and the request would otherwise be lost until the next configured
+     * event happened to fire.
+     */
+    private strategyRunRequested = false;
     /**
      * Set while a strategy run is sizing columns. Resizing changes which columns fall inside the
      * viewport, and the resulting `virtualColumnsChanged` carries no source to recognise the run by -
@@ -97,14 +103,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 this.strategySetupPending = true;
                 this.addManagedEventListeners({
                     firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy),
-                    // `firstDataRendered` waits on a row being rendered, so a grid which has yet to
-                    // receive any rows is not waiting on a setup application at all - releasing here
-                    // stops configured events being swallowed for as long as the grid stays empty
-                    modelUpdated: () => {
-                        if (this.beans.rowModel.getRowCount() === 0) {
-                            this.strategySetupPending = false;
-                        }
-                    },
                 });
                 // Hide columns when we already have row data to display. This avoids jittering when we initially
                 // render columns at default width, only to immediately resize them when rows are rendered.
@@ -136,7 +134,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (this.strategyRunInFlight) {
                 return;
             }
-            // the outstanding setup application runs after this event, and covers it
+            this.strategyRunRequested = true;
+            // the setup application still to come runs after this event, and covers it. The request
+            // stays held rather than being dropped, so that a setup application which cannot size -
+            // a grid started in a hidden tab - leaves it for `gridSizeChanged` to serve
             if (this.strategySetupPending) {
                 return;
             }
@@ -148,15 +149,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
         this.addManagedEventListeners(handlers);
 
-        // a re-run the grid was too narrow to serve is held rather than dropped - a grid in a
-        // hidden tab reports no width, and the request would otherwise be lost until the next
-        // configured event happened to fire
+        // a grid which gains a width serves whatever request is being held for one
         this.addManagedEventListeners({
             gridSizeChanged: () => {
-                if (this.strategyRunDeferredForWidth && getAvailableWidth(this.beans) > 0) {
+                if (this.strategyRunRequested && !this.strategySetupPending) {
                     // through the debounce, so that a `gridSizeChanged` which is itself configured
                     // serves the held request and its own trigger with a single run
-                    this.strategyRunDeferredForWidth = false;
                     this.reRunStrategyDebounced();
                 }
             },
@@ -177,10 +175,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // `gridSizeChanged` to serve once there is a width. `fitProvidedWidth` takes its width from
         // the option rather than the grid, so it is served either way.
         if (strategy && strategy.type !== 'fitProvidedWidth' && getAvailableWidth(this.beans) <= 0) {
-            this.strategyRunDeferredForWidth = true;
             return;
         }
-        this.strategyRunDeferredForWidth = false;
         this.strategyRunPending = true;
         // wait a frame so frameworks which render asynchronously have painted the changes
         // caused by the triggering event before we measure
@@ -188,6 +184,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             this.strategyRunPending = false;
             const strategy = this.gos.get('autoSizeStrategy');
             if (strategy && this.isAlive()) {
+                this.strategyRunRequested = false;
                 this.applyStrategy(strategy);
             }
         });
@@ -740,9 +737,17 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (!this.isAlive()) {
                 return;
             }
-            this.applyStrategy(strategy);
+            const type = strategy.type;
+            // this application is what a re-run requested during setup was waiting on, so it clears
+            // the request - unless it had no width to size with, in which case the columns it just
+            // sized are no better off than before and the request is left for `gridSizeChanged`
+            const served = type === 'fitProvidedWidth' || getAvailableWidth(this.beans) > 0;
             this.strategySetupPending = false;
-            this.beans.colDelayRenderSvc?.revealColumns(strategy.type);
+            this.applyStrategy(strategy);
+            if (served) {
+                this.strategyRunRequested = false;
+            }
+            this.beans.colDelayRenderSvc?.revealColumns(type);
         });
     }
 
