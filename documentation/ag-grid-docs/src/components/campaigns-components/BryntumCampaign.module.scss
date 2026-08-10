@@ -85,7 +85,7 @@
     margin: 0 0 $spacing-size-2;
     font-size: var(--text-fs-lg);
     font-weight: var(--text-semibold);
-    line-height: 28px;
+    line-height: var(--text-lh-lg);
     color: var(--color-util-brand-600);
 
     #{$selector-darkmode} & {
@@ -112,7 +112,7 @@
 
 .heroBody {
     font-size: var(--text-fs-lg);
-    line-height: 28px;
+    line-height: var(--text-lh-lg);
     color: var(--color-white);
     opacity: 0.92;
     margin-bottom: $spacing-size-8;
@@ -249,7 +249,7 @@
 .textMediaCopy {
     h2 {
         font-size: var(--text-fs-2xl);
-        line-height: 35px;
+        line-height: var(--text-lh-2xl);
         margin: 0 0 $spacing-size-4;
     }
 
@@ -373,7 +373,7 @@
 
 .partnershipHeading {
     font-size: var(--text-fs-2xl);
-    line-height: 35px;
+    line-height: var(--text-lh-2xl);
     margin: 0 0 $spacing-size-4;
 }
 
@@ -467,7 +467,7 @@
 .miniDemoCopy {
     h2 {
         font-size: var(--text-fs-2xl);
-        line-height: 35px;
+        line-height: var(--text-lh-2xl);
         margin: 0 0 $spacing-size-4;
     }
 
@@ -619,7 +619,7 @@
 .exampleCardDescription {
     margin: $spacing-size-1 0 0;
     font-size: var(--text-fs-sm);
-    line-height: 20px;
+    line-height: var(--text-lh-sm);
     color: var(--color-fg-secondary);
 }
 

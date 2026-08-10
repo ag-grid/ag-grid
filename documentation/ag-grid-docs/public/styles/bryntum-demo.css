@@ -21,7 +21,7 @@
     margin: 0 0 8px;
     font-size: var(--text-fs-lg);
     font-weight: var(--text-semibold);
-    line-height: 28px;
+    line-height: var(--text-lh-lg);
     color: var(--color-util-brand-600);
 }
 
