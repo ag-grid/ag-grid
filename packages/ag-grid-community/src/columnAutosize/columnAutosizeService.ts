@@ -68,6 +68,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private strategySetupPending = false;
     /** A re-run the grid was too narrow to serve, waiting for a width to become available. */
     private strategyRunDeferredForWidth = false;
+    /**
+     * Set while a strategy run is sizing columns. Resizing changes which columns fall inside the
+     * viewport, and the resulting `virtualColumnsChanged` carries no source to recognise the run by -
+     * ignoring every trigger raised inside the run stops it feeding itself.
+     */
+    private strategyRunInFlight = false;
     private readonly reRunStrategyDebounced = _debounce(this, () => this.reRunStrategy(), STRATEGY_RERUN_DEBOUNCE_MS);
 
     /** when we're waiting for cell data types to be inferred, we need to defer column resizing */
@@ -125,6 +131,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (event.source && STRATEGY_SOURCES.has(event.source)) {
                 return;
             }
+            // the same loop through an event which carries no source to recognise, `virtualColumnsChanged`
+            // above all: the run raised it, so it is not news the run has yet to account for
+            if (this.strategyRunInFlight) {
+                return;
+            }
             // the outstanding setup application runs after this event, and covers it
             if (this.strategySetupPending) {
                 return;
@@ -143,7 +154,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             gridSizeChanged: () => {
                 if (this.strategyRunDeferredForWidth && getAvailableWidth(this.beans) > 0) {
-                    this.reRunStrategy();
+                    // through the debounce, so that a `gridSizeChanged` which is itself configured
+                    // serves the held request and its own trigger with a single run
+                    this.strategyRunDeferredForWidth = false;
+                    this.reRunStrategyDebounced();
                 }
             },
         });
@@ -156,10 +170,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
         const strategy = this.gos.get('autoSizeStrategy');
-        // a re-run against a grid with no width would collapse the columns onto their minimums, and
-        // `sizeColumnsToFitGridBody` would start its own retry cascade for every run that piles up.
-        // The request is held instead, for `gridSizeChanged` to serve once there is a width.
-        if (strategy?.type === 'fitGridWidth' && getAvailableWidth(this.beans) <= 0) {
+        // a grid with no width - one in a hidden tab, say - cannot serve a re-run: `fitGridWidth`
+        // would collapse the columns onto their minimums and start a `sizeColumnsToFitGridBody` retry
+        // cascade for every run that piles up, and `fitCellContents` measures cells which are laid
+        // out at no width, so it silently sizes nothing. The request is held instead, for
+        // `gridSizeChanged` to serve once there is a width. `fitProvidedWidth` takes its width from
+        // the option rather than the grid, so it is served either way.
+        if (strategy && strategy.type !== 'fitProvidedWidth' && getAvailableWidth(this.beans) <= 0) {
             this.strategyRunDeferredForWidth = true;
             return;
         }
@@ -177,6 +194,15 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     private applyStrategy(strategy: AutoSizeStrategy): void {
+        this.strategyRunInFlight = true;
+        try {
+            this.applyStrategyInner(strategy);
+        } finally {
+            this.strategyRunInFlight = false;
+        }
+    }
+
+    private applyStrategyInner(strategy: AutoSizeStrategy): void {
         const type = strategy.type;
         if (type === 'fitGridWidth') {
             const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = strategy;
