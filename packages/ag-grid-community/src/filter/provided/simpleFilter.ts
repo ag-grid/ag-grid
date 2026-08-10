@@ -2,6 +2,7 @@ import {
     AgPromise,
     _addOrRemoveAttribute,
     _areEqual,
+    _isBrowserFirefox,
     _isComponent,
     _removeFromParent,
     _setDisabled,
@@ -20,11 +21,11 @@ import type { Component, ComponentSelector } from '../../widgets/component';
 import type { GridInputTextField, GridRadioButton, GridSelect } from '../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type {
+    FilterOptionKey,
     ICombinedSimpleModel,
     IFilterOptionDef,
     ISimpleFilter,
     ISimpleFilterModel,
-    ISimpleFilterModelType,
     ISimpleFilterParams,
     JoinOperator,
     MapValuesFromSimpleFilterModel,
@@ -34,6 +35,7 @@ import type {
 import { OptionsFactory } from './optionsFactory';
 import { ProvidedFilter } from './providedFilter';
 import { getPlaceholderText } from './providedFilterUtils';
+import type { FilterOptionSet } from './simpleFilterUtils';
 import {
     getDefaultJoinOperator,
     getNumberOfInputs,
@@ -46,6 +48,9 @@ type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterPara
     FilterDisplayParams<any, any, M | ICombinedSimpleModel<M>>;
 
 type FilterModelOrCombined<M extends ISimpleFilterModel> = M | ICombinedSimpleModel<M> | null;
+
+/** What a range-validated input has to offer, so a number and a text field are both one. */
+type RangeInput = Pick<GridInputTextField, 'onValueChange' | 'addGuiEventListener'>;
 
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values.
@@ -85,7 +90,7 @@ export abstract class SimpleFilter<
     constructor(
         filterNameKey: FilterLocaleTextKey,
         private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<M, V>,
-        private readonly defaultOptions: string[]
+        private readonly options: FilterOptionSet
     ) {
         super(filterNameKey, 'simple-filter');
     }
@@ -108,12 +113,66 @@ export abstract class SimpleFilter<
     // allow retrieval of all condition input values.
     protected abstract getValues(position: number): Tuple<V>;
 
+    protected refreshInputValidation(): void {
+        const eTypes = this.eTypes;
+        for (let position = 0, len = eTypes.length; position < len; ++position) {
+            this.refreshPositionValidation(position);
+        }
+    }
+
+    protected refreshPositionValidation(_position: number, _isFrom?: boolean): void {
+        // Overridden by the filters whose inputs can reject what they hold; `isFrom` names the edited input.
+    }
+
+    /** Resolved per event, never captured: a condition removed from the middle shifts every one after it. */
+    protected getInputPosition(element: E): number {
+        const eTypes = this.eTypes;
+        for (let position = 0, len = eTypes.length; position < len; ++position) {
+            const inputs = this.getInputs(position);
+            if (inputs[0] === element || inputs[1] === element) {
+                return position;
+            }
+        }
+        return -1;
+    }
+
+    /** A replacement element carries none of the original's listeners, so a rebuild re-attaches them all. */
+    protected attachRebuiltInputListeners(from: E & RangeInput, to: E & RangeInput): void {
+        this.attachElementOnChange(from, this.listener);
+        this.attachElementOnChange(to, this.listener);
+        this.attachRangeValidationListeners(from, to);
+    }
+
+    /** Either input changing re-validates the pair: the message is about their order, not one value. */
+    protected attachRangeValidationListeners(from: E & RangeInput, to: E & RangeInput): void {
+        const fromListener = () => this.refreshInputValidationAt(from, true);
+        from.onValueChange(fromListener);
+        from.addGuiEventListener('focusin', fromListener);
+
+        const toListener = () => this.refreshInputValidationAt(to, false);
+        to.onValueChange(toListener);
+        to.addGuiEventListener('focusin', toListener);
+    }
+
+    private refreshInputValidationAt(element: E, isFrom: boolean): void {
+        const position = this.getInputPosition(element);
+        if (position < 0) {
+            return;
+        }
+        this.refreshPositionValidation(position, isFrom);
+    }
+
+    /** An option taking one value has no range, so the second input is not part of what it filters on. */
+    protected isRangeCondition(position: number): boolean {
+        return getNumberOfInputs(this.getConditionType(position), this.optionsFactory) === 2;
+    }
+
     protected override setParams(params: P): void {
         super.setParams(params);
 
         const optionsFactory = new OptionsFactory();
         this.optionsFactory = optionsFactory;
-        optionsFactory.init(this.beans.log, params, this.defaultOptions);
+        optionsFactory.init(this.beans.log, params, this.options);
 
         this.commonUpdateSimpleParams(params);
 
@@ -122,11 +181,36 @@ export abstract class SimpleFilter<
     }
 
     protected override updateParams(newParams: P, oldParams: P): void {
-        this.optionsFactory.refresh(this.beans.log, newParams, this.defaultOptions);
+        const optionsChanged = this.optionsFactory.refresh(this.beans.log, newParams, this.options);
 
         super.updateParams(newParams, oldParams);
 
         this.commonUpdateSimpleParams(newParams);
+        if (optionsChanged) {
+            this.refreshConditionsForOptions();
+        } else {
+            this.resetPlaceholder();
+        }
+    }
+
+    /** The dropdowns hold the options as they were, so one added or withdrawn has to reach every condition. */
+    private refreshConditionsForOptions(): void {
+        const { eTypes, optionsFactory } = this;
+        for (let position = 0, numConditions = eTypes.length; position < numConditions; ++position) {
+            const eType = eTypes[position];
+            const selectedType = eType.getValue();
+            eType.clearOptions();
+            this.putOptionsIntoDropdown(eType);
+            const isStillOffered = optionsFactory.hasOption(selectedType);
+            eType.setValue(isStillOffered ? selectedType : optionsFactory.defaultOption, true);
+            if (!isStillOffered) {
+                // Values the withdrawn option collected mean nothing to the one replacing it.
+                this.forEachPositionInput(position, (element) => this.resetInput(element));
+            }
+        }
+        // An option that kept its key can still have changed arity, leaving a message on a lone input.
+        this.refreshInputValidation();
+        this.updateUiVisibility();
     }
 
     protected commonUpdateSimpleParams(params: P): void {
@@ -173,12 +257,8 @@ export abstract class SimpleFilter<
         return conditions[0];
     }
 
-    protected getConditionTypes(): (ISimpleFilterModelType | null)[] {
-        return this.eTypes.map((eType) => eType.getValue() as ISimpleFilterModelType);
-    }
-
-    protected getConditionType(position: number): ISimpleFilterModelType | null {
-        return this.eTypes[position].getValue() as ISimpleFilterModelType;
+    protected getConditionType(position: number): FilterOptionKey | null {
+        return this.eTypes[position].getValue() ?? null;
     }
 
     protected getJoinOperator(): JoinOperator {
@@ -236,47 +316,20 @@ export abstract class SimpleFilter<
         const isCombined = (model as any).operator;
 
         if (isCombined) {
-            const combinedModel = model as ICombinedSimpleModel<M>;
-
-            let conditions = combinedModel.conditions;
-            if (conditions == null) {
-                conditions = [];
-                this.beans.log.warn(77);
-            }
-
-            const numConditions = validateAndUpdateConditions<M>(this.beans.log, conditions, this.maxNumConditions);
-            const numPrevConditions = this.getNumConditions();
-            if (numConditions < numPrevConditions) {
-                this.removeConditionsAndOperators(numConditions);
-            } else if (numConditions > numPrevConditions) {
-                for (let i = numPrevConditions; i < numConditions; i++) {
-                    this.createJoinOperatorPanel();
-                    this.createOption();
-                }
-            }
-
-            const orChecked = combinedModel.operator === 'OR';
-            this.eJoinAnds.forEach((eJoinOperatorAnd) => eJoinOperatorAnd.setValue(!orChecked, true));
-            this.eJoinOrs.forEach((eJoinOperatorOr) => eJoinOperatorOr.setValue(orChecked, true));
-
-            conditions.forEach((condition, position) => {
-                this.eTypes[position].setValue(condition.type, true);
-                this.setConditionIntoUi(condition, position);
-            });
+            this.setCombinedModelIntoUi(model as ICombinedSimpleModel<M>);
         } else {
-            const simpleModel = model as M;
-
             if (this.getNumConditions() > 1) {
-                this.removeConditionsAndOperators(1);
+                this.removeConditionsForModel(1);
             }
-
-            this.eTypes[0].setValue(simpleModel.type, true);
-            this.setConditionIntoUi(simpleModel, 0);
+            this.setConditionAndTypeIntoUi(model as M, 0);
         }
 
         this.lastUiCompletePosition = this.getNumConditions() - 1;
 
         this.createMissingConditionsAndOperators();
+
+        // Every input holds the new model, so a message the old one left is about nothing shown.
+        this.refreshInputValidation();
 
         this.updateUiVisibility();
         if (!isInitialLoad) {
@@ -473,7 +526,16 @@ export abstract class SimpleFilter<
         return areAllConditionsUiComplete && this.getNumConditions() < this.maxNumConditions && !this.isReadOnly();
     }
 
+    /** A condition the user is still fixing must not vanish under them. */
     protected removeConditionsAndOperators(startPosition: number, deleteCount?: number): void {
+        if (this.hasInvalidInputs()) {
+            return;
+        }
+        this.removeConditionsForModel(startPosition, deleteCount);
+    }
+
+    /** A model overrules an input the user is mid-way through, since the conditions are no longer theirs. */
+    private removeConditionsForModel(startPosition: number, deleteCount?: number): void {
         if (startPosition >= this.getNumConditions()) {
             return;
         }
@@ -535,6 +597,17 @@ export abstract class SimpleFilter<
     }
 
     protected shouldKeepInvalidInputState(): boolean {
+        // A range the user is still fixing is kept, as Chrome and Safari keep an incomplete date. Firefox
+        // clears those, so it clears this too.
+        if (_isBrowserFirefox() || !this.hasInvalidInputs()) {
+            return false;
+        }
+        // Only a two-value condition has an order an input can be reported as out of.
+        for (let position = 0, len = this.eTypes.length; position < len; ++position) {
+            if (this.isRangeCondition(position)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -620,8 +693,14 @@ export abstract class SimpleFilter<
                       ? globalTranslate('ariaFilterValue', 'Filter Value')
                       : globalTranslate('ariaFilterToValue', 'Filter to Value');
 
-            const filterOptionKey = eTypes[position].getValue() as ISimpleFilterModelType;
-            const placeholderText = getPlaceholderText(this, filterPlaceholder, placeholderKey, filterOptionKey);
+            const filterOptionKey = eTypes[position].getValue()!;
+            const placeholderText = getPlaceholderText(
+                this,
+                filterPlaceholder,
+                placeholderKey,
+                filterOptionKey,
+                this.optionsFactory
+            );
 
             element.setInputPlaceholder(placeholderText);
             element.setInputAriaLabel(ariaLabel);
@@ -654,9 +733,10 @@ export abstract class SimpleFilter<
     }
 
     protected forEachInput(cb: (element: E, index: number, position: number, numberOfInputs: number) => void): void {
-        this.getConditionTypes().forEach((type, position) => {
-            this.forEachPositionTypeInput(position, type, cb);
-        });
+        const eTypes = this.eTypes;
+        for (let position = 0, len = eTypes.length; position < len; ++position) {
+            this.forEachPositionTypeInput(position, eTypes[position].getValue() ?? null, cb);
+        }
     }
 
     protected forEachPositionInput(
@@ -669,7 +749,7 @@ export abstract class SimpleFilter<
 
     private forEachPositionTypeInput(
         position: number,
-        type: ISimpleFilterModelType | null,
+        type: FilterOptionKey | null,
         cb: (element: E, index: number, position: number, numberOfInputs: number) => void
     ): void {
         const numberOfInputs = getNumberOfInputs(type, this.optionsFactory);
@@ -750,7 +830,7 @@ export abstract class SimpleFilter<
     }
 
     private resetUiToDefaults(silent?: boolean): void {
-        this.removeConditionsAndOperators(this.isReadOnly() ? 1 : this.numAlwaysVisibleConditions);
+        this.removeConditionsForModel(this.isReadOnly() ? 1 : this.numAlwaysVisibleConditions);
 
         this.eTypes.forEach((eType) => this.resetType(eType));
 
@@ -837,6 +917,50 @@ export abstract class SimpleFilter<
         this.setElementDisabled(element, this.isReadOnly());
     }
 
+    /** A condition naming an option the dropdown does not offer cannot be shown, so the default is. */
+    private setCombinedModelIntoUi(combinedModel: ICombinedSimpleModel<M>): void {
+        let conditions = combinedModel.conditions;
+        if (conditions == null) {
+            conditions = [];
+            this.beans.log.warn(77);
+        }
+
+        const numConditions = validateAndUpdateConditions<M>(this.beans.log, conditions, this.maxNumConditions);
+        this.matchNumConditions(numConditions);
+
+        const orChecked = combinedModel.operator === 'OR';
+        const { eJoinAnds, eJoinOrs } = this;
+        for (let i = 0, len = eJoinAnds.length; i < len; ++i) {
+            eJoinAnds[i].setValue(!orChecked, true);
+        }
+        for (let i = 0, len = eJoinOrs.length; i < len; ++i) {
+            eJoinOrs[i].setValue(orChecked, true);
+        }
+
+        for (let position = 0, len = conditions.length; position < len; ++position) {
+            this.setConditionAndTypeIntoUi(conditions[position], position);
+        }
+    }
+
+    private matchNumConditions(numConditions: number): void {
+        const numPrevConditions = this.getNumConditions();
+        if (numConditions < numPrevConditions) {
+            this.removeConditionsForModel(numConditions);
+            return;
+        }
+        for (let i = numPrevConditions; i < numConditions; i++) {
+            this.createJoinOperatorPanel();
+            this.createOption();
+        }
+    }
+
+    private setConditionAndTypeIntoUi(condition: M, position: number): void {
+        const optionsFactory = this.optionsFactory;
+        const isOffered = optionsFactory.hasOption(condition.type);
+        this.eTypes[position].setValue(isOffered ? condition.type : optionsFactory.defaultOption, true);
+        this.setConditionIntoUi(isOffered ? condition : null, position);
+    }
+
     // puts model values into the UI
     private setConditionIntoUi(model: M | null, position: number): void {
         const values = this.mapValuesFromModel(model, this.optionsFactory);
@@ -862,19 +986,43 @@ export abstract class SimpleFilter<
             return;
         }
 
-        eType.onValueChange(this.listener);
+        // The chosen option decides which inputs the condition uses, so their messages go stale with it.
+        eType.onValueChange(() => {
+            this.refreshInputValidation();
+            this.onUiChanged();
+        });
 
         this.forEachPositionInput(position, (element) => {
             this.attachElementOnChange(element, this.listener);
         });
     }
 
-    protected hasInvalidInputs(): boolean {
+    protected isInputInvalid(_element: E): boolean {
         return false;
     }
 
-    protected positionHasInvalidInputs(_position: number): boolean {
-        return false;
+    /** Whether the element holds a whole value, i.e. one its filter has had the chance to reject. */
+    protected isInputValueSettled(_element: E): boolean {
+        return true;
+    }
+
+    protected hasInvalidInputs(): boolean {
+        let invalidInputs = false;
+        // Past `numberOfInputs` an element is mounted but not part of the condition, so its message is not either.
+        this.forEachInput((element, index, _position, numberOfInputs) => {
+            invalidInputs ||=
+                index < numberOfInputs && this.isInputValueSettled(element) && this.isInputInvalid(element);
+        });
+        return invalidInputs;
+    }
+
+    /** Unsettled inputs count here: this decides whether one condition may be applied, not whether it is stable. */
+    protected positionHasInvalidInputs(position: number): boolean {
+        let invalidInputs = false;
+        this.forEachPositionInput(position, (element, index, _p, numberOfInputs) => {
+            invalidInputs ||= index < numberOfInputs && this.isInputInvalid(element);
+        });
+        return invalidInputs;
     }
 
     private isReadOnly(): boolean {

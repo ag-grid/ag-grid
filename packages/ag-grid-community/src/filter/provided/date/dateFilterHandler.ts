@@ -1,7 +1,7 @@
 import type { Comparator } from '../iScalarFilter';
 import type { ISimpleFilterModelPresetType, Tuple } from '../iSimpleFilter';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
-import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
+import { DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
 import { mapValuesFromDateFilterModel } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
@@ -32,7 +32,7 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
     private readonly filterTypeToRangeCache = new Map<ISimpleFilterModelPresetType, RangeCacheItem>();
 
     constructor() {
-        super(mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
+        super(mapValuesFromDateFilterModel, DATE_FILTER_OPTIONS);
     }
 
     getOrRefreshRangeCacheItem(key: ISimpleFilterModelPresetType, rangeFn: (s: Date, e: Date) => [Date, Date]): Range {
@@ -44,7 +44,8 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
         }
         if (!cache) {
             const [from, to] = rangeFn(new Date(now), new Date(now));
-            cache = { from, to, expires: setStartOfNextDay(new Date(now)).getTime() - now };
+            // The absolute instant it stops being today, which is what the guard above compares against.
+            cache = { from, to, expires: setStartOfNextDay(new Date(now)).getTime() };
             filterTypeToRangeCache.set(key, cache);
         }
         return cache;

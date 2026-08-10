@@ -1,18 +1,18 @@
 import type { Comparator, IScalarFilterParams } from './iScalarFilter';
-import type { ISimpleFilterModel, ISimpleFilterModelType, Tuple } from './iSimpleFilter';
+import type { FilterOptionKey, ISimpleFilterModel, ISimpleFilterModelType, Tuple } from './iSimpleFilter';
 import { SimpleFilterHandler } from './simpleFilterHandler';
 import { isBlank } from './simpleFilterUtils';
 
 export abstract class ScalarFilterHandler<
     TModel extends ISimpleFilterModel,
     TValue,
-    TParams extends IScalarFilterParams,
+    TParams extends IScalarFilterParams<ISimpleFilterModelType>,
 > extends SimpleFilterHandler<TModel, TValue, TParams> {
     protected abstract comparator(): Comparator<TValue>;
 
     protected abstract isValid(value: TValue): boolean;
 
-    protected evaluateNullValue(filterType?: ISimpleFilterModelType | null) {
+    protected evaluateNullValue(filterType?: FilterOptionKey | null) {
         const {
             includeBlanksInEquals,
             includeBlanksInNotEqual,

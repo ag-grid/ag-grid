@@ -30,6 +30,19 @@ describe('Date Filter — conditions coverage', () => {
 
     const ASCENDING = [{ date: '2024-01-10' }, { date: '2024-03-15' }, { date: '2024-05-20' }, { date: '2024-07-04' }];
 
+    test('the condition body carries no role, leaving the date widget to declare its own', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: ASCENDING,
+        });
+
+        await ColumnFilterHarness.open(api, 'date');
+
+        const body = document.querySelector('.ag-filter-menu .ag-filter-body');
+        expect(body).not.toBeNull();
+        expect(body!.hasAttribute('role')).toBe(false);
+    });
+
     test('comparison operators over an ascending date dataset', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0 } }],
@@ -48,7 +61,7 @@ describe('Date Filter — conditions coverage', () => {
             input: "2024-03-15"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨yyyy-mm-dd⟩
             model:
               dateFrom: "2024-03-15"
               dateTo: null
@@ -116,7 +129,7 @@ describe('Date Filter — conditions coverage', () => {
             operator: "Blank"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨yyyy-mm-dd⟩
             model:
               dateFrom: null
               dateTo: null
@@ -167,7 +180,7 @@ describe('Date Filter — conditions coverage', () => {
             input [1]: "2024-07-04"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨yyyy-mm-dd⟩
             model:
               dateFrom: "2024-03-15"
               dateTo: "2024-07-04"
@@ -235,7 +248,7 @@ describe('Date Filter — conditions coverage', () => {
             COLUMN FILTER
             operator: "Between"
             input [0]: "2024-03-15"
-            input [1]: ""
+            input [1]: "" ⟨yyyy-mm-dd⟩
             model: null
         `);
         // Incomplete range → no model applied → all rows visible.
@@ -541,7 +554,7 @@ describe('Date Filter — conditions coverage', () => {
             input [1]: "2024-07-04"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨yyyy-mm-dd⟩
             model:
               dateFrom: "2024-03-15"
               dateTo: "2024-07-04"

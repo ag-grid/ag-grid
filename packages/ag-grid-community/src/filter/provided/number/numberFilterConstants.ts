@@ -1,6 +1,6 @@
-import type { ISimpleFilterModelType } from '../iSimpleFilter';
+import { defineFilterOptions } from '../simpleFilterUtils';
 
-export const DEFAULT_NUMBER_FILTER_OPTIONS: ISimpleFilterModelType[] = [
+export const NUMBER_FILTER_OPTIONS = defineFilterOptions([
     'equals',
     'notEqual',
     'greaterThan',
@@ -10,4 +10,4 @@ export const DEFAULT_NUMBER_FILTER_OPTIONS: ISimpleFilterModelType[] = [
     'inRange',
     'blank',
     'notBlank',
-];
+]);

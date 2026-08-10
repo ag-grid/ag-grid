@@ -2,13 +2,9 @@ import { BeanStub } from '../../context/beanStub';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
 import type { ProvidedFilterModel } from './iProvidedFilter';
-import type {
-    ICombinedSimpleModel,
-    ISimpleFilterModel,
-    ISimpleFilterModelType,
-    ISimpleFilterParams,
-} from './iSimpleFilter';
+import type { FilterOptionKey, ICombinedSimpleModel, ISimpleFilterModel, ISimpleFilterParams } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
+import { _getCustomOptionNumberOfInputs } from './simpleFilterUtils';
 
 export const SCALAR_FILTER_TYPE_KEYS = {
     equals: 'Equals',
@@ -41,10 +37,14 @@ export abstract class SimpleFilterModelFormatter<
 
     constructor(
         private optionsFactory: OptionsFactory,
-        protected filterParams: TFilterParams,
-        protected readonly valueFormatter?: (value: TValue | null) => string | null
+        protected filterParams: TFilterParams
     ) {
         super();
+    }
+
+    /** Read per call, so a `colDef` refresh that replaces the formatter reaches the summary. */
+    protected getValueFormatter(): ((value: TValue | null) => string | null) | undefined {
+        return undefined;
     }
 
     // used by:
@@ -67,24 +67,20 @@ export abstract class SimpleFilterModelFormatter<
             return forToolPanel
                 ? translateForFilter(this, model.type === 'blank' ? 'filterSummaryBlank' : 'filterSummaryNotBlank')
                 : translate(model.type, model.type);
-        } else {
-            const condition = model;
-            const customOption = this.optionsFactory.getCustomOption(condition.type);
-
-            // For custom filter options we display the Name of the filter instead
-            // of displaying the `from` value, as it wouldn't be relevant
-            const { displayKey, displayName, numberOfInputs } = customOption || {};
-            if (displayKey && displayName && numberOfInputs === 0) {
-                return translate(displayKey, displayName);
-            }
-            return this.conditionToString(
-                condition,
-                forToolPanel,
-                condition.type === 'inRange' || numberOfInputs === 2,
-                displayKey,
-                displayName
-            );
         }
+        const condition = model;
+        const customOption = this.optionsFactory.getCustomOption(condition.type);
+        if (!customOption) {
+            return this.conditionToString(condition, forToolPanel, condition.type === 'inRange', undefined, undefined);
+        }
+
+        const { displayKey, displayName } = customOption;
+        const numberOfInputs = _getCustomOptionNumberOfInputs(customOption);
+        // A custom option taking no value shows its name: it has no `from` value that would be relevant.
+        if (numberOfInputs === 0) {
+            return translate(displayKey, displayName);
+        }
+        return this.conditionToString(condition, forToolPanel, numberOfInputs === 2, displayKey, displayName);
     }
 
     // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
@@ -103,7 +99,7 @@ export abstract class SimpleFilterModelFormatter<
     }
 
     protected conditionForToolPanel(
-        type: ISimpleFilterModelType | null | undefined,
+        type: FilterOptionKey | null | undefined,
         isRange: boolean,
         getFilter: () => string,
         getFilterTo: () => string,
@@ -129,13 +125,13 @@ export abstract class SimpleFilterModelFormatter<
         return null;
     }
 
-    protected getTypeKey(type: ISimpleFilterModelType | null | undefined): FilterLocaleTextKey | null {
+    protected getTypeKey(type: FilterOptionKey | null | undefined): FilterLocaleTextKey | null {
         const suffix = this.filterTypeKeys[type as keyof FilterTypeKeys];
         return suffix ? `filterSummary${suffix}` : null;
     }
 
     protected formatValue(value?: TValue | null): string {
-        const valueFormatter = this.valueFormatter;
+        const valueFormatter = this.getValueFormatter();
         return valueFormatter ? (valueFormatter(value ?? null) ?? '') : String(value);
     }
 }

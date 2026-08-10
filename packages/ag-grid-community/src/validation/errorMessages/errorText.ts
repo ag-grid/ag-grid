@@ -370,7 +370,6 @@ export const AG_GRID_ERRORS = {
         `Grid option \`quickFilterText\` only supports string inputs, received: ${typeof newFilter}` as const,
     71: () => '`debounceMs` is ignored when apply button is present' as const,
     72: ({ keys }: { keys: string[] }) => [`ignoring \`FilterOptionDef\` as it doesn't contain one of `, keys] as const,
-    73: () => `invalid \`FilterOptionDef\` supplied as it doesn't contain a \`displayKey\`` as const,
     74: () => 'no filter options for filter' as const,
     75: () => 'Unknown button type specified' as const,
     76: ({ filterModelType }: { filterModelType: any }) =>
@@ -947,6 +946,24 @@ export const AG_GRID_ERRORS = {
     },
     325: ({ property, value }: { property: string; value?: unknown }) =>
         `\`${property}\` must be an array with at least one element, currently it is \`[${String(value)}]\``,
+    326: ({ colId }: { colId: string }) =>
+        [
+            '`numberFormatter` on column ',
+            colId,
+            ' produced text the filter input cannot hold and read back as the same number, so it shows the unformatted value. Add `allowedCharPattern` for the characters it writes, and a `numberParser` that reverses it. A formatter that rounds cannot be shown, as the value it hides could not be read back.',
+        ] as const,
+    327: ({ key }: { key: string }) =>
+        [
+            '`filterParams.filterOptions` contains ',
+            key,
+            ', which this filter does not evaluate - it matches no rows',
+        ] as const,
+    328: ({ key }: { key: string }) =>
+        [
+            '`filterParams.defaultOption` names ',
+            key,
+            ', which `filterParams.filterOptions` does not offer - the first offered option is used instead. Add it to `filterOptions`, or name one of the options it lists.',
+        ] as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

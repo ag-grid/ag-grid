@@ -136,7 +136,16 @@ export {
 export { AgFilterButtonSelector, FilterButtonComp } from './filter/filterButtonComp';
 export type { FilterButton, FilterButtonEvent } from './filter/filterButtonComp';
 export { FilterComp } from './filter/filterComp';
-export { _getDefaultSimpleFilter, _getFilterParamsForDataType } from './filter/filterDataTypeUtils';
+export {
+    _getDefaultSimpleFilter,
+    _getFilterParamsForDataType,
+    _isDataTypeFilterOptions,
+} from './filter/filterDataTypeUtils';
+export {
+    _getCustomOptionNumberOfInputs,
+    _getMissingFilterOptionKeys,
+    _isValidFilterOptionDef,
+} from './filter/provided/simpleFilterUtils';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';

@@ -1,12 +1,14 @@
 import type { FilterHandlerParams, IDoesFilterPassParams } from '../../../interfaces/iFilter';
-import type { ICombinedSimpleModel, ISimpleFilterModelType, Tuple } from '../iSimpleFilter';
+import type { FilterOptionKey, ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { isCombinedFilterModel } from '../iSimpleFilter';
 import { SimpleFilterHandler } from '../simpleFilterHandler';
 import { isBlank } from '../simpleFilterUtils';
 import type { ITextFilterParams, TextFilterModel, TextFormatter, TextMatcher } from './iTextFilter';
-import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
+import { TEXT_FILTER_OPTIONS } from './textFilterConstants';
 import { TextFilterModelFormatter } from './textFilterModelFormatter';
 import { mapValuesFromTextFilterModel, trimInputForFilter } from './textFilterUtils';
+
+const FILTER_TYPES_ALLOWING_NULLS: ReadonlySet<FilterOptionKey> = new Set(['notEqual', 'notContains', 'blank']);
 
 const defaultMatcher: TextMatcher = ({ filterOption, value, filterText }) => {
     if (filterText == null) {
@@ -45,7 +47,7 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
     private formatter: TextFormatter;
 
     constructor() {
-        super(mapValuesFromTextFilterModel, DEFAULT_TEXT_FILTER_OPTIONS);
+        super(mapValuesFromTextFilterModel, TEXT_FILTER_OPTIONS);
     }
 
     protected override updateParams(
@@ -65,10 +67,8 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
             filterParams.textFormatter ?? (filterParams.caseSensitive ? defaultFormatter : defaultLowercaseFormatter);
     }
 
-    protected override evaluateNullValue(filterType: ISimpleFilterModelType | null) {
-        const filterTypesAllowNulls: ISimpleFilterModelType[] = ['notEqual', 'notContains', 'blank'];
-
-        return filterType ? filterTypesAllowNulls.indexOf(filterType) >= 0 : false;
+    protected override evaluateNullValue(filterType: FilterOptionKey | null) {
+        return filterType != null && FILTER_TYPES_ALLOWING_NULLS.has(filterType);
     }
 
     protected override evaluateNonNullValue(

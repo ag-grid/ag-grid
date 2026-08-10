@@ -12,7 +12,7 @@ import type { ISimpleFilterModel } from '../iSimpleFilter';
 import { getDebounceMs } from '../providedFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import type { DateFilter } from './dateFilter';
-import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
+import { DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
 import type { DateFilterModel, DateFilterParams } from './iDateFilter';
 
@@ -36,7 +36,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
     protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
     private dateComp: DateCompWrapper;
     protected readonly filterType = 'date';
-    protected readonly defaultOptions = DEFAULT_DATE_FILTER_OPTIONS;
+    protected readonly options = DATE_FILTER_OPTIONS;
 
     constructor() {
         super(DateFloatingFilterElement, [AgInputTextFieldSelector]);

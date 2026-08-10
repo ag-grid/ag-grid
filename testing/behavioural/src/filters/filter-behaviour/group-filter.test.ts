@@ -238,7 +238,7 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
             input: "2020"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "equals"
@@ -346,7 +346,7 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
             input: "2020"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "greaterThan"
@@ -396,7 +396,7 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
             input: "an"
             AND
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "text"
               type: "contains"

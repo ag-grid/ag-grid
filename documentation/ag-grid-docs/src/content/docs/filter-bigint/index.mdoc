@@ -99,6 +99,13 @@ The BigInt Filter presents the same list of [Filter Options](./filter-conditions
 
 The default option for the BigInt Filter is `equals`.
 
+## Range Input Validation and Error States
+
+When using the `inRange` filter type, or a [Custom Filter Option](./filter-conditions/#custom-filter-options) taking two values, the grid performs input validation to ensure the bounds of the range produce a valid filter; that is, where the start value is less than the end value. Values are compared as parsed `bigint`s, so a `bigintParser` reading another format is respected.
+
+Where this is not the case, the last edited input will display a red border and a hover tooltip directing the user to enter a valid value. While the filter is in an invalid state, the filter will not be applied.
+Screen readers that respond to the `aria-invalid` attribute or the `ValidityState` of the input will detect the input as invalid.
+
 ## Applying the BigInt Filter
 
 Applying the BigInt Filter is described in more detail in the following sections:

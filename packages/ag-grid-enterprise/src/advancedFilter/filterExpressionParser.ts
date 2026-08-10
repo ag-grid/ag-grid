@@ -7,6 +7,7 @@ import type {
     FilterExpressionFunctionParams,
     FilterExpressionParserParams,
 } from './filterExpressionUtils';
+import { applyExpressionRewrites } from './filterExpressionUtils';
 import { JoinFilterExpressionParser } from './joinFilterExpressionParser';
 
 export class FilterExpressionParser {
@@ -15,11 +16,12 @@ export class FilterExpressionParser {
 
     constructor(private readonly params: FilterExpressionParserParams) {}
 
+    /** Positions are recorded against the text as parsed, so a caller showing the returned text must re-parse it. */
     public parseExpression(): string {
         this.joinExpressionParser = new JoinFilterExpressionParser(this.params, 0);
         const i = this.joinExpressionParser.parseExpression();
         this.valid = i >= this.params.expression.length - 1 && this.joinExpressionParser.isValid();
-        return this.params.expression;
+        return applyExpressionRewrites(this.params);
     }
 
     public isValid(): boolean {
@@ -31,13 +33,14 @@ export class FilterExpressionParser {
         if (!error) {
             return null;
         }
-        const { message, startPosition, endPosition } = error;
-        return startPosition < this.params.expression.length
-            ? this.params.advFilterExpSvc.translate('advancedFilterValidationMessage', [
-                  message,
-                  this.params.expression.slice(startPosition, endPosition + 1).trim(),
-              ])
-            : this.params.advFilterExpSvc.translate('advancedFilterValidationMessageAtEnd', [message]);
+        const { expression, advFilterExpSvc } = this.params;
+        if (error.startPosition >= expression.length) {
+            return advFilterExpSvc.translate('advancedFilterValidationMessageAtEnd', [error.message]);
+        }
+        return advFilterExpSvc.translate('advancedFilterValidationMessage', [
+            error.message,
+            expression.slice(error.startPosition, error.endPosition + 1).trim(),
+        ]);
     }
 
     public getFunction(): {

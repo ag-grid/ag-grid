@@ -1,6 +1,6 @@
-import type { ISimpleFilterModelType } from '../iSimpleFilter';
+import { defineFilterOptions } from '../simpleFilterUtils';
 
-export const DEFAULT_TEXT_FILTER_OPTIONS: ISimpleFilterModelType[] = [
+export const TEXT_FILTER_OPTIONS = defineFilterOptions([
     'contains',
     'notContains',
     'equals',
@@ -9,4 +9,4 @@ export const DEFAULT_TEXT_FILTER_OPTIONS: ISimpleFilterModelType[] = [
     'endsWith',
     'blank',
     'notBlank',
-];
+]);

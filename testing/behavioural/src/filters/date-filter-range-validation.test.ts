@@ -11,7 +11,7 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ColumnFilterHarness, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 async function selectFilterOption(gridDiv: HTMLElement, userSession: any, optionText: string): Promise<void> {
     const pickerDisplay = getAllByTestId(
@@ -213,20 +213,19 @@ describe('Date Range Filter', () => {
         // Switch back to "inRange" - the from date (2024-12-15) is now after the to date (2024-06-15)
         await selectFilterOption(gridDiv, userSession, 'Between');
 
-        // Trigger validation by interacting with the from input
-        const fromDateInputRange = getByTestId<HTMLInputElement>(
-            gridDiv,
-            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 0 })
-        );
-        fromDateInputRange.dispatchEvent(new Event('focusin', { bubbles: true }));
-
         await asyncSetTimeout(0);
 
-        // Range validation should now be active again - from > to is invalid
-        expect(fromDateInputRange.validity.valid).toBe(false);
+        // Range validation is active again without waiting to be prodded - from > to is invalid
+        const toDateInputRange = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 1 })
+        );
+        expect(toDateInputRange.validity.valid).toBe(false);
+        // The inverted range is not applied, so the equals filter entered before it still stands.
         await new GridRows(api, `Switching from equals back to inRange re-enables range validation final state`).check(
             `
                 ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 date:"2024-12-15"
             `
         );
     });
@@ -521,5 +520,58 @@ describe('Date Range Filter', () => {
                 └── LEAF id:2 date:"2024-12-15"
             `);
         });
+    });
+
+    test('cancelling back to an applied range clears the message the edit left behind', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    filter: 'agDateColumnFilter',
+                    filterParams: { filterOptions: ['inRange'], buttons: ['apply', 'cancel'] },
+                },
+            ],
+            rowData: [{ date: '2024-01-15' }, { date: '2024-06-15' }, { date: '2024-12-15' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'date');
+        await filter.setDate('2024-01-15', 0);
+        await filter.setDate('2024-06-15', 1);
+        await filter.apply();
+
+        // Edit the applied range the wrong way round, then abandon the edit.
+        await filter.setDate('2024-01-01', 1);
+        expect(filter.input('date', 1).validity.valid).toBe(false);
+
+        await filter.cancel();
+
+        // The inputs hold the applied range again, so the message it replaced is gone.
+        expect(filter.input('date', 1).validity.valid).toBe(true);
+        expect(filter.input('date', 0).validity.valid).toBe(true);
+    });
+
+    test('a valid model applied through the API clears a stale range message', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', filterParams: { filterOptions: ['inRange'] } }],
+            rowData: [{ date: '2024-01-15' }, { date: '2024-06-15' }, { date: '2024-12-15' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'date');
+        await filter.setDate('2024-06-15', 0);
+        await filter.setDate('2024-01-01', 1);
+        expect(filter.input('date', 1).validity.valid).toBe(false);
+
+        await api.setColumnFilterModel('date', {
+            filterType: 'date',
+            type: 'inRange',
+            dateFrom: '2024-01-15',
+            dateTo: '2024-06-15',
+        } as DateFilterModel);
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // The inputs hold an ordered range now, so the message the old one left is gone.
+        expect(filter.input('date', 0).validity.valid).toBe(true);
+        expect(filter.input('date', 1).validity.valid).toBe(true);
     });
 });

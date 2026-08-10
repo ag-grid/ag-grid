@@ -1,11 +1,18 @@
 import type { BaseColDefParams } from '../../../entities/colDef';
 import type { IFilterParams } from '../../../interfaces/iFilter';
 import type { IFloatingFilterParams } from '../../floating/floatingFilter';
-import type { ISimpleFilterModel, ISimpleFilterParams } from '../iSimpleFilter';
+import type {
+    CustomFilterOptionKey,
+    ISimpleFilterModel,
+    ISimpleFilterParams,
+    TextFilterOptionKey,
+} from '../iSimpleFilter';
 import type { NumberFilter } from '../number/numberFilter';
 import type { TextFilter } from './textFilter';
 
 export interface TextFilterModel extends ISimpleFilterModel {
+    /** One of the Text Filter's options, or a Custom Filter Option's `displayKey`. */
+    type?: TextFilterOptionKey | CustomFilterOptionKey | null;
     /** Filter type is always `'text'` */
     filterType?: 'text';
     /**
@@ -57,7 +64,7 @@ export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TD
  * Parameters used in `colDef.filterParams` to configure a  Text Filter (`agTextColumnFilter`).
  */
 
-export interface ITextFilterParams extends ISimpleFilterParams {
+export interface ITextFilterParams extends ISimpleFilterParams<TextFilterOptionKey> {
     /**
      * Used to override how to filter based on the user input.
      * Returns `true` if the value passes the filter, otherwise `false`.

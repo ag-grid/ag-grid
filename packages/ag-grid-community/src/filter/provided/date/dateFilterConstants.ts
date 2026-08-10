@@ -1,11 +1,6 @@
-import type { ISimpleFilterModelType } from '../iSimpleFilter';
+import { defineFilterOptions, zeroInputTypes } from '../simpleFilterUtils';
 
-export const DEFAULT_DATE_FILTER_OPTIONS: ISimpleFilterModelType[] = [
-    'equals',
-    'notEqual',
-    'lessThan',
-    'greaterThan',
-    'inRange',
-    'blank',
-    'notBlank',
-];
+export const DATE_FILTER_OPTIONS = defineFilterOptions(
+    ['equals', 'notEqual', 'lessThan', 'greaterThan', 'inRange', 'blank', 'notBlank'],
+    ['lessThanOrEqual', 'greaterThanOrEqual', ...zeroInputTypes]
+);

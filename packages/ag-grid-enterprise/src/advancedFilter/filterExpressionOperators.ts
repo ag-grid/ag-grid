@@ -74,7 +74,7 @@ export function findMatch<T>(
     }
 }
 
-function getEntries<ConvertedTValue, TValue = ConvertedTValue>(
+export function getEntries<ConvertedTValue, TValue = ConvertedTValue>(
     operators: { [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue> },
     activeOperatorKeys?: string[]
 ): AutocompleteEntry[] {

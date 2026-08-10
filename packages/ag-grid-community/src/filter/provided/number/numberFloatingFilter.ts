@@ -8,9 +8,9 @@ import { FloatingFilterTextInputService } from '../../floating/provided/floating
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import type { INumberFloatingFilterParams, NumberFilterModel, NumberFilterParams } from './iNumberFilter';
-import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
+import { NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
-import { getAllowedCharPattern } from './numberFilterUtils';
+import { getAllowedCharPattern, processNumberFilterValue, stringToFloat } from './numberFilterUtils';
 
 class FloatingFilterNumberInputService extends BeanStub implements FloatingFilterInputService {
     private eTextInput: GridInputTextField;
@@ -107,30 +107,29 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatin
     protected readonly FilterModelFormatterClass = NumberFilterModelFormatter;
     private allowedCharPattern: string | null;
     protected readonly filterType = 'number';
-    protected readonly defaultOptions = DEFAULT_NUMBER_FILTER_OPTIONS;
+    protected readonly options = NUMBER_FILTER_OPTIONS;
 
     protected override updateParams(params: INumberFloatingFilterParams): void {
-        const allowedCharPattern = getAllowedCharPattern(params.filterParams as NumberFilterParams);
-        if (allowedCharPattern !== this.allowedCharPattern) {
+        const filterParams = params.filterParams as NumberFilterParams;
+        if (getAllowedCharPattern(filterParams) !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);
         }
         super.updateParams(params);
     }
 
     protected createFloatingFilterInputService(params: INumberFloatingFilterParams): FloatingFilterInputService {
-        this.allowedCharPattern = getAllowedCharPattern(params.filterParams as NumberFilterParams);
-        if (this.allowedCharPattern) {
-            // need to use text input
-            return this.createManagedBean(
-                new FloatingFilterTextInputService({
-                    config: { allowedCharPattern: this.allowedCharPattern },
-                })
-            );
+        const filterParams = params.filterParams as NumberFilterParams;
+        const allowedCharPattern = getAllowedCharPattern(filterParams);
+        this.allowedCharPattern = allowedCharPattern;
+        if (allowedCharPattern) {
+            return this.createManagedBean(new FloatingFilterTextInputService({ config: { allowedCharPattern } }));
         }
         return this.createManagedBean(new FloatingFilterNumberInputService());
     }
 
+    /** Read back through `numberParser`, which is the only thing that can read what a `numberFormatter` wrote. */
     protected override convertValue<TValue>(value: string | null | undefined): TValue | null {
-        return value ? (Number(value) as TValue) : null;
+        const numberParser = (this.params.filterParams as NumberFilterParams | undefined)?.numberParser;
+        return processNumberFilterValue(stringToFloat(numberParser, value)) as TValue | null;
     }
 }

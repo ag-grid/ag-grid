@@ -2,7 +2,7 @@ import { _parseBigIntOrNull } from 'ag-stack';
 
 import type { Comparator } from '../iScalarFilter';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
-import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
+import { BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { BigIntFilterModelFormatter } from './bigIntFilterModelFormatter';
 import { mapValuesFromBigIntFilterModel } from './bigIntFilterUtils';
 import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
@@ -12,7 +12,7 @@ export class BigIntFilterHandler extends ScalarFilterHandler<BigIntFilterModel, 
     protected readonly FilterModelFormatterClass = BigIntFilterModelFormatter;
 
     constructor() {
-        super(mapValuesFromBigIntFilterModel, DEFAULT_BIGINT_FILTER_OPTIONS);
+        super(mapValuesFromBigIntFilterModel, BIGINT_FILTER_OPTIONS);
     }
 
     protected override comparator(): Comparator<bigint> {

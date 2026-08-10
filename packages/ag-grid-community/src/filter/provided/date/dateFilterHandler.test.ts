@@ -178,6 +178,19 @@ describe('getOrRefreshRangeCacheItem', () => {
         expect(first.to).toBe(second.to);
     });
 
+    it('caches within the day when the clock is not at the epoch', () => {
+        // At the epoch a duration and an absolute timestamp coincide, hiding a cache that never hits.
+        vi.setSystemTime(new Date('2026-08-10T09:00:00Z'));
+        const handler = new DateFilterHandler();
+        const rangeFn = vi.fn(() => [new Date(1), new Date(2)] as [Date, Date]);
+
+        handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        vi.setSystemTime(new Date('2026-08-10T09:00:01Z'));
+        handler.getOrRefreshRangeCacheItem(key, rangeFn);
+
+        expect(rangeFn).toHaveBeenCalledTimes(1);
+    });
+
     it('refreshes the cache when expired', () => {
         const handler = new DateFilterHandler();
         const rangeFn = vi
