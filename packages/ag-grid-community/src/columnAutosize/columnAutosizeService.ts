@@ -59,12 +59,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     private strategyRunPending = false;
     /**
-     * Bumped when the strategy is applied as part of grid setup. A re-run requested before that
-     * point is superseded by it, so lifecycle events in `events` - the initial `modelUpdated`, say -
-     * do not size the columns a second time during startup.
+     * True while a setup application of the strategy is still expected. That application runs after
+     * anything happening now, so it supersedes a re-run requested while it is outstanding - lifecycle
+     * events in `events` - the initial `modelUpdated`, say - do not size the columns a second time
+     * during startup. Tracking the outstanding application rather than comparing timers keeps this
+     * correct however long setup takes.
      */
-    private strategyAppliedOnSetup = 0;
-    private strategyRunRequestedAt = -1;
+    private strategySetupPending = false;
     /** A re-run the grid was too narrow to serve, waiting for a width to become available. */
     private strategyRunDeferredForWidth = false;
     private readonly reRunStrategyDebounced = _debounce(this, () => this.reRunStrategy(), STRATEGY_RERUN_DEBOUNCE_MS);
@@ -80,10 +81,25 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         if (autoSizeStrategy) {
             let shouldHideColumns = false;
             const type = autoSizeStrategy.type;
+            // each strategy is applied once as part of setup, and only the branches below arrange
+            // that - width strategies from `columnModel` once the initial columns are loaded,
+            // `fitCellContents` on `firstDataRendered`
             if (type === 'fitGridWidth' || type === 'fitProvidedWidth') {
+                this.strategySetupPending = true;
                 shouldHideColumns = true;
             } else if (type === 'fitCellContents') {
-                this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy) });
+                this.strategySetupPending = true;
+                this.addManagedEventListeners({
+                    firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy),
+                    // `firstDataRendered` waits on a row being rendered, so a grid which has yet to
+                    // receive any rows is not waiting on a setup application at all - releasing here
+                    // stops configured events being swallowed for as long as the grid stays empty
+                    modelUpdated: () => {
+                        if (this.beans.rowModel.getRowCount() === 0) {
+                            this.strategySetupPending = false;
+                        }
+                    },
+                });
                 // Hide columns when we already have row data to display. This avoids jittering when we initially
                 // render columns at default width, only to immediately resize them when rows are rendered.
                 const rowData = gos.get('rowData');
@@ -109,7 +125,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (event.source && STRATEGY_SOURCES.has(event.source)) {
                 return;
             }
-            this.strategyRunRequestedAt = this.strategyAppliedOnSetup;
+            // the outstanding setup application runs after this event, and covers it
+            if (this.strategySetupPending) {
+                return;
+            }
             this.reRunStrategyDebounced();
         };
         const handlers: Partial<Record<AgPublicEventType, (event: StrategyTriggerEvent) => void>> = {};
@@ -131,10 +150,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     private reRunStrategy(): void {
-        // the setup application has run since this was requested, and covers it
-        if (this.strategyRunRequestedAt !== this.strategyAppliedOnSetup) {
-            return;
-        }
         // a background tab never services its animation frames, so without this every debounce
         // window spent hidden would queue another run, all firing at once when the tab is revealed
         if (this.strategyRunPending) {
@@ -700,7 +715,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 return;
             }
             this.applyStrategy(strategy);
-            this.strategyAppliedOnSetup++;
+            this.strategySetupPending = false;
             this.beans.colDelayRenderSvc?.revealColumns(strategy.type);
         });
     }

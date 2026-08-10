@@ -301,6 +301,24 @@ describe('autoSizeStrategy events', () => {
             expect(resizeBatches()).toBe(1);
         });
 
+        test('a lifecycle event is superseded however late the data it waits on arrives', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                autoSizeStrategy: { type: 'fitCellContents', skipHeader: true, events: ['gridReady'] },
+            });
+            const resizeBatches = countResizeBatches(api);
+
+            // `gridReady` fires long before this data, and so before the setup application it
+            // ultimately triggers - the strategy still runs once, after the rows are rendered
+            await settleStrategyWindow();
+            api.setGridOption('rowData', [{ a: 'x', b: 'y', c: 'z' }]);
+
+            await waitFor(() => expect(widths(api)).toEqual([100, 100, 100]));
+            await settleStrategyWindow();
+
+            expect(resizeBatches()).toBe(1);
+        });
+
         test('an event after setup still re-runs the strategy', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,

@@ -2,8 +2,12 @@
  * `autoSizeStrategy.events` — the reported scenarios the option exists to solve.
  *
  * Each case configures the grid event that covers one of them and asserts the strategy ran after
- * the grid rendered what that event describes: columns scrolled into view, rows scrolled into view,
- * a server-side page change, and data arriving after the grid was created.
+ * the grid rendered what that event describes: a change to the rendered columns, a change to the
+ * rendered row range, a server-side page change, and data arriving after the grid was created.
+ *
+ * jsdom renders every row and column at once, so scrolling changes neither rendered set and the
+ * virtualisation events never fire for it. The first two cases therefore change the rendered set
+ * directly - the same events, reached the only way this harness can reach them.
  *
  * jsdom reports 0 px for the autosize measuring container, so `fitCellContents` lands every column
  * on its `minWidth`. A re-run is therefore observable by widening a column by hand, firing the
@@ -49,11 +53,12 @@ describe('autoSizeStrategy events - reported scenarios', () => {
 
     const widthOf = (api: GridApi, colId: string): number => api.getColumn(colId)!.getActualWidth();
 
-    const viewportOf = (api: GridApi): HTMLElement =>
-        TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
-
-    /** TC2 — columns virtualised out of view are not measured, so scrolling them in must re-run. */
-    test('re-runs when horizontal scrolling brings columns into view', async () => {
+    /**
+     * TC2 — columns virtualised out of view are not measured, so bringing them into the rendered set
+     * must re-run. jsdom renders every column at once, so the rendered set is changed here by adding
+     * a column rather than by scrolling one in; `virtualColumnsChanged` is the event either produces.
+     */
+    test('re-runs when the rendered columns change', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData: [{ a: 'x', b: 'y', c: 'z' }],
@@ -64,13 +69,17 @@ describe('autoSizeStrategy events - reported scenarios', () => {
         api.setColumnWidths([{ key: 'a', newWidth: 400 }]);
         expect(widthOf(api, 'a')).toBe(400);
 
-        api.ensureColumnVisible('c');
+        api.setGridOption('columnDefs', [...columnDefs, { colId: 'd', minWidth: 100, width: 200 }]);
 
         await waitFor(() => expect(widthOf(api, 'a')).toBe(100));
     });
 
-    /** TC4 — rows scrolled into view carry values the earlier run never measured. */
-    test('re-runs when vertical scrolling renders new rows', async () => {
+    /**
+     * TC4 — rows scrolled into view carry values the earlier run never measured. jsdom renders every
+     * row at once, so the rendered range is changed here by adding rows rather than by scrolling to
+     * them; `viewportChanged` is the event either produces.
+     */
+    test('re-runs when the rendered row range changes', async () => {
         const rowData = Array.from({ length: 200 }, (_, i) => ({ a: `row ${i}`, b: 'y', c: 'z' }));
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
@@ -82,7 +91,7 @@ describe('autoSizeStrategy events - reported scenarios', () => {
         api.setColumnWidths([{ key: 'a', newWidth: 400 }]);
         expect(widthOf(api, 'a')).toBe(400);
 
-        viewportOf(api).scrollTop = 2000;
+        api.applyTransaction({ add: [{ a: 'row 200', b: 'y', c: 'z' }] });
 
         await waitFor(() => expect(widthOf(api, 'a')).toBe(100));
     });
