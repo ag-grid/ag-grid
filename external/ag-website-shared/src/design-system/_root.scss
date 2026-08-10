@@ -61,6 +61,10 @@
     --text-semibold: 600;
     --text-bold: 700;
 
+    // Ratios, for a line-height inherited by a subtree: a length is inherited as-is, so descendants
+    // with a different font-size would keep the ancestor's line box. Pair --text-lh-<step> with its
+    // own --text-fs-<step> only.
+    --text-lh-ratio-base: 1.4;
     --text-lh-tight: 1.2;
     --text-lh-ultra-tight: 1;
 
