@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import { vi } from 'vitest';
 
 import type { GridApi, GridOptions, GridState, Module, UserColumnProperty } from 'ag-grid-community';
 import {
@@ -124,12 +125,14 @@ describe('calculated columns - grid state persistence', () => {
         getDialog()
             .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
             .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-        await asyncSetTimeout(1);
-        const option = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).find(
-            (element) => element.textContent?.trim() === label
-        );
-        expect(option).toBeTruthy();
-        option!.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        const option = await waitFor(() => {
+            const found = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).find(
+                (element) => element.textContent?.trim() === label
+            );
+            expect(found).toBeTruthy();
+            return found!;
+        });
+        option.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
     }
 
     function clickDialogButton(label: string): void {
@@ -145,16 +148,20 @@ describe('calculated columns - grid state persistence', () => {
     async function addViaDialog(api: GridApi, anchorColId: string, expression: string): Promise<string> {
         const before = new Set(order(api));
         api.showColumnMenu(anchorColId);
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getDialog());
         setExpression(expression);
         clickDialogButton('Apply');
-        // Wait past the live-apply animation frame so no expression flush is in flight when the
-        // caller starts toggling columns (under the default 'live' mode Apply is a no-op).
-        await asyncSetTimeout(40);
-        const added = order(api).filter((id) => !before.has(id));
-        expect(added).toHaveLength(1);
+        // Under the default 'live' mode, "Add" creates the column up front (with an empty expression)
+        // and opens the dialog over it, so the new colId is in `order()` immediately — before the
+        // rAF-coalesced live-apply flush (`scheduleLiveApplyUpdate`) commits the typed expression. Poll
+        // for the expression itself landing, not just the column's presence.
+        const added = await waitFor(() => {
+            const result = order(api).filter((id) => !before.has(id));
+            expect(result).toHaveLength(1);
+            expect(api.getColumn(result[0])!.getColDef().calculatedExpression).toBeTruthy();
+            return result;
+        });
         return added[0];
     }
 
@@ -165,9 +172,12 @@ describe('calculated columns - grid state persistence', () => {
         edits: { expression?: string; title?: string }
     ): Promise<void> {
         api.showColumnMenu(colId);
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Edit Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getDialog());
+        // Only an actual edit schedules a live-apply flush (a no-op Apply, as used to merely open the
+        // dialog, never fires the draft-change listener), so only then is there a flush to wait for.
+        const willChange = edits.title !== undefined || edits.expression !== undefined;
+        const colDefBefore = willChange ? api.getColumn(colId)!.getColDef() : undefined;
         if (edits.title !== undefined) {
             setTitle(edits.title);
         }
@@ -175,16 +185,17 @@ describe('calculated columns - grid state persistence', () => {
             setExpression(edits.expression);
         }
         clickDialogButton('Apply');
-        await asyncSetTimeout(40);
+        if (willChange) {
+            await waitFor(() => expect(api.getColumn(colId)!.getColDef()).not.toBe(colDefBefore));
+        }
     }
 
     /** Removes a dynamic calc col through its header menu — dynamic calc cols are not in `columnDefs`,
      *  so the menu's "Remove Calculated Column" action is the only way a user can drop one. */
     async function removeViaMenu(api: GridApi, colId: string): Promise<void> {
         api.showColumnMenu(colId);
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Remove Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getColumn(colId)).toBeNull());
     }
 
     // === core repro: initialState round-trip =====================================================
@@ -373,15 +384,15 @@ describe('calculated columns - grid state persistence', () => {
 
         // Reopen the column menu and edit the expression live (default apply mode).
         api.showColumnMenu(calcId);
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Edit Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getDialog());
         setExpression('[A] * 3');
         await waitFor(() => expect(api.getColumn(calcId)!.getColDef().calculatedExpression).toBe('[a] * 3'));
         clickDialogButton('Apply');
-        await asyncSetTimeout(40);
 
-        expect(propertiesOf(api.getState(), calcId)).toMatchObject({ calculatedExpression: '[a] * 3' });
+        await waitFor(() =>
+            expect(propertiesOf(api.getState(), calcId)).toMatchObject({ calculatedExpression: '[a] * 3' })
+        );
     });
 
     // === non-lossy when the feature is disabled: provided userColumns survive a re-save ==========
@@ -974,17 +985,17 @@ describe('calculated columns - grid state persistence', () => {
         });
 
         api.showColumnMenu('a');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getDialog());
         setExpression('[A] * 2');
         // Typing does not commit under deferred mode, so nothing is persisted yet.
         expect(order(api)).toEqual(['a', 'b']);
         expect(api.getState().userColumns).toBeUndefined();
 
         clickDialogButton('Apply');
-        await asyncSetTimeout(1);
-        expect(propertiesOf(api.getState(), 'calculated_1')).toMatchObject({ calculatedExpression: '[a] * 2' });
+        await waitFor(() =>
+            expect(propertiesOf(api.getState(), 'calculated_1')).toMatchObject({ calculatedExpression: '[a] * 2' })
+        );
     });
 
     test('under deferred apply mode a cancelled dialog leaves the state untouched', async () => {
@@ -995,13 +1006,14 @@ describe('calculated columns - grid state persistence', () => {
         });
 
         api.showColumnMenu('a');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getDialog());
         setExpression('[A] * 2');
         clickDialogButton('Cancel');
-        await asyncSetTimeout(1);
 
+        // Gate on the cancellation completing (the dialog closing), not on the pre-cancel column order —
+        // that already held, so polling it would let a delayed erroneous commit slip through.
+        await waitFor(() => expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0));
         expect(order(api)).toEqual(['a', 'b']);
         expect(api.getState().userColumns).toBeUndefined();
     });
@@ -1014,20 +1026,17 @@ describe('calculated columns - grid state persistence', () => {
         });
 
         api.showColumnMenu('a');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getDialog());
         setExpression('[A] * 2');
         clickDialogButton('Apply');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getColumn('calculated_1')).toBeTruthy());
 
         api.showColumnMenu('calculated_1');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Edit Calculated Column');
-        await asyncSetTimeout(1);
+        await waitFor(() => getDialog());
         setExpression('[A] * 3');
         clickDialogButton('Cancel');
-        await asyncSetTimeout(1);
 
         expect(propertiesOf(api.getState(), 'calculated_1')).toMatchObject({ calculatedExpression: '[a] * 2' });
     });
@@ -1185,6 +1194,8 @@ describe('calculated columns - grid state persistence', () => {
         // does when the developer ignores that: identity falls back to the build's positional ids, which
         // the layer cannot match, so nothing the user does through the dialog takes effect.
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
+        // Suppression stops the throw but not the log, by design, so hold the console and assert #319 fires.
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const anonymousColumnDefs = (): GridOptions['columnDefs'] => [
             { field: 'a' },
             { field: 'b' },
@@ -1200,6 +1211,8 @@ describe('calculated columns - grid state persistence', () => {
         });
         // With neither colId nor field to key on, both calc cols land on positional ids.
         await waitFor(() => expect(order(source)).toEqual(['a', 'b', '0', '1']));
+        expect(warn.mock.calls.flat().join(' ')).toContain('#319');
+        warn.mockRestore();
 
         await editViaDialog(source, '0', { title: 'Renamed Sum' });
         // The rename is dropped by the rebuild the edit triggers: the entry it wrote is keyed by the
@@ -1533,10 +1546,8 @@ describe('calculated columns - grid state persistence', () => {
         });
         await waitFor(() => expect(order(api)).toEqual(['a', 'b', 'declared']));
         api.showColumnMenu('declared');
-        await asyncSetTimeout(10);
         await clickColumnMenuItem('Edit Calculated Column');
-        await asyncSetTimeout(1);
-        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
+        await waitFor(() => expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1));
 
         // The dialog edits a column the state has just deleted, so it cannot be left open — same
         // contract as removing the column through its header menu.

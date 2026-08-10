@@ -1,7 +1,9 @@
+import { waitFor } from '@testing-library/dom';
+
 import { PaginationModule, TextEditorModule, enableDevValidations } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
 
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /**
  * Tests for find options: case sensitivity, pagination, etc.
@@ -49,10 +51,8 @@ describe('Find Options', () => {
                     └── LEAF id:3 value:"aPpLe"
                 `
             );
-            await asyncSetTimeout(1);
-
             // All variations should match when case-insensitive
-            expect(api.findGetTotalMatches()).toBe(4);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(4));
         });
 
         test('caseSensitive option makes find case-sensitive', async () => {
@@ -91,10 +91,8 @@ describe('Find Options', () => {
                 ├── LEAF id:2 value:"apple"
                 └── LEAF id:3 value:"aPpLe"
             `);
-            await asyncSetTimeout(1);
-
             // Only exact case match
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             // Verify it's the lowercase one
             api.findNext();
@@ -133,10 +131,8 @@ describe('Find Options', () => {
                 ├── LEAF id:0 value:"Apple"
                 └── LEAF id:1 value:"apple"
             `);
-            await asyncSetTimeout(1);
-
             // Case-insensitive: both match
-            expect(api.findGetTotalMatches()).toBe(2);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(2));
 
             // Enable case sensitivity
             api.setGridOption('findOptions', { caseSensitive: true });
@@ -153,10 +149,8 @@ describe('Find Options', () => {
                     ├── LEAF id:0 value:"Apple"
                     └── LEAF id:1 value:"apple"
                 `);
-            await asyncSetTimeout(1);
-
             // Only exact case match
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             // Disable case sensitivity
             api.setGridOption('findOptions', { caseSensitive: false });
@@ -175,10 +169,8 @@ describe('Find Options', () => {
                 ├── LEAF id:0 value:"Apple"
                 └── LEAF id:1 value:"apple"
             `);
-            await asyncSetTimeout(1);
-
             // Both match again
-            expect(api.findGetTotalMatches()).toBe(2);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(2));
         });
     });
 
@@ -255,18 +247,15 @@ describe('Find Options', () => {
                 ├── LEAF id:4 value:"apple"
                 └── LEAF id:5 value:"cherry"
             `);
-            await asyncSetTimeout(1);
-
             // First page has 2 apples (rows 0, 1)
-            expect(api.findGetTotalMatches()).toBe(2);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(2));
 
             // Navigate to second page
             api.paginationGoToPage(1);
-            await asyncSetTimeout(1);
+            expect(api.paginationGetCurrentPage()).toBe(1);
 
             // Second page has 2 apples (rows 3, 4)
             api.findRefresh();
-            await asyncSetTimeout(1);
             expect(api.findGetTotalMatches()).toBe(2);
         });
 
@@ -329,10 +318,8 @@ describe('Find Options', () => {
                 ├── LEAF id:4 value:"apple"
                 └── LEAF id:5 value:"cherry"
             `);
-            await asyncSetTimeout(1);
-
             // All 4 apples across all pages
-            expect(api.findGetTotalMatches()).toBe(4);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(4));
         });
     });
 
@@ -367,8 +354,7 @@ describe('Find Options', () => {
                     └── LEAF id:2 value:"cherry"
                 `
             );
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             api.setGridOption('findSearchValue', 'banana');
             await new GridColumns(api, `changing search value updates matches after setGridOption findSearchValue #2`)
@@ -383,8 +369,7 @@ describe('Find Options', () => {
                     ├── LEAF id:1 value:"banana"
                     └── LEAF id:2 value:"cherry"
                 `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             api.setGridOption('findSearchValue', 'a');
             await new GridColumns(api, `changing search value updates matches after setGridOption findSearchValue #3`)
@@ -399,10 +384,9 @@ describe('Find Options', () => {
                     ├── LEAF id:1 value:"banana"
                     └── LEAF id:2 value:"cherry"
                 `);
-            await asyncSetTimeout(1);
             // 'apple', 'banana' contain multiple 'a's
             // apple has 1 'a', banana has 3 'a's = 4 total
-            expect(api.findGetTotalMatches()).toBe(4);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(4));
         });
 
         test('empty search value clears matches', async () => {
@@ -431,8 +415,7 @@ describe('Find Options', () => {
                 ├── LEAF id:0 value:"apple"
                 └── LEAF id:1 value:"banana"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBeGreaterThan(0);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBeGreaterThan(0));
 
             api.findNext();
             expect(api.findGetActiveMatch()).toBeDefined();
@@ -451,9 +434,7 @@ describe('Find Options', () => {
                     └── LEAF id:1 value:"banana"
                 `
             );
-            await asyncSetTimeout(1);
-
-            expect(api.findGetTotalMatches()).toBe(0);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(0));
             expect(api.findGetActiveMatch()).toBeUndefined();
         });
 
@@ -483,8 +464,7 @@ describe('Find Options', () => {
                     └── LEAF id:0 value:"apple"
                 `
             );
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             api.setGridOption('findSearchValue', undefined);
             await new GridColumns(api, `undefined search value clears matches after setGridOption findSearchValue #2`)
@@ -497,9 +477,7 @@ describe('Find Options', () => {
                     ROOT id:ROOT_NODE_ID
                     └── LEAF id:0 value:"apple"
                 `);
-            await asyncSetTimeout(1);
-
-            expect(api.findGetTotalMatches()).toBe(0);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(0));
         });
     });
 });

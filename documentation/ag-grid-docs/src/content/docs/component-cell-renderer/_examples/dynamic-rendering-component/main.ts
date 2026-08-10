@@ -12,8 +12,8 @@ import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidati
 import { GenderRenderer } from './genderRenderer_typescript';
 import { MoodRenderer } from './moodRenderer_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

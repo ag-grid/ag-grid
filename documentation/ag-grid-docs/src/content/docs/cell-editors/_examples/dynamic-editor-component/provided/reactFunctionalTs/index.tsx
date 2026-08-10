@@ -25,8 +25,8 @@ import MoodEditor from './moodEditor';
 import NumericCellEditor from './numericCellEditor';
 import './styles.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

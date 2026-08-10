@@ -23,7 +23,7 @@
         align-items: center;
         text-align: center;
         height: 100%;
-        padding: $spacing-size-4;
+        padding: $spacing-size-5 $spacing-size-4 $spacing-size-4;
 
         @media screen and (min-width: $breakpoint-pricing-medium) {
             align-items: flex-start;
@@ -204,6 +204,14 @@ p.name {
 
 /* mobile breakpoint responsive */
 @media screen and (max-width: $breakpoint-pricing-medium) {
+    .enterpriseTier {
+        background-color: var(--pricing-tint-enterprise);
+    }
+
+    .bundleTier {
+        background-color: var(--pricing-tint-bundle);
+    }
+
     .license {
         border: 1px solid var(--color-border-secondary);
         padding-bottom: $spacing-size-6;

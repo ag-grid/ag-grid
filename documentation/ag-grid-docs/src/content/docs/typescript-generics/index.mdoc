@@ -200,7 +200,15 @@ The `TValue` generic type is also supported for cell renderers / editors by `ICe
 
 ### Typed: TValue | null | undefined
 
-For a number of events and callbacks when a generic interface is provided, the `value` property is typed as `TValue | null | undefined` instead of `any`. This is because it is possible for the `value` property to be `undefined` under certain grid configurations, and it can be `null` when cell editing is enabled and the value has been deleted.
+For a number of events and callbacks when a generic interface is provided, the `value` property is typed as `TValue | null | undefined` instead of `any`. `value` is nullable because the grid calls these callbacks in situations where there is no underlying value to provide:
+
+- Group rows, which have no row `data` of their own, so any `field`-based value is unresolved.
+- Rows whose data has not yet loaded, e.g. with the [Server-Side Row Model](./server-side-model/).
+- A `field` that is absent from the row data.
+
+Callbacks must handle `null` and `undefined` themselves - the grid does not filter them out before invoking your callback.
+
+Annotating `ColDef<TData, TValue>` (or the relevant params interface) turns property access and arithmetic on `params.value` into compile errors, e.g. `params.value.toFixed(2)` or `params.value * 2`. It does not catch every mistake: string concatenation and template interpolation, e.g. `'£' + params.value` or `` `${params.value}` ``, still compile even though they render `"undefined"` for an unhandled value, so these still need an explicit `== null` check.
 
 ## Context: \<TContext>
 

@@ -176,6 +176,7 @@ import type {
     PaginationPanel,
     PasteEndEvent,
     PasteStartEvent,
+    PdfExportParams,
     PinnedRowDataChangedEvent,
     PinnedRowsChangedEvent,
     PivotColumnGroupTotals,
@@ -775,6 +776,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public suppressExcelExport: boolean | undefined = undefined;
+    /** A default configuration object used to export to PDF.
+     * @agModule `PdfExportModule`
+     */
+    @Input() public defaultPdfExportParams: PdfExportParams | undefined = undefined;
+    /** Prevents the user from exporting the grid to PDF.
+     * @default false
+     */
+    @Input({ transform: booleanAttribute }) public suppressPdfExport: boolean | undefined = undefined;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.
      * @initial
      * @agModule `ExcelExportModule`
@@ -1572,6 +1581,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public suppressGroupRowsSticky: boolean | undefined = undefined;
+    /** Maximum share of the viewport height that each sticky row section (top or bottom) may occupy, as a number between 0 and 1.
+     * Rows that do not fit within the resulting height budget do not stick and scroll normally instead.
+     * @default 0.5
+     * @agModule `RowGroupingModule` / `TreeDataModule` / `ServerSideRowModelModule`
+     */
+    @Input() public stickyRowsMaxViewportRatio: number | undefined = undefined;
     /** Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
      * @agModule `RowGroupingModule`
      */

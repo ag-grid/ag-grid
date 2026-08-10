@@ -15,8 +15,8 @@ import { FindModule } from 'ag-grid-enterprise';
 
 import './styles.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

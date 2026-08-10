@@ -9,14 +9,15 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
 ModuleRegistry.registerModules([RowApiModule, CellStyleModule, ClientSideRowModelModule, HighlightChangesModule]);
 
 let gridApi: GridApi;
+let updateInterval: ReturnType<typeof setInterval>;
 
 function formatNumber(number: number) {
     return Math.floor(number).toLocaleString();
@@ -41,6 +42,11 @@ const gridOptions: GridOptions = {
     rowData: createRowData(),
     onGridReady: () => {
         const updateValues = () => {
+            // The timer outlives the grid, so stop once it is gone rather than calling a destroyed API.
+            if (gridApi!.isDestroyed()) {
+                clearInterval(updateInterval);
+                return;
+            }
             const rowCount = gridApi!.getDisplayedRowCount();
             // pick 2 cells at random to update
             for (let i = 0; i < 2; i++) {
@@ -51,7 +57,7 @@ const gridOptions: GridOptions = {
             }
         };
 
-        setInterval(updateValues, 250);
+        updateInterval = setInterval(updateValues, 250);
     },
 };
 

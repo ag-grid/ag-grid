@@ -100,6 +100,7 @@ export interface ICellEditor<TValue = any> extends BaseCellEditor {
 }
 
 export interface IErrorValidationParams<TData = any, TValue = any, TContext = any> {
+    /** The value being validated. May be `null` or `undefined` — for example if the editor was cleared; the callback must handle this. */
     value: TValue | null | undefined;
     internalErrors: string[] | null;
     cellEditorParams: ICellEditorParams<TData, TValue, TContext>;
@@ -109,7 +110,7 @@ export interface ICellEditorParamsShared<TData = any, TValue = any, TContext = a
     TData,
     TContext
 > {
-    /** Current value of the cell */
+    /** Current value of the cell. May be `null` or `undefined` — for example on group rows or when the `field` is absent from the row data; the callback must handle this. */
     value: TValue | null | undefined;
     /** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable
      *  characters appear here */
@@ -160,7 +161,7 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
 > {
     /** Utility function to parse a value using the column's `colDef.valueParser` */
     parseValue: (value: string) => TValue | null | undefined;
-    /** Utility function to format a value using the column's `colDef.valueFormatter` */
+    /** Utility function to format a value using the column's `colDef.valueFormatter`. The `value` argument may be `null` or `undefined`; callers should handle this. */
     formatValue: (value: TValue | null | undefined) => string;
 }
 

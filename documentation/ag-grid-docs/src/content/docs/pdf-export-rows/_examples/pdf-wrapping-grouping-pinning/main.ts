@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, PdfExportParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -7,10 +7,10 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { PdfExportModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { ContextMenuModule, PdfExportModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -19,6 +19,7 @@ ModuleRegistry.registerModules([
     PinnedRowModule,
     RowAutoHeightModule,
     RowGroupingModule,
+    ContextMenuModule,
     PdfExportModule,
 ]);
 
@@ -111,19 +112,26 @@ const gridOptions: GridOptions<ProjectData> = {
     ],
 };
 
-function onBtExport() {
+function getPdfExportParams(): PdfExportParams {
     const includeTop = document.querySelector<HTMLInputElement>('#includeTop')!.checked;
     const includeBottom = document.querySelector<HTMLInputElement>('#includeBottom')!.checked;
     const limitLines = document.querySelector<HTMLInputElement>('#limitLines')!.checked;
 
-    gridApi.exportDataAsPdf({
+    return {
         rowGroupIndentSize: 16,
         skipPinnedTop: !includeTop,
         skipPinnedBottom: !includeBottom,
-        maxLines: limitLines ? 2 : undefined,
-        overflow: 'ellipsis',
+        defaultCellStyle: {
+            maxLines: limitLines ? 2 : undefined,
+            overflow: 'ellipsis',
+        },
         columnWidth: ({ column }) => (column?.getColId() === 'summary' ? 190 : 'auto'),
-    });
+    };
+}
+
+function onBtExport() {
+    gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+    gridApi.exportDataAsPdf();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

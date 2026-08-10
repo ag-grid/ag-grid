@@ -5,7 +5,6 @@ import type { DateFilterModel } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     DateFilterModule,
-    NumberFilterModule,
     TextFilterModule,
     agTestIdFor,
     getGridElement,
@@ -13,119 +12,6 @@ import {
 } from 'ag-grid-community';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
-
-describe('Number Range Filter', () => {
-    const gridsManager = new TestGridsManager({
-        modules: [NumberFilterModule, ClientSideRowModelModule, TextFilterModule, DateFilterModule],
-    });
-
-    beforeAll(() => setupAgTestIds());
-    afterEach(() => gridsManager.reset());
-
-    test('Filter displays validation error state in last touched input when invalid range entered', async () => {
-        const userSession = userEvent.setup();
-
-        const api = await gridsManager.createGridAndWait('grid1', {
-            columnDefs: [
-                {
-                    field: 'gold',
-                    filter: 'agNumberColumnFilter',
-                    filterParams: {
-                        filterOptions: ['inRange'],
-                    },
-                },
-            ],
-            rowData: [
-                { country: 'Ireland', gold: 2 },
-                { country: 'Mexico', gold: 8 },
-                { country: 'Italy', gold: 3 },
-            ],
-        });
-        await new GridColumns(
-            api,
-            `Filter displays validation error state in last touched input when invalid range  setup`
-        ).checkColumns(`
-            CENTER
-            └── gold "Gold" width:200
-        `);
-        await new GridRows(
-            api,
-            `Filter displays validation error state in last touched input when invalid range  setup`
-        ).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 gold:2
-            ├── LEAF id:1 gold:8
-            └── LEAF id:2 gold:3
-        `);
-
-        const gridDiv = getGridElement(api)! as HTMLElement;
-
-        // Wait for next tick, filters are async
-        await asyncSetTimeout(0);
-
-        const filterBtn = getByTestId(gridDiv, agTestIdFor.headerFilterButton('gold'));
-        await userSession.click(filterBtn);
-
-        const fromNumberInput = getByTestId<HTMLInputElement>(
-            gridDiv,
-            agTestIdFor.numberFilterInstanceInput({ source: 'column-filter', index: 0 })
-        );
-        const toNumberInput = getByTestId<HTMLInputElement>(
-            gridDiv,
-            agTestIdFor.numberFilterInstanceInput({ source: 'column-filter', index: 1 })
-        );
-
-        await userSession.type(fromNumberInput, '1');
-        await userSession.type(toNumberInput, '5');
-
-        expect(fromNumberInput.valueAsNumber).toBe(1);
-        expect(toNumberInput.valueAsNumber).toBe(5);
-        expect(toNumberInput.validity.valid).toBe(true);
-        await waitFor(() => {
-            expect(api.getFilterModel()).toEqual({
-                gold: {
-                    filter: 1,
-                    filterTo: 5,
-                    filterType: 'number',
-                    type: 'inRange',
-                },
-            });
-        });
-
-        await userSession.type(fromNumberInput, '0');
-        expect(fromNumberInput.valueAsNumber).toBe(10);
-        expect(fromNumberInput.validity.valid).toBe(false);
-        expect(fromNumberInput).toHaveAttribute('aria-invalid', 'true');
-
-        // Click away to make the filter disappear
-        await userSession.click(getByTestId(gridDiv, agTestIdFor.cell('2', 'gold')));
-
-        // Click to get the filter back again
-        await userSession.click(filterBtn);
-
-        // When re-opening, validity state defaults to the "to" input
-        expect(fromNumberInput.valueAsNumber).toBe(10);
-        expect(toNumberInput.valueAsNumber).toBe(5);
-        expect(toNumberInput.validity.valid).toBe(false);
-        expect(toNumberInput).toHaveAttribute('aria-invalid', 'true');
-
-        // Delete content of from input
-        await userSession.type(fromNumberInput, `{Backspace}{Backspace}`);
-
-        expect(fromNumberInput.valueAsNumber).toBeNaN();
-        expect(toNumberInput.valueAsNumber).toBe(5);
-        expect(toNumberInput.validity.valid).toBe(true);
-        expect(toNumberInput).toHaveAttribute('aria-invalid', 'false');
-        await new GridRows(
-            api,
-            `Filter displays validation error state in last touched input when invalid range  final state`
-        ).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 gold:2
-            └── LEAF id:2 gold:3
-        `);
-    });
-});
 
 async function selectFilterOption(gridDiv: HTMLElement, userSession: any, optionText: string): Promise<void> {
     const pickerDisplay = getAllByTestId(
@@ -420,7 +306,9 @@ describe('Date Range Filter', () => {
 
             const reportsOnOpen = reportSpy.mock.calls.length;
 
-            // Let the 500ms date-report debounce window elapse.
+            // Let the 500ms date-report debounce window elapse. The assertion below is negative (no
+            // second report was scheduled), so it can only be made once the window has closed.
+            // eslint-disable-next-line no-restricted-syntax -- waits for the 500ms date validity-report debounce window (dateCompWrapper.ts) to elapse
             await asyncSetTimeout(600);
 
             // The tooltip must render once and stay stable: the focusin from the focus steal recomputes
@@ -473,7 +361,10 @@ describe('Date Range Filter', () => {
         toDateInput.dispatchEvent(new Event('input', { bubbles: true }));
         toDateInput.dispatchEvent(new Event('change', { bubbles: true }));
 
-        // Let the debounced report from typing land, so the invalid bubble is stably shown.
+        // Let the debounced report from typing land, so the invalid bubble is stably shown. The spy
+        // installed below must see zero calls, so the pending debounce has to drain first — there is
+        // no positive signal to poll for, only the absence of further reports.
+        // eslint-disable-next-line no-restricted-syntax -- waits for the 500ms date validity-report debounce window (dateCompWrapper.ts) to elapse
         await asyncSetTimeout(600);
 
         expect(toDateInput.validity.valid).toBe(false);
@@ -486,6 +377,7 @@ describe('Date Range Filter', () => {
             // native validation bubble blinks (disappears then reappears) on every tab return.
             toDateInput.dispatchEvent(new Event('focusin', { bubbles: true }));
 
+            // eslint-disable-next-line no-restricted-syntax -- waits for the 500ms date validity-report debounce window (dateCompWrapper.ts) to elapse; the assertion below is negative
             await asyncSetTimeout(600);
 
             expect(reportSpy).not.toHaveBeenCalled();
@@ -538,9 +430,14 @@ describe('Date Range Filter', () => {
         toDateInput.dispatchEvent(new Event('change', { bubbles: true }));
 
         // Let the debounced report from typing land, so the invalid bubble is stably shown on `to`.
+        // The spy installed below must only see the report triggered by the focus change, so the
+        // pending debounce from typing has to drain first — nothing positive to poll for.
+        // eslint-disable-next-line no-restricted-syntax -- waits for the 500ms date validity-report debounce window (dateCompWrapper.ts) to elapse
         await asyncSetTimeout(600);
 
         expect(toDateInput.validity.valid).toBe(false);
+        // The message names the bound the focused input has to respect: `to` must come after `from`.
+        expect(toDateInput.validationMessage).toMatch(/^Date must be after /);
 
         const reportSpy = vi.spyOn(HTMLInputElement.prototype, 'reportValidity');
 
@@ -549,12 +446,80 @@ describe('Date Range Filter', () => {
             // so the message changes and the bubble must follow focus by re-reporting on `from`.
             fromDateInput.dispatchEvent(new Event('focusin', { bubbles: true }));
 
-            await asyncSetTimeout(600);
+            // Poll for the re-report (it lands after the 500ms debounce) rather than guessing a delay.
+            await waitFor(() => expect(reportSpy).toHaveBeenCalled(), { timeout: 2000 });
 
-            expect(reportSpy).toHaveBeenCalled();
             expect(fromDateInput.validity.valid).toBe(false);
+            // Mirrored for the other input: `from` must come before `to`.
+            expect(fromDateInput.validationMessage).toMatch(/^Date must be before /);
+            expect(toDateInput.validationMessage).toBe('');
         } finally {
             reportSpy.mockRestore();
         }
+    });
+
+    /**
+     * The range check compares the parsed dates, so it is only as good as the parse. A year outside
+     * 1000-9999 and an identical from/to pair are the two boundaries the descending 4-digit pairs
+     * used above never reach.
+     */
+    describe.each([
+        ['an end year before 100AD', '1999-10-10', '0099-12-19'],
+        ['an end date equal to the start date', '2024-06-15', '2024-06-15'],
+    ])('rejects a range with %s', (_, fromValue, toValue) => {
+        test('flags the to input as invalid and applies no filter', async () => {
+            const userSession = userEvent.setup();
+
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    {
+                        field: 'date',
+                        filter: 'agDateColumnFilter',
+                        filterParams: {
+                            filterOptions: ['inRange'],
+                        },
+                    },
+                ],
+                rowData: [{ date: '2024-01-15' }, { date: '2024-06-15' }, { date: '2024-12-15' }],
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            await asyncSetTimeout(0);
+
+            await userSession.click(getByTestId(gridDiv, agTestIdFor.headerFilterButton('date')));
+
+            await asyncSetTimeout(0);
+
+            const fromDateInput = getByTestId<HTMLInputElement>(
+                gridDiv,
+                agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 0 })
+            );
+            const toDateInput = getByTestId<HTMLInputElement>(
+                gridDiv,
+                agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 1 })
+            );
+
+            // Assigning the string rather than `valueAsDate` keeps the four-digit form the browser
+            // date picker produces, which is what the filter parses.
+            fromDateInput.value = fromValue;
+            fromDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+            fromDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+            toDateInput.value = toValue;
+            toDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+            toDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+            await asyncSetTimeout(0);
+
+            expect(toDateInput.validity.valid).toBe(false);
+            expect(api.getFilterModel()).toEqual({});
+
+            await new GridRows(api, `invalid range leaves rows unfiltered`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 date:"2024-01-15"
+                ├── LEAF id:1 date:"2024-06-15"
+                └── LEAF id:2 date:"2024-12-15"
+            `);
+        });
     });
 });

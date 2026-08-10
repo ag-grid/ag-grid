@@ -245,8 +245,15 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             api.applyTransaction({
                 update: [{ name: 'a', value: i }],
             });
-            // Allow debounced RowSpanService timeouts to dispatch spannedCellsUpdated
-            await asyncSetTimeout(5);
+            // RowSpanService chains two 0-delay timers (modelTimeout -> buildModelCaches ->
+            // debounceModelEvent -> spannedCellsUpdated), so a single tick is not enough. With
+            // enableCellSpan off there is no event to poll for — and if the chain never runs, no RAFs
+            // are scheduled and the accumulation assertion below passes vacuously.
+            // Both links are 0-delay (rowSpanService `modelTimeout` then the `_debounce(…, 0)`), so
+            // draining them is a fixed number of ticks, not a guessed window.
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
             // Flush animation frame tasks (simulates what happens during scroll/focus)
             api.flushAllAnimationFrames();
         }
@@ -307,8 +314,14 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             └── LEAF id:c name:"c" value:3
         `);
 
-        // Allow RowSpanService timeouts and events to process
-        await asyncSetTimeout(50);
+        // Negative assertion: the test exists to prove the span cycle completes without error, so it
+        // needs the whole chain to run. A single tick can return before RowSpanService's second
+        // 0-delay timer fires, leaving the cycle half-done and the assertion vacuous. Both links are
+        // 0-delay (rowSpanService `modelTimeout` then the `_debounce(…, 0)`), so draining them is a
+        // fixed number of ticks rather than a guessed window.
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
 
         // The grid should not have errored — spans are being processed
         expect(api.getDisplayedRowCount()).toBe(3);

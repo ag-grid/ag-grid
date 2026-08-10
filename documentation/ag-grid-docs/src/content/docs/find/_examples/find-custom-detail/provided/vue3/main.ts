@@ -18,8 +18,8 @@ import { AgGridVue } from 'ag-grid-vue3';
 import DetailCellRenderer from './detailCellRenderer';
 import './styles.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

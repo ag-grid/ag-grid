@@ -142,9 +142,9 @@ describe('showValuesAs header indicator', () => {
         `);
 
         api.applyColumnState({ state: [{ colId: 'country', rowGroup: true }] });
-        await asyncSetTimeout(10);
+        // `amount` was dormant before the grouping was added, so this cannot pass before it lands.
+        await waitFor(() => expect(isDormant('amount')).toBe(false)); // now meaningful
         expect(isShown('amount')).toBe(true);
-        expect(isDormant('amount')).toBe(false); // now meaningful
 
         // Grouping added → %parentTotal applies → percentages.
         await new GridColumns(api, 'after grouping added').checkColumns(`

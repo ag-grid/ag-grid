@@ -2,6 +2,7 @@ import { Select } from '@ag-website-shared/components/select/Select';
 import styled from '@emotion/styled';
 
 import { type FontFamilyValue, paramValueToCss } from '../../theming/api';
+import { normaliseFontFamilyList } from '../../theming/fontFamilyCss';
 import type { ValueEditorProps } from './ValueEditorProps';
 
 export type FontFamilyOption = { label: string; value: FontFamilyValue };
@@ -41,11 +42,15 @@ export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorPro
 
 const FontItem = styled('span')``;
 
+// An option can name its Google font bare or as the first entry of a stack, so
+// look inside arrays too.
+const getGoogleFonts = (value: FontFamilyValue): string[] =>
+    (Array.isArray(value) ? value : [value]).flatMap((font) =>
+        typeof font === 'object' && font != null && 'googleFont' in font ? [font.googleFont] : []
+    );
+
 export const LoadFontFamilyMenuFonts = () => {
-    const css = fontOptions
-        .map(({ value }) => value)
-        .filter((v: unknown): v is { googleFont: string } => typeof v === 'object' && v != null && 'googleFont' in v)
-        .map((v) => v.googleFont)
+    const css = Array.from(new Set(fontOptions.flatMap(({ value }) => getGoogleFonts(value))))
         .sort()
         .map(
             (font) =>
@@ -58,4 +63,12 @@ export const LoadFontFamilyMenuFonts = () => {
 const isSameFont = (a: FontFamilyValue, b: FontFamilyValue): boolean =>
     (Array.isArray(b) && isSameFont(a, b[0])) ||
     (Array.isArray(a) && isSameFont(a[0], b)) ||
-    paramValueToCss('fontFamily', a, null) === paramValueToCss('fontFamily', b, null);
+    toComparableCss(a) === toComparableCss(b);
+
+// The same stack reaches us quoted or unquoted depending on how it was
+// authored (`"DM Sans", sans-serif` vs `DM Sans, sans-serif`); CSS selects the
+// same font either way, so the menu must match them as one.
+const toComparableCss = (value: FontFamilyValue): string | false => {
+    const css = paramValueToCss('fontFamily', value, null);
+    return typeof css === 'string' ? normaliseFontFamilyList(css) : css;
+};

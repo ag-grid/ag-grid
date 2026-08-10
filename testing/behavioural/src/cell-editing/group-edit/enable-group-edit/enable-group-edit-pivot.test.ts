@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule } from 'ag-grid-community';
@@ -98,21 +99,25 @@ describe('enableGroupEdit with pivot mode', () => {
             },
         });
 
-        await asyncSetTimeout(1);
+        // Pivot columns and the grouped rows are produced asynchronously after the grid is created.
+        const pivotCol2000Gold = await waitFor(() => {
+            const col = api
+                .getPivotResultColumns()
+                ?.find((c) => c.getColId().includes('2000') && c.getColId().includes('gold'));
+            expect(col).toBeDefined();
+            return col!;
+        });
 
-        const pivotColumns = api.getPivotResultColumns();
-        const pivotCol2000Gold = pivotColumns?.find(
-            (col) => col.getColId().includes('2000') && col.getColId().includes('gold')
-        );
-        expect(pivotCol2000Gold).toBeDefined();
-
-        const usaNode = api.getRowNode('row-group-country-United States');
-        expect(usaNode).toBeDefined();
+        const usaNode = await waitFor(() => {
+            const node = api.getRowNode('row-group-country-United States');
+            expect(node).toBeTruthy();
+            return node!;
+        });
 
         return {
             api,
-            pivotCol2000GoldId: pivotCol2000Gold!.getColId(),
-            usaNode: usaNode!,
+            pivotCol2000GoldId: pivotCol2000Gold.getColId(),
+            usaNode,
         };
     }
 

@@ -1,9 +1,10 @@
+import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager } from '../test-utils';
 
 describe('column tool panel custom layout preservation', () => {
     const gridMgr = new TestGridsManager({
@@ -46,9 +47,12 @@ describe('column tool panel custom layout preservation', () => {
             },
         });
 
-        await asyncSetTimeout(50);
+        const toolPanel = await waitFor(() => {
+            const panel = gridApi.getToolPanelInstance('columns') as any;
+            expect(getDisplayedPrimaryColumnOrder(panel)).toHaveLength(baseColumnDefs.length);
+            return panel;
+        });
 
-        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
         return { gridApi, toolPanel };
     }
 
@@ -63,13 +67,16 @@ describe('column tool panel custom layout preservation', () => {
         const { gridApi, toolPanel } = await createGrid();
 
         gridApi.getToolPanelInstance('columns')!.setColumnLayout(alphabeticalLayout);
-        await asyncSetTimeout(50);
 
-        expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'country', 'sport']);
+        await waitFor(() => expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'country', 'sport']));
 
         // reset columnDefs to a different order
         gridApi.setGridOption('columnDefs', [{ field: 'sport' }, { field: 'athlete' }, { field: 'country' }]);
-        await asyncSetTimeout(50);
+
+        // wait for the grid to adopt the new colDefs (the panel refresh runs in the same event dispatch)
+        await waitFor(() =>
+            expect(gridApi.getColumnState().map((s) => s.colId)).toEqual(['sport', 'athlete', 'country'])
+        );
 
         // panel retains the custom alphabetical layout, not the new grid order
         expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'country', 'sport']);
@@ -81,9 +88,8 @@ describe('column tool panel custom layout preservation', () => {
         expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['country', 'athlete', 'sport']);
 
         gridApi.setGridOption('columnDefs', [{ field: 'sport' }, { field: 'athlete' }, { field: 'country' }]);
-        await asyncSetTimeout(50);
 
-        expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['sport', 'athlete', 'country']);
+        await waitFor(() => expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['sport', 'athlete', 'country']));
     });
 
     // Option 1 semantics: setColumnLayout owns the panel. A columnDefs reset that changes the set of
@@ -96,15 +102,20 @@ describe('column tool panel custom layout preservation', () => {
             const { gridApi, toolPanel } = await createGrid();
 
             gridApi.getToolPanelInstance('columns')!.setColumnLayout(alphabeticalLayout);
-            await asyncSetTimeout(50);
 
-            expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'country', 'sport']);
+            await waitFor(() =>
+                expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'country', 'sport'])
+            );
 
             consoleWarnSpy.mockClear();
 
             // drop 'sport', add 'gold'
             gridApi.setGridOption('columnDefs', [{ field: 'country' }, { field: 'athlete' }, { field: 'gold' }]);
-            await asyncSetTimeout(50);
+
+            // wait for the grid to adopt the new colDefs (the panel refresh runs in the same event dispatch)
+            await waitFor(() =>
+                expect(gridApi.getColumnState().map((s) => s.colId)).toEqual(['country', 'athlete', 'gold'])
+            );
 
             // panel stays exactly as set: removed 'sport' remains, added 'gold' is not shown
             expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'country', 'sport']);
@@ -151,13 +162,17 @@ describe('column tool panel custom layout preservation', () => {
                 defaultToolPanel: 'columns',
             },
         });
-        await asyncSetTimeout(50);
-        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+        const toolPanel = await waitFor(() => {
+            const panel = gridApi.getToolPanelInstance('columns') as any;
+            expect(getDisplayedPrimaryColumnOrder(panel)).toHaveLength(fiveColDefs.length);
+            return panel;
+        });
 
         // step 2: custom order
         gridApi.getToolPanelInstance('columns')!.setColumnLayout(customOrder);
-        await asyncSetTimeout(50);
-        expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['age', 'athlete', 'country', 'sport', 'year']);
+        await waitFor(() =>
+            expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['age', 'athlete', 'country', 'sport', 'year'])
+        );
 
         // step 3b: reset columnDefs removing 'sport', adding 'gold'
         gridApi.setGridOption('columnDefs', [
@@ -167,7 +182,11 @@ describe('column tool panel custom layout preservation', () => {
             { field: 'age' },
             { field: 'athlete' },
         ]);
-        await asyncSetTimeout(50);
+
+        // wait for the grid to adopt the new colDefs (the panel refresh runs in the same event dispatch)
+        await waitFor(() =>
+            expect(gridApi.getColumnState().map((s) => s.colId)).toEqual(['gold', 'year', 'country', 'age', 'athlete'])
+        );
 
         // Option 1: panel stays exactly as set in step 2
         expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['age', 'athlete', 'country', 'sport', 'year']);

@@ -443,7 +443,12 @@ export { AgSelect, AgSelectSelector } from './agWidgets/agSelect';
 export type { AgSelectParams } from './agWidgets/agSelect';
 export { AgToggleButton, AgToggleButtonSelector } from './agWidgets/agToggleButton';
 export type { AgToggleButtonParams } from './agWidgets/agToggleButton';
-export type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from './export/iGridSerializer';
+export type {
+    GridHeaderCell,
+    GridSerializingParams,
+    HeaderRowAccumulator,
+    RowAccumulator,
+} from './export/iGridSerializer';
 
 // These should have been exported with _ as only used in SSRM and end users should be using them via the gridApi
 export { onRowHeightChanged, resetRowHeights } from './api/rowModelSharedApi';
@@ -481,32 +486,3 @@ export { KeyboardNavigationModule as _KeyboardNavigationModule } from './navigat
 export { SharedRowSelectionModule as _SharedRowSelectionModule } from './selection/rowSelectionModule';
 export { SortModule as _SortModule } from './sort/sortModule';
 export { PopupModule as _PopupModule } from './widgets/popupModule';
-
-// PDF Export
-export type {
-    IPdfCreator,
-    PdfCell,
-    PdfCellData,
-    PdfCellHyperlinkCallbackParams,
-    PdfCellStyle,
-    PdfCellStyleCallbackParams,
-    PdfColors,
-    PdfColumnWidth,
-    PdfColumnWidthCallback,
-    PdfCustomContent,
-    PdfDocumentTitleStyle,
-    PdfExportParams,
-    PdfFontFamily,
-    PdfFontWeight,
-    PdfGroupHeaderStyleCallbackParams,
-    PdfHeaderStyleCallbackParams,
-    PdfMargin,
-    PdfPageOrientation,
-    PdfPageSetup,
-    PdfPageSize,
-    PdfRowStyleCallbackParams,
-    PdfStyleCallbackParams,
-    PdfStyleCallbackType,
-    PdfTextAlignment,
-    PdfTextOverflow,
-} from './interfaces/iPdfCreator';

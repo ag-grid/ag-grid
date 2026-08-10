@@ -40,7 +40,6 @@ describe('Tooltip interaction', () => {
 
         // show the AGE tooltip
         await userEvent.hover(ageCell);
-        await asyncSetTimeout(260);
         await waitFor(() => expect(visibleTooltip()?.textContent).toContain('Age tooltip'));
 
         // leave AGE: after the 100ms interactive lock, the tooltip starts fading out (1s fade window)
@@ -50,6 +49,7 @@ describe('Tooltip interaction', () => {
 
         // quick detour onto the empty ATHLETE cell, dwelling just under the 100ms interactive lock window
         await userEvent.hover(athleteCell);
+        // eslint-disable-next-line no-restricted-syntax -- deliberate dwell just under the 100ms INTERACTIVE_HIDE_DELAY lock window
         await asyncSetTimeout(99);
         await userEvent.unhover(athleteCell);
 
@@ -74,7 +74,6 @@ describe('Tooltip interaction', () => {
 
         // show the AGE tooltip
         await userEvent.hover(ageCell);
-        await asyncSetTimeout(260);
         const tooltip = await waitFor(() => {
             const t = visibleTooltip();
             expect(t?.textContent).toContain('Age tooltip');
@@ -87,6 +86,7 @@ describe('Tooltip interaction', () => {
         await userEvent.unhover(tooltip);
         await userEvent.hover(ageCell);
 
+        // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples past the 100ms INTERACTIVE_HIDE_DELAY so a spurious hide would already have landed
         await asyncSetTimeout(150);
         expect(visibleTooltip()?.textContent).toContain('Age tooltip');
     });

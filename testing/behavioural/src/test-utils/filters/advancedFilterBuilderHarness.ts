@@ -11,11 +11,19 @@ import { nudgeVirtualList, openPicker, selectRichSelectRow } from '../widgets/dr
 const BUILDER_ROW_HEIGHT = 40;
 
 const BUILDER = '.ag-advanced-filter-builder';
+const VIRTUAL_LIST_ITEM = '.ag-advanced-filter-builder-virtual-list-item';
 const ITEM_WRAPPER = '.ag-advanced-filter-builder-item-wrapper';
 const COLUMN_PILL = '.ag-advanced-filter-builder-column-pill';
 const OPTION_PILL = '.ag-advanced-filter-builder-option-pill';
 const VALUE_PILL = '.ag-advanced-filter-builder-value-pill';
 const JOIN_PILL = '.ag-advanced-filter-builder-join-pill';
+
+/** Column-pill captions in rendered order — the observable signature of the builder's item list. */
+function columnPillOrder(): string {
+    return Array.from(document.querySelectorAll<HTMLElement>(`${ITEM_WRAPPER} ${COLUMN_PILL}`))
+        .map((pill) => pill.textContent)
+        .join('|');
+}
 
 /**
  * Drives the Advanced Filter Builder dialog through public DOM. Requires the layout mock
@@ -76,15 +84,34 @@ export class AdvancedFilterBuilderHarness {
     }
 
     private async selectPill(item: HTMLElement, pillSelector: string, displayName: string): Promise<void> {
-        const pill = item.querySelector<HTMLElement>(pillSelector);
-        if (!pill) {
-            throw new Error(`Pill "${pillSelector}" not found on builder item`);
-        }
-        await openPicker(pill);
-        // The builder pill defers showPicker() by a macrotask; wait for the list to mount.
-        await asyncSetTimeout(0);
-        await this.ensureItemsRendered();
+        await this.openPillPicker(item, pillSelector);
         await selectRichSelectRow(displayName);
+    }
+
+    /** Opens the pill's rich-select and waits for its rows to render. */
+    private async openPillPicker(item: HTMLElement, pillSelector: string): Promise<void> {
+        // The row's own identity, not the caller's element or its DOM index: a re-render replaces the row
+        // (leaving a detached tree that can be clicked forever) and only renders the rows in view.
+        const posInSet = item.closest(VIRTUAL_LIST_ITEM)?.getAttribute('aria-posinset');
+        if (!posInSet) {
+            throw new Error('Builder item is not one of the rendered rows');
+        }
+        // Re-clicked, not just awaited: the pill defers showPicker(), so a click swallowed by a re-render
+        // needs another - waiting alone never opens a picker that was never told to open.
+        await waitFor(async () => {
+            if (document.querySelector('.ag-rich-select-list')) {
+                return;
+            }
+            const livePill = document.querySelector<HTMLElement>(
+                `${VIRTUAL_LIST_ITEM}[aria-posinset="${posInSet}"] ${pillSelector}`
+            );
+            if (!livePill) {
+                throw new Error(`Pill "${pillSelector}" not found on builder item`);
+            }
+            await openPicker(livePill);
+            await this.ensureItemsRendered();
+            throw new Error(`Picker for "${pillSelector}" did not open`);
+        });
     }
 
     /** Adds a new condition via the builder add-item button. */
@@ -110,7 +137,7 @@ export class AdvancedFilterBuilderHarness {
         // The column/operator pills carry hidden rich-select inputs; the value editor is the only
         // visible one, and it mounts a macrotask or two after the click — poll rather than guess a delay.
         return waitFor(() => {
-            const input = Array.from(item.querySelectorAll<HTMLInputElement>('input.ag-text-field-input')).find(
+            const input = Array.from(item.querySelectorAll<HTMLInputElement>('input.ag-input-field-input')).find(
                 (candidate) => !candidate.closest('.ag-hidden')
             );
             if (!input) {
@@ -204,6 +231,7 @@ export class AdvancedFilterBuilderHarness {
             throw new Error('drag handle or builder container not found');
         }
         const toClientY = targetRow * BUILDER_ROW_HEIGHT + Math.round(BUILDER_ROW_HEIGHT * 0.75);
+        const orderBeforeDrop = columnPillOrder();
         const doc = handle.ownerDocument;
         const originalElementsFromPoint = doc.elementsFromPoint?.bind(doc);
         // The drop target resolves via elementsFromPoint; point it at the builder container.
@@ -214,7 +242,14 @@ export class AdvancedFilterBuilderHarness {
             await dispatcher.movePointer(container, 10, BUILDER_ROW_HEIGHT + 5);
             await dispatcher.movePointer(container, 10, toClientY);
             await dispatcher.finishDrag(container);
-            await asyncSetTimeout(50);
+            // The drop re-renders the builder list asynchronously. Poll for the reordered pills
+            // rather than guessing a delay — a drop that never lands must fail here, not silently
+            // in the caller's assertion.
+            await waitFor(() => {
+                if (columnPillOrder() === orderBeforeDrop) {
+                    throw new Error('builder rows did not reorder after drop');
+                }
+            });
         } finally {
             doc.elementsFromPoint = originalElementsFromPoint as typeof doc.elementsFromPoint;
         }
@@ -227,10 +262,19 @@ export class AdvancedFilterBuilderHarness {
      * assigns its drag feature, so the first-render rows have no drag source.
      */
     public async forceReRender(): Promise<this> {
+        const rowsBefore = Array.from(document.querySelectorAll<HTMLElement>(ITEM_WRAPPER));
         this.api.setAdvancedFilterModel(this.api.getAdvancedFilterModel());
         this.api.onFilterChanged();
-        await asyncSetTimeout(10);
-        await this.ensureItemsRendered();
+        // Recreating the rows is the whole point of this helper, so poll until the rendered rows are
+        // new element instances — the only signal that can distinguish a rebuild from the original render.
+        await waitFor(() => {
+            nudgeVirtualList('.ag-advanced-filter-builder-virtual-list-viewport');
+            nudgeVirtualList('.ag-rich-select-virtual-list-viewport');
+            const rowsNow = Array.from(document.querySelectorAll<HTMLElement>(ITEM_WRAPPER));
+            if (rowsNow.length === 0 || rowsNow.some((row) => rowsBefore.includes(row))) {
+                throw new Error('builder item rows were not recreated');
+            }
+        });
         return this;
     }
 }

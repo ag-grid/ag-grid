@@ -4,8 +4,8 @@ import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidati
 import { LazyCellLoader } from './lazyCellComp_typescript';
 
 // PLACEHOLDER MAIN FILE NOT ACTUALLY USED IN THE EXAMPLE AS REACT PROVIDED EXAMPLES ONLY
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

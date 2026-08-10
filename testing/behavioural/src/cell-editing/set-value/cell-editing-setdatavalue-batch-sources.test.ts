@@ -10,7 +10,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 
 /**
  * Tests for setDataValue behaviour during batch editing — source routing.
@@ -73,7 +73,6 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             `);
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             const result = rowNode.setDataValue('a', 'changed', eventSource);
@@ -108,7 +107,6 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             });
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             rowNode.setDataValue('a', 'committed', eventSource);
@@ -119,7 +117,6 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             `);
 
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'after commit').check(`
                 ROOT id:ROOT_NODE_ID
@@ -142,7 +139,6 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             });
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             rowNode.setDataValue('a', 'pending', eventSource);
@@ -153,7 +149,6 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             `);
 
             api.cancelBatchEdit();
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'after cancel').check(`
                 ROOT id:ROOT_NODE_ID
@@ -178,7 +173,6 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             `);
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             const result = rowNode.setDataValue('a', 'changed', 'data');
@@ -298,7 +292,6 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             `);
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             rowNode.setDataValue('a', 'a-changed', 'paste');
@@ -319,7 +312,6 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             expect(api.getCellValue({ rowNode, colKey: 'b', from: 'data' })).toBe('b-initial');
 
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'after commit').check(`
                 ROOT id:ROOT_NODE_ID
@@ -346,7 +338,6 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
 
             // Start batch and immediately call setDataValue without opening any editor
             api.startBatchEdit();
-            await asyncSetTimeout(1);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             rowNode.setDataValue('age', 10);
@@ -362,14 +353,13 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             expect(api.getCellValue({ rowNode, colKey: 'age', from: 'data' })).toBe(23); // Data unchanged
 
             api.cancelBatchEdit();
-            await asyncSetTimeout(1);
 
             // After cancel, value should be reverted
-            expect(rowNode.data.age).toBe(23);
             await new GridRows(api, 'after cancel').check(`
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 athlete:"Michael Phelps" age:23
             `);
+            expect(rowNode.data.age).toBe(23);
         });
 
         test('mass update via setDataValue stages all rows as pending (TC2)', async () => {
@@ -387,7 +377,6 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             });
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
 
             // Mass update: call setDataValue on multiple rows without opening any editor
             const row0 = api.getDisplayedRowAtIndex(0)!;
@@ -408,7 +397,6 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
 
             // Commit batch: values should now be written to data
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'after commit').check(`
                 ROOT id:ROOT_NODE_ID

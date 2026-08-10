@@ -14,8 +14,8 @@ import {
 import { getCountries } from './countries';
 import { createFakeServer, createServerSideDatasource } from './server';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

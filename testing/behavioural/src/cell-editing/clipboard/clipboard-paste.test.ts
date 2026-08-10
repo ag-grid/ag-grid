@@ -81,7 +81,9 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
 
         api.setFocusedCell(1, 'field');
         await user.keyboard('{Control>}v{/Control}');
-        await asyncSetTimeout(5);
+        await waitFor(() => expect(valueSetterCalls).toBeGreaterThanOrEqual(1));
+        // one macrotask window in which a duplicate update of the destination cell would land
+        await asyncSetTimeout(0);
 
         const afterRows = new GridRows(api, 'after paste');
         await afterRows.check(`
@@ -217,7 +219,7 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         api.copyToClipboard();
 
         api.startEditingCell({ rowIndex: 1, colKey: 'field' });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getEditingCells().length).toBeGreaterThanOrEqual(1));
 
         api.setFocusedCell(1, 'field');
         const pasteEnd = waitForEvent('pasteEnd', api);
@@ -276,11 +278,14 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         api.copyToClipboard();
 
         api.setFocusedCell(1, 'field');
+        const pasteEnd = waitForEvent('pasteEnd', api);
         api.pasteFromClipboard();
-        await asyncSetTimeout(5);
+        await pasteEnd;
 
         api.commitBatchEdit();
-        await asyncSetTimeout(5);
+        await waitFor(() => expect(valueSetterCalls).toBeGreaterThanOrEqual(1));
+        // one macrotask window in which a duplicate update of the destination cell would land
+        await asyncSetTimeout(0);
 
         const afterRows = new GridRows(api, 'after batch paste');
         await afterRows.check(`
@@ -332,8 +337,9 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         api.copyToClipboard();
 
         api.setFocusedCell(1, 'field');
+        const pasteEnd = waitForEvent('pasteEnd', api);
         api.pasteFromClipboard();
-        await asyncSetTimeout(5);
+        await pasteEnd;
 
         const stagedRows = new GridRows(api, 'staged batch paste');
         await stagedRows.check(`
@@ -346,7 +352,9 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         expect(stagedRowNode?.data?.field).toBe('Bottom Value');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(5);
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(1)?.data?.field).toBe('Top Value'));
+        // one macrotask window in which a duplicate valueSetter call would land
+        await asyncSetTimeout(0);
 
         const afterRows = new GridRows(api, 'after batch staging commit');
         await afterRows.check(`
@@ -405,7 +413,7 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             clipboardUtils.setText('Top Value');
             api.setFocusedCell(1, 'field');
             api.startEditingCell({ rowIndex: 1, colKey: 'field' });
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getEditingCells().length).toBeGreaterThanOrEqual(1));
 
             const pasteEnd = waitForEvent('pasteEnd', api);
             api.pasteFromClipboard();

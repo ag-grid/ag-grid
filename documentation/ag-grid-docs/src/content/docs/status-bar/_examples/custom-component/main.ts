@@ -15,8 +15,8 @@ import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
 import { ClickableStatusBarComponent } from './clickableStatusBarComponent_typescript';
 import { CountStatusBarComponent } from './countStatusBarComponent_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

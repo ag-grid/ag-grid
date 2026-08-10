@@ -4,8 +4,8 @@ import { ColumnsToolPanelModule, FiltersToolPanelModule, SideBarModule, ToolbarM
 
 import { ToolPanelRadio, WinnersToggle } from './customToolbarItem_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

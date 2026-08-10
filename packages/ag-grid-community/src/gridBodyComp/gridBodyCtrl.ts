@@ -12,7 +12,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
-import { _isAnimateRows } from '../gridOptionsUtils';
+import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import { getAriaHeaderRowCount } from '../headerRendering/headerUtils';
 import type { IRowGroupColsService } from '../interfaces/iColsService';
 import type { VerticalSection } from '../interfaces/iGridSection';
@@ -44,6 +44,7 @@ export interface IGridBodyComp extends LayoutView {
     setRowAnimationCssOnScrollableArea(animate: boolean): void;
     setPreventRowAnimationCssOnContainers(prevent: boolean): void;
     setGridScrollableAreaWidth(width: string): void;
+    setPinnedColumnsOverflowing(overflowing: boolean): void;
     setGridRole(role: 'grid' | 'treegrid'): void;
 }
 
@@ -180,35 +181,62 @@ export class GridBodyCtrl extends BeanStub {
         this.updatePinnedColumnStickyOffsets();
         this.updateScrollableAreaWidth();
         this.updateScrollingClasses();
-        this.updateAnchorWidth();
+        this.updateGridViewportWidth();
     }
 
     private onGridSizeChanged(): void {
         this.updateScrollableAreaWidth();
         this.updatePinnedColumnStickyOffsets();
-        this.updateAnchorWidth();
+        this.updateGridViewportWidth();
     }
 
     private updateScrollableAreaWidth(): void {
+        const pinnedColumnsOverflowing = this.isPinnedWidthOverflowingViewport();
         const contentWidth = this.getHorizontalContentWidth();
         const viewportWidth = this.getHorizontalViewportWidth();
         this.comp.setGridScrollableAreaWidth(`${Math.max(contentWidth, viewportWidth, 1)}px`);
+        this.comp.setPinnedColumnsOverflowing(pinnedColumnsOverflowing);
+
+        if (pinnedColumnsOverflowing && this.getHorizontalScrollLeft() !== 0) {
+            this.setHorizontalScrollLeft(0);
+        }
     }
 
     public getHorizontalContentWidth(
         verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing
     ): number {
-        const { visibleCols } = this.beans;
-        const baseWidth =
-            visibleCols.bodyWidth +
-            visibleCols.getLeftStickyColumnContainerWidth() +
-            visibleCols.getRightStickyColumnContainerWidth();
-
-        if (!verticalScrollShowing) {
-            return baseWidth;
+        if (this.isPinnedWidthOverflowingViewport(verticalScrollShowing)) {
+            // Retained pinned overflow is clipped and must not create a horizontal scroll range.
+            return 0;
         }
 
-        return baseWidth + this.getVerticalScrollbarWidth(verticalScrollShowing);
+        return this.getColumnsWidth() + this.getVerticalScrollbarWidth(verticalScrollShowing);
+    }
+
+    /** Raw width of the displayed columns, without the scroll-range adjustments of `getHorizontalContentWidth`. */
+    public getColumnsWidth(): number {
+        const { visibleCols } = this.beans;
+        return (
+            visibleCols.bodyWidth +
+            visibleCols.getLeftStickyColumnContainerWidth() +
+            visibleCols.getRightStickyColumnContainerWidth()
+        );
+    }
+
+    public isPinnedWidthOverflowingViewport(
+        verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing
+    ): boolean {
+        if (_isDomLayout(this.gos, 'print')) {
+            return false;
+        }
+
+        const pinnedWidth = this.getPinnedWidth();
+        return pinnedWidth > 0 && pinnedWidth >= this.getViewportWidthWithoutScrollbar(verticalScrollShowing);
+    }
+
+    private getPinnedWidth(): number {
+        const { visibleCols } = this.beans;
+        return visibleCols.getLeftStickyColumnContainerWidth() + visibleCols.getRightStickyColumnContainerWidth();
     }
 
     public getHorizontalViewportWidth(): number {
@@ -222,10 +250,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public getCenterWidth(verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing): number {
-        const { visibleCols } = this.beans;
-        const pinnedWidth =
-            visibleCols.getLeftStickyColumnContainerWidth() + visibleCols.getRightStickyColumnContainerWidth();
-        return Math.max(0, this.getViewportWidthWithoutScrollbar(verticalScrollShowing) - pinnedWidth);
+        return Math.max(0, this.getViewportWidthWithoutScrollbar(verticalScrollShowing) - this.getPinnedWidth());
     }
 
     public getHorizontalScrollLeft(): number {
@@ -248,9 +273,9 @@ export class GridBodyCtrl extends BeanStub {
         this.beans.colViewport.setScrollPosition(this.getCenterWidth(), this.getHorizontalScrollLeft(), afterScroll);
     }
 
-    private updateAnchorWidth(): void {
-        const anchorWidth = this.getViewportWidthWithoutScrollbar();
-        this.eGridViewport.style.setProperty('--ag-internal-fw-anchor-width', `${anchorWidth}px`);
+    private updateGridViewportWidth(): void {
+        const viewportWidth = this.getViewportWidthWithoutScrollbar();
+        this.eGridViewport.style.setProperty('--ag-internal-grid-viewport-width', `${viewportWidth}px`);
     }
 
     private setGridRole(): void {

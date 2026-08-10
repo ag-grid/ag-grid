@@ -10,6 +10,7 @@ import type {
     GridApi,
     GridOptions,
     GridReadyEvent,
+    PdfExportParams,
     SideBarDef,
     Theme,
     Toolbar as ToolbarConfig,
@@ -26,6 +27,7 @@ import {
     MasterDetailModule,
     MultiFilterModule,
     NewFiltersToolPanelModule,
+    PdfExportModule,
     PivotModule,
     RichSelectModule,
     RowGroupingModule,
@@ -59,6 +61,16 @@ const IS_SSR = typeof window === 'undefined';
 
 const AgGridReactMemo = memo(AgGridReact);
 
+const PDF_EXPORT_COLUMNS = ['name', 'language', 'country', 'game.name', 'bankBalance', 'totalWinnings'];
+const PDF_EXPORT_COLUMN_WIDTHS: Record<string, number> = {
+    name: 130,
+    language: 80,
+    country: 110,
+    'game.name': 135,
+    bankBalance: 100,
+    totalWinnings: 110,
+};
+
 const themeMap: Record<string, Theme> = {
     alpine: themeAlpine,
     balham: themeBalham,
@@ -83,6 +95,7 @@ const modules = [
     SetFilterModule,
     SideBarModule,
     StatusBarModule,
+    PdfExportModule,
     PivotModule,
     RowNumbersModule,
     ToolbarModule,
@@ -189,6 +202,51 @@ const ExampleInner = ({
                         value: value,
                     };
                 }
+            },
+        }),
+        [base64Flags]
+    );
+
+    const defaultPdfExportParams = useMemo<PdfExportParams>(
+        () => ({
+            columnKeys: PDF_EXPORT_COLUMNS,
+            columnWidth: ({ column }) => (column ? PDF_EXPORT_COLUMN_WIDTHS[column.getColId()] : undefined),
+            processCellCallback: ({ column, value }) => {
+                const columnId = column.getColId();
+                if ((columnId === 'bankBalance' || columnId === 'totalWinnings') && typeof value === 'number') {
+                    return value.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 0,
+                    });
+                }
+                return value == null ? '' : String(value);
+            },
+            addImageToCell: ({ column, value }) => {
+                if (column.getColId() !== 'country' || typeof value !== 'string' || !base64Flags) {
+                    return;
+                }
+
+                const countryCode = COUNTRY_CODES[value];
+                if (!countryCode) {
+                    return;
+                }
+                const flag = base64Flags[countryCode];
+                if (!flag) {
+                    return;
+                }
+
+                return {
+                    image: {
+                        id: `country-${countryCode}`,
+                        base64: flag,
+                        imageType: 'png',
+                        width: 20,
+                        height: 10,
+                        altText: `${value} flag`,
+                    },
+                    value,
+                };
             },
         }),
         [base64Flags]
@@ -455,6 +513,7 @@ const ExampleInner = ({
                                 dataTypeDefinitions={dataTypeDefinitions}
                                 defaultCsvExportParams={defaultExportParams as CsvExportParams}
                                 defaultExcelExportParams={defaultExportParams as ExcelExportParams}
+                                defaultPdfExportParams={defaultPdfExportParams}
                                 onGridReady={onGridReady}
                             />
                         </div>

@@ -137,6 +137,52 @@ export type {
     RowHeightCallbackParams,
 } from './interfaces/iExcelCreator';
 
+// PDF Export
+export type {
+    IPdfCreator,
+    PdfBuiltInFontFamily,
+    PdfCell,
+    PdfCellData,
+    PdfCellHyperlinkCallbackParams,
+    PdfCellImageCallbackParams,
+    PdfCellImageResult,
+    PdfCellStyle,
+    PdfCellStyleCallbackParams,
+    PdfColors,
+    PdfColumnWidth,
+    PdfColumnWidthCallback,
+    PdfCustomContent,
+    PdfDocumentHeadingStyle,
+    PdfExportParams,
+    PdfFontFace,
+    PdfFontFamily,
+    PdfFontFamilyDefinition,
+    PdfFontStyle,
+    PdfFontWeight,
+    PdfGroupHeaderStyleCallbackParams,
+    PdfHeaderFooter,
+    PdfHeaderFooterConfig,
+    PdfHeaderFooterContent,
+    PdfHeaderFooterImageContent,
+    PdfHeaderFooterTextContent,
+    PdfHeaderStyleCallbackParams,
+    PdfImage,
+    PdfImageAlignment,
+    PdfImageType,
+    PdfMargin,
+    PdfPageOrientation,
+    PdfPageSetup,
+    PdfPageSize,
+    PdfRowStyleCallbackParams,
+    PdfStyleCallbackParams,
+    PdfTextAlignment,
+    PdfTextDirection,
+    PdfTextOverflow,
+    PdfTextStyle,
+    PdfWatermark,
+    PdfWatermarkPageSelection,
+} from './interfaces/iPdfCreator';
+
 // Drag and Drop
 export { DragSourceType } from './dragAndDrop/dragAndDropService';
 export type { DragAndDropIcon, DropTarget, GridDraggingEvent, GridDragSource } from './dragAndDrop/dragAndDropService';

@@ -19,8 +19,8 @@ import { ViewportRowModelModule } from 'ag-grid-enterprise';
 import { createMockServer } from './mock-server';
 import { createViewportDatasource } from './viewport-datasource';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

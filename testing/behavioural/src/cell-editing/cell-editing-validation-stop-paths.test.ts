@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import type { GridApi, GridOptions, ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
@@ -338,10 +339,9 @@ describe('Cell editing validation — block mode holds invalid values across all
         `);
 
         api.onFilterChanged();
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(editorCount(api)).toBe(0));
 
         expect(rowData[0].number).toBe(10);
-        expect(editorCount(api)).toBe(0);
         expect(api.getEditingCells()).toHaveLength(0);
 
         await new GridRows(api, 'pull-only invalid discarded on filter change').check(`
@@ -375,10 +375,9 @@ describe('Cell editing validation — block mode holds invalid values across all
         api.addEventListener('cellValueChanged', (e) => committed.push(e.column.getColId()));
 
         await user.dblClick(cell(api, 0, 'number'));
-        await asyncSetTimeout(1);
 
         // The unsupported pairing must announce itself rather than fail silently.
-        expect(warnSpy).toHaveBeenCalled();
+        await waitFor(() => expect(warnSpy).toHaveBeenCalled());
 
         await new GridRows(api, 'full-row popup: row editors open, all valid').check(`
             ROOT id:ROOT_NODE_ID

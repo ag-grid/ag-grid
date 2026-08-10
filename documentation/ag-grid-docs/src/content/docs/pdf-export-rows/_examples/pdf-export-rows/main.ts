@@ -9,10 +9,10 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { PdfExportModule } from 'ag-grid-enterprise';
+import { ContextMenuModule, PdfExportModule } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -22,6 +22,7 @@ ModuleRegistry.registerModules([
     RowApiModule,
     RowSelectionModule,
     TextFilterModule,
+    ContextMenuModule,
     PdfExportModule,
 ]);
 
@@ -90,16 +91,19 @@ function isChecked(id: string): boolean {
     return document.querySelector<HTMLInputElement>(`#${id}`)!.checked;
 }
 
-function onBtExport() {
-    const params: PdfExportParams = {
+function getPdfExportParams(): PdfExportParams {
+    return {
         onlySelected: isChecked('onlySelected'),
         exportedRows: isChecked('allRows') ? 'all' : 'filteredAndSorted',
         skipPinnedTop: isChecked('skipPinnedTop'),
         skipPinnedBottom: isChecked('skipPinnedBottom'),
         columnWidth: 'auto',
     };
+}
 
-    gridApi.exportDataAsPdf(params);
+function onBtExport() {
+    gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+    gridApi.exportDataAsPdf();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

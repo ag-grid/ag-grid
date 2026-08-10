@@ -10,14 +10,26 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import {
+    ColumnFilterHarness,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from '../test-utils';
 
-describe('Date Range Filter', () => {
+describe('Number Range Filter', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, TextFilterModule, NumberFilterModule],
     });
 
-    beforeAll(() => setupAgTestIds());
+    beforeAll(() => {
+        setupAgTestIds();
+        installFilterLayoutMock();
+    });
+    afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
     test('Filter displays validation error state in last touched input when invalid range entered', async () => {
@@ -122,5 +134,122 @@ describe('Date Range Filter', () => {
             ├── LEAF id:0 gold:2
             └── LEAF id:2 gold:3
         `);
+    });
+
+    test('the message names the bound each input must respect, and follows the touched input', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'gold',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { filterOptions: ['inRange'] },
+                },
+            ],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 3 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        await filter.setNumber(5, 0);
+        await filter.setNumber(1, 1);
+
+        // The `to` input was touched last, so it carries the message and must exceed `from`.
+        expect(filter.input('number', 1).validity.valid).toBe(false);
+        expect(filter.input('number', 1).validationMessage).toBe('Must be greater than 5');
+        expect(filter.input('number', 0).validationMessage).toBe('');
+
+        // Touching `from` moves the message across, mirrored to name the opposite bound.
+        await filter.setNumber(6, 0);
+
+        expect(filter.input('number', 0).validity.valid).toBe(false);
+        expect(filter.input('number', 0).validationMessage).toBe('Must be less than 1');
+        expect(filter.input('number', 1).validationMessage).toBe('');
+    });
+
+    test('a from value equal to the to value is invalid', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'gold',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { filterOptions: ['inRange'] },
+                },
+            ],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 3 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        await filter.setNumber(3, 0);
+        await filter.setNumber(3, 1);
+
+        // The bound is strict (`from >= to` is invalid), so an empty range is rejected rather than
+        // silently matching nothing.
+        expect(filter.input('number', 1).validity.valid).toBe(false);
+        expect(filter.getModel()).toBeNull();
+        await new GridRows(api, 'equal range bounds leave rows unfiltered').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 gold:2
+            ├── LEAF id:1 gold:8
+            └── LEAF id:2 gold:3
+        `);
+    });
+
+    test('switching from inRange to equals clears the range validation', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'gold',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { filterOptions: ['inRange', 'equals'] },
+                },
+            ],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 3 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        await filter.setNumber(8, 0);
+        await filter.setNumber(2, 1);
+
+        expect(filter.input('number', 1).validity.valid).toBe(false);
+
+        // "Equals" is a single-input condition, so the range bound no longer applies.
+        await filter.selectOperator('Equals');
+        await asyncSetTimeout(0);
+
+        expect(filter.input('number', 0).validity.valid).toBe(true);
+        expect(filter.input('number', 0).validationMessage).toBe('');
+        await new GridRows(api, 'rows stay unfiltered while the equals value is unset').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 gold:2
+            ├── LEAF id:1 gold:8
+            └── LEAF id:2 gold:3
+        `);
+    });
+
+    test('switching from equals back to inRange re-applies the range validation', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'gold',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { filterOptions: ['inRange', 'equals'] },
+                },
+            ],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 3 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        await filter.setNumber(8, 0);
+        await filter.setNumber(2, 1);
+        await filter.selectOperator('Equals');
+        await asyncSetTimeout(0);
+
+        expect(filter.input('number', 0).validity.valid).toBe(true);
+
+        // Switching back re-exposes the retained `to` value, so the inverted range is flagged again.
+        await filter.selectOperator('Between');
+        await asyncSetTimeout(0);
+
+        expect(filter.input('number', 1).validity.valid).toBe(false);
+        expect(filter.input('number', 1).validationMessage).toBe('Must be greater than 8');
     });
 });

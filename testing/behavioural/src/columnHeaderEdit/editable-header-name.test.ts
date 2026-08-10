@@ -1,4 +1,4 @@
-import { findByText } from '@testing-library/dom';
+import { findByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 
 import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
@@ -48,22 +48,30 @@ describe('Editable header name', () => {
                 defaultToolPanel: 'columns',
             },
         });
-        await asyncSetTimeout(1);
+        // The tool panel component is attached from a promise, so it is not available synchronously.
+        const toolPanel = await waitFor(() => {
+            const instance = api.getToolPanelInstance('columns') as any;
+            expect(instance).toBeTruthy();
+            return instance;
+        });
         return {
             api,
             gridDiv: getGridElement(api)! as HTMLElement,
-            toolPanel: api.getToolPanelInstance('columns') as any,
+            toolPanel,
         };
     }
 
     /** Materialise the tool-panel entry for `label` and dispatch a real `contextmenu` event on it. */
     async function openContextMenu(toolPanel: any, gridDiv: HTMLElement, label: string): Promise<void> {
-        const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
-        const displayedColsList = listPanel.getDisplayedColsList() as any[];
-        const rowIndex = displayedColsList.findIndex((item) => item.displayName === label);
-        if (rowIndex < 0) {
-            throw new Error(`Tool-panel column entry not found for displayName="${label}"`);
-        }
+        const { listPanel, displayedColsList, rowIndex } = await waitFor(() => {
+            const panel = toolPanel.primaryColsPanel?.primaryColsListPanel;
+            const cols = (panel?.getDisplayedColsList() as any[]) ?? [];
+            const index = cols.findIndex((item) => item.displayName === label);
+            if (index < 0) {
+                throw new Error(`Tool-panel column entry not found for displayName="${label}"`);
+            }
+            return { listPanel: panel, displayedColsList: cols, rowIndex: index };
+        });
 
         listPanel['virtualList'].ensureIndexVisible(rowIndex);
         await asyncSetTimeout(0);
@@ -85,7 +93,6 @@ describe('Editable header name', () => {
         entry.dispatchEvent(
             new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })
         );
-        await asyncSetTimeout(1);
     }
 
     /** Open the "Edit Column Name" editor for a column via its tool-panel context menu. */
@@ -93,11 +100,18 @@ describe('Editable header name', () => {
         await openContextMenu(toolPanel, gridDiv, label);
         const menuItem = await findByText(gridDiv, 'Edit Column Name');
         await userEvent.click(menuItem);
-        await asyncSetTimeout(1);
-        const input = document.querySelector('.ag-column-header-edit-popup-editor input') as HTMLInputElement | null;
-        expect(input).toBeTruthy();
-        return input!;
+        return waitFor(() => {
+            const input = document.querySelector(
+                '.ag-column-header-edit-popup-editor input'
+            ) as HTMLInputElement | null;
+            expect(input).toBeTruthy();
+            return input!;
+        });
     }
+
+    /** The editor popup is removed from the DOM when it closes, so its absence marks the close as done. */
+    const editorPopup = () => document.querySelector('.ag-column-header-edit-popup-editor');
+    const waitForEditorClosed = () => waitFor(() => expect(editorPopup()).toBeNull());
 
     /** Commit the editor with the ENTER key (bubbles to the dialog gui listener). */
     function pressEnter(input: HTMLInputElement): void {
@@ -130,7 +144,7 @@ describe('Editable header name', () => {
         expect(events.length).toBe(0);
 
         pressEscape(input);
-        await asyncSetTimeout(1);
+        await waitForEditorClosed();
         expect(events.length).toBe(0);
     });
 
@@ -171,7 +185,7 @@ describe('Editable header name', () => {
         await userEvent.clear(input);
         await userEvent.type(input, 'Renamed');
         pressEnter(input);
-        await asyncSetTimeout(1);
+        await waitForEditorClosed();
 
         const callsAfterCommit = getterCalls;
         // Resolving the display name again must return the override without consulting the getter.
@@ -186,7 +200,7 @@ describe('Editable header name', () => {
 
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
         pressEnter(input);
-        await asyncSetTimeout(1);
+        await waitForEditorClosed();
 
         expect(events.length).toBe(0);
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
@@ -205,9 +219,8 @@ describe('Editable header name', () => {
         // Deferred mode does not apply while typing.
         expect(events.length).toBe(0);
         pressEnter(input);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(events.length).toBe(1));
 
-        expect(events.length).toBe(1);
         expect(events[0].column.getColId()).toBe('athlete');
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Competitor');
     });
@@ -228,7 +241,7 @@ describe('Editable header name', () => {
         ) as HTMLElement | null;
         expect(closeButton).toBeTruthy();
         await userEvent.click(closeButton!);
-        await asyncSetTimeout(1);
+        await waitForEditorClosed();
 
         expect(events.length).toBe(0);
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
@@ -240,20 +253,20 @@ describe('Editable header name', () => {
         expect(input.value).toBe('Athlete');
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
-        await asyncSetTimeout(1);
 
-        expect(input.value).toBe('Renamed');
+        await waitFor(() => expect(input.value).toBe('Renamed'));
     });
 
     test('a column header name edit is saved to grid state', async () => {
         const { api } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
-        await asyncSetTimeout(1);
 
-        expect(api.getState().columnHeaderName?.columnHeaderNames).toEqual([
-            { colId: 'athlete', headerName: 'Renamed' },
-        ]);
+        await waitFor(() =>
+            expect(api.getState().columnHeaderName?.columnHeaderNames).toEqual([
+                { colId: 'athlete', headerName: 'Renamed' },
+            ])
+        );
     });
 
     test('an edited column header name is restored from initialState', async () => {
@@ -264,10 +277,9 @@ describe('Editable header name', () => {
                 columnHeaderName: { columnHeaderNames: [{ colId: 'athlete', headerName: 'Renamed' }] },
             },
         });
-        await asyncSetTimeout(1);
 
         const column = api.getColumn('athlete') as unknown as AgColumn;
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed'));
     });
 
     test('a saved grid state with an edited column header name round-trips through api.setState', async () => {
@@ -275,17 +287,15 @@ describe('Editable header name', () => {
         const column = api.getColumn('athlete') as unknown as AgColumn;
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed'));
         const savedState = api.getState();
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: null }] });
-        await asyncSetTimeout(1);
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete'));
 
         api.setState(savedState);
-        await asyncSetTimeout(1);
 
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed'));
     });
 
     test('applying a grid state without columnHeaderName clears a previously-edited name', async () => {
@@ -293,13 +303,11 @@ describe('Editable header name', () => {
         const column = api.getColumn('athlete') as unknown as AgColumn;
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
-        await asyncSetTimeout(1);
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed'));
 
         api.setState({});
-        await asyncSetTimeout(1);
 
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete'));
     });
 
     test('a reset clears the edited header name, reverting to the colDef value', async () => {
@@ -307,12 +315,11 @@ describe('Editable header name', () => {
         const column = api.getColumn('athlete') as unknown as AgColumn;
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed'));
 
         api.resetColumnState();
-        await asyncSetTimeout(1);
 
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete'));
     });
 
     test('deferred mode commits whitespace around the name verbatim (input is not trimmed)', async () => {
@@ -326,9 +333,8 @@ describe('Editable header name', () => {
         await userEvent.clear(input);
         await userEvent.type(input, '  Athlete  ');
         pressEnter(input);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(events.length).toBe(1));
 
-        expect(events.length).toBe(1);
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('  Athlete  ');
     });
 
@@ -339,9 +345,8 @@ describe('Editable header name', () => {
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
         await userEvent.clear(input);
         pressEnter(input);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe(''));
 
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('');
         expect(api.getState().columnHeaderName?.columnHeaderNames).toEqual([{ colId: 'athlete', headerName: '' }]);
     });
 
@@ -350,13 +355,11 @@ describe('Editable header name', () => {
         const column = api.getColumn('athlete') as unknown as AgColumn;
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
-        await asyncSetTimeout(1);
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed'));
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: null }] });
-        await asyncSetTimeout(1);
 
-        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
+        await waitFor(() => expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete'));
         expect(api.getState().columnHeaderName).toBeUndefined();
     });
 
@@ -372,14 +375,15 @@ describe('Editable header name', () => {
 
         const groupLabel = () =>
             Array.from(gridDiv.querySelectorAll('.ag-column-select-column-label')).map((el) => el.textContent);
-        expect(groupLabel()).toContain('Group');
+        await waitFor(() => expect(groupLabel()).toContain('Group'));
 
         const events = captureColumnHeaderNameChanged(api.getColumn('athlete') as unknown as AgColumn);
         const input = await openEditor(toolPanel, gridDiv, 'Group');
         await userEvent.clear(input);
         await userEvent.type(input, 'Renamed');
         pressEnter(input);
-        await asyncSetTimeout(1);
+        // The tool panel (and column chooser, which shares agPrimaryColsList) label reflects the new name.
+        await waitFor(() => expect(groupLabel()).toContain('Renamed'));
 
         // The public event carries the renamed columnGroup (and no column) for a group rename.
         // Live mode (the default) dispatches per keystroke, so assert on the latest event.
@@ -388,8 +392,6 @@ describe('Editable header name', () => {
         expect(lastEvent.columnGroup.getGroupId()).toBe('athleteGroup');
         expect(lastEvent.column).toBeNull();
 
-        // The tool panel (and column chooser, which shares agPrimaryColsList) label reflects the new name.
-        expect(groupLabel()).toContain('Renamed');
         const columnGroup = api.getColumnGroup('athleteGroup')!;
         expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
         // The UI-driven rename is persisted to grid state, not just reflected in the display name.
@@ -423,7 +425,7 @@ describe('Editable header name', () => {
         // Baseline captured after opening/typing so only the commit's refresh is measured.
         const callsBeforeCommit = ageGroupGetterCalls;
         pressEnter(input);
-        await asyncSetTimeout(1);
+        await waitForEditorClosed();
 
         // The athleteGroup rename carries its groupId, so untouched groups skip the display-name recompute.
         expect(ageGroupGetterCalls).toBe(callsBeforeCommit);
@@ -444,12 +446,11 @@ describe('Editable header name', () => {
 
         await userEvent.clear(input);
         await userEvent.type(input, 'Comp');
-        await asyncSetTimeout(1);
         // Live: the header reflects the in-progress edit without committing.
-        expect(headerText()).toBe('Comp');
+        await waitFor(() => expect(headerText()).toBe('Comp'));
 
         pressEscape(input);
-        await asyncSetTimeout(1);
+        await waitForEditorClosed();
         // Escape keeps the live change (Calculated Columns parity).
         expect(headerText()).toBe('Comp');
     });
@@ -469,7 +470,7 @@ describe('Editable header name', () => {
         ) as HTMLElement;
         expect(cancelBtn).toBeTruthy();
         await userEvent.click(cancelBtn);
-        await asyncSetTimeout(1);
+        await waitForEditorClosed();
         expect(headerText()).toBe('Athlete');
 
         input = await openEditor(toolPanel, gridDiv, 'Athlete');
@@ -477,8 +478,7 @@ describe('Editable header name', () => {
         await userEvent.type(input, 'Applied');
         const applyBtn = document.querySelector('.ag-column-header-edit-action-apply') as HTMLElement;
         await userEvent.click(applyBtn);
-        await asyncSetTimeout(1);
-        expect(headerText()).toBe('Applied');
+        await waitFor(() => expect(headerText()).toBe('Applied'));
     });
 
     test('editing highlights the header cell and clears it on close', async () => {
@@ -486,12 +486,10 @@ describe('Editable header name', () => {
         expect(isHighlighted()).toBe(false);
 
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
-        await asyncSetTimeout(1);
-        expect(isHighlighted()).toBe(true);
+        await waitFor(() => expect(isHighlighted()).toBe(true));
 
         pressEscape(input);
-        await asyncSetTimeout(1);
-        expect(isHighlighted()).toBe(false);
+        await waitFor(() => expect(isHighlighted()).toBe(false));
     });
 
     test('suppressColumnHighlighting disables the edit highlight', async () => {
@@ -499,8 +497,8 @@ describe('Editable header name', () => {
             columnHeaderEdit: { suppressColumnHighlighting: true },
         });
 
+        // The highlight is toggled synchronously as the editor opens, so no further wait is needed.
         await openEditor(toolPanel, gridDiv, 'Athlete');
-        await asyncSetTimeout(1);
         expect(isHighlighted()).toBe(false);
     });
 });
@@ -539,10 +537,10 @@ describe('Editable group header name', () => {
                 },
             },
         });
-        await asyncSetTimeout(1);
 
-        const columnGroup = api.getColumnGroup('athleteGroup')!;
-        expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
+        await waitFor(() =>
+            expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Renamed')
+        );
     });
 
     test('a group header name round-trips through grid state', async () => {
@@ -556,9 +554,12 @@ describe('Editable group header name', () => {
                 },
             },
         });
-        await asyncSetTimeout(1);
 
-        expect(api.getState().columnGroup?.headerNames).toEqual([{ groupId: 'athleteGroup', headerName: 'Renamed' }]);
+        await waitFor(() =>
+            expect(api.getState().columnGroup?.headerNames).toEqual([
+                { groupId: 'athleteGroup', headerName: 'Renamed' },
+            ])
+        );
     });
 
     test('a saved grid state with an edited group header name round-trips through api.setState', async () => {
@@ -572,18 +573,21 @@ describe('Editable group header name', () => {
                 },
             },
         });
-        await asyncSetTimeout(1);
+        await waitFor(() =>
+            expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Renamed')
+        );
         const savedState = api.getState();
 
         api.resetColumnState();
-        await asyncSetTimeout(1);
-        const columnGroup = api.getColumnGroup('athleteGroup')!;
-        expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Group');
+        await waitFor(() =>
+            expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Group')
+        );
 
         api.setState(savedState);
-        await asyncSetTimeout(1);
 
-        expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Renamed');
+        await waitFor(() =>
+            expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Renamed')
+        );
     });
 
     test('a reset clears the edited group header name, reverting to the colGroupDef value', async () => {
@@ -597,13 +601,16 @@ describe('Editable group header name', () => {
                 },
             },
         });
-        await asyncSetTimeout(1);
+
+        await waitFor(() =>
+            expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Renamed')
+        );
 
         api.resetColumnState();
-        await asyncSetTimeout(1);
 
-        const columnGroup = api.getColumnGroup('athleteGroup')!;
-        expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Group');
+        await waitFor(() =>
+            expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Group')
+        );
     });
 
     test('an edited group name wins over the group headerValueGetter', async () => {
@@ -623,9 +630,13 @@ describe('Editable group header name', () => {
                 },
             },
         });
-        await asyncSetTimeout(1);
 
-        const columnGroup = api.getColumnGroup('athleteGroup')!;
+        // Poll for the group itself, not its display name — resolving the name is what the test measures.
+        const columnGroup = await waitFor(() => {
+            const group = api.getColumnGroup('athleteGroup');
+            expect(group).toBeTruthy();
+            return group!;
+        });
         const callsBefore = getterCalls;
         expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
         expect(getterCalls).toBe(callsBefore);
@@ -653,7 +664,6 @@ describe('Editable group header name', () => {
                 },
             },
         });
-        await asyncSetTimeout(1);
 
         // The group's children span three pinned sections, so it is replicated as one instance per section.
         // The override is keyed by groupId, so the single edited name applies to every split instance.
@@ -665,14 +675,13 @@ describe('Editable group header name', () => {
             ].filter((cg) => (cg as any).getGroupId?.() === 'athleteGroup');
         const displayNames = () => groupInstances().map((cg) => api.getDisplayNameForColumnGroup(cg as any, 'header'));
 
-        expect(displayNames()).toEqual(['Renamed', 'Renamed', 'Renamed']);
+        await waitFor(() => expect(displayNames()).toEqual(['Renamed', 'Renamed', 'Renamed']));
 
         // Un-pinning re-merges the children into a single instance, which keeps the edited name.
         api.applyColumnState({ defaultState: { pinned: null } });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(groupInstances().length).toBe(1));
 
         const merged = groupInstances();
-        expect(merged.length).toBe(1);
         expect(api.getDisplayNameForColumnGroup(merged[0] as any, 'header')).toBe('Renamed');
         expect(api.getState().columnGroup?.headerNames).toEqual([{ groupId: 'athleteGroup', headerName: 'Renamed' }]);
     });
@@ -739,16 +748,14 @@ describe('Editable group header name — custom header components', () => {
             ],
             rowData: [{ athlete: 'Michael Phelps' }],
         });
-        await asyncSetTimeout(1);
-        expect(groupText()).toBe('Group');
+        await waitFor(() => expect(groupText()).toBe('Group'));
         const initsAfterRender = refreshableInits;
 
         api.setState({
             columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
         });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(groupText()).toBe('Renamed'));
 
-        expect(groupText()).toBe('Renamed');
         // Refreshed in place: refresh called, no new instance created.
         expect(refreshableRefreshes).toBeGreaterThan(0);
         expect(refreshableInits).toBe(initsAfterRender);
@@ -768,16 +775,14 @@ describe('Editable group header name — custom header components', () => {
             ],
             rowData: [{ athlete: 'Michael Phelps' }],
         });
-        await asyncSetTimeout(1);
-        expect(groupText()).toBe('Group');
+        await waitFor(() => expect(groupText()).toBe('Group'));
         const initsAfterRender = staticInits;
 
         api.setState({
             columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
         });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(groupText()).toBe('Renamed'));
 
-        expect(groupText()).toBe('Renamed');
         // No refresh method, so the grid recreates the component.
         expect(staticInits).toBeGreaterThan(initsAfterRender);
     });

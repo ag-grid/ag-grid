@@ -11,7 +11,7 @@ import {
 import type { MultiFilter, SetFilter } from 'ag-grid-enterprise';
 import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 interface Row {
     name: string;
@@ -63,7 +63,7 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
 
-        await asyncSetTimeout(1);
+        // No sleep: the returned promise resolves on the post-debounce filterChanged event itself.
         return filterChanged;
     }
 

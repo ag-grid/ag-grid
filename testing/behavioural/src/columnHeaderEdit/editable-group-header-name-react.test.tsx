@@ -1,4 +1,4 @@
-import { cleanup, render, waitFor } from '@testing-library/react';
+import { act, cleanup, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import type { ColDef, ColGroupDef, GridApi, GridReadyEvent } from 'ag-grid-community';
@@ -45,11 +45,13 @@ describe('editable group header name (react)', () => {
         const groupText = () => document.querySelector('.ag-header-group-text')?.textContent;
         await waitFor(() => expect(groupText()).toBe('Group'));
 
-        gridApi!.setState({
-            columnGroup: {
-                openColumnGroupIds: [],
-                headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
-            },
+        act(() => {
+            gridApi!.setState({
+                columnGroup: {
+                    openColumnGroupIds: [],
+                    headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
+                },
+            });
         });
 
         await waitFor(() => expect(groupText()).toBe('Renamed'));

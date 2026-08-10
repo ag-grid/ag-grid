@@ -9,8 +9,8 @@ import {
     iconSetMaterial,
 } from 'ag-grid-community';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

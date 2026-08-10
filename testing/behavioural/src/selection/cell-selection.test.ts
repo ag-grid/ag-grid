@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import type { MockInstance } from 'vitest';
 
@@ -63,9 +63,14 @@ describe('Cell Selection', () => {
 
     async function focusHeaderAndGetAnnouncement(api: GridApi, colKey: string): Promise<string> {
         api.setFocusedHeader(api.getColumnGroup(colKey) ?? colKey);
-        await asyncSetTimeout(300);
 
-        return getAriaAnnouncementText(getGridElement(api)! as HTMLElement);
+        // The aria announcement is debounced (200ms) and then applied on a further 50ms timer, so poll
+        // until it lands. Callers assert on the settled text synchronously.
+        return waitFor(() => {
+            const text = getAriaAnnouncementText(getGridElement(api)! as HTMLElement);
+            expect(text).not.toBe('');
+            return text;
+        });
     }
 
     const columnDefs = [{ field: 'sport' }, { field: 'year' }, { field: 'amount' }, { field: 'day' }];
@@ -126,17 +131,15 @@ describe('Cell Selection', () => {
             });
             const gridDiv = getGridElement(api)! as HTMLElement;
 
-            await asyncSetTimeout(1);
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('tennis', 'sport'));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('tennis', 'sport')));
 
             const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
             // Need to manually dispatch touchstart because when running in JSDOM the grid will only attach touchstart not mousedown
             cell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
 
             await cellSelectionChanged;
-            await asyncSetTimeout(1);
 
-            const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+            const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
 
             const fillEnd = waitForEvent('fillEnd', api);
 

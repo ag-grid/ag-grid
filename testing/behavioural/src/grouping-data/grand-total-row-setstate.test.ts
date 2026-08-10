@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi, GridOptions, GridState, RowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule, PinnedRowModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
@@ -70,7 +72,8 @@ describe('grand total row survives setState', () => {
         expectGrandTotalPinnedTop(api);
 
         api.setState(savedState);
-        await asyncSetTimeout(5);
+        // `setState` defers its last section to a `setTimeout`; one macrotask lets that run.
+        await asyncSetTimeout(0);
 
         expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['region']);
         expectGrandTotalPinnedTop(api);
@@ -87,8 +90,11 @@ describe('grand total row survives setState', () => {
         };
         const api = gridsManager.createGrid<RowData>('myGrid', options);
 
-        // let firstDataRendered + the microtask + setState's deferred setTimeout flush
-        await asyncSetTimeout(20);
+        // `region` replaces the initial `category` grouping, so this cannot pass before the
+        // onFirstDataRendered microtask has run setState.
+        await waitFor(() => expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['region']));
+        // `setState` defers its last section to a `setTimeout`; one macrotask lets that run.
+        await asyncSetTimeout(0);
 
         expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['region']);
         expectGrandTotalPinnedTop(api);
@@ -111,7 +117,8 @@ describe('grand total row survives setState', () => {
         // that state takes the explicit `setPinnedState` path (not `reset`), which must not clear
         // the grand total row driven by the `grandTotalRow` option.
         api.setState({ ...savedState, rowPinning: { top: [], bottom: [] } });
-        await asyncSetTimeout(5);
+        // `setState` defers its last section to a `setTimeout`; one macrotask lets that run.
+        await asyncSetTimeout(0);
 
         expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['region']);
         expectGrandTotalPinnedTop(api);
@@ -122,7 +129,8 @@ describe('grand total row survives setState', () => {
         expectGrandTotalPinnedTop(api);
 
         api.setState(api.getState());
-        await asyncSetTimeout(5);
+        // `setState` defers its last section to a `setTimeout`; one macrotask lets that run.
+        await asyncSetTimeout(0);
 
         expectGrandTotalPinnedTop(api);
     });
@@ -136,7 +144,8 @@ describe('grand total row survives setState', () => {
         expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
 
         api.setState(savedState);
-        await asyncSetTimeout(5);
+        // `setState` defers its last section to a `setTimeout`; one macrotask lets that run.
+        await asyncSetTimeout(0);
 
         expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['region']);
         expectGrandTotalPinnedBottom(api);

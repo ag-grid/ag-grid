@@ -38,8 +38,8 @@ import { zzzLocale } from './locale';
 // Create a dummy locale based on english but prefix everything with zzz
 const AG_GRID_LOCALE_ZZZ: Record<string, string> = zzzLocale(AG_GRID_LOCALE_DE);
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

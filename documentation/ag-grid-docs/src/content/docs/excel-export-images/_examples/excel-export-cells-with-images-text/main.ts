@@ -13,8 +13,8 @@ import { CountryCellRenderer } from './countryCellRenderer_typescript';
 import { createBase64FlagsFromResponse } from './imageUtils';
 import type { FlagContext } from './interfaces';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

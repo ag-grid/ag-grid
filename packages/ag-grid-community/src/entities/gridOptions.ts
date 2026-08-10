@@ -191,6 +191,7 @@ import type { ProcessFileInputParams } from '../interfaces/iFileProcessor';
 import type { AlwaysPassFilter, FilterHandlers, QuickFilterMatcher, QuickFilterParser } from '../interfaces/iFilter';
 import type { FindOptions } from '../interfaces/iFind';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
+import type { PdfExportParams } from '../interfaces/iPdfCreator';
 import type { RowDragTextFunc } from '../interfaces/iRowDragItem';
 import type { RowModelType } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
@@ -668,6 +669,16 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressExcelExport?: boolean;
+    /**
+     * A default configuration object used to export to PDF.
+     * @agModule `PdfExportModule`
+     */
+    defaultPdfExportParams?: PdfExportParams;
+    /**
+     * Prevents the user from exporting the grid to PDF.
+     * @default false
+     */
+    suppressPdfExport?: boolean;
     /**
      * A list (array) of Excel styles to be used when exporting to Excel with styles.
      * @initial
@@ -1672,6 +1683,14 @@ export interface GridOptions<TData = any> {
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     suppressGroupRowsSticky?: boolean;
+
+    /**
+     * Maximum share of the viewport height that each sticky row section (top or bottom) may occupy, as a number between 0 and 1.
+     * Rows that do not fit within the resulting height budget do not stick and scroll normally instead.
+     * @default 0.5
+     * @agModule `RowGroupingModule` / `TreeDataModule` / `ServerSideRowModelModule`
+     */
+    stickyRowsMaxViewportRatio?: number;
 
     /**
      * Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`

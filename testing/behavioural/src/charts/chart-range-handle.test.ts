@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
@@ -48,11 +48,19 @@ describe('chart range handle', () => {
                 cellRange: { rowStartIndex: 0, rowEndIndex: initialEndRow, columns: ['month', 'sunshine'] },
                 chartType: 'groupedColumn',
             });
-            await asyncSetTimeout(1);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             const cellOfRow = (rowIndex: number) =>
                 getByTestId(gridDiv, agTestIdFor.cell(`ROW_${rowIndex}`, 'sunshine'));
+
+            // Test IDs are stamped on by a debounced pass, so poll until both the handle and the
+            // cells the drag visits are addressable.
+            await waitFor(() => {
+                expect(gridDiv.querySelector('.ag-range-handle')).toBeTruthy();
+                for (let i = 0, len = rowData.length; i < len; ++i) {
+                    cellOfRow(i);
+                }
+            });
 
             gridDiv
                 .querySelector('.ag-range-handle')!
@@ -61,20 +69,21 @@ describe('chart range handle', () => {
                 cellOfRow(hoveredRows[i]).dispatchEvent(
                     new MouseEvent('mousemove', { bubbles: true, clientX: 0, clientY: 1 })
                 );
-                await asyncSetTimeout(1);
+                await asyncSetTimeout(0);
             }
             cellOfRow(expectedEndRow).dispatchEvent(
                 new MouseEvent('mouseup', { bubbles: true, clientX: 0, clientY: 1 })
             );
-            await asyncSetTimeout(1);
 
-            const [chartModel] = api.getChartModels()!;
-            expect(chartModel.cellRange.rowEndIndex).toBe(expectedEndRow);
-            // the dimension range must follow the value range that carries the handle
-            expect(api.getCellRanges()!.map((r) => [r.startRow!.rowIndex, r.endRow!.rowIndex])).toEqual([
-                [0, expectedEndRow],
-                [0, expectedEndRow],
-            ]);
+            await waitFor(() => {
+                const [chartModel] = api.getChartModels()!;
+                expect(chartModel.cellRange.rowEndIndex).toBe(expectedEndRow);
+                // the dimension range must follow the value range that carries the handle
+                expect(api.getCellRanges()!.map((r) => [r.startRow!.rowIndex, r.endRow!.rowIndex])).toEqual([
+                    [0, expectedEndRow],
+                    [0, expectedEndRow],
+                ]);
+            });
         }
     );
 });

@@ -1,0 +1,109 @@
+---
+title: "PDF Export - Images"
+enterprise: true
+---
+
+PDF Export can embed JPEG and PNG images in grid cells, page headers, and page footers. Images are embedded directly in the generated document without third-party libraries.
+
+## Images In Grid Cells
+
+Load each image as a base64 string before export, then use `addImageToCell` to provide an image for an exported body cell. The callback receives the final exported cell value, row node, and column. Return the image together with the text that should appear alongside it.
+
+```{% frameworkTransform=true %}
+const defaultPdfExportParams = {
+    addImageToCell: (params) => {
+        if (params.column.getColId() !== 'country') {
+            return;
+        }
+
+        return {
+            image: {
+                id: params.node.data.countryCode,
+                base64: flagImages[params.node.data.countryCode],
+                imageType: 'png',
+                width: 18,
+                height: 12,
+            },
+            value: params.value,
+        };
+    },
+};
+```
+
+The image `id` is used to embed repeated images only once. Supply either `width` or `height` in PDF points and the image keeps its original aspect ratio; supplying both stretches the image to those exact dimensions. Use `alignment` to render the image before (`'start'`, the default) or after (`'end'`) the cell text, and `gap` to control the space between the image and the text.
+
+The following example displays country flags with a Cell Renderer and exports the same flags alongside the country names in the PDF.
+
+{% gridExampleRunner title="PDF Images In Cells" name="pdf-images-in-cells" exampleHeight=500 /%}
+
+Cell Renderer output is not captured automatically. Use `addImageToCell` to explicitly provide the image data required by the PDF.
+
+## Images In Page Headers And Footers
+
+Set `image` on a `PdfHeaderFooterContent` entry to add a company logo or other image to a page header or footer. An entry can contain an image, text, or both.
+
+```ts
+const defaultPdfExportParams = {
+    headerFooterConfig: {
+        all: {
+            header: [
+                {
+                    position: 'Left',
+                    image: {
+                        id: 'company-logo',
+                        base64: companyLogo,
+                        imageType: 'png',
+                        width: 92,
+                    },
+                },
+                {
+                    position: 'Right',
+                    value: 'Page &[Page] of &[Pages]',
+                },
+            ],
+        },
+    },
+};
+```
+
+The exported page colours follow the grid theme, so a logo designed for a light page can be hard to see when the grid uses a dark theme. Supply a logo variant for each theme and select one when exporting — reading the grid's background colour at export time keeps the choice in step with the active theme.
+
+The following example adds the AG Grid logo to every page header, selecting a light or dark logo variant from the grid's background colour.
+
+{% gridExampleRunner title="PDF Company Logo In Page Header" name="pdf-page-header-image" exampleHeight=500 /%}
+
+## API
+
+### Export Options
+
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["addImageToCell", "headerFooterConfig"] config={"description":""} /%}
+
+### PdfImage
+
+{% interfaceDocumentation interfaceName="PdfImage" overrideSrc="pdf-export/pdf.json" /%}
+
+### PdfCellImageCallbackParams
+
+{% interfaceDocumentation interfaceName="PdfCellImageCallbackParams" /%}
+
+### PdfCellImageResult
+
+{% interfaceDocumentation interfaceName="PdfCellImageResult" overrideSrc="pdf-export/pdf.json" /%}
+
+### PdfHeaderFooterTextContent
+
+{% interfaceDocumentation interfaceName="PdfHeaderFooterTextContent" /%}
+
+### PdfHeaderFooterImageContent
+
+{% interfaceDocumentation interfaceName="PdfHeaderFooterImageContent" /%}
+
+## Known Limitations
+
+- PNG and JPEG are the supported formats. Typical web images work as-is, including PNG transparency, palette PNGs, and progressive JPEGs.
+- GIF, SVG, WebP, animated images, interlaced PNG, 16-bit PNG, CMYK JPEG, lossless JPEG, and image collections are not supported.
+- Cell Renderer output and images referenced by HTML or CSS are not captured automatically.
+- A cell or page header/footer entry can contain one image.
+- Images cannot currently be used on cover pages or as watermarks.
+- Images cannot currently contain hyperlink annotations.
+- Source images are embedded at their supplied resolution. Use appropriately sized images to limit the exported file size.

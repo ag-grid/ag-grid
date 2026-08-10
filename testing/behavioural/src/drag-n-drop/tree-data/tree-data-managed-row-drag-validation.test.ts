@@ -83,12 +83,9 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRowId);
         await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Drafts'));
-        await asyncSetTimeout(1);
         await dispatcher.move(targetRowId, { yOffsetPercent: 0.9 });
-        await asyncSetTimeout(1);
         assertDropIndicatorVisible(api);
         await dispatcher.finish();
-        await asyncSetTimeout(1);
 
         const finalRows = new GridRows(api, 'unmanaged final');
         await finalRows.check(`
@@ -144,12 +141,9 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         await dispatcher.start('draft');
         await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Draft'));
         await dispatcher.move('protected', { yOffsetPercent: 0.35 });
-        await asyncSetTimeout(1);
         await dispatcher.move('protected', { center: true });
-        await asyncSetTimeout(1);
         assertDropIndicatorVisible(api);
         await dispatcher.finish();
-        await asyncSetTimeout(1);
 
         const finalRows = new GridRows(api, 'validator final');
         await finalRows.check(`

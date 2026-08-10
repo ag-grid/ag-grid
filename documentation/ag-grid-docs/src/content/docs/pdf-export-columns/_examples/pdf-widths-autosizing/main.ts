@@ -6,14 +6,14 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { PdfExportModule, RowNumbersModule } from 'ag-grid-enterprise';
+import { ContextMenuModule, PdfExportModule, RowNumbersModule } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowNumbersModule, PdfExportModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ContextMenuModule, RowNumbersModule, PdfExportModule]);
 
 interface ProductData {
     sku: string;
@@ -62,7 +62,7 @@ const gridOptions: GridOptions<ProductData> = {
     rowData,
 };
 
-function onBtExport() {
+function getPdfExportParams(): PdfExportParams {
     const widthMode = document.querySelector<HTMLSelectElement>('#widthMode')!.value;
     const params: PdfExportParams = { exportRowNumbers: true };
 
@@ -84,7 +84,12 @@ function onBtExport() {
         params.columnWidth = widthMode === 'grid' ? 'grid' : 'auto';
     }
 
-    gridApi.exportDataAsPdf(params);
+    return params;
+}
+
+function onBtExport() {
+    gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+    gridApi.exportDataAsPdf();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

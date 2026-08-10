@@ -19,8 +19,8 @@ import {
 import type { Fact, VegetableNode } from './data';
 import { vegetablesData } from './data';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

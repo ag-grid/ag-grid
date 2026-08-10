@@ -26,8 +26,8 @@ import { getData } from './data';
 import { getFileCssIcon, moveFiles } from './fileUtils';
 import type { IFile } from './fileUtils';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

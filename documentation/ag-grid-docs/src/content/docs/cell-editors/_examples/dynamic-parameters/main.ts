@@ -13,8 +13,8 @@ import type { IRow } from './data';
 import { getData } from './data';
 import { GenderCellRenderer } from './genderCellRenderer_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

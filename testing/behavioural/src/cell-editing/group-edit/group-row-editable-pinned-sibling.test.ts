@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridOptions, GroupRowValueSetterParams, RowNode, ValueSetterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -144,11 +146,10 @@ describe('editing with pinned sibling rows', () => {
                     pinnedRow.setDataValue('sales', 9999, 'ui');
                     await asyncSetTimeout(0);
                 }
-                await asyncSetTimeout(50);
-
-                // Both should have the updated value
-                expect(pinnedRow.data?.sales).toBe(9999);
-                expect(sourceRow.data?.sales).toBe(9999);
+                await waitFor(() => {
+                    expect(pinnedRow.data?.sales).toBe(9999);
+                    expect(sourceRow.data?.sales).toBe(9999);
+                });
 
                 // Verify grid state - both pinned and source row should show updated value
                 gridRows = new GridRows(api, 'after edit');
@@ -201,10 +202,10 @@ describe('editing with pinned sibling rows', () => {
                     sourceRow.setDataValue('sales', 1111, 'ui');
                     await asyncSetTimeout(0);
                 }
-                await asyncSetTimeout(50);
-
-                expect(sourceRow.data?.sales).toBe(1111);
-                expect(pinnedRow.data?.sales).toBe(1111);
+                await waitFor(() => {
+                    expect(sourceRow.data?.sales).toBe(1111);
+                    expect(pinnedRow.data?.sales).toBe(1111);
+                });
 
                 // Verify grid state - both source and pinned row should show updated value
                 const gridRows = new GridRows(api, 'after edit');
@@ -307,11 +308,11 @@ describe('editing with pinned sibling rows', () => {
                     pinnedGroup.setDataValue('amount', 600, 'ui');
                     await asyncSetTimeout(0);
                 }
-                await asyncSetTimeout(50);
-
                 // Verify the edit cascaded to children (600 / 2 = 300 each)
-                expect(api.getRowNode('fr-paris')?.data?.amount).toBe(300);
-                expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(300);
+                await waitFor(() => {
+                    expect(api.getRowNode('fr-paris')?.data?.amount).toBe(300);
+                    expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(300);
+                });
 
                 // Verify aggregations updated
                 expect(franceGroup.aggData?.amount).toBe(600);
@@ -385,11 +386,11 @@ describe('editing with pinned sibling rows', () => {
                     franceGroup.setDataValue('amount', 400, 'ui');
                     await asyncSetTimeout(0);
                 }
-                await asyncSetTimeout(50);
-
                 // Verify the edit cascaded to children (400 / 2 = 200 each)
-                expect(api.getRowNode('fr-paris')?.data?.amount).toBe(200);
-                expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(200);
+                await waitFor(() => {
+                    expect(api.getRowNode('fr-paris')?.data?.amount).toBe(200);
+                    expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(200);
+                });
 
                 // Verify both source and pinned group have updated aggregation
                 expect(franceGroup.aggData?.amount).toBe(400);
@@ -462,9 +463,10 @@ describe('editing with pinned sibling rows', () => {
                     pinnedGroup.setDataValue('amount', 600, 'ui');
                     await asyncSetTimeout(0);
                 }
-                await asyncSetTimeout(50);
-
                 // Verify the callback was called with correct aggregatedChildren
+                await waitFor(() => expect(capturedParams.length).toBeGreaterThanOrEqual(1));
+                // one macrotask, the window in which a second, redundant callback would arrive
+                await asyncSetTimeout(0);
                 expect(capturedParams.length).toBe(1);
                 const params = capturedParams[0];
 
@@ -529,9 +531,10 @@ describe('editing with pinned sibling rows', () => {
                     pinnedGroup.setDataValue('amount', 400, 'ui');
                     await asyncSetTimeout(0);
                 }
-                await asyncSetTimeout(50);
-
                 // Verify the callback was called with filtered aggregatedChildren
+                await waitFor(() => expect(capturedParams.length).toBeGreaterThanOrEqual(1));
+                // one macrotask, the window in which a second, redundant callback would arrive
+                await asyncSetTimeout(0);
                 expect(capturedParams.length).toBe(1);
                 const params = capturedParams[0];
 
@@ -585,11 +588,9 @@ describe('editing with pinned sibling rows', () => {
                     pinnedEurope.setDataValue('amount', 1400, 'ui');
                     await asyncSetTimeout(0);
                 }
-                await asyncSetTimeout(50);
-
                 // Verify the callback was called with correct aggregatedChildren
                 // For a filler group, children are the country groups (France, Germany)
-                expect(capturedParams.length).toBeGreaterThanOrEqual(1);
+                await waitFor(() => expect(capturedParams.length).toBeGreaterThanOrEqual(1));
                 const europeParams = capturedParams[0];
 
                 // aggregatedChildren should contain the Europe group's direct children (country groups)

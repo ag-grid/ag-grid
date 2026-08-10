@@ -1,4 +1,4 @@
-import { findByTestId } from '@testing-library/dom';
+import { findByTestId, waitFor } from '@testing-library/dom';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -91,9 +91,8 @@ describe('Multi Filter floating filter keystroke race', () => {
             input.focus();
             input.value = 'u';
             input.dispatchEvent(new Event('input', { bubbles: true }));
-            await asyncSetTimeout(2);
-            expect(api.getDisplayedRowCount()).toBe(0);
             // No name contains 'u', so the applied `u` model empties the grid.
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(0));
             await new GridRows(api, "text 'u' applied empties grid").check(`
                 ROOT id:ROOT_NODE_ID
             `);
@@ -106,14 +105,17 @@ describe('Multi Filter floating filter keystroke race', () => {
             // An interleaving, non-floating filter-changed cycle re-runs the model writeback over the
             // focused input with the still-stale `u` model — the keystroke-clobber trigger.
             api.onFilterChanged();
-            await asyncSetTimeout(2);
+
+            // The applied filter model must converge on the live keystroke, not the stale `u`.
+            await waitFor(() =>
+                expect(
+                    api.getColumnFilterModel<{ filterModels: ({ filter?: string } | null)[] }>('name')
+                        ?.filterModels?.[0]?.filter
+                ).toBe('u8')
+            );
 
             // The live keystroke must survive: the input must still read `u8`, not revert to `u`.
             expect(input.value).toBe('u8');
-
-            // ...and the applied filter model must converge on the live keystroke, not the stale `u`.
-            const model = api.getColumnFilterModel<{ filterModels: ({ filter?: string } | null)[] }>('name');
-            expect(model?.filterModels?.[0]?.filter).toBe('u8');
             // Converged `u8` model matches no name, so the grid stays empty (not reverted to a different set).
             expect(api.getDisplayedRowCount()).toBe(0);
             await new GridRows(api, "converged 'u8' model empties grid").check(`
@@ -132,9 +134,8 @@ describe('Multi Filter floating filter keystroke race', () => {
                 filterModels: [{ filterType: 'text', type: 'contains', filter: 'bob' }, null],
             });
             await api.onFilterChanged();
-            await asyncSetTimeout(2);
 
-            expect(input.value).toBe('bob');
+            await waitFor(() => expect(input.value).toBe('bob'));
             // The programmatic `contains bob` model filters down to the single matching row.
             expect(api.getDisplayedRowCount()).toBe(1);
             await new GridRows(api, "writeback 'bob' filters to one row (blurred)").check(`
@@ -155,9 +156,8 @@ describe('Multi Filter floating filter keystroke race', () => {
                 filterModels: [{ filterType: 'text', type: 'contains', filter: 'bob' }, null],
             });
             await api.onFilterChanged();
-            await asyncSetTimeout(2);
 
-            expect(input.value).toBe('bob');
+            await waitFor(() => expect(input.value).toBe('bob'));
             // Same programmatic model applied while focused still filters to the single matching row.
             expect(api.getDisplayedRowCount()).toBe(1);
             await new GridRows(api, "writeback 'bob' filters to one row (focused)").check(`
@@ -185,18 +185,18 @@ describe('Multi Filter floating filter keystroke race', () => {
             input.focus();
             input.value = '5';
             input.dispatchEvent(new Event('input', { bubbles: true }));
-            await asyncSetTimeout(2);
+            await waitFor(() => expect(api.getColumnFilterModel<{ filter?: number }>('age')?.filter).toBe(5));
 
             // Continue typing `58` while focused, before the keystroke flushes into the model.
             input.value = '58';
             input.dispatchEvent(new Event('input', { bubbles: true }));
 
             api.onFilterChanged();
-            await asyncSetTimeout(2);
+
+            // The model must converge on the live keystroke, not the stale `5`.
+            await waitFor(() => expect(api.getColumnFilterModel<{ filter?: number }>('age')?.filter).toBe(58));
 
             expect(input.value).toBe('58');
-            const model = api.getColumnFilterModel<{ filter?: number }>('age');
-            expect(model?.filter).toBe(58);
             // Converged `58` equals-model keeps only the age-58 row, not the stale age-5 result.
             expect(api.getDisplayedRowCount()).toBe(1);
             await new GridRows(api, "converged age '58' keeps one row").check(`
@@ -223,11 +223,13 @@ describe('Multi Filter floating filter keystroke race', () => {
             input.focus();
             input.value = 'mich';
             input.dispatchEvent(new Event('input', { bubbles: true }));
-            await asyncSetTimeout(2);
+            // Nothing to poll for: the apply button gates the model, so the only effect of the
+            // keystroke is the synchronously-recorded pending edit. Just yield a tick.
+            await asyncSetTimeout(0);
 
             // With an apply button the keystroke is held until applied, so `pendingEdit` stays set.
             api.onFilterChanged();
-            await asyncSetTimeout(2);
+            await asyncSetTimeout(0);
 
             expect(input.value).toBe('mich');
             // Nothing was applied: the apply button still gates the model.

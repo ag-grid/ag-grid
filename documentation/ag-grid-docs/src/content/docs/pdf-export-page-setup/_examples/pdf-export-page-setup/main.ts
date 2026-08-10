@@ -1,13 +1,13 @@
 import type { GridApi, GridOptions, PdfExportParams, PdfPageOrientation, PdfPageSize } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
-import { PdfExportModule } from 'ag-grid-enterprise';
+import { ContextMenuModule, PdfExportModule } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, PdfExportModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ContextMenuModule, PdfExportModule]);
 
 interface InventoryData {
     item: string;
@@ -79,8 +79,8 @@ function getPageMargin(): number {
     return 36;
 }
 
-function onBtExport() {
-    const params: PdfExportParams = {
+function getPdfExportParams(): PdfExportParams {
+    return {
         documentTitle: 'Quarterly Inventory',
         page: {
             size: getPageSize(),
@@ -90,8 +90,11 @@ function onBtExport() {
         repeatHeader: document.querySelector<HTMLInputElement>('#repeatHeader')!.checked,
         columnWidth: 'auto',
     };
+}
 
-    gridApi.exportDataAsPdf(params);
+function onBtExport() {
+    gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+    gridApi.exportDataAsPdf();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

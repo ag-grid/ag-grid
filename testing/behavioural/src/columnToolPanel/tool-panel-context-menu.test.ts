@@ -1,4 +1,4 @@
-import { findByText, queryByText } from '@testing-library/dom';
+import { findByText, queryByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 
 import type { ColDef, ColumnEventType, GetColumnMenuItemsParams, GridApi, GridOptions } from 'ag-grid-community';
@@ -45,11 +45,14 @@ describe('ToolPanelContextMenu', () => {
      */
     async function getColumnEntry(toolPanel: any, gridDiv: HTMLElement, label: string): Promise<HTMLElement> {
         const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
+        const rowIndex = await waitFor(() => {
+            const index = (listPanel.getDisplayedColsList() as any[]).findIndex((item) => item.displayName === label);
+            if (index < 0) {
+                throw new Error(`Tool-panel column entry not found for displayName="${label}"`);
+            }
+            return index;
+        });
         const displayedColsList = listPanel.getDisplayedColsList() as any[];
-        const rowIndex = displayedColsList.findIndex((item) => item.displayName === label);
-        if (rowIndex < 0) {
-            throw new Error(`Tool-panel column entry not found for displayName="${label}"`);
-        }
 
         listPanel['virtualList'].ensureIndexVisible(rowIndex);
         await asyncSetTimeout(0);
@@ -81,13 +84,14 @@ describe('ToolPanelContextMenu', () => {
         entry.dispatchEvent(
             new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })
         );
-        await asyncSetTimeout(1);
+        // The popup registers its close listeners in a deferred task, so yield one tick to let the
+        // menu reach its steady state before the caller reads or clicks it.
+        await asyncSetTimeout(0);
     }
 
     async function clickMenuItem(gridDiv: HTMLElement, label: string): Promise<void> {
         const menuItem = await findByText(gridDiv, label);
         await userEvent.click(menuItem);
-        await asyncSetTimeout(1);
     }
 
     describe('non-deferred mode', () => {
@@ -121,7 +125,6 @@ describe('ToolPanelContextMenu', () => {
 
             gridDiv = getGridElement(gridApi)! as HTMLElement;
             toolPanel = gridApi.getToolPanelInstance('columns') as any;
-            await asyncSetTimeout(1);
         });
 
         const getGroupedRowIds = () => gridApi.getRowGroupColumns().map((col) => col.getId());
@@ -136,7 +139,7 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
             await clickMenuItem(gridDiv, 'Group by Athlete');
 
-            expect(getGroupedRowIds()).toStrictEqual(['athlete']);
+            await waitFor(() => expect(getGroupedRowIds()).toStrictEqual(['athlete']));
         });
 
         test("stock actions invoked from the tool panel emit column events with source 'toolPanelUi'", async () => {
@@ -146,7 +149,7 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
             await clickMenuItem(gridDiv, 'Group by Athlete');
 
-            expect(getGroupedRowIds()).toStrictEqual(['athlete']);
+            await waitFor(() => expect(getGroupedRowIds()).toStrictEqual(['athlete']));
             expect(rowGroupSources).toContain<ColumnEventType>('toolPanelUi');
             expect(rowGroupSources).not.toContain<ColumnEventType>('columnMenu');
         });
@@ -158,7 +161,7 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
             await clickMenuItem(gridDiv, 'Un-Group by Athlete');
 
-            expect(getGroupedRowIds()).toStrictEqual(['age']);
+            await waitFor(() => expect(getGroupedRowIds()).toStrictEqual(['age']));
         });
 
         test('group and ungroup context menu actions update the tool panel row group pills', async () => {
@@ -167,14 +170,14 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
             await clickMenuItem(gridDiv, 'Group by Athlete');
 
+            await waitFor(() => expect(getToolPanelRowGroupLabels()).toStrictEqual(['Athlete']));
             expect(getGroupedRowIds()).toStrictEqual(['athlete']);
-            expect(getToolPanelRowGroupLabels()).toStrictEqual(['Athlete']);
 
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
             await clickMenuItem(gridDiv, 'Un-Group by Athlete');
 
+            await waitFor(() => expect(getToolPanelRowGroupLabels()).toStrictEqual([]));
             expect(getGroupedRowIds()).toStrictEqual([]);
-            expect(getToolPanelRowGroupLabels()).toStrictEqual([]);
         });
 
         test('add-to-values context menu action adds the column as an aggregation', async () => {
@@ -183,7 +186,7 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Age');
             await clickMenuItem(gridDiv, 'Add Age to values');
 
-            expect(gridApi.getValueColumns().map((c) => c.getColId())).toStrictEqual(['age']);
+            await waitFor(() => expect(gridApi.getValueColumns().map((c) => c.getColId())).toStrictEqual(['age']));
         });
     });
 
@@ -230,7 +233,6 @@ describe('ToolPanelContextMenu', () => {
                     defaultToolPanel: 'columns',
                 },
             });
-            await asyncSetTimeout(1);
             return {
                 gridApi,
                 gridDiv: getGridElement(gridApi)! as HTMLElement,
@@ -244,12 +246,14 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
             await clickMenuItem(gridDiv, 'Group by Athlete');
 
+            // Deferred mode schedules no apply of its own — the Apply button is the only path — so the
+            // pill landing is the full extent of the change until it is clicked.
+            await waitFor(() => expect(getToolPanelRowGroupLabels(toolPanel)).toStrictEqual(['Athlete']));
             expect(gridApi.getRowGroupColumns()).toEqual([]);
 
             getDeferredActionButton(toolPanel, 'Apply').click();
-            await asyncSetTimeout(1);
 
-            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['athlete']);
+            await waitFor(() => expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['athlete']));
         });
 
         test('row group context menu actions in deferred mode update the tool panel pills immediately', async () => {
@@ -260,14 +264,13 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
             await clickMenuItem(gridDiv, 'Group by Athlete');
 
+            await waitFor(() => expect(getToolPanelRowGroupLabels(toolPanel)).toStrictEqual(['Athlete']));
             expect(gridApi.getRowGroupColumns()).toEqual([]);
-            expect(getToolPanelRowGroupLabels(toolPanel)).toStrictEqual(['Athlete']);
 
             getDeferredActionButton(toolPanel, 'Cancel').click();
-            await asyncSetTimeout(1);
 
+            await waitFor(() => expect(getToolPanelRowGroupLabels(toolPanel)).toStrictEqual([]));
             expect(gridApi.getRowGroupColumns()).toEqual([]);
-            expect(getToolPanelRowGroupLabels(toolPanel)).toStrictEqual([]);
         });
 
         test('value context menu action in deferred mode is discarded by Cancel', async () => {
@@ -276,11 +279,12 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Age');
             await clickMenuItem(gridDiv, 'Add Age to values');
 
+            await waitFor(() => expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).toContain('Age'));
             expect(gridApi.getValueColumns()).toEqual([]);
 
             getDeferredActionButton(toolPanel, 'Cancel').click();
-            await asyncSetTimeout(1);
 
+            await waitFor(() => expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age'));
             expect(gridApi.getValueColumns()).toEqual([]);
         });
 
@@ -292,14 +296,13 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Age');
             await clickMenuItem(gridDiv, 'Add Age to values');
 
+            await waitFor(() => expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).toContain('Age'));
             expect(gridApi.getValueColumns()).toEqual([]);
-            expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).toContain('Age');
 
             getDeferredActionButton(toolPanel, 'Cancel').click();
-            await asyncSetTimeout(1);
 
+            await waitFor(() => expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age'));
             expect(gridApi.getValueColumns()).toEqual([]);
-            expect(getToolPanelDropZoneText(toolPanel.valuesDropZonePanel)).not.toContain('Age');
         });
 
         test('pivot context menu action in deferred pivot mode applies only after clicking Apply', async () => {
@@ -319,12 +322,14 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Country');
             await clickMenuItem(gridDiv, 'Add Country to labels');
 
+            await waitFor(() => expect(getToolPanelDropZoneText(toolPanel.pivotDropZonePanel)).toContain('Country'));
             expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
 
             getDeferredActionButton(toolPanel, 'Apply').click();
-            await asyncSetTimeout(1);
 
-            expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year', 'country']);
+            await waitFor(() =>
+                expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year', 'country'])
+            );
         });
 
         test('pivot context menu actions in deferred pivot mode update the tool panel pills immediately', async () => {
@@ -344,14 +349,15 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Country');
             await clickMenuItem(gridDiv, 'Add Country to labels');
 
+            await waitFor(() => expect(getToolPanelDropZoneText(toolPanel.pivotDropZonePanel)).toContain('Country'));
             expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
-            expect(getToolPanelDropZoneText(toolPanel.pivotDropZonePanel)).toContain('Country');
 
             getDeferredActionButton(toolPanel, 'Cancel').click();
-            await asyncSetTimeout(1);
 
+            await waitFor(() =>
+                expect(getToolPanelDropZoneText(toolPanel.pivotDropZonePanel)).not.toContain('Country')
+            );
             expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
-            expect(getToolPanelDropZoneText(toolPanel.pivotDropZonePanel)).not.toContain('Country');
         });
     });
 
@@ -378,7 +384,6 @@ describe('ToolPanelContextMenu', () => {
                 },
                 ...gridOptions,
             });
-            await asyncSetTimeout(1);
             return {
                 gridApi,
                 gridDiv: getGridElement(gridApi)! as HTMLElement,
@@ -531,7 +536,6 @@ describe('ToolPanelContextMenu', () => {
             const entry = await getColumnEntry(toolPanel, gridDiv, 'Athlete');
             const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 });
             entry.dispatchEvent(event);
-            await asyncSetTimeout(1);
 
             // AG Grid handled the gesture (columnMenuItems is configured) so the browser menu is suppressed,
             // even though the resolved menu is empty and nothing opens.
@@ -546,7 +550,6 @@ describe('ToolPanelContextMenu', () => {
             const entry = await getColumnEntry(toolPanel, gridDiv, 'Athlete');
             const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 });
             entry.dispatchEvent(event);
-            await asyncSetTimeout(1);
 
             // Unlike a per-column columnMenuItems, a grid-level callback that returns nothing for this column
             // does not claim the gesture, so the browser's native menu is left to show.
@@ -568,6 +571,7 @@ describe('ToolPanelContextMenu', () => {
 
             // The disabled item must not mutate value state when clicked.
             await userEvent.click(option);
+            // eslint-disable-next-line no-restricted-syntax -- negative assertion: needs a real settling window to observe a mutation a disabled item must never make
             await asyncSetTimeout(1);
             expect(gridApi.getValueColumns().map((col) => col.getColId())).not.toContain('age');
         });
@@ -597,7 +601,6 @@ describe('ToolPanelContextMenu', () => {
                     defaultToolPanel: 'columns',
                 },
             });
-            await asyncSetTimeout(1);
             return {
                 gridApi,
                 gridDiv: getGridElement(gridApi)! as HTMLElement,

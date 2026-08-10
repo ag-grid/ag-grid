@@ -9,8 +9,8 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import { getData } from './data';
 import './styles.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -28,6 +28,10 @@ const GridExample = () => {
             field: 'size',
             aggFunc: 'sum',
             valueFormatter: (params) => {
+                if (params.value == null) {
+                    return ''; // params.value can be null/undefined here (e.g. no size for this row)
+                }
+
                 const sizeInKb = params.value / 1024;
                 if (sizeInKb > 1024) {
                     return `${+(sizeInKb / 1024).toFixed(2)} MB`;

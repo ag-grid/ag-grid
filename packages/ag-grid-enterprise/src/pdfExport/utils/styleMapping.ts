@@ -87,6 +87,16 @@ export function mapCssStylesToPdfStyle(
         result.fontWeight = fontWeight;
     }
 
+    const fontStyle = readStyleString(mergedStyles, ['fontStyle', 'font-style'])?.toLowerCase();
+    if (fontStyle === 'normal' || fontStyle === 'italic' || fontStyle === 'oblique') {
+        result.fontStyle = fontStyle;
+    }
+
+    const direction = readStyleString(mergedStyles, ['direction'])?.toLowerCase();
+    if (direction === 'ltr' || direction === 'rtl') {
+        result.direction = direction;
+    }
+
     const alignment = resolveTextAlignment(readStyleString(mergedStyles, ['textAlign', 'text-align']));
     if (alignment) {
         result.alignment = alignment;

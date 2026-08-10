@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { ALL_SEVERITIES, TestGridsManager } from '../../test-utils';
 import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
@@ -45,7 +47,12 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
         modules: [ServerSideRowModelApiModule, ServerSideRowModelModule, RowSelectionModule],
     });
 
+    // Incremented once each getRows round-trip RESOLVES (after params.success), so tests can gate on
+    // the datasource having actually come back rather than on a guessed delay.
+    let loadCount = 0;
+
     beforeEach(() => {
+        loadCount = 0;
         gridsManager.reset();
     });
 
@@ -65,7 +72,10 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
             getRowId: ({ data: d }) => d.id,
             serverSideDatasource: {
                 getRows: (params: IServerSideGetRowsParams) => {
-                    setTimeout(() => params.success({ rowData: data, rowCount: data.length }), 1);
+                    setTimeout(() => {
+                        params.success({ rowData: data, rowCount: data.length });
+                        loadCount++;
+                    }, 1);
                 },
             },
             ...extra,
@@ -74,7 +84,7 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
 
     async function createAndLoad(gridId: string, extra: Partial<GridOptions> = {}) {
         const api = gridsManager.createGrid(gridId, createFlatGridOptions(extra));
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(loadCount).toBeGreaterThan(0));
         await waitForNoLoadingRows(api);
         return api;
     }
@@ -102,8 +112,10 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
         api.deselectAll();
         expect(selectedIds(api)).toEqual([]);
 
+        // Gate on a flag that was FALSE before the restore, so the assertions below cannot pass on
+        // the pre-restore state.
         api.setServerSideSelectionState(captured!);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getRowNode('a')!.isSelected()).toBe(true));
 
         // Surprising pin: the default SSRM strategy does NOT rebuild its selectedNodes map from
         // a state restore, so getSelectedNodes() stays empty even though the rows read as selected.
@@ -143,9 +155,9 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
         api.deselectAll();
         expect(api.getRowNode('a')!.isSelected()).toBe(false);
 
+        // 'a' was deselected by the deselectAll above, so this gate can only pass post-restore.
         api.setServerSideSelectionState(state);
-        await asyncSetTimeout(1);
-        expect(api.getRowNode('a')!.isSelected()).toBe(true);
+        await waitFor(() => expect(api.getRowNode('a')!.isSelected()).toBe(true));
         expect(api.getRowNode('c')!.isSelected()).toBe(false);
         const restored = api.getServerSideSelectionState() as any;
         expect(restored.selectAll).toBe(true);
@@ -159,8 +171,11 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
         api.getRowNode('e')!.setSelected(true);
         expect(selectedIds(api)).toEqual(['b', 'e']);
 
+        // The selection asserted below is the same selection that held before the refresh, so gate on
+        // the refresh's getRows round-trip having RESOLVED — otherwise the assertions are vacuous.
+        const loadsBeforeRefresh = loadCount;
         api.refreshServerSide({ purge: false });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(loadCount).toBeGreaterThan(loadsBeforeRefresh));
         await waitForNoLoadingRows(api);
 
         // Pinned: selection survives a non-purge refresh (stable getRowId identity).
@@ -177,8 +192,11 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
         api.getRowNode('e')!.setSelected(true);
         expect(selectedIds(api)).toEqual(['b', 'e']);
 
+        // As above: the post-refresh selection matches the pre-refresh one, so the round-trip must be
+        // observed to have resolved before asserting.
+        const loadsBeforeRefresh = loadCount;
         api.refreshServerSide({ purge: true });
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(loadCount).toBeGreaterThan(loadsBeforeRefresh));
         await waitForNoLoadingRows(api);
 
         // Pinned: with a stable getRowId, the selection STATE persists across a purge refresh.

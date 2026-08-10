@@ -21,8 +21,8 @@ const leftModules = [ClipboardModule, CsvExportModule, SetFilterModule];
 const rightModules = [CsvExportModule, ExcelExportModule, NumberFilterModule, TextFilterModule];
 
 // Register shared Modules globally
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

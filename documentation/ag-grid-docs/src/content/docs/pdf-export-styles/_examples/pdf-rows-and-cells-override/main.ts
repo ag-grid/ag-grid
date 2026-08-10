@@ -11,8 +11,8 @@ import { ColumnMenuModule, ContextMenuModule, PdfExportModule } from 'ag-grid-en
 
 import { data } from './data';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

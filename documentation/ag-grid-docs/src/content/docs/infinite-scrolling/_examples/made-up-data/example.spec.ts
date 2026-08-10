@@ -28,7 +28,9 @@ test.agExample(import.meta, () => {
                 el.scrollTop = el.scrollHeight;
             });
             // Row 99 (the last row): column A => 'A100 = 116' (17 + 99 + 0).
-            await expect(lastCell).toContainText('A100 = 116');
+            // Short timeout so a scroll that lands mid-load costs one retry rather than the whole
+            // budget - at the default this assertion only ever gets a single attempt.
+            await expect(lastCell).toContainText('A100 = 116', { timeout: 2000 });
         }).toPass();
     });
 });

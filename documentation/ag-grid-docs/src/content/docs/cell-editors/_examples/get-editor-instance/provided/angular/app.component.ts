@@ -16,8 +16,8 @@ import {
 import { MySimpleEditor } from './mySimple-editor.component';
 import './style.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

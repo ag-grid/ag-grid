@@ -240,6 +240,10 @@ const gridOptions = {
 }
 ```
 
+Note that `params.value` may be `null` or `undefined`, e.g. for group rows, so the `valueFormatter` above checks
+for this before formatting. See [TypeScript Generics](./typescript-generics/) for how typing callback params
+surfaces this case at compile time.
+
 Each custom data type definition must have a `baseDataType` of one of the [Pre-Defined Cell Data Types](#pre-defined-cell-data-types), which represents the data type of the underlying cell values.
 
 Data type definitions support inheritance via the `extendsDataType` property. Each custom cell data type must either extend one of the pre-defined types, or another custom type. Any non-overridden properties are inherited from the parent definition. To prevent inheriting properties from the parent definition, `suppressDefaultProperties = true` can be set on the definition.

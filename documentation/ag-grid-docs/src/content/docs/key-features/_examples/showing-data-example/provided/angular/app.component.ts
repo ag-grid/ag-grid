@@ -5,8 +5,8 @@ import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, ICellRendererParams, ValueGetterParams } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

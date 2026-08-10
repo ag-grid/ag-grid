@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
 import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { DragEventDispatcher, TestGridsManager } from '../test-utils';
 
 type SuppressValue = GridOptions['suppressGroupChangesColumnVisibility'];
 
@@ -67,7 +69,6 @@ describe('suppressGroupChangesColumnVisibility', () => {
             await dispatcher.startDrag(source, sourceRect.left + 2, sourceRect.top + 2);
             await dispatcher.movePointer(target, targetRect.left + 10, targetRect.top + 10);
             await dispatcher.finishDrag(target);
-            await asyncSetTimeout(50);
         } finally {
             ownerDocument.elementsFromPoint = originalElementsFromPoint as typeof ownerDocument.elementsFromPoint;
             source.getBoundingClientRect = originalSourceRect;
@@ -125,7 +126,8 @@ describe('suppressGroupChangesColumnVisibility', () => {
 
             await dragSourceToTarget(getColumnHeader(api, 'country'), getRowGroupDropZone(api));
 
-            expect(api.getRowGroupColumns().map((col) => col.getColId())).toContain('country');
+            // No row group columns existed before the drag, so this cannot pass before the drop lands.
+            await waitFor(() => expect(api.getRowGroupColumns().map((col) => col.getColId())).toContain('country'));
             expect(country.isVisible()).toBe(!hiddenAfterGroup);
         });
 

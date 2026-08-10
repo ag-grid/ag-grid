@@ -4,8 +4,8 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -19,8 +19,9 @@ const gridOptions: GridOptions = {
             field: 'athlete',
             rowGroup: true,
             hide: true,
-            keyCreator: (params) => params.value.id,
-            valueFormatter: (params) => params.value.name,
+            // `value` can be `null`/`undefined` for group and footer rows, which have no athlete object.
+            keyCreator: (params) => params.value?.id ?? '',
+            valueFormatter: (params) => params.value?.name ?? '',
         },
         { field: 'country' },
         { field: 'year' },

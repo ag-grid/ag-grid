@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
 
@@ -57,7 +59,6 @@ describe('column header drag reorder', () => {
             await dispatcher.movePointer(viewport, fromClientX, y);
             await dispatcher.movePointer(viewport, toClientX, y);
             await dispatcher.finishDrag(viewport);
-            await asyncSetTimeout(50);
         } finally {
             ownerDocument.elementsFromPoint = original as typeof ownerDocument.elementsFromPoint;
         }
@@ -79,6 +80,7 @@ describe('column header drag reorder', () => {
             await dispatcher.startDrag(source, 200, y);
             await dispatcher.movePointer(viewport, 200, y);
             await dispatcher.movePointer(viewport, 5, y);
+            // eslint-disable-next-line no-restricted-syntax -- holds the drag still through the hold-to-pin interval: it fires every 100ms and must fail ~9 times before the ghost icon is decided
             await asyncSetTimeout(1200);
 
             const ghostIcon = ownerDocument.querySelector('.ag-dnd-ghost-icon');
@@ -111,7 +113,7 @@ describe('column header drag reorder', () => {
         // 'c' out of the displayed-order comparison; 'a' lands after 'd', 'c' keeps its slot.
         await dragHeader(api, 'a', 5, 250);
 
-        expect(colOrder(api)).toEqual(['b', 'c', 'd', 'a']);
+        await waitFor(() => expect(colOrder(api)).toEqual(['b', 'c', 'd', 'a']));
     });
 
     test('dragging a header left to the front, hidden col preserved', async () => {
@@ -122,7 +124,7 @@ describe('column header drag reorder', () => {
         // notDisplayedInSection) and 'd' settles at the front; hidden 'c' keeps its slot.
         await dragHeader(api, 'd', 400, 5);
 
-        expect(colOrder(api)).toEqual(['d', 'a', 'b', 'c']);
+        await waitFor(() => expect(colOrder(api)).toEqual(['d', 'a', 'b', 'c']));
     });
 
     test('dragging a center column to the far left pins it, alongside an existing pinned column', async () => {
@@ -143,7 +145,7 @@ describe('column header drag reorder', () => {
         // 'd' pins to the left, ahead of the existing pinned 'p'.
         await dragHeader(api, 'd', 400, 5);
 
-        expect(colOrder(api)).toEqual(['d', 'p', 'a', 'b']);
+        await waitFor(() => expect(colOrder(api)).toEqual(['d', 'p', 'a', 'b']));
         expect(api.getColumn('d')!.getPinned()).toBe('left');
     });
 
@@ -162,6 +164,10 @@ describe('column header drag reorder', () => {
         // calculateValidMoves short-circuits to [] for a non-movable col, so no valid move exists.
         await dragHeader(api, 'a', 5, 400);
 
+        // Negative assertion (the move must not be applied), so there is nothing to poll for: hold
+        // open the window in which a wrongly-permitted move would land.
+        // eslint-disable-next-line no-restricted-syntax -- waits out the post-drop settle window in which an (incorrect) column move would be applied
+        await asyncSetTimeout(50);
         expect(colOrder(api)).toEqual(['a', 'b', 'd']);
     });
 
@@ -259,6 +265,6 @@ describe('column header drag reorder', () => {
         // multi-col path) and getColsToMove pulls the hidden 'b' so the married group stays intact.
         await dragSelector(api, '.ag-header-group-cell', 250, 5);
 
-        expect(colOrder(api)).toEqual(['a', 'b', 'x', 'd']);
+        await waitFor(() => expect(colOrder(api)).toEqual(['a', 'b', 'x', 'd']));
     });
 });

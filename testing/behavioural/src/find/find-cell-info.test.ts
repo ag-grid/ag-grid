@@ -1,6 +1,6 @@
 import { FindModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /**
  * Tests for findGetNumMatches and findGetParts API functions.
@@ -47,7 +47,6 @@ describe('Find Cell Info API', () => {
                     ├── LEAF id:1 value:"aba"
                     └── LEAF id:2 value:"bbb"
                 `);
-            await asyncSetTimeout(1);
 
             const column = api.getColumn('value')!;
 
@@ -115,7 +114,6 @@ describe('Find Cell Info API', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 a:"test" b:"testing test"
             `);
-            await asyncSetTimeout(1);
 
             const row = api.getDisplayedRowAtIndex(0)!;
             const colA = api.getColumn('a')!;
@@ -157,7 +155,6 @@ describe('Find Cell Info API', () => {
                     ROOT id:ROOT_NODE_ID
                     └── LEAF id:0 value:"hello world hello"
                 `);
-            await asyncSetTimeout(1);
 
             const row = api.getDisplayedRowAtIndex(0)!;
             const column = api.getColumn('value')!;
@@ -196,7 +193,6 @@ describe('Find Cell Info API', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 value:"aaa"
             `);
-            await asyncSetTimeout(1);
 
             // Navigate to second match
             api.findNext();
@@ -239,7 +235,6 @@ describe('Find Cell Info API', () => {
                     └── LEAF id:0 value:"hello"
                 `
             );
-            await asyncSetTimeout(1);
 
             const row = api.getDisplayedRowAtIndex(0)!;
             const column = api.getColumn('value')!;
@@ -274,7 +269,6 @@ describe('Find Cell Info API', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 value:""
             `);
-            await asyncSetTimeout(1);
 
             const row = api.getDisplayedRowAtIndex(0)!;
             const column = api.getColumn('value')!;
@@ -314,7 +308,6 @@ describe('Find Cell Info API', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 value:"aa bb aa"
             `);
-            await asyncSetTimeout(1);
 
             // Navigate to third match (second 'aa')
             api.findNext();

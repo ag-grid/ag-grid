@@ -64,6 +64,7 @@ plugins/ag-grid-generate-example-files/coverage/
 coverage
 reports
 .playwright-network-cache/
+.playwright-network-mirror/
 
 vite.config.*.timestamp*
 
@@ -146,3 +147,6 @@ documentation/ag-grid-docs/test-results/.last-run.json
 **/modular-mcp.json
 !.rulesync/.aiignore
 /.junie/
+
+# AI Workflow: the pipeline stub npm-installs @ag-grid/dev-prompts here.
+/.ag-dev-prompts/

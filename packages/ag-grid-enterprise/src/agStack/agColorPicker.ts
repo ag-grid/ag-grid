@@ -10,6 +10,7 @@ import type { AgPickerFieldParams, _AgWidgetSelectorType } from 'ag-grid-communi
 import { AgPickerField, _createElement } from 'ag-grid-community';
 
 import { AgColorPanel } from './agColorPanel';
+import agColorPickerCSS from './agColorPicker.css';
 import type { AgDialogCallbacks } from './agDialog';
 import { AgDialog } from './agDialog';
 import type { IAgChartsExports } from './iAgChartsExports';
@@ -56,6 +57,7 @@ export class AgColorPicker<
             pickerIcon: 'chartsColorPicker',
             ...config,
         });
+        this.registerCSS(agColorPickerCSS);
     }
 
     public override postConstruct() {

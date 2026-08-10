@@ -60,20 +60,19 @@ describe('Tooltips (React)', () => {
         const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
 
         await userEvent.hover(cell);
-        await asyncSetTimeout(250);
         await waitFor(() => expect(hasTooltipText('Cell renderer tooltip')).toBe(true));
 
         await userEvent.unhover(cell);
-        await asyncSetTimeout(250);
         await waitFor(() => expect(getTooltips().length).toBe(0));
 
         act(() => {
             api!.setGridOption('rowData', [{ id: 'r1', showDetail: false }]);
         });
-        await asyncSetTimeout(100);
+        await waitFor(() => expect(getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))).toHaveTextContent('plain'));
 
         await userEvent.hover(cell);
-        await asyncSetTimeout(250);
+        // the ColDef tooltip can only render once the show delay has fired, so it proves the window elapsed
+        await waitFor(() => expect(hasTooltipText('ColDef tooltip')).toBe(true));
 
         expect(hasTooltipText('Cell renderer tooltip')).toBe(false);
         expect(getTooltips().length).toBeLessThanOrEqual(1);
@@ -110,20 +109,19 @@ describe('Tooltips (React)', () => {
         const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
 
         await userEvent.hover(cell);
-        await asyncSetTimeout(250);
         await waitFor(() => expect(hasTooltipText('Cell renderer tooltip')).toBe(true));
 
         await userEvent.unhover(cell);
-        await asyncSetTimeout(250);
         await waitFor(() => expect(getTooltips().length).toBe(0));
 
         act(() => {
             api!.setGridOption('rowData', [{ id: 'r1', showDetail: false }]);
         });
-        await asyncSetTimeout(100);
+        await waitFor(() => expect(getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))).toHaveTextContent('plain'));
 
         await userEvent.hover(cell);
-        await asyncSetTimeout(250);
+        // the ColDef tooltip can only render once the show delay has fired, so it proves the window elapsed
+        await waitFor(() => expect(hasTooltipText('ColDef tooltip')).toBe(true));
 
         expect(hasTooltipText('Cell renderer tooltip')).toBe(false);
         expect(getTooltips().length).toBeLessThanOrEqual(1);
@@ -163,11 +161,9 @@ describe('Tooltips (React)', () => {
         const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
 
         await userEvent.hover(cell);
-        await asyncSetTimeout(250);
         await waitFor(() => expect(hasTooltipText('Tip a1')).toBe(true));
 
         await userEvent.unhover(cell);
-        await asyncSetTimeout(250);
         await waitFor(() => expect(getTooltips().length).toBe(0));
 
         act(() => {
@@ -176,7 +172,6 @@ describe('Tooltips (React)', () => {
         await waitFor(() => expect(getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))).toHaveTextContent('a2'));
 
         await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))));
-        await asyncSetTimeout(250);
         await waitFor(() => expect(hasTooltipText('Tip a2')).toBe(true));
         expect(getTooltips()).toHaveLength(1);
     });
@@ -224,11 +219,9 @@ describe('Tooltips (React)', () => {
         });
 
         await userEvent.hover(cell);
-        await asyncSetTimeout(250);
         await waitFor(() => expect(getTooltips()[0]?.classList.contains('ag-cell-formula-tooltip')).toBe(true));
 
         await userEvent.unhover(cell);
-        await asyncSetTimeout(250);
         await waitFor(() => expect(getTooltips().length).toBe(0));
 
         act(() => {
@@ -238,7 +231,6 @@ describe('Tooltips (React)', () => {
 
         const renamedCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r2', 'result')));
         await userEvent.hover(renamedCell);
-        await asyncSetTimeout(250);
         await waitFor(() => expect(getTooltips()[0]?.classList.contains('ag-cell-formula-tooltip')).toBe(true));
     });
 
@@ -279,7 +271,6 @@ describe('Tooltips (React)', () => {
         const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell(groupRowId!, 'value')));
 
         await userEvent.hover(cell);
-        await asyncSetTimeout(250);
         await waitFor(() => expect(getTooltips().length).toBe(1));
         expect(getTooltips()[0]).toHaveTextContent('6');
     });
@@ -319,6 +310,7 @@ describe('Tooltips (React)', () => {
             const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
 
             await userEvent.hover(cell);
+            // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples past the 200ms tooltipShowDelay window to prove no whenTruncated tooltip appears
             await asyncSetTimeout(250);
             expect(getTooltips()).toHaveLength(0);
         });
@@ -349,7 +341,6 @@ describe('Tooltips (React)', () => {
             const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
 
             await userEvent.hover(cell);
-            await asyncSetTimeout(250);
             await waitFor(() => expect(hasTooltipText('Renderer tooltip')).toBe(true));
         });
     });

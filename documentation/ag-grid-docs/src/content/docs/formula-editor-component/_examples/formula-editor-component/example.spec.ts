@@ -21,7 +21,8 @@ test.agExample(import.meta, () => {
 
         const editable = page.locator('.ag-cell-inline-editing [contenteditable]').first();
         await editable.click();
-        await page.keyboard.press('Control+a');
+        // Select-all is Meta+A on macOS, so Control+A leaves the existing formula in place.
+        await page.keyboard.press('ControlOrMeta+A');
         await page.keyboard.type('=3+4');
         await page.keyboard.press('Enter');
 

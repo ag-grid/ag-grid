@@ -10,8 +10,8 @@ import {
 } from 'ag-grid-community';
 import { ColumnsToolPanelModule, NewFiltersToolPanelModule, PivotModule, SideBarModule } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

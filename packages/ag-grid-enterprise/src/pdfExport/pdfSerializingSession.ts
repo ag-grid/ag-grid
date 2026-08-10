@@ -3,20 +3,23 @@ import type {
     AgColumnGroup,
     CellClassParams,
     CellStyle,
+    GridHeaderCell,
     GridSerializingParams,
     HeaderClassParams,
+    HeaderRowAccumulator,
     HeaderStyle,
     HeaderStyleFunc,
     PdfCellHyperlinkCallbackParams,
+    PdfCellImageCallbackParams,
+    PdfCellImageResult,
     PdfCellStyle,
     PdfCustomContent,
     PdfExportParams,
+    PdfImage,
     PdfStyleCallbackParams,
-    PdfStyleCallbackType,
     RowAccumulator,
     RowNode,
     RowPinnedType,
-    RowSpanningAccumulator,
 } from 'ag-grid-community';
 import { BaseGridSerializingSession, _addGridCommonParams, _isFullWidthGroupRow } from 'ag-grid-community';
 
@@ -28,12 +31,15 @@ import { mergePdfCellStyles } from './utils/styles';
 
 export type PdfRowType = 'HEADER_GROUPING' | 'HEADER' | 'BODY' | 'CUSTOM';
 
-type PdfElementType = PdfStyleCallbackType | 'custom';
+type PdfElementType = 'cell' | 'row' | 'rowgroup' | 'header' | 'groupheader' | 'custom';
 
 interface PdfSerializingCell {
     value: string;
     hyperlink?: string;
+    image?: PdfImage;
     mergeAcross?: number;
+    mergeDown?: number;
+    covered?: boolean;
     style?: PdfCellStyle;
     elementType?: PdfElementType;
     sourceColumn?: AgColumn | AgColumnGroup;
@@ -60,6 +66,7 @@ type OmitGridCommon<T> = T extends unknown ? Omit<T, 'api' | 'context'> : never;
 type PdfStyleCallbackParamsInput = OmitGridCommon<PdfStyleCallbackParams>;
 
 export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomContent> {
+    public override readonly useGridHeaderLayout: boolean = true;
     private readonly rows: PdfRow[] = [];
     private columnsToExport: AgColumn[] = [];
     private rowIndex = 0;
@@ -113,6 +120,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 row.cells.push({
                     value: String(cell?.data?.value ?? ''),
                     hyperlink: normaliseHyperlink(cell?.data?.hyperlink),
+                    image: cell?.data?.image,
                     mergeAcross: mergeAcross || undefined,
                     style: resolvePdfCellStyleColors(cell?.style, this.config.resolveColor),
                     elementType: 'custom',
@@ -122,39 +130,29 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
         }
     }
 
-    public onNewHeaderGroupingRow(): RowSpanningAccumulator {
+    public onNewHeaderGroupingRow(): HeaderRowAccumulator {
         const row = this.createRow('HEADER_GROUPING');
-
-        return {
-            onColumn: (columnGroup: AgColumnGroup, header: string, _index: number, span: number) => {
-                const value = header ?? '';
-                row.cells.push({
-                    value,
-                    mergeAcross: span || undefined,
-                    elementType: 'groupheader',
-                    sourceColumn: columnGroup,
-                    style: mergePdfCellStyles(
-                        this.resolveColumnGroupHeaderPdfStyle(columnGroup),
-                        this.resolveCallbackPdfStyle({
-                            type: 'groupheader',
-                            accumulatedRowIndex: this.rowIndex,
-                            value,
-                            column: columnGroup,
-                        })
-                    ),
-                });
-            },
-        };
+        return { onCell: this.createHeaderCellAccumulator(row) };
     }
 
-    public onNewHeaderRow(): RowAccumulator {
+    public onNewHeaderRow(): HeaderRowAccumulator {
         const row = this.createRow('HEADER');
+        return { onCell: this.createHeaderCellAccumulator(row) };
+    }
 
-        return {
-            onColumn: (column: AgColumn) => {
+    private createHeaderCellAccumulator(row: PdfRow): (cell: GridHeaderCell) => void {
+        return (cell) => {
+            if (cell.type === 'covered') {
+                row.cells.push({ value: '', covered: true });
+                return;
+            }
+
+            if (cell.type === 'column') {
+                const column = cell.column;
                 const value = this.extractHeaderValue(column);
                 row.cells.push({
                     value,
+                    mergeDown: cell.rowSpan > 1 ? cell.rowSpan - 1 : undefined,
                     elementType: 'header',
                     sourceColumn: column,
                     style: mergePdfCellStyles(
@@ -167,7 +165,28 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                         })
                     ),
                 });
-            },
+                return;
+            }
+
+            const columnGroup = cell.column;
+            const value = columnGroup ? this.extractGroupHeaderValue(columnGroup) : '';
+            row.cells.push({
+                value,
+                mergeAcross: cell.columnSpan > 1 ? cell.columnSpan - 1 : undefined,
+                elementType: 'groupheader',
+                sourceColumn: columnGroup,
+                style: columnGroup
+                    ? mergePdfCellStyles(
+                          this.resolveColumnGroupHeaderPdfStyle(columnGroup),
+                          this.resolveCallbackPdfStyle({
+                              type: 'groupheader',
+                              accumulatedRowIndex: this.rowIndex,
+                              value,
+                              column: columnGroup,
+                          })
+                      )
+                    : undefined,
+            });
         };
     }
 
@@ -222,7 +241,9 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                     isFullWidthGroup
                 );
 
-                const value = String(rowCellValue.valueFormatted ?? rowCellValue.value ?? '');
+                const processedValue = String(rowCellValue.valueFormatted ?? rowCellValue.value ?? '');
+                const imageResult = this.resolveCellImage(processedValue, column, activeNode, rowIndex);
+                const value = imageResult ? String(imageResult.value ?? '') : processedValue;
                 const style = mergePdfCellStyles(
                     automaticCellStyle,
                     this.resolveCallbackPdfStyle({
@@ -243,6 +264,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 row.cells.push({
                     value,
                     hyperlink: this.resolveCellHyperlink(value, column, activeNode, rowIndex),
+                    image: imageResult?.image,
                     mergeAcross,
                     style,
                     elementType: isRowGroupCell ? 'rowgroup' : 'cell',
@@ -255,7 +277,14 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
     }
 
     public parse(): string {
-        return createPdfDocument(this.rows, this.columnsToExport, this.config);
+        if (this.config.direction !== 'rtl') {
+            return createPdfDocument(this.rows, this.columnsToExport, this.config);
+        }
+
+        const rows = this.rows.map((row) => ({ ...row, cells: [...row.cells].reverse() }));
+        const columnsToExport = [...this.columnsToExport].reverse();
+
+        return createPdfDocument(rows, columnsToExport, this.config);
     }
 
     private createRow(type: PdfRowType, sourceNode?: RowNode): PdfRow {
@@ -432,6 +461,26 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
             column,
         };
         return normaliseHyperlink(callback(_addGridCommonParams(this.gos, params) as PdfCellHyperlinkCallbackParams));
+    }
+
+    private resolveCellImage(
+        value: string,
+        column: AgColumn,
+        node: RowNode,
+        accumulatedRowIndex: number
+    ): PdfCellImageResult | undefined {
+        const callback = this.config.addImageToCell;
+        if (!callback) {
+            return undefined;
+        }
+
+        const params: Omit<PdfCellImageCallbackParams, 'api' | 'context'> = {
+            value,
+            accumulatedRowIndex,
+            node,
+            column,
+        };
+        return callback(_addGridCommonParams(this.gos, params) as PdfCellImageCallbackParams) ?? undefined;
     }
 
     private isRowGroupCell(column: AgColumn, node: RowNode, isFullWidthGroup: boolean): boolean {

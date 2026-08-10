@@ -461,7 +461,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     suppressMovable?: boolean;
     /**
      * By default, values are formatted using the column's `valueFormatter` when exporting data from the grid.
-     * This applies to CSV and Excel, as well as clipboard operations and the fill handle.
+     * This applies to CSV, Excel, and PDF export, as well as clipboard operations and the fill handle.
      * Set to `false` to prevent values from being formatted for these operations.
      * Regardless of this option, if custom handling is provided for the export operation, the value formatter will not be used.
      * @default true
@@ -1207,7 +1207,7 @@ export type HeaderCheckboxSelectionCallback<TData = any, TValue = any, TContext 
 ) => boolean;
 
 interface GetTextParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** Value for the cell. */
+    /** Value for the cell. May be `null` or `undefined` — for example on group rows or when the `field` is absent from the row data; the callback must handle this. */
     value: TValue | null | undefined;
     /** Row node for the given row */
     node: IRowNode<TData>;
@@ -1270,11 +1270,11 @@ export type SpanRowsFunc<TData = any, TValue = any, TContext = any> = (
 export interface SpanRowsParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** First row of the span, which if spanned represents the spanned cells */
     nodeA: IRowNode<TData> | null;
-    /** First rows value */
+    /** First rows value. May be `null` or `undefined` — for example on group rows or rows whose data has not loaded; the callback must handle this. */
     valueA: TValue | null | undefined;
     /** Next row of the span to test */
     nodeB: IRowNode<TData> | null;
-    /** Next rows value */
+    /** Next rows value. May be `null` or `undefined` — for example on group rows or rows whose data has not loaded; the callback must handle this. */
     valueB: TValue | null | undefined;
     /** Column for this callback */
     column: Column<TValue>;
@@ -1346,7 +1346,7 @@ export interface NewValueParams<TData = any, TValue = any, TContext = any> exten
     TValue | null | undefined,
     TContext
 > {
-    /** The raw value from the edit, before any value getter is applied. */
+    /** The raw value from the edit, before any value getter is applied. May be `null` or `undefined` — for example when the edit clears the cell; the callback must handle this. */
     newRawValue: TValue | null | undefined;
     /** The source of the value change, e.g. `'edit'`, `'paste'`, `'undo'`, `'redo'`, `'data'`. */
     source: string | undefined;
@@ -1376,7 +1376,12 @@ export interface ValueFormatterParams<TData = any, TValue = any, TContext = any>
     TValue,
     TContext
 > {
-    /** Value for the cell. */
+    /**
+     * Value for the cell. May be `null` or `undefined`, so the formatter must handle this. Common causes:
+     * - Group rows
+     * - Rows whose data has not loaded
+     * - The `field` is absent from the row data
+     */
     value: TValue | null | undefined;
 }
 
@@ -1397,7 +1402,12 @@ export interface KeyCreatorParams<TData = any, TValue = any, TContext = any> ext
     TValue,
     TContext
 > {
-    /** Value for the cell. */
+    /**
+     * Value for the cell. May be `null` or `undefined`, so the callback must handle this. Common causes:
+     * - Group rows
+     * - Rows whose data has not loaded
+     * - The `field` is absent from the row data
+     */
     value: TValue | null | undefined;
 }
 
@@ -1454,7 +1464,7 @@ export interface CellClassParams<TData = any, TValue = any, TContext = any> exte
     column: Column<TValue>;
     /** The colDef associated with the column for this cell */
     colDef: ColDef<TData, TValue>;
-    /** The value to be rendered */
+    /** The value to be rendered. May be `null` or `undefined` — for example on group rows or when the `field` is absent from the row data; the callback must handle this. */
     value: TValue | null | undefined;
 }
 export type CellClassFunc<TData = any, TValue = any, TContext = any> = (

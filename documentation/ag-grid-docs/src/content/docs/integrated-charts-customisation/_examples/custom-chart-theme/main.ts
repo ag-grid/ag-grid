@@ -7,8 +7,8 @@ import { ColumnMenuModule, ContextMenuModule, IntegratedChartsModule, RowGroupin
 
 import { deepMerge, getData } from './data';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

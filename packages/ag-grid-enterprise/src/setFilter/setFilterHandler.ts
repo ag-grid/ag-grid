@@ -261,6 +261,9 @@ export class SetFilterHandler<TValue = string>
                     syncAfterDataChangeDebounced();
                 }
             },
+            // cellDataType inference resolves the value type and populates the grid values only once real data
+            // arrives. Rebuild the value model then so the selection re-keys against the inferred type.
+            dataTypesInferred: () => syncAfterDataChangeDebounced(),
         });
     }
 
@@ -296,6 +299,14 @@ export class SetFilterHandler<TValue = string>
             } else {
                 valueModel.allValues.forEach((_value, key) => addKey(key));
             }
+            // An empty grid-derived value set means the values are not yet known (e.g. the filter was
+            // instantiated before cellDataType inference populated the rows), not that everything is selected.
+            // Reconciling now would discard the applied criteria; leave the model untouched until real values
+            // arrive and re-reconcile then (via cellValueChanged / dataTypesInferred / onNewRowsLoaded).
+            const takenFromGrid = valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+            if (takenFromGrid && existingFormattedKeys.size === 0 && model.values.length > 0) {
+                return;
+            }
             const newValues: SetFilterModelValue = [];
             let updated = false;
             for (const unformattedKey of model.values) {
@@ -318,8 +329,7 @@ export class SetFilterHandler<TValue = string>
             }
             const clearOnAllSelected =
                 !filterParams.defaultToNothingSelected &&
-                (valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ||
-                    !filterParams.suppressClearModelOnRefreshValues);
+                (takenFromGrid || !filterParams.suppressClearModelOnRefreshValues);
             const allSelected = clearOnAllSelected && numNewValues === existingFormattedKeys.size;
 
             if (updated || !model.filterType || allSelected) {

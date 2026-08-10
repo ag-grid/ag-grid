@@ -8,8 +8,8 @@ import { callChatGPT } from './chatgptApi';
 import { type IOlympicData, gridOptions } from './gridOptions';
 import './styles.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

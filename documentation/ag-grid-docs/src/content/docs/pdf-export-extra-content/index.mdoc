@@ -5,11 +5,90 @@ enterprise: true
 
 PDF Export uses Value Getters and Value Formatters but does not export Cell Renderer output. Export callbacks can replace the resulting text without changing the grid.
 
-## Document Title
+## Document Headings
 
 Use `documentTitle` to set the PDF metadata title and render a visible title above the table. Use `documentTitleStyle` to configure its font, colour, border, padding, margin, alignment, wrapping, line height, line limit, and overflow behaviour.
 
 {% gridExampleRunner title="Document Title" name="pdf-document-title" exampleHeight=520 /%}
+
+### Subtitle
+
+Use `documentSubtitle` to render a subtitle below the title. It uses a smaller default font and can be styled independently with `documentSubtitleStyle`.
+
+```{% frameworkTransform=true %}
+const defaultPdfExportParams = {
+    documentTitle: 'Quarterly Results',
+    documentSubtitle: 'Prepared for the board',
+};
+```
+
+{% gridExampleRunner title="Document Subtitle" name="pdf-document-subtitle" exampleHeight=520 /%}
+
+## Page Headers And Footers
+
+Use `headerFooterConfig` to add content to the left, centre, or right of each page header and footer. The `all` rule applies by default, while `first` and `even` replace it on the corresponding pages.
+
+Each header or footer accepts up to three entries. When `position` is omitted, entries are positioned left, centre, and right in array order.
+
+Each position uses one third of the printable page width. Header and footer text remains on one line and is truncated with an ellipsis when it exceeds that space. The required vertical space is reserved before the table is paginated.
+
+### Page Headers
+
+```{% frameworkTransform=true %}
+const defaultPdfExportParams = {
+    headerFooterConfig: {
+        all: {
+            header: [{ value: 'Quarterly Results', position: 'Center' }],
+        },
+        first: {
+            header: [{ value: 'Confidential Report', position: 'Center' }],
+        },
+    },
+};
+```
+
+{% gridExampleRunner title="Page Headers" name="pdf-page-headers" exampleHeight=520 /%}
+
+### Page Footers
+
+Header and footer values support the following placeholders:
+
+- `&[Page]`: current page number.
+- `&[Pages]`: total number of pages.
+- `&[Date]`: date when the PDF export started.
+- `&[Time]`: time when the PDF export started.
+
+Date and time are captured once per export and formatted using the export `language`, when provided.
+
+```{% frameworkTransform=true %}
+const defaultPdfExportParams = {
+    headerFooterConfig: {
+        all: {
+            footer: [
+                { value: '&[Date]', position: 'Left' },
+                { value: 'Page &[Page] of &[Pages]', position: 'Center' },
+                { value: '&[Time]', position: 'Right' },
+            ],
+        },
+    },
+};
+```
+
+{% gridExampleRunner title="Page Footers" name="pdf-page-footers" exampleHeight=520 /%}
+
+## Cover Page
+
+Set `coverPage=true` to place the document title and subtitle on the first page and begin the exported grid on the following page. Page header and footer rules still apply, so `headerFooterConfig.first` can customise the cover page.
+
+```{% frameworkTransform=true %}
+const defaultPdfExportParams = {
+    coverPage: true,
+    documentTitle: 'Annual Performance Report',
+    documentSubtitle: 'Financial year 2026',
+};
+```
+
+{% gridExampleRunner title="PDF Cover Page" name="pdf-cover-page" exampleHeight=520 /%}
 
 ## Customising Exported Values
 
@@ -36,3 +115,45 @@ Use `prependContent`, `appendContent`, or `getCustomContentBelowRow` to add cont
 See [PDF Export - Master Detail](./pdf-export-master-detail/) for an example that uses `getCustomContentBelowRow` to include detail data below each master row.
 
 {% gridExampleRunner title="Custom Content" name="pdf-custom-content" exampleHeight=520 /%}
+
+## API
+
+### Export Options
+
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["documentTitle", "documentTitleStyle", "documentSubtitle", "documentSubtitleStyle", "coverPage", "headerFooterConfig", "processCellCallback", "processHeaderCallback", "processGroupHeaderCallback", "processRowGroupCallback", "prependContent", "appendContent", "getCustomContentBelowRow"] config={"description":""} /%}
+
+### PdfDocumentHeadingStyle
+
+{% interfaceDocumentation interfaceName="PdfDocumentHeadingStyle" /%}
+
+### PdfHeaderFooterConfig
+
+{% interfaceDocumentation interfaceName="PdfHeaderFooterConfig" /%}
+
+### PdfHeaderFooter
+
+{% interfaceDocumentation interfaceName="PdfHeaderFooter" /%}
+
+### PdfHeaderFooterTextContent
+
+{% interfaceDocumentation interfaceName="PdfHeaderFooterTextContent" /%}
+
+### PdfHeaderFooterImageContent
+
+{% interfaceDocumentation interfaceName="PdfHeaderFooterImageContent" /%}
+
+### PdfTextStyle
+
+{% interfaceDocumentation interfaceName="PdfTextStyle" /%}
+
+### PdfCell
+
+{% interfaceDocumentation interfaceName="PdfCell" overrideSrc="pdf-export/pdf.json" /%}
+
+### PdfCellData
+
+{% interfaceDocumentation interfaceName="PdfCellData" overrideSrc="pdf-export/pdf.json" /%}
+
+### PdfCustomContent
+
+{% interfaceDocumentation interfaceName="PdfCustomContent" config={"asCode":true} /%}

@@ -1,13 +1,17 @@
 import { vi } from 'vitest';
 
-import type { PdfDocumentTitleStyle, PdfExportParams } from 'ag-grid-community';
+import type { PdfDocumentHeadingStyle, PdfExportParams } from 'ag-grid-community';
 
 import { PdfCreator } from './pdfCreator';
 import {
     getThemePdfColors,
-    mergeDocumentTitleStyle,
-    resolveDocumentTitleStyleColors,
+    mergeDocumentHeadingStyle,
+    mergeHeaderFooterConfig,
+    mergeWatermark,
+    resolveDocumentHeadingStyleColors,
+    resolveHeaderFooterConfigColors,
     resolveThemeColorValue,
+    resolveWatermarkColors,
 } from './utils/pdfStyleResolver';
 
 const getComputedColor = (root: HTMLElement, value: string): string => {
@@ -20,6 +24,50 @@ const getComputedColor = (root: HTMLElement, value: string): string => {
 };
 
 describe('PdfCreator', () => {
+    it('inherits the grid text direction unless the export direction is specified', () => {
+        const creator = new PdfCreator() as unknown as {
+            getMergedParams: (params?: PdfExportParams) => PdfExportParams;
+            gos: { get: (key: string) => unknown };
+            beans: { eRootDiv: HTMLElement };
+        };
+        const root = document.createElement('div');
+        let enableRtl = true;
+        creator.gos = {
+            get: (key: string) => (key === 'enableRtl' ? enableRtl : undefined),
+        };
+        creator.beans = { eRootDiv: root };
+
+        expect(creator.getMergedParams().direction).toBe('rtl');
+
+        enableRtl = false;
+        expect(creator.getMergedParams().direction).toBe('ltr');
+        expect(creator.getMergedParams({ direction: 'auto' }).direction).toBe('auto');
+        expect(creator.getMergedParams({ direction: 'ltr' }).direction).toBe('ltr');
+        expect(creator.getMergedParams({ direction: 'rtl' }).direction).toBe('rtl');
+    });
+
+    it('resolves theme colour tokens in merged default cell and header styles', () => {
+        const root = document.createElement('div');
+        document.body.appendChild(root);
+        const creator = new PdfCreator() as unknown as {
+            getMergedParams: (params?: PdfExportParams) => PdfExportParams;
+            gos: { get: (key: string) => unknown };
+            beans: { eRootDiv: HTMLElement };
+        };
+        creator.gos = {
+            get: (key: string) =>
+                key === 'defaultPdfExportParams' ? { defaultCellStyle: { color: 'red', padding: 6 } } : undefined,
+        };
+        creator.beans = { eRootDiv: root };
+
+        const merged = creator.getMergedParams({ defaultHeaderStyle: { backgroundColor: '#00ff00' } });
+
+        expect(merged.defaultCellStyle).toEqual({ color: getComputedColor(root, 'red'), padding: 6 });
+        expect(merged.defaultHeaderStyle?.backgroundColor).toBe(getComputedColor(root, '#00ff00'));
+
+        root.remove();
+    });
+
     it('does not return PDF data when PDF export is suppressed', () => {
         const creator = new PdfCreator() as unknown as {
             getDataAsPdf: (params?: PdfExportParams) => Blob | undefined;
@@ -48,19 +96,19 @@ describe('PdfCreator', () => {
     });
 
     it('merges default and override document title styles', () => {
-        const baseStyle: PdfDocumentTitleStyle = { fontSize: 12, alignment: 'left' };
-        const overrideStyle: PdfDocumentTitleStyle = { alignment: 'center' };
+        const baseStyle: PdfDocumentHeadingStyle = { fontSize: 12, alignment: 'left' };
+        const overrideStyle: PdfDocumentHeadingStyle = { alignment: 'center' };
 
-        expect(mergeDocumentTitleStyle(baseStyle, overrideStyle)).toEqual({ fontSize: 12, alignment: 'center' });
-        expect(mergeDocumentTitleStyle(baseStyle, undefined)).toBe(baseStyle);
-        expect(mergeDocumentTitleStyle(undefined, overrideStyle)).toBe(overrideStyle);
+        expect(mergeDocumentHeadingStyle(baseStyle, overrideStyle)).toEqual({ fontSize: 12, alignment: 'center' });
+        expect(mergeDocumentHeadingStyle(baseStyle, undefined)).toBe(baseStyle);
+        expect(mergeDocumentHeadingStyle(undefined, overrideStyle)).toBe(overrideStyle);
     });
 
     it('resolves document title colours to computed values', () => {
         const root = document.createElement('div');
         document.body.appendChild(root);
 
-        const style: PdfDocumentTitleStyle = {
+        const style: PdfDocumentHeadingStyle = {
             color: 'red',
             backgroundColor: '#00ff00',
             borderColor: 'rgb(10, 20, 30)',
@@ -70,13 +118,85 @@ describe('PdfCreator', () => {
         const expectedBackground = getComputedColor(root, '#00ff00');
         const expectedBorder = getComputedColor(root, 'rgb(10, 20, 30)');
 
-        const resolved = resolveDocumentTitleStyleColors(style, (value) => resolveThemeColorValue(value, root));
+        const resolved = resolveDocumentHeadingStyleColors(style, (value) => resolveThemeColorValue(value, root));
 
         expect(resolved?.color).toBe(expectedColor);
         expect(resolved?.backgroundColor).toBe(expectedBackground);
         expect(resolved?.borderColor).toBe(expectedBorder);
 
         root.remove();
+    });
+
+    it('merges header and footer rules independently', () => {
+        const base = {
+            all: {
+                header: [{ value: 'Header' }],
+                footer: [{ value: 'Base footer' }],
+            },
+        };
+        const override = {
+            all: {
+                footer: [{ value: 'Override footer' }],
+            },
+            first: {
+                header: [{ value: 'First header' }],
+            },
+        };
+
+        expect(mergeHeaderFooterConfig(base, override)).toEqual({
+            all: {
+                header: [{ value: 'Header' }],
+                footer: [{ value: 'Override footer' }],
+            },
+            first: {
+                header: [{ value: 'First header' }],
+            },
+        });
+    });
+
+    it('resolves header and footer text colours', () => {
+        const resolved = resolveHeaderFooterConfigColors(
+            {
+                all: {
+                    header: [{ value: 'Header', style: { color: 'red' } }],
+                },
+            },
+            () => 'rgb(255, 0, 0)'
+        );
+
+        expect(resolved?.all?.header?.[0].style?.color).toBe('rgb(255, 0, 0)');
+    });
+
+    it('merges watermark configuration and nested text styles', () => {
+        expect(
+            mergeWatermark(
+                {
+                    text: 'DRAFT',
+                    opacity: 0.1,
+                    style: { fontSize: 72, color: 'grey' },
+                },
+                {
+                    text: 'CONFIDENTIAL',
+                    style: { fontWeight: 'bold' },
+                }
+            )
+        ).toEqual({
+            text: 'CONFIDENTIAL',
+            opacity: 0.1,
+            style: { fontSize: 72, color: 'grey', fontWeight: 'bold' },
+        });
+    });
+
+    it('resolves watermark text colours', () => {
+        const resolved = resolveWatermarkColors(
+            {
+                text: 'DRAFT',
+                style: { color: 'var(--ag-foreground-color)' },
+            },
+            () => 'rgb(100, 110, 120)'
+        );
+
+        expect(resolved?.style?.color).toBe('rgb(100, 110, 120)');
     });
 
     it('reads the computed header text colour when no header text theme variable is available', () => {

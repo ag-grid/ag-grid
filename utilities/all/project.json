@@ -198,7 +198,7 @@
       }
     },
     "clean": {
-      "command": "rimraf -g dist/ 'packages/*/dist/' 'plugins/*/dist/' 'testing/*/dist/' 'documentation/*/dist/' 'documentation/ag-grid-docs/node_modules/.vite/' 'documentation/ag-grid-docs/.astro/' 'community-modules/locale/umd/' 'packages/ag-grid-community/styles' 'packages/ag-grid-enterprise/styles' 'reports' 'packages/*/coverage/'"
+      "command": "rimraf -g dist/ 'packages/*/dist/' 'plugins/*/dist/' 'testing/*/dist/' 'documentation/*/dist/' 'documentation/ag-grid-docs/node_modules/.vite/' 'documentation/ag-grid-docs/.astro/' 'documentation/ag-grid-docs/.playwright-network-mirror/' 'documentation/ag-grid-docs/.playwright-network-cache/' 'community-modules/locale/umd/' 'packages/ag-grid-community/styles' 'packages/ag-grid-enterprise/styles' 'reports' 'packages/*/coverage/'"
     },
     "generate-examples": {
       "dependsOn": ["^generate-examples"],
@@ -241,6 +241,13 @@
     "slack:user-config": {
       "cache": false,
       "command": "node --env-file-if-exists=.env.local ./external/ag-shared/scripts/slack/get-slack-user-config-command.mjs",
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "security:update": {
+      "cache": false,
+      "command": "npx tsx ./external/ag-shared/scripts/security/update-security-versions.ts",
       "options": {
         "cwd": "{workspaceRoot}"
       }

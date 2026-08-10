@@ -1,6 +1,8 @@
+import { waitFor } from '@testing-library/dom';
+
 import { FindModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /**
  * Tests for find with value formatters, value getters, and different data types.
@@ -55,8 +57,7 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:1 price:"£200.00"
                 └── LEAF id:2 price:"£150.00"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             // Search for raw value shouldn't match the formatted display
             api.setGridOption('findSearchValue', '100');
@@ -76,9 +77,8 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:1 price:"£200.00"
                 └── LEAF id:2 price:"£150.00"
             `);
-            await asyncSetTimeout(1);
             // Will match '100' in '£100.00'
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             // Search for currency symbol
             api.setGridOption('findSearchValue', '£');
@@ -98,8 +98,7 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:1 price:"£200.00"
                 └── LEAF id:2 price:"£150.00"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(3);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(3));
         });
 
         test('find works with date formatters', async () => {
@@ -143,8 +142,7 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:1 date:"20/6/2024"
                 └── LEAF id:2 date:"25/12/2023"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(2);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(2));
 
             // Search for specific date format
             api.setGridOption('findSearchValue', '15/1/2024');
@@ -159,8 +157,7 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:1 date:"20/6/2024"
                 └── LEAF id:2 date:"25/12/2023"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
         });
     });
 
@@ -211,8 +208,7 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:0 firstName:"John" lastName:"Doe" 0:"John Doe"
                 └── LEAF id:1 firstName:"Jane" lastName:"Smith" 0:"Jane Smith"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             // Search for partial
             api.setGridOption('findSearchValue', 'Jane');
@@ -233,9 +229,8 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:0 firstName:"John" lastName:"Doe" 0:"John Doe"
                 └── LEAF id:1 firstName:"Jane" lastName:"Smith" 0:"Jane Smith"
             `);
-            await asyncSetTimeout(1);
             // Should find in both firstName column and Full Name column
-            expect(api.findGetTotalMatches()).toBe(2);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(2));
         });
     });
 
@@ -269,9 +264,8 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:2 number:1234
                 └── LEAF id:3 number:12345
             `);
-            await asyncSetTimeout(1);
             // Matches '123', '1234', '12345'
-            expect(api.findGetTotalMatches()).toBe(3);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(3));
 
             api.setGridOption('findSearchValue', '456');
             await new GridColumns(api, `find with number values after setGridOption findSearchValue #2`).checkColumns(
@@ -287,8 +281,7 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:2 number:1234
                 └── LEAF id:3 number:12345
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
         });
 
         // Note: boolean values without valueFormatter return empty display value
@@ -326,8 +319,7 @@ describe('Find Value Formatting', () => {
                     └── LEAF id:3 value:""
                 `
             );
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             // Null/undefined shouldn't match anything
             api.setGridOption('findSearchValue', 'null');
@@ -345,8 +337,7 @@ describe('Find Value Formatting', () => {
                     └── LEAF id:3 value:""
                 `
             );
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(0);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(0));
         });
 
         test('find with special characters', async () => {
@@ -385,8 +376,7 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:2 value:"test (brackets)"
                 └── LEAF id:3 value:"a*b+c"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             api.setGridOption('findSearchValue', '$');
             await new GridColumns(api, `find with special characters after setGridOption findSearchValue #2`)
@@ -401,8 +391,7 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:2 value:"test (brackets)"
                 └── LEAF id:3 value:"a*b+c"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             api.setGridOption('findSearchValue', '(brackets)');
             await new GridColumns(api, `find with special characters after setGridOption findSearchValue #3`)
@@ -417,8 +406,7 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:2 value:"test (brackets)"
                 └── LEAF id:3 value:"a*b+c"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             api.setGridOption('findSearchValue', '*');
             await new GridColumns(api, `find with special characters after setGridOption findSearchValue #4`)
@@ -433,8 +421,7 @@ describe('Find Value Formatting', () => {
                 ├── LEAF id:2 value:"test (brackets)"
                 └── LEAF id:3 value:"a*b+c"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
         });
     });
 
@@ -470,8 +457,7 @@ describe('Find Value Formatting', () => {
                 ROOT id:ROOT_NODE_ID value:"formatted"
                 └── LEAF id:0 value:"formatted"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
 
             // Shouldn't find the formatted display value
             api.setGridOption('findSearchValue', 'formatted');
@@ -484,8 +470,7 @@ describe('Find Value Formatting', () => {
                 ROOT id:ROOT_NODE_ID value:"formatted"
                 └── LEAF id:0 value:"formatted"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(0);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(0));
 
             // Can search for original value via getFindText
             api.setGridOption('findSearchValue', 'original');
@@ -498,8 +483,7 @@ describe('Find Value Formatting', () => {
                 ROOT id:ROOT_NODE_ID value:"formatted"
                 └── LEAF id:0 value:"formatted"
             `);
-            await asyncSetTimeout(1);
-            expect(api.findGetTotalMatches()).toBe(1);
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
         });
     });
 });

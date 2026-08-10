@@ -35,16 +35,20 @@ const groupHeader = (page: Page, name: string) => page.locator('.ag-header-group
 // (`ag-scrollbar-scrolling` is transient mid-settle), and rows are not mid-animation. A freshly
 // created grid also applies measured scrollbar sizing and header classes over subsequent frames, so
 // poll until two consecutive serialisations agree rather than capturing part-way through settling.
+const SETTLED_REPEATS = 3;
+
 async function captureSettledGrid(page: Page) {
     await expect(page.locator('.ag-overlay-loading-center')).toHaveCount(0);
     await waitForRowAnimations(page);
     await expect(page.locator('.ag-scrollbar-scrolling')).toHaveCount(0);
+    let stableFor = 0;
     let previous: string | null = null;
     let current: string | null = null;
     await expect(async () => {
         previous = current;
         current = stripHistory(await serializeGridDom(page));
-        expect(current).toBe(previous);
+        stableFor = current === previous ? stableFor + 1 : 0;
+        expect(stableFor).toBeGreaterThanOrEqual(SETTLED_REPEATS);
     }).toPass();
     return current;
 }

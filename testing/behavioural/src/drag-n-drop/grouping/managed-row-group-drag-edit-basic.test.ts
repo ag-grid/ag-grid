@@ -495,6 +495,7 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
         await dispatcher.start('1');
         await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('A1'));
         await dispatcher.move('2', { center: true });
+        // eslint-disable-next-line no-restricted-syntax -- waits out this test's 60ms rowDragInsertDelay before the nudging move
         await asyncSetTimeout(80);
         await dispatcher.move('2', { center: true });
 

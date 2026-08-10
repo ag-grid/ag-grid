@@ -23,9 +23,10 @@ import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimation
  */
 
 /** Wait for the debounced span rebuild + spanned-row renderer to settle before snapshotting:
- *  the debounce timer, then the animation frame the spanned-row renderer paints on. */
+ *  a macrotask tick for the rowSpanService's 0ms debounce chain, then the animation frames the
+ *  spanned-row renderer paints on. */
 const settle = async (): Promise<void> => {
-    await asyncSetTimeout(10);
+    await asyncSetTimeout(0);
     await nextAnimationFrame();
     await nextAnimationFrame();
 };

@@ -10,8 +10,8 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { CustomMedalCellRenderer } from './customMedalCellRenderer_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

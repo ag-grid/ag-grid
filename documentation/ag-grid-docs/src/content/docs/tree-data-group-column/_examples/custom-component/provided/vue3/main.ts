@@ -14,8 +14,8 @@ import { AgGridVue } from 'ag-grid-vue3';
 import CustomGroupCellRenderer from './customGroupCellRendererVue';
 import { getData } from './data';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -52,6 +52,10 @@ const VueExample = defineComponent({
                     field: 'size',
                     aggFunc: 'sum',
                     valueFormatter: (params: ValueFormatterParams) => {
+                        if (params.value == null) {
+                            return ''; // params.value can be null/undefined here (e.g. no size for this row)
+                        }
+
                         const sizeInKb = params.value / 1024;
 
                         if (sizeInKb > 1024) {

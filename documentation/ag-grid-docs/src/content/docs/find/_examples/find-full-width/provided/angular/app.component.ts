@@ -17,8 +17,8 @@ import { getData, getLatinText } from './data';
 import { FullWidthCellRenderer } from './full-width-cell-renderer.component';
 import './styles.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

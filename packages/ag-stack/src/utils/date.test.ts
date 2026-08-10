@@ -32,6 +32,22 @@ describe('_serialiseDate', () => {
 
         expect(result).toBe('2020-03-27');
     });
+
+    it('pads a year before 100AD to four digits', () => {
+        const date = new Date(2000, 0, 1);
+        date.setFullYear(87);
+        const result = _serialiseDate(date, false);
+
+        expect(result).toBe('0087-01-01');
+    });
+
+    it('pads a three-digit year to four digits', () => {
+        const date = new Date(2000, 0, 1);
+        date.setFullYear(987);
+        const result = _serialiseDate(date, false);
+
+        expect(result).toBe('0987-01-01');
+    });
 });
 
 describe('_parseDateTimeFromString', () => {
@@ -64,6 +80,42 @@ describe('_parseDateTimeFromString', () => {
 
     it('returns null for a malformed time portion', () => {
         expect(_parseDateTimeFromString('2020-03-30T-1:-1:-1')).toBeNull();
+    });
+
+    it.each(['0087-01-01', '0000-01-01', '0987-06-15'])(
+        'parses a year before 100AD without shifting into the 1900s: %s',
+        (value) => {
+            const result = _parseDateTimeFromString(value);
+            const expectedYear = Number.parseInt(value.slice(0, 4), 10);
+
+            expect(result).not.toBeNull();
+            expect(result!.getFullYear()).toBe(expectedYear);
+        }
+    );
+
+    it('parses the leap day of a leap year before 100AD (year 0 is a leap year)', () => {
+        const result = _parseDateTimeFromString('0000-02-29');
+
+        expect(result).not.toBeNull();
+        expect(result!.getFullYear()).toBe(0);
+        expect(result!.getMonth()).toBe(1);
+        expect(result!.getDate()).toBe(29);
+    });
+
+    it('returns null for a February 29th in a non-leap year before 100AD', () => {
+        expect(_parseDateTimeFromString('0001-02-29')).toBeNull();
+    });
+
+    it('round-trips a year before 100AD through serialise and parse', () => {
+        const date = new Date(2000, 0, 1);
+        date.setFullYear(87);
+
+        const result = _parseDateTimeFromString(_serialiseDate(date, false));
+
+        expect(result).not.toBeNull();
+        expect(result!.getFullYear()).toBe(87);
+        expect(result!.getMonth()).toBe(0);
+        expect(result!.getDate()).toBe(1);
     });
 });
 

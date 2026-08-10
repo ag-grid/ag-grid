@@ -15,8 +15,8 @@ import type { IOlympicData } from './interfaces';
 import NumberFilterComponent from './numberFilterComponent';
 import NumberFloatingFilterComponent from './numberFloatingFilterComponent';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

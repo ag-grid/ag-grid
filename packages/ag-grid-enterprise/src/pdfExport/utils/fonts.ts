@@ -1,30 +1,5 @@
 import type { PdfCellStyle, PdfFontFamily, PdfFontWeight } from 'ag-grid-community';
 
-const DEFAULT_PDF_FONT_FAMILY: PdfFontFamily = 'Helvetica';
-const PDF_FONT_FAMILIES = new Set<string>([
-    'Helvetica',
-    'Helvetica-Bold',
-    'Times-Roman',
-    'Times-Bold',
-    'Courier',
-    'Courier-Bold',
-]);
-
-/**
- * Resolve runtime font values to one of the built-in PDF font families.
- * @param fontFamily - Candidate font family.
- * @param fallback - Fallback font family.
- * @returns Supported PDF font family.
- */
-export function normalisePdfFontFamily(
-    fontFamily: PdfFontFamily | undefined,
-    fallback: PdfFontFamily = DEFAULT_PDF_FONT_FAMILY
-): PdfFontFamily {
-    const fallbackFont = PDF_FONT_FAMILIES.has(fallback) ? fallback : DEFAULT_PDF_FONT_FAMILY;
-
-    return fontFamily && PDF_FONT_FAMILIES.has(fontFamily) ? fontFamily : fallbackFont;
-}
-
 /**
  * Map CSS text alignment values to PDF alignment values.
  * @param value - CSS alignment token.
@@ -51,7 +26,7 @@ export function resolveTextAlignment(value?: string): PdfCellStyle['alignment'] 
 }
 
 /**
- * Map a CSS font-family value to one of the built-in PDF fonts.
+ * Map a CSS font-family value to a built-in or registered PDF font name.
  * @param fontFamilyValue - CSS `font-family` value.
  * @returns Matching PDF font family, or `undefined` when no mapping exists.
  */
@@ -70,60 +45,30 @@ export function resolveFontWeight(fontWeightValue?: string | number): PdfFontWei
     }
 
     if (typeof fontWeightValue === 'number') {
-        return Number.isFinite(fontWeightValue) ? (fontWeightValue >= 600 ? 'bold' : 'normal') : undefined;
+        return toPdfFontWeight(fontWeightValue);
     }
 
     const normalised = String(fontWeightValue).trim().toLowerCase();
     if (normalised === 'bold' || normalised === 'bolder') {
         return 'bold';
     }
-    if (normalised === 'normal' || normalised === 'lighter') {
+    if (normalised === 'normal') {
         return 'normal';
+    }
+    if (normalised === 'lighter') {
+        return 300;
     }
     if (!/^\d+(?:\.\d+)?$/.test(normalised)) {
         return undefined;
     }
 
-    return Number.parseFloat(normalised) >= 600 ? 'bold' : 'normal';
+    return toPdfFontWeight(Number.parseFloat(normalised));
 }
 
 /**
- * Resolve a font family and weight after style inheritance has been applied.
- * @param fontFamily - Optional style-specific font family.
- * @param fontWeight - Optional style-specific font weight.
- * @param fallback - Inherited font family.
- * @returns Resolved built-in PDF font family.
- */
-export function resolvePdfFontFamily(
-    fontFamily: PdfFontFamily | undefined,
-    fontWeight: PdfFontWeight | undefined,
-    fallback: PdfFontFamily = DEFAULT_PDF_FONT_FAMILY
-): PdfFontFamily {
-    const resolvedFamily = normalisePdfFontFamily(fontFamily, fallback);
-    if (!fontWeight) {
-        return resolvedFamily;
-    }
-
-    const useBold = fontWeight === 'bold';
-    switch (resolvedFamily) {
-        case 'Helvetica':
-        case 'Helvetica-Bold':
-            return useBold ? 'Helvetica-Bold' : 'Helvetica';
-        case 'Times-Roman':
-        case 'Times-Bold':
-            return useBold ? 'Times-Bold' : 'Times-Roman';
-        case 'Courier':
-        case 'Courier-Bold':
-            return useBold ? 'Courier-Bold' : 'Courier';
-        default:
-            return resolvedFamily;
-    }
-}
-
-/**
- * Resolve the primary CSS font family token to a PDF base font.
+ * Resolve the primary CSS font family token to a PDF font.
  * @param fontFamilyValue - CSS `font-family` value.
- * @returns PDF base font family, or `undefined`.
+ * @returns Built-in mapping or custom family name, or `undefined`.
  */
 function mapFontFamily(fontFamilyValue?: string): PdfFontFamily | undefined {
     if (!fontFamilyValue) {
@@ -141,7 +86,12 @@ function mapFontFamily(fontFamilyValue?: string): PdfFontFamily | undefined {
         return 'Helvetica-Bold';
     }
 
-    if (primaryFamily.includes('helvetica') || primaryFamily.includes('arial') || primaryFamily.includes('sans')) {
+    if (
+        primaryFamily === 'helvetica' ||
+        primaryFamily === 'arial' ||
+        primaryFamily === 'sans-serif' ||
+        primaryFamily === 'system-ui'
+    ) {
         return 'Helvetica';
     }
 
@@ -149,7 +99,7 @@ function mapFontFamily(fontFamilyValue?: string): PdfFontFamily | undefined {
         return 'Times-Bold';
     }
 
-    if (primaryFamily.includes('times') || primaryFamily.includes('serif')) {
+    if (primaryFamily.includes('times') || primaryFamily === 'serif') {
         return 'Times-Roman';
     }
 
@@ -157,9 +107,17 @@ function mapFontFamily(fontFamilyValue?: string): PdfFontFamily | undefined {
         return 'Courier-Bold';
     }
 
-    if (primaryFamily.includes('courier') || primaryFamily.includes('mono')) {
+    if (primaryFamily.includes('courier') || primaryFamily === 'monospace') {
         return 'Courier';
     }
 
-    return undefined;
+    return primaryFamily;
+}
+
+function toPdfFontWeight(value: number): PdfFontWeight | undefined {
+    if (!Number.isFinite(value)) {
+        return undefined;
+    }
+    const weight = Math.min(Math.max(Math.round(value / 100) * 100, 100), 900);
+    return weight as PdfFontWeight;
 }

@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { ColumnState } from 'ag-grid-community';
 import { convertColumnState } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager } from '../test-utils';
 
 describe('Value Column Order (valueIndex)', () => {
     const gridsManager = new TestGridsManager({
@@ -43,10 +45,9 @@ describe('Value Column Order (valueIndex)', () => {
             pivotMode: true,
             rowData,
         });
-        await asyncSetTimeout(1);
 
         // silver (valueIndex 0) before gold (valueIndex 1), regardless of colDef declaration order.
-        expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']);
+        await waitFor(() => expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']));
     });
 
     test('value column order is captured in and restored from column state', async () => {
@@ -60,32 +61,32 @@ describe('Value Column Order (valueIndex)', () => {
             pivotMode: true,
             rowData,
         });
-        await asyncSetTimeout(1);
 
         // Default follows colDef order.
-        expect(valueColIdsInOrder(api)).toEqual(['gold', 'silver']);
+        await waitFor(() => expect(valueColIdsInOrder(api)).toEqual(['gold', 'silver']));
 
         // Reorder so silver comes first.
         api.setValueColumns(['silver', 'gold']);
-        await asyncSetTimeout(1);
-        expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']);
-
-        const savedState = api.getColumnState();
-        expect(valueOrderFromState(savedState)).toEqual(['silver', 'gold']);
+        const savedState = await waitFor(() => {
+            expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']);
+            const state = api.getColumnState();
+            expect(valueOrderFromState(state)).toEqual(['silver', 'gold']);
+            return state;
+        });
 
         // Change the order again so the restore below has something to undo.
         api.setValueColumns(['gold', 'silver']);
-        await asyncSetTimeout(1);
-        expect(valueColIdsInOrder(api)).toEqual(['gold', 'silver']);
+        await waitFor(() => expect(valueColIdsInOrder(api)).toEqual(['gold', 'silver']));
 
         // Restoring the saved state brings back the silver-first order.
         api.applyColumnState({ state: savedState, applyOrder: true });
-        await asyncSetTimeout(1);
-        expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']);
+        await waitFor(() => expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']));
     });
 
     test('a state item with valueIndex but no aggFunc activates and orders the value column', async () => {
-        const api = gridsManager.createGrid('myGrid', {
+        // Awaiting first render pins the "no value columns" check to a defined point: polling for an
+        // empty array would pass vacuously before the grid has processed the columns at all.
+        const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true },
                 { field: 'year', pivot: true },
@@ -95,7 +96,6 @@ describe('Value Column Order (valueIndex)', () => {
             pivotMode: true,
             rowData,
         });
-        await asyncSetTimeout(1);
 
         // No value columns to start with.
         expect(valueColIdsInOrder(api)).toEqual([]);
@@ -107,9 +107,8 @@ describe('Value Column Order (valueIndex)', () => {
                 { colId: 'silver', valueIndex: 0 },
             ],
         });
-        await asyncSetTimeout(1);
 
-        expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']);
+        await waitFor(() => expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']));
         // Activation assigned a default aggFunc to each column.
         const aggFuncs = api.getColumnState().filter((s) => s.aggFunc != null);
         expect(aggFuncs.map((s) => s.colId).sort()).toEqual(['gold', 'silver']);
@@ -160,23 +159,22 @@ describe('Role Column Order (rowGroupIndex / pivotIndex)', () => {
         });
 
         api.setRowGroupColumns(['a', 'b']);
-        await asyncSetTimeout(1);
-        expect(orderFromState(api.getColumnState(), 'rowGroupIndex')).toEqual(['a', 'b']);
+        await waitFor(() => expect(orderFromState(api.getColumnState(), 'rowGroupIndex')).toEqual(['a', 'b']));
 
         // Reorder imperatively — the saved state must follow the new order, not the original.
         api.setRowGroupColumns(['b', 'a']);
-        await asyncSetTimeout(1);
-        const savedState = api.getColumnState();
-        expect(orderFromState(savedState, 'rowGroupIndex')).toEqual(['b', 'a']);
+        const savedState = await waitFor(() => {
+            const state = api.getColumnState();
+            expect(orderFromState(state, 'rowGroupIndex')).toEqual(['b', 'a']);
+            return state;
+        });
 
         // Reorder away, then restore the saved order.
         api.setRowGroupColumns(['a', 'b']);
-        await asyncSetTimeout(1);
-        expect(orderFromState(api.getColumnState(), 'rowGroupIndex')).toEqual(['a', 'b']);
+        await waitFor(() => expect(orderFromState(api.getColumnState(), 'rowGroupIndex')).toEqual(['a', 'b']));
 
         api.applyColumnState({ state: savedState, applyOrder: true });
-        await asyncSetTimeout(1);
-        expect(orderFromState(api.getColumnState(), 'rowGroupIndex')).toEqual(['b', 'a']);
+        await waitFor(() => expect(orderFromState(api.getColumnState(), 'rowGroupIndex')).toEqual(['b', 'a']));
     });
 
     test('pivot column order is captured in and restored from column state', async () => {
@@ -187,20 +185,19 @@ describe('Role Column Order (rowGroupIndex / pivotIndex)', () => {
         });
 
         api.setPivotColumns(['a', 'b']);
-        await asyncSetTimeout(1);
-        expect(orderFromState(api.getColumnState(), 'pivotIndex')).toEqual(['a', 'b']);
+        await waitFor(() => expect(orderFromState(api.getColumnState(), 'pivotIndex')).toEqual(['a', 'b']));
 
         api.setPivotColumns(['b', 'a']);
-        await asyncSetTimeout(1);
-        const savedState = api.getColumnState();
-        expect(orderFromState(savedState, 'pivotIndex')).toEqual(['b', 'a']);
+        const savedState = await waitFor(() => {
+            const state = api.getColumnState();
+            expect(orderFromState(state, 'pivotIndex')).toEqual(['b', 'a']);
+            return state;
+        });
 
         api.setPivotColumns(['a', 'b']);
-        await asyncSetTimeout(1);
-        expect(orderFromState(api.getColumnState(), 'pivotIndex')).toEqual(['a', 'b']);
+        await waitFor(() => expect(orderFromState(api.getColumnState(), 'pivotIndex')).toEqual(['a', 'b']));
 
         api.applyColumnState({ state: savedState, applyOrder: true });
-        await asyncSetTimeout(1);
-        expect(orderFromState(api.getColumnState(), 'pivotIndex')).toEqual(['b', 'a']);
+        await waitFor(() => expect(orderFromState(api.getColumnState(), 'pivotIndex')).toEqual(['b', 'a']));
     });
 });

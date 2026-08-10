@@ -51,7 +51,9 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('age').locator('.ag-sort-ascending-icon')).toBeVisible();
 
         // multiSortKey: 'ctrl' means Ctrl+click adds gold as a secondary sort rather than replacing.
-        await agIdFor.headerCell('gold').click({ modifiers: ['Control'] });
+        // ControlOrMeta sends Meta on macOS, where Ctrl+click is a context-menu gesture; the grid
+        // accepts either modifier for the 'ctrl' multi-sort key.
+        await agIdFor.headerCell('gold').click({ modifiers: ['ControlOrMeta'] });
         await waitForRowAnimations(page);
         await expect(agIdFor.headerCell('gold').locator('.ag-sort-ascending-icon')).toBeVisible();
         await expect(agIdFor.headerCell('age').locator('.ag-sort-ascending-icon')).toBeVisible();

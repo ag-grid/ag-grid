@@ -3,11 +3,11 @@ title: "PDF Export - Rows"
 enterprise: true
 ---
 
-PDF Export includes rows after the grid's filtering and sorting by default. Export parameters can select rows, use the unprocessed row order, exclude pinned rows, or choose rows programmatically.
+PDF Export includes rows after filtering and sorting by default. Export options can select rows, change their order, omit groups, and control pinned rows.
 
 ## Export Selected Rows
 
-Set `onlySelected=true` to export selected rows instead of every row in the current export set.
+Set `onlySelected=true` to export selected rows. With pagination, use `onlySelectedAllPages=true` to include selections from every page.
 
 ```{% frameworkTransform=true %}
 api.exportDataAsPdf({
@@ -15,21 +15,26 @@ api.exportDataAsPdf({
 });
 ```
 
-When using pagination, set `onlySelectedAllPages=true` to include selected rows from every page.
-
 ## Text Wrapping And Row Height
 
-Cells, including numeric cells, remain on one line by default. Set `wrapText=true` for all exported cells, use `colDef.wrapText` or `colDef.wrapHeaderText`, or return `wrapText: true` from `processStyleCallback` for an individual PDF element.
+Cells remain on one line by default. Enable wrapping globally with `defaultCellStyle.wrapText`, per column with `colDef.wrapText`, or per element with `processStyleCallback`.
 
-PDF Export also translates CSS white-space properties returned by `cellStyle`. For example, `white-space: normal` enables wrapping, `white-space-collapse: preserve-breaks` preserves explicit line breaks without wrapping, and `white-space: pre-line` enables both behaviours. The `pre`, `pre-wrap`, and `break-spaces` values also preserve repeated, leading, and trailing spaces. The equivalent PDF-specific properties are `preserveLineBreaks` and `preserveSpaces`.
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    defaultCellStyle: {
+        wrapText: true,
+        maxLines: 3,
+    },
+});
+```
 
-Wrapped text breaks on whitespace and falls back to character-level wrapping for words wider than the cell. Explicit newline characters start distinct lines when wrapping is enabled. `lineHeight` defaults to the resolved font size, `maxLines` is unlimited by default, and `overflow` defaults to `'ellipsis'`.
+Without a fixed height, rows grow to fit wrapped content and can continue across pages. An explicit `rowHeight` or `headerRowHeight` fixes the available height and clips overflowing text.
 
-When `rowHeight` is omitted, each row grows to its tallest cell. An automatically sized row that is taller than the printable area continues across pages, with its backgrounds and borders repeated for each fragment. An explicit `rowHeight` or `headerRowHeight` is a fixed clipping boundary and does not grow or continue onto another page. Use `maxLines` when a line-count limit is preferable to a fixed height.
+Supported `white-space` values returned by `cellStyle` are also translated into wrapping, line-break preservation, and space preservation.
 
-## Export All Unprocessed Rows
+## Row Order
 
-The default `exportedRows='filteredAndSorted'` exports rows after filtering and sorting, in their displayed order. Set `exportedRows='all'` to ignore filtering and sorting and export rows in their original order.
+The default `exportedRows='filteredAndSorted'` follows the displayed row order. Use `'all'` to export the original unfiltered and unsorted row set.
 
 ```{% frameworkTransform=true %}
 api.exportDataAsPdf({
@@ -37,37 +42,36 @@ api.exportDataAsPdf({
 });
 ```
 
-{% note %}
-`exportedRows='all'` controls which rows form the export set. Options such as `onlySelected` and `shouldRowBeSkipped` can still remove rows from that set.
-{% /note %}
+Selection and `shouldRowBeSkipped` can still remove rows from this set.
 
 ## Row Groups
 
-Row-group labels are indented according to their displayed depth. Use `rowGroupIndentSize` to configure the indentation in points; `processRowGroupCallback` changes the exported label independently.
+Row groups are exported with indentation based on their displayed level. Set `rowGroupIndentSize` to change the indentation, or `skipRowGroups=true` to omit group rows.
 
-Set `skipRowGroups=true` to omit row-group rows from the export.
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    rowGroupIndentSize: 12,
+});
+```
 
 ## Pinned Rows
 
-Pinned top and bottom rows are exported by default. Set `skipPinnedTop` or `skipPinnedBottom` to omit the corresponding pinned section.
+Pinned top and bottom rows are exported by default. Use `skipPinnedTop` or `skipPinnedBottom` to omit them.
 
-Manually pinned rows also remain in the exported body by default. Set `skipPinnedRowDuplicates=true` to omit those body copies while retaining the rows in their pinned sections.
+Manually pinned rows can also appear in the body. Set `skipPinnedRowDuplicates=true` to keep only their pinned copies.
 
 ```{% frameworkTransform=true %}
 api.exportDataAsPdf({
     skipPinnedTop: true,
-    skipPinnedBottom: false,
     skipPinnedRowDuplicates: true,
 });
 ```
-
-The example below demonstrates wrapped rows, group indentation, line limits, and pinned-row sections.
 
 {% gridExampleRunner title="Wrapping, Grouping And Pinning" name="pdf-wrapping-grouping-pinning" exampleHeight=580 /%}
 
 ## Choose Rows Programmatically
 
-Use `rowPositions` to export explicit row positions, or `shouldRowBeSkipped` to decide whether each row in the export set should be omitted.
+Use `rowPositions` to export specific row positions, or `shouldRowBeSkipped` to omit rows conditionally.
 
 ```{% frameworkTransform=true %}
 api.exportDataAsPdf({
@@ -75,6 +79,22 @@ api.exportDataAsPdf({
 });
 ```
 
-The example below combines selected-row export, processed or unprocessed row order, and pinned-row controls.
-
 {% gridExampleRunner title="PDF Export - Rows" name="pdf-export-rows" exampleHeight=600 /%}
+
+## API
+
+### Export Options
+
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["onlySelected", "onlySelectedAllPages", "defaultCellStyle", "rowHeight", "headerRowHeight", "exportedRows", "rowGroupIndentSize", "skipRowGroups", "skipPinnedTop", "skipPinnedBottom", "skipPinnedRowDuplicates", "rowPositions", "shouldRowBeSkipped"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
+
+### PdfTextOverflow
+
+{% interfaceDocumentation interfaceName="PdfTextOverflow" config={"asCode":true} /%}
+
+### ShouldRowBeSkippedParams
+
+{% interfaceDocumentation interfaceName="ShouldRowBeSkippedParams" /%}
+
+### RowPosition
+
+{% interfaceDocumentation interfaceName="RowPosition" /%}

@@ -19,8 +19,8 @@ import { AgGridReact } from 'ag-grid-react';
 import { getData } from './data';
 import './styles.css';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

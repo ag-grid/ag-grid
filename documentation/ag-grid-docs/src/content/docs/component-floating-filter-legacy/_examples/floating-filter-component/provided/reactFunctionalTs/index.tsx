@@ -12,8 +12,8 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import SliderFloatingFilter from './sliderFloatingFilter';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

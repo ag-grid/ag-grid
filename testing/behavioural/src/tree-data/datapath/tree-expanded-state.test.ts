@@ -1,13 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import {
-    GridRows,
-    TestGridsManager,
-    applyTransactionChecked,
-    asyncSetTimeout,
-    setRowDataChecked,
-} from '../../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../../test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
 
@@ -62,8 +56,6 @@ describe('ag-grid tree expanded state', () => {
             },
         });
 
-        await asyncSetTimeout(1);
-
         await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID
             └─┬ "Erica Rogers" GROUP collapsed id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
@@ -82,8 +74,6 @@ describe('ag-grid tree expanded state', () => {
 
         api.getRowNode('0')!.setExpanded(true, undefined, true);
         api.getRowNode('1')!.setExpanded(true, undefined, true);
-
-        await asyncSetTimeout(1);
 
         await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID
@@ -105,8 +95,6 @@ describe('ag-grid tree expanded state', () => {
 
         api.getRowNode('7')!.setExpanded(true, undefined, true);
         api.getRowNode('2')!.setExpanded(true, undefined, true);
-
-        await asyncSetTimeout(1);
 
         await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID

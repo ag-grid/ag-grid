@@ -64,6 +64,7 @@ export { SetFilterModule } from './setFilter/setFilterModule';
 export { StatusBarModule } from './statusBar/statusBarModule';
 export { ToolbarModule } from './toolbar/toolbarModule';
 export { ExcelExportModule } from './excelExport/excelExportModule';
+export { PdfExportModule } from './pdfExport/pdfExportModule';
 export { MultiFilterModule } from './multiFilter/multiFilterModule';
 export { GroupFilterModule, RowGroupingPanelModule, RowGroupingModule } from './rowGrouping/rowGroupingModule';
 export { SideBarModule } from './sideBar/sideBarModule';

@@ -9,4 +9,7 @@ export type ValueEditorProps<T> = {
     onChange: (newValue: T | null) => void;
     icon?: ReactNode;
     swipeAdjustmentDivisor?: number;
+    // Optional clamp for numeric (length) editors; ignored by other editor types.
+    min?: number;
+    max?: number;
 };

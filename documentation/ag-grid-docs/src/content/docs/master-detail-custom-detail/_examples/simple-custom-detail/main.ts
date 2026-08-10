@@ -10,8 +10,8 @@ import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, MasterDeta
 
 import { DetailCellRenderer } from './detailCellRenderer_typescript';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 

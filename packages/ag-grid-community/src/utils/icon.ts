@@ -87,6 +87,7 @@ export type IconName =
     | 'save'
     | 'csvExport'
     | 'excelExport'
+    | 'pdfExport'
     | 'smallDown' // deprecated v33
     | 'selectOpen'
     | 'richSelectOpen'

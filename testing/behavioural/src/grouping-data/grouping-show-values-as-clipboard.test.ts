@@ -1,7 +1,9 @@
+import { waitFor } from '@testing-library/dom';
+
 import { NumberEditorModule, TextEditorModule, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule, ClipboardModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, clipboardUtils } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, clipboardUtils } from '../test-utils';
 
 describe('showValuesAs copies the transformed value to the clipboard', () => {
     const gridMgr = new TestGridsManager({
@@ -66,8 +68,8 @@ describe('showValuesAs copies the transformed value to the clipboard', () => {
         api.setFocusedCell(0, 'amount');
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['amount'] });
         api.copyToClipboard();
-        await asyncSetTimeout(1);
-        expect(clipboardUtils.getText()).toBe('25.00%');
+        // The clipboard was empty before the copy, so this cannot pass before it lands.
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('25.00%'));
     });
 
     test('editing a showValuesAs cell operates on the raw value; the cell re-renders transformed', async () => {

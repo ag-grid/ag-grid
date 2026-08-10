@@ -12,8 +12,6 @@ import {
 import type { CustomFilterProps, CustomFloatingFilterProps } from 'ag-grid-react';
 import { AgGridReact, useGridFilter } from 'ag-grid-react';
 
-import { asyncSetTimeout } from '../test-utils';
-
 const rowData = [{ athlete: 'Michael Phelps' }, { athlete: 'Aleksey Nemov' }];
 
 const AthleteFloatingFilter = ({ model, onModelChange }: CustomFloatingFilterProps) => {
@@ -67,9 +65,13 @@ describe('Custom floating filter onModelChange (React)', () => {
     // route through the parent filter's deprecated setModel() (which fires warning #286).
     test('does not emit deprecation warning #286 when the model changes', async () => {
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        let api: GridApi | undefined;
 
         const rendered = render(
             <AgGridReact
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
                 rowData={rowData}
                 columnDefs={[
                     {
@@ -87,7 +89,16 @@ describe('Custom floating filter onModelChange (React)', () => {
         const input = await rendered.findByTestId('floating-filter-input');
 
         fireEvent.change(input, { target: { value: 'Phelps' } });
-        await asyncSetTimeout(50);
+
+        // #286 would be emitted while the model is routed into the parent filter, so wait for the
+        // model to land there before asserting the warning was not produced.
+        await waitFor(() =>
+            expect(api!.getColumnFilterModel('athlete')).toEqual({
+                filterType: 'text',
+                type: 'contains',
+                filter: 'Phelps',
+            })
+        );
 
         expect(emitted286(warnSpy)).toBe(false);
     });
@@ -117,14 +128,15 @@ describe('Custom floating filter onModelChange (React)', () => {
         const input = await rendered.findByTestId('floating-filter-input');
 
         fireEvent.change(input, { target: { value: 'Phelps' } });
-        await asyncSetTimeout(50);
 
-        expect(api!.getColumnFilterModel('athlete')).toEqual({
-            filterType: 'text',
-            type: 'contains',
-            filter: 'Phelps',
+        await waitFor(() => {
+            expect(api!.getColumnFilterModel('athlete')).toEqual({
+                filterType: 'text',
+                type: 'contains',
+                filter: 'Phelps',
+            });
+            expect(api!.getDisplayedRowCount()).toBe(1);
         });
-        expect(api!.getDisplayedRowCount()).toBe(1);
     });
 
     // Scope guard: a fully-custom parent filter keeps its own setModel path (the instanceof

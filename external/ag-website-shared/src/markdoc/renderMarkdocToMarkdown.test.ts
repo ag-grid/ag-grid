@@ -68,7 +68,7 @@ describe('renderMarkdocToMarkdown', () => {
     });
 
     it('omits the Enterprise flag for a Community page', async () => {
-        const output = await render('Body paragraph.', { frontmatter: { title: 'Row Sorting' } });
+        const output = await render('Body paragraph.', { frontmatter: { title: 'Bar Series' } });
 
         expect(output).not.toContain('enterprise:');
     });
@@ -233,16 +233,6 @@ describe('renderMarkdocToMarkdown', () => {
         );
     });
 
-    it('drops hard-dropped tags without leaving blank-line gaps', async () => {
-        const body = ['Before.', '', '{% oneTrustCookies /%}', '', '{% oneTrustCookies /%}', '', 'After.'].join('\n');
-        const output = await render(body);
-
-        expect(output).toContain('Before.');
-        expect(output).toContain('After.');
-        expect(output).not.toContain('oneTrustCookies');
-        expect(output).not.toMatch(/\n{3,}/);
-    });
-
     it('delegates unhandled tags to renderTag and embeds the resolved result', async () => {
         const renderTag = vi.fn(
             ({ tag, attributes }: { tag: string; attributes: Record<string, unknown> }) =>
@@ -269,16 +259,6 @@ describe('renderMarkdocToMarkdown', () => {
 
         expect(renderTag).toHaveBeenCalledWith(expect.objectContaining({ tag: 'customWrapper' }));
         expect(output).toContain('Inner **content**.');
-    });
-
-    it('never offers hard-dropped tags to renderTag', async () => {
-        const renderTag = vi.fn(() => 'SHOULD_NOT_APPEAR');
-        const output = await render('Before.\n\n{% oneTrustCookies /%}\n\nAfter.', { resolvers: { renderTag } });
-
-        expect(renderTag).not.toHaveBeenCalled();
-        expect(output).not.toContain('SHOULD_NOT_APPEAR');
-        expect(output).toContain('Before.');
-        expect(output).toContain('After.');
     });
 
     it('delegates gettingStarted/licenseSetup/trialLicenceForm to renderTag', async () => {

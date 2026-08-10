@@ -30,6 +30,7 @@ const GridBodyComp = () => {
     const [stickyBottomWidth, setStickyBottomWidth] = useState<string>('100%');
     const [cellSelectableCss, setCellSelectableCss] = useState<string | null>(null);
     const [preventRowAnimationClass, setPreventRowAnimationClass] = useState<string | null>(null);
+    const [pinnedColumnsOverflowing, setPinnedColumnsOverflowing] = useState(false);
 
     // we initialise layoutClass to 'ag-layout-normal', because if we don't, the comp will initially
     // render with no width (as ag-layout-normal sets width to 0, which is needed for flex) which
@@ -136,6 +137,7 @@ const GridBodyComp = () => {
                     eGridScrollableArea.current.style.width = width;
                 }
             },
+            setPinnedColumnsOverflowing,
             setStickyBottomHeight,
             setStickyBottomWidth,
             setGridRole: (role: 'grid' | 'treegrid') => {
@@ -170,7 +172,15 @@ const GridBodyComp = () => {
     }, [context, gos, overlays, rangeSvc, rootElement]);
 
     const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
-    const gridViewportClasses = useMemo(() => classesList('ag-grid-viewport', layoutClass), [layoutClass]);
+    const gridViewportClasses = useMemo(
+        () =>
+            classesList(
+                'ag-grid-viewport',
+                layoutClass,
+                pinnedColumnsOverflowing ? 'ag-pinned-columns-overflow' : null
+            ),
+        [layoutClass, pinnedColumnsOverflowing]
+    );
     const bodyClasses = useMemo(
         () => classesList('ag-grid-scrolling-rows', layoutClass, cellSelectableCss),
         [layoutClass, cellSelectableCss]

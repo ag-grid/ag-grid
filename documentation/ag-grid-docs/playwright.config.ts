@@ -11,11 +11,7 @@ const baseURL = BASE_URL || PREV_URL || PROD_URL || 'https://localhost:4610';
 
 const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
 
-/* PDF Export is not part of the public API yet (release delayed), so its examples cannot load the module. */
-const IGNORED_TESTS = ['**/pdf-export*/**'];
-
 const BROWSER_IGNORED_TESTS = [
-    ...IGNORED_TESTS,
     '**/async-test/provided/angular/app.component.spec.ts',
     // page-verification.spec.ts runs in its own dedicated CI job.
     '**/page-verification.spec.ts',
@@ -64,8 +60,9 @@ export default defineConfig({
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : localRetries,
-    /* Limit parallel tests on CI. */
-    workers: process.env.CI ? 4 : undefined,
+    /* Limit parallel tests on CI. Locally Playwright's default is half the cores, which measured ~49% idle
+       on a 16-core machine - the browsers are the load and they do not saturate it, so take more of it. */
+    workers: process.env.CI ? 4 : '75%',
     // Stop running tests if lots of errors as likely configuration issues
     maxFailures: process.env.CI ? 200 : undefined,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -90,6 +87,11 @@ export default defineConfig({
     use: {
         /* Base URL to use in actions like `await page.goto('/')`. */
         baseURL,
+
+        // The dev server's certificate is self-signed. Chromium waives that for localhost but Node does not,
+        // so route handlers that re-request a URL fail without this. Left on for a deployed run, whose
+        // certificate is real and should still be checked.
+        ignoreHTTPSErrors: isLocalRun(baseURL),
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         // Keep this off for CI runs that upload reports: a trace records request headers, so it would

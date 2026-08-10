@@ -87,6 +87,16 @@ After editing, run `yarn nx generate-examples ag-grid-docs` and
 `yarn nx format --sort-root-tsconfig-paths=false` to confirm every variant still typechecks and is
 formatted.
 
+## Deleting or renaming an example
+
+Grep the whole docs tree for references first, not just the parent page. Examples may be referenced from elsewhere, and an orphaned reference fails the build:
+
+```bash
+grep -r 'name="example-name"' documentation/ag-grid-docs/src/content/docs/ --include='*.mdoc'
+```
+
+Examples are referenced through the `{% gridExampleRunner %}` tag, so its `name` attribute is what to search for.
+
 ## Validation
 
 ```bash

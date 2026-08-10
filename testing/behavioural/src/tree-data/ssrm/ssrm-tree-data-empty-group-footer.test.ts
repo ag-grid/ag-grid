@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
@@ -43,10 +45,8 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
         return { datasource, tracker };
     }
 
-    async function waitForLoadCount(tracker: { loadCount: number }, target: number, timeoutMs = 500) {
-        for (let elapsed = 0; elapsed < timeoutMs && tracker.loadCount < target; elapsed += 5) {
-            await asyncSetTimeout(5);
-        }
+    async function waitForLoadCount(tracker: { loadCount: number }, target: number) {
+        await waitFor(() => expect(tracker.loadCount).toBeGreaterThanOrEqual(target));
     }
 
     test('expanding group with empty children and groupTotalRow bottom does not cause infinite requests', async () => {
@@ -92,10 +92,11 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
 
         // Wait for children load (2nd request)
         await waitForLoadCount(tracker, 2);
-        await asyncSetTimeout(20);
+        await waitForNoLoadingRows(api);
         expect(tracker.loadCount).toBe(2);
 
         // Wait more — if there's an infinite loop, loadCount will keep growing
+        // eslint-disable-next-line no-restricted-syntax -- observation window: an infinite request loop would keep pushing loadCount past 2
         await asyncSetTimeout(200);
 
         expect(tracker.loadCount).toBe(2);
@@ -189,7 +190,7 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
 
         // Wait for Node B's children to load (empty)
         await waitForLoadCount(tracker, 3);
-        await asyncSetTimeout(20);
+        await waitForNoLoadingRows(api);
         expect(tracker.loadCount).toBe(3);
 
         // The footer for Node B's empty store must be resolved via the
@@ -197,12 +198,12 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
         // contiguous-previous-node shortcut, because Node B is hidden.
         // Before the fix, isDisplayIndexInStore returned false for the
         // footer index, causing the parent cache to create a spurious stub.
+        // eslint-disable-next-line no-restricted-syntax -- observation window: an infinite request loop would keep pushing loadCount past 3
         await asyncSetTimeout(200);
 
         expect(tracker.loadCount).toBe(3);
 
         tracker.active = false;
-        await asyncSetTimeout(10);
         await new GridRows(
             api,
             `expanding empty group with groupHideOpenParents and groupTotalRow bottom does no final state`
@@ -257,10 +258,11 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
 
         // Wait for children load
         await waitForLoadCount(tracker, 2);
-        await asyncSetTimeout(20);
+        await waitForNoLoadingRows(api);
         expect(tracker.loadCount).toBe(2);
 
         // Wait more
+        // eslint-disable-next-line no-restricted-syntax -- observation window: an infinite request loop would keep pushing loadCount past 2
         await asyncSetTimeout(200);
 
         expect(tracker.loadCount).toBe(2);

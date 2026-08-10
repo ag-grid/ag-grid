@@ -9,10 +9,11 @@ import {
     ContextMenuModule,
     ExcelExportModule,
     IntegratedChartsModule,
+    PdfExportModule,
 } from 'ag-grid-enterprise';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -24,6 +25,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     CellSelectionModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
+    PdfExportModule,
 ]);
 
 let gridApi: GridApi<IOlympicData>;

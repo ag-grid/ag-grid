@@ -2,15 +2,12 @@ import type {
     AgColumn,
     PdfColumnWidth,
     PdfColumnWidthCallback,
-    PdfFontFamily,
     PdfPageOrientation,
     PdfPageSetup,
     PdfPageSize,
 } from 'ag-grid-community';
 
 import type { PdfRow, PdfRowType } from '../../pdfSerializingSession';
-import { normalisePdfFontFamily, resolvePdfFontFamily } from '../fonts';
-import { mergePdfCellStyles } from '../styles';
 import { resolveFiniteNumber } from './numbers';
 
 export type ResolvedMargin = { top: number; right: number; bottom: number; left: number };
@@ -241,53 +238,6 @@ function resolveColumnWidth(requestedWidth: PdfColumnWidth, gridWidth: number, a
     }
 
     return resolveFiniteNumber(requestedWidth, autoWidth, Number.EPSILON);
-}
-
-/**
- * Build a deterministic map of PDF font names to internal font resource keys.
- * @param bodyFont - Default body font.
- * @param headerFont - Default header font.
- * @param titleFont - Optional document title font.
- * @param rows - Serialised rows that may include custom per-cell fonts.
- * @returns Map of font family to resource key.
- */
-export function createFontKeyMap(
-    bodyFont: PdfFontFamily,
-    headerFont: PdfFontFamily,
-    titleFont: PdfFontFamily | undefined,
-    rows: PdfRow[]
-): Map<PdfFontFamily, string> {
-    const fontKeyByFamily = new Map<PdfFontFamily, string>();
-    let nextIndex = 1;
-
-    const registerFont = (font?: PdfFontFamily) => {
-        if (!font) {
-            return;
-        }
-
-        const resolvedFont = normalisePdfFontFamily(font);
-        if (fontKeyByFamily.has(resolvedFont)) {
-            return;
-        }
-
-        fontKeyByFamily.set(resolvedFont, `F${nextIndex}`);
-        nextIndex += 1;
-    };
-
-    registerFont(bodyFont);
-    registerFont(headerFont);
-    registerFont(titleFont);
-
-    for (const row of rows) {
-        const baseFont = isHeaderRowType(row.type) ? headerFont : bodyFont;
-        registerFont(resolvePdfFontFamily(row.style?.fontFamily, row.style?.fontWeight, baseFont));
-        for (const cell of row.cells) {
-            const style = mergePdfCellStyles(row.style, cell.style);
-            registerFont(resolvePdfFontFamily(style?.fontFamily, style?.fontWeight, baseFont));
-        }
-    }
-
-    return fontKeyByFamily;
 }
 
 /**

@@ -6,8 +6,8 @@ import { MissionResultRenderer } from './missionResultRenderer_typescript';
 // Fallback for Safari and other browsers that do not support requestIdleCallback
 const _requestIdleCallback = window.requestIdleCallback ?? setTimeout;
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -44,7 +44,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 function outputText(time?: number) {
     const text = `Time taken: ${time ? Math.round(time) + 'ms' : '....'}`;
     console.log(text);
-    document.querySelector<HTMLElement>('#output')!.innerText = text;
+    // Reported from an idle callback, which can still run after the example has been removed.
+    const output = document.querySelector<HTMLElement>('#output');
+    if (output) {
+        output.innerText = text;
+    }
 }
 
 function onScroll() {

@@ -48,6 +48,8 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             displayedColumnsWidthChanged: widthListener,
             leftPinnedWidthChanged: widthListener,
             rightPinnedWidthChanged: widthListener,
+            gridSizeChanged: widthListener,
+            scrollVisibilityChanged: widthListener,
             pinnedRowDataChanged: this.refreshCompBottom.bind(this),
         });
 
@@ -87,11 +89,12 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 
     private setContainerWidth(): void {
-        const visibleCols = this.visibleCols;
-        const width =
-            visibleCols.bodyWidth +
-            visibleCols.getLeftStickyColumnContainerWidth() +
-            visibleCols.getRightStickyColumnContainerWidth();
+        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+        const width = gridBodyCtrl
+            ? gridBodyCtrl.getHorizontalContentWidth()
+            : this.visibleCols.bodyWidth +
+              this.visibleCols.getLeftStickyColumnContainerWidth() +
+              this.visibleCols.getRightStickyColumnContainerWidth();
         this.eContainer.style.width = `${Math.max(width, 1)}px`;
     }
 

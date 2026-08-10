@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { AgColumn, ColDef, GridApi, IColumnStateUpdateStrategy } from 'ag-grid-community';
 import { getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from '../test-utils';
 
 describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
     const gridMgr = new TestGridsManager({
@@ -59,9 +61,13 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             },
         });
 
-        await asyncSetTimeout(50);
+        const expectedColCount = (params.columnDefs ?? baseColumnDefs).length;
+        const toolPanel = await waitFor(() => {
+            const panel = gridApi.getToolPanelInstance('columns') as any;
+            expect(getDisplayedPrimaryColumnOrder(panel)).toHaveLength(expectedColCount);
+            return panel;
+        });
 
-        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
         return {
             gridApi,
             toolPanel,
@@ -120,26 +126,28 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             const gold = gridApi.getColumn('gold')! as AgColumn;
 
             getUpdateStrategy(toolPanel).moveColumns(false, [gold], 0, 'toolPanelUi');
-            await asyncSetTimeout(50);
 
-            expect(gridApi.getColumnState().map((s) => s.colId)).toEqual([
-                'gold',
-                'athlete',
-                'age',
-                'country',
-                'sport',
-            ]);
+            await waitFor(() =>
+                expect(gridApi.getColumnState().map((s) => s.colId)).toEqual([
+                    'gold',
+                    'athlete',
+                    'age',
+                    'country',
+                    'sport',
+                ])
+            );
 
             gridApi.resetColumnState();
-            await asyncSetTimeout(50);
 
-            expect(gridApi.getColumnState().map((s) => s.colId)).toEqual([
-                'athlete',
-                'age',
-                'country',
-                'sport',
-                'gold',
-            ]);
+            await waitFor(() =>
+                expect(gridApi.getColumnState().map((s) => s.colId)).toEqual([
+                    'athlete',
+                    'age',
+                    'country',
+                    'sport',
+                    'gold',
+                ])
+            );
         });
     });
 
@@ -156,11 +164,12 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // External sort change
             gridApi.applyColumnState({ state: [{ colId: 'age', sort: 'asc' }] });
-            await asyncSetTimeout(50);
 
             // Staged changes should be reset
-            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
-            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            await waitFor(() => {
+                expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+                expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            });
         });
 
         test('external column visibility change resets staged changes', async () => {
@@ -175,10 +184,11 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // External visibility change
             gridApi.setColumnsVisible(['gold'], false);
-            await asyncSetTimeout(50);
 
-            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
-            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            await waitFor(() => {
+                expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+                expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            });
         });
 
         test('external column move does NOT reset staged changes when suppressSyncLayoutWithGrid is true', async () => {
@@ -193,7 +203,9 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // External column move
             gridApi.moveColumns(['gold'], 0);
-            await asyncSetTimeout(50);
+
+            // Wait for the move to land, then assert nothing was reset
+            await waitFor(() => expect(gridApi.getColumnState().map((s) => s.colId)[0]).toBe('gold'));
 
             // Staged changes should NOT be reset because suppressSyncLayoutWithGrid is true
             expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(true);
@@ -212,11 +224,12 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // External column move
             gridApi.moveColumns(['gold'], 0);
-            await asyncSetTimeout(50);
 
             // Staged changes SHOULD be reset
-            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
-            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            await waitFor(() => {
+                expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+                expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            });
         });
 
         test('external newColumnsLoaded resets staged changes', async () => {
@@ -230,10 +243,11 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // setColumnDefs triggers newColumnsLoaded
             gridApi.setGridOption('columnDefs', baseColumnDefs);
-            await asyncSetTimeout(50);
 
-            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
-            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            await waitFor(() => {
+                expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+                expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            });
         });
 
         test('commit does not trigger external reset (isCommitting guard)', async () => {
@@ -249,12 +263,13 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // Apply commits staged changes — this fires grid events, but should NOT reset
             getApplyButton(toolPanelGui).click();
-            await asyncSetTimeout(50);
 
-            // The change should have been applied
-            expect(gridApi.getColumn('athlete')!.isVisible()).toBe(false);
-            // Apply button should now be disabled (no pending changes)
-            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            await waitFor(() => {
+                // The change should have been applied
+                expect(gridApi.getColumn('athlete')!.isVisible()).toBe(false);
+                // Apply button should now be disabled (no pending changes)
+                expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            });
         });
 
         test('pinning does not reset staged changes', async () => {
@@ -268,7 +283,9 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // External pinning
             gridApi.setColumnsPinned(['age'], 'left');
-            await asyncSetTimeout(50);
+
+            // Wait for the pin to land, then assert nothing was reset
+            await waitFor(() => expect(gridApi.getColumn('age')!.getPinned()).toBe('left'));
 
             // Staged changes should NOT be reset
             expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(true);
@@ -284,9 +301,8 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             expect(getApplyButton(toolPanelGui).disabled).toBe(false);
 
-            // External resize
+            // External resize — applied synchronously, so any reset would already have run
             gridApi.setColumnWidths([{ key: 'age', newWidth: 200 }]);
-            await asyncSetTimeout(50);
 
             // Staged changes should NOT be reset
             expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(true);
@@ -299,7 +315,9 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // External sort change with no pending changes
             gridApi.applyColumnState({ state: [{ colId: 'age', sort: 'asc' }] });
-            await asyncSetTimeout(50);
+
+            // Wait for the sort to land, then assert no reset happened
+            await waitFor(() => expect(gridApi.getColumn('age')!.getSort()).toBe('asc'));
 
             // reset should not have been called since there were no pending changes
             expect(resetSpy).not.toHaveBeenCalled();
@@ -326,11 +344,12 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // External aggFunc change (value col IDs stay the same, only aggFunc changes)
             gridApi.applyColumnState({ state: [{ colId: 'age', aggFunc: 'max' }] });
-            await asyncSetTimeout(50);
 
             // Staged changes should be reset because the grid state changed
-            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
-            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            await waitFor(() => {
+                expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+                expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            });
         });
 
         test('no-op applyColumnState clears staged changes', async () => {
@@ -345,10 +364,11 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             expect(getApplyButton(toolPanelGui).disabled).toBe(false);
 
             gridApi.applyColumnState({ state: savedState });
-            await asyncSetTimeout(50);
 
-            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
-            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            await waitFor(() => {
+                expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+                expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            });
         });
 
         test('no-op resetColumnState clears staged changes', async () => {
@@ -363,11 +383,12 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // Reset columns — no-op since staged changes haven't been applied
             gridApi.resetColumnState();
-            await asyncSetTimeout(50);
 
             // Staged changes should be cleared
-            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
-            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            await waitFor(() => {
+                expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+                expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            });
         });
 
         test('external aggFunc change with custom function resets staged changes', async () => {
@@ -395,11 +416,12 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
             // External aggFunc change: swap one custom function for another
             gridApi.applyColumnState({ state: [{ colId: 'age', aggFunc: 'customMax' }] });
-            await asyncSetTimeout(50);
 
             // Staged changes should be reset — the snapshot must detect function reference change
-            expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
-            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            await waitFor(() => {
+                expect(getUpdateStrategy(toolPanel).hasPendingChanges(isDeferred(toolPanel))).toBe(false);
+                expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+            });
         });
     });
 
@@ -471,9 +493,14 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
                     defaultToolPanel: 'columns',
                 },
             });
-            await asyncSetTimeout(50);
-            const strategy = getUpdateStrategy(gridApi.getToolPanelInstance('columns'));
-            return { gridApi, strategy };
+            const toolPanel = await waitFor(() => {
+                const panel = gridApi.getToolPanelInstance('columns');
+                expect(panel).toBeTruthy();
+                return panel;
+            });
+            // let any column animation started during init clear before the tests observe it
+            await nextAnimationFrame();
+            return { gridApi, strategy: getUpdateStrategy(toolPanel) };
         };
 
         test('a lone reorder skips columnEverythingChanged and animates the reflow', async () => {

@@ -29,7 +29,7 @@
     padding: 4px;
     border-radius: 24px;
     fill: var(--color-util-brand-700);
-    background: color-mix(in srgb, var(--color-util-brand-700), var(--color-bg-primary) 95%);
+    background: color-mix(in srgb, var(--color-util-brand-700) 7.5%, transparent);
     transition: all 0.3s;
     opacity: 1;
 }

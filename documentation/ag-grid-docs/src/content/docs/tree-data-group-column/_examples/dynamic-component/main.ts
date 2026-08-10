@@ -5,8 +5,8 @@ import { TreeDataModule } from 'ag-grid-enterprise';
 import { CustomGroupCellRenderer } from './customGroupCellRenderer_typescript';
 import { getData } from './data';
 
-// Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
     enableDevValidations();
 }
 
@@ -19,6 +19,10 @@ const columnDefs: ColDef[] = [
         field: 'size',
         aggFunc: 'sum',
         valueFormatter: (params) => {
+            if (params.value == null) {
+                return ''; // params.value can be null/undefined here (e.g. no size for this row)
+            }
+
             const sizeInKb = params.value / 1024;
 
             if (sizeInKb > 1024) {

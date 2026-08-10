@@ -191,6 +191,7 @@ function getImports(
     imports.push(getEnableAGTestIdLogic());
 
     if (bindings.moduleRegistration) {
+        imports.push('\n');
         imports.push(bindings.moduleRegistration);
     }
 
