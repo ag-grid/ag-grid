@@ -2,6 +2,7 @@
 import Layout from '@layouts/Layout.astro';
 import { Content as CookiesPolicies } from '@ag-website-shared/content/policies/cookies.mdoc';
 import CookiesTable from '../components/CookiesTable.astro';
+import { POLICY_CONTENT, policyHeading } from '../policyContent';
 import styles from '../policyPage.module.scss';
 
 interface Props {
@@ -9,22 +10,24 @@ interface Props {
 }
 
 const { name } = Astro.props;
+// Heading and effective date are shared with the /cookies.md twin so the two cannot drift.
+const content = POLICY_CONTENT.cookies;
 ---
 
 <Layout
-    title={`${name}: Cookies Policy`}
-    description="This page outlines our policy in relation to the cookies that we collect on our website."
+    title={`${name}: ${content.metaTitle}`}
+    description={content.description}
     showSearchBar={true}
     showDocsNav={false}
 >
     <div class:list={styles.policyPage}>
         <div class="layout-max-width-small">
-            <h1>Cookies Policy</h1>
+            <h1>{policyHeading('cookies', name)}</h1>
             <hr />
 
             <header>
                 <div id="introduction" class={styles.introduction}>
-                    <h4>Effective Date: May 17, 2018</h4>
+                    {content.meta.map((line) => <h4 set:html={line} />)}
                 </div>
 
                 <nav>
@@ -53,9 +56,9 @@ const { name } = Astro.props;
             </div>
 
             <section>
-                <h3 id="cookies-we-use">Cookies We Use</h3>
+                <h3 id={content.cookiesSection.id}>{content.cookiesSection.heading}</h3>
                 <hr />
-                <p>The cookies listed below were last reviewed on 7 August 2026.</p>
+                <p>{content.cookiesSection.note}</p>
                 <CookiesTable />
             </section>
         </div>
