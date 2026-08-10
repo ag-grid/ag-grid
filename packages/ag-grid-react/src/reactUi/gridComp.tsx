@@ -67,6 +67,15 @@ const GridComp = ({ context }: GridCompProps) => {
                 }
                 tabGuardRef.current?.forceFocusOutOfContainer(up);
             },
+            focusNextElementOutsideContainer: (up: boolean, eExcludeContainers: HTMLElement[]) => {
+                const eRootWrapper = eRootWrapperRef.current;
+                return eRootWrapper
+                    ? (tabGuardRef.current?.focusNextElementOutsideContainer(up, [
+                          eRootWrapper,
+                          ...eExcludeContainers,
+                      ]) ?? false)
+                    : false;
+            },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {
                 const beforeGridBody: FocusableContainer[] = [];
