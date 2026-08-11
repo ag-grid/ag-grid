@@ -9,7 +9,7 @@ const RESET_SCROLL_ON_UNLOAD_LOCALSTORAGE_KEY = 'ignore-docs-scroll-position';
 const NAV_SCROLL_CONTAINER_SELECTOR = '#docs-nav-scroll';
 
 export function initNavScrollPositionSync() {
-    window.addEventListener('load', () => {
+    const restoreScroll = () => {
         const nav = document.querySelector(NAV_SCROLL_CONTAINER_SELECTOR);
         const top = sessionStorage.getItem(SCROLL_POSITION_LOCALSTORAGE_KEY);
 
@@ -19,20 +19,30 @@ export function initNavScrollPositionSync() {
 
         // Don't reset on page load - reset should be set after the page has loaded
         sessionStorage.removeItem(RESET_SCROLL_ON_UNLOAD_LOCALSTORAGE_KEY);
+    };
 
-        window.addEventListener('beforeunload', () => {
-            const resetScroll = sessionStorage.getItem(RESET_SCROLL_ON_UNLOAD_LOCALSTORAGE_KEY) === 'true';
-            if (resetScroll) {
-                sessionStorage.removeItem(RESET_SCROLL_ON_UNLOAD_LOCALSTORAGE_KEY);
-                sessionStorage.removeItem(SCROLL_POSITION_LOCALSTORAGE_KEY);
-                return;
-            } else if (!nav) {
-                return;
-            }
+    const saveScroll = () => {
+        const resetScroll = sessionStorage.getItem(RESET_SCROLL_ON_UNLOAD_LOCALSTORAGE_KEY) === 'true';
+        if (resetScroll) {
+            sessionStorage.removeItem(RESET_SCROLL_ON_UNLOAD_LOCALSTORAGE_KEY);
+            sessionStorage.removeItem(SCROLL_POSITION_LOCALSTORAGE_KEY);
+            return;
+        }
 
-            sessionStorage.setItem(SCROLL_POSITION_LOCALSTORAGE_KEY, nav.scrollTop.toString());
-        });
-    });
+        const nav = document.querySelector(NAV_SCROLL_CONTAINER_SELECTOR);
+        if (!nav) {
+            return;
+        }
+
+        sessionStorage.setItem(SCROLL_POSITION_LOCALSTORAGE_KEY, nav.scrollTop.toString());
+    };
+
+    document.addEventListener('astro:before-preparation', saveScroll);
+    document.addEventListener('astro:page-load', restoreScroll);
+
+    // The astro:* events above cover router navigations; these cover hard ones.
+    window.addEventListener('load', restoreScroll);
+    window.addEventListener('beforeunload', saveScroll);
 }
 
 export function resetScrollPosition() {

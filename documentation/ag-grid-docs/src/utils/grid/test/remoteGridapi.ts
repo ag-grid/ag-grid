@@ -20,7 +20,7 @@ export const ensureGridReady = async (page: Page, gridId: string = '1') => {
 };
 
 export async function waitForGridContent(page: Page) {
-    await page.locator('ag-overlay-loading-center').first().waitFor({ state: 'hidden' });
+    await page.locator('.ag-overlay-loading-center').first().waitFor({ state: 'hidden' });
     // Normal cells
     const cellLocator = page.locator('.ag-cell');
     // Grouped cells

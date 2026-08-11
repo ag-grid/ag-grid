@@ -26,12 +26,13 @@ describe('buildLlmsTxt', () => {
         expect(txt).toContain('(https://www.ag-grid.com/sitemap-index.xml)');
     });
 
-    test('advertises the per-page markdown (.md) convention and the top-level .md pages', () => {
+    test('advertises the markdown (.md) convention as a site-wide rule, not a page list', () => {
         expect(txt).toContain('.md');
         expect(txt).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
-        expect(txt).toContain(
-            'The Home, About, Community, Documentation Archive, Example, Pricing, Changelog and Pipeline pages also have `.md` versions'
-        );
+        // Every page in the sitemap has a twin, so llms.txt states the rule. Enumerating
+        // pages here would drift the moment one is added (see markdownPages.test.ts).
+        expect(txt).toContain('append `.md` to any page URL listed in the sitemap');
+        expect(txt).toContain('Accept: text/markdown');
     });
 
     test('lists the pipeline page', () => {
@@ -65,14 +66,13 @@ describe('buildAgentsMd', () => {
         expect(md).toContain('https://www.ag-grid.com/llms.txt');
     });
 
-    test('advertises the markdown (.md) versions', () => {
+    test('advertises the markdown (.md) versions as a site-wide rule', () => {
         expect(md).toContain('Markdown for LLMs');
         expect(md).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
-        expect(md).toContain('https://www.ag-grid.com/pipeline/');
-        // The new page twins are advertised with links.
-        expect(md).toContain('[About](https://www.ag-grid.com/about/)');
-        expect(md).toContain('[Community](https://www.ag-grid.com/community/)');
-        expect(md).toContain('[Documentation Archive](https://www.ag-grid.com/documentation-archive/)');
+        // Every page in the sitemap has a twin, so point at the sitemap rather than
+        // listing pages that would drift (see markdownPages.test.ts for the guarantee).
+        expect(md).toContain('append `.md` to any page URL listed in the');
+        expect(md).toContain('[sitemap](https://www.ag-grid.com/sitemap-index.xml)');
     });
 
     test('omits the markdown affordance when markdown docs are disabled', () => {

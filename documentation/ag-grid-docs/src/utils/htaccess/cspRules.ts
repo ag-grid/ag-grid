@@ -13,7 +13,12 @@
  */
 import { createHash } from 'node:crypto';
 
-import { DARK_MODE_INIT_SCRIPT, KBD_PLATFORM_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
+import {
+    DARK_MODE_INIT_SCRIPT,
+    KBD_PLATFORM_INIT_SCRIPT,
+    PLAUSIBLE_INIT_SCRIPT,
+    PLAUSIBLE_PAGE_LOAD_SCRIPT,
+} from '../csp/inlineScripts';
 
 export type CspEnv = 'dev' | 'staging' | 'production';
 export type CspMode = 'report-only' | 'enforce';
@@ -126,6 +131,7 @@ const GTM_ZOOMINFO_HASH = "'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
     hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
+    hashInlineScript(PLAUSIBLE_PAGE_LOAD_SCRIPT),
     hashInlineScript(KBD_PLATFORM_INIT_SCRIPT),
     ...ASTRO_HYDRATION_SCRIPT_HASHES,
     GTM_ZOOMINFO_HASH,

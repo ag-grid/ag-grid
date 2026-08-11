@@ -13,17 +13,6 @@ import SearchModal from './SearchModal';
 const Search = () => {
     const framework = useFrameworkFromStore();
     const [isOpen, setOpen] = useState(false);
-    const [isMac, setMac] = useState<boolean>();
-
-    // done inside effect as window won't be available for SSR.
-    useEffect(() => {
-        const isMacLike =
-            typeof window !== 'undefined' &&
-            typeof window.navigator !== 'undefined' &&
-            (/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform) ||
-                /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgentData?.platform));
-        setMac(isMacLike);
-    }, []);
 
     /**
      * When search is mounted, add global listeners to open/close the search
@@ -69,11 +58,17 @@ const Search = () => {
                 className={styles.headerSearchBox}
                 onClick={setModalOpenFnc(true)}
                 onKeyPress={onPseudoInputKeyDown}
-                aria-label={`Open search with Enter or Space, or use the shortcut ${isMac ? `⌘ K` : `Ctrl K`} while anywhere else in the page.`}
+                aria-label="Open search with Enter or Space, or use the Command K (Control K on Windows and Linux) shortcut while anywhere else in the page."
             >
                 <Icon name="search" svgClasses={styles.searchIcon} />
                 <span className={styles.placeholder}>Search</span>
-                {isMac !== undefined && <span className={styles.kbdShortcut}>{isMac ? `⌘ K` : `Ctrl K`}</span>}
+                {/* Both labels render at build time; CSS picks one off html[data-os]. Detecting
+                    the platform in an effect instead would leave the hint missing until after
+                    hydration — visibly popping in on every page the search bar mounts on. */}
+                <span className={styles.kbdShortcut}>
+                    <span className={styles.kbdShortcutMac}>⌘ K</span>
+                    <span className={styles.kbdShortcutDefault}>Ctrl K</span>
+                </span>
             </div>
 
             <SearchModal isOpen={isOpen} currentFramework={framework} closeModal={setModalOpenFnc(false)} />
