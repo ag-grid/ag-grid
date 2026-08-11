@@ -182,6 +182,24 @@ Independent of this fix, the cache key still hashes every workspace `package.jso
 
 ---
 
+## 2026-06-18 -- Ignore ag-website-shared in the Studio watch loop
+
+**Branch:** `fix-watch-ag-website-shared-build`
+
+### Changes
+
+- **[scripts]** `studioWatch.config.js`: added `ag-website-shared` to `BASE_IGNORED_PROJECTS`. The catch-all branch in `getProjectBuildTargets` fires `<project>:build` for any non-package project, but `ag-website-shared` has no `build` target (it is consumed by the docs site as source via Astro/Vite HMR), so saving a file under it logged `NX Cannot find configuration for task ag-website-shared:build` on every save.
+
+### Migration Actions
+
+- [ ] Restart `yarn nx dev` so the watch loop picks up the updated ignore list
+
+### Notes
+
+Studio-only config; charts/grid watch configs are unaffected. The same catch-all assumption exists in their configs — only relevant if either repo gains a build-less website library project.
+
+---
+
 ## 2026-06-17 -- Shared l10n translation-review script
 
 **Branch:** `at/add-l10n-maintenance-rules`
