@@ -169,18 +169,23 @@ const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
 // than markup in this repo, so nothing here references these origins directly — the CSP is
 // the only place the site declares them.
 //
-//  - snap.licdn.com serves the tag SDK (/li.lms-analytics/insight.min.js). GTM injects it as
-//    an external <script src>, so no script-src hash is needed (contrast GTM_ZOOMINFO_HASH).
-//  - px.ads.linkedin.com and px4.ads.linkedin.com receive the tag's beacons. Most are image
-//    pixels, which the permissive img-src already covers, but the website-actions endpoint
-//    (px.ads.linkedin.com/wa/) is an XHR, so it needs connect-src as well.
+//  - snap.licdn.com serves the tag. /li.lms-analytics/insight.min.js is only a router: it
+//    injects insight.beta.min.js or insight.old.min.js from the same origin depending on the
+//    data-partner id. Both are external <script src>, so no script-src hash is needed
+//    (contrast GTM_ZOOMINFO_HASH).
+//  - px.ads.linkedin.com is the only origin either payload contacts. Its /collect and
+//    /insight_tag_errors.gif endpoints are image pixels, which the permissive img-src already
+//    covers, but the website-actions gateway (SEND_EVENT '/wa/', sent via sendBeacon) and
+//    /attribution_trigger (fetch) are governed by connect-src.
 //
-// LinkedIn's published allowlist also names dc.ads.linkedin.com and p.adsymptotic.com — both
-// image pixels, so img-src covers them — plus the Oribi hosts and the legacy
-// sjs.bizographics.com loader, which the current tag does not load. Add those only if a
-// violation actually shows up.
+// Deliberately NOT allowed, despite all appearing on LinkedIn's published required-domains
+// list: px4.ads.linkedin.com, dc.ads.linkedin.com, p.adsymptotic.com, the linkedin.oribi.io
+// hosts and the legacy sjs.bizographics.com loader. Parsing every string literal in both
+// payloads turns up none of them — the only 'oribi' strings are a DOM event name and a
+// storage key, not hosts. Pixel hosts reached by server-side redirect stay covered by
+// img-src; add a script-src/connect-src entry only if a violation actually shows up.
 const LINKEDIN_SDK_HOST = 'https://snap.licdn.com';
-const LINKEDIN_BEACON_HOSTS = ['https://px.ads.linkedin.com', 'https://px4.ads.linkedin.com'];
+const LINKEDIN_BEACON_HOST = 'https://px.ads.linkedin.com';
 
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
 // demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
@@ -359,7 +364,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://cdnjs.cloudflare.com', // example-runner legacy deps (XHR)
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
-            ...LINKEDIN_BEACON_HOSTS, // LinkedIn Insight Tag website-actions beacon
+            LINKEDIN_BEACON_HOST, // LinkedIn Insight Tag: website-actions beacon and attribution-trigger fetch
             'https://www.google.com', // reCAPTCHA (api2/clr XHR)
             'https://*.onetrust.com', // OneTrust geolocation + consent-receipt endpoints
             ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
