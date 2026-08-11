@@ -44,16 +44,10 @@ import {
 } from './simpleFilterUtils';
 
 /** temporary type until `SimpleFilterParams` is updated as breaking change */
-type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
+export type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
     FilterDisplayParams<any, any, M | ICombinedSimpleModel<M>>;
 
 type FilterModelOrCombined<M extends ISimpleFilterModel> = M | ICombinedSimpleModel<M> | null;
-
-/** What a range-validated input has to offer, so a number and a text field are both one. */
-type RangeInput = Pick<GridInputTextField, 'onValueChange' | 'addGuiEventListener'>;
-
-/** What an input whose rendered value is tracked has to offer; a date picker holds no text of its own. */
-type RenderedInput = Pick<GridInputTextField, 'getInputElement'>;
 
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values.
@@ -78,8 +72,7 @@ export abstract class SimpleFilter<
     protected readonly eJoinAnds: GridRadioButton[] = [];
     protected readonly eJoinOrs: GridRadioButton[] = [];
     protected readonly eConditionBodies: HTMLElement[] = [];
-    private readonly listener = () => this.onUiChanged();
-    private readonly rendered = new Map<object, { text: string; value: V | null }>();
+    protected readonly listener = () => this.onUiChanged();
 
     private maxNumConditions: number;
     private numAlwaysVisibleConditions: number;
@@ -138,54 +131,6 @@ export abstract class SimpleFilter<
             }
         }
         return -1;
-    }
-
-    /** A replacement element carries none of the original's listeners, so a rebuild re-attaches them all. */
-    protected attachRebuiltInputListeners(from: E & RangeInput, to: E & RangeInput): void {
-        this.attachElementOnChange(from, this.listener);
-        this.attachElementOnChange(to, this.listener);
-        this.attachRangeValidationListeners(from, to);
-    }
-
-    /** Either input changing re-validates the pair: the message is about their order, not one value. */
-    protected attachRangeValidationListeners(from: E & RangeInput, to: E & RangeInput): void {
-        const fromListener = () => this.refreshInputValidationAt(from, true);
-        from.onValueChange(fromListener);
-        from.addGuiEventListener('focusin', fromListener);
-
-        const toListener = () => this.refreshInputValidationAt(to, false);
-        to.onValueChange(toListener);
-        to.addGuiEventListener('focusin', toListener);
-    }
-
-    private refreshInputValidationAt(element: E, isFrom: boolean): void {
-        const position = this.getInputPosition(element);
-        if (position < 0) {
-            return;
-        }
-        this.refreshPositionValidation(position, isFrom);
-    }
-
-    /**
-     * What the filter wrote is not something the user typed, so it is never read back through the parser.
-     * A floating filter passes the text the user typed there, which is read back like any other typing.
-     */
-    protected trackRenderedValue(element: E & RenderedInput, value: V | null, fromFloatingFilter?: boolean): void {
-        if (fromFloatingFilter) {
-            this.rendered.delete(element);
-        } else {
-            this.rendered.set(element, { text: element.getInputElement().value, value });
-        }
-    }
-
-    /** The value the input was rendered with, or `undefined` once the user has made the text their own. */
-    protected getRenderedValue(element: E & RenderedInput): { value: V | null } | undefined {
-        const rendered = this.rendered.get(element);
-        return rendered?.text === element.getInputElement().value ? rendered : undefined;
-    }
-
-    protected forgetRenderedValue(element: object): void {
-        this.rendered.delete(element);
     }
 
     /** An option taking one value has no range, so the second input is not part of what it filters on. */
@@ -597,7 +542,6 @@ export abstract class SimpleFilter<
         const removedComponents = removeItems(components, startPosition, deleteCount);
         for (const comp of removedComponents) {
             _removeFromParent(comp.getGui());
-            this.forgetRenderedValue(comp);
             this.destroyBean(comp);
         }
     }

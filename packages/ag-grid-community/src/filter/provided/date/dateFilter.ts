@@ -119,7 +119,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         (isFrom ? to : from).setCustomValidity('', effectiveMode); // Reset validity error state for other input
 
         if (message.length > 0) {
-            beans.ariaAnnounce.announceValue(message, 'dateFilter');
+            beans.ariaAnnounce.announceValue(message, 'filterValidation');
         }
     }
 
