@@ -44,7 +44,9 @@ import styles from './Icon.module.scss';
 // Uses IBM Carbon Design System icons as a base
 // Full list of Carbon icons => https://carbondesignsystem.com/guidelines/icons/library
 
-const SOCIALS_ICON_MAP = {
+// Exported so the design system style guide can present the icon library grouped rather than as
+// one flat list of every key in ICON_MAP.
+export const SOCIALS_ICON_MAP = {
     github: CarbonIcon.LogoGithub,
     twitter: CarbonIcon.LogoTwitter,
     xLogo: XLogoIcon,
@@ -58,7 +60,7 @@ const SOCIALS_ICON_MAP = {
     zendeskMonochrome: ZendeskMonochromeIcon,
 };
 
-const CHARTS_ICON_MAP = {
+export const CHARTS_ICON_MAP = {
     chartsBar: CarbonIcon.ChartBar,
     chartsColumn: CarbonIcon.ChartColumn,
     chartsLine: CarbonIcon.ChartLine,

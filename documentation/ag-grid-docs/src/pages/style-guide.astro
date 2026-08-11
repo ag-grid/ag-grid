@@ -3,6 +3,13 @@ import Layout from '@layouts/Layout.astro';
 import { StyleGuide } from '@design-system/style-guide/StyleGuide';
 ---
 
-<Layout title="AG Grid - Style Guide" description="Style reference for building pages on the ag-grid.com site.">
+<Layout
+    title="AG Grid - Design System"
+    description="Reference for the design tokens, elements and components shared across the AG websites."
+>
+    {
+        /* client:load rather than client:visible - the guide reads token values out of the live
+        stylesheet on mount, so it has to hydrate as soon as the styles are applied. */
+    }
     <StyleGuide client:load />
 </Layout>
