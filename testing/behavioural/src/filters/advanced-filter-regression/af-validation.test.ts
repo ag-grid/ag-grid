@@ -326,7 +326,7 @@ describe('Custom filterOptions (0/1/2-input) reuse surface', () => {
             operator: "Is even"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "even"
@@ -356,7 +356,7 @@ describe('Custom filterOptions (0/1/2-input) reuse surface', () => {
             input: "10"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "multipleOf"
@@ -389,7 +389,7 @@ describe('Custom filterOptions (0/1/2-input) reuse surface', () => {
             input [1]: "30"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "strictlyBetween"

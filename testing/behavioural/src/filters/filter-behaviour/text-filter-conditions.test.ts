@@ -183,7 +183,7 @@ describe('Text Filter — conditions coverage', () => {
         await new FilterDom(api, 'incomplete condition panel', { colId: 'name' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             model: null
         `);
         await new GridRows(api, 'incomplete condition rows').check(`
@@ -389,6 +389,91 @@ describe('Text Filter — conditions coverage', () => {
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 name:"Apple"
             └── LEAF id:2 name:"Pineapple"
+        `);
+    });
+
+    test('a model mutated in place and re-applied filters on its new value, not its old one', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'name', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: [{ name: 'Bolt' }, { name: 'Ng' }, { name: 'Ada' }],
+        });
+
+        const model: any = { filterType: 'text', type: 'contains', filter: 'bolt' };
+        await api.setColumnFilterModel('name', model);
+        api.onFilterChanged();
+        await new GridRows(api, 'contains bolt').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Bolt"
+        `);
+
+        // Re-applied with the same object identity, so nothing but the act of applying signals the change.
+        model.filter = 'ng';
+        await api.setColumnFilterModel('name', model);
+        api.onFilterChanged();
+        await new GridRows(api, 'contains ng after in-place edit').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 name:"Ng"
+        `);
+    });
+
+    test('the condition body is presentational, so it adds no semantics around the inputs', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'name', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: [{ name: 'Apple' }],
+        });
+
+        await ColumnFilterHarness.open(api, 'name');
+
+        const body = document.querySelector('.ag-filter-menu .ag-filter-body');
+        expect(body?.getAttribute('role')).toBe('presentation');
+    });
+
+    test('trimInput:true also trims the values a Custom Filter Option takes', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agTextColumnFilter',
+                    filterParams: {
+                        debounceMs: 0,
+                        maxNumConditions: 1,
+                        trimInput: true,
+                        filterOptions: [
+                            {
+                                displayKey: 'startsWithCustom',
+                                displayName: 'Starts With (custom)',
+                                numberOfInputs: 2,
+                                predicate: (filterValues: any[], cellValue: any) =>
+                                    cellValue != null &&
+                                    filterValues.some((filterValue) => String(cellValue).startsWith(filterValue)),
+                            },
+                        ],
+                    },
+                },
+            ],
+            rowData: [{ name: 'Apple' }, { name: 'Banana' }, { name: 'Pineapple' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'name');
+        await filter.setText('  App  ');
+        await filter.setText('  Ban  ', 1);
+        await asyncSetTimeout(0);
+
+        await new FilterDom(api, 'custom option trimInput panel', { colId: 'name' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Starts With (custom)"
+            input [0]: "App"
+            input [1]: "Ban"
+            model:
+              filterType: "text"
+              type: "startsWithCustom"
+              filter: "App"
+              filterTo: "Ban"
+        `);
+        await new GridRows(api, 'custom option trimInput rows').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"Apple"
+            └── LEAF id:1 name:"Banana"
         `);
     });
 

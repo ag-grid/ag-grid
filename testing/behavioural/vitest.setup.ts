@@ -1,9 +1,10 @@
 import * as jestDomMatchers from '@testing-library/jest-dom/matchers';
 import { afterAll, beforeEach, expect, vitest } from 'vitest';
 
-// Imported from the specific module, not the test-utils barrel: the barrel transitively imports
-// `ag-grid-community` at runtime, which would defeat the lazy `ag`-import guard below. This module is
-// type-only besides the constant, so it pulls in nothing at runtime.
+// Output-volume controls (--no-diff, --stack-trace-len, DEBUG_PRINT_LIMIT) shared with every unit project.
+import '../../vitest.output.setup';
+// `ALL_SEVERITIES` comes from the specific module, not the test-utils barrel: the barrel transitively
+// imports `ag-grid-community` at runtime, which would defeat the lazy `ag`-import guard below.
 import { ALL_SEVERITIES } from './src/test-utils/dev-validations';
 import { ignoreConsoleLicenseKeyError } from './src/test-utils/ignoreConsoleLicenseKeyError';
 
@@ -25,11 +26,6 @@ beforeEach(async () => {
 
 // Shim for code that references `jest` — redirect to vitest.
 (globalThis as Record<string, unknown>).jest = vitest;
-
-// Ensure stack traces are long enough to be useful.
-if (Error.stackTraceLimit < 40) {
-    Error.stackTraceLimit = 40;
-}
 
 // --- GridRows snapshot update mode -------------------------------------------
 //

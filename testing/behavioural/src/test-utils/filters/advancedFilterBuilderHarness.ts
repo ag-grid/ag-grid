@@ -5,13 +5,15 @@ import type { GridApi } from 'ag-grid-community';
 import { DragEventDispatcher } from '../drag-n-drop/drag-event-dispatcher';
 import { asyncSetTimeout } from '../node-utils';
 import { firePointerLikeClick } from '../test-utils-events';
-import { nudgeVirtualList, openPicker, selectRichSelectRow } from '../widgets/dropdowns';
+import { getRichSelectRowLabels, nudgeVirtualList, openPicker, selectRichSelectRow } from '../widgets/dropdowns';
+import { setNativeInputValue } from '../widgets/inputs';
 
 /** Row height the builder virtual list is created with (`setRowHeight(40)`); used to target drag drops. */
 const BUILDER_ROW_HEIGHT = 40;
 
 const BUILDER = '.ag-advanced-filter-builder';
 const VIRTUAL_LIST_ITEM = '.ag-advanced-filter-builder-virtual-list-item';
+const RICH_SELECT_ITEM = '.ag-rich-select-virtual-list-item';
 const ITEM_WRAPPER = '.ag-advanced-filter-builder-item-wrapper';
 const COLUMN_PILL = '.ag-advanced-filter-builder-column-pill';
 const OPTION_PILL = '.ag-advanced-filter-builder-option-pill';
@@ -83,30 +85,61 @@ export class AdvancedFilterBuilderHarness {
         return this;
     }
 
+    /** Opens the operator pill on `item` and reads the options it offers, in order. */
+    public async operatorOptions(item: HTMLElement): Promise<string[]> {
+        const pill = await this.openPillPicker(item, OPTION_PILL);
+        try {
+            // Both polled together: the list virtualises, so a partial render is a state to wait out rather
+            // than an answer, and a viewport-sized subset would let an absence assertion pass vacuously.
+            return await waitFor(() => {
+                const setSize = Number(document.querySelector(RICH_SELECT_ITEM)?.getAttribute('aria-setsize'));
+                const options = getRichSelectRowLabels();
+                if (!options.length || options.length < setSize) {
+                    throw new Error(`Only ${options.length} of ${setSize || '?'} operator rows rendered`);
+                }
+                return options;
+            });
+        } finally {
+            // Leave the pill closed, so a following selection re-opens it rather than toggling it shut.
+            pill.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            await asyncSetTimeout(0);
+        }
+    }
+
     private async selectPill(item: HTMLElement, pillSelector: string, displayName: string): Promise<void> {
         await this.openPillPicker(item, pillSelector);
         await selectRichSelectRow(displayName);
     }
 
-    /** Opens the pill's rich-select and waits for its rows to render. */
-    private async openPillPicker(item: HTMLElement, pillSelector: string): Promise<void> {
-        // The row's own identity, not the caller's element or its DOM index: a re-render replaces the row
-        // (leaving a detached tree that can be clicked forever) and only renders the rows in view.
+    /**
+     * The row currently rendered for `item`, resolved by its own identity rather than the caller's element:
+     * committing an edit re-renders the row, leaving a detached tree that can be clicked forever.
+     */
+    private liveItem(item: HTMLElement): HTMLElement {
         const posInSet = item.closest(VIRTUAL_LIST_ITEM)?.getAttribute('aria-posinset');
         if (!posInSet) {
             throw new Error('Builder item is not one of the rendered rows');
         }
+        const live = document.querySelector<HTMLElement>(`${VIRTUAL_LIST_ITEM}[aria-posinset="${posInSet}"]`);
+        if (!live) {
+            throw new Error(`Builder row ${posInSet} is no longer rendered`);
+        }
+        return live;
+    }
+
+    /** Opens the pill's rich-select, waits for its rows to render, and returns the pill it opened. */
+    private async openPillPicker(item: HTMLElement, pillSelector: string): Promise<HTMLElement> {
+        const posInSet = this.liveItem(item).getAttribute('aria-posinset');
+        const livePillSelector = `${VIRTUAL_LIST_ITEM}[aria-posinset="${posInSet}"] ${pillSelector}`;
         // Re-clicked, not just awaited: the pill defers showPicker(), so a click swallowed by a re-render
         // needs another - waiting alone never opens a picker that was never told to open.
-        await waitFor(async () => {
-            if (document.querySelector('.ag-rich-select-list')) {
-                return;
-            }
-            const livePill = document.querySelector<HTMLElement>(
-                `${VIRTUAL_LIST_ITEM}[aria-posinset="${posInSet}"] ${pillSelector}`
-            );
+        return waitFor(async () => {
+            const livePill = document.querySelector<HTMLElement>(livePillSelector);
             if (!livePill) {
                 throw new Error(`Pill "${pillSelector}" not found on builder item`);
+            }
+            if (document.querySelector('.ag-rich-select-list')) {
+                return livePill;
             }
             await openPicker(livePill);
             await this.ensureItemsRendered();
@@ -127,19 +160,24 @@ export class AdvancedFilterBuilderHarness {
         return this;
     }
 
-    /** Clicks the value pill on `item` and returns the editor input it opens. */
-    public async openValueEditor(item: HTMLElement): Promise<HTMLInputElement> {
-        const pill = item.querySelector<HTMLElement>(VALUE_PILL);
+    /** The value pills on `item` — a two-input filter option renders one per operand. */
+    public valuePills(item: HTMLElement): HTMLElement[] {
+        return Array.from(this.liveItem(item).querySelectorAll<HTMLElement>(VALUE_PILL));
+    }
+
+    /** Clicks value pill `index` on `item` and returns the editor input it opens. */
+    public async openValueEditor(item: HTMLElement, index = 0): Promise<HTMLInputElement> {
+        const pill = this.valuePills(item)[index];
         if (!pill) {
-            throw new Error('Value pill not found on builder item');
+            throw new Error(`Value pill ${index} not found on builder item`);
         }
         await firePointerLikeClick(pill);
         // The column/operator pills carry hidden rich-select inputs; the value editor is the only
         // visible one, and it mounts a macrotask or two after the click — poll rather than guess a delay.
         return waitFor(() => {
-            const input = Array.from(item.querySelectorAll<HTMLInputElement>('input.ag-input-field-input')).find(
-                (candidate) => !candidate.closest('.ag-hidden')
-            );
+            const input = Array.from(
+                this.liveItem(item).querySelectorAll<HTMLInputElement>('input.ag-input-field-input')
+            ).find((candidate) => !candidate.closest('.ag-hidden'));
             if (!input) {
                 throw new Error('Value editor input did not open');
             }
@@ -147,12 +185,10 @@ export class AdvancedFilterBuilderHarness {
         });
     }
 
-    /** Clicks the value pill on `item`, types `value` into the editor it opens, and commits (Enter). */
-    public async setValue(item: HTMLElement, value: string): Promise<this> {
-        const editor = await this.openValueEditor(item);
-        const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
-        setter.call(editor, value);
-        editor.dispatchEvent(new Event('input', { bubbles: true }));
+    /** Clicks value pill `index` on `item`, types `value` into the editor it opens, and commits (Enter). */
+    public async setValue(item: HTMLElement, value: string, index = 0): Promise<this> {
+        const editor = await this.openValueEditor(item, index);
+        setNativeInputValue(editor, value);
         editor.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
         await asyncSetTimeout(0);
         return this;

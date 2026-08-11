@@ -3,6 +3,7 @@ import { BigIntFilterModule, ClientSideRowModelModule, setupAgTestIds } from 'ag
 
 import {
     ColumnFilterHarness,
+    FilterDom,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -50,6 +51,19 @@ describe('BigInt Filter — custom bigintParser', () => {
         await asyncSetTimeout(0);
 
         expect(filter.getModel()).toEqual({ filterType: 'bigint', type: 'equals', filter: '255' });
+        // The input keeps the hex as typed while the model holds what the parser made of it.
+        await new FilterDom(api, 'hex typed, decimal model', { mode: 'column-filter', colId: 'val' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Equals"
+            input: "0xFF"
+            AND
+            operator: "Equals"
+            input: "" ⟨Filter...⟩
+            model:
+              filterType: "bigint"
+              type: "equals"
+              filter: "255"
+        `);
         await new GridRows(api, 'hex value filters to the matching bigint row').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 val:"255n"
@@ -80,6 +94,21 @@ describe('BigInt Filter — custom bigintParser', () => {
         await filter.setText('0xFF', 1);
         await asyncSetTimeout(0);
 
+        await new FilterDom(api, 'hex range, both bounds parsed', { mode: 'column-filter', colId: 'val' })
+            .checkFilterDom(`
+                COLUMN FILTER
+                operator: "Between"
+                input [0]: "0x10"
+                input [1]: "0xFF"
+                AND
+                operator: "Equals"
+                input: "" ⟨Filter...⟩
+                model:
+                  filterType: "bigint"
+                  type: "inRange"
+                  filter: "16"
+                  filterTo: "255"
+            `);
         expect(filter.getModel()).toEqual({
             filterType: 'bigint',
             type: 'inRange',
@@ -89,6 +118,56 @@ describe('BigInt Filter — custom bigintParser', () => {
         await new GridRows(api, 'hex range bounds filter to the row inside the range').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:2 val:"100n"
+        `);
+    });
+
+    test('an allowedCharPattern replaced at runtime reaches inputs built before the change', async () => {
+        const columnDefs = (allowedCharPattern: string) => [
+            {
+                field: 'val',
+                cellDataType: 'bigint' as const,
+                filter: 'agBigIntColumnFilter' as const,
+                filterParams: {
+                    debounceMs: 0,
+                    allowedCharPattern,
+                    bigintParser: (text: string | null) => (text == null || text.trim() === '' ? null : BigInt(text)),
+                },
+            },
+        ];
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid3', {
+            // Decimal only, so the inputs built here reject the `x` and `F` a hex value needs.
+            columnDefs: columnDefs('[\\d]'),
+            rowData: [{ val: 255n }, { val: 16n }],
+        });
+
+        // Built before the swap: an input reads `allowedCharPattern` once, when it is created.
+        const filter = await ColumnFilterHarness.open(api, 'val');
+
+        api.setGridOption('columnDefs', columnDefs('[\\dxXa-fA-F]'));
+        await asyncSetTimeout(0);
+
+        await filter.selectOperator('Equals');
+        await filter.setText('0xFF', 0);
+        await asyncSetTimeout(0);
+
+        expect(filter.getModel()).toEqual({ filterType: 'bigint', type: 'equals', filter: '255' });
+        await new FilterDom(api, 'hex after allowedCharPattern swap', { mode: 'column-filter', colId: 'val' })
+            .checkFilterDom(`
+            COLUMN FILTER
+            operator: "Equals"
+            input: "0xFF"
+            AND
+            operator: "Equals"
+            input: "" ⟨Filter...⟩
+            model:
+              filterType: "bigint"
+              type: "equals"
+              filter: "255"
+        `);
+        await new GridRows(api, 'hex accepted after the pattern was replaced').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 val:"255n"
         `);
     });
 });
