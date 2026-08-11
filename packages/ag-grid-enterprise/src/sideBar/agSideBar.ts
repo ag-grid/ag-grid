@@ -101,7 +101,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         const backwards = e.shiftKey;
 
         if (!openPanel) {
-            if (_focusNextGridCoreContainer(beans, backwards, true)) {
+            if (_focusNextGridCoreContainer(beans, backwards, 'force')) {
                 e.preventDefault();
                 return true;
             }
