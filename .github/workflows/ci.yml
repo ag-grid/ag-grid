@@ -445,8 +445,14 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    # Per-PR lock, not a global one: every writer only ever touches files under its own
+    # pr-<N>/ prefix, and diverged refs between concurrent writers are resolved by the
+    # push-retry loop in gh-pages-commit.sh, so different PRs no longer contend. The
+    # per-PR lock still matters — it stops this job overlapping its own close-time
+    # cleanup. Keep this group string byte-identical to the one in `gh_pages_cleanup`
+    # (pr-cleanup.yml).
     concurrency:
-      group: pr-preview-gh-pages
+      group: pr-preview-gh-pages-${{ github.event.pull_request.number }}
       cancel-in-progress: false
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}

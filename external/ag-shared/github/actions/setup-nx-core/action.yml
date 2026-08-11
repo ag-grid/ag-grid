@@ -15,6 +15,16 @@ inputs:
             - 'true'
             - 'false'
             - 'no-install'
+    skip_plugin_build:
+        description: >-
+            Skip the repo postinstall plugin-build pass on an exact node_modules cache hit.
+            Only safe for jobs whose own nx run materialises all outputs it needs (plugin-build
+            side-effect-builds plugin dependencies such as package dist/types).
+        required: false
+        default: 'false'
+        options:
+            - 'true'
+            - 'false'
     fetch_base:
         description: 'Shallow fetch latest branch.'
         required: false
@@ -272,6 +282,7 @@ runs:
               # 'true' only on an exact key hit; an inexact restore-keys fallback can carry a stale hoisting layout.
               EXACT_CACHE_HIT: ${{ steps.cache_rw.outputs.cache-hit == 'true' || steps.cache_ro.outputs.cache-hit == 'true' }}
               NODE_MODULES_PATHS: ${{ inputs.node_modules_paths }}
+              SKIP_PLUGIN_BUILD_ENV: ${{ inputs.skip_plugin_build == 'true' && 'AG_SKIP_PLUGIN_BUILD=1' || '' }}
           run: |
               if [[ "${EXACT_CACHE_HIT}" != "true" ]] ; then
                 # Fallback restore: wipe node_modules so install rebuilds hoisting from this
@@ -285,7 +296,16 @@ runs:
                 yarn install --ci --prefer-offline
                 yarn check --integrity
               elif (yarn check --integrity) ; then
-                yarn postinstall
+                # Exact-hit caches are only saved after a fully-scripted install, so
+                # dependency lifecycle scripts (allow-scripts) have already run in this
+                # tree — skip them and run only the repo's own postinstall steps.
+                # skip_plugin_build additionally skips the ~60s plugin-build pass; only
+                # safe for jobs whose own nx run materialises all needed outputs anyway
+                # (plugin-build also side-effect-builds plugin deps like package dist/types,
+                # which e.g. type-aware lint relies on).
+                # `env` is required: an assignment produced by variable expansion is not
+                # parsed as an assignment prefix by the shell.
+                env ALLOW_SCRIPTS_RUNNING=1 ${SKIP_PLUGIN_BUILD_ENV} yarn postinstall
               else
                 yarn install --ci --prefer-offline
 
@@ -302,11 +322,26 @@ runs:
               yarn check --integrity || yarn install --ci --prefer-offline
 
         - name: yarn install (skipping postinstall)
-          if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall == 'no-install' && steps.cache_ro.outputs.cache-hit != 'false'
+          # Covers both cache modes deliberately. The previous `cache_mode == 'rw'` guard left
+          # `ro` consumers with no install and no integrity check at all, so an inexact
+          # restore-keys fallback was built against silently: a tree predating the current
+          # lockfile resolves as a missing module at bundle time rather than a cache error.
+          if: inputs.yarn_postinstall == 'no-install'
           id: yarn_install_check
           shell: bash
+          env:
+              # 'true' only on an exact key hit; an inexact restore-keys fallback can carry a
+              # node_modules tree that predates this lockfile.
+              EXACT_CACHE_HIT: ${{ steps.cache_rw.outputs.cache-hit == 'true' || steps.cache_ro.outputs.cache-hit == 'true' }}
           run: |
-              yarn check --integrity
+              if [[ "${EXACT_CACHE_HIT}" == "true" ]] ; then
+                yarn check --integrity
+              else
+                # Fallback restore: reconcile the tree against this lockfile before any build
+                # reads it. Installing under cache_mode:ro is safe — nothing is saved.
+                yarn install --ci --prefer-offline
+                yarn check --integrity
+              fi
 
         - name: Save node_modules
           # Explicit save of the freshly installed tree (see "Restore node_modules" for
