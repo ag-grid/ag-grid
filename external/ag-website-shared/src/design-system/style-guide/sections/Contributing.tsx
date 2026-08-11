@@ -45,8 +45,14 @@ export const Contributing: FunctionComponent = () => (
             <>
                 <p>
                     The design system lives in <code>external/ag-website-shared/src/design-system</code> and is loaded
-                    as a single stylesheet by each site&rsquo;s layout. Because it is a shared subrepo, a change here
-                    lands on AG Grid, AG Charts and AG Studio at once.
+                    as a single stylesheet by each site&rsquo;s layout.
+                </p>
+                <p>
+                    <code>ag-website-shared</code> is a <strong>git-subrepo</strong>, not a package. AG Grid, AG Charts
+                    and AG Studio each hold their own copy of these files, pinned to a commit in <code>.gitrepo</code>.
+                    A change you make here affects <strong>only the repo you make it in</strong> until it is pushed
+                    upstream and pulled down into the others - see below. Both are deliberate steps someone has to take,
+                    so the three copies can and do drift apart in between.
                 </p>
                 <p>
                     Everything on this page is generated from that source. Token tables come from scanning the live
@@ -77,6 +83,41 @@ export const Contributing: FunctionComponent = () => (
                     </tbody>
                 </table>
             </div>
+        </Block>
+
+        <Block
+            title="Getting a change into the other repos"
+            note={
+                <>
+                    <p>
+                        Two steps, both manual: push your change up to the <code>ag-website-shared</code> repository,
+                        then pull it down in each of the others. Nothing propagates on its own.
+                    </p>
+                    <p>
+                        Each repo records the commit it is pinned to in <code>external/ag-website-shared/.gitrepo</code>
+                        , so comparing that value between repos tells you which ones are behind.
+                    </p>
+                </>
+            }
+        >
+            <Specimen
+                code={`# 1. In the repo where you made the change, send it upstream
+yarn subrepo push --subrepo ag-website-shared
+
+# 2. In each other repo, bring it down
+yarn subrepo pull --subrepo ag-website-shared
+
+# Which commit is this repo pinned to?
+git config -f external/ag-website-shared/.gitrepo subrepo.commit`}
+            >
+                <p>
+                    <code>yarn subrepo</code> wraps <code>git subrepo</code> to work around stale <code>.gitrepo</code>{' '}
+                    parent shas left by rebasing. Omit <code>--subrepo</code> and it will prompt. If someone else has
+                    pushed since you last pulled, the push is refused with{' '}
+                    <em>&ldquo;There are new changes upstream, you need to pull first&rdquo;</em> - pull, then push
+                    again.
+                </p>
+            </Specimen>
         </Block>
 
         <Block
@@ -185,8 +226,9 @@ $nav-collapse: 960px !default;
                         that always resolve to the same value are a maintenance cost with no benefit.
                     </>,
                     <>
-                        Note in the pull request that the change is in <code>external/ag-website-shared</code>, since it
-                        affects all three sites.
+                        Say in the pull request that the change is inside <code>external/ag-website-shared</code>, and
+                        whether it still needs syncing to the other repos. A reviewer cannot tell from the diff, and an
+                        unsynced change is easy to forget about.
                     </>,
                 ]}
                 donts={[
