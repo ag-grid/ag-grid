@@ -32,11 +32,6 @@ export class NumberFilter extends SimpleFilter<
     private allowedCharPattern: string | null;
     /** A `numberFormatter` writes text a number input would drop, so its column gets a text one instead. */
     private usesTextInput: boolean;
-    /** What each input was last rendered with, keyed weakly so a replaced element takes its entry with it. */
-    private readonly rendered = new WeakMap<
-        GridInputTextField | GridInputNumberField,
-        { text: string; value: number | null }
-    >();
     /** The parameters the mounted inputs were filled through; their text is only readable through these. */
     private renderedWith: NumberFilterDisplayParams | undefined;
 
@@ -101,13 +96,16 @@ export class NumberFilter extends SimpleFilter<
     ): void {
         const previous = eValues[position];
         const text = previous.getValue();
-        const value = processNumberFilterValue(stringToFloat(previousParser, text));
+        // What the filter wrote is read back from what it was rendered with; only the user's own typing is parsed.
+        const rendered = this.getRenderedValue(previous);
+        const value = rendered ? rendered.value : processNumberFilterValue(stringToFloat(previousParser, text));
         // Text no parser reads is not a value to render again, it is what the user is still typing.
         const isMidEdit = value == null && text != null && text !== '';
         let element = previous;
         if (rebuild) {
             element = this.createInputElement(fromTo);
             previous.getGui().replaceWith(element.getGui());
+            this.forgetRenderedValue(previous);
             this.destroyBean(previous);
             eValues[position] = element;
         }
@@ -153,13 +151,7 @@ export class NumberFilter extends SimpleFilter<
         const numberFormatter = this.params.numberFormatter;
         const valueToSet = !fromFloatingFilter && numberFormatter ? numberFormatter(value ?? null) : value;
         super.setElementValue(element, valueToSet as any);
-        // What the filter wrote is not something the user typed, so it is never read back through the parser.
-        // A floating filter passes the text the user typed there, which is read back like any other typing.
-        if (fromFloatingFilter) {
-            this.rendered.delete(element);
-        } else {
-            this.rendered.set(element, { text: element.getInputElement().value, value });
-        }
+        this.trackRenderedValue(element, value, fromFloatingFilter);
         if (valueToSet === null) {
             element.setCustomValidity('');
         }
@@ -167,8 +159,8 @@ export class NumberFilter extends SimpleFilter<
 
     /** The value an input holds: the one it was rendered with, until the user makes the text their own. */
     private readValue(element: GridInputTextField | GridInputNumberField, ignoreValidity?: boolean): number | null {
-        const rendered = this.rendered.get(element);
-        if (rendered?.text === element.getInputElement().value) {
+        const rendered = this.getRenderedValue(element);
+        if (rendered) {
             return rendered.value;
         }
         return processNumberFilterValue(stringToFloat(this.params.numberParser, element.getValue(ignoreValidity)));

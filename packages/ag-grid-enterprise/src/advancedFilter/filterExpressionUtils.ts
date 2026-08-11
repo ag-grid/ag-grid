@@ -201,7 +201,6 @@ export function getOperandRangeValidationMessage(
         return null;
     }
     let outOfOrder: boolean;
-    let isNumeric = true;
     if (baseCellDataType === 'number') {
         outOfOrder = Number(from) >= Number(to);
     } else if (baseCellDataType === 'bigint') {
@@ -210,12 +209,12 @@ export function getOperandRangeValidationMessage(
         outOfOrder = fromBigInt != null && toBigInt != null && fromBigInt >= toBigInt;
     } else {
         outOfOrder = String(from) >= String(to);
-        isNumeric = false;
     }
     if (!outOfOrder) {
         return null;
     }
     // Each column filter's own key for this, so one `localeText` override covers the filter and the expression.
+    const isNumeric = baseCellDataType === 'number' || baseCellDataType === 'bigint';
     const localeKey = isNumeric ? 'strictMaxValueValidation' : 'maxDateValidation';
     return _translateForFilter(advFilterExpSvc, localeKey, [String(to)]);
 }

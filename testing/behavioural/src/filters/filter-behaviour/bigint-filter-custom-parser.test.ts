@@ -193,6 +193,35 @@ describe('BigInt Filter — custom bigintParser', () => {
         expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'bigint', type: 'equals', filter: '1234' });
     });
 
+    test('a bigintFormatter replaced at runtime re-renders the inputs it already wrote', async () => {
+        const columnDefs = (suffix: string) => [
+            {
+                field: 'val',
+                cellDataType: 'bigint' as const,
+                filter: 'agBigIntColumnFilter' as const,
+                filterParams: {
+                    debounceMs: 0,
+                    bigintFormatter: (value: bigint | null) => (value == null ? null : `${value}${suffix}`),
+                },
+            },
+        ];
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid9', {
+            columnDefs: columnDefs(' old'),
+            rowData: [{ val: 1234n }, { val: 16n }],
+        });
+        await api.setColumnFilterModel('val', { filterType: 'bigint', type: 'equals', filter: '1234' });
+
+        const filter = await ColumnFilterHarness.open(api, 'val');
+        expect(filter.inputs('text', 0)[0].value).toBe('1234 old');
+
+        api.setGridOption('columnDefs', columnDefs(' new'));
+        await asyncSetTimeout(0);
+
+        expect(filter.inputs('text', 0)[0].value).toBe('1234 new');
+        expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'bigint', type: 'equals', filter: '1234' });
+    });
+
     test('a floating filter rebuilt for a new allowedCharPattern carries what was being typed', async () => {
         const columnDefs = (allowedCharPattern: string) => [
             {

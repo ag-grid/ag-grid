@@ -1015,6 +1015,46 @@ describe('Number Filter — conditions coverage', () => {
         expect(filter.inputs('text', 0)[0].value).toBe('1,500');
     });
 
+    test('a formatter replaced by an equivalent one leaves the value it wrote intact', async () => {
+        // No numberParser, so nothing can read "1,234" back: only what the input was rendered with can.
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'val',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: {
+                        debounceMs: 0,
+                        numberFormatter: (value: number | null) =>
+                            value == null ? null : value.toLocaleString('en-US'),
+                    },
+                },
+            ],
+            rowData: [{ val: 5 }, { val: 1234 }],
+        });
+        const filter = await ColumnFilterHarness.open(api, 'val');
+
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'greaterThan', filter: 1234 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(filter.inputs('text', 0)[0].value).toBe('1,234');
+
+        // A new formatter of the same behaviour, which is what an inline arrow gives on every render.
+        api.setGridOption('columnDefs', [
+            {
+                field: 'val',
+                filter: 'agNumberColumnFilter',
+                filterParams: {
+                    debounceMs: 0,
+                    numberFormatter: (value: number | null) => (value == null ? null : value.toLocaleString('en-US')),
+                },
+            },
+        ]);
+        await asyncSetTimeout(0);
+
+        expect(filter.inputs('text', 0)[0].value).toBe('1,234');
+        expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'number', type: 'greaterThan', filter: 1234 });
+    });
+
     test('a value already shown survives the numberFormatter that wrote it being withdrawn', async () => {
         const numberParser = (text: string | null) =>
             text == null || text === '' ? null : Number(String(text).replace(/,/g, ''));

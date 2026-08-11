@@ -361,7 +361,12 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         if (!column || !dataTypeOperators) {
             return dataTypeOperators && { operators: dataTypeOperators, activeOperators: undefined };
         }
-        const forDataType = (this.columnExpressionOperators[baseCellDataType!] ??= new Map());
+        const byDataType = this.columnExpressionOperators;
+        let forDataType = byDataType[baseCellDataType!];
+        if (!forDataType) {
+            forDataType = new Map();
+            byDataType[baseCellDataType!] = forDataType;
+        }
         let columnOperators = forDataType.get(column);
         if (!columnOperators) {
             const filterOptions = getColumnFilterOptions(column);
@@ -509,9 +514,8 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     /**
-     * The keys the column offers, one per key as the column filter's dropdown lists them, and the options
-     * carrying their own predicate. A malformed one is reported here too: a column filtered only through the
-     * Advanced Filter has no `OptionsFactory` to report it.
+     * The keys the column offers, one per key, and the options carrying their own predicate. A malformed one is
+     * reported here: a column filtered only through the Advanced Filter builds no `OptionsFactory` to report it.
      */
     private classifyColumnOptions(filterOptions: (string | IFilterOptionDef)[] | undefined): {
         keys: string[];

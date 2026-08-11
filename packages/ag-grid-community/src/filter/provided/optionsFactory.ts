@@ -44,7 +44,6 @@ export class OptionsFactory {
         if (this.configuredOptions !== filterOptions) {
             const previousOptions = this.filterOptions;
             this.configuredOptions = filterOptions;
-            this.customFilterOptions.clear();
             this.buildOptions(log);
             offeredOptionsChanged = !areOfferedOptionsEqual(previousOptions, this.filterOptions);
         }
@@ -55,7 +54,9 @@ export class OptionsFactory {
     private buildOptions(log: LogService): void {
         const { configuredOptions, customFilterOptions, optionPositions } = this;
         const validOptions: (IFilterOptionDef | string)[] = [];
+        // Rebuilt wholesale, so a predicate the previous list carried cannot survive into this one.
         optionPositions.clear();
+        customFilterOptions.clear();
         for (let i = 0, len = configuredOptions.length; i < len; ++i) {
             const filterOption = configuredOptions[i];
             let key: string;

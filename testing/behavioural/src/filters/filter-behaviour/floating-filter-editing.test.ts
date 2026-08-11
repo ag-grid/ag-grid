@@ -447,8 +447,19 @@ describe('Floating filter editing', () => {
         getGridElement(api)!.addEventListener('keydown', () => {
             reachedGrid = true;
         });
-        fireEvent.keyDown(floating.input(), { key: 'Enter' });
-        await asyncSetTimeout(0);
+        // A listener that throws still propagates, so the throw itself is what has to be asserted on.
+        const errors: string[] = [];
+        const onError = (event: ErrorEvent) => {
+            errors.push(event.message);
+        };
+        window.addEventListener('error', onError);
+        try {
+            fireEvent.keyDown(floating.input(), { key: 'Enter' });
+            await asyncSetTimeout(0);
+        } finally {
+            window.removeEventListener('error', onError);
+        }
+        expect(errors).toEqual([]);
         expect(reachedGrid).toBe(true);
 
         await floating.setValue('ita');

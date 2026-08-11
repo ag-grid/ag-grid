@@ -24,8 +24,8 @@ export class BigIntFilter extends SimpleFilter<
     private readonly eValuesTo: GridInputTextField[] = [];
     /** Read once when an input is built, so a `colDef` refresh that changes it has to rebuild them. */
     private allowedCharPattern: string | null;
-    /** What each input was last rendered with, keyed weakly so a replaced element takes its entry with it. */
-    private readonly rendered = new WeakMap<GridInputTextField, { text: string; value: bigint | null }>();
+    /** The parameters the mounted inputs were filled through; their text is only readable through these. */
+    private renderedWith: BigIntFilterDisplayParams | undefined;
 
     public readonly filterType = 'bigint' as const;
 
@@ -89,13 +89,7 @@ export class BigIntFilter extends SimpleFilter<
         const bigintFormatter = this.params.bigintFormatter;
         const valueToSet = !fromFloatingFilter && bigintFormatter ? bigintFormatter(value ?? null) : value;
         super.setElementValue(element, valueToSet as any, fromFloatingFilter);
-        // What the filter wrote is not something the user typed, so it is never read back through the parser.
-        // A floating filter passes the text the user typed there, which is read back like any other typing.
-        if (fromFloatingFilter) {
-            this.rendered.delete(element);
-        } else {
-            this.rendered.set(element, { text: element.getInputElement().value, value });
-        }
+        this.trackRenderedValue(element, value, fromFloatingFilter);
         if (valueToSet === null) {
             element.setCustomValidity('');
         }
@@ -106,65 +100,83 @@ export class BigIntFilter extends SimpleFilter<
         this.refreshInputElements(params);
     }
 
-    /** Mirrors the Number Filter, and the BigInt floating filter, which already rebuild on this change. */
+    /** An input's element type is fixed when it is built, so a `colDef` refresh that changes it rebuilds them. */
     private refreshInputElements(params: BigIntFilterDisplayParams): void {
+        const previous = this.renderedWith;
+        this.renderedWith = params;
         const allowedCharPattern = getAllowedCharPattern(params);
-        if (allowedCharPattern === this.allowedCharPattern) {
-            return;
-        }
+        const rebuild = allowedCharPattern !== this.allowedCharPattern;
         this.allowedCharPattern = allowedCharPattern;
+        // What an input shows is rendered through these, so its text stops being readable when they change.
+        const rerender =
+            rebuild ||
+            params.bigintParser !== previous?.bigintParser ||
+            params.bigintFormatter !== previous?.bigintFormatter;
         const { eValuesFrom, eValuesTo } = this;
         const numConditions = eValuesFrom.length;
-        if (!numConditions) {
+        if (!rerender || !numConditions) {
             return;
         }
+        const previousParser = previous?.bigintParser;
         for (let position = 0; position < numConditions; ++position) {
-            this.rebuildInputElement(eValuesFrom, position, 'from');
-            this.rebuildInputElement(eValuesTo, position, 'to');
-            this.attachRebuiltInputListeners(eValuesFrom[position], eValuesTo[position]);
+            this.refreshInputElement(eValuesFrom, position, 'from', rebuild, previousParser);
+            this.refreshInputElement(eValuesTo, position, 'to', rebuild, previousParser);
+            if (rebuild) {
+                this.attachRebuiltInputListeners(eValuesFrom[position], eValuesTo[position]);
+            }
         }
         this.updateUiVisibility(); // the replacements start visible and enabled, whatever the condition is
         this.refreshInputValidation();
     }
 
-    /** The text is the canonical decimal string either way, so it carries across the rebuild unchanged. */
-    private rebuildInputElement(eValues: GridInputTextField[], position: number, fromTo: string): void {
+    /** Read back through the parser that wrote the text, then shown again through the new parameters. */
+    private refreshInputElement(
+        eValues: GridInputTextField[],
+        position: number,
+        fromTo: string,
+        rebuild: boolean,
+        previousParser: IBigIntFilterParams['bigintParser']
+    ): void {
         const previous = eValues[position];
-        const eValue = this.createInputElement(fromTo);
-        eValue.setValue(previous.getValue(), true);
-        previous.getGui().replaceWith(eValue.getGui());
-        this.destroyBean(previous);
-        eValues[position] = eValue;
+        const text = previous.getValue();
+        // What the filter wrote is read back from what it was rendered with; only the user's own typing is parsed.
+        const rendered = this.getRenderedValue(previous);
+        const value = rendered ? rendered.value : stringToBigInt(previousParser, text);
+        // Text no parser reads is not a value to render again, it is what the user is still typing.
+        const isMidEdit = value == null && text != null && text !== '';
+        let element = previous;
+        if (rebuild) {
+            element = this.createInputElement(fromTo);
+            previous.getGui().replaceWith(element.getGui());
+            this.forgetRenderedValue(previous);
+            this.destroyBean(previous);
+            eValues[position] = element;
+        }
+        if (isMidEdit) {
+            element.setValue(text, true);
+        } else {
+            this.setElementValue(element, value);
+        }
     }
 
     protected createEValue(): HTMLElement {
-        const { eValuesFrom, eValuesTo } = this;
-
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
-        const from = this.createFromToElement(eCondition, eValuesFrom, 'from');
-        const to = this.createFromToElement(eCondition, eValuesTo, 'to');
-
+        const from = this.createInputElement('from');
+        const to = this.createInputElement('to');
+        this.eValuesFrom.push(from);
+        this.eValuesTo.push(to);
+        eCondition.appendChild(from.getGui());
+        eCondition.appendChild(to.getGui());
         this.attachRangeValidationListeners(from, to);
 
         return eCondition;
     }
 
-    private createFromToElement(
-        eCondition: HTMLElement,
-        eValues: GridInputTextField[],
-        fromTo: string
-    ): GridInputTextField {
-        const eValue = this.createInputElement(fromTo);
-        eValues.push(eValue);
-        eCondition.appendChild(eValue.getGui());
-        return eValue;
-    }
-
     private createInputElement(fromTo: string): GridInputTextField {
         const allowedCharPattern = this.allowedCharPattern;
         const eValue = this.createManagedBean<GridInputTextField>(
-            allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputTextField()
+            new AgInputTextField(allowedCharPattern ? { allowedCharPattern } : undefined)
         );
         eValue.addCss(`ag-filter-${fromTo}`);
         eValue.addCss('ag-filter-filter');
@@ -235,8 +247,8 @@ export class BigIntFilter extends SimpleFilter<
         element: GridInputTextField,
         bigintParser: IBigIntFilterParams['bigintParser']
     ): bigint | null {
-        const rendered = this.rendered.get(element);
-        if (rendered?.text === element.getInputElement().value) {
+        const rendered = this.getRenderedValue(element);
+        if (rendered) {
             return rendered.value;
         }
         return stringToBigInt(bigintParser, element.getValue());

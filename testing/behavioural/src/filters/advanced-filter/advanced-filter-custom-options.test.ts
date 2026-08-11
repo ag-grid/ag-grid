@@ -593,11 +593,11 @@ describe('Advanced Filter — custom filter options', () => {
         `);
     });
 
-    test('a value supplied only in `filter` still resolves, and is reported in both slots', async () => {
+    test('a one-input option reads `filter` alone, and a zero-input one drops a value left in the model', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
         const af = AdvancedFilterHarness.get(api);
 
-        // A one-input option: `filter` alone is read, and reported back in both slots.
+        // A one-input option reports the one slot it takes, not a pair.
         api.setAdvancedFilterModel({ filterType: 'number', colId: 'age', type: 'age5YearsAgo', filter: 20 });
         await asyncSetTimeout(0);
         expect(af.value).toBe('[Age] Age 5 Years Ago 20');

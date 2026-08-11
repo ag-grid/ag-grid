@@ -52,6 +52,9 @@ type FilterModelOrCombined<M extends ISimpleFilterModel> = M | ICombinedSimpleMo
 /** What a range-validated input has to offer, so a number and a text field are both one. */
 type RangeInput = Pick<GridInputTextField, 'onValueChange' | 'addGuiEventListener'>;
 
+/** What an input whose rendered value is tracked has to offer; a date picker holds no text of its own. */
+type RenderedInput = Pick<GridInputTextField, 'getInputElement'>;
+
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values.
  *
@@ -160,6 +163,32 @@ export abstract class SimpleFilter<
             return;
         }
         this.refreshPositionValidation(position, isFrom);
+    }
+
+    /** What each input was last rendered with. Every element is destroyed through one of the removal paths
+     * below, which forget it, so entries do not outlive the inputs they describe. */
+    private readonly rendered = new Map<object, { text: string; value: V | null }>();
+
+    /**
+     * What the filter wrote is not something the user typed, so it is never read back through the parser.
+     * A floating filter passes the text the user typed there, which is read back like any other typing.
+     */
+    protected trackRenderedValue(element: E & RenderedInput, value: V | null, fromFloatingFilter?: boolean): void {
+        if (fromFloatingFilter) {
+            this.rendered.delete(element);
+        } else {
+            this.rendered.set(element, { text: element.getInputElement().value, value });
+        }
+    }
+
+    /** The value the input was rendered with, or `undefined` once the user has made the text their own. */
+    protected getRenderedValue(element: E & RenderedInput): { value: V | null } | undefined {
+        const rendered = this.rendered.get(element);
+        return rendered?.text === element.getInputElement().value ? rendered : undefined;
+    }
+
+    protected forgetRenderedValue(element: object): void {
+        this.rendered.delete(element);
     }
 
     /** An option taking one value has no range, so the second input is not part of what it filters on. */
@@ -571,6 +600,7 @@ export abstract class SimpleFilter<
         const removedComponents = removeItems(components, startPosition, deleteCount);
         for (const comp of removedComponents) {
             _removeFromParent(comp.getGui());
+            this.forgetRenderedValue(comp);
             this.destroyBean(comp);
         }
     }

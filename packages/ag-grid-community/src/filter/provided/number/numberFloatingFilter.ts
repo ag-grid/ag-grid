@@ -137,11 +137,7 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatin
 
     /** Read back through `numberParser`, which is the only thing that can read what a `numberFormatter` wrote. */
     protected override convertValue<TValue>(value: string | null | undefined): TValue | null {
-        const numberParser = this.getFilterParams()?.numberParser;
+        const numberParser = (this.params.filterParams as NumberFilterParams | undefined)?.numberParser;
         return processNumberFilterValue(stringToFloat(numberParser, value)) as TValue | null;
-    }
-
-    private getFilterParams(): NumberFilterParams | undefined {
-        return this.params.filterParams as NumberFilterParams | undefined;
     }
 }

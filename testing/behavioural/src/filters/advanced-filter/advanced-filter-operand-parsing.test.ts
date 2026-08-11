@@ -162,84 +162,40 @@ describe('Advanced Filter — operand parsing', () => {
             `);
         });
 
-        test('an unterminated quote is rejected', async () => {
+        // Each is rejected whole: the expression reaches no model and nothing is filtered.
+        test.each([
+            ['an unterminated quote', '[Name] equals "Bolt', 'Value is missing an end quote - "Bolt.'],
+            ['an operator with nothing after it', '[Name] equals', 'Value is missing at end of expression.'],
+            ['a quoted number, the type having a syntax of its own', '[Age] = "25"', 'Value is not a number - "25".'],
+            ['a non-numeric operand on a number column', '[Age] = abc', 'Value is not a number - abc.'],
+            ['an unreadable date', '[When] = "not-a-date"', 'Value is not a valid date - "not-a-date".'],
+            ['a missing comma between operands', '[Age] Any Of Two (25 28)', 'Value is missing - (25 2.'],
+            [
+                'a trailing comma leaving the last operand missing',
+                '[Age] Any Of Two (25, )',
+                'Value is missing - (25, ).',
+            ],
+            ['a second comma rather than a third operand', '[Age] Any Of Two (25,,28)', 'Value is missing - (25,,.'],
+            ['more operands than the option takes', '[Age] Any Of Two (25, 28, 40)', 'Missing end bracket - (25, 28,.'],
+            [
+                'a bracket the operand list never opened',
+                '[Age] Any Of Two 25)',
+                'Value is missing at end of expression.',
+            ],
+        ])('%s is rejected', async (_name, expression, message) => {
             const api = await grid();
 
-            await AdvancedFilterHarness.get(api).applyExpression('[Name] equals "Bolt');
+            await AdvancedFilterHarness.get(api).applyExpression(expression);
             await asyncSetTimeout(0);
 
-            await new FilterDom(api, 'unterminated quote').checkFilterDom(`
+            await new FilterDom(api, expression).checkFilterDom(`
                 ADVANCED FILTER
-                input: "[Name] equals "Bolt"
-                valid: false — Expression has an error. Value is missing an end quote - "Bolt.
+                input: "${expression}"
+                valid: false — Expression has an error. ${message}
                 buttons: Apply ⊘ | Builder
                 model: null
             `);
-            await new GridRows(api, 'unterminated quote rows').check(UNFILTERED);
-        });
-
-        test('an operator with nothing after it is rejected as a missing value', async () => {
-            const api = await grid();
-
-            await AdvancedFilterHarness.get(api).applyExpression('[Name] equals');
-            await asyncSetTimeout(0);
-
-            await new FilterDom(api, 'missing value').checkFilterDom(`
-                ADVANCED FILTER
-                input: "[Name] equals"
-                valid: false — Expression has an error. Value is missing at end of expression.
-                buttons: Apply ⊘ | Builder
-                model: null
-            `);
-            await new GridRows(api, 'missing value rows').check(UNFILTERED);
-        });
-
-        test('a quoted number is rejected, as the type has a syntax of its own', async () => {
-            const api = await grid();
-
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] = "25"');
-            await asyncSetTimeout(0);
-
-            await new FilterDom(api, 'quoted number').checkFilterDom(`
-                ADVANCED FILTER
-                input: "[Age] = "25""
-                valid: false — Expression has an error. Value is not a number - "25".
-                buttons: Apply ⊘ | Builder
-                model: null
-            `);
-            await new GridRows(api, 'quoted number rows').check(UNFILTERED);
-        });
-
-        test('a non-numeric operand on a number column is rejected', async () => {
-            const api = await grid();
-
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] = abc');
-            await asyncSetTimeout(0);
-
-            await new FilterDom(api, 'not a number').checkFilterDom(`
-                ADVANCED FILTER
-                input: "[Age] = abc"
-                valid: false — Expression has an error. Value is not a number - abc.
-                buttons: Apply ⊘ | Builder
-                model: null
-            `);
-            await new GridRows(api, 'not a number rows').check(UNFILTERED);
-        });
-
-        test('an unreadable date is rejected', async () => {
-            const api = await grid();
-
-            await AdvancedFilterHarness.get(api).applyExpression('[When] = "not-a-date"');
-            await asyncSetTimeout(0);
-
-            await new FilterDom(api, 'invalid date').checkFilterDom(`
-                ADVANCED FILTER
-                input: "[When] = "not-a-date""
-                valid: false — Expression has an error. Value is not a valid date - "not-a-date".
-                buttons: Apply ⊘ | Builder
-                model: null
-            `);
-            await new GridRows(api, 'invalid date rows').check(UNFILTERED);
+            await new GridRows(api, `${expression} rows`).check(UNFILTERED);
         });
 
         test('a comma belongs to the value when the option takes only one operand', async () => {
@@ -292,22 +248,6 @@ describe('Advanced Filter — operand parsing', () => {
             await new GridRows(api, 'bare operands').check(TWO_MATCHED);
         });
 
-        test('a missing comma between operands is rejected', async () => {
-            const api = await grid();
-
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] Any Of Two (25 28)');
-            await asyncSetTimeout(0);
-
-            await new FilterDom(api, 'missing separator').checkFilterDom(`
-                ADVANCED FILTER
-                input: "[Age] Any Of Two (25 28)"
-                valid: false — Expression has an error. Value is missing - (25 2.
-                buttons: Apply ⊘ | Builder
-                model: null
-            `);
-            await new GridRows(api, 'missing separator rows').check(UNFILTERED);
-        });
-
         test('the comma is what stops a following join being read as a value', async () => {
             const api = await grid();
 
@@ -321,30 +261,13 @@ describe('Advanced Filter — operand parsing', () => {
             `);
         });
 
-        test('a trailing comma leaves the last operand missing', async () => {
-            const api = await grid();
-
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] Any Of Two (25, )');
-            await asyncSetTimeout(0);
-
-            await new FilterDom(api, 'trailing comma').checkFilterDom(`
-                ADVANCED FILTER
-                input: "[Age] Any Of Two (25, )"
-                valid: false — Expression has an error. Value is missing - (25, ).
-                buttons: Apply ⊘ | Builder
-                model: null
-            `);
-            await new GridRows(api, 'trailing comma rows').check(UNFILTERED);
-        });
-
         test('quoted text operands keep their spaces on both sides of the comma', async () => {
             const api = await grid();
 
             await AdvancedFilterHarness.get(api).applyExpression('[Name] Any Of Two Text ("Ng Wei", "Bolt")');
             await asyncSetTimeout(0);
 
-            // Both operands keep their spaces, and the pair reaches `filter`/`filterTo` untrimmed.
-            // and `filter` repeats the first. The column filter writes `filterTo` as well.
+            // Both operands keep their spaces, untrimmed, in `filter` and `filterTo`.
             await waitFor(() =>
                 expect(api.getAdvancedFilterModel()).toEqual({
                     filterType: 'text',
@@ -359,54 +282,6 @@ describe('Advanced Filter — operand parsing', () => {
                 ├── LEAF id:0 name:"Bolt" age:25 when:"2012-08-10"
                 └── LEAF id:1 name:"Ng Wei" age:40 when:"2012-08-14"
             `);
-        });
-
-        test('a second comma is rejected rather than starting a third operand', async () => {
-            const api = await grid();
-
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] Any Of Two (25,,28)');
-            await asyncSetTimeout(0);
-
-            await new FilterDom(api, 'double comma').checkFilterDom(`
-                ADVANCED FILTER
-                input: "[Age] Any Of Two (25,,28)"
-                valid: false — Expression has an error. Value is missing - (25,,.
-                buttons: Apply ⊘ | Builder
-                model: null
-            `);
-            await new GridRows(api, 'double comma rows').check(UNFILTERED);
-        });
-
-        test('more operands than the option takes is rejected', async () => {
-            const api = await grid();
-
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] Any Of Two (25, 28, 40)');
-            await asyncSetTimeout(0);
-
-            await new FilterDom(api, 'too many operands').checkFilterDom(`
-                ADVANCED FILTER
-                input: "[Age] Any Of Two (25, 28, 40)"
-                valid: false — Expression has an error. Missing end bracket - (25, 28,.
-                buttons: Apply ⊘ | Builder
-                model: null
-            `);
-            await new GridRows(api, 'too many operands rows').check(UNFILTERED);
-        });
-
-        test('a bracket the operand list never opened still reports the value it is short of', async () => {
-            const api = await grid();
-
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] Any Of Two 25)');
-            await asyncSetTimeout(0);
-
-            await new FilterDom(api, 'stray end bracket').checkFilterDom(`
-                ADVANCED FILTER
-                input: "[Age] Any Of Two 25)"
-                valid: false — Expression has an error. Value is missing at end of expression.
-                buttons: Apply ⊘ | Builder
-                model: null
-            `);
-            await new GridRows(api, 'stray end bracket rows').check(UNFILTERED);
         });
     });
 

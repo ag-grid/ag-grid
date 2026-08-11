@@ -174,7 +174,7 @@ class OperatorParser implements Parser {
         )!;
         this.endPosition = endPosition;
 
-        // OPTIMIZATION: re-parsed on every keystroke, so the per-character prefix test must not re-case these.
+        // OPTIMIZATION: the prefix test runs per candidate character, so its lower-cased names are cached.
         const lowerCaseDisplayValues = getLowerCaseDisplayValues(operatorForType.operators);
         let matchedOperator: string | undefined;
         let matchedEndPosition = -1;
