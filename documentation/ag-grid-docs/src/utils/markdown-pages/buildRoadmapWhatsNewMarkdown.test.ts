@@ -10,7 +10,13 @@ const SITE_ROOT = 'https://www.ag-grid.com/';
 const resolveUrl = (url: string) => urlWithPrefix({ framework: 'javascript', url });
 
 describe('buildRoadmapMarkdown', () => {
-    const output = buildRoadmapMarkdown({ roadmapData, siteRoot: SITE_ROOT, resolveUrl, year: 2026 });
+    const output = buildRoadmapMarkdown({
+        roadmapData,
+        productName: 'AG Grid',
+        siteRoot: SITE_ROOT,
+        resolveUrl,
+        year: 2026,
+    });
 
     it('emits frontmatter and the page H1, then the intro from roadmap.json', () => {
         expect(output.startsWith('---\n')).toBe(true);

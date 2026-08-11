@@ -33,9 +33,9 @@ export interface BuildLandingPageMarkdownOptions {
     resolveFaqUrl?: (url: string) => string;
 }
 
-type Resolve = (url: string) => string;
+export type Resolve = (url: string) => string;
 
-function link(text: string, url: string, resolve: Resolve, siteRoot?: string): string {
+export function link(text: string, url: string, resolve: Resolve, siteRoot?: string): string {
     return `[${text}](${url.startsWith('http') ? url : toAbsoluteUrl(resolve(url), siteRoot)})`;
 }
 
@@ -43,7 +43,7 @@ function link(text: string, url: string, resolve: Resolve, siteRoot?: string): s
  * Rewrite the targets of markdown links already present in authored copy (FAQ answers are
  * Markdoc, so they arrive as markdown rather than as a URL field to resolve).
  */
-function resolveMarkdownLinks(markdown: string, resolve: Resolve, siteRoot?: string): string {
+export function resolveMarkdownLinks(markdown: string, resolve: Resolve, siteRoot?: string): string {
     return markdown.replace(/\[([^\]]*)\]\(([^)\s]+)\)/g, (match, text: string, target: string) => {
         if (target.startsWith('http') || target.startsWith('mailto') || target.startsWith('#')) {
             return match;
@@ -57,7 +57,7 @@ function resolveMarkdownLinks(markdown: string, resolve: Resolve, siteRoot?: str
  * emphasised kicker so it holds that reading order without adding a heading level —
  * matching how the homepage twin renders its section tags.
  */
-function sectionHeader(
+export function sectionHeader(
     section: { tag?: string; heading?: string; headingHtml?: string; subHeading?: string; subHeadingHtml?: string },
     siteRoot?: string
 ): string[] {
@@ -114,7 +114,7 @@ function pricingBody(section: ExtractSection<'pricing'>, resolve: Resolve, siteR
 }
 
 /** Section body beyond the shared tag/heading/subheading header. */
-function sectionBody(
+export function sectionBody(
     section: LandingPageSectionType,
     resolve: Resolve,
     resolveFaq: Resolve,

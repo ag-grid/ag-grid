@@ -15,14 +15,13 @@ import { AgTabGuardCtrl, TabGuardClassNames } from './tabGuardCtrl';
 export interface AgTabGuardParams {
     focusInnerElement?: (fromBottom: boolean) => boolean;
     shouldStopEventPropagation?: () => boolean;
-    /**
-     * @returns `true` to prevent the default onFocusIn behavior
-     */
     onFocusIn?: (e: FocusEvent) => void;
-    /**
-     * @returns `true` to prevent the default onFocusOut behavior
-     */
     onFocusOut?: (e: FocusEvent) => void;
+    /**
+     * Called when a guard receives focus from inside a focusable container.
+     * Return `true` when focus was handled or `false` to continue native tab order.
+     */
+    onGuardFocusedFromInside?: (fromBottom: boolean) => boolean | undefined;
     onTabKeyDown?: (e: KeyboardEvent) => void;
     handleKeyDown?: (e: KeyboardEvent) => void;
     /**
@@ -89,6 +88,7 @@ export class AgTabGuardFeature<
             focusTrapActive = false,
             onFocusIn,
             onFocusOut,
+            onGuardFocusedFromInside,
             focusInnerElement,
             handleKeyDown,
             onTabKeyDown,
@@ -108,6 +108,7 @@ export class AgTabGuardFeature<
                     eFocusableElement,
                     onFocusIn,
                     onFocusOut,
+                    onGuardFocusedFromInside,
                     focusInnerElement,
                     handleKeyDown,
                     onTabKeyDown,
@@ -149,6 +150,10 @@ export class AgTabGuardFeature<
 
     public forceFocusOutOfContainer(up: boolean = false): void {
         this.tabGuardCtrl.forceFocusOutOfContainer(up);
+    }
+
+    public focusNextElementOutsideContainer(up: boolean, excludeElements: HTMLElement[]): boolean {
+        return this.tabGuardCtrl.focusNextElementOutsideContainer(up, excludeElements);
     }
 
     public appendChild(

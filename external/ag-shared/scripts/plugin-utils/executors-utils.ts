@@ -140,6 +140,11 @@ export function batchExecutor<ExecutorOptions>(
     };
 }
 
+// Heap ceiling (bytes) at which a pooled worker is recycled after finishing a task. Sized so the
+// 4 CI workers stay well within a 16GB runner even as per-task memory accumulates; overridable via
+// env for tuning without a code change.
+const WORKER_RECYCLE_HEAP_LIMIT_BYTES = Number(process.env.NX_WORKER_RECYCLE_HEAP_BYTES) || 1_024 * 1_024 * 1_024;
+
 export function batchWorkerExecutor<ExecutorOptions>(
     workerModule: string,
     extraMsgContent?: () => object,
@@ -166,6 +171,10 @@ export function batchWorkerExecutor<ExecutorOptions>(
             filename: workerModule,
             maxThreads: threadCount,
             env: process.env as Record<string, string>,
+            // Recycle a worker once its heap crosses this bound. Some render workloads (chart
+            // thumbnail generation) retain memory that GC cannot reclaim; without recycling, the
+            // pooled workers grow until a constrained CI runner exhausts memory and stalls.
+            maxMemoryLimitBeforeRecycle: WORKER_RECYCLE_HEAP_LIMIT_BYTES,
         });
         process.on('exit', () => {
             pool.cancelPendingTasks();
