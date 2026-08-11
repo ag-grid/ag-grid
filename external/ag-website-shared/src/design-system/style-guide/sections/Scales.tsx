@@ -5,7 +5,7 @@ import type { FunctionComponent } from 'react';
 import styles from '../StyleGuide.module.scss';
 import { useStyleGuide, useTokens } from '../StyleGuideContext';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 import { parseSassVariables, pxVariables } from '../lib/sassSource';
 
@@ -71,18 +71,11 @@ export const Spacing: FunctionComponent = () => {
             title="Spacing"
             source="core/_variables.scss"
             lede={
-                <>
-                    <p>
-                        A 4px-based scale, available as Sass variables only. There is no <code>--spacing-*</code> custom
-                        property, so spacing cannot be re-pointed per theme or overridden per subtree - it is a fixed
-                        scale by design.
-                    </p>
-                    <p>
-                        The step number is the multiplier: <code>$spacing-size-4</code> is 4 &times; 4px = 16px. Steps
-                        run 1-6 in single increments and then jump, so the small end is fine-grained and the large end
-                        is coarse.
-                    </p>
-                </>
+                <p>
+                    Sass variables only - there is no <code>--spacing-*</code> custom property. The step number is the
+                    multiplier: <code>$spacing-size-4</code> is 16px. Use a step for every gap, margin and padding; a
+                    value between two steps means one of the two was right.
+                </p>
             }
         >
             <Block title="Scale">
@@ -123,37 +116,11 @@ export const Spacing: FunctionComponent = () => {
                 )}
             </Block>
 
-            <Block title="Using the scale">
-                <Guidance
-                    dos={[
-                        <>
-                            Use a step for every <code>gap</code>, <code>margin</code> and <code>padding</code>.
-                        </>,
-                        <>
-                            Prefer <code>gap</code> on a flex or grid container over margins on children - it collapses
-                            correctly when items wrap.
-                        </>,
-                        <>
-                            Use <code>var(--layout-gap)</code> rather than a spacing step for gutters between layout
-                            columns, so column widths and gutters stay in agreement.
-                        </>,
-                    ]}
-                    donts={[
-                        <>
-                            Don&rsquo;t use raw px. A value between two steps means one of the two steps was the right
-                            answer.
-                        </>,
-                        <>
-                            Don&rsquo;t add margins to prose elements - <code>_typography.scss</code> already spaces
-                            them, and adding more double-spaces the page.
-                        </>,
-                        <>
-                            Don&rsquo;t use <code>em</code> for structural spacing; it compounds with whatever font size
-                            the component happens to inherit.
-                        </>,
-                    ]}
-                />
-            </Block>
+            <Gotcha>
+                Layout gutters use <code>var(--layout-gap)</code>, not a spacing step - column widths subtract that
+                exact value. Prose spacing is already applied by <code>_typography.scss</code>; adding margins there
+                double-spaces the page.
+            </Gotcha>
         </Section>
     );
 };
@@ -169,8 +136,7 @@ export const Radii: FunctionComponent = () => {
             source="_root.scss"
             lede={
                 <p>
-                    Eleven steps from square to circle. <code>--radius-sm</code> is the system default and covers most
-                    interactive controls; anything larger is a deliberate choice for a surface rather than a control.
+                    <code>--radius-sm</code> is the default and covers most controls. Larger steps are for surfaces.
                 </p>
             }
         >
@@ -217,21 +183,12 @@ export const Shadows: FunctionComponent = () => {
             title="Shadows"
             source="_root.scss"
             lede={
-                <>
-                    <p>
-                        Six elevation steps, all built with <code>color-mix()</code> against{' '}
-                        <code>--color-gray-950</code> at low alpha rather than a fixed black, so they tint with the
-                        neutral scale.
-                    </p>
-                    <p>
-                        Shadows are translucent and do not change between themes. On the dark background they are
-                        correspondingly much weaker - use a border as well as, or instead of, a shadow when an edge
-                        needs to read in dark mode.
-                    </p>
-                </>
+                <p>
+                    Six steps, mixed from <code>--color-gray-950</code> at low alpha rather than a fixed black.
+                </p>
             }
         >
-            <Block title="Steps" note={<p>Shown on both the primary and secondary background.</p>}>
+            <Block title="Steps">
                 {tokens.length === 0 ? (
                     <p className={styles.emptyState}>No shadows match the current filter.</p>
                 ) : (
@@ -278,27 +235,10 @@ export const Shadows: FunctionComponent = () => {
                 )}
             </Block>
 
-            <Block title="Using elevation">
-                <Guidance
-                    dos={[
-                        <>Step up one level on hover, not two - elevation changes should be felt rather than seen.</>,
-                        <>
-                            Pair a shadow with <code>--color-border-secondary</code> for anything that must read as a
-                            distinct surface in dark mode.
-                        </>,
-                    ]}
-                    donts={[
-                        <>
-                            Don&rsquo;t write a custom box-shadow. If none of the six steps fits, the design is asking
-                            for a border.
-                        </>,
-                        <>
-                            Don&rsquo;t rely on a shadow alone to separate a floating panel from the page in dark mode;
-                            it will be close to invisible.
-                        </>,
-                    ]}
-                />
-            </Block>
+            <Gotcha>
+                Shadows are translucent and identical in both themes, so they are close to invisible on the dark
+                background. Anything that must read as a distinct surface needs a border too.
+            </Gotcha>
         </Section>
     );
 };

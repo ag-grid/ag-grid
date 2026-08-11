@@ -296,6 +296,17 @@
     }
 }
 
+// Deliberately light: a rule on the left, no panel, no heading. It has to be cheap enough to skip
+// that it does not compete with the specimen beside it.
+.gotcha {
+    max-width: 76ch;
+    margin-top: $spacing-size-4;
+    padding-left: $spacing-size-3;
+    border-left: 2px solid var(--color-util-brand-300);
+    font-size: var(--text-fs-sm);
+    color: var(--color-text-primary);
+}
+
 .knownIssue {
     display: flex;
     flex-wrap: wrap;

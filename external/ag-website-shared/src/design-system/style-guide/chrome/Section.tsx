@@ -89,6 +89,19 @@ export const Guidance: FunctionComponent<{ dos: ReactNode[]; donts: ReactNode[] 
 );
 
 /**
+ * One or two sentences for something that is correct but will surprise you.
+ *
+ * The lightweight alternative to `Guidance`: most sections do not need a six-item do/don't panel,
+ * they need one line saying the thing nobody would guess. Reach for this first and only use
+ * `Guidance` where there is a genuine either/or decision to make.
+ *
+ * Distinct from `KnownIssue`, which is for defects. A gotcha is working as intended.
+ */
+export const Gotcha: FunctionComponent<{ children: ReactNode }> = ({ children }) => (
+    <p className={styles.gotcha}>{children}</p>
+);
+
+/**
  * Flags something in the design system that is a known problem rather than a rule to follow.
  *
  * Recording these in the guide instead of leaving them as `// TODO` comments in `_root.scss` is
