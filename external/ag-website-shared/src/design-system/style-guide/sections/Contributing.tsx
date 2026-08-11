@@ -1,7 +1,7 @@
 import type { FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
-import { Block, Guidance, Section } from '../chrome/Section';
+import { Block, Gotcha, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 
 const FILE_MAP = [
@@ -210,42 +210,12 @@ $nav-collapse: 960px !default;
             </Specimen>
         </Block>
 
-        <Block title="Before you add anything">
-            <Guidance
-                dos={[
-                    <>
-                        Search for an existing token first. The colour section&rsquo;s filter box searches every token
-                        name on the page at once.
-                    </>,
-                    <>
-                        Add the dark-mode value at the same time as the light one, and check both. A token with no dark
-                        value silently inherits the light one.
-                    </>,
-                    <>
-                        Prefer widening an existing semantic token&rsquo;s use over adding a near-duplicate. Two tokens
-                        that always resolve to the same value are a maintenance cost with no benefit.
-                    </>,
-                    <>
-                        Say in the pull request that the change is inside <code>external/ag-website-shared</code>, and
-                        whether it still needs syncing to the other repos. A reviewer cannot tell from the diff, and an
-                        unsynced change is easy to forget about.
-                    </>,
-                ]}
-                donts={[
-                    <>
-                        Don&rsquo;t add a token for one component&rsquo;s one-off need. Declare a local custom property
-                        on the component instead.
-                    </>,
-                    <>
-                        Don&rsquo;t add an unguarded global element selector, and don&rsquo;t widen an existing
-                        guard&rsquo;s scope to make a selector match.
-                    </>,
-                    <>
-                        Don&rsquo;t leave a <code>// TODO, review &amp; replace color</code> behind. There are already
-                        several, and each one is a token nobody can safely rely on.
-                    </>,
-                ]}
-            />
-        </Block>
+        <Gotcha>
+            A token with no dark value silently inherits the light one, so add both and check both. Search first - the
+            filter box at the top narrows every table on the page. Don&rsquo;t add a global token for one
+            component&rsquo;s one-off need; declare a local custom property on the component instead. And say in the
+            pull request whether the change still needs syncing to the other repos - a reviewer cannot tell from the
+            diff.
+        </Gotcha>
     </Section>
 );

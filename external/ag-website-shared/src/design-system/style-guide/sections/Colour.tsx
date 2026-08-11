@@ -2,7 +2,7 @@ import type { FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { useStyleGuide, useTokens } from '../StyleGuideContext';
-import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { SwatchLegend } from '../chrome/Swatch';
 import { ScaleStrip, TokenTable } from '../chrome/TokenTable';
 
@@ -68,18 +68,11 @@ export const Colour: FunctionComponent = () => {
             title="Colour"
             source="_root.scss"
             lede={
-                <>
-                    <p>
-                        Colour is declared once in <code>_root.scss</code> and re-pointed for dark mode under{' '}
-                        <code>html[data-dark-mode=&apos;true&apos;]</code>. Abstract values stay fixed across themes;
-                        semantic and component tokens change what they point at.
-                    </p>
-                    <p>
-                        Contrast ratios below are WCAG 2.1, measured against the resolved background for that theme.
-                        Body text needs 4.5:1; text at 24px, or 18.66px bold, needs 3:1; borders and other non-text
-                        indicators need 3:1.
-                    </p>
-                </>
+                <p>
+                    Abstract values stay fixed across themes; semantic and component tokens re-point under{' '}
+                    <code>html[data-dark-mode=&apos;true&apos;]</code>. Contrast is WCAG 2.1 against the resolved
+                    background for that theme - 4.5:1 for body text, 3:1 for large text and non-text indicators.
+                </p>
             }
         >
             <SwatchLegend />
@@ -98,9 +91,8 @@ export const Colour: FunctionComponent = () => {
                 title="Semantic: backgrounds"
                 note={
                     <p>
-                        <code>--color-bg-primary</code> is the page. <code>--color-bg-secondary</code> is the recessed
-                        surface used for cards, code blocks and table stripes. Every other background token is a special
-                        case - reach for one of these two first.
+                        <code>--color-bg-primary</code> is the page, <code>--color-bg-secondary</code> the recessed
+                        surface. Reach for one of those two first - the rest are special cases.
                     </p>
                 }
             >
@@ -109,12 +101,7 @@ export const Colour: FunctionComponent = () => {
 
             <Block
                 title="Semantic: foreground"
-                note={
-                    <p>
-                        Foreground tokens are for icons, rules and any non-text mark. Text has its own group below.
-                        Contrast is measured against <code>--color-bg-primary</code>.
-                    </p>
-                }
+                note={<p>For icons, rules and any non-text mark. Running text has its own group below.</p>}
             >
                 <TokenTable tokens={foregrounds} contrastAgainst={bgPrimary} />
             </Block>
@@ -123,9 +110,8 @@ export const Colour: FunctionComponent = () => {
                 title="Semantic: text"
                 note={
                     <p>
-                        <code>--color-text-primary</code> is the default body colour set on <code>html</code>. Headings
-                        use <code>--color-fg-primary</code> instead, which is why heading and body text differ in weight
-                        of colour as well as size.
+                        <code>--color-text-primary</code> is the body default set on <code>html</code>; headings use{' '}
+                        <code>--color-fg-primary</code> instead, so they differ in colour as well as size.
                     </p>
                 }
             >
@@ -136,35 +122,21 @@ export const Colour: FunctionComponent = () => {
                 title="Semantic: borders"
                 note={
                     <p>
-                        Graded against the 3:1 non-text threshold from WCAG 1.4.11. A border that fails here is
-                        invisible to some users, which matters most for input outlines where the border is the only
-                        thing marking the control.
+                        Graded against 3:1 (WCAG 1.4.11), which matters most for input outlines where the border is the
+                        only thing marking the control.
                     </p>
                 }
             >
                 <TokenTable tokens={borders} contrastAgainst={bgPrimary} largeText />
             </Block>
 
-            <Block
-                title="Semantic: links"
-                note={
-                    <p>
-                        Links are brand-coloured and semibold, with no underline by default - the weight and colour
-                        together are what distinguish them from body text.
-                    </p>
-                }
-            >
+            <Block title="Semantic: links">
                 <TokenTable tokens={links} contrastAgainst={bgPrimary} />
             </Block>
 
             <Block
                 title="Component: buttons"
-                note={
-                    <p>
-                        Three variants, each with background, hover, active, focus-ring, foreground and border tokens.
-                        The foreground rows are graded against their own variant background rather than the page.
-                    </p>
-                }
+                note={<p>Three variants, each with background, hover, active, focus-ring, foreground and border.</p>}
             >
                 <TokenTable tokens={buttons} />
             </Block>
@@ -176,20 +148,11 @@ export const Colour: FunctionComponent = () => {
             <Block
                 title="Utility scales"
                 note={
-                    <>
-                        <p>
-                            The <code>--color-util-*</code> scales are the one group that <strong>inverts</strong>{' '}
-                            between themes: <code>--color-util-gray-50</code> is the lightest grey in light mode and the{' '}
-                            <em>darkest</em> in dark mode. They exist so a component can be written once using &ldquo;50
-                            is the subtle end, 700 is the strong end&rdquo; and work in both themes without a dark-mode
-                            block.
-                        </p>
-                        <p>
-                            Compare the two strips below - they run in opposite directions. This is the single easiest
-                            thing to get wrong in the whole colour system, because a util token looks like an abstract
-                            token but does not behave like one.
-                        </p>
-                    </>
+                    <p>
+                        The one group that <strong>inverts</strong> between themes - the strips below run in opposite
+                        directions. 50 is always the subtle end and 700 the strong end, so a component works in both
+                        themes without a dark-mode block.
+                    </p>
                 }
             >
                 <UtilityScales />
@@ -200,9 +163,7 @@ export const Colour: FunctionComponent = () => {
                 title="Code syntax"
                 note={
                     <p>
-                        Consumed by the Prism token classes in <code>components/_code.scss</code>. These are the only
-                        colour tokens tuned per theme by hand rather than by re-pointing at the abstract palette, since
-                        syntax highlighting needs hue separation that a single neutral scale cannot give.
+                        Consumed by the Prism token classes in <code>components/_code.scss</code>.
                     </p>
                 }
             >
@@ -211,49 +172,17 @@ export const Colour: FunctionComponent = () => {
 
             <Block
                 title="Brand marks and status"
-                note={
-                    <p>
-                        Logo colours are fixed brand assets and must not be re-pointed per theme. Status colours are
-                        used by pricing tables, changelogs and the enterprise marker.
-                    </p>
-                }
+                note={<p>Logo colours are fixed brand assets and must not be re-pointed per theme.</p>}
             >
                 <TokenTable tokens={logo.concat(status)} contrastAgainst={bgPrimary} />
             </Block>
 
-            <Block title="Choosing a colour">
-                <Guidance
-                    dos={[
-                        <>
-                            Start from the role: a surface is <code>--color-bg-*</code>, a mark is{' '}
-                            <code>--color-fg-*</code>, running text is <code>--color-text-*</code>, an outline is{' '}
-                            <code>--color-border-*</code>.
-                        </>,
-                        <>
-                            Use <code>--color-util-*</code> when a component needs a light-to-strong ramp that should
-                            invert in dark mode.
-                        </>,
-                        <>
-                            Use <code>color-mix()</code> against a token when you need an in-between value, so the
-                            result still follows the theme.
-                        </>,
-                    ]}
-                    donts={[
-                        <>
-                            Don&rsquo;t use <code>--color-gray-*</code> directly for a border or text colour; the
-                            semantic token already picks the right step per theme.
-                        </>,
-                        <>
-                            Don&rsquo;t assume a <code>--color-util-*</code> step means the same lightness in both
-                            themes - it does not.
-                        </>,
-                        <>
-                            Don&rsquo;t pair colours without checking the contrast column. Several existing pairings
-                            below already fail.
-                        </>,
-                    ]}
-                />
-            </Block>
+            <Gotcha>
+                Pick by role: a surface is <code>--color-bg-*</code>, a mark <code>--color-fg-*</code>, running text{' '}
+                <code>--color-text-*</code>, an outline <code>--color-border-*</code>. Never reach for{' '}
+                <code>--color-gray-*</code> directly - the semantic token already picks the right step per theme. Need
+                an in-between value? <code>color-mix()</code> against a token, so the result still follows the theme.
+            </Gotcha>
 
             <KnownIssue>
                 <p>

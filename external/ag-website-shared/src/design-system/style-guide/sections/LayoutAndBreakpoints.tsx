@@ -49,18 +49,10 @@ export const LayoutSection: FunctionComponent = () => {
             title="Layout"
             source={['_root.scss', '_layout.scss']}
             lede={
-                <>
-                    <p>
-                        Two width caps and one gutter carry most of the site. Content sits in{' '}
-                        <code>--layout-max-width</code> (1800px) for wide, visual pages and{' '}
-                        <code>--layout-max-width-small</code> (1240px) for reading-length text.
-                    </p>
-                    <p>
-                        Columns are fractional widths applied to flex children, not a grid. They only produce the right
-                        result inside a container that sets <code>--layout-gap</code>, because the width formula
-                        subtracts the gutters before dividing the remainder.
-                    </p>
-                </>
+                <p>
+                    <code>--layout-max-width</code> (1800px) for wide visual pages,{' '}
+                    <code>--layout-max-width-small</code> (1240px) for reading-length text.
+                </p>
             }
         >
             <Block title="Tokens">
@@ -94,8 +86,9 @@ export const LayoutSection: FunctionComponent = () => {
                 title="Columns"
                 note={
                     <p>
-                        Available in 4, 6 and 12 column grids as <code>.column-&lt;span&gt;-&lt;total&gt;</code>. Spans
-                        within one row should add up to the total.
+                        <code>.column-&lt;span&gt;-&lt;total&gt;</code> in 4, 6 and 12 column grids. These are widths on
+                        flex children, not a real grid, so they only add up inside a container that sets{' '}
+                        <code>--layout-gap</code> - the formula subtracts the gutters before dividing.
                     </p>
                 }
             >

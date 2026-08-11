@@ -1,7 +1,7 @@
 import type { FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
-import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 
 const ROWS = [
@@ -44,16 +44,10 @@ export const Tables: FunctionComponent = () => (
         title="Tables"
         source={['elements/_table.scss', 'core/_mixins.scss']}
         lede={
-            <>
-                <p>
-                    Tables are borderless apart from horizontal rules between rows, full width, and left aligned. There
-                    is no zebra striping - separation comes from the row rules alone.
-                </p>
-                <p>
-                    A table has no built-in horizontal scrolling, so a wide table needs either a scroll container or the
-                    stacking treatment below.
-                </p>
-            </>
+            <p>
+                Full width, left aligned, horizontal rules between rows and no zebra striping. There is no built-in
+                horizontal scrolling, so a wide table needs a scroll container or the stacking treatment below.
+            </p>
         }
     >
         <Block title="Default">
@@ -69,13 +63,7 @@ export const Tables: FunctionComponent = () => (
 
         <Block
             title="Compact header"
-            note={
-                <p>
-                    <code>.small-header</code> drops the header row to regular weight and tightens its vertical padding.
-                    Use it when the header is a label rather than a heading - long reference tables, for instance, where
-                    a bold header row on every table is noisy.
-                </p>
-            }
+            note={<p>Regular weight and tighter padding, for when the header is a label rather than a heading.</p>}
         >
             <Specimen code={`<table class="small-header">`}>
                 <table className="small-header">
@@ -90,19 +78,11 @@ export const Tables: FunctionComponent = () => (
         <Block
             title="Stacking on narrow widths"
             note={
-                <>
-                    <p>
-                        <code>.stack</code> collapses each row into a block, hides the header, and relabels every cell
-                        from its <code>data-column</code> attribute. Cells must carry{' '}
-                        <code>data-column=&quot;&lt;header text&gt;&quot;</code> for this to work - without it the cell
-                        loses its meaning entirely.
-                    </p>
-                    <p>
-                        The same behaviour is available as the <code>stack-table()</code> mixin, which is what to use
-                        inside a component&rsquo;s own <code>.module.scss</code> when the table should stack at that
-                        component&rsquo;s breakpoint rather than always.
-                    </p>
-                </>
+                <p>
+                    Collapses each row into a block and relabels every cell from its <code>data-column</code> attribute
+                    - so cells must carry it, or they lose their meaning. Available as the <code>stack-table()</code>{' '}
+                    mixin too, for stacking at a component&rsquo;s own breakpoint rather than always.
+                </p>
             }
         >
             <Specimen
@@ -135,52 +115,15 @@ export const Tables: FunctionComponent = () => (
         @include stack-table();
     }
 }`}
-            >
-                <p>
-                    <code>stack-table()</code> lives in <code>core/_mixins.scss</code> rather than beside the table
-                    element styles, so a component can reach it through <code>@use &apos;design-system&apos;</code>{' '}
-                    without pulling in the global table CSS.
-                </p>
-            </Specimen>
-        </Block>
-
-        <Block title="Building a table">
-            <Guidance
-                dos={[
-                    <>
-                        Use <code>&lt;th scope=&quot;col&quot;&gt;</code> for column headers and{' '}
-                        <code>&lt;th scope=&quot;row&quot;&gt;</code> for the first cell of each row, so the
-                        relationships are announced.
-                    </>,
-                    <>
-                        Add <code>data-column</code> to every cell in a table that might stack - it costs nothing when
-                        it does not.
-                    </>,
-                    <>
-                        Wrap a wide table in a container with <code>overflow-x: auto</code>, and give that container{' '}
-                        <code>tabindex=&quot;0&quot;</code> so it can be scrolled by keyboard.
-                    </>,
-                    <>
-                        Add a <code>&lt;caption&gt;</code> when the table&rsquo;s purpose is not clear from the
-                        surrounding text.
-                    </>,
-                ]}
-                donts={[
-                    <>
-                        Don&rsquo;t use <code>role=&quot;grid&quot;</code> on a static table. That role is for
-                        interactive grid widgets and it changes how screen readers navigate the content.
-                    </>,
-                    <>
-                        Don&rsquo;t use <code>&lt;td scope=&quot;row&quot;&gt;</code> - <code>scope</code> is only valid
-                        on <code>&lt;th&gt;</code> and is ignored on a <code>&lt;td&gt;</code>.
-                    </>,
-                    <>
-                        Don&rsquo;t use a table for layout. The global styles assume tabular data and will add rules
-                        between your rows.
-                    </>,
-                ]}
             />
         </Block>
+
+        <Gotcha>
+            Don&rsquo;t put <code>role=&quot;grid&quot;</code> on a static table - that role is for interactive grid
+            widgets and changes how screen readers navigate it. <code>scope</code> is only valid on{' '}
+            <code>&lt;th&gt;</code>, so <code>&lt;td scope=&quot;row&quot;&gt;</code> does nothing. Wrap a wide table in{' '}
+            <code>overflow-x: auto</code> with <code>tabindex=&quot;0&quot;</code> so it can be scrolled by keyboard.
+        </Gotcha>
 
         <KnownIssue>
             <p>
