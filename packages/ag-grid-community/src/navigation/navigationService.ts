@@ -447,10 +447,11 @@ export class NavigationService extends BeanStub implements NamedBean {
                 }
             }
         } else {
-            // if the case it's a popup editor, the focus is on the editor and not the previous cell.
-            // in order for the tab navigation to work, we need to focus the browser back onto the
-            // previous cell.
-            if (previous instanceof CellCtrl) {
+            // Only when focus is not already on the previous cell (e.g. a popup editor holds it) do
+            // we restore browser focus to the cell, so native Tab can carry focus out of the grid.
+            // When the cell already has focus the re-focus is redundant and would spuriously re-fire
+            // cellFocused.
+            if (previous instanceof CellCtrl && !previous.hasBrowserFocus()) {
                 previous.focusCell({ forceBrowserFocus: true });
             }
 

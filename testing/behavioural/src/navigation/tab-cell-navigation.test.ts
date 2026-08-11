@@ -1,7 +1,7 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { CellFocusedEvent, ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
 
-import { TestGridsManager } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
 
 interface RowData {
@@ -80,5 +80,21 @@ describe('Tab Cell Navigation', () => {
         dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
         expect(getFocusedRowIndex(api)).toBe(0);
         expect(getFocusedColId(api)).toBe('a');
+    });
+
+    test('Tab off last cell of grid does not re-fire cellFocused', async () => {
+        const focusedCols: (string | undefined)[] = [];
+        api.addEventListener('cellFocused', (e: CellFocusedEvent) => {
+            focusedCols.push(e.column?.getColId());
+        });
+
+        api.setFocusedCell(2, 'c');
+        await asyncSetTimeout(0);
+        const focusEventsAfterInitialFocus = focusedCols.length;
+
+        dispatchKeyDown(KeyCode.TAB);
+        await asyncSetTimeout(0);
+
+        expect(focusedCols.length).toBe(focusEventsAfterInitialFocus);
     });
 });
