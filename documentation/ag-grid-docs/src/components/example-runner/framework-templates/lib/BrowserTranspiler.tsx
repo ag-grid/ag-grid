@@ -1,5 +1,3 @@
-import ts from 'typescript';
-
 import {
     ASSET_REGEX,
     CSS_IMPORT_REGEX,
@@ -9,6 +7,7 @@ import {
     STYLESHEET_LOADER_NAME,
     getCompilerOptions,
 } from '@utils/exampleModules/transformExampleModule';
+import ts from 'typescript';
 
 interface Props {
     /** The example's entry file, as authored -- `main.ts`, not `main.js` */
