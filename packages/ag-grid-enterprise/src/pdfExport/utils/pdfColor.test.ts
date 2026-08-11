@@ -33,4 +33,22 @@ describe('PDF colours', () => {
         expect(colors.dataBackground).toEqual({ r: 30, g: 30, b: 30 });
         expect(colors.oddRowBackground).toEqual({ r: 30, g: 30, b: 30 });
     });
+
+    it('reuses resolved translucent fallback backgrounds without compositing them again', () => {
+        const pageColors = resolvePdfStyleColors({ backgroundColor: 'rgba(0, 0, 0, 0.5)' });
+        const dataColors = resolvePdfStyleColors({ dataBackgroundColor: 'rgba(0, 0, 0, 0.5)' });
+
+        expect(pageColors.pageBackground).toEqual({ r: 128, g: 128, b: 128 });
+        expect(pageColors.dataBackground).toEqual(pageColors.pageBackground);
+        expect(pageColors.oddRowBackground).toEqual(pageColors.dataBackground);
+        expect(dataColors.dataBackground).toEqual({ r: 128, g: 128, b: 128 });
+        expect(dataColors.oddRowBackground).toEqual(dataColors.dataBackground);
+    });
+
+    it('retains the built-in header background when only the page background is configured', () => {
+        const colors = resolvePdfStyleColors({ backgroundColor: '#1e1e1e' });
+
+        expect(colors.pageBackground).toEqual({ r: 30, g: 30, b: 30 });
+        expect(colors.headerBackground).toEqual({ r: 255, g: 255, b: 255 });
+    });
 });
