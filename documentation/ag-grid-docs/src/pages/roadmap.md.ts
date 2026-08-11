@@ -14,6 +14,7 @@ export function GET() {
 
     const output = buildRoadmapMarkdown({
         roadmapData,
+        productName: 'AG Grid',
         siteRoot: SITE_URL,
         // The page is framework-agnostic; resolve its framework-prefixed links against a single
         // framework, matching the other markdown twins (homepage, license-pricing).
