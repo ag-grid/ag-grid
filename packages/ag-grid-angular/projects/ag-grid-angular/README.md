@@ -464,9 +464,9 @@ AG Grid is used by 100,000's of developers across the world, from almost every i
 Founded in 2016, AG Grid has seen a steady rise in popularity and is now the market leader for Data Grids:
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ag-grid/ag-grid&type=Date&theme=dark"/>
-  <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ag-grid/ag-grid&type=Date"/>
-  <img width="100%" alt="The AG Grid star history chart" src="https://api.star-history.com/svg?repos=ag-grid/ag-grid&type=Date"/>
+  <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=ag-grid/ag-grid&type=Date&theme=dark"/>
+  <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=ag-grid/ag-grid&type=Date"/>
+  <img width="100%" alt="The AG Grid star history chart" src="https://star-history.dera.page/svg?repos=ag-grid/ag-grid&type=Date"/>
 </picture>
 
 ## 🤝 Support
