@@ -350,16 +350,18 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         baseCellDataType?: BaseCellDataType,
         column?: AgColumn | null
     ): DataTypeFilterExpressionOperators<any> | undefined {
-        return this.getColumnOperators(baseCellDataType, column)?.operators;
+        return column
+            ? this.getColumnOperators(baseCellDataType, column)?.operators
+            : this.expressionOperators[baseCellDataType!];
     }
 
     private getColumnOperators(
-        baseCellDataType?: BaseCellDataType,
-        column?: AgColumn | null
+        baseCellDataType: BaseCellDataType | undefined,
+        column: AgColumn
     ): ColumnOperators | undefined {
         const dataTypeOperators = this.expressionOperators[baseCellDataType!];
-        if (!column || !dataTypeOperators) {
-            return dataTypeOperators && { operators: dataTypeOperators, activeOperators: undefined };
+        if (!dataTypeOperators) {
+            return undefined;
         }
         const byDataType = this.columnExpressionOperators;
         let forDataType = byDataType[baseCellDataType!];
@@ -375,7 +377,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 operators: customOptions.length
                     ? createCustomOptionOperators(dataTypeOperators, customOptions, this.getLocaleTextFunc())
                     : dataTypeOperators,
-                activeOperators: filterOptions && keys,
+                activeOperators: filterOptions ? keys : undefined,
             };
             forDataType.set(column, columnOperators);
         }

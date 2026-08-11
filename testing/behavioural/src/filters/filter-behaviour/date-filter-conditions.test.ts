@@ -43,6 +43,26 @@ describe('Date Filter — conditions coverage', () => {
         expect(body!.hasAttribute('role')).toBe(false);
     });
 
+    test('a filterParams `includeTime` column shows the date it was given', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            // `includeTime` here and not on the cell data type, so the two disagree about the input's type.
+            columnDefs: [
+                { field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0, includeTime: true } },
+            ],
+            rowData: ASCENDING,
+        });
+
+        await api.setColumnFilterModel('date', { filterType: 'date', type: 'equals', dateFrom: '2024-03-15 00:00:00' });
+        api.onFilterChanged();
+        await ColumnFilterHarness.open(api, 'date');
+        await asyncSetTimeout(0);
+
+        const input = document.querySelector<HTMLInputElement>('.ag-filter-menu input[type="datetime-local"]');
+        expect(input).not.toBeNull();
+        // Written for the input the params asked for, not the one the cell data type implies.
+        expect(input!.value).toBe('2024-03-15T00:00');
+    });
+
     test('comparison operators over an ascending date dataset', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0 } }],

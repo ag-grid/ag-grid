@@ -79,6 +79,7 @@ export abstract class SimpleFilter<
     protected readonly eJoinOrs: GridRadioButton[] = [];
     protected readonly eConditionBodies: HTMLElement[] = [];
     private readonly listener = () => this.onUiChanged();
+    private readonly rendered = new Map<object, { text: string; value: V | null }>();
 
     private maxNumConditions: number;
     private numAlwaysVisibleConditions: number;
@@ -164,10 +165,6 @@ export abstract class SimpleFilter<
         }
         this.refreshPositionValidation(position, isFrom);
     }
-
-    /** What each input was last rendered with. Every element is destroyed through one of the removal paths
-     * below, which forget it, so entries do not outlive the inputs they describe. */
-    private readonly rendered = new Map<object, { text: string; value: V | null }>();
 
     /**
      * What the filter wrote is not something the user typed, so it is never read back through the parser.

@@ -329,6 +329,66 @@ describe('Advanced Filter — custom filter options', () => {
         `);
     });
 
+    test('a value list must be separated from the option name by a space', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', OPTS);
+
+        // The name ends in `)`, so the greedy match runs past the terminator and the abutting `(` is
+        // consumed with it: the pair then reads as unbracketed and the closing `)` has no opener.
+        await AdvancedFilterHarness.get(api).applyExpression('[Age] Between (Exclusive)(25, 40)');
+        await asyncSetTimeout(0);
+        await new FilterDom(api, 'no space before a bracketed pair').checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Age] Between (Exclusive)(25, 40)"
+            valid: false — Expression has an error. Too many end brackets - ).
+            buttons: Apply ⊘ | Builder
+            model: null
+        `);
+
+        // Written the way the autocomplete writes it, the same expression parses.
+        await AdvancedFilterHarness.get(api).applyExpression('[Age] Between (Exclusive) (25, 40)');
+        await asyncSetTimeout(0);
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'number',
+            colId: 'age',
+            type: 'betweenExclusive',
+            filter: 25,
+            filterTo: 40,
+        });
+    });
+
+    test('an empty filterOptions list leaves the column with no operators to suggest', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...OPTS,
+            columnDefs: [
+                { field: 'athlete', filter: 'agTextColumnFilter' },
+                { field: 'age', filter: 'agNumberColumnFilter', filterParams: { filterOptions: [] } },
+            ],
+        });
+
+        // Narrowing to an empty list narrows to nothing, as it does on the column filter's own dropdown.
+        const af = AdvancedFilterHarness.get(api);
+        await af.type('[Age] ');
+        expect(af.autocompleteEntries()).toEqual([]);
+    });
+
+    test('a value written after a zero-input option fails the expression, it is not absorbed', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', OPTS);
+
+        // The option takes no value, so the trailing one has no slot: the whole expression is rejected
+        // rather than the value being dropped into `filter`, where a round-trip would preserve it.
+        await AdvancedFilterHarness.get(api).applyExpression('[Athlete] Starts With A "Bolt"');
+        await asyncSetTimeout(0);
+
+        expect(api.getAdvancedFilterModel()).toBeNull();
+        await new GridRows(api, 'trailing value rejects the expression').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Bolt" age:25
+            ├── LEAF id:1 athlete:"Ng" age:40
+            ├── LEAF id:2 athlete:"Ada" age:28
+            └── LEAF id:3 athlete:"Wei" age:null
+        `);
+    });
+
     test('an option is also accepted by its displayKey, and rewritten to the display name', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
         const af = AdvancedFilterHarness.get(api);

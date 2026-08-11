@@ -19,10 +19,9 @@ import {
 } from '../../test-utils';
 
 /**
- * Regression baseline for Advanced Filter grid options and current operator behaviour: display-name/colId
- * resolution, `includeHiddenColumnsInAdvancedFilter`, `suppressAdvancedFilterEval`, `advancedFilterParent`;
- * operators the remaining tickets will ADD but don't offer today (AG-10029 presets and inRange); custom
- * `filterOptions`, which are supported; and Set Filter columns treated as text (AG-8950).
+ * Regression baseline for Advanced Filter grid options and operator behaviour: display-name/colId resolution,
+ * `includeHiddenColumnsInAdvancedFilter`, `suppressAdvancedFilterEval`, `advancedFilterParent`; the operators
+ * not offered today (presets, inRange); custom `filterOptions`; and Set Filter columns treated as text.
  */
 
 describe('Advanced Filter — grid options', () => {
