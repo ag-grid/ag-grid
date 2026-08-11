@@ -48,6 +48,11 @@ function getProjectBuildTargets(project) {
             ];
         case 'ag-charts-enterprise':
             return [[project, ['build:umd', 'build'], 'watch']];
+        case 'ag-charts-demos':
+            // Rebuild the demo apps into their dist with the embedded base path. build:watch
+            // skips the typecheck + upstream deps of the full build for a fast, reload-gated
+            // rebuild; it is a reload target so the dev server refreshes once dist is ready.
+            return [[project, ['build:watch'], undefined]];
         case 'ag-charts-generate-example-files':
             return [['ag-charts-website', ['generate-examples']]];
     }
@@ -59,6 +64,13 @@ module.exports = {
     ignoredProjects: IGNORED_PROJECTS,
     // Targets whose completion can trigger a browser reload (via ag-build-queue.empty).
     // The reload fires only when the last reloadable target in the current queue finishes.
-    devServerReloadTargets: ['generate', 'docs-resolved-interfaces', 'build:package', 'build:umd', 'generate-examples'],
+    devServerReloadTargets: [
+        'generate',
+        'docs-resolved-interfaces',
+        'build:package',
+        'build:umd',
+        'build:watch',
+        'generate-examples',
+    ],
     getProjectBuildTargets,
 };
