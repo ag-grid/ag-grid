@@ -32,7 +32,7 @@ export async function GET() {
             ].join('\n'),
             `# ${content.heading}`,
             content.description,
-            'Every page listed here also has a markdown version: append `.md` to its URL.',
+            `Every page listed here also has a markdown version: append \`.md\` to its URL. The homepage is the one URL with no \`.md\` suffix - its copy is ${PRODUCTION_GRID_SITE_URL}/index.md.`,
             ...sections,
         ].join('\n\n') + '\n';
 
