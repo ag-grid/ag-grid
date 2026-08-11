@@ -79,6 +79,10 @@
                 "url": "/cookies/"
             },
             {
+                "name": "Manage Cookies",
+                "url": "#manage_cookies"
+            },
+            {
                 "name": "Modern Slavery",
                 "url": "/modern-slavery/"
             },
