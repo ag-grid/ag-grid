@@ -332,14 +332,14 @@ describe('Advanced Filter — custom filter options', () => {
     test('a value list must be separated from the option name by a space', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
 
-        // The name ends in `)`, so the greedy match runs past the terminator and the abutting `(` is
-        // consumed with it: the pair then reads as unbracketed and the closing `)` has no opener.
+        // Only a space or a closing bracket may abut a resolved name, so the option is reported rather
+        // than the `(` being swallowed into it.
         await AdvancedFilterHarness.get(api).applyExpression('[Age] Between (Exclusive)(25, 40)');
         await asyncSetTimeout(0);
         await new FilterDom(api, 'no space before a bracketed pair').checkFilterDom(`
             ADVANCED FILTER
             input: "[Age] Between (Exclusive)(25, 40)"
-            valid: false — Expression has an error. Too many end brackets - ).
+            valid: false — Expression has an error. Option not found - Between (Exclusive).
             buttons: Apply ⊘ | Builder
             model: null
         `);
@@ -368,6 +368,8 @@ describe('Advanced Filter — custom filter options', () => {
         // Narrowing to an empty list narrows to nothing, as it does on the column filter's own dropdown.
         const af = AdvancedFilterHarness.get(api);
         await af.type('[Age] ');
+        // The list is open and empty, not absent: an absent popup would report the same entries.
+        expect(af.isAutocompleteOpen()).toBe(true);
         expect(af.autocompleteEntries()).toEqual([]);
     });
 
@@ -379,10 +381,108 @@ describe('Advanced Filter — custom filter options', () => {
         await AdvancedFilterHarness.get(api).applyExpression('[Athlete] Starts With A "Bolt"');
         await asyncSetTimeout(0);
 
-        expect(api.getAdvancedFilterModel()).toBeNull();
+        // The message names the trailing value, so this cannot pass by the option going unrecognised.
+        await new FilterDom(api, 'trailing value rejects the expression').checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Athlete] Starts With A "Bolt""
+            valid: false — Expression has an error. Join operator not found - "Bolt".
+            buttons: Apply ⊘ | Builder
+            model: null
+        `);
         await new GridRows(api, 'trailing value rejects the expression').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 athlete:"Bolt" age:25
+            ├── LEAF id:1 athlete:"Ng" age:40
+            ├── LEAF id:2 athlete:"Ada" age:28
+            └── LEAF id:3 athlete:"Wei" age:null
+        `);
+    });
+
+    test('a character abutting a resolved option name fails the expression, it is not dropped', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...OPTS,
+            columnDefs: [
+                { field: 'athlete', filter: 'agTextColumnFilter' },
+                {
+                    field: 'age',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: {
+                        debounceMs: 0,
+                        // One name a prefix of the other, so the longer match runs past the space that settled it.
+                        filterOptions: [
+                            {
+                                displayKey: 'over',
+                                displayName: 'Over',
+                                numberOfInputs: 1,
+                                predicate: ([filterValue]: any[], cellValue: number | null) =>
+                                    cellValue != null && cellValue > filterValue,
+                            },
+                            {
+                                displayKey: 'overOrEqual',
+                                displayName: 'Over Or Equal',
+                                numberOfInputs: 1,
+                                predicate: ([filterValue]: any[], cellValue: number | null) =>
+                                    cellValue != null && cellValue >= filterValue,
+                            },
+                        ],
+                    },
+                },
+            ],
+        });
+
+        // `Over Or Equal5` names no option, so the `5` must not be swallowed and the rest read as the value.
+        await AdvancedFilterHarness.get(api).applyExpression('[Age] Over Or Equal5 30');
+        await asyncSetTimeout(0);
+        expect(api.getAdvancedFilterModel()).toBeNull();
+
+        // Written with the value separated, the same option resolves and filters.
+        await AdvancedFilterHarness.get(api).applyExpression('[Age] Over Or Equal 30');
+        await asyncSetTimeout(0);
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'number',
+            colId: 'age',
+            type: 'overOrEqual',
+            filter: 30,
+        });
+    });
+
+    test('a custom option whose display name matches a built-in operator is the one that evaluates', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...OPTS,
+            columnDefs: [
+                {
+                    field: 'athlete',
+                    filter: 'agTextColumnFilter',
+                    filterParams: {
+                        debounceMs: 0,
+                        // Named as the built-in `contains` operator is written, so only the key tells them apart.
+                        filterOptions: [
+                            {
+                                displayKey: 'lacks',
+                                displayName: 'contains',
+                                numberOfInputs: 1,
+                                predicate: ([filterValue]: any[], cellValue: string | null) =>
+                                    cellValue != null && !cellValue.includes(filterValue),
+                            },
+                        ],
+                    },
+                },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ],
+        });
+
+        await AdvancedFilterHarness.get(api).applyExpression('[Athlete] contains "o"');
+        await asyncSetTimeout(0);
+
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'text',
+            colId: 'athlete',
+            type: 'lacks',
+            filter: 'o',
+        });
+        // The column's own predicate ran, so the rows kept are the ones NOT containing an "o".
+        await new GridRows(api, 'a shadowing custom option evaluates').check(`
+            ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 athlete:"Ng" age:40
             ├── LEAF id:2 athlete:"Ada" age:28
             └── LEAF id:3 athlete:"Wei" age:null

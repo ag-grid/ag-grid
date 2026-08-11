@@ -1,7 +1,11 @@
 import type { LocaleTextFunc } from 'ag-stack';
 
 import type { AgColumn, IFilterOptionDef } from 'ag-grid-community';
-import { _getCustomOptionNumberOfInputs, _isDataTypeFilterOptions, _isValidFilterOptionDef } from 'ag-grid-community';
+import {
+    _getCustomOptionNumberOfInputs,
+    _isGridSuppliedFilterOptions,
+    _isValidFilterOptionDef,
+} from 'ag-grid-community';
 
 import type { DataTypeFilterExpressionOperators, FilterExpressionOperator } from './filterExpressionOperators';
 import { findMatch, getEntries } from './filterExpressionOperators';
@@ -15,7 +19,7 @@ export function isCustomFilterOption(option: string | IFilterOptionDef): option 
 export function getColumnFilterOptions(column: AgColumn): (string | IFilterOptionDef)[] | undefined {
     const filterOptions = column.colDef.filterParams?.filterOptions;
     // A data type's own list is not the column authoring anything, so it contributes no options of its own.
-    return !filterOptions || _isDataTypeFilterOptions(filterOptions) ? undefined : filterOptions;
+    return !filterOptions || _isGridSuppliedFilterOptions(filterOptions) ? undefined : filterOptions;
 }
 
 /** Overlays a column's Custom Filter Options on its data type's operators, replacing a built-in of the same key. */
@@ -37,12 +41,20 @@ export function createCustomOptionOperators(
         operators,
         getEntries: (activeOperators) => getEntries(operators, activeOperators),
         findOperator: (displayValue) => {
+            const search = displayValue.toLocaleLowerCase();
+            // The column's own option owns the name it is offered under: a built-in written the same way is
+            // not what the column offers, and matching it would run the wrong evaluator under that name.
+            for (let i = 0, len = customOptions.length; i < len; ++i) {
+                const key = customOptions[i].displayKey;
+                if (operators[key].displayValue.toLocaleLowerCase() === search) {
+                    return key;
+                }
+            }
             const byDisplayName = findMatch(displayValue, operators, (operator) => operator.displayValue);
             if (byDisplayName) {
                 return byDisplayName;
             }
             // A `displayKey` stands in for the name, and the match rewrites it to the name in the expression.
-            const search = displayValue.toLocaleLowerCase();
             for (let i = 0, len = customOptions.length; i < len; ++i) {
                 const key = customOptions[i].displayKey;
                 if (key.toLocaleLowerCase() === search) {

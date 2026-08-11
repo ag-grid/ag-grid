@@ -62,6 +62,18 @@ test.agExample(import.meta, () => {
         }).toPass();
     });
 
+    test.eachFramework('should filter rows with a one-input custom option', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await applyExpression(page, '[Athlete] Regular Expression "^Mich"');
+        await expect(async () => {
+            const athletes = await orderedValues(page, 'athlete');
+            expect(athletes.length).toBeGreaterThan(0);
+            expect(athletes.filter((athlete) => !/^Mich/i.test(athlete))).toEqual([]);
+        }).toPass();
+    });
+
     test.eachFramework('should filter the date column with its custom options', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);

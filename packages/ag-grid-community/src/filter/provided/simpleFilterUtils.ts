@@ -1,9 +1,23 @@
 import type { LogService } from '../../validation/logService';
+import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type { FilterOptionKey, IFilterOptionDef, ISimpleFilterModelType, JoinOperator } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
 export function removeItems<T>(items: T[], startPosition: number, deleteCount?: number): T[] {
     return deleteCount == null ? items.splice(startPosition) : items.splice(startPosition, deleteCount);
+}
+
+/** The message an out-of-order pair earns, on the input the user last touched. */
+export function getStrictRangeValidityMessageKey<T extends number | bigint>(
+    fromValue: T | null,
+    toValue: T | null,
+    isFrom: boolean
+): FilterLocaleTextKey | null {
+    const isInvalid = fromValue != null && toValue != null && fromValue >= toValue;
+    if (!isInvalid) {
+        return null;
+    }
+    return `strict${isFrom ? 'Max' : 'Min'}ValueValidation`;
 }
 
 export function isBlank<V>(cellValue: V) {
@@ -54,13 +68,18 @@ const zeroInputTypes: ReadonlySet<string> = new Set<ISimpleFilterModelType>([
     'last24Months',
 ]);
 
+/** Reported by name when one is absent, so the warning says which; validity is the same set being present. */
+const REQUIRED_OPTION_PROPERTIES: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isValidFilterOptionDef(option: IFilterOptionDef): boolean {
-    return option.displayKey != null && option.displayName != null && option.predicate != null;
+    for (let i = 0, len = REQUIRED_OPTION_PROPERTIES.length; i < len; ++i) {
+        if (option[REQUIRED_OPTION_PROPERTIES[i]] == null) {
+            return false;
+        }
+    }
+    return true;
 }
-
-/** Reported by name when one is absent, so the warning says which; `_isValidFilterOptionDef` tests the same set. */
-const REQUIRED_OPTION_PROPERTIES: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getMissingFilterOptionKeys(option: IFilterOptionDef): string[] {

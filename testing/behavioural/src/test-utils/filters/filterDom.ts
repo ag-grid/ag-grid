@@ -63,6 +63,9 @@ export class FilterDom {
         if (document.querySelector('.ag-filter-toolpanel')) {
             return 'filters-tool-panel';
         }
+        if (document.querySelector('.ag-advanced-filter')) {
+            return 'advanced-filter';
+        }
         return this.options.colId ? 'floating-filter' : 'advanced-filter';
     }
 

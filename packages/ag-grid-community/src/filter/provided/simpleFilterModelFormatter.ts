@@ -126,8 +126,11 @@ export abstract class SimpleFilterModelFormatter<
     }
 
     protected getTypeKey(type: FilterOptionKey | null | undefined): FilterLocaleTextKey | null {
-        const suffix = this.filterTypeKeys[type as keyof FilterTypeKeys];
-        return suffix ? `filterSummary${suffix}` : null;
+        const keys = this.filterTypeKeys;
+        if (type == null || !Object.prototype.hasOwnProperty.call(keys, type)) {
+            return null;
+        }
+        return `filterSummary${keys[type as keyof FilterTypeKeys]}`;
     }
 
     protected formatValue(value?: TValue | null): string {

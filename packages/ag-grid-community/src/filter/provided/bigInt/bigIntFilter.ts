@@ -1,8 +1,8 @@
 import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
-import type { FilterLocaleTextKey } from '../../filterLocaleText';
-import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
+import type { ICombinedSimpleModel } from '../iSimpleFilter';
+import { getStrictRangeValidityMessageKey } from '../simpleFilterUtils';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { getAllowedCharPattern, mapValuesFromBigIntFilterModel, stringToBigInt } from './bigIntFilterUtils';
@@ -27,11 +27,9 @@ export class BigIntFilter extends TextInputSimpleFilter<
     protected override defaultDebounceMs = 500;
 
     protected override refreshPositionValidation(position: number, isFrom = false): void {
-        const from = this.eValuesFrom[position];
-        const to = this.eValuesTo[position];
-        const { bigintParser } = this.params;
-        const fromValue = this.getParsedValue(from, bigintParser);
-        const toValue = this.getParsedValue(to, bigintParser);
+        const { from, to } = this.getConditionInputs(position);
+        const fromValue = this.readValue(from);
+        const toValue = this.readValue(to);
         const fromInvalid = this.isInvalidValue(from, fromValue);
         const toInvalid = this.isInvalidValue(to, toValue);
 
@@ -44,7 +42,7 @@ export class BigIntFilter extends TextInputSimpleFilter<
         if (isFrom ? fromInvalid : toInvalid) {
             validityMessage = this.getLocaleTextFunc()('invalidBigInt', 'Invalid BigInt');
         } else if (!fromInvalid && !toInvalid && this.isRangeCondition(position)) {
-            const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
+            const localeKey = getStrictRangeValidityMessageKey(fromValue, toValue, isFrom);
             validityMessage = localeKey ? this.translate(localeKey, [String(other.getValue())]) : '';
         }
 
@@ -57,19 +55,8 @@ export class BigIntFilter extends TextInputSimpleFilter<
         }
     }
 
-    protected override setElementValue(
-        element: GridInputTextField,
-        value: bigint | null,
-        fromFloatingFilter?: boolean
-    ): void {
-        // values from floating filter are directly from the input, not from the model
-        const bigintFormatter = this.params.bigintFormatter;
-        const valueToSet = !fromFloatingFilter && bigintFormatter ? bigintFormatter(value ?? null) : value;
-        super.setElementValue(element, valueToSet as any, fromFloatingFilter);
-        this.trackRenderedValue(element, value, fromFloatingFilter);
-        if (valueToSet === null) {
-            element.setCustomValidity('');
-        }
+    protected override getValueFormatter(): ((value: bigint | null) => string | null) | undefined {
+        return this.params.bigintFormatter;
     }
 
     protected override commonUpdateSimpleParams(params: BigIntFilterDisplayParams): void {
@@ -90,14 +77,14 @@ export class BigIntFilter extends TextInputSimpleFilter<
         }
     }
 
-    protected override readPreviousText(
+    protected override parseText(
         text: string | null | undefined,
-        previous: BigIntFilterDisplayParams | undefined
+        params: BigIntFilterDisplayParams | undefined
     ): bigint | null {
-        return stringToBigInt(previous?.bigintParser, text);
+        return stringToBigInt(params?.bigintParser, text);
     }
 
-    protected override createInputElement(fromTo: string): GridInputTextField {
+    protected override createInputElement(fromTo: 'from' | 'to'): GridInputTextField {
         const allowedCharPattern = this.allowedCharPattern;
         const eValue = this.createManagedBean<GridInputTextField>(
             new AgInputTextField(allowedCharPattern ? { allowedCharPattern } : undefined)
@@ -105,18 +92,6 @@ export class BigIntFilter extends TextInputSimpleFilter<
         eValue.addCss(`ag-filter-${fromTo}`);
         eValue.addCss('ag-filter-filter');
         return eValue;
-    }
-
-    protected getValues(position: number): Tuple<bigint> {
-        const { bigintParser } = this.params;
-        const result: Tuple<bigint> = [];
-        this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
-            if (index < numberOfInputs) {
-                result.push(this.getParsedValue(element, bigintParser));
-            }
-        });
-
-        return result;
     }
 
     protected areSimpleModelsEqual(aSimple: BigIntFilterModel, bSimple: BigIntFilterModel): boolean {
@@ -143,32 +118,8 @@ export class BigIntFilter extends TextInputSimpleFilter<
         return model;
     }
 
-    /** The value an input holds: the one it was rendered with, until the user makes the text their own. */
-    private getParsedValue(
-        element: GridInputTextField,
-        bigintParser: IBigIntFilterParams['bigintParser']
-    ): bigint | null {
-        const rendered = this.getRenderedValue(element);
-        if (rendered) {
-            return rendered.value;
-        }
-        return stringToBigInt(bigintParser, element.getValue());
-    }
-
     private isInvalidValue(element: GridInputTextField, parsedValue: bigint | null): boolean {
         const rawValue = element.getValue();
         return rawValue != null && String(rawValue).trim() !== '' && parsedValue === null;
     }
-}
-
-function getValidityMessageKey(
-    fromValue: bigint | null,
-    toValue: bigint | null,
-    isFrom: boolean
-): FilterLocaleTextKey | null {
-    const isInvalid = fromValue != null && toValue != null && fromValue >= toValue;
-    if (!isInvalid) {
-        return null;
-    }
-    return `strict${isFrom ? 'Max' : 'Min'}ValueValidation`;
 }

@@ -90,8 +90,11 @@ export class OptionsFactory {
             return undefined;
         }
         // Only an option the dropdown lists can be selected into it.
-        if (defaultOption != null && this.hasOption(defaultOption)) {
-            return defaultOption;
+        if (defaultOption != null) {
+            if (this.hasOption(defaultOption)) {
+                return defaultOption;
+            }
+            log.warn(326, { defaultOption });
         }
         return typeof firstFilterOption === 'string' ? firstFilterOption : firstFilterOption.displayKey;
     }

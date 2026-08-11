@@ -139,7 +139,7 @@ export { FilterComp } from './filter/filterComp';
 export {
     _getDefaultSimpleFilter,
     _getFilterParamsForDataType,
-    _isDataTypeFilterOptions,
+    _isGridSuppliedFilterOptions,
 } from './filter/filterDataTypeUtils';
 export {
     _getCustomOptionNumberOfInputs,

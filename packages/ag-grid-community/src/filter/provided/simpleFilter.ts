@@ -121,18 +121,6 @@ export abstract class SimpleFilter<
         // Overridden by the filters whose inputs can reject what they hold; `isFrom` names the edited input.
     }
 
-    /** Resolved per event, never captured: a condition removed from the middle shifts every one after it. */
-    protected getInputPosition(element: E): number {
-        const eTypes = this.eTypes;
-        for (let position = 0, len = eTypes.length; position < len; ++position) {
-            const inputs = this.getInputs(position);
-            if (inputs[0] === element || inputs[1] === element) {
-                return position;
-            }
-        }
-        return -1;
-    }
-
     /** An option taking one value has no range, so the second input is not part of what it filters on. */
     protected isRangeCondition(position: number): boolean {
         return getNumberOfInputs(this.getConditionType(position), this.optionsFactory) === 2;
@@ -175,8 +163,15 @@ export abstract class SimpleFilter<
             const isStillOffered = optionsFactory.hasOption(selectedType);
             eType.setValue(isStillOffered ? selectedType : optionsFactory.defaultOption, true);
             if (!isStillOffered) {
-                // Values the withdrawn option collected mean nothing to the one replacing it.
-                this.forEachPositionInput(position, (element) => this.resetInput(element));
+                // Every mounted input, not just the ones the replacement uses: the values are the withdrawn
+                // option's, and one it leaves unread would come back if that arity were chosen again.
+                const inputs = this.getInputs(position);
+                for (let i = 0, len = inputs.length; i < len; ++i) {
+                    const element = inputs[i];
+                    if (element) {
+                        this.resetInput(element);
+                    }
+                }
             }
         }
         // An option that kept its key can still have changed arity, leaving a message on a lone input.
@@ -821,6 +816,9 @@ export abstract class SimpleFilter<
 
         this.lastUiCompletePosition = null;
 
+        // Every input holds the new model, so a message the old one left is about nothing shown.
+        this.refreshInputValidation();
+
         this.updateUiVisibility();
         if (!silent) {
             this.params.onUiChange(this.getUiChangeEventParams());
@@ -985,6 +983,10 @@ export abstract class SimpleFilter<
                 index < numberOfInputs && this.isInputValueSettled(element) && this.isInputInvalid(element);
         });
         return invalidInputs;
+    }
+
+    protected override canApply(_model: FilterModelOrCombined<M>): boolean {
+        return !this.hasInvalidInputs();
     }
 
     /** Unsettled inputs count here: this decides whether one condition may be applied, not whether it is stable. */

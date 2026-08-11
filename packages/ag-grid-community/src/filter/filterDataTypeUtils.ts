@@ -101,15 +101,20 @@ type FilterParamsDefMap = CheckDataTypes<{
     object: FilterParamCallback<ITextFilterParams, any>;
 }>;
 
-/** One list shared by every boolean column, so a refresh recognises it as unchanged. Never mutated. */
-const BOOLEAN_FILTER_OPTIONS: (string | IFilterOptionDef)[] = [
+/** One list shared by every boolean column, so a refresh recognises it as unchanged. */
+const BOOLEAN_FILTER_OPTIONS: readonly (string | IFilterOptionDef)[] = [
     'empty',
     { displayKey: 'true', displayName: 'True', numberOfInputs: 0, predicate: (_, cellValue) => !!cellValue },
     { displayKey: 'false', displayName: 'False', numberOfInputs: 0, predicate: (_, cellValue) => cellValue === false },
 ];
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export const _isDataTypeFilterOptions = (filterOptions: unknown): boolean => filterOptions === BOOLEAN_FILTER_OPTIONS;
+/**
+ * Whether the list is the grid's own for the cell data type, rather than options the column author wrote.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isGridSuppliedFilterOptions(filterOptions: unknown): boolean {
+    return filterOptions === BOOLEAN_FILTER_OPTIONS;
+}
 
 // using an object here to enforce dev to not forget to implement new types as they are added
 const filterParamsForEachDataType: FilterParamsDefMap = {

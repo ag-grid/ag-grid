@@ -1114,7 +1114,7 @@ describe('Column filter — an invalid custom option', () => {
     });
 
     test('is not defaulted to by `defaultOption` either, which names an option the dropdown lacks', async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [72] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [72, 326] });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', {
@@ -1137,10 +1137,11 @@ describe('Column filter — an invalid custom option', () => {
         expect(await filter.operatorOptions()).toEqual(['Equals', 'Multiple of']);
         expect(filter.operatorSelectValue()).toBe('Equals');
 
-        // Only the rejected option is reported; substituting the default it named needs no warning of its own.
+        // Both faults are the user's to fix: the option is malformed, and the default names one not offered.
         const warnings = warnSpy.mock.calls.map((call) => call.map(String).join(' ')).join('\n');
         expect(warnings).toContain('warning #72');
-        expect(warnings).not.toContain('`noPredicate`');
+        expect(warnings).toContain('warning #326');
+        expect(warnings).toContain('noPredicate');
 
         await filter.setNumber(40, 0);
         await asyncSetTimeout(0);
@@ -1215,7 +1216,7 @@ const EDGE_KEY_OPTS: GridOptions<AgeRow> = {
 
 describe('Column filter — a built-in option the filter cannot evaluate', () => {
     const gridsManager = new TestGridsManager({
-        modules: [TextFilterModule, ColumnMenuModule, ClientSideRowModelModule],
+        modules: [TextFilterModule, NumberFilterModule, ColumnMenuModule, ClientSideRowModelModule],
     });
 
     beforeAll(() => {
@@ -1291,6 +1292,38 @@ describe('Column filter — a built-in option the filter cannot evaluate', () =>
         expect(warnings).toContain('lastYear');
     });
 
+    // Both filters report `#76`, but they answer it differently, and neither answer changed on this branch.
+    test('a number filter shows every row for the option it cannot evaluate, where a text filter shows none', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [76] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'age',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { filterOptions: ['equals', 'contains'], debounceMs: 0 },
+                },
+            ],
+            rowData: [{ age: 25 }, { age: 40 }],
+        } as GridOptions);
+
+        const filter = await ColumnFilterHarness.open(api, 'age');
+        await filter.selectOperator('Contains');
+        await filter.setNumber(25, 0);
+        await asyncSetTimeout(0);
+
+        // The scalar filters admit the row they cannot judge; the text filter excludes it.
+        await new GridRows(api, 'a number `contains` the comparison cannot answer').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 age:25
+            └── LEAF id:1 age:40
+        `);
+        const warnings = warnSpy.mock.calls.map((call) => call.map(String).join(' ')).join('\n');
+        expect(warnings).toContain('warning #76');
+        expect(warnings).toContain('contains');
+    });
+
     test('a `textMatcher` answering the key is what makes it usable, and nothing is reported', async () => {
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
@@ -1347,7 +1380,11 @@ describe('Custom filter option — a `displayKey` shadowing `Object.prototype`',
         installFilterLayoutMock();
     });
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => gridsManager.reset());
+    afterEach(() => {
+        gridsManager.reset();
+        vi.restoreAllMocks();
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
+    });
 
     test('the column filter offers it and filters with it', async () => {
         const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', EDGE_KEY_OPTS);
@@ -1621,7 +1658,10 @@ describe('Column filter — a `defaultOption` the dropdown does not offer', () =
         enableDevValidations({ throwOn: ALL_SEVERITIES });
     });
 
-    test('falls back to the first offered option', async () => {
+    test('falls back to the first offered option, and reports the one it could not select', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [326] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {
@@ -1639,6 +1679,10 @@ describe('Column filter — a `defaultOption` the dropdown does not offer', () =
 
         const filter = await ColumnFilterHarness.open(api, 'age');
         expect(filter.operatorSelectValue()).toBe('Greater than');
+
+        const warnings = warnSpy.mock.calls.map((call) => call.map(String).join(' ')).join('\n');
+        expect(warnings).toContain('warning #326');
+        expect(warnings).toContain('lessThan');
         await new FilterDom(api, 'fallen back to the first offered option', { colId: 'age' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Greater than"

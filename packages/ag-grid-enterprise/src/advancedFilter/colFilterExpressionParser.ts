@@ -137,7 +137,15 @@ class OperatorParser implements Parser {
             }
         }
         // A resolved name may run past the terminator that settled it, so the rest of it is consumed as read.
-        return position > this.matchEndPosition! ? true : undefined;
+        if (position <= this.matchEndPosition!) {
+            return undefined;
+        }
+        // The region ends here and the caller drops this character, so only a terminator may abut the name:
+        // anything else would be silently discarded and the text would name an option it does not spell.
+        if (char !== ' ' && char !== ')') {
+            this.valid = false;
+        }
+        return true;
     }
 
     public complete(position: number): void {

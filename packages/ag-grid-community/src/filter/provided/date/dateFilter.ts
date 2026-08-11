@@ -129,21 +129,19 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             params,
         } = this;
         const isFrom = fromTo === 'from';
+        // Resolved per event, never captured: a condition removed from the middle shifts every one after it.
+        const position = () =>
+            (isFrom ? this.dateConditionFromComps : this.dateConditionToComps).indexOf(dateCompWrapper);
         const dateCompWrapper = new DateCompWrapper(
             context,
             userCompFactory,
             params.colDef,
             _addGridCommonParams<IDateParams>(gos, {
                 onDateChanged: () => {
-                    this.refreshInputPairValidation(this.getInputPosition(dateCompWrapper), isFrom, 'debounce');
+                    this.refreshInputPairValidation(position(), isFrom, 'debounce');
                     this.onUiChanged();
                 },
-                onFocusIn: () =>
-                    this.refreshInputPairValidation(
-                        this.getInputPosition(dateCompWrapper),
-                        isFrom,
-                        'debounceIfChanged'
-                    ),
+                onFocusIn: () => this.refreshInputPairValidation(position(), isFrom, 'debounceIfChanged'),
                 filterParams: params as any,
                 location: 'filter',
             }),
@@ -153,15 +151,12 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         return dateCompWrapper;
     }
 
+    /** Equivalent to the inputs' validity, so a change in it drives a UI update (see `ProvidedFilter.refresh`). */
     protected override getState(): { isInvalid: boolean } {
-        // State represents non-model related UI state, so we make this equivalent to the validity state of the inputs
-        // so that changes in validity state cause updates to the UI (see `ProvidedFilter.refresh`).
         return { isInvalid: this.hasInvalidInputs() };
     }
 
     protected override areStatesEqual(stateA?: { isInvalid: boolean }, stateB?: { isInvalid: boolean }): boolean {
-        // For DateFilter, the state is just a boolean of whether or not any inputs are invalid.
-        // As such, `undefined` should be identical to `false`
         return (stateA?.isInvalid ?? false) === (stateB?.isInvalid ?? false);
     }
 
@@ -249,10 +244,6 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     /** A date is read only once whole, so a part-typed one is not a value the picker has rejected. */
     protected override isInputValueSettled(element: DateCompWrapper): boolean {
         return element.getDate() != null;
-    }
-
-    protected override canApply(_model: DateFilterModel | ICombinedSimpleModel<DateFilterModel> | null): boolean {
-        return !this.hasInvalidInputs();
     }
 
     protected override isConditionUiComplete(position: number): boolean {

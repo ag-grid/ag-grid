@@ -164,11 +164,12 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
     /** The whole row is rebuilt, not just its tail: the first pill is named From only while there is a second. */
     private syncOperandPills(): void {
         const { eOperandPills, numOperands } = this;
+        // A supplied model can carry slots the chosen option does not take, and they are not its values.
+        for (let i = numOperands, len = OPERAND_KEYS.length; i < len; ++i) {
+            this.setOperandModelValue(i, undefined);
+        }
         if (eOperandPills.length === numOperands) {
             return;
-        }
-        for (let i = numOperands, len = eOperandPills.length; i < len; ++i) {
-            this.setOperandModelValue(i, undefined);
         }
         this.destroyOperandPills();
         for (let i = 0; i < numOperands; ++i) {
@@ -255,12 +256,15 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
 
     private setOperand(operand: string, index: number): void {
         // Number comes back as string from input, so convert. Dates are already in iso string format
-        this.setOperandModelValue(index, this.baseCellDataType === 'number' && operand ? Number(operand) : operand);
+        // An emptied pill holds nothing to filter on, so the slot goes rather than keeping an empty string.
+        const value = this.baseCellDataType === 'number' && operand ? Number(operand) : operand;
+        this.setOperandModelValue(index, value === '' ? undefined : value);
         this.validate();
     }
 
+    /** Resolved, not suggested: narrowing governs what a column offers, and a built-in still filters. */
     private isOperatorOffered(operator: string): boolean {
-        return !!operator && this.getOperatorAutocompleteEntries().some(({ key }) => key === operator);
+        return !!operator && !!this.advFilterExpSvc.getExpressionOperator(this.baseCellDataType, operator, this.column);
     }
 
     private getNumOperands(operator: string): number {

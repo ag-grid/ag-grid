@@ -492,4 +492,66 @@ describe('Number Range Filter', () => {
         expect(filter.input('number', 0).validationMessage).toBe('');
         expect(filter.input('number', 0).validity.valid).toBe(true);
     });
+
+    test('a `colDef` refresh keeps the value an input showing a range error holds', async () => {
+        const columnDefs = (numberParser: (value: string | null) => number | null) => [
+            {
+                field: 'gold',
+                filter: 'agNumberColumnFilter' as const,
+                filterParams: { debounceMs: 0, filterOptions: ['inRange'], numberParser },
+            },
+        ];
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: columnDefs((value) => (value == null ? null : Number(value))),
+            rowData: [{ gold: 2 }, { gold: 8 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        await filter.setNumber(9, 0);
+        await filter.setNumber(1, 1);
+        expect(filter.input('number', 1).validity.valid).toBe(false);
+
+        // A new parser identity re-renders every input, and the invalid one still holds what the user typed.
+        api.setGridOption(
+            'columnDefs',
+            columnDefs((value) => (value == null ? null : Number(value)))
+        );
+        await asyncSetTimeout(0);
+
+        expect(filter.input('number', 0).value).toBe('9');
+        expect(filter.input('number', 1).value).toBe('1');
+    });
+
+    test('Reset clears a range message a `numberFormatter` would otherwise leave on an empty input', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'gold',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: {
+                        debounceMs: 0,
+                        filterOptions: ['inRange'],
+                        buttons: ['reset'],
+                        // Writes '' rather than null for no value, so the empty input is not written as null.
+                        numberFormatter: (value: number | null) => (value == null ? '' : String(value)),
+                    },
+                },
+            ],
+            rowData: [{ gold: 2 }, { gold: 8 }],
+        });
+
+        // A `numberFormatter` gives the column text inputs, so its values are read as text.
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        await filter.setText('9', 0);
+        await filter.setText('1', 1);
+        expect(filter.input('text', 1).validity.valid).toBe(false);
+
+        await filter.reset();
+
+        // Both inputs are empty, so there is no pair left for the message to be about.
+        expect(filter.input('text', 1).value).toBe('');
+        expect(filter.input('text', 1).validationMessage).toBe('');
+        expect(filter.input('text', 1).validity.valid).toBe(true);
+    });
 });

@@ -2,8 +2,8 @@ import { AgInputNumberField } from '../../../agWidgets/agInputNumberField';
 import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
-import type { FilterLocaleTextKey } from '../../filterLocaleText';
-import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
+import type { ICombinedSimpleModel } from '../iSimpleFilter';
+import { getStrictRangeValidityMessageKey } from '../simpleFilterUtils';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
 import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
@@ -57,19 +57,24 @@ export class NumberFilter extends TextInputSimpleFilter<
         }
     }
 
-    protected override readPreviousText(
+    protected override parseText(
         text: string | null | undefined,
-        previous: NumberFilterDisplayParams | undefined
+        params: NumberFilterDisplayParams | undefined
     ): number | null {
-        return processNumberFilterValue(stringToFloat(previous?.numberParser, text));
+        return processNumberFilterValue(stringToFloat(params?.numberParser, text));
+    }
+
+    protected override getValueFormatter(): ((value: number | null) => string | null) | undefined {
+        return this.params.numberFormatter;
     }
 
     protected override refreshPositionValidation(position: number, isFrom = false): void {
-        const from = this.eValuesFrom[position];
-        const to = this.eValuesTo[position];
+        const { from, to } = this.getConditionInputs(position);
         const fromValue = this.readValue(from, true);
         const toValue = this.readValue(to, true);
-        const localeKey = this.isRangeCondition(position) ? getValidityMessageKey(fromValue, toValue, isFrom) : null;
+        const localeKey = this.isRangeCondition(position)
+            ? getStrictRangeValidityMessageKey(fromValue, toValue, isFrom)
+            : null;
         const validityMessage = localeKey ? this.translate(localeKey, [String(isFrom ? toValue : fromValue)]) : '';
         (isFrom ? from : to).setCustomValidity(validityMessage); // Set validity error state for target input
         (isFrom ? to : from).setCustomValidity(''); // Reset validity error state for other input
@@ -78,31 +83,7 @@ export class NumberFilter extends TextInputSimpleFilter<
         }
     }
 
-    protected override setElementValue(
-        element: GridInputTextField | GridInputNumberField,
-        value: number | null,
-        fromFloatingFilter?: boolean
-    ): void {
-        // values from floating filter are directly from the input, not from the model
-        const numberFormatter = this.params.numberFormatter;
-        const valueToSet = !fromFloatingFilter && numberFormatter ? numberFormatter(value ?? null) : value;
-        super.setElementValue(element, valueToSet as any);
-        this.trackRenderedValue(element, value, fromFloatingFilter);
-        if (valueToSet === null) {
-            element.setCustomValidity('');
-        }
-    }
-
-    /** The value an input holds: the one it was rendered with, until the user makes the text their own. */
-    private readValue(element: GridInputTextField | GridInputNumberField, ignoreValidity?: boolean): number | null {
-        const rendered = this.getRenderedValue(element);
-        if (rendered) {
-            return rendered.value;
-        }
-        return processNumberFilterValue(stringToFloat(this.params.numberParser, element.getValue(ignoreValidity)));
-    }
-
-    protected override createInputElement(fromTo: string): GridInputTextField | GridInputNumberField {
+    protected override createInputElement(fromTo: 'from' | 'to'): GridInputTextField | GridInputNumberField {
         const allowedCharPattern = this.allowedCharPattern;
         const eValue = this.createManagedBean<GridInputTextField | GridInputNumberField>(
             this.usesTextInput
@@ -112,17 +93,6 @@ export class NumberFilter extends TextInputSimpleFilter<
         eValue.addCss(`ag-filter-${fromTo}`);
         eValue.addCss('ag-filter-filter');
         return eValue;
-    }
-
-    protected getValues(position: number): Tuple<number> {
-        const result: Tuple<number> = [];
-        this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
-            if (index < numberOfInputs) {
-                result.push(this.readValue(element));
-            }
-        });
-
-        return result;
     }
 
     protected areSimpleModelsEqual(aSimple: NumberFilterModel, bSimple: NumberFilterModel): boolean {
@@ -148,16 +118,4 @@ export class NumberFilter extends TextInputSimpleFilter<
 
         return model;
     }
-}
-
-function getValidityMessageKey(
-    fromValue: number | null,
-    toValue: number | null,
-    isFrom: boolean
-): FilterLocaleTextKey | null {
-    const isInvalid = fromValue != null && toValue != null && fromValue >= toValue;
-    if (!isInvalid) {
-        return null;
-    }
-    return `strict${isFrom ? 'Max' : 'Min'}ValueValidation`;
 }

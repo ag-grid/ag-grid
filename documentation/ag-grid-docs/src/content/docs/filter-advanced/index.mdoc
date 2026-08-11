@@ -207,6 +207,8 @@ const advancedFilterModel = {
 
 A `displayKey` is resolved against the column being filtered, so different columns can reuse the same key. Reusing an Option Key from the table above replaces that built-in option for the column, the same as it does in the column filter.
 
+`filterOptions` narrows what the Advanced Filter _offers_ for a column - the suggestions and the Builder's list. It does not restrict what an expression may say: a built-in operator the column omits still parses and still filters when it is typed out in full.
+
 The following example demonstrates custom filter options taking different numbers of values:
 
 - The **Athlete** column has `Starts With A` (no values) and `Regular Expression` (one value).
