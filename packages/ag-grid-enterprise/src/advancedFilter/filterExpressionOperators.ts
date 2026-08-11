@@ -1,13 +1,14 @@
-import type { BaseCellDataType, IRowNode } from 'ag-grid-community';
+import type { BaseCellDataType, EvaluatorFilterParams, IRowNode } from 'ag-grid-community';
+import { _TEXT_FILTER_PREDICATES, _getBuiltInOptionNumberOfInputs, _isBlank } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
 
-export interface FilterExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue> {
-    caseSensitive?: boolean;
-    includeBlanksInEquals?: boolean;
-    includeBlanksInLessThan?: boolean;
-    includeBlanksInGreaterThan?: boolean;
+/** The column filter's own evaluation params, so one `filterParams` governs both filters. */
+export interface FilterExpressionEvaluatorParams<
+    ConvertedTValue,
+    TValue = ConvertedTValue,
+> extends EvaluatorFilterParams {
     valueConverter: (value: TValue, node: IRowNode) => ConvertedTValue;
 }
 
@@ -96,6 +97,20 @@ export function getEntries<ConvertedTValue, TValue = ConvertedTValue>(
     return entries;
 }
 
+/** Arity comes from the shared table rather than each definition, so an option cannot disagree with the
+ * column filter about how many values it takes. */
+function defineOperators<C, T>(definitions: {
+    [operator: string]: Omit<FilterExpressionOperator<C, T>, 'numOperands'>;
+}): { [operator: string]: FilterExpressionOperator<C, T> } {
+    const operators: { [operator: string]: FilterExpressionOperator<C, T> } = {};
+    const keys = Object.keys(definitions);
+    for (let i = 0, len = keys.length; i < len; ++i) {
+        const key = keys[i];
+        operators[key] = { ...definitions[key], numOperands: _getBuiltInOptionNumberOfInputs(key) };
+    }
+    return operators;
+}
+
 interface FilterExpressionOperatorsParams {
     translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => string;
 }
@@ -120,54 +135,47 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
 
     private initOperators(): void {
         const { translate } = this.params;
-        this.operators = {
+        this.operators = defineOperators({
             contains: {
                 displayValue: translate('advancedFilterContains'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.includes(o)),
-                numOperands: 1,
+                    this.evaluateExpression(value, node, params, operand1!, false, _TEXT_FILTER_PREDICATES.contains),
             },
             notContains: {
                 displayValue: translate('advancedFilterNotContains'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, true, (v, o) => !v.includes(o)),
-                numOperands: 1,
+                    this.evaluateExpression(value, node, params, operand1!, true, _TEXT_FILTER_PREDICATES.notContains),
             },
             equals: {
                 displayValue: translate('advancedFilterTextEquals'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v === o),
-                numOperands: 1,
+                    this.evaluateExpression(value, node, params, operand1!, false, _TEXT_FILTER_PREDICATES.equals),
             },
             notEqual: {
                 displayValue: translate('advancedFilterTextNotEqual'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, true, (v, o) => v != o),
-                numOperands: 1,
+                    this.evaluateExpression(value, node, params, operand1!, true, _TEXT_FILTER_PREDICATES.notEqual),
             },
             startsWith: {
                 displayValue: translate('advancedFilterStartsWith'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.startsWith(o)),
-                numOperands: 1,
+                    this.evaluateExpression(value, node, params, operand1!, false, _TEXT_FILTER_PREDICATES.startsWith),
             },
             endsWith: {
                 displayValue: translate('advancedFilterEndsWith'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.endsWith(o)),
-                numOperands: 1,
+                    this.evaluateExpression(value, node, params, operand1!, false, _TEXT_FILTER_PREDICATES.endsWith),
             },
+            // The column filter's own test, so `blank` means one thing whichever filter asks.
             blank: {
                 displayValue: translate('advancedFilterBlank'),
-                evaluator: (value) => value == null || (typeof value === 'string' && value.trim().length === 0),
-                numOperands: 0,
+                evaluator: (value) => _isBlank(value),
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
-                evaluator: (value) => value != null && (typeof value !== 'string' || value.trim().length > 0),
-                numOperands: 0,
+                evaluator: (value) => !_isBlank(value),
             },
-        };
+        });
     }
 
     private evaluateExpression(
@@ -211,7 +219,7 @@ export class ScalarFilterExpressionOperators<
 
     private initOperators(): void {
         const { translate, equals } = this.params;
-        this.operators = {
+        this.operators = defineOperators({
             equals: {
                 displayValue: translate('advancedFilterEquals'),
                 evaluator: (value, node, params, operand1) =>
@@ -223,7 +231,6 @@ export class ScalarFilterExpressionOperators<
                         !!params.includeBlanksInEquals,
                         equals
                     ),
-                numOperands: 1,
             },
             notEqual: {
                 displayValue: translate('advancedFilterNotEqual'),
@@ -233,10 +240,10 @@ export class ScalarFilterExpressionOperators<
                         node,
                         params,
                         operand1!,
-                        !!params.includeBlanksInEquals,
-                        (v, o) => !equals(v, o)
+                        !!params.includeBlanksInNotEqual,
+                        (v, o) => !equals(v, o),
+                        true
                     ),
-                numOperands: 1,
             },
             greaterThan: {
                 displayValue: translate('advancedFilterGreaterThan'),
@@ -249,7 +256,6 @@ export class ScalarFilterExpressionOperators<
                         !!params.includeBlanksInGreaterThan,
                         (v, o) => v > o
                     ),
-                numOperands: 1,
             },
             greaterThanOrEqual: {
                 displayValue: translate('advancedFilterGreaterThanOrEqual'),
@@ -262,7 +268,6 @@ export class ScalarFilterExpressionOperators<
                         !!params.includeBlanksInGreaterThan,
                         (v, o) => v >= o
                     ),
-                numOperands: 1,
             },
             lessThan: {
                 displayValue: translate('advancedFilterLessThan'),
@@ -275,7 +280,6 @@ export class ScalarFilterExpressionOperators<
                         !!params.includeBlanksInLessThan,
                         (v, o) => v < o
                     ),
-                numOperands: 1,
             },
             lessThanOrEqual: {
                 displayValue: translate('advancedFilterLessThanOrEqual'),
@@ -288,19 +292,16 @@ export class ScalarFilterExpressionOperators<
                         !!params.includeBlanksInLessThan,
                         (v, o) => v <= o
                     ),
-                numOperands: 1,
             },
             blank: {
                 displayValue: translate('advancedFilterBlank'),
                 evaluator: (value) => value == null,
-                numOperands: 0,
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
                 evaluator: (value) => value != null,
-                numOperands: 0,
             },
-        };
+        });
     }
 
     private evaluateSingleOperandExpression(
@@ -309,12 +310,19 @@ export class ScalarFilterExpressionOperators<
         params: FilterExpressionEvaluatorParams<ConvertedTValue, TValue>,
         operand: ConvertedTValue,
         nullsMatch: boolean,
-        expression: (value: ConvertedTValue, operand: ConvertedTValue) => boolean
+        expression: (value: ConvertedTValue, operand: ConvertedTValue) => boolean,
+        isNegated?: boolean
     ): boolean {
         if (value == null) {
             return nullsMatch;
         }
-        return expression(params.valueConverter(value, node), operand);
+        const convertedValue = params.valueConverter(value, node);
+        // A value the data type cannot read is nothing to compare against, as the column filter's own validity
+        // gate decides: it matches no comparison, and so matches every negation of one.
+        if (convertedValue == null) {
+            return !!isNegated;
+        }
+        return expression(convertedValue, operand);
     }
 }
 
@@ -335,27 +343,23 @@ export class BooleanFilterExpressionOperators implements DataTypeFilterExpressio
 
     private initOperators(): void {
         const { translate } = this.params;
-        this.operators = {
+        this.operators = defineOperators({
             true: {
                 displayValue: translate('advancedFilterTrue'),
                 evaluator: (value) => !!value,
-                numOperands: 0,
             },
             false: {
                 displayValue: translate('advancedFilterFalse'),
                 evaluator: (value) => value === false,
-                numOperands: 0,
             },
             blank: {
                 displayValue: translate('advancedFilterBlank'),
                 evaluator: (value) => value == null,
-                numOperands: 0,
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
                 evaluator: (value) => value != null,
-                numOperands: 0,
             },
-        };
+        });
     }
 }

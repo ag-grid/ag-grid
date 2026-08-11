@@ -12,7 +12,7 @@ import type {
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _classifyFilterOptions } from 'ag-grid-community';
+import { BeanStub, _EVALUATOR_FILTER_PARAMS, _classifyFilterOptions } from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -460,14 +460,14 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         }
         const { filterParams } = column.colDef;
         if (filterParams) {
-            ['caseSensitive', 'includeBlanksInEquals', 'includeBlanksInLessThan', 'includeBlanksInGreaterThan'].forEach(
-                (param: keyof FilterExpressionEvaluatorParams<ConvertedTValue, TValue>) => {
-                    const paramValue = filterParams[param];
-                    if (paramValue) {
-                        params[param] = paramValue;
-                    }
+            // The column filter's own list, so a param added there reaches the Advanced Filter with it.
+            for (let i = 0, len = _EVALUATOR_FILTER_PARAMS.length; i < len; ++i) {
+                const param = _EVALUATOR_FILTER_PARAMS[i];
+                const paramValue = filterParams[param];
+                if (paramValue) {
+                    params[param] = paramValue;
                 }
-            );
+            }
         }
         this.expressionEvaluatorParams[colId] = params;
 

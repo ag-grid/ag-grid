@@ -141,7 +141,15 @@ export {
     _getFilterParamsForDataType,
     _isGridSuppliedFilterOptions,
 } from './filter/filterDataTypeUtils';
-export { _classifyFilterOptions, _getCustomOptionNumberOfInputs } from './filter/provided/simpleFilterUtils';
+export {
+    _EVALUATOR_FILTER_PARAMS,
+    _classifyFilterOptions,
+    _getBuiltInOptionNumberOfInputs,
+    _getCustomOptionNumberOfInputs,
+    isBlank as _isBlank,
+} from './filter/provided/simpleFilterUtils';
+export type { EvaluatorFilterParams } from './filter/provided/simpleFilterUtils';
+export { _TEXT_FILTER_PREDICATES } from './filter/provided/text/textFilterUtils';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';

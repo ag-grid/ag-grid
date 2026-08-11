@@ -6,7 +6,7 @@ import { isBlank } from '../simpleFilterUtils';
 import type { ITextFilterParams, TextFilterModel, TextFormatter, TextMatcher } from './iTextFilter';
 import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
 import { TextFilterModelFormatter } from './textFilterModelFormatter';
-import { mapValuesFromTextFilterModel, trimInputForFilter } from './textFilterUtils';
+import { _TEXT_FILTER_PREDICATES, mapValuesFromTextFilterModel, trimInputForFilter } from './textFilterUtils';
 
 const FILTER_TYPES_ALLOWING_NULLS: ReadonlySet<FilterOptionKey> = new Set(['notEqual', 'notContains', 'blank']);
 
@@ -18,21 +18,20 @@ const defaultMatcher: TextMatcher = ({ filterOption, value, filterText }) => {
         return false;
     }
 
+    // Dispatched by `switch` rather than by key: this runs per row, and the option set is fixed.
     switch (filterOption) {
         case 'contains':
-            return value.includes(filterText);
+            return _TEXT_FILTER_PREDICATES.contains(value, filterText);
         case 'notContains':
-            return !value.includes(filterText);
+            return _TEXT_FILTER_PREDICATES.notContains(value, filterText);
         case 'equals':
-            return value === filterText;
+            return _TEXT_FILTER_PREDICATES.equals(value, filterText);
         case 'notEqual':
-            return value != filterText;
+            return _TEXT_FILTER_PREDICATES.notEqual(value, filterText);
         case 'startsWith':
-            return value.indexOf(filterText) === 0;
-        case 'endsWith': {
-            const index = value.lastIndexOf(filterText);
-            return index >= 0 && index === value.length - filterText.length;
-        }
+            return _TEXT_FILTER_PREDICATES.startsWith(value, filterText);
+        case 'endsWith':
+            return _TEXT_FILTER_PREDICATES.endsWith(value, filterText);
         default:
             return false;
     }
