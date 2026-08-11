@@ -1,11 +1,18 @@
 import type { IFilterParams } from '../../../interfaces/iFilter';
 import type { IScalarFilterParams } from '../iScalarFilter';
-import type { ISimpleFilterModel, ISimpleFilterModelPresetType } from '../iSimpleFilter';
+import type {
+    CustomFilterOptionKey,
+    DateFilterOptionKey,
+    ISimpleFilterModel,
+    ISimpleFilterModelPresetType,
+} from '../iSimpleFilter';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
 
 export interface DateFilterModel extends ISimpleFilterModel {
+    /** One of the Date Filter's options, or a Custom Filter Option's `displayKey`. */
+    type?: DateFilterOptionKey | CustomFilterOptionKey | null;
     /** Filter type is always `'date'` */
     filterType?: 'date';
     /**
@@ -51,7 +58,7 @@ export type DateFilterParams<TData = any> = IDateFilterParams & IFilterParams<TD
  * Parameters used in `colDef.filterParams` to configure a Date Filter (`agDateColumnFilter`).
  */
 
-export interface IDateFilterParams extends IScalarFilterParams {
+export interface IDateFilterParams extends IScalarFilterParams<DateFilterOptionKey> {
     /**
      * Required if the data for the column are not native JS `Date` objects.
      * If cell values can contain invalid dates, should also implement `isValidDate`.

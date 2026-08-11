@@ -91,4 +91,41 @@ describe('BigInt Filter — custom bigintParser', () => {
             └── LEAF id:2 val:"100n"
         `);
     });
+
+    test('an allowedCharPattern replaced at runtime reaches inputs built before the change', async () => {
+        const columnDefs = (allowedCharPattern: string) => [
+            {
+                field: 'val',
+                cellDataType: 'bigint' as const,
+                filter: 'agBigIntColumnFilter' as const,
+                filterParams: {
+                    debounceMs: 0,
+                    allowedCharPattern,
+                    bigintParser: (text: string | null) => (text == null || text.trim() === '' ? null : BigInt(text)),
+                },
+            },
+        ];
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid3', {
+            // Decimal only, so the inputs built here reject the `x` and `F` a hex value needs.
+            columnDefs: columnDefs('[\\d]'),
+            rowData: [{ val: 255n }, { val: 16n }],
+        });
+
+        // Built before the swap: an input reads `allowedCharPattern` once, when it is created.
+        const filter = await ColumnFilterHarness.open(api, 'val');
+
+        api.setGridOption('columnDefs', columnDefs('[\\dxXa-fA-F]'));
+        await asyncSetTimeout(0);
+
+        await filter.selectOperator('Equals');
+        await filter.setText('0xFF', 0);
+        await asyncSetTimeout(0);
+
+        expect(filter.getModel()).toEqual({ filterType: 'bigint', type: 'equals', filter: '255' });
+        await new GridRows(api, 'hex accepted after the pattern was replaced').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 val:"255n"
+        `);
+    });
 });

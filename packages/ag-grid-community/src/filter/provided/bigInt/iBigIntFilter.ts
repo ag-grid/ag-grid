@@ -1,9 +1,11 @@
 import type { IFilterParams } from '../../../interfaces/iFilter';
 import type { IScalarFilterParams } from '../iScalarFilter';
-import type { ISimpleFilterModel } from '../iSimpleFilter';
+import type { CustomFilterOptionKey, ISimpleFilterModel, ScalarFilterOptionKey } from '../iSimpleFilter';
 import type { ITextInputFloatingFilterParams } from '../text/iTextFilter';
 
 export interface BigIntFilterModel extends ISimpleFilterModel {
+    /** One of the BigInt Filter's options, or a Custom Filter Option's `displayKey`. */
+    type?: ScalarFilterOptionKey | CustomFilterOptionKey | null;
     /** Filter type is always `'bigint'` */
     filterType?: 'bigint';
     /**
@@ -27,7 +29,7 @@ export type BigIntFilterParams<TData = any> = IBigIntFilterParams & IFilterParam
 /**
  * Parameters used in `colDef.filterParams` to configure a BigInt Filter (`agBigIntColumnFilter`).
  */
-export interface IBigIntFilterParams extends IScalarFilterParams {
+export interface IBigIntFilterParams extends IScalarFilterParams<ScalarFilterOptionKey> {
     /**
      * When specified, the input field will be of type `text`, and this will be used as a regex of all the characters that are allowed to be typed.
      * This will be compared against any typed character and prevent the character from appearing in the input if it does not match.

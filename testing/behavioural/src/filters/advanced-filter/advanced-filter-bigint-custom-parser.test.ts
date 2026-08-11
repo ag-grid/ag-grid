@@ -4,6 +4,7 @@ import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 import {
     AdvancedFilterBuilderHarness,
+    FilterDom,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -325,5 +326,86 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         const [condition] = await builder.conditionItems();
         expect(valuePillText(condition)).toBe('1000');
         expect((await builder.openValueEditor(condition)).value).toBe('1000');
+    });
+
+    test('a two-input option orders bigint operands numerically, not as text', async () => {
+        const api = gridsManager.createGrid('grid8', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    headerName: 'Value',
+                    cellDataType: 'bigint',
+                    filter: 'agBigIntColumnFilter',
+                    filterParams: {
+                        filterOptions: [
+                            'equals',
+                            {
+                                displayKey: 'betweenExclusive',
+                                displayName: 'Between (Exclusive)',
+                                numberOfInputs: 2,
+                                predicate: ([from, to]: any[], cellValue: bigint | null) =>
+                                    cellValue != null && cellValue > from && cellValue < to,
+                            },
+                        ],
+                    },
+                },
+            ],
+            rowData: [{ value: 9n }, { value: 10n }, { value: 255n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        // `"9" < "10"` is false as text, so a lexicographic check would reject this valid range.
+        applyExpression(gridDiv, '[Value] Between (Exclusive) (9, 255)');
+        await asyncSetTimeout(0);
+
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'bigint',
+            colId: 'value',
+            type: 'betweenExclusive',
+            filter: '9',
+            filterTo: '255',
+        });
+        await new FilterDom(api, 'bigint range applied').checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Value] Between (Exclusive) (9, 255)"
+            valid: true
+            buttons: Apply ⊘ | Builder
+            model:
+              filterType: "bigint"
+              colId: "value"
+              type: "betweenExclusive"
+              filter: "9"
+              filterTo: "255"
+        `);
+        await new GridRows(api, 'bigint range applied').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 value:"10n"
+        `);
+
+        // And the genuinely out-of-order pair is still rejected, where text ordering would accept it.
+        applyExpression(gridDiv, '[Value] Between (Exclusive) (255, 9)');
+        await asyncSetTimeout(0);
+        // The editor reports the reversed pair, so the applied model is the previous one, not this.
+        await new FilterDom(api, 'bigint range reversed').checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Value] Between (Exclusive) (255, 9)"
+            valid: false — Expression has an error. Must be less than 9 - 255.
+            buttons: Apply ⊘ | Builder
+            model:
+              filterType: "bigint"
+              colId: "value"
+              type: "betweenExclusive"
+              filter: "9"
+              filterTo: "255"
+        `);
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'bigint',
+            colId: 'value',
+            type: 'betweenExclusive',
+            filter: '9',
+            filterTo: '255',
+        });
     });
 });

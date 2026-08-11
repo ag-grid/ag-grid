@@ -129,4 +129,46 @@ describe('BigInt Range Filter', () => {
         expect(filter.input('text', 0).validity.valid).toBe(true);
         expect(filter.input('text', 0).validationMessage).toBe('');
     });
+
+    test('a one-input option is not held to the range rule of the value left behind', async () => {
+        const { api, filter } = await openRangeFilter('grid1');
+        await filter.setText('16', 0);
+        await filter.setText('100', 1);
+
+        // `Equals` takes one value, so the 100 the range left in the hidden second input is not a bound on it.
+        await filter.selectOperator('Equals');
+        await filter.setText('255', 0);
+        await asyncSetTimeout(0);
+
+        expect(filter.input('text', 0).validity.valid).toBe(true);
+        expect(filter.getModel()).toEqual({ filterType: 'bigint', type: 'equals', filter: '255' });
+        await new GridRows(api, 'equals applies over a stale range bound').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:3 val:"255n"
+        `);
+    });
+
+    test('a model applied through the API clears a stale range message', async () => {
+        const { api, filter } = await openRangeFilter('grid1');
+        await filter.setText('255', 0);
+        await filter.setText('16', 1);
+        expect(filter.input('text', 1).validity.valid).toBe(false);
+
+        await api.setColumnFilterModel('val', {
+            filterType: 'bigint',
+            type: 'inRange',
+            filter: '16',
+            filterTo: '255',
+        });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // The inputs hold an ordered range now, so the message the old one left is gone.
+        expect(filter.input('text', 0).validity.valid).toBe(true);
+        expect(filter.input('text', 1).validity.valid).toBe(true);
+        await new GridRows(api, 'the applied range filters, with no message left over').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 val:"100n"
+        `);
+    });
 });

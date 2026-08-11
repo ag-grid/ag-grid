@@ -1,7 +1,7 @@
 import type { Comparator } from '../iScalarFilter';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
-import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
+import { NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
 import { mapValuesFromNumberFilterModel } from './numberFilterUtils';
 
@@ -10,7 +10,7 @@ export class NumberFilterHandler extends ScalarFilterHandler<NumberFilterModel, 
     protected readonly FilterModelFormatterClass = NumberFilterModelFormatter;
 
     constructor() {
-        super(mapValuesFromNumberFilterModel, DEFAULT_NUMBER_FILTER_OPTIONS);
+        super(mapValuesFromNumberFilterModel, NUMBER_FILTER_OPTIONS);
     }
 
     protected override comparator(): Comparator<number> {

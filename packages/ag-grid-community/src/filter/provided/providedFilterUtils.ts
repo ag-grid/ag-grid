@@ -5,7 +5,8 @@ import type { LogService } from '../../validation/logService';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
 import type { IProvidedFilterParams } from './iProvidedFilter';
-import type { FilterPlaceholderFunction, ISimpleFilterModelType } from './iSimpleFilter';
+import type { FilterOptionKey, FilterPlaceholderFunction } from './iSimpleFilter';
+import type { OptionsFactory } from './optionsFactory';
 
 export function getDebounceMs(log: LogService, params: IProvidedFilterParams, debounceDefault: number): number {
     const { debounceMs } = params;
@@ -29,11 +30,16 @@ export function getPlaceholderText(
     bean: { getLocaleTextFunc(): LocaleTextFunc },
     filterPlaceholder: string | FilterPlaceholderFunction | undefined,
     defaultPlaceholder: FilterLocaleTextKey,
-    filterOptionKey: ISimpleFilterModelType
+    filterOptionKey: FilterOptionKey,
+    optionsFactory: OptionsFactory
 ): string {
     let placeholder = translateForFilter(bean, defaultPlaceholder);
     if (typeof filterPlaceholder === 'function') {
-        const filterOption = translateForFilter(bean, filterOptionKey);
+        // Localised through its own `displayKey`, as the dropdown label for the same option is.
+        const customOption = optionsFactory.getCustomOption(filterOptionKey);
+        const filterOption = customOption
+            ? bean.getLocaleTextFunc()(customOption.displayKey, customOption.displayName)
+            : translateForFilter(bean, filterOptionKey as FilterLocaleTextKey);
         placeholder = filterPlaceholder({
             filterOptionKey,
             filterOption,

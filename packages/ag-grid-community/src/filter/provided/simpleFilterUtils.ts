@@ -1,5 +1,5 @@
 import type { LogService } from '../../validation/logService';
-import type { IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
+import type { FilterOptionKey, IFilterOptionDef, ISimpleFilterModelType, JoinOperator } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
 export function removeItems<T>(items: T[], startPosition: number, deleteCount?: number): T[] {
@@ -14,24 +14,6 @@ export function getDefaultJoinOperator(defaultJoinOperator?: JoinOperator): Join
     return defaultJoinOperator === 'AND' || defaultJoinOperator === 'OR' ? defaultJoinOperator : 'AND';
 }
 
-export function evaluateCustomFilter<V>(
-    customFilterOption: IFilterOptionDef | undefined,
-    values: Tuple<V>,
-    cellValue: V | null | undefined
-): boolean | undefined {
-    if (customFilterOption == null) {
-        return;
-    }
-
-    const { predicate } = customFilterOption;
-    // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
-    if (predicate != null && !values.some((v) => v == null)) {
-        return predicate(values, cellValue);
-    }
-
-    // No custom filter invocation, indicate that to the caller.
-}
-
 export function validateAndUpdateConditions<M>(log: LogService, conditions: M[], maxNumConditions: number): number {
     let numConditions = conditions.length;
     if (numConditions > maxNumConditions) {
@@ -43,7 +25,19 @@ export function validateAndUpdateConditions<M>(log: LogService, conditions: M[],
     return numConditions;
 }
 
-const zeroInputTypes: Set<ISimpleFilterModelType> = new Set([
+/** What a filter offers by default, and every built-in key it can evaluate. */
+export interface FilterOptionSet {
+    defaults: ISimpleFilterModelType[];
+    supported: ReadonlySet<string>;
+}
+
+/** `empty` is the placeholder every filter offers; `extra` is what one evaluates beyond its defaults. */
+export function defineFilterOptions(defaults: ISimpleFilterModelType[], extra?: Iterable<string>): FilterOptionSet {
+    return { defaults, supported: new Set<string>(['empty', ...defaults, ...(extra ?? [])]) };
+}
+
+/** The options taking no value: the two blank checks, the placeholder, and every relative date range. */
+export const zeroInputTypes: ReadonlySet<string> = new Set<ISimpleFilterModelType>([
     'empty',
     'notBlank',
     'blank',
@@ -71,14 +65,30 @@ const zeroInputTypes: Set<ISimpleFilterModelType> = new Set([
     'last24Months',
 ]);
 
-export function getNumberOfInputs(
-    type: ISimpleFilterModelType | null | undefined,
-    optionsFactory: OptionsFactory
-): number {
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _isValidFilterOptionDef(option: IFilterOptionDef): boolean {
+    return option.displayKey != null && option.displayName != null && option.predicate != null;
+}
+
+/** Reported by name when one is absent, so the warning says which; `_isValidFilterOptionDef` tests the same set. */
+const REQUIRED_OPTION_PROPERTIES: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _getMissingFilterOptionKeys(option: IFilterOptionDef): string[] {
+    return REQUIRED_OPTION_PROPERTIES.filter((name) => option[name] == null);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _getCustomOptionNumberOfInputs(option: IFilterOptionDef): number {
+    // The declared `0 | 1 | 2` is no check on a JS caller, which can pass a numeric string or a fraction.
+    const count = Math.trunc(option.numberOfInputs ?? 1);
+    return count > 0 ? Math.min(count, 2) : 0;
+}
+
+export function getNumberOfInputs(type: FilterOptionKey | null | undefined, optionsFactory: OptionsFactory): number {
     const customOpts = optionsFactory.getCustomOption(type);
     if (customOpts) {
-        const { numberOfInputs } = customOpts;
-        return numberOfInputs != null ? numberOfInputs : 1;
+        return _getCustomOptionNumberOfInputs(customOpts);
     }
 
     if (type && zeroInputTypes.has(type)) {

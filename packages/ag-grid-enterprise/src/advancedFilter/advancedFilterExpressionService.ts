@@ -4,20 +4,21 @@ import type {
     AgColumn,
     BaseCellDataType,
     BeanCollection,
-    BooleanAdvancedFilterModel,
     ColumnAdvancedFilterModel,
     ColumnModel,
     ColumnNameService,
     DataTypeService,
+    IFilterOptionDef,
     JoinAdvancedFilterModel,
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _getMissingFilterOptionKeys } from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import { COL_FILTER_EXPRESSION_END_CHAR, COL_FILTER_EXPRESSION_START_CHAR } from './colFilterExpressionParser';
+import { createCustomOptionOperators, getColumnFilterOptions, isCustomFilterOption } from './customFilterOptions';
 import type {
     DataTypeFilterExpressionOperators,
     FilterExpressionEvaluatorParams,
@@ -29,7 +30,22 @@ import {
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
+import type { ColumnFilterModelOperands } from './filterExpressionUtils';
 import { getBigIntParser } from './filterExpressionUtils';
+
+/** How many values a model carries, for an option no operator resolves. */
+function getModelNumOperands(filter: unknown, filterTo: unknown): number {
+    if (filterTo != null) {
+        return 2;
+    }
+    return filter == null ? 0 : 1;
+}
+
+/** A column's operators and the keys it narrows them to, classified together from its one `filterOptions`. */
+interface ColumnOperators {
+    operators: DataTypeFilterExpressionOperators<any>;
+    activeOperators: string[] | undefined;
+}
 
 export class AdvancedFilterExpressionService extends BeanStub implements NamedBean {
     beanName = 'advFilterExpSvc' as const;
@@ -127,14 +143,29 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string; columnName: string } } =
         Object.create(null);
-    private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
     private expressionOperators: FilterExpressionOperators;
     private expressionJoinOperators: { AND: string; OR: string };
     private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams<any> } = Object.create(null);
+    private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
+    /** Per data type, then per column identity, so a cache hit costs no key to build. */
+    private columnExpressionOperators: { [dataType: string]: Map<AgColumn, ColumnOperators> } = Object.create(null);
 
     public postConstruct(): void {
         this.expressionJoinOperators = this.generateExpressionJoinOperators();
         this.expressionOperators = this.generateExpressionOperators();
+
+        // Everything an entry is built from: which columns exist, whether each is offered, and its display name.
+        const resetColumnCaches = this.resetColumnCaches.bind(this);
+        this.addManagedEventListeners({
+            newColumnsLoaded: resetColumnCaches,
+            columnVisible: resetColumnCaches,
+            columnRowGroupChanged: resetColumnCaches,
+            columnPivotModeChanged: resetColumnCaches,
+            columnPivotChanged: resetColumnCaches,
+            columnHeaderNameChanged: resetColumnCaches,
+        });
+        // No listener for `includeHiddenColumnsInAdvancedFilter`, which these caches also depend on:
+        // `AdvancedFilterService` listens for it and resets them through `updateValidity`.
     }
 
     public parseJoinOperator(model: JoinAdvancedFilterModel): string {
@@ -157,7 +188,8 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     public getOperatorDisplayValue(model: ColumnAdvancedFilterModel): string | undefined {
-        return this.getExpressionOperator(model.filterType, model.type)?.displayValue ?? model.type;
+        const column = this.colModel.getNonPivotColById(model.colId);
+        return this.getExpressionOperator(model.filterType, model.type, column)?.displayValue ?? model.type;
     }
 
     public getOperandModelValue(
@@ -182,25 +214,53 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return baseCellDataType !== 'bigint';
     }
 
+    /** The whole operand region: one value, or the comma-separated bracketed pair an option taking two writes. */
     public getOperandDisplayValue(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
-        const { filter, filterType } = model as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>;
+        const { filter, filterTo } = model as ColumnFilterModelOperands;
+        const column = this.colModel.getNonPivotColById(model.colId);
+        // An option nothing resolves says nothing about its arity, so the model's own values decide it.
+        const numOperands =
+            this.getExpressionOperator(model.filterType, model.type, column)?.numOperands ??
+            getModelNumOperands(filter, filterTo);
 
-        if (filter == null) {
+        // A value left in the model by whatever set it is not this option's, which takes none.
+        if (numOperands === 0) {
             return '';
         }
-        let operand1 = this.filterOperandGetters[filterType](
-            model as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>
-        );
+
+        const from = this.formatOperand(model, filter, skipFormatting);
+        const to = numOperands > 1 ? this.formatOperand(model, filterTo, skipFormatting) : '';
+        if (!from && !to) {
+            return '';
+        }
+        // A leading gap keeps its place, or the value reads as the first operand; a trailing one just stops short.
+        if (!to) {
+            return skipFormatting ? from : ` ${from}`;
+        }
+        return skipFormatting ? `${from}, ${to}` : ` (${from}, ${to})`;
+    }
+
+    /** One operand of a model, quoted for the expression unless the caller shows it on its own. */
+    public formatOperand(
+        model: ColumnAdvancedFilterModel,
+        value: string | number | undefined,
+        skipFormatting?: boolean
+    ): string {
+        const { filterType, colId } = model;
+        if (value == null) {
+            return '';
+        }
+        let operand = this.filterOperandGetters[filterType]({ filter: value, colId });
         if (filterType !== 'number' && filterType !== 'bigint') {
-            operand1 ??= _toStringOrNull(filter) ?? '';
+            operand ??= _toStringOrNull(value) ?? '';
             if (!skipFormatting) {
                 // Quote with the char the value does not contain so a value holding one quote kind
                 // still round-trips (the parser accepts either quote); a value with both fails safe.
-                const quote = operand1.includes('"') && !operand1.includes(`'`) ? `'` : `"`;
-                operand1 = `${quote}${operand1}${quote}`;
+                const quote = operand.includes('"') && !operand.includes(`'`) ? `'` : `"`;
+                operand = `${quote}${operand}${quote}`;
             }
         }
-        return skipFormatting ? operand1! : ` ${operand1}`;
+        return operand!;
     }
 
     public parseColumnFilterModel(model: ColumnAdvancedFilterModel): string {
@@ -242,8 +302,9 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     public getColumnAutocompleteEntries(): AutocompleteEntry[] {
-        if (this.columnAutocompleteEntries) {
-            return this.columnAutocompleteEntries;
+        const cached = this.columnAutocompleteEntries;
+        if (cached) {
+            return cached;
         }
         const columns = this.colModel.colDefList;
         const entries: AutocompleteEntry[] = [];
@@ -266,12 +327,13 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             }
             return 0;
         });
+        this.columnAutocompleteEntries = entries;
         return entries;
     }
 
     public getOperatorAutocompleteEntries(column: AgColumn, baseCellDataType: BaseCellDataType): AutocompleteEntry[] {
-        const activeOperators = this.getActiveOperators(column);
-        return this.getDataTypeExpressionOperator(baseCellDataType)!.getEntries(activeOperators);
+        const { operators, activeOperators } = this.getColumnOperators(baseCellDataType, column)!;
+        return operators.getEntries(activeOperators);
     }
 
     public getJoinOperatorAutocompleteEntries(): AutocompleteEntry[] {
@@ -283,17 +345,47 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return this.generateAutocompleteListParams(this.getColumnAutocompleteEntries(), 'column', searchString);
     }
 
+    /** A data type's built-ins with the column's own options over them, so a `displayKey` is per column. */
     public getDataTypeExpressionOperator(
-        baseCellDataType?: BaseCellDataType
+        baseCellDataType?: BaseCellDataType,
+        column?: AgColumn | null
     ): DataTypeFilterExpressionOperators<any> | undefined {
-        return this.expressionOperators[baseCellDataType!];
+        return this.getColumnOperators(baseCellDataType, column)?.operators;
+    }
+
+    private getColumnOperators(
+        baseCellDataType?: BaseCellDataType,
+        column?: AgColumn | null
+    ): ColumnOperators | undefined {
+        const dataTypeOperators = this.expressionOperators[baseCellDataType!];
+        if (!column || !dataTypeOperators) {
+            return dataTypeOperators && { operators: dataTypeOperators, activeOperators: undefined };
+        }
+        const forDataType = (this.columnExpressionOperators[baseCellDataType!] ??= new Map());
+        let columnOperators = forDataType.get(column);
+        if (!columnOperators) {
+            const filterOptions = getColumnFilterOptions(column);
+            const { keys, customOptions } = this.classifyColumnOptions(filterOptions);
+            columnOperators = {
+                operators: customOptions.length
+                    ? createCustomOptionOperators(dataTypeOperators, customOptions, this.getLocaleTextFunc())
+                    : dataTypeOperators,
+                activeOperators: filterOptions && keys,
+            };
+            forDataType.set(column, columnOperators);
+        }
+        return columnOperators;
     }
 
     public getExpressionOperator(
         baseCellDataType?: BaseCellDataType,
-        operator?: string
+        operator?: string,
+        column?: AgColumn | null
     ): FilterExpressionOperator<any> | undefined {
-        return this.getDataTypeExpressionOperator(baseCellDataType)?.operators?.[operator!];
+        const operators = this.getDataTypeExpressionOperator(baseCellDataType, column)?.operators;
+        return operators && Object.prototype.hasOwnProperty.call(operators, operator!)
+            ? operators[operator!]
+            : undefined;
     }
 
     public getExpressionJoinOperators(): { AND: string; OR: string } {
@@ -416,18 +508,44 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         };
     }
 
-    private getActiveOperators(column: AgColumn): string[] | undefined {
-        const filterOptions = column.colDef.filterParams?.filterOptions;
-        if (!filterOptions) {
-            return undefined;
+    /**
+     * The keys the column offers, one per key as the column filter's dropdown lists them, and the options
+     * carrying their own predicate. A malformed one is reported here too: a column filtered only through the
+     * Advanced Filter has no `OptionsFactory` to report it.
+     */
+    private classifyColumnOptions(filterOptions: (string | IFilterOptionDef)[] | undefined): {
+        keys: string[];
+        customOptions: IFilterOptionDef[];
+    } {
+        const keys: string[] = [];
+        const customOptions: IFilterOptionDef[] = [];
+        const seenKeys = new Set<string>();
+        for (let i = 0, len = filterOptions?.length ?? 0; i < len; ++i) {
+            const option = filterOptions![i];
+            let key: string;
+            if (typeof option === 'string') {
+                key = option;
+            } else if (option == null) {
+                continue;
+            } else if (isCustomFilterOption(option)) {
+                key = option.displayKey;
+                customOptions.push(option);
+            } else {
+                this.warn(72, { keys: _getMissingFilterOptionKeys(option) });
+                continue;
+            }
+            if (!seenKeys.has(key)) {
+                seenKeys.add(key);
+                keys.push(key);
+            }
         }
-        const isValid = filterOptions.every((filterOption: any) => typeof filterOption === 'string');
-        return isValid ? filterOptions : undefined;
+        return { keys, customOptions };
     }
 
     public resetColumnCaches(): void {
         this.columnAutocompleteEntries = null;
         this.columnNameToIdMap = Object.create(null);
         this.expressionEvaluatorParams = Object.create(null);
+        this.columnExpressionOperators = Object.create(null);
     }
 }

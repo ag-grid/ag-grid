@@ -7,7 +7,7 @@ import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import type { ITextFilterParams, TextFilterModel } from './iTextFilter';
-import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
+import { TEXT_FILTER_OPTIONS } from './textFilterConstants';
 import { mapValuesFromTextFilterModel } from './textFilterUtils';
 
 /** temporary type until `TextFilterParams` is updated as breaking change */
@@ -21,7 +21,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, GridInputT
     private readonly eValuesTo: GridInputTextField[] = [];
 
     constructor() {
-        super('textFilter', mapValuesFromTextFilterModel, DEFAULT_TEXT_FILTER_OPTIONS);
+        super('textFilter', mapValuesFromTextFilterModel, TEXT_FILTER_OPTIONS);
     }
 
     protected override defaultDebounceMs: number = 500;

@@ -70,6 +70,12 @@ The number of `filterValues` and corresponding inputs is controlled by the optio
 - If unspecified or set to `1` a single input is displayed, and one-element array of `filterValues` are provided to the `predicate` function.
 - If set to `2` two inputs are displayed, and a two-element array of `filterValues` is provided to the `predicate` function.
 
+The `predicate` is the whole of what a custom option filters on, and only runs once every input has a value. Until then the condition filters on nothing: it neither excludes rows from an `AND` nor admits them to an `OR`, and a filter whose only condition is incomplete is not applied.
+
+An option taking two values of an orderable Cell Data Type is a range: the inputs are labelled from/to, and the second must be greater than the first or the filter is not applied. See Range Input Validation for the [Number](./filter-number/#range-input-validation-and-error-states), [BigInt](./filter-bigint/#range-input-validation-and-error-states) and [Date](./filter-date/#range-input-validation-and-error-states) Filters. Text has no ordering to assume, so its inputs are labelled from/to but the pair is never compared.
+
+Custom Filter Options are also offered by the [Advanced Filter](./filter-advanced/#custom-filter-options), which evaluates them with the same `predicate`.
+
 Custom `FilterOptionDef`s can be supplied alongside the built-in filter option `string` keys as shown below:
 
 ```{% frameworkTransform=true %}

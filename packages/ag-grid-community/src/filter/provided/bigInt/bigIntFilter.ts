@@ -1,4 +1,4 @@
-import { _isBrowserFirefox, _parseBigIntOrNull } from 'ag-stack';
+import { _parseBigIntOrNull } from 'ag-stack';
 
 import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
@@ -6,10 +6,9 @@ import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
-import type { ProvidedFilterParams } from '../iProvidedFilter';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
-import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
+import { BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { getAllowedCharPattern, mapValuesFromBigIntFilterModel } from './bigIntFilterUtils';
 import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
 
@@ -25,34 +24,26 @@ export class BigIntFilter extends SimpleFilter<
 > {
     private readonly eValuesFrom: GridInputTextField[] = [];
     private readonly eValuesTo: GridInputTextField[] = [];
+    /** Read once when an input is built, so a `colDef` refresh that changes it has to rebuild them. */
+    private allowedCharPattern: string | null;
 
     public readonly filterType = 'bigint' as const;
 
     constructor() {
-        super('bigintFilter', mapValuesFromBigIntFilterModel, DEFAULT_BIGINT_FILTER_OPTIONS);
+        super('bigintFilter', mapValuesFromBigIntFilterModel, BIGINT_FILTER_OPTIONS);
     }
 
     protected override defaultDebounceMs = 500;
 
-    public override afterGuiAttached(params?: IAfterGuiAttachedParams | undefined): void {
+    public override afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         super.afterGuiAttached(params);
 
         this.refreshInputValidation();
     }
 
-    protected override shouldKeepInvalidInputState(): boolean {
-        return !_isBrowserFirefox() && this.hasInvalidInputs() && this.getConditionTypes().includes('inRange');
-    }
-
-    private refreshInputValidation(): void {
-        for (let i = 0; i < this.eValuesFrom.length; i++) {
-            const from = this.eValuesFrom[i];
-            const to = this.eValuesTo[i];
-            this.refreshInputPairValidation(from, to);
-        }
-    }
-
-    private refreshInputPairValidation(from: GridInputTextField, to: GridInputTextField, isFrom = false): void {
+    protected override refreshPositionValidation(position: number, isFrom = false): void {
+        const from = this.eValuesFrom[position];
+        const to = this.eValuesTo[position];
         const { bigintParser } = this.params;
         const fromValue = this.getParsedValue(from, bigintParser);
         const toValue = this.getParsedValue(to, bigintParser);
@@ -61,18 +52,15 @@ export class BigIntFilter extends SimpleFilter<
 
         const target = isFrom ? from : to;
         const other = isFrom ? to : from;
-        const targetInvalid = isFrom ? fromInvalid : toInvalid;
         const otherInvalid = isFrom ? toInvalid : fromInvalid;
 
+        // A value the parser rejected is reported as such; only a readable pair can be reported as out of order.
         let validityMessage = '';
-        if (targetInvalid) {
-            const translate = this.getLocaleTextFunc();
-            validityMessage = translate('invalidBigInt', 'Invalid BigInt');
-        } else if (!fromInvalid && !toInvalid) {
+        if (isFrom ? fromInvalid : toInvalid) {
+            validityMessage = this.getLocaleTextFunc()('invalidBigInt', 'Invalid BigInt');
+        } else if (!fromInvalid && !toInvalid && this.isRangeCondition(position)) {
             const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
-            if (localeKey) {
-                validityMessage = this.translate(localeKey, [String(isFrom ? to.getValue() : from.getValue())]);
-            }
+            validityMessage = localeKey ? this.translate(localeKey, [String(other.getValue())]) : '';
         }
 
         target.setCustomValidity(validityMessage);
@@ -92,26 +80,6 @@ export class BigIntFilter extends SimpleFilter<
         return (stateA?.isInvalid ?? false) === (stateB?.isInvalid ?? false);
     }
 
-    public override refresh(legacyNewParams: ProvidedFilterParams): boolean {
-        const result = super.refresh(legacyNewParams);
-
-        const { state: newState, additionalEventAttributes } = legacyNewParams as unknown as BigIntFilterDisplayParams;
-        const oldState = this.state;
-
-        const fromAction = additionalEventAttributes?.fromAction;
-        const forceRefreshValidation = fromAction && fromAction != 'apply';
-
-        if (
-            forceRefreshValidation ||
-            newState.model !== oldState.model ||
-            !this.areStatesEqual(newState.state, oldState.state)
-        ) {
-            this.refreshInputValidation();
-        }
-
-        return result;
-    }
-
     protected override setElementValue(
         element: GridInputTextField,
         value: bigint | null,
@@ -123,25 +91,51 @@ export class BigIntFilter extends SimpleFilter<
         }
     }
 
-    protected createEValue(): HTMLElement {
-        const { params, eValuesFrom, eValuesTo } = this;
+    protected override commonUpdateSimpleParams(params: BigIntFilterDisplayParams): void {
+        super.commonUpdateSimpleParams(params);
+        this.refreshInputElements(params);
+    }
+
+    /** Mirrors the Number Filter, and the BigInt floating filter, which already rebuild on this change. */
+    private refreshInputElements(params: BigIntFilterDisplayParams): void {
         const allowedCharPattern = getAllowedCharPattern(params);
+        if (allowedCharPattern === this.allowedCharPattern) {
+            return;
+        }
+        this.allowedCharPattern = allowedCharPattern;
+        const { eValuesFrom, eValuesTo } = this;
+        const numConditions = eValuesFrom.length;
+        if (!numConditions) {
+            return;
+        }
+        for (let position = 0; position < numConditions; ++position) {
+            this.rebuildInputElement(eValuesFrom, position, 'from');
+            this.rebuildInputElement(eValuesTo, position, 'to');
+            this.attachRebuiltInputListeners(eValuesFrom[position], eValuesTo[position]);
+        }
+        this.updateUiVisibility(); // the replacements start visible and enabled, whatever the condition is
+        this.refreshInputValidation();
+    }
+
+    /** The text is the canonical decimal string either way, so it carries across the rebuild unchanged. */
+    private rebuildInputElement(eValues: GridInputTextField[], position: number, fromTo: string): void {
+        const previous = eValues[position];
+        const eValue = this.createInputElement(fromTo);
+        eValue.setValue(previous.getValue(), true);
+        previous.getGui().replaceWith(eValue.getGui());
+        this.destroyBean(previous);
+        eValues[position] = eValue;
+    }
+
+    protected createEValue(): HTMLElement {
+        const { eValuesFrom, eValuesTo } = this;
 
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
-        const from = this.createFromToElement(eCondition, eValuesFrom, 'from', allowedCharPattern);
-        const to = this.createFromToElement(eCondition, eValuesTo, 'to', allowedCharPattern);
+        const from = this.createFromToElement(eCondition, eValuesFrom, 'from');
+        const to = this.createFromToElement(eCondition, eValuesTo, 'to');
 
-        const getFieldChangedListener = (fromEl: GridInputTextField, toEl: GridInputTextField, isFrom: boolean) => () =>
-            this.refreshInputPairValidation(fromEl, toEl, isFrom);
-
-        const fromListener = getFieldChangedListener(from, to, true);
-        from.onValueChange(fromListener);
-        from.addGuiEventListener('focusin', fromListener);
-
-        const toListener = getFieldChangedListener(from, to, false);
-        to.onValueChange(toListener);
-        to.addGuiEventListener('focusin', toListener);
+        this.attachRangeValidationListeners(from, to);
 
         return eCondition;
     }
@@ -149,16 +143,21 @@ export class BigIntFilter extends SimpleFilter<
     private createFromToElement(
         eCondition: HTMLElement,
         eValues: GridInputTextField[],
-        fromTo: string,
-        allowedCharPattern: string | null
+        fromTo: string
     ): GridInputTextField {
+        const eValue = this.createInputElement(fromTo);
+        eValues.push(eValue);
+        eCondition.appendChild(eValue.getGui());
+        return eValue;
+    }
+
+    private createInputElement(fromTo: string): GridInputTextField {
+        const allowedCharPattern = this.allowedCharPattern;
         const eValue = this.createManagedBean<GridInputTextField>(
             allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputTextField()
         );
         eValue.addCss(`ag-filter-${fromTo}`);
         eValue.addCss('ag-filter-filter');
-        eValues.push(eValue);
-        eCondition.appendChild(eValue.getGui());
         return eValue;
     }
 
@@ -205,14 +204,6 @@ export class BigIntFilter extends SimpleFilter<
         return model;
     }
 
-    protected override removeConditionsAndOperators(startPosition: number, deleteCount?: number | undefined): void {
-        if (this.hasInvalidInputs()) {
-            return;
-        }
-
-        return super.removeConditionsAndOperators(startPosition, deleteCount);
-    }
-
     protected override getInputs(position: number): Tuple<GridInputTextField> {
         const { eValuesFrom, eValuesTo } = this;
         if (position >= eValuesFrom.length) {
@@ -221,16 +212,8 @@ export class BigIntFilter extends SimpleFilter<
         return [eValuesFrom[position], eValuesTo[position]];
     }
 
-    protected override hasInvalidInputs(): boolean {
-        let invalidInputs = false;
-        this.forEachInput((element) => (invalidInputs ||= !element.getInputElement().validity.valid));
-        return invalidInputs;
-    }
-
-    protected override positionHasInvalidInputs(position: number): boolean {
-        let invalidInputs = false;
-        this.forEachPositionInput(position, (element) => (invalidInputs ||= !element.getInputElement().validity.valid));
-        return invalidInputs;
+    protected override isInputInvalid(element: GridInputTextField): boolean {
+        return !element.getInputElement().validity.valid;
     }
 
     protected override canApply(_model: BigIntFilterModel | ICombinedSimpleModel<BigIntFilterModel> | null): boolean {

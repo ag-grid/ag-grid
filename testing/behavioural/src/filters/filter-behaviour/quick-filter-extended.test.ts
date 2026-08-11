@@ -196,7 +196,7 @@ describe('Quick Filter — extended coverage', () => {
             input: "a"
             AND
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "text"
               type: "contains"

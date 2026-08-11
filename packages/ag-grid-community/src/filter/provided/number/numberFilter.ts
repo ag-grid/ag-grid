@@ -1,5 +1,3 @@
-import { _isBrowserFirefox, _makeNull } from 'ag-stack';
-
 import { AgInputNumberField } from '../../../agWidgets/agInputNumberField';
 import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
@@ -7,12 +5,17 @@ import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
-import type { ProvidedFilterParams } from '../iProvidedFilter';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
-import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
-import { getAllowedCharPattern, mapValuesFromNumberFilterModel, processNumberFilterValue } from './numberFilterUtils';
+import { NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
+import {
+    getAllowedCharPattern,
+    mapValuesFromNumberFilterModel,
+    processNumberFilterValue,
+    readsBackAsSameNumber,
+    stringToFloat,
+} from './numberFilterUtils';
 
 /** temporary type until `NumberFilterParams` is updated as breaking change */
 type NumberFilterDisplayParams = INumberFilterParams &
@@ -26,46 +29,93 @@ export class NumberFilter extends SimpleFilter<
 > {
     private readonly eValuesFrom: (GridInputTextField | GridInputNumberField)[] = [];
     private readonly eValuesTo: (GridInputTextField | GridInputNumberField)[] = [];
+    private allowedCharPattern: string | null;
+    /** The parameters the mounted inputs were filled through; their text is only readable through these. */
+    private renderedWith: NumberFilterDisplayParams | undefined;
 
     public readonly filterType = 'number' as const;
 
     constructor() {
-        super('numberFilter', mapValuesFromNumberFilterModel, DEFAULT_NUMBER_FILTER_OPTIONS);
+        super('numberFilter', mapValuesFromNumberFilterModel, NUMBER_FILTER_OPTIONS);
     }
 
     protected override defaultDebounceMs = 500;
 
-    public override afterGuiAttached(params?: IAfterGuiAttachedParams | undefined): void {
+    public override afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         super.afterGuiAttached(params);
 
-        // Refresh validation
         this.refreshInputValidation();
     }
 
-    protected override shouldKeepInvalidInputState(): boolean {
-        // We deliberately keep invalid input state for inRange filters when not in Firefox
-        // to mimic the behaviour for incomplete date and datetime inputs (which are cleared
-        // in Firefox but not in Chrome/Safari)
-        return !_isBrowserFirefox() && this.hasInvalidInputs() && this.getConditionTypes().includes('inRange');
+    protected override commonUpdateSimpleParams(params: NumberFilterDisplayParams): void {
+        super.commonUpdateSimpleParams(params);
+        this.refreshInputElements(params);
     }
 
-    private refreshInputValidation(): void {
-        for (let i = 0; i < this.eValuesFrom.length; i++) {
-            const from = this.eValuesFrom[i];
-            const to = this.eValuesTo[i];
-            this.refreshInputPairValidation(from, to);
+    /** An input's element type is fixed when it is built, so a `colDef` refresh that changes it rebuilds them. */
+    private refreshInputElements(params: NumberFilterDisplayParams): void {
+        const previous = this.renderedWith;
+        this.renderedWith = params;
+        const allowedCharPattern = getAllowedCharPattern(params);
+        // `allowedCharPattern` is read once when an input is built, and decides its element type with it.
+        const rebuild = allowedCharPattern !== this.allowedCharPattern;
+        this.allowedCharPattern = allowedCharPattern;
+        // What an input shows is rendered through these, so its text stops being readable when they change.
+        const rerender =
+            rebuild ||
+            params.numberParser !== previous?.numberParser ||
+            params.numberFormatter !== previous?.numberFormatter;
+        const { eValuesFrom, eValuesTo } = this;
+        const numConditions = eValuesFrom.length;
+        if (!rerender || !numConditions) {
+            return;
+        }
+        const previousParser = previous?.numberParser;
+        for (let position = 0; position < numConditions; ++position) {
+            this.refreshInputElement(eValuesFrom, position, 'from', rebuild, previousParser);
+            this.refreshInputElement(eValuesTo, position, 'to', rebuild, previousParser);
+            if (rebuild) {
+                this.attachRebuiltInputListeners(eValuesFrom[position], eValuesTo[position]);
+            }
+        }
+        this.updateUiVisibility(); // the replacements start visible and enabled, whatever the condition is
+        this.refreshInputValidation();
+    }
+
+    /** Read back through the parser that wrote the text, then shown again through the new parameters. */
+    private refreshInputElement(
+        eValues: (GridInputTextField | GridInputNumberField)[],
+        position: number,
+        fromTo: string,
+        rebuild: boolean,
+        previousParser: INumberFilterParams['numberParser']
+    ): void {
+        const previous = eValues[position];
+        const text = previous.getValue();
+        const value = processNumberFilterValue(stringToFloat(previousParser, text));
+        // Text no parser reads is not a value to render again, it is what the user is still typing.
+        const isMidEdit = value == null && text != null && text !== '';
+        let element = previous;
+        if (rebuild) {
+            element = this.createInputElement(fromTo);
+            previous.getGui().replaceWith(element.getGui());
+            this.destroyBean(previous);
+            eValues[position] = element;
+        }
+        if (isMidEdit) {
+            element.setValue(text, true);
+        } else {
+            this.setElementValue(element, value);
         }
     }
 
-    private refreshInputPairValidation(
-        from: GridInputNumberField | GridInputTextField,
-        to: GridInputNumberField | GridInputTextField,
-        isFrom = false
-    ): void {
+    protected override refreshPositionValidation(position: number, isFrom = false): void {
+        const from = this.eValuesFrom[position];
+        const to = this.eValuesTo[position];
         const parser = this.params.numberParser;
         const fromValue = getNormalisedValue(parser, from);
         const toValue = getNormalisedValue(parser, to);
-        const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
+        const localeKey = this.isRangeCondition(position) ? getValidityMessageKey(fromValue, toValue, isFrom) : null;
         const validityMessage = localeKey ? this.translate(localeKey, [String(isFrom ? toValue : fromValue)]) : '';
         (isFrom ? from : to).setCustomValidity(validityMessage); // Set validity error state for target input
         (isFrom ? to : from).setCustomValidity(''); // Reset validity error state for other input
@@ -86,34 +136,27 @@ export class NumberFilter extends SimpleFilter<
         return (stateA?.isInvalid ?? false) === (stateB?.isInvalid ?? false);
     }
 
-    public override refresh(legacyNewParams: ProvidedFilterParams): boolean {
-        const result = super.refresh(legacyNewParams);
-
-        const { state: newState, additionalEventAttributes } = legacyNewParams as unknown as NumberFilterDisplayParams;
-        const oldState = this.state;
-
-        const fromAction = additionalEventAttributes?.fromAction;
-        const forceRefreshValidation = fromAction && fromAction != 'apply';
-
-        if (
-            forceRefreshValidation ||
-            newState.model !== oldState.model ||
-            !this.areStatesEqual(newState.state, oldState.state)
-        ) {
-            this.refreshInputValidation();
-        }
-
-        return result;
-    }
-
     protected override setElementValue(
         element: GridInputTextField | GridInputNumberField,
         value: number | null,
         fromFloatingFilter?: boolean
     ): void {
         // values from floating filter are directly from the input, not from the model
-        const { numberFormatter } = this.params;
-        const valueToSet = !fromFloatingFilter && numberFormatter ? numberFormatter(value ?? null) : value;
+        const params = this.params;
+        const numberFormatter = params.numberFormatter;
+        let valueToSet: string | number | null = value;
+        if (!fromFloatingFilter && numberFormatter) {
+            const formatted = numberFormatter(value ?? null);
+            // Shown only where it reads back as the same number: nothing else can recover what the user sees.
+            if (
+                value == null ||
+                readsBackAsSameNumber(formatted, value, !!this.allowedCharPattern, params.numberParser)
+            ) {
+                valueToSet = formatted;
+            } else {
+                this.beans.log.warn(326, { colId: params.column.getColId() });
+            }
+        }
         super.setElementValue(element, valueToSet as any);
         if (valueToSet === null) {
             element.setCustomValidity('');
@@ -121,47 +164,26 @@ export class NumberFilter extends SimpleFilter<
     }
 
     protected createEValue(): HTMLElement {
-        const { params, eValuesFrom, eValuesTo } = this;
-        const allowedCharPattern = getAllowedCharPattern(params);
-
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
-        const from = this.createFromToElement(eCondition, eValuesFrom, 'from', allowedCharPattern);
-        const to = this.createFromToElement(eCondition, eValuesTo, 'to', allowedCharPattern);
-
-        const getFieldChangedListener =
-            (
-                from: GridInputTextField | GridInputNumberField,
-                to: GridInputTextField | GridInputNumberField,
-                isFrom: boolean
-            ) =>
-            () =>
-                this.refreshInputPairValidation(from, to, isFrom);
-
-        const fromListener = getFieldChangedListener(from, to, true);
-        from.onValueChange(fromListener);
-        from.addGuiEventListener('focusin', fromListener);
-
-        const toListener = getFieldChangedListener(from, to, false);
-        to.onValueChange(toListener);
-        to.addGuiEventListener('focusin', toListener);
+        const from = this.createInputElement('from');
+        const to = this.createInputElement('to');
+        this.eValuesFrom.push(from);
+        this.eValuesTo.push(to);
+        eCondition.appendChild(from.getGui());
+        eCondition.appendChild(to.getGui());
+        this.attachRangeValidationListeners(from, to);
 
         return eCondition;
     }
 
-    private createFromToElement(
-        eCondition: HTMLElement,
-        eValues: (GridInputTextField | GridInputNumberField)[],
-        fromTo: string,
-        allowedCharPattern: string | null
-    ): GridInputTextField | GridInputNumberField {
+    private createInputElement(fromTo: string): GridInputTextField | GridInputNumberField {
+        const allowedCharPattern = this.allowedCharPattern;
         const eValue = this.createManagedBean<GridInputTextField | GridInputNumberField>(
             allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputNumberField()
         );
         eValue.addCss(`ag-filter-${fromTo}`);
         eValue.addCss('ag-filter-filter');
-        eValues.push(eValue);
-        eCondition.appendChild(eValue.getGui());
         return eValue;
     }
 
@@ -208,17 +230,6 @@ export class NumberFilter extends SimpleFilter<
         return model;
     }
 
-    protected override removeConditionsAndOperators(startPosition: number, deleteCount?: number | undefined): void {
-        if (this.hasInvalidInputs()) {
-            // When there are invalid inputs (which currently can only be when there is an invalid range in the last condition)
-            // we don't want to remove those conditions, to prevent the condition from disappearing just as the user finishes
-            // editing it.
-            return;
-        }
-
-        return super.removeConditionsAndOperators(startPosition, deleteCount);
-    }
-
     protected getInputs(position: number): Tuple<GridInputTextField | GridInputNumberField> {
         const { eValuesFrom, eValuesTo } = this;
         if (position >= eValuesFrom.length) {
@@ -227,42 +238,13 @@ export class NumberFilter extends SimpleFilter<
         return [eValuesFrom[position], eValuesTo[position]];
     }
 
-    protected override hasInvalidInputs(): boolean {
-        let invalidInputs = false;
-        this.forEachInput((element) => (invalidInputs ||= !element.getInputElement().validity.valid));
-        return invalidInputs;
-    }
-
-    protected override positionHasInvalidInputs(position: number): boolean {
-        let invalidInputs = false;
-        this.forEachPositionInput(position, (element) => (invalidInputs ||= !element.getInputElement().validity.valid));
-        return invalidInputs;
+    protected override isInputInvalid(element: GridInputTextField | GridInputNumberField): boolean {
+        return !element.getInputElement().validity.valid;
     }
 
     protected override canApply(_model: NumberFilterModel | ICombinedSimpleModel<NumberFilterModel> | null): boolean {
         return !this.hasInvalidInputs();
     }
-}
-
-function stringToFloat(
-    numberParser: INumberFilterParams['numberParser'],
-    value?: string | number | null
-): number | null {
-    if (typeof value === 'number') {
-        return value;
-    }
-
-    let filterText = _makeNull(value);
-
-    if (filterText?.trim() === '') {
-        filterText = null;
-    }
-
-    if (numberParser) {
-        return numberParser(filterText);
-    }
-
-    return filterText == null || filterText.trim() === '-' ? null : Number.parseFloat(filterText);
 }
 
 function getNormalisedValue(

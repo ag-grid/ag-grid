@@ -1,4 +1,4 @@
-import { RefPlaceholder, _exists, _removeFromParent } from 'ag-stack';
+import { RefPlaceholder, _removeFromParent } from 'ag-stack';
 
 import type {
     AdvancedFilterModel,
@@ -19,6 +19,8 @@ import { VirtualList } from '../../widgets/virtualList';
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
 import type { AdvancedFilterService } from '../advancedFilterService';
+import type { PartialColumnFilterModel } from '../filterExpressionUtils';
+import { hasOperandValue } from '../filterExpressionUtils';
 import { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemAddComp } from './advancedFilterBuilderItemAddComp';
 import { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
@@ -572,11 +574,10 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     }
 
     private validateItems(): void {
-        const clearOperator = (filterModel: ColumnAdvancedFilterModel) => {
-            filterModel.type = undefined as any;
-        };
-        const clearOperand = (filterModel: ColumnAdvancedFilterModel) => {
-            delete (filterModel as any).filter;
+        const clearCondition = (filterModel: PartialColumnFilterModel) => {
+            delete filterModel.type;
+            delete filterModel.filter;
+            delete filterModel.filterTo;
         };
         for (const item of this.items) {
             if (!item.valid || !item.filterModel || item.filterModel.filterType === 'join') {
@@ -588,20 +589,27 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             const columnDetails = this.advFilterExpSvc.getColumnDetails(filterModel.colId);
             if (!hasColumn || !columnDetails.column) {
                 item.valid = false;
-                filterModel.colId = undefined as any;
-                clearOperator(filterModel);
-                clearOperand(filterModel);
+                delete (filterModel as PartialColumnFilterModel).colId;
+                clearCondition(filterModel);
                 continue;
             }
-            const operatorForType = this.advFilterExpSvc.getDataTypeExpressionOperator(columnDetails.baseCellDataType)!;
-            const operator = operatorForType.operators[filterModel.type];
+            // Resolved through the service, which ignores inherited members: a `type` of `toString` is not an option.
+            const operator = this.advFilterExpSvc.getExpressionOperator(
+                columnDetails.baseCellDataType,
+                filterModel.type,
+                columnDetails.column
+            );
             if (!operator) {
                 item.valid = false;
-                clearOperator(filterModel);
-                clearOperand(filterModel);
+                clearCondition(filterModel);
                 continue;
             }
-            if (operator.numOperands > 0 && !_exists((filterModel as any).filter)) {
+            const operands: PartialColumnFilterModel = filterModel;
+            const numOperands = operator.numOperands;
+            if (
+                (numOperands > 0 && !hasOperandValue(operands.filter)) ||
+                (numOperands > 1 && !hasOperandValue(operands.filterTo))
+            ) {
                 item.valid = false;
             }
         }

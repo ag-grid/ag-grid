@@ -49,7 +49,7 @@ describe('Simple Filter — In Range (2-input) reuse surface', () => {
             input [1]: "35"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "inRange"
@@ -77,7 +77,7 @@ describe('Simple Filter — In Range (2-input) reuse surface', () => {
             COLUMN FILTER
             operator: "Between"
             input [0]: "20"
-            input [1]: ""
+            input [1]: "" ⟨To⟩
             model: null
         `);
         await new GridRows(api, 'number inRange incomplete rows').check(`
@@ -104,7 +104,7 @@ describe('Simple Filter — In Range (2-input) reuse surface', () => {
             COLUMN FILTER
             operator: "Between"
             input [0]: "35"
-            input [1]: "20"
+            input [1]: "20" ✗ "Must be greater than 35"
             model: null
         `);
         await new GridRows(api, 'number inRange reversed rows').check(`
@@ -141,7 +141,7 @@ describe('Simple Filter — In Range (2-input) reuse surface', () => {
             input [1]: "2024-06-30"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨yyyy-mm-dd⟩
             model:
               dateFrom: "2024-03-15"
               dateTo: "2024-06-30"

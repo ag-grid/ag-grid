@@ -14,7 +14,7 @@ import type {
 import type { ISetFilterParams } from '../interfaces/iSetFilter';
 import type { IBigIntFilterParams } from './provided/bigInt/iBigIntFilter';
 import type { IDateFilterParams } from './provided/date/iDateFilter';
-import type { ISimpleFilterParams } from './provided/iSimpleFilter';
+import type { IFilterOptionDef, ISimpleFilterParams } from './provided/iSimpleFilter';
 import type { INumberFilterParams } from './provided/number/iNumberFilter';
 import type { ITextFilterParams } from './provided/text/iTextFilter';
 
@@ -101,6 +101,16 @@ type FilterParamsDefMap = CheckDataTypes<{
     object: FilterParamCallback<ITextFilterParams, any>;
 }>;
 
+/** One list shared by every boolean column, so a refresh recognises it as unchanged. Never mutated. */
+const BOOLEAN_FILTER_OPTIONS: (string | IFilterOptionDef)[] = [
+    'empty',
+    { displayKey: 'true', displayName: 'True', numberOfInputs: 0, predicate: (_, cellValue) => !!cellValue },
+    { displayKey: 'false', displayName: 'False', numberOfInputs: 0, predicate: (_, cellValue) => cellValue === false },
+];
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _isDataTypeFilterOptions = (filterOptions: unknown): boolean => filterOptions === BOOLEAN_FILTER_OPTIONS;
+
 // using an object here to enforce dev to not forget to implement new types as they are added
 const filterParamsForEachDataType: FilterParamsDefMap = {
     number: () => undefined,
@@ -108,21 +118,7 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
     boolean: () => ({
         maxNumConditions: 1,
         debounceMs: 0,
-        filterOptions: [
-            'empty',
-            {
-                displayKey: 'true',
-                displayName: 'True',
-                predicate: (_filterValues: any[], cellValue: any) => cellValue,
-                numberOfInputs: 0,
-            },
-            {
-                displayKey: 'false',
-                displayName: 'False',
-                predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
-                numberOfInputs: 0,
-            },
-        ],
+        filterOptions: BOOLEAN_FILTER_OPTIONS,
     }),
     date: () => ({ isValidDate }),
     dateString: ({ dataTypeDefinition }) => ({

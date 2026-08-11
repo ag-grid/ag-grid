@@ -21,8 +21,8 @@ import {
 /**
  * Regression baseline for Advanced Filter grid options and current operator behaviour: display-name/colId
  * resolution, `includeHiddenColumnsInAdvancedFilter`, `suppressAdvancedFilterEval`, `advancedFilterParent`;
- * operators the tickets will ADD but don't offer today (AG-10029 presets, AG-10029/10819 inRange, AG-10819
- * custom filterOptions); and Set Filter columns treated as text (AG-8950). Locks each so tickets are visible diffs.
+ * operators the remaining tickets will ADD but don't offer today (AG-10029 presets and inRange); custom
+ * `filterOptions`, which are supported; and Set Filter columns treated as text (AG-8950).
  */
 
 describe('Advanced Filter — grid options', () => {
@@ -140,6 +140,39 @@ describe('Advanced Filter — grid options', () => {
                 └── LEAF id:1 athlete:"Ng" age:40
             `);
         });
+
+        test('turning the option on reaches an expression parsed while it was off', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    { field: 'athlete', filter: true },
+                    { field: 'age', filter: true, hide: true },
+                ],
+                rowData: ROW_DATA,
+                enableAdvancedFilter: true,
+            });
+
+            // Parsing this is what builds the offered columns, so the option is read before it changes.
+            await AdvancedFilterHarness.get(api).applyExpression('[Age] > 30');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+
+            api.setGridOption('includeHiddenColumnsInAdvancedFilter', true);
+            await asyncSetTimeout(0);
+
+            // A different bound, so the expression is re-parsed rather than recognised as the text already there.
+            await AdvancedFilterHarness.get(api).applyExpression('[Age] > 39');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'number',
+                colId: 'age',
+                type: 'greaterThan',
+                filter: 39,
+            });
+            await new GridRows(api, 'hidden column included after the option was turned on').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 athlete:"Ng" age:40
+            `);
+        });
     });
 
     describe('suppressAdvancedFilterEval (deprecated no-op since v34)', () => {
@@ -203,7 +236,7 @@ describe('Advanced Filter — grid options', () => {
     });
 });
 
-describe('Advanced Filter — currently-unsupported operators (baseline)', () => {
+describe('Advanced Filter — operator support by filterOptions', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             TextFilterModule,
@@ -304,7 +337,7 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
         });
     });
 
-    describe('custom (object) filterOptions are ignored today', () => {
+    describe('custom (object) filterOptions', () => {
         const EVEN: IFilterOptionDef = {
             displayKey: 'even',
             displayName: 'Is even',
@@ -319,20 +352,31 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
             enableAdvancedFilter: true,
         };
 
-        test('the custom option key is not an AF operator, but standard operators still work', async () => {
+        test('the custom option applies, and standard operators from the list still work', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
 
-            // The object option makes the whole list "not all strings", so AF falls back to its default
-            // operators — the custom key is unknown.
+            // The key is accepted and rewritten to the configured display name.
             await AdvancedFilterHarness.get(api).applyExpression('[Age] even');
             await asyncSetTimeout(0);
-            expect(api.getAdvancedFilterModel()).toBeNull();
-            await new FilterDom(api, 'custom option rejected').checkFilterDom(`
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'number',
+                colId: 'age',
+                type: 'even',
+            });
+            await new FilterDom(api, 'custom option applied').checkFilterDom(`
                 ADVANCED FILTER
-                input: "[Age] even"
-                valid: false — Expression has an error. Option not found - even.
+                input: "[Age] Is even"
+                valid: true
                 buttons: Apply ⊘ | Builder
-                model: null
+                model:
+                  filterType: "number"
+                  colId: "age"
+                  type: "even"
+            `);
+            await new GridRows(api, 'custom option rows').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 age:10
+                └── LEAF id:2 age:20
             `);
 
             await AdvancedFilterHarness.get(api).applyExpression('[Age] = 20');
@@ -362,7 +406,7 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
 
             // `contains` is a valid text operator but NOT in the column's restricted `filterOptions`.
             // The restriction only trims the autocomplete suggestions — the parser still accepts it,
-            // so the expression applies. (Baseline for AG-10819: the operator set is not enforced.)
+            // so the expression applies.
             await AdvancedFilterHarness.get(api).applyExpression('[Name] contains "o"');
             await asyncSetTimeout(0);
             expect(api.getAdvancedFilterModel()).toEqual({

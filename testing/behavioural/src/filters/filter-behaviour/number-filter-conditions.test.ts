@@ -1,9 +1,11 @@
 import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
+    FloatingFilterHarness,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -26,7 +28,11 @@ describe('Number Filter — conditions coverage', () => {
         installFilterLayoutMock();
     });
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => gridsManager.reset());
+    afterEach(() => {
+        gridsManager.reset();
+        vi.restoreAllMocks();
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [] });
+    });
 
     const MIXED = [{ val: -10 }, { val: -2.5 }, { val: 0 }, { val: 3 }, { val: 7.5 }, { val: 10 }];
 
@@ -48,7 +54,7 @@ describe('Number Filter — conditions coverage', () => {
             input: "3"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "equals"
@@ -133,7 +139,7 @@ describe('Number Filter — conditions coverage', () => {
             input: "-2.5"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "equals"
@@ -165,7 +171,7 @@ describe('Number Filter — conditions coverage', () => {
             input [1]: "7.5"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "inRange"
@@ -225,7 +231,7 @@ describe('Number Filter — conditions coverage', () => {
             operator: "Blank"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "blank"
@@ -423,7 +429,7 @@ describe('Number Filter — conditions coverage', () => {
             input: "1,5"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "equals"
@@ -433,6 +439,119 @@ describe('Number Filter — conditions coverage', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 val:1.5
         `);
+    });
+
+    test('numberFormatter reaches both inputs, and they can hold it', async () => {
+        const numberFormatter = (value: number | null) => (value == null ? null : `${value} units`);
+        const numberParser = (text: string | null) => (text == null ? null : parseFloat(text));
+        const columnDef = {
+            field: 'val',
+            filter: 'agNumberColumnFilter' as const,
+            // `allowedCharPattern` is what admits the letters `5 units` needs; without it the input is numeric.
+            filterParams: { debounceMs: 0, allowedCharPattern: '\\d\\w\\s\\.\\-', numberFormatter, numberParser },
+        };
+        const rowData = [{ val: 5 }, { val: 7 }];
+
+        const floatingApi: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ ...columnDef, floatingFilter: true }],
+            rowData,
+        });
+        await floatingApi.setColumnFilterModel('val', { filterType: 'number', type: 'equals', filter: 5 });
+        floatingApi.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        const floatingInput = FloatingFilterHarness.get(floatingApi, 'val').inputs()[0];
+        expect(floatingInput.type).toBe('text');
+        expect(floatingInput.value).toBe('5 units');
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid2', { columnDefs: [columnDef], rowData });
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'equals', filter: 5 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        const filter = await ColumnFilterHarness.open(api, 'val');
+        expect(filter.inputs('text')[0].value).toBe('5 units');
+
+        // Read back through the same text field: what the formatter wrote still parses to the number.
+        await filter.setText('7 units', 0);
+        await asyncSetTimeout(0);
+        expect(filter.getModel()).toEqual({ filterType: 'number', type: 'equals', filter: 7 });
+        await new GridRows(api, 'formatted number filter rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 val:7
+        `);
+    });
+
+    test('a numberFormatter with nothing to read it back is ignored, rather than writing text no one can parse', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [326] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'val',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: {
+                        debounceMs: 0,
+                        // Groups the thousands, so its own output does not read back as the number it came from.
+                        numberFormatter: (value: number | null) =>
+                            value == null ? null : value.toLocaleString('en-US'),
+                    },
+                },
+            ],
+            rowData: [{ val: 1234 }, { val: 5 }],
+        });
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'equals', filter: 1234 });
+        await api.onFilterChanged();
+
+        const filter = await ColumnFilterHarness.open(api, 'val');
+        // `1,234` would come back as 1, so the raw number is shown and the formatter reported instead.
+        expect(filter.inputs('number', 0)[0].value).toBe('1234');
+        const warnings = warnSpy.mock.calls.map((call) => call.map(String).join(' ')).join('\n');
+        expect(warnings).toContain('warning #326');
+        expect(warnings).toContain('numberParser');
+
+        await filter.selectOperator('Does not equal');
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'number', type: 'notEqual', filter: 1234 });
+        await new GridRows(api, 'the value survives an operator change').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 val:5
+        `);
+
+        warnSpy.mockRestore();
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
+    });
+
+    test('a read-only summary follows numberFormatter across a colDef refresh', async () => {
+        const columnDefs = (suffix: string) => [
+            {
+                field: 'val',
+                filter: 'agNumberColumnFilter' as const,
+                floatingFilter: true,
+                filterParams: {
+                    debounceMs: 0,
+                    readOnly: true,
+                    numberFormatter: (value: number | null) => (value == null ? null : `${value} ${suffix}`),
+                },
+            },
+        ];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: columnDefs('units'),
+            rowData: [{ val: 5 }, { val: 7 }],
+        });
+
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'equals', filter: 5 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(FloatingFilterHarness.get(api, 'val').inputs()[0].value).toBe('5 units');
+
+        // The formatter is read from the params each time, so a refresh that replaces it is picked up.
+        api.updateGridOptions({ columnDefs: columnDefs('kg') });
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'equals', filter: 7 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(FloatingFilterHarness.get(api, 'val').inputs()[0].value).toBe('7 kg');
     });
 
     test('two conditions joined with AND', async () => {
@@ -558,12 +677,279 @@ describe('Number Filter — conditions coverage', () => {
             input [1]: "7.5"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "inRange"
               filter: -2.5
               filterTo: 7.5
+        `);
+    });
+
+    test('a combined model with no conditions is tolerated rather than throwing', async () => {
+        // Deliberate: a combined model without `conditions` is reported as warning #77.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [77] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: MIXED,
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'val');
+        await filter.selectOperator('Equals');
+        await filter.setNumber(3, 0);
+        await asyncSetTimeout(0);
+
+        // Hand-written models reach the grid: a join operator with no conditions must not break filtering,
+        // and the open panel must still follow it.
+        await api.setColumnFilterModel('val', { filterType: 'number', operator: 'AND' } as any);
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #77');
+        expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'number', operator: 'AND' });
+        await new FilterDom(api, 'conditionless combined model panel', { colId: 'val' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Equals"
+            input: "" ⟨Filter...⟩
+            model:
+              filterType: "number"
+              operator: "AND"
+        `);
+        await new GridRows(api, 'conditionless combined model matches every row').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 val:-10
+            ├── LEAF id:1 val:-2.5
+            ├── LEAF id:2 val:0
+            ├── LEAF id:3 val:3
+            ├── LEAF id:4 val:7.5
+            └── LEAF id:5 val:10
+        `);
+
+        // A well-formed model applied over it still takes effect.
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'greaterThan', filter: 7 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'valid model applied after the malformed one').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:4 val:7.5
+            └── LEAF id:5 val:10
+        `);
+    });
+
+    test('a cell no number can be compared with is excluded rather than ordered against', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: [{ val: 1 }, { val: 'N/A' }, { val: 'abc' }, { val: 9 }],
+        });
+
+        // The ordering operators are where a non-coercing check would differ, letting every such row through.
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'lessThan', filter: 5 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'lessThan skips the uncomparable cells').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 val:1
+        `);
+
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'greaterThan', filter: 5 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'greaterThan skips them too').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:3 val:9
+        `);
+
+        // `notEqual` is the one an uncomparable cell still passes, as nothing it holds equals the filter value.
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'notEqual', filter: 1 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'notEqual keeps them').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 val:"Invalid Number"
+            ├── LEAF id:2 val:"Invalid Number"
+            └── LEAF id:3 val:9
+        `);
+    });
+
+    test('a numberParser replaced at runtime is used by inputs built before the change', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'val',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: {
+                        debounceMs: 0,
+                        allowedCharPattern: '\\d\\-\\,\\.',
+                        // Reads "1,5" as one-and-a-half.
+                        numberParser: (text: string | null) =>
+                            text == null || text === '' ? null : Number(text.replace(',', '.')),
+                    },
+                },
+            ],
+            rowData: [{ val: 1.5 }, { val: 15 }],
+        });
+
+        // Building the condition's inputs is what captures the params, so open before swapping them.
+        const filter = await ColumnFilterHarness.open(api, 'val');
+
+        api.setGridOption('columnDefs', [
+            {
+                field: 'val',
+                filter: 'agNumberColumnFilter',
+                filterParams: {
+                    debounceMs: 0,
+                    allowedCharPattern: '\\d\\-\\,\\.',
+                    // Reads "1,5" as fifteen: the comma is a thousands separator.
+                    numberParser: (text: string | null) =>
+                        text == null || text === '' ? null : Number(text.replace(',', '')),
+                },
+            },
+        ]);
+        await asyncSetTimeout(0);
+
+        await filter.setText('1,5', 0);
+        await asyncSetTimeout(0);
+
+        expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'number', type: 'equals', filter: 15 });
+        await new FilterDom(api, 'input read by the replaced parser', { colId: 'val' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Equals"
+            input: "1,5"
+            AND
+            operator: "Equals"
+            input: "" \u27e8Filter...\u27e9
+            model:
+              filterType: "number"
+              type: "equals"
+              filter: 15
+        `);
+        await new GridRows(api, 'the replaced numberParser decides which row matches').check(`
+            ROOT id:ROOT_NODE_ID
+            \u2514\u2500\u2500 LEAF id:1 val:15
+        `);
+    });
+
+    test('a numberFormatter added at runtime reaches inputs built before it', async () => {
+        const numberParser = (text: string | null) =>
+            text == null || text === '' ? null : Number(String(text).replace(/,/g, ''));
+        const numberFormatter = (value: number | null) => (value == null ? null : value.toLocaleString('en-US'));
+        const allowedCharPattern = '\\d\\,\\.\\-';
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0, allowedCharPattern } },
+            ],
+            rowData: [{ val: 5 }, { val: 1500 }],
+        });
+        const filter = await ColumnFilterHarness.open(api, 'val');
+
+        api.setGridOption('columnDefs', [
+            {
+                field: 'val',
+                filter: 'agNumberColumnFilter',
+                filterParams: { debounceMs: 0, allowedCharPattern, numberParser, numberFormatter },
+            },
+        ]);
+        await asyncSetTimeout(0);
+
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'equals', filter: 1500 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(filter.inputs('text', 0)[0].value).toBe('1,500');
+    });
+
+    test('a value already shown survives the numberFormatter that wrote it being withdrawn', async () => {
+        const numberParser = (text: string | null) =>
+            text == null || text === '' ? null : Number(String(text).replace(/,/g, ''));
+        const numberFormatter = (value: number | null) => (value == null ? null : value.toLocaleString('en-US'));
+        const allowedCharPattern = '\\d\\,\\.\\-';
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'val',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { debounceMs: 0, allowedCharPattern, numberParser, numberFormatter },
+                },
+            ],
+            rowData: [{ val: 5 }, { val: 1500 }],
+        });
+        const filter = await ColumnFilterHarness.open(api, 'val');
+
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'equals', filter: 1500 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(filter.inputs('text', 0)[0].value).toBe('1,500');
+
+        // Nothing can read "1,500" back once the parser goes, so the value is re-rendered, not copied across.
+        api.setGridOption('columnDefs', [
+            { field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0, allowedCharPattern } },
+        ]);
+        await asyncSetTimeout(0);
+
+        expect(filter.inputs('text', 0)[0].value).toBe('1500');
+        expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'number', type: 'equals', filter: 1500 });
+    });
+
+    test('a colDef refresh keeps text the parser cannot read yet', async () => {
+        // Declared inline, as a framework wrapper does, so every refresh passes new function identities.
+        const makeColumnDefs = () => [
+            {
+                field: 'val',
+                filter: 'agNumberColumnFilter',
+                filterParams: {
+                    debounceMs: 0,
+                    allowedCharPattern: '\\d\\-\\.',
+                    numberParser: (text: string | null) => (text == null || text === '' ? null : Number(text)),
+                    numberFormatter: (value: number | null) => (value == null ? null : String(value)),
+                },
+            },
+        ];
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: makeColumnDefs(),
+            rowData: [{ val: -5 }, { val: 5 }],
+        });
+        const filter = await ColumnFilterHarness.open(api, 'val');
+        await filter.selectOperator('Equals');
+        await filter.setText('-');
+
+        api.setGridOption('columnDefs', makeColumnDefs());
+        await asyncSetTimeout(0);
+
+        expect(filter.inputs('text', 0)[0].value).toBe('-');
+        await filter.setText('-5');
+        expect(filter.getModel()).toEqual({ filterType: 'number', type: 'equals', filter: -5 });
+    });
+
+    test('an input replaced by a colDef refresh still applies what is typed into it', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: [{ val: 5 }, { val: 1500 }],
+        });
+        const filter = await ColumnFilterHarness.open(api, 'val');
+        await filter.selectOperator('Equals');
+        expect(filter.inputs('number', 0)).toHaveLength(1);
+
+        // `allowedCharPattern` makes the inputs text, so the ones typed into here are not the ones built.
+        api.setGridOption('columnDefs', [
+            {
+                field: 'val',
+                filter: 'agNumberColumnFilter',
+                filterParams: { debounceMs: 0, allowedCharPattern: '\\d\\-\\.' },
+            },
+        ]);
+        await asyncSetTimeout(0);
+
+        await filter.setText('1500');
+        expect(filter.getModel()).toEqual({ filterType: 'number', type: 'equals', filter: 1500 });
+        await new GridRows(api, 'typed into the replacement input').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 val:1500
         `);
     });
 });
