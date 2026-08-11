@@ -55,22 +55,22 @@ const DEFAULT_PDF_STYLES: PdfBaseColors = {
  * @returns Fully resolved colour bundle used by the PDF renderer.
  */
 export function resolvePdfStyleColors(styles?: PdfColors): PdfStyleColors {
-    const resolvedStyles = { ...DEFAULT_PDF_STYLES, ...(styles ?? {}) };
+    const resolvedStyles = styles ?? {};
 
-    const pageBackground = resolveColor(resolvedStyles.backgroundColor, DEFAULT_PDF_STYLES.backgroundColor);
-    const dataBackground = resolveColor(
-        resolvedStyles.dataBackgroundColor,
-        resolvedStyles.backgroundColor || DEFAULT_PDF_STYLES.dataBackgroundColor,
-        pageBackground
-    );
+    const backgroundColor = resolvedStyles.backgroundColor || DEFAULT_PDF_STYLES.backgroundColor;
+    const dataBackgroundColor = resolvedStyles.dataBackgroundColor || backgroundColor;
+    const oddRowBackgroundColor = resolvedStyles.oddRowBackgroundColor || dataBackgroundColor;
+    const headerBackgroundColor = resolvedStyles.headerBackgroundColor || backgroundColor;
+    const pageBackground = resolveColor(backgroundColor, DEFAULT_PDF_STYLES.backgroundColor);
+    const dataBackground = resolveColor(dataBackgroundColor, DEFAULT_PDF_STYLES.dataBackgroundColor, pageBackground);
     const oddRowBackground = resolveColor(
-        resolvedStyles.oddRowBackgroundColor,
-        resolvedStyles.dataBackgroundColor || DEFAULT_PDF_STYLES.oddRowBackgroundColor,
+        oddRowBackgroundColor,
+        DEFAULT_PDF_STYLES.oddRowBackgroundColor,
         dataBackground ?? pageBackground
     );
     const headerBackground = resolveColor(
-        resolvedStyles.headerBackgroundColor,
-        resolvedStyles.backgroundColor || DEFAULT_PDF_STYLES.headerBackgroundColor,
+        headerBackgroundColor,
+        DEFAULT_PDF_STYLES.headerBackgroundColor,
         pageBackground
     );
     const border = resolveColor(

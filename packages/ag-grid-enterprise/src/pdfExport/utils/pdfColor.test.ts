@@ -26,4 +26,11 @@ describe('PDF colours', () => {
 
         expect(colors.headerBackground).toEqual({ r: 252, g: 251, b: 250 });
     });
+
+    it('falls back to the data background for odd rows', () => {
+        const colors = resolvePdfStyleColors({ dataBackgroundColor: '#1e1e1e' });
+
+        expect(colors.dataBackground).toEqual({ r: 30, g: 30, b: 30 });
+        expect(colors.oddRowBackground).toEqual({ r: 30, g: 30, b: 30 });
+    });
 });

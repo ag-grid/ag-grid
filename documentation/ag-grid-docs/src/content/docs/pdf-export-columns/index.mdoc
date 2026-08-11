@@ -58,16 +58,16 @@ When `columnWidth` is omitted, the exported Row Numbers column is sized automati
 
 The example below demonstrates header suppression, visible or hidden column selection, and Row Numbers export.
 
-{% gridExampleRunner title="PDF Export - Columns" name="pdf-export-columns" exampleHeight=600 /%}
+{% gridExampleRunner title="PDF Export - Columns" name="pdf-export-columns" exampleHeight=350 /%}
 
 ## Column Widths
 
 The `columnWidth` option accepts:
 
-- `'grid'` to use the current grid width.
-- `'auto'` to measure the exported header and body content.
+- `'grid'` to use the current column widths defined in the grid.
+- `'auto'` to size each column to fit its contents.
 - A number to use a fixed width in points.
-- A callback to configure each exported column independently.
+- A callback to return a custom value for each column.
 
 When `columnWidth` is omitted, regular columns use `'grid'` and the Row Numbers column uses `'auto'`. A `columnWidth` value overrides those defaults; a callback result overrides the default for that column. Returning `null` or `undefined` from the callback uses the column's default mode.
 
@@ -75,7 +75,7 @@ Auto widths are measured before page scaling. If the combined widths exceed the 
 
 PDF layout dimensions use points, where 72 points equal one inch.
 
-{% gridExampleRunner title="Widths And Autosizing" name="pdf-widths-autosizing" exampleHeight=560 /%}
+{% gridExampleRunner title="Widths And Autosizing" name="pdf-widths-autosizing" exampleHeight=280 /%}
 
 ## API
 
