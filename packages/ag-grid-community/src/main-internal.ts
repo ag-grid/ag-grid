@@ -141,11 +141,7 @@ export {
     _getFilterParamsForDataType,
     _isGridSuppliedFilterOptions,
 } from './filter/filterDataTypeUtils';
-export {
-    _getCustomOptionNumberOfInputs,
-    _getMissingFilterOptionKeys,
-    _isValidFilterOptionDef,
-} from './filter/provided/simpleFilterUtils';
+export { _classifyFilterOptions, _getCustomOptionNumberOfInputs } from './filter/provided/simpleFilterUtils';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';

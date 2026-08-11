@@ -1,19 +1,10 @@
 import type { LocaleTextFunc } from 'ag-stack';
 
 import type { AgColumn, IFilterOptionDef } from 'ag-grid-community';
-import {
-    _getCustomOptionNumberOfInputs,
-    _isGridSuppliedFilterOptions,
-    _isValidFilterOptionDef,
-} from 'ag-grid-community';
+import { _getCustomOptionNumberOfInputs, _isGridSuppliedFilterOptions } from 'ag-grid-community';
 
 import type { DataTypeFilterExpressionOperators, FilterExpressionOperator } from './filterExpressionOperators';
 import { findMatch, getEntries } from './filterExpressionOperators';
-
-/** An option that can actually filter: nothing runs anything but `predicate`. */
-export function isCustomFilterOption(option: string | IFilterOptionDef): option is IFilterOptionDef {
-    return option != null && typeof option !== 'string' && _isValidFilterOptionDef(option);
-}
 
 /** The options a column narrows itself to, or `undefined` where it narrows nothing of its own. */
 export function getColumnFilterOptions(column: AgColumn): (string | IFilterOptionDef)[] | undefined {
@@ -25,17 +16,18 @@ export function getColumnFilterOptions(column: AgColumn): (string | IFilterOptio
 /** Overlays a column's Custom Filter Options on its data type's operators, replacing a built-in of the same key. */
 export function createCustomOptionOperators(
     dataTypeOperators: DataTypeFilterExpressionOperators<any>,
-    customOptions: IFilterOptionDef[],
+    customOptions: Map<string, IFilterOptionDef>,
     localeTextFunc: LocaleTextFunc
 ): DataTypeFilterExpressionOperators<any> {
     const operators: { [operator: string]: FilterExpressionOperator<any> } = Object.assign(
         Object.create(null),
         dataTypeOperators.operators
     );
-    for (let i = 0, len = customOptions.length; i < len; ++i) {
-        const option = customOptions[i];
-        operators[option.displayKey] = createCustomOptionOperator(option, localeTextFunc);
-    }
+    const customKeys: string[] = [];
+    customOptions.forEach((option, key) => {
+        customKeys.push(key);
+        operators[key] = createCustomOptionOperator(option, localeTextFunc);
+    });
 
     return {
         operators,
@@ -44,8 +36,8 @@ export function createCustomOptionOperators(
             const search = displayValue.toLocaleLowerCase();
             // The column's own option owns the name it is offered under: a built-in written the same way is
             // not what the column offers, and matching it would run the wrong evaluator under that name.
-            for (let i = 0, len = customOptions.length; i < len; ++i) {
-                const key = customOptions[i].displayKey;
+            for (let i = 0, len = customKeys.length; i < len; ++i) {
+                const key = customKeys[i];
                 if (operators[key].displayValue.toLocaleLowerCase() === search) {
                     return key;
                 }
@@ -55,8 +47,8 @@ export function createCustomOptionOperators(
                 return byDisplayName;
             }
             // A `displayKey` stands in for the name, and the match rewrites it to the name in the expression.
-            for (let i = 0, len = customOptions.length; i < len; ++i) {
-                const key = customOptions[i].displayKey;
+            for (let i = 0, len = customKeys.length; i < len; ++i) {
+                const key = customKeys[i];
                 if (key.toLocaleLowerCase() === search) {
                     return key;
                 }

@@ -69,7 +69,8 @@ export class NumberFilter extends TextInputSimpleFilter<
     }
 
     protected override refreshPositionValidation(position: number, isFrom = false): void {
-        const { from, to } = this.getConditionInputs(position);
+        const from = this.eValuesFrom[position];
+        const to = this.eValuesTo[position];
         const fromValue = this.readValue(from, true);
         const toValue = this.readValue(to, true);
         const localeKey = this.isRangeCondition(position)

@@ -8,17 +8,16 @@ import type {
     ColumnModel,
     ColumnNameService,
     DataTypeService,
-    IFilterOptionDef,
     JoinAdvancedFilterModel,
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _getMissingFilterOptionKeys } from 'ag-grid-community';
+import { BeanStub, _classifyFilterOptions } from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import { COL_FILTER_EXPRESSION_END_CHAR, COL_FILTER_EXPRESSION_START_CHAR } from './colFilterExpressionParser';
-import { createCustomOptionOperators, getColumnFilterOptions, isCustomFilterOption } from './customFilterOptions';
+import { createCustomOptionOperators, getColumnFilterOptions } from './customFilterOptions';
 import type {
     DataTypeFilterExpressionOperators,
     FilterExpressionEvaluatorParams,
@@ -366,12 +365,16 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         let columnOperators = forDataType.get(column);
         if (!columnOperators) {
             const filterOptions = getColumnFilterOptions(column);
-            const { keys, customOptions } = this.classifyColumnOptions(filterOptions);
+            // Malformed entries are reported here: a column filtered only through the Advanced Filter builds
+            // no `OptionsFactory` to report them.
+            const { positions, customOptions } = _classifyFilterOptions(filterOptions ?? [], (keys) =>
+                this.warn(72, { keys })
+            );
             columnOperators = {
-                operators: customOptions.length
+                operators: customOptions.size
                     ? createCustomOptionOperators(dataTypeOperators, customOptions, this.getLocaleTextFunc())
                     : dataTypeOperators,
-                activeOperators: filterOptions ? keys : undefined,
+                activeOperators: filterOptions ? [...positions.keys()] : undefined,
             };
             forDataType.set(column, columnOperators);
         }
@@ -507,39 +510,6 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             AND: this.translate('advancedFilterAnd'),
             OR: this.translate('advancedFilterOr'),
         };
-    }
-
-    /**
-     * The keys the column offers, one per key, and the options carrying their own predicate. A malformed one is
-     * reported here: a column filtered only through the Advanced Filter builds no `OptionsFactory` to report it.
-     */
-    private classifyColumnOptions(filterOptions: (string | IFilterOptionDef)[] | undefined): {
-        keys: string[];
-        customOptions: IFilterOptionDef[];
-    } {
-        const keys: string[] = [];
-        const customOptions: IFilterOptionDef[] = [];
-        const seenKeys = new Set<string>();
-        for (let i = 0, len = filterOptions?.length ?? 0; i < len; ++i) {
-            const option = filterOptions![i];
-            let key: string;
-            if (typeof option === 'string') {
-                key = option;
-            } else if (option == null) {
-                continue;
-            } else if (isCustomFilterOption(option)) {
-                key = option.displayKey;
-                customOptions.push(option);
-            } else {
-                this.warn(72, { keys: _getMissingFilterOptionKeys(option) });
-                continue;
-            }
-            if (!seenKeys.has(key)) {
-                seenKeys.add(key);
-                keys.push(key);
-            }
-        }
-        return { keys, customOptions };
     }
 
     public resetColumnCaches(): void {

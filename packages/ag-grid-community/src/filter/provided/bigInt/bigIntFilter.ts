@@ -27,7 +27,8 @@ export class BigIntFilter extends TextInputSimpleFilter<
     protected override defaultDebounceMs = 500;
 
     protected override refreshPositionValidation(position: number, isFrom = false): void {
-        const { from, to } = this.getConditionInputs(position);
+        const from = this.eValuesFrom[position];
+        const to = this.eValuesTo[position];
         const fromValue = this.readValue(from);
         const toValue = this.readValue(to);
         const fromInvalid = this.isInvalidValue(from, fromValue);

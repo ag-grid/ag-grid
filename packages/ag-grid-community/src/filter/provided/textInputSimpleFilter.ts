@@ -1,25 +1,14 @@
-import { _removeFromParent } from 'ag-stack';
-
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { _createElement } from '../../utils/element';
 import type { GridInputNumberField, GridInputTextField } from '../../widgets/gridWidgetTypes';
 import type { ISimpleFilterModel, Tuple } from './iSimpleFilter';
 import type { SimpleFilterDisplayParams } from './simpleFilter';
 import { SimpleFilter } from './simpleFilter';
-import { removeItems } from './simpleFilterUtils';
 
 /** What an input was written with: the value is only still its own while the text is the one written. */
 interface RenderedValue<V> {
     text: string;
     value: V | null;
-}
-
-/** One condition's pair of inputs, each beside what it was last written with, so neither outlives the other. */
-interface ConditionInputs<E, V> {
-    from: E;
-    to: E;
-    renderedFrom: RenderedValue<V> | undefined;
-    renderedTo: RenderedValue<V> | undefined;
 }
 
 /**
@@ -32,7 +21,11 @@ export abstract class TextInputSimpleFilter<
     E extends GridInputTextField | GridInputNumberField,
     P extends SimpleFilterDisplayParams<M>,
 > extends SimpleFilter<M, V, E, P> {
-    private readonly conditionInputs: ConditionInputs<E, V>[] = [];
+    /** Held by position, never handed out as an element: removing a condition shifts every one after it. */
+    protected readonly eValuesFrom: E[] = [];
+    protected readonly eValuesTo: E[] = [];
+    /** Keyed on the element so it cannot outlive it, unlike a position, which shifts. */
+    private readonly renderedValues = new WeakMap<E, RenderedValue<V>>();
     /** Read once when an input is built, so a `colDef` refresh that changes it has to rebuild them. */
     protected allowedCharPattern: string | null;
     /** The parameters the mounted inputs were filled through; their text is only readable through these. */
@@ -46,12 +39,6 @@ export abstract class TextInputSimpleFilter<
     /** The text a value is written as, where the filter formats it at all. */
     protected abstract getValueFormatter(): ((value: V | null) => string | null) | undefined;
 
-    /** The pair a condition filters through. Callers hold a position, never an element, since removing a
-     * condition from the middle shifts every one after it. */
-    protected getConditionInputs(position: number): ConditionInputs<E, V> {
-        return this.conditionInputs[position];
-    }
-
     public override afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         super.afterGuiAttached(params);
 
@@ -63,7 +50,8 @@ export abstract class TextInputSimpleFilter<
 
         const from = this.createInputElement('from');
         const to = this.createInputElement('to');
-        this.conditionInputs.push({ from, to, renderedFrom: undefined, renderedTo: undefined });
+        this.eValuesFrom.push(from);
+        this.eValuesTo.push(to);
         eCondition.appendChild(from.getGui());
         eCondition.appendChild(to.getGui());
         this.attachRangeValidationListeners(from, to);
@@ -72,14 +60,8 @@ export abstract class TextInputSimpleFilter<
     }
 
     protected override removeEValues(startPosition: number, deleteCount?: number): void {
-        const removed = removeItems(this.conditionInputs, startPosition, deleteCount);
-        for (let i = 0, len = removed.length; i < len; ++i) {
-            const { from, to } = removed[i];
-            _removeFromParent(from.getGui());
-            _removeFromParent(to.getGui());
-            this.destroyBean(from);
-            this.destroyBean(to);
-        }
+        this.removeComponents(this.eValuesFrom, startPosition, deleteCount);
+        this.removeComponents(this.eValuesTo, startPosition, deleteCount);
     }
 
     /** A replacement element carries none of the original's listeners, so a rebuild re-attaches them all. */
@@ -102,47 +84,16 @@ export abstract class TextInputSimpleFilter<
 
     /** Resolved per event, never captured: a condition removed from the middle shifts every one after it. */
     private refreshInputValidationAt(element: E, isFrom: boolean): void {
-        const conditionInputs = this.conditionInputs;
-        for (let position = 0, len = conditionInputs.length; position < len; ++position) {
-            const inputs = conditionInputs[position];
-            if ((isFrom ? inputs.from : inputs.to) === element) {
-                this.refreshPositionValidation(position, isFrom);
-                return;
-            }
-        }
-    }
-
-    /**
-     * What the filter wrote is not something the user typed, so it is never read back through the parser.
-     * A floating filter passes the text the user typed there, which is read back like any other typing.
-     */
-    private trackRenderedValue(element: E, value: V | null, fromFloatingFilter?: boolean): void {
-        const rendered = fromFloatingFilter ? undefined : { text: element.getInputElement().value, value };
-        const conditionInputs = this.conditionInputs;
-        for (let i = 0, len = conditionInputs.length; i < len; ++i) {
-            const inputs = conditionInputs[i];
-            if (inputs.from === element) {
-                inputs.renderedFrom = rendered;
-                return;
-            } else if (inputs.to === element) {
-                inputs.renderedTo = rendered;
-                return;
-            }
+        const position = (isFrom ? this.eValuesFrom : this.eValuesTo).indexOf(element);
+        if (position >= 0) {
+            this.refreshPositionValidation(position, isFrom);
         }
     }
 
     /** What the input was rendered with, or `undefined` once the user has made the text their own. */
     private getRenderedValue(element: E): RenderedValue<V> | undefined {
-        const conditionInputs = this.conditionInputs;
-        for (let i = 0, len = conditionInputs.length; i < len; ++i) {
-            const inputs = conditionInputs[i];
-            const isFrom = inputs.from === element;
-            if (isFrom || inputs.to === element) {
-                const rendered = isFrom ? inputs.renderedFrom : inputs.renderedTo;
-                return rendered?.text === element.getInputElement().value ? rendered : undefined;
-            }
-        }
-        return undefined;
+        const rendered = this.renderedValues.get(element);
+        return rendered?.text === element.getInputElement().value ? rendered : undefined;
     }
 
     /** The value an input holds: the one it was rendered with, until the user makes the text their own. */
@@ -156,7 +107,13 @@ export abstract class TextInputSimpleFilter<
         const valueFormatter = this.getValueFormatter();
         const valueToSet = !fromFloatingFilter && valueFormatter ? valueFormatter(value) : value;
         super.setElementValue(element, valueToSet as any, fromFloatingFilter);
-        this.trackRenderedValue(element, value, fromFloatingFilter);
+        // What the filter wrote is not something the user typed, so it is never read back through the parser.
+        // A floating filter passes the text the user typed there, which is read back like any other typing.
+        if (fromFloatingFilter) {
+            this.renderedValues.delete(element);
+        } else {
+            this.renderedValues.set(element, { text: element.getInputElement().value, value });
+        }
         if (valueToSet === null) {
             element.setCustomValidity('');
         }
@@ -174,8 +131,8 @@ export abstract class TextInputSimpleFilter<
     }
 
     protected override getInputs(position: number): Tuple<E> {
-        const inputs = this.conditionInputs[position];
-        return inputs ? [inputs.from, inputs.to] : [null, null];
+        const eValuesFrom = this.eValuesFrom;
+        return position < eValuesFrom.length ? [eValuesFrom[position], this.eValuesTo[position]] : [null, null];
     }
 
     protected override isInputInvalid(element: E): boolean {
@@ -196,17 +153,16 @@ export abstract class TextInputSimpleFilter<
 
     /** Shows every mounted input again, replacing the elements whose type the new parameters changed. */
     protected refreshInputElements(rebuild: boolean, previous: P | undefined): void {
-        const conditionInputs = this.conditionInputs;
-        const numConditions = conditionInputs.length;
+        const { eValuesFrom, eValuesTo } = this;
+        const numConditions = eValuesFrom.length;
         if (!numConditions) {
             return;
         }
         for (let position = 0; position < numConditions; ++position) {
-            const inputs = conditionInputs[position];
-            this.refreshInputElement(inputs, true, rebuild, previous);
-            this.refreshInputElement(inputs, false, rebuild, previous);
+            this.refreshInputElement(eValuesFrom, position, 'from', rebuild, previous);
+            this.refreshInputElement(eValuesTo, position, 'to', rebuild, previous);
             if (rebuild) {
-                this.attachRebuiltInputListeners(inputs.from, inputs.to);
+                this.attachRebuiltInputListeners(eValuesFrom[position], eValuesTo[position]);
             }
         }
         this.updateUiVisibility(); // the replacements start visible and enabled, whatever the condition is
@@ -214,33 +170,28 @@ export abstract class TextInputSimpleFilter<
     }
 
     private refreshInputElement(
-        inputs: ConditionInputs<E, V>,
-        isFrom: boolean,
+        eValues: E[],
+        position: number,
+        fromTo: 'from' | 'to',
         rebuild: boolean,
         previous: P | undefined
     ): void {
-        const mounted = isFrom ? inputs.from : inputs.to;
+        const mounted = eValues[position];
         // Read past the validity gate: an input reported as out of order still holds what the user typed.
         const text = mounted.getValue(true);
-        const rendered = isFrom ? inputs.renderedFrom : inputs.renderedTo;
-        const value =
-            rendered?.text === mounted.getInputElement().value ? rendered.value : this.parseText(text, previous);
+        const rendered = this.getRenderedValue(mounted);
+        const value = rendered ? rendered.value : this.parseText(text, previous);
         // Text no parser reads is not a value to render again, it is what the user is still typing.
         const isMidEdit = value == null && text != null && text !== '';
         let element = mounted;
         if (rebuild) {
-            element = this.createInputElement(isFrom ? 'from' : 'to');
+            element = this.createInputElement(fromTo);
             mounted.getGui().replaceWith(element.getGui());
             this.destroyBean(mounted);
-        }
-        if (isFrom) {
-            inputs.from = element;
-            inputs.renderedFrom = undefined;
-        } else {
-            inputs.to = element;
-            inputs.renderedTo = undefined;
+            eValues[position] = element;
         }
         if (isMidEdit) {
+            this.renderedValues.delete(element);
             element.setValue(text, true);
         } else {
             this.setElementValue(element, value);

@@ -71,19 +71,47 @@ const zeroInputTypes: ReadonlySet<string> = new Set<ISimpleFilterModelType>([
 /** Reported by name when one is absent, so the warning says which; validity is the same set being present. */
 const REQUIRED_OPTION_PROPERTIES: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _isValidFilterOptionDef(option: IFilterOptionDef): boolean {
-    for (let i = 0, len = REQUIRED_OPTION_PROPERTIES.length; i < len; ++i) {
-        if (option[REQUIRED_OPTION_PROPERTIES[i]] == null) {
-            return false;
+/**
+ * What a `filterOptions` list offers: one entry per key in first-listed order, a `FilterOptionDef` replacing
+ * the built-in of the same `displayKey`, and a malformed entry reported through `warnMissingKeys` and dropped.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _classifyFilterOptions(
+    configuredOptions: readonly (IFilterOptionDef | string)[],
+    warnMissingKeys: (keys: string[]) => void
+): {
+    options: (IFilterOptionDef | string)[];
+    positions: Map<string, number>;
+    customOptions: Map<string, IFilterOptionDef>;
+} {
+    const options: (IFilterOptionDef | string)[] = [];
+    const positions = new Map<string, number>();
+    const customOptions = new Map<string, IFilterOptionDef>();
+    for (let i = 0, len = configuredOptions.length; i < len; ++i) {
+        const option = configuredOptions[i];
+        let key: string;
+        if (typeof option === 'string') {
+            key = option;
+        } else if (option == null) {
+            continue; // `typeof null` is `'object'`, so a hole would read as an option with no properties
+        } else {
+            const missingKeys = REQUIRED_OPTION_PROPERTIES.filter((name) => option[name] == null);
+            if (missingKeys.length) {
+                warnMissingKeys(missingKeys);
+                continue;
+            }
+            key = option.displayKey;
+            customOptions.set(key, option);
+        }
+        const position = positions.get(key);
+        if (position == null) {
+            positions.set(key, options.length);
+            options.push(option);
+        } else if (typeof option !== 'string') {
+            options[position] = option; // keeps the place the key was first listed in
         }
     }
-    return true;
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getMissingFilterOptionKeys(option: IFilterOptionDef): string[] {
-    return REQUIRED_OPTION_PROPERTIES.filter((name) => option[name] == null);
+    return { options, positions, customOptions };
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

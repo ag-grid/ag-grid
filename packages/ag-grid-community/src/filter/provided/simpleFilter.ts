@@ -898,11 +898,10 @@ export abstract class SimpleFilter<
         this.matchNumConditions(numConditions);
 
         const orChecked = combinedModel.operator === 'OR';
+        // Created and removed in lockstep, so one index reaches both halves of a panel.
         const { eJoinAnds, eJoinOrs } = this;
         for (let i = 0, len = eJoinAnds.length; i < len; ++i) {
             eJoinAnds[i].setValue(!orChecked, true);
-        }
-        for (let i = 0, len = eJoinOrs.length; i < len; ++i) {
             eJoinOrs[i].setValue(orChecked, true);
         }
 
