@@ -150,17 +150,10 @@ export const Accessibility: FunctionComponent = () => {
             title="Accessibility"
             source={['_root.scss', 'elements/_button.scss', 'elements/_form-elements.scss']}
             lede={
-                <>
-                    <p>
-                        The design system gets some of this right for you: focus rings are on every interactive element,
-                        they use <code>:focus-visible</code> so they appear for keyboard users only, and global element
-                        styling means semantic HTML renders correctly without classes.
-                    </p>
-                    <p>
-                        It does not check contrast, manage focus order, or provide accessible names. Those are the
-                        caller&rsquo;s job, and the audit below shows what the token set currently gets wrong.
-                    </p>
-                </>
+                <p>
+                    The design system gives you focus rings and correct semantics for free. It does not check contrast,
+                    manage focus order or provide accessible names - see the table below for the split.
+                </p>
             }
         >
             <Block

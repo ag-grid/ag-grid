@@ -5,7 +5,7 @@ import type { CSSProperties, FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 
 const ALERT_TYPES = [
@@ -31,16 +31,10 @@ export const Alerts: FunctionComponent = () => (
         title="Alerts"
         source="components/alert/Alert.tsx"
         lede={
-            <>
-                <p>
-                    Callouts for information that should interrupt the reading flow. The type sets both the colour and
-                    the icon, so the two never disagree.
-                </p>
-                <p>
-                    Alerts are for content that would be missed inline. Reaching for one because a paragraph feels
-                    unimportant is a sign the paragraph should be cut instead.
-                </p>
-            </>
+            <p>
+                Callouts that interrupt the reading flow. The <code>type</code> sets both colour and icon, so the two
+                cannot disagree.
+            </p>
         }
     >
         <Block title="Types">
@@ -55,31 +49,10 @@ export const Alerts: FunctionComponent = () => (
             ))}
         </Block>
 
-        <Block title="Using alerts">
-            <Guidance
-                dos={[
-                    <>
-                        Lead with what the reader should do or know. The first few words carry the whole callout if it
-                        is skimmed.
-                    </>,
-                    <>Keep an alert to one idea. Two warnings in one box means neither is read.</>,
-                    <>
-                        Use <code>warning</code> sparingly. Its value comes from being rare on the page.
-                    </>,
-                ]}
-                donts={[
-                    <>
-                        Don&rsquo;t stack alerts. Three in a row is a wall of colour that reads as decoration rather
-                        than emphasis.
-                    </>,
-                    <>Don&rsquo;t put the only copy of essential information in an alert - readers skip boxes.</>,
-                    <>
-                        Don&rsquo;t use <code>success</code> for general positive framing; it means something completed
-                        or is now supported.
-                    </>,
-                ]}
-            />
-        </Block>
+        <Gotcha>
+            Readers skip boxes, so an alert must not hold the only copy of something essential. One idea each, and
+            don&rsquo;t stack them - three in a row reads as decoration rather than emphasis.
+        </Gotcha>
     </Section>
 );
 
@@ -90,27 +63,18 @@ export const Containers: FunctionComponent = () => (
         title="Cards and tabs"
         source={['components/_containers.scss', 'components/card/Card.tsx']}
         lede={
-            <>
-                <p>
-                    Two container patterns are styled globally. <code>.card</code> is a tinted panel with an optional
-                    header, driven by a single <code>--card-color</code> that both the border and the two surface tints
-                    derive from. <code>.tabs-outer</code> is a bordered panel with a tab strip.
-                </p>
-                <p>
-                    Note that there are <strong>two different cards</strong>: the global <code>.card</code> class
-                    described here, and a separate <code>Card</code> React component with its own module styles. They
-                    look different and are not interchangeable.
-                </p>
-            </>
+            <p>
+                <code>.card</code> is a tinted panel with an optional header; <code>.tabs-outer</code> is a bordered
+                panel with a tab strip. Both are global classes.
+            </p>
         }
     >
         <Block
             title="Card"
             note={
                 <p>
-                    Set <code>--card-color</code> to re-tint the whole card. <code>--header-tint</code> and{' '}
-                    <code>--content-tint</code> control how much of the page background is mixed into each region, so a
-                    lower percentage means a stronger tint.
+                    Set <code>--card-color</code> to re-tint the whole card - the border and both surface tints derive
+                    from it.
                 </p>
             }
         >
@@ -196,35 +160,13 @@ export const Containers: FunctionComponent = () => (
             </Specimen>
         </Block>
 
-        <Block title="Using containers">
-            <Guidance
-                dos={[
-                    <>
-                        Drive a card&rsquo;s appearance through <code>--card-color</code> rather than overriding its
-                        background and border separately - the tints stay consistent that way.
-                    </>,
-                    <>
-                        Use a real interactive element for a clickable card. The <code>Card</code> component renders an{' '}
-                        <code>&lt;a&gt;</code> when given a <code>link</code>, and an <code>&lt;article&gt;</code>{' '}
-                        otherwise.
-                    </>,
-                    <>
-                        Mark up tabs with the <code>tab</code> / <code>tablist</code> / <code>tabpanel</code> roles and
-                        arrow-key navigation if you are not using the shared component.
-                    </>,
-                ]}
-                donts={[
-                    <>
-                        Don&rsquo;t put an <code>onClick</code> on a bare <code>&lt;article&gt;</code> card - it is not
-                        focusable or keyboard operable.
-                    </>,
-                    <>
-                        Don&rsquo;t nest cards. The tint mixing compounds and the nested card loses its distinction from
-                        its parent.
-                    </>,
-                ]}
-            />
-        </Block>
+        <Gotcha>
+            There are <strong>two different cards</strong>: the global <code>.card</code> class here, and a separate{' '}
+            <code>Card</code> React component with its own module styles. They look different and are not
+            interchangeable. Don&rsquo;t nest either - the tint mixing compounds and the inner card loses its
+            distinction. A clickable card needs a real interactive element; an <code>onClick</code> on a bare{' '}
+            <code>&lt;article&gt;</code> is not keyboard operable.
+        </Gotcha>
 
         <KnownIssue>
             <p>
@@ -260,20 +202,14 @@ export const Pills: FunctionComponent = () => (
         id="pills"
         title="Pills"
         source="components/pill/Pill.tsx"
-        lede={
-            <p>
-                Small status labels. Four colours, each with an optional leading dot. Used for release status, licence
-                tier and feature availability.
-            </p>
-        }
+        lede={<p>Small status labels, used for release status, licence tier and feature availability.</p>}
     >
         <Block
             title="Colours and the dot"
             note={
                 <p>
-                    Four colours, each available with or without a leading status dot. Use the dot when the pill marks a
-                    live state that a reader scans for - a build status, a roadmap stage. Leave it off when the pill is
-                    just a label, such as a licence tier, where the dot adds a mark without adding meaning.
+                    Use the dot when the pill marks a live state a reader scans for; leave it off when the pill is just
+                    a label, where the dot adds a mark without adding meaning.
                 </p>
             }
         >
@@ -319,21 +255,10 @@ export const Pills: FunctionComponent = () => (
             </Specimen>
         </Block>
 
-        <Block title="Using pills">
-            <Guidance
-                dos={[
-                    <>Keep the label to one or two words. A pill is a label, not a sentence.</>,
-                    <>Use the same colour for the same meaning across the site - blue for tier, green for available.</>,
-                ]}
-                donts={[
-                    <>Don&rsquo;t use a pill as a button. It has no interactive styling or focus state.</>,
-                    <>
-                        Don&rsquo;t rely on colour alone to carry the meaning; the text has to say it too, which is why
-                        there is no icon-only variant.
-                    </>,
-                ]}
-            />
-        </Block>
+        <Gotcha>
+            A pill has no interactive styling or focus state, so it cannot double as a button. Colour never carries the
+            meaning on its own - the text has to say it, which is why there is no icon-only variant.
+        </Gotcha>
 
         <KnownIssue>
             <p>
