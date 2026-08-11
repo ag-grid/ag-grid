@@ -56,6 +56,9 @@ function emphasise(text: string, delimiter: string): string {
 const BLOCK_SEPARATOR = '\u0000';
 const LINE_SEPARATOR = '\u0001';
 
+/** Markers emitted for list items, so an already-converted item is not re-run as inline copy. */
+const LIST_MARKER = /^(?:- |\d+\. )/;
+
 /**
  * Convert a block-level HTML fragment (paragraphs, lists and headings, as stored in the Bryntum
  * campaign content) to markdown. Block structure becomes markdown blocks; the text inside each is
@@ -68,11 +71,17 @@ export function htmlBlockToMarkdown(html: string, siteRoot?: string): string {
     // Innermost blocks first, so a list item's own markup is consumed before its <ul> wrapper.
     // List items are line-joined into a single markdown list; other blocks are block-separated.
     const marked = html
+        // <ol> is consumed whole so its items can be numbered; what reaches the <li> pass below is
+        // therefore unordered, and takes the bullet marker.
+        .replace(
+            /<ol\b[^>]*>([\s\S]*?)<\/ol>/gi,
+            (_match, items) => `${numberedListItems(items, siteRoot)}${BLOCK_SEPARATOR}`
+        )
         .replace(
             /<li\b[^>]*>([\s\S]*?)<\/li>/gi,
             (_match, text) => `${LINE_SEPARATOR}- ${htmlInlineToMarkdown(text, siteRoot)}`
         )
-        .replace(/<\/(?:ul|ol)>/gi, BLOCK_SEPARATOR)
+        .replace(/<\/ul>/gi, BLOCK_SEPARATOR)
         .replace(
             /<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi,
             (_match, level: string, text) =>
@@ -90,11 +99,20 @@ export function htmlBlockToMarkdown(html: string, siteRoot?: string): string {
                 .split(LINE_SEPARATOR)
                 // List items are already converted; anything left outside a block (bare text,
                 // stray <span>s) is inline copy and still needs converting.
-                .map((line) => (line.startsWith('- ') ? line.trim() : htmlInlineToMarkdown(line, siteRoot)))
+                .map((line) => (LIST_MARKER.test(line) ? line.trim() : htmlInlineToMarkdown(line, siteRoot)))
                 .filter(Boolean)
                 .join('\n')
         )
         .filter(Boolean)
         .join('\n\n')
         .trim();
+}
+
+/** Numbered from 1: `<ol start>` does not appear in the source copy. */
+function numberedListItems(items: string, siteRoot?: string): string {
+    let position = 0;
+    return items.replace(/<li\b[^>]*>([\s\S]*?)<\/li>/gi, (_match, text) => {
+        position += 1;
+        return `${LINE_SEPARATOR}${position}. ${htmlInlineToMarkdown(text, siteRoot)}`;
+    });
 }
