@@ -4,7 +4,7 @@ import type { FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 
 const VARIANTS = [
@@ -46,19 +46,11 @@ export const Buttons: FunctionComponent = () => (
         title="Buttons"
         source="elements/_button.scss"
         lede={
-            <>
-                <p>
-                    Buttons are styled by element, so <code>&lt;button&gt;</code> with no class is the primary variant.
-                    Variants are single classes on top of that. <code>input[type=submit]</code> and{' '}
-                    <code>input[type=reset]</code> get the same treatment, and <code>.button</code> lets a link adopt
-                    it.
-                </p>
-                <p>
-                    Every variant carries the full state set: hover, active, focus ring and two kinds of disabled. The
-                    focus ring is a 4px <code>box-shadow</code> rather than an outline, which is why it follows the
-                    border radius.
-                </p>
-            </>
+            <p>
+                Styled by element, so a bare <code>&lt;button&gt;</code> is already the primary variant. Adding{' '}
+                <code>.button</code>, <code>.button-secondary</code> or <code>.button-tertiary</code> to an{' '}
+                <code>&lt;a&gt;</code> gives a link the same treatment while keeping middle-click and open-in-new-tab.
+            </p>
         }
     >
         <Block title="Variants and states">
@@ -109,9 +101,9 @@ export const Buttons: FunctionComponent = () => (
             title="disabled or aria-disabled"
             note={
                 <p>
-                    Both look the same. They behave differently on purpose: <code>disabled</code> also sets{' '}
-                    <code>pointer-events: none</code> and removes the button from the tab order, whereas{' '}
-                    <code>aria-disabled</code> leaves it focusable and hoverable while still announcing it as disabled.
+                    Identical to look at, different on purpose. <code>disabled</code> also sets{' '}
+                    <code>pointer-events: none</code> and drops the button from the tab order;{' '}
+                    <code>aria-disabled</code> keeps it focusable while still announcing it as disabled.
                 </p>
             }
         >
@@ -135,11 +127,6 @@ export const Buttons: FunctionComponent = () => (
                     </button>
                 </Variant>
             </Specimen>
-            <p>
-                Prefer <code>aria-disabled</code> for a form submit that is blocked by validation: a keyboard user can
-                still reach the button, and you can explain what is missing. Use <code>disabled</code> only when the
-                control is genuinely inert and its state is obvious from context.
-            </p>
         </Block>
 
         <Block
@@ -147,8 +134,7 @@ export const Buttons: FunctionComponent = () => (
             note={
                 <p>
                     Each variant sets <code>--icon-color</code> to its own foreground, so an <code>Icon</code> inside a
-                    button follows the variant and its hover state without extra styling. Icons in buttons are sized at{' '}
-                    <code>2em</code> and negatively margined so they do not increase the button&rsquo;s height.
+                    button follows the variant and its hover state with no extra styling.
                 </p>
             }
         >
@@ -181,16 +167,7 @@ export const Buttons: FunctionComponent = () => (
             </Specimen>
         </Block>
 
-        <Block
-            title="Links styled as buttons"
-            note={
-                <p>
-                    Add <code>.button</code>, <code>.button-secondary</code> or <code>.button-tertiary</code> to an{' '}
-                    <code>&lt;a&gt;</code> when a navigation target should carry a button&rsquo;s visual weight. It
-                    stays a link, so it keeps middle-click, right-click and open-in-new-tab.
-                </p>
-            }
-        >
+        <Block title="Links styled as buttons">
             <Specimen row code={`<a href="/pricing" class="button">See pricing</a>`}>
                 <Variant name=".button">
                     <a href="#buttons" className="button">
@@ -210,43 +187,12 @@ export const Buttons: FunctionComponent = () => (
             </Specimen>
         </Block>
 
-        <Block title="Using buttons">
-            <Guidance
-                dos={[
-                    <>
-                        Use one primary button per view. Two primaries side by side leave no indication of which action
-                        is expected.
-                    </>,
-                    <>
-                        Label with the action, not the mechanism: &ldquo;Download trial&rdquo; rather than
-                        &ldquo;Submit&rdquo;.
-                    </>,
-                    <>
-                        Set <code>type=&quot;button&quot;</code> on any button inside a form that is not the submit
-                        control - the default is <code>submit</code>.
-                    </>,
-                    <>
-                        Use <code>.button-style-none</code> when you need a real button for accessibility but none of
-                        its appearance.
-                    </>,
-                ]}
-                donts={[
-                    <>
-                        Don&rsquo;t use a <code>&lt;div&gt;</code> with a click handler. A button gives you keyboard
-                        activation, focus and the correct role for free.
-                    </>,
-                    <>
-                        Don&rsquo;t remove the focus ring. It is a <code>box-shadow</code>, so overriding{' '}
-                        <code>box-shadow</code> on a button will remove it by accident - re-declare it if you must
-                        restyle.
-                    </>,
-                    <>
-                        Don&rsquo;t use <code>disabled</code> for a submit blocked by validation; the user cannot focus
-                        it to discover why.
-                    </>,
-                ]}
-            />
-        </Block>
+        <Gotcha>
+            The focus ring is a <code>box-shadow</code>, not an <code>outline</code> - so overriding{' '}
+            <code>box-shadow</code> on a button silently removes it. Re-declare it if you restyle. Buttons inside a form
+            also default to <code>type=&quot;submit&quot;</code>; set <code>type=&quot;button&quot;</code> on anything
+            that is not the submit control.
+        </Gotcha>
 
         <KnownIssue>
             <p>
