@@ -4,6 +4,15 @@ import { existsSync } from 'node:fs';
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 
+/** Repo root. `__dirname` (not `import.meta`) because the package `tsconfig.spec` type-checks this as CJS. */
+const repoRoot = __dirname;
+
+/** Output-volume controls (`--no-diff`, `--stack-trace-len`, DEBUG_PRINT_LIMIT), shared by every unit project. */
+export const outputSetupFile = path.resolve(repoRoot, 'vitest.output.setup.ts');
+
+/** Diff options module (`--diff-lines`), shared by every unit project. */
+export const diffConfigFile = path.resolve(repoRoot, 'vitest.diff.ts');
+
 // Pin the timezone so date-sensitive tests behave identically on every machine. Set when any config
 // imports this module (main process), before workers spawn and inherit the env.
 process.env.TZ = 'UTC';
@@ -119,6 +128,8 @@ export const unitProjectTestConfig = ({ name, junitFile, environment = 'jsdom', 
     watch: false,
     pool: UNIT_TEST_POOL,
     reporters: vitestReporters(),
-    setupFiles,
+    // Prepended, so a project's own setup still runs last and can override.
+    setupFiles: [outputSetupFile, ...(setupFiles ?? [])],
+    diff: diffConfigFile,
     outputFile: { junit: junitFile },
 });

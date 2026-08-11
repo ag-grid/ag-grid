@@ -3,6 +3,7 @@ export * from './polyfills/canvasPolyfill';
 export * from './polyfills/mockGridLayout';
 export * from './polyfills/filterLayoutMock';
 export * from './widgets/dropdowns';
+export * from './widgets/inputs';
 export * from './filters';
 export * from './polyfills/pointerEvent';
 export * from './polyfills/clipboard';

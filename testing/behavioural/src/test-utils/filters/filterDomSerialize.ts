@@ -52,6 +52,11 @@ function serializeSetBody(scope: ParentNode, lines: string[]): void {
     });
 }
 
+/** An empty input says what it is for through its placeholder, which is all the user has to go on. */
+function placeholderSuffix(input: HTMLInputElement): string {
+    return input.value === '' && input.placeholder ? ` ⟨${input.placeholder}⟩` : '';
+}
+
 /** Appends a simple filter's condition rows (operator + visible inputs) separated by the join, scoped to `scope`. */
 function serializeSimpleBody(scope: ParentNode, lines: string[]): void {
     const selects = Array.from(scope.querySelectorAll('.ag-filter-select .ag-picker-field-display'));
@@ -68,7 +73,10 @@ function serializeSimpleBody(scope: ParentNode, lines: string[]): void {
         lines.push(`operator: "${text(selects[i])}"`);
         const inputs = bodies[i] ? visibleInputs(bodies[i]) : [];
         inputs.forEach((input, idx) => {
-            lines.push(`input${inputs.length > 1 ? ` [${idx}]` : ''}: "${input.value}"`);
+            // What the user is told, which is the whole of an input's rejected state.
+            const invalid = input.validity.valid ? '' : ` ✗ "${input.validationMessage}"`;
+            const suffix = `${placeholderSuffix(input)}${invalid}`;
+            lines.push(`input${inputs.length > 1 ? ` [${idx}]` : ''}: "${input.value}"${suffix}`);
         });
     }
 }
@@ -128,8 +136,8 @@ function serializeMultiFilter(multi: Element, popup: Element): string {
 }
 
 /**
- * Serialises a column's floating filter row: the visible input's value, whether it is read-only (`⊘`), the
- * input type when not plain text, and whether the filter-active indicator is lit. `colId` selects the header cell.
+ * Serialises a column's floating filter row: the visible input's value, its placeholder when empty, whether
+ * it is read-only (`⊘`), the input type when not plain text, and whether the filter-active indicator is lit.
  */
 export function serializeFloatingFilter(root: ParentNode, colId: string | undefined): string {
     if (!colId) {
@@ -146,8 +154,10 @@ export function serializeFloatingFilter(root: ParentNode, colId: string | undefi
 
     const lines = [`FLOATING FILTER ${colId}`];
     if (input) {
+        // The type says which value type the floating filter rendered, which an option can declare per input.
         const typeSuffix = input.type === 'text' ? '' : ` [${input.type}]`;
-        lines.push(`input${typeSuffix}: "${input.value}"${input.disabled ? ' ⊘' : ''}`);
+        const disabled = input.disabled ? ' ⊘' : '';
+        lines.push(`input${typeSuffix}: "${input.value}"${placeholderSuffix(input)}${disabled}`);
     } else {
         lines.push('input: (none)');
     }
@@ -294,10 +304,10 @@ function builderRowText(wrapper: Element): string | null {
         if (op !== null) {
             parts.push(op);
         }
-        const value = pillSlot(wrapper, 'ag-advanced-filter-builder-value-pill');
-        if (value !== null) {
-            parts.push(value);
-        }
+        // One value pill per operand the option takes, so a multi-value option shows all of them.
+        wrapper.querySelectorAll('.ag-advanced-filter-builder-value-pill').forEach((pill) => {
+            parts.push(text(pill.querySelector('.ag-advanced-filter-builder-pill-display')) || '∅');
+        });
         return parts.join(' ') + invalid;
     }
     if (join !== null) {

@@ -4,6 +4,7 @@ import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 import {
     AdvancedFilterBuilderHarness,
+    FilterDom,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -84,9 +85,51 @@ describe('Advanced Filter — builder drag-and-drop reorder', () => {
         const builder = await AdvancedFilterBuilderHarness.open(api);
         await builder.forceReRender();
         const conditions = await builder.conditionItems();
+        await new FilterDom(api, 'builder before drag down', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Athlete contains "B"
+              Age > 26
+              + add
+            buttons: Apply ⊘ | Cancel
+            model:
+              filterType: "join"
+              type: "AND"
+              conditions:
+                - filterType: "text"
+                  colId: "athlete"
+                  type: "contains"
+                  filter: "B"
+                - filterType: "number"
+                  colId: "age"
+                  type: "greaterThan"
+                  filter: 26
+        `);
 
         // List rows: [join(0), athlete(1), age(2)]; drop the first condition onto row 2 (after age).
         await builder.dragToRow(conditions[0], 2);
+        // The tree is reordered before Apply, which is what the drag itself has to prove.
+        await new FilterDom(api, 'builder after drag down, before apply', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Age > 26
+              Athlete contains "B"
+              + add
+            buttons: Apply | Cancel
+            model:
+              filterType: "join"
+              type: "AND"
+              conditions:
+                - filterType: "text"
+                  colId: "athlete"
+                  type: "contains"
+                  filter: "B"
+                - filterType: "number"
+                  colId: "age"
+                  type: "greaterThan"
+                  filter: 26
+        `);
+
         await builder.apply();
         await asyncSetTimeout(0);
 
@@ -102,9 +145,50 @@ describe('Advanced Filter — builder drag-and-drop reorder', () => {
         const builder = await AdvancedFilterBuilderHarness.open(api);
         await builder.forceReRender();
         const conditions = await builder.conditionItems();
+        await new FilterDom(api, 'builder before drag up', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Athlete contains "B"
+              Age > 26
+              + add
+            buttons: Apply ⊘ | Cancel
+            model:
+              filterType: "join"
+              type: "AND"
+              conditions:
+                - filterType: "text"
+                  colId: "athlete"
+                  type: "contains"
+                  filter: "B"
+                - filterType: "number"
+                  colId: "age"
+                  type: "greaterThan"
+                  filter: 26
+        `);
 
         // Drop the second condition (age) onto the group's join row (0) so it lands first.
         await builder.dragToRow(conditions[1], 0);
+        await new FilterDom(api, 'builder after drag up, before apply', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Age > 26
+              Athlete contains "B"
+              + add
+            buttons: Apply | Cancel
+            model:
+              filterType: "join"
+              type: "AND"
+              conditions:
+                - filterType: "text"
+                  colId: "athlete"
+                  type: "contains"
+                  filter: "B"
+                - filterType: "number"
+                  colId: "age"
+                  type: "greaterThan"
+                  filter: 26
+        `);
+
         await builder.apply();
         await asyncSetTimeout(0);
 

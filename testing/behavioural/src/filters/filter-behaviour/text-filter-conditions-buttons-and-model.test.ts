@@ -89,7 +89,7 @@ describe('Text Filter — buttons & model round-trip', () => {
         await new FilterDom(api, 'buttons after clear', { colId: 'name' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             buttons: Apply | Clear | Reset
             model:
               filterType: "text"
@@ -113,7 +113,7 @@ describe('Text Filter — buttons & model round-trip', () => {
         await new FilterDom(api, 'buttons after reset', { colId: 'name' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             buttons: Apply | Clear | Reset
             model: null
         `);
