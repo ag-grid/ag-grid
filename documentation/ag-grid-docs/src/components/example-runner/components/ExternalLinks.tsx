@@ -2,7 +2,6 @@ import type { InternalFramework } from '@ag-grid-types';
 import { OpenInCodeSandbox } from '@ag-website-shared/components/codeSandbox/components/OpenInCodeSandbox';
 import { OpenInPlunkr } from '@ag-website-shared/components/plunkr/components/OpenInPlunkr';
 import type { FileContents } from '@components/example-generator/types';
-import { toModuleFileName } from '@utils/exampleModules/transformExampleModule';
 import { isReactInternalFramework } from '@utils/framework';
 
 export function ExternalLinks({
@@ -30,12 +29,12 @@ export function ExternalLinks({
     codeSandboxHtmlUrl?: string;
     isDev: boolean;
 }) {
-    // Plunker serves static files, so it always needs the transpiled modules. CodeSandbox only
-    // does for the frameworks it runs on the `static` template -- its React templates build
-    // the TypeScript sources themselves.
+    // CodeSandbox serves static files for every framework it does not run on a React template,
+    // so those need the transpiled modules. Plunker gets the sources as authored and transpiles
+    // them in the page instead, so that what a user opens is the TypeScript they were reading.
     const staticFiles = exampleModuleFiles ?? exampleFiles;
     const codeSandboxFiles = isReactInternalFramework(internalFramework) ? exampleFiles : staticFiles;
-    const plunkrFileToOpen = staticFiles && initialSelectedFile && toModuleFileName(initialSelectedFile);
+    const plunkrFiles = exampleFiles ?? staticFiles;
 
     return (
         <>
@@ -51,14 +50,14 @@ export function ExternalLinks({
                     />
                 </li>
             ) : undefined}
-            {plunkrHtmlUrl && staticFiles ? (
+            {plunkrHtmlUrl && plunkrFiles ? (
                 <li>
                     <OpenInPlunkr
                         title={title}
-                        files={staticFiles}
+                        files={plunkrFiles}
                         htmlUrl={plunkrHtmlUrl}
                         packageJson={packageJson!}
-                        fileToOpen={plunkrFileToOpen!}
+                        fileToOpen={initialSelectedFile!}
                         isDev={isDev}
                     />
                 </li>

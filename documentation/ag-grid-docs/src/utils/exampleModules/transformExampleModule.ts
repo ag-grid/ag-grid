@@ -6,31 +6,32 @@ import ts from 'typescript';
  * loader or in-browser compiler in the page.
  */
 
-const EXTENSIONS = ['.ts', '.tsx', '.jsx'] as const;
+export const EXTENSIONS = ['.ts', '.tsx', '.jsx'] as const;
 
 const EXTENSION_REGEX = /\.(tsx?|jsx)$/;
 
 /** Matches the specifier of a static import/export, or a dynamic `import()` */
-const SPECIFIER_REGEX = /(\bfrom\s*|\bimport\s*\(?\s*|\bexport\s*\*\s*from\s*)(['"])([^'"]+)\2/g;
+export const SPECIFIER_REGEX = /(\bfrom\s*|\bimport\s*\(?\s*|\bexport\s*\*\s*from\s*)(['"])([^'"]+)\2/g;
 
 /** A bare `import 'foo.css';` with no bindings */
-const CSS_IMPORT_REGEX = /^[ \t]*import\s+(['"])([^'"]+\.css)\1;?[ \t]*$/gm;
+export const CSS_IMPORT_REGEX = /^[ \t]*import\s+(['"])([^'"]+\.css)\1;?[ \t]*$/gm;
 
 /**
  * `emitDecoratorMetadata` is what lets the Angular JIT compiler resolve constructor
  * injection: without the emitted `design:paramtypes`, any component or service with
  * constructor dependencies fails to instantiate (NG0202).
+ *
+ * Self-contained, because the Plunker template serialises this function into the page it
+ * generates (see `BrowserTranspiler`) so that both transpilers stay on the same options.
  */
-const COMPILER_OPTIONS: ts.CompilerOptions = {
-    module: ts.ModuleKind.ESNext,
+export const getCompilerOptions = (tsModule: typeof ts): ts.CompilerOptions => ({
+    module: tsModule.ModuleKind.ESNext,
     // ES2022 so the top-level `await` a stylesheet import compiles to is emitted as authored
-    target: ts.ScriptTarget.ES2022,
-    jsx: ts.JsxEmit.React,
+    target: tsModule.ScriptTarget.ES2022,
+    jsx: tsModule.JsxEmit.React,
     experimentalDecorators: true,
     emitDecoratorMetadata: true,
-    inlineSourceMap: true,
-    inlineSources: true,
-};
+});
 
 /** Playwright specs live alongside an example but are not part of it, and are never served */
 export const isSpecFile = (fileName: string) => fileName.includes('.spec.') || fileName.includes('.test.');
@@ -62,7 +63,10 @@ const isRelative = (specifier: string) => specifier.startsWith('./') || specifie
  * extension at all", because a specifier can carry a dot and still name a module --
  * `./app.component` is how Angular examples import theirs.
  */
-const SERVED_AS_AUTHORED_REGEX = /\.(css|json|html|svg|png|jpe?g|gif|webp|wasm|txt|js|mjs|cjs)$/i;
+export const SERVED_AS_AUTHORED_REGEX = /\.(css|json|html|svg|png|jpe?g|gif|webp|wasm|txt|js|mjs|cjs)$/i;
+
+/** The subset of the above that is not a module, and so can never be transpiled */
+export const ASSET_REGEX = /\.(css|json|html|svg|png|jpe?g|gif|webp|wasm|txt)$/i;
 
 /**
  * Native module resolution has no notion of a "default extension", so every relative
@@ -82,7 +86,7 @@ const rewriteRelativeSpecifiers = (source: string) =>
         return `${prefix}${quote}${rewritten.endsWith('.js') ? rewritten : `${rewritten}.js`}${quote}`;
     });
 
-const STYLESHEET_LOADER_NAME = '__agLoadStylesheet';
+export const STYLESHEET_LOADER_NAME = '__agLoadStylesheet';
 
 /**
  * Awaited, so a module never reaches the code that measures the page before the styles it
@@ -90,7 +94,7 @@ const STYLESHEET_LOADER_NAME = '__agLoadStylesheet';
  * create its grid in a collapsed container. A stylesheet the template already linked is
  * matched by path, since the template's href can carry a cache-busting query.
  */
-const STYLESHEET_LOADER = `const ${STYLESHEET_LOADER_NAME} = (href) => new Promise((resolve) => {
+export const STYLESHEET_LOADER = `const ${STYLESHEET_LOADER_NAME} = (href) => new Promise((resolve) => {
     const { pathname } = new URL(href, document.baseURI);
     const linked = (link) => new URL(link.href, document.baseURI).pathname === pathname;
     if (Array.from(document.querySelectorAll('link[rel="stylesheet"]')).some(linked)) {
@@ -123,7 +127,7 @@ const rewriteCssImports = (source: string) => {
 export const transformExampleModule = ({ fileName, source }: { fileName: string; source: string }) => {
     const { outputText } = ts.transpileModule(rewriteCssImports(rewriteRelativeSpecifiers(source)), {
         fileName,
-        compilerOptions: COMPILER_OPTIONS,
+        compilerOptions: getCompilerOptions(ts),
     });
 
     return outputText;
