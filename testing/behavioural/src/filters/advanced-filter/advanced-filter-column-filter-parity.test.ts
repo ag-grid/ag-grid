@@ -75,6 +75,12 @@ describe('Advanced Filter matches the column filter', () => {
         return ids;
     }
 
+    /** Anchors the comparison: were either side to stop filtering, both would return every row and agree. */
+    function expectFiltered(ids: number[]): void {
+        expect(ids.length).toBeGreaterThan(0);
+        expect(ids.length).toBeLessThan(ROW_DATA.length);
+    }
+
     /**
      * The harness that keeps the two filters honest: every built-in option, evaluated by both against the same
      * rows. A future change that makes one of them mean something different fails here.
@@ -97,6 +103,7 @@ describe('Advanced Filter matches the column filter', () => {
                 filter,
             } as ColumnAdvancedFilterModel);
 
+            expectFiltered(columnFilterIds);
             expect(advancedFilterIds).toEqual(columnFilterIds);
         });
 
@@ -108,6 +115,7 @@ describe('Advanced Filter matches the column filter', () => {
                 type,
             } as ColumnAdvancedFilterModel);
 
+            expectFiltered(columnFilterIds);
             expect(advancedFilterIds).toEqual(columnFilterIds);
         });
     });

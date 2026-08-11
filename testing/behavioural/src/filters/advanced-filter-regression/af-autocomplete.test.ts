@@ -146,40 +146,34 @@ describe('Advanced Filter — autocomplete completion & editing', () => {
         expect(af.autocompleteEntries()).toEqual(['equals']);
     });
 
-    test('Tab completes a partial column name and appends a space', async () => {
+    // Each case retypes the whole expression, so they share one grid without carrying state between them.
+    test('Tab completes a partial column, a partial operator, and an empty operator slot', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
         const af = AdvancedFilterHarness.get(api);
 
-        await af.type('[Ath');
-        await asyncSetTimeout(0);
-        await af.tabComplete();
-        await asyncSetTimeout(0);
+        for (const [typed, completed] of [
+            ['[Ath', '[Athlete] '],
+            ['[Athlete] con', '[Athlete] contains "'],
+            // An empty slot takes the first operator, which is the same one `con` narrows to.
+            ['[Athlete] ', '[Athlete] contains "'],
+        ]) {
+            await af.type(typed);
+            await asyncSetTimeout(0);
+            await af.tabComplete();
+            await asyncSetTimeout(0);
 
-        expect(af.value).toBe('[Athlete] ');
-    });
+            expect(af.value).toBe(completed);
+        }
 
-    test('Tab completes a partial operator and opens the operand quote', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', OPTS);
-        const af = AdvancedFilterHarness.get(api);
-
-        await af.type('[Athlete] con');
-        await asyncSetTimeout(0);
-        await af.tabComplete();
-        await asyncSetTimeout(0);
-
-        expect(af.value).toBe('[Athlete] contains "');
-    });
-
-    test('Tab at an empty operator slot selects the first operator', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', OPTS);
-        const af = AdvancedFilterHarness.get(api);
-
-        await af.type('[Athlete] ');
-        await asyncSetTimeout(0);
-        await af.tabComplete();
-        await asyncSetTimeout(0);
-
-        expect(af.value).toBe('[Athlete] contains "');
+        // A completed operator with an open operand quote is not yet an expression to apply.
+        await new FilterDom(api, 'tab-completed operand quote').checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Athlete] contains ""
+            valid: false — Expression has an error. Value is missing an end quote - ".
+            buttons: Apply ⊘ | Builder
+            model: null
+        `);
+        await new GridRows(api, 'tab completion applies nothing on its own').check(UNFILTERED);
     });
 
     test('an expression built entirely through completion applies', async () => {
@@ -267,22 +261,23 @@ describe('Advanced Filter — join autocomplete & multi-condition completion', (
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
-    test('after a complete condition the suggestion list offers the join operators', async () => {
+    // Both cases retype from the same empty state, so one grid serves them.
+    test('after a complete condition the join slot offers both joins, and a partial narrows it', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
         const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Age] > 20 ');
         expect(af.autocompleteEntries()).toEqual(['AND', 'OR']);
-    });
-
-    test('a partial join operator narrows to the matching join', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', OPTS);
-        const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Age] > 20 A');
         expect(af.autocompleteEntries()).toEqual(['AND']);
+
+        // Neither was applied, so the grid is still showing every row.
+        await new GridRows(api, 'join suggestions apply nothing').check(UNFILTERED);
     });
 
+    // Needs its own grid: typing this expression into an input that has already offered a join slot
+    // leaves OR on the list, so the restriction only shows on a first parse.
     test('once a join is chosen, a further operator slot only offers the same join', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
         const af = AdvancedFilterHarness.get(api);

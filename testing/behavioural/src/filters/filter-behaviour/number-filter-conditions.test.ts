@@ -1116,6 +1116,7 @@ describe('Number Filter — conditions coverage', () => {
 
         expect(filter.inputs('text', 0)[0].value).toBe('-');
         await filter.setText('-5');
+        await asyncSetTimeout(0);
         expect(filter.getModel()).toEqual({ filterType: 'number', type: 'equals', filter: -5 });
     });
 

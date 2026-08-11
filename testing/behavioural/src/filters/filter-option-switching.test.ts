@@ -1,5 +1,6 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
 
+import type { GetLocaleTextParams, GridApi, IFilterPlaceholderFunctionParams } from 'ag-grid-community';
 import {
     BigIntFilterModule,
     ClientSideRowModelModule,
@@ -47,7 +48,7 @@ describe('Filter option switching and floating filter sync', () => {
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
-    const datePicker = (api: any) =>
+    const datePicker = (api: GridApi) =>
         getGridElement(api)!.querySelector<HTMLInputElement>(
             '.ag-header-cell.ag-floating-filter[col-id="date"] input[type="date"]'
         )!;
@@ -86,25 +87,28 @@ describe('Filter option switching and floating filter sync', () => {
     });
 
     test.each([
-        ['agTextColumnFilter', 'text', 'Ada'],
-        ['agNumberColumnFilter', 'number', '25'],
-        ['agBigIntColumnFilter', 'bigint', '25'],
-    ])('a typed %s floating filter waits for Enter when an apply button is configured', async (filter, _key, typed) => {
-        const api = await gridsManager.createGridAndWait('grid1', {
-            columnDefs: [{ field: 'value', filter, floatingFilter: true, filterParams: { buttons: ['apply'] } }],
-            rowData: [{ value: 'Ada' }, { value: 'Bolt' }],
-        });
-        await asyncSetTimeout(0);
+        ['agTextColumnFilter', 'Ada', { filterType: 'text', type: 'contains', filter: 'Ada' }],
+        ['agNumberColumnFilter', '25', { filterType: 'number', type: 'equals', filter: 25 }],
+        ['agBigIntColumnFilter', '25', { filterType: 'bigint', type: 'equals', filter: '25' }],
+    ])(
+        'a typed %s floating filter waits for Enter when an apply button is configured',
+        async (filter, typed, applied) => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'value', filter, floatingFilter: true, filterParams: { buttons: ['apply'] } }],
+                rowData: [{ value: 'Ada' }, { value: 'Bolt' }],
+            });
+            await asyncSetTimeout(0);
 
-        const floating = FloatingFilterHarness.get(api, 'value');
-        await floating.setValue(typed);
-        // Typing is a value on its way to being finished, which is what the apply button waits out.
-        await asyncSetTimeout(0);
-        expect(api.getColumnFilterModel('value')).toBeNull();
+            const floating = FloatingFilterHarness.get(api, 'value');
+            await floating.setValue(typed);
+            // Typing is a value on its way to being finished, which is what the apply button waits out.
+            await asyncSetTimeout(0);
+            expect(api.getColumnFilterModel('value')).toBeNull();
 
-        fireEvent.keyDown(floating.input(), { key: 'Enter' });
-        await waitFor(() => expect(api.getColumnFilterModel('value')).not.toBeNull());
-    });
+            fireEvent.keyDown(floating.input(), { key: 'Enter' });
+            await waitFor(() => expect(api.getColumnFilterModel('value')).toEqual(applied));
+        }
+    );
 
     test('a floating filter showing a read-only summary keeps it when the column definitions change', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
@@ -211,10 +215,14 @@ describe('Filter option switching and floating filter sync', () => {
                                 displayKey: 'withinOf',
                                 displayName: 'Within Of',
                                 numberOfInputs: 1,
-                                predicate: ([target]: any[], cellValue: any) => cellValue === target,
+                                predicate: ([target]: unknown[], cellValue: unknown) => cellValue === target,
                             },
                         ],
-                        filterPlaceholder: ({ filterOptionKey, filterOption, placeholder }: any) => {
+                        filterPlaceholder: ({
+                            filterOptionKey,
+                            filterOption,
+                            placeholder,
+                        }: IFilterPlaceholderFunctionParams) => {
                             seen.push({ filterOptionKey, filterOption });
                             return placeholder;
                         },
@@ -224,7 +232,8 @@ describe('Filter option switching and floating filter sync', () => {
                 },
             ],
             // The `displayKey` is the locale key, so an override reaches the dropdown and the callback alike.
-            getLocaleText: ({ key, defaultValue }: any) => (key === 'withinOf' ? 'Dentro De' : defaultValue),
+            getLocaleText: ({ key, defaultValue }: GetLocaleTextParams) =>
+                key === 'withinOf' ? 'Dentro De' : defaultValue,
             rowData: [{ age: 25 }, { age: 40 }],
         });
 

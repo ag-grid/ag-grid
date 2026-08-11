@@ -88,20 +88,22 @@ export class AdvancedFilterBuilderHarness {
     /** Opens the operator pill on `item` and reads the options it offers, in order. */
     public async operatorOptions(item: HTMLElement): Promise<string[]> {
         const pill = await this.openPillPicker(item, OPTION_PILL);
-        const options = getRichSelectRowLabels();
-        // The list virtualises, so a viewport-sized subset would let an absence assertion pass vacuously.
-        // Read off the rich-select's own item class: the builder's rows are `ag-virtual-list-item` too.
-        const setSize = document.querySelector(RICH_SELECT_ITEM)?.getAttribute('aria-setsize');
-        // Leave the pill closed, so a following selection re-opens it rather than toggling it shut.
-        pill.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-        await asyncSetTimeout(0);
-        if (setSize == null) {
-            throw new Error('The operator rich-select rendered no rows, so its options cannot be read');
+        try {
+            // Both polled together: the list virtualises, so a partial render is a state to wait out rather
+            // than an answer, and a viewport-sized subset would let an absence assertion pass vacuously.
+            return await waitFor(() => {
+                const setSize = Number(document.querySelector(RICH_SELECT_ITEM)?.getAttribute('aria-setsize'));
+                const options = getRichSelectRowLabels();
+                if (!options.length || options.length < setSize) {
+                    throw new Error(`Only ${options.length} of ${setSize || '?'} operator rows rendered`);
+                }
+                return options;
+            });
+        } finally {
+            // Leave the pill closed, so a following selection re-opens it rather than toggling it shut.
+            pill.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            await asyncSetTimeout(0);
         }
-        if (Number(setSize) > options.length) {
-            throw new Error(`Only ${options.length} of ${setSize} operator rows rendered - the list is virtualised`);
-        }
-        return options;
     }
 
     private async selectPill(item: HTMLElement, pillSelector: string, displayName: string): Promise<void> {

@@ -30,7 +30,8 @@ describe('Date Filter — conditions coverage', () => {
 
     const ASCENDING = [{ date: '2024-01-10' }, { date: '2024-03-15' }, { date: '2024-05-20' }, { date: '2024-07-04' }];
 
-    test('the condition body carries no role, leaving the date widget to declare its own', async () => {
+    // Pinned as the odd one out: text, number and bigint all mark this element `role="presentation"`.
+    test('the condition body carries no role, unlike every other provided filter', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0 } }],
             rowData: ASCENDING,

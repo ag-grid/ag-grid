@@ -3,7 +3,13 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
 
-import { dropCssParseErrors, loadSourceCodeAliases, sortAliases, vitestReporters } from '../../vitest.shared';
+import {
+    diffConfigFile,
+    dropCssParseErrors,
+    loadSourceCodeAliases,
+    sortAliases,
+    vitestReporters,
+} from '../../vitest.shared';
 import type { Alias } from '../../vitest.shared';
 
 // Pin the timezone so date tests behave the same on every machine, matching the packages/* vitest configs.
@@ -98,6 +104,7 @@ export default defineConfig(({ mode }) => {
             globals: true,
             environment: 'jsdom',
             setupFiles: [path.resolve(thisDir, 'vitest.setup.ts')],
+            diff: diffConfigFile,
             reporters: vitestReporters(),
             watch: false,
             // Applies when this config runs standalone (benches.sh / direct); the workspace run uses the

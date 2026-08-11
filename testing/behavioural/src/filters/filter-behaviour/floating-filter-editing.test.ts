@@ -1,6 +1,6 @@
 import { fireEvent } from '@testing-library/dom';
 
-import type { GridApi } from 'ag-grid-community';
+import type { GridApi, SuppressHeaderKeyboardEventParams } from 'ag-grid-community';
 import {
     BigIntFilterModule,
     ClientSideRowModelModule,
@@ -400,12 +400,19 @@ describe('Floating filter editing', () => {
         `);
     });
 
+    // Every range is complete: a half-filled one applies nothing, so the outcome assertion would be vacuous.
     test.each([
-        ['country', 'agTextColumnFilter', 1, { filterType: 'text', type: 'contains', filter: 'ita' }],
-        ['age', 'agNumberColumnFilter', 2, { filterType: 'number', type: 'inRange', filter: 20, filterTo: 35 }],
-        ['date', 'agDateColumnFilter', 2, { filterType: 'date', type: 'inRange', dateFrom: '2024-01-01' }],
-        ['big', 'agBigIntColumnFilter', 1, { filterType: 'bigint', type: 'equals', filter: '9' }],
-    ])('%s mounts %s inputs, read-only or not', async (colId, filter, expectedInputs, model) => {
+        ['country', 'agTextColumnFilter', 1, { filterType: 'text', type: 'contains', filter: 'ita' }, false],
+        ['age', 'agNumberColumnFilter', 2, { filterType: 'number', type: 'inRange', filter: 20, filterTo: 35 }, true],
+        [
+            'date',
+            'agDateColumnFilter',
+            2,
+            { filterType: 'date', type: 'inRange', dateFrom: '2024-01-01', dateTo: '2024-03-01' },
+            true,
+        ],
+        ['big', 'agBigIntColumnFilter', 1, { filterType: 'bigint', type: 'equals', filter: '9' }, false],
+    ])('%s mounts %s inputs, read-only or not', async (colId, filter, expectedInputs, model, readOnlyWhenApplied) => {
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: colId, filter, filterParams: { debounceMs: 0 }, floatingFilter: true }],
             rowData: [{ [colId]: '2024-01-01' }],
@@ -420,9 +427,12 @@ describe('Floating filter editing', () => {
         await api.onFilterChanged();
         await asyncSetTimeout(0);
 
-        // Whatever the model, exactly one input is on show and the element count never moves.
+        // Whatever the model, exactly one input is on show and the element count never moves. Which one it is
+        // does move: a two-value option has no single editor, so the summary takes the slot.
         expect(floating.allInputs()).toHaveLength(expectedInputs);
         expect(floating.inputs()).toHaveLength(1);
+        expect(floating.input().disabled).toBe(readOnlyWhenApplied);
+        expect(floating.input().value).not.toBe('');
     });
 
     test('a key pressed in a floating filter the grid holds no header focus for is not suppressed', async () => {
@@ -465,6 +475,35 @@ describe('Floating filter editing', () => {
         await floating.setValue('ita');
         await asyncSetTimeout(0);
         expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'text', type: 'contains', filter: 'ita' });
+    });
+
+    test('suppressHeaderKeyboardEvent is still consulted for a floating filter the grid holds no focus for', async () => {
+        const seen: SuppressHeaderKeyboardEventParams[] = [];
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agTextColumnFilter',
+                    floatingFilter: true,
+                    filterParams: { debounceMs: 0 },
+                    suppressHeaderKeyboardEvent: (params) => {
+                        seen.push(params);
+                        return true;
+                    },
+                },
+            ],
+            rowData: [{ country: 'Italy' }, { country: 'Spain' }],
+        });
+        await asyncSetTimeout(0);
+
+        // Nothing has registered header focus, so the callback is described by the cell the key landed on
+        // rather than being skipped: a column that suppresses still gets its say.
+        fireEvent.keyDown(FloatingFilterHarness.get(api, 'country').input(), { key: 'Enter' });
+        await asyncSetTimeout(0);
+
+        expect(seen).toHaveLength(1);
+        expect(seen[0].headerRowIndex).toBe(1);
+        expect(seen[0].column).toBe(api.getColumn('country'));
     });
 
     describe.each([false, true])('set (enableFilterHandlers: %s)', (enableFilterHandlers) => {

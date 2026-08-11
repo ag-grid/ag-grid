@@ -1,9 +1,9 @@
 import type { GridApi } from 'ag-grid-community';
-import { BigIntFilterModule, ClientSideRowModelModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
+import { BigIntFilterModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 
 import {
-    ALL_SEVERITIES,
     ColumnFilterHarness,
+    FilterDom,
     FloatingFilterHarness,
     GridRows,
     TestGridsManager,
@@ -26,11 +26,7 @@ describe('BigInt Filter — custom bigintParser', () => {
         installFilterLayoutMock();
     });
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => {
-        gridsManager.reset();
-        vi.restoreAllMocks();
-        enableDevValidations({ throwOn: ALL_SEVERITIES });
-    });
+    afterEach(() => gridsManager.reset());
 
     test('a hex value entered via a custom bigintParser is applied to the filter', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
@@ -56,6 +52,19 @@ describe('BigInt Filter — custom bigintParser', () => {
         await asyncSetTimeout(0);
 
         expect(filter.getModel()).toEqual({ filterType: 'bigint', type: 'equals', filter: '255' });
+        // The input keeps the hex as typed while the model holds what the parser made of it.
+        await new FilterDom(api, 'hex typed, decimal model', { mode: 'column-filter', colId: 'val' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Equals"
+            input: "0xFF"
+            AND
+            operator: "Equals"
+            input: "" ⟨Filter...⟩
+            model:
+              filterType: "bigint"
+              type: "equals"
+              filter: "255"
+        `);
         await new GridRows(api, 'hex value filters to the matching bigint row').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 val:"255n"
@@ -86,6 +95,21 @@ describe('BigInt Filter — custom bigintParser', () => {
         await filter.setText('0xFF', 1);
         await asyncSetTimeout(0);
 
+        await new FilterDom(api, 'hex range, both bounds parsed', { mode: 'column-filter', colId: 'val' })
+            .checkFilterDom(`
+                COLUMN FILTER
+                operator: "Between"
+                input [0]: "0x10"
+                input [1]: "0xFF"
+                AND
+                operator: "Equals"
+                input: "" ⟨Filter...⟩
+                model:
+                  filterType: "bigint"
+                  type: "inRange"
+                  filter: "16"
+                  filterTo: "255"
+            `);
         expect(filter.getModel()).toEqual({
             filterType: 'bigint',
             type: 'inRange',
@@ -129,6 +153,19 @@ describe('BigInt Filter — custom bigintParser', () => {
         await asyncSetTimeout(0);
 
         expect(filter.getModel()).toEqual({ filterType: 'bigint', type: 'equals', filter: '255' });
+        await new FilterDom(api, 'hex after allowedCharPattern swap', { mode: 'column-filter', colId: 'val' })
+            .checkFilterDom(`
+            COLUMN FILTER
+            operator: "Equals"
+            input: "0xFF"
+            AND
+            operator: "Equals"
+            input: "" ⟨Filter...⟩
+            model:
+              filterType: "bigint"
+              type: "equals"
+              filter: "255"
+        `);
         await new GridRows(api, 'hex accepted after the pattern was replaced').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 val:"255n"

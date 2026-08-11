@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 
 import type { GridApi } from 'ag-grid-community';
 import { agTestIdFor, getGridElement } from 'ag-grid-community';
@@ -50,10 +50,19 @@ export class ColumnFilterHarness {
     public async operatorOptions(conditionIndex = 0): Promise<string[]> {
         const select = this.operatorSelect(conditionIndex);
         await openPicker(select);
-        const options = getSelectOptionLabels();
-        // Toggled shut rather than dismissed with Escape, which would close the filter menu around it.
-        await openPicker(select);
-        return options;
+        try {
+            // An operator dropdown always offers something, so no rows means it never opened.
+            return await waitFor(() => {
+                const options = getSelectOptionLabels();
+                if (!options.length) {
+                    throw new Error(`The operator dropdown for "${this.colId}" rendered no options`);
+                }
+                return options;
+            });
+        } finally {
+            // Toggled shut rather than dismissed with Escape, which would close the filter menu around it.
+            await openPicker(select);
+        }
     }
 
     /** The operator label a condition is currently showing. */
@@ -76,12 +85,9 @@ export class ColumnFilterHarness {
     public inputs(type: 'text' | 'number' | 'date', conditionIndex?: number): HTMLInputElement[] {
         const typeSel = type === 'date' ? 'input[type="date"], input[type="datetime-local"]' : `input[type="${type}"]`;
         const bodies = Array.from(this.popup.querySelectorAll<HTMLElement>('.ag-filter-body'));
-        const roots = conditionIndex == null ? bodies : [bodies[conditionIndex]];
+        const roots = conditionIndex == null ? bodies : bodies.slice(conditionIndex, conditionIndex + 1);
         const inputs: HTMLInputElement[] = [];
         for (const root of roots) {
-            if (!root) {
-                continue;
-            }
             for (const input of root.querySelectorAll<HTMLInputElement>(`.ag-input-field ${typeSel}`)) {
                 if (!input.closest('.ag-hidden')) {
                     inputs.push(input);
