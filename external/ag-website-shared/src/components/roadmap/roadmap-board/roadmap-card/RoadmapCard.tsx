@@ -56,7 +56,14 @@ export const RoadmapCard: React.FC<RoadmapCardProps> = ({
                 </span>
             ) : null}
             <div className={styles.bottomRow}>
-                <Pill className={styles.status} color={colorMap[status] || 'blue'} text={status.replace(/-/g, ' ')} />
+                {/* `dot` is passed explicitly now that Pill honours it. The dot used to be
+                    unconditional, so this keeps the roadmap status pills looking as they did. */}
+                <Pill
+                    className={styles.status}
+                    color={colorMap[status] || 'blue'}
+                    text={status.replace(/-/g, ' ')}
+                    dot
+                />
                 {link ? (
                     <a
                         href={urlWithPrefix({ url: link, framework: framework })}

@@ -4,6 +4,7 @@ import Pill from '@ag-website-shared/components/pill/Pill';
 import type { CSSProperties, FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
+import { CopyButton } from '../chrome/CopyButton';
 import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 
@@ -237,7 +238,21 @@ export const Containers: FunctionComponent = () => (
     </Section>
 );
 
-const PILL_COLOURS = ['blue', 'green', 'yellow', 'red'] as const;
+/**
+ * The four variants, with what each is for.
+ *
+ * Recording the meaning matters more than the swatch here: four interchangeable colours invite
+ * picking one that looks right, and then the same colour means different things on two pages.
+ */
+const PILL_COLOURS = [
+    {
+        color: 'blue',
+        means: 'Neutral or in-progress state. The default, and the fallback when a status is unrecognised.',
+    },
+    { color: 'green', means: 'Done, available, shipped.' },
+    { color: 'yellow', means: 'Planned, pending, or needs attention but not broken.' },
+    { color: 'red', means: 'Failed, removed, or blocked.' },
+] as const;
 
 /** Pills. */
 export const Pills: FunctionComponent = () => (
@@ -252,20 +267,55 @@ export const Pills: FunctionComponent = () => (
             </p>
         }
     >
-        <Block title="Colours">
-            <Specimen row code={`<Pill text="Enterprise" color="blue" dot />`}>
-                {PILL_COLOURS.map((color) => (
-                    <Variant key={color} name={color}>
-                        <Pill text={color} color={color} />
-                    </Variant>
-                ))}
-            </Specimen>
-            <Specimen row label="With dot">
-                {PILL_COLOURS.map((color) => (
-                    <Variant key={color} name={color}>
-                        <Pill text={color} color={color} dot />
-                    </Variant>
-                ))}
+        <Block
+            title="Colours and the dot"
+            note={
+                <p>
+                    Four colours, each available with or without a leading status dot. Use the dot when the pill marks a
+                    live state that a reader scans for - a build status, a roadmap stage. Leave it off when the pill is
+                    just a label, such as a licence tier, where the dot adds a mark without adding meaning.
+                </p>
+            }
+        >
+            <div className={styles.tableScroll}>
+                <table className={styles.tokenTable}>
+                    <thead>
+                        <tr>
+                            <th scope="col">Colour</th>
+                            <th scope="col">No dot</th>
+                            <th scope="col">With dot</th>
+                            <th scope="col">Means</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {PILL_COLOURS.map(({ color, means }) => (
+                            <tr key={color}>
+                                <th scope="row">
+                                    <CopyButton value={`color="${color}"`} label={color} inline />
+                                </th>
+                                <td data-column="No dot">
+                                    <Pill text={color} color={color} />
+                                </td>
+                                <td data-column="With dot">
+                                    <Pill text={color} color={color} dot />
+                                </td>
+                                <td data-column="Means">{means}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <Specimen
+                label="Props"
+                code={`<Pill text="Shipped" color="green" dot />
+<Pill text="Enterprise" color="blue" />`}
+            >
+                <p>
+                    <code>text</code> and <code>color</code> are required; <code>dot</code> and <code>className</code>{' '}
+                    are optional. <code>text</code> is rendered <code>text-transform: capitalize</code>, so pass it in
+                    natural case rather than pre-capitalising.
+                </p>
             </Specimen>
         </Block>
 
@@ -287,16 +337,29 @@ export const Pills: FunctionComponent = () => (
 
         <KnownIssue>
             <p>
-                The <code>red</code> variant is broken. <code>Pill.module.scss</code> references{' '}
-                <code>--color-error</code>, <code>--color-red-100</code>, <code>--color-red-300</code>,{' '}
-                <code>--color-red-600</code> and <code>--color-red-950</code>, none of which are declared anywhere in
-                the design system - there is no red scale, and the error token is called{' '}
-                <code>--color-input-error</code>. The red pill above therefore renders with no background, border colour
-                or text colour of its own. It should point at <code>--color-negative</code> or gain a real red scale.
+                <strong>The red variant still has no real palette behind it.</strong> <code>Pill.module.scss</code>{' '}
+                referenced <code>--color-error</code> and <code>--color-red-100/300/600/950</code> - five tokens that
+                are not declared anywhere - so the variant rendered with no background, border colour or text colour at
+                all. It is now mixed from <code>--color-negative</code>, the one red token that does exist, which makes
+                it render correctly but is a stopgap: the design system has no red scale, and adding one is a design
+                decision rather than an implementation one. Until it has one, red is the only variant not built from a
+                scale.
             </p>
             <p>
-                The same file sets <code>font-weight: var(--text-fw-medium)</code>, another token that does not exist,
-                immediately before setting <code>font-weight</code> again to a real token.
+                Two related defects were fixed alongside it. The <code>dot</code> prop was inert - the dot was declared
+                unconditionally on <code>.pill</code> and no <code>.dot</code> class existed, so <code>styles.dot</code>{' '}
+                was <code>undefined</code> and passing <code>dot</code> added a class literally named{' '}
+                <code>undefined</code>. And <code>font-weight: var(--text-fw-medium)</code> referenced a sixth
+                non-existent token, immediately before <code>font-weight</code> was set again to a real one.
+            </p>
+            <p>
+                <strong>The green and yellow variants fail contrast in the light theme.</strong> Pill text is 12px, so
+                it needs 4.5:1. Measured against the tint each pill actually sits on: <code>green 2.92:1</code> and{' '}
+                <code>yellow 2.20:1</code>, against <code>blue 8.65:1</code> and <code>red 6.17:1</code>. Green uses{' '}
+                <code>--color-success</code> and yellow <code>--color-warning-500</code> as text colours, and both are
+                tuned as fill colours rather than type. All four pass in the dark theme, where the text colours are
+                lightened. Darkening the two light values the way red now is would fix it, but it changes the appearance
+                of shipped roadmap status pills, so it wants a design call rather than a drive-by change.
             </p>
         </KnownIssue>
     </Section>
