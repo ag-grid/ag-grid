@@ -1,8 +1,4 @@
-import {
-    CONTACT_CONTENT,
-    CONTACT_SOCIAL_LINKS,
-    contactGithubUrl,
-} from '@ag-website-shared/components/contact-us/contactContent';
+import { CONTACT_CONTENT, contactSocialLinks } from '@ag-website-shared/components/contact-us/contactContent';
 
 /**
  * Build the markdown twin of the contact page. The page's substance is an interactive form, which
@@ -13,11 +9,6 @@ import {
  * `library` they pass (which selects the GitHub repository).
  */
 export function buildContactMarkdown({ library, contactUrl }: { library: string; contactUrl: string }): string {
-    const socialLinks = [
-        { label: 'GitHub', url: contactGithubUrl(library) },
-        ...CONTACT_SOCIAL_LINKS.map(({ label, url }) => ({ label, url })),
-    ];
-
     const document = [
         [
             '---',
@@ -30,7 +21,9 @@ export function buildContactMarkdown({ library, contactUrl }: { library: string;
         CONTACT_CONTENT.subhead,
         `The contact form is on the page itself: [${CONTACT_CONTENT.headline}](${contactUrl}).`,
         '## Elsewhere',
-        socialLinks.map(({ label, url }) => `- [${label}](${url})`).join('\n'),
+        contactSocialLinks(library)
+            .map(({ label, url }) => `- [${label}](${url})`)
+            .join('\n'),
     ];
 
     return `${document.join('\n\n').trimEnd()}\n`;
