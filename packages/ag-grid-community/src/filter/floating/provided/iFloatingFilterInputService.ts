@@ -5,6 +5,7 @@ export interface FloatingFilterInputService extends Bean {
     setEditable(editable: boolean): void;
     isFocused(): boolean;
     getValue(): string | null | undefined;
+    getInputText(): string;
     setValue(value: string | null | undefined, silent?: boolean): void;
     setValueChangedListener(listener: (e: KeyboardEvent) => void): void;
     setParams(params: { ariaLabel: string; autoComplete?: boolean | string; placeholder?: string }): void;

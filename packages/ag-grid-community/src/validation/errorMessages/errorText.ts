@@ -370,7 +370,6 @@ export const AG_GRID_ERRORS = {
         `Grid option \`quickFilterText\` only supports string inputs, received: ${typeof newFilter}` as const,
     71: () => '`debounceMs` is ignored when apply button is present' as const,
     72: ({ keys }: { keys: string[] }) => [`ignoring \`FilterOptionDef\` as it doesn't contain one of `, keys] as const,
-    73: () => `invalid \`FilterOptionDef\` supplied as it doesn't contain a \`displayKey\`` as const,
     74: () => 'no filter options for filter' as const,
     75: () => 'Unknown button type specified' as const,
     76: ({ filterModelType }: { filterModelType: any }) =>

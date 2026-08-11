@@ -36,7 +36,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
     protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
     private dateComp: DateCompWrapper;
     protected readonly filterType = 'date';
-    protected readonly defaultOptions = DEFAULT_DATE_FILTER_OPTIONS;
+    protected readonly options = DEFAULT_DATE_FILTER_OPTIONS;
 
     constructor() {
         super(DateFloatingFilterElement, [AgInputTextFieldSelector]);

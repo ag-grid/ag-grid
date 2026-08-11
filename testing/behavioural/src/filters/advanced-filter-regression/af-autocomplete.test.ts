@@ -56,6 +56,22 @@ describe('Advanced Filter — autocomplete completion & editing', () => {
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
+    test('a column hidden after the list was first built leaves the suggestions', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', OPTS);
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[A');
+        expect(af.autocompleteEntries()).toEqual(['Age', 'Athlete']);
+        await af.pressKey('Escape');
+
+        api.setColumnsVisible(['athlete'], false);
+        await asyncSetTimeout(0);
+
+        await af.type('[');
+        await af.type('[A');
+        expect(af.autocompleteEntries()).toEqual(['Age']);
+    });
+
     test('the suggestion list is position-aware: column, operator, then filtered operators', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
         const af = AdvancedFilterHarness.get(api);

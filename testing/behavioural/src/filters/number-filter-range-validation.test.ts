@@ -12,6 +12,7 @@ import {
 
 import {
     ColumnFilterHarness,
+    FilterDom,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -163,6 +164,14 @@ describe('Number Range Filter', () => {
         expect(filter.input('number', 0).validity.valid).toBe(false);
         expect(filter.input('number', 0).validationMessage).toBe('Must be less than 1');
         expect(filter.input('number', 1).validationMessage).toBe('');
+
+        await new FilterDom(api, 'message on the touched input', { colId: 'gold' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Between"
+            input [0]: "6" ✗ "Must be less than 1"
+            input [1]: "1"
+            model: null
+        `);
     });
 
     test('a from value equal to the to value is invalid', async () => {
@@ -185,6 +194,13 @@ describe('Number Range Filter', () => {
         // silently matching nothing.
         expect(filter.input('number', 1).validity.valid).toBe(false);
         expect(filter.getModel()).toBeNull();
+        await new FilterDom(api, 'equal range bounds', { colId: 'gold' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Between"
+            input [0]: "3"
+            input [1]: "3" ✗ "Must be greater than 3"
+            model: null
+        `);
         await new GridRows(api, 'equal range bounds leave rows unfiltered').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 gold:2
@@ -251,5 +267,229 @@ describe('Number Range Filter', () => {
 
         expect(filter.input('number', 1).validity.valid).toBe(false);
         expect(filter.input('number', 1).validationMessage).toBe('Must be greater than 8');
+    });
+
+    test('cancelling back to an applied range clears the message the edit left behind', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'gold',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { filterOptions: ['inRange'], buttons: ['apply', 'cancel'] },
+                },
+            ],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 3 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        await filter.setNumber(1, 0);
+        await filter.setNumber(5, 1);
+        await filter.apply();
+
+        // Edit the applied range the wrong way round, then abandon the edit.
+        await filter.setNumber(0, 1);
+        expect(filter.input('number', 1).validity.valid).toBe(false);
+
+        await filter.cancel();
+
+        // The inputs hold the applied range again, so the message it replaced is gone.
+        expect(filter.input('number', 1).validity.valid).toBe(true);
+        expect(filter.input('number', 0).validity.valid).toBe(true);
+
+        await new FilterDom(api, 'cancelled back to the applied range', { colId: 'gold' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Between"
+            input [0]: "1"
+            input [1]: "5"
+            AND
+            operator: "Between"
+            input [0]: "" ⟨From⟩
+            input [1]: "" ⟨To⟩
+            buttons: Apply | Cancel
+            model:
+              filterType: "number"
+              type: "inRange"
+              filter: 1
+              filterTo: 5
+        `);
+    });
+
+    test('a valid model applied through the API clears a stale range message', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'gold', filter: 'agNumberColumnFilter', filterParams: { filterOptions: ['inRange'] } },
+            ],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 3 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        await filter.setNumber(5, 0);
+        await filter.setNumber(1, 1);
+        expect(filter.input('number', 1).validity.valid).toBe(false);
+
+        await api.setColumnFilterModel('gold', { filterType: 'number', type: 'inRange', filter: 1, filterTo: 5 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // The inputs hold an ordered range now, so the message the old one left is gone.
+        expect(filter.input('number', 0).validity.valid).toBe(true);
+        expect(filter.input('number', 1).validity.valid).toBe(true);
+
+        await new FilterDom(api, 'model applied over a stale message', { colId: 'gold' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Between"
+            input [0]: "1"
+            input [1]: "5"
+            AND
+            operator: "Between"
+            input [0]: "" ⟨From⟩
+            input [1]: "" ⟨To⟩
+            model:
+              filterType: "number"
+              type: "inRange"
+              filter: 1
+              filterTo: 5
+        `);
+    });
+
+    test('a one-input option is not held to the range rule of the value left behind', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'gold',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { filterOptions: ['inRange', 'equals'], maxNumConditions: 1 },
+                },
+            ],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 3 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        await filter.setNumber(1, 0);
+        await filter.setNumber(5, 1);
+
+        await filter.selectOperator('Equals');
+        // `Equals` takes one value, so the 5 the range left in the hidden second input is not a bound on it.
+        await filter.setNumber(8, 0);
+        await asyncSetTimeout(0);
+
+        expect(filter.input('number', 0).validity.valid).toBe(true);
+        await waitFor(() => expect(filter.getModel()).toEqual({ filterType: 'number', type: 'equals', filter: 8 }));
+        await new FilterDom(api, 'one-input option after a range', { colId: 'gold' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Equals"
+            input: "8"
+            model:
+              filterType: "number"
+              type: "equals"
+              filter: 8
+        `);
+        await new GridRows(api, 'equals applies over a stale range bound').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 gold:8
+        `);
+    });
+
+    test('a condition still validates its own inputs once an earlier condition has been dropped', async () => {
+        const userSession = userEvent.setup();
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'gold',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { filterOptions: ['inRange'], maxNumConditions: 4 },
+                },
+            ],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 3 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        await filter.setNumber(1, 0);
+        await filter.setNumber(2, 1);
+        await filter.setNumber(3, 2);
+        await filter.setNumber(4, 3);
+        await filter.setNumber(5, 4);
+        await filter.setNumber(6, 5);
+
+        // Emptying the middle condition makes it incomplete, so closing the popup drops it and the
+        // third condition slides down into its place.
+        await filter.setNumber('', 2);
+        await filter.setNumber('', 3);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await userSession.click(getByTestId(gridDiv, agTestIdFor.cell('2', 'gold')));
+
+        const reopened = await ColumnFilterHarness.open(api, 'gold');
+        await waitFor(() => expect(reopened.inputs('number', 1)).toHaveLength(2));
+
+        await reopened.setNumber(9, 2);
+        await reopened.setNumber(1, 3);
+
+        expect(reopened.input('number', 3).validity.valid).toBe(false);
+        expect(reopened.input('number', 3).validationMessage).toBe('Must be greater than 9');
+        await new FilterDom(api, 'range validated after a condition was dropped', { colId: 'gold' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Between"
+            input [0]: "1"
+            input [1]: "2"
+            AND
+            operator: "Between"
+            input [0]: "9"
+            input [1]: "1" ✗ "Must be greater than 9"
+            AND
+            operator: "Between"
+            input [0]: "" ⟨From⟩
+            input [1]: "" ⟨To⟩
+            model:
+              filterType: "number"
+              operator: "AND"
+              conditions:
+                - filterType: "number"
+                  type: "inRange"
+                  filter: 1
+                  filterTo: 2
+                - filterType: "number"
+                  type: "inRange"
+                  filter: 5
+                  filterTo: 6
+        `);
+    });
+
+    test('an option that keeps its key but drops to one input clears the range message it left', async () => {
+        const columnDefs = (numberOfInputs: 1 | 2) => [
+            {
+                field: 'gold',
+                filter: 'agNumberColumnFilter' as const,
+                filterParams: {
+                    debounceMs: 0,
+                    filterOptions: [
+                        {
+                            displayKey: 'span',
+                            displayName: 'Span',
+                            numberOfInputs,
+                            predicate: ([from, to]: any[], cellValue: number | null) =>
+                                cellValue != null && cellValue >= from && (to == null || cellValue <= to),
+                        },
+                    ],
+                },
+            },
+        ];
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: columnDefs(2),
+            rowData: [{ gold: 2 }, { gold: 8 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        // `from` is edited last, so the message lands on the input the one-value option keeps using.
+        await filter.setNumber(1, 1);
+        await filter.setNumber(9, 0);
+        expect(filter.input('number', 0).validationMessage).toBe('Must be less than 1');
+
+        // The same key now takes one value, so there is no order left for that input to be out of.
+        api.setGridOption('columnDefs', columnDefs(1));
+        await asyncSetTimeout(0);
+
+        expect(filter.input('number', 0).validationMessage).toBe('');
+        expect(filter.input('number', 0).validity.valid).toBe(true);
     });
 });

@@ -44,7 +44,8 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
         }
         if (!cache) {
             const [from, to] = rangeFn(new Date(now), new Date(now));
-            cache = { from, to, expires: setStartOfNextDay(new Date(now)).getTime() - now };
+            // The absolute instant it stops being today, which is what the guard above compares against.
+            cache = { from, to, expires: setStartOfNextDay(new Date(now)).getTime() };
             filterTypeToRangeCache.set(key, cache);
         }
         return cache;

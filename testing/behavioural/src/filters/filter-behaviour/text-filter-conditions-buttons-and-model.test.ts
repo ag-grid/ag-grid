@@ -89,7 +89,7 @@ describe('Text Filter — buttons & model round-trip', () => {
         await new FilterDom(api, 'buttons after clear', { colId: 'name' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             buttons: Apply | Clear | Reset
             model:
               filterType: "text"
@@ -113,7 +113,7 @@ describe('Text Filter — buttons & model round-trip', () => {
         await new FilterDom(api, 'buttons after reset', { colId: 'name' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             buttons: Apply | Clear | Reset
             model: null
         `);
@@ -206,5 +206,24 @@ describe('Text Filter — buttons & model round-trip', () => {
             ├── LEAF id:0 name:"Alice"
             └── LEAF id:2 name:"Charlie"
         `);
+    });
+
+    test('a combined model with no conditions and a wrong filterType leaves every row through', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'name', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: [{ name: 'Alice' }, { name: 'Bob' }],
+        });
+
+        // A wrong `filterType` alongside it, which is what drives the conditions through a rewrite.
+        for (const conditions of [undefined, []]) {
+            await api.setColumnFilterModel('name', { filterType: 'number', operator: 'AND', conditions } as any);
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            await new GridRows(api, `unfiltered with conditions ${conditions ? 'empty' : 'missing'}`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"Alice"
+                └── LEAF id:1 name:"Bob"
+            `);
+        }
     });
 });

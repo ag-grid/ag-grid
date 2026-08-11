@@ -222,6 +222,10 @@ export class AdvancedFilterComp extends Component {
         this.expressionParser = this.advancedFilter.createExpressionParser(value);
         const updatedExpression = this.expressionParser?.parseExpression();
         if (updatedExpression && updatedExpression !== value) {
+            // The caret arrives in the text as shown, while the parser's positions are in the text as typed.
+            this.advancedFilter.setExpressionDisplayValue(updatedExpression);
+            this.expressionParser = this.advancedFilter.createExpressionParser(updatedExpression);
+            this.expressionParser?.parseExpression();
             this.eAutocomplete.setValue({ value: updatedExpression, silent: true, restoreFocus: true });
         }
     }

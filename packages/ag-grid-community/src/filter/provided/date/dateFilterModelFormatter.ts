@@ -4,7 +4,6 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { SharedFilterParams } from '../../../interfaces/iFilter';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
 import { translateForFilter } from '../../filterLocaleText';
-import type { OptionsFactory } from '../optionsFactory';
 import { SCALAR_FILTER_TYPE_KEYS, SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
@@ -14,16 +13,13 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter<
     Date
 > {
     protected readonly filterTypeKeys = SCALAR_FILTER_TYPE_KEYS;
-    constructor(optionsFactory: OptionsFactory, filterParams: IDateFilterParams) {
-        super(optionsFactory, filterParams, (value) => {
-            const { dataTypeSvc, valueSvc } = this.beans;
-            const column = (filterParams as SharedFilterParams).column as AgColumn;
-            const dateFormatFn = dataTypeSvc?.getDateFormatterFunction(column); // only exists for dateString.
-            // dateString value formatter requires a string, so format it first.
-            // date value formatter wants the original Date.
-            const valueToFormat = dateFormatFn ? dateFormatFn(value ?? undefined) : value;
-            return valueSvc.formatValue(column, null, valueToFormat);
-        });
+    protected override formatValue(value: Date | null = null): string {
+        const { dataTypeSvc, valueSvc } = this.beans;
+        const column = (this.filterParams as SharedFilterParams).column as AgColumn;
+        const dateFormatFn = dataTypeSvc?.getDateFormatterFunction(column); // only exists for dateString.
+        // dateString's value formatter requires a string; date's wants the original Date.
+        const valueToFormat = dateFormatFn ? dateFormatFn(value ?? undefined) : value;
+        return valueSvc.formatValue(column, null, valueToFormat) ?? '';
     }
 
     protected conditionToString(

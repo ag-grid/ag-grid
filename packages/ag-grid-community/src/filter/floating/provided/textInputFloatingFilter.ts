@@ -3,7 +3,7 @@ import { KeyCode, RefPlaceholder, _clearElement, _debounce } from 'ag-stack';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ElementParams } from '../../../utils/element';
 import type { BigIntFilterModel } from '../../provided/bigInt/iBigIntFilter';
-import type { ISimpleFilterModelType, ISimpleFilterParams } from '../../provided/iSimpleFilter';
+import type { ISimpleFilterParams } from '../../provided/iSimpleFilter';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
 import { _isUseApplyButton, getDebounceMs, getPlaceholderText } from '../../provided/providedFilterUtils';
 import type {
@@ -43,16 +43,15 @@ export abstract class TextInputFloatingFilter<
     protected override defaultDebounceMs: number = 500;
 
     protected onModelUpdated(model: M): void {
-        const { inputSvc } = this;
         this.setLastTypeFromModel(model);
         this.setEditable(this.canWeEditAfterModelFromParentFilter(model));
 
         // Don't clobber a keystroke the user is mid-typing: an interleaving non-floating
         // filter-changed cycle can deliver a stale model while the input is focused.
-        if (inputSvc.isFocused() && this.pendingEdit) {
+        if (this.inputSvc.isFocused() && this.pendingEdit) {
             return;
         }
-        inputSvc.setValue(this.filterModelFormatter.getModelAsString(model));
+        this.inputSvc.setValue(this.filterModelFormatter.getModelAsString(model));
         this.pendingEdit = false;
     }
 
@@ -71,11 +70,11 @@ export abstract class TextInputFloatingFilter<
         const { inputSvc, defaultDebounceMs, readOnly } = this;
         const { filterPlaceholder, column, browserAutoComplete, filterParams } = params;
 
-        const filterOptionKey = (this.lastType ?? this.optionsFactory.defaultOption!) as ISimpleFilterModelType;
+        const filterOptionKey = this.lastType ?? this.optionsFactory.defaultOption!;
         const parentFilterPlaceholder = (params.filterParams as ISimpleFilterParams).filterPlaceholder;
         const placeholder =
             filterPlaceholder === true
-                ? getPlaceholderText(this, parentFilterPlaceholder, 'filterOoo', filterOptionKey)
+                ? getPlaceholderText(this, parentFilterPlaceholder, 'filterOoo', filterOptionKey, this.optionsFactory)
                 : filterPlaceholder || undefined;
 
         inputSvc.setParams({
@@ -102,12 +101,13 @@ export abstract class TextInputFloatingFilter<
     }
 
     protected recreateFloatingFilterInputService(params: TParams): void {
-        const { inputSvc } = this;
-        const value = inputSvc.getValue();
+        const previous = this.inputSvc;
+        // The text as typed, which the widget's own reader drops once the input calls it invalid.
+        const value = previous.getInputText();
         _clearElement(this.eFloatingFilterInputContainer);
-        this.destroyBean(inputSvc);
+        this.destroyBean(previous);
         this.setupFloatingFilterInputService(params);
-        inputSvc.setValue(value, true);
+        this.inputSvc.setValue(value, true);
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {

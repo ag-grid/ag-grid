@@ -1,5 +1,5 @@
 import type { IFilterParams } from '../../interfaces/iFilter';
-import type { ISimpleFilterParams } from './iSimpleFilter';
+import type { ISimpleFilterModelType, ISimpleFilterParams, ScalarFilterOptionKey } from './iSimpleFilter';
 
 /**
  * @deprecated v34 Internal only. Use `IScalarFilterParams`
@@ -9,7 +9,9 @@ export type ScalarFilterParams<TData = any> = IScalarFilterParams & IFilterParam
 /**
  * Common parameters in `colDef.filterParams` used by all scalar filters. Extended by the specific filter types.
  */
-export interface IScalarFilterParams extends ISimpleFilterParams {
+export interface IScalarFilterParams<
+    TOptionKey extends ISimpleFilterModelType = ScalarFilterOptionKey,
+> extends ISimpleFilterParams<TOptionKey> {
     /** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */
     inRangeInclusive?: boolean;
     /** If `true`, blank (`null` or `undefined`) values will pass the `'equals'` filter option. */

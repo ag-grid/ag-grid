@@ -149,6 +149,72 @@ For `number`, `date`, `dateString`, `dateTime` and `dateTimeString` Cell Data Ty
 
 These settings only apply when using the Client-Side Row Model. You need to implement support for these in your server-side filtering logic when using the Server-Side Row Model.
 
+### Custom Filter Options
+
+`filterOptions` also accepts [Custom Filter Options](./filter-conditions/#custom-filter-options). The Advanced Filter runs the same `predicate` as the column filter.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            filterParams: {
+                filterOptions: [
+                    'equals',
+                    {
+                        displayKey: 'evenNumbers',
+                        displayName: 'Even Numbers',
+                        numberOfInputs: 0,
+                        predicate: (_values, cellValue) => cellValue != null && cellValue % 2 === 0,
+                    },
+                    {
+                        displayKey: 'betweenExclusive',
+                        displayName: 'Between (Exclusive)',
+                        numberOfInputs: 2,
+                        predicate: ([from, to], cellValue) => cellValue > from && cellValue < to,
+                    },
+                ],
+            },
+        },
+    ],
+}
+```
+
+An option is written in an expression under its `displayName`, followed by as many values as the option takes. Two values are separated by a comma, and are conventionally wrapped in brackets, which are optional:
+
+```text
+[Age] Even Numbers
+[Age] Between (Exclusive) (30, 40)
+```
+
+Each value is quoted according to its Cell Data Type, as for the built-in options: `number` and `bigint` values are unquoted, all others are quoted.
+
+The `displayKey` can be typed in place of the `displayName`. It is replaced by the `displayName` once the option is recognised.
+
+An option taking two values of an orderable Cell Data Type is a range: the second value must be greater than the first, or the expression reports an error and the filter is not applied. This is the same rule the column filter reports against its inputs, and the [Advanced Filter Builder](#advanced-filter-builder) reports it on the condition. Text has no ordering to assume, so a pair of text values is two unrelated values.
+
+The filter model stores the `displayKey` in `type`, and the values in `filter` and `filterTo`:
+
+```js
+const advancedFilterModel = {
+    filterType: 'number',
+    colId: 'age',
+    type: 'betweenExclusive',
+    filter: 30,
+    filterTo: 40,
+};
+```
+
+A `displayKey` is resolved against the column being filtered, so different columns can reuse the same key. Reusing an Option Key from the table above replaces that built-in option for the column, the same as it does in the column filter.
+
+The following example demonstrates custom filter options taking different numbers of values:
+
+- The **Athlete** column has `Starts With A` (no values) and `Regular Expression` (one value).
+- The **Age** column has `Even Numbers` (no values) and `Between (Exclusive)` (two values).
+- The **Date** column has `Leap Year` (no values) and `Between (Exclusive)` (two dates).
+
+{% gridExampleRunner title="Custom Filter Options" name="custom-filter-options" /%}
+
 ## Filter Model / API
 
 The Advanced Filter model describes the current state of the Advanced Filter. This is represented by an `AdvancedFilterModel`, which is either a `ColumnAdvancedFilterModel` for a single condition, or a `JoinAdvancedFilterModel` for multiple conditions:

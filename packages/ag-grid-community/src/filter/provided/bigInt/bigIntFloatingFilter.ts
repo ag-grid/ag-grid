@@ -1,11 +1,9 @@
-import { _parseBigIntOrNull } from 'ag-stack';
-
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { BigIntFilterModelFormatter } from './bigIntFilterModelFormatter';
-import { getAllowedCharPattern } from './bigIntFilterUtils';
+import { getAllowedCharPattern, stringToBigInt } from './bigIntFilterUtils';
 import type { BigIntFilterModel, BigIntFilterParams, IBigIntFloatingFilterParams } from './iBigIntFilter';
 
 export class BigIntFloatingFilter extends TextInputFloatingFilter<IBigIntFloatingFilterParams, BigIntFilterModel> {
@@ -13,7 +11,7 @@ export class BigIntFloatingFilter extends TextInputFloatingFilter<IBigIntFloatin
     private allowedCharPattern: string | null;
     private bigintParser: BigIntFilterParams['bigintParser'] | undefined;
     protected readonly filterType = 'bigint';
-    protected readonly defaultOptions = DEFAULT_BIGINT_FILTER_OPTIONS;
+    protected readonly options = DEFAULT_BIGINT_FILTER_OPTIONS;
 
     protected override updateParams(params: IBigIntFloatingFilterParams): void {
         const filterParams = params.filterParams as BigIntFilterParams;
@@ -35,13 +33,6 @@ export class BigIntFloatingFilter extends TextInputFloatingFilter<IBigIntFloatin
     }
 
     protected override convertValue<TValue>(value: string | null | undefined): TValue | null {
-        if (value == null || value === '') {
-            return null;
-        }
-
-        if (this.bigintParser) {
-            return this.bigintParser(value) as TValue | null;
-        }
-        return _parseBigIntOrNull(value) as TValue | null;
+        return stringToBigInt(this.bigintParser, value) as TValue | null;
     }
 }

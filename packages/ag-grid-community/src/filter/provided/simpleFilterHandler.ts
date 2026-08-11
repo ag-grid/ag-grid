@@ -6,6 +6,7 @@ import type {
     IDoesFilterPassParams,
 } from '../../interfaces/iFilter';
 import type {
+    FilterOptionKey,
     ICombinedSimpleModel,
     ISimpleFilterModel,
     ISimpleFilterModelType,
@@ -16,7 +17,6 @@ import type {
 import { isCombinedFilterModel } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import type { SimpleFilterModelFormatter } from './simpleFilterModelFormatter';
-import { evaluateCustomFilter } from './simpleFilterUtils';
 
 export abstract class SimpleFilterHandler<
     TModel extends ISimpleFilterModel,
@@ -40,12 +40,12 @@ export abstract class SimpleFilterHandler<
 
     constructor(
         private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<TModel, TValue>,
-        private readonly defaultOptions: string[]
+        private readonly options: ISimpleFilterModelType[]
     ) {
         super();
     }
 
-    protected abstract evaluateNullValue(filterType?: ISimpleFilterModelType | null): boolean;
+    protected abstract evaluateNullValue(filterType?: FilterOptionKey | null): boolean;
 
     protected abstract evaluateNonNullValue(
         range: Tuple<TValue>,
@@ -58,7 +58,7 @@ export abstract class SimpleFilterHandler<
         const filterParams = params.filterParams;
         const optionsFactory = new OptionsFactory();
         this.optionsFactory = optionsFactory;
-        optionsFactory.init(this.beans.log, filterParams, this.defaultOptions);
+        optionsFactory.init(this.beans.log, filterParams, this.options);
 
         this.filterModelFormatter = this.createManagedBean(
             new this.FilterModelFormatterClass(optionsFactory, filterParams)
@@ -73,7 +73,7 @@ export abstract class SimpleFilterHandler<
         if (params.source === 'colDef') {
             const filterParams = params.filterParams;
             const optionsFactory = this.optionsFactory;
-            optionsFactory.refresh(this.beans.log, filterParams, this.defaultOptions);
+            optionsFactory.refresh(this.beans.log, filterParams, this.options);
             this.filterModelFormatter.updateParams({ optionsFactory, filterParams });
 
             this.updateParams(params);
@@ -106,11 +106,20 @@ export abstract class SimpleFilterHandler<
             models.push(model as TModel);
         }
 
-        const combineFunction = operator && operator === 'OR' ? 'some' : 'every';
-
+        const isOr = operator === 'OR';
         const cellValue = this.params.getValue(params.node);
 
-        return models[combineFunction]((m) => this.individualConditionPasses(params, m, cellValue));
+        // A condition filtering on nothing neither adds rows to an OR nor removes them from an AND.
+        let anyFiltering = false;
+        for (let i = 0, len = models.length; i < len; ++i) {
+            const passes = this.individualConditionPasses(params, models[i], cellValue);
+            if (passes === isOr) {
+                return passes;
+            }
+            anyFiltering ||= passes !== undefined;
+        }
+        // An AND that got here passed every condition; an OR passed none, so it passes only if none filtered.
+        return !isOr || !anyFiltering;
     }
 
     public getModelAsString(
@@ -123,10 +132,8 @@ export abstract class SimpleFilterHandler<
     protected validateModel(
         params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
     ): void {
-        const {
-            model,
-            filterParams: { filterOptions, maxNumConditions },
-        } = params;
+        const model = params.model;
+        const maxNumConditions = params.filterParams.maxNumConditions;
 
         if (model == null) {
             return;
@@ -134,18 +141,12 @@ export abstract class SimpleFilterHandler<
 
         const isCombined = isCombinedFilterModel(model);
 
-        let conditions: TModel[] | null = isCombined ? model.conditions : [model];
+        // A hand-written combined model can omit `conditions` entirely.
+        let conditions: TModel[] = (isCombined ? model.conditions : [model]) ?? [];
 
-        // Invalid when one of the existing condition options is not in new options list
-        const newOptionsList =
-            filterOptions?.map((option) => (typeof option === 'string' ? option : option.displayKey)) ??
-            this.defaultOptions;
-
-        const allConditionsExistInNewOptionsList =
-            !conditions ||
-            conditions.every((condition) => newOptionsList.find((option) => option === condition.type) !== undefined);
-
-        if (!allConditionsExistInNewOptionsList) {
+        // Checked against the list the dropdown is built from, so a malformed option does not count as offered.
+        const optionsFactory = this.optionsFactory;
+        if (!conditions.every((condition) => optionsFactory.hasOption(condition.type))) {
             this.params = {
                 ...params,
                 model: null,
@@ -158,32 +159,29 @@ export abstract class SimpleFilterHandler<
 
         const filterType = this.filterType;
 
-        if (
-            (conditions && !conditions.every((condition) => condition.filterType === filterType)) ||
-            model.filterType !== filterType
-        ) {
+        if (!conditions.every((condition) => condition.filterType === filterType) || model.filterType !== filterType) {
             // need to add filterType to model
             conditions = conditions.map((condition) => ({ ...condition, filterType }));
             needsUpdate = true;
         }
 
         // Check number of conditions vs maxNumConditions
-        if (typeof maxNumConditions === 'number' && conditions && conditions.length > maxNumConditions) {
+        if (typeof maxNumConditions === 'number' && conditions.length > maxNumConditions) {
             conditions = conditions.slice(0, maxNumConditions);
             needsUpdate = true;
         }
 
         if (needsUpdate) {
             const updatedModel =
-                conditions.length > 1
+                conditions.length === 1
                     ? {
+                          ...conditions[0],
+                          filterType,
+                      }
+                    : {
                           ...(model as ICombinedSimpleModel<TModel>),
                           filterType,
                           conditions,
-                      }
-                    : {
-                          ...conditions[0],
-                          filterType,
                       };
             this.params = {
                 ...params,
@@ -193,15 +191,25 @@ export abstract class SimpleFilterHandler<
         }
     }
 
-    /** returns true if the row passes the said condition */
-    private individualConditionPasses(params: IDoesFilterPassParams, filterModel: TModel, cellValue: any) {
+    /** Whether the row passes the condition, or `undefined` where the condition filters on nothing. */
+    private individualConditionPasses(
+        params: IDoesFilterPassParams,
+        filterModel: TModel,
+        cellValue: any
+    ): boolean | undefined {
         const optionsFactory = this.optionsFactory;
         const values = this.mapValuesFromModel(filterModel, optionsFactory);
         const customFilterOption = optionsFactory.getCustomOption(filterModel.type);
 
-        const customFilterResult = evaluateCustomFilter<TValue>(customFilterOption, values, cellValue);
-        if (customFilterResult != null) {
-            return customFilterResult;
+        if (customFilterOption) {
+            // `predicate` is the whole of what a custom option filters on, so short of a value it filters nothing.
+            for (let i = 0, len = values.length; i < len; ++i) {
+                if (values[i] == null) {
+                    return undefined;
+                }
+            }
+            // A predicate may return any truthy value; `undefined` is reserved for "filters on nothing".
+            return !!customFilterOption.predicate(values, cellValue);
         }
 
         if (cellValue == null) {

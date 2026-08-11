@@ -1,5 +1,8 @@
+import { fireEvent } from '@testing-library/dom';
+
 import type { GridApi } from 'ag-grid-community';
 import {
+    BigIntFilterModule,
     ClientSideRowModelModule,
     DateFilterModule,
     NumberFilterModule,
@@ -12,10 +15,12 @@ import { SetFilterModule } from 'ag-grid-enterprise';
 import {
     ColumnFilterHarness,
     FilterDom,
+    FloatingFilterHarness,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
+    setNativeInputValue,
     uninstallFilterLayoutMock,
 } from '../../test-utils';
 
@@ -25,43 +30,22 @@ import {
  * read-only filters (set, range) show a summary, and clearing. Driven via GridApi + real DOM only.
  */
 
-/** The `.ag-floating-filter-body` for a column's floating filter row. */
-function floatingBody(api: GridApi, colId: string): HTMLElement {
-    const gridDiv = getGridElement(api)! as HTMLElement;
-    // The body carries `ag-floating-filter-body`, or `ag-floating-filter-full-body` when the
-    // floating-filter button is suppressed and the whole cell is the filter body.
-    const body = gridDiv.querySelector<HTMLElement>(
-        `.ag-header-cell.ag-floating-filter[col-id="${colId}"] .ag-floating-filter-body, ` +
-            `.ag-header-cell.ag-floating-filter[col-id="${colId}"] .ag-floating-filter-full-body`
-    );
-    if (!body) {
-        throw new Error(`No floating filter body for "${colId}"`);
-    }
-    return body;
-}
+const floatingBody = (api: GridApi, colId: string): HTMLElement => FloatingFilterHarness.get(api, colId).body;
 
-/** The single visible (non-hidden) input inside a column's floating filter. */
-function floatingInput(api: GridApi, colId: string): HTMLInputElement {
-    const inputs = Array.from(floatingBody(api, colId).querySelectorAll<HTMLInputElement>('input')).filter(
-        (input) => !input.closest('.ag-hidden')
-    );
-    if (!inputs.length) {
-        throw new Error(`No visible floating filter input for "${colId}"`);
-    }
-    return inputs[0];
-}
+const floatingInput = (api: GridApi, colId: string): HTMLInputElement => FloatingFilterHarness.get(api, colId).input();
 
-/** Sets a native input's value and fires input+change so the widget's listeners run. */
-function typeInto(input: HTMLInputElement, value: string): void {
-    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
-    setter.call(input, value);
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-}
+const typeInto = setNativeInputValue;
 
 describe('Floating filter editing', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule, NumberFilterModule, DateFilterModule, SetFilterModule],
+        modules: [
+            ClientSideRowModelModule,
+            TextFilterModule,
+            NumberFilterModule,
+            BigIntFilterModule,
+            DateFilterModule,
+            SetFilterModule,
+        ],
     });
 
     beforeAll(() => {
@@ -416,7 +400,61 @@ describe('Floating filter editing', () => {
         `);
     });
 
-    // --- Set (read-only floating filter, enterprise) ---
+    test.each([
+        ['country', 'agTextColumnFilter', 1, { filterType: 'text', type: 'contains', filter: 'ita' }],
+        ['age', 'agNumberColumnFilter', 2, { filterType: 'number', type: 'inRange', filter: 20, filterTo: 35 }],
+        ['date', 'agDateColumnFilter', 2, { filterType: 'date', type: 'inRange', dateFrom: '2024-01-01' }],
+        ['big', 'agBigIntColumnFilter', 1, { filterType: 'bigint', type: 'equals', filter: '9' }],
+    ])('%s mounts %s inputs, read-only or not', async (colId, filter, expectedInputs, model) => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: colId, filter, filterParams: { debounceMs: 0 }, floatingFilter: true }],
+            rowData: [{ [colId]: '2024-01-01' }],
+        });
+        await asyncSetTimeout(0);
+
+        const floating = FloatingFilterHarness.get(api, colId);
+        expect(floating.allInputs()).toHaveLength(expectedInputs);
+        expect(floating.inputs()).toHaveLength(1);
+
+        await api.setColumnFilterModel(colId, model);
+        await api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // Whatever the model, exactly one input is on show and the element count never moves.
+        expect(floating.allInputs()).toHaveLength(expectedInputs);
+        expect(floating.inputs()).toHaveLength(1);
+    });
+
+    test('a key pressed in a floating filter the grid holds no header focus for is not suppressed', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agTextColumnFilter',
+                    floatingFilter: true,
+                    filterParams: { debounceMs: 0 },
+                    suppressHeaderKeyboardEvent: () => false,
+                },
+            ],
+            rowData: [{ country: 'Italy' }, { country: 'Spain' }],
+        });
+        await asyncSetTimeout(0);
+
+        // Nothing has registered header focus, so there is no cell to describe to `suppressHeaderKeyboardEvent`.
+        const floating = FloatingFilterHarness.get(api, 'country');
+        // Suppression is `stopPropagation`, so an ancestor listener is what observes it not happening.
+        let reachedGrid = false;
+        getGridElement(api)!.addEventListener('keydown', () => {
+            reachedGrid = true;
+        });
+        fireEvent.keyDown(floating.input(), { key: 'Enter' });
+        await asyncSetTimeout(0);
+        expect(reachedGrid).toBe(true);
+
+        await floating.setValue('ita');
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'text', type: 'contains', filter: 'ita' });
+    });
 
     describe.each([false, true])('set (enableFilterHandlers: %s)', (enableFilterHandlers) => {
         test('read-only floating filter shows the selection summary and clears', async () => {
@@ -520,6 +558,52 @@ describe('Floating filter editing', () => {
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 country:"Italy"
                 └── LEAF id:3 country:"Italy"
+            `);
+        });
+    });
+
+    describe.each([false, true])('number with a numberFormatter (enableFilterHandlers: %s)', (enableFilterHandlers) => {
+        test('round-trips the formatted value it shows', async () => {
+            const numberParser = (text: string | null) =>
+                text == null || text === '' ? null : Number(String(text).replace(/,/g, ''));
+            const numberFormatter = (value: number | null) => (value == null ? null : value.toLocaleString('en-US'));
+
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: [
+                    {
+                        field: 'val',
+                        filter: 'agNumberColumnFilter',
+                        floatingFilter: true,
+                        // `allowedCharPattern` admits the separator the formatter writes, and takes the
+                        // text input with it — a number input holds neither `1,500` nor `1,600`.
+                        filterParams: {
+                            debounceMs: 0,
+                            allowedCharPattern: '\\d\\,\\.\\-',
+                            numberParser,
+                            numberFormatter,
+                        },
+                    },
+                ],
+                rowData: [{ val: 5 }, { val: 1500 }, { val: 1600 }],
+            });
+            await asyncSetTimeout(0);
+
+            await api.setColumnFilterModel('val', { filterType: 'number', type: 'equals', filter: 1500 });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const floating = FloatingFilterHarness.get(api, 'val');
+            expect(floating.input().value).toBe('1,500');
+
+            // The formatter wrote it, so only the parser can read it back - `Number("1,600")` is NaN.
+            await floating.setValue('1,600');
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'number', type: 'equals', filter: 1600 });
+            await new GridRows(api, `formatted floating filter round-trip ${enableFilterHandlers}`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 val:1600
             `);
         });
     });
