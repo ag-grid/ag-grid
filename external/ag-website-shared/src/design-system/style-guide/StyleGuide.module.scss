@@ -1,273 +1,968 @@
 @use '../core' as *;
 
-// General style guide
-// ===============================================
+// Local tokens for the guide's own chrome. The guide is documentation *about* the design system,
+// so its layout deliberately uses its own measurements rather than the page layout tokens - it is
+// not an example of how to build a site page.
 .styleGuide {
-    padding-top: 6rem;
-    padding-bottom: 24rem;
+    --sidebar-width: 240px;
+    --guide-gap: #{$spacing-size-8};
+    --guide-max-width: 1100px;
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 3em;
-        margin-bottom: $spacing-size-2;
+    display: flex;
+    gap: var(--guide-gap);
+    align-items: flex-start;
+    max-width: calc(var(--sidebar-width) + var(--guide-gap) + var(--guide-max-width));
+    margin: 0 auto;
+    padding: $spacing-size-8 $spacing-size-6 $spacing-size-64;
+}
+
+// Sidebar
+// ===============================================
+.sidebarColumn {
+    flex: 0 0 var(--sidebar-width);
+    position: sticky;
+    // Clears the sticky site header rather than tucking under it.
+    top: calc(var(--layout-site-header-height) + #{$spacing-size-4});
+    max-height: calc(100vh - var(--layout-site-header-height) - #{$spacing-size-8});
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    // Below this the sidebar has nowhere to go, so it becomes a plain block at the top of the page.
+    @media (max-width: $breakpoint-docs-nav-medium) {
+        position: static;
+        flex-basis: auto;
+        width: 100%;
+        max-height: none;
+        overflow: visible;
     }
 }
 
-// Layout
+.sidebar {
+    padding-right: $spacing-size-4;
+}
+
+.sidebarGroup:not(:last-child) {
+    margin-bottom: $spacing-size-5;
+}
+
+.sidebarGroupTitle {
+    margin-bottom: $spacing-size-2;
+    font-size: var(--text-fs-2xs);
+    line-height: var(--text-lh-tight);
+    font-weight: var(--text-bold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-fg-tertiary);
+}
+
+.sidebarLink {
+    display: block;
+    padding: $spacing-size-1 $spacing-size-2;
+    border-radius: var(--radius-xs);
+    font-size: var(--text-fs-sm);
+    line-height: var(--text-lh-tight);
+    font-weight: var(--text-regular);
+    color: var(--color-fg-secondary);
+    // The 2px inset is the active marker's slot, so becoming active does not shift the text.
+    box-shadow: inset 2px 0 0 transparent;
+    transition:
+        background-color $transition-default-timing,
+        box-shadow $transition-default-timing,
+        color $transition-default-timing;
+
+    &:where([href]):hover {
+        background-color: var(--color-bg-secondary);
+        color: var(--color-fg-primary);
+    }
+}
+
+.sidebarLinkActive {
+    background-color: var(--color-util-brand-50);
+    box-shadow: inset 2px 0 0 var(--color-link);
+    color: var(--color-link);
+    font-weight: var(--text-semibold);
+}
+
+// Page header and toolbar
 // ===============================================
-.layoutExample {
+.content {
+    flex: 1 1 auto;
+    min-width: 0; // Lets wide tables scroll inside the column instead of stretching it.
+}
+
+.pageHeader {
+    margin-bottom: $spacing-size-6;
+}
+
+.pageLede {
+    max-width: 68ch;
+    font-size: var(--text-fs-lg);
+    line-height: var(--text-lh-base);
+    color: var(--color-fg-tertiary);
+}
+
+.toolbar {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--layout-gap);
-
-    div {
-        background-color: rgba(255, 0, 0, 0.1);
-    }
-}
-
-// Spacing
-// ===============================================
-.spacingItem {
-    display: flex;
+    gap: $spacing-size-3;
     align-items: center;
-    gap: $spacing-size-4;
-    min-height: $spacing-size-8;
-
-    div {
-        height: $spacing-size-2;
-        background-color: var(--color-brand-300);
-    }
+    position: sticky;
+    top: var(--layout-site-header-height);
+    z-index: 1;
+    margin-bottom: $spacing-size-6;
+    padding: $spacing-size-3 0;
+    background-color: var(--color-bg-primary);
+    border-bottom: 1px solid var(--color-border-secondary);
 }
 
-// Radii
-// ===============================================
-.radiiList {
+.toolbarSearch {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--layout-gap);
-
-    code {
-        display: inline-block;
-        margin-bottom: 16px;
-    }
-}
-
-.radiiItem {
-    width: 4rem;
-    height: 4rem;
-    background-color: var(--color-brand-300);
-}
-
-// Text Sizes
-// ===============================================
-.textSizeList {
-    display: flex;
-    gap: 2rem;
-}
-
-.textSizeItem {
-    margin-bottom: 1rem;
-}
-
-.textSizeExample {
-    max-width: 440px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-// Color
-// ===============================================
-.swatch {
-    width: 12rem;
+    flex: 1 1 280px;
+    align-items: center;
+    gap: $spacing-size-2;
+    padding: 0 $spacing-size-3;
+    border: 1px solid var(--color-input-border);
     border-radius: var(--radius-sm);
-    border: 1px solid var(--color-border-primary);
-    overflow: hidden;
-}
+    background-color: var(--color-bg-primary);
 
-.swatchTop {
-    height: 4rem;
-}
+    --icon-size: #{$spacing-size-5};
+    --icon-color: var(--color-fg-quinary);
 
-.swatchBottom {
-    display: flex;
-    flex-direction: column;
-    padding: 0.5rem;
-    gap: 0.25rem;
-}
-
-.colorsList {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-// Shadows
-// ===============================================
-.shadowsList {
-    display: flex;
-    gap: $spacing-size-8;
-
-    div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-width: $spacing-size-32;
-        aspect-ratio: 1/1;
-        border-radius: 8px;
-    }
-}
-
-// Text Elements
-// ===============================================
-.textElementsList {
-    display: flex;
-    flex-wrap: wrap;
-
-    p {
-        min-width: 20%;
-    }
-}
-
-.textElementsItem {
-    margin-top: $spacing-size-8;
-    margin-bottom: $spacing-size-8;
-
-    code {
-        display: inline-block;
-        margin-bottom: $spacing-size-2;
-    }
-}
-
-// Buttons
-// ===============================================
-.buttonExamples {
-    display: flex;
-    gap: $spacing-size-8;
-    align-items: center;
-    margin-bottom: $spacing-size-8;
-
-    label {
-        min-width: 100px;
-        text-align: right;
-    }
-}
-
-// Inputs
-// ===============================================
-.inputsOuter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--layout-gap);
-}
-
-.textInput {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--layout-gap);
-}
-
-.textInputGroup,
-.textInputGroupStacked {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-size-3;
-
-    code {
-        width: fit-content;
-    }
-}
-
-.textInputGroupStacked .textInput {
-    flex-direction: column;
-    gap: $spacing-size-3;
-}
-
-.inputsList,
-.checkboxList,
-.radioList,
-.switchList,
-.selectList,
-.textareaList {
-    div {
-        display: flex;
-        align-items: center;
-        margin-bottom: $spacing-size-4;
-        min-height: $spacing-size-12;
-    }
-
-    label {
-        display: inline-block;
-        min-width: 100px;
-        text-align: right;
+    &:focus-within {
+        border-color: var(--color-input-border-hover);
     }
 
     input {
-        top: unset; // Fix for existing odd behavior.
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: $spacing-size-2 0;
+        border: none;
+        background: none;
+        box-shadow: none;
+
+        &:focus-visible {
+            box-shadow: none;
+        }
     }
 }
 
-.textareaList label {
-    margin-right: 0.5rem;
+.toolbarCount {
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-tertiary);
+    white-space: nowrap;
 }
 
-// Icons
+// Section frame
 // ===============================================
-.iconsList {
+.section {
+    padding-top: $spacing-size-12;
+    // Keeps a linked section clear of the sticky site header and toolbar.
+    scroll-margin-top: calc(var(--layout-site-header-height) + #{$spacing-size-16});
+
+    &:not(:last-child) {
+        padding-bottom: $spacing-size-12;
+        border-bottom: 1px solid var(--color-border-secondary);
+    }
+}
+
+.sectionHeader {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-size-8;
-    justify-content: center;
-    margin-top: $spacing-size-8;
-    margin-bottom: $spacing-size-16;
+    gap: $spacing-size-2 $spacing-size-4;
+    align-items: baseline;
+    margin-bottom: $spacing-size-3;
+}
+
+.anchorLink {
+    color: var(--color-fg-primary);
+    font-weight: inherit;
+
+    &:where([href]):hover {
+        color: var(--color-link);
+    }
+}
+
+.sectionSource {
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-tertiary);
+}
+
+.sectionLede {
+    max-width: 76ch;
+    margin-bottom: $spacing-size-6;
+
+    p {
+        color: var(--color-text-primary);
+    }
+}
+
+.block {
+    margin-bottom: $spacing-size-10;
+}
+
+.blockTitle {
+    margin-bottom: $spacing-size-2;
+    font-size: var(--text-fs-lg);
+    line-height: var(--text-lh-lg);
+    font-weight: var(--text-semibold);
+}
+
+.blockNote {
+    max-width: 76ch;
+    margin-bottom: $spacing-size-4;
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-tertiary);
+}
+
+// Guidance and known issues
+// ===============================================
+.guidance {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: $spacing-size-4;
+}
+
+.guidanceColumn {
+    padding: $spacing-size-4;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-secondary);
+
+    h4 {
+        margin-bottom: $spacing-size-3;
+        font-size: var(--text-fs-sm);
+        line-height: var(--text-lh-tight);
+        font-weight: var(--text-bold);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    li {
+        position: relative;
+        padding-left: $spacing-size-5;
+        font-size: var(--text-fs-sm);
+        color: var(--color-text-primary);
+
+        &:not(:last-child) {
+            margin-bottom: $spacing-size-2;
+        }
+
+        &::before {
+            position: absolute;
+            left: 0;
+            font-weight: var(--text-bold);
+        }
+    }
+}
+
+.guidanceDo {
+    background-color: color-mix(in srgb, var(--color-green-500) 6%, var(--color-bg-primary));
+    border-color: color-mix(in srgb, var(--color-green-500) 25%, var(--color-bg-primary));
+
+    h4 {
+        color: var(--color-green-700);
+    }
+
+    li::before {
+        content: '✓';
+        color: var(--color-green-600);
+    }
+}
+
+.guidanceDont {
+    background-color: color-mix(in srgb, var(--color-negative) 6%, var(--color-bg-primary));
+    border-color: color-mix(in srgb, var(--color-negative) 25%, var(--color-bg-primary));
+
+    h4 {
+        color: var(--color-negative);
+    }
+
+    li::before {
+        content: '✕';
+        color: var(--color-negative);
+    }
+}
+
+#{$selector-darkmode} {
+    .guidanceDo h4 {
+        color: var(--color-green-300);
+    }
+
+    .guidanceDont h4 {
+        color: var(--color-warning-300);
+    }
+
+    .guidanceDont li::before {
+        color: var(--color-warning-300);
+    }
+}
+
+.knownIssue {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-3;
+    margin-top: $spacing-size-6;
+    padding: $spacing-size-4;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-util-warning-300);
+    background-color: var(--color-util-warning-50);
 
     > div {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: $spacing-size-2;
+        flex: 1 1 400px;
+    }
+
+    p {
+        font-size: var(--text-fs-sm);
+        color: var(--color-text-secondary);
+
+        &:not(:last-child) {
+            margin-bottom: $spacing-size-2;
+        }
     }
 }
 
-.iconsElementsList {
+.knownIssueTag {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 2px $spacing-size-2;
+    border-radius: var(--radius-xs);
+    font-size: var(--text-fs-2xs);
+    font-weight: var(--text-bold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background-color: var(--color-util-warning-500);
+    color: var(--color-white);
+}
+
+// Copy control
+// ===============================================
+.copyButton {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-1;
+    max-width: 100%;
+    padding: 2px $spacing-size-2;
+    border-radius: var(--radius-xs);
+    font-family: var(--text-monospace-font-family);
+    font-size: var(--text-fs-xs);
+    color: var(--color-fg-primary);
+    background-color: var(--color-bg-code);
+    cursor: pointer;
+
+    --icon-size: #{$spacing-size-4};
+    --icon-color: var(--color-fg-quinary);
+
+    // The icon only appears on hover or focus, so a dense table of token names is not a grid of
+    // clipboard glyphs - but it stays reachable by keyboard.
+    :where(.icon) {
+        opacity: 0;
+        transition: opacity $transition-default-timing;
+    }
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--color-util-brand-100);
+
+        :where(.icon) {
+            opacity: 1;
+        }
+    }
+}
+
+.copyButtonInline {
+    background-color: transparent;
+    padding-left: 0;
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--color-util-brand-50);
+    }
+}
+
+.copyButtonCopied {
+    --icon-color: var(--color-green-600);
+
+    :where(.icon) {
+        opacity: 1;
+    }
+}
+
+.copyButtonLabel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// Specimens
+// ===============================================
+.specimen {
+    margin-bottom: $spacing-size-4;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-secondary);
+    overflow: hidden;
+}
+
+.specimenLabel {
+    padding: $spacing-size-2 $spacing-size-4;
+    border-bottom: 1px solid var(--color-border-secondary);
+    background-color: var(--color-bg-secondary);
+    font-size: var(--text-fs-xs);
+    font-weight: var(--text-semibold);
+    color: var(--color-fg-tertiary);
+}
+
+.specimenPreview {
+    padding: $spacing-size-5;
+}
+
+.specimenPreviewRow {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-size-8;
+    gap: $spacing-size-5 $spacing-size-8;
+    align-items: flex-start;
+}
+
+.specimenPreviewSecondary {
+    background-color: var(--color-bg-secondary);
+}
+
+.specimenCode {
+    display: flex;
+    gap: $spacing-size-2;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: $spacing-size-3 $spacing-size-4;
+    border-top: 1px solid var(--color-border-secondary);
+    background-color: var(--color-bg-secondary);
+
+    pre {
+        flex: 1 1 auto;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: none;
+        font-size: var(--text-fs-xs);
+        overflow-x: auto;
+    }
+
+    code {
+        padding: 0;
+        border: none;
+        background: none;
+        font-size: inherit;
+        // The global inline-code rule sets `white-space: normal`, which collapses a multi-line
+        // snippet into one wrapped paragraph. Restore preformatting for code inside a <pre>.
+        white-space: pre;
+    }
+}
+
+.variant {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+}
+
+.variantName {
+    font-size: var(--text-fs-2xs);
+    line-height: var(--text-lh-tight);
+    font-weight: var(--text-bold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-fg-tertiary);
+}
+
+.variantBody {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-2;
     align-items: center;
-    margin-top: $spacing-size-8;
-    margin-bottom: $spacing-size-8;
 }
 
-.iconsSpan {
-    --icon-color: red;
-
-    color: red;
+.variantNote {
+    max-width: 30ch;
+    font-size: var(--text-fs-xs);
+    color: var(--color-fg-tertiary);
 }
 
-.iconsButton {
-    --icon-color: white;
+// Swatches
+// ===============================================
+.swatch {
+    display: inline-flex;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: var(--radius-xs);
+    // Checkerboard shows through a translucent token instead of reading as a solid colour.
+    background-image:
+        linear-gradient(45deg, var(--color-util-gray-200) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--color-util-gray-200) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--color-util-gray-200) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--color-util-gray-200) 75%);
+    background-size: 8px 8px;
+    background-position:
+        0 0,
+        0 4px,
+        4px -4px,
+        -4px 0;
+    box-shadow: inset 0 0 0 1px var(--color-border-primary);
+}
 
-    background-color: blue;
-    color: white;
+.swatchSm {
+    width: 48px;
+    height: 24px;
+}
 
-    &:hover {
-        background-color: green;
-        color: white;
+.swatchMd {
+    width: 96px;
+    height: 40px;
+}
+
+.swatchLg {
+    width: 100%;
+    height: 64px;
+}
+
+.swatchHalf {
+    display: flex;
+    flex: 1 1 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-fs-2xs);
+    font-family: var(--text-monospace-font-family);
+}
+
+.swatchSplit .swatchHalf:first-child {
+    border-right: 1px solid var(--color-border-primary);
+}
+
+.swatchOnDark {
+    color: var(--color-white);
+}
+
+.swatchOnLight {
+    color: var(--color-gray-900);
+}
+
+.swatchLegend {
+    max-width: 76ch;
+    margin-bottom: $spacing-size-6;
+    padding: $spacing-size-3 $spacing-size-4;
+    border-left: 3px solid var(--color-link);
+    background-color: var(--color-util-brand-50);
+    font-size: var(--text-fs-sm);
+    color: var(--color-text-secondary);
+}
+
+// Contrast grades
+// ===============================================
+.grade {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 2px $spacing-size-2;
+    border-radius: var(--radius-xs);
+    font-size: var(--text-fs-2xs);
+    line-height: var(--text-lh-ultra-tight);
+    white-space: nowrap;
+}
+
+.gradeRatio {
+    font-family: var(--text-monospace-font-family);
+    font-weight: var(--text-semibold);
+}
+
+.gradeLabel {
+    opacity: 0.8;
+}
+
+.gradePass {
+    background-color: color-mix(in srgb, var(--color-green-500) 15%, var(--color-bg-primary));
+    color: var(--color-green-700);
+}
+
+.gradeWarn {
+    background-color: var(--color-util-warning-100);
+    color: var(--color-util-warning-700);
+}
+
+.gradeFail {
+    background-color: color-mix(in srgb, var(--color-negative) 15%, var(--color-bg-primary));
+    color: var(--color-negative);
+}
+
+.gradeUnknown {
+    color: var(--color-fg-quinary);
+}
+
+#{$selector-darkmode} {
+    .gradePass {
+        color: var(--color-green-300);
+    }
+
+    .gradeFail {
+        color: var(--color-warning-300);
     }
 }
 
-.iconsLink {
-    --icon-color: green;
+// Token tables
+// ===============================================
+.tableScroll {
+    // Wide token tables scroll within the content column rather than widening the page.
+    overflow-x: auto;
+    margin-bottom: $spacing-size-4;
+}
 
-    color: green;
+.tokenTable {
+    width: 100%;
+    font-size: var(--text-fs-sm);
 
-    &:hover {
-        --icon-color: orange;
+    th,
+    td {
+        padding: $spacing-size-2 $spacing-size-3;
+        vertical-align: middle;
 
-        color: orange;
+        &:first-child {
+            padding-left: 0;
+        }
     }
+
+    th {
+        font-size: var(--text-fs-xs);
+        font-weight: var(--text-semibold);
+        white-space: nowrap;
+        color: var(--color-fg-tertiary);
+    }
+
+    td {
+        color: var(--color-text-primary);
+    }
+}
+
+.tokenLiteral {
+    font-family: var(--text-monospace-font-family);
+    font-size: var(--text-fs-xs);
+    color: var(--color-fg-primary);
+    white-space: nowrap;
+}
+
+.tokenInherited {
+    font-size: var(--text-fs-xs);
+    font-style: italic;
+    color: var(--color-fg-quinary);
+}
+
+.aliasChain {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-1;
+    align-items: center;
+}
+
+.aliasStep {
+    // Keeps a token name and its arrow together, so a chain wraps between steps rather than
+    // mid-name.
+    white-space: nowrap;
+
+    &::after {
+        content: '→';
+        margin-left: $spacing-size-1;
+        color: var(--color-fg-quinary);
+    }
+}
+
+// Verdict against the ratio a pairing actually requires, which is not the same thing as the WCAG
+// grade badge beside it - see `meetsRequirement` in the accessibility section.
+.verdictPass,
+.verdictFail {
+    padding: 2px $spacing-size-2;
+    border-radius: var(--radius-xs);
+    font-size: var(--text-fs-2xs);
+    font-weight: var(--text-bold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.verdictPass {
+    background-color: color-mix(in srgb, var(--color-green-500) 15%, var(--color-bg-primary));
+    color: var(--color-green-700);
+}
+
+.verdictFail {
+    background-color: var(--color-negative);
+    color: var(--color-white);
+}
+
+#{$selector-darkmode} .verdictPass {
+    color: var(--color-green-300);
+}
+
+// Flags a breakpoint sitting within 20px of its neighbour - a consolidation candidate.
+.gapTight {
+    padding: 0 $spacing-size-1;
+    border-radius: var(--radius-xxs);
+    background-color: var(--color-util-warning-100);
+    color: var(--color-util-warning-700);
+    font-weight: var(--text-semibold);
+}
+
+.emptyState {
+    padding: $spacing-size-4 0;
+    font-size: var(--text-fs-sm);
+    font-style: italic;
+    color: var(--color-fg-quinary);
+}
+
+// Colour scale strips
+// ===============================================
+.scaleStrip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-bottom: $spacing-size-4;
+}
+
+.scaleStep {
+    display: flex;
+    flex: 1 1 64px;
+    flex-direction: column;
+    gap: $spacing-size-1;
+    min-width: 64px;
+}
+
+.scaleSwatch {
+    height: 56px;
+    border-radius: var(--radius-xs);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-fg-primary) 10%, transparent);
+}
+
+.scaleStepLabel {
+    font-size: var(--text-fs-xs);
+    font-weight: var(--text-semibold);
+    color: var(--color-fg-primary);
+}
+
+.scaleStepValue {
+    font-family: var(--text-monospace-font-family);
+    font-size: var(--text-fs-2xs);
+    color: var(--color-fg-tertiary);
+}
+
+.themePair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: $spacing-size-4;
+    margin-bottom: $spacing-size-4;
+}
+
+.themePairLabel {
+    display: block;
+    margin-bottom: $spacing-size-2;
+    font-family: var(--text-monospace-font-family);
+    font-size: var(--text-fs-xs);
+    color: var(--color-fg-tertiary);
+}
+
+// Typography specimens
+// ===============================================
+.familySpecimen {
+    font-size: var(--text-fs-lg);
+    color: var(--color-fg-primary);
+}
+
+.scaleSample {
+    display: block;
+    // A px cap rather than a ch cap: `ch` scales with the sample's own font size, so the 40px step
+    // would be wide enough to force the whole table into horizontal scroll.
+    max-width: 420px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-fg-primary);
+}
+
+// Spacing, radii, shadows
+// ===============================================
+.spacingBar {
+    display: block;
+    height: $spacing-size-2;
+    border-radius: var(--radius-xxs);
+    background-color: var(--color-util-brand-400);
+}
+
+.radiiGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: $spacing-size-4;
+}
+
+.radiiItem {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-1;
+    align-items: flex-start;
+}
+
+.radiiSample {
+    width: 100%;
+    height: 72px;
+    background-color: var(--color-util-brand-200);
+    box-shadow: inset 0 0 0 1px var(--color-util-brand-400);
+}
+
+.radiiValue {
+    font-family: var(--text-monospace-font-family);
+    font-size: var(--text-fs-2xs);
+    color: var(--color-fg-tertiary);
+}
+
+.radiiUse {
+    font-size: var(--text-fs-xs);
+    color: var(--color-fg-tertiary);
+}
+
+.shadowSample {
+    display: block;
+    width: 96px;
+    height: 96px;
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-primary);
+}
+
+.shadowValue {
+    display: inline-block;
+    max-width: 46ch;
+    font-size: var(--text-fs-2xs);
+    white-space: normal;
+}
+
+// Layout and breakpoints
+// ===============================================
+.columnDemo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--layout-gap);
+}
+
+.columnDemoCell {
+    padding: $spacing-size-3 0;
+    border-radius: var(--radius-xs);
+    background-color: var(--color-util-brand-100);
+    box-shadow: inset 0 0 0 1px var(--color-util-brand-300);
+    text-align: center;
+    font-size: var(--text-fs-xs);
+    font-family: var(--text-monospace-font-family);
+    color: var(--color-fg-primary);
+}
+
+.ruler {
+    position: relative;
+    height: $spacing-size-16;
+    margin-bottom: $spacing-size-4;
+    border-bottom: 1px solid var(--color-border-primary);
+}
+
+.rulerTick {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    // Ticks overlap heavily where breakpoints cluster, so partial opacity makes density readable:
+    // a darker line means more breakpoints at that width.
+    background-color: color-mix(in srgb, var(--color-link) 55%, transparent);
+}
+
+.rulerScale {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    right: 0;
+    bottom: calc(-1 * #{$spacing-size-5});
+    left: 0;
+    font-size: var(--text-fs-2xs);
+    color: var(--color-fg-tertiary);
+}
+
+// Motion
+// ===============================================
+.motionTrack {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-3;
+    margin-top: $spacing-size-4;
+}
+
+.motionRow {
+    display: flex;
+    gap: $spacing-size-3;
+    align-items: center;
+}
+
+.motionLabel {
+    flex: 0 0 160px;
+    font-family: var(--text-monospace-font-family);
+    font-size: var(--text-fs-xs);
+    color: var(--color-fg-tertiary);
+}
+
+.motionBox,
+.motionBoxFast {
+    display: block;
+    width: $spacing-size-8;
+    height: $spacing-size-8;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-util-brand-300);
+
+    &[data-playing='true'] {
+        background-color: var(--color-bg-brand-solid);
+        transform: translateX(200px);
+    }
+}
+
+.motionBox {
+    transition:
+        transform $transition-default-timing,
+        background-color $transition-default-timing;
+}
+
+.motionBoxFast {
+    transition:
+        transform 0.125s ease-in-out,
+        background-color 0.125s ease-in-out;
+}
+
+// Forms, tables, icons, cards
+// ===============================================
+.formDemo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-5;
+    align-items: flex-start;
+}
+
+.narrowDemo {
+    // Constrains the stacked-table example so the stacking is visible at any page width.
+    max-width: 280px;
+}
+
+.iconGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: $spacing-size-4 $spacing-size-2;
+}
+
+.iconCell {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-1;
+    align-items: center;
+    text-align: center;
+}
+
+.iconName {
+    max-width: 100%;
+    font-size: var(--text-fs-2xs);
+}
+
+.cardDemo {
+    min-width: 200px;
 }
