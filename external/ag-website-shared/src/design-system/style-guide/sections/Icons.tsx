@@ -5,7 +5,7 @@ import type { CSSProperties, FunctionComponent } from 'react';
 import styles from '../StyleGuide.module.scss';
 import { useStyleGuide, useTokens } from '../StyleGuideContext';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Guidance, Section } from '../chrome/Section';
+import { Block, Gotcha, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 import { TokenTable } from '../chrome/TokenTable';
 
@@ -44,18 +44,10 @@ export const Icons: FunctionComponent = () => {
             title="Icons"
             source={['components/icon/Icon.tsx', '_root.scss']}
             lede={
-                <>
-                    <p>
-                        Icons come from the <code>Icon</code> component, which renders an inline SVG so it inherits
-                        colour and can be sized with CSS. The library is IBM Carbon plus bespoke marks for things Carbon
-                        does not cover.
-                    </p>
-                    <p>
-                        Two custom properties control appearance: <code>--icon-size</code> and <code>--icon-color</code>
-                        . Set them on an ancestor rather than styling the SVG - that is how buttons and links give their
-                        icons the right colour and hover behaviour for free.
-                    </p>
-                </>
+                <p>
+                    IBM Carbon plus bespoke marks, rendered as inline SVG. <code>--icon-size</code> and{' '}
+                    <code>--icon-color</code> control appearance - set them on an ancestor rather than styling the SVG.
+                </p>
             }
         >
             <Block
@@ -70,15 +62,7 @@ export const Icons: FunctionComponent = () => {
                 <TokenTable tokens={iconTokens} withoutSwatch />
             </Block>
 
-            <Block
-                title="Usage"
-                note={
-                    <p>
-                        Icons are decorative by default. If an icon is the only content of a control, the control needs
-                        an accessible name of its own.
-                    </p>
-                }
-            >
+            <Block title="Usage">
                 <Specimen label="Inheriting colour from the context" row code={`<Icon name="eye" />`}>
                     <Variant name="In text">
                         <span>
@@ -152,37 +136,12 @@ export const Icons: FunctionComponent = () => {
                 );
             })}
 
-            <Block title="Using icons">
-                <Guidance
-                    dos={[
-                        <>
-                            Set <code>--icon-color</code> on the containing element so hover states cascade to the icon
-                            without a second rule.
-                        </>,
-                        <>
-                            Give an icon-only control an <code>aria-label</code>. The SVG carries no accessible name.
-                        </>,
-                        <>
-                            Pair an icon with a text label wherever the meaning is not universal - an icon alone is
-                            rarely as unambiguous as it looks to the person who chose it.
-                        </>,
-                    ]}
-                    donts={[
-                        <>
-                            Don&rsquo;t target the <code>svg</code> directly to change its colour; use{' '}
-                            <code>--icon-color</code> so every state follows.
-                        </>,
-                        <>
-                            Don&rsquo;t recolour a third-party brand mark. Use the monochrome variant where one exists,
-                            such as <code>stackoverflowMonochrome</code>.
-                        </>,
-                        <>
-                            Don&rsquo;t add an icon to the library for one use. Check Carbon first - most needs are
-                            already covered by a name that is not yet mapped.
-                        </>,
-                    ]}
-                />
-            </Block>
+            <Gotcha>
+                The SVG carries no accessible name, so an icon-only control needs an <code>aria-label</code>. Change
+                colour through <code>--icon-color</code> rather than targeting the <code>svg</code>, or hover states
+                stop following. Don&rsquo;t recolour a third-party brand mark - use the monochrome variant where one
+                exists, such as <code>stackoverflowMonochrome</code>.
+            </Gotcha>
         </Section>
     );
 };

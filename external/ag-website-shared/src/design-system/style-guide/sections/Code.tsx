@@ -2,7 +2,7 @@ import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
 import type { FunctionComponent } from 'react';
 
 import { useStyleGuide, useTokens } from '../StyleGuideContext';
-import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 import { TokenTable } from '../chrome/TokenTable';
 
@@ -27,27 +27,19 @@ export const Code: FunctionComponent = () => {
             title="Code"
             source={['elements/_inline.scss', 'elements/_block.scss', 'components/_code.scss']}
             lede={
-                <>
-                    <p>
-                        Three levels, in increasing weight: <code>&lt;code&gt;</code> for an identifier in a sentence,{' '}
-                        <code>&lt;pre&gt;</code> for a literal block with no highlighting, and the <code>Snippet</code>{' '}
-                        component for source that should be syntax highlighted and copyable.
-                    </p>
-                    <p>
-                        Syntax highlighting uses Prism token classes mapped onto <code>--color-code-*</code> tokens.
-                        Those are the only colours in the system hand-tuned per theme rather than re-pointed at the
-                        palette, because highlighting needs hue separation a neutral scale cannot provide.
-                    </p>
-                </>
+                <p>
+                    Three levels: <code>&lt;code&gt;</code> for an identifier in a sentence, <code>&lt;pre&gt;</code>{' '}
+                    for a literal block with no highlighting, and <code>Snippet</code> for source that should be
+                    highlighted and copyable.
+                </p>
             }
         >
             <Block
                 title="Inline"
                 note={
                     <p>
-                        <code>&lt;code&gt;</code> renders at <code>0.875em</code> of its context, so it stays
-                        proportional inside a heading as well as in body text. Use it for anything the reader would type
-                        or find in an API: option names, values, file paths, class names.
+                        Renders at <code>0.875em</code> of its context, so it scales inside a heading too. For anything
+                        the reader would type or find in an API.
                     </p>
                 }
             >
@@ -67,9 +59,8 @@ export const Code: FunctionComponent = () => {
                 title="Preformatted"
                 note={
                     <p>
-                        <code>&lt;pre&gt;</code> preserves whitespace and applies the monospace family, a border and the
-                        secondary background - but no highlighting. Use it for output, logs, directory trees and
-                        configuration fragments where highlighting would be misleading.
+                        Whitespace preserved, no highlighting. For output, logs and directory trees, where highlighting
+                        would be misleading.
                     </p>
                 }
             >
@@ -82,15 +73,7 @@ export const Code: FunctionComponent = () => {
                 </Specimen>
             </Block>
 
-            <Block
-                title="Highlighted snippets"
-                note={
-                    <p>
-                        The <code>Snippet</code> component wraps <code>Code</code>, which renders <code>pre.code</code>.
-                        It handles framework transformation, optional line numbers and the copy-to-clipboard control.
-                    </p>
-                }
-            >
+            <Block title="Highlighted snippets">
                 <Specimen label="Default" code={`<Snippet framework="javascript" content={source} />`}>
                     <Snippet framework="javascript" content={EXAMPLE} />
                 </Specimen>
@@ -112,47 +95,19 @@ export const Code: FunctionComponent = () => {
                 title="Syntax colours"
                 note={
                     <p>
-                        Contrast is measured against <code>--color-code-background</code>, which is the surface these
-                        colours actually sit on. Comments and punctuation are the ones to watch - they are the lowest
-                        contrast by design and the easiest to push too far.
+                        Hand-tuned per theme rather than re-pointed at the palette - highlighting needs hue separation a
+                        neutral scale cannot give. Contrast is against <code>--color-code-background</code>.
                     </p>
                 }
             >
                 <TokenTable tokens={codeColours} contrastAgainst={codeBackground} />
             </Block>
 
-            <Block title="Presenting code">
-                <Guidance
-                    dos={[
-                        <>
-                            Use <code>Snippet</code> for anything a reader might copy, and turn on{' '}
-                            <code>copyToClipboard</code> when they almost certainly will.
-                        </>,
-                        <>
-                            Keep snippets to the lines that matter. A full file forces the reader to work out which part
-                            is the point.
-                        </>,
-                        <>
-                            Use a comment inside the snippet to explain a line, rather than prose after it - the comment
-                            travels with the code when it is copied.
-                        </>,
-                    ]}
-                    donts={[
-                        <>
-                            Don&rsquo;t use <code>&lt;code&gt;</code> for emphasis. It means &ldquo;this is a literal
-                            you would type&rdquo;, not &ldquo;this is important&rdquo;.
-                        </>,
-                        <>
-                            Don&rsquo;t turn on line numbers unless you refer to the numbers; they add noise and make
-                            the snippet harder to copy cleanly.
-                        </>,
-                        <>
-                            Don&rsquo;t nest <code>&lt;code&gt;</code> inside <code>&lt;pre&gt;</code> by hand - the
-                            inline styling will fight the block styling.
-                        </>,
-                    ]}
-                />
-            </Block>
+            <Gotcha>
+                <code>&lt;code&gt;</code> means &ldquo;a literal you would type&rdquo;, not &ldquo;this is
+                important&rdquo; - don&rsquo;t use it for emphasis. Explain a line with a comment inside the snippet
+                rather than prose after it, so the explanation travels with the code when it is copied.
+            </Gotcha>
 
             <KnownIssue>
                 <p>

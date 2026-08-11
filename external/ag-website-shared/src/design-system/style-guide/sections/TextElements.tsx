@@ -2,7 +2,7 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import type { FunctionComponent, ReactNode } from 'react';
 
 import styles from '../StyleGuide.module.scss';
-import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 
 /**
@@ -66,17 +66,10 @@ export const TextElements: FunctionComponent = () => (
         title="Text elements"
         source={['elements/_inline.scss', 'elements/_block.scss']}
         lede={
-            <>
-                <p>
-                    Inline and block text elements are styled globally by tag, so semantic HTML renders correctly with
-                    no classes. Pick the tag that describes what the content <em>is</em>; the styling follows.
-                </p>
-                <p>
-                    All of these selectors are guarded with <code>:where(:not([class^=ag]))</code> so they cannot leak
-                    into a rendered grid on the same page. That guard is why the global styles are safe on documentation
-                    pages that embed live examples.
-                </p>
-            </>
+            <p>
+                Styled globally by tag, so semantic HTML renders correctly with no classes. Pick the tag that describes
+                what the content <em>is</em>; the styling follows.
+            </p>
         }
     >
         <Block title="Inline elements">
@@ -164,38 +157,12 @@ export const TextElements: FunctionComponent = () => (
             </Specimen>
         </Block>
 
-        <Block title="Writing content">
-            <Guidance
-                dos={[
-                    <>
-                        Use <code>strong</code> for importance and <code>em</code> for stress. Both render distinctly
-                        and both are announced by screen readers.
-                    </>,
-                    <>
-                        Give every <code>abbr</code> a <code>title</code>, and mirror it in <code>data-tooltip</code> so
-                        it shows on hover.
-                    </>,
-                    <>
-                        Use <code>kbd</code> for keys. The Mac variant is handled for you - see the{' '}
-                        <code>.kbd-mac</code> / <code>.kbd-default</code> pair in <code>elements/_inline.scss</code>.
-                    </>,
-                ]}
-                donts={[
-                    <>
-                        Don&rsquo;t use <code>u</code>. Underlined text that is not a link is a usability problem, and
-                        the system offers no visual distinction between the two.
-                    </>,
-                    <>
-                        Don&rsquo;t use <code>b</code> or <code>i</code> where <code>strong</code> or <code>em</code>{' '}
-                        carries the meaning - they render identically here but do not convey the same thing.
-                    </>,
-                    <>
-                        Don&rsquo;t use <code>pre</code> for source code that should be highlighted; use the{' '}
-                        <code>Snippet</code> component or <code>pre.code</code>.
-                    </>,
-                ]}
-            />
-        </Block>
+        <Gotcha>
+            <code>b</code>/<code>i</code> render identically to <code>strong</code>/<code>em</code> here but do not mean
+            the same thing, so pick by meaning. Avoid <code>u</code> entirely - underlined text that is not a link is a
+            usability problem and the system gives no visual distinction between the two. The Mac variant of{' '}
+            <code>kbd</code> is handled for you by the <code>.kbd-mac</code> / <code>.kbd-default</code> pair.
+        </Gotcha>
     </Section>
 );
 
@@ -206,17 +173,10 @@ export const Links: FunctionComponent = () => (
         title="Links"
         source={['elements/_inline.scss', 'elements/_button.scss']}
         lede={
-            <>
-                <p>
-                    Links are <code>--color-link</code> and <code>--text-semibold</code> with no underline. Colour and
-                    weight together do the work of distinguishing them, which means a link inside already-bold text is
-                    identified by colour alone.
-                </p>
-                <p>
-                    Links set <code>--icon-color</code> alongside their own colour, so an icon inside a link picks up
-                    the link colour and its hover state automatically.
-                </p>
-            </>
+            <p>
+                <code>--color-link</code> at <code>--text-semibold</code>, no underline. Links also set{' '}
+                <code>--icon-color</code>, so an icon inside one follows the link colour and its hover state.
+            </p>
         }
     >
         <Block title="Variants">
@@ -244,45 +204,52 @@ export const Links: FunctionComponent = () => (
 
         <Block
             title="Link or button?"
-            note={
-                <p>
-                    <code>.button-as-link</code> exists because the choice between <code>a</code> and{' '}
-                    <code>button</code> is about behaviour, not appearance. Something that changes the page in place is
-                    a button even when it should look like a link.
-                </p>
-            }
+            note={<p>The choice is about behaviour, not appearance - which is why both look like links.</p>}
         >
-            <Guidance
-                dos={[
-                    <>
-                        Use <code>&lt;a href&gt;</code> when the result is a new location - a different page, or an
-                        anchor on this one.
-                    </>,
-                    <>
-                        Use <code>&lt;button class=&quot;button-as-link&quot;&gt;</code> when the result is an action:
-                        expanding a section, opening a dialog, copying something.
-                    </>,
-                    <>
-                        Use <code>.meta-link</code> for cross-references to an API member, where the link is an
-                        identifier rather than a phrase.
-                    </>,
-                ]}
-                donts={[
-                    <>
-                        Don&rsquo;t use an <code>&lt;a&gt;</code> without an <code>href</code> for an action - it is not
-                        focusable or operable by keyboard.
-                    </>,
-                    <>
-                        Don&rsquo;t write &ldquo;click here&rdquo;. The link text should make sense read on its own,
-                        because that is how screen reader users navigate a page.
-                    </>,
-                    <>
-                        Don&rsquo;t rely on colour alone to mark a link inside a heading or other bold text, where the
-                        weight difference disappears.
-                    </>,
-                ]}
-            />
+            <div className={styles.tableScroll}>
+                <table className={styles.tokenTable}>
+                    <thead>
+                        <tr>
+                            <th scope="col">Use</th>
+                            <th scope="col">When the result is</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-column="Use">
+                                <code>&lt;a href&gt;</code>
+                            </td>
+                            <td data-column="When the result is">
+                                A new location - another page, or an anchor on this one.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td data-column="Use">
+                                <code>&lt;button class=&quot;button-as-link&quot;&gt;</code>
+                            </td>
+                            <td data-column="When the result is">
+                                An action on this page - expanding a section, opening a dialog, copying something.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td data-column="Use">
+                                <code>.meta-link</code>
+                            </td>
+                            <td data-column="When the result is">
+                                A cross-reference to an API member, where the link is an identifier rather than a
+                                phrase.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </Block>
+
+        <Gotcha>
+            An <code>&lt;a&gt;</code> with no <code>href</code> is not focusable or keyboard-operable, so never use one
+            for an action. Colour and weight together distinguish a link, which means inside a heading or other bold
+            text it is left carrying colour alone - check it still reads.
+        </Gotcha>
 
         <KnownIssue>
             <p>

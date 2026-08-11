@@ -4,7 +4,7 @@ import type { FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 import { parseSassVariables } from '../lib/sassSource';
 
@@ -52,17 +52,10 @@ export const Motion: FunctionComponent = () => {
             title="Motion"
             source={['core/_variables.scss', '_interactions.scss']}
             lede={
-                <>
-                    <p>
-                        There is one motion token: <code>$transition-default-timing</code>, currently{' '}
-                        <code>{timing?.value}</code>. Interactive elements use it for colour, border and shadow
-                        transitions, which is what gives controls across the site a consistent feel.
-                    </p>
-                    <p>
-                        There is no duration or easing scale. Anything that needs different timing states it inline, so
-                        the handful of exceptions below are the entire motion vocabulary of the system.
-                    </p>
-                </>
+                <p>
+                    One token, <code>$transition-default-timing</code> (<code>{timing?.value}</code>). There is no
+                    duration or easing scale, so the table below is the system&rsquo;s entire motion vocabulary.
+                </p>
             }
         >
             <Block title="Timings in use">
@@ -88,15 +81,7 @@ export const Motion: FunctionComponent = () => {
                 </div>
             </Block>
 
-            <Block
-                title="What the default timing feels like"
-                note={
-                    <p>
-                        Both boxes transition background and transform. The left uses the design system timing; the
-                        right uses a snappier 0.125s, which is the only other duration the system uses.
-                    </p>
-                }
-            >
+            <Block title="What the default timing feels like">
                 <Specimen>
                     <button type="button" className="button-secondary" onClick={() => setPlaying((value) => !value)}>
                         {playing ? 'Reset' : 'Play'}
@@ -141,9 +126,10 @@ export const Motion: FunctionComponent = () => {
                 title="View transitions"
                 note={
                     <p>
-                        <code>_interactions.scss</code> suppresses the default root cross-fade, so only explicitly named
-                        view transitions animate on navigation. Without that suppression the root and{' '}
-                        <code>&lt;main&gt;</code> fade at the same time and every navigation double-fades.
+                        <code>_interactions.scss</code> suppresses the default root cross-fade, so only named view
+                        transitions animate. Without it the root and <code>&lt;main&gt;</code> fade together and every
+                        navigation double-fades - so give a new transition a name and animate that, rather than
+                        re-enabling the root.
                     </p>
                 }
             >
@@ -152,49 +138,20 @@ export const Motion: FunctionComponent = () => {
 ::view-transition-new(root) {
     animation: none;
 }`}
-                >
-                    <p>
-                        If you add a view transition, give it a name and animate that name. Do not re-enable the root
-                        animation.
-                    </p>
-                </Specimen>
-            </Block>
-
-            <Block title="Using motion">
-                <Guidance
-                    dos={[
-                        <>
-                            Use <code>$transition-default-timing</code> for hover, focus and active feedback, so a new
-                            control matches every existing one.
-                        </>,
-                        <>
-                            List the properties you are transitioning rather than using <code>all</code>; transitioning
-                            everything makes later layout changes animate unexpectedly.
-                        </>,
-                        <>
-                            Add a <code>@media (prefers-reduced-motion: reduce)</code> block for anything that moves,
-                            scales or auto-plays.
-                        </>,
-                    ]}
-                    donts={[
-                        <>
-                            Don&rsquo;t animate layout properties such as <code>height</code>, <code>width</code> or{' '}
-                            <code>top</code> where <code>transform</code> would do - they force layout on every frame.
-                        </>,
-                        <>
-                            Don&rsquo;t invent a new duration for a one-off. If the default feels wrong for a whole
-                            class of interaction, the system needs a second token.
-                        </>,
-                    ]}
                 />
             </Block>
 
+            <Gotcha>
+                List the properties you transition rather than using <code>all</code>, which makes later layout changes
+                animate unexpectedly. Prefer <code>transform</code> over <code>height</code>, <code>width</code> or{' '}
+                <code>top</code> - those force layout on every frame.
+            </Gotcha>
+
             <KnownIssue>
                 <p>
-                    The design system has no global <code>prefers-reduced-motion</code> handling. Individual components
-                    honour it, but nothing in <code>_interactions.scss</code> or <code>_base.scss</code> does, so every
-                    new animated component has to remember on its own. A global rule that disables non-essential
-                    transitions under the reduce preference would remove that requirement.
+                    No global <code>prefers-reduced-motion</code> handling. Individual components honour it, but nothing
+                    in <code>_interactions.scss</code> or <code>_base.scss</code> does, so every new animated component
+                    has to remember on its own.
                 </p>
             </KnownIssue>
         </Section>
