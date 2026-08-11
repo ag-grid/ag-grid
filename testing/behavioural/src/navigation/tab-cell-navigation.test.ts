@@ -85,7 +85,8 @@ describe('Tab Cell Navigation', () => {
     test('Tab off last cell of grid does not re-fire cellFocused', async () => {
         const focusedCols: (string | undefined)[] = [];
         api.addEventListener('cellFocused', (e: CellFocusedEvent) => {
-            focusedCols.push(e.column?.getColId());
+            const col = e.column;
+            focusedCols.push(typeof col === 'string' ? col : col?.getColId());
         });
 
         api.setFocusedCell(2, 'c');
