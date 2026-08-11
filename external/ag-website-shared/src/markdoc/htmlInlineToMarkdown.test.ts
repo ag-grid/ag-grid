@@ -50,6 +50,25 @@ describe('htmlBlockToMarkdown', () => {
         expect(htmlBlockToMarkdown('<ul><li>One</li><li>Two</li><li>Three</li></ul>')).toBe('- One\n- Two\n- Three');
     });
 
+    it('numbers an ordered list, so the sequence the copy relies on survives', () => {
+        expect(htmlBlockToMarkdown('<ol><li>One</li><li>Two</li><li>Three</li></ol>')).toBe('1. One\n2. Two\n3. Three');
+    });
+
+    it('numbers each ordered list from 1, independently of the ones before it', () => {
+        const html = '<ol><li>A</li><li>B</li></ol><ol><li>C</li></ol>';
+        expect(htmlBlockToMarkdown(html)).toBe('1. A\n2. B\n\n1. C');
+    });
+
+    it('keeps ordered and unordered markers apart in the same fragment', () => {
+        const html = '<ol><li>First</li></ol><ul><li>Bullet</li></ul>';
+        expect(htmlBlockToMarkdown(html)).toBe('1. First\n\n- Bullet');
+    });
+
+    it('converts links and emphasis inside ordered list items', () => {
+        const html = '<ol><li><a href="/about/">about</a></li><li><b>bold</b></li></ol>';
+        expect(htmlBlockToMarkdown(html, SITE_ROOT)).toBe('1. [about](https://www.ag-grid.com/about/)\n2. **bold**');
+    });
+
     it('keeps a paragraph, a list and a heading as separate blocks in source order', () => {
         const html = '<p>Intro.</p><h6>Section</h6><ul><li>A</li><li>B</li></ul><p>Outro.</p>';
         expect(htmlBlockToMarkdown(html)).toBe('Intro.\n\n###### Section\n\n- A\n- B\n\nOutro.');
