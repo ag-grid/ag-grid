@@ -207,6 +207,20 @@ export function resolvePdfColors(
         ...overrideColors,
     };
 
+    const dataBackgroundIsOverridden =
+        baseColors?.dataBackgroundColor != null || overrideColors?.dataBackgroundColor != null;
+    const oddRowBackgroundIsOverridden =
+        baseColors?.oddRowBackgroundColor != null || overrideColors?.oddRowBackgroundColor != null;
+    const themeOddRowBackgroundIsInherited =
+        themeColors.oddRowBackgroundColor == null ||
+        themeColors.oddRowBackgroundColor === themeColors.dataBackgroundColor;
+    const preserveOddRowBackgroundInheritance =
+        dataBackgroundIsOverridden && !oddRowBackgroundIsOverridden && themeOddRowBackgroundIsInherited;
+    // preserve the theme's odd-row -> data-background fallback after applying export overrides.
+    mergedColors.oddRowBackgroundColor = preserveOddRowBackgroundInheritance
+        ? mergedColors.dataBackgroundColor
+        : mergedColors.oddRowBackgroundColor;
+
     for (const key of PDF_COLOR_KEYS) {
         const value = mergedColors[key];
         if (!value) {
