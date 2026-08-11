@@ -155,6 +155,36 @@ describe('cspRules', () => {
         });
     });
 
+    describe('LinkedIn Insight Tag', () => {
+        it('allows the tag SDK in script-src and its beacon hosts in connect-src', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            // GTM injects the SDK as an external <script src>, so the origin is enough — no
+            // inline hash, unlike the ZoomInfo bootstrap.
+            expect(site['script-src']).toContain('https://snap.licdn.com');
+            // The website-actions beacon is an XHR rather than an image pixel, so the
+            // permissive img-src does not cover it.
+            expect(site['connect-src']).toContain('https://px.ads.linkedin.com');
+            expect(site['connect-src']).toContain('https://px4.ads.linkedin.com');
+        });
+
+        it('leaves the remaining LinkedIn pixel hosts to img-src', () => {
+            // dc.ads.linkedin.com and p.adsymptotic.com are image pixels; img-src is
+            // deliberately permissive, so they need no entry of their own.
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            expect(site['img-src']).toContain('https:');
+            expect(site['script-src']).not.toContain('https://sjs.bizographics.com');
+        });
+
+        it('applies in every scope, since GTM loads the tag site-wide', () => {
+            const scopes = ['site', 'examples', 'campaigns', 'ecommerce'] as const;
+            for (let i = 0, len = scopes.length; i < len; ++i) {
+                const directives = getCspDirectives({ env: 'production', scope: scopes[i] });
+                expect(directives['script-src']).toContain('https://snap.licdn.com');
+                expect(directives['connect-src']).toContain('https://px.ads.linkedin.com');
+            }
+        });
+    });
+
     describe('RTI-3353: campaigns path matching covers archived campaign pages', () => {
         // The live campaign page and its archived snapshots both embed the Bryntum
         // demo, so both must resolve to the campaigns scope. An archived campaign path

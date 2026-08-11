@@ -165,6 +165,24 @@ const SITE_SCRIPT_HASHES = [
 const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
 const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
 
+// The LinkedIn Insight Tag (LinkedIn Ads conversion tracking and website demographics).
+// Like ZoomInfo and Enzuzo, it is a tag in the shared Google Tag Manager container rather
+// than markup in this repo, so nothing here references these origins directly — the CSP is
+// the only place the site declares them.
+//
+//  - snap.licdn.com serves the tag SDK (/li.lms-analytics/insight.min.js). GTM injects it as
+//    an external <script src>, so no script-src hash is needed (contrast GTM_ZOOMINFO_HASH).
+//  - px.ads.linkedin.com and px4.ads.linkedin.com receive the tag's beacons. Most are image
+//    pixels, which the permissive img-src already covers, but the website-actions endpoint
+//    (px.ads.linkedin.com/wa/) is an XHR, so it needs connect-src as well.
+//
+// LinkedIn's published allowlist also names dc.ads.linkedin.com and p.adsymptotic.com — both
+// image pixels, so img-src covers them — plus the Oribi hosts and the legacy
+// sjs.bizographics.com loader, which the current tag does not load. Add those only if a
+// violation actually shows up.
+const LINKEDIN_SDK_HOST = 'https://snap.licdn.com';
+const LINKEDIN_BEACON_HOSTS = ['https://px.ads.linkedin.com', 'https://px4.ads.linkedin.com'];
+
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
 // demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
 // bryntum.com. Allowed only in the 'campaigns' scope so the rest of the site does
@@ -292,6 +310,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://cdnjs.cloudflare.com',
             'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
             'https://*.zoominfo.com', // ZoomInfo FormComplete
+            LINKEDIN_SDK_HOST, // LinkedIn Insight Tag SDK (injected via GTM)
             'https://www.google.com', // reCAPTCHA
             'https://www.gstatic.com', // reCAPTCHA
             'https://apis.google.com', // Firebase Auth (ecommerce checkout): GAPI client loads the auth iframe
@@ -341,6 +360,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://cdnjs.cloudflare.com', // example-runner legacy deps (XHR)
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
+            ...LINKEDIN_BEACON_HOSTS, // LinkedIn Insight Tag website-actions beacon
             'https://www.google.com', // reCAPTCHA (api2/clr XHR)
             ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
             ENZUZO_GVL_HOST, // Enzuzo-hosted IAB TCF Global Vendor List
