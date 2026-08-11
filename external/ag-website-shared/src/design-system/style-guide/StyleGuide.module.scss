@@ -305,6 +305,13 @@
     border-left: 2px solid var(--color-util-brand-300);
     font-size: var(--text-fs-sm);
     color: var(--color-text-primary);
+
+    // Both callouts own only a top margin, which collides with a following block's heading when
+    // they appear mid-section. Matched to `.block`'s own bottom margin so the rhythm is the same
+    // whether a block or a callout precedes the next heading.
+    &:not(:last-child) {
+        margin-bottom: $spacing-size-10;
+    }
 }
 
 .knownIssue {
@@ -313,6 +320,12 @@
     gap: $spacing-size-3;
     margin-top: $spacing-size-6;
     padding: $spacing-size-4;
+
+    // See the note on `.gotcha` - a mid-section callout needs a bottom margin or the next
+    // block's heading sits flush against its border.
+    &:not(:last-child) {
+        margin-bottom: $spacing-size-10;
+    }
     border-radius: var(--radius-md);
     border: 1px solid var(--color-util-warning-300);
     background-color: var(--color-util-warning-50);
