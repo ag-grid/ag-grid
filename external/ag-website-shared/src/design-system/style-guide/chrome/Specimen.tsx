@@ -5,8 +5,11 @@ import styles from '../StyleGuide.module.scss';
 import { CopyButton } from './CopyButton';
 
 interface Props {
-    /** Live rendering of the thing being documented. */
-    children: ReactNode;
+    /**
+     * Live rendering of the thing being documented. Optional: some things have nothing to render -
+     * a view-transition suppression, a Sass mixin - and for those the code alone is the specimen.
+     */
+    children?: ReactNode;
     /** Markup or CSS that produces it, shown beneath and copyable. */
     code?: string;
     /** Short caption above the preview. */
@@ -27,14 +30,16 @@ interface Props {
 export const Specimen: FunctionComponent<Props> = ({ children, code, label, row, onSecondary, className }) => (
     <figure className={classnames(styles.specimen, className)}>
         {label && <figcaption className={styles.specimenLabel}>{label}</figcaption>}
-        <div
-            className={classnames(styles.specimenPreview, {
-                [styles.specimenPreviewRow]: row,
-                [styles.specimenPreviewSecondary]: onSecondary,
-            })}
-        >
-            {children}
-        </div>
+        {children != null && (
+            <div
+                className={classnames(styles.specimenPreview, {
+                    [styles.specimenPreviewRow]: row,
+                    [styles.specimenPreviewSecondary]: onSecondary,
+                })}
+            >
+                {children}
+            </div>
+        )}
         {code && (
             <div className={styles.specimenCode}>
                 <pre>

@@ -3,7 +3,7 @@ import type { FunctionComponent, ReactNode } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 
 const STATES = ['Default', 'Hover', 'Focus', 'Disabled'] as const;
@@ -147,17 +147,11 @@ export const Forms: FunctionComponent = () => (
         title="Form controls"
         source="elements/_form-elements.scss"
         lede={
-            <>
-                <p>
-                    Every control is styled by element and type, so plain HTML forms come out correct. Checkboxes,
-                    radios and switches are custom-drawn with <code>appearance: none</code> and inline SVG backgrounds,
-                    which is why they need no wrapper markup.
-                </p>
-                <p>
-                    Focus is a 4px <code>box-shadow</code> ring using <code>--color-input-shadow-focus</code>, applied
-                    on <code>:focus-visible</code> only - so it appears for keyboard users and not on mouse click.
-                </p>
-            </>
+            <p>
+                Styled by element and type, so plain HTML forms come out correct - checkboxes, radios and switches are
+                custom-drawn and need no wrapper markup. Focus is a <code>box-shadow</code> ring on{' '}
+                <code>:focus-visible</code> only, so it appears for keyboard users and not on mouse click.
+            </p>
         }
     >
         <Block title="Controls and states">
@@ -199,9 +193,7 @@ export const Forms: FunctionComponent = () => (
             title="Field layout"
             note={
                 <p>
-                    <code>.input-field</code> stacks a label above its control and drops the label to{' '}
-                    <code>--text-fs-sm</code>. Add <code>.inline</code> to put them on one row instead, which also
-                    restores the label to body size and applies a 280px minimum width to text inputs.
+                    <code>.input-field</code> stacks label above control. Add <code>.inline</code> for one row instead.
                 </p>
             }
         >
@@ -251,10 +243,9 @@ export const Forms: FunctionComponent = () => (
             title="Errors and hints"
             note={
                 <p>
-                    <code>.input-error</code> on the field wrapper re-points the border tokens to{' '}
-                    <code>--color-input-error</code> and fades in the <code>.error</code> message, which is always in
-                    the DOM at zero opacity so adding it does not shift the layout. <code>.extra-info</code> is for
-                    non-error help text, and <code>.req</code> marks a required label.
+                    <code>.input-error</code> on the wrapper reddens the border and fades in <code>.error</code>, which
+                    is always in the DOM at zero opacity so adding it does not shift the layout.{' '}
+                    <code>.extra-info</code> is non-error help text; <code>.req</code> marks a required label.
                 </p>
             }
         >
@@ -293,42 +284,12 @@ export const Forms: FunctionComponent = () => (
             </Specimen>
         </Block>
 
-        <Block title="Building a form">
-            <Guidance
-                dos={[
-                    <>
-                        Give every control a <code>&lt;label for&gt;</code>. The label is the click target for
-                        checkboxes and radios as well as the accessible name.
-                    </>,
-                    <>
-                        Set <code>aria-invalid</code> alongside <code>.input-error</code>, and point{' '}
-                        <code>aria-describedby</code> at the error message - the class is visual only.
-                    </>,
-                    <>
-                        Use <code>.input-field</code> for the label-and-control pairing rather than your own flex
-                        wrapper, so field spacing matches other forms.
-                    </>,
-                    <>
-                        Use the right <code>type</code>: <code>email</code>, <code>number</code>, <code>search</code>.
-                        They all share the text input styling and give better mobile keyboards.
-                    </>,
-                ]}
-                donts={[
-                    <>
-                        Don&rsquo;t use a placeholder as the label. It disappears on input and is not reliably
-                        announced.
-                    </>,
-                    <>
-                        Don&rsquo;t mark a field required with colour alone - use <code>.req</code> together with the{' '}
-                        <code>required</code> attribute.
-                    </>,
-                    <>
-                        Don&rsquo;t restyle the focus ring. It is the only focus indicator these controls have, since{' '}
-                        <code>outline</code> is cleared.
-                    </>,
-                ]}
-            />
-        </Block>
+        <Gotcha>
+            <code>.input-error</code> and <code>.req</code> are visual only - pair them with <code>aria-invalid</code>,{' '}
+            <code>aria-describedby</code> and <code>required</code> so the state is actually announced. Never use a
+            placeholder as the label: it disappears on input. And don&rsquo;t restyle the focus ring, since{' '}
+            <code>outline</code> is cleared and the ring is the only indicator these controls have.
+        </Gotcha>
 
         <KnownIssue>
             <p>

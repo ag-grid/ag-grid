@@ -4,7 +4,7 @@ import type { FunctionComponent } from 'react';
 import styles from '../StyleGuide.module.scss';
 import { useStyleGuide, useTokens } from '../StyleGuideContext';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 import { TokenTable } from '../chrome/TokenTable';
 
@@ -55,18 +55,10 @@ export const Typography: FunctionComponent = () => {
             title="Typography"
             source={['_root.scss', '_typography.scss']}
             lede={
-                <>
-                    <p>
-                        The scale is a fixed set of px sizes, each paired with its own line height. Sizes do not change
-                        between themes or viewports - there is no fluid type in the system, so a heading is the same
-                        size on mobile as on desktop unless a component overrides it.
-                    </p>
-                    <p>
-                        <code>h1</code>-<code>h6</code> are mapped onto the scale globally, so the tag you choose for
-                        document structure also sets the size. Where the two disagree, keep the tag correct and add a{' '}
-                        <code>.text-*</code> class.
-                    </p>
-                </>
+                <p>
+                    Fixed px sizes, each paired with its own line height. There is no fluid type, so a heading is the
+                    same size on mobile as on desktop.
+                </p>
             }
         >
             <Block title="Families">
@@ -83,8 +75,9 @@ export const Typography: FunctionComponent = () => {
                 title="Scale"
                 note={
                     <p>
-                        Each row shows the live rendering at that step, the two tokens behind it, the tag mapped to it,
-                        and the utility class that applies it without changing the tag.
+                        The <code>Tag</code> column is the heading mapped to that step globally - so the tag you pick
+                        for document structure also picks the size. The <code>Class</code> column changes size without
+                        changing the tag.
                     </p>
                 }
             >
@@ -176,31 +169,21 @@ export const Typography: FunctionComponent = () => {
                 title="Line heights"
                 note={
                     <p>
-                        Most steps carry their own line height. <code>--text-lh-tight</code> and{' '}
-                        <code>--text-lh-ultra-tight</code> are standalone, for single-line contexts such as table cells
-                        and tab labels where the step&rsquo;s own line height leaves too much room.
+                        <code>--text-lh-tight</code> and <code>--text-lh-ultra-tight</code> are standalone, for
+                        single-line contexts such as table cells and tab labels.
                     </p>
                 }
             >
                 <TokenTable tokens={lineHeights} withoutSwatch />
             </Block>
 
-            <Block
-                title="Sizes"
-                note={<p>Raw size tokens, for cases where you need the value rather than the utility class.</p>}
-            >
+            <Block title="Sizes">
                 <TokenTable tokens={sizes} withoutSwatch />
             </Block>
 
             <Block
                 title="Prose rhythm"
-                note={
-                    <p>
-                        Vertical spacing between prose elements is global, applied with{' '}
-                        <code>:where(:not(:last-child))</code> so the last child of a container never contributes a
-                        trailing margin. You should not need to add margins to prose yourself.
-                    </p>
-                }
+                note={<p>Applied globally, so you should not need to add margins to prose yourself.</p>}
             >
                 <Specimen
                     code={`h1..h6 + sibling   margin-bottom: $spacing-size-2   (8px)
@@ -224,38 +207,11 @@ li + li                 margin-bottom: $spacing-size-2   (8px)`}
                 </Specimen>
             </Block>
 
-            <Block title="Using the scale">
-                <Guidance
-                    dos={[
-                        <>
-                            Pick the tag for document outline, then correct the size with a <code>.text-*</code> class
-                            if the mapped size is wrong.
-                        </>,
-                        <>
-                            Use <code>--text-lh-tight</code> for anything constrained to one line - the step line
-                            heights are tuned for wrapped prose.
-                        </>,
-                        <>
-                            Use <code>.text-monospace</code> rather than naming a font stack, so the mono fallback chain
-                            stays consistent.
-                        </>,
-                    ]}
-                    donts={[
-                        <>
-                            Don&rsquo;t skip heading levels to get a size. That breaks the document outline for screen
-                            readers and gains nothing a class would not.
-                        </>,
-                        <>
-                            Don&rsquo;t set a font size in px directly. If no step fits, the scale needs a new step
-                            rather than a one-off value.
-                        </>,
-                        <>
-                            Don&rsquo;t pair a step&rsquo;s font size with a different step&rsquo;s line height; the
-                            pairs are tuned together.
-                        </>,
-                    ]}
-                />
-            </Block>
+            <Gotcha>
+                Never skip a heading level to get a size - pick the tag for the document outline and correct the size
+                with a <code>.text-*</code> class. The size and line-height of a step are tuned together, so don&rsquo;t
+                mix one step&rsquo;s size with another&rsquo;s line height.
+            </Gotcha>
 
             <KnownIssue>
                 <p>
