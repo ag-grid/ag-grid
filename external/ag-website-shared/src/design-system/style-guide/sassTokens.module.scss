@@ -1,0 +1,15 @@
+// The handful of Sass tokens the style guide cannot get by parsing source text.
+//
+// Everything else Sass-only (spacing sizes, breakpoints, transition timing) is read straight out
+// of `core/*.scss` as raw text, which keeps it drift-free. The header tokens are the exception:
+// they are declared `!default` and each repo overrides them via `@forward ... with (...)`, so the
+// only way to report the *effective* value is to let Sass resolve them the same way the header
+// itself does. `@use` picks up the repo's override file first via the configured loadPaths.
+@use 'site-header-tokens' as header;
+
+:export {
+    header-nav-collapse: header.$nav-collapse;
+    header-docs-search-inline: header.$docs-search-inline;
+    header-switcher-popup-at: header.$switcher-popup-at;
+    header-search-box-cap-at: header.$search-box-cap-at;
+}

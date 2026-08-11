@@ -1,39 +1,44 @@
-import classnames from 'classnames';
-import React from 'react';
 import type { FunctionComponent } from 'react';
 
-import { Alerts } from './Alerts';
-import { Buttons } from './Buttons';
-import { Colors } from './Colors';
-import { Icons } from './Icons';
-import { Inputs } from './Inputs';
-import { Layout } from './Layout';
-import { Radii } from './Radii';
-import { Shadows } from './Shadows';
-import { Spacing } from './Spacing';
 import styles from './StyleGuide.module.scss';
-import { Tables } from './Tables';
-import { TextElements } from './TextElements';
-import { TextSizes } from './TextSizes';
+import { StyleGuideProvider } from './StyleGuideContext';
+import { Sidebar } from './chrome/Sidebar';
+import { Toolbar } from './chrome/Toolbar';
+import { SECTIONS } from './sections';
 
-export const StyleGuide: FunctionComponent = () => {
-    return (
-        <>
-            <div className={classnames(styles.styleGuide, 'layout-max-width-small')}>
-                <h1>STYLE GUIDE</h1>
-                <Layout />
-                <Spacing />
-                <Radii />
-                <TextSizes />
-                <Colors />
-                <Shadows />
-                <TextElements />
-                <Buttons />
-                <Inputs />
-                <Icons />
-                <Alerts />
-                <Tables />
+/**
+ * The design system reference.
+ *
+ * Structured as a sidebar plus one long scrolling document rather than a page per section, because
+ * the questions this page answers are usually comparative - which grey, which of these two
+ * spacings, does this read in dark mode - and comparison across a page break is hard.
+ *
+ * All token data is read from the live stylesheet and the design system's own Sass source at
+ * runtime (see `lib/tokens.ts` and `lib/sassSource.ts`), so this page cannot fall behind the code
+ * it documents.
+ */
+export const StyleGuide: FunctionComponent = () => (
+    <StyleGuideProvider>
+        <div className={styles.styleGuide}>
+            <div className={styles.sidebarColumn}>
+                <Sidebar />
             </div>
-        </>
-    );
-};
+
+            <main className={styles.content}>
+                <header className={styles.pageHeader}>
+                    <h1>Design system</h1>
+                    <p className={styles.pageLede}>
+                        The tokens, elements and components shared across the AG websites. Every value on this page is
+                        read from the design system itself, so it is always current.
+                    </p>
+                </header>
+
+                <Toolbar />
+
+                {SECTIONS.map(({ id, Component }) => (
+                    <Component key={id} />
+                ))}
+            </main>
+        </div>
+    </StyleGuideProvider>
+);
