@@ -27,15 +27,9 @@ fi
 
 cd ../../../
 
-echo "Backing up branch builds"
-cp -R /var/www/html/branch-builds /var/www/
-
 echo "Cleaning current grid staging"
 rm -rf /var/www/html/*
 mv $FILENAME /var/www/html/
 
 echo "Unzipping new grid staging"
 unzip -q /var/www/html/$FILENAME -d /var/www/html/
-
-echo "Restoring branch builds"
-cp -R /var/www/branch-builds /var/www/html/
