@@ -83,7 +83,9 @@ export async function routePdfFontsFromDisk(page: Page, siteOrigin: string): Pro
                 await route.fallback();
                 return;
             }
-            await route.fulfill({ path: filePath });
+            // Stated rather than inferred from the extension: the examples read the response as an
+            // ArrayBuffer, and a browser that is strict about the type would reject a wrong guess.
+            await route.fulfill({ path: filePath, contentType: 'font/ttf' });
         })
     );
 }
