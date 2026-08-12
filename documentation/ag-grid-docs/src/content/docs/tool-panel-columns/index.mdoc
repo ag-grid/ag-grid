@@ -48,11 +48,21 @@ Selecting columns means different things depending on whether the grid is in piv
 - **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
 - **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
+## Column Selection Panel Configuration
+
+The Columns section and the [Column Chooser](./column-menu/#customising-the-column-chooser) use the same column selection panel. Their shared options are defined by `IColumnSelectionPanelParams`, while `IToolPanelColumnCompParams` adds options for the other Columns Tool Panel sections.
+
+### Shared Column Selection Options
+
+{% interfaceDocumentation interfaceName="IColumnSelectionPanelParams" config={"overrideBottomMargin":"1rem"} /%}
+
+### Columns Tool Panel Options
+
+{% interfaceDocumentation interfaceName="IToolPanelColumnCompParams" names=["suppressColumnMove", "suppressRowGroups", "suppressValues", "suppressPivots", "suppressPivotMode", "buttons"] config={"overrideBottomMargin":"1rem"} /%}
+
 ## Section Visibility
 
-It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the following `toolPanelParams` to `true` whenever you are using the `agColumnsToolPanel` component properties:
-
-{% interfaceDocumentation interfaceName="IToolPanelColumnCompParams" config={"overrideBottomMargin":"1rem"} /%}
+Use the suppression options above to remove controls and sections from the Columns Tool Panel.
 
 To remove a particular column from the tool panel, set the column property `suppressColumnsToolPanel` to `true`. This is useful when you have a column working in the background, e.g. a column you want to group by, but not visible to the user.
 
@@ -157,6 +167,48 @@ The example below demonstrates the Columns Tool Panel using a mixture of items e
 - The country column uses a `headerValueGetter` to give the column a slightly different name dependent on where it appears using the `location` parameter.
 
 {% gridExampleRunner title="Tool Panel Styling" name="styling"  exampleHeight=610 /%}
+
+## Custom Column Labels
+
+Use `columnLabelRenderer` to replace the text shown for columns and column groups in the Columns section. The grid continues to provide and manage the checkbox, drag handle and group expand controls.
+
+The renderer can be supplied directly or referenced by a name registered in the grid's [`components`](./components/#registering-custom-components) map. Additional properties can be passed through `columnLabelRendererParams`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    components: {
+        customColumnLabel: CustomColumnLabel,
+    },
+    sideBar: {
+        toolPanels: [{
+            id: 'columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
+            iconKey: 'columns',
+            toolPanel: 'agColumnsToolPanel',
+            toolPanelParams: {
+                columnLabelRenderer: 'customColumnLabel',
+                columnLabelRendererParams: {
+                    columnIcon: '●',
+                    columnGroupIcon: '◆',
+                },
+            },
+        }],
+    },
+};
+```
+
+The renderer receives either `column` or `columnGroup`, together with the resolved `displayName` and a `source` of `'columnsToolPanel'`. The same renderer can be configured independently for the [Column Chooser](./column-menu/#custom-column-labels).
+
+{% note %}
+Column search, tooltips, drag labels and accessibility announcements continue to use `displayName`, rather than text extracted from the renderer. Column selection rows have a fixed height, so renderer content should remain inline and fit within the configured list item height. Clicking the rendered label retains the normal selection behaviour; interactive elements should stop event propagation when they should not toggle the column.
+{% /note %}
+
+{% gridExampleRunner title="Custom Column Labels" name="custom-column-labels" exampleHeight=610 /%}
+
+### Renderer Parameters
+
+{% interfaceDocumentation interfaceName="IColumnSelectionLabelRendererParams" /%}
 
 ## Context Menu
 

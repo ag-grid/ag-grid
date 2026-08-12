@@ -31,6 +31,8 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         const columnChooserParams = params ?? column?.colDef.columnChooserParams ?? {};
 
         const {
+            columnLabelRenderer,
+            columnLabelRendererParams,
             contractColumnSelection,
             suppressColumnExpandAll,
             suppressColumnFilter,
@@ -52,6 +54,8 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
                 suppressColumnFilter: !!suppressColumnFilter,
                 suppressColumnSelectAll: !!suppressColumnSelectAll,
                 suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
+                columnLabelRenderer,
+                columnLabelRendererParams,
                 onStateUpdated: () => {},
             }),
             'columnMenu',

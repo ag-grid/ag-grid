@@ -41,6 +41,7 @@ import {
 
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
 import { CellRendererComponentWrapper } from '../shared/customComp/cellRendererComponentWrapper';
+import { ColumnSelectionLabelRendererComponentWrapper } from '../shared/customComp/columnSelectionLabelRendererComponentWrapper';
 import { CustomOverlayComponentWrapper } from '../shared/customComp/customOverlayComponentWrapper';
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
 import { DragAndDropImageComponentWrapper } from '../shared/customComp/dragAndDropImageComponentWrapper';
@@ -343,6 +344,8 @@ class ReactFrameworkComponentWrapper
                         return MenuItemComponentWrapper;
                     case 'cellRenderer':
                         return CellRendererComponentWrapper;
+                    case 'columnLabelRenderer':
+                        return ColumnSelectionLabelRendererComponentWrapper;
                     case 'innerHeaderComponent':
                         return InnerHeaderComponentWrapper;
                 }
@@ -364,6 +367,7 @@ class ReactFrameworkComponentWrapper
                 case 'toolPanel':
                 case 'menuItem':
                 case 'cellRenderer':
+                case 'columnLabelRenderer':
                     // Grid ID is always set at this point
                     warnReactiveCustomComponents(this.gridId!);
                     break;

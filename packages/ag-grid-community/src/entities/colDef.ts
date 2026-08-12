@@ -1,6 +1,7 @@
 import type { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from '../events';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
+import type { IColumnSelectionPanelParams } from '../interfaces/iColumnSelectionPanel';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IFilterDef } from '../interfaces/iFilter';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
@@ -1248,18 +1249,7 @@ export type GetFindTextFunc<TData = any, TValue = any, TContext = any> = (
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';
 
-export interface ColumnChooserParams {
-    /** To suppress updating the layout of columns as they are rearranged in the grid */
-    suppressSyncLayoutWithGrid?: boolean;
-    /** To suppress Column Filter section*/
-    suppressColumnFilter?: boolean;
-    /** To suppress Select / Un-select all widget*/
-    suppressColumnSelectAll?: boolean;
-    /** To suppress Expand / Collapse all widget*/
-    suppressColumnExpandAll?: boolean;
-    /** By default, column groups start expanded.
-     * Pass true to default to contracted groups*/
-    contractColumnSelection?: boolean;
+export interface ColumnChooserParams extends IColumnSelectionPanelParams {
     /** Custom Columns Panel layout */
     columnLayout?: (ColDef | ColGroupDef)[];
 }

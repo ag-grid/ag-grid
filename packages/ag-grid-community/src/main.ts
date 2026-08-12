@@ -423,6 +423,14 @@ export type {
 } from './interfaces/iCellEditor';
 export type { ICellEditorRendererComp, ICellEditorRendererParams } from './interfaces/iCellEditorRenderer';
 export type {
+    ColumnSelectionLabelRendererFunc,
+    ColumnSelectionPanelSource,
+    IColumnSelectionLabelRenderer,
+    IColumnSelectionLabelRendererComp,
+    IColumnSelectionLabelRendererParams,
+    IColumnSelectionPanelParams,
+} from './interfaces/iColumnSelectionPanel';
+export type {
     IRichCellEditorParams,
     IRichCellEditorRendererParams,
     RichCellEditorParams,
