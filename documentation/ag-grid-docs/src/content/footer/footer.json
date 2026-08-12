@@ -80,7 +80,8 @@
             },
             {
                 "name": "Manage Cookies",
-                "url": "#manage_cookies"
+                "url": "#manage_cookies",
+                "showCookiesPrefs": true
             },
             {
                 "name": "Modern Slavery",
