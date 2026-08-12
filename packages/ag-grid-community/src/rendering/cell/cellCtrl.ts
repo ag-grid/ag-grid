@@ -1085,14 +1085,12 @@ export class CellCtrl extends BeanStub {
         super.destroy();
     }
 
-    public hasBrowserFocus(): boolean {
-        return this.eGui?.contains(_getActiveDomElement(this.beans)) ?? false;
-    }
-
-    // focus is on the cell element itself, as opposed to a focusable descendant (renderer child,
-    // inline editor). hasBrowserFocus() is true for both; this distinguishes the cell from its contents.
-    public hasDirectBrowserFocus(): boolean {
-        return this.eGui === _getActiveDomElement(this.beans);
+    // directOnly distinguishes focus on the cell element itself from focus on a focusable descendant
+    // (renderer child, inline editor): the default (contains) is true for both, directOnly only for the cell.
+    public hasBrowserFocus(directOnly?: boolean): boolean {
+        const activeEl = _getActiveDomElement(this.beans);
+        const eGui = this.eGui;
+        return directOnly ? eGui === activeEl : (eGui?.contains(activeEl) ?? false);
     }
 
     public createSelectionCheckbox(): CheckboxSelectionComponent | undefined {

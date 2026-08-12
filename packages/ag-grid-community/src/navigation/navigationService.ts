@@ -447,11 +447,9 @@ export class NavigationService extends BeanStub implements NamedBean {
                 }
             }
         } else {
-            // Anchor native Tab exit on the cell element, unless it already holds focus directly:
-            // re-focusing the same element redundantly re-dispatches cellFocused. A focused
-            // descendant (renderer child, inline editor, popup) is not the cell, so still re-focus
-            // it - otherwise native Tab moves between the cell's descendants instead of exiting.
-            if (previous instanceof CellCtrl && !previous.hasDirectBrowserFocus()) {
+            // anchor container navigation on the cell when focus is in an editor or renderer child.
+            // re-focusing the cell itself would unnecessarily re-dispatch cellFocused.
+            if (previous instanceof CellCtrl && !previous.hasBrowserFocus(true)) {
                 previous.focusCell({ forceBrowserFocus: true });
             }
 
