@@ -155,6 +155,47 @@ describe('cspRules', () => {
         });
     });
 
+    describe('LinkedIn Insight Tag', () => {
+        it('allows the tag SDK in script-src and its beacon hosts in connect-src', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            // GTM injects the SDK as an external <script src>, so the origin is enough — no
+            // inline hash, unlike the ZoomInfo bootstrap.
+            expect(site['script-src']).toContain('https://snap.licdn.com');
+            // The website-actions beacon and the attribution trigger are a sendBeacon and a
+            // fetch rather than image pixels, so the permissive img-src does not cover them.
+            expect(site['connect-src']).toContain('https://px.ads.linkedin.com');
+        });
+
+        it('trusts no LinkedIn origin the shipped tag does not contact', () => {
+            // Everything else on LinkedIn's published required-domains list is either an image
+            // pixel (img-src is deliberately permissive) or absent from both SDK payloads
+            // altogether — see the note above LINKEDIN_SDK_HOST in cspRules.ts.
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            expect(site['img-src']).toContain('https:');
+            const unused = [
+                'https://px4.ads.linkedin.com',
+                'https://dc.ads.linkedin.com',
+                'https://p.adsymptotic.com',
+                'https://cdn.linkedin.oribi.io',
+                'https://gw.linkedin.oribi.io',
+                'https://sjs.bizographics.com',
+            ];
+            for (let i = 0, len = unused.length; i < len; ++i) {
+                expect(site['script-src']).not.toContain(unused[i]);
+                expect(site['connect-src']).not.toContain(unused[i]);
+            }
+        });
+
+        it('applies in every scope, since GTM loads the tag site-wide', () => {
+            const scopes = ['site', 'examples', 'campaigns', 'ecommerce'] as const;
+            for (let i = 0, len = scopes.length; i < len; ++i) {
+                const directives = getCspDirectives({ env: 'production', scope: scopes[i] });
+                expect(directives['script-src']).toContain('https://snap.licdn.com');
+                expect(directives['connect-src']).toContain('https://px.ads.linkedin.com');
+            }
+        });
+    });
+
     describe('RTI-3353: campaigns path matching covers archived campaign pages', () => {
         // The live campaign page and its archived snapshots both embed the Bryntum
         // demo, so both must resolve to the campaigns scope. An archived campaign path
