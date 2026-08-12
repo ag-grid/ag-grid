@@ -31,7 +31,12 @@ export interface BuildRoadmapMarkdownOptions {
 
 /** Matches the page's `formatLastUpdated`, so both render the date identically. */
 function formatLastUpdated(dateStr: string): string {
-    return new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(dateStr));
+    return new Intl.DateTimeFormat('en', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'UTC',
+    }).format(new Date(dateStr));
 }
 
 /**
