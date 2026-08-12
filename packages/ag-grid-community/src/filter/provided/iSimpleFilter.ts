@@ -23,9 +23,9 @@ export interface ISimpleFilter extends IProvidedFilter, IFloatingFilterParent {
 
 export interface IFilterPlaceholderFunctionParams {
     /**
-     * The filter option key
+     * The filter option key. A Custom Filter Option reports its `displayKey`.
      */
-    filterOptionKey: ISimpleFilterModelType;
+    filterOptionKey: FilterOptionKey;
     /**
      * The filter option name as localised text
      */
@@ -49,10 +49,11 @@ export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParam
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     /**
      * Array of filter options to present to the user.
+     * A key the filter cannot evaluate is reported when a value is tested against it under the built-in matching.
      */
-    filterOptions?: (IFilterOptionDef | ISimpleFilterModelType)[];
-    /** The default filter option to be selected. */
-    defaultOption?: string;
+    filterOptions?: (IFilterOptionDef | ISimpleFilterModelType | CustomFilterOptionKey)[];
+    /** The default filter option to be selected. Must be one of the offered options. */
+    defaultOption?: ISimpleFilterModelType | CustomFilterOptionKey;
     /**
      * By default, the two conditions are combined using `AND`.
      * You can change this default by setting this property.
@@ -105,26 +106,48 @@ export type ISimpleFilterModelPresetType =
     | 'last12Months'
     | 'last24Months';
 
-export type ISimpleFilterModelType =
-    | 'empty'
+/**
+ * The `displayKey` of a Custom Filter Option. Plain `string` would swallow the literals it is unioned with and leave
+ * nothing to suggest; the intersection accepts any string without collapsing them. Spelt this way because static
+ * analysis rejects the equivalent `{}` as a type with no members.
+ */
+export type CustomFilterOptionKey = string & Record<never, never>;
+
+/** A built-in filter option key, or the `displayKey` of a Custom Filter Option. */
+export type FilterOptionKey = ISimpleFilterModelType | CustomFilterOptionKey;
+
+/** Valid on every simple filter: `'empty'` selects no condition, `'blank'`/`'notBlank'` test presence, not a value. */
+export type CommonFilterOptionKey = 'empty' | 'blank' | 'notBlank';
+
+/** The built-in option keys valid on a Text Filter. */
+export type TextFilterOptionKey =
+    | CommonFilterOptionKey
+    | 'equals'
+    | 'notEqual'
+    | 'contains'
+    | 'notContains'
+    | 'startsWith'
+    | 'endsWith';
+
+/** The built-in option keys valid on the ordered filters, which compare values. */
+export type ScalarFilterOptionKey =
+    | CommonFilterOptionKey
     | 'equals'
     | 'notEqual'
     | 'lessThan'
     | 'lessThanOrEqual'
     | 'greaterThan'
     | 'greaterThanOrEqual'
-    | 'inRange'
-    | 'contains'
-    | 'notContains'
-    | 'startsWith'
-    | 'endsWith'
-    | 'blank'
-    | 'notBlank'
-    | ISimpleFilterModelPresetType;
+    | 'inRange';
+
+/** The ordered filter keys, plus the relative ranges only a date can express. */
+export type DateFilterOptionKey = ScalarFilterOptionKey | ISimpleFilterModelPresetType;
+
+export type ISimpleFilterModelType = TextFilterOptionKey | DateFilterOptionKey;
 
 export interface ISimpleFilterModel extends ProvidedFilterModel {
-    /** One of the filter options, e.g. `'equals'` */
-    type?: ISimpleFilterModelType | null;
+    /** One of the filter options, e.g. `'equals'`, or a Custom Filter Option's `displayKey`. */
+    type?: FilterOptionKey | null;
 }
 
 export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends ProvidedFilterModel {

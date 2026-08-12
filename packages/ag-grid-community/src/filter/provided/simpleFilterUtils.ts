@@ -1,5 +1,5 @@
 import type { LogService } from '../../validation/logService';
-import type { IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
+import type { FilterOptionKey, IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
 export function removeItems<T>(items: T[], startPosition: number, deleteCount?: number): T[] {
@@ -43,7 +43,7 @@ export function validateAndUpdateConditions<M>(log: LogService, conditions: M[],
     return numConditions;
 }
 
-const zeroInputTypes: Set<ISimpleFilterModelType> = new Set([
+const zeroInputTypes: ReadonlySet<string> = new Set<ISimpleFilterModelType>([
     'empty',
     'notBlank',
     'blank',
@@ -71,10 +71,7 @@ const zeroInputTypes: Set<ISimpleFilterModelType> = new Set([
     'last24Months',
 ]);
 
-export function getNumberOfInputs(
-    type: ISimpleFilterModelType | null | undefined,
-    optionsFactory: OptionsFactory
-): number {
+export function getNumberOfInputs(type: FilterOptionKey | null | undefined, optionsFactory: OptionsFactory): number {
     const customOpts = optionsFactory.getCustomOption(type);
     if (customOpts) {
         const { numberOfInputs } = customOpts;

@@ -2,12 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
 import type { ProvidedFilterModel } from './iProvidedFilter';
-import type {
-    ICombinedSimpleModel,
-    ISimpleFilterModel,
-    ISimpleFilterModelType,
-    ISimpleFilterParams,
-} from './iSimpleFilter';
+import type { FilterOptionKey, ICombinedSimpleModel, ISimpleFilterModel, ISimpleFilterParams } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
 export const SCALAR_FILTER_TYPE_KEYS = {
@@ -103,7 +98,7 @@ export abstract class SimpleFilterModelFormatter<
     }
 
     protected conditionForToolPanel(
-        type: ISimpleFilterModelType | null | undefined,
+        type: FilterOptionKey | null | undefined,
         isRange: boolean,
         getFilter: () => string,
         getFilterTo: () => string,
@@ -129,7 +124,7 @@ export abstract class SimpleFilterModelFormatter<
         return null;
     }
 
-    protected getTypeKey(type: ISimpleFilterModelType | null | undefined): FilterLocaleTextKey | null {
+    protected getTypeKey(type: FilterOptionKey | null | undefined): FilterLocaleTextKey | null {
         const suffix = this.filterTypeKeys[type as keyof FilterTypeKeys];
         return suffix ? `filterSummary${suffix}` : null;
     }
