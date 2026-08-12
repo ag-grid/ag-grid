@@ -76,10 +76,9 @@ const getCodeSandboxFiles = ({
           }
         : { ...boilerPlateFiles, ...files };
 
-    // Only the sandbox templates (React) take a `package.json`; the caller no longer supplies one for the
-    // `static` runtime. `boilerPlateFiles` are read as a directory sweep and are merged in on that runtime
-    // only, so this is still the guard that stops a boilerplate-supplied `package.json` reaching a static
-    // example — where it would only confuse, since the AG Grid version comes from `index.html`.
+    // Only the sandbox templates (React) take a `package.json`. `boilerPlateFiles` are read as a directory
+    // sweep and are merged in on the `static` runtime only, so this guards against one arriving that way —
+    // on a static example it would only confuse, since the AG Grid version comes from `index.html`.
     if (allFiles['package.json'] == undefined || !isUsingSandboxTemplate) {
         delete allFiles['package.json'];
     }
