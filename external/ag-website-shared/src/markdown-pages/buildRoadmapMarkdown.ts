@@ -17,6 +17,8 @@ export interface RoadmapData {
 
 export interface BuildRoadmapMarkdownOptions {
     roadmapData: RoadmapData;
+    /** Product display name for the page metadata, e.g. `AG Charts`. */
+    productName: string;
     siteRoot?: string;
     /** Resolve an item's `./`-prefixed docs link — the site's `urlWithPrefix` bound to a framework. */
     resolveUrl: (url: string) => string;
@@ -37,15 +39,21 @@ function formatLastUpdated(dateStr: string): string {
  * groups items by quarter exactly as `RoadmapBoard` does. The page's status filter is interactive;
  * here each item carries its status inline instead.
  *
- * Product-agnostic: the caller injects `resolveUrl` and the year, so AG Grid, AG Charts and
- * AG Studio share this module.
+ * Product-agnostic: the caller injects `productName`, `resolveUrl` and the year, so AG Grid,
+ * AG Charts and AG Studio share this module.
  */
-export function buildRoadmapMarkdown({ roadmapData, siteRoot, resolveUrl, year }: BuildRoadmapMarkdownOptions): string {
+export function buildRoadmapMarkdown({
+    roadmapData,
+    productName,
+    siteRoot,
+    resolveUrl,
+    year,
+}: BuildRoadmapMarkdownOptions): string {
     const document: string[] = [
         [
             '---',
-            'title: "Roadmap | AG Grid"',
-            'description: "AG Grid Roadmap - see what we are building next, including planned features, items in progress, and recently shipped work."',
+            `title: ${JSON.stringify(`Roadmap | ${productName}`)}`,
+            `description: ${JSON.stringify(`${productName} Roadmap - see what we are building next, including planned features, items in progress, and recently shipped work.`)}`,
             '---',
         ].join('\n'),
         "# What we're building next",

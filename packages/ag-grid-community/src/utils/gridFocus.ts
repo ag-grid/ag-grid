@@ -45,11 +45,19 @@ export function _isCellFocusSuppressed(beans: BeanCollection): boolean {
     return beans.gos.get('suppressCellFocus') || !!beans.overlays?.exclusive;
 }
 
+/**
+ * How focus should leave the grid when no inner container can take it:
+ * - 'auto': force out only when tabbing forward out of a non-detail grid body.
+ * - 'force': always force out through the tab guards, letting the browser pick the target.
+ * - 'direct': programmatically focus the next element outside the grid root.
+ */
+type GridExitBehaviour = 'auto' | 'force' | 'direct';
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _focusNextGridCoreContainer(
     beans: BeanCollection,
     backwards: boolean,
-    forceOut: boolean = false
+    exitBehaviour: GridExitBehaviour = 'auto'
 ): boolean {
     const gridCtrl = beans.ctrlsSvc.get('gridCtrl');
     const focusResult = gridCtrl.focusNextInnerContainer(backwards);
@@ -63,7 +71,11 @@ export function _focusNextGridCoreContainer(
         return focusResult;
     }
 
-    if (forceOut || (!backwards && !gridCtrl.isDetailGrid() && gridCtrl.isFocusInsideGridBody())) {
+    if (exitBehaviour === 'direct') {
+        return gridCtrl.focusNextElementOutsideContainer(backwards);
+    }
+
+    if (exitBehaviour === 'force' || (!backwards && !gridCtrl.isDetailGrid() && gridCtrl.isFocusInsideGridBody())) {
         gridCtrl.forceFocusOutOfContainer(backwards);
     }
 

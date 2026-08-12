@@ -38,6 +38,8 @@ export class GridComp extends TabGuardComp {
         const compProxy: IGridComp = {
             destroyGridUi: () => this.destroyBean(this),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
+            focusNextElementOutsideContainer: (up, eExcludeContainers) =>
+                this.focusNextElementOutsideContainer(up, [this.getGui(), ...eExcludeContainers]),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),
             setUserSelect: (value) => {

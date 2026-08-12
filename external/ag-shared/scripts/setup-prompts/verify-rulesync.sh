@@ -702,6 +702,60 @@ verify_content() {
 }
 
 # =============================================================================
+# Source Frontmatter Keys
+# =============================================================================
+
+# Content verification deliberately strips frontmatter before comparing, so a
+# rule whose source declares its file scope under the wrong key still passes.
+# rulesync accepts `globs:` and emits `paths:`; a source file that declares
+# `paths:` has its scope silently dropped and the rule is then injected into
+# every conversation instead of only the files it targets.
+verify_source_frontmatter() {
+    log_info "Verifying source rule frontmatter keys..."
+
+    local rules_dir="$REPO_ROOT/.rulesync/rules"
+    local frontmatter_errors=0
+
+    if [[ ! -d "$rules_dir" ]]; then
+        log_info "No .rulesync/rules directory - skipping"
+        return 0
+    fi
+
+    for source_file in "$rules_dir"/*.md; do
+        [[ -f "$source_file" ]] || continue
+
+        local name
+        name=$(basename "$source_file")
+
+        # Only inspect the frontmatter block, not the body.
+        local frontmatter
+        frontmatter=$(awk 'NR==1 && $0!="---" {exit} NR==1 {next} $0=="---" {exit} {print}' "$source_file")
+
+        if [[ -z "$frontmatter" ]]; then
+            log_warn "$name: no frontmatter - rule will apply unconditionally"
+            continue
+        fi
+
+        if grep -q '^paths:' <<<"$frontmatter"; then
+            log_error "$name: uses 'paths:' - rulesync accepts 'globs:' and emits 'paths:'. The scope is silently dropped and the rule loads in every conversation."
+            ((frontmatter_errors++)) || true
+            continue
+        fi
+
+        if ! grep -q '^globs:' <<<"$frontmatter" && ! grep -q '^alwaysApply: *true' <<<"$frontmatter"; then
+            log_warn "$name: declares neither 'globs:' nor 'alwaysApply: true' - confirm it is meant to load in every conversation"
+        fi
+    done
+
+    if [[ $frontmatter_errors -gt 0 ]]; then
+        return 2
+    fi
+
+    log_success "Source frontmatter verification passed"
+    return 0
+}
+
+# =============================================================================
 # Main
 # =============================================================================
 
@@ -724,6 +778,7 @@ main() {
 
     verify_inventory || exit_code=$?
     verify_content || exit_code=$?
+    verify_source_frontmatter || exit_code=$?
 
     echo ""
     echo "========================================"

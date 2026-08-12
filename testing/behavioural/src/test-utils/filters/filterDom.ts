@@ -63,7 +63,11 @@ export class FilterDom {
         if (document.querySelector('.ag-filter-toolpanel')) {
             return 'filters-tool-panel';
         }
-        return 'advanced-filter';
+        // Scoped to this grid, or a second grid's advanced filter would capture a column-scoped instance.
+        if (getGridElement(this.api)?.querySelector('.ag-advanced-filter')) {
+            return 'advanced-filter';
+        }
+        return this.options.colId ? 'floating-filter' : 'advanced-filter';
     }
 
     private modelLine(mode: Exclude<FilterDomMode, 'auto'>): string {

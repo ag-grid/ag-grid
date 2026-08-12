@@ -110,7 +110,10 @@ export abstract class AbstractHeaderCellCtrl<
     ): void;
 
     protected shouldStopEventPropagation(event: KeyboardEvent): boolean {
-        const { headerRowIndex, column } = this.beans.focusSvc.focusedHeader!;
+        const { headerRowIndex, column } = this.beans.focusSvc.focusedHeader ?? {
+            headerRowIndex: this.rowCtrl.rowIndex,
+            column: this.column,
+        };
 
         const colDef = column.getDefinition();
         const colDefFunc = colDef?.suppressHeaderKeyboardEvent;

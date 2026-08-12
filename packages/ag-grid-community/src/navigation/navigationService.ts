@@ -440,7 +440,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === pageBounds.getFirstRow();
             if (firstRow) {
                 if (gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(beans)) {
-                    _focusNextGridCoreContainer(beans, true, true);
+                    _focusNextGridCoreContainer(beans, true, 'force');
                 } else {
                     keyboardEvent.preventDefault();
                     focusSvc.focusPreviousFromFirstCell(keyboardEvent);

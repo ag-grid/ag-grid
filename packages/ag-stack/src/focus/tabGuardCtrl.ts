@@ -32,6 +32,7 @@ export interface TabGuardCtrlParams {
     focusInnerElement?: (fromBottom: boolean) => boolean;
     onFocusIn?: (event: FocusEvent) => void;
     onFocusOut?: (event: FocusEvent) => void;
+    onGuardFocusedFromInside?: (fromBottom: boolean) => boolean | undefined;
     shouldStopEventPropagation?: () => boolean;
     onTabKeyDown?: (e: KeyboardEvent) => void;
     handleKeyDown?: (e: KeyboardEvent) => void;
@@ -60,6 +61,7 @@ export class AgTabGuardCtrl<
     private readonly providedFocusInnerElement?: (fromBottom: boolean) => boolean;
     private readonly providedFocusIn?: (event: FocusEvent) => void;
     private readonly providedFocusOut?: (event: FocusEvent) => void;
+    private readonly providedOnGuardFocusedFromInside?: (fromBottom: boolean) => boolean | undefined;
 
     private readonly providedShouldStopEventPropagation?: () => boolean;
     private readonly providedOnTabKeyDown?: (e: KeyboardEvent) => void;
@@ -68,6 +70,7 @@ export class AgTabGuardCtrl<
 
     private skipTabGuardFocus: boolean = false;
     private forcingFocusOut: boolean = false;
+    private lastFocusedElementInside: HTMLElement | null = null;
     // Used when `isFocusableContainer` enabled
     private allowFocus: boolean = false;
 
@@ -87,6 +90,7 @@ export class AgTabGuardCtrl<
             focusInnerElement,
             onFocusIn,
             onFocusOut,
+            onGuardFocusedFromInside,
             shouldStopEventPropagation,
             onTabKeyDown,
             handleKeyDown,
@@ -106,6 +110,7 @@ export class AgTabGuardCtrl<
 
         this.providedFocusIn = onFocusIn;
         this.providedFocusOut = onFocusOut;
+        this.providedOnGuardFocusedFromInside = onGuardFocusedFromInside;
         this.providedShouldStopEventPropagation = shouldStopEventPropagation;
         this.providedOnTabKeyDown = onTabKeyDown;
         this.providedHandleKeyDown = handleKeyDown;
@@ -189,6 +194,18 @@ export class AgTabGuardCtrl<
         }
 
         if (this.isFocusableContainer && this.eFocusableElement.contains(e.relatedTarget as HTMLElement)) {
+            const fromBottom = e.target === this.eBottomGuard;
+            const focusHandled = this.providedOnGuardFocusedFromInside?.(fromBottom);
+
+            if (focusHandled === true && _getDocument(this.beans).activeElement === e.target) {
+                const relatedTarget = e.relatedTarget as HTMLElement;
+                const focusTarget = relatedTarget.classList.contains(TabGuardClassNames.TAB_GUARD)
+                    ? this.lastFocusedElementInside
+                    : relatedTarget;
+                focusTarget?.focus();
+            } else if (focusHandled === false) {
+                this.findNextElementOutsideAndFocus(!fromBottom);
+            }
             return;
         }
 
@@ -203,53 +220,49 @@ export class AgTabGuardCtrl<
         }
     }
 
-    private findNextElementOutsideAndFocus(up: boolean) {
+    private findNextElementOutsideAndFocus(up: boolean, excludeElements?: HTMLElement[]): boolean {
         const eDocument = _getDocument(this.beans);
-        const focusableEls = _findFocusableElements(eDocument.body, null, true);
-        const index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);
+        const focusableEls = _findFocusableElements(eDocument.body, null, true)
+            .filter((element) => element.tabIndex >= 0)
+            .map((element, domIndex) => ({ element, domIndex }))
+            .sort((a, b) => {
+                const tabIndexA = a.element.tabIndex || Number.MAX_SAFE_INTEGER;
+                const tabIndexB = b.element.tabIndex || Number.MAX_SAFE_INTEGER;
+
+                return tabIndexA - tabIndexB || a.domIndex - b.domIndex;
+            })
+            .map(({ element }) => element);
+        const tabGuard = up ? this.eTopGuard : this.eBottomGuard;
+        const index = focusableEls.indexOf(tabGuard);
 
         if (index === -1) {
-            return;
+            return false;
         }
 
-        let start: number;
-        let end: number;
-        if (up) {
-            start = 0;
-            end = index;
-        } else {
-            start = index + 1;
-            end = focusableEls.length;
+        const step = up ? -1 : 1;
+        for (
+            let currentIndex = index + step;
+            currentIndex >= 0 && currentIndex < focusableEls.length;
+            currentIndex += step
+        ) {
+            const focusTarget = focusableEls[currentIndex];
+            if (!excludeElements?.some((excludeElement) => excludeElement.contains(focusTarget))) {
+                focusTarget.focus();
+                return true;
+            }
         }
-        const focusableRange = focusableEls.slice(start, end);
-        const targetTabIndex = this.gos.get('tabIndex');
-        focusableRange.sort((a: HTMLElement, b: HTMLElement) => {
-            const indexA = Number.parseInt(a.getAttribute('tabindex') || '0');
-            const indexB = Number.parseInt(b.getAttribute('tabindex') || '0');
 
-            if (indexB === targetTabIndex) {
-                return 1;
-            }
-            if (indexA === targetTabIndex) {
-                return -1;
-            }
-
-            if (indexA === 0) {
-                return 1;
-            }
-            if (indexB === 0) {
-                return -1;
-            }
-
-            return indexA - indexB;
-        });
-
-        focusableRange[up ? focusableRange.length - 1 : 0]?.focus();
+        return false;
     }
 
     private onFocusIn(e: FocusEvent): void {
         if (this.focusTrapActive || this.forcingFocusOut) {
             return;
+        }
+
+        const target = e.target as HTMLElement;
+        if (!target.classList.contains(TabGuardClassNames.TAB_GUARD)) {
+            this.lastFocusedElementInside = target;
         }
 
         if (this.providedFocusIn) {
@@ -350,6 +363,10 @@ export class AgTabGuardCtrl<
             this.forcingFocusOut = false;
             this.activateTabGuards();
         });
+    }
+
+    public focusNextElementOutsideContainer(up: boolean, excludeElements: HTMLElement[]): boolean {
+        return this.findNextElementOutsideAndFocus(up, excludeElements);
     }
 
     public isTabGuard(element: HTMLElement, bottom?: boolean): boolean {

@@ -9,6 +9,7 @@ import {
     firePointerLikeClick,
     nudgeVirtualList,
     openPicker,
+    setNativeInputValue,
 } from '../../test-utils';
 
 /**
@@ -17,14 +18,6 @@ import {
  */
 
 const PANEL_SELECTOR = '.ag-filter-toolpanel';
-
-/** Sets a native input value and fires the input/change events the widgets listen for. */
-function setNativeInputValue(input: HTMLInputElement, value: string): void {
-    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
-    setter.call(input, value);
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-}
 
 function textOf(el: Element | null | undefined): string {
     return el?.textContent?.trim() ?? '';

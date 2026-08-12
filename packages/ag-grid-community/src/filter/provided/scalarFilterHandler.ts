@@ -1,5 +1,5 @@
 import type { Comparator, IScalarFilterParams } from './iScalarFilter';
-import type { ISimpleFilterModel, ISimpleFilterModelType, Tuple } from './iSimpleFilter';
+import type { FilterOptionKey, ISimpleFilterModel, Tuple } from './iSimpleFilter';
 import { SimpleFilterHandler } from './simpleFilterHandler';
 import { isBlank } from './simpleFilterUtils';
 
@@ -12,7 +12,7 @@ export abstract class ScalarFilterHandler<
 
     protected abstract isValid(value: TValue): boolean;
 
-    protected evaluateNullValue(filterType?: ISimpleFilterModelType | null) {
+    protected evaluateNullValue(filterType?: FilterOptionKey | null) {
         const {
             includeBlanksInEquals,
             includeBlanksInNotEqual,
@@ -101,7 +101,7 @@ export abstract class ScalarFilterHandler<
                 return !isBlank(cellValue);
 
             default:
-                this.warn(76, { filterModelType: type });
+                this.warnUnexpectedFilterType(type);
                 return true;
         }
     }

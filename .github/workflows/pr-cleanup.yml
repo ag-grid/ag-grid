@@ -18,8 +18,12 @@ jobs:
     if: github.event.pull_request.head.repo.full_name == github.repository
     permissions:
       contents: write
+    # Per-PR lock — stops this cleanup overlapping the same PR's publishers. Cross-PR
+    # serialisation is unnecessary (each writer touches only its own pr-<N>/ prefix) and
+    # divergence is handled by the push-retry loop in pr-preview-cleanup, not this lock.
+    # Keep this group string byte-identical to the one in `pr_preview` (ci.yml).
     concurrency:
-      group: pr-preview-gh-pages
+      group: pr-preview-gh-pages-${{ github.event.pull_request.number }}
       cancel-in-progress: false
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}

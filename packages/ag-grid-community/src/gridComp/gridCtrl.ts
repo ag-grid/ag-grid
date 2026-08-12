@@ -22,6 +22,7 @@ import type { Component, ComponentSelector } from '../widgets/component';
 export interface IGridComp extends LayoutView {
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
+    focusNextElementOutsideContainer(up: boolean, eExcludeContainers: HTMLElement[]): boolean;
     getFocusableContainers(): FocusableContainer[];
     setCursor(value: string | null): void;
     setUserSelect(value: string | null): void;
@@ -278,6 +279,11 @@ export class GridCtrl extends BeanStub {
 
     public forceFocusOutOfContainer(up = false): void {
         this.view.forceFocusOutOfContainer(up);
+    }
+
+    public focusNextElementOutsideContainer(up = false): boolean {
+        const eExcludeContainers = [...this.additionalFocusableContainers].map((container) => container.getGui());
+        return this.view.focusNextElementOutsideContainer(up, eExcludeContainers);
     }
 
     public isFocusInsideGridBody(): boolean {

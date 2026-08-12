@@ -369,8 +369,7 @@ export const AG_GRID_ERRORS = {
     70: ({ newFilter }: { newFilter: any }) =>
         `Grid option \`quickFilterText\` only supports string inputs, received: ${typeof newFilter}` as const,
     71: () => '`debounceMs` is ignored when apply button is present' as const,
-    72: ({ keys }: { keys: string[] }) => [`ignoring \`FilterOptionDef\` as it doesn't contain one of `, keys] as const,
-    73: () => `invalid \`FilterOptionDef\` supplied as it doesn't contain a \`displayKey\`` as const,
+    72: ({ keys }: { keys: string[] }) => [`ignoring \`FilterOptionDef\` as it is missing `, keys] as const,
     74: () => 'no filter options for filter' as const,
     75: () => 'Unknown button type specified' as const,
     76: ({ filterModelType }: { filterModelType: any }) =>
@@ -947,6 +946,8 @@ export const AG_GRID_ERRORS = {
     },
     325: ({ property, value }: { property: string; value?: unknown }) =>
         `\`${property}\` must be an array with at least one element, currently it is \`[${String(value)}]\``,
+    326: ({ defaultOption }: { defaultOption: string }) =>
+        `ignoring \`defaultOption\` \`${defaultOption}\` as it is not one of the filter's \`filterOptions\`` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

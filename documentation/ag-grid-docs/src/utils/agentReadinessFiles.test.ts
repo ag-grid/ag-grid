@@ -35,6 +35,10 @@ describe('buildLlmsTxt', () => {
         expect(txt).toContain('Accept: text/markdown');
     });
 
+    test('points at index.md for the homepage, whose twin is not a `.md` suffix', () => {
+        expect(txt).toContain('https://www.ag-grid.com/index.md');
+    });
+
     test('lists the pipeline page', () => {
         expect(txt).toContain('(https://www.ag-grid.com/pipeline/)');
     });
@@ -73,6 +77,10 @@ describe('buildAgentsMd', () => {
         // listing pages that would drift (see markdownPages.test.ts for the guarantee).
         expect(md).toContain('append `.md` to any page URL listed in the');
         expect(md).toContain('[sitemap](https://www.ag-grid.com/sitemap-index.xml)');
+    });
+
+    test('points at index.md for the homepage, whose twin is not a `.md` suffix', () => {
+        expect(md).toContain('https://www.ag-grid.com/index.md');
     });
 
     test('omits the markdown affordance when markdown docs are disabled', () => {

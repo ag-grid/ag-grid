@@ -16,6 +16,8 @@ interface FooterProps {
 const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
     const slugger = new GithubSlugger();
 
+    const isFragment = (url: string) => url.startsWith('#');
+
     return footerItems.map(({ title, links }) => {
         // Associate each link list with its (non-heading) title so assistive tech still announces the
         // group label. SE-45 deliberately drops the <h2> to keep these out of the page heading outline.
@@ -30,7 +32,7 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
                         <li key={`${title}_${name}`}>
                             <a
                                 id={`${slugger.slug(name)}-nav`}
-                                href={urlWithBaseUrl(url)}
+                                href={isFragment(url) ? url : urlWithBaseUrl(url)}
                                 {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
                             >
                                 {iconName && <Icon name={iconName} />}

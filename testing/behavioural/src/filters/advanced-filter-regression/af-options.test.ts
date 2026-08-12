@@ -140,6 +140,39 @@ describe('Advanced Filter — grid options', () => {
                 └── LEAF id:1 athlete:"Ng" age:40
             `);
         });
+
+        test('turning the option on reaches an expression parsed while it was off', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    { field: 'athlete', filter: true },
+                    { field: 'age', filter: true, hide: true },
+                ],
+                rowData: ROW_DATA,
+                enableAdvancedFilter: true,
+            });
+
+            // Parsing this is what builds the offered columns, so the option is read before it changes.
+            await AdvancedFilterHarness.get(api).applyExpression('[Age] > 30');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+
+            api.setGridOption('includeHiddenColumnsInAdvancedFilter', true);
+            await asyncSetTimeout(0);
+
+            // A different bound, so the expression is re-parsed rather than recognised as the text already there.
+            await AdvancedFilterHarness.get(api).applyExpression('[Age] > 39');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'number',
+                colId: 'age',
+                type: 'greaterThan',
+                filter: 39,
+            });
+            await new GridRows(api, 'hidden column included after the option was turned on').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 athlete:"Ng" age:40
+            `);
+        });
     });
 
     describe('suppressAdvancedFilterEval (deprecated no-op since v34)', () => {

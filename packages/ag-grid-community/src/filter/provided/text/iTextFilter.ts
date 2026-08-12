@@ -1,11 +1,19 @@
 import type { BaseColDefParams } from '../../../entities/colDef';
 import type { IFilterParams } from '../../../interfaces/iFilter';
 import type { IFloatingFilterParams } from '../../floating/floatingFilter';
-import type { ISimpleFilterModel, ISimpleFilterParams } from '../iSimpleFilter';
+import type {
+    CustomFilterOptionKey,
+    IFilterOptionDef,
+    ISimpleFilterModel,
+    ISimpleFilterParams,
+    TextFilterOptionKey,
+} from '../iSimpleFilter';
 import type { NumberFilter } from '../number/numberFilter';
 import type { TextFilter } from './textFilter';
 
 export interface TextFilterModel extends ISimpleFilterModel {
+    /** One of the Text Filter's options, or a Custom Filter Option's `displayKey`. */
+    type?: TextFilterOptionKey | CustomFilterOptionKey | null;
     /** Filter type is always `'text'` */
     filterType?: 'text';
     /**
@@ -58,6 +66,10 @@ export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TD
  */
 
 export interface ITextFilterParams extends ISimpleFilterParams {
+    /** Array of filter options to present to the user. A key the filter cannot evaluate is reported when used. */
+    filterOptions?: (IFilterOptionDef | TextFilterOptionKey | CustomFilterOptionKey)[];
+    /** The default filter option to be selected. Must be one of the offered options. */
+    defaultOption?: TextFilterOptionKey | CustomFilterOptionKey;
     /**
      * Used to override how to filter based on the user input.
      * Returns `true` if the value passes the filter, otherwise `false`.

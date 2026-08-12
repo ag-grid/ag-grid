@@ -1,0 +1,156 @@
+name: 'PR preview — janitor sweep'
+description: Reclaim dead weight from a GitHub Pages publish branch — previews for closed PRs, and source maps that pr-preview-publish no longer publishes. Everything found is removed in ONE push. Caller supplies the schedule; this action is the whole sweep.
+
+# Why this exists: GitHub Pages rebuilds and republishes the WHOLE site on every push to the
+# publish branch, and its branch builds are single-flight — a new push cancels the in-flight
+# build. Site size is therefore paid by every PR on every deploy, and a bloated site turns into
+# minutes of deploy latency. Two leaks drive that growth:
+#
+#   1. Previews for closed PRs. Close-time cleanup removes pr-<N>/, but a CI run still in flight
+#      at merge time republishes it minutes later and orphans it forever. pr-preview-publish's
+#      skip_when_closed narrows that race to seconds; only a periodic sweep closes it.
+#   2. Source maps. pr-preview-publish stopped publishing them, but publishes overlay rather than
+#      replace, so previously-published maps persist until their PR closes.
+#
+# Caller requirements: check out the repo first (this action runs the shared commit script from
+# the working tree), and grant `contents: write` plus `pull-requests: read`.
+
+inputs:
+    github_token:
+        description: 'Token with contents:write on the publish branch and pull-requests:read.'
+        required: false
+        default: ${{ github.token }}
+    publish_branch:
+        description: 'Branch the previews were published to.'
+        required: false
+        default: gh-pages
+    dry_run:
+        description: 'Report what would be removed without pushing.'
+        required: false
+        default: 'false'
+    purge_source_maps:
+        description: 'Also delete .map files under pr-*/. Leave off in repos that opt into include_source_maps.'
+        required: false
+        default: 'true'
+
+outputs:
+    paths:
+        description: 'Whitespace-separated paths the sweep selected (empty when nothing was stale).'
+        value: ${{ steps.plan.outputs.paths }}
+    count:
+        description: 'Number of paths selected.'
+        value: ${{ steps.plan.outputs.count }}
+
+runs:
+    using: composite
+    steps:
+        - name: Work out what is stale
+          id: plan
+          shell: bash
+          env:
+              GH_TOKEN: ${{ inputs.github_token }}
+              PUBLISH_BRANCH: ${{ inputs.publish_branch }}
+              PURGE_SOURCE_MAPS: ${{ inputs.purge_source_maps }}
+          run: |
+              set -uo pipefail
+              paths=""
+
+              tree=$(gh api "repos/${GITHUB_REPOSITORY}/git/trees/${PUBLISH_BRANCH}?recursive=1" \
+                         --jq '.tree[] | select(.type=="blob") | .path')
+              if [[ -z "$tree" ]]; then
+                  echo "::error::Could not list ${PUBLISH_BRANCH}; aborting rather than guessing."
+                  exit 1
+              fi
+
+              # Closed-PR previews. Unreadable PR state keeps the directory — a stale preview is
+              # cheap, deleting a live one is not.
+              for dir in $(printf '%s\n' "$tree" | grep -oE '^pr-[0-9]+' | sort -u); do
+                  state=$(gh pr view "${dir#pr-}" --json state --jq .state 2>/dev/null) || state=''
+                  case "$state" in
+                      CLOSED | MERGED) echo "stale preview: ${dir} (${state})"; paths="${paths} ${dir}" ;;
+                      OPEN) ;;
+                      *) echo "::warning::could not read state for ${dir}; keeping it." ;;
+                  esac
+              done
+
+              # Source maps under previews that survived the pass above (maps under a directory
+              # already queued for removal would be redundant).
+              if [[ "$PURGE_SOURCE_MAPS" == 'true' ]]; then
+                  while IFS= read -r f; do
+                      [[ -n "$f" ]] || continue
+                      keep=true
+                      for p in $paths; do [[ "$f" == "$p"/* ]] && { keep=false; break; }; done
+                      if [[ "$keep" == true ]]; then
+                          echo "source map: ${f}"
+                          paths="${paths} ${f}"
+                      fi
+                  done < <(printf '%s\n' "$tree" | grep -E '^pr-[0-9]+/.*\.map$')
+              fi
+
+              # Collapse whitespace so the emptiness check below is honest.
+              paths=$(echo $paths)
+              count=0
+              [[ -n "$paths" ]] && count=$(wc -w <<< "$paths" | tr -d ' ')
+              if [[ "$count" -eq 0 ]]; then
+                  echo "Nothing stale on ${PUBLISH_BRANCH}."
+              else
+                  echo "Reclaiming ${count} path(s) in one push."
+              fi
+              {
+                  echo "paths=${paths}"
+                  echo "count=${count}"
+              } >> "$GITHUB_OUTPUT"
+
+        - name: Remove stale paths
+          id: remove
+          # Empty list: nothing to do, and the shared commit script requires a non-empty TARGET_PREFIX.
+          if: steps.plan.outputs.paths != '' && inputs.dry_run != 'true'
+          shell: bash
+          env:
+              GH_TOKEN: ${{ inputs.github_token }}
+              MODE: remove
+              TARGET_PREFIX: ${{ steps.plan.outputs.paths }}
+              COMMIT_MESSAGE: 'pr-preview: janitor sweep of stale previews and source maps'
+              PUBLISH_BRANCH: ${{ inputs.publish_branch }}
+          run: bash "${{ github.action_path }}/../pr-preview-lib/gh-pages-commit.sh"
+
+        # always(): the summary is the only place a scheduled run reports anything, so it has to
+        # survive a failure in either step above. It therefore reports on step OUTCOMES, not just
+        # on the paths output — an empty output means "planning failed" just as readily as
+        # "nothing stale", and a non-empty one says nothing about whether the push succeeded.
+        - name: Summary
+          if: always()
+          shell: bash
+          env:
+              PATHS: ${{ steps.plan.outputs.paths }}
+              COUNT: ${{ steps.plan.outputs.count }}
+              PLAN_OUTCOME: ${{ steps.plan.outcome }}
+              REMOVE_OUTCOME: ${{ steps.remove.outcome }}
+              DRY_RUN: ${{ inputs.dry_run }}
+              PUBLISH_BRANCH: ${{ inputs.publish_branch }}
+          run: |
+              set -euo pipefail
+              {
+                  echo "### PR preview janitor (${PUBLISH_BRANCH})"
+                  echo
+                  if [[ "$PLAN_OUTCOME" != 'success' ]]; then
+                      echo ":x: Planning failed (\`${PLAN_OUTCOME}\`) — nothing was removed. See the step log."
+                  elif [[ -z "${PATHS:-}" ]]; then
+                      echo "Nothing stale to reclaim."
+                  else
+                      case "$REMOVE_OUTCOME" in
+                          success) echo "Removed ${COUNT} path(s):" ;;
+                          skipped)
+                              if [[ "$DRY_RUN" == 'true' ]]; then
+                                  echo "Dry run — would remove ${COUNT} path(s):"
+                              else
+                                  echo ":warning: Removal did not run — ${COUNT} path(s) selected:"
+                              fi
+                              ;;
+                          *) echo ":x: Removal failed (\`${REMOVE_OUTCOME}\`) — ${COUNT} path(s) selected but the push did not land:" ;;
+                      esac
+                      echo '```'
+                      tr ' ' '\n' <<< "$PATHS"
+                      echo '```'
+                  fi
+              } >> "$GITHUB_STEP_SUMMARY"

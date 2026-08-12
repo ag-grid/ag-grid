@@ -3,10 +3,10 @@ import type { FilterChangedEvent } from '../../../events';
 import { Component } from '../../../widgets/component';
 import type { IProvidedFilterParams, ProvidedFilterModel } from '../../provided/iProvidedFilter';
 import type {
+    FilterOptionKey,
     ICombinedSimpleModel,
     ISimpleFilter,
     ISimpleFilterModel,
-    ISimpleFilterModelType,
     ISimpleFilterParams,
 } from '../../provided/iSimpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
@@ -166,7 +166,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     }
 
     private isTypeEditable(type?: string | null): boolean {
-        return !!type && !this.readOnly && getNumberOfInputs(type as ISimpleFilterModelType, this.optionsFactory) === 1;
+        return !!type && !this.readOnly && getNumberOfInputs(type as FilterOptionKey, this.optionsFactory) === 1;
     }
 
     protected getAriaLabel(column: AgColumn): string {
