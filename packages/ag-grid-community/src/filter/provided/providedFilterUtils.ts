@@ -5,7 +5,8 @@ import type { LogService } from '../../validation/logService';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
 import type { IProvidedFilterParams } from './iProvidedFilter';
-import type { FilterPlaceholderFunction, ISimpleFilterModelType } from './iSimpleFilter';
+import type { FilterOptionKey, FilterPlaceholderFunction } from './iSimpleFilter';
+import type { OptionsFactory } from './optionsFactory';
 
 export function getDebounceMs(log: LogService, params: IProvidedFilterParams, debounceDefault: number): number {
     const { debounceMs } = params;
@@ -25,15 +26,28 @@ export function _isUseApplyButton(params: FilterWrapperParams): boolean {
     return (params.buttons?.indexOf('apply') ?? -1) >= 0;
 }
 
+/** A Custom Filter Option has no built-in locale entry, so its own `displayKey`/`displayName` are the lookup. */
+export function translateFilterOption(
+    bean: { getLocaleTextFunc(): LocaleTextFunc },
+    optionsFactory: OptionsFactory,
+    filterOptionKey: FilterOptionKey
+): string {
+    const customOption = optionsFactory.getCustomOption(filterOptionKey);
+    return customOption
+        ? bean.getLocaleTextFunc()(customOption.displayKey, customOption.displayName)
+        : translateForFilter(bean, filterOptionKey as FilterLocaleTextKey);
+}
+
 export function getPlaceholderText(
     bean: { getLocaleTextFunc(): LocaleTextFunc },
     filterPlaceholder: string | FilterPlaceholderFunction | undefined,
     defaultPlaceholder: FilterLocaleTextKey,
-    filterOptionKey: ISimpleFilterModelType
+    filterOptionKey: FilterOptionKey,
+    optionsFactory: OptionsFactory
 ): string {
     let placeholder = translateForFilter(bean, defaultPlaceholder);
     if (typeof filterPlaceholder === 'function') {
-        const filterOption = translateForFilter(bean, filterOptionKey);
+        const filterOption = translateFilterOption(bean, optionsFactory, filterOptionKey);
         placeholder = filterPlaceholder({
             filterOptionKey,
             filterOption,

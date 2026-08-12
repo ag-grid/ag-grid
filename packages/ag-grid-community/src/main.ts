@@ -237,16 +237,23 @@ export type {
 export type { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
 export { isCombinedFilterModel } from './filter/provided/iSimpleFilter';
 export type {
+    CommonFilterOptionKey,
+    CustomFilterOptionKey,
+    DateFilterOptionKey,
+    FilterOptionKey,
     FilterPlaceholderFunction,
     ICombinedSimpleModel,
     IFilterOptionDef,
     IFilterPlaceholderFunctionParams,
     ISimpleFilter,
     ISimpleFilterModel,
+    ISimpleFilterModelPresetType,
     ISimpleFilterModelType,
     ISimpleFilterParams,
     JoinOperator,
+    ScalarFilterOptionKey,
     SimpleFilterParams,
+    TextFilterOptionKey,
 } from './filter/provided/iSimpleFilter';
 export type {
     INumberFilterParams,
