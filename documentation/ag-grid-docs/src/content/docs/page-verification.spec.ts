@@ -68,13 +68,18 @@ async function setupPage(page: Page): Promise<string[]> {
     return cspViolations;
 }
 
+// Every navigation below is base-relative (`'./'`, `'about/'`) rather than root-absolute (`'/about/'`)
+// on purpose: Playwright resolves a leading-slash path against the base URL's *origin*, discarding any
+// path prefix. A branch build is deployed under one (`https://testing.ag-grid.com/<TICKET>/`), so
+// root-absolute paths there land on the site's 404 page instead of the page under test. Relative paths
+// resolve against the whole base URL, so they work under a prefix and are unchanged for a root deploy.
 test.describe('Page Verification', () => {
     // --- Homepage ---
 
     test('homepage loads with title and header visible', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/');
+        await page.goto('./');
         await expect(page).toHaveTitle(/AG Grid/);
         await expect(page.locator('.site-header')).toBeVisible();
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -85,7 +90,7 @@ test.describe('Page Verification', () => {
     test('homepage shows Docs and Demos navigation links', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/');
+        await page.goto('./');
         // Both links appear in the large and small nav – use first() to target the large (desktop) nav
         await expect(page.locator('.site-header').getByRole('link', { name: 'AG Grid Docs' }).first()).toBeVisible();
         await expect(page.locator('.site-header').getByRole('link', { name: 'AG Grid Demos' }).first()).toBeVisible();
@@ -98,7 +103,7 @@ test.describe('Page Verification', () => {
     test('demos page loads with an example grid', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/example');
+        await page.goto('example');
         await page.waitForSelector('.ag-root-wrapper', { state: 'visible' });
         await expect(page.locator('.ag-root-wrapper')).toBeVisible();
 
@@ -108,7 +113,7 @@ test.describe('Page Verification', () => {
     test('theme builder page loads', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/theme-builder/');
+        await page.goto('theme-builder/');
         await expect(page).toHaveTitle(/Theme Builder/);
         await expect(page.locator('.site-header')).toBeVisible();
 
@@ -118,7 +123,7 @@ test.describe('Page Verification', () => {
     test('API reference page loads', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/react-data-grid/reference/');
+        await page.goto('react-data-grid/reference/');
         await expect(page).toHaveTitle(/Reference/);
         await expect(page.locator('#docs-mobile-nav-collapser')).toBeVisible();
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -129,7 +134,7 @@ test.describe('Page Verification', () => {
     test('community page loads', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/community/');
+        await page.goto('community/');
         await expect(page).toHaveTitle(/Community/);
         await expect(page.locator('.site-header')).toBeVisible();
 
@@ -139,7 +144,7 @@ test.describe('Page Verification', () => {
     test('about page loads', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/about/');
+        await page.goto('about/');
         await expect(page).toHaveTitle(/About AG Grid/);
         await expect(page.locator('.site-header')).toBeVisible();
 
@@ -149,7 +154,7 @@ test.describe('Page Verification', () => {
     test('contact page loads', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/contact/');
+        await page.goto('contact/');
         await expect(page).toHaveTitle(/Contact AG Grid/);
         await expect(page.locator('.site-header')).toBeVisible();
 
@@ -159,7 +164,7 @@ test.describe('Page Verification', () => {
     test('pricing page loads', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/license-pricing/');
+        await page.goto('license-pricing/');
         await expect(page).toHaveTitle(/Licence and Pricing/);
         await expect(page.locator('.site-header')).toBeVisible();
 
@@ -171,7 +176,7 @@ test.describe('Page Verification', () => {
     test('docs getting-started page loads', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/react-data-grid/getting-started/');
+        await page.goto('react-data-grid/getting-started/');
         await expect(page).toHaveTitle(/Quick Start/);
         // Left docs nav is always visible at desktop widths (CSS overrides mobile collapse)
         await expect(page.locator('#docs-mobile-nav-collapser')).toBeVisible();
@@ -183,7 +188,7 @@ test.describe('Page Verification', () => {
     test('clicking a left-nav link navigates to the correct doc page', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/react-data-grid/getting-started/');
+        await page.goto('react-data-grid/getting-started/');
         // 'Key Features' is a flat (non-grouped) item in the Getting Started section
         await page.locator('#docs-mobile-nav-collapser').getByRole('link', { name: 'Key Features' }).click();
         await expect(page).toHaveURL(/key-features/);
@@ -207,7 +212,7 @@ test.describe('Page Verification', () => {
             { width: 1250, expectButton: false },
         ]) {
             await page.setViewportSize({ width, height: 900 });
-            await page.goto('/react-data-grid/getting-started/');
+            await page.goto('react-data-grid/getting-started/');
             await expect(docsButton, `docs button at ${width}px`).toBeVisible({ visible: expectButton });
             await expect(docsNav, `docs nav at ${width}px`).toBeVisible({ visible: !expectButton });
         }
@@ -232,7 +237,7 @@ test.describe('Page Verification', () => {
         };
 
         await page.setViewportSize({ width: 1110, height: 900 });
-        await page.goto('/react-data-grid/getting-started/');
+        await page.goto('react-data-grid/getting-started/');
         await expect(menuButton).toBeVisible();
 
         await page.evaluate(() => window.scrollTo(0, 1200));
@@ -259,7 +264,7 @@ test.describe('Page Verification', () => {
 
         // Reload rather than just resize: the open nav leaves inline heights on the collapsible.
         await page.setViewportSize({ width: 1250, height: 900 });
-        await page.goto('/react-data-grid/getting-started/');
+        await page.goto('react-data-grid/getting-started/');
         await expect(menuButton).toBeHidden();
         await page.evaluate(() => window.scrollTo(0, 1200));
         expect((await boxOf(header)).y, 'inline header stays pinned to the top').toBe(0);
@@ -284,7 +289,7 @@ test.describe('Page Verification', () => {
 
                 // The standalone example page renders the grid directly in the top-level
                 // document (no iframe), unlike the embedded docs-page runner.
-                await page.goto(`/examples/${pageName}/${exampleName}/${framework}`);
+                await page.goto(`examples/${pageName}/${exampleName}/${framework}`);
                 await expect(page.locator('.ag-root-wrapper')).toBeVisible({ timeout: 30_000 });
 
                 expect(cspViolations, 'CSP violations').toEqual([]);
@@ -297,7 +302,7 @@ test.describe('Page Verification', () => {
     test('product switcher opens and shows AG products', async ({ page }) => {
         const cspViolations = await setupPage(page);
 
-        await page.goto('/');
+        await page.goto('./');
         // The Products button opens the dropdown on hover (onMouseEnter)
         await page.getByRole('button', { name: 'Products' }).hover();
         // AG Charts and AG Studio links should now be visible in the dropdown

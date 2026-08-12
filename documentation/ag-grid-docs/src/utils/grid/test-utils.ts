@@ -5,7 +5,12 @@ import { test as base, expect as playwrightExpect } from '@playwright/test';
 import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
 import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
-import { routeExampleAssetsFromDisk, routeExternalThroughMirror, warnOnNetworkAccess } from './test/localSources';
+import {
+    routeExampleAssetsFromDisk,
+    routeExternalThroughMirror,
+    routePdfFontsFromDisk,
+    warnOnNetworkAccess,
+} from './test/localSources';
 import { routeExampleModulesTranspiled } from './test/localTranspile';
 import { PendingRequests } from './test/pendingRequests';
 import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test/remoteGridapi';
@@ -313,6 +318,7 @@ export const extended = base.extend<TestFixtures>({
             await routeExternalThroughMirror(page, siteOrigin);
             await routeExampleAssetsFromDisk(page);
             await routeExampleModulesTranspiled(page, siteOrigin);
+            await routePdfFontsFromDisk(page, siteOrigin);
             await use();
         },
         { auto: true },
