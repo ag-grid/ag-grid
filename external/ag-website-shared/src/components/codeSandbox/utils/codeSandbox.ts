@@ -76,11 +76,11 @@ const getCodeSandboxFiles = ({
           }
         : { ...boilerPlateFiles, ...files };
 
+    // Only the sandbox templates (React) take a `package.json`; the caller no longer supplies one for the
+    // `static` runtime. `boilerPlateFiles` are read as a directory sweep and are merged in on that runtime
+    // only, so this is still the guard that stops a boilerplate-supplied `package.json` reaching a static
+    // example — where it would only confuse, since the AG Grid version comes from `index.html`.
     if (allFiles['package.json'] == undefined || !isUsingSandboxTemplate) {
-        // don't include undefined package.json
-        // Don't include package.json if not using a sandbox template so that users do not get
-        // confused about why changing the versions in package.json does not impact the code example
-        // which is pulling the code version directly from the index.html file.
         delete allFiles['package.json'];
     }
 
@@ -106,7 +106,7 @@ const createHiddenInputFactory =
         form.appendChild(input);
     };
 
-const getCodeSandboxFilesToSubmit = ({
+export const getCodeSandboxFilesToSubmit = ({
     title,
     files,
     boilerPlateFiles,

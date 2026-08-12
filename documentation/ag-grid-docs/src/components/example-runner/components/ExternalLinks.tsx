@@ -35,7 +35,7 @@ export function ExternalLinks({
                         htmlUrl={codeSandboxHtmlUrl}
                         internalFramework={internalFramework}
                         boilerPlateFiles={exampleBoilerPlateFiles}
-                        packageJson={packageJson!}
+                        packageJson={packageJson}
                         isDev={isDev}
                     />
                 </li>
