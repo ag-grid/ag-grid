@@ -3,7 +3,7 @@ import type { LocaleTextFunc } from 'ag-stack';
 import type { FilterWrapperParams } from '../../interfaces/iFilter';
 import type { LogService } from '../../validation/logService';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
-import { translateForFilter } from '../filterLocaleText';
+import { translateFilterOptionKey, translateForFilter } from '../filterLocaleText';
 import type { IProvidedFilterParams } from './iProvidedFilter';
 import type { FilterOptionKey, FilterPlaceholderFunction } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
@@ -35,7 +35,7 @@ export function translateFilterOption(
     const customOption = optionsFactory.getCustomOption(filterOptionKey);
     return customOption
         ? bean.getLocaleTextFunc()(customOption.displayKey, customOption.displayName)
-        : translateForFilter(bean, filterOptionKey as FilterLocaleTextKey);
+        : translateFilterOptionKey(bean, filterOptionKey);
 }
 
 export function getPlaceholderText(

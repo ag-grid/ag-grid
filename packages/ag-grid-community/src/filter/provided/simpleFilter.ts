@@ -19,6 +19,7 @@ import { _createElement } from '../../utils/element';
 import type { Component, ComponentSelector } from '../../widgets/component';
 import type { GridInputTextField, GridRadioButton, GridSelect } from '../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
+import { isFilterLocaleTextKey } from '../filterLocaleText';
 import type {
     FilterOptionKey,
     ICombinedSimpleModel,
@@ -375,9 +376,10 @@ export abstract class SimpleFilter<
         eType.setDisabled(filterListOptions.length <= 1);
     }
 
-    /** `translate` is overridden per filter, so a built-in key must go through it rather than the shared lookup. */
+    /** `translate` is overridden per filter, so a key the grid defines goes through it; any other is its own label. */
     private createBoilerplateListOption(option: string): ListOption {
-        return { value: option, text: this.translate(option as FilterLocaleTextKey) };
+        const text = isFilterLocaleTextKey(option) ? this.translate(option) : this.getLocaleTextFunc()(option, option);
+        return { value: option, text };
     }
 
     private createCustomListOption(option: IFilterOptionDef): ListOption {

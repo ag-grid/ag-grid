@@ -246,7 +246,15 @@ export {
 } from './utils/focus';
 export { _batchCall, _debounce, _doOnce, _throttle, _waitUntil } from './utils/function';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
-export { _defaultComparator, _exists, _jsonEquals, _makeNull, _missing, _toStringOrNull } from './utils/generic';
+export {
+    _defaultComparator,
+    _exists,
+    _hasOwn,
+    _jsonEquals,
+    _makeNull,
+    _missing,
+    _toStringOrNull,
+} from './utils/generic';
 export { _isEventFromPrintableCharacter } from './utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './utils/locale';
 export { _isPromise } from './utils/promise';

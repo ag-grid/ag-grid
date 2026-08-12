@@ -1,3 +1,5 @@
+import { _hasOwn } from 'ag-stack';
+
 import type { BaseCellDataType, IRowNode } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
@@ -82,10 +84,9 @@ function getEntries<ConvertedTValue, TValue = ConvertedTValue>(
     const len = keys.length;
     const entries: AutocompleteEntry[] = new Array(len);
     let count = 0;
-    const hasOwnProperty = Object.prototype.hasOwnProperty;
     for (let i = 0; i < len; ++i) {
         const key = keys[i];
-        const operator = hasOwnProperty.call(operators, key) ? operators[key] : undefined;
+        const operator = _hasOwn(operators, key) ? operators[key] : undefined;
         if (operator) {
             entries[count++] = { key, displayValue: operator.displayValue };
         }
