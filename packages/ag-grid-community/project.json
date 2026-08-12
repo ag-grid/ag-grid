@@ -120,7 +120,7 @@
         "sharedGlobals",
         "defaultExcludes",
         {
-          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+          "externalDependencies": ["npm:typescript", "npm:esbuild", "npm:acorn"]
         }
       ],
       "outputs": ["{options.outputPath}"],
