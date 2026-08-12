@@ -6,6 +6,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
+import type { Environment } from '../environment';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
@@ -15,10 +16,12 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
     private visibleCols: VisibleColsService;
     private colModel: ColumnModel;
+    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
         this.colModel = beans.colModel;
+        this.environment = beans.environment;
     }
 
     // cols in center that are in the viewport
@@ -125,9 +128,9 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     }
 
     private isColumnVirtualisationSuppressed() {
-        // When running within jsdom the viewportRight is always 0, so we need to return true to allow
-        // tests to validate all the columns.
-        return this.suppressColumnVirtualisation || this.viewportRight === 0;
+        // A zero viewport width only means "genuinely zero wide" once the environment has proven it can
+        // measure; where there is no layout engine every measurement reads 0 regardless of styling.
+        return this.suppressColumnVirtualisation || (this.viewportRight === 0 && !this.environment.sizesMeasured);
     }
 
     public clear(): void {

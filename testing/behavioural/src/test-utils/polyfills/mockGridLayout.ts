@@ -31,6 +31,12 @@ export const mockGridLayout = {
      * such as page-key navigation. */
     useRealOffsetDimensions: false,
 
+    /** When true, the mock behaves like a real layout engine that happens to report zero: computed
+     * width/height are stamped even when the mocked rect is 0 (a browser reports `'0px'`, jsdom
+     * reports `''`), and attached elements get a non-null `offsetParent`. Use to simulate a
+     * container the browser has not laid out yet, as distinct from jsdom's "no layout engine". */
+    simulateRealLayoutEngine: false,
+
     /** Optional per-element measured-height override, e.g. to simulate wrapped text driving an
      * autoHeight cell wrapper taller. Return undefined to fall back to the standard mock layout.
      * Combine with `useRealOffsetDimensions` when the code under test reads `offsetHeight`. */
@@ -265,14 +271,21 @@ function init(): boolean {
             // Only override when still at the jsdom default ('' or '0px').
             const origWidth = style.width;
             const origHeight = style.height;
-            if (rect.width > 0 && (!origWidth || origWidth === '' || origWidth === '0px' || origWidth === '0')) {
+            const stampZero = mockGridLayout.simulateRealLayoutEngine;
+            if (
+                (rect.width > 0 || stampZero) &&
+                (!origWidth || origWidth === '' || origWidth === '0px' || origWidth === '0')
+            ) {
                 Object.defineProperty(style, 'width', {
                     value: `${rect.width}px`,
                     writable: true,
                     configurable: true,
                 });
             }
-            if (rect.height > 0 && (!origHeight || origHeight === '' || origHeight === '0px' || origHeight === '0')) {
+            if (
+                (rect.height > 0 || stampZero) &&
+                (!origHeight || origHeight === '' || origHeight === '0px' || origHeight === '0')
+            ) {
                 Object.defineProperty(style, 'height', {
                     value: `${rect.height}px`,
                     writable: true,
@@ -324,6 +337,9 @@ function init(): boolean {
                 return native;
             }
             if (inPopupOrDialog(this)) {
+                return this.parentElement;
+            }
+            if (mockGridLayout.simulateRealLayoutEngine && this.isConnected) {
                 return this.parentElement;
             }
             return null;
