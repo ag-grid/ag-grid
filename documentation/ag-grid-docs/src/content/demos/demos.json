@@ -1,0 +1,26 @@
+{
+    "finance": {
+        "heading": "Finance",
+        "metaTitle": "Demo - Finance",
+        "metaDescription": "Financial data example featuring live updates and sparklines.",
+        "bodyText": "Financial data example featuring live updates and sparklines.",
+        "githubUrl": "https://github.com/ag-grid/ag-grid-demos/tree/main/finance",
+        "activeTab": "finance"
+    },
+    "hr": {
+        "heading": "HR",
+        "metaTitle": "Demo - HR Management",
+        "metaDescription": "HR data example showing hierarchical employee data.",
+        "bodyText": "Example showing HR hierarchical employee data.",
+        "githubUrl": "https://github.com/ag-grid/ag-grid-demos/tree/main/hr",
+        "activeTab": "crm"
+    },
+    "inventory": {
+        "heading": "Inventory",
+        "metaTitle": "Demo - Inventory Management",
+        "metaDescription": "Inventory data example to view and manage products.",
+        "bodyText": "Inventory data example to view and manage products.",
+        "githubUrl": "https://github.com/ag-grid/ag-grid-demos/tree/main/inventory",
+        "activeTab": "inventory"
+    }
+}
