@@ -325,6 +325,19 @@ jobs:
         timeout-minutes: 25
         permissions:
             contents: read
+            # actions: read — the in-flight-agent interlock (AG-17369) reads the
+            # status of the AGENT run named by `AI run url`
+            # (actions/runs/{id}) before promoting, so the green-CI handback
+            # cannot land while the agent is still working. Without this scope
+            # that lookup 403s, `runState` fails OPEN to "not in flight", and
+            # the interlock is silently INERT on every ticket (AS-1123) — the
+            # promote fired 6 min early and the post step then re-opened a
+            # `pipe-ci` progress step nothing would ever close. NOTE a job's
+            # `permissions:` block REPLACES the default token scopes rather
+            # than merging, so this must sit alongside the three below, never
+            # in place of them. Also a prerequisite for the AG-17920
+            # cancelled-run re-verification (actions/runs/{id}/jobs).
+            actions: read
             pull-requests: read
             packages: read
         # Surfaced so the pr-plnkr job can gate on the first promoting green
