@@ -35,8 +35,6 @@ jobs:
   page-verification:
     runs-on: ubuntu-latest
     name: Page Verification (Staging)
-    outputs:
-      baseline_run_id: ${{ steps.prev_run.outputs.baseline_id }}
     # For manual dispatch: always run.
     # For workflow_run: only proceed if triggered by a push to this repo (not a fork PR),
     # and only if the upstream CI run succeeded. This guards against the untrusted-checkout
@@ -135,19 +133,6 @@ jobs:
           echo "sha=$(echo "$PREV" | jq -r '.headSha // ""')" >> $GITHUB_OUTPUT
           echo "outcome=$(echo "$PREV" | jq -r '.conclusion // ""')" >> $GITHUB_OUTPUT
 
-          # The CSP baseline has to come from a run that produced a report. 'completed' is a
-          # status, so it also matches a skipped run, which has no artifact, and a failed one,
-          # whose report stops where the suite stopped; 'success' is a conclusion, so it matches
-          # neither. Skips are routine here, since the job only proceeds for a successful
-          # same-repo push, so the run immediately before this one is usually not a baseline.
-          echo "baseline_id=$(gh run list \
-            --workflow post-deploy-verification.yml \
-            --branch latest \
-            --status success \
-            --limit 1 \
-            --json databaseId \
-            --jq '.[0].databaseId // ""')" >> $GITHUB_OUTPUT
-
       - name: Notify Slack
         # Always notify on failure. On success, only notify if the previous run
         # failed - a "back to green" signal - so a routine passing run doesn't
@@ -202,24 +187,47 @@ jobs:
           path: csp/current
 
       - name: Download previous CSP report
-        # A baseline is often absent: the last successful run may predate this job, its
-        # artifact may have expired, or it may have been a dispatch against a hand-given
-        # URL, which is deliberately not uploaded. The notifier treats a missing baseline
-        # as "everything is new", so report it and carry on rather than leaving a failed
-        # step on an otherwise green run.
-        if: needs.page-verification.outputs.baseline_run_id != ''
+        # The baseline has to be a run that actually produced a report, so this walks back
+        # over recent successful runs rather than trusting the newest: a dispatch against a
+        # hand-given URL succeeds without uploading one, and a run predating this job has
+        # none at all. Once the artifact is known to exist, a failed download is a real
+        # error, so it fails this job rather than quietly reporting the site as all-new.
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BASELINE_RUN_ID: ${{ needs.page-verification.outputs.baseline_run_id }}
         run: |
-          if gh run download "$BASELINE_RUN_ID" \
+          set -e
+          # The workflow run is still in progress, so this cannot select the current run.
+          CANDIDATES=$(gh run list \
+            --workflow post-deploy-verification.yml \
+            --branch latest \
+            --status success \
+            --limit 10 \
+            --json databaseId \
+            --jq '.[].databaseId')
+
+          BASELINE=""
+          for ID in $CANDIDATES; do
+            if ! ARTIFACTS=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ID/artifacts" \
+              --jq '.artifacts[] | select(.expired == false) | .name'); then
+              echo "::warning title=CSP baseline::Could not list artifacts for run $ID; skipping it."
+              continue
+            fi
+            if grep -qx csp-violations <<<"$ARTIFACTS"; then
+              BASELINE=$ID
+              break
+            fi
+          done
+
+          if [ -z "$BASELINE" ]; then
+            echo "No recent successful run has a csp-violations artifact; treating this run as having no baseline."
+            exit 0
+          fi
+
+          gh run download "$BASELINE" \
             --repo "$GITHUB_REPOSITORY" \
             --name csp-violations \
-            --dir csp/previous; then
-            echo "Comparing against run $BASELINE_RUN_ID."
-          else
-            echo "Run $BASELINE_RUN_ID has no csp-violations artifact; treating this run as having no baseline."
-          fi
+            --dir csp/previous
+          echo "Comparing against run $BASELINE."
 
       - name: Report CSP violations
         env:
