@@ -38,7 +38,7 @@ const MODULE_EXTENSION_REGEX = /\.(tsx?|jsx?|mjs|cjs)$/i;
  */
 export const BrowserTranspiler = ({ entryFileName, nonce }: Props) => (
     <>
-        <script nonce={nonce} src={TYPESCRIPT_URL} crossorigin="anonymous" />
+        <script nonce={nonce} src={TYPESCRIPT_URL} crossOrigin="anonymous" />
         <script
             nonce={nonce}
             type="module"
