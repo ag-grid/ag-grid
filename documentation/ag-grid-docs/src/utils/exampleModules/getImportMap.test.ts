@@ -1,7 +1,7 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { NPM_CDN } from '@constants';
 
-import { getImportMap } from './getImportMap';
+import { FRAMEWORK_VERSION_PATTERN, getDefaultFrameworkVersion, getImportMap } from './getImportMap';
 
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3'];
 
@@ -122,5 +122,59 @@ describe('getImportMap', () => {
 
             expect(local['ag-grid-community']).not.toContain(NPM_CDN);
         });
+    });
+
+    describe('framework version', () => {
+        const frameworkEntry: Partial<Record<InternalFramework, string>> = {
+            reactFunctionalTs: 'react',
+            angular: '@angular/core',
+            vue3: 'vue',
+        };
+
+        test.each(Object.entries(frameworkEntry))('%s resolves the pinned version by default', (framework, entry) => {
+            const importMap = getImportMap({
+                internalFramework: framework as InternalFramework,
+                isEnterprise: false,
+            });
+
+            expect(importMap[entry]).toContain(`@${getDefaultFrameworkVersion(framework as InternalFramework)}`);
+        });
+
+        test.each(Object.entries(frameworkEntry))('%s resolves the requested version', (framework, entry) => {
+            const importMap = getImportMap({
+                internalFramework: framework as InternalFramework,
+                isEnterprise: false,
+                frameworkVersion: '1.2.3',
+            });
+
+            expect(importMap[entry]).toContain('@1.2.3');
+        });
+
+        test('overriding the version leaves the companion packages pinned', () => {
+            const importMap = getImportMap({
+                internalFramework: 'angular',
+                isEnterprise: false,
+                frameworkVersion: '1.2.3',
+            });
+
+            expect(importMap['rxjs']).not.toContain('@1.2.3');
+            expect(importMap['tslib']).not.toContain('@1.2.3');
+        });
+
+        test('the frameworkless examples have no framework version', () => {
+            expect(getDefaultFrameworkVersion('typescript')).toBeUndefined();
+            expect(getDefaultFrameworkVersion('vanilla')).toBeUndefined();
+        });
+
+        test.each(['19.2.1', '18.3.1', '20.0.0-next.7', '3.5.17+build.1'])('%s is a valid version', (version) => {
+            expect(FRAMEWORK_VERSION_PATTERN.test(version)).toBe(true);
+        });
+
+        test.each(['19', '19.2', 'latest', '../evil', '19.2.1/../evil', 'https://example.com'])(
+            '%s is not a valid version',
+            (version) => {
+                expect(FRAMEWORK_VERSION_PATTERN.test(version)).toBe(false);
+            }
+        );
     });
 });

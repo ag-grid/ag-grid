@@ -1,10 +1,16 @@
 import type { InternalFramework } from '@ag-grid-types';
-import { getImportMap } from '@utils/exampleModules/getImportMap';
+import {
+    FRAMEWORK_VERSION_PARAM,
+    FRAMEWORK_VERSION_PATTERN,
+    getDefaultFrameworkVersion,
+    getImportMap,
+} from '@utils/exampleModules/getImportMap';
 import { toModuleFileName } from '@utils/exampleModules/transformExampleModule';
 import { pathJoin } from '@utils/pathJoin';
 
 import { BrowserTranspiler } from './BrowserTranspiler';
 import { SeedRandom } from './SeedRandom';
+import { FRAMEWORK_VERSION_PLACEHOLDER, type InjectImportMapOptions, injectImportMap } from './injectImportMap';
 
 interface Props {
     appLocation: string;
@@ -26,6 +32,9 @@ interface Props {
  * package specifiers, and the entry file is loaded as a module. TypeScript and JSX sources
  * are transpiled server-side and served as `.js`, so the entry point is requested as such.
  * The exception is Plunker, which is handed the sources as authored -- see `transpileInBrowser`.
+ *
+ * For framework examples the map is registered in the browser rather than served as markup, so
+ * that `?version=` can pick the framework version to run against -- see `injectImportMap`.
  */
 export const ExampleModules = ({
     appLocation,
@@ -37,16 +46,38 @@ export const ExampleModules = ({
     transpileInBrowser,
     nonce,
 }: Props) => {
-    const importMap = getImportMap({ internalFramework, isEnterprise, isIntegratedCharts });
+    const defaultVersion = getDefaultFrameworkVersion(internalFramework);
+    const importMap = getImportMap({
+        internalFramework,
+        isEnterprise,
+        isIntegratedCharts,
+        // Substituted in the browser, so the version can come from the URL (see injectImportMap)
+        frameworkVersion: defaultVersion ? FRAMEWORK_VERSION_PLACEHOLDER : undefined,
+    });
+    const template = JSON.stringify({ imports: importMap }, null, 4);
     const startFile = pathJoin(appLocation, toModuleFileName(entryFileName));
+
+    const injectOptions: InjectImportMapOptions | undefined = defaultVersion
+        ? {
+              template,
+              defaultVersion,
+              placeholder: FRAMEWORK_VERSION_PLACEHOLDER,
+              versionParam: FRAMEWORK_VERSION_PARAM,
+              versionPattern: FRAMEWORK_VERSION_PATTERN.source,
+          }
+        : undefined;
 
     return (
         <>
-            <script
-                nonce={nonce}
-                type="importmap"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify({ imports: importMap }, null, 4) }}
-            />
+            {injectOptions ? (
+                <script
+                    nonce={nonce}
+                    dangerouslySetInnerHTML={{ __html: `(${injectImportMap})(${JSON.stringify(injectOptions)});` }}
+                />
+            ) : (
+                // Nothing to resolve from the URL, so the map is served as rendered
+                <script nonce={nonce} type="importmap" dangerouslySetInnerHTML={{ __html: template }} />
+            )}
             {usesMathRandom && <SeedRandom nonce={nonce} />}
 
             {/* Examples read `process.env.NODE_ENV` to guard dev-only validations, and nothing

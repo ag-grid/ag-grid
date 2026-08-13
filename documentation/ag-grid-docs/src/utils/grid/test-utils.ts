@@ -25,6 +25,10 @@ type PlaywrightFixtures = ExtractFixtures<typeof base>;
 type AgIdFor = ReturnType<typeof wrapAgTestIdFor<Locator>>;
 type LoadPageOptions = {
     prod: boolean;
+    /**
+     * Framework version the example runs against, e.g. '18.3.1' for React. Omitted, the
+     * example resolves the version the docs pin (see getImportMap).
+     */
     version: string;
 };
 

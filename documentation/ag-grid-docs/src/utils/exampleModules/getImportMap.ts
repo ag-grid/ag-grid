@@ -15,65 +15,97 @@ import { pathJoin } from '@utils/pathJoin';
 export type ImportMap = Record<string, string>;
 
 /**
- * The framework versions examples run against, deliberately independent of the versions the
- * docs site itself is built with.
+ * The framework versions examples run against by default, deliberately independent of the
+ * versions the docs site itself is built with. Overridable per page load with the
+ * `?version=` URL parameter (see `injectImportMap`).
  */
-const ANGULAR_VERSION = '20.0.0';
-const REACT_VERSION = '19.2.1';
+const DEFAULT_ANGULAR_VERSION = '20.0.0';
+const DEFAULT_REACT_VERSION = '19.2.1';
+const DEFAULT_VUE_VERSION = '3.5.17';
+
+/**
+ * Companion packages, pinned rather than overridable: they are not the framework whose
+ * version an example is being tried against.
+ */
 const RXJS_VERSION = '7.8.1';
 const TSLIB_VERSION = '2.3.1';
-const VUE_VERSION = '3.5.17';
+
+/** The URL parameter that overrides the framework version an example runs against */
+export const FRAMEWORK_VERSION_PARAM = 'version';
+
+/** `major.minor.patch`, optionally with a pre-release or build suffix */
+export const FRAMEWORK_VERSION_PATTERN = /^\d+\.\d+\.\d+(?:[-+][\w.-]+)*$/;
 
 /**
  * React and React DOM have no ES module build on npm, so they resolve through esm.sh.
  * `external=react` keeps React DOM from bundling a second copy of React, which would give
  * the page two renderers and break hooks.
  */
-const REACT_IMPORTS: ImportMap = {
-    react: `https://esm.sh/react@${REACT_VERSION}`,
-    'react/': `https://esm.sh/react@${REACT_VERSION}/`,
-    'react-dom': `https://esm.sh/react-dom@${REACT_VERSION}?external=react`,
-    'react-dom/': `https://esm.sh/react-dom@${REACT_VERSION}&external=react/`,
-};
+const reactImports = (version: string): ImportMap => ({
+    react: `https://esm.sh/react@${version}`,
+    'react/': `https://esm.sh/react@${version}/`,
+    'react-dom': `https://esm.sh/react-dom@${version}?external=react`,
+    'react-dom/': `https://esm.sh/react-dom@${version}&external=react/`,
+});
 
 /** `esm-browser` is the build that ships Vue's runtime template compiler */
-const VUE_IMPORTS: ImportMap = {
-    vue: `${NPM_CDN}/vue@${VUE_VERSION}/dist/vue.esm-browser.js`,
+const vueImports = (version: string): ImportMap => ({
+    vue: `${NPM_CDN}/vue@${version}/dist/vue.esm-browser.js`,
+});
+
+const angularImports = (version: string): ImportMap => {
+    const angularPackage = (name: string, entryPoint = name) =>
+        `${NPM_CDN}/@angular/${name}@${version}/fesm2022/${entryPoint}.mjs`;
+
+    return {
+        '@angular/animations': angularPackage('animations'),
+        '@angular/animations/browser': angularPackage('animations', 'browser'),
+        '@angular/common': angularPackage('common'),
+        '@angular/common/http': angularPackage('common', 'http'),
+        '@angular/compiler': angularPackage('compiler'),
+        '@angular/core': angularPackage('core'),
+        '@angular/core/primitives/di': angularPackage('core', 'primitives/di'),
+        '@angular/core/primitives/event-dispatch': angularPackage('core', 'primitives/event-dispatch'),
+        '@angular/core/primitives/signals': angularPackage('core', 'primitives/signals'),
+        '@angular/forms': angularPackage('forms'),
+        '@angular/platform-browser': angularPackage('platform-browser'),
+        '@angular/platform-browser/animations': angularPackage('platform-browser', 'animations'),
+        '@angular/platform-browser-dynamic': angularPackage('platform-browser-dynamic'),
+        // rxjs' own ESM build imports its internals without file extensions, which native
+        // resolution cannot follow, so it comes from esm.sh with those specifiers resolved
+        rxjs: `https://esm.sh/rxjs@${RXJS_VERSION}`,
+        'rxjs/': `https://esm.sh/rxjs@${RXJS_VERSION}&external=rxjs/`,
+        tslib: `${NPM_CDN}/tslib@${TSLIB_VERSION}/tslib.es6.js`,
+    };
 };
 
-const angularPackage = (name: string, entryPoint = name) =>
-    `${NPM_CDN}/@angular/${name}@${ANGULAR_VERSION}/fesm2022/${entryPoint}.mjs`;
-
-const ANGULAR_IMPORTS: ImportMap = {
-    '@angular/animations': angularPackage('animations'),
-    '@angular/animations/browser': angularPackage('animations', 'browser'),
-    '@angular/common': angularPackage('common'),
-    '@angular/common/http': angularPackage('common', 'http'),
-    '@angular/compiler': angularPackage('compiler'),
-    '@angular/core': angularPackage('core'),
-    '@angular/core/primitives/di': angularPackage('core', 'primitives/di'),
-    '@angular/core/primitives/event-dispatch': angularPackage('core', 'primitives/event-dispatch'),
-    '@angular/core/primitives/signals': angularPackage('core', 'primitives/signals'),
-    '@angular/forms': angularPackage('forms'),
-    '@angular/platform-browser': angularPackage('platform-browser'),
-    '@angular/platform-browser/animations': angularPackage('platform-browser', 'animations'),
-    '@angular/platform-browser-dynamic': angularPackage('platform-browser-dynamic'),
-    // rxjs' own ESM build imports its internals without file extensions, which native
-    // resolution cannot follow, so it comes from esm.sh with those specifiers resolved
-    rxjs: `https://esm.sh/rxjs@${RXJS_VERSION}`,
-    'rxjs/': `https://esm.sh/rxjs@${RXJS_VERSION}&external=rxjs/`,
-    tslib: `${NPM_CDN}/tslib@${TSLIB_VERSION}/tslib.es6.js`,
-};
-
-const getFrameworkImports = (internalFramework: InternalFramework): ImportMap => {
+/** The pinned version an example runs against, or undefined for the frameworkless examples */
+export const getDefaultFrameworkVersion = (internalFramework: InternalFramework): string | undefined => {
     if (isReactInternalFramework(internalFramework)) {
-        return REACT_IMPORTS;
+        return DEFAULT_REACT_VERSION;
     }
     if (internalFramework === 'angular') {
-        return ANGULAR_IMPORTS;
+        return DEFAULT_ANGULAR_VERSION;
     }
     if (internalFramework === 'vue3') {
-        return VUE_IMPORTS;
+        return DEFAULT_VUE_VERSION;
+    }
+    return undefined;
+};
+
+const getFrameworkImports = (internalFramework: InternalFramework, frameworkVersion?: string): ImportMap => {
+    const version = frameworkVersion ?? getDefaultFrameworkVersion(internalFramework);
+    if (!version) {
+        return {};
+    }
+    if (isReactInternalFramework(internalFramework)) {
+        return reactImports(version);
+    }
+    if (internalFramework === 'angular') {
+        return angularImports(version);
+    }
+    if (internalFramework === 'vue3') {
+        return vueImports(version);
     }
     return {};
 };
@@ -105,10 +137,13 @@ export const getImportMap = ({
     internalFramework,
     isEnterprise,
     isIntegratedCharts,
+    frameworkVersion,
 }: {
     internalFramework: InternalFramework;
     isEnterprise: boolean;
     isIntegratedCharts?: boolean;
+    /** Framework version to resolve against; the pinned default when omitted */
+    frameworkVersion?: string;
 }): ImportMap => {
     const imports: ImportMap = {
         'ag-stack': esmEntryPoint('ag-stack'),
@@ -119,7 +154,7 @@ export const getImportMap = ({
         'ag-grid-enterprise': esmEntryPoint('ag-grid-enterprise'),
         'ag-grid-enterprise/styles/': stylesPrefix('ag-grid-enterprise'),
         '@ag-grid-community/locale': esmEntryPoint('@ag-grid-community/locale'),
-        ...getFrameworkImports(internalFramework),
+        ...getFrameworkImports(internalFramework, frameworkVersion),
     };
 
     if (isEnterprise || isIntegratedCharts) {
