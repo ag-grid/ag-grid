@@ -23,7 +23,12 @@ interface RoadmapProps {
 }
 
 function formatLastUpdated(dateStr: string): string {
-    return new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(dateStr));
+    return new Intl.DateTimeFormat('en', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'UTC',
+    }).format(new Date(dateStr));
 }
 
 export const Roadmap: React.FC<RoadmapProps> = ({ roadmapData, versionData }) => {

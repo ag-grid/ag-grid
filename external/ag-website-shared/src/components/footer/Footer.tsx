@@ -16,7 +16,15 @@ interface FooterProps {
 const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
     const slugger = new GithubSlugger();
 
-    const isFragment = (url: string) => url.startsWith('#');
+    const toggleCookiesPrefs = (event) => {
+        event.preventDefault();
+
+        if (window.location.hash === '#manage_cookies') {
+            window.location.hash = '';
+        }
+
+        window.location.hash = 'manage_cookies';
+    };
 
     return footerItems.map(({ title, links }) => {
         // Associate each link list with its (non-heading) title so assistive tech still announces the
@@ -28,11 +36,12 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
                     {title}
                 </span>
                 <ul className="list-style-none" aria-labelledby={titleId}>
-                    {links.map(({ name, url, newTab, iconName }: any) => (
+                    {links.map(({ name, url, newTab, iconName, showCookiesPrefs }: any) => (
                         <li key={`${title}_${name}`}>
                             <a
                                 id={`${slugger.slug(name)}-nav`}
-                                href={isFragment(url) ? url : urlWithBaseUrl(url)}
+                                href={urlWithBaseUrl(url)}
+                                onClick={showCookiesPrefs ? toggleCookiesPrefs : undefined}
                                 {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
                             >
                                 {iconName && <Icon name={iconName} />}

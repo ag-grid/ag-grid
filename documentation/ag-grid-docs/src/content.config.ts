@@ -187,6 +187,7 @@ const footer = defineCollection({
                     name: z.string(),
                     url: z.string(),
                     newTab: z.boolean().optional(),
+                    showCookiesPrefs: z.boolean().optional(),
                     iconName: z.string().optional(),
                 })
             ),
