@@ -37,7 +37,7 @@ const NAMEABLE_ROLES = ['listbox', 'group', 'region'];
  * Assert the invariant, not one specific remediation: the ticket's Expected is disjunctive
  * ("no aria-label while presentational, OR a role that permits a name").
  */
-function expectNoPresentationalNameConflict(gridRoot: HTMLElement): void {
+function expectNoPresentationalNameConflict(gridRoot: Element): void {
     const dropLists = Array.from(gridRoot.querySelectorAll<HTMLElement>('.ag-column-drop-list'));
 
     // Precondition: these are the elements the audit tool inspects.
@@ -56,7 +56,7 @@ function expectNoPresentationalNameConflict(gridRoot: HTMLElement): void {
  * silently rename `ag-column-drop-area:source=…;name=…` and break the docs e2e specs that
  * target empty zones. Pin the name — and the fact that its role permits one.
  */
-function expectEmptyZonesKeepTheirName(gridRoot: HTMLElement): void {
+function expectEmptyZonesKeepTheirName(gridRoot: Element): void {
     const unnamed = Array.from(gridRoot.querySelectorAll<HTMLElement>('.ag-column-drop-list'))
         .filter(
             (el) => el.getAttribute('aria-label') == null || !NAMEABLE_ROLES.includes(el.getAttribute('role') ?? '')
