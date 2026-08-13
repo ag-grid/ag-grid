@@ -6,8 +6,12 @@
 export const FRAMEWORK_VERSION_PLACEHOLDER = '0.0.0-ag-framework-version';
 
 export interface InjectImportMapOptions {
-    /** The import map, serialised, with `placeholder` wherever the framework version goes */
-    template: string;
+    /**
+     * The import map, serialised, with `placeholder` wherever the framework version goes.
+     * `development` is the map resolving the framework's development build, present only
+     * where it differs from the production one.
+     */
+    templates: { production: string; development?: string };
     /** Substituted for `placeholder` when the URL does not request a version */
     defaultVersion: string;
     placeholder: string;
@@ -15,18 +19,19 @@ export interface InjectImportMapOptions {
     versionParam: string;
     /** Source of the pattern a requested version must match */
     versionPattern: string;
+    /** URL parameter asking for the development build, with `prod=false` */
+    prodParam: string;
 }
 
 /**
- * Registers the example page's import map, resolving the framework version from the
- * `?version=` URL parameter when one is given.
+ * Registers the example page's import map, resolving the framework version and whether to
+ * run against its development build from the `?version=` and `?prod=` URL parameters.
  *
- * Example pages are statically generated, so the requested version is not known when the
- * page is built: the map is rendered with a placeholder where the framework version goes,
- * and this substitutes the version and registers the map in the browser. It is emitted as a
- * classic inline script, which the parser runs synchronously -- so the map is in place
- * before the parser reaches the example's module script, which is what the import-map spec
- * requires.
+ * Example pages are statically generated, so neither is known when the page is built: the
+ * maps are rendered with a placeholder where the framework version goes, and this picks one,
+ * substitutes the version and registers it in the browser. It is emitted as a classic inline
+ * script, which the parser runs synchronously -- so the map is in place before the parser
+ * reaches the example's module script, which is what the import-map spec requires.
  *
  * A version that is not a plausible version string aborts the load with a visible message,
  * rather than quietly running the example against the pinned default. A well-formed but
@@ -37,13 +42,17 @@ export interface InjectImportMapOptions {
  * parameters.
  */
 export function injectImportMap({
-    template,
+    templates,
     defaultVersion,
     placeholder,
     versionParam,
     versionPattern,
+    prodParam,
 }: InjectImportMapOptions): void {
-    const requestedVersion = new URLSearchParams(window.location.search).get(versionParam);
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedVersion = urlParams.get(versionParam);
+    // Production unless the URL says otherwise, as under SystemJS
+    const isProd = urlParams.get(prodParam) !== 'false';
     let version = defaultVersion;
 
     if (requestedVersion) {
@@ -61,6 +70,8 @@ export function injectImportMap({
         }
         version = requestedVersion;
     }
+
+    const template = (isProd ? templates.production : templates.development) ?? templates.production;
 
     const importMap = document.createElement('script');
     importMap.type = 'importmap';

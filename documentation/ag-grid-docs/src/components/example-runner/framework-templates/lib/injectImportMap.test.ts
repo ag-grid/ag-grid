@@ -1,11 +1,15 @@
 import { FRAMEWORK_VERSION_PLACEHOLDER, injectImportMap } from './injectImportMap';
 
+const importMap = (query: string) =>
+    JSON.stringify({ imports: { react: `https://esm.sh/react@${FRAMEWORK_VERSION_PLACEHOLDER}${query}` } });
+
 const OPTIONS = {
-    template: JSON.stringify({ imports: { react: `https://esm.sh/react@${FRAMEWORK_VERSION_PLACEHOLDER}` } }),
+    templates: { production: importMap(''), development: importMap('?dev') },
     defaultVersion: '19.2.1',
     placeholder: FRAMEWORK_VERSION_PLACEHOLDER,
     versionParam: 'version',
     versionPattern: /^\d+\.\d+\.\d+(?:[-+][\w.-]+)*$/.source,
+    prodParam: 'prod',
 };
 
 /**
@@ -51,6 +55,30 @@ describe('injectImportMap', () => {
         injectImportMap(OPTIONS);
 
         expect(JSON.parse(head[0].textContent).imports.react).toBe('https://esm.sh/react@18.3.1');
+    });
+
+    test('registers the production build unless the URL asks for the development one', () => {
+        const { head } = stubPage('?prod=true');
+
+        injectImportMap(OPTIONS);
+
+        expect(JSON.parse(head[0].textContent).imports.react).toBe('https://esm.sh/react@19.2.1');
+    });
+
+    test('registers the development build for prod=false', () => {
+        const { head } = stubPage('?prod=false&version=18.3.1');
+
+        injectImportMap(OPTIONS);
+
+        expect(JSON.parse(head[0].textContent).imports.react).toBe('https://esm.sh/react@18.3.1?dev');
+    });
+
+    test('falls back to the one map for frameworks with no separate development build', () => {
+        const { head } = stubPage('?prod=false');
+
+        injectImportMap({ ...OPTIONS, templates: { production: OPTIONS.templates.production } });
+
+        expect(JSON.parse(head[0].textContent).imports.react).toBe('https://esm.sh/react@19.2.1');
     });
 
     test('fails visibly rather than falling back when the version is not a version', () => {

@@ -37,16 +37,27 @@ export const FRAMEWORK_VERSION_PARAM = 'version';
 export const FRAMEWORK_VERSION_PATTERN = /^\d+\.\d+\.\d+(?:[-+][\w.-]+)*$/;
 
 /**
+ * The URL parameter that picks the framework's development build. As under SystemJS, examples
+ * run against the production build unless the URL says `prod=false`.
+ */
+export const PROD_PARAM = 'prod';
+
+/**
  * React and React DOM have no ES module build on npm, so they resolve through esm.sh.
  * `external=react` keeps React DOM from bundling a second copy of React, which would give
- * the page two renderers and break hooks.
+ * the page two renderers and break hooks. esm.sh serves the production build by default and
+ * the development one -- React's warnings and its dev-only validations -- given `dev`.
  */
-const reactImports = (version: string): ImportMap => ({
-    react: `https://esm.sh/react@${version}`,
-    'react/': `https://esm.sh/react@${version}/`,
-    'react-dom': `https://esm.sh/react-dom@${version}?external=react`,
-    'react-dom/': `https://esm.sh/react-dom@${version}&external=react/`,
-});
+const reactImports = (version: string, isProd: boolean): ImportMap => {
+    const dev = isProd ? '' : '&dev';
+
+    return {
+        react: `https://esm.sh/react@${version}${isProd ? '' : '?dev'}`,
+        'react/': `https://esm.sh/react@${version}${dev}/`,
+        'react-dom': `https://esm.sh/react-dom@${version}?external=react${dev}`,
+        'react-dom/': `https://esm.sh/react-dom@${version}&external=react${dev}/`,
+    };
+};
 
 /** `esm-browser` is the build that ships Vue's runtime template compiler */
 const vueImports = (version: string): ImportMap => ({
@@ -93,13 +104,17 @@ export const getDefaultFrameworkVersion = (internalFramework: InternalFramework)
     return undefined;
 };
 
-const getFrameworkImports = (internalFramework: InternalFramework, frameworkVersion?: string): ImportMap => {
+const getFrameworkImports = (
+    internalFramework: InternalFramework,
+    frameworkVersion?: string,
+    isProd = true
+): ImportMap => {
     const version = frameworkVersion ?? getDefaultFrameworkVersion(internalFramework);
     if (!version) {
         return {};
     }
     if (isReactInternalFramework(internalFramework)) {
-        return reactImports(version);
+        return reactImports(version, isProd);
     }
     if (internalFramework === 'angular') {
         return angularImports(version);
@@ -138,12 +153,15 @@ export const getImportMap = ({
     isEnterprise,
     isIntegratedCharts,
     frameworkVersion,
+    isProd = true,
 }: {
     internalFramework: InternalFramework;
     isEnterprise: boolean;
     isIntegratedCharts?: boolean;
     /** Framework version to resolve against; the pinned default when omitted */
     frameworkVersion?: string;
+    /** Whether to resolve the framework's production build, as examples do by default */
+    isProd?: boolean;
 }): ImportMap => {
     const imports: ImportMap = {
         'ag-stack': esmEntryPoint('ag-stack'),
@@ -154,7 +172,7 @@ export const getImportMap = ({
         'ag-grid-enterprise': esmEntryPoint('ag-grid-enterprise'),
         'ag-grid-enterprise/styles/': stylesPrefix('ag-grid-enterprise'),
         '@ag-grid-community/locale': esmEntryPoint('@ag-grid-community/locale'),
-        ...getFrameworkImports(internalFramework, frameworkVersion),
+        ...getFrameworkImports(internalFramework, frameworkVersion, isProd),
     };
 
     if (isEnterprise || isIntegratedCharts) {

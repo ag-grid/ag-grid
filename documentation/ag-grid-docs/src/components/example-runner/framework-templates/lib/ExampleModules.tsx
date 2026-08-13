@@ -2,6 +2,7 @@ import type { InternalFramework } from '@ag-grid-types';
 import {
     FRAMEWORK_VERSION_PARAM,
     FRAMEWORK_VERSION_PATTERN,
+    PROD_PARAM,
     getDefaultFrameworkVersion,
     getImportMap,
 } from '@utils/exampleModules/getImportMap';
@@ -34,7 +35,8 @@ interface Props {
  * The exception is Plunker, which is handed the sources as authored -- see `transpileInBrowser`.
  *
  * For framework examples the map is registered in the browser rather than served as markup, so
- * that `?version=` can pick the framework version to run against -- see `injectImportMap`.
+ * that `?version=` and `?prod=` can pick the framework version and build an example runs
+ * against -- see `injectImportMap`.
  */
 export const ExampleModules = ({
     appLocation,
@@ -47,23 +49,32 @@ export const ExampleModules = ({
     nonce,
 }: Props) => {
     const defaultVersion = getDefaultFrameworkVersion(internalFramework);
-    const importMap = getImportMap({
-        internalFramework,
-        isEnterprise,
-        isIntegratedCharts,
-        // Substituted in the browser, so the version can come from the URL (see injectImportMap)
-        frameworkVersion: defaultVersion ? FRAMEWORK_VERSION_PLACEHOLDER : undefined,
-    });
-    const template = JSON.stringify({ imports: importMap }, null, 4);
+    // Substituted in the browser, so the version can come from the URL (see injectImportMap)
+    const frameworkVersion = defaultVersion ? FRAMEWORK_VERSION_PLACEHOLDER : undefined;
+    const renderMap = (isProd: boolean) => {
+        const imports = getImportMap({
+            internalFramework,
+            isEnterprise,
+            isIntegratedCharts,
+            frameworkVersion,
+            isProd,
+        });
+        return JSON.stringify({ imports }, null, 4);
+    };
+
+    const production = renderMap(true);
+    const development = renderMap(false);
     const startFile = pathJoin(appLocation, toModuleFileName(entryFileName));
 
     const injectOptions: InjectImportMapOptions | undefined = defaultVersion
         ? {
-              template,
+              // Only React has a separate development build, so for the others there is one map
+              templates: { production, development: development === production ? undefined : development },
               defaultVersion,
               placeholder: FRAMEWORK_VERSION_PLACEHOLDER,
               versionParam: FRAMEWORK_VERSION_PARAM,
               versionPattern: FRAMEWORK_VERSION_PATTERN.source,
+              prodParam: PROD_PARAM,
           }
         : undefined;
 
@@ -76,7 +87,7 @@ export const ExampleModules = ({
                 />
             ) : (
                 // Nothing to resolve from the URL, so the map is served as rendered
-                <script nonce={nonce} type="importmap" dangerouslySetInnerHTML={{ __html: template }} />
+                <script nonce={nonce} type="importmap" dangerouslySetInnerHTML={{ __html: production }} />
             )}
             {usesMathRandom && <SeedRandom nonce={nonce} />}
 

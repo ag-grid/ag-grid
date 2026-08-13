@@ -177,4 +177,35 @@ describe('getImportMap', () => {
             }
         );
     });
+
+    describe('framework build', () => {
+        test('React resolves its production build by default and its development build on request', () => {
+            const production = getImportMap({ internalFramework: 'reactFunctionalTs', isEnterprise: false });
+            const development = getImportMap({
+                internalFramework: 'reactFunctionalTs',
+                isEnterprise: false,
+                isProd: false,
+            });
+
+            // esm.sh serves the production build unless asked for `dev`
+            expect(production['react']).not.toContain('dev');
+            expect(production['react-dom']).not.toContain('dev');
+
+            expect(development['react']).toBe(
+                `https://esm.sh/react@${getDefaultFrameworkVersion('reactFunctionalTs')}?dev`
+            );
+            expect(development['react/']).toContain('&dev/');
+            expect(development['react-dom']).toContain('?external=react&dev');
+            expect(development['react-dom/']).toContain('&external=react&dev/');
+        });
+
+        test.each(['angular', 'vue3'] as InternalFramework[])(
+            '%s resolves the same entries either way, having no separate development build',
+            (internalFramework) => {
+                expect(getImportMap({ internalFramework, isEnterprise: false, isProd: false })).toEqual(
+                    getImportMap({ internalFramework, isEnterprise: false })
+                );
+            }
+        );
+    });
 });
