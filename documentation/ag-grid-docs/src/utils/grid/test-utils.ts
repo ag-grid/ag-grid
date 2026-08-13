@@ -63,27 +63,61 @@ const ALL_FRAMEWORKS = [
 ] as const;
 type AgFramework = (typeof ALL_FRAMEWORKS)[number];
 
+const PROD_VARIANT_FRAMEWORK = 'reactFunctionalTs';
+
+/**
+ * The framework this run is pinned to, or null for a run that covers them all. CI shards the suite by
+ * framework, one job per value, so a pinned run must declare nothing outside its own shard.
+ */
+function getPinnedFramework(): AgFramework | null {
+    const frameworkFilter = process.env.FRAMEWORK;
+    if (!frameworkFilter) {
+        return null;
+    }
+    const requestedFramework = frameworkFilter as AgFramework;
+    if (!ALL_FRAMEWORKS.includes(requestedFramework)) {
+        throw new Error(
+            `Invalid framework specified in FRAMEWORK environment variable: ${frameworkFilter}. Valid options are: ${ALL_FRAMEWORKS.join(', ')}`
+        );
+    }
+    return requestedFramework;
+}
+
+const PINNED_FRAMEWORK = getPinnedFramework();
+
 /**
  * React is the only framework declared twice - once on the production build, once forcing the development
- * one - so this only ever drops a React variant. That is a sixth of the suite, and locally the development
- * build is the one worth the wall clock, so CI runs both and a local run does not.
+ * one - so running `eachFramework` on both doubles a sixth of the suite for little return. Only one of the
+ * two is used: the development build locally, where its warnings are worth the wall clock, and the
+ * production build in CI. `ALL_FRAMEWORK_VARIANTS=true` (or `--all-variants`) uses both.
+ *
+ * This is an economy applied to `eachFramework`. A spec that names a variant outright -
+ * `test.reactFunctionalTs` or `test.reactFunctionalTs_Dev` - is asserting that this example behaves
+ * differently on that build, so it is always declared and never subject to this. See isFrameworkDeclared.
  */
 const runAllFrameworkVariants = !!process.env.CI || process.env.ALL_FRAMEWORK_VARIANTS === 'true';
 
-const PROD_VARIANT_FRAMEWORK = 'reactFunctionalTs';
+/**
+ * Frameworks that `eachFramework` never runs, so pinning to one leaves only the handful of specs that name
+ * it outright. That makes `--framework reactFunctionalTs_Dev` a quick way to run just those.
+ */
+const EACH_FRAMEWORK_EXCLUDES: readonly AgFramework[] = [reactFunctionalTsDev];
 
-// Filter frameworks based on FRAMEWORK environment variable
-function getFilteredFrameworks(): readonly AgFramework[] {
-    const frameworkFilter = process.env.FRAMEWORK;
-    if (frameworkFilter) {
-        const requestedFramework = frameworkFilter as AgFramework;
-        if (ALL_FRAMEWORKS.includes(requestedFramework)) {
-            return [requestedFramework] as const;
-        } else {
-            throw new Error(
-                `Invalid framework specified in FRAMEWORK environment variable: ${frameworkFilter}. Valid options are: ${ALL_FRAMEWORKS.join(', ')}`
-            );
-        }
+/**
+ * Variants a pinned run declares alongside the framework itself. A CI job is a shard per *framework*, and
+ * the two React builds are variants within one framework rather than two of them - so the React shard owns
+ * the development-build tests too, and CI needs no second job to cover them. Only tests naming the variant
+ * outright are picked up; `eachFramework` stays on the production build (see getEachFrameworkList), which
+ * is what keeps this from doubling a sixth of the suite.
+ */
+const PINNED_FRAMEWORK_VARIANTS: Partial<Record<AgFramework, readonly AgFramework[]>> = {
+    [PROD_VARIANT_FRAMEWORK]: [reactFunctionalTsDev],
+};
+
+/** The frameworks `eachFramework` runs. Tests naming a framework outright use isFrameworkDeclared. */
+function getEachFrameworkList(): readonly AgFramework[] {
+    if (PINNED_FRAMEWORK) {
+        return EACH_FRAMEWORK_EXCLUDES.includes(PINNED_FRAMEWORK) ? [] : [PINNED_FRAMEWORK];
     }
     if (!runAllFrameworkVariants) {
         return ALL_FRAMEWORKS.filter((framework) => framework !== PROD_VARIANT_FRAMEWORK);
@@ -91,15 +125,26 @@ function getFilteredFrameworks(): readonly AgFramework[] {
     return ALL_FRAMEWORKS;
 }
 
-const FILTERED_FRAMEWORKS = getFilteredFrameworks();
+const EACH_FRAMEWORK_LIST = getEachFrameworkList();
+
+/**
+ * Whether a test naming this framework outright should be declared. Only the CI shard pinning applies -
+ * declaring a test just to skip it produces a fake "skipped" result and still spins up a browser fixture.
+ */
+function isFrameworkDeclared(agFramework: AgFramework): boolean {
+    if (PINNED_FRAMEWORK === null || agFramework === PINNED_FRAMEWORK) {
+        return true;
+    }
+    return PINNED_FRAMEWORK_VARIANTS[PINNED_FRAMEWORK]?.includes(agFramework) ?? false;
+}
 
 // One worker, so a run says once what it is doing rather than once per worker.
-if (process.env.TEST_WORKER_INDEX === '0' && !process.env.FRAMEWORK) {
+if (process.env.TEST_WORKER_INDEX === '0' && !PINNED_FRAMEWORK) {
     // eslint-disable-next-line no-console
     console.log(
         runAllFrameworkVariants
-            ? `Running all framework variants: ${FILTERED_FRAMEWORKS.join(', ')}`
-            : `Skipping the ${PROD_VARIANT_FRAMEWORK} variant - set ALL_FRAMEWORK_VARIANTS=true to include it`
+            ? `Running eachFramework tests on: ${EACH_FRAMEWORK_LIST.join(', ')}`
+            : `Running eachFramework tests on: ${EACH_FRAMEWORK_LIST.join(', ')} - set ALL_FRAMEWORK_VARIANTS=true to add ${PROD_VARIANT_FRAMEWORK}. Tests naming a framework outright always run.`
     );
 }
 
@@ -356,11 +401,11 @@ const frameworkTest =
         testBody: (fixtures: TestFixtures) => Promise<void>,
         opts?: { allowedConsoleMessages?: string[] }
     ): void => {
-        // A single-framework test (test.typescript(...), etc.) hardcodes its framework, bypassing the
-        // FRAMEWORK filter that eachFramework applies via FILTERED_FRAMEWORKS. Declaring a test only to
-        // skip it at runtime when the CI job targets another framework produces a fake "skipped" result
-        // and still spins up a browser fixture, so don't declare it at all for a filtered-out framework.
-        if (!FILTERED_FRAMEWORKS.includes(agFramework)) {
+        // A single-framework test (test.typescript(...), etc.) names its framework outright, so only the
+        // CI shard pinning applies - not the React variant economy eachFramework is subject to. Declaring
+        // a test only to skip it at runtime when the job targets another framework produces a fake
+        // "skipped" result and still spins up a browser fixture, so don't declare it at all.
+        if (!isFrameworkDeclared(agFramework)) {
             return;
         }
 
@@ -444,7 +489,7 @@ const eachFramework = (
     opts?: { allowedConsoleMessages?: string[] }
 ) => {
     describeWithTeardown(testName, opts, () => {
-        FILTERED_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody));
+        EACH_FRAMEWORK_LIST.forEach((framework) => frameworkTest(framework)(undefined, testBody));
     });
 };
 
