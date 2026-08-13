@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Page Verification (Staging)
     outputs:
-      prev_run_id: ${{ steps.prev_run.outputs.id }}
+      baseline_run_id: ${{ steps.prev_run.outputs.baseline_id }}
     # For manual dispatch: always run.
     # For workflow_run: only proceed if triggered by a push to this repo (not a fork PR),
     # and only if the upstream CI run succeeded. This guards against the untrusted-checkout
@@ -129,12 +129,24 @@ jobs:
             --branch latest \
             --status completed \
             --limit 1 \
-            --json databaseId,headSha,conclusion \
+            --json headSha,conclusion \
             --jq '.[0] // {}')
 
-          echo "id=$(echo "$PREV" | jq -r '.databaseId // ""')" >> $GITHUB_OUTPUT
           echo "sha=$(echo "$PREV" | jq -r '.headSha // ""')" >> $GITHUB_OUTPUT
           echo "outcome=$(echo "$PREV" | jq -r '.conclusion // ""')" >> $GITHUB_OUTPUT
+
+          # The CSP baseline has to come from a run that produced a report. 'completed' is a
+          # status, so it also matches a skipped run, which has no artifact, and a failed one,
+          # whose report stops where the suite stopped; 'success' is a conclusion, so it matches
+          # neither. Skips are routine here, since the job only proceeds for a successful
+          # same-repo push, so the run immediately before this one is usually not a baseline.
+          echo "baseline_id=$(gh run list \
+            --workflow post-deploy-verification.yml \
+            --branch latest \
+            --status success \
+            --limit 1 \
+            --json databaseId \
+            --jq '.[0].databaseId // ""')" >> $GITHUB_OUTPUT
 
       - name: Notify Slack
         # Always notify on failure. On success, only notify if the previous run
@@ -190,17 +202,24 @@ jobs:
           path: csp/current
 
       - name: Download previous CSP report
-        # Absent on the first run after this job is introduced, and whenever the previous run
-        # predates it - the notifier treats a missing baseline as "everything is new".
-        if: needs.page-verification.outputs.prev_run_id != ''
-        continue-on-error: true
+        # A baseline is often absent: the last successful run may predate this job, its
+        # artifact may have expired, or it may have been a dispatch against a hand-given
+        # URL, which is deliberately not uploaded. The notifier treats a missing baseline
+        # as "everything is new", so report it and carry on rather than leaving a failed
+        # step on an otherwise green run.
+        if: needs.page-verification.outputs.baseline_run_id != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASELINE_RUN_ID: ${{ needs.page-verification.outputs.baseline_run_id }}
         run: |
-          gh run download ${{ needs.page-verification.outputs.prev_run_id }} \
-            --repo ${{ github.repository }} \
+          if gh run download "$BASELINE_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
             --name csp-violations \
-            --dir csp/previous
+            --dir csp/previous; then
+            echo "Comparing against run $BASELINE_RUN_ID."
+          else
+            echo "Run $BASELINE_RUN_ID has no csp-violations artifact; treating this run as having no baseline."
+          fi
 
       - name: Report CSP violations
         env:
