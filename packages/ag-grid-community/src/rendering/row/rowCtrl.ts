@@ -7,7 +7,6 @@ import {
     _isElementChildOfClass,
     _isVisible,
     _makeNull,
-    _removeAriaExpanded,
     _setAriaExpanded,
     _setAriaRowIndex,
 } from 'ag-stack';
@@ -285,8 +284,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (this.rowNode.isExpandable()) {
             _setAriaExpanded(element, !!this.rowNode.expanded);
-        } else {
-            _removeAriaExpanded(element);
         }
 
         this.setRowCompRowId();

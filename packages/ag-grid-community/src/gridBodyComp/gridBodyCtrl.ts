@@ -110,6 +110,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.addEventListeners();
         this.addFocusListeners([eTop, eGridViewport, eBottom]);
+        this.setGridRole();
         this.onGridColumnsChanged();
         this.addBodyViewportListener();
         // Mount before setPinnedRowsHeights: the top section has to reserve vertical space for the
