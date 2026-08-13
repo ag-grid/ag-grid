@@ -29,10 +29,11 @@ export abstract class SimpleFilterHandler<
     /** Used to get the filter type for filter models. */
     public abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date';
 
-    protected abstract readonly FilterModelFormatterClass: new (
+    /** Subclasses narrow `filterParams` to their own filter's params type. */
+    protected abstract createModelFormatter(
         optionsFactory: OptionsFactory,
         filterParams: ISimpleFilterParams
-    ) => SimpleFilterModelFormatter<ISimpleFilterParams>;
+    ): SimpleFilterModelFormatter<ISimpleFilterParams>;
 
     protected params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>;
     private optionsFactory: OptionsFactory;
@@ -73,9 +74,7 @@ export abstract class SimpleFilterHandler<
         this.optionsFactory = optionsFactory;
         optionsFactory.init(this.beans.log, filterParams, this.defaultOptions);
 
-        this.filterModelFormatter = this.createManagedBean(
-            new this.FilterModelFormatterClass(optionsFactory, filterParams)
-        );
+        this.filterModelFormatter = this.createManagedBean(this.createModelFormatter(optionsFactory, filterParams));
 
         this.updateParams(params);
 

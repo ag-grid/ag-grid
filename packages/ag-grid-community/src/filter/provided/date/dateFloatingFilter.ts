@@ -9,12 +9,13 @@ import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';
+import type { OptionsFactory } from '../optionsFactory';
 import { getDebounceMs } from '../providedFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import type { DateFilter } from './dateFilter';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
-import type { DateFilterModel, DateFilterParams } from './iDateFilter';
+import type { DateFilterModel, DateFilterParams, IDateFilterParams } from './iDateFilter';
 
 const DateFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -33,13 +34,19 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
     private readonly eReadOnlyText: GridInputTextField = RefPlaceholder;
     private readonly eDateWrapper: HTMLInputElement = RefPlaceholder;
 
-    protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
     private dateComp: DateCompWrapper;
     protected readonly filterType = 'date';
     protected readonly defaultOptions = DEFAULT_DATE_FILTER_OPTIONS;
 
     constructor() {
         super(DateFloatingFilterElement, [AgInputTextFieldSelector]);
+    }
+
+    protected createModelFormatter(
+        optionsFactory: OptionsFactory,
+        filterParams: IDateFilterParams
+    ): DateFilterModelFormatter {
+        return new DateFilterModelFormatter(optionsFactory, filterParams);
     }
 
     protected override setParams(params: IFloatingFilterParams<DateFilter>): void {

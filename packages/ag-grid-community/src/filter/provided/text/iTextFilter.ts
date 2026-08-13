@@ -66,8 +66,8 @@ export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TD
  */
 
 export interface ITextFilterParams extends ISimpleFilterParams {
-    /** Array of filter options to present to the user. A key the filter cannot evaluate is reported when used. */
-    filterOptions?: (IFilterOptionDef | TextFilterOptionKey | CustomFilterOptionKey)[];
+    /** Array of filter options to present to the user. */
+    filterOptions?: (IFilterOptionDef | TextFilterOptionKey)[];
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: TextFilterOptionKey | CustomFilterOptionKey;
     /**
