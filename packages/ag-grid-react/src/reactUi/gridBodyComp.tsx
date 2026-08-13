@@ -204,8 +204,14 @@ const GridBodyComp = () => {
         [bottomSection.invisible, topSection.invisible]
     );
     const bottomClasses = useMemo(
-        () => classesList('ag-grid-pinned-bottom-rows', bottomSectionHidden ? 'ag-hidden' : null, cellSelectableCss),
-        [bottomSection.invisible, bottomSectionHidden, cellSelectableCss]
+        () =>
+            classesList(
+                'ag-grid-pinned-bottom-rows',
+                bottomSectionHidden ? 'ag-hidden' : null,
+                stickyBottomHeightNumber > 0 ? 'ag-grid-pinned-bottom-rows-has-sticky-rows' : null,
+                cellSelectableCss
+            ),
+        [bottomSection.invisible, bottomSectionHidden, stickyBottomHeightNumber, cellSelectableCss]
     );
     const rowAnimationContainerClass = useMemo(
         () => classesList(rowAnimationClass, preventRowAnimationClass),

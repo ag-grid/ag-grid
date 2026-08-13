@@ -112,6 +112,10 @@
         }
     }
 
+    .ag-grid-pinned-bottom-rows-has-sticky-rows {
+        border-top: var(--ag-row-border);
+    }
+
     :where(.ag-grid-sticky-bottom-rows-container) {
         .ag-row:where(:not(.ag-header-row, .ag-full-width-row)),
         .ag-row:where(.ag-embedded-full-width-row) {
@@ -119,7 +123,6 @@
             > .ag-grid-scrolling-cells,
             > .ag-grid-pinned-right-cells {
                 border-bottom: none;
-                border-top: var(--ag-row-border);
             }
         }
     }

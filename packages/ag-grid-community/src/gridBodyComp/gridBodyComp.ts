@@ -228,11 +228,13 @@ export class GridBodyComp extends Component implements FocusableContainer {
 
     private refreshBottomSectionHeight(): void {
         const bottomSection = this.pinnedSectionState.bottom;
-        const totalHeight = bottomSection.height + this.stickyBottomRowsHeight;
+        const stickyBottomRowsHeight = this.stickyBottomRowsHeight;
+        const totalHeight = bottomSection.height + stickyBottomRowsHeight;
         const heightString = `${totalHeight}px`;
         const eBottom = this.eBottom;
         eBottom.style.minHeight = heightString;
         eBottom.style.height = heightString;
+        eBottom.classList.toggle('ag-grid-pinned-bottom-rows-has-sticky-rows', stickyBottomRowsHeight > 0);
         _setDisplayed(eBottom, totalHeight > 0, { skipAriaHidden: true });
     }
 

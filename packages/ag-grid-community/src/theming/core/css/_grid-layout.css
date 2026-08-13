@@ -111,17 +111,20 @@
     }
 }
 
+.ag-grid-pinned-bottom-rows-has-sticky-rows {
+    border-top: var(--ag-row-border);
+}
+
 :where(.ag-grid-sticky-bottom-rows-container) {
     .ag-row:where(:not(.ag-header-row, .ag-full-width-row)),
     .ag-row:where(.ag-embedded-full-width-row) {
         > .ag-grid-pinned-left-cells,
         > .ag-grid-scrolling-cells,
         > .ag-grid-pinned-right-cells {
-            /* FIXME: it would be preferable to selectively apply the border top
-            to rows that are not sticky bottom, rather than apply to all and
-            remove for sticky bottom */
+            /* FIXME: it would be preferable to selectively apply the border
+            bottom to rows that are not sticky bottom, rather than apply to all
+            and remove for sticky bottom */
             border-bottom: none;
-            border-top: var(--ag-row-border);
         }
     }
 }
