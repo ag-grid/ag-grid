@@ -19,11 +19,9 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
     const toggleCookiesPrefs = (event) => {
         event.preventDefault();
 
-        if (window.location.hash === '#manage_cookies') {
-            window.location.hash = '';
-        }
+        if (!window.__enzuzoApi) return;
 
-        window.location.hash = 'manage_cookies';
+        window.__enzuzoApi.prefCenter.show();
     };
 
     return footerItems.map(({ title, links }) => {
