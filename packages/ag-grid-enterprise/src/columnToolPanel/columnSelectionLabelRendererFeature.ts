@@ -57,7 +57,11 @@ export class ColumnSelectionLabelRendererFeature extends BeanStub {
         }
 
         const { renderer } = this;
-        if (renderer != null && this.rendererClass === details.componentClass && renderer.refresh?.(details.params) === true) {
+        if (
+            renderer != null &&
+            this.rendererClass === details.componentClass &&
+            renderer.refresh?.(details.params) === true
+        ) {
             // Cancel any replacement still initialising with older parameters.
             this.rendererVersion++;
             return;
