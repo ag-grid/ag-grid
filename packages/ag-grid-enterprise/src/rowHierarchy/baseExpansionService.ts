@@ -1,4 +1,4 @@
-import { _setAriaExpanded } from 'ag-stack';
+import { _removeAriaExpanded, _setAriaExpanded } from 'ag-stack';
 
 import type {
     IsGroupOpenByDefaultParams,
@@ -117,7 +117,11 @@ export abstract class BaseExpansionService extends BeanStub {
         rowComp.toggleCss('ag-row-group', expandable);
         rowComp.toggleCss('ag-row-group-expanded', expandable && expanded);
         rowComp.toggleCss('ag-row-group-contracted', expandable && !expanded);
-        _setAriaExpanded(gui.element, expandable && expanded);
+        if (expandable) {
+            _setAriaExpanded(gui.element, expanded);
+        } else {
+            _removeAriaExpanded(gui.element);
+        }
     }
 
     protected dispatchStateUpdatedEvent() {
