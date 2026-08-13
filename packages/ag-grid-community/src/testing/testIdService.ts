@@ -487,7 +487,10 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
     private setupColumnDropArea(root: Element, source: 'panel' | 'toolbar'): void {
         root.querySelectorAll('.ag-column-drop').forEach((columnDrop) => {
-            const dropAreaName = columnDrop.querySelector('.ag-column-drop-list')?.getAttribute('aria-label');
+            // An empty drop zone is presentational, so it carries its name as a data attribute
+            // rather than an aria-label.
+            const dropList = columnDrop.querySelector('.ag-column-drop-list');
+            const dropAreaName = dropList?.getAttribute('aria-label') ?? dropList?.getAttribute('data-drop-area-name');
             setTestId(columnDrop, agTestIdFor.columnDropArea(source, dropAreaName));
             columnDrop.querySelectorAll('.ag-column-drop-cell').forEach((columnDropCell) => {
                 const label = columnDropCell.querySelector('.ag-column-drop-cell-text')?.textContent;

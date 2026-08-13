@@ -139,7 +139,6 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.createManagedBean(this.positionableFeature);
 
         this.refreshGui();
-        _setAriaLabel(this.ePillDropList, this.getAriaLabel());
 
         this.addManagedElementListeners(this.getFocusableElement(), {
             focusin: this.onFocusIn.bind(this),
@@ -612,8 +611,17 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const { childPillComponents, ePillDropList } = this;
         const len = childPillComponents.length;
 
-        // An empty zone has no `option` children so cannot be a `listbox`, but is still labelled.
-        _setAriaRole(ePillDropList, len === 0 ? 'group' : 'listbox');
+        // A presentational element must not carry an accessible name, so an empty zone drops its
+        // label; the name stays readable for test-id derivation via `data-drop-area-name`.
+        const empty = len === 0;
+        const label = this.getAriaLabel();
+        _setAriaRole(ePillDropList, empty ? 'presentation' : 'listbox');
+        _setAriaLabel(ePillDropList, empty ? null : label);
+        if (empty) {
+            ePillDropList.setAttribute('data-drop-area-name', label);
+        } else {
+            ePillDropList.removeAttribute('data-drop-area-name');
+        }
 
         for (let i = 0; i < len; i++) {
             const comp = childPillComponents[i];

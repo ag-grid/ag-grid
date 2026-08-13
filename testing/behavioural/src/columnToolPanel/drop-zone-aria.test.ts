@@ -25,17 +25,9 @@ function createGrid(gridsManager: TestGridsManager, options: Partial<GridOptions
     });
 }
 
-/** Roles that permit an accessible name from `aria-label`. */
-const NAMEABLE_ROLES = ['listbox', 'group', 'region'];
-
 /**
- * The reporter-visible symptom (AG-18152): an ARIA audit flags `div.ag-column-drop-list`
- * because it carries `role="presentation"` **and** `aria-label` at the same time.
- * Presentational-role conflict resolution then discards the role, the element computes as
- * generic, and `aria-label` is prohibited on it.
- *
- * Assert the invariant, not one specific remediation: the ticket's Expected is disjunctive
- * ("no aria-label while presentational, OR a role that permits a name").
+ * Presentational-role conflict resolution discards `role="presentation"` from a labelled
+ * element, leaving a generic element on which `aria-label` is prohibited.
  */
 function expectNoPresentationalNameConflict(gridRoot: Element): void {
     const dropLists = Array.from(gridRoot.querySelectorAll<HTMLElement>('.ag-column-drop-list'));
@@ -51,24 +43,19 @@ function expectNoPresentationalNameConflict(gridRoot: Element): void {
 }
 
 /**
- * `.ag-column-drop-list`'s `aria-label` is also the source of the drop area's `data-testid`
- * (`testIdService.setupColumnDropArea` reads it), so removing it when the zone is empty would
- * silently rename `ag-column-drop-area:source=…;name=…` and break the docs e2e specs that
- * target empty zones. Pin the name — and the fact that its role permits one.
+ * `testIdService.setupColumnDropArea` names the drop area's `data-testid` after the zone, so an
+ * unlabelled empty zone must still expose its name — otherwise every docs e2e spec targeting an
+ * empty zone silently changes test id.
  */
 function expectEmptyZonesKeepTheirName(gridRoot: Element): void {
     const unnamed = Array.from(gridRoot.querySelectorAll<HTMLElement>('.ag-column-drop-list'))
-        .filter(
-            (el) => el.getAttribute('aria-label') == null || !NAMEABLE_ROLES.includes(el.getAttribute('role') ?? '')
-        )
-        .map(
-            (el) => `${el.className} [role="${el.getAttribute('role')}" aria-label="${el.getAttribute('aria-label')}"]`
-        );
+        .filter((el) => el.getAttribute('aria-label') == null && el.getAttribute('data-drop-area-name') == null)
+        .map((el) => el.className);
 
     expect(unnamed).toEqual([]);
 }
 
-describe('Column drop zone aria (AG-18152)', () => {
+describe('Column drop zone aria', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
@@ -96,5 +83,22 @@ describe('Column drop zone aria (AG-18152)', () => {
         const gridRoot = getGridElement(api)!;
         expectNoPresentationalNameConflict(gridRoot);
         expectEmptyZonesKeepTheirName(gridRoot);
+    });
+
+    test('a populated drop zone is a labelled listbox', async () => {
+        const api = createGrid(gridsManager);
+        api.setRowGroupColumns(['country']);
+        await asyncSetTimeout(0);
+
+        const populated = Array.from(getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-column-drop-list')).filter(
+            (el) => el.querySelector('.ag-column-drop-cell') != null
+        );
+
+        expect(populated.length).toBeGreaterThan(0);
+        for (const el of populated) {
+            expect(el.getAttribute('role')).toBe('listbox');
+            expect(el.getAttribute('aria-label')).toBe('Row Groups');
+            expect(el.getAttribute('data-drop-area-name')).toBeNull();
+        }
     });
 });
