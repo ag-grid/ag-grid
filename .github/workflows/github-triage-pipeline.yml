@@ -301,7 +301,19 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            issues: write
+            # NO `issues: write` — deliberately narrower than the `run` job.
+            #
+            # These two stages navigate UNTRUSTED, reporter-authored repro pages, and
+            # they perform ZERO GitHub writes: every write they cause is the pipeline's
+            # own Jira write, authenticated by JIRA_API_TOKEN. Inheriting `issues: write`
+            # therefore handed an injectable agent a credential it never uses — and
+            # "the agent has no write tool" does not mean the token is out of reach,
+            # since it can read the environment and call the GitHub API directly.
+            # Raised twice as a P0 on ag-dev-prompts#840; the full browser-stage
+            # hardening stays deferred for the pilot, but an UNUSED permission is not
+            # hardening work, it is a mistake. See ag-dev-prompts
+            # docs/github-triage-deferred-hardening.md section 1.
+            issues: read
             packages: read
         outputs:
             reproduces: ${{ steps.pipeline.outputs.reproduces }}
@@ -339,7 +351,19 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            issues: write
+            # NO `issues: write` — deliberately narrower than the `run` job.
+            #
+            # These two stages navigate UNTRUSTED, reporter-authored repro pages, and
+            # they perform ZERO GitHub writes: every write they cause is the pipeline's
+            # own Jira write, authenticated by JIRA_API_TOKEN. Inheriting `issues: write`
+            # therefore handed an injectable agent a credential it never uses — and
+            # "the agent has no write tool" does not mean the token is out of reach,
+            # since it can read the environment and call the GitHub API directly.
+            # Raised twice as a P0 on ag-dev-prompts#840; the full browser-stage
+            # hardening stays deferred for the pilot, but an UNUSED permission is not
+            # hardening work, it is a mistake. See ag-dev-prompts
+            # docs/github-triage-deferred-hardening.md section 1.
+            issues: read
             packages: read
         steps:
             - uses: actions/checkout@v4
