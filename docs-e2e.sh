@@ -33,7 +33,11 @@ Any unrecognised arguments are forwarded directly to playwright test.
 Options:
   --all-browsers          Run all browsers (chromium, firefox, webkit)
   --framework <name>      Set FRAMEWORK env var. Valid: typescript, vanilla,
-                          reactFunctionalTs, reactFunctionalTs_Dev, angular, vue3
+                          reactFunctionalTs, reactFunctionalTs_Dev, angular, vue3.
+                          Mirrors a CI shard, so reactFunctionalTs covers both React
+                          builds: the sweep on the production one, plus the tests
+                          naming reactFunctionalTs_Dev outright. Pin that instead to
+                          run only those.
   --url <url>             Set BASE_URL env var (default: https://localhost:4610)
   --all-variants          Sweep every example with the production React variant too (or
                           ALL_FRAMEWORK_VARIANTS=true). The sweep covers one React build:
