@@ -87,38 +87,37 @@ const PINNED_FRAMEWORK = getPinnedFramework();
 
 /**
  * React is the only framework declared twice - once on the production build, once forcing the development
- * one - so running both across every example doubles a sixth of the suite for little return. Only one of
- * the two is swept: the development build locally, where its warnings are worth the wall clock, and the
- * production build in CI. `ALL_FRAMEWORK_VARIANTS=true` (or `--all-variants`) sweeps both.
+ * one - so running `eachFramework` on both doubles a sixth of the suite for little return. Only one of the
+ * two is used: the development build locally, where its warnings are worth the wall clock, and the
+ * production build in CI. `ALL_FRAMEWORK_VARIANTS=true` (or `--all-variants`) uses both.
  *
- * This is an economy applied to the *sweep*. A spec that names a variant outright - `test.reactFunctionalTs`
- * or `test.reactFunctionalTs_Dev` - is asserting that this example behaves differently on that build, so it
- * is always declared and never subject to this. See isFrameworkDeclared.
+ * This is an economy applied to `eachFramework`. A spec that names a variant outright -
+ * `test.reactFunctionalTs` or `test.reactFunctionalTs_Dev` - is asserting that this example behaves
+ * differently on that build, so it is always declared and never subject to this. See isFrameworkDeclared.
  */
 const runAllFrameworkVariants = !!process.env.CI || process.env.ALL_FRAMEWORK_VARIANTS === 'true';
 
 /**
- * Frameworks a pinned run covers by explicit tests alone, sweeping nothing. Pinning to one is therefore
- * cheap - it yields only the handful of specs that ask for it by name - so `--framework
- * reactFunctionalTs_Dev` is a quick way to run just those.
+ * Frameworks that `eachFramework` never runs, so pinning to one leaves only the handful of specs that name
+ * it outright. That makes `--framework reactFunctionalTs_Dev` a quick way to run just those.
  */
-const EXPLICIT_ONLY_FRAMEWORKS: readonly AgFramework[] = [reactFunctionalTsDev];
+const EACH_FRAMEWORK_EXCLUDES: readonly AgFramework[] = [reactFunctionalTsDev];
 
 /**
  * Variants a pinned run declares alongside the framework itself. A CI job is a shard per *framework*, and
  * the two React builds are variants within one framework rather than two of them - so the React shard owns
  * the development-build tests too, and CI needs no second job to cover them. Only tests naming the variant
- * outright are picked up; the sweep stays on the production build (see getSweptFrameworks), which is what
- * keeps this from doubling a sixth of the suite.
+ * outright are picked up; `eachFramework` stays on the production build (see getEachFrameworkList), which
+ * is what keeps this from doubling a sixth of the suite.
  */
 const PINNED_FRAMEWORK_VARIANTS: Partial<Record<AgFramework, readonly AgFramework[]>> = {
     [PROD_VARIANT_FRAMEWORK]: [reactFunctionalTsDev],
 };
 
-/** The frameworks `eachFramework` sweeps. Single-framework tests are governed by isFrameworkDeclared. */
-function getSweptFrameworks(): readonly AgFramework[] {
+/** The frameworks `eachFramework` runs. Tests naming a framework outright use isFrameworkDeclared. */
+function getEachFrameworkList(): readonly AgFramework[] {
     if (PINNED_FRAMEWORK) {
-        return EXPLICIT_ONLY_FRAMEWORKS.includes(PINNED_FRAMEWORK) ? [] : [PINNED_FRAMEWORK];
+        return EACH_FRAMEWORK_EXCLUDES.includes(PINNED_FRAMEWORK) ? [] : [PINNED_FRAMEWORK];
     }
     if (!runAllFrameworkVariants) {
         return ALL_FRAMEWORKS.filter((framework) => framework !== PROD_VARIANT_FRAMEWORK);
@@ -126,7 +125,7 @@ function getSweptFrameworks(): readonly AgFramework[] {
     return ALL_FRAMEWORKS;
 }
 
-const SWEPT_FRAMEWORKS = getSweptFrameworks();
+const EACH_FRAMEWORK_LIST = getEachFrameworkList();
 
 /**
  * Whether a test naming this framework outright should be declared. Only the CI shard pinning applies -
@@ -144,8 +143,8 @@ if (process.env.TEST_WORKER_INDEX === '0' && !PINNED_FRAMEWORK) {
     // eslint-disable-next-line no-console
     console.log(
         runAllFrameworkVariants
-            ? `Sweeping all framework variants: ${SWEPT_FRAMEWORKS.join(', ')}`
-            : `Sweeping with the ${reactFunctionalTsDev} React variant - set ALL_FRAMEWORK_VARIANTS=true to sweep ${PROD_VARIANT_FRAMEWORK} too. Tests naming a variant outright always run.`
+            ? `Running eachFramework tests on: ${EACH_FRAMEWORK_LIST.join(', ')}`
+            : `Running eachFramework tests on: ${EACH_FRAMEWORK_LIST.join(', ')} - set ALL_FRAMEWORK_VARIANTS=true to add ${PROD_VARIANT_FRAMEWORK}. Tests naming a framework outright always run.`
     );
 }
 
@@ -490,7 +489,7 @@ const eachFramework = (
     opts?: { allowedConsoleMessages?: string[] }
 ) => {
     describeWithTeardown(testName, opts, () => {
-        SWEPT_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody));
+        EACH_FRAMEWORK_LIST.forEach((framework) => frameworkTest(framework)(undefined, testBody));
     });
 };
 
