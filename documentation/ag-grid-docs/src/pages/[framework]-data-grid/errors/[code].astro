@@ -125,11 +125,6 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
             <div class={styles.pageSections}>
                 <h2 id={fullErrorTextHeading.slug}>{fullErrorTextHeading.text}</h2>
                 {
-                    /* The note replaces the two blocks below rather than sitting inside them: the client script
-                    hides `.full-error-message` when the URL has no `_version_`, which is exactly when a reader
-                    needs to be told the code is unknown. */
-                }
-                {
                     isUnknownCode ? (
                         <Note>
                             Error #{code} is not recognised in AG Grid {VERSION}. If you followed this link from an

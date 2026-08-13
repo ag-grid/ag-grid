@@ -948,6 +948,7 @@ export const AG_GRID_ERRORS = {
         `\`${property}\` must be an array with at least one element, currently it is \`[${String(value)}]\``,
     326: ({ defaultOption }: { defaultOption: string }) =>
         `ignoring \`defaultOption\` \`${defaultOption}\` as it is not one of the filter's \`filterOptions\`` as const,
+    // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
