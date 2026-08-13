@@ -139,8 +139,6 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.createManagedBean(this.positionableFeature);
 
         this.refreshGui();
-        // Set unconditionally: `testIdService.setupColumnDropArea` derives the drop area's
-        // `data-testid` from this label, so it must be present even when the zone is empty.
         _setAriaLabel(this.ePillDropList, this.getAriaLabel());
 
         this.addManagedElementListeners(this.getFocusableElement(), {
@@ -614,10 +612,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const { childPillComponents, ePillDropList } = this;
         const len = childPillComponents.length;
 
-        // An empty zone owns no `option` children, so it cannot be a `listbox`. It must still be
-        // nameable: `role="presentation"` is discarded by ARIA presentational-role conflict
-        // resolution because the element is labelled, leaving a generic element that may not carry
-        // a name. `group` permits one.
+        // An empty zone has no `option` children so cannot be a `listbox`, but is still labelled.
         _setAriaRole(ePillDropList, len === 0 ? 'group' : 'listbox');
 
         for (let i = 0; i < len; i++) {
