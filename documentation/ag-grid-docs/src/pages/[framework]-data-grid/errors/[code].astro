@@ -61,6 +61,13 @@ const errorCode = parseInt(code, 10);
 // unknown code, which throws under `astro dev`.
 const isRetired = !(errorCode in AG_GRID_ERRORS);
 const retiredInVersion = isRetired ? RETIRED_ERROR_CODES[errorCode] : null;
+// Built as one string rather than interpolated into the markup, so the optional version clause does not
+// leave a stray space before its punctuation.
+const retiredMessage =
+    `Error #${code} is no longer used in this version of AG Grid` +
+    (retiredInVersion ? `, and was last used in version ${retiredInVersion}` : '') +
+    `. A link logged by an older version carries that version, and is redirected to that version's ` +
+    `archived error page.`;
 const frameworkDisplayText = framework === 'javascript' ? '' : getFrameworkDisplayText(framework);
 const title = `AG Grid ${frameworkDisplayText} Error #${code}`;
 const description = errorPage?.data.description ? errorPage?.data.description : '';
@@ -132,12 +139,7 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
                 }
                 {
                     isRetired ? (
-                        <Note>
-                            Error #{code} is no longer used in this version of AG Grid
-                            {retiredInVersion ? `, and was last used in version ${retiredInVersion}` : ''}. A link
-                            logged by an older version carries that version, and is redirected to that version's
-                            archived error page.
-                        </Note>
+                        <Note>{retiredMessage}</Note>
                     ) : (
                         <>
                             <div class="missing-params-message">
