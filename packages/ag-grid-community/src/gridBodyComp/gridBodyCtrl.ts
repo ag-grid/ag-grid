@@ -110,7 +110,6 @@ export class GridBodyCtrl extends BeanStub {
 
         this.addEventListeners();
         this.addFocusListeners([eTop, eGridViewport, eBottom]);
-        this.setGridRole();
         this.onGridColumnsChanged();
         this.addBodyViewportListener();
         // Mount before setPinnedRowsHeights: the top section has to reserve vertical space for the
@@ -172,6 +171,9 @@ export class GridBodyCtrl extends BeanStub {
         const columns = this.beans.colModel.colsList;
         this.comp.setColumnCount(columns.length);
         this.updateScrollableAreaWidth();
+        // Row-group / pivot columns declared in the initial column defs are only populated by the time the
+        // columns are refreshed, so the role has to be recomputed here and not just on later role changes.
+        this.setGridRole();
     }
 
     private onScrollVisibilityChanged(): void {
