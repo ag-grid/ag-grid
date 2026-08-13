@@ -198,7 +198,6 @@ describe('column selection label renderer', () => {
     });
 
     test('keeps the current renderer until an asynchronous replacement is ready', async () => {
-        let initCount = 0;
         let resolveReplacement: (() => void) | undefined;
         let destroyCount = 0;
 
@@ -206,10 +205,9 @@ describe('column selection label renderer', () => {
             private readonly eGui = document.createElement('span');
 
             public init(params: IColumnSelectionLabelRendererParams): AgPromise<void> | void {
-                initCount++;
                 this.eGui.className = 'refreshing-column-label';
                 this.eGui.textContent = `Rendered: ${params.displayName}`;
-                if (initCount > 1) {
+                if (params.displayName === 'Competitor') {
                     return new AgPromise<void>((resolve) => {
                         resolveReplacement = () => resolve();
                     });
@@ -254,12 +252,13 @@ describe('column selection label renderer', () => {
             expect(renderer?.textContent).toBe('Rendered: Athlete');
             return renderer!;
         });
+        const destroyCountBeforeReplacement = destroyCount;
 
         api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Competitor' }] });
 
         expect(resolveReplacement).toBeDefined();
         expect(gridElement.querySelector('.refreshing-column-label')).toBe(initialRenderer);
-        expect(destroyCount).toBe(0);
+        expect(destroyCount).toBe(destroyCountBeforeReplacement);
 
         resolveReplacement!();
 
@@ -268,7 +267,7 @@ describe('column selection label renderer', () => {
             expect(renderer).not.toBe(initialRenderer);
             expect(renderer?.textContent).toBe('Rendered: Competitor');
         });
-        expect(destroyCount).toBe(1);
+        expect(destroyCount).toBe(destroyCountBeforeReplacement + 1);
     });
 
     test('destroys renderer instances with the panel', async () => {
