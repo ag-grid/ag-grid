@@ -150,6 +150,10 @@ export class AgColumn<TValue = any>
     public tooltipFieldContainsDots: boolean = false;
 
     // ── Cold ── structure, transient interaction state, indices, events.
+    /** Index into the resolved `sortingOrder` of the sort last applied by a header-click progression.
+     *  Internal, best-effort: not part of `ColumnState`, never saved/restored, cleared by any sort write,
+     *  and only trusted while it still matches {@link sortDef} — see `SortService`. */
+    public sortCycleIndex: number | undefined = undefined;
     private frameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined = undefined;
     // Lazy — most columns never get a listener; allocated on first __addEventListener/addEventListener.
     private colEventSvc: LocalEventService<ColumnEventName> | null = null;
@@ -269,6 +273,7 @@ export class AgColumn<TValue = any>
         }
         ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
+        this.sortCycleIndex = undefined;
         this.initColDefHotFields();
         this.beans.showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();

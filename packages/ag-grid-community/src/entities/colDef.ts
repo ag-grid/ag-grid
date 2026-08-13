@@ -1017,6 +1017,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *
      * - `['asc', 'desc', null]` if no sort type is specified,
      * - `[{ type: 'absolute', direction: 'asc', }, { type: 'absolute', direction: 'desc' }, null]` if 'sort' or 'initialSort' have type 'absolute'
+     *
+     * Each entry is visited at its own position, so an entry appearing more than once is stepped
+     * through once per occurrence. A repeated entry produces the same visible sort at each of its
+     * positions, so one of those clicks will appear to change nothing.
      */
     sortingOrder?: (SortDirection | SortDef)[];
     /**

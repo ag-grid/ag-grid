@@ -37,7 +37,14 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     public progressSort(column: AgColumn, multiSort: boolean, source: ColumnEventType): void {
-        this.setSortForColumn(column, this.getNextSortDirection(column), multiSort, source);
+        const { sortDef, index } = this.getNextSortDefAndIndex(column, column.getSortDef(), column.sortCycleIndex);
+        // Clears `sortCycleIndex` (via `setColSort`) for every column it writes, including this one.
+        this.setSortForColumn(column, sortDef, multiSort, source);
+        // Remember the position only if the progression is what actually stuck: coupled row-group
+        // derivation, or a non-sortable column, can end up with a different def.
+        if (index >= 0 && areSortDefsEqual(column.getSortDef(), sortDef)) {
+            column.sortCycleIndex = index;
+        }
     }
 
     public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
@@ -162,20 +169,43 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     public getNextSortDirection(column: AgColumn, currentSort?: SortDef | SortDirection | null): SortDef {
+        const currentSortDef = currentSort === undefined ? column.getSortDef() : getSortDefFromInput(currentSort);
+        return this.getNextSortDefAndIndex(column, currentSortDef).sortDef;
+    }
+
+    /** Resolve the entry of `sortingOrder` to advance to, and the index it sits at.
+     *  `cachedIndex` (the column's remembered cycle position) is used only while it still describes
+     *  `currentSortDef`; otherwise the first entry matching by value wins, as it always has.
+     *  Returns index `-1` when there is no sorting order to advance through. */
+    private getNextSortDefAndIndex(
+        column: AgColumn,
+        currentSortDef: SortDef | null,
+        cachedIndex?: number
+    ): { sortDef: SortDef; index: number } {
         const sortingOrder = getSortingOrder(this.gos, column);
         const len = sortingOrder.length;
         if (len === 0) {
-            return getSortDefFromInput();
+            return { sortDef: getSortDefFromInput(), index: -1 };
         }
-        const currentSortDef = currentSort === undefined ? column.getSortDef() : getSortDefFromInput(currentSort);
-        let next = 0;
-        for (let i = 0; i < len; ++i) {
-            if (areSortDefsEqual(sortingOrder[i], currentSortDef)) {
-                next = i + 1 >= len ? 0 : i + 1;
-                break;
+        let current = -1;
+        if (
+            cachedIndex !== undefined &&
+            cachedIndex >= 0 &&
+            cachedIndex < len &&
+            areSortDefsEqual(sortingOrder[cachedIndex], currentSortDef)
+        ) {
+            current = cachedIndex;
+        } else {
+            for (let i = 0; i < len; ++i) {
+                if (areSortDefsEqual(sortingOrder[i], currentSortDef)) {
+                    current = i;
+                    break;
+                }
             }
         }
-        return getSortDefFromInput(sortingOrder[next]);
+        // No match, or the last entry -> restart at the first entry (unchanged behaviour).
+        const index = current === -1 || current + 1 >= len ? 0 : current + 1;
+        return { sortDef: getSortDefFromInput(sortingOrder[index]), index };
     }
 
     private getSortedCols(): AgColumn[] {
@@ -346,6 +376,10 @@ export class SortService extends BeanStub implements NamedBean {
 
     private setColSort(column: AgColumn, sortDef: SortDef, source: ColumnEventType): void {
         const prevSortDef = column.getSortDef();
+        // Any sort write invalidates the remembered cycle position; a progression re-stamps it
+        // afterwards. Must be unconditional: re-applying the *same* value is a no-op below but still
+        // means "this sort did not come from a progression".
+        column.sortCycleIndex = undefined;
         if (!areSortDefsEqual(prevSortDef, sortDef)) {
             // Presence flip changes membership (drop all); direction/type-only keeps order (drop opts).
             if (!!prevSortDef?.direction !== !!sortDef.direction) {
