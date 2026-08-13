@@ -611,17 +611,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const { childPillComponents, ePillDropList } = this;
         const len = childPillComponents.length;
 
-        // A presentational element must not carry an accessible name, so an empty zone drops its
-        // label; the name stays readable for test-id derivation via `data-drop-area-name`.
+        // A presentational element must not carry an accessible name.
         const empty = len === 0;
-        const label = this.getAriaLabel();
         _setAriaRole(ePillDropList, empty ? 'presentation' : 'listbox');
-        _setAriaLabel(ePillDropList, empty ? null : label);
-        if (empty) {
-            ePillDropList.setAttribute('data-drop-area-name', label);
-        } else {
-            ePillDropList.removeAttribute('data-drop-area-name');
-        }
+        _setAriaLabel(ePillDropList, empty ? null : this.getAriaLabel());
 
         for (let i = 0; i < len; i++) {
             const comp = childPillComponents[i];

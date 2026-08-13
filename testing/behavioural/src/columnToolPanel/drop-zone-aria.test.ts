@@ -1,5 +1,7 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
+import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { ColumnsToolPanelModule, PivotModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -42,17 +44,26 @@ function expectNoPresentationalNameConflict(gridRoot: Element): void {
     expect(offenders).toEqual([]);
 }
 
-/**
- * `testIdService.setupColumnDropArea` names the drop area's `data-testid` after the zone, so an
- * unlabelled empty zone must still expose its name — otherwise every docs e2e spec targeting an
- * empty zone silently changes test id.
- */
-function expectEmptyZonesKeepTheirName(gridRoot: Element): void {
-    const unnamed = Array.from(gridRoot.querySelectorAll<HTMLElement>('.ag-column-drop-list'))
-        .filter((el) => el.getAttribute('aria-label') == null && el.getAttribute('data-drop-area-name') == null)
-        .map((el) => el.className);
+function getDropAreaTestIds(gridRoot: Element): (string | null)[] {
+    return Array.from(gridRoot.querySelectorAll<HTMLElement>('.ag-column-drop')).map((el) =>
+        el.getAttribute('data-testid')
+    );
+}
 
-    expect(unnamed).toEqual([]);
+/**
+ * The drop area's `data-testid` names the zone, so an unlabelled empty zone must still get a named
+ * test id — otherwise every docs e2e spec targeting an empty zone silently changes test id.
+ */
+async function expectEmptyZonesKeepTheirTestIdName(gridRoot: Element): Promise<void> {
+    await waitFor(() => {
+        expect(getDropAreaTestIds(gridRoot)).toContain(agTestIdFor.columnDropArea('toolbar', 'Row Groups'));
+    });
+
+    const testIds = getDropAreaTestIds(gridRoot);
+
+    expect(testIds).toContain(agTestIdFor.columnDropArea('panel', 'Row Groups'));
+    expect(testIds).toContain(agTestIdFor.columnDropArea('panel', 'Column Labels'));
+    expect(testIds).toContain(agTestIdFor.columnDropArea('toolbar', 'Values'));
 }
 
 describe('Column drop zone aria', () => {
@@ -64,6 +75,10 @@ describe('Column drop zone aria', () => {
             RowGroupingModule,
             RowGroupingPanelModule,
         ],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
     });
 
     beforeEach(() => {
@@ -82,7 +97,7 @@ describe('Column drop zone aria', () => {
 
         const gridRoot = getGridElement(api)!;
         expectNoPresentationalNameConflict(gridRoot);
-        expectEmptyZonesKeepTheirName(gridRoot);
+        await expectEmptyZonesKeepTheirTestIdName(gridRoot);
     });
 
     test('a populated drop zone is a labelled listbox', async () => {
@@ -98,7 +113,6 @@ describe('Column drop zone aria', () => {
         for (const el of populated) {
             expect(el.getAttribute('role')).toBe('listbox');
             expect(el.getAttribute('aria-label')).toBe('Row Groups');
-            expect(el.getAttribute('data-drop-area-name')).toBeNull();
         }
     });
 });
