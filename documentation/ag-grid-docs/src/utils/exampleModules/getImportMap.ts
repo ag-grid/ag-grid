@@ -43,21 +43,33 @@ export const FRAMEWORK_VERSION_PATTERN = /^\d+\.\d+\.\d+(?:[-+][\w.-]+)*$/;
 export const PROD_PARAM = 'prod';
 
 /**
+ * How esm.sh is asked for the framework's development build -- React's warnings and its
+ * dev-only validations -- which it serves given the `dev` flag, the production build being its
+ * default. The flag reaches a URL either as its query or appended to flags already there, so
+ * both forms travel together. `ExampleModules` passes placeholders instead of these, so that
+ * the browser can pick a build from the URL after the page is built.
+ */
+export interface DevFlags {
+    /** Opens the query string of a URL that has none, as `?dev` */
+    query: string;
+    /** Appends to a query already present, as `&dev` */
+    appended: string;
+}
+
+export const PRODUCTION_FLAGS: DevFlags = { query: '', appended: '' };
+export const DEVELOPMENT_FLAGS: DevFlags = { query: '?dev', appended: '&dev' };
+
+/**
  * React and React DOM have no ES module build on npm, so they resolve through esm.sh.
  * `external=react` keeps React DOM from bundling a second copy of React, which would give
- * the page two renderers and break hooks. esm.sh serves the production build by default and
- * the development one -- React's warnings and its dev-only validations -- given `dev`.
+ * the page two renderers and break hooks.
  */
-const reactImports = (version: string, isProd: boolean): ImportMap => {
-    const dev = isProd ? '' : '&dev';
-
-    return {
-        react: `https://esm.sh/react@${version}${isProd ? '' : '?dev'}`,
-        'react/': `https://esm.sh/react@${version}${dev}/`,
-        'react-dom': `https://esm.sh/react-dom@${version}?external=react${dev}`,
-        'react-dom/': `https://esm.sh/react-dom@${version}&external=react${dev}/`,
-    };
-};
+const reactImports = (version: string, { query, appended }: DevFlags): ImportMap => ({
+    react: `https://esm.sh/react@${version}${query}`,
+    'react/': `https://esm.sh/react@${version}${appended}/`,
+    'react-dom': `https://esm.sh/react-dom@${version}?external=react${appended}`,
+    'react-dom/': `https://esm.sh/react-dom@${version}&external=react${appended}/`,
+});
 
 /** `esm-browser` is the build that ships Vue's runtime template compiler */
 const vueImports = (version: string): ImportMap => ({
@@ -107,14 +119,14 @@ export const getDefaultFrameworkVersion = (internalFramework: InternalFramework)
 const getFrameworkImports = (
     internalFramework: InternalFramework,
     frameworkVersion?: string,
-    isProd = true
+    dev: DevFlags = PRODUCTION_FLAGS
 ): ImportMap => {
     const version = frameworkVersion ?? getDefaultFrameworkVersion(internalFramework);
     if (!version) {
         return {};
     }
     if (isReactInternalFramework(internalFramework)) {
-        return reactImports(version, isProd);
+        return reactImports(version, dev);
     }
     if (internalFramework === 'angular') {
         return angularImports(version);
@@ -153,15 +165,15 @@ export const getImportMap = ({
     isEnterprise,
     isIntegratedCharts,
     frameworkVersion,
-    isProd = true,
+    dev = PRODUCTION_FLAGS,
 }: {
     internalFramework: InternalFramework;
     isEnterprise: boolean;
     isIntegratedCharts?: boolean;
     /** Framework version to resolve against; the pinned default when omitted */
     frameworkVersion?: string;
-    /** Whether to resolve the framework's production build, as examples do by default */
-    isProd?: boolean;
+    /** How to ask for the framework's development build; the production build by default */
+    dev?: DevFlags;
 }): ImportMap => {
     const imports: ImportMap = {
         'ag-stack': esmEntryPoint('ag-stack'),
@@ -172,7 +184,7 @@ export const getImportMap = ({
         'ag-grid-enterprise': esmEntryPoint('ag-grid-enterprise'),
         'ag-grid-enterprise/styles/': stylesPrefix('ag-grid-enterprise'),
         '@ag-grid-community/locale': esmEntryPoint('@ag-grid-community/locale'),
-        ...getFrameworkImports(internalFramework, frameworkVersion, isProd),
+        ...getFrameworkImports(internalFramework, frameworkVersion, dev),
     };
 
     if (isEnterprise || isIntegratedCharts) {

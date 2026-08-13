@@ -3,6 +3,8 @@ import { NPM_CDN } from '@constants';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
+import { IMPORT_MAP_OPTIONS_ID } from './injectImportMap';
+
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 
 /**
@@ -37,12 +39,44 @@ const renderImportMap = async ({
         />
     );
 
-    const importMap = html.match(/<script type="importmap">([\s\S]*?)<\/script>/);
-    if (!importMap) {
+    const served = html.match(/<script type="importmap">([\s\S]*?)<\/script>/);
+    if (served) {
+        return JSON.parse(served[1].replace(/&quot;/g, '"')).imports as Record<string, string>;
+    }
+
+    // Framework examples register the map in the browser instead, so that the framework version
+    // and build can come from the URL -- so run the injector over the options the page carries
+    const options = html.match(new RegExp(`<script[^>]*id="${IMPORT_MAP_OPTIONS_ID}"[^>]*>([\\s\\S]*?)</script>`));
+    if (!options) {
         throw new Error(`No import map rendered in:\n${html}`);
     }
 
-    return JSON.parse(importMap[1].replace(/&quot;/g, '"')).imports as Record<string, string>;
+    return await registerImportMap(options[1].replace(/&quot;/g, '"'));
+};
+
+/**
+ * Runs the page's own injector over its serialised options, rather than substituting the tokens
+ * here, so that what this asserts on is what a browser would resolve. No URL parameters, so it
+ * gives the pinned version and the production build -- what a plain example load resolves.
+ */
+const registerImportMap = async (optionsJson: string) => {
+    const registered: any[] = [];
+
+    vi.stubGlobal('window', { location: { search: '' } });
+    vi.stubGlobal('document', {
+        createElement: () => ({}) as any,
+        head: { appendChild: (element: any) => registered.push(element) },
+        body: { appendChild: () => undefined },
+    });
+
+    try {
+        const { injectImportMap } = await import('./injectImportMap');
+        injectImportMap(JSON.parse(optionsJson));
+    } finally {
+        vi.unstubAllGlobals();
+    }
+
+    return JSON.parse(registered[0].textContent).imports as Record<string, string>;
 };
 
 describe('ExampleModules', () => {

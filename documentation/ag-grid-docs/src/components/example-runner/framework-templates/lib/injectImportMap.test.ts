@@ -1,10 +1,15 @@
-import { FRAMEWORK_VERSION_PLACEHOLDER, injectImportMap } from './injectImportMap';
-
-const importMap = (query: string) =>
-    JSON.stringify({ imports: { react: `https://esm.sh/react@${FRAMEWORK_VERSION_PLACEHOLDER}${query}` } });
+import { DEV_FLAG_PLACEHOLDERS, FRAMEWORK_VERSION_PLACEHOLDER, injectImportMap } from './injectImportMap';
 
 const OPTIONS = {
-    templates: { production: importMap(''), development: importMap('?dev') },
+    template: JSON.stringify({
+        imports: {
+            react: `https://esm.sh/react@${FRAMEWORK_VERSION_PLACEHOLDER}${DEV_FLAG_PLACEHOLDERS.query}`,
+        },
+    }),
+    buildTokens: {
+        production: { [DEV_FLAG_PLACEHOLDERS.query]: '', [DEV_FLAG_PLACEHOLDERS.appended]: '' },
+        development: { [DEV_FLAG_PLACEHOLDERS.query]: '?dev', [DEV_FLAG_PLACEHOLDERS.appended]: '&dev' },
+    },
     defaultVersion: '19.2.1',
     placeholder: FRAMEWORK_VERSION_PLACEHOLDER,
     versionParam: 'version',
@@ -73,12 +78,16 @@ describe('injectImportMap', () => {
         expect(JSON.parse(head[0].textContent).imports.react).toBe('https://esm.sh/react@18.3.1?dev');
     });
 
-    test('falls back to the one map for frameworks with no separate development build', () => {
+    test('leaves a map with no build-dependent entries alone when asked for the development build', () => {
         const { head } = stubPage('?prod=false');
 
-        injectImportMap({ ...OPTIONS, templates: { production: OPTIONS.templates.production } });
+        // Every framework but React: no build token appears, so both builds give the same map
+        injectImportMap({
+            ...OPTIONS,
+            template: JSON.stringify({ imports: { vue: `https://cdn/vue@${FRAMEWORK_VERSION_PLACEHOLDER}/vue.js` } }),
+        });
 
-        expect(JSON.parse(head[0].textContent).imports.react).toBe('https://esm.sh/react@19.2.1');
+        expect(JSON.parse(head[0].textContent).imports.vue).toBe('https://cdn/vue@19.2.1/vue.js');
     });
 
     test('fails visibly rather than falling back when the version is not a version', () => {

@@ -5,13 +5,29 @@
  */
 export const FRAMEWORK_VERSION_PLACEHOLDER = '0.0.0-ag-framework-version';
 
+/**
+ * Stand in for the two forms the development-build flag takes in a URL (see `DevFlags`), so
+ * that one rendered map can serve either build.
+ */
+export const DEV_FLAG_PLACEHOLDERS = {
+    query: '?ag-dev-query',
+    appended: '&ag-dev-appended',
+};
+
+/** Identifies the JSON block the page carries this function's options in */
+export const IMPORT_MAP_OPTIONS_ID = 'ag-import-map-options';
+
 export interface InjectImportMapOptions {
     /**
-     * The import map, serialised, with `placeholder` wherever the framework version goes.
-     * `development` is the map resolving the framework's development build, present only
-     * where it differs from the production one.
+     * The import map, serialised, with `placeholder` wherever the framework version goes and
+     * the build tokens wherever the build is selected.
      */
-    templates: { production: string; development?: string };
+    template: string;
+    /**
+     * What the build tokens in `template` stand for in each build, applied whole -- a map with
+     * no build-dependent entries, which is every framework but React, substitutes nothing.
+     */
+    buildTokens: { production: Record<string, string>; development: Record<string, string> };
     /** Substituted for `placeholder` when the URL does not request a version */
     defaultVersion: string;
     placeholder: string;
@@ -42,7 +58,8 @@ export interface InjectImportMapOptions {
  * parameters.
  */
 export function injectImportMap({
-    templates,
+    template,
+    buildTokens,
     defaultVersion,
     placeholder,
     versionParam,
@@ -71,10 +88,17 @@ export function injectImportMap({
         version = requestedVersion;
     }
 
-    const template = (isProd ? templates.production : templates.development) ?? templates.production;
+    const substitutions: Record<string, string> = {
+        [placeholder]: version,
+        ...(isProd ? buildTokens.production : buildTokens.development),
+    };
+    let importMapJson = template;
+    for (const token of Object.keys(substitutions)) {
+        importMapJson = importMapJson.split(token).join(substitutions[token]);
+    }
 
     const importMap = document.createElement('script');
     importMap.type = 'importmap';
-    importMap.textContent = template.split(placeholder).join(version);
+    importMap.textContent = importMapJson;
     document.head.appendChild(importMap);
 }

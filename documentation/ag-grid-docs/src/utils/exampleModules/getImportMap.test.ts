@@ -1,7 +1,7 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { NPM_CDN } from '@constants';
 
-import { FRAMEWORK_VERSION_PATTERN, getDefaultFrameworkVersion, getImportMap } from './getImportMap';
+import { DEVELOPMENT_FLAGS, FRAMEWORK_VERSION_PATTERN, getDefaultFrameworkVersion, getImportMap } from './getImportMap';
 
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3'];
 
@@ -184,7 +184,7 @@ describe('getImportMap', () => {
             const development = getImportMap({
                 internalFramework: 'reactFunctionalTs',
                 isEnterprise: false,
-                isProd: false,
+                dev: DEVELOPMENT_FLAGS,
             });
 
             // esm.sh serves the production build unless asked for `dev`
@@ -202,7 +202,7 @@ describe('getImportMap', () => {
         test.each(['angular', 'vue3'] as InternalFramework[])(
             '%s resolves the same entries either way, having no separate development build',
             (internalFramework) => {
-                expect(getImportMap({ internalFramework, isEnterprise: false, isProd: false })).toEqual(
+                expect(getImportMap({ internalFramework, isEnterprise: false, dev: DEVELOPMENT_FLAGS })).toEqual(
                     getImportMap({ internalFramework, isEnterprise: false })
                 );
             }
