@@ -35,8 +35,8 @@ export type NumberFilterParams<TData = any> = INumberFilterParams & IFilterParam
  */
 
 export interface INumberFilterParams extends IScalarFilterParams {
-    /** Array of filter options to present to the user. A key the filter cannot evaluate is reported when used. */
-    filterOptions?: (IFilterOptionDef | ScalarFilterOptionKey | CustomFilterOptionKey)[];
+    /** Array of filter options to present to the user. */
+    filterOptions?: (IFilterOptionDef | ScalarFilterOptionKey)[];
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: ScalarFilterOptionKey | CustomFilterOptionKey;
     /**

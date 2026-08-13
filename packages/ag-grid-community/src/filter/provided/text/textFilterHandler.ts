@@ -1,6 +1,7 @@
 import type { FilterHandlerParams, IDoesFilterPassParams } from '../../../interfaces/iFilter';
 import type { FilterOptionKey, ICombinedSimpleModel, TextFilterOptionKey, Tuple } from '../iSimpleFilter';
 import { isCombinedFilterModel } from '../iSimpleFilter';
+import type { OptionsFactory } from '../optionsFactory';
 import { SimpleFilterHandler } from '../simpleFilterHandler';
 import { isBlank } from '../simpleFilterUtils';
 import type { ITextFilterParams, TextFilterModel, TextFormatter, TextMatcher } from './iTextFilter';
@@ -50,12 +51,18 @@ const defaultLowercaseFormatter: TextFormatter = (from: string) =>
 
 export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, string, ITextFilterParams> {
     public readonly filterType = 'text' as const;
-    protected readonly FilterModelFormatterClass = TextFilterModelFormatter;
     private matcher: TextMatcher;
     private formatter: TextFormatter;
 
     constructor() {
         super(mapValuesFromTextFilterModel, DEFAULT_TEXT_FILTER_OPTIONS);
+    }
+
+    protected createModelFormatter(
+        optionsFactory: OptionsFactory,
+        filterParams: ITextFilterParams
+    ): TextFilterModelFormatter {
+        return new TextFilterModelFormatter(optionsFactory, filterParams);
     }
 
     protected override updateParams(

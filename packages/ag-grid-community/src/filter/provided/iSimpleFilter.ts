@@ -51,7 +51,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
      * Array of filter options to present to the user.
      * A key the filter cannot evaluate is reported when a value is tested against it under the built-in matching.
      */
-    filterOptions?: (IFilterOptionDef | ISimpleFilterModelType | CustomFilterOptionKey)[];
+    filterOptions?: (IFilterOptionDef | ISimpleFilterModelType)[];
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: ISimpleFilterModelType | CustomFilterOptionKey;
     /**

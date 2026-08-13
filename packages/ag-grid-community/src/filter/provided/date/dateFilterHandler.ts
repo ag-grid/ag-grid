@@ -1,5 +1,6 @@
 import type { Comparator } from '../iScalarFilter';
 import type { ISimpleFilterModelPresetType, Tuple } from '../iSimpleFilter';
+import type { OptionsFactory } from '../optionsFactory';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
@@ -28,11 +29,17 @@ interface RangeCacheItem extends Range {
 
 export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date, IDateFilterParams> {
     public readonly filterType = 'date' as const;
-    protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
     private readonly filterTypeToRangeCache = new Map<ISimpleFilterModelPresetType, RangeCacheItem>();
 
     constructor() {
         super(mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
+    }
+
+    protected createModelFormatter(
+        optionsFactory: OptionsFactory,
+        filterParams: IDateFilterParams
+    ): DateFilterModelFormatter {
+        return new DateFilterModelFormatter(optionsFactory, filterParams);
     }
 
     getOrRefreshRangeCacheItem(key: ISimpleFilterModelPresetType, rangeFn: (s: Date, e: Date) => [Date, Date]): Range {

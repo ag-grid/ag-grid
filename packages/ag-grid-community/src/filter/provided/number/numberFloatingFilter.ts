@@ -7,7 +7,13 @@ import type { GridInputNumberField, GridInputTextField } from '../../../widgets/
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
-import type { INumberFloatingFilterParams, NumberFilterModel, NumberFilterParams } from './iNumberFilter';
+import type { OptionsFactory } from '../optionsFactory';
+import type {
+    INumberFilterParams,
+    INumberFloatingFilterParams,
+    NumberFilterModel,
+    NumberFilterParams,
+} from './iNumberFilter';
 import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
 import { getAllowedCharPattern } from './numberFilterUtils';
@@ -104,10 +110,16 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
 }
 
 export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatingFilterParams, NumberFilterModel> {
-    protected readonly FilterModelFormatterClass = NumberFilterModelFormatter;
     private allowedCharPattern: string | null;
     protected readonly filterType = 'number';
     protected readonly defaultOptions = DEFAULT_NUMBER_FILTER_OPTIONS;
+
+    protected createModelFormatter(
+        optionsFactory: OptionsFactory,
+        filterParams: INumberFilterParams
+    ): NumberFilterModelFormatter {
+        return new NumberFilterModelFormatter(optionsFactory, filterParams);
+    }
 
     protected override updateParams(params: INumberFloatingFilterParams): void {
         const allowedCharPattern = getAllowedCharPattern(params.filterParams as NumberFilterParams);
