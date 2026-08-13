@@ -172,7 +172,7 @@ export class GridBodyCtrl extends BeanStub {
         this.comp.setColumnCount(columns.length);
         this.updateScrollableAreaWidth();
         // Row-group / pivot columns declared in the initial column defs are only populated by the time the
-        // columns are refreshed, so the role has to be recomputed here and not just on later role changes.
+        // grid columns are refreshed, which is after this ctrl is constructed.
         this.setGridRole();
     }
 
