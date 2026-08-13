@@ -32,8 +32,7 @@ interface Props {
 
 export async function getStaticPaths() {
     const errors = await getCollection('errors');
-    // Retired codes keep their route: the hop to the archived page is client-side JS on this page, so a
-    // 404 here would strand users on older grid versions. See `@utils/retiredErrorCodes`.
+    // Retired codes keep their route, or the client-side hop to their archived page never runs.
     const codes = [...new Set([...Object.keys(AG_GRID_ERRORS), ...Object.keys(RETIRED_ERROR_CODES)])];
     return FRAMEWORKS.flatMap((framework: Framework) => {
         return codes.map((codeNum) => {
@@ -55,14 +54,12 @@ export async function getStaticPaths() {
 const { framework, code } = Astro.params as Params;
 const { errorPage } = Astro.props as Props;
 const errorCode = parseInt(code, 10);
-// A code whose page is generated from the retired registry rather than from `AG_GRID_ERRORS`. Keyed off
-// live presence rather than off the registry, so an archive build (where the code is still live) renders
-// the real error text. Retired codes must not reach `getErrorText`: it warns via `throwDevWarning` for an
-// unknown code, which throws under `astro dev`.
+// Keyed off live presence, not off the registry, so an archive build of a version where the code is still
+// live renders its real text. A retired code must never reach `getErrorText`, which throws for an unknown
+// code under `astro dev` via `throwDevWarning`.
 const isRetired = !(errorCode in AG_GRID_ERRORS);
 const retiredInVersion = isRetired ? RETIRED_ERROR_CODES[errorCode] : null;
-// Built as one string rather than interpolated into the markup, so the optional version clause does not
-// leave a stray space before its punctuation.
+// One string rather than markup interpolation, so the optional clause leaves no space before the full stop.
 const retiredMessage =
     `Error #${code} is no longer used in this version of AG Grid` +
     (retiredInVersion ? `, and was last used in version ${retiredInVersion}` : '') +
@@ -133,9 +130,9 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
             <div class={styles.pageSections}>
                 <h2 id={fullErrorTextHeading.slug}>{fullErrorTextHeading.text}</h2>
                 {
-                    /* The retired-code note is a sibling of the two blocks below, never nested inside them: the
-                    client script hides `.full-error-message` whenever the URL has no `_version_`, which is
-                    exactly when a reader most needs to be told the code is gone. */
+                    /* The note replaces the two blocks below rather than sitting inside them: the client script
+                    hides `.full-error-message` when the URL has no `_version_`, which is exactly when a reader
+                    needs to be told the code is gone. */
                 }
                 {
                     isRetired ? (
@@ -211,8 +208,7 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
     const { _version_, ...params } = Object.fromEntries(searchParams.entries());
 
     if (!_version_) {
-        // Missing version number, show a warning message. Both blocks are absent for a retired code —
-        // that page shows a "no longer used" note instead, which needs no version to make sense.
+        // Missing version number, show a warning message. Both blocks are absent on a retired code's page.
         const missingParamsMessage = document.querySelector(MISSING_PARAMS_MESSAGE_SELECTOR) as HTMLElement | null;
         const fullErrorMessage = document.querySelector(FULL_ERROR_MESSAGE_SELECTOR) as HTMLElement | null;
 
@@ -223,8 +219,7 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
             fullErrorMessage.style.display = 'none';
         }
     } else {
-        // Take the redirect before computing any error text, so the hop to the archive can never sit
-        // downstream of a failing call — a retired code has no entry in `AG_GRID_ERRORS` on this build.
+        // Redirect first, so the hop to the archive can never sit downstream of a failing text lookup.
         const errorRedirectBaseUrl = getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION });
 
         if (errorRedirectBaseUrl) {

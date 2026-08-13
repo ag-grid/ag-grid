@@ -1,11 +1,9 @@
 import { AG_GRID_ERRORS } from '../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
 import { HIGHEST_ALLOCATED_CODE, RETIRED_ERROR_CODES } from './retiredErrorCodes';
 
-// Deleting an error code from `errorText.ts` also deletes its docs route, because the error page builds
-// `getStaticPaths()` from `AG_GRID_ERRORS`. That is a live 404 for anyone whose grid logged the link, and
-// it takes the client-side hop to `/archive/<version>/` down with it, so even the intact archived page
-// becomes unreachable. Error codes are allocated monotonically, so a removal leaves a hole in the range —
-// these assertions turn that hole into a red test unless the code is registered as retired.
+// Deleting a code from `errorText.ts` also deletes its docs route, and with it the client-side hop that is
+// the only way to reach the archived page. Codes are allocated monotonically, so a removal leaves a hole in
+// the range — these assertions turn that hole red unless the code is registered as retired.
 const liveCodes = Object.keys(AG_GRID_ERRORS).map(Number);
 const retiredCodes = Object.keys(RETIRED_ERROR_CODES).map(Number);
 const allCodes = new Set([...liveCodes, ...retiredCodes]);
