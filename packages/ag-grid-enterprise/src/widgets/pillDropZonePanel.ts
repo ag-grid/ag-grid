@@ -139,7 +139,6 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.createManagedBean(this.positionableFeature);
 
         this.refreshGui();
-        _setAriaLabel(this.ePillDropList, this.getAriaLabel());
 
         this.addManagedElementListeners(this.getFocusableElement(), {
             focusin: this.onFocusIn.bind(this),
@@ -612,7 +611,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const { childPillComponents, ePillDropList } = this;
         const len = childPillComponents.length;
 
-        _setAriaRole(ePillDropList, len === 0 ? 'presentation' : 'listbox');
+        // A presentational element must not carry an accessible name.
+        const empty = len === 0;
+        _setAriaRole(ePillDropList, empty ? 'presentation' : 'listbox');
+        _setAriaLabel(ePillDropList, empty ? null : this.getAriaLabel());
 
         for (let i = 0; i < len; i++) {
             const comp = childPillComponents[i];

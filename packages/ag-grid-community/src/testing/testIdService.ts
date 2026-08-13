@@ -18,6 +18,23 @@ export function setTestIdAttribute(attr: string): void {
     TEST_ID_ATTR = attr;
 }
 
+// An empty drop zone is presentational and so has no accessible name to read the zone name from.
+const COLUMN_DROP_AREA_NAMES: Record<string, string> = {
+    'ag-column-drop-rowgroup': 'Row Groups',
+    'ag-column-drop-aggregation': 'Values',
+    'ag-column-drop-pivot': 'Column Labels',
+};
+
+function getColumnDropAreaName(columnDrop: Element): string | undefined {
+    const classes = Object.keys(COLUMN_DROP_AREA_NAMES);
+    for (let i = 0, len = classes.length; i < len; ++i) {
+        if (columnDrop.classList.contains(classes[i])) {
+            return COLUMN_DROP_AREA_NAMES[classes[i]];
+        }
+    }
+    return undefined;
+}
+
 export class TestIdService extends BeanStub implements NamedBean, ITestIdService {
     beanName: BeanName = 'testIdSvc';
 
@@ -487,7 +504,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
     private setupColumnDropArea(root: Element, source: 'panel' | 'toolbar'): void {
         root.querySelectorAll('.ag-column-drop').forEach((columnDrop) => {
-            const dropAreaName = columnDrop.querySelector('.ag-column-drop-list')?.getAttribute('aria-label');
+            const dropAreaName = getColumnDropAreaName(columnDrop);
             setTestId(columnDrop, agTestIdFor.columnDropArea(source, dropAreaName));
             columnDrop.querySelectorAll('.ag-column-drop-cell').forEach((columnDropCell) => {
                 const label = columnDropCell.querySelector('.ag-column-drop-cell-text')?.textContent;
