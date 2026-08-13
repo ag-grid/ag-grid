@@ -51,7 +51,7 @@ const gridOptions = {
 
 For each label in the Column Chooser, the renderer receives the resolved `displayName` and either `column` or `columnGroup`, depending on the item being rendered. The `source` is always `'columnChooser'`. Setting these options on `defaultColDef.columnChooserParams` applies them to the chooser regardless of which column it is opened from. They can also be supplied when calling `api.showColumnChooser(params)`.
 
-The Column Chooser does not automatically inherit a renderer configured for the [Columns Tool Panel](./tool-panel-columns/#custom-column-labels). To use the same presentation in both places, register the component once and reference its name from both configurations. Both configurations extend the shared `IColumnSelectionPanelParams` interface.
+The Column Chooser does not automatically inherit a renderer configured for the [Columns Tool Panel](./tool-panel-columns/#custom-column-labels). To use the same presentation in both places, register the component once and reference its name from both configurations. Both `ColumnChooserParams` and `IToolPanelColumnCompParams` extend the shared `IColumnSelectionPanelParams` interface.
 
 {% note %}
 Column search and accessibility announcements continue to use `displayName`, rather than text extracted from the renderer. Column selection rows have a fixed height, so renderer content should remain inline and fit within the configured list item height.
