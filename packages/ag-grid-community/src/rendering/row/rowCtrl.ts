@@ -7,6 +7,7 @@ import {
     _isElementChildOfClass,
     _isVisible,
     _makeNull,
+    _removeAriaExpanded,
     _setAriaExpanded,
     _setAriaRowIndex,
 } from 'ag-stack';
@@ -282,8 +283,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.editSvc?.applyRowEditStyles(this);
         this.executeSlideAndFadeAnimations();
 
-        if (this.rowNode.group) {
+        if (this.rowNode.isExpandable()) {
             _setAriaExpanded(element, !!this.rowNode.expanded);
+        } else {
+            _removeAriaExpanded(element);
         }
 
         this.setRowCompRowId();
