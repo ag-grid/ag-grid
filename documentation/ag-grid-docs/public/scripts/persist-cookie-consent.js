@@ -62,8 +62,6 @@
 
         var untagged = document.head.querySelectorAll(UNTAGGED_HEAD_STYLES);
 
-        console.log({ stylesNum: untagged.length });
-
         for (var i = 0, len = untagged.length; i < len; ++i) {
             if (matchesAnyMarker(untagged[i])) {
                 matchedStyles.push(untagged[i]);
