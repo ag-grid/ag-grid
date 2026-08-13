@@ -1,7 +1,7 @@
 const fs = require('fs/promises');
 const path = require('path');
 
-const { parse } = require('acorn');
+const ts = require('typescript');
 
 /**
  * Makes the bundled ESM tree shakeable by consumers whose bundler does not scope-hoist it.
@@ -39,57 +39,70 @@ const ALIASABLE_SOURCES = new Set(['ag-stack', 'ag-grid-community']);
 
 const ALIAS_PREFIX = '__agSuperclass_';
 
-function walk(node, visit) {
-    visit(node);
-    for (const key of Object.keys(node)) {
-        const value = node[key];
-        if (Array.isArray(value)) {
-            for (const child of value) {
-                if (child && typeof child.type === 'string') walk(child, visit);
-            }
-        } else if (value && typeof value.type === 'string') {
-            walk(value, visit);
+/** local binding name -> package it was imported from, for every top-level import. */
+function importedBindings(sourceFile) {
+    const importedFrom = new Map();
+    for (const statement of sourceFile.statements) {
+        if (!ts.isImportDeclaration(statement) || !statement.importClause) continue;
+        const source = statement.moduleSpecifier.text;
+        const { name, namedBindings } = statement.importClause;
+        if (name) importedFrom.set(name.text, source);
+        if (namedBindings && ts.isNamedImports(namedBindings)) {
+            for (const element of namedBindings.elements) importedFrom.set(element.name.text, source);
+        } else if (namedBindings && ts.isNamespaceImport(namedBindings)) {
+            importedFrom.set(namedBindings.name.text, source);
         }
     }
+    return importedFrom;
 }
 
 /**
  * @param {string} code bundled ESM
- * @returns {{ code: string, sites: number, aliases: number, skipped: string[] }}
+ * @returns {{ code: string, sites: number, aliases: number, preambleLines: number, skipped: string[] }}
  */
 function aliasImportedSuperclasses(code) {
     if (code.includes(ALIAS_PREFIX)) {
         throw new Error(`bundle already contains the ${ALIAS_PREFIX} prefix; pick another to stay collision-free`);
     }
 
-    const ast = parse(code, { ecmaVersion: 'latest', sourceType: 'module' });
+    const sourceFile = ts.createSourceFile('bundle.mjs', code, ts.ScriptTarget.Latest, false, ts.ScriptKind.JS);
 
-    /** local binding name -> package it was imported from */
-    const importedFrom = new Map();
-    for (const node of ast.body) {
-        if (node.type !== 'ImportDeclaration') continue;
-        for (const specifier of node.specifiers) {
-            importedFrom.set(specifier.local.name, node.source.value);
-        }
+    // TypeScript recovers from syntax errors rather than throwing, so a malformed bundle would
+    // otherwise yield a partial tree and silently leave superclasses unaliased.
+    if (sourceFile.parseDiagnostics?.length) {
+        const [first] = sourceFile.parseDiagnostics;
+        throw new Error(
+            `bundle did not parse cleanly: ${sourceFile.parseDiagnostics.length} diagnostic(s), first at ` +
+                `position ${first.start}: ${ts.flattenDiagnosticMessageText(first.messageText, ' ')}`
+        );
     }
+
+    const importedFrom = importedBindings(sourceFile);
 
     const edits = [];
     const aliases = new Map();
     const skipped = new Set();
-    walk(ast, (node) => {
-        if (node.type !== 'ClassDeclaration' && node.type !== 'ClassExpression') return;
-        const superClass = node.superClass;
-        if (!superClass || superClass.type !== 'Identifier') return;
-        const source = importedFrom.get(superClass.name);
-        if (source === undefined) return; // declared in this bundle, so already a plain identifier
-        if (!ALIASABLE_SOURCES.has(source)) {
-            skipped.add(source);
-            return;
+    const visit = (node) => {
+        if (ts.isClassDeclaration(node) || ts.isClassExpression(node)) {
+            for (const heritage of node.heritageClauses ?? []) {
+                if (heritage.token !== ts.SyntaxKind.ExtendsKeyword) continue;
+                const superClass = heritage.types[0]?.expression;
+                // Anything but a bare identifier is already opaque to a minifier, so leave it alone.
+                if (!superClass || !ts.isIdentifier(superClass)) continue;
+                const source = importedFrom.get(superClass.text);
+                if (source === undefined) continue; // declared in this bundle, so already a plain identifier
+                if (!ALIASABLE_SOURCES.has(source)) {
+                    skipped.add(source);
+                    continue;
+                }
+                const alias = `${ALIAS_PREFIX}${superClass.text}`;
+                aliases.set(superClass.text, alias);
+                edits.push({ start: superClass.getStart(sourceFile), end: superClass.end, text: alias });
+            }
         }
-        const alias = `${ALIAS_PREFIX}${superClass.name}`;
-        aliases.set(superClass.name, alias);
-        edits.push({ start: superClass.start, end: superClass.end, text: alias });
-    });
+        ts.forEachChild(node, visit);
+    };
+    visit(sourceFile);
 
     if (edits.length === 0) {
         return { code, sites: 0, aliases: 0, preambleLines: 0, skipped: [...skipped] };

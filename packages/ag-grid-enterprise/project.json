@@ -132,7 +132,7 @@
         "defaultExcludes",
         "chartsPackages",
         {
-          "externalDependencies": ["npm:typescript", "npm:esbuild", "npm:acorn"]
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
       "outputs": ["{options.outputPath}"],
