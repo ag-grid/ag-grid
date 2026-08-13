@@ -24,6 +24,10 @@ interface Props {
      * Extra styles to add to HTML
      */
     extraStyles?: string;
+    /**
+     * Whether to transpile the example's sources in the page instead of serving them transpiled
+     */
+    transpileInBrowser?: boolean;
 }
 
 const {
@@ -34,6 +38,7 @@ const {
     addInitMessageScript,
     ignoreModuleLoader,
     extraStyles,
+    transpileInBrowser,
 } = Astro.props as Props;
 
 const contentParams = {
@@ -72,6 +77,7 @@ const exampleUrl = getExampleUrl({
             addInitMessageScript={addInitMessageScript}
             ignoreModuleLoader={ignoreModuleLoader}
             extraStyles={extraStyles}
+            transpileInBrowser={transpileInBrowser}
             nonce={generatedContents?.scriptNonce}
         />
     )

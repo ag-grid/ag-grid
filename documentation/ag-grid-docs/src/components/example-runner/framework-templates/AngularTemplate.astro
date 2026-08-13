@@ -23,6 +23,10 @@ interface Props {
     headFragment?: string;
     extras?: string[];
     usesMathRandom?: boolean;
+    /**
+     * Whether to transpile the example's sources in the page instead of serving them transpiled
+     */
+    transpileInBrowser?: boolean;
     nonce?: string;
 }
 
@@ -40,6 +44,7 @@ const {
     headFragment,
     extras,
     usesMathRandom,
+    transpileInBrowser,
     nonce,
 } = Astro.props as Props;
 ---
@@ -87,6 +92,7 @@ const {
             isEnterprise={isEnterprise}
             isIntegratedCharts={isIntegratedCharts}
             usesMathRandom={usesMathRandom}
+            transpileInBrowser={transpileInBrowser}
             nonce={nonce}
         />
         <Styles

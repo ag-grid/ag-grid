@@ -32,6 +32,10 @@ interface Props {
      * Extra styles to add to HTML
      */
     extraStyles?: string;
+    /**
+     * Whether to transpile the example's sources in the page instead of serving them transpiled
+     */
+    transpileInBrowser?: boolean;
 
     /**
      * Nonce value used for Content Security Policies
@@ -49,6 +53,7 @@ const {
     addInitMessageScript,
     ignoreModuleLoader,
     extraStyles,
+    transpileInBrowser,
     nonce,
 } = Astro.props as Props;
 
@@ -132,6 +137,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             extras={extras}
             headFragment={headFragment}
             usesMathRandom={usesMathRandom}
+            transpileInBrowser={transpileInBrowser}
             nonce={nonce}
         >
             {addInitMessageScript && (
@@ -159,6 +165,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             extras={extras}
             headFragment={headFragment}
             usesMathRandom={usesMathRandom}
+            transpileInBrowser={transpileInBrowser}
             nonce={nonce}
         >
             {addInitMessageScript && (
@@ -184,6 +191,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             extras={extras}
             headFragment={headFragment}
             usesMathRandom={usesMathRandom}
+            transpileInBrowser={transpileInBrowser}
             nonce={nonce}
         >
             {addInitMessageScript && (
@@ -209,6 +217,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             extras={extras}
             headFragment={headFragment}
             usesMathRandom={usesMathRandom}
+            transpileInBrowser={transpileInBrowser}
             nonce={nonce}
         >
             {addInitMessageScript && (

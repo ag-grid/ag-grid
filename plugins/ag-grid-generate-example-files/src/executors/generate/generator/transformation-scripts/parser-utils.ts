@@ -575,9 +575,34 @@ export function handleRowGenericInterface(fileTxt: string, tData: string): strin
     return fileTxt;
 }
 
+/**
+ * Every interface `getGenericInterface` declares for a given `tData`. A row type can refer to
+ * others (`IAccount.callRecords` is `ICallRecord[]`), and an example that names one of those in
+ * its own types needs it imported too.
+ */
+const GENERIC_INTERFACE_NAMES: Record<string, string[]> = {
+    IOlympicData: ['IOlympicData'],
+    IOlympicDataWithId: ['IOlympicDataWithId', 'IOlympicData'],
+    IAccount: ['IAccount', 'ICallRecord'],
+};
+
 export function addGenericInterfaceImport(imports: string[], tData: string, bindings) {
-    if (tData && !bindings.interfaces.some((i) => i.includes(tData)) && !imports.some((i) => i.includes(tData))) {
-        imports.push(`import { ${tData} } from './interfaces';`);
+    if (!tData) {
+        return;
+    }
+
+    // The parsed bindings hold the example's code, so they are what decides whether a
+    // companion interface is referenced at all -- an unused import would only be noise.
+    const source = JSON.stringify(bindings);
+    const names = (GENERIC_INTERFACE_NAMES[tData] ?? [tData]).filter(
+        (name) =>
+            (name === tData || new RegExp(`\\b${name}\\b`).test(source)) &&
+            !bindings.interfaces.some((i) => i.includes(name)) &&
+            !imports.some((i) => i.includes(name))
+    );
+
+    if (names.length > 0) {
+        imports.push(`import { ${names.join(', ')} } from './interfaces';`);
     }
 }
 

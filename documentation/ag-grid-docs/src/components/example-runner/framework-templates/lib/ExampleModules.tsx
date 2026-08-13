@@ -3,6 +3,7 @@ import { getImportMap } from '@utils/exampleModules/getImportMap';
 import { toModuleFileName } from '@utils/exampleModules/transformExampleModule';
 import { pathJoin } from '@utils/pathJoin';
 
+import { BrowserTranspiler } from './BrowserTranspiler';
 import { SeedRandom } from './SeedRandom';
 
 interface Props {
@@ -12,6 +13,11 @@ interface Props {
     isEnterprise: boolean;
     isIntegratedCharts?: boolean;
     usesMathRandom?: boolean;
+    /**
+     * Whether the example's sources are transpiled in the page rather than served transpiled,
+     * which is what Plunker needs (see `BrowserTranspiler`)
+     */
+    transpileInBrowser?: boolean;
     nonce?: string;
 }
 
@@ -19,6 +25,7 @@ interface Props {
  * Example modules are loaded natively by the browser: an import map resolves the bare
  * package specifiers, and the entry file is loaded as a module. TypeScript and JSX sources
  * are transpiled server-side and served as `.js`, so the entry point is requested as such.
+ * The exception is Plunker, which is handed the sources as authored -- see `transpileInBrowser`.
  */
 export const ExampleModules = ({
     appLocation,
@@ -27,6 +34,7 @@ export const ExampleModules = ({
     isEnterprise,
     isIntegratedCharts,
     usesMathRandom,
+    transpileInBrowser,
     nonce,
 }: Props) => {
     const importMap = getImportMap({ internalFramework, isEnterprise, isIntegratedCharts });
@@ -51,7 +59,11 @@ export const ExampleModules = ({
 window.addEventListener('error', function (e) { console.error('ERROR', e.message, e.filename); });`,
                 }}
             />
-            <script nonce={nonce} type="module" src={startFile} />
+            {transpileInBrowser ? (
+                <BrowserTranspiler entryFileName={entryFileName} nonce={nonce} />
+            ) : (
+                <script nonce={nonce} type="module" src={startFile} />
+            )}
         </>
     );
 };

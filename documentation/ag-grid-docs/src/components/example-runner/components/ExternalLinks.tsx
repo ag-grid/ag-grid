@@ -2,14 +2,11 @@ import type { InternalFramework } from '@ag-grid-types';
 import { OpenInCodeSandbox } from '@ag-website-shared/components/codeSandbox/components/OpenInCodeSandbox';
 import { OpenInPlunkr } from '@ag-website-shared/components/plunkr/components/OpenInPlunkr';
 import type { FileContents } from '@components/example-generator/types';
-import { toModuleFileName } from '@utils/exampleModules/transformExampleModule';
-import { isReactInternalFramework } from '@utils/framework';
 
 export function ExternalLinks({
     title,
     internalFramework,
     exampleFiles,
-    exampleModuleFiles,
     packageJson,
     initialSelectedFile,
     plunkrHtmlUrl,
@@ -19,10 +16,6 @@ export function ExternalLinks({
     title: string;
     internalFramework: InternalFramework;
     exampleFiles?: FileContents;
-    /**
-     * `exampleFiles` transpiled to plain ES modules, for targets that have no build step
-     */
-    exampleModuleFiles?: FileContents;
     packageJson?: Record<string, any>;
     initialSelectedFile?: string;
 
@@ -30,20 +23,13 @@ export function ExternalLinks({
     codeSandboxHtmlUrl?: string;
     isDev: boolean;
 }) {
-    // Plunker serves static files, so it always needs the transpiled modules. CodeSandbox only
-    // does for the frameworks it runs on the `static` template -- its React templates build
-    // the TypeScript sources themselves.
-    const staticFiles = exampleModuleFiles ?? exampleFiles;
-    const codeSandboxFiles = isReactInternalFramework(internalFramework) ? exampleFiles : staticFiles;
-    const plunkrFileToOpen = staticFiles && initialSelectedFile && toModuleFileName(initialSelectedFile);
-
     return (
         <>
-            {codeSandboxHtmlUrl && codeSandboxFiles ? (
+            {codeSandboxHtmlUrl && exampleFiles ? (
                 <li>
                     <OpenInCodeSandbox
                         title={title}
-                        files={codeSandboxFiles}
+                        files={exampleFiles}
                         htmlUrl={codeSandboxHtmlUrl}
                         internalFramework={internalFramework}
                         packageJson={packageJson}
@@ -51,14 +37,14 @@ export function ExternalLinks({
                     />
                 </li>
             ) : undefined}
-            {plunkrHtmlUrl && staticFiles ? (
+            {plunkrHtmlUrl && exampleFiles ? (
                 <li>
                     <OpenInPlunkr
                         title={title}
-                        files={staticFiles}
+                        files={exampleFiles}
                         htmlUrl={plunkrHtmlUrl}
                         packageJson={packageJson!}
-                        fileToOpen={plunkrFileToOpen!}
+                        fileToOpen={initialSelectedFile!}
                         isDev={isDev}
                     />
                 </li>

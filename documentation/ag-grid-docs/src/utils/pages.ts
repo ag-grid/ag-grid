@@ -78,8 +78,8 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // Framework libraries
     'ag-grid-react/dist/**': 'packages/ag-grid-react/dist/**/*.{cjs,mjs,js,map}',
     'ag-grid-react/src/**': 'packages/ag-grid-react/src/**/*.{tsx,ts}',
-    'ag-grid-angular/fesm2022/ag-grid-angular.mjs':
-        'packages/ag-grid-angular/dist/ag-grid-angular/fesm2022/ag-grid-angular.mjs',
+    // NOTE: matched as a glob so that the `.map` the `.mjs` points at is served too
+    'ag-grid-angular/fesm2022/**': 'packages/ag-grid-angular/dist/ag-grid-angular/fesm2022/**/*.{mjs,map}',
     'ag-grid-vue3/dist/**': 'packages/ag-grid-vue3/dist/**/*.{cjs,mjs,js,map}',
 };
 

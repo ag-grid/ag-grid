@@ -109,29 +109,23 @@ const DocsExampleRunnerInner = ({
                             return {};
                         }
 
-                        // `moduleFiles` mirrors `files`, so both are pruned the same way
-                        const fileSets = [json.files, json.moduleFiles].filter(Boolean);
-
                         const isTs =
                             internalFramework === 'reactFunctionalTs' ||
                             internalFramework === 'typescript' ||
                             internalFramework === 'angular';
-                        fileSets.forEach((fileSet) => {
-                            if (!isTs) {
-                                delete fileSet['interfaces.ts'];
-                                delete fileSet['interfaces.js'];
-                            }
-                            if (internalFramework.startsWith('vue') || internalFramework.startsWith('react')) {
-                                delete fileSet['index.html'];
-                            }
+                        if (!isTs) {
+                            delete json.files['interfaces.ts'];
+                        }
+                        if (internalFramework.startsWith('vue') || internalFramework.startsWith('react')) {
+                            delete json.files['index.html'];
+                        }
 
-                            // Don't include the example spec files in the example runner for now
-                            Object.keys(fileSet)
-                                .filter((file) => file?.includes('.spec.') || file?.includes('.test.'))
-                                .forEach((specFile) => {
-                                    delete fileSet[specFile];
-                                });
-                        });
+                        // Don't include the example spec files in the example runner for now
+                        Object.keys(json.files)
+                            .filter((file) => file?.includes('.spec.') || file?.includes('.test.'))
+                            .forEach((specFile) => {
+                                delete json.files[specFile];
+                            });
 
                         return json;
                     }),
@@ -166,7 +160,6 @@ const DocsExampleRunnerInner = ({
             title={title}
             internalFramework={internalFramework}
             exampleFiles={contents.files}
-            exampleModuleFiles={contents.moduleFiles}
             packageJson={contents.packageJson}
             initialSelectedFile={contents.mainFileName}
             plunkrHtmlUrl={urls.plunkrHtmlUrl}
