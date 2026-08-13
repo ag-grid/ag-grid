@@ -1,5 +1,5 @@
 import { BASE_URL } from '../../baseUrl';
-import { AG_GRID_ERRORS } from './errorText';
+import { AG_GRID_ERRORS, MAX_ERROR_ID } from './errorText';
 
 const trimTrailingSpaces = (s: string) => s.replace(/ +\n/g, '\n');
 
@@ -10,6 +10,12 @@ describe('Validate AG_GRID_ERRORS', () => {
             errorTextFn({} as any);
         }
     );
+
+    test('MAX_ERROR_ID covers every error code, so the docs site generates a page for each', () => {
+        const highestErrorId = Math.max(...Object.keys(AG_GRID_ERRORS).map(Number));
+
+        expect(MAX_ERROR_ID).toBeGreaterThanOrEqual(highestErrorId);
+    });
 });
 
 describe('error 200 (missing module)', () => {

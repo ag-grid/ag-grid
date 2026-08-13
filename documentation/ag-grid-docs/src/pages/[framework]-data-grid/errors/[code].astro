@@ -14,13 +14,14 @@ import { getFrameworkDisplayText } from '@utils/framework';
 import { getErrorText } from '@utils/getErrorText';
 import { getHeadings, getTopHeading } from '@utils/markdoc/getHeadings';
 import { pathJoin } from '@utils/pathJoin';
-import { RETIRED_ERROR_CODES } from '@utils/retiredErrorCodes';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
 import {
     AG_GRID_ERRORS,
+    MAX_ERROR_ID,
     type ErrorId,
 } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
+import { VERSION } from '../../../../../../packages/ag-grid-community/src/version';
 
 interface Params {
     framework: Framework;
@@ -32,8 +33,9 @@ interface Props {
 
 export async function getStaticPaths() {
     const errors = await getCollection('errors');
-    // Retired codes keep their route, or the client-side hop to their archived page never runs.
-    const codes = [...new Set([...Object.keys(AG_GRID_ERRORS), ...Object.keys(RETIRED_ERROR_CODES)])];
+    // The whole allocated range, not just the live codes: a code dropped from `AG_GRID_ERRORS` still needs
+    // a page for the client-side hop to its archived copy to run on.
+    const codes = Array.from({ length: MAX_ERROR_ID }, (_, index) => index + 1);
     return FRAMEWORKS.flatMap((framework: Framework) => {
         return codes.map((codeNum) => {
             const code = codeNum.toString();
@@ -54,18 +56,10 @@ export async function getStaticPaths() {
 const { framework, code } = Astro.params as Params;
 const { errorPage } = Astro.props as Props;
 const errorCode = parseInt(code, 10);
-// Keyed off live presence, not off the registry, so an archive build of a version where the code is still
-// live renders its real text. A retired code must never reach `getErrorText`, which throws for an unknown
-// code under `astro dev` via `throwDevWarning`.
-const isRetired = !(errorCode in AG_GRID_ERRORS);
-const retiredInVersion = isRetired ? RETIRED_ERROR_CODES[errorCode] : null;
-// One string rather than markup interpolation, so the optional clause leaves no space before the full stop.
-const retiredMessage = isRetired
-    ? `Error #${code} is no longer used in this version of AG Grid` +
-      (retiredInVersion ? `, and was last used in version ${retiredInVersion}` : '') +
-      `. A link logged by an older version carries that version, and is redirected to that version's ` +
-      `archived error page.`
-    : '';
+// Covers both a code retired since an earlier release and a number never allocated — the two cannot be
+// told apart without a hand-maintained list, so the copy stays version-neutral. It must never reach
+// `getErrorText`, which throws for an unknown code under `astro dev` via `throwDevWarning`.
+const isUnknownCode = !(errorCode in AG_GRID_ERRORS);
 const frameworkDisplayText = framework === 'javascript' ? '' : getFrameworkDisplayText(framework);
 const title = `AG Grid ${frameworkDisplayText} Error #${code}`;
 const description = errorPage?.data.description ? errorPage?.data.description : '';
@@ -77,7 +71,7 @@ const { data: allErrorLinks } = (await getEntry('errorLinks', 'links')) as Colle
 const errorLinks = allErrorLinks.filter((e) => e.errorIds.includes(errorCode)) ?? [];
 const path = Astro.url.pathname;
 const pageName = `errors/${code}`;
-const defaultErrorText = isRetired ? '' : getErrorText({ errorCode: errorCode as ErrorId });
+const defaultErrorText = isUnknownCode ? '' : getErrorText({ errorCode: errorCode as ErrorId });
 
 const getTabItemSlug = (id: string) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`;
 const topHeading = getTopHeading(title);
@@ -133,11 +127,14 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
                 {
                     /* The note replaces the two blocks below rather than sitting inside them: the client script
                     hides `.full-error-message` when the URL has no `_version_`, which is exactly when a reader
-                    needs to be told the code is gone. */
+                    needs to be told the code is unknown. */
                 }
                 {
-                    isRetired ? (
-                        <Note>{retiredMessage}</Note>
+                    isUnknownCode ? (
+                        <Note>
+                            Error #{code} is not recognised in AG Grid {VERSION}. If you followed this link from an
+                            older version of AG Grid, you will be redirected to that version's documentation.
+                        </Note>
                     ) : (
                         <>
                             <div class="missing-params-message">
@@ -209,7 +206,7 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
     const { _version_, ...params } = Object.fromEntries(searchParams.entries());
 
     if (!_version_) {
-        // Missing version number, show a warning message. Both blocks are absent on a retired code's page.
+        // Missing version number, show a warning message. Both blocks are absent on an unknown code's page.
         const missingParamsMessage = document.querySelector(MISSING_PARAMS_MESSAGE_SELECTOR) as HTMLElement | null;
         const fullErrorMessage = document.querySelector(FULL_ERROR_MESSAGE_SELECTOR) as HTMLElement | null;
 
