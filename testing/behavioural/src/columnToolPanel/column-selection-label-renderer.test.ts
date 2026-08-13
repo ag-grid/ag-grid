@@ -119,6 +119,18 @@ describe('column selection label renderer', () => {
                 label.textContent = `Chooser: ${params.displayName}`;
                 return label;
             },
+            columnLabelRendererSelector: (params: IColumnSelectionLabelRendererParams) =>
+                params.column?.getColId() === 'sport'
+                    ? {
+                          component: (rendererParams: IColumnSelectionLabelRendererParams) => {
+                              receivedParams.push(rendererParams);
+                              const label = document.createElement('span');
+                              label.className = 'custom-chooser-label';
+                              label.textContent = `Selected: ${rendererParams.displayName}`;
+                              return label;
+                          },
+                      }
+                    : undefined,
         });
 
         const dialog = await waitFor(() => {
@@ -134,7 +146,7 @@ describe('column selection label renderer', () => {
 
         expect(Array.from(dialog.querySelectorAll('.custom-chooser-label'), (element) => element.textContent)).toEqual([
             'Chooser: Athlete',
-            'Chooser: Sport',
+            'Selected: Sport',
         ]);
         expect(receivedParams.length).toBeGreaterThanOrEqual(2);
         expect(receivedParams.every((params) => params.source === 'columnChooser')).toBe(true);
@@ -201,17 +213,12 @@ describe('column selection label renderer', () => {
         let resolveReplacement: (() => void) | undefined;
         let destroyCount = 0;
 
-        class RefreshingLabelRenderer implements IColumnSelectionLabelRendererComp {
+        class CurrentLabelRenderer implements IColumnSelectionLabelRendererComp {
             private readonly eGui = document.createElement('span');
 
-            public init(params: IColumnSelectionLabelRendererParams): AgPromise<void> | void {
+            public init(params: IColumnSelectionLabelRendererParams): void {
                 this.eGui.className = 'refreshing-column-label';
                 this.eGui.textContent = `Rendered: ${params.displayName}`;
-                if (params.displayName === 'Competitor') {
-                    return new AgPromise<void>((resolve) => {
-                        resolveReplacement = () => resolve();
-                    });
-                }
             }
 
             public getGui(): HTMLElement {
@@ -219,11 +226,27 @@ describe('column selection label renderer', () => {
             }
 
             public refresh(): boolean {
-                return false;
+                return true;
             }
 
             public destroy(): void {
                 destroyCount++;
+            }
+        }
+
+        class ReplacementLabelRenderer implements IColumnSelectionLabelRendererComp {
+            private readonly eGui = document.createElement('span');
+
+            public init(params: IColumnSelectionLabelRendererParams): AgPromise<void> {
+                this.eGui.className = 'refreshing-column-label';
+                this.eGui.textContent = `Rendered: ${params.displayName}`;
+                return new AgPromise<void>((resolve) => {
+                    resolveReplacement = () => resolve();
+                });
+            }
+
+            public getGui(): HTMLElement {
+                return this.eGui;
             }
         }
 
@@ -238,7 +261,14 @@ describe('column selection label renderer', () => {
                         labelKey: 'columns',
                         iconKey: 'columns',
                         toolPanel: 'agColumnsToolPanel',
-                        toolPanelParams: { columnLabelRenderer: RefreshingLabelRenderer },
+                        toolPanelParams: {
+                            columnLabelRendererSelector: (params: IColumnSelectionLabelRendererParams) => ({
+                                component:
+                                    params.displayName === 'Competitor'
+                                        ? ReplacementLabelRenderer
+                                        : CurrentLabelRenderer,
+                            }),
+                        },
                     },
                 ],
                 defaultToolPanel: 'columns',

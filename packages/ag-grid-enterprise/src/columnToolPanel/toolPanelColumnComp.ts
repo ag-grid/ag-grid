@@ -79,7 +79,7 @@ export class ToolPanelColumnComp extends Component {
         checkboxGui.after(eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
-        if (this.params.columnLabelRenderer != null) {
+        if (ColumnSelectionLabelRendererFeature.isEnabled(this.params)) {
             this.labelRendererFeature = this.createManagedBean(
                 new ColumnSelectionLabelRendererFeature(
                     eLabel,

@@ -50,7 +50,7 @@ Selecting columns means different things depending on whether the grid is in piv
 
 ## Column Selection Panel Configuration
 
-The Columns section and the [Column Chooser](./column-menu/#customising-the-column-chooser) use the same column selection panel. Their shared options are defined by `IColumnSelectionPanelParams`, while `IToolPanelColumnCompParams` adds options for the other Columns Tool Panel sections.
+The Columns section and the [Column Chooser](./column-chooser/) use the same column selection panel. Their shared options are defined by `IColumnSelectionPanelParams`, while `IToolPanelColumnCompParams` adds options for the other Columns Tool Panel sections.
 
 ### Shared Column Selection Options
 
@@ -174,6 +174,8 @@ Use `columnLabelRenderer` to replace the text shown for columns and column group
 
 The renderer can be supplied directly or referenced by a name registered in the grid's [`components`](./components/#registering-custom-components) map. Additional properties can be passed through `columnLabelRendererParams`.
 
+Use `columnLabelRendererSelector` to select different renderers for individual columns or column groups. The selector can also provide renderer-specific `params`; returning `undefined` falls back to `columnLabelRenderer`.
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     components: {
@@ -198,7 +200,7 @@ const gridOptions = {
 };
 ```
 
-The renderer receives either `column` or `columnGroup`, together with the resolved `displayName` and a `source` of `'columnsToolPanel'`. The same renderer can be configured independently for the [Column Chooser](./column-menu/#custom-column-labels).
+The renderer receives either `column` or `columnGroup`, together with the resolved `displayName` and a `source` of `'columnsToolPanel'`. The same renderer can be configured independently for the [Column Chooser](./column-chooser/#custom-column-labels).
 
 {% note %}
 Column search, tooltips, drag labels and accessibility announcements continue to use `displayName`, rather than text extracted from the renderer. Column selection rows have a fixed height, so renderer content should remain inline and fit within the configured list item height. Clicking the rendered label retains the normal selection behaviour; interactive elements should stop event propagation when they should not toggle the column.

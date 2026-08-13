@@ -424,6 +424,8 @@ export type {
 export type { ICellEditorRendererComp, ICellEditorRendererParams } from './interfaces/iCellEditorRenderer';
 export type {
     ColumnSelectionLabelRendererFunc,
+    ColumnSelectionLabelRendererSelectorFunc,
+    ColumnSelectionLabelRendererSelectorResult,
     ColumnSelectionPanelSource,
     IColumnSelectionLabelRenderer,
     IColumnSelectionLabelRendererComp,

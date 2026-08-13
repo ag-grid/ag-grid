@@ -12,11 +12,7 @@ interface CustomColumnLabelParams {
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <span
-            class="custom-column-label"
-            [attr.data-kind]="isGroup() ? 'group' : 'column'"
-            [attr.data-source]="source()"
-        >
+        <span class="custom-column-label">
             <span class="custom-column-label-icon">{{ icon() }}</span>
             <span class="custom-column-label-text">{{ displayName() }}</span>
         </span>
@@ -25,8 +21,6 @@ interface CustomColumnLabelParams {
 export class CustomColumnLabel implements IColumnSelectionLabelRendererAngularComp {
     readonly displayName = signal<string | null>(null);
     readonly icon = signal('');
-    readonly isGroup = signal(false);
-    readonly source = signal('');
 
     public agInit(params: IColumnSelectionLabelRendererParams & CustomColumnLabelParams): void {
         this.update(params);
@@ -41,7 +35,5 @@ export class CustomColumnLabel implements IColumnSelectionLabelRendererAngularCo
         const isGroup = params.columnGroup != null;
         this.displayName.set(params.displayName);
         this.icon.set(isGroup ? params.columnGroupIcon : params.columnIcon);
-        this.isGroup.set(isGroup);
-        this.source.set(params.source);
     }
 }

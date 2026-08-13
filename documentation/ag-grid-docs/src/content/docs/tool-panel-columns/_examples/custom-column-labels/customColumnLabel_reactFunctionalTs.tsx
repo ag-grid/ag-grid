@@ -11,7 +11,7 @@ export default (props: CustomColumnLabelProps) => {
     const isGroup = props.columnGroup != null;
 
     return (
-        <span className="custom-column-label" data-kind={isGroup ? 'group' : 'column'} data-source={props.source}>
+        <span className="custom-column-label">
             <span className="custom-column-label-icon">{isGroup ? props.columnGroupIcon : props.columnIcon}</span>
             <span className="custom-column-label-text">{props.displayName}</span>
         </span>

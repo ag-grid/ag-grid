@@ -18,7 +18,12 @@ const ColumnLabelRendererComponent: ComponentType<IColumnSelectionLabelRendererC
 
 export class ColumnSelectionLabelRendererFeature extends BeanStub {
     private renderer: IColumnSelectionLabelRendererComp | null = null;
+    private rendererClass: any = null;
     private rendererVersion = 0;
+
+    public static isEnabled(definition: IColumnSelectionPanelParams): boolean {
+        return definition.columnLabelRenderer != null || definition.columnLabelRendererSelector != null;
+    }
 
     constructor(
         private readonly eLabel: HTMLElement,
@@ -51,10 +56,14 @@ export class ColumnSelectionLabelRendererFeature extends BeanStub {
             return;
         }
 
-        if (this.renderer?.refresh?.(details.params)) {
-            // Cancel any replacement still initialising with older parameters.
-            this.rendererVersion++;
-            return;
+        const { renderer } = this;
+        if (renderer != null && this.rendererClass === details.componentClass && renderer.refresh != null) {
+            const refreshed = renderer.refresh(details.params);
+            if (refreshed === true || refreshed === undefined) {
+                // Cancel any replacement still initialising with older parameters.
+                this.rendererVersion++;
+                return;
+            }
         }
 
         this.createRenderer(details);
@@ -75,6 +84,7 @@ export class ColumnSelectionLabelRendererFeature extends BeanStub {
 
             const oldRenderer = this.renderer;
             this.renderer = renderer;
+            this.rendererClass = details.componentClass;
             this.eLabel.replaceChildren(renderer.getGui());
             this.destroyBean(oldRenderer);
         });
@@ -98,6 +108,7 @@ export class ColumnSelectionLabelRendererFeature extends BeanStub {
         this.rendererVersion++;
         this.destroyBean(this.renderer);
         this.renderer = null;
+        this.rendererClass = null;
         if (displayName === undefined) {
             this.eLabel.replaceChildren();
         } else {

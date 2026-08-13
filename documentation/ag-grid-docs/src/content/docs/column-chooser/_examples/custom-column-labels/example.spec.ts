@@ -9,9 +9,8 @@ test.agExample(import.meta, () => {
         await page.locator('.ag-menu-option-text', { hasText: 'Choose Columns' }).click();
 
         const chooser = page.locator('.ag-column-select');
-        await expect(chooser.locator('.custom-column-label[data-kind="group"]')).toHaveCount(2);
-        await expect(chooser.locator('.custom-column-label[data-kind="column"]')).toHaveCount(6);
-        await expect(chooser.locator('.custom-column-label[data-source="columnChooser"]')).toHaveCount(8);
+        await expect(chooser.locator('.ag-column-select-column-group .custom-column-label')).toHaveCount(2);
+        await expect(chooser.locator('.ag-column-select-column .custom-column-label')).toHaveCount(6);
         await expect(chooser.locator('.custom-column-label', { hasText: 'Results' })).toBeVisible();
 
         const goldRow = chooser.locator('.ag-column-select-column', {

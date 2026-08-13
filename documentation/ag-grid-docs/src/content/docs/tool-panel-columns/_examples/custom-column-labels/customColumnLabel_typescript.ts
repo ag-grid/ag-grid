@@ -24,8 +24,6 @@ export class CustomColumnLabel implements IColumnSelectionLabelRendererComp {
 
     private refreshLabel(params: IColumnSelectionLabelRendererParams & CustomColumnLabelParams): void {
         const isGroup = params.columnGroup != null;
-        this.eGui.dataset.kind = isGroup ? 'group' : 'column';
-        this.eGui.dataset.source = params.source;
         this.eGui.replaceChildren();
 
         const icon = document.createElement('span');

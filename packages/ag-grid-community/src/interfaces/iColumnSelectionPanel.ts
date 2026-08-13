@@ -23,6 +23,8 @@ export interface IColumnSelectionPanelParams {
     columnLabelRenderer?: any;
     /** Additional parameters passed to the `columnLabelRenderer`. */
     columnLabelRendererParams?: any;
+    /** Callback to select which renderer to use for an individual column or column group label. */
+    columnLabelRendererSelector?: ColumnSelectionLabelRendererSelectorFunc;
 }
 
 export interface IColumnSelectionLabelRendererParams<TData = any, TContext = any> extends AgGridCommon<
@@ -48,3 +50,14 @@ export interface IColumnSelectionLabelRendererComp
     extends IComponent<IColumnSelectionLabelRendererParams>, IColumnSelectionLabelRenderer {}
 
 export type ColumnSelectionLabelRendererFunc = (params: IColumnSelectionLabelRendererParams) => HTMLElement | string;
+
+export type ColumnSelectionLabelRendererSelectorFunc = (
+    params: IColumnSelectionLabelRendererParams
+) => ColumnSelectionLabelRendererSelectorResult | undefined;
+
+export interface ColumnSelectionLabelRendererSelectorResult {
+    /** Equivalent to setting `columnLabelRenderer`. */
+    component?: any;
+    /** Equivalent to setting `columnLabelRendererParams`. */
+    params?: any;
+}

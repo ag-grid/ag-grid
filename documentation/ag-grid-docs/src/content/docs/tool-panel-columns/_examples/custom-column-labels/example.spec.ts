@@ -5,9 +5,8 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         const toolPanel = page.locator('.ag-column-select');
-        await expect(toolPanel.locator('.custom-column-label[data-kind="group"]')).toHaveCount(2);
-        await expect(toolPanel.locator('.custom-column-label[data-kind="column"]')).toHaveCount(6);
-        await expect(toolPanel.locator('.custom-column-label[data-source="columnsToolPanel"]')).toHaveCount(8);
+        await expect(toolPanel.locator('.ag-column-select-column-group .custom-column-label')).toHaveCount(2);
+        await expect(toolPanel.locator('.ag-column-select-column .custom-column-label')).toHaveCount(6);
         await expect(toolPanel.locator('.custom-column-label', { hasText: 'Athlete Details' })).toBeVisible();
 
         const athleteRow = toolPanel.locator('.ag-column-select-column', {

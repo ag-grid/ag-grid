@@ -33,6 +33,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         const {
             columnLabelRenderer,
             columnLabelRendererParams,
+            columnLabelRendererSelector,
             contractColumnSelection,
             suppressColumnExpandAll,
             suppressColumnFilter,
@@ -56,6 +57,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
                 suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
                 columnLabelRenderer,
                 columnLabelRendererParams,
+                columnLabelRendererSelector,
                 onStateUpdated: () => {},
             }),
             'columnMenu',
