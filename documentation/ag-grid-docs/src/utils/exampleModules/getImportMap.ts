@@ -33,8 +33,13 @@ const TSLIB_VERSION = '2.3.1';
 /** The URL parameter that overrides the framework version an example runs against */
 export const FRAMEWORK_VERSION_PARAM = 'version';
 
-/** `major.minor.patch`, optionally with a pre-release or build suffix */
-export const FRAMEWORK_VERSION_PATTERN = /^\d+\.\d+\.\d+(?:[-+][\w.-]+)*$/;
+/**
+ * `major.minor.patch`, optionally with a pre-release suffix and a build suffix. Each suffix is
+ * matched once rather than as one repeated group, so that no quantifier nests inside another over
+ * the same characters -- a version arriving from the URL would otherwise be able to make matching
+ * it cost far more than reading it.
+ */
+export const FRAMEWORK_VERSION_PATTERN = /^\d+\.\d+\.\d+(?:-[\w.-]+)?(?:\+[\w.-]+)?$/;
 
 /**
  * The URL parameter that picks the framework's development build. As under SystemJS, examples

@@ -166,8 +166,21 @@ describe('getImportMap', () => {
             expect(getDefaultFrameworkVersion('vanilla')).toBeUndefined();
         });
 
-        test.each(['19.2.1', '18.3.1', '20.0.0-next.7', '3.5.17+build.1'])('%s is a valid version', (version) => {
-            expect(FRAMEWORK_VERSION_PATTERN.test(version)).toBe(true);
+        test.each(['19.2.1', '18.3.1', '20.0.0-next.7', '3.5.17+build.1', '1.2.3-rc.1+build.2'])(
+            '%s is a valid version',
+            (version) => {
+                expect(FRAMEWORK_VERSION_PATTERN.test(version)).toBe(true);
+            }
+        );
+
+        test('rejects a long near-miss without the match itself becoming expensive', () => {
+            // The suffixes are matched once each, so a value engineered to make a repeated group
+            // backtrack cannot: this settles immediately rather than hanging the example page
+            const start = performance.now();
+
+            expect(FRAMEWORK_VERSION_PATTERN.test(`1.2.3-${'a-'.repeat(2000)}!`)).toBe(false);
+
+            expect(performance.now() - start).toBeLessThan(100);
         });
 
         test.each(['19', '19.2', 'latest', '../evil', '19.2.1/../evil', 'https://example.com'])(
