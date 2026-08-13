@@ -87,6 +87,9 @@ export default defineConfig({
                 outputFile: `ag-grid-examples-interactive-${process.env.FRAMEWORK || 'default'}.json`,
             },
         ],
+        // Only the page-verification project records CSP violations, so every other project
+        // writes an empty report here.
+        ['./scripts/csp/cspViolationReporter.ts'],
     ],
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
