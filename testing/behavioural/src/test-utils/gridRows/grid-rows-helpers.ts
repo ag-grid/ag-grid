@@ -8,7 +8,7 @@ import { unindentText } from '../string-utils';
 import type { GridRows } from './gridRows';
 import type { GridRowsOptions } from './gridRowsOptions';
 import type { GridRowsErrors } from './rows-validation/gridRowsErrors';
-import { recordSnapshotMismatch } from './snapshot-updater';
+import { CLASS_NAME_BY_METHOD, recordSnapshotMismatch } from './snapshot-updater';
 
 /** Adds the diagram text to a vitest assertion error so it appears in test output. */
 export function addDiagramToError(
@@ -60,11 +60,6 @@ export interface SnapshotCheckTarget {
 }
 
 const RETRY_DELAYS_MS = [10, 50, 100] as const;
-const CLASS_NAME_BY_METHOD: Record<SnapshotCheckMethodName, string> = {
-    check: 'GridRows',
-    checkColumns: 'GridColumns',
-    checkFilterDom: 'FilterDom',
-};
 const UNDEFINED_SNAPSHOT_NOTICE = (method: SnapshotCheckMethodName, label: string): string => {
     return `\n❌ ${CLASS_NAME_BY_METHOD[method]}.${method}() called without a snapshot for "${label}". Run \`./behave.sh --update-grid-rows\` to generate one.\n`;
 };
@@ -114,13 +109,13 @@ export async function runSnapshotCheck(
     updateMode: 'update' | 'dry' | undefined
 ): Promise<void> {
     if (diagramSnapshot === undefined) {
-        if (updateMode) {
-            // Treat undefined as an empty snapshot in update mode so the updater can fill it in.
-            diagramSnapshot = '';
-        } else {
-            process.stderr.write(UNDEFINED_SNAPSHOT_NOTICE(target.methodName, target.label));
-            diagramSnapshot = 'skip-snapshot';
+        if (!updateMode) {
+            // A placeholder asserts nothing, so it fails rather than passing quietly. `'skip-snapshot'`
+            // is how a check is deliberately bypassed.
+            throw new Error(UNDEFINED_SNAPSHOT_NOTICE(target.methodName, target.label));
         }
+        // Treat undefined as an empty snapshot in update mode so the updater can fill it in.
+        diagramSnapshot = '';
     }
 
     if (diagramSnapshot === true) {

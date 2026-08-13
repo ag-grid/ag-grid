@@ -1,20 +1,14 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 
 import type { GridApi } from 'ag-grid-community';
 import { agTestIdFor, getGridElement } from 'ag-grid-community';
 
 import { asyncSetTimeout } from '../node-utils';
 import { firePointerLikeClick } from '../test-utils-events';
-import { clickSelectOption, nudgeVirtualList, openPicker } from '../widgets/dropdowns';
+import { clickSelectOption, getSelectOptionLabels, nudgeVirtualList, openPicker } from '../widgets/dropdowns';
+import { setNativeInputValue } from '../widgets/inputs';
 
 const COLUMN_FILTER_MENU = '.ag-filter-menu';
-
-function setNativeInputValue(input: HTMLInputElement, value: string): void {
-    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
-    setter.call(input, value);
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-}
 
 /**
  * Drives a column filter popup (`.ag-filter-menu`) through public DOM only. Operator selection uses the
@@ -47,22 +41,60 @@ export class ColumnFilterHarness {
 
     /** Selects an operator by its display label (e.g. "Greater than", "In range") via the AgSelect. */
     public async selectOperator(displayName: string, conditionIndex = 0): Promise<this> {
-        const selects = this.popup.querySelectorAll<HTMLElement>('.ag-filter-select');
-        const select = selects[conditionIndex];
-        if (!select) {
-            throw new Error(`No operator select at condition index ${conditionIndex} for "${this.colId}"`);
-        }
-        await openPicker(select);
+        await openPicker(this.operatorSelect(conditionIndex));
         await clickSelectOption(displayName);
         return this;
     }
 
-    /** Non-set inputs in DOM order (from/to for ranges). Excludes inputs hidden via any ancestor. */
-    private inputs(type: 'text' | 'number' | 'date'): HTMLInputElement[] {
+    /** The operator labels the condition offers, in order. Leaves the dropdown closed. */
+    public async operatorOptions(conditionIndex = 0): Promise<string[]> {
+        const select = this.operatorSelect(conditionIndex);
+        await openPicker(select);
+        try {
+            // An operator dropdown always offers something, so no rows means it never opened.
+            return await waitFor(() => {
+                const options = getSelectOptionLabels();
+                if (!options.length) {
+                    throw new Error(`The operator dropdown for "${this.colId}" rendered no options`);
+                }
+                return options;
+            });
+        } finally {
+            // Toggled shut rather than dismissed with Escape, which would close the filter menu around it.
+            await openPicker(select);
+        }
+    }
+
+    /** The operator label a condition is currently showing. */
+    public operatorSelectValue(conditionIndex = 0): string {
+        return this.operatorSelect(conditionIndex).textContent?.trim() ?? '';
+    }
+
+    private operatorSelect(conditionIndex: number): HTMLElement {
+        const select = this.popup.querySelectorAll<HTMLElement>('.ag-filter-select')[conditionIndex];
+        if (!select) {
+            throw new Error(`No operator select at condition index ${conditionIndex} for "${this.colId}"`);
+        }
+        return select;
+    }
+
+    /**
+     * Non-set inputs in DOM order (from/to for ranges), excluding those hidden via any ancestor.
+     * Spans every condition unless `conditionIndex` narrows it to one.
+     */
+    public inputs(type: 'text' | 'number' | 'date', conditionIndex?: number): HTMLInputElement[] {
         const typeSel = type === 'date' ? 'input[type="date"], input[type="datetime-local"]' : `input[type="${type}"]`;
-        return Array.from(
-            this.popup.querySelectorAll<HTMLInputElement>(`.ag-filter-body .ag-input-field ${typeSel}`)
-        ).filter((input) => !input.closest('.ag-hidden'));
+        const bodies = Array.from(this.popup.querySelectorAll<HTMLElement>('.ag-filter-body'));
+        const roots = conditionIndex == null ? bodies : bodies.slice(conditionIndex, conditionIndex + 1);
+        const inputs: HTMLInputElement[] = [];
+        for (const root of roots) {
+            for (const input of root.querySelectorAll<HTMLInputElement>(`.ag-input-field ${typeSel}`)) {
+                if (!input.closest('.ag-hidden')) {
+                    inputs.push(input);
+                }
+            }
+        }
+        return inputs;
     }
 
     /** A filter input, for asserting native validity state (`validity`, `validationMessage`). */
@@ -164,6 +196,12 @@ export class ColumnFilterHarness {
 
     public async clear(): Promise<this> {
         await this.clickApplyPanelButton('Clear');
+        return this;
+    }
+
+    /** Abandons the edit, restoring the inputs to the applied model. */
+    public async cancel(): Promise<this> {
+        await this.clickApplyPanelButton('Cancel');
         return this;
     }
 

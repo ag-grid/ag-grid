@@ -1,5 +1,5 @@
 import type { FilterHandlerParams, IDoesFilterPassParams } from '../../../interfaces/iFilter';
-import type { ICombinedSimpleModel, ISimpleFilterModelType, Tuple } from '../iSimpleFilter';
+import type { FilterOptionKey, ICombinedSimpleModel, TextFilterOptionKey, Tuple } from '../iSimpleFilter';
 import { isCombinedFilterModel } from '../iSimpleFilter';
 import { SimpleFilterHandler } from '../simpleFilterHandler';
 import { isBlank } from '../simpleFilterUtils';
@@ -7,6 +7,16 @@ import type { ITextFilterParams, TextFilterModel, TextFormatter, TextMatcher } f
 import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
 import { TextFilterModelFormatter } from './textFilterModelFormatter';
 import { mapValuesFromTextFilterModel, trimInputForFilter } from './textFilterUtils';
+
+/** Every key `defaultMatcher` answers; anything else needs a `textMatcher` to mean something. */
+const DEFAULT_MATCHER_KEYS: ReadonlySet<string> = new Set<TextFilterOptionKey>([
+    'contains',
+    'notContains',
+    'equals',
+    'notEqual',
+    'startsWith',
+    'endsWith',
+]);
 
 const defaultMatcher: TextMatcher = ({ filterOption, value, filterText }) => {
     if (filterText == null) {
@@ -65,10 +75,18 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
             filterParams.textFormatter ?? (filterParams.caseSensitive ? defaultFormatter : defaultLowercaseFormatter);
     }
 
-    protected override evaluateNullValue(filterType: ISimpleFilterModelType | null) {
-        const filterTypesAllowNulls: ISimpleFilterModelType[] = ['notEqual', 'notContains', 'blank'];
+    /** The key is checked rather than the matcher's answer, which cannot distinguish "no match" from "unknown". */
+    private isUnmatchable(type?: FilterOptionKey | null): boolean {
+        return this.matcher === defaultMatcher && (type == null || !DEFAULT_MATCHER_KEYS.has(type));
+    }
 
-        return filterType ? filterTypesAllowNulls.indexOf(filterType) >= 0 : false;
+    protected override evaluateNullValue(filterType: FilterOptionKey | null) {
+        // Presence is decided without the matcher, so an unusable key is reported for a blank column too.
+        if (filterType !== 'blank' && filterType !== 'notBlank' && this.isUnmatchable(filterType)) {
+            this.warnUnexpectedFilterType(filterType);
+            return false;
+        }
+        return filterType === 'notEqual' || filterType === 'notContains' || filterType === 'blank';
     }
 
     protected override evaluateNonNullValue(
@@ -87,12 +105,19 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
             filterParams: { textFormatter },
         } = this.params;
 
-        if (filterModel.type === 'blank') {
+        const type = filterModel.type;
+        if (type === 'blank') {
             return isBlank(cellValue);
-        } else if (filterModel.type === 'notBlank') {
+        } else if (type === 'notBlank') {
             return !isBlank(cellValue);
         }
 
+        if (this.isUnmatchable(type)) {
+            this.warnUnexpectedFilterType(type);
+            return false;
+        }
+
+        const matcher = this.matcher;
         const matcherParams = {
             api,
             colDef,
@@ -100,12 +125,12 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
             context,
             node: params.node,
             data: params.data,
-            filterOption: filterModel.type,
+            filterOption: type,
             value: cellValueFormatted,
             textFormatter,
         };
 
-        return formattedValues.some((v) => this.matcher({ ...matcherParams, filterText: v }));
+        return formattedValues.some((v) => matcher({ ...matcherParams, filterText: v }));
     }
 
     public processModelToApply(

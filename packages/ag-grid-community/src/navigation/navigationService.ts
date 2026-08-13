@@ -440,17 +440,16 @@ export class NavigationService extends BeanStub implements NamedBean {
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === pageBounds.getFirstRow();
             if (firstRow) {
                 if (gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(beans)) {
-                    _focusNextGridCoreContainer(beans, true, true);
+                    _focusNextGridCoreContainer(beans, true, 'force');
                 } else {
                     keyboardEvent.preventDefault();
                     focusSvc.focusPreviousFromFirstCell(keyboardEvent);
                 }
             }
         } else {
-            // if the case it's a popup editor, the focus is on the editor and not the previous cell.
-            // in order for the tab navigation to work, we need to focus the browser back onto the
-            // previous cell.
-            if (previous instanceof CellCtrl) {
+            // anchor container navigation on the cell when focus is in an editor or renderer child.
+            // re-focusing the cell itself would unnecessarily re-dispatch cellFocused.
+            if (previous instanceof CellCtrl && !previous.hasBrowserFocus(true)) {
                 previous.focusCell({ forceBrowserFocus: true });
             }
 

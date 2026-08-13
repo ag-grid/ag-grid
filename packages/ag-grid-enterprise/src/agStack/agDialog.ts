@@ -8,7 +8,7 @@ import type {
     ResizableStructure,
     StopPropagationCallbacks,
 } from 'ag-stack';
-import { AgComponentStub, AgTabGuardFeature, _findNextFocusableElement, _setDisplayed } from 'ag-stack';
+import { AgComponentStub, AgTabGuardFeature, _setDisplayed } from 'ag-stack';
 
 import type { AgPanelOptions, AgPanelPostProcessPopupParams } from './agPanel';
 import { AgPanel } from './agPanel';
@@ -116,18 +116,12 @@ export class AgDialog<
             onFocusIn: () => {
                 this.popupSvc?.bringPopupToFront(eGui);
             },
-            onTabKeyDown: (e) => {
-                if (modal) {
-                    return;
-                }
-                const backwards = e.shiftKey;
-                const nextFocusableElement = _findNextFocusableElement(this.beans, eGui, false, backwards);
-                if (!nextFocusableElement || this.tabGuardFeature.getTabGuardCtrl().isTabGuard(nextFocusableElement)) {
-                    if (this.callbacks?.focusNextContainer(this.beans, backwards)) {
-                        e.preventDefault();
-                    }
-                }
-            },
+            onGuardFocusedFromInside: modal
+                ? undefined
+                : (fromBottom) => {
+                      return this.callbacks?.focusNextContainer(this.beans, !fromBottom);
+                  },
+            onTabKeyDown: () => undefined,
         });
 
         if (movable) {
@@ -140,7 +134,7 @@ export class AgDialog<
             this.setResizable(resizable);
         }
 
-        if (!this.config.modal) {
+        if (!modal) {
             this.callbacks?.configureFocusableContainer(this.beans, this);
         }
     }

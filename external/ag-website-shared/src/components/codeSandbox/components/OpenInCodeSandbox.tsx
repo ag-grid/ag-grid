@@ -4,6 +4,7 @@ import { cleanIndexHtml } from '@ag-website-shared/utils/cleanIndexHtml';
 import type { FileContents } from '@components/example-generator/types';
 import { stripOutExampleGeneratorCode } from '@components/example-runner/components/stripOutExampleGeneratorCode';
 import { fetchTextFile } from '@utils/fetchTextFile';
+import { isReactInternalFramework } from '@utils/framework';
 import type { FunctionComponent } from 'react';
 
 import { openCodeSandbox } from '../utils/codeSandbox';
@@ -14,7 +15,8 @@ interface Props {
     files: FileContents;
     htmlUrl: string;
     boilerPlateFiles?: FileContents;
-    packageJson: Record<string, any>;
+    /** Only used by React examples, which run on a CodeSandbox `create-react-app` template. */
+    packageJson?: Record<string, any>;
     isDev: boolean;
 }
 
@@ -35,10 +37,13 @@ export const OpenInCodeSandbox: FunctionComponent<Props> = ({
                 const indexHtml = isDev ? cleanIndexHtml(html) : html;
                 const localFiles = { ...files };
                 stripOutExampleGeneratorCode(localFiles);
+                // Non-React examples run on the `static` CodeSandbox runtime and resolve AG Grid straight
+                // from `index.html`, so a `package.json` would be misleading and is not sent.
                 const sandboxFiles = {
                     ...localFiles,
-                    'package.json': JSON.stringify(packageJson, null, 2),
-
+                    ...(isReactInternalFramework(internalFramework) && packageJson
+                        ? { 'package.json': JSON.stringify(packageJson, null, 2) }
+                        : {}),
                     'index.html': indexHtml,
                 };
                 openCodeSandbox({

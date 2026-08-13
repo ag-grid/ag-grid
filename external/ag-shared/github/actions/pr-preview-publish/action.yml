@@ -1,12 +1,12 @@
 name: 'PR preview — publish UMD bundles'
-description: Stage caller-supplied bundle files under pr-<N>/ and deploy them to gh-pages (served at https://<owner>.github.io/<repo>/pr-<N>/<bundle>). Skips cleanly when no bundle exists.
+description: Stage caller-supplied bundle files under pr-<N>/ and publish them to gh-pages (served at https://<owner>.github.io/<repo>/pr-<N>/<bundle>). Skips cleanly when no bundle exists. Concurrent publishes (other PRs, or this PR's other publishers) are resolved by a push-retry loop rather than a lock.
 
 inputs:
     pr_number:
         description: 'PR number — bundles are published under pr-<pr_number>/.'
         required: true
     files:
-        description: 'Newline-separated bundle paths to publish (a sibling <file>.map is included when present).'
+        description: 'Newline-separated bundle paths to publish (set include_source_maps to also publish a sibling <file>.map).'
         required: true
     github_token:
         description: 'Token with contents:write for the publish branch.'
@@ -16,26 +16,71 @@ inputs:
         description: 'Branch to publish to.'
         required: false
         default: gh-pages
+    include_source_maps:
+        # Source maps dominate the size of a Pages site that keeps one preview per open PR
+        # (measured on ag-charts: 897MB of 1155MB, ~12MB of each ~16MB preview). GitHub Pages
+        # repackages the whole site on every push, and its branch builds are single-flight, so
+        # that weight is paid on every deploy by every PR and is the main driver of deploy
+        # latency. Off by default: a preview bundle is loaded from a URL for live-testing, not
+        # stepped through in a debugger. Opt in per caller where maps genuinely earn their cost.
+        description: 'Publish a sibling <file>.map alongside each bundle. Off by default — maps are large and rarely used in a preview.'
+        required: false
+        default: 'false'
+    skip_when_closed:
+        # Close-time cleanup and a still-running CI publish are serialised by the caller's per-PR
+        # concurrency group, but that orders nothing: a publish that wins the lock after cleanup
+        # re-creates the directory cleanup just removed, orphaning it forever. Re-check PR state
+        # here, as late as possible, so the surviving race window is the seconds between this
+        # check and the push rather than the minutes a CI run can outlive its own merge.
+        description: 'Skip publishing when the PR is already closed, so a late publish cannot resurrect a cleaned-up preview.'
+        required: false
+        default: 'true'
 
 runs:
     using: composite
     steps:
-        - name: Stage publish tree
+        # Fails open: if PR state cannot be read (no pull-requests scope on the calling job, API
+        # blip), publish. A missed skip costs a stale preview directory that the caller's cleanup
+        # or janitor reclaims; a wrongly-skipped publish silently loses the preview for an open PR.
+        - name: Check PR is still open
+          id: guard
+          if: inputs.skip_when_closed == 'true'
+          shell: bash
+          env:
+              GH_TOKEN: ${{ inputs.github_token }}
+              PR_NUMBER: ${{ inputs.pr_number }}
+          run: |
+              set -uo pipefail
+              state=$(gh pr view "$PR_NUMBER" --json state --jq .state 2>/dev/null) || state=''
+              if [ "$state" = 'CLOSED' ] || [ "$state" = 'MERGED' ]; then
+                  echo "::notice::PR #${PR_NUMBER} is ${state} — skipping preview publish so cleanup is not undone."
+                  echo "skip=true" >> "$GITHUB_OUTPUT"
+              else
+                  [ -n "$state" ] || echo "::warning::PR preview: could not read PR #${PR_NUMBER} state; publishing anyway."
+                  echo "skip=false" >> "$GITHUB_OUTPUT"
+              fi
+
+        - name: Stage bundle files
           id: stage
+          if: steps.guard.outputs.skip != 'true'
           shell: bash
           env:
               PR_NUMBER: ${{ inputs.pr_number }}
               FILES: ${{ inputs.files }}
+              STAGE_DIR: ${{ runner.temp }}/pr-preview-stage
+              INCLUDE_SOURCE_MAPS: ${{ inputs.include_source_maps }}
           run: |
               set -euo pipefail
-              DEST="_publish/pr-${PR_NUMBER}"
+              rm -rf "$STAGE_DIR"
+              mkdir -p "$STAGE_DIR"
               found=0
               while IFS= read -r f; do
                   [ -z "$f" ] && continue
                   if [ -f "$f" ]; then
-                      mkdir -p "$DEST"
-                      cp "$f" "$DEST/"
-                      [ -f "${f}.map" ] && cp "${f}.map" "$DEST/"
+                      cp "$f" "$STAGE_DIR/"
+                      if [ "$INCLUDE_SOURCE_MAPS" = 'true' ] && [ -f "${f}.map" ]; then
+                          cp "${f}.map" "$STAGE_DIR/"
+                      fi
                       found=$((found + 1))
                   else
                       echo "::warning::PR preview: listed bundle not found, skipping: $f"
@@ -45,19 +90,18 @@ runs:
               if [ "$found" -eq 0 ]; then
                   echo "::warning::PR preview: no bundles to publish — skipping deploy."
                   echo "publish=false" >> "$GITHUB_OUTPUT"
-                  exit 0
+              else
+                  echo "publish=true" >> "$GITHUB_OUTPUT"
               fi
-              touch _publish/.nojekyll  # disable Jekyll on gh-pages
-              echo "publish=true" >> "$GITHUB_OUTPUT"
 
-        - name: Deploy to ${{ inputs.publish_branch }}
-          if: steps.stage.outputs.publish == 'true'
-          uses: peaceiris/actions-gh-pages@v3
-          with:
-              github_token: ${{ inputs.github_token }}
-              publish_dir: _publish
-              publish_branch: ${{ inputs.publish_branch }}
-              keep_files: true
-              commit_message: 'pr-preview: publish pr-${{ inputs.pr_number }}'
-              user_name: 'github-actions[bot]'
-              user_email: 'github-actions[bot]@users.noreply.github.com'
+        - name: Publish to ${{ inputs.publish_branch }}
+          if: steps.guard.outputs.skip != 'true' && steps.stage.outputs.publish == 'true'
+          shell: bash
+          env:
+              GH_TOKEN: ${{ inputs.github_token }}
+              MODE: sync
+              TARGET_PREFIX: pr-${{ inputs.pr_number }}
+              SOURCE_DIR: ${{ runner.temp }}/pr-preview-stage
+              COMMIT_MESSAGE: 'pr-preview: publish pr-${{ inputs.pr_number }}'
+              PUBLISH_BRANCH: ${{ inputs.publish_branch }}
+          run: bash "${{ github.action_path }}/../pr-preview-lib/gh-pages-commit.sh"

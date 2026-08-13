@@ -77,8 +77,13 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
                 targetSize: 0,
             };
         });
+        // Only hide on a pass that goes on to flex, and so reaches the reveal below. Hiding on a pass
+        // that returns early leaves the request outstanding with nothing to clear it, and the grid stays
+        // hidden for the lifetime of the page.
+        const hideForFlex = hasFlexItems && !!totalSpace;
+
         // hide all columns and cells because we are going to flex them after they are displayed
-        if (hasFlexItems) {
+        if (hideForFlex) {
             colDelayRenderSvc?.hideColumns('colFlex');
             this.columnsHidden = true;
         } else if (this.columnsHidden) {

@@ -3,7 +3,7 @@ import { KeyCode, RefPlaceholder, _clearElement, _debounce } from 'ag-stack';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ElementParams } from '../../../utils/element';
 import type { BigIntFilterModel } from '../../provided/bigInt/iBigIntFilter';
-import type { ISimpleFilterModelType, ISimpleFilterParams } from '../../provided/iSimpleFilter';
+import type { FilterOptionKey, ISimpleFilterParams } from '../../provided/iSimpleFilter';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
 import { _isUseApplyButton, getDebounceMs, getPlaceholderText } from '../../provided/providedFilterUtils';
 import type {
@@ -71,11 +71,11 @@ export abstract class TextInputFloatingFilter<
         const { inputSvc, defaultDebounceMs, readOnly } = this;
         const { filterPlaceholder, column, browserAutoComplete, filterParams } = params;
 
-        const filterOptionKey = (this.lastType ?? this.optionsFactory.defaultOption!) as ISimpleFilterModelType;
+        const filterOptionKey = (this.lastType ?? this.optionsFactory.defaultOption!) as FilterOptionKey;
         const parentFilterPlaceholder = (params.filterParams as ISimpleFilterParams).filterPlaceholder;
         const placeholder =
             filterPlaceholder === true
-                ? getPlaceholderText(this, parentFilterPlaceholder, 'filterOoo', filterOptionKey)
+                ? getPlaceholderText(this, parentFilterPlaceholder, 'filterOoo', filterOptionKey, this.optionsFactory)
                 : filterPlaceholder || undefined;
 
         inputSvc.setParams({

@@ -1532,13 +1532,13 @@ describe('Focus override callbacks', () => {
                 },
             } as any;
 
-            _focusNextGridCoreContainer(beans, false, true);
+            _focusNextGridCoreContainer(beans, false, 'force');
 
             expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledWith(false);
             expect(gridCtrl.forceFocusOutOfContainer).toHaveBeenCalledWith(false);
         });
 
-        test('tabToNextGridContainer: false should always preserve browser-default flow, including forceOut path', () => {
+        test('tabToNextGridContainer: false should always preserve browser-default flow, including force exit', () => {
             const gridCtrl = {
                 focusNextInnerContainer: vi.fn(() => false),
                 forceFocusOutOfContainer: vi.fn(),
@@ -1552,11 +1552,29 @@ describe('Focus override callbacks', () => {
                 },
             } as any;
 
-            const result = _focusNextGridCoreContainer(beans, false, true);
+            const result = _focusNextGridCoreContainer(beans, false, 'force');
 
             expect(result).toBe(false);
             expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledWith(false);
             expect(gridCtrl.forceFocusOutOfContainer).not.toHaveBeenCalled();
+        });
+
+        test.each([true, false])('direct exit returns whether an external element was focused: %s', (focused) => {
+            const gridCtrl = {
+                focusNextInnerContainer: vi.fn(() => undefined),
+                focusNextElementOutsideContainer: vi.fn(() => focused),
+            };
+
+            const beans = {
+                ctrlsSvc: {
+                    get: vi.fn(() => gridCtrl),
+                },
+            } as any;
+
+            const result = _focusNextGridCoreContainer(beans, true, 'direct');
+
+            expect(result).toBe(focused);
+            expect(gridCtrl.focusNextElementOutsideContainer).toHaveBeenCalledWith(true);
         });
     });
 });

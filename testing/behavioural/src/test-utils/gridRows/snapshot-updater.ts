@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import type { default as TypescriptImport } from 'typescript';
 
 import { unindentText } from '../string-utils';
+import type { SnapshotCheckMethodName } from './grid-rows-helpers';
 
 type Typescript = typeof TypescriptImport;
 
@@ -22,8 +23,13 @@ export interface SnapshotMismatch {
     methodName?: string;
 }
 
-/** Snapshot-assertion method names whose template-literal argument the updater rewrites. */
-const SNAPSHOT_CHECK_METHODS = new Set(['check', 'checkColumns', 'checkFilterDom']);
+/** The single registry of snapshot assertions: which method the updater rewrites, and on which class. */
+export const CLASS_NAME_BY_METHOD: Record<SnapshotCheckMethodName, string> = {
+    check: 'GridRows',
+    checkColumns: 'GridColumns',
+    checkFilterDom: 'FilterDom',
+};
+const SNAPSHOT_CHECK_METHODS = new Set(Object.keys(CLASS_NAME_BY_METHOD));
 
 interface Replacement {
     start: number;
@@ -264,6 +270,9 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
 
 // ─── AST-based replacement finder ────────────────────────────────────────────
 
+/** The classes a snapshot call must be made on, so an unrelated `.check()` is never rewritten. */
+const SNAPSHOT_CLASS_NAMES = new Set(Object.values(CLASS_NAME_BY_METHOD));
+
 /** Walks the receiver chain of a check call to the underlying `new GridRows/GridColumns(api, LABEL)`
  *  and returns LABEL when it's a static string/template literal, else undefined (dynamic label). */
 function extractGridInstanceLabel(ts: Typescript, expr: any): string | undefined {
@@ -278,6 +287,9 @@ function extractGridInstanceLabel(ts: Typescript, expr: any): string | undefined
         }
     }
     if (!cursor || !ts.isNewExpression(cursor) || !cursor.arguments || cursor.arguments.length < 2) {
+        return undefined;
+    }
+    if (!ts.isIdentifier(cursor.expression) || !SNAPSHOT_CLASS_NAMES.has(cursor.expression.text)) {
         return undefined;
     }
     const labelArg = cursor.arguments[1];
@@ -332,14 +344,14 @@ function findReplacements(
         if (ts.isCallExpression(node)) {
             const expr = node.expression;
             // Match .check(...) / .checkColumns(...) / .checkFilterDom(...) — PropertyAccessExpression
-            if (
-                ts.isPropertyAccessExpression(expr) &&
-                SNAPSHOT_CHECK_METHODS.has(expr.name.text) &&
-                node.arguments.length >= 1
-            ) {
-                const callLine = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1; // 1-based
+            if (ts.isPropertyAccessExpression(expr) && SNAPSHOT_CHECK_METHODS.has(expr.name.text)) {
                 const label = extractGridInstanceLabel(ts, expr.expression);
-                checkCalls.push({ callLine, node, arg: node.arguments[0], methodName: expr.name.text, label });
+                // A no-argument call has no template literal to identify it, so it is only claimed when
+                // the receiver is recognisably one of ours - `destroyedNodeChecker.check()` is not.
+                if (node.arguments.length >= 1 || label !== undefined) {
+                    const callLine = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1; // 1-based
+                    checkCalls.push({ callLine, node, arg: node.arguments[0], methodName: expr.name.text, label });
+                }
             }
         }
         ts.forEachChild(node, visit);
@@ -438,7 +450,10 @@ function findReplacements(
 
         usedCheckCalls.add(bestMatch);
 
-        const result = resolveTemplateLiteral(ts, sourceFile, bestMatch.arg, varDeclarations, relPath, mismatch);
+        // A no-argument call has nothing to replace, so the snapshot is inserted between its brackets.
+        const result = bestMatch.arg
+            ? resolveTemplateLiteral(ts, sourceFile, bestMatch.arg, varDeclarations, relPath, mismatch)
+            : { start: bestMatch.node.getEnd() - 1, end: bestMatch.node.getEnd() - 1 };
         if (result) {
             const built = buildReplacementText(source, result.start, result.end, mismatch.actualDiagram);
             replacements.push({

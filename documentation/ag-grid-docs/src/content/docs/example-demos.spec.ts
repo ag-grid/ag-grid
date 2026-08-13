@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { setupConsoleExpectations } from '@utils/grid/test-utils';
+import { blockConsentAndAnalytics, setupConsoleExpectations } from '@utils/grid/test-utils';
 
 // These could be extended to actually interact with the examples more
 // but for now just a basic load test to ensure no errors / warnings in console
@@ -9,6 +9,7 @@ test.describe(`Demo Examples`, async () => {
     let errors: string[];
 
     test.beforeEach(async ({ page }) => {
+        await blockConsentAndAnalytics(page);
         errors = setupConsoleExpectations(page);
     });
 
@@ -78,6 +79,8 @@ test.describe(`Demo Examples`, async () => {
         await page.getByRole('button', { name: 'Active' }).click();
         await page.getByRole('button', { name: 'On Hold' }).click();
         await page.getByRole('button', { name: 'Out of Stock' }).click();
-        await page.getByRole('button', { name: 'All' }).click();
+        // `exact` so the page's own "All" tab cannot be confused with any other button whose name
+        // merely contains it (e.g. a consent banner's "Allow All").
+        await page.getByRole('button', { name: 'All', exact: true }).click();
     });
 });

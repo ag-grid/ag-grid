@@ -13,7 +13,12 @@
  */
 import { createHash } from 'node:crypto';
 
-import { DARK_MODE_INIT_SCRIPT, KBD_PLATFORM_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
+import {
+    DARK_MODE_INIT_SCRIPT,
+    KBD_PLATFORM_INIT_SCRIPT,
+    PLAUSIBLE_INIT_SCRIPT,
+    PLAUSIBLE_PAGE_LOAD_SCRIPT,
+} from '../csp/inlineScripts';
 
 export type CspEnv = 'dev' | 'staging' | 'production';
 export type CspMode = 'report-only' | 'enforce';
@@ -29,8 +34,12 @@ export type CspMode = 'report-only' | 'enforce';
  *   for the separately-managed SPA served under /ecommerce/, whose index.html carries
  *   inline scripts we do not own and part of which evaluates strings as JavaScript
  *   at runtime — see ECOMMERCE_PATH_CONDITION.
+ * - 'blog': the self-hosted Ghost blog reverse-proxied under /blog/. Allows
+ *   'unsafe-inline' in script-src (the theme ships inline onclick= handlers, which
+ *   CSP cannot authorise by hash at all) plus the embed and Mailchimp origins its
+ *   posts use — see BLOG_PATH_CONDITION.
  */
-export type CspScope = 'site' | 'examples' | 'campaigns' | 'ecommerce';
+export type CspScope = 'site' | 'examples' | 'campaigns' | 'ecommerce' | 'blog';
 
 export interface CspOptions {
     env: CspEnv;
@@ -126,6 +135,7 @@ const GTM_ZOOMINFO_HASH = "'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
     hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
+    hashInlineScript(PLAUSIBLE_PAGE_LOAD_SCRIPT),
     hashInlineScript(KBD_PLATFORM_INIT_SCRIPT),
     ...ASTRO_HYDRATION_SCRIPT_HASHES,
     GTM_ZOOMINFO_HASH,
@@ -161,6 +171,29 @@ const ESM_SH_HOST = 'https://esm.sh';
 
 const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
 const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
+
+// The LinkedIn Insight Tag (LinkedIn Ads conversion tracking and website demographics).
+// Like ZoomInfo and Enzuzo, it is a tag in the shared Google Tag Manager container rather
+// than markup in this repo, so nothing here references these origins directly — the CSP is
+// the only place the site declares them.
+//
+//  - snap.licdn.com serves the tag. /li.lms-analytics/insight.min.js is only a router: it
+//    injects insight.beta.min.js or insight.old.min.js from the same origin depending on the
+//    data-partner id. Both are external <script src>, so no script-src hash is needed
+//    (contrast GTM_ZOOMINFO_HASH).
+//  - px.ads.linkedin.com is the only origin either payload contacts. Its /collect and
+//    /insight_tag_errors.gif endpoints are image pixels, which the permissive img-src already
+//    covers, but the website-actions gateway (SEND_EVENT '/wa/', sent via sendBeacon) and
+//    /attribution_trigger (fetch) are governed by connect-src.
+//
+// Deliberately NOT allowed, despite all appearing on LinkedIn's published required-domains
+// list: px4.ads.linkedin.com, dc.ads.linkedin.com, p.adsymptotic.com, the linkedin.oribi.io
+// hosts and the legacy sjs.bizographics.com loader. Parsing every string literal in both
+// payloads turns up none of them — the only 'oribi' strings are a DOM event name and a
+// storage key, not hosts. Pixel hosts reached by server-side redirect stay covered by
+// img-src; add a script-src/connect-src entry only if a violation actually shows up.
+const LINKEDIN_SDK_HOST = 'https://snap.licdn.com';
+const LINKEDIN_BEACON_HOST = 'https://px.ads.linkedin.com';
 
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
 // demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
@@ -199,6 +232,18 @@ export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^(?:/archive/[^/]+)
 // /ecommerce/. AG-17134.
 export const ECOMMERCE_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/ecommerce/#';
 
+// The self-hosted Ghost blog, reverse-proxied to 127.0.0.1:2368 under /blog/.
+//
+// UNLIKE every other *_PATH_CONDITION here, this one is NOT used inside an <If>.
+// <If> sections are merged during request mapping, which a proxied request skips,
+// so an <If> block never fires on a proxied response. It must be emitted as a
+// mod_headers `expr=` condition instead, which is evaluated in that module's own
+// output filter. For the same reason the block belongs in the VHOST, not the
+// generated docroot .htaccess — a proxied request never reads that either.
+//
+// No JS PATH_REGEXP counterpart: the dev/preview middleware never serves /blog/.
+export const BLOG_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/blog/#';
+
 // Apache <If> expression matching the staging-only /branch-builds/ tree: a directory
 // of full per-branch documentation builds, preserved across deployments (backed up
 // and restored by scripts/deployments/*) rather than produced by this build. Each is
@@ -226,6 +271,30 @@ export const CAMPAIGNS_PATH_REGEXP = /^(?:\/archive\/[^/]+)?\/campaigns\//;
 // cross-subdomain references to the production host need an explicit allowance.
 // Harmless on production where 'self' already covers www.ag-grid.com.
 const AG_GRID_HOSTS = 'https://*.ag-grid.com';
+
+// Origins the Ghost blog's post content needs beyond the site policy
+const BLOG_SCRIPT_HOSTS = [
+    'https://platform.twitter.com', // embedded tweets (widgets.js)
+    'https://widget.spreaker.com', // podcast embeds
+];
+
+const BLOG_STYLE_HOSTS = ['https://cdn-images.mailchimp.com']; // Mailchimp embed stylesheet
+
+const BLOG_FRAME_HOSTS = [
+    // The apex, listed explicitly: CSP host wildcards do not match a bare domain, so
+    // AG_GRID_HOSTS does not cover it, and 'self' is www. 35 post embeds target it.
+    'https://ag-grid.com',
+    'https://stackblitz.com',
+    'https://codesandbox.io',
+    'https://embed.plnkr.co',
+    'https://*.github.io',
+    'https://platform.twitter.com',
+    'https://open.spotify.com',
+    'https://player.simplecast.com',
+    'https://widget.spreaker.com',
+    'https://whimsical.com', // draft posts only today
+    'https://snappify.com', // draft posts only today
+];
 
 // The trial-licence form posts to a different Cloud Function per environment
 // (see PUBLIC_TRIAL_LICENCE_FORM_URL in the .env.build.* files).
@@ -290,6 +359,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://cdnjs.cloudflare.com',
             'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
             'https://*.zoominfo.com', // ZoomInfo FormComplete
+            LINKEDIN_SDK_HOST, // LinkedIn Insight Tag SDK (injected via GTM)
             'https://www.google.com', // reCAPTCHA
             'https://www.gstatic.com', // reCAPTCHA
             'https://apis.google.com', // Firebase Auth (ecommerce checkout): GAPI client loads the auth iframe
@@ -340,6 +410,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://cdnjs.cloudflare.com', // example-runner legacy deps (XHR)
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
+            LINKEDIN_BEACON_HOST, // LinkedIn Insight Tag: website-actions beacon and attribution-trigger fetch
             'https://www.google.com', // reCAPTCHA (api2/clr XHR)
             ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
             ENZUZO_GVL_HOST, // Enzuzo-hosted IAB TCF Global Vendor List
@@ -387,6 +458,18 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
         // routes never reach the server, so 'unsafe-eval' cannot be path-scoped narrower
         // than the whole /ecommerce/ scope. See ECOMMERCE_PATH_CONDITION.
         directives['script-src'].push(UNSAFE_INLINE, UNSAFE_EVAL);
+    } else if (scope === 'blog') {
+        // Ghost theme output carries three inline onclick= handlers (the mobile-menu
+        // toggle in site-header.hbs and the two share-window handlers in post.hbs),
+        // which CSP cannot authorise by hash at all, plus six Handlebars-rendered
+        // inline <script>s — and post bodies can add more through the editor. So
+        // 'unsafe-inline' rather than hashes, and NO SITE_SCRIPT_HASHES: a hash makes
+        // the browser ignore 'unsafe-inline'. This branch sits inside the chain so it
+        // inherits the else that skips them. No 'unsafe-eval' — nothing on the blog
+        // evaluates strings as JavaScript.
+        directives['script-src'].push(UNSAFE_INLINE, ...BLOG_SCRIPT_HOSTS);
+        directives['style-src'].push(...BLOG_STYLE_HOSTS);
+        directives['frame-src'].push(AG_GRID_HOSTS, ...BLOG_FRAME_HOSTS);
     } else if (env === 'dev') {
         // Dev server (Vite/Astro) injects its own inline scripts for HMR/hydration
         // that the static build does not; keep 'unsafe-inline' locally rather than

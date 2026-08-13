@@ -481,12 +481,26 @@ generate_config() {
     local rulesync_cmd
     rulesync_cmd=$(get_rulesync_cmd)
 
+    # `mcp.json` is plugin-delivered (staged by rulesync-fetch) and gitignored, so
+    # it is absent whenever the ag-dev-prompts fetch could not run — notably in a
+    # Claude Code cloud session that cannot reach the private repo. Asking
+    # rulesync for the mcp feature then fails ENOENT and takes the whole generate
+    # down with it, leaving no .claude/rules and no .claude/skills even though the
+    # tracked local sources were perfectly generatable. Request mcp only when the
+    # file is actually there.
+    local features="rules,ignore,commands,subagents,skills"
+    if [[ -f "$REPO_ROOT/.rulesync/mcp.json" ]]; then
+        features="rules,ignore,mcp,commands,subagents,skills"
+    elif [[ "$verbose" == "true" ]]; then
+        echo -e "${YELLOW}!${NC} No .rulesync/mcp.json — generating without the mcp feature" >&2
+    fi
+
     # Run rulesync and capture output + exit code
     local output
     local exit_code=0
     output=$($rulesync_cmd generate \
         --targets="$targets" \
-        --features="rules,ignore,mcp,commands,subagents,skills" \
+        --features="$features" \
         --delete 2>&1) || exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then

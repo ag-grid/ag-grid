@@ -46,7 +46,7 @@ export function ExternalLinks({
                         files={codeSandboxFiles}
                         htmlUrl={codeSandboxHtmlUrl}
                         internalFramework={internalFramework}
-                        packageJson={packageJson!}
+                        packageJson={packageJson}
                         isDev={isDev}
                     />
                 </li>

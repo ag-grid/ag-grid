@@ -50,6 +50,13 @@ export async function clickSelectOption(label: string, root: ParentNode = docume
 
 // --- AgRichSelect (builder pills) ---
 
+/** All open AgRichSelect row labels, in order. */
+export function getRichSelectRowLabels(root: ParentNode = document): string[] {
+    return Array.from(root.querySelectorAll<HTMLElement>('.ag-rich-select-row')).map(
+        (row) => row.textContent?.trim() ?? ''
+    );
+}
+
 /**
  * Selects the open AgRichSelect row whose text matches `label`. AgRichSelect resolves the clicked
  * row from `event.clientY` (not the target), so we compute clientY from the list rect and row index;
@@ -58,16 +65,16 @@ export async function clickSelectOption(label: string, root: ParentNode = docume
 export async function selectRichSelectRow(label: string, root: ParentNode = document): Promise<void> {
     let rows: HTMLElement[] = [];
     let index = -1;
-    // Polled, not awaited once: the picker mounts its list a macrotask after the click, and the rows
-    // only exist once the nudge has run against the mounted viewport.
+    // Polled on a time budget, not a tick count: the list mounts a macrotask after the click and a fixed
+    // number of ticks flakes under load. Nudging inside the callback is safe - `waitFor` arms an independent
+    // `setTimeout` for its deadline, so the mutations it observes only add polls.
     await waitFor(() => {
         nudgeVirtualList(RICH_SELECT_VIEWPORT, root);
         rows = Array.from(root.querySelectorAll<HTMLElement>('.ag-rich-select-row'));
         index = rows.findIndex((r) => r.textContent?.trim() === label);
         if (index < 0) {
-            throw new Error(
-                `AgRichSelect row "${label}" not found. Available: ${rows.map((r) => r.textContent?.trim()).join(', ')}`
-            );
+            const available = getRichSelectRowLabels(root).join(', ');
+            throw new Error(`AgRichSelect row "${label}" not found. Available: ${available}`);
         }
     });
 

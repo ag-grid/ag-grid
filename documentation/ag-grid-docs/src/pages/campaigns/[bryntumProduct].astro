@@ -2,6 +2,7 @@
 import BryntumCampaign from '@components/campaigns-components/BryntumCampaign.astro';
 import type { BryntumCampaignContent } from '@components/campaigns-components/bryntum/types';
 import Layout from '@layouts/Layout.astro';
+import { campaignMeta } from '@utils/markdown-pages/buildCampaignMarkdown';
 
 export async function getStaticPaths() {
     // Match the rewritten `{slug}.json` content files; the original
@@ -34,8 +35,8 @@ interface Props {
 }
 
 const { content } = Astro.props;
-const pageTitle = content.meta?.og_title ?? content.title;
-const pageDescription = content.meta?.description ?? '';
+// Shared with the /campaigns/<slug>.md twin so both describe the page identically.
+const { title: pageTitle, description: pageDescription } = campaignMeta(content);
 
 // Per-product Open Graph images; Scheduler and Scheduler Pro deliberately share one image.
 const ogImageBasePath = '/images/campaigns/bryntum-products/opengraph-images';

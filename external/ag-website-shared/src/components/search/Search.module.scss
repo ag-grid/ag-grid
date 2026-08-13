@@ -78,7 +78,6 @@
     margin-left: auto;
     opacity: 1;
     font-size: var(--text-fs-sm);
-    animation: fadeIn 0.2s;
 
     font-weight: var(--text-semibold);
     background-color: rgba(255, 255, 255, 0.2);
@@ -87,18 +86,25 @@
     padding-left: $spacing-size-1;
     border-radius: var(--radius-sm);
 
+    // Only one of these carries the platform-specific text; both are rendered at build
+    // time and toggled by the html[data-os] attribute that KBD_PLATFORM_INIT_SCRIPT sets
+    // before first paint. Defaults to the non-Mac label, matching the {% kbd %} tags.
+    .kbdShortcutMac {
+        display: none;
+    }
+
+    html[data-os='mac'] & {
+        .kbdShortcutDefault {
+            display: none;
+        }
+
+        .kbdShortcutMac {
+            display: inline;
+        }
+    }
+
     #{$selector-darkmode} & {
         color: var(--color-fg-white);
         background-color: rgba(255, 255, 255, 0.2);
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
     }
 }

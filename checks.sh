@@ -87,6 +87,24 @@ countWarnings() {
         awk '{ total += $1 } END { print total + 0 }'
 }
 
+# Reprinted at the end so the failing tasks are the last thing on screen rather than lost up the stream.
+# Two sources because neither is complete on its own: Nx marks each failure inline as "✖ nx run <task>",
+# while its closing bullet list is capped at a handful of tasks but survives an interleaved stream.
+failedTasks() {
+    stripAnsi "$1" | awk '
+        /^[[:space:]]*✖[[:space:]]+nx run / { sub(/^[[:space:]]*✖[[:space:]]+nx run[[:space:]]+/, ""); sub(/ .*/, ""); print; next }
+        /^[[:space:]]*(Failed tasks:|✖[[:space:]]+[0-9]+\/[0-9]+ targets failed)/ { inList = 1; next }
+        # Only bullets that look like a task id, or a task own output can pose as Nx summary list.
+        inList && /^[[:space:]]*-[[:space:]]/ {
+            sub(/^[[:space:]]*-[[:space:]]*/, "")
+            sub(/^nx run[[:space:]]+/, "")
+            if ($0 ~ /^[A-Za-z0-9@._\/-]+:[A-Za-z0-9:._-]+$/) print
+            next
+        }
+        inList && NF { inList = 0 }
+    ' | sort -u
+}
+
 start=$SECONDS
 
 # An explicit XXXXXX template: GNU mktemp rejects `-t ag-checks`, and with errexit off that failure
@@ -129,5 +147,6 @@ elif [[ $status -eq 0 ]]; then
     echo "CHECKS-PASSED (${elapsed}s) — ${summary}"
 else
     echo "CHECKS-FAILED (${elapsed}s) — ${summary}" >&2
+    failedTasks "$log" | sed 's/^/  failed: /' >&2
 fi
 exit $status

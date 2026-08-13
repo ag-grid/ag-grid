@@ -10,6 +10,7 @@ import {
     mergeWatermark,
     resolveDocumentHeadingStyleColors,
     resolveHeaderFooterConfigColors,
+    resolvePdfColors,
     resolveThemeColorValue,
     resolveWatermarkColors,
 } from './utils/pdfStyleResolver';
@@ -210,5 +211,41 @@ describe('PdfCreator', () => {
         expect(getThemePdfColors(root).headerTextColor).toBe('rgb(220, 230, 240)');
 
         root.remove();
+    });
+
+    it('preserves an inherited odd-row background when overriding the data background', () => {
+        const colors = resolvePdfColors(
+            { dataBackgroundColor: '#ffffff', oddRowBackgroundColor: '#ffffff' },
+            { dataBackgroundColor: '#1e1e1e' },
+            undefined,
+            (value) => value
+        );
+
+        expect(colors.dataBackgroundColor).toBe('#1e1e1e');
+        expect(colors.oddRowBackgroundColor).toBe('#1e1e1e');
+    });
+
+    it('preserves a distinct theme odd-row background when overriding the data background', () => {
+        const colors = resolvePdfColors(
+            { dataBackgroundColor: '#ffffff', oddRowBackgroundColor: '#f5f5f5' },
+            { dataBackgroundColor: '#1e1e1e' },
+            undefined,
+            (value) => value
+        );
+
+        expect(colors.dataBackgroundColor).toBe('#1e1e1e');
+        expect(colors.oddRowBackgroundColor).toBe('#f5f5f5');
+    });
+
+    it('uses an explicit odd-row export background independently of the data background', () => {
+        const colors = resolvePdfColors(
+            { dataBackgroundColor: '#ffffff', oddRowBackgroundColor: '#ffffff' },
+            { dataBackgroundColor: '#1e1e1e', oddRowBackgroundColor: '#303030' },
+            undefined,
+            (value) => value
+        );
+
+        expect(colors.dataBackgroundColor).toBe('#1e1e1e');
+        expect(colors.oddRowBackgroundColor).toBe('#303030');
     });
 });

@@ -41,13 +41,17 @@ test.agExample(import.meta, () => {
     test.eachFramework('initial group order ascending by leaf-child count', async ({ page }) => {
         await waitForGridContent(page);
 
-        const counts = await readTopGroupCounts(page, COUNTRY_COL_ID);
-        expect(counts.length).toBeGreaterThan(1);
-        for (let i = 0, len = counts.length; i < len; ++i) {
-            expect(Number.isNaN(counts[i])).toBe(false);
-        }
-        for (let i = 0, len = counts.length - 1; i < len; ++i) {
-            expect(counts[i]).toBeLessThanOrEqual(counts[i + 1]);
-        }
+        // A group cell exists before its renderer has written the "(N)" count into it, so read and
+        // assert together: a partially-rendered pass reads NaN and is retried rather than failing.
+        await expect(async () => {
+            const counts = await readTopGroupCounts(page, COUNTRY_COL_ID);
+            expect(counts.length).toBeGreaterThan(1);
+            for (let i = 0, len = counts.length; i < len; ++i) {
+                expect(Number.isNaN(counts[i])).toBe(false);
+            }
+            for (let i = 0, len = counts.length - 1; i < len; ++i) {
+                expect(counts[i]).toBeLessThanOrEqual(counts[i + 1]);
+            }
+        }).toPass();
     });
 });
