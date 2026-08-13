@@ -45,6 +45,30 @@ describe('SSRM row ARIA', () => {
         expect(api.isDestroyed()).toBe(false);
     });
 
+    test('full-width loading row exposes a cell child with a custom loading renderer', async () => {
+        gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            rowModelType: 'serverSide',
+            serverSideDatasource: { getRows: () => {} },
+            loadingCellRenderer: class {
+                private eGui = document.createElement('div');
+                public init(): void {
+                    this.eGui.textContent = 'custom loading';
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public refresh(): boolean {
+                    return false;
+                }
+            },
+        });
+
+        const loadingRow = await waitForLoadingRow();
+        expect(loadingRow.textContent).toBe('custom loading');
+        expect(loadingRow.querySelector('[role="gridcell"]')).not.toBeNull();
+    });
+
     test('non-expandable loading row has no aria-expanded attribute', async () => {
         gridsManager.createGrid(null, {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],

@@ -575,6 +575,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.rowType;
     }
 
+    /**
+     * A loading row holds a placeholder rather than real cell content, so the anchor stands in as the
+     * cell child that `role="row"` requires — the renderer is replaceable and cannot be relied on for it.
+     */
+    public getFullWidthAnchorRole(): 'gridcell' | 'presentation' {
+        return this.rowType === 'FullWidthLoading' ? 'gridcell' : 'presentation';
+    }
+
     public getContainerType(): RowContainerType | undefined {
         return this.rowGui?.containerType;
     }

@@ -6,7 +6,6 @@ import { Component, _createIconNoSpan } from 'ag-grid-community';
 const LoadingCellRendererElement: ElementParams = {
     tag: 'div',
     cls: 'ag-loading',
-    role: 'gridcell',
     children: [
         { tag: 'span', ref: 'eLoadingIcon', cls: 'ag-loading-icon' },
         { tag: 'span', ref: 'eLoadingText', cls: 'ag-loading-text' },
