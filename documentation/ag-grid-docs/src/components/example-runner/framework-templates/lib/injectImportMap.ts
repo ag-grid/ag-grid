@@ -72,7 +72,9 @@ export function injectImportMap({
     const isProd = urlParams.get(prodParam) !== 'false';
     let version = defaultVersion;
 
-    if (requestedVersion) {
+    // An empty `?version=` is a version that is not a version, not an absent one, so it fails
+    // below rather than quietly loading the default
+    if (requestedVersion !== null) {
         if (!new RegExp(versionPattern).test(requestedVersion)) {
             const message =
                 `Example not loaded: "${requestedVersion}" is not a valid ?${versionParam}= value. ` +
@@ -100,5 +102,14 @@ export function injectImportMap({
     const importMap = document.createElement('script');
     importMap.type = 'importmap';
     importMap.textContent = importMapJson;
+
+    // An example may carry a CSP that allows inline scripts only by nonce -- the security-test
+    // examples do -- and a script created here has none, so it takes the nonce of the script
+    // running this. Read from the IDL attribute, which keeps the value after the parser hides it.
+    const nonce = (document.currentScript as HTMLScriptElement | null)?.nonce;
+    if (nonce) {
+        importMap.nonce = nonce;
+    }
+
     document.head.appendChild(importMap);
 }
