@@ -60,11 +60,12 @@ const errorCode = parseInt(code, 10);
 const isRetired = !(errorCode in AG_GRID_ERRORS);
 const retiredInVersion = isRetired ? RETIRED_ERROR_CODES[errorCode] : null;
 // One string rather than markup interpolation, so the optional clause leaves no space before the full stop.
-const retiredMessage =
-    `Error #${code} is no longer used in this version of AG Grid` +
-    (retiredInVersion ? `, and was last used in version ${retiredInVersion}` : '') +
-    `. A link logged by an older version carries that version, and is redirected to that version's ` +
-    `archived error page.`;
+const retiredMessage = isRetired
+    ? `Error #${code} is no longer used in this version of AG Grid` +
+      (retiredInVersion ? `, and was last used in version ${retiredInVersion}` : '') +
+      `. A link logged by an older version carries that version, and is redirected to that version's ` +
+      `archived error page.`
+    : '';
 const frameworkDisplayText = framework === 'javascript' ? '' : getFrameworkDisplayText(framework);
 const title = `AG Grid ${frameworkDisplayText} Error #${code}`;
 const description = errorPage?.data.description ? errorPage?.data.description : '';
