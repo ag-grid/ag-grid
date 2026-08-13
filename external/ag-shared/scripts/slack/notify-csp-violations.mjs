@@ -8,18 +8,28 @@
  * that stays broken for a week does not repeat itself on every deploy. Exits non-zero only when
  * Slack itself rejects the message.
  *
+ * A baseline is only usable if it describes the same site, and only a complete run can say a
+ * violation is gone: a run that died mid-suite reports fewer violations than the site has, which
+ * would otherwise read as a policy being fixed. Set RUN_COMPLETE=false for such a run and it will
+ * still report anything new, without claiming anything was resolved.
+ *
  * Expects a report as written by the suite's CSP reporter:
  *   { baseUrl?: string, violations: [{ key, directive, blockedUri, disposition, suggestedHashes,
  *     sourceFiles, pages, tests }] }
  *
- * Env: CSP_REPORT_FILE (required), PREVIOUS_CSP_REPORT_FILE, SLACK_CHANNEL, SLACK_BOT_OAUTH_TOKEN,
- * PROJECT_TITLE, SITE_URL, RUN_URL, COMMIT_SHA, DRY_RUN, GITHUB_STEP_SUMMARY.
+ * Env: CSP_REPORT_FILE (required), PREVIOUS_CSP_REPORT_FILE, RUN_COMPLETE, SLACK_CHANNEL,
+ * SLACK_BOT_OAUTH_TOKEN, PROJECT_TITLE, SITE_URL, RUN_URL, COMMIT_SHA, DRY_RUN,
+ * GITHUB_STEP_SUMMARY.
  */
 import fs from 'node:fs';
 
 import { sendSlackMessage } from './send-slack-message.mjs';
 
 const MAX_VIOLATION_BLOCKS = 10;
+const MAX_RESOLVED_LISTED = 10;
+// Slack rejects the whole message when any block's text exceeds its limit, which would turn the
+// reporting job red over a long blocked URI. Well under the 3000-character limit.
+const MAX_BLOCK_TEXT = 1000;
 
 const reportFile = process.env.CSP_REPORT_FILE;
 const previousReportFile = process.env.PREVIOUS_CSP_REPORT_FILE;
@@ -29,6 +39,7 @@ const projectTitle = process.env.PROJECT_TITLE || 'AG';
 const runUrl = process.env.RUN_URL || '';
 const commitSha = process.env.COMMIT_SHA || '';
 const isDryRun = process.env.DRY_RUN === 'true';
+const isRunComplete = process.env.RUN_COMPLETE !== 'false';
 const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
 
 const readReport = (file) => {
@@ -44,6 +55,17 @@ const readReport = (file) => {
 };
 
 const enforcedOf = (report) => (report?.violations ?? []).filter((violation) => violation.disposition === 'enforce');
+
+const truncate = (text, limit = MAX_BLOCK_TEXT) => (text.length > limit ? `${text.slice(0, limit - 3)}...` : text);
+
+// Trailing slashes and case differ between a resolved staging URL and a hand-typed one.
+const sameSite = (a, b) =>
+    String(a ?? '')
+        .toLowerCase()
+        .replace(/\/+$/, '') ===
+    String(b ?? '')
+        .toLowerCase()
+        .replace(/\/+$/, '');
 
 const describe = (violation) => {
     const parts = [`\`${violation.directive}\` blocked \`${violation.blockedUri}\``];
@@ -68,11 +90,20 @@ const siteUrl = process.env.SITE_URL || report.baseUrl || '';
 const enforced = enforcedOf(report);
 const reportOnlyCount = (report.violations ?? []).length - enforced.length;
 
-const previousReport = readReport(previousReportFile);
+const candidateBaseline = readReport(previousReportFile);
+// A manual run can target any URL, and its report is uploaded like any other, so the most recent
+// run is not necessarily a baseline for this one.
+const baselineMatchesSite = candidateBaseline && sameSite(candidateBaseline.baseUrl, report.baseUrl);
+if (candidateBaseline && !baselineMatchesSite) {
+    console.log(
+        `Previous report describes ${candidateBaseline.baseUrl || '(unknown)'}, not ${report.baseUrl || '(unknown)'}; ignoring it as a baseline.`
+    );
+}
+const previousReport = baselineMatchesSite ? candidateBaseline : undefined;
 const previousKeys = new Set(enforcedOf(previousReport).map((violation) => violation.key));
 const currentKeys = new Set(enforced.map((violation) => violation.key));
 const added = enforced.filter((violation) => !previousKeys.has(violation.key));
-const resolved = enforcedOf(previousReport).filter((violation) => !currentKeys.has(violation.key));
+const resolved = isRunComplete ? enforcedOf(previousReport).filter((violation) => !currentKeys.has(violation.key)) : [];
 
 for (const violation of enforced) {
     console.log(`::warning title=CSP violation::${describe(violation)}`);
@@ -80,7 +111,8 @@ for (const violation of enforced) {
 console.log(
     `${enforced.length} enforced violation(s), ${reportOnlyCount} report-only, ` +
         `${added.length} new, ${resolved.length} resolved` +
-        (previousReport ? '' : ' (no previous report to compare against)')
+        (previousReport ? '' : ' (no usable baseline to compare against)') +
+        (isRunComplete ? '' : ' (incomplete run: not reporting anything as resolved)')
 );
 
 if (stepSummaryFile) {
@@ -97,7 +129,11 @@ if (stepSummaryFile) {
 
 const hasChanged = previousReport ? added.length > 0 || resolved.length > 0 : enforced.length > 0;
 if (!hasChanged) {
-    console.log('Violation set unchanged since the previous run; not posting to Slack.');
+    console.log(
+        isRunComplete
+            ? 'Violation set unchanged since the previous run; not posting to Slack.'
+            : 'Nothing new observed, and an incomplete run cannot report anything as resolved; not posting.'
+    );
     process.exit(0);
 }
 
@@ -111,14 +147,24 @@ const headline = enforced.length
 
 const blocks = [section(headline)];
 for (const violation of enforced.slice(0, MAX_VIOLATION_BLOCKS)) {
-    blocks.push(section(`${added.includes(violation) ? ':new: ' : ''}${describe(violation)}`));
+    blocks.push(section(truncate(`${added.includes(violation) ? ':new: ' : ''}${describe(violation)}`)));
 }
 if (enforced.length > MAX_VIOLATION_BLOCKS) {
     blocks.push(context(`${enforced.length - MAX_VIOLATION_BLOCKS} further violation(s) in the run report.`));
 }
 if (resolved.length) {
-    const cleared = resolved.map((violation) => `\`${violation.directive}\` / \`${violation.blockedUri}\``);
-    blocks.push(context(`No longer blocked since the previous run: ${cleared.join(', ')}`));
+    const cleared = resolved
+        .slice(0, MAX_RESOLVED_LISTED)
+        .map((violation) => `\`${violation.directive}\` / \`${violation.blockedUri}\``);
+    const remainder = resolved.length - cleared.length;
+    blocks.push(
+        context(
+            truncate(
+                `No longer blocked since the previous run: ${cleared.join(', ')}` +
+                    (remainder ? ` and ${remainder} more` : '')
+            )
+        )
+    );
 }
 blocks.push(
     context(

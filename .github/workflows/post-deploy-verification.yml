@@ -104,9 +104,11 @@ jobs:
           retention-days: 14
 
       # Kept as its own artifact so the csp-report job can pull just this file from the
-      # previous run to compare against, rather than a bundle carrying every trace.
+      # previous run to compare against, rather than a bundle carrying every trace. A run
+      # against a hand-given URL is not uploaded: it would become the next run's baseline
+      # while describing a different site.
       - name: Upload CSP report
-        if: always()
+        if: always() && inputs.staging_url == ''
         uses: actions/upload-artifact@v4
         with:
           name: csp-violations
@@ -210,4 +212,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           COMMIT_SHA: ${{ github.sha }}
           DRY_RUN: ${{ inputs.csp_dry_run || false }}
+          # A run that failed part way through sees fewer violations than the site has, which
+          # would otherwise read as a policy being fixed.
+          RUN_COMPLETE: ${{ needs.page-verification.result == 'success' }}
         run: node ./external/ag-shared/scripts/slack/notify-csp-violations.mjs

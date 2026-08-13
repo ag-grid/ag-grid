@@ -1,12 +1,22 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
+import { createHash } from 'node:crypto';
 
-import type { CspViolationRecord } from '../../utils/csp/cspViolationReport';
+import type { CspHashHint, CspViolationRecord } from '../../utils/csp/cspViolationReport';
 import {
     CSP_HASH_HINT_ANNOTATION,
     CSP_VIOLATION_ANNOTATION,
     parseCspHashHint,
 } from '../../utils/csp/cspViolationReport';
+
+declare global {
+    interface Window {
+        __agCspSelfCheck?: boolean;
+    }
+}
+
+/** Inline script the site policy cannot authorise, used to prove CSP capture still works. */
+const CSP_SELF_CHECK_SCRIPT = 'window.__agCspSelfCheck = true;';
 
 // Chromium writes the policy name with spaces in some messages and hyphens in others.
 const isCspIssue = (msg: string) => /Content[- ]Security[- ]Policy|Refused to (load|execute|connect)/i.test(msg);
@@ -38,21 +48,24 @@ const KNOWN_NOISE = [
 // annotations to the team that owns the policy instead. KNOWN_NOISE just keeps expected
 // noise out of the annotations; it's report hygiene, not a safety mechanism.
 async function setupPage(page: Page): Promise<void> {
-    const handle = (text: string, annotationPrefix: string) => {
+    const handle = (text: string, annotationPrefix: string, sourceUrl: string) => {
         if (KNOWN_NOISE.some((n) => text.includes(n))) {
             return;
         }
-        // The securitypolicyviolation listener below owns CSP reporting; all the console
-        // text adds is the hash the browser suggests for a blocked inline script, which
-        // the event itself doesn't carry.
         if (isCspIssue(text)) {
-            const hint = parseCspHashHint(text, page.url());
+            // What the console adds over the violation event is the hash the browser suggests
+            // for a blocked inline script, which the event doesn't carry.
+            const hint = parseCspHashHint(text, sourceUrl);
             if (hint) {
                 test.info().annotations.push({
                     type: CSP_HASH_HINT_ANNOTATION,
                     description: JSON.stringify(hint),
                 });
+                return;
             }
+            // Otherwise keep it visible in the report: the violation listener is installed on
+            // documents, so a worker's CSP failure reaches the console and nothing else.
+            test.info().annotations.push({ type: 'warning', description: `[CSP] ${text}` });
             return;
         }
         test.info().annotations.push({ type: 'warning', description: `${annotationPrefix} ${text}` });
@@ -62,11 +75,13 @@ async function setupPage(page: Page): Promise<void> {
         if (msg.type() !== 'error' && msg.type() !== 'warning') {
             return;
         }
-        handle(msg.text(), '[Console]');
+        // The message's own location, not page.url(): a violation inside an iframe is reported
+        // against that frame's document, and a hash has to be matched to the page that needs it.
+        handle(msg.text(), '[Console]', msg.location()?.url || page.url());
     });
 
     page.on('pageerror', (error) => {
-        handle(`Uncaught exception: ${error.message}`, '[Exception]');
+        handle(`Uncaught exception: ${error.message}`, '[Exception]', page.url());
     });
 
     await watchCspViolations(page);
@@ -316,38 +331,49 @@ test.describe('Page Verification', () => {
         // Route the URL the run actually resolved, so this holds for a build deployed under
         // a path prefix as well as at a domain root.
         await page.goto('/');
+        const annotations = test.info().annotations;
+        const beforeInjection = annotations.length;
+
         await page.route(page.url(), async (route) => {
             const response = await route.fetch();
-            const body = (await response.text()).replace(
-                '</head>',
-                '<script>window.__agCspSelfCheck = true;</script></head>'
-            );
+            const body = (await response.text()).replace('</head>', `<script>${CSP_SELF_CHECK_SCRIPT}</script></head>`);
             await route.fulfill({ response, body });
         });
         await page.reload();
 
-        const annotations = test.info().annotations;
-        const captured = annotations.filter(
-            (annotation) => annotation.type === CSP_VIOLATION_ANNOTATION || annotation.type === CSP_HASH_HINT_ANNOTATION
-        );
-        // The injected script is this test's own doing, so drop what it provoked before
-        // asserting: only violations the site really has should reach the report, whether or
-        // not the assertions below hold.
+        // Only what the injected reload provoked is this test's own doing: anything the first
+        // navigation reported is a real violation and stays in the report. Removing it before
+        // the assertions means a failure here cannot leak the synthetic violation either.
+        const synthetic = annotations
+            .slice(beforeInjection)
+            .filter(
+                (annotation) =>
+                    annotation.type === CSP_VIOLATION_ANNOTATION || annotation.type === CSP_HASH_HINT_ANNOTATION
+            );
         annotations.splice(
             0,
             annotations.length,
-            ...annotations.filter((annotation) => !captured.includes(annotation))
+            ...annotations.filter((annotation) => !synthetic.includes(annotation))
         );
 
-        const violations = captured
+        expect(await page.evaluate(() => window.__agCspSelfCheck === true), 'injected script ran').toBe(false);
+
+        const violations = synthetic
             .filter((annotation) => annotation.type === CSP_VIOLATION_ANNOTATION)
             .map((annotation) => JSON.parse(annotation.description ?? '{}') as CspViolationRecord);
-        expect(violations, 'blocked inline script').toContainEqual(
-            expect.objectContaining({ blockedUri: 'inline', disposition: 'enforce' })
+        expect(violations, 'the injected script reported as blocked').toContainEqual(
+            expect.objectContaining({
+                blockedUri: 'inline',
+                disposition: 'enforce',
+                directive: expect.stringContaining('script-src'),
+            })
         );
-        expect(
-            captured.filter((annotation) => annotation.type === CSP_HASH_HINT_ANNOTATION).length,
-            'hashes suggested for the blocked script'
-        ).toBeGreaterThan(0);
+
+        const hashes = synthetic
+            .filter((annotation) => annotation.type === CSP_HASH_HINT_ANNOTATION)
+            .map((annotation) => (JSON.parse(annotation.description ?? '{}') as CspHashHint).hash);
+        expect(hashes, 'the hash that would authorise the injected script').toContain(
+            `sha256-${createHash('sha256').update(CSP_SELF_CHECK_SCRIPT, 'utf8').digest('base64')}`
+        );
     });
 });

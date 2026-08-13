@@ -21,6 +21,8 @@ const SCRIPT_ORIGIN_BLOCKED =
     "Refused to load the script 'https://example.invalid/blocked.js' because it violates the following " +
     'Content Security Policy directive: "script-src-elem \'self\'".';
 
+const REPORT_ONLY_INLINE_SCRIPT_BLOCKED = `[Report Only] ${INLINE_SCRIPT_BLOCKED}`;
+
 const PAGE = 'https://studio-staging.ag-grid.com/';
 const DOCS_PAGE = 'https://studio-staging.ag-grid.com/react/data/';
 
@@ -45,6 +47,7 @@ describe('parseCspHashHint', () => {
         expect(parseCspHashHint(INLINE_SCRIPT_BLOCKED, PAGE)).toEqual({
             hash: 'sha256-ogkEMWdvvBUuNnFAsG8ceWwymW4NoLtrf4wkYCkjQlI=',
             family: 'script',
+            disposition: 'enforce',
             pageUrl: PAGE,
         });
     });
@@ -53,12 +56,17 @@ describe('parseCspHashHint', () => {
         expect(parseCspHashHint(INLINE_STYLE_BLOCKED, PAGE)).toEqual({
             hash: 'sha256-KzFLXA5t2S8vLLQZ9AGxlY2CFqUEQ0Vv0nQPBRRRRR8=',
             family: 'style',
+            disposition: 'enforce',
             pageUrl: PAGE,
         });
     });
 
     it('yields nothing for a violation a hash cannot answer', () => {
         expect(parseCspHashHint(SCRIPT_ORIGIN_BLOCKED, PAGE)).toBeUndefined();
+    });
+
+    it('marks a hash the report-only policy asked for', () => {
+        expect(parseCspHashHint(REPORT_ONLY_INLINE_SCRIPT_BLOCKED, PAGE)?.disposition).toBe('report');
     });
 });
 
@@ -100,7 +108,7 @@ describe('aggregateCspViolations', () => {
 
         const violations = aggregateCspViolations(
             [{ record: inlineScriptRecord, testTitle: 'homepage loads' }],
-            [hint, { hash: 'sha256-elsewhere=', family: 'script', pageUrl: DOCS_PAGE }]
+            [hint, { hash: 'sha256-elsewhere=', family: 'script', disposition: 'enforce', pageUrl: DOCS_PAGE }]
         );
 
         expect(violations[0].suggestedHashes).toEqual(['sha256-ogkEMWdvvBUuNnFAsG8ceWwymW4NoLtrf4wkYCkjQlI=']);
@@ -146,5 +154,56 @@ describe('aggregateCspViolations', () => {
             'enforce|script-src-elem|inline',
             'report|script-src-elem|inline',
         ]);
+    });
+
+    it("keeps a report-only policy's hash off the enforced violation", () => {
+        const violations = aggregateCspViolations(
+            [{ record: inlineScriptRecord, testTitle: 'homepage loads' }],
+            [parseCspHashHint(REPORT_ONLY_INLINE_SCRIPT_BLOCKED, PAGE) as CspHashHint]
+        );
+
+        expect(violations[0].suggestedHashes).toEqual([]);
+        expect(violations[0].key).toBe('enforce|script-src-elem|inline');
+    });
+
+    it('keeps two inline scripts blocked under one directive apart', () => {
+        const otherPage = 'https://studio-staging.ag-grid.com/react/ai/';
+        const hints: CspHashHint[] = [
+            { hash: 'sha256-first=', family: 'script', disposition: 'enforce', pageUrl: PAGE },
+            { hash: 'sha256-second=', family: 'script', disposition: 'enforce', pageUrl: otherPage },
+        ];
+
+        const violations = aggregateCspViolations(
+            [
+                { record: inlineScriptRecord, testTitle: 'homepage loads' },
+                { record: { ...inlineScriptRecord, pageUrl: otherPage }, testTitle: 'ai page loads' },
+            ],
+            hints
+        );
+
+        expect(violations.map((violation) => [violation.key, violation.pages])).toEqual([
+            ['enforce|script-src-elem|inline|sha256-first=', ['/']],
+            ['enforce|script-src-elem|inline|sha256-second=', ['/react/ai/']],
+        ]);
+    });
+
+    it('gathers one blocked script into a single entry across the pages that serve it', () => {
+        const otherPage = 'https://studio-staging.ag-grid.com/react/ai/';
+        const hints: CspHashHint[] = [
+            { hash: 'sha256-gtm=', family: 'script', disposition: 'enforce', pageUrl: PAGE },
+            { hash: 'sha256-gtm=', family: 'script', disposition: 'enforce', pageUrl: otherPage },
+        ];
+
+        const violations = aggregateCspViolations(
+            [
+                { record: inlineScriptRecord, testTitle: 'homepage loads' },
+                { record: { ...inlineScriptRecord, pageUrl: otherPage }, testTitle: 'ai page loads' },
+            ],
+            hints
+        );
+
+        expect(violations).toHaveLength(1);
+        expect(violations[0].pages).toEqual(['/', '/react/ai/']);
+        expect(violations[0].suggestedHashes).toEqual(['sha256-gtm=']);
     });
 });

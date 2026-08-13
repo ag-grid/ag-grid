@@ -32,8 +32,15 @@ export default class CspViolationReporter implements Reporter {
         this.outputFile = options.outputFile ?? DEFAULT_OUTPUT_FILE;
     }
 
+    // Which site the run targeted. CI compares a report against the previous run's, so the
+    // report has to say what it describes: a manual run against some other URL must not be
+    // mistaken for a baseline. Falls back to the environment for a suite that navigates by
+    // absolute URL rather than through a Playwright baseURL.
     onBegin(config: FullConfig): void {
-        this.baseUrl = config.projects.map((project) => project.use.baseURL).find(Boolean);
+        this.baseUrl =
+            config.projects.map((project) => project.use.baseURL).find(Boolean) ??
+            process.env.PUBLIC_SITE_URL ??
+            process.env.BASE_URL;
     }
 
     onTestEnd(test: TestCase, result: TestResult): void {

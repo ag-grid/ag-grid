@@ -24,10 +24,13 @@ export interface CspViolationRecord {
 /**
  * The hash the browser suggests for a blocked inline script or style. Only the console message
  * carries it - the violation event does not - so it is captured separately and joined back on.
+ * A page can carry an enforced and a report-only policy at once, each rejecting the same inline
+ * content, so the disposition is part of what identifies which violation a hash answers.
  */
 export interface CspHashHint {
     hash: string;
     family: string;
+    disposition: CspDisposition;
     pageUrl: string;
 }
 
@@ -75,7 +78,30 @@ export function parseCspHashHint(consoleText: string, pageUrl: string): CspHashH
     if (!hash || !directive) {
         return undefined;
     }
-    return { hash, family: cspDirectiveFamily(directive), pageUrl };
+    const disposition: CspDisposition = /report[ -]only/i.test(consoleText) ? 'report' : 'enforce';
+    return { hash, family: cspDirectiveFamily(directive), disposition, pageUrl };
+}
+
+/**
+ * A hash only ever answers a blocked inline script or style, and only the one the same page
+ * reported under the same policy: an external origin blocked by the same directive is a
+ * different fix, and a report-only policy's hash does not authorise anything.
+ */
+function hashesFor(record: CspViolationRecord, hints: CspHashHint[]): string[] {
+    if (record.blockedUri !== 'inline') {
+        return [];
+    }
+    const pagePath = toPagePath(record.pageUrl);
+    return sorted(
+        hints
+            .filter(
+                (hint) =>
+                    hint.disposition === record.disposition &&
+                    hint.family === cspDirectiveFamily(record.directive) &&
+                    toPagePath(hint.pageUrl) === pagePath
+            )
+            .map((hint) => hint.hash)
+    );
 }
 
 export function aggregateCspViolations(
@@ -85,7 +111,11 @@ export function aggregateCspViolations(
     const groups = new Map<string, { violation: AggregatedCspViolation; pagePaths: Set<string> }>();
 
     for (const { record, testTitle } of records) {
-        const groupKey = `${record.disposition}|${record.directive}|${record.blockedUri}`;
+        // Grouping on the suggested hash keeps two different blocked inline scripts apart: they
+        // share a directive and report the same `inline` blocked URI, so grouping without it
+        // would merge them and make fixing one look like the pair being replaced by a new one.
+        const suggestedHashes = hashesFor(record, hints);
+        const groupKey = [record.disposition, record.directive, record.blockedUri, ...suggestedHashes].join('|');
         let group = groups.get(groupKey);
         if (!group) {
             group = {
@@ -94,7 +124,7 @@ export function aggregateCspViolations(
                     directive: record.directive,
                     blockedUri: record.blockedUri,
                     disposition: record.disposition,
-                    suggestedHashes: [],
+                    suggestedHashes,
                     sourceFiles: [],
                     pages: [],
                     tests: [],
@@ -110,29 +140,12 @@ export function aggregateCspViolations(
         }
     }
 
-    const violations = [...groups.values()].map(({ violation, pagePaths }) => {
-        // A hash only ever answers a blocked inline script or style, and only on the page that
-        // reported it - an external origin blocked by the same directive is a different fix.
-        const hashes =
-            violation.blockedUri === 'inline'
-                ? hints
-                      .filter(
-                          (hint) =>
-                              hint.family === cspDirectiveFamily(violation.directive) &&
-                              pagePaths.has(toPagePath(hint.pageUrl))
-                      )
-                      .map((hint) => hint.hash)
-                : [];
-        const suggestedHashes = sorted(hashes);
-        return {
-            ...violation,
-            key: suggestedHashes.length ? `${violation.key}|${suggestedHashes.join(',')}` : violation.key,
-            suggestedHashes,
-            sourceFiles: sorted(violation.sourceFiles),
-            pages: sorted(pagePaths),
-            tests: sorted(violation.tests),
-        };
-    });
+    const violations = [...groups.values()].map(({ violation, pagePaths }) => ({
+        ...violation,
+        sourceFiles: sorted(violation.sourceFiles),
+        pages: sorted(pagePaths),
+        tests: sorted(violation.tests),
+    }));
 
     return violations.sort(
         (a, b) =>
