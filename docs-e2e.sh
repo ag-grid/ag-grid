@@ -7,7 +7,8 @@
 #   ./docs-e2e.sh "file-pattern"                    # Run tests matching pattern
 #   ./docs-e2e.sh "file-pattern" --grep "name"      # Run specific test by name
 #   ./docs-e2e.sh --all-browsers                    # Run all browsers
-#   ./docs-e2e.sh --framework reactFunctionalTs      # Run with specific framework
+#   ./docs-e2e.sh --framework reactFunctionalTs     # Run with specific framework
+#   ./docs-e2e.sh --framework reactFunctionalTs_Dev # Only the React development-build tests
 #   ./docs-e2e.sh --url https://localhost:4610      # Run against specific URL
 #   ./docs-e2e.sh --headed                          # Run in headed mode
 #   ./docs-e2e.sh --ui                              # Open Playwright UI mode
@@ -34,8 +35,10 @@ Options:
   --framework <name>      Set FRAMEWORK env var. Valid: typescript, vanilla,
                           reactFunctionalTs, reactFunctionalTs_Dev, angular, vue3
   --url <url>             Set BASE_URL env var (default: https://localhost:4610)
-  --all-variants          Also run the production React variant (or ALL_FRAMEWORK_VARIANTS=true).
-                          CI runs both; locally only the development one runs.
+  --all-variants          Sweep every example with the production React variant too (or
+                          ALL_FRAMEWORK_VARIANTS=true). The sweep covers one React build:
+                          development locally, production in CI. Tests naming a variant
+                          outright always run and are unaffected by this.
   --help                  Show this help message
 
 Playwright options (forwarded as-is):
