@@ -694,6 +694,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaFilterColumnsInput: 'Vstup Filtra pre Stĺpce',
     ariaFilterFromValue: 'Filtrovať od hodnoty',
     ariaFilterInput: 'Vstup Filtra',
+    ariaLabelInputClear: 'Vyčistiť',
     ariaFilterList: 'Zoznam Filtrov',
     ariaFilterToValue: 'Filtrovať do hodnoty',
     ariaFilterValue: 'Hodnota Filtra',

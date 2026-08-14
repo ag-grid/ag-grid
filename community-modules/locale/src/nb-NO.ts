@@ -695,6 +695,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaFilterColumnsInput: 'Filtrer kolonner inndata',
     ariaFilterFromValue: 'Filtrer fra verdi',
     ariaFilterInput: 'Filterinndata',
+    ariaLabelInputClear: 'Tøm',
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til verdi',
     ariaFilterValue: 'Filterverdi',

@@ -697,6 +697,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaFilterColumnsInput: 'Filterkolumnsinmatning',
     ariaFilterFromValue: 'Filtrera från värde',
     ariaFilterInput: 'Filterinmatning',
+    ariaLabelInputClear: 'Rensa',
     ariaFilterList: 'Filterlista',
     ariaFilterToValue: 'Filtrera till värde',
     ariaFilterValue: 'Filtervärde',

@@ -693,6 +693,7 @@ export const AG_GRID_LOCALE_TW = {
     ariaFilterColumnsInput: '篩選欄輸入',
     ariaFilterFromValue: '從值篩選',
     ariaFilterInput: '篩選輸入',
+    ariaLabelInputClear: '清除',
     ariaFilterList: '篩選列表',
     ariaFilterToValue: '篩選到值',
     ariaFilterValue: '篩選值',

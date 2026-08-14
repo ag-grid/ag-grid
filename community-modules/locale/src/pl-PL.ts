@@ -698,6 +698,7 @@ export const AG_GRID_LOCALE_PL = {
     ariaFilterColumnsInput: 'Wejście Filtrowania Kolumn',
     ariaFilterFromValue: 'Filtr od wartości',
     ariaFilterInput: 'Wejście Filtra',
+    ariaLabelInputClear: 'Wyczyść',
     ariaFilterList: 'Lista Filtrowania',
     ariaFilterToValue: 'Filtr do wartości',
     ariaFilterValue: 'Wartość Filtra',

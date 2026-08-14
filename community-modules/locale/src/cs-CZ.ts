@@ -695,6 +695,7 @@ export const AG_GRID_LOCALE_CZ = {
     ariaFilterColumnsInput: 'Vstup filtru sloupců',
     ariaFilterFromValue: 'Filtrovat od hodnoty',
     ariaFilterInput: 'Vstup filtru',
+    ariaLabelInputClear: 'Vymazat',
     ariaFilterList: 'Seznam filtrů',
     ariaFilterToValue: 'Filtrovat do hodnoty',
     ariaFilterValue: 'Hodnota filtru',
