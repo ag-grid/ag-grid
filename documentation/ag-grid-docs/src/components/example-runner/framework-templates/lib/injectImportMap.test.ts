@@ -1,38 +1,55 @@
-import { DEV_FLAG_PLACEHOLDERS, FRAMEWORK_VERSION_PLACEHOLDER, injectImportMap } from './injectImportMap';
-
-const OPTIONS = {
-    template: JSON.stringify({
-        imports: {
-            react: `https://esm.sh/react@${FRAMEWORK_VERSION_PLACEHOLDER}${DEV_FLAG_PLACEHOLDERS.query}`,
-        },
-    }),
-    buildTokens: {
-        production: { [DEV_FLAG_PLACEHOLDERS.query]: '', [DEV_FLAG_PLACEHOLDERS.appended]: '' },
-        development: { [DEV_FLAG_PLACEHOLDERS.query]: '?dev', [DEV_FLAG_PLACEHOLDERS.appended]: '&dev' },
-    },
-    defaultVersion: '19.2.1',
-    placeholder: FRAMEWORK_VERSION_PLACEHOLDER,
-    versionParam: 'version',
-    versionPattern: /^\d+\.\d+\.\d+(?:[-+][\w.-]+)*$/.source,
-    prodParam: 'prod',
-};
+import {
+    DEVELOPMENT_FLAGS,
+    DEV_FLAG_PLACEHOLDERS,
+    FRAMEWORK_VERSION_PARAM,
+    FRAMEWORK_VERSION_PATTERN,
+    FRAMEWORK_VERSION_PLACEHOLDER,
+    IMPORT_MAP_OPTIONS_ID,
+    PRODUCTION_FLAGS,
+    PROD_PARAM,
+} from '@utils/exampleModules/getImportMap';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 
 /**
- * The function runs in the example page, so the test supplies the pieces of the page it
- * touches: the URL it reads the version from and the elements it appends.
+ * The injector is served to the example page as it is written, so the test runs the file itself
+ * rather than a module built from it -- what it asserts on is what a browser executes.
  */
-const stubPage = (search: string, nonce?: string) => {
-    const elements: any[] = [];
+const INJECTOR_PATH = join(__dirname, '../../../../../public/example-runner/inject-import-map.js');
+const injectorSource = readFileSync(INJECTOR_PATH, 'utf8');
+
+const TEMPLATE = JSON.stringify({
+    imports: {
+        react: `https://esm.sh/react@${FRAMEWORK_VERSION_PLACEHOLDER}${DEV_FLAG_PLACEHOLDERS.query}`,
+    },
+});
+
+/**
+ * The injector runs in the example page, so the test supplies the pieces of the page it touches:
+ * the URL it reads the version from, the block it reads the map from, and what it appends.
+ */
+const stubPage = (
+    search: string,
+    { nonce, template = TEMPLATE, defaultProd }: { nonce?: string; template?: string; defaultProd?: boolean } = {}
+) => {
     const head: any[] = [];
     const body: any[] = [];
+    // Omitted rather than defaulted when the test names no default, so that a page from before
+    // the script read one can be stubbed
+    const options = JSON.stringify({
+        template,
+        defaultVersion: '19.2.1',
+        ...(defaultProd === undefined ? {} : { defaultProd }),
+    });
 
     vi.stubGlobal('window', { location: { search } });
     vi.stubGlobal('document', {
         currentScript: nonce === undefined ? null : { nonce },
+        getElementById: (id: string) => (id === IMPORT_MAP_OPTIONS_ID ? { textContent: options } : null),
         createElement: (tagName: string) => {
             const element = { tagName, attributes: {} as Record<string, string>, setAttribute: undefined as any };
             element.setAttribute = (name: string, value: string) => (element.attributes[name] = value);
-            elements.push(element);
             return element;
         },
         head: { appendChild: (element: any) => head.push(element) },
@@ -42,59 +59,88 @@ const stubPage = (search: string, nonce?: string) => {
     return { head, body };
 };
 
+const injectImportMap = () => new Function(injectorSource)();
+
+const registeredImports = (head: any[]) => JSON.parse(head[0].textContent).imports;
+
 afterEach(() => vi.unstubAllGlobals());
 
-describe('injectImportMap', () => {
+describe('inject-import-map.js', () => {
     test('registers the pinned version when the URL requests none', () => {
-        const { head } = stubPage('?enableTestIds=true');
+        const { head } = stubPage('?enableTestIds=true', { defaultProd: true });
 
-        injectImportMap(OPTIONS);
+        injectImportMap();
 
         expect(head).toHaveLength(1);
         expect(head[0].type).toBe('importmap');
-        expect(JSON.parse(head[0].textContent).imports.react).toBe('https://esm.sh/react@19.2.1');
+        expect(registeredImports(head).react).toBe('https://esm.sh/react@19.2.1');
     });
 
     test('registers the version the URL requests', () => {
         const { head } = stubPage('?version=18.3.1');
 
-        injectImportMap(OPTIONS);
+        injectImportMap();
 
-        expect(JSON.parse(head[0].textContent).imports.react).toBe('https://esm.sh/react@18.3.1');
+        expect(registeredImports(head).react).toBe('https://esm.sh/react@18.3.1');
     });
 
     test('registers the production build unless the URL asks for the development one', () => {
         const { head } = stubPage('?prod=true');
 
-        injectImportMap(OPTIONS);
+        injectImportMap();
 
-        expect(JSON.parse(head[0].textContent).imports.react).toBe('https://esm.sh/react@19.2.1');
+        expect(registeredImports(head).react).toBe('https://esm.sh/react@19.2.1');
+    });
+
+    test("registers the page's default build when the URL asks for neither", () => {
+        const { head } = stubPage('?enableTestIds=true', { defaultProd: false });
+
+        injectImportMap();
+
+        expect(registeredImports(head).react).toBe('https://esm.sh/react@19.2.1?dev');
+    });
+
+    test('falls back to the production build for a page that names no default', () => {
+        // The script is served from a mutable URL, so it outlives the pages that carry it
+        const { head } = stubPage('');
+
+        injectImportMap();
+
+        expect(registeredImports(head).react).toBe('https://esm.sh/react@19.2.1');
+    });
+
+    test('overrides a page defaulting to the development build with prod=true', () => {
+        const { head } = stubPage('?prod=true', { defaultProd: false });
+
+        injectImportMap();
+
+        expect(registeredImports(head).react).toBe('https://esm.sh/react@19.2.1');
     });
 
     test('registers the development build for prod=false', () => {
         const { head } = stubPage('?prod=false&version=18.3.1');
 
-        injectImportMap(OPTIONS);
+        injectImportMap();
 
-        expect(JSON.parse(head[0].textContent).imports.react).toBe('https://esm.sh/react@18.3.1?dev');
+        expect(registeredImports(head).react).toBe('https://esm.sh/react@18.3.1?dev');
     });
 
     test('leaves a map with no build-dependent entries alone when asked for the development build', () => {
-        const { head } = stubPage('?prod=false');
-
         // Every framework but React: no build token appears, so both builds give the same map
-        injectImportMap({
-            ...OPTIONS,
-            template: JSON.stringify({ imports: { vue: `https://cdn/vue@${FRAMEWORK_VERSION_PLACEHOLDER}/vue.js` } }),
+        const template = JSON.stringify({
+            imports: { vue: `https://cdn/vue@${FRAMEWORK_VERSION_PLACEHOLDER}/vue.js` },
         });
+        const { head } = stubPage('?prod=false', { template });
 
-        expect(JSON.parse(head[0].textContent).imports.vue).toBe('https://cdn/vue@19.2.1/vue.js');
+        injectImportMap();
+
+        expect(registeredImports(head).vue).toBe('https://cdn/vue@19.2.1/vue.js');
     });
 
     test('takes the nonce of the script running it, for a page whose CSP allows only nonces', () => {
-        const { head } = stubPage('', 'test-nonce');
+        const { head } = stubPage('', { nonce: 'test-nonce' });
 
-        injectImportMap(OPTIONS);
+        injectImportMap();
 
         expect(head[0].nonce).toBe('test-nonce');
     });
@@ -102,7 +148,7 @@ describe('injectImportMap', () => {
     test('registers no nonce when the page has none', () => {
         const { head } = stubPage('');
 
-        injectImportMap(OPTIONS);
+        injectImportMap();
 
         expect(head[0].nonce).toBeUndefined();
     });
@@ -110,7 +156,7 @@ describe('injectImportMap', () => {
     test('fails visibly rather than falling back when the version is not a version', () => {
         const { head, body } = stubPage('?version=latest');
 
-        expect(() => injectImportMap(OPTIONS)).toThrowError(/not a valid \?version= value/);
+        expect(() => injectImportMap()).toThrowError(/not a valid \?version= value/);
 
         // No map registered, so the example cannot quietly run against the pinned default
         expect(head).toHaveLength(0);
@@ -120,8 +166,53 @@ describe('injectImportMap', () => {
     test('fails the same way for an empty version, rather than taking it as absent', () => {
         const { head } = stubPage('?version=');
 
-        expect(() => injectImportMap(OPTIONS)).toThrowError(/not a valid \?version= value/);
+        expect(() => injectImportMap()).toThrowError(/not a valid \?version= value/);
 
         expect(head).toHaveLength(0);
+    });
+
+    /**
+     * The served file cannot import the constants the map is rendered with, so it carries its own
+     * copies. A page whose tokens the injector does not recognise would register a map still
+     * holding placeholders, which fails as a wall of bare-specifier errors rather than as one
+     * legible failure -- so the copies are checked against their source here instead.
+     */
+    describe('carries the same constants the map is rendered with', () => {
+        // Evaluated rather than read as text, so that what is compared is the value the browser
+        // ends up with rather than the escaping the source happens to use
+        const literal = (name: string) => {
+            const match = injectorSource.match(new RegExp(`var ${name} = ('[^']*');`));
+            expect(match, `${name} not found in inject-import-map.js`).not.toBeNull();
+            return new Function(`return ${match![1]}`)() as string;
+        };
+
+        test.each([
+            ['OPTIONS_ID', IMPORT_MAP_OPTIONS_ID],
+            ['VERSION_PARAM', FRAMEWORK_VERSION_PARAM],
+            ['PROD_PARAM', PROD_PARAM],
+            ['VERSION_PLACEHOLDER', FRAMEWORK_VERSION_PLACEHOLDER],
+        ])('%s', (name, expected) => {
+            expect(literal(name)).toBe(expected);
+        });
+
+        test('VERSION_PATTERN', () => {
+            expect(literal('VERSION_PATTERN')).toBe(FRAMEWORK_VERSION_PATTERN.source);
+        });
+
+        test('BUILD_TOKENS', () => {
+            const tokens = injectorSource.match(/var BUILD_TOKENS = (\{[\s\S]*?\n {4}\});/);
+            expect(tokens, 'BUILD_TOKENS not found in inject-import-map.js').not.toBeNull();
+
+            expect(new Function(`return ${tokens![1]}`)()).toEqual({
+                production: {
+                    [DEV_FLAG_PLACEHOLDERS.query]: PRODUCTION_FLAGS.query,
+                    [DEV_FLAG_PLACEHOLDERS.appended]: PRODUCTION_FLAGS.appended,
+                },
+                development: {
+                    [DEV_FLAG_PLACEHOLDERS.query]: DEVELOPMENT_FLAGS.query,
+                    [DEV_FLAG_PLACEHOLDERS.appended]: DEVELOPMENT_FLAGS.appended,
+                },
+            });
+        });
     });
 });

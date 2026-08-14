@@ -1,11 +1,15 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { NPM_CDN } from '@constants';
+import { IMPORT_MAP_OPTIONS_ID } from '@utils/exampleModules/getImportMap';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { IMPORT_MAP_OPTIONS_ID } from './injectImportMap';
-
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
+
+/** The injector as it is served, so the test registers the map the way the page does */
+const INJECTOR_PATH = '../../../../../public/example-runner/inject-import-map.js';
 
 /**
  * The example runner, the Plunker page and the static CodeSandbox page all render this component,
@@ -16,9 +20,11 @@ const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'ang
 const renderMarkup = async ({
     internalFramework,
     transpileInBrowser,
+    usesMathRandom,
 }: {
     internalFramework: InternalFramework;
     transpileInBrowser?: boolean;
+    usesMathRandom?: boolean;
 }) => {
     // `.env.build.production` sets `PUBLIC_USE_PUBLISHED_PACKAGES`, which `@constants` reads at
     // module scope, so the modules have to be re-evaluated with it in place
@@ -36,6 +42,7 @@ const renderMarkup = async ({
             isEnterprise
             isIntegratedCharts
             transpileInBrowser={transpileInBrowser}
+            usesMathRandom={usesMathRandom}
         />
     );
 
@@ -70,14 +77,16 @@ const registerImportMap = async (optionsJson: string) => {
 
     vi.stubGlobal('window', { location: { search: '' } });
     vi.stubGlobal('document', {
+        currentScript: null,
+        getElementById: (id: string) => (id === IMPORT_MAP_OPTIONS_ID ? { textContent: optionsJson } : null),
         createElement: () => ({}) as any,
         head: { appendChild: (element: any) => registered.push(element) },
         body: { appendChild: () => undefined },
     });
 
     try {
-        const { injectImportMap } = await import('./injectImportMap');
-        injectImportMap(JSON.parse(optionsJson));
+        const injector = readFileSync(join(__dirname, INJECTOR_PATH), 'utf8');
+        new Function(injector)();
     } finally {
         vi.unstubAllGlobals();
     }
@@ -111,15 +120,50 @@ describe('ExampleModules', () => {
             expect(exported).toEqual(runner);
         });
 
-        test('emits the page boilerplate once, before the example is loaded', async () => {
+        test('serves the page boilerplate once, before the example is loaded', async () => {
             const html = await renderMarkup({ internalFramework });
 
-            const shim = html.indexOf('window.process');
+            const boilerplate = html.indexOf('/example-runner/example-page.js');
             const entryModule = html.indexOf('type="module"');
 
-            expect(html.match(/window\.process/g)).toHaveLength(1);
-            expect(shim).toBeGreaterThan(-1);
-            expect(shim).toBeLessThan(entryModule);
+            expect(html.match(/example-page\.js/g)).toHaveLength(1);
+            expect(boilerplate).toBeGreaterThan(-1);
+            expect(boilerplate).toBeLessThan(entryModule);
+        });
+
+        test('serves the boilerplate from the site rather than inlining it', async () => {
+            const html = await renderMarkup({ internalFramework });
+
+            // The frameworkless examples have no version to resolve from the URL, so their map
+            // is served as markup and there is no injector to load
+            const served = ['example-page.js', ...(internalFramework === 'typescript' ? [] : ['inject-import-map.js'])];
+
+            for (const fileName of served) {
+                expect(html).toContain(`src="https://testing.ag-grid.com/AG-17103/example-runner/${fileName}"`);
+            }
+        });
+
+        test('hands the seeded generator its seed as data, for an example that generates its own', async () => {
+            const html = await renderMarkup({ internalFramework, usesMathRandom: true });
+
+            expect(html).toContain('/example-runner/seed-random.js');
+            expect(html).toMatch(/seed-random\.js"[^>]*data-seed="[^"]+"/);
+        });
+
+        test('carries no script body of its own beyond the data the served scripts read', async () => {
+            const html = await renderMarkup({ internalFramework, usesMathRandom: true });
+
+            // Every inline script is either the base-path assignment the templates emit or a
+            // JSON block; anything else is machinery that belongs in a served file
+            const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/g)];
+            const machinery = inline.filter(
+                ([, attributes, body]) =>
+                    !attributes.includes('application/json') &&
+                    !attributes.includes('importmap') &&
+                    !body.includes('__basePath')
+            );
+
+            expect(machinery.map(([, , body]) => body)).toEqual([]);
         });
     });
 });

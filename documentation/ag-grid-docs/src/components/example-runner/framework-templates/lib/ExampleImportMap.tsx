@@ -1,21 +1,14 @@
 import type { InternalFramework } from '@ag-grid-types';
-import {
-    DEVELOPMENT_FLAGS,
-    FRAMEWORK_VERSION_PARAM,
-    FRAMEWORK_VERSION_PATTERN,
-    PRODUCTION_FLAGS,
-    PROD_PARAM,
-    getDefaultFrameworkVersion,
-    getImportMap,
-} from '@utils/exampleModules/getImportMap';
-
+import { getIsDev } from '@utils/env';
+import { exampleRunnerAsset } from '@utils/exampleModules/exampleRunnerAsset';
 import {
     DEV_FLAG_PLACEHOLDERS,
     FRAMEWORK_VERSION_PLACEHOLDER,
     IMPORT_MAP_OPTIONS_ID,
-    type InjectImportMapOptions,
-    injectImportMap,
-} from './injectImportMap';
+    PRODUCTION_FLAGS,
+    getDefaultFrameworkVersion,
+    getImportMap,
+} from '@utils/exampleModules/getImportMap';
 
 interface Props {
     internalFramework: InternalFramework;
@@ -43,31 +36,15 @@ const renderImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts }
     return { template: JSON.stringify({ imports }), defaultVersion };
 };
 
-/** What the browser needs to turn the rendered template into the map for this page's URL */
-const getInjectOptions = (template: string, defaultVersion: string): InjectImportMapOptions => ({
-    template,
-    buildTokens: {
-        production: {
-            [DEV_FLAG_PLACEHOLDERS.query]: PRODUCTION_FLAGS.query,
-            [DEV_FLAG_PLACEHOLDERS.appended]: PRODUCTION_FLAGS.appended,
-        },
-        development: {
-            [DEV_FLAG_PLACEHOLDERS.query]: DEVELOPMENT_FLAGS.query,
-            [DEV_FLAG_PLACEHOLDERS.appended]: DEVELOPMENT_FLAGS.appended,
-        },
-    },
-    defaultVersion,
-    placeholder: FRAMEWORK_VERSION_PLACEHOLDER,
-    versionParam: FRAMEWORK_VERSION_PARAM,
-    versionPattern: FRAMEWORK_VERSION_PATTERN.source,
-    prodParam: PROD_PARAM,
-});
-
 /**
  * The import map that resolves the example's bare package specifiers.
  *
  * For framework examples it is registered in the browser rather than served as markup, so that
- * `?version=` and `?prod=` can pick the framework version and build -- see `injectImportMap`.
+ * `?version=` and `?prod=` can pick the framework version and build. Which build the page falls
+ * back to is fixed when it is generated: the development one under the dev server, so that local
+ * examples run against React's development build as they did under SystemJS. The page carries the
+ * rendered map and nothing else; what substitutes and registers it is served -- see
+ * `public/example-runner/inject-import-map.js`.
  */
 export const ExampleImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts, nonce }: Props) => {
     const { template, defaultVersion } = renderImportMap({ internalFramework, isEnterprise, isIntegratedCharts });
@@ -77,23 +54,17 @@ export const ExampleImportMap = ({ internalFramework, isEnterprise, isIntegrated
         return <script nonce={nonce} type="importmap" dangerouslySetInnerHTML={{ __html: template }} />;
     }
 
-    const options = JSON.stringify(getInjectOptions(template, defaultVersion));
-    const optionsElement = `document.getElementById(${JSON.stringify(IMPORT_MAP_OPTIONS_ID)})`;
-
     return (
         <>
             <script
                 nonce={nonce}
                 type="application/json"
                 id={IMPORT_MAP_OPTIONS_ID}
-                dangerouslySetInnerHTML={{ __html: options }}
-            />
-            <script
-                nonce={nonce}
                 dangerouslySetInnerHTML={{
-                    __html: `(${injectImportMap})(JSON.parse(${optionsElement}.textContent));`,
+                    __html: JSON.stringify({ template, defaultVersion, defaultProd: !getIsDev() }),
                 }}
             />
+            <script nonce={nonce} src={exampleRunnerAsset('inject-import-map.js')} />
         </>
     );
 };
