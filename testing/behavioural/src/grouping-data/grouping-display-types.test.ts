@@ -189,9 +189,8 @@ describe('ag-grid grouping display types and footers', () => {
             getRowId: (params) => params.data.id,
         });
 
-        // Capture the footer node while it is still displayed, exactly as a mounted RowCtrl or
-        // cell component holds it. It must be captured before the destroy: the lookup resolves
-        // through the group node's sibling, which the destroy severs.
+        // Must be captured before the destroy: the lookup resolves through the group node's
+        // sibling, which the destroy severs.
         const irelandTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'row-group-country-Ireland')!;
         expect(irelandTotal.footer).toBe(true);
         expect(irelandTotal.isSelected()).toBeFalsy();
