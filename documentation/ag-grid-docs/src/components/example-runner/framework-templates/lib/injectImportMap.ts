@@ -42,11 +42,7 @@ export interface InjectImportMapOptions {
 /**
  * Registers the example page's import map, substituting the framework version and build that
  * `?version=` and `?prod=` ask for -- neither is known when the page is statically generated.
- * Emitted as a classic inline script, so the parser registers the map before it reaches the
- * example's module script, as the import-map spec requires.
  *
- * A version that is not a plausible version string aborts the load visibly rather than quietly
- * falling back to the pinned default; a well-formed but non-existent one is left to 404.
  *
  * Serialised into the page with `toString()`, so it must reference nothing outside its own
  * parameters.
