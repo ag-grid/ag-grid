@@ -16,7 +16,7 @@ const ts = require('typescript');
  * `splitChunks: { chunks: 'all' }` creates exactly that — it rewrites the reference to
  * `ns.BeanStub`. A property access may invoke a getter, so terser will not drop the class, and
  * our feature classes reference each other in cycles: retaining one retains its whole subsystem.
- * 256 of ag-grid-enterprise's 355 `extends` sites are cross-package, so this retains most of the
+ * Most of ag-grid-enterprise's `extends` sites are cross-package, so this retains most of the
  * package regardless of which modules the application registered.
  *
  * Hoisting the superclass into a local binding costs one statement webpack keeps, and leaves
@@ -43,12 +43,18 @@ const ALIAS_PREFIX = '__agSuperclass_';
 function importedBindings(sourceFile) {
     const importedFrom = new Map();
     for (const statement of sourceFile.statements) {
-        if (!ts.isImportDeclaration(statement) || !statement.importClause) continue;
+        if (!ts.isImportDeclaration(statement) || !statement.importClause) {
+            continue;
+        }
         const source = statement.moduleSpecifier.text;
         const { name, namedBindings } = statement.importClause;
-        if (name) importedFrom.set(name.text, source);
+        if (name) {
+            importedFrom.set(name.text, source);
+        }
         if (namedBindings && ts.isNamedImports(namedBindings)) {
-            for (const element of namedBindings.elements) importedFrom.set(element.name.text, source);
+            for (const element of namedBindings.elements) {
+                importedFrom.set(element.name.text, source);
+            }
         } else if (namedBindings && ts.isNamespaceImport(namedBindings)) {
             importedFrom.set(namedBindings.name.text, source);
         }
@@ -63,30 +69,46 @@ function importedBindings(sourceFile) {
  *
  * Deliberately coarse — one name shadowed anywhere disables aliasing for that name everywhere,
  * rather than tracking which scope each site sits in. esbuild renames nested bindings that would
- * shadow an import, so this currently matches nothing in our bundles (0 collisions against 1392
- * imports in ag-grid-enterprise); if that ever changes we lose a little tree shaking rather than
- * emitting a class that extends the wrong base.
+ * shadow an import, so this is expected to match nothing; when it does match, we lose a little tree
+ * shaking rather than emitting a class that extends the wrong base.
  */
 function locallyBoundNames(sourceFile) {
     const names = new Set();
 
     const addBinding = (name) => {
-        if (!name) return;
+        if (!name) {
+            return;
+        }
         if (ts.isIdentifier(name)) {
             names.add(name.text);
         } else if (ts.isObjectBindingPattern(name) || ts.isArrayBindingPattern(name)) {
-            for (const element of name.elements) if (ts.isBindingElement(element)) addBinding(element.name);
+            for (const element of name.elements) {
+                if (ts.isBindingElement(element)) {
+                    addBinding(element.name);
+                }
+            }
         }
     };
 
     const visit = (node, nested) => {
         if (ts.isFunctionLike(node)) {
-            for (const parameter of node.parameters ?? []) addBinding(parameter.name);
+            for (const parameter of node.parameters ?? []) {
+                addBinding(parameter.name);
+            }
+        }
+        // A named class or function expression binds its own name in a scope wrapping its body,
+        // which is never the top-level scope — so unlike everything below, a top-level one still
+        // shadows. In `var Foo = class BeanStub { m() { return class extends BeanStub {}; } }` the
+        // inner clause extends Foo, not the import.
+        if (node.name && ts.isIdentifier(node.name) && (ts.isClassExpression(node) || ts.isFunctionExpression(node))) {
+            names.add(node.name.text);
         }
         if (nested) {
-            if (ts.isVariableDeclaration(node)) addBinding(node.name);
-            else if (ts.isCatchClause(node) && node.variableDeclaration) addBinding(node.variableDeclaration.name);
-            else if (node.name && ts.isIdentifier(node.name) && (ts.isFunctionLike(node) || ts.isClassLike(node))) {
+            if (ts.isVariableDeclaration(node)) {
+                addBinding(node.name);
+            } else if (ts.isCatchClause(node) && node.variableDeclaration) {
+                addBinding(node.variableDeclaration.name);
+            } else if (node.name && ts.isIdentifier(node.name) && (ts.isFunctionLike(node) || ts.isClassLike(node))) {
                 names.add(node.name.text);
             }
         }
@@ -107,6 +129,100 @@ function locallyBoundNames(sourceFile) {
 }
 
 /**
+ * TypeScript recovers from syntax errors rather than throwing, so a malformed bundle would
+ * otherwise yield a partial tree and silently leave superclasses unaliased.
+ */
+function parseBundle(code, description) {
+    const sourceFile = ts.createSourceFile('bundle.mjs', code, ts.ScriptTarget.Latest, false, ts.ScriptKind.JS);
+    if (sourceFile.parseDiagnostics?.length) {
+        const [first] = sourceFile.parseDiagnostics;
+        throw new Error(
+            `${description} did not parse cleanly: ${sourceFile.parseDiagnostics.length} diagnostic(s), first at ` +
+                `position ${first.start}: ${ts.flattenDiagnosticMessageText(first.messageText, ' ')}`
+        );
+    }
+    return sourceFile;
+}
+
+/**
+ * Calls back with the superclass of every `class … extends <identifier>` in the tree. Anything but a
+ * bare identifier is already opaque to a minifier, so it is not reported.
+ */
+function forEachExtendedIdentifier(sourceFile, callback) {
+    const visit = (node) => {
+        if (ts.isClassDeclaration(node) || ts.isClassExpression(node)) {
+            for (const heritage of node.heritageClauses ?? []) {
+                if (heritage.token !== ts.SyntaxKind.ExtendsKeyword) {
+                    continue;
+                }
+                const superClass = heritage.types[0]?.expression;
+                if (superClass && ts.isIdentifier(superClass)) {
+                    callback(superClass);
+                }
+            }
+        }
+        ts.forEachChild(node, visit);
+    };
+    visit(sourceFile);
+}
+
+/**
+ * Re-parses a rewritten bundle and checks the invariants the rewrite is meant to hold: it still
+ * parses, every alias is declared exactly once, and each declaration is reached by as many extends
+ * sites as we edited. Returns the result it was given so it can gate every return path, rather than
+ * sitting alongside one as a statement that is easy to omit.
+ *
+ * Without this, an edit landing at the wrong offset produces a bundle that throws on load in a
+ * consumer's app off the back of a green build here.
+ *
+ * @param {{ code: string, sites: number, aliases: number }} result
+ */
+function verifyRewrite(result) {
+    const { code, sites, aliases } = result;
+    if (sites === 0) {
+        return result; // nothing was edited, so the output is the input, already parsed above
+    }
+
+    const sourceFile = parseBundle(code, 'rewritten bundle');
+
+    const declared = new Set();
+    for (const statement of sourceFile.statements) {
+        if (!ts.isVariableStatement(statement)) {
+            continue;
+        }
+        for (const declaration of statement.declarationList.declarations) {
+            if (!ts.isIdentifier(declaration.name) || !declaration.name.text.startsWith(ALIAS_PREFIX)) {
+                continue;
+            }
+            if (declared.has(declaration.name.text)) {
+                throw new Error(`alias ${declaration.name.text} is declared more than once`);
+            }
+            declared.add(declaration.name.text);
+        }
+    }
+
+    let aliasedSites = 0;
+    forEachExtendedIdentifier(sourceFile, (superClass) => {
+        if (!superClass.text.startsWith(ALIAS_PREFIX)) {
+            return;
+        }
+        if (!declared.has(superClass.text)) {
+            throw new Error(`a class extends ${superClass.text}, which is never declared`);
+        }
+        aliasedSites++;
+    });
+
+    if (declared.size !== aliases) {
+        throw new Error(`expected ${aliases} alias declaration(s), found ${declared.size}`);
+    }
+    if (aliasedSites !== sites) {
+        throw new Error(`expected ${sites} aliased extends site(s), found ${aliasedSites}`);
+    }
+
+    return result;
+}
+
+/**
  * @param {string} code bundled ESM
  * @returns {{ code: string, sites: number, aliases: number, preambleLines: number, skipped: string[],
  *            shadowed: string[] }}
@@ -116,17 +232,7 @@ function aliasImportedSuperclasses(code) {
         throw new Error(`bundle already contains the ${ALIAS_PREFIX} prefix; pick another to stay collision-free`);
     }
 
-    const sourceFile = ts.createSourceFile('bundle.mjs', code, ts.ScriptTarget.Latest, false, ts.ScriptKind.JS);
-
-    // TypeScript recovers from syntax errors rather than throwing, so a malformed bundle would
-    // otherwise yield a partial tree and silently leave superclasses unaliased.
-    if (sourceFile.parseDiagnostics?.length) {
-        const [first] = sourceFile.parseDiagnostics;
-        throw new Error(
-            `bundle did not parse cleanly: ${sourceFile.parseDiagnostics.length} diagnostic(s), first at ` +
-                `position ${first.start}: ${ts.flattenDiagnosticMessageText(first.messageText, ' ')}`
-        );
-    }
+    const sourceFile = parseBundle(code, 'bundle');
 
     const importedFrom = importedBindings(sourceFile);
     const locallyBound = locallyBoundNames(sourceFile);
@@ -135,34 +241,34 @@ function aliasImportedSuperclasses(code) {
     const aliases = new Map();
     const skipped = new Set();
     const shadowed = new Set();
-    const visit = (node) => {
-        if (ts.isClassDeclaration(node) || ts.isClassExpression(node)) {
-            for (const heritage of node.heritageClauses ?? []) {
-                if (heritage.token !== ts.SyntaxKind.ExtendsKeyword) continue;
-                const superClass = heritage.types[0]?.expression;
-                // Anything but a bare identifier is already opaque to a minifier, so leave it alone.
-                if (!superClass || !ts.isIdentifier(superClass)) continue;
-                const source = importedFrom.get(superClass.text);
-                if (source === undefined) continue; // declared in this bundle, so already a plain identifier
-                if (!ALIASABLE_SOURCES.has(source)) {
-                    skipped.add(source);
-                    continue;
-                }
-                if (locallyBound.has(superClass.text)) {
-                    shadowed.add(superClass.text); // may not be the import; see locallyBoundNames
-                    continue;
-                }
-                const alias = `${ALIAS_PREFIX}${superClass.text}`;
-                aliases.set(superClass.text, alias);
-                edits.push({ start: superClass.getStart(sourceFile), end: superClass.end, text: alias });
-            }
+    forEachExtendedIdentifier(sourceFile, (superClass) => {
+        const source = importedFrom.get(superClass.text);
+        // Declared in this bundle, so already a plain identifier.
+        if (source === undefined) {
+            return;
         }
-        ts.forEachChild(node, visit);
-    };
-    visit(sourceFile);
+        if (!ALIASABLE_SOURCES.has(source)) {
+            skipped.add(source);
+            return;
+        }
+        if (locallyBound.has(superClass.text)) {
+            shadowed.add(superClass.text); // may not be the import; see locallyBoundNames
+            return;
+        }
+        const alias = `${ALIAS_PREFIX}${superClass.text}`;
+        aliases.set(superClass.text, alias);
+        edits.push({ start: superClass.getStart(sourceFile), end: superClass.end, text: alias });
+    });
 
     if (edits.length === 0) {
-        return { code, sites: 0, aliases: 0, preambleLines: 0, skipped: [...skipped], shadowed: [...shadowed] };
+        return verifyRewrite({
+            code,
+            sites: 0,
+            aliases: 0,
+            preambleLines: 0,
+            skipped: [...skipped],
+            shadowed: [...shadowed],
+        });
     }
 
     // Right to left, so earlier offsets stay valid.
@@ -176,14 +282,14 @@ function aliasImportedSuperclasses(code) {
     // file is the earliest point every binding is readable, and it precedes every class.
     const preamble = [...aliases].map(([name, alias]) => `var ${alias} = ${name};`).join('\n');
 
-    return {
+    return verifyRewrite({
         code: `${preamble}\n${out}`,
         sites: edits.length,
         aliases: aliases.size,
         preambleLines: aliases.size,
         skipped: [...skipped],
         shadowed: [...shadowed],
-    };
+    });
 }
 
 /**
@@ -191,7 +297,7 @@ function aliasImportedSuperclasses(code) {
  *
  * Only the default (non-production) build emits a map for the unminified ESM — production and
  * staging turn source maps off, so nothing we publish has one — but the docs site serves those
- * files locally and a map off by 254 lines is worse than no map at all.
+ * files locally and a map off by the length of the preamble is worse than no map at all.
  *
  * A leading `;` per preamble line shifts every mapping down by one line, which is the whole of the
  * structural change. Renaming a superclass in place still shifts columns after it on that one
@@ -202,7 +308,10 @@ async function shiftSourceMapLines(mapFile, lines) {
     try {
         raw = await fs.readFile(mapFile, 'utf-8');
     } catch (e) {
-        if (e.code === 'ENOENT') return false; // production builds emit no map
+        // Production builds emit no map.
+        if (e.code === 'ENOENT') {
+            return false;
+        }
         throw e;
     }
     const map = JSON.parse(raw);
