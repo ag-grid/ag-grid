@@ -6,34 +6,31 @@ const ts = require('typescript');
 /**
  * Makes the bundled ESM tree shakeable by consumers whose bundler does not scope-hoist it.
  *
- * We ship one bundled ESM file per package, so a consumer's bundler sees a single module and
- * all dead-code elimination falls to its minifier. esbuild emits our classes as
+ * We ship one bundled ESM file per package, so a consumer's bundler sees a single module and all
+ * dead-code elimination falls to its minifier. esbuild emits classes extending an import binding:
  *
  *     var GridChartComp = class extends BeanStub { ... };
  *
- * where `BeanStub` is an import binding. When webpack cannot scope-hoist us into the consumer's
- * scope — which it refuses to do for any module referenced across a chunk boundary, and
- * `splitChunks: { chunks: 'all' }` creates exactly that — it rewrites the reference to
- * `ns.BeanStub`. A property access may invoke a getter, so terser will not drop the class, and
- * our feature classes reference each other in cycles: retaining one retains its whole subsystem.
- * Most of ag-grid-enterprise's `extends` sites are cross-package, so this retains most of the
- * package regardless of which modules the application registered.
+ * Webpack will not scope-hoist a module referenced across a chunk boundary — `splitChunks:
+ * { chunks: 'all' }` creates one — and rewrites that reference to `ns.BeanStub`. A property access
+ * may invoke a getter, so a minifier keeps the class, and our feature classes are cyclic: keeping
+ * one keeps its whole subsystem. Most enterprise `extends` sites cross a package boundary, so this
+ * retains most of the package whatever the application registered.
  *
- * Hoisting the superclass into a local binding costs one statement webpack keeps, and leaves
- * every class extending a plain identifier, which a minifier will drop:
+ * Hoisting the superclass into a local costs one statement webpack keeps, and leaves every class
+ * extending a plain identifier, which a minifier drops freely:
  *
  *     var __agSuperclass_BeanStub = BeanStub;
  *     var GridChartComp = class extends __agSuperclass_BeanStub { ... };
  */
 
 /**
- * Superclasses are only aliased when they come from one of these packages.
+ * Superclasses are only aliased when imported from one of these packages.
  *
- * The alias reads the binding while the module body runs, so it captures a final value only if the
- * exporting module has already been evaluated. Our packages form a DAG — ag-stack, then
- * ag-grid-community, then ag-grid-enterprise, then the framework wrappers — and neither package
- * below imports one above it, so nothing here can be part of a cycle. Anything imported from
- * elsewhere is left as it is rather than assumed safe.
+ * The alias reads the binding as the module body runs, so it captures a final value only if the
+ * exporting module has already been evaluated. Our packages form a DAG (ag-stack →
+ * ag-grid-community → ag-grid-enterprise → wrappers), so these two can never be mid-cycle.
+ * Anything else is left alone rather than assumed safe.
  */
 const ALIASABLE_SOURCES = new Set(['ag-stack', 'ag-grid-community']);
 
@@ -63,14 +60,13 @@ function importedBindings(sourceFile) {
 }
 
 /**
- * Every name bound below the top level, so a superclass identifier matching one cannot be assumed
- * to be the import: `function make(BeanStub) { return class extends BeanStub {}; }` is legal, and
+ * Every name bound below the top level. A superclass identifier matching one cannot be assumed to
+ * be the import — `function make(BeanStub) { return class extends BeanStub {}; }` is legal, and
  * aliasing it would silently extend the wrong class.
  *
- * Deliberately coarse — one name shadowed anywhere disables aliasing for that name everywhere,
- * rather than tracking which scope each site sits in. esbuild renames nested bindings that would
- * shadow an import, so this is expected to match nothing; when it does match, we lose a little tree
- * shaking rather than emitting a class that extends the wrong base.
+ * Deliberately coarse: one shadowed name disables aliasing for that name everywhere. esbuild
+ * renames bindings that would shadow an import, so this should match nothing anyway, and a match
+ * costs a little tree shaking rather than correctness.
  */
 function locallyBoundNames(sourceFile) {
     const names = new Set();
@@ -97,9 +93,7 @@ function locallyBoundNames(sourceFile) {
             }
         }
         // A named class or function expression binds its own name in a scope wrapping its body,
-        // which is never the top-level scope — so unlike everything below, a top-level one still
-        // shadows. In `var Foo = class BeanStub { m() { return class extends BeanStub {}; } }` the
-        // inner clause extends Foo, not the import.
+        // never the top-level scope, so even a top-level one shadows.
         if (node.name && ts.isIdentifier(node.name) && (ts.isClassExpression(node) || ts.isFunctionExpression(node))) {
             names.add(node.name.text);
         }
@@ -112,6 +106,7 @@ function locallyBoundNames(sourceFile) {
                 names.add(node.name.text);
             }
         }
+        // Sticky: once inside any nested scope everything below it is nested too.
         const opensScope =
             nested ||
             ts.isFunctionLike(node) ||
@@ -123,7 +118,7 @@ function locallyBoundNames(sourceFile) {
             ts.isForOfStatement(node);
         ts.forEachChild(node, (child) => visit(child, opensScope));
     };
-    visit(sourceFile, false);
+    visit(sourceFile, false); // the top level is not nested, so its own declarations are not shadows
 
     return names;
 }
@@ -167,20 +162,19 @@ function forEachExtendedIdentifier(sourceFile, callback) {
 }
 
 /**
- * Re-parses a rewritten bundle and checks the invariants the rewrite is meant to hold: it still
- * parses, every alias is declared exactly once, and each declaration is reached by as many extends
- * sites as we edited. Returns the result it was given so it can gate every return path, rather than
- * sitting alongside one as a statement that is easy to omit.
+ * Checks the invariants the rewrite must hold: the output still parses, every alias is declared
+ * exactly once, and the declaration and site counts match what the transform intended. An edit
+ * landing at a wrong offset would otherwise ship a bundle that throws on load in a consumer's app
+ * off the back of a green build here.
  *
- * Without this, an edit landing at the wrong offset produces a bundle that throws on load in a
- * consumer's app off the back of a green build here.
+ * Returns its argument, so it can gate every return path rather than be an omittable statement.
  *
  * @param {{ code: string, sites: number, aliases: number }} result
  */
 function verifyRewrite(result) {
     const { code, sites, aliases } = result;
     if (sites === 0) {
-        return result; // nothing was edited, so the output is the input, already parsed above
+        return result; // nothing was edited, so this is the input the caller already parsed
     }
 
     const sourceFile = parseBundle(code, 'rewritten bundle');
@@ -228,6 +222,7 @@ function verifyRewrite(result) {
  *            shadowed: string[] }}
  */
 function aliasImportedSuperclasses(code) {
+    // Also catches a second pass over output we already rewrote.
     if (code.includes(ALIAS_PREFIX)) {
         throw new Error(`bundle already contains the ${ALIAS_PREFIX} prefix; pick another to stay collision-free`);
     }
@@ -238,7 +233,8 @@ function aliasImportedSuperclasses(code) {
     const locallyBound = locallyBoundNames(sourceFile);
 
     const edits = [];
-    const aliases = new Map();
+    const aliases = new Map(); // keyed by name, so repeated superclasses share one alias
+
     const skipped = new Set();
     const shadowed = new Set();
     forEachExtendedIdentifier(sourceFile, (superClass) => {
@@ -295,13 +291,11 @@ function aliasImportedSuperclasses(code) {
 /**
  * Keeps an emitted source map pointing at the right lines.
  *
- * Only the default (non-production) build emits a map for the unminified ESM — production and
- * staging turn source maps off, so nothing we publish has one — but the docs site serves those
- * files locally and a map off by the length of the preamble is worse than no map at all.
+ * Only non-production builds emit a map for the unminified ESM, so nothing we publish has one — but
+ * the docs site serves these locally, and a map off by the preamble length is worse than none.
  *
- * A leading `;` per preamble line shifts every mapping down by one line, which is the whole of the
- * structural change. Renaming a superclass in place still shifts columns after it on that one
- * line; that is a handful of class-heritage lines and not worth a full remap to correct.
+ * A leading `;` per preamble line shifts every mapping down one line, which is the whole structural
+ * change. Renaming a superclass still shifts columns on its own line; not worth a full remap.
  */
 async function shiftSourceMapLines(mapFile, lines) {
     let raw;
@@ -333,8 +327,10 @@ const superclassAliasPlugin = {
         build.initialOptions.metafile = true;
 
         build.onEnd(async (result) => {
-            if (!result.metafile) {
-                return; // esbuild has already reported its own failure; do not mask it
+            // esbuild has already reported its own failure, and on error the outputs on disk are
+            // not the ones the metafile describes; do not mask it or rewrite a stale bundle.
+            if (result.errors?.length || !result.metafile) {
+                return;
             }
 
             const esmOutputs = Object.keys(result.metafile.outputs).filter((f) => f.endsWith('.esm.mjs'));
@@ -342,9 +338,14 @@ const superclassAliasPlugin = {
             await Promise.all(
                 esmOutputs.map(async (outputFile) => {
                     const resolved = path.resolve(outputFile);
-                    const { code, sites, aliases, preambleLines, skipped, shadowed } = aliasImportedSuperclasses(
-                        await fs.readFile(resolved, 'utf-8')
-                    );
+                    let rewrite;
+                    try {
+                        rewrite = aliasImportedSuperclasses(await fs.readFile(resolved, 'utf-8'));
+                    } catch (e) {
+                        // Several outputs are processed together, so name the one that failed.
+                        throw new Error(`superclass-alias failed for ${resolved}: ${e.message}`, { cause: e });
+                    }
+                    const { code, sites, aliases, preambleLines, skipped, shadowed } = rewrite;
 
                     if (sites > 0) {
                         await fs.writeFile(resolved, code);
