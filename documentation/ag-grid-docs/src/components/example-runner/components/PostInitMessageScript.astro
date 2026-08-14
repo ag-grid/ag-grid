@@ -4,6 +4,7 @@ import {
     POST_INIT_MESSAGE_END,
     LIBRARY_INIT_SELECTOR,
 } from '@components/example-runner/constants';
+import { exampleRunnerAsset } from '@utils/exampleModules/exampleRunnerAsset';
 interface Props {
     pageName: string;
     exampleName: string;
@@ -16,26 +17,10 @@ const initSelector = LIBRARY_INIT_SELECTOR;
 
 <Fragment set:html={POST_INIT_MESSAGE_START} />
 <script
+    is:inline
     nonce={nonce}
-    define:vars={{
-        pageName,
-        exampleName,
-        initSelector,
-    }}
->
-    const checkInit = function () {
-        if (document.querySelector(initSelector)) {
-            const loadedEvent = {
-                type: 'init',
-                pageName,
-                exampleName,
-            };
-            window.parent?.postMessage(loadedEvent);
-        } else {
-            requestAnimationFrame(() => checkInit());
-        }
-    };
-
-    checkInit();
-</script>
+    src={exampleRunnerAsset('post-init-message.js')}
+    data-page-name={pageName}
+    data-example-name={exampleName}
+    data-init-selector={initSelector}></script>
 <Fragment set:html={POST_INIT_MESSAGE_END} />

@@ -42,8 +42,11 @@ export const FRAMEWORK_VERSION_PARAM = 'version';
 export const FRAMEWORK_VERSION_PATTERN = /^\d+\.\d+\.\d+(?:-[\w.-]+)?(?:\+[\w.-]+)?$/;
 
 /**
- * The URL parameter that picks the framework's development build. As under SystemJS, examples
- * run against the production build unless the URL says `prod=false`.
+ * The URL parameter that picks the framework's build: `prod=false` asks for the development
+ * build, any other value for the production one. Absent, the page's own default applies, which
+ * is the development build when the page was served by the dev server and the production build
+ * otherwise -- as under SystemJS, where the dev server rendered `systemjs.config.dev.js` in
+ * place of `systemjs.config.js` for the sake of React's development warnings.
  */
 export const PROD_PARAM = 'prod';
 
@@ -63,6 +66,27 @@ export interface DevFlags {
 
 export const PRODUCTION_FLAGS: DevFlags = { query: '', appended: '' };
 export const DEVELOPMENT_FLAGS: DevFlags = { query: '?dev', appended: '&dev' };
+
+/**
+ * Stands in for the framework version in the rendered import map until the browser substitutes
+ * the version being run against. Shaped like a version so the entries stay recognisable as URLs.
+ */
+export const FRAMEWORK_VERSION_PLACEHOLDER = '0.0.0-ag-framework-version';
+
+/**
+ * Stand in for the two forms the development-build flag takes in a URL, so that one rendered
+ * map can serve either build.
+ */
+export const DEV_FLAG_PLACEHOLDERS: DevFlags = {
+    query: '?ag-dev-query',
+    appended: '&ag-dev-appended',
+};
+
+/**
+ * Identifies the JSON block the page carries the rendered map in, for
+ * `public/example-runner/inject-import-map.js` to register.
+ */
+export const IMPORT_MAP_OPTIONS_ID = 'ag-import-map';
 
 /**
  * React and React DOM have no ES module build on npm, so they resolve through esm.sh.
