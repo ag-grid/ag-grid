@@ -5,15 +5,15 @@ enterprise: true
 
 The Column Chooser is a dialog that displays the grid's columns, allowing users to show, hide and reorder them. When column definitions contain groups, these are displayed as expandable rows containing their child columns.
 
-Open the Column Chooser by selecting **Choose Columns** from the [Column Menu](./column-menu/) or by calling `api.showColumnChooser()`.
+Open the Column Chooser by selecting **Choose Columns** from the [Column Menu](./column-menu/) or by calling `api.showColumnChooser()`. The same column selection panel is also available docked to the side of the grid as part of the [Columns Tool Panel](./tool-panel-columns/).
 
-{% note %}
-With the [Legacy Tabbed Column Menu](./column-menu/#legacy-tabbed-column-menu), the same column selection panel is displayed within the `columnsMenuTab` instead of a separate dialog.
-{% /note %}
+{% imageCaption imagePath="resources/screenshot.png" alt="AG Grid Column Chooser" centered=true constrained=true width="20rem" /%}
 
 ## Customising the Column Chooser
 
 The behaviour and appearance of the Column Chooser can be customised with `ColumnChooserParams`. Set `colDef.columnChooserParams` to configure the chooser opened from that column, or set `defaultColDef.columnChooserParams` to apply the same configuration to every column. When opening the chooser through the Grid API, the same options can instead be passed to `api.showColumnChooser(params)`. These options are unset by default.
+
+`ColumnChooserParams` extends the shared `IColumnSelectionPanelParams` interface, so the same column selection options apply to the [Columns Tool Panel](./tool-panel-columns/#column-selection-panel-configuration), where they are set through `toolPanelParams` instead.
 
 {% interfaceDocumentation interfaceName="ColumnChooserParams" /%}
 
@@ -113,3 +113,7 @@ The Column Chooser can be opened and closed through the Grid API.
 The following example demonstrates opening and closing the Column Chooser through the Grid API.
 
 {% gridExampleRunner title="Column Chooser API" name="column-chooser-api" /%}
+
+## Legacy Tabbed Column Menu
+
+With the [Legacy Tabbed Column Menu](./column-menu/#legacy-tabbed-column-menu), a column selection panel is displayed within the `columnsMenuTab` instead of a separate dialog. It supports the same customisation options through `columnChooserParams`, but columns cannot be dragged to reorder them or to move them between sections.
