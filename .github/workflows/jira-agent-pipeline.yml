@@ -142,14 +142,13 @@ on:
 permissions:
     contents: read
 
-concurrency:
-    # For workflow_run events the dispatch payloads are empty, so fall back
-    # to the failing run's head branch (which encodes the issue key in the
-    # agent branch shape: `ghabot-ag-<NNNNN>-<slug>`). Same group as the
-    # dispatch-driven jobs so a fresh CI-failure iteration queues behind any
-    # in-flight pr-iterate for the same ticket instead of interleaving.
-    group: claude-${{ github.event.client_payload.issue_key || inputs.issue_key || github.event.workflow_run.head_branch }}
-    cancel-in-progress: false
+# No workflow-level `concurrency:` (AG-18177). It resolved to two different groups
+# for one ticket — `claude-<KEY>` on a dispatch, `claude-ghabot-<proj>-<n>-<slug>`
+# on a workflow_run — so it never serialised the pair it exists to serialise. A GHA
+# expression can't normalise that and workflow-level `concurrency` can't read
+# `needs`; `jobs.<id>.concurrency` can, so the group is resolved by the
+# `concurrency-key` job below and consumed per job. Why, in full:
+# ag-dev-prompts docs/ai-workflow.md -> "Normalising the concurrency group".
 
 env:
     # Disable git's post-fetch background gc/maintenance for every git invocation in this
@@ -165,6 +164,51 @@ env:
     DEV_PROMPTS_CHANNEL: latest
 
 jobs:
+    # -------------------------------------------------- concurrency key
+    # Resolves the ticket so the jobs below can name it in a `concurrency.group`.
+    # No group of its own (it computes the group — serialising it is circular).
+    # Must never publish an EMPTY group: an empty `concurrency.group` is one group
+    # shared by every run of this workflow, not "no group". So the fallible
+    # bootstrap steps are `continue-on-error` and the last step supplies a
+    # unique-per-run fallback.
+    concurrency-key:
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            contents: read
+            packages: read
+        outputs:
+            group: ${{ steps.key.outputs.group || steps.fallback.outputs.group }}
+            issue_key: ${{ steps.key.outputs.issue_key }}
+        steps:
+            - uses: actions/checkout@v4
+              continue-on-error: true
+              with:
+                  fetch-depth: 1
+
+            - name: Install @ag-grid/dev-prompts
+              continue-on-error: true
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            - id: key
+              continue-on-error: true
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-concurrency-key
+              with:
+                  issue_key: ${{ github.event.client_payload.issue_key || inputs.issue_key }}
+                  head_branch: ${{ github.event.workflow_run.head_branch }}
+
+            # Bootstrap broke: a group of one — unserialised, never shared.
+            - name: Fall back to a unique group (bootstrap failed)
+              id: fallback
+              if: steps.key.outputs.group == ''
+              env:
+                  RUN_ID: ${{ github.run_id }}
+              run: |
+                  echo "::warning title=Concurrency key unresolved::the concurrency-key bootstrap failed; this run gets the unique group claude-run-${RUN_ID} and is NOT serialised against this ticket's other runs."
+                  echo "group=claude-run-${RUN_ID}" >> "$GITHUB_OUTPUT"
+
     # -------------------------------------------------- preflight
     # The single cheap gate for both human (→ In Progress) and CI-failure
     # re-entry. No App token, no agent. Branches by event:
@@ -242,12 +286,19 @@ jobs:
     # resume route → a forced workflow_dispatch stage. `!cancelled()` lets the
     # gate evaluate even when preflight is skipped (the forced-dispatch path).
     agent-run:
+        # The paid agent: two on one ticket is the AG-17369 interleave. Never
+        # cancels — a fresh stage queues behind a finishing one. The `||` default
+        # is required: `needs` is readable even when `concurrency-key` failed, and
+        # an empty group would serialise unrelated tickets.
+        concurrency:
+            group: ${{ needs.concurrency-key.outputs.group || format('claude-fallback-{0}', github.run_id) }}
+            cancel-in-progress: false
         # Both gates feed this one job: `preflight` for the resume routes +
         # ci-failure-iterate, and `ci-success-handler` for the codex-review
         # hold (green PR, open P0/P1 findings → pr-iterate). On any given
         # event only one of the two needed jobs runs and the other is skipped
         # (empty outputs); `!cancelled()` lets the `if` evaluate regardless.
-        needs: [preflight, ci-success-handler]
+        needs: [concurrency-key, preflight, ci-success-handler]
         if: |
             !cancelled() &&
             (needs.preflight.outputs.stage != '' ||
@@ -288,15 +339,101 @@ jobs:
               with:
                   channel: ${{ env.DEV_PROMPTS_CHANNEL }}
 
-            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-pipeline
+            # The lock is per job now, so the routes chosen by the ungrouped
+            # `preflight` can go stale under a predecessor holding it. Three guards
+            # follow; they ship WITH the group, not optionally.
+
+            # workflow_run routes: skip if the commit CI ran against is no longer
+            # the branch head. Fail-open — a false "stale" is a strand.
+            - name: Re-check the CI head is still the branch head (post-lock)
+              id: headcheck
+              if: github.event_name == 'workflow_run'
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  REPO: ${{ github.repository }}
+                  HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+                  HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+              run: |
+                  tip="$(gh api "repos/${REPO}/commits/${HEAD_BRANCH}" --jq '.sha' 2>/dev/null || true)"
+                  if [ -z "${tip}" ] || [ -z "${HEAD_SHA}" ] || [ "${tip}" = "${HEAD_SHA}" ]; then
+                      echo "stale=false" >> "$GITHUB_OUTPUT"
+                  else
+                      echo "stale=true" >> "$GITHUB_OUTPUT"
+                      echo "::notice title=Stage superseded::CI ran against ${HEAD_SHA} but ${HEAD_BRANCH} is now at ${tip}; a run for the newer commit owns this ticket. Skipping the agent."
+                  fi
+
+            # Resume path: re-run the (mechanical, seconds) router inside the lock.
+            # `continue-on-error` is what makes the pre-lock fallback below
+            # reachable — without it a transient read failure skips that branch.
+            - name: Re-resolve the resume route (post-lock)
+              id: revalidate
+              continue-on-error: true
+              if: |
+                  needs.preflight.outputs.stage != '' &&
+                  needs.preflight.outputs.ci_failure_eligible != 'true' &&
+                  needs.ci-success-handler.outputs.dispatch_pr_iterate != 'true'
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-resume-preflight
+              with:
+                  issue_key: ${{ needs.preflight.outputs.issue_key || env.ISSUE_KEY }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+
+            # ALL-OR-NOTHING by execution state, never per-value `||`: an empty
+            # revalidated value is meaningful (a non-recycle stage emits an empty
+            # prior_pr_outcome, which `||` would refill from the pre-lock route).
+            - name: Choose the route (post-lock if the re-resolve ran, else pre-lock)
+              id: route
+              env:
+                  REVALIDATE_OUTCOME: ${{ steps.revalidate.outcome }}
+                  REVALIDATE_STAGE: ${{ steps.revalidate.outputs.stage }}
+                  REVALIDATE_PRIOR_PR_OUTCOME: ${{ steps.revalidate.outputs.prior_pr_outcome }}
+                  REVALIDATE_ISSUE_KEY: ${{ steps.revalidate.outputs.issue_key }}
+                  PREFLIGHT_STAGE: ${{ needs.preflight.outputs.stage }}
+                  PREFLIGHT_PRIOR_PR_OUTCOME: ${{ needs.preflight.outputs.prior_pr_outcome }}
+                  PREFLIGHT_ISSUE_KEY: ${{ needs.preflight.outputs.issue_key }}
+              run: |
+                  if [ "${REVALIDATE_OUTCOME}" = "success" ]; then
+                      source="post-lock"
+                      stage="${REVALIDATE_STAGE}"
+                      prior_pr_outcome="${REVALIDATE_PRIOR_PR_OUTCOME}"
+                      issue_key="${REVALIDATE_ISSUE_KEY}"
+                  else
+                      source="pre-lock"
+                      stage="${PREFLIGHT_STAGE}"
+                      prior_pr_outcome="${PREFLIGHT_PRIOR_PR_OUTCOME}"
+                      issue_key="${PREFLIGHT_ISSUE_KEY}"
+                  fi
+                  {
+                      echo "source=${source}"
+                      echo "stage=${stage}"
+                      echo "prior_pr_outcome=${prior_pr_outcome}"
+                      echo "issue_key=${issue_key}"
+                  } >> "$GITHUB_OUTPUT"
+                  echo "::notice title=Route source::${source} stage='${stage}' prior_pr_outcome='${prior_pr_outcome}'"
+
+            # An empty post-lock stage is the answer, not a failure: the
+            # predecessor did the work. Skip the agent rather than pay twice.
+            - name: Nothing left to do after the predecessor (post-lock re-resolve)
+              if: steps.route.outputs.source == 'post-lock' && steps.route.outputs.stage == ''
+              run: |
+                  echo "::notice title=Stage superseded::the queued stage '${{ needs.preflight.outputs.stage }}' no longer applies after the preceding run for this ticket finished; skipping the agent."
+
+            # Both post-lock skips must clear before an agent is paid for.
+            - if: |
+                  (steps.route.outputs.source != 'post-lock' || steps.route.outputs.stage != '') &&
+                  steps.headcheck.outputs.stale != 'true'
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-pipeline
               with:
                   # Stage precedence: ci-failure-iterate (failure preflight eligible)
                   # → pr-iterate (green CI held on open P0/P1 Codex findings)
-                  # → the resume route → a forced workflow_dispatch stage.
-                  stage: ${{ needs.preflight.outputs.ci_failure_eligible == 'true' && 'ci-failure-iterate' || needs.ci-success-handler.outputs.dispatch_pr_iterate == 'true' && 'pr-iterate' || needs.preflight.outputs.stage || inputs.stage }}
-                  issue_key: ${{ needs.preflight.outputs.issue_key || needs.ci-success-handler.outputs.issue_key || env.ISSUE_KEY }}
+                  # → the route chosen above → a forced workflow_dispatch stage.
+                  stage: ${{ needs.preflight.outputs.ci_failure_eligible == 'true' && 'ci-failure-iterate' || needs.ci-success-handler.outputs.dispatch_pr_iterate == 'true' && 'pr-iterate' || steps.route.outputs.stage || inputs.stage }}
+                  # Every state-dependent value comes from that one route — never a
+                  # post-lock stage married to pre-lock metadata.
+                  issue_key: ${{ steps.route.outputs.issue_key || needs.ci-success-handler.outputs.issue_key || env.ISSUE_KEY }}
                   ci_failure_run_url: ${{ needs.preflight.outputs.ci_failure_run_url }}
-                  recycle_from: ${{ needs.preflight.outputs.prior_pr_outcome }}
+                  recycle_from: ${{ steps.route.outputs.prior_pr_outcome }}
                   jira_agent_app_id: ${{ vars.JIRA_AGENT_APP_ID }}
                   jira_agent_app_private_key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
                   anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -314,7 +451,17 @@ jobs:
     # status: done, clear AI failure, zero the recovery counter. See the
     # shared action for the full eligibility walk.
     ci-success-handler:
+        # Its OWN group, keyed per COMMIT: duplicate promotes of one commit must
+        # serialise (each writes JIRA, which has no compare-and-swap), but handlers
+        # for DIFFERENT commits must never be able to evict each other — an evicted
+        # promote is a lost green-CI event, i.e. a strand. Kept out of agent-run's
+        # group for the same reason; agent-vs-promote is the interlock's job.
+        needs: [concurrency-key]
+        concurrency:
+            group: ${{ needs.concurrency-key.outputs.group || format('claude-fallback-{0}', github.run_id) }}-promote-${{ github.event.workflow_run.head_sha }}
+            cancel-in-progress: false
         if: |
+            !cancelled() &&
             github.event_name == 'workflow_run' &&
             github.event.workflow_run.conclusion == 'success'
         runs-on: ubuntu-latest
