@@ -26,17 +26,12 @@ describe('buildLlmsTxt', () => {
         expect(txt).toContain('(https://www.ag-grid.com/sitemap-index.xml)');
     });
 
-    test('advertises the markdown (.md) convention as a site-wide rule, not a page list', () => {
+    test('advertises the per-page markdown (.md) convention and the top-level .md pages', () => {
         expect(txt).toContain('.md');
         expect(txt).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
-        // Every page in the sitemap has a twin, so llms.txt states the rule. Enumerating
-        // pages here would drift the moment one is added (see markdownPages.test.ts).
-        expect(txt).toContain('append `.md` to any page URL listed in the sitemap');
-        expect(txt).toContain('Accept: text/markdown');
-    });
-
-    test('points at index.md for the homepage, whose twin is not a `.md` suffix', () => {
-        expect(txt).toContain('https://www.ag-grid.com/index.md');
+        expect(txt).toContain(
+            'The Home, About, Community, Documentation Archive, Example, Pricing, Changelog and Pipeline pages also have `.md` versions'
+        );
     });
 
     test('lists the pipeline page', () => {
@@ -70,17 +65,14 @@ describe('buildAgentsMd', () => {
         expect(md).toContain('https://www.ag-grid.com/llms.txt');
     });
 
-    test('advertises the markdown (.md) versions as a site-wide rule', () => {
+    test('advertises the markdown (.md) versions', () => {
         expect(md).toContain('Markdown for LLMs');
         expect(md).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
-        // Every page in the sitemap has a twin, so point at the sitemap rather than
-        // listing pages that would drift (see markdownPages.test.ts for the guarantee).
-        expect(md).toContain('append `.md` to any page URL listed in the');
-        expect(md).toContain('[sitemap](https://www.ag-grid.com/sitemap-index.xml)');
-    });
-
-    test('points at index.md for the homepage, whose twin is not a `.md` suffix', () => {
-        expect(md).toContain('https://www.ag-grid.com/index.md');
+        expect(md).toContain('https://www.ag-grid.com/pipeline/');
+        // The new page twins are advertised with links.
+        expect(md).toContain('[About](https://www.ag-grid.com/about/)');
+        expect(md).toContain('[Community](https://www.ag-grid.com/community/)');
+        expect(md).toContain('[Documentation Archive](https://www.ag-grid.com/documentation-archive/)');
     });
 
     test('omits the markdown affordance when markdown docs are disabled', () => {

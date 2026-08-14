@@ -6,32 +6,30 @@ import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
 import { getEntry, type CollectionEntry } from 'astro:content';
 import { buildContactPage } from '@ag-website-shared/utils/structuredData';
 import { LIBRARY } from '@constants';
-import { CONTACT_CONTENT, contactSocialLinks } from './contactContent';
 import styles from './ContactPage.module.scss';
 
-// Copy and links are shared with the /contact.md twin so the two cannot drift.
-const socialLinks = contactSocialLinks(LIBRARY);
+const githubUrl = LIBRARY === 'charts' ? 'https://github.com/ag-grid/ag-charts' : 'https://github.com/ag-grid/ag-grid';
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
 const contactPageStructuredData = buildContactPage({
     canonicalUrlBase: metadata.canonicalUrlBase,
     pageUrl: new URL(Astro.url.pathname, metadata.canonicalUrlBase).href,
-    name: CONTACT_CONTENT.structuredDataName,
+    name: 'Contact AG Grid',
 });
 ---
 
 <Layout
-    title={CONTACT_CONTENT.title}
-    description={CONTACT_CONTENT.description}
+    title="Contact AG Grid: Get in Touch with Our Team"
+    description="Have questions or need assistance? Contact the AG Grid team for support, licensing, or any other inquiries."
     showSearchBar={true}
     showDocsNav={false}
     pageStructuredData={[contactPageStructuredData]}
 >
     <div class={styles.contactPage}>
         <PageHero
-            eyebrow={CONTACT_CONTENT.eyebrow}
-            headline={CONTACT_CONTENT.headline}
-            subhead={CONTACT_CONTENT.subhead}
+            eyebrow="Get in touch"
+            headline="Contact Us"
+            subhead="Get help with pricing, explore use cases, understand how our products can help you, and more."
         />
         <div class="layout-max-width-small">
             <section id="contact-section" class={styles.contactSection}>
@@ -40,20 +38,46 @@ const contactPageStructuredData = buildContactPage({
                 </div>
 
                 <div class={styles.socialLinks}>
-                    {
-                        socialLinks.map(({ label, ariaLabel, icon, url }) => (
-                            <a
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={ariaLabel ?? label}
-                                class={styles.socialLinkRow}
-                            >
-                                <Icon name={icon} />
-                                <span>{label}</span>
-                            </a>
-                        ))
-                    }
+                    <a
+                        href={githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="GitHub"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="github" />
+                        <span>GitHub</span>
+                    </a>
+                    <a
+                        href="https://x.com/ag_grid"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="X (Twitter)"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="xLogo" />
+                        <span>X</span>
+                    </a>
+                    <a
+                        href="https://youtube.com/c/aggrid"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="YouTube"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="youtube" />
+                        <span>YouTube</span>
+                    </a>
+                    <a
+                        href="https://linkedin.com/company/ag-grid"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="LinkedIn"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="linkedin" />
+                        <span>LinkedIn</span>
+                    </a>
                 </div>
             </section>
         </div>

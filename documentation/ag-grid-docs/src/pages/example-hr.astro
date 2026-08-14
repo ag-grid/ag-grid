@@ -6,18 +6,19 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { HR } from '@components/demos/examples/hr';
 import LogoMark from '@components/logo/LogoMark';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { demoContent } from '@utils/markdown-pages/buildDemoMarkdown';
-
-// Copy is shared with the /example-hr.md twin so the two cannot drift.
-const content = demoContent('hr');
 ---
 
-<DemosLayout title={content.metaTitle} description={content.metaDescription}>
+<DemosLayout title="Demo - HR Management" description="HR data example showing hierarchical employee data.">
     <div class={styles.topHeader}>
         <div>
             <div class={styles.headerTitle}>
-                <h1 class={styles.headerHeading}>{content.heading}</h1>
-                <a class="button-secondary" target="_blank" rel="noopener noreferrer" href={content.githubUrl}>
+                <h1 class={styles.headerHeading}>HR</h1>
+                <a
+                    class="button-secondary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://github.com/ag-grid/ag-grid-demos/tree/main/hr"
+                >
                     <Icon name="github" svgClasses={styles.githubIcon} />
                     <span>See On GitHub</span>
                 </a>
@@ -25,10 +26,10 @@ const content = demoContent('hr');
                     <span>Contact Us</span>
                 </a>
             </div>
-            <p>{content.bodyText}</p>
+            <p>Example showing HR hierarchical employee data.</p>
         </div>
 
-        <DemoTabs activeTab={content.activeTab} />
+        <DemoTabs activeTab="crm" />
     </div>
 
     <div class={styles.layout}>
