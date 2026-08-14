@@ -66,7 +66,8 @@ export const ExampleModules = ({
         frameworkVersion: defaultVersion && FRAMEWORK_VERSION_PLACEHOLDER,
         dev: defaultVersion ? DEV_FLAG_PLACEHOLDERS : PRODUCTION_FLAGS,
     });
-    const importMap = JSON.stringify({ imports }, null, 4);
+    // Not pretty-printed: nothing reads this in the page, and the indentation is only weight
+    const importMap = JSON.stringify({ imports });
     const startFile = pathJoin(appLocation, toModuleFileName(entryFileName));
 
     const injectOptions: InjectImportMapOptions | undefined = defaultVersion
