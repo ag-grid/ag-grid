@@ -822,13 +822,16 @@ export function getEnableAGTestIdLogic(isUmd: boolean = false): string {
 
     // Support dynamically adding modules during integration testing
     const agGridCommunityImport = isUmd ? '' : `import * as ${community} from 'ag-grid-community';`;
-    const agGridEnterpriseImport = isUmd ? '' : `import * as ${enterprise} from 'ag-grid-enterprise';`;
 
+    // Enterprise is imported on demand: only `?modules=` resolves names against it, and a static
+    // import would have every community example load and parse the enterprise bundle for nothing.
+    // A genuinely enterprise example imports it itself and is unaffected.
     const extraModules = isUmd
         ? ''
         : `
     const modulesCSV = url.get('modules');
     if (modulesCSV) {
+        const ${enterprise} = await import('ag-grid-enterprise');
         ${community}.ModuleRegistry.registerModules(
             modulesCSV.split(',').map(name => ${community}[name] || ${enterprise}[name])
         );
@@ -842,7 +845,6 @@ export function getEnableAGTestIdLogic(isUmd: boolean = false): string {
 
     const method = `
 ${agGridCommunityImport}
-${agGridEnterpriseImport}
 const url = new URLSearchParams(window.location.search);
 const enableTestIds = url.get('enableTestIds');
 if (enableTestIds) {

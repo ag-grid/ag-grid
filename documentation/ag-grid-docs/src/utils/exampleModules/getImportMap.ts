@@ -185,7 +185,7 @@ export const getImportMap = ({
         'ag-grid-community': esmEntryPoint('ag-grid-community'),
         'ag-grid-community/styles/': stylesPrefix('ag-grid-community'),
         // Every example resolves enterprise, not just the enterprise ones: the generator's
-        // test-id block imports it to look up module names given by `?modules=`
+        // test-id block imports it on demand to look up module names given by `?modules=`
         'ag-grid-enterprise': esmEntryPoint('ag-grid-enterprise'),
         'ag-grid-enterprise/styles/': stylesPrefix('ag-grid-enterprise'),
         '@ag-grid-community/locale': esmEntryPoint('@ag-grid-community/locale'),
