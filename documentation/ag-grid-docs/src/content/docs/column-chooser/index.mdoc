@@ -1,0 +1,119 @@
+---
+title: "Column Chooser"
+enterprise: true
+---
+
+The Column Chooser is a dialog that displays the grid's columns, allowing users to show, hide and reorder them. When column definitions contain groups, these are displayed as expandable rows containing their child columns.
+
+Open the Column Chooser by selecting **Choose Columns** from the [Column Menu](./column-menu/) or by calling `api.showColumnChooser()`. The same column selection panel is also available docked to the side of the grid as part of the [Columns Tool Panel](./tool-panel-columns/).
+
+{% imageCaption imagePath="resources/screenshot.png" alt="AG Grid Column Chooser" centered=true constrained=true width="20rem" /%}
+
+## Customising the Column Chooser
+
+The behaviour and appearance of the Column Chooser can be customised with `ColumnChooserParams`. Set `colDef.columnChooserParams` to configure the chooser opened from that column, or set `defaultColDef.columnChooserParams` to apply the same configuration to every column. When opening the chooser through the Grid API, the same options can instead be passed to `api.showColumnChooser(params)`. These options are unset by default.
+
+`ColumnChooserParams` extends the shared `IColumnSelectionPanelParams` interface, so the same column selection options apply to the [Columns Tool Panel](./tool-panel-columns/#column-selection-panel-configuration), where they are set through `toolPanelParams` instead.
+
+{% interfaceDocumentation interfaceName="ColumnChooserParams" /%}
+
+The following example demonstrates the suppression and `contractColumnSelection` options above; the column label renderer options and `columnLayout` are covered in the sections below. Note the following:
+
+- Launch the Column Chooser by selecting **Choose Columns** from any column menu.
+- The Column Chooser opened from any column ignores column moves in the grid because `suppressSyncLayoutWithGrid=true` is set on the default column definition.
+- The **Name** column's chooser does not show the column search, Select / Unselect All or Expand / Collapse All controls because `suppressColumnFilter`, `suppressColumnSelectAll` and `suppressColumnExpandAll` are all set to `true`.
+- The **Age** column's chooser starts with column groups collapsed because `contractColumnSelection=true`.
+
+{% gridExampleRunner title="Customising Column Chooser" name="customising-column-chooser" /%}
+
+## Custom Column Labels
+
+Use `columnLabelRenderer` in `ColumnChooserParams` to replace the text shown for columns and column groups. The checkbox, drag handle and group expand controls remain grid managed. Additional properties can be supplied through `columnLabelRendererParams`.
+
+Use `columnLabelRendererSelector` to select different renderers for individual columns or column groups. The selector can also provide renderer-specific `params`; returning `undefined` falls back to `columnLabelRenderer`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    components: {
+        customColumnLabel: CustomColumnLabel,
+    },
+    defaultColDef: {
+        columnChooserParams: {
+            columnLabelRenderer: 'customColumnLabel',
+            columnLabelRendererParams: {
+                columnIcon: '●',
+                columnGroupIcon: '◆',
+            },
+        },
+    },
+};
+```
+
+For each label in the Column Chooser, the renderer receives the resolved `displayName` and either `column` or `columnGroup`, depending on the item being rendered. The `source` is always `'columnChooser'`. Setting these options on `defaultColDef.columnChooserParams` applies them to the chooser regardless of which column it is opened from. They can also be supplied when calling `api.showColumnChooser(params)`.
+
+The Column Chooser does not automatically inherit a renderer configured for the [Columns Tool Panel](./tool-panel-columns/#custom-column-labels). To use the same presentation in both places, register the component once and reference its name from both configurations. Both `ColumnChooserParams` and `IToolPanelColumnCompParams` extend the shared `IColumnSelectionPanelParams` interface.
+
+{% note %}
+Column search and accessibility announcements continue to use `displayName`, rather than text extracted from the renderer. Column selection rows have a fixed height, so renderer content should remain inline and fit within the configured list item height.
+{% /note %}
+
+{% gridExampleRunner title="Custom Column Labels" name="custom-column-labels" /%}
+
+### Renderer Parameters
+
+{% interfaceDocumentation interfaceName="IColumnSelectionLabelRendererParams" /%}
+
+## Custom Column Layout
+
+By default, the order of columns in the Column Chooser is derived from the `columnDefs` supplied in the grid options and is kept in sync when columns are moved in the grid.
+
+A custom layout can instead be provided through `colDef.columnChooserParams.columnLayout`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    // original column definitions supplied to the grid
+    columnDefs: [
+        {
+            columnChooserParams: {
+                columnLayout: [{
+                    headerName: 'Group 1', // group doesn't appear in grid
+                    children: [
+                        { field: 'c' }, // custom column order with column "b" omitted
+                        { field: 'a' }
+                    ]
+                }]
+            }
+        },
+        { field: 'b' },
+        { field: 'c' }
+    ]
+}
+```
+
+{% note %}
+Providing `columnLayout` automatically enables `suppressSyncLayoutWithGrid`. Reordering columns in the grid therefore does not reorder the custom layout displayed in the Column Chooser.
+{% /note %}
+
+The following example demonstrates custom Column Chooser layouts. Note the following:
+
+- Open the Column Chooser for the **Name** column and note that it uses the order specified by `columnLayout`.
+- Open the Column Chooser for the **Age** column and note that it uses the current column order from the grid.
+- Drag the **Age** column to the left of the **Name** column in the grid.
+- Open the Column Chooser for the **Age** column and note that **Age** now appears before **Name**.
+- Open the Column Chooser for the **Name** column and note that its custom layout remains unchanged.
+
+{% gridExampleRunner title="Customising Columns Layout" name="customising-columns-layout" /%}
+
+## Column Chooser API
+
+The Column Chooser can be opened and closed through the Grid API.
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["showColumnChooser", "hideColumnChooser"] /%}
+
+The following example demonstrates opening and closing the Column Chooser through the Grid API.
+
+{% gridExampleRunner title="Column Chooser API" name="column-chooser-api" /%}
+
+## Legacy Tabbed Column Menu
+
+With the [Legacy Tabbed Column Menu](./column-menu/#legacy-tabbed-column-menu), a column selection panel is displayed within the `columnsMenuTab` instead of a separate dialog. It supports the same customisation options through `columnChooserParams`, but columns cannot be dragged to reorder them or to move them between sections.

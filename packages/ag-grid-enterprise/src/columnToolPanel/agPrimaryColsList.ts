@@ -8,10 +8,10 @@ import type {
     ColGroupDef,
     ColumnEventType,
     ColumnHeaderNameChangedEvent,
-    ColumnMenuItemsSource,
     ColumnModel,
     ColumnPanelItemDragEndEvent,
     ColumnPanelItemDragStartEvent,
+    ColumnSelectionPanelSource,
     ColumnToolPanelState,
     ComponentSelector,
 } from 'ag-grid-community';
@@ -62,7 +62,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private expandGroupsByDefault: boolean;
     private params: ToolPanelColumnCompParams;
     private eventType: ColumnEventType;
-    private source: ColumnMenuItemsSource;
+    private source: ColumnSelectionPanelSource;
 
     private groupsExist: boolean;
 
@@ -97,7 +97,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         params: ToolPanelColumnCompParams,
         allowDragging: boolean,
         eventType: ColumnEventType,
-        source: ColumnMenuItemsSource
+        source: ColumnSelectionPanelSource
     ): void {
         this.params = params;
         const { suppressSyncLayoutWithGrid, contractColumnSelection, suppressColumnMove } = params;
@@ -247,15 +247,15 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         item: ColumnModelItem,
         listItemElement: HTMLElement
     ): ToolPanelColumnGroupComp | ToolPanelColumnComp {
-        const allowDragging = this.allowDragging;
+        const { allowDragging, eventType, params, source, groupsExist } = this;
         if (item.group) {
             const renderedGroup = new ToolPanelColumnGroupComp(
                 item,
                 allowDragging,
-                this.eventType,
+                eventType,
                 listItemElement,
-                this.params,
-                this.source
+                params,
+                source
             );
             this.createBean(renderedGroup);
 
@@ -265,11 +265,11 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         const columnComp = new ToolPanelColumnComp(
             item,
             allowDragging,
-            this.groupsExist,
+            groupsExist,
             listItemElement,
-            this.params,
-            this.eventType,
-            this.source
+            params,
+            eventType,
+            source
         );
         this.createBean(columnComp);
 

@@ -34,6 +34,7 @@ The full list of component types you can provide in the grid are as follows:
 - [Overlay Component](./overlays-overview/): To customise loading, no rows, no matching rows and exporting overlay components or provide a custom overlay.
 - [Status Bar Component](./status-bar/): For custom status bar components.
 - [Tool Panel Component](./component-tool-panel/): For custom tool panel components.
+- [Column Selection Label Component](./tool-panel-columns/#custom-column-labels): To customise column and column group labels in the Columns Tool Panel and Column Chooser.
 - [Toolbar Item Component](./toolbar/#custom-components): For custom items rendered in the Quick Access Toolbar.
 - [Tooltip Component](./tooltips/): For custom cell tooltip components.
 
@@ -49,6 +50,25 @@ The remainder of this page gives information that is common across all the compo
 Clicking on the `Push For Total` button will log results in the developer console.
 
 {% gridExampleRunner title="Registering Components" name="register"  exampleHeight=580 /%}
+
+### Application-Wide Component Registration
+
+The `components` grid option registers component names for one grid. To make named components available to every subsequently created grid, provide them through [Global Grid Options](./grid-interface/#global-grid-options):
+
+```ts
+import { provideGlobalGridOptions } from 'ag-grid-community';
+
+provideGlobalGridOptions(
+    {
+        components: {
+            customColumnLabel: CustomColumnLabel,
+        },
+    },
+    'deep'
+);
+```
+
+Use the `deep` merge strategy when individual grids may also define a `components` map; otherwise a local map replaces the global map. All custom component types share the same registry, so component names must be unique.
 
 ## Providing Additional Parameters
 
@@ -268,6 +288,7 @@ The below table gives a summary of the components, where they are configured and
 | [Drag and Drop Image](./row-dragging-customisation/#custom-drag-and-drop-image) | Grid Option                                              | dragAndDropImageComponent{% br /%}dragAndDropImageComponentParams                |
 | [Status Bar Component](./status-bar/#custom-panels)                             | Grid Option -> Status Bar                                | statusPanel{% br /%}statusPanelParams                                            |
 | [Tool Panel](./component-tool-panel/)                                           | Grid Option -> Side Bar                                  | toolPanel{% br /%}toolPanelParams                                                |
+| [Column Selection Label](./tool-panel-columns/#custom-column-labels)            | Columns Tool Panel / Column Chooser                      | columnLabelRenderer{% br /%}columnLabelRendererParams                            |
 | [Toolbar Item Component](./toolbar/#custom-components)                          | Grid Option -> Toolbar                                   | toolbarItem{% br /%}toolbarItemParams                                            |
 | [Menu Item](./component-menu-item/)                                             | Grid Option -> Menu                                      | menuItem{% br /%}menuItemParams                                                  |
 
