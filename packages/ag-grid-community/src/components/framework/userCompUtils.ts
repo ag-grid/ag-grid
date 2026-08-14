@@ -50,23 +50,23 @@ const HeaderGroupComponent: ComponentType = { name: 'headerGroupComponent' };
 
 const InnerCellRendererComponent: ComponentType = {
     name: 'innerRenderer',
-    cellRenderer: true,
+    supportsJsFunction: true,
     optionalMethods: ['afterGuiAttached'],
 };
 
 const CellRendererComponent: ComponentType = {
     name: 'cellRenderer',
     optionalMethods: ['refresh', 'afterGuiAttached'],
-    cellRenderer: true,
+    supportsJsFunction: true,
 };
 
 const EditorRendererComponent: ComponentType = {
     name: 'cellRenderer',
     optionalMethods: ['refresh', 'afterGuiAttached'],
-    cellRenderer: true,
+    supportsJsFunction: true,
 };
 
-const LoadingCellRendererComponent: ComponentType = { name: 'loadingCellRenderer', cellRenderer: true };
+const LoadingCellRendererComponent: ComponentType = { name: 'loadingCellRenderer', supportsJsFunction: true };
 
 const CellEditorComponent: ComponentType<ICellEditorComp> = {
     name: 'cellEditor',
@@ -108,18 +108,22 @@ const FloatingFilterComponent: ComponentType<IFloatingFilterComp> = {
 const FullWidth: ComponentType = {
     name: 'fullWidthCellRenderer',
     optionalMethods: ['refresh', 'afterGuiAttached'],
-    cellRenderer: true,
+    supportsJsFunction: true,
 };
 
-const FullWidthLoading: ComponentType = { name: 'loadingCellRenderer', cellRenderer: true };
+const FullWidthLoading: ComponentType = { name: 'loadingCellRenderer', supportsJsFunction: true };
 
 const FullWidthGroup: ComponentType = {
     name: 'groupRowRenderer',
     optionalMethods: ['afterGuiAttached'],
-    cellRenderer: true,
+    supportsJsFunction: true,
 };
 
-const FullWidthDetail: ComponentType = { name: 'detailCellRenderer', optionalMethods: ['refresh'], cellRenderer: true };
+const FullWidthDetail: ComponentType = {
+    name: 'detailCellRenderer',
+    optionalMethods: ['refresh'],
+    supportsJsFunction: true,
+};
 
 export function _getDragAndDropImageCompDetails(
     userCompFactory: UserComponentFactory,
