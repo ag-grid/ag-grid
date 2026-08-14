@@ -25,8 +25,14 @@ describe('Dialog tab navigation', () => {
         modules: [ClientSideRowModelModule, ColumnMenuModule, NotesModule, PaginationModule],
     });
     const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
+    let agHiddenStyle: HTMLStyleElement;
 
     beforeAll(() => {
+        // give ag-hidden its real meaning in jsdom so hidden elements (e.g. the unused
+        // pagination panel's tab guards) are untabbable, matching real browsers
+        agHiddenStyle = document.createElement('style');
+        agHiddenStyle.textContent = '.ag-hidden { display: none !important; }';
+        document.head.appendChild(agHiddenStyle);
         Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
             configurable: true,
             get() {
@@ -36,6 +42,7 @@ describe('Dialog tab navigation', () => {
     });
 
     afterAll(() => {
+        agHiddenStyle.remove();
         if (originalOffsetParent) {
             Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
         } else {
@@ -111,6 +118,60 @@ describe('Dialog tab navigation', () => {
         expect(dialog.contains(document.activeElement)).toBe(true);
         expect(document.activeElement).not.toHaveClass('ag-tab-guard');
         expect((document.activeElement as HTMLElement).tabIndex).toBeGreaterThanOrEqual(0);
+    });
+
+    /** Deactivates nested tab guards (e.g. the column chooser's virtual list guards) so entry exercises the dialog's own guard, not an inner one. */
+    function deactivateInnerTabGuards(dialog: HTMLElement): void {
+        dialog.querySelectorAll<HTMLElement>('.ag-tab-guard').forEach((guard) => {
+            if (guard.parentElement !== dialog) {
+                guard.removeAttribute('tabindex');
+            }
+        });
+    }
+
+    test('skips a visible clear button when entering the dialog', async () => {
+        const { after, dialog } = await createFocusFixture();
+        const user = userEvent.setup();
+        const filterInput = dialog.querySelector<HTMLInputElement>('.ag-column-select-header-filter-wrapper input')!;
+
+        filterInput.value = 'a';
+        filterInput.dispatchEvent(new Event('input', { bubbles: true }));
+        const clearButton = dialog.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
+        expect(clearButton).not.toHaveClass('ag-hidden');
+
+        // demote every other control so the visible clear button (which follows the
+        // filter input in the DOM) is the boundary candidate on reverse entry
+        deactivateInnerTabGuards(dialog);
+        dialog
+            .querySelectorAll<HTMLElement>('input, select, button, textarea, [href], [tabindex]:not(.ag-tab-guard)')
+            .forEach((element) => {
+                if (element !== filterInput && element !== clearButton) {
+                    element.tabIndex = -1;
+                }
+            });
+
+        after.focus();
+        await user.tab({ shift: true });
+
+        expect(document.activeElement).toBe(filterInput);
+        expect(document.activeElement).not.toBe(clearButton);
+    });
+
+    test('falls back to managed focus when the dialog has no tabbable content', async () => {
+        const { after, dialog } = await createFocusFixture();
+        const user = userEvent.setup();
+
+        deactivateInnerTabGuards(dialog);
+        dialog
+            .querySelectorAll<HTMLElement>('input, select, button, textarea, [href], [tabindex]:not(.ag-tab-guard)')
+            .forEach((element) => (element.tabIndex = -1));
+
+        after.focus();
+        await user.tab({ shift: true });
+
+        expect(dialog.contains(document.activeElement)).toBe(true);
+        expect(document.activeElement).not.toHaveClass('ag-tab-guard');
+        expect((document.activeElement as HTMLElement).tabIndex).toBe(-1);
     });
 
     test('routes the bottom dialog guard to the element after the grid', async () => {

@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { fireEvent, getByTestId, waitFor } from '@testing-library/dom';
 
 import {
     ClientSideRowModelModule,
@@ -30,7 +30,7 @@ describe('Floating Filters', () => {
     describe('apply filtering as you type', () => {
         test('typing in a floating text filter filters the grid, and clearing restores every row', async () => {
             const api = await gridsManager.createGridAndWait('grid1', {
-                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
+                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter' }],
                 defaultColDef: { floatingFilter: true },
                 rowData: [{ country: 'Ireland' }, { country: 'Ireland' }, { country: 'Italy' }],
             });
@@ -41,10 +41,21 @@ describe('Floating Filters', () => {
                 gridDiv,
                 agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'country' })
             ) as HTMLInputElement;
+            expect(input.type).toBe('text');
+            expect(input.autocomplete).toBe('off');
+            const clearButton = input.parentElement!.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
+            expect(clearButton.classList.contains('ag-hidden')).toBe(true);
 
             // Type into the floating filter → default 'contains' applies and the grid filters live.
             typeIntoFloatingFilter(input, 'Italy');
-            await asyncSetTimeout(0);
+            await waitFor(() =>
+                expect(api.getColumnFilterModel('country')).toEqual({
+                    filterType: 'text',
+                    type: 'contains',
+                    filter: 'Italy',
+                })
+            );
+            expect(clearButton.classList.contains('ag-hidden')).toBe(false);
             expect(api.getColumnFilterModel('country')).toEqual({
                 filterType: 'text',
                 type: 'contains',
@@ -56,8 +67,14 @@ describe('Floating Filters', () => {
             `);
 
             // Clearing the floating input removes the filter and restores all rows.
-            typeIntoFloatingFilter(input, '');
+            input.focus();
+            fireEvent.mouseDown(clearButton);
+            fireEvent.click(clearButton);
             await asyncSetTimeout(0);
+            expect(input.value).toBe('');
+            expect(document.activeElement).toBe(input);
+            expect(clearButton.isConnected).toBe(true);
+            expect(clearButton.classList.contains('ag-hidden')).toBe(true);
             expect(api.getColumnFilterModel('country')).toBeNull();
             await new GridRows(api, 'floating text filter — cleared').check(`
                 ROOT id:ROOT_NODE_ID
@@ -65,6 +82,114 @@ describe('Floating Filters', () => {
                 ├── LEAF id:1 country:"Ireland"
                 └── LEAF id:2 country:"Italy"
             `);
+        });
+
+        test('global input options control autocomplete and the clear button', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
+                defaultColDef: { floatingFilter: true },
+                rowData: [{ country: 'Ireland' }, { country: 'Italy' }],
+                suppressInputClearButton: true,
+                enableInputAutoComplete: true,
+            });
+            await asyncSetTimeout(0);
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const input = getByTestId(
+                gridDiv,
+                agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'country' })
+            ) as HTMLInputElement;
+            expect(input.getAttribute('autocomplete')).toBeNull();
+
+            typeIntoFloatingFilter(input, 'Italy');
+            await asyncSetTimeout(0);
+            const clearButton = input.parentElement!.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
+            expect(clearButton.classList.contains('ag-hidden')).toBe(true);
+
+            api.setGridOption('suppressInputClearButton', false);
+            expect(clearButton.classList.contains('ag-hidden')).toBe(false);
+
+            api.setGridOption('enableInputAutoComplete', false);
+            expect(input.autocomplete).toBe('off');
+        });
+
+        test('floating filter autocomplete overrides the global input option', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    {
+                        field: 'country',
+                        filter: 'agTextColumnFilter',
+                        floatingFilter: true,
+                        floatingFilterComponentParams: { browserAutoComplete: false },
+                    },
+                ],
+                rowData: [{ country: 'Ireland' }],
+                enableInputAutoComplete: true,
+            });
+            await asyncSetTimeout(0);
+
+            const input = getByTestId(
+                getGridElement(api)! as HTMLElement,
+                agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'country' })
+            ) as HTMLInputElement;
+            expect(input.autocomplete).toBe('off');
+
+            api.setGridOption('columnDefs', [
+                {
+                    field: 'country',
+                    filter: 'agTextColumnFilter',
+                    floatingFilter: true,
+                },
+            ]);
+            await asyncSetTimeout(0);
+
+            const refreshedInput = getByTestId(
+                getGridElement(api)! as HTMLElement,
+                agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'country' })
+            ) as HTMLInputElement;
+            expect(refreshedInput.getAttribute('autocomplete')).toBeNull();
+        });
+
+        test('clearing during a pending debounce applies immediately, exactly once', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 200 } }],
+                defaultColDef: { floatingFilter: true },
+                rowData: [{ country: 'Ireland' }, { country: 'Italy' }],
+            });
+            await asyncSetTimeout(0);
+
+            const input = getByTestId(
+                getGridElement(api)! as HTMLElement,
+                agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'country' })
+            ) as HTMLInputElement;
+
+            typeIntoFloatingFilter(input, 'Italy');
+            await waitFor(() =>
+                expect(api.getColumnFilterModel('country')).toEqual({
+                    filterType: 'text',
+                    type: 'contains',
+                    filter: 'Italy',
+                })
+            );
+
+            // type again, then clear while the 200ms sync debounce is still pending
+            typeIntoFloatingFilter(input, 'Irel');
+            let filterChangedCount = 0;
+            api.addEventListener('filterChanged', () => ++filterChangedCount);
+            const clearButton = input.parentElement!.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
+            fireEvent.mouseDown(clearButton);
+            fireEvent.click(clearButton);
+            await asyncSetTimeout(0);
+
+            // the clear applied without waiting out the debounce, with a single event
+            expect(input.value).toBe('');
+            expect(api.getColumnFilterModel('country')).toBeNull();
+            expect(filterChangedCount).toBe(1);
+
+            // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples past the 200ms sync debounce so an uncancelled 'Irel' timer would already have fired
+            await asyncSetTimeout(300);
+            expect(api.getColumnFilterModel('country')).toBeNull();
+            expect(filterChangedCount).toBe(1);
         });
 
         test('typing in a floating number filter filters the grid by equals', async () => {

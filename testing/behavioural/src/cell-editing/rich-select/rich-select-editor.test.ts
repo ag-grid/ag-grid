@@ -158,6 +158,7 @@ describe('Rich Select cell editor', () => {
     test('allowTyping filters the list via the typed text', async () => {
         const api = await createGrid({
             columnDefs: [baseColDef({ values: ['Alpha', 'Beta', 'Gamma'], allowTyping: true, filterList: true })],
+            enableInputAutoComplete: true,
             rowData: [{ id: '0', a: 'Alpha' }],
             getRowId: (p) => p.data.id,
         });
@@ -166,6 +167,7 @@ describe('Rich Select cell editor', () => {
 
         const input = gridDiv.querySelector<HTMLInputElement>('.ag-rich-select-field-input input')!;
         expect(input).toBeTruthy();
+        expect(input.getAttribute('autocomplete')).toBe('off');
         input.focus();
         await userEvent.clear(input);
         await userEvent.type(input, 'Be');

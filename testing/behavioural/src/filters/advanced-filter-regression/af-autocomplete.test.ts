@@ -56,6 +56,13 @@ describe('Advanced Filter — autocomplete completion & editing', () => {
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
+    test('keeps browser autocomplete disabled when it is enabled for regular grid inputs', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', { ...OPTS, enableInputAutoComplete: true });
+        const af = AdvancedFilterHarness.get(api);
+
+        expect(af.input.getAttribute('autocomplete')).toBe('off');
+    });
+
     test('a column hidden after the list was first built leaves the suggestions', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
         const af = AdvancedFilterHarness.get(api);
