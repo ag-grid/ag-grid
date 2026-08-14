@@ -95,6 +95,35 @@ describe('Editable header name', () => {
         );
     }
 
+    /**
+     * The virtual list only materialises rows that are in view, and jsdom gives it no height, so a
+     * child row has to be brought into view (or built from its model item, as the list itself does)
+     * before its rendered label can be read.
+     */
+    async function childColumnLabel(toolPanel: any, gridDiv: HTMLElement, colId: string): Promise<string | null> {
+        const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
+        const items = (listPanel.getDisplayedColsList() as any[]) ?? [];
+        const rowIndex = items.findIndex((item) => !item.group && item.column?.getColId() === colId);
+        if (rowIndex < 0) {
+            throw new Error(`Tool-panel column entry not found for colId="${colId}"`);
+        }
+
+        listPanel['virtualList'].ensureIndexVisible(rowIndex);
+        await asyncSetTimeout(0);
+
+        const rendered = listPanel['virtualList'].getComponentAt(rowIndex) as any;
+        if (rendered) {
+            return rendered.getGui().querySelector('.ag-column-select-column-label')?.textContent ?? null;
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('ag-virtual-list-item');
+        gridDiv.appendChild(wrapper);
+        const comp = listPanel['createComponentFromItem'](items[rowIndex], wrapper);
+        wrapper.appendChild(comp.getGui());
+        return wrapper.querySelector('.ag-column-select-column-label')?.textContent ?? null;
+    }
+
     /** Open the "Edit Column Name" editor for a column via its tool-panel context menu. */
     async function openEditor(toolPanel: any, gridDiv: HTMLElement, label: string): Promise<HTMLInputElement> {
         await openContextMenu(toolPanel, gridDiv, label);
@@ -398,6 +427,79 @@ describe('Editable header name', () => {
         expect(api.getState().columnGroup?.headerNames).toEqual([{ groupId: 'athleteGroup', headerName: 'Renamed' }]);
     });
 
+    test('an edited group label survives collapsing and expanding the group in the columns tool panel', async () => {
+        const { gridDiv, toolPanel } = await createGrid([
+            {
+                groupId: 'athleteGroup',
+                headerName: 'Group',
+                headerNameEditable: true,
+                children: [{ field: 'athlete' }, { field: 'age' }],
+            } as any,
+        ]);
+
+        const labels = () =>
+            Array.from(gridDiv.querySelectorAll('.ag-column-select-column-label')).map((el) => el.textContent);
+        await waitFor(() => expect(labels()).toContain('Group'));
+
+        const input = await openEditor(toolPanel, gridDiv, 'Group');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Renamed');
+        pressEnter(input);
+        await waitFor(() => expect(labels()).toContain('Renamed'));
+
+        // Toggling destroys and recreates the row components from their tool-panel model items.
+        toolPanel.collapseColumnGroups();
+        await asyncSetTimeout(0);
+        expect(labels()).toContain('Renamed');
+
+        toolPanel.expandColumnGroups();
+        await asyncSetTimeout(0);
+        expect(labels()).toContain('Renamed');
+    });
+
+    test('an edited child column label survives collapsing and expanding its group in the columns tool panel', async () => {
+        const { gridDiv, toolPanel } = await createGrid([
+            {
+                groupId: 'athleteGroup',
+                headerName: 'Group',
+                children: [{ field: 'athlete', headerNameEditable: true }, { field: 'age' }],
+            } as any,
+        ]);
+
+        await waitFor(async () => expect(await childColumnLabel(toolPanel, gridDiv, 'athlete')).toBe('Athlete'));
+
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Renamed');
+        pressEnter(input);
+        await waitFor(async () => expect(await childColumnLabel(toolPanel, gridDiv, 'athlete')).toBe('Renamed'));
+
+        toolPanel.collapseColumnGroups();
+        await asyncSetTimeout(0);
+        toolPanel.expandColumnGroups();
+        await asyncSetTimeout(0);
+
+        expect(await childColumnLabel(toolPanel, gridDiv, 'athlete')).toBe('Renamed');
+    });
+
+    test('the tool-panel filter matches a name edited while the filter is already active', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete' }, { field: 'age' }]);
+
+        const labels = () =>
+            Array.from(gridDiv.querySelectorAll('.ag-column-select-column-label')).map((el) => el.textContent);
+        await waitFor(() => expect(labels()).toContain('Athlete'));
+
+        // Filtering first is what discriminates: `setFilterText` re-marks the items itself, so a
+        // filter applied after the rename would match whether or not the rename refreshed them.
+        const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
+        listPanel.setFilterText('Renamed');
+        await waitFor(() => expect(labels()).toEqual([]));
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
+
+        await waitFor(() => expect(labels()).toEqual(['Renamed']));
+    });
+
     test('renaming one group does not recompute the header name of another group', async () => {
         let ageGroupGetterCalls = 0;
         const { api, gridDiv, toolPanel } = await createGrid([
@@ -431,6 +533,49 @@ describe('Editable header name', () => {
         expect(ageGroupGetterCalls).toBe(callsBeforeCommit);
         const athleteGroup = api.getColumnGroup('athleteGroup')!;
         expect(api.getDisplayNameForColumnGroup(athleteGroup, 'header')).toBe('Swimmers');
+    });
+
+    test('renaming a column does not recompute the tool-panel name of an unrendered group', async () => {
+        let innerGroupToolPanelCalls = 0;
+        const { gridDiv, toolPanel } = await createGrid([
+            { field: 'athlete', headerNameEditable: true },
+            {
+                groupId: 'outerGroup',
+                headerName: 'Outer',
+                children: [
+                    {
+                        groupId: 'innerGroup',
+                        headerValueGetter: (params: any) => {
+                            // Rendered rows and the grid header refresh themselves on any rename, so
+                            // the group is collapsed out of view below and only the tool panel's own
+                            // resolutions are counted, isolating the model-item refresh.
+                            if (params.location === 'columnToolPanel') {
+                                innerGroupToolPanelCalls++;
+                            }
+                            return 'Inner';
+                        },
+                        children: [{ field: 'age' }],
+                    },
+                ],
+            } as any,
+        ]);
+        await waitFor(() => expect(innerGroupToolPanelCalls).toBeGreaterThan(0));
+
+        toolPanel.collapseColumnGroups();
+        await asyncSetTimeout(0);
+
+        // Baseline before typing: `columnHeaderEdit.applyMode` defaults to `live`, so the rename
+        // event fires per keystroke and a baseline taken after typing would miss the extra work.
+        const callsBeforeEdit = innerGroupToolPanelCalls;
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Renamed');
+        pressEnter(input);
+        await waitForEditorClosed();
+
+        // A column rename dispatches a null columnGroup, so treating that alone as "refresh
+        // everything" would re-resolve every group's display name in the panel.
+        expect(innerGroupToolPanelCalls).toBe(callsBeforeEdit);
     });
 
     const headerText = () =>

@@ -14,7 +14,7 @@ export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {
     public passesFilter: boolean;
 
     constructor(
-        public readonly displayName: string | null,
+        public displayName: string | null,
         columnOrGroup: AgColumn | AgProvidedColumnGroup,
         public readonly depth: number,
         public readonly group = false,

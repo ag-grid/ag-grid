@@ -7,6 +7,7 @@ import type {
     BeanCollection,
     ColGroupDef,
     ColumnEventType,
+    ColumnHeaderNameChangedEvent,
     ColumnMenuItemsSource,
     ColumnModel,
     ColumnPanelItemDragEndEvent,
@@ -112,6 +113,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         this.addManagedEventListeners({
             newColumnsLoaded: this.onColumnsChanged.bind(this),
+            columnHeaderNameChanged: this.onHeaderNameChanged.bind(this),
         });
 
         const listener = this.fireSelectionChangedEvent.bind(this);
@@ -478,6 +480,35 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
     private onColumnExpanded(): void {
         this.flattenAndFilterModel();
+    }
+
+    private onHeaderNameChanged(event: ColumnHeaderNameChangedEvent): void {
+        const { column, columnGroup } = event;
+        // Both targets absent means a reset or a multi-group state change, so every cached name is stale.
+        // A single-column rename dispatches a null columnGroup, so neither target alone implies a bulk change.
+        const refreshAll = column == null && columnGroup == null;
+        const groupId = columnGroup?.getGroupId();
+        const colNames = this.beans.colNames;
+
+        this.forEachItem((item) => {
+            const { group, column: itemColumn, columnGroup: itemColumnGroup } = item;
+            const isTarget = group ? itemColumnGroup.groupId === groupId : itemColumn === column;
+            if (!refreshAll && !isTarget) {
+                return;
+            }
+            item.displayName = group
+                ? colNames.getDisplayNameForProvidedColumnGroup(null, itemColumnGroup, 'columnToolPanel')
+                : colNames.getDisplayNameForColumn(itemColumn, 'columnToolPanel');
+        });
+
+        // Rendered rows refresh their own labels, so the list itself only needs rebuilding while a
+        // filter is active, where a new name can change which rows match. `columnHeaderEdit.applyMode`
+        // defaults to `live`, so this event fires per keystroke and an unconditional refresh would
+        // recreate every rendered row per character typed.
+        if (this.filterText != null) {
+            this.markFilteredColumns();
+            this.flattenAndFilterModel();
+        }
     }
 
     private flattenAndFilterModel(): void {
