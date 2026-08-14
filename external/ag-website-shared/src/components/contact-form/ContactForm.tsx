@@ -86,7 +86,6 @@ export const ContactForm: FunctionComponent<Props> = ({
     submitLabel,
 }: Props) => {
     const formRef = useRef<HTMLFormElement>(null);
-    const reapplyCaptchaTimestamp = useRef<(() => void) | null>(null);
     const [isDebug, setIsDebug] = useState(isDev);
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
     const [isDisabled, setIsDisabled] = useState(false);
@@ -140,7 +139,7 @@ export const ContactForm: FunctionComponent<Props> = ({
         }
 
         loadRecaptchaScript().then(() => {
-            reapplyCaptchaTimestamp.current = initCaptcha();
+            initCaptcha();
         });
     }, []);
 
@@ -150,8 +149,6 @@ export const ContactForm: FunctionComponent<Props> = ({
 
         const captchaPassed = (globalThis as any).grecaptcha.getResponse();
         if (captchaPassed) {
-            // Must run after the re-renders above, which reset the hidden captcha_settings input.
-            reapplyCaptchaTimestamp.current?.();
             formRef.current?.submit();
         } else {
             setCaptchaError(true);
