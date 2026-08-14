@@ -1591,6 +1591,12 @@
                         },
                         {
                             "type": "item",
+                            "title": "Column Chooser",
+                            "path": "column-chooser",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Context Menu",
                             "path": "context-menu",
                             "isEnterprise": true
