@@ -500,6 +500,33 @@ describe('Editable header name', () => {
         await waitFor(() => expect(labels()).toEqual(['Renamed']));
     });
 
+    test('editing a name from the tool panel works while a tool-panel filter is active', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([
+            { field: 'athlete', headerNameEditable: true },
+            { field: 'age' },
+        ]);
+
+        const labels = () =>
+            Array.from(gridDiv.querySelectorAll('.ag-column-select-column-label')).map((el) => el.textContent);
+        await waitFor(() => expect(labels()).toContain('Athlete'));
+
+        const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
+        listPanel.setFilterText('ath');
+        await waitFor(() => expect(labels()).toEqual(['Athlete']));
+
+        // Live mode dispatches per keystroke, and the row the editor was opened from is recreated
+        // whenever the filter is re-applied — the editor must survive that.
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Athletics');
+        expect(editorPopup()).not.toBeNull();
+        pressEnter(input);
+        await waitForEditorClosed();
+
+        expect(api.getDisplayNameForColumn(api.getColumn('athlete')!, 'header')).toBe('Athletics');
+        expect(labels()).toEqual(['Athletics']);
+    });
+
     test('renaming one group does not recompute the header name of another group', async () => {
         let ageGroupGetterCalls = 0;
         const { api, gridDiv, toolPanel } = await createGrid([
