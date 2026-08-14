@@ -583,8 +583,9 @@ export class SetFilter<V = string>
     private initMiniFilter() {
         const { eMiniFilter } = this;
 
+        eMiniFilter.setClearButtonEnabled(true);
         this.updateMiniFilter();
-        eMiniFilter.onValueChange(() => this.onMiniFilterInput());
+        eMiniFilter.onValueChange(() => this.onMiniFilterInput()).onValueClear(() => this.onMiniFilterInput(true));
         eMiniFilter.setInputAriaLabel(translateForSetFilter(this, 'ariaSearchFilterValues'));
 
         this.addManagedElementListeners(eMiniFilter.getInputElement(), {
@@ -690,7 +691,7 @@ export class SetFilter<V = string>
         // we don't warn here because the multi filter can call this
     }
 
-    private onMiniFilterInput(silent?: boolean) {
+    private onMiniFilterInput(forceImmediate = false, silent?: boolean) {
         if (!this.doSetMiniFilter(this.eMiniFilter.getValue())) {
             return;
         }
@@ -703,7 +704,12 @@ export class SetFilter<V = string>
         const { applyMiniFilterWhileTyping, readOnly, excelMode } = this.params;
 
         const updateSelections = !readOnly && (applyMiniFilterWhileTyping || !!excelMode);
-        const apply = applyMiniFilterWhileTyping && !readOnly ? 'debounce' : undefined;
+        const apply =
+            forceImmediate && updateSelections
+                ? 'immediately'
+                : applyMiniFilterWhileTyping && !readOnly
+                  ? 'debounce'
+                  : undefined;
 
         this.updateUiAfterMiniFilterChange(updateSelections, apply);
     }
@@ -834,7 +840,7 @@ export class SetFilter<V = string>
 
     public setMiniFilter(newMiniFilter: string | null, silent?: boolean): void {
         this.eMiniFilter.setValue(newMiniFilter, silent);
-        this.onMiniFilterInput(silent);
+        this.onMiniFilterInput(false, silent);
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */

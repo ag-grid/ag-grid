@@ -10,6 +10,7 @@ import type { FloatingFilterInputService } from './iFloatingFilterInputService';
 export class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {
     private eInput: GridInputTextField = RefPlaceholder;
     private onValueChanged: (e: KeyboardEvent) => void = () => {};
+    private onValueCleared: () => void = () => {};
 
     constructor(private readonly params?: { config?: AgInputTextFieldParams<AgComponentSelectorType> }) {
         super();
@@ -17,6 +18,7 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
 
     public setupGui(parentElement: HTMLElement): void {
         this.eInput = this.createManagedBean(new AgInputTextField(this.params?.config));
+        this.eInput.setClearButtonEnabled(true).onValueClear(() => this.onValueCleared());
 
         const eInput = this.eInput.getGui();
 
@@ -49,6 +51,10 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
         this.onValueChanged = listener;
     }
 
+    public setValueClearedListener(listener: () => void): void {
+        this.onValueCleared = listener;
+    }
+
     public setParams({
         ariaLabel,
         autoComplete,
@@ -61,9 +67,7 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
         const { eInput } = this;
         eInput.setInputAriaLabel(ariaLabel);
 
-        if (autoComplete !== undefined) {
-            eInput.setAutoComplete(autoComplete);
-        }
+        eInput.setAutoComplete(autoComplete);
 
         eInput.toggleCss('ag-floating-filter-search-icon', !!placeholder);
         eInput.setInputPlaceholder(placeholder);

@@ -825,6 +825,15 @@ export interface Props<TData> {
          * @initial
          */
     tabIndex?: number,
+    /** Set to `true` to hide the clear button shown in supported input fields when they contain a value.
+         * @default false
+         */
+    suppressInputClearButton?: boolean,
+    /** Set to `true` to enable the browser's autocomplete/autofill behaviour for eligible grid input fields.
+         * Inputs that provide grid-owned suggestions, such as Rich Select and Advanced Filter inputs, keep browser autocomplete disabled.
+         * @default false
+         */
+    enableInputAutoComplete?: boolean,
     /** The number of rows rendered outside the viewable area the grid renders.
          * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.
          * @default 10
@@ -2299,6 +2308,8 @@ export function getProps() {
         context: undefined,
         alignedGrids: undefined,
         tabIndex: undefined,
+        suppressInputClearButton: undefined,
+        enableInputAutoComplete: undefined,
         rowBuffer: undefined,
         valueCache: undefined,
         valueCacheNeverExpires: undefined,

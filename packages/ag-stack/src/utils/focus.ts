@@ -4,6 +4,9 @@ import { _getTabIndex } from './browser';
 import { _getActiveDomElement, _getDocument } from './document';
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, _isVisible } from './dom';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const FOCUS_MANAGED_CLASS = 'ag-focus-managed';
+
 let keyboardModeActive: boolean = false;
 let instanceCount: number = 0;
 
@@ -80,14 +83,13 @@ export function _findFocusableElements(
         .filter((node: HTMLElement) => {
             return _isVisible(node);
         }) as HTMLElement[];
-    const excludeNodes = Array.prototype.slice.apply(rootNode.querySelectorAll(excludeString)) as HTMLElement[];
+    const excludeNodes = new Set(rootNode.querySelectorAll(excludeString));
 
-    if (!excludeNodes.length) {
+    if (!excludeNodes.size) {
         return nodes;
     }
 
-    const diff = (a: HTMLElement[], b: HTMLElement[]) => a.filter((element) => b.indexOf(element) === -1);
-    return diff(nodes, excludeNodes);
+    return nodes.filter((element) => !excludeNodes.has(element));
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -103,6 +105,31 @@ export function _focusInto(
         onlyUnmanaged
     );
     const toFocus = up ? _last(focusableElements) : focusableElements[0];
+
+    if (toFocus) {
+        toFocus.focus({ preventScroll: true });
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Focuses into `rootNode` the way native Tab would: tabbable elements win. Elements with a
+ * negative tabindex are only eligible when a managed-focus wrapper inside `rootNode` owns their
+ * keyboard handling — bare tabindex="-1" content would otherwise be a keyboard dead end.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, excludeTabGuards = false): boolean {
+    const candidates = _findFocusableElements(rootNode, excludeTabGuards ? '.ag-tab-guard' : null);
+    const tabbable = candidates.filter((element) => element.tabIndex >= 0);
+    const pool = tabbable.length
+        ? tabbable
+        : candidates.filter((element) => {
+              const managedRoot = element.closest(`.${FOCUS_MANAGED_CLASS}`);
+              return managedRoot !== null && rootNode.contains(managedRoot);
+          });
+    const toFocus = up ? _last(pool) : pool[0];
 
     if (toFocus) {
         toFocus.focus({ preventScroll: true });

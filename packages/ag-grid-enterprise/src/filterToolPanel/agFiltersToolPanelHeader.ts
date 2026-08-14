@@ -37,7 +37,8 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
     private eExpandUnchecked: Element;
     private eExpandIndeterminate: Element;
 
-    private onSearchTextChangedDebounced: () => void;
+    private onSearchTextChangedDebounced: () => number;
+    private searchTextChangedTimeout: number | undefined;
 
     private currentExpandState: EXPAND_STATE;
 
@@ -49,9 +50,10 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
         const translate = this.getLocaleTextFunc();
 
         this.eFilterTextField
-            .setAutoComplete(false)
+            .setClearButtonEnabled(true)
             .setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'))
-            .onValueChange(this.onSearchTextChanged.bind(this));
+            .onValueChange(this.onSearchTextChanged.bind(this))
+            .onValueClear(() => this.onSearchTextCleared());
 
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
@@ -99,7 +101,12 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
             );
         }
 
-        this.onSearchTextChangedDebounced();
+        this.searchTextChangedTimeout = this.onSearchTextChangedDebounced();
+    }
+
+    private onSearchTextCleared(): void {
+        clearTimeout(this.searchTextChangedTimeout);
+        this.dispatchLocalEvent({ type: 'searchChanged', searchText: this.eFilterTextField.getValue() });
     }
 
     private onExpandClicked(): void {

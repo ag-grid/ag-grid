@@ -22,12 +22,14 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     private eTextInput: GridInputTextField;
     private eNumberInput: GridInputNumberField;
     private onValueChanged: (e: KeyboardEvent) => void = () => {};
+    private onValueCleared: () => void = () => {};
 
     private numberInputActive = true;
 
     public setupGui(parentElement: HTMLElement): void {
         this.eNumberInput = this.createManagedBean(new AgInputNumberField());
         this.eTextInput = this.createManagedBean(new AgInputTextField());
+        this.eTextInput.setClearButtonEnabled(true).onValueClear(() => this.onValueCleared());
 
         this.eTextInput.setDisabled(true);
 
@@ -47,7 +49,7 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         this.eTextInput.setDisplayed(!this.numberInputActive);
     }
 
-    public setAutoComplete(autoComplete: boolean | string): void {
+    public setAutoComplete(autoComplete?: boolean | string): void {
         this.eNumberInput.setAutoComplete(autoComplete);
         this.eTextInput.setAutoComplete(autoComplete);
     }
@@ -72,6 +74,10 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         this.onValueChanged = listener;
     }
 
+    public setValueClearedListener(listener: () => void): void {
+        this.onValueCleared = listener;
+    }
+
     private setupListeners(element: HTMLElement, listener: (e: KeyboardEvent) => void): void {
         this.addManagedListeners(element, {
             input: listener,
@@ -90,9 +96,7 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }): void {
         this.setAriaLabel(ariaLabel);
 
-        if (autoComplete !== undefined) {
-            this.setAutoComplete(autoComplete);
-        }
+        this.setAutoComplete(autoComplete);
 
         this.setPlaceholder(this.eNumberInput, placeholder);
         this.setPlaceholder(this.eTextInput, placeholder);

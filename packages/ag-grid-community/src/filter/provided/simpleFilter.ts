@@ -9,6 +9,7 @@ import {
 } from 'ag-stack';
 
 import { AgAbstractInputField } from '../../agWidgets/agAbstractInputField';
+import { AgInputTextField } from '../../agWidgets/agInputTextField';
 import type { ListOption } from '../../agWidgets/agList';
 import { AgRadioButton } from '../../agWidgets/agRadioButton';
 import { AgSelect } from '../../agWidgets/agSelect';
@@ -653,6 +654,9 @@ export abstract class SimpleFilter<
     protected attachElementOnChange(element: E, listener: () => void): void {
         if (element instanceof AgAbstractInputField) {
             element.onValueChange(listener);
+        }
+        if (element instanceof AgInputTextField) {
+            element.onValueClear(() => this.onUiCleared());
         }
     }
 
