@@ -208,7 +208,9 @@ export const ECOMMERCE_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/ecommerce/#';
 // keyword-source — CSP cannot bind it to google.com or salesforce.com, so granting it
 // grants it to every script on whichever pages it covers. Confining it to these three
 // keeps the rest of the site on the strict policy. AG-3390.
-export const CONTACT_FORM_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(?:contact|about|license-pricing)/#';
+// Anchored so it covers only these three pages, not their descendants: /contact/success
+// and /contact/failure carry no form and must not inherit 'unsafe-eval'.
+export const CONTACT_FORM_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(?:contact|about|license-pricing)/?$#';
 
 // Apache <If> expression matching the staging-only /branch-builds/ tree: a directory
 // of full per-branch documentation builds, preserved across deployments (backed up
