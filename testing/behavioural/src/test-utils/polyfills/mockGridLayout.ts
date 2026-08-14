@@ -26,6 +26,12 @@ export const mockGridLayout = {
      * clientY, so a mismatch drifts row selection past the first couple of rows. */
     listItemHeight: 24,
 
+    /** Size reported for an Integrated Charts canvas wrapper - the element AG Charts observes as its
+     * container. A container that never reports a size leaves the chart waiting out a 500ms
+     * first-auto-size timeout on every layout-level update. */
+    chartWidth: 600,
+    chartHeight: 400,
+
     /** When true, `offset*`/`client*` dimensions come from `getBoundingClientRect()`. Default
      * `false` returns jsdom's 0, matching most captured snapshots; opt in for viewport-aware code
      * such as page-key navigation. */
@@ -51,6 +57,13 @@ function inPopupOrDialog(el: HTMLElement): boolean {
 
 function inVirtualList(el: HTMLElement): boolean {
     return !!el.closest(VIRTUAL_LIST_SELECTOR);
+}
+
+/** `gridChartComp`'s `eChart`, which is the element handed to AG Charts as its container. */
+const CHART_CONTAINER_CLASS = 'ag-chart-canvas-wrapper';
+
+function isChartContainer(el: HTMLElement): boolean {
+    return el.classList.contains(CHART_CONTAINER_CLASS);
 }
 
 const getElementType = (el: HTMLElement) => {
@@ -93,6 +106,9 @@ const getElementType = (el: HTMLElement) => {
     }
     if (classList.contains('ag-rich-select-row')) {
         return 'rich-select-row';
+    }
+    if (classList.contains(CHART_CONTAINER_CLASS)) {
+        return 'chart-container';
     }
     return 'default';
 };
@@ -176,6 +192,12 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
 
         case 'rich-select-row': {
             height = listItemHeight;
+            break;
+        }
+
+        case 'chart-container': {
+            width = mockGridLayout.chartWidth;
+            height = mockGridLayout.chartHeight;
             break;
         }
 
@@ -305,6 +327,11 @@ function init(): boolean {
                     return this.getBoundingClientRect()[axis];
                 }
                 if (isHeightProp && inVirtualList(this)) {
+                    return this.getBoundingClientRect()[axis];
+                }
+                // AG Charts sizes itself off its container's `client*`, and skips its 500ms
+                // first-auto-size wait once it has seen a non-zero size.
+                if (isChartContainer(this)) {
                     return this.getBoundingClientRect()[axis];
                 }
                 return original?.get?.call(this) ?? 0;

@@ -455,7 +455,9 @@ describe('chart tool panel options', () => {
               ]
             `);
         },
-        20 * 60 * 1000
+        // ~17s locally for the full 37-chart-type matrix; the allowance is for slower CI, not for the
+        // matrix growing. If this starts timing out, something is sleeping rather than doing work.
+        2 * 60 * 1000
     );
 });
 
