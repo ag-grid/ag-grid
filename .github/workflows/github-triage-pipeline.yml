@@ -263,6 +263,23 @@ jobs:
                   # regardless of preflight's own behaviour.
                   stage: ${{ (github.event.action == 'gh-triage-manual-resume' && 'resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'repro-rebuild') || needs.preflight.outputs.stage || inputs.stage || 'triage' }}
                   product: grid
+                  # claude-code-action refuses to run when the TRIGGERING ACTOR lacks
+                  # write access — and on an `issues` event that actor is the ISSUE
+                  # AUTHOR, a community reporter with `read`. Auto-triage therefore
+                  # failed for every genuine community report ("Actor does not have
+                  # write permissions to the repository") and only ever worked when a
+                  # maintainer happened to touch the issue, which is the opposite of
+                  # the feature. It looked healthy because the first live ticket was
+                  # label-triggered by a maintainer; the first real community report
+                  # (AITGH-28 / #14837) failed on both auto-fires.
+                  #
+                  # Scoped to the `issues` event ALONE: the board drag, the manual
+                  # buttons and workflow_dispatch all already carry a write-capable
+                  # actor, so the gate stays armed there at no cost — and stays armed
+                  # for any trigger added later. Setting this also makes
+                  # claude-code-action best-effort scrub secrets from subprocess
+                  # environments.
+                  allowed_non_write_users: ${{ github.event_name == 'issues' && '*' || '' }}
                   # Provenance for the pin: `post` stamps this channel onto the
                   # mapping ticket so `resolve-channel` can route the NEXT drag to the
                   # same channel. Must match the channel actually installed above.
