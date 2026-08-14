@@ -484,8 +484,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
     private onHeaderNameChanged(event: ColumnHeaderNameChangedEvent): void {
         const { column, columnGroup } = event;
-        // Both targets absent means a reset or a multi-group state change, so every cached name is stale.
-        // A single-column rename dispatches a null columnGroup, so neither target alone implies a bulk change.
+        // A single-column rename dispatches a null columnGroup, so only the absence of BOTH targets
+        // marks a bulk change (a reset or a multi-group state change) where every cached name is stale.
         const refreshAll = column == null && columnGroup == null;
         const groupId = columnGroup?.getGroupId();
         const colNames = this.beans.colNames;
@@ -501,10 +501,9 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 : colNames.getDisplayNameForColumn(itemColumn, 'columnToolPanel');
         });
 
-        // Rendered rows refresh their own labels, so the list itself only needs rebuilding while a
-        // filter is active, where a new name can change which rows match. `columnHeaderEdit.applyMode`
-        // defaults to `live`, so this event fires per keystroke and an unconditional refresh would
-        // recreate every rendered row per character typed.
+        // Rendered rows refresh their own labels, so the list only needs rebuilding when a filter is
+        // active and a new name may change which rows match. `applyMode: 'live'` dispatches this per
+        // keystroke, so refreshing unconditionally would recreate every rendered row per character.
         if (this.filterText != null) {
             this.markFilteredColumns();
             this.flattenAndFilterModel();
