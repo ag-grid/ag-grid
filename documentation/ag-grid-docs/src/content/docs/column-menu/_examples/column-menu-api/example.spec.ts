@@ -27,11 +27,9 @@ test.agExample(import.meta, () => {
 
             await page.evaluate(() => {
                 const grid = document.querySelector('.ag-root-wrapper')!;
-                // WebKit performs no backwards tab traversal when focus sits on a <button>: Shift+Tab
-                // is a no-op there (measured - the keydown fires, no focus event follows), while
-                // forward Tab and both directions from a form field work. Chromium and Firefox move
-                // focus in every case. So the elements this test tabs *out of* are form fields, or the
-                // reverse-navigation assertion below could never run on WebKit.
+                // The elements this test tabs out of must be form fields: on WebKit, Shift+Tab from a
+                // <button> is a no-op (the keydown fires, no focus event follows), so the
+                // reverse-navigation assertion below could never run there.
                 const after = document.createElement('input');
                 const popupParent = document.createElement('div');
                 const final = document.createElement('input');
