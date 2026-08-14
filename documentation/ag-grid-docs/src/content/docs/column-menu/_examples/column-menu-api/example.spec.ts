@@ -27,9 +27,6 @@ test.agExample(import.meta, () => {
 
             await page.evaluate(() => {
                 const grid = document.querySelector('.ag-root-wrapper')!;
-                // The elements this test tabs out of must be form fields: on WebKit, Shift+Tab from a
-                // <button> is a no-op (the keydown fires, no focus event follows), so the
-                // reverse-navigation assertion below could never run there.
                 const after = document.createElement('input');
                 const popupParent = document.createElement('div');
                 const final = document.createElement('input');
