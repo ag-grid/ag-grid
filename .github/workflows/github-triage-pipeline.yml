@@ -227,11 +227,19 @@ jobs:
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-resume')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-browser-verify')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-repro-rebuild')
-            )
+            ) &&
+            needs.preflight.outputs.stage != 'execute' && inputs.stage != 'execute'
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            issues: write
+            # `issues: read`, NOT write — see the `execute` job below. Every GitHub
+            # WRITE in the pipeline lives in execute.ts; every other label call in the
+            # codebase is `jira.addLabel`, not `gh`. So the agent stages (triage /
+            # resume / the browser chain) never needed write, and holding it meant an
+            # agent reading attacker-authored issue text sat in a job that could write
+            # to GitHub. Same argument as #14834: an unused permission is not hardening
+            # work, it is a mistake.
+            issues: read
             packages: read
         outputs:
             # NEW — downstream chain jobs need the mapping-ticket key and the
@@ -270,6 +278,53 @@ jobs:
                   gh_issue: ${{ github.event.issue.number || github.event.client_payload.gh_issue || inputs.gh_issue }}
                   issue_key: ${{ needs.preflight.outputs.issue_key || github.event.client_payload.issue_key || inputs.issue_key }}
                   anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
+
+    # -------------------------------------------------- execute
+    # The ONLY job that may write to GitHub, and the only one that needs to.
+    #
+    # `execute` is MECHANICAL — no agent, no Anthropic key, no browser: it performs the
+    # approved action in deterministic TypeScript (mint the golden AG ticket, post the
+    # reply, apply the label, close the issue). It is split out of `run` purely so that
+    # `issues: write` stops being handed to jobs that run an AGENT over untrusted,
+    # reporter-authored text. Splitting the small mechanical job out is far cheaper than
+    # splitting the large agent job out, and leaves the chain jobs' `needs: [run]`
+    # wiring untouched.
+    #
+    # Reachable only via the two paths that can resolve stage=execute: the board drag
+    # routed here by preflight, and an explicit `workflow_dispatch stage=execute`.
+    execute:
+        needs: [preflight, resolve-channel]
+        if: |
+            !cancelled() &&
+            (
+              (github.event_name == 'repository_dispatch' && needs.preflight.outputs.stage == 'execute')
+              || (github.event_name == 'workflow_dispatch' && inputs.stage == 'execute')
+            )
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            issues: write # mint → reply → label → close, all mechanical
+            packages: read
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
+            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
+              with:
+                  stage: execute
+                  product: grid
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
+                  gh_issue: ${{ github.event.client_payload.gh_issue || inputs.gh_issue }}
+                  issue_key: ${{ needs.preflight.outputs.issue_key || github.event.client_payload.issue_key || inputs.issue_key }}
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
