@@ -40,19 +40,9 @@ export interface InjectImportMapOptions {
 }
 
 /**
- * Registers the example page's import map, resolving the framework version and whether to
- * run against its development build from the `?version=` and `?prod=` URL parameters.
+ * Registers the example page's import map, substituting the framework version and build that
+ * `?version=` and `?prod=` ask for -- neither is known when the page is statically generated.
  *
- * Example pages are statically generated, so neither is known when the page is built: the
- * maps are rendered with a placeholder where the framework version goes, and this picks one,
- * substitutes the version and registers it in the browser. It is emitted as a classic inline
- * script, which the parser runs synchronously -- so the map is in place before the parser
- * reaches the example's module script, which is what the import-map spec requires.
- *
- * A version that is not a plausible version string aborts the load with a visible message,
- * rather than quietly running the example against the pinned default. A well-formed but
- * non-existent version is left to fail on its own: the CDN 404s and the example does not
- * start.
  *
  * Serialised into the page with `toString()`, so it must reference nothing outside its own
  * parameters.
@@ -68,7 +58,7 @@ export function injectImportMap({
 }: InjectImportMapOptions): void {
     const urlParams = new URLSearchParams(window.location.search);
     const requestedVersion = urlParams.get(versionParam);
-    // Production unless the URL says otherwise, as under SystemJS
+    // Production unless the URL says otherwise
     const isProd = urlParams.get(prodParam) !== 'false';
     let version = defaultVersion;
 

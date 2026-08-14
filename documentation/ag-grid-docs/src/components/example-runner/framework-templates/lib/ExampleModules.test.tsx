@@ -9,11 +9,11 @@ const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'ang
 
 /**
  * The example runner, the Plunker page and the static CodeSandbox page all render this component,
- * so the import map it emits is what each of them ships. `transpileInBrowser` is the only thing
+ * so what it emits is what each of them ships. `transpileInBrowser` is the only thing
  * that differs between them: Plunker and the static CodeSandbox template are handed the sources as
  * authored, the runner is served them transpiled.
  */
-const renderImportMap = async ({
+const renderMarkup = async ({
     internalFramework,
     transpileInBrowser,
 }: {
@@ -38,6 +38,12 @@ const renderImportMap = async ({
             transpileInBrowser={transpileInBrowser}
         />
     );
+
+    return html;
+};
+
+const renderImportMap = async (props: { internalFramework: InternalFramework; transpileInBrowser?: boolean }) => {
+    const html = await renderMarkup(props);
 
     const served = html.match(/<script type="importmap">([\s\S]*?)<\/script>/);
     if (served) {
@@ -103,6 +109,17 @@ describe('ExampleModules', () => {
             const exported = await renderImportMap({ internalFramework, transpileInBrowser: true });
 
             expect(exported).toEqual(runner);
+        });
+
+        test('emits the page boilerplate once, before the example is loaded', async () => {
+            const html = await renderMarkup({ internalFramework });
+
+            const shim = html.indexOf('window.process');
+            const entryModule = html.indexOf('type="module"');
+
+            expect(html.match(/window\.process/g)).toHaveLength(1);
+            expect(shim).toBeGreaterThan(-1);
+            expect(shim).toBeLessThan(entryModule);
         });
     });
 });
