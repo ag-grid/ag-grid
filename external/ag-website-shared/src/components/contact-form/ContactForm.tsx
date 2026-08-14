@@ -86,6 +86,8 @@ export const ContactForm: FunctionComponent<Props> = ({
     submitLabel,
 }: Props) => {
     const formRef = useRef<HTMLFormElement>(null);
+    const captchaTimestamp = useRef('');
+    const reapplyCaptchaTimestamp = useRef<(() => void) | null>(null);
     const [isDebug, setIsDebug] = useState(isDev);
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
     const [isDisabled, setIsDisabled] = useState(false);
@@ -139,7 +141,9 @@ export const ContactForm: FunctionComponent<Props> = ({
         }
 
         loadRecaptchaScript().then(() => {
-            initCaptcha();
+            reapplyCaptchaTimestamp.current = initCaptcha((ts) => {
+                captchaTimestamp.current = ts;
+            });
         });
     }, []);
 
@@ -149,6 +153,7 @@ export const ContactForm: FunctionComponent<Props> = ({
 
         const captchaPassed = (globalThis as any).grecaptcha.getResponse();
         if (captchaPassed) {
+            reapplyCaptchaTimestamp.current?.();
             formRef.current?.submit();
         } else {
             setCaptchaError(true);
@@ -169,7 +174,7 @@ export const ContactForm: FunctionComponent<Props> = ({
             <input
                 type="hidden"
                 name="captcha_settings"
-                value={`{"keyname":"${captchaSettingsKeyName}","fallback":"true","orgId":"${orgId}","ts":""}`}
+                value={`{"keyname":"${captchaSettingsKeyName}","fallback":"true","orgId":"${orgId}","ts":"${captchaTimestamp.current}"}`}
             />
             <input type="hidden" name="oid" value={orgId} />
             <input type="hidden" name="retURL" value={returnUrl} />

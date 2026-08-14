@@ -1,6 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import { Content as ModernSlaveryPolicies } from '@ag-website-shared/content/policies/modern-slavery.mdoc';
+import { POLICY_CONTENT, policyHeading } from '../policyContent';
 import styles from '../policyPage.module.scss';
 
 interface Props {
@@ -8,25 +9,25 @@ interface Props {
 }
 
 const { name } = Astro.props;
+// Heading and the financial-year/version/effective-date block are shared with the
+// /modern-slavery.md twin so the two cannot drift.
+const content = POLICY_CONTENT['modern-slavery'];
 ---
 
 <Layout
-    title={`${name}: Modern Slavery and
-Human Trafficking Statement`}
-    description="AG Grid Ltd has a zero-tolerance approach to modern slavery. We are committed to acting ethically and with integrity in all our business dealings and relationships and to implementing and enforcing effective systems and controls to ensure modern slavery is not taking place anywhere in our own business or in any of our supply chains."
+    title={`${name}: ${content.metaTitle}`}
+    description={content.description}
     showSearchBar={true}
     showDocsNav={false}
 >
     <div class:list={styles.policyPage}>
         <div class="layout-max-width-small">
-            <h1>AG Grid Modern Slavery and Human Trafficking Statement</h1>
+            <h1>{policyHeading('modern-slavery', name)}</h1>
             <hr />
 
             <header>
                 <div id="meta" class={styles.introduction}>
-                    <p><strong>For the Financial Year Ending 31 December 2026</strong></p>
-                    <p><strong>Version:</strong> 1.0</p>
-                    <p><strong>Effective Date:</strong> 01 January 2026</p>
+                    {content.meta.map((line) => <p set:html={line} />)}
                 </div>
 
                 <nav>
