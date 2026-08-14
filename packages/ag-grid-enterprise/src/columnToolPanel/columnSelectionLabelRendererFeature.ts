@@ -13,7 +13,7 @@ import { BeanStub, _addGridCommonParams } from 'ag-grid-community';
 const ColumnLabelRendererComponent: ComponentType<IColumnSelectionLabelRendererComp> = {
     name: 'columnLabelRenderer',
     optionalMethods: ['refresh'],
-    cellRenderer: true,
+    supportsJsFunction: true,
 };
 
 export function isColumnSelectionLabelRendererEnabled(definition: IColumnSelectionPanelParams): boolean {

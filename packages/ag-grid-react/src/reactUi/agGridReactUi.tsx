@@ -373,8 +373,8 @@ class ReactFrameworkComponentWrapper
                     break;
             }
         }
-        // only cell renderers and tool panel should use fallback methods
-        const suppressFallbackMethods = !componentType.cellRenderer && componentType.name !== 'toolPanel';
+        // only renderers supporting JavaScript functions and tool panels should use fallback methods
+        const suppressFallbackMethods = !componentType.supportsJsFunction && componentType.name !== 'toolPanel';
         return new ReactComponent(UserReactComponent, this.parent, componentType, suppressFallbackMethods);
     }
 }
