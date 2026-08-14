@@ -715,17 +715,23 @@ export class SetFilter<V = string>
     }
 
     private updateUiAfterMiniFilterChange(updateSelections: boolean, apply?: 'immediately' | 'debounce'): void {
+        let effectiveApply = apply;
         if (updateSelections) {
             const { excelMode, readOnly, model } = this.params;
             if (excelMode && !readOnly && this.miniFilterText == null) {
                 // reset to applied model
                 this.setModelAndRefresh(model?.values ?? null);
+                if (effectiveApply === 'immediately') {
+                    // the reset can land asynchronously (async values), when an immediate apply
+                    // would submit the pre-reset UI and bypass an active apply button
+                    effectiveApply = undefined;
+                }
             } else {
                 this.selectAllMatchingMiniFilter(true);
             }
         }
         this.checkAndRefreshVirtualList();
-        this.onUiChanged(updateSelections ? apply : 'prevent');
+        this.onUiChanged(updateSelections ? effectiveApply : 'prevent');
 
         this.showOrHideResults();
     }

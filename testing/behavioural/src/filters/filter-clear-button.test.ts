@@ -1,7 +1,9 @@
 import { fireEvent } from '@testing-library/dom';
 
-import type { GridApi } from 'ag-grid-community';
+import type { GridApi, ISetFilterParams, SetFilterValuesFuncParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import type { SetFilterHandler } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 import {
     ColumnFilterHarness,
@@ -15,7 +17,7 @@ const ROW_DATA = [{ country: 'Ireland' }, { country: 'Italy' }];
 
 describe('Filter input clear button', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule],
+        modules: [ClientSideRowModelModule, TextFilterModule, SetFilterModule],
     });
 
     beforeAll(() => {
@@ -80,5 +82,49 @@ describe('Filter input clear button', () => {
         expect(api.getColumnFilterModel('country')).toBeNull();
         expect(filterModifiedCount).toBe(1);
         expect(filterChangedCount).toBe(1);
+    });
+
+    test('excel-mode mini filter clear never applies pending selections, even mid values-refresh', async () => {
+        let capturedSuccess: ((values: string[]) => void) | undefined;
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        excelMode: 'windows',
+                        values: (params: SetFilterValuesFuncParams) => {
+                            capturedSuccess = params.success;
+                        },
+                    } as ISetFilterParams,
+                },
+            ],
+            rowData: ROW_DATA,
+        });
+
+        const harness = await ColumnFilterHarness.open(api, 'country');
+        capturedSuccess!(['Ireland', 'Italy']);
+        await asyncSetTimeout(0);
+
+        // type first (excel mode select-all-matching runs on typing), then make the pending change
+        await harness.miniFilterSearch('I');
+        await harness.toggleSetItem('Italy');
+        expect(api.getColumnFilterModel('country')).toBeNull();
+
+        // hold the next values load so the clear's reset-to-applied-model cannot land synchronously
+        capturedSuccess = undefined;
+        api.getColumnFilterHandler<SetFilterHandler>('country')!.refreshFilterValues();
+
+        const clearButton = document.querySelector<HTMLButtonElement>('.ag-mini-filter .ag-input-field-clear-button')!;
+        fireEvent.mouseDown(clearButton);
+        fireEvent.click(clearButton);
+        await asyncSetTimeout(0);
+
+        // the pending Apply/Cancel state must not be applied by the clear
+        expect(api.getColumnFilterModel('country')).toBeNull();
+
+        capturedSuccess!(['Ireland', 'Italy']);
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('country')).toBeNull();
     });
 });
