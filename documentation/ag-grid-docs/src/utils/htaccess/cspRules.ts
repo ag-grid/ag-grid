@@ -29,8 +29,10 @@ export type CspMode = 'report-only' | 'enforce';
  *   for the separately-managed SPA served under /ecommerce/, whose index.html carries
  *   inline scripts we do not own and part of which evaluates strings as JavaScript
  *   at runtime — see ECOMMERCE_PATH_CONDITION.
+ * - 'contact-form': the 'site' policy plus 'unsafe-eval', for the pages carrying the
+ *   Salesforce Web-to-Lead form — see CONTACT_FORM_PATH_CONDITION.
  */
-export type CspScope = 'site' | 'examples' | 'campaigns' | 'ecommerce';
+export type CspScope = 'site' | 'examples' | 'campaigns' | 'ecommerce' | 'contact-form';
 
 export interface CspOptions {
     env: CspEnv;
@@ -200,6 +202,15 @@ export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^(?:/archive/[^/]+)
 // force. No JS PATH_REGEXP counterpart because the dev/preview middleware never serves
 // /ecommerce/. AG-17134.
 export const ECOMMERCE_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/ecommerce/#';
+
+// The pages carrying the Salesforce Web-to-Lead form (ContactForm.tsx): /contact,
+// /about and /license-pricing. Scoped rather than site-wide because 'unsafe-eval' is a
+// keyword-source — CSP cannot bind it to google.com or salesforce.com, so granting it
+// grants it to every script on whichever pages it covers. Confining it to these three
+// keeps the rest of the site on the strict policy. AG-3390.
+// Anchored so it covers only these three pages, not their descendants: /contact/success
+// and /contact/failure carry no form and must not inherit 'unsafe-eval'.
+export const CONTACT_FORM_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(?:contact|about|license-pricing)/?$#';
 
 // Apache <If> expression matching the staging-only /branch-builds/ tree: a directory
 // of full per-branch documentation builds, preserved across deployments (backed up
@@ -388,6 +399,10 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
         // routes never reach the server, so 'unsafe-eval' cannot be path-scoped narrower
         // than the whole /ecommerce/ scope. See ECOMMERCE_PATH_CONDITION.
         directives['script-src'].push(UNSAFE_INLINE, UNSAFE_EVAL);
+    } else if (scope === 'contact-form') {
+        // Same as 'site' (inline scripts still authorised by hash, never 'unsafe-inline')
+        // plus 'unsafe-eval'. See CONTACT_FORM_PATH_CONDITION.
+        directives['script-src'].push(...SITE_SCRIPT_HASHES, UNSAFE_EVAL);
     } else if (env === 'dev') {
         // Dev server (Vite/Astro) injects its own inline scripts for HMR/hydration
         // that the static build does not; keep 'unsafe-inline' locally rather than
@@ -523,6 +538,24 @@ export function getEcommerceCspIfOverride(options: Omit<CspOptions, 'scope'>, mo
 }
 
 /**
+ * The `<If>` override adding 'unsafe-eval' to script-src for the Web-to-Lead form pages
+ * matched by CONTACT_FORM_PATH_CONDITION.
+ */
+export function getContactFormCspIfOverride(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
+    return getCspIfOverride(
+        CONTACT_FORM_PATH_CONDITION,
+        [
+            '# The Salesforce Web-to-Lead form pages (/contact, /about, /license-pricing).',
+            "# 'unsafe-eval' is a keyword-source, so CSP cannot scope it to google.com or",
+            '# salesforce.com — confining it to these paths keeps the rest of the site strict.',
+            "# Inline scripts stay hash-authorised here, exactly as under the 'site' policy.",
+        ],
+        { ...options, scope: 'contact-form' },
+        mode
+    );
+}
+
+/**
  * The `<If>` override that drops the CSP header entirely for the staging-only
  * /branch-builds/ tree matched by BRANCH_BUILDS_PATH_CONDITION.
  *
@@ -566,5 +599,7 @@ export function getScopedCspHtaccessBlock(options: Omit<CspOptions, 'scope'>, mo
         getCampaignsCspIfOverride(options, mode),
         '',
         getEcommerceCspIfOverride(options, mode),
+        '',
+        getContactFormCspIfOverride(options, mode),
     ].join('\n');
 }
