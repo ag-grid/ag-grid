@@ -43,11 +43,20 @@ name: GitHub issue AI triage
 # ============================================================================
 
 on:
-    # Auto-triage of new triage-labelled issues — DISABLED for the initial manual
-    # dogfood (run via workflow_dispatch first). Uncomment to go live once the
-    # dispatch + drag paths are validated.
-    # issues:
-    #     types: [opened, labeled]
+    # Auto-triage of new `triage`-labelled issues — LIVE (this is the go-live switch;
+    # it was commented out for the manual dogfood phase).
+    #
+    # `labeled` is needed as well as `opened` because the `triage` label is
+    # very often added a moment after the issue is filed, not at creation.
+    #
+    # ⚠️ The `labeled` half fires on ANY label being added, so the `run` job's gate
+    # additionally requires the ADDED label to be `triage` specifically. Without
+    # that, stamping any other label (`AG-NNNNN`, `waiting-for-repro`, `invalid`)
+    # on one of the ~64 pre-existing open `triage` issues would fire a full triage
+    # on it — bypassing the batch-selection rule, and re-triaging an issue that may
+    # already carry a reviewed verdict (which the pipeline would overwrite).
+    issues:
+        types: [opened, labeled]
     repository_dispatch:
         types: [gh-triage-resume, gh-triage-manual-resume, gh-triage-manual-browser-verify, gh-triage-manual-repro-rebuild]
     workflow_dispatch:
@@ -83,20 +92,98 @@ concurrency:
     cancel-in-progress: false
 
 env:
-    # Defaults to `latest`. A repository_dispatch (the JIRA `→ In Progress` drag)
-    # overrides via client_payload.channel; a workflow_dispatch via inputs.channel.
-    # During rollout/dogfood the JIRA rule sends "channel":"canary" so the drag runs
-    # the unpromoted action (canary dist-tag → `latest` only on promotion); drop the
-    # payload channel at activation so production drags run the promoted `latest`.
+    # Defaults to `latest`; a workflow_dispatch overrides via inputs.channel.
+    #
+    # For a repository_dispatch (the JIRA drag + the manual buttons) treat this as a
+    # FALLBACK only — the effective value comes from the `resolve-channel` job below,
+    # which reads the mapping ticket's own `channel-canary` pin so a ticket triaged on
+    # canary keeps resuming/executing on canary while production traffic runs latest.
+    # A workflow-level `env:` cannot reference a job output, which is why the jobs
+    # below read `needs.resolve-channel.outputs.channel` and fall back to this.
     DEV_PROMPTS_CHANNEL: ${{ github.event.client_payload.channel || inputs.channel || 'latest' }}
 
 jobs:
+    # -------------------------------------------------- resolve-channel
+    # Which @ag-grid/dev-prompts dist-tag should this dispatch run?
+    #
+    # The drag's payload comes from ONE Jira Automation rule, so it cannot carry a
+    # per-ticket channel — which meant production and canary dry-run traffic could
+    # not coexist on the board. Instead the pipeline stamps the channel it ran from
+    # onto the mapping ticket as a `channel-canary` label, and this job reads it back.
+    # Present ⇒ canary, absent ⇒ latest. See the github-triage-pipeline action's
+    # `core/channel-label.ts`.
+    #
+    # The guarantee is release-channel continuity, NOT build immutability: dist-tags
+    # move (canary on every publish, latest nightly), so a later drag runs newer code
+    # from the SAME channel. That is deliberate — a version pin would freeze a ticket
+    # triaged before a fix onto the broken code.
+    #
+    # Deliberately a raw REST GET rather than the pipeline bundle: this has to decide
+    # WHICH channel to install, so it cannot itself depend on an installed package.
+    # `labels` is a system field, so no field-id resolution is needed.
+    #
+    # MIGRATION: while the Jira rule still sends "channel":"canary" that payload wins,
+    # so behaviour is unchanged and the pin is inert. Removing the `channel` field from
+    # the rule body is the switch that hands control to the pin.
+    resolve-channel:
+        if: github.event_name == 'repository_dispatch' && github.event.client_payload.issue_key != ''
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions: {}
+        outputs:
+            channel: ${{ steps.r.outputs.channel }}
+        steps:
+            - id: r
+              shell: bash
+              env:
+                  # Via env, never string-interpolated into the script body.
+                  ISSUE_KEY: ${{ github.event.client_payload.issue_key }}
+                  PAYLOAD_CHANNEL: ${{ github.event.client_payload.channel }}
+                  JIRA_EMAIL: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  JIRA_API_TOKEN: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  JIRA_SITE_URL: ${{ vars.JIRA_SITE_URL }}
+              run: |
+                  set -uo pipefail
+
+                  emit() { echo "channel=$1" >> "$GITHUB_OUTPUT"; echo "resolved channel: $1 ($2)"; }
+
+                  # An explicit payload channel is an intentional override and wins.
+                  if [ -n "${PAYLOAD_CHANNEL:-}" ]; then
+                      emit "$PAYLOAD_CHANNEL" "explicit client_payload.channel"
+                      exit 0
+                  fi
+
+                  if ! labels=$(curl -sS --fail --max-time 20 \
+                        -u "$JIRA_EMAIL:$JIRA_API_TOKEN" \
+                        -H 'Accept: application/json' \
+                        "$JIRA_SITE_URL/rest/api/3/issue/$ISSUE_KEY?fields=labels" \
+                        | jq -r '.fields.labels[]? // empty'); then
+                      # FAIL-SAFE to production. An unreadable ticket must not silently
+                      # route a production drag to canary; a dry run losing its pin is
+                      # the cheaper, visible failure.
+                      echo "::warning title=channel-pin::could not read labels for $ISSUE_KEY — falling back to latest"
+                      emit latest "label read failed"
+                      exit 0
+                  fi
+
+                  if printf '%s\n' "$labels" | grep -qx 'channel-canary'; then
+                      emit canary "channel-canary pin present"
+                  else
+                      emit latest "no pin"
+                  fi
+
     # -------------------------------------------------- preflight
     # Only on the JIRA `→ In Progress` drag. Mechanical (no agent): reads the
     # AITGH ticket's SUGGESTED-ACTION-READY marker + comments + bot-actor and
     # emits `stage` (execute | resume | '' for suppress).
     preflight:
-        if: github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-resume'
+        needs: [resolve-channel]
+        # `!cancelled()` because resolve-channel is SKIPPED for every non-dispatch
+        # event, and a skipped dependency would otherwise skip this job regardless of
+        # the condition below (which is already false in exactly those cases).
+        if: |
+            !cancelled() &&
+            github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-resume'
         runs-on: ubuntu-latest
         timeout-minutes: 5
         permissions:
@@ -112,7 +199,7 @@ jobs:
             - name: Install @ag-grid/dev-prompts
               uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
               with:
-                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
             - id: pf
               uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-resume-preflight
               with:
@@ -130,11 +217,11 @@ jobs:
     # stage directly, no preflight/routing involved: the PM's button click IS
     # the unambiguous intent signal).
     run:
-        needs: [preflight]
+        needs: [preflight, resolve-channel]
         if: |
             !cancelled() &&
             (
-              (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'triage') && github.event.issue.state == 'open')
+              (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'triage') && github.event.issue.state == 'open' && (github.event.action == 'opened' || github.event.label.name == 'triage'))
               || github.event_name == 'workflow_dispatch'
               || (github.event_name == 'repository_dispatch' && needs.preflight.outputs.stage != '')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-resume')
@@ -159,7 +246,7 @@ jobs:
             - name: Install @ag-grid/dev-prompts
               uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
               with:
-                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
             - id: pipeline
               uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
               with:
@@ -176,6 +263,10 @@ jobs:
                   # regardless of preflight's own behaviour.
                   stage: ${{ (github.event.action == 'gh-triage-manual-resume' && 'resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'repro-rebuild') || needs.preflight.outputs.stage || inputs.stage || 'triage' }}
                   product: grid
+                  # Provenance for the pin: `post` stamps this channel onto the
+                  # mapping ticket so `resolve-channel` can route the NEXT drag to the
+                  # same channel. Must match the channel actually installed above.
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
                   gh_issue: ${{ github.event.issue.number || github.event.client_payload.gh_issue || inputs.gh_issue }}
                   issue_key: ${{ needs.preflight.outputs.issue_key || github.event.client_payload.issue_key || inputs.issue_key }}
                   anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -210,7 +301,19 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            issues: write
+            # NO `issues: write` — deliberately narrower than the `run` job.
+            #
+            # These two stages navigate UNTRUSTED, reporter-authored repro pages, and
+            # they perform ZERO GitHub writes: every write they cause is the pipeline's
+            # own Jira write, authenticated by JIRA_API_TOKEN. Inheriting `issues: write`
+            # therefore handed an injectable agent a credential it never uses — and
+            # "the agent has no write tool" does not mean the token is out of reach,
+            # since it can read the environment and call the GitHub API directly.
+            # Raised twice as a P0 on ag-dev-prompts#840; the full browser-stage
+            # hardening stays deferred for the pilot, but an UNUSED permission is not
+            # hardening work, it is a mistake. See ag-dev-prompts
+            # docs/github-triage-deferred-hardening.md section 1.
+            issues: read
             packages: read
         outputs:
             reproduces: ${{ steps.pipeline.outputs.reproduces }}
@@ -248,7 +351,19 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            issues: write
+            # NO `issues: write` — deliberately narrower than the `run` job.
+            #
+            # These two stages navigate UNTRUSTED, reporter-authored repro pages, and
+            # they perform ZERO GitHub writes: every write they cause is the pipeline's
+            # own Jira write, authenticated by JIRA_API_TOKEN. Inheriting `issues: write`
+            # therefore handed an injectable agent a credential it never uses — and
+            # "the agent has no write tool" does not mean the token is out of reach,
+            # since it can read the environment and call the GitHub API directly.
+            # Raised twice as a P0 on ag-dev-prompts#840; the full browser-stage
+            # hardening stays deferred for the pilot, but an UNUSED permission is not
+            # hardening work, it is a mistake. See ag-dev-prompts
+            # docs/github-triage-deferred-hardening.md section 1.
+            issues: read
             packages: read
         steps:
             - uses: actions/checkout@v4

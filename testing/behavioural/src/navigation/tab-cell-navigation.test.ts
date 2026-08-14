@@ -1,7 +1,7 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { CellFocusedEvent, ColDef, GridApi, GridOptions, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
 
-import { TestGridsManager } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
 
 interface RowData {
@@ -80,5 +80,55 @@ describe('Tab Cell Navigation', () => {
         dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
         expect(getFocusedRowIndex(api)).toBe(0);
         expect(getFocusedColId(api)).toBe('a');
+    });
+
+    test('Tab off last cell of grid does not re-fire cellFocused', async () => {
+        const focusedCols: (string | undefined)[] = [];
+        api.addEventListener('cellFocused', (e: CellFocusedEvent) => {
+            const col = e.column;
+            focusedCols.push(typeof col === 'string' ? col : col?.getColId());
+        });
+
+        api.setFocusedCell(2, 'c');
+        await asyncSetTimeout(0);
+        const focusEventsAfterInitialFocus = focusedCols.length;
+
+        dispatchKeyDown(KeyCode.TAB);
+        await asyncSetTimeout(0);
+
+        expect(focusedCols.length).toBe(focusEventsAfterInitialFocus);
+    });
+
+    test('Tab off last cell whose renderer child holds focus re-anchors focus to the cell', async () => {
+        api.setGridOption('columnDefs', [
+            { field: 'a', colId: 'a' },
+            { field: 'b', colId: 'b' },
+            { field: 'c', colId: 'c', cellRenderer: (p: ICellRendererParams) => `<button>${p.value}</button>` },
+        ]);
+        await asyncSetTimeout(0);
+
+        const focusedCols: (string | undefined)[] = [];
+        api.addEventListener('cellFocused', (e: CellFocusedEvent) => {
+            const col = e.column;
+            focusedCols.push(typeof col === 'string' ? col : col?.getColId());
+        });
+
+        api.setFocusedCell(2, 'c');
+        await asyncSetTimeout(0);
+
+        const button = Array.from(document.querySelectorAll('button')).find((b) => b.textContent === 'c2');
+        if (!button) {
+            throw new Error('Expected a focusable button in the last cell');
+        }
+        button.focus();
+        const focusEventsBeforeTab = focusedCols.length;
+
+        dispatchKeyDown(KeyCode.TAB);
+        await asyncSetTimeout(0);
+
+        // focus was on the button, not the cell itself, so Tab must pull it back to the cell to
+        // anchor native exit rather than moving between the cell's focusable descendants.
+        expect(focusedCols.length).toBe(focusEventsBeforeTab + 1);
+        expect(focusedCols[focusedCols.length - 1]).toBe('c');
     });
 });

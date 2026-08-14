@@ -18,14 +18,14 @@ test.agExample(import.meta, () => {
 
             await page.evaluate(() => {
                 const grid = document.querySelector('.ag-root-wrapper')!;
-                const after = document.createElement('button');
+                const after = document.createElement('input');
                 const popupParent = document.createElement('div');
-                const final = document.createElement('button');
+                const final = document.createElement('input');
                 after.id = 'focus-after-grid';
-                after.textContent = 'After grid';
+                after.value = 'After grid';
                 popupParent.id = 'external-popup-parent';
                 final.id = 'focus-after-popup-parent';
-                final.textContent = 'After popup parent';
+                final.value = 'After popup parent';
                 grid.after(after, popupParent, final);
             });
 

@@ -62,6 +62,34 @@ export async function routeExampleAssetsFromDisk(page: Page): Promise<void> {
     );
 }
 
+const PDF_FONTS_URL_PREFIX = '/fonts/pdf-export/';
+const PDF_FONTS_DIR = fileURLToPath(new URL('../../../../public/fonts/pdf-export/', import.meta.url));
+
+/**
+ * The PDF export examples fetch their fonts with a root-absolute path (`/fonts/pdf-export/...`), which is
+ * correct on the real site but 404s on a branch build served under a path prefix - and a font that fails to
+ * load leaves the example unable to produce a download at all. The files ship in `public/fonts/pdf-export`,
+ * so serve them from disk, exactly as `routeExampleAssetsFromDisk` does for example data: they are static
+ * site assets rather than part of the build under test, so this does not weaken what the run verifies.
+ */
+export async function routePdfFontsFromDisk(page: Page, siteOrigin: string): Promise<void> {
+    await page.route(
+        (url) => url.origin === siteOrigin && url.pathname.includes(PDF_FONTS_URL_PREFIX),
+        whileTheRequestMatters(async (route) => {
+            const { pathname } = new URL(route.request().url());
+            const name = pathname.slice(pathname.indexOf(PDF_FONTS_URL_PREFIX) + PDF_FONTS_URL_PREFIX.length);
+            const filePath = join(PDF_FONTS_DIR, name);
+            if (!filePath.startsWith(PDF_FONTS_DIR) || !(await isFile(filePath))) {
+                await route.fallback();
+                return;
+            }
+            // Stated rather than inferred from the extension: the examples read the response as an
+            // ArrayBuffer, and a browser that is strict about the type would reject a wrong guess.
+            await route.fulfill({ path: filePath, contentType: 'font/ttf' });
+        })
+    );
+}
+
 const MIRROR_DIR = fileURLToPath(new URL('../../../../.playwright-network-mirror/', import.meta.url));
 
 /** One file per entry so a single rename publishes it whole; the first newline ends the metadata. */

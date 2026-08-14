@@ -3,17 +3,29 @@ import { _parseBigIntOrNull } from 'ag-stack';
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
+import type { OptionsFactory } from '../optionsFactory';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { BigIntFilterModelFormatter } from './bigIntFilterModelFormatter';
 import { getAllowedCharPattern } from './bigIntFilterUtils';
-import type { BigIntFilterModel, BigIntFilterParams, IBigIntFloatingFilterParams } from './iBigIntFilter';
+import type {
+    BigIntFilterModel,
+    BigIntFilterParams,
+    IBigIntFilterParams,
+    IBigIntFloatingFilterParams,
+} from './iBigIntFilter';
 
 export class BigIntFloatingFilter extends TextInputFloatingFilter<IBigIntFloatingFilterParams, BigIntFilterModel> {
-    protected readonly FilterModelFormatterClass = BigIntFilterModelFormatter;
     private allowedCharPattern: string | null;
     private bigintParser: BigIntFilterParams['bigintParser'] | undefined;
     protected readonly filterType = 'bigint';
     protected readonly defaultOptions = DEFAULT_BIGINT_FILTER_OPTIONS;
+
+    protected createModelFormatter(
+        optionsFactory: OptionsFactory,
+        filterParams: IBigIntFilterParams
+    ): BigIntFilterModelFormatter {
+        return new BigIntFilterModelFormatter(optionsFactory, filterParams);
+    }
 
     protected override updateParams(params: IBigIntFloatingFilterParams): void {
         const filterParams = params.filterParams as BigIntFilterParams;

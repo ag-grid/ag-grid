@@ -109,6 +109,12 @@
       "command": "tsx scripts/csp/preview-csp.ts --port=${PORT}",
       "options": {
         "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": { "args": "--env staging" },
+        "production": { "args": "--env production" },
+        "report-only": { "args": "--mode report-only" },
+        "staging-report-only": { "args": "--env staging --mode report-only" }
       }
     },
     "lint": {

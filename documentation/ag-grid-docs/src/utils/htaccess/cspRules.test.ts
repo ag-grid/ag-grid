@@ -196,6 +196,66 @@ describe('cspRules', () => {
         });
     });
 
+    describe('Enzuzo → GTM consent bridge', () => {
+        it('authorises the inline bridge by hash in the site scope', () => {
+            // Enzuzo injects this inline when the visitor makes a consent choice, to pass the
+            // decision to GTM. Blocked before this hash was added, so consent never reached GTM.
+            const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(site).toContain("'sha256-NSYHvOQXo5WNxDt0/+l9AbSTx6N4CkkrbuSSa6ERhlo='");
+        });
+
+        it('derives that hash from the recorded script source', () => {
+            // The digest is reproducible from ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT (verified against
+            // the browser's CSP violation report), so the source and the policy cannot drift.
+            // If this fails, the recorded source was edited — re-check it against a real browser
+            // rather than just updating the expected digest.
+            expect(sha256Source('if (window.enzuzoGtmConsent) { window.enzuzoGtmConsent(); }')).toBe(
+                "'sha256-NSYHvOQXo5WNxDt0/+l9AbSTx6N4CkkrbuSSa6ERhlo='"
+            );
+        });
+
+        it('is site-scope only, since examples keeps unsafe-inline', () => {
+            const examples = getCspDirectives({ env: 'production', scope: 'examples' })['script-src'];
+            expect(examples).not.toContain("'sha256-NSYHvOQXo5WNxDt0/+l9AbSTx6N4CkkrbuSSa6ERhlo='");
+        });
+    });
+
+    describe('UTM attribution (GTM Custom HTML tags)', () => {
+        it('allows the Make webhook in connect-src', () => {
+            // The form-submit tag POSTs the stashed first/last-touch UTMs with fetch().
+            expect(getCspDirectives({ env: 'production', scope: 'site' })['connect-src']).toContain(
+                'https://hook.eu2.make.com'
+            );
+        });
+
+        it('applies in every scope, since GTM loads the tags site-wide', () => {
+            const scopes = ['site', 'examples', 'campaigns', 'ecommerce'] as const;
+            for (let i = 0, len = scopes.length; i < len; ++i) {
+                expect(getCspDirectives({ env: 'production', scope: scopes[i] })['connect-src']).toContain(
+                    'https://hook.eu2.make.com'
+                );
+            }
+        });
+
+        it('does not grant the webhook script-src (it is a fetch target, not a script source)', () => {
+            expect(getCspDirectives({ env: 'production', scope: 'site' })['script-src']).not.toContain(
+                'https://hook.eu2.make.com'
+            );
+        });
+
+        it('authorises both capture tags by hash in the site scope', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(site).toContain("'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='"); // page-view capture
+            expect(site).toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='"); // webhook POST
+        });
+
+        it('is site-scope only, since examples keeps unsafe-inline', () => {
+            const examples = getCspDirectives({ env: 'production', scope: 'examples' })['script-src'];
+            expect(examples).not.toContain("'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='");
+            expect(examples).not.toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='");
+        });
+    });
+
     describe('RTI-3353: campaigns path matching covers archived campaign pages', () => {
         // The live campaign page and its archived snapshots both embed the Bryntum
         // demo, so both must resolve to the campaigns scope. An archived campaign path
