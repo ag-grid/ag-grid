@@ -16,14 +16,14 @@ const ColumnLabelRendererComponent: ComponentType<IColumnSelectionLabelRendererC
     cellRenderer: true,
 };
 
+export function isColumnSelectionLabelRendererEnabled(definition: IColumnSelectionPanelParams): boolean {
+    return definition.columnLabelRenderer != null || definition.columnLabelRendererSelector != null;
+}
+
 export class ColumnSelectionLabelRendererFeature extends BeanStub {
     private renderer: IColumnSelectionLabelRendererComp | null = null;
     private rendererClass: any = null;
     private rendererVersion = 0;
-
-    public static isEnabled(definition: IColumnSelectionPanelParams): boolean {
-        return definition.columnLabelRenderer != null || definition.columnLabelRendererSelector != null;
-    }
 
     constructor(
         private readonly eLabel: HTMLElement,

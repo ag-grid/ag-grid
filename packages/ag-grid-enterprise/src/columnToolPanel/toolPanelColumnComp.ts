@@ -24,7 +24,10 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import { ColumnSelectionLabelRendererFeature } from './columnSelectionLabelRendererFeature';
+import {
+    ColumnSelectionLabelRendererFeature,
+    isColumnSelectionLabelRendererEnabled,
+} from './columnSelectionLabelRendererFeature';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { createPivotStateForToolPanel, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
@@ -79,7 +82,7 @@ export class ToolPanelColumnComp extends Component {
         checkboxGui.after(eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
-        if (ColumnSelectionLabelRendererFeature.isEnabled(this.params)) {
+        if (isColumnSelectionLabelRendererEnabled(this.params)) {
             this.labelRendererFeature = this.createManagedBean(
                 new ColumnSelectionLabelRendererFeature(
                     eLabel,
