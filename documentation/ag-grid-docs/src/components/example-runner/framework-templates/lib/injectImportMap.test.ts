@@ -31,15 +31,17 @@ const TEMPLATE = JSON.stringify({
  */
 const stubPage = (
     search: string,
-    {
-        nonce,
-        template = TEMPLATE,
-        defaultProd = true,
-    }: { nonce?: string; template?: string; defaultProd?: boolean } = {}
+    { nonce, template = TEMPLATE, defaultProd }: { nonce?: string; template?: string; defaultProd?: boolean } = {}
 ) => {
     const head: any[] = [];
     const body: any[] = [];
-    const options = JSON.stringify({ template, defaultVersion: '19.2.1', defaultProd });
+    // Omitted rather than defaulted when the test names no default, so that a page from before
+    // the script read one can be stubbed
+    const options = JSON.stringify({
+        template,
+        defaultVersion: '19.2.1',
+        ...(defaultProd === undefined ? {} : { defaultProd }),
+    });
 
     vi.stubGlobal('window', { location: { search } });
     vi.stubGlobal('document', {
@@ -65,7 +67,7 @@ afterEach(() => vi.unstubAllGlobals());
 
 describe('inject-import-map.js', () => {
     test('registers the pinned version when the URL requests none', () => {
-        const { head } = stubPage('?enableTestIds=true');
+        const { head } = stubPage('?enableTestIds=true', { defaultProd: true });
 
         injectImportMap();
 
@@ -96,6 +98,15 @@ describe('inject-import-map.js', () => {
         injectImportMap();
 
         expect(registeredImports(head).react).toBe('https://esm.sh/react@19.2.1?dev');
+    });
+
+    test('falls back to the production build for a page that names no default', () => {
+        // The script is served from a mutable URL, so it outlives the pages that carry it
+        const { head } = stubPage('');
+
+        injectImportMap();
+
+        expect(registeredImports(head).react).toBe('https://esm.sh/react@19.2.1');
     });
 
     test('overrides a page defaulting to the development build with prod=true', () => {

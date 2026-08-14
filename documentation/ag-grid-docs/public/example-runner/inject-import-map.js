@@ -29,8 +29,10 @@
     var urlParams = new URLSearchParams(window.location.search);
     var requestedVersion = urlParams.get(VERSION_PARAM);
     var requestedProd = urlParams.get(PROD_PARAM);
-    // The page's default build unless the URL asks for one
-    var isProd = requestedProd === null ? options.defaultProd : requestedProd !== 'false';
+    // The page's default build unless the URL asks for one. A page that names no default -- an
+    // export taken before this script asked for one -- gets the production build, since this is
+    // served from a mutable URL and so has to keep reading pages older than itself.
+    var isProd = requestedProd === null ? options.defaultProd !== false : requestedProd !== 'false';
     var version = options.defaultVersion;
 
     // An empty `?version=` is a version that is not a version, not an absent one, so it fails
