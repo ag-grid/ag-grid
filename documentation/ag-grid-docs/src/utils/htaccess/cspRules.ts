@@ -29,10 +29,8 @@ export type CspMode = 'report-only' | 'enforce';
  *   for the separately-managed SPA served under /ecommerce/, whose index.html carries
  *   inline scripts we do not own and part of which evaluates strings as JavaScript
  *   at runtime — see ECOMMERCE_PATH_CONDITION.
- * - 'contact-form': the 'site' policy plus 'unsafe-eval', for the pages carrying the
- *   Salesforce Web-to-Lead form — see CONTACT_FORM_PATH_CONDITION.
  */
-export type CspScope = 'site' | 'examples' | 'campaigns' | 'ecommerce' | 'contact-form';
+export type CspScope = 'site' | 'examples' | 'campaigns' | 'ecommerce';
 
 export interface CspOptions {
     env: CspEnv;
@@ -112,19 +110,39 @@ const ASTRO_HYDRATION_SCRIPT_HASHES = [
     "'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='", // <astro-island> hydration runtime
 ];
 
-// SHA-256 of the inline ZoomInfo (WebSights) bootstrap that the shared Google Tag
-// Manager container injects as a Custom HTML tag once the visitor accepts functional
-// cookie consent. Unlike the scripts above, this one is authored in GTM, not this
-// repo — so the value is taken from the browser's CSP violation report, NOT by
-// hashing the GTM source (GTM normalises the injected bytes, so the source does not
-// reproduce this digest).
+// Inline scripts injected by third parties — the shared Google Tag Manager container and the
+// Enzuzo cookie banner — rather than rendered by this repo, authorised by hash so the site
+// scope can stay free of 'unsafe-inline'.
 //
-// FRAGILE — this pins ZoomInfo's exact bytes. If the ZoomInfo tag in GTM is edited,
-// or ZoomInfo regenerates its loader snippet, the hash stops matching and ZoomInfo
-// silently fails to load for consenting users. The GTM tag carries a note pointing
-// back here; if it changes, replace this with the new console-reported hash (here and
-// in the ag-studio / ag-charts CSPs — the GTM container is shared). AG-17134.
+// FRAGILE by nature: each pins another party's exact bytes, so editing the tag or snippet
+// stops it running, silently. To re-derive a digest take it from the browser's CSP violation
+// report, or hash the tag's `vtp_html` string in the gtm.js payload — GTM minifies the body,
+// so hashing what is typed into the GTM UI will not reproduce it. The GTM container is shared,
+// so a changed digest must be updated in the ag-charts and ag-studio CSPs too.
+//
+// A GTM tag is hashable only while it interpolates NO GTM variable: macro values are
+// substituted into the body before injection, so one `{{…}}` reference makes the bytes vary
+// per request and no single hash can cover them. In the container payload a hashable tag's
+// `vtp_html` is a plain JSON string, whereas an interpolating one is a
+// ["template", …, ["macro",N], …] composition — the tell that its hash cannot be pinned.
+
+// ZoomInfo (WebSights) bootstrap, injected once the visitor accepts functional cookie consent.
+// The GTM tag carries a note pointing back here. AG-17134.
 const GTM_ZOOMINFO_HASH = "'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='";
+
+// Hands the visitor's consent choice from the Enzuzo banner to GTM. Recorded as a source
+// string rather than an opaque digest because it is short enough to read, and cspRules.test.ts
+// asserts the string still hashes to the browser-reported value so the two cannot drift. It is
+// a verbatim copy of Enzuzo's bytes, NOT a source of truth like the DARK_MODE_INIT_SCRIPT
+// constants this repo actually renders.
+const ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT = 'if (window.enzuzoGtmConsent) { window.enzuzoGtmConsent(); }';
+
+// UTM attribution: a page-view tag stashing first/last-touch UTMs in localStorage, and an
+// all-pages tag that installs one `submit` listener and POSTs them to MAKE_WEBHOOK_HOST. Both
+// read location.search via URLSearchParams and reach the form through the submit event's
+// target, which is what keeps them free of the interpolation that would unpin these digests.
+const GTM_UTM_CAPTURE_HASH = "'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='";
+const GTM_UTM_WEBHOOK_HASH = "'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='";
 
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
@@ -132,6 +150,9 @@ const SITE_SCRIPT_HASHES = [
     hashInlineScript(KBD_PLATFORM_INIT_SCRIPT),
     ...ASTRO_HYDRATION_SCRIPT_HASHES,
     GTM_ZOOMINFO_HASH,
+    hashInlineScript(ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT),
+    GTM_UTM_CAPTURE_HASH,
+    GTM_UTM_WEBHOOK_HASH,
 ];
 
 // Enzuzo, the cookie-consent banner that replaces OneTrust. Like OneTrust before it,
@@ -165,6 +186,38 @@ const SITE_SCRIPT_HASHES = [
 // string-bodied event handlers.
 const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
 const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
+
+// The LinkedIn Insight Tag (LinkedIn Ads conversion tracking and website demographics).
+// Like ZoomInfo and Enzuzo, it is a tag in the shared Google Tag Manager container rather
+// than markup in this repo, so nothing here references these origins directly — the CSP is
+// the only place the site declares them.
+//
+//  - snap.licdn.com serves the tag. /li.lms-analytics/insight.min.js is only a router: it
+//    injects insight.beta.min.js or insight.old.min.js from the same origin depending on the
+//    data-partner id. Both are external <script src>, so no script-src hash is needed
+//    (contrast GTM_ZOOMINFO_HASH).
+//  - px.ads.linkedin.com is the only origin either payload contacts. Its /collect and
+//    /insight_tag_errors.gif endpoints are image pixels, which the permissive img-src already
+//    covers, but the website-actions gateway (SEND_EVENT '/wa/', sent via sendBeacon) and
+//    /attribution_trigger (fetch) are governed by connect-src.
+//
+// Deliberately NOT allowed, despite all appearing on LinkedIn's published required-domains
+// list: px4.ads.linkedin.com, dc.ads.linkedin.com, p.adsymptotic.com, the linkedin.oribi.io
+// hosts and the legacy sjs.bizographics.com loader. Parsing every string literal in both
+// payloads turns up none of them — the only 'oribi' strings are a DOM event name and a
+// storage key, not hosts. Pixel hosts reached by server-side redirect stay covered by
+// img-src; add a script-src/connect-src entry only if a violation actually shows up.
+const LINKEDIN_SDK_HOST = 'https://snap.licdn.com';
+const LINKEDIN_BEACON_HOST = 'https://px.ads.linkedin.com';
+
+// The Make (formerly Integromat) webhook that receives UTM attribution, POSTed with fetch()
+// on form submit by the GTM tag behind GTM_UTM_WEBHOOK_HASH. Nothing here references the
+// origin directly, so — as with Enzuzo and LinkedIn — the CSP is the only place the site
+// declares it. connect-src only: the tag itself is covered by that hash, not by an origin.
+//
+// Regional host — Make gives each account a zone-specific webhook domain (eu2 here), so
+// this changes if the automation is recreated in another zone.
+const MAKE_WEBHOOK_HOST = 'https://hook.eu2.make.com';
 
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
 // demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
@@ -202,15 +255,6 @@ export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^(?:/archive/[^/]+)
 // force. No JS PATH_REGEXP counterpart because the dev/preview middleware never serves
 // /ecommerce/. AG-17134.
 export const ECOMMERCE_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/ecommerce/#';
-
-// The pages carrying the Salesforce Web-to-Lead form (ContactForm.tsx): /contact,
-// /about and /license-pricing. Scoped rather than site-wide because 'unsafe-eval' is a
-// keyword-source — CSP cannot bind it to google.com or salesforce.com, so granting it
-// grants it to every script on whichever pages it covers. Confining it to these three
-// keeps the rest of the site on the strict policy. AG-3390.
-// Anchored so it covers only these three pages, not their descendants: /contact/success
-// and /contact/failure carry no form and must not inherit 'unsafe-eval'.
-export const CONTACT_FORM_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(?:contact|about|license-pricing)/?$#';
 
 // Apache <If> expression matching the staging-only /branch-builds/ tree: a directory
 // of full per-branch documentation builds, preserved across deployments (backed up
@@ -302,6 +346,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://cdnjs.cloudflare.com',
             'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
             'https://*.zoominfo.com', // ZoomInfo FormComplete
+            LINKEDIN_SDK_HOST, // LinkedIn Insight Tag SDK (injected via GTM)
             'https://www.google.com', // reCAPTCHA
             'https://www.gstatic.com', // reCAPTCHA
             'https://apis.google.com', // Firebase Auth (ecommerce checkout): GAPI client loads the auth iframe
@@ -351,10 +396,12 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://cdnjs.cloudflare.com', // example-runner legacy deps (XHR)
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
+            LINKEDIN_BEACON_HOST, // LinkedIn Insight Tag: website-actions beacon and attribution-trigger fetch
             'https://www.google.com', // reCAPTCHA (api2/clr XHR)
             'https://*.onetrust.com', // OneTrust geolocation + consent-receipt endpoints
             ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
             ENZUZO_GVL_HOST, // Enzuzo-hosted IAB TCF Global Vendor List
+            MAKE_WEBHOOK_HOST, // UTM-attribution POST on form submit (injected via GTM)
             'https://www.googleapis.com', // Firebase Auth (ecommerce checkout): identitytoolkit REST
             'https://securetoken.googleapis.com', // Firebase Auth ID-token refresh
             trialFormOrigin,
@@ -399,10 +446,6 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
         // routes never reach the server, so 'unsafe-eval' cannot be path-scoped narrower
         // than the whole /ecommerce/ scope. See ECOMMERCE_PATH_CONDITION.
         directives['script-src'].push(UNSAFE_INLINE, UNSAFE_EVAL);
-    } else if (scope === 'contact-form') {
-        // Same as 'site' (inline scripts still authorised by hash, never 'unsafe-inline')
-        // plus 'unsafe-eval'. See CONTACT_FORM_PATH_CONDITION.
-        directives['script-src'].push(...SITE_SCRIPT_HASHES, UNSAFE_EVAL);
     } else if (env === 'dev') {
         // Dev server (Vite/Astro) injects its own inline scripts for HMR/hydration
         // that the static build does not; keep 'unsafe-inline' locally rather than
@@ -538,24 +581,6 @@ export function getEcommerceCspIfOverride(options: Omit<CspOptions, 'scope'>, mo
 }
 
 /**
- * The `<If>` override adding 'unsafe-eval' to script-src for the Web-to-Lead form pages
- * matched by CONTACT_FORM_PATH_CONDITION.
- */
-export function getContactFormCspIfOverride(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
-    return getCspIfOverride(
-        CONTACT_FORM_PATH_CONDITION,
-        [
-            '# The Salesforce Web-to-Lead form pages (/contact, /about, /license-pricing).',
-            "# 'unsafe-eval' is a keyword-source, so CSP cannot scope it to google.com or",
-            '# salesforce.com — confining it to these paths keeps the rest of the site strict.',
-            "# Inline scripts stay hash-authorised here, exactly as under the 'site' policy.",
-        ],
-        { ...options, scope: 'contact-form' },
-        mode
-    );
-}
-
-/**
  * The `<If>` override that drops the CSP header entirely for the staging-only
  * /branch-builds/ tree matched by BRANCH_BUILDS_PATH_CONDITION.
  *
@@ -599,7 +624,5 @@ export function getScopedCspHtaccessBlock(options: Omit<CspOptions, 'scope'>, mo
         getCampaignsCspIfOverride(options, mode),
         '',
         getEcommerceCspIfOverride(options, mode),
-        '',
-        getContactFormCspIfOverride(options, mode),
     ].join('\n');
 }
