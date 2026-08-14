@@ -6,18 +6,19 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Inventory } from '@components/demos/examples/inventory';
 import LogoMark from '@components/logo/LogoMark';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { demoContent } from '@utils/markdown-pages/buildDemoMarkdown';
-
-// Copy is shared with the /example-inventory.md twin so the two cannot drift.
-const content = demoContent('inventory');
 ---
 
-<DemosLayout title={content.metaTitle} description={content.metaDescription}>
+<DemosLayout title="Demo - Inventory Management" description="Inventory data example to view and manage products.">
     <div class={styles.topHeader}>
         <div>
             <div class={styles.headerTitle}>
-                <h1 class={styles.headerHeading}>{content.heading}</h1>
-                <a class="button-secondary" target="_blank" rel="noopener noreferrer" href={content.githubUrl}>
+                <h1 class={styles.headerHeading}>Inventory</h1>
+                <a
+                    class="button-secondary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://github.com/ag-grid/ag-grid-demos/tree/main/inventory"
+                >
                     <Icon name="github" svgClasses={styles.githubIcon} />
                     <span>See On GitHub</span>
                 </a>
@@ -25,10 +26,10 @@ const content = demoContent('inventory');
                     <span>Contact Us</span>
                 </a>
             </div>
-            <p>{content.bodyText}</p>
+            <p>Inventory data example to view and manage products.</p>
         </div>
 
-        <DemoTabs activeTab={content.activeTab} />
+        <DemoTabs activeTab="inventory" />
     </div>
     <div class={styles.layout}>
         <div class={styles.layoutWrapper}>

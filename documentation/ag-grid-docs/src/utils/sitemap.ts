@@ -49,12 +49,9 @@ const isNonPublicContent = (page: string) => {
     return (
         page.includes('pdf-export') ||
         page.endsWith('/style-guide/') ||
-        // Post-submission confirmation pages. These are already disallowed in robots.txt (see
-        // getSitemapIgnorePaths), so listing them in the sitemap contradicts it and Search Console
-        // reports them as "submitted URL blocked by robots.txt".
+        // Contact form result pages
         page.endsWith('/contact/failure/') ||
-        page.endsWith('/contact/success/') ||
-        page.endsWith('/privacy/your-choice/')
+        page.endsWith('/contact/success/')
     );
 };
 

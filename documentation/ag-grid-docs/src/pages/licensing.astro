@@ -1,14 +1,16 @@
 ---
 import Layout from '@layouts/Layout.astro';
+import { LICENSE_INSTALL_REDIRECT_PAGE } from '@components/docs/constants';
 import FrameworkRedirectPage from '@ag-website-shared/components/framework-redirect-page/FrameworkRedirectPage.astro';
-import { STATIC_PAGE_CONTENT } from '@utils/markdown-pages/staticPageContent';
-
-// Metadata is shared with the /licensing.md twin so the two cannot drift.
-const content = STATIC_PAGE_CONTENT.licensing;
 ---
 
-<Layout title={content.title} description={content.description} showSearchBar={false} showDocsNav={false}>
-    <FrameworkRedirectPage redirectPageName={content.redirectPageName}>
+<Layout
+    title="AG Grid: Licensing"
+    description={'Installing Your Licence Key'}
+    showSearchBar={false}
+    showDocsNav={false}
+>
+    <FrameworkRedirectPage redirectPageName={LICENSE_INSTALL_REDIRECT_PAGE}>
         <h1>Redirecting to AG Grid Install License page...</h1>
     </FrameworkRedirectPage>
 </Layout>

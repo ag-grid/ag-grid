@@ -1,14 +1,15 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import FrameworkRedirectPage from '@ag-website-shared/components/framework-redirect-page/FrameworkRedirectPage.astro';
-import { STATIC_PAGE_CONTENT } from '@utils/markdown-pages/staticPageContent';
-
-// Metadata is shared with the /reference.md twin so the two cannot drift.
-const content = STATIC_PAGE_CONTENT.reference;
 ---
 
-<Layout title={content.title} description={content.description} showSearchBar={false} showDocsNav={false}>
-    <FrameworkRedirectPage redirectPageName={content.redirectPageName}>
+<Layout
+    title="AG Grid: API Reference"
+    description={'View the AG Grid API Reference Documentation - a feature-rich datagrid for major JavaScript frameworks, offering filtering, grouping, pivoting, and more.'}
+    showSearchBar={false}
+    showDocsNav={false}
+>
+    <FrameworkRedirectPage redirectPageName="reference">
         <h1>Redirecting to AG Grid API Reference...</h1>
     </FrameworkRedirectPage>
 </Layout>

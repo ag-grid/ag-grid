@@ -2,7 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { SESSIONS, sessionSlug, youtubeId } from '@utils/beyondThePromptSessions';
-import { sessionDescription } from '@utils/markdown-pages/buildSessionMarkdown';
 import styles from '../../pages-styles/session.module.scss';
 
 // One real, crawlable page per recorded session. On the Beyond the Prompt page
@@ -17,8 +16,8 @@ export function getStaticPaths() {
 
 const { session } = Astro.props;
 const videoId = session.youtubeUrl ? youtubeId(session.youtubeUrl) : null;
-// Shared with the /session/<slug>.md twin so both describe the page identically.
-const description = sessionDescription(session);
+const description =
+    session.description ?? `Watch "${session.title}" from Beyond the Prompt, the AG Grid and Bryntum conference.`;
 ---
 
 <Layout
