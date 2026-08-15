@@ -1,6 +1,6 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { NPM_CDN } from '@constants';
-import { IMPORT_MAP_OPTIONS_ID } from '@utils/exampleModules/getImportMap';
+import { FRAMEWORK_VERSION_GLOBAL, IMPORT_MAP_OPTIONS_ID } from '@utils/exampleModules/getImportMap';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -64,18 +64,23 @@ const renderImportMap = async (props: { internalFramework: InternalFramework; tr
         throw new Error(`No import map rendered in:\n${html}`);
     }
 
-    return await registerImportMap(options[1].replace(/&quot;/g, '"'));
+    const version = html.match(new RegExp(`window\\.${FRAMEWORK_VERSION_GLOBAL} = '([^']+)';`));
+    if (!version) {
+        throw new Error(`No framework version named in:\n${html}`);
+    }
+
+    return await registerImportMap(options[1].replace(/&quot;/g, '"'), version[1]);
 };
 
 /**
  * Runs the page's own injector over its serialised options, rather than substituting the tokens
  * here, so that what this asserts on is what a browser would resolve. No URL parameters, so it
- * gives the pinned version and the production build -- what a plain example load resolves.
+ * gives the version the page names and the production build -- what a plain example load resolves.
  */
-const registerImportMap = async (optionsJson: string) => {
+const registerImportMap = async (optionsJson: string, version: string) => {
     const registered: any[] = [];
 
-    vi.stubGlobal('window', { location: { search: '' } });
+    vi.stubGlobal('window', { location: { search: '' }, [FRAMEWORK_VERSION_GLOBAL]: version });
     vi.stubGlobal('document', {
         currentScript: null,
         getElementById: (id: string) => (id === IMPORT_MAP_OPTIONS_ID ? { textContent: optionsJson } : null),
@@ -153,17 +158,35 @@ describe('ExampleModules', () => {
         test('carries no script body of its own beyond the data the served scripts read', async () => {
             const html = await renderMarkup({ internalFramework, usesMathRandom: true });
 
-            // Every inline script is either the base-path assignment the templates emit or a
-            // JSON block; anything else is machinery that belongs in a served file
+            // Every inline script is a JSON block, the base-path assignment the templates emit or
+            // the framework version the page is meant to be edited on; anything else is machinery
+            // that belongs in a served file
             const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/g)];
             const machinery = inline.filter(
                 ([, attributes, body]) =>
                     !attributes.includes('application/json') &&
                     !attributes.includes('importmap') &&
-                    !body.includes('__basePath')
+                    !body.includes('__basePath') &&
+                    !body.includes(`window.${FRAMEWORK_VERSION_GLOBAL}`)
             );
 
             expect(machinery.map(([, , body]) => body)).toEqual([]);
+        });
+
+        test('names the framework version where a reader of the page can change it', async () => {
+            const html = await renderMarkup({ internalFramework });
+
+            // Frameworkless examples have no framework version to run against
+            if (internalFramework === 'typescript') {
+                expect(html).not.toContain(FRAMEWORK_VERSION_GLOBAL);
+                return;
+            }
+
+            const assignment = html.match(new RegExp(`window\\.${FRAMEWORK_VERSION_GLOBAL} = '([^']+)';`));
+
+            expect(assignment?.[1]).toMatch(/^\d+\.\d+\.\d+/);
+            // Ahead of the injector that reads it, which the parser runs as it reaches it
+            expect(html.indexOf(assignment![0])).toBeLessThan(html.indexOf('inject-import-map.js'));
         });
     });
 });

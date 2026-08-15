@@ -8,12 +8,15 @@
  * deferred, and an import map added after module loading has started is an error.
  *
  * The page supplies only what varies per example, in `#ag-import-map`: the rendered map, with
- * a token wherever the version or the build appears, and the version and build to use by default.
- * Everything below is fixed, and is checked against its TypeScript counterpart by
- * `injectImportMap.test.ts` so the two cannot drift.
+ * a token wherever the version or the build appears, and the build to use by default. The
+ * version it runs against is a variable of its own, `window.agFrameworkVersion`, so that a
+ * reader of the page can point the example at another version by editing it. Everything below
+ * is fixed, and is checked against its TypeScript counterpart by `injectImportMap.test.ts` so
+ * the two cannot drift.
  */
 (function () {
     var OPTIONS_ID = 'ag-import-map';
+    var VERSION_GLOBAL = 'agFrameworkVersion';
     var VERSION_PARAM = 'version';
     var PROD_PARAM = 'prod';
     var VERSION_PLACEHOLDER = '0.0.0-ag-framework-version';
@@ -33,30 +36,30 @@
     // export taken before this script asked for one -- gets the production build, since this is
     // served from a mutable URL and so has to keep reading pages older than itself.
     var isProd = requestedProd === null ? options.defaultProd !== false : requestedProd !== 'false';
-    var version = options.defaultVersion;
+    // The version the page names unless the URL asks for another, so that editing the page runs
+    // the example against a version of the reader's choosing. `defaultVersion` is read for a page
+    // from before the version became a variable of its own -- an export taken then.
+    var pageVersion = window[VERSION_GLOBAL] || options.defaultVersion;
+    var version = requestedVersion === null ? pageVersion : requestedVersion;
 
     // An empty `?version=` is a version that is not a version, not an absent one, so it fails
     // here rather than quietly loading the default. A well-formed but non-existent one is left
     // to 404 on its own.
-    if (requestedVersion !== null) {
-        if (!new RegExp(VERSION_PATTERN).test(requestedVersion)) {
-            var message =
-                'Example not loaded: "' +
-                requestedVersion +
-                '" is not a valid ?' +
-                VERSION_PARAM +
-                '= value. Expected a framework version such as ' +
-                options.defaultVersion +
-                '.';
+    if (!new RegExp(VERSION_PATTERN).test(version)) {
+        var source = requestedVersion === null ? 'window.' + VERSION_GLOBAL : '?' + VERSION_PARAM + '=';
+        var message =
+            'Example not loaded: "' +
+            version +
+            '" is not a valid ' +
+            source +
+            ' value. Expected a framework version such as 19.2.1.';
 
-            var banner = document.createElement('div');
-            banner.textContent = message;
-            banner.setAttribute('style', 'padding: 1rem; font-family: monospace; color: #b00020;');
-            document.body.appendChild(banner);
+        var banner = document.createElement('div');
+        banner.textContent = message;
+        banner.setAttribute('style', 'padding: 1rem; font-family: monospace; color: #b00020;');
+        document.body.appendChild(banner);
 
-            throw new Error(message);
-        }
-        version = requestedVersion;
+        throw new Error(message);
     }
 
     var substitutions = Object.assign({}, isProd ? BUILD_TOKENS.production : BUILD_TOKENS.development);

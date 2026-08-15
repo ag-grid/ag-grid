@@ -16,8 +16,9 @@ export type ImportMap = Record<string, string>;
 
 /**
  * The framework versions examples run against by default, deliberately independent of the
- * versions the docs site itself is built with. Overridable per page load with the
- * `?version=` URL parameter (see `injectImportMap`).
+ * versions the docs site itself is built with. Rendered into the page as the version it names,
+ * which a reader can edit, and overridable per page load with the `?version=` URL parameter
+ * (see `public/example-runner/inject-import-map.js`).
  */
 const DEFAULT_ANGULAR_VERSION = '20.0.0';
 const DEFAULT_REACT_VERSION = '19.2.1';
@@ -87,6 +88,13 @@ export const DEV_FLAG_PLACEHOLDERS: DevFlags = {
  * `public/example-runner/inject-import-map.js` to register.
  */
 export const IMPORT_MAP_OPTIONS_ID = 'ag-import-map';
+
+/**
+ * The global the page names its framework version in, which the injector reads. A variable of
+ * its own rather than a field of the map's JSON, so that a reader of `index.html` -- of an
+ * exported example above all -- can run it against another version by editing one legible line.
+ */
+export const FRAMEWORK_VERSION_GLOBAL = 'agFrameworkVersion';
 
 /**
  * React and React DOM have no ES module build on npm, so they resolve through esm.sh.

@@ -1,6 +1,7 @@
 import {
     DEVELOPMENT_FLAGS,
     DEV_FLAG_PLACEHOLDERS,
+    FRAMEWORK_VERSION_GLOBAL,
     FRAMEWORK_VERSION_PARAM,
     FRAMEWORK_VERSION_PATTERN,
     FRAMEWORK_VERSION_PLACEHOLDER,
@@ -27,23 +28,39 @@ const TEMPLATE = JSON.stringify({
 
 /**
  * The injector runs in the example page, so the test supplies the pieces of the page it touches:
- * the URL it reads the version from, the block it reads the map from, and what it appends.
+ * the version and URL it resolves the version from, the block it reads the map from, and what it
+ * appends.
  */
 const stubPage = (
     search: string,
-    { nonce, template = TEMPLATE, defaultProd }: { nonce?: string; template?: string; defaultProd?: boolean } = {}
+    {
+        nonce,
+        template = TEMPLATE,
+        defaultProd,
+        pageVersion = '19.2.1',
+        defaultVersion,
+    }: {
+        nonce?: string;
+        template?: string;
+        defaultProd?: boolean;
+        pageVersion?: string | null;
+        defaultVersion?: string;
+    } = {}
 ) => {
     const head: any[] = [];
     const body: any[] = [];
-    // Omitted rather than defaulted when the test names no default, so that a page from before
-    // the script read one can be stubbed
+    // Each omitted rather than defaulted when the test names none, so that a page from before the
+    // script read it can be stubbed
     const options = JSON.stringify({
         template,
-        defaultVersion: '19.2.1',
+        ...(defaultVersion === undefined ? {} : { defaultVersion }),
         ...(defaultProd === undefined ? {} : { defaultProd }),
     });
 
-    vi.stubGlobal('window', { location: { search } });
+    vi.stubGlobal('window', {
+        location: { search },
+        ...(pageVersion === null ? {} : { [FRAMEWORK_VERSION_GLOBAL]: pageVersion }),
+    });
     vi.stubGlobal('document', {
         currentScript: nonce === undefined ? null : { nonce },
         getElementById: (id: string) => (id === IMPORT_MAP_OPTIONS_ID ? { textContent: options } : null),
@@ -66,7 +83,7 @@ const registeredImports = (head: any[]) => JSON.parse(head[0].textContent).impor
 afterEach(() => vi.unstubAllGlobals());
 
 describe('inject-import-map.js', () => {
-    test('registers the pinned version when the URL requests none', () => {
+    test('registers the version the page names when the URL requests none', () => {
         const { head } = stubPage('?enableTestIds=true', { defaultProd: true });
 
         injectImportMap();
@@ -171,6 +188,42 @@ describe('inject-import-map.js', () => {
         expect(head).toHaveLength(0);
     });
 
+    test('registers the version the page has been edited to name', () => {
+        const { head } = stubPage('', { pageVersion: '18.3.1' });
+
+        injectImportMap();
+
+        expect(registeredImports(head).react).toBe('https://esm.sh/react@18.3.1');
+    });
+
+    test('lets the URL override the version the page names', () => {
+        const { head } = stubPage('?version=17.0.2', { pageVersion: '18.3.1' });
+
+        injectImportMap();
+
+        expect(registeredImports(head).react).toBe('https://esm.sh/react@17.0.2');
+    });
+
+    test('fails visibly when the page has been edited to a version that is not a version', () => {
+        const { head, body } = stubPage('', { pageVersion: 'latest' });
+
+        expect(() => injectImportMap()).toThrowError(
+            new RegExp(`not a valid window.${FRAMEWORK_VERSION_GLOBAL} value`)
+        );
+
+        expect(head).toHaveLength(0);
+        expect(body[0].textContent).toContain('latest');
+    });
+
+    test('reads the version from the map options for a page that names none of its own', () => {
+        // The script is served from a mutable URL, so it outlives the pages that carry it
+        const { head } = stubPage('', { pageVersion: null, defaultVersion: '18.3.1' });
+
+        injectImportMap();
+
+        expect(registeredImports(head).react).toBe('https://esm.sh/react@18.3.1');
+    });
+
     /**
      * The served file cannot import the constants the map is rendered with, so it carries its own
      * copies. A page whose tokens the injector does not recognise would register a map still
@@ -188,6 +241,7 @@ describe('inject-import-map.js', () => {
 
         test.each([
             ['OPTIONS_ID', IMPORT_MAP_OPTIONS_ID],
+            ['VERSION_GLOBAL', FRAMEWORK_VERSION_GLOBAL],
             ['VERSION_PARAM', FRAMEWORK_VERSION_PARAM],
             ['PROD_PARAM', PROD_PARAM],
             ['VERSION_PLACEHOLDER', FRAMEWORK_VERSION_PLACEHOLDER],
