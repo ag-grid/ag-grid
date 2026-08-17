@@ -44,6 +44,7 @@ export const ExampleModules = ({
             internalFramework={internalFramework}
             isEnterprise={isEnterprise}
             isIntegratedCharts={isIntegratedCharts}
+            isExported={transpileInBrowser}
             nonce={nonce}
         />
         {usesMathRandom && <SeedRandom nonce={nonce} />}

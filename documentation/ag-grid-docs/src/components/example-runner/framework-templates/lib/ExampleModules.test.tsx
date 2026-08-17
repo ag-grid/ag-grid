@@ -1,6 +1,6 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { NPM_CDN } from '@constants';
-import { IMPORT_MAP_OPTIONS_ID } from '@utils/exampleModules/getImportMap';
+import { FRAMEWORK_VERSION_PLACEHOLDER, IMPORT_MAP_OPTIONS_ID } from '@utils/exampleModules/getImportMap';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -141,6 +141,17 @@ describe('ExampleModules', () => {
             for (const fileName of served) {
                 expect(html).toContain(`src="https://testing.ag-grid.com/AG-17103/example-runner/${fileName}"`);
             }
+        });
+
+        test('resolves the import map in the exported page, rather than leaving it to the injector', async () => {
+            const html = await renderMarkup({ internalFramework, transpileInBrowser: true });
+
+            // An export has no URL to read `?version=` from, and a map that never registers
+            // resolves no specifier at all -- so it carries the map as markup, with no
+            // placeholder left for a script it may not be able to fetch
+            expect(html).toContain('type="importmap"');
+            expect(html).not.toContain('inject-import-map.js');
+            expect(html).not.toContain(FRAMEWORK_VERSION_PLACEHOLDER);
         });
 
         test('defines `process.env` in the exported page, before the example reads it', async () => {
