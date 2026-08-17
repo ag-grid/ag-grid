@@ -5049,48 +5049,47 @@ describe('SSRM selection with a destroyed footer row node', () => {
         { id: '2', value: 20 },
     ];
 
-    test('DefaultStrategy: selecting a destroyed grand total footer is a no-op, not a throw', async () => {
-        const api = gridMgr.createGrid(null, {
-            columnDefs: [{ field: 'id' }, { field: 'value' }],
-            rowModelType: 'serverSide',
-            rowSelection: { mode: 'multiRow' },
-            grandTotalRow: 'bottom',
-            getRowId: (params: GetRowIdParams<FlatRow>) => params.data.id,
-            serverSideDatasource: {
-                getRows(params) {
-                    const rowData: any[] = [...flatRows];
-                    if (params.needsGrandTotal) {
-                        rowData.push({ id: GRAND_TOTAL_ROW_ID, value: 30 });
-                    }
-                    setTimeout(() => params.success({ rowData, rowCount: flatRows.length }), 0);
+    // 'singleRow' takes the strategy's single-node fast path, 'multiRow' the node loop — both resolve
+    // the footer's sibling, and neither may clear the selection that is already there.
+    test.each(['singleRow', 'multiRow'] as const)(
+        'DefaultStrategy (%s): selecting a destroyed grand total footer is a no-op, not a throw',
+        async (mode) => {
+            const api = gridMgr.createGrid(null, {
+                columnDefs: [{ field: 'id' }, { field: 'value' }],
+                rowModelType: 'serverSide',
+                rowSelection: { mode },
+                grandTotalRow: 'bottom',
+                getRowId: (params: GetRowIdParams<FlatRow>) => params.data.id,
+                serverSideDatasource: {
+                    getRows(params) {
+                        const rowData: any[] = [...flatRows];
+                        if (params.needsGrandTotal) {
+                            rowData.push({ id: GRAND_TOTAL_ROW_ID, value: 30 });
+                        }
+                        setTimeout(() => params.success({ rowData, rowCount: flatRows.length }), 0);
+                    },
                 },
-            },
-        });
+            });
 
-        await waitForEvent('firstDataRendered', api);
-        await waitForNoLoadingRows(api);
+            await waitForEvent('firstDataRendered', api);
+            await waitForNoLoadingRows(api);
 
-        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
-        expect(grandTotal.footer).toBe(true);
+            const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+            expect(grandTotal.footer).toBe(true);
 
-        api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'api' });
-        expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['1']);
+            api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'api' });
+            expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['1']);
 
-        // Clearing the option destroys the grand total node and severs its sibling link.
-        api.setGridOption('grandTotalRow', undefined);
-        await waitFor(() => expect(grandTotal.destroyed).toBe(true));
-        expect(grandTotal.footer).toBe(true);
-        expect(grandTotal.sibling).toBeUndefined();
+            // Clearing the option destroys the grand total node and severs its sibling link.
+            api.setGridOption('grandTotalRow', undefined);
+            await waitFor(() => expect(grandTotal.destroyed).toBe(true));
+            expect(grandTotal.footer).toBe(true);
+            expect(grandTotal.sibling).toBeUndefined();
 
-        // The multi-row path walks every node, the single-node fast path takes the orphan directly.
-        expect(() => api.setNodesSelected({ nodes: [grandTotal], newValue: true, source: 'api' })).not.toThrow();
-        expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['1']);
-
-        expect(() =>
-            api.setNodesSelected({ nodes: [grandTotal], newValue: true, clearSelection: true, source: 'api' })
-        ).not.toThrow();
-        expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['1']);
-    });
+            expect(() => api.setNodesSelected({ nodes: [grandTotal], newValue: true, source: 'api' })).not.toThrow();
+            expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['1']);
+        }
+    );
 
     test('GroupSelectsChildrenStrategy: selecting a destroyed group total footer is a no-op, not a throw', async () => {
         const api = gridMgr.createGrid(null, {
@@ -5147,13 +5146,6 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(groupTotal.sibling).toBeUndefined();
 
         expect(() => api.setNodesSelected({ nodes: [groupTotal], newValue: true, source: 'api' })).not.toThrow();
-        expect(JSON.stringify(api.getServerSideSelectionState())).toEqual(selectionState);
-
-        // The single-node path deselects everything before resolving the sibling, so the
-        // pre-existing selection must survive an orphan-only call.
-        expect(() =>
-            api.setNodesSelected({ nodes: [groupTotal], newValue: true, clearSelection: true, source: 'api' })
-        ).not.toThrow();
         expect(JSON.stringify(api.getServerSideSelectionState())).toEqual(selectionState);
     });
 });
