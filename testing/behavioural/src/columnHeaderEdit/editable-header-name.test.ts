@@ -502,6 +502,30 @@ describe('Editable header name', () => {
         await waitFor(() => expect(labels()).toEqual(['Renamed']));
     });
 
+    test('the tool-panel search box matches a virtualised column that has never been rendered', async () => {
+        const manyCols = Array.from({ length: 80 }, (_, i) => ({ field: `col${i}`, headerName: `Col ${i}` }));
+        const { api, toolPanel } = await createGrid(manyCols);
+
+        const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
+        const targetIndex = await waitFor(() => {
+            const index = (listPanel.getDisplayedColsList() as any[]).findIndex(
+                (item) => item.column?.getColId() === 'col79'
+            );
+            expect(index).toBeGreaterThan(-1);
+            return index;
+        });
+
+        // Non-vacuous: the search below has to reach an item the virtual list never materialised.
+        expect(listPanel['virtualList'].getComponentAt(targetIndex)).toBeFalsy();
+
+        api.applyColumnState({ state: [{ colId: 'col79', headerName: 'Renamed' }] });
+        listPanel.setFilterText('Renamed');
+
+        await waitFor(() =>
+            expect((listPanel.getDisplayedColsList() as any[]).map((item) => item.displayName)).toEqual(['Renamed'])
+        );
+    });
+
     test('the tool panel resolves an unrendered group name only when something reads it', async () => {
         let innerGroupToolPanelCalls = 0;
         const { gridDiv, toolPanel } = await createGrid([
