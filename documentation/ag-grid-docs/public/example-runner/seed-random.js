@@ -1,18 +1,14 @@
 /**
- * Initialises the seeded random number generator examples use, so that an example that would
- * otherwise generate different data on every load is predictable for tests and screenshots.
- *
- * Served as a classic script rather than inlined, so that an example's `index.html` carries no
- * machinery. The seed is the page's to choose, and arrives as `data-seed` -- `seedrandom`
- * itself is loaded from a CDN by the tag before this one.
+ * Initialises the seeded random number generator, so an example that generates its own data is
+ * predictable for tests and screenshots. Served, so `index.html` carries no machinery. The seed is the
+ * page's to choose and arrives as `data-seed`; `seedrandom` comes from a CDN, loaded by the tag above.
  */
 (function () {
     var seed = document.currentScript.dataset.seed;
 
     window.agRandom = new Math.seedrandom(seed);
 
-    // Maintain consistency with previous versions of the docs by "warming up" the generator
-    // with a few calls
+    // "Warm up" the generator, as previous versions of the docs did, so the data matches
     window.agRandom();
     window.agRandom();
 })();

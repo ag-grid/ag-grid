@@ -11,22 +11,14 @@ const EXAMPLE_VARIANTS = [
     { isEnterprise: false, isIntegratedCharts: true },
 ];
 
-/** AG packages, as opposed to the third-party framework entries, which have their own CDNs */
 const isAgPackage = (specifier: string) => specifier.startsWith('ag-') || specifier.startsWith('@ag-grid-community/');
 
-/** Strips any subpath, so that `ag-grid-community/styles/` gives the package it belongs to */
 const getPackageName = (specifier: string) =>
     specifier
         .split('/')
         .slice(0, specifier.startsWith('@') ? 2 : 1)
         .join('/');
 
-/**
- * `.env.build.production` sets `PUBLIC_USE_PUBLISHED_PACKAGES`, which `@constants` reads at module
- * scope, so the modules have to be re-evaluated with it in place to see what production emits.
- * `PUBLIC_BASE_URL` is stubbed alongside it because branch builds set it, and a path prefix must
- * never end up in a published-packages import map.
- */
 const getProductionImportMap = async (args: {
     internalFramework: InternalFramework;
     isEnterprise: boolean;
@@ -71,16 +63,9 @@ describe('getImportMap', () => {
         expect(community['ag-charts-community']).toBeUndefined();
         expect(enterprise['ag-charts-community']).toBeDefined();
 
-        // Resolvable either way, for the generator's test-id block
         expect(community['ag-grid-enterprise']).toBeDefined();
     });
 
-    /**
-     * The production site is built against published packages, so its examples must load AG Grid
-     * from the npm CDN and never from the site that served them -- a `localhost`, staging or
-     * branch-prefixed URL here would leave a published example unable to load, and the same import
-     * map is what the Plunker and CodeSandbox exports carry (see `ExampleModules`).
-     */
     describe('built against published packages', () => {
         afterEach(() => {
             vi.unstubAllEnvs();
@@ -94,8 +79,6 @@ describe('getImportMap', () => {
 
                 expect(agEntries.length).toBeGreaterThan(0);
                 for (const [specifier, url] of agEntries) {
-                    // Every entry is versioned, including the trailing-slash stylesheet prefixes,
-                    // whose specifier is a subpath of the package rather than the package itself
                     const cdnPrefix = `${NPM_CDN}/${getPackageName(specifier)}@`;
                     expect(url.startsWith(cdnPrefix), `${specifier} -> ${url}`).toBe(true);
                 }
@@ -106,18 +89,15 @@ describe('getImportMap', () => {
 
                 for (const [specifier, url] of Object.entries(importMap)) {
                     expect(url, specifier).toMatch(/^https:\/\//);
-                    // A port only ever appears on a local or preview host
                     expect(url, specifier).not.toMatch(/^https:\/\/[^/]+:\d+/);
                     expect(url, specifier).not.toContain('localhost');
                     expect(url, specifier).not.toContain('ag-grid.com');
-                    // The branch path prefix stubbed above, which must not leak into the URLs
                     expect(url, specifier).not.toContain('AG-17103');
                 }
             });
         });
 
         test('is what makes the AG packages resolve to the CDN', async () => {
-            // Guards the tests above against passing because the CDN is used unconditionally
             const local = getImportMap({ internalFramework: 'typescript', isEnterprise: true });
 
             expect(local['ag-grid-community']).not.toContain(NPM_CDN);
@@ -174,8 +154,6 @@ describe('getImportMap', () => {
         );
 
         test('rejects a long near-miss without the match itself becoming expensive', () => {
-            // The suffixes are matched once each, so a value engineered to make a repeated group
-            // backtrack cannot: this settles immediately rather than hanging the example page
             const start = performance.now();
 
             expect(FRAMEWORK_VERSION_PATTERN.test(`1.2.3-${'a-'.repeat(2000)}!`)).toBe(false);
@@ -200,7 +178,6 @@ describe('getImportMap', () => {
                 dev: DEVELOPMENT_FLAGS,
             });
 
-            // esm.sh serves the production build unless asked for `dev`
             expect(production['react']).not.toContain('dev');
             expect(production['react-dom']).not.toContain('dev');
 

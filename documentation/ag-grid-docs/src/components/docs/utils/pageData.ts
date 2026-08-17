@@ -202,8 +202,8 @@ export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
                     fileName,
                 };
 
-                // Transpilable sources are also served transpiled, under a `.js` name, as
-                // that is what the natively loaded example modules import
+                // Transpilable sources are served transpiled too, under the `.js` name the example
+                // modules import
                 return isTransformableModule(fileName)
                     ? [entry, { ...entry, fileName: toModuleFileName(fileName) }]
                     : [entry];

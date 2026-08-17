@@ -15,23 +15,19 @@ interface Props {
     internalFramework: InternalFramework;
     isEnterprise: boolean;
     isIntegratedCharts?: boolean;
-    /**
-     * Whether the page is exported to Plunker or CodeSandbox, and so has neither a URL to read
-     * `?version=` from nor any guarantee that the injector is reachable
-     */
+    /** Whether the page is exported, so it has no URL to read `?version=` from and may not reach the injector */
     isExported?: boolean;
     nonce?: string;
 }
 
 /**
- * Renders the map with a token wherever the framework version or the build appears, so that one
- * rendered map can serve every version and build the URL asks for -- unless the page is to carry
- * the map resolved, in which case the values it would be substituted with are rendered in.
+/**
+ * Tokenises the framework version and build, so one rendered map serves every combination the URL
+ * can ask for. A page carrying the map resolved gets the values instead.
  */
 const renderImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts, isExported }: Omit<Props, 'nonce'>) => {
     const defaultVersion = getDefaultFrameworkVersion(internalFramework);
-    // Frameworkless examples have no version to substitute, and an exported page has nothing to
-    // substitute from, so both carry the map as rendered
+    // Frameworkless examples have no version to substitute and exports have nothing to substitute from
     const isResolved = isExported || !defaultVersion;
     const dev = getIsDev() ? DEVELOPMENT_FLAGS : PRODUCTION_FLAGS;
     const imports = getImportMap({
@@ -48,16 +44,14 @@ const renderImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts, 
 /**
  * The import map that resolves the example's bare package specifiers.
  *
- * For framework examples the runner registers it in the browser rather than serving it as markup,
- * so that `?version=` and `?prod=` can pick the framework version and build. Which build the page
- * falls back to is fixed when it is generated: the development one under the dev server, so that
- * local examples run against React's development build as they did under SystemJS. The page
- * carries the rendered map and nothing else; what substitutes and registers it is served -- see
- * `public/example-runner/inject-import-map.js`.
+ * Framework examples register it in the browser, so `?version=` and `?prod=` can pick the framework
+ * version and build. The fallback build is fixed when the page is generated: the development one under
+ * the dev server, as under SystemJS. The page carries only the rendered map; what substitutes and
+ * registers it is served (`public/example-runner/inject-import-map.js`).
  *
- * Exported pages instead carry the map resolved, as markup. They have no URL to read a version
- * from, and nothing else in an export is load-bearing the way the map is: a page that cannot reach
- * the injector resolves no specifier at all, so the example does not load.
+ * Exports carry the map resolved, as markup. They have no URL to read a version from, and the map is
+ * load-bearing in a way nothing else in an export is: if the injector is unreachable, no specifier
+ * resolves and the example never loads.
  */
 export const ExampleImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts, isExported, nonce }: Props) => {
     const { imports, defaultVersion, isResolved } = renderImportMap({

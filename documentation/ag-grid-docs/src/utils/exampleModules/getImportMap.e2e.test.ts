@@ -9,14 +9,6 @@ const REPO_ROOT = path.resolve(__dirname, '../../../../..');
 
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3'];
 
-/**
- * `/files/<pkg>/...` is served from the local build, via FILES_PATH_MAP. An entry pointing
- * at a path that is not built (or not matched by those globs) 404s at runtime and the
- * example never loads, so check every local entry resolves to a file on disk.
- *
- * This runs in the e2e suite rather than alongside the unit tests because it needs the
- * packages to have been built (`^pack`) before the paths exist.
- */
 const LOCAL_PACKAGE_ROOTS: Record<string, string> = {
     'ag-stack': 'packages/ag-stack',
     'ag-grid-community': 'packages/ag-grid-community',
@@ -31,14 +23,12 @@ const LOCAL_PACKAGE_ROOTS: Record<string, string> = {
     'ag-charts-enterprise': 'node_modules/ag-charts-enterprise',
 };
 
-/** Local entries are the ones served from this site rather than a CDN */
 const isLocal = (url: string) => !url.startsWith('http');
 
 const toLocalPath = (url: string) => {
     const [, filePath] = url.split(`${FILES_BASE_PATH.replace(/^\//, '')}/`);
     const packageName = Object.keys(LOCAL_PACKAGE_ROOTS)
         .filter((name) => filePath.startsWith(`${name}/`))
-        // `ag-grid-community` also prefixes nothing else, but prefer the longest match
         .sort((a, b) => b.length - a.length)[0];
 
     expect(packageName, `no local root known for ${filePath}`).toBeDefined();
@@ -52,7 +42,6 @@ describe('getImportMap', () => {
             const importMap = getImportMap({ internalFramework, isEnterprise, isIntegratedCharts: true });
 
             const localEntries = Object.entries(importMap).filter(
-                // Trailing-slash specifiers map to a directory prefix, not an entry point
                 ([specifier, url]) => isLocal(url) && !specifier.endsWith('/')
             );
 

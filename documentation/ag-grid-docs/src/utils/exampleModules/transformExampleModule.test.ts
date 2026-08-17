@@ -120,7 +120,6 @@ describe('transformExampleModule', () => {
         );
 
         expect(code).toContain('Component({');
-        // design:paramtypes is what makes constructor injection resolvable (NG0202 without it)
         expect(code).toContain('design:paramtypes');
     });
 
@@ -135,7 +134,6 @@ describe('transformExampleModule', () => {
         const code = transform('main.ts', ["import './styles.css';", 'export const x = 1;'].join('\n'));
 
         expect(code).toContain("await __agLoadStylesheet(import.meta.resolve('./styles.css'))");
-        // The template links the stylesheet itself for some frameworks, so it must not be loaded twice
         expect(code).toContain('link[rel="stylesheet"]');
     });
 

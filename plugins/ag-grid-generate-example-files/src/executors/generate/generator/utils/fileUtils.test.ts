@@ -1,6 +1,3 @@
-/**
- * @jest-environment node
- */
 import { getBoilerPlateName, getEntryFileName, getMainFileName, getTransformTsFileExt } from './fileUtils';
 
 describe('getEntryFileName', () => {

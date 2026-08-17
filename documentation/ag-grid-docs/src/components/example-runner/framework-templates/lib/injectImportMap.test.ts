@@ -12,10 +12,6 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-/**
- * The injector is served to the example page as it is written, so the test runs the file itself
- * rather than a module built from it -- what it asserts on is what a browser executes.
- */
 const INJECTOR_PATH = join(__dirname, '../../../../../public/example-runner/inject-import-map.js');
 const injectorSource = readFileSync(INJECTOR_PATH, 'utf8');
 
@@ -23,10 +19,6 @@ const IMPORTS = {
     react: `https://esm.sh/react@${FRAMEWORK_VERSION_PLACEHOLDER}${DEV_FLAG_PLACEHOLDERS.query}`,
 };
 
-/**
- * The injector runs in the example page, so the test supplies the pieces of the page it touches:
- * the URL it reads the version from, the block it reads the map from, and what it appends.
- */
 const stubPage = (
     search: string,
     {
@@ -37,15 +29,12 @@ const stubPage = (
     }: {
         nonce?: string;
         imports?: Record<string, string>;
-        /** The map as a JSON string, as pages older than the script carry it */
         template?: string;
         defaultProd?: boolean;
     } = {}
 ) => {
     const head: any[] = [];
     const body: any[] = [];
-    // Omitted rather than defaulted when the test names no default, so that a page from before
-    // the script read one can be stubbed
     const options = JSON.stringify({
         ...(template === undefined ? { imports } : { template }),
         defaultVersion: '19.2.1',
@@ -110,7 +99,6 @@ describe('inject-import-map.js', () => {
     });
 
     test('falls back to the production build for a page that names no default', () => {
-        // The script is served from a mutable URL, so it outlives the pages that carry it
         const { head } = stubPage('');
 
         injectImportMap();
@@ -135,7 +123,6 @@ describe('inject-import-map.js', () => {
     });
 
     test('leaves a map with no build-dependent entries alone when asked for the development build', () => {
-        // Every framework but React: no build token appears, so both builds give the same map
         const imports = { vue: `https://cdn/vue@${FRAMEWORK_VERSION_PLACEHOLDER}/vue.js` };
         const { head } = stubPage('?prod=false', { imports });
 
@@ -145,7 +132,6 @@ describe('inject-import-map.js', () => {
     });
 
     test('reads a page carrying the map as a JSON string, from before it carried an object', () => {
-        // The script is served from a mutable URL, so exports taken before this change still load
         const { head } = stubPage('?version=18.3.1', { template: JSON.stringify({ imports: IMPORTS }) });
 
         injectImportMap();
@@ -174,7 +160,6 @@ describe('inject-import-map.js', () => {
 
         expect(() => injectImportMap()).toThrowError(/not a valid \?version= value/);
 
-        // No map registered, so the example cannot quietly run against the pinned default
         expect(head).toHaveLength(0);
         expect(body[0].textContent).toContain('latest');
     });
@@ -187,15 +172,7 @@ describe('inject-import-map.js', () => {
         expect(head).toHaveLength(0);
     });
 
-    /**
-     * The served file cannot import the constants the map is rendered with, so it carries its own
-     * copies. A page whose tokens the injector does not recognise would register a map still
-     * holding placeholders, which fails as a wall of bare-specifier errors rather than as one
-     * legible failure -- so the copies are checked against their source here instead.
-     */
     describe('carries the same constants the map is rendered with', () => {
-        // Evaluated rather than read as text, so that what is compared is the value the browser
-        // ends up with rather than the escaping the source happens to use
         const literal = (name: string) => {
             const match = injectorSource.match(new RegExp(`var ${name} = ('[^']*');`));
             expect(match, `${name} not found in inject-import-map.js`).not.toBeNull();

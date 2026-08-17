@@ -1,9 +1,7 @@
 /**
- * Tells the page hosting the example's iframe that the example has rendered, which is what the
- * runner waits on before it stops showing a loading state.
- *
- * Served rather than inlined, so that an example's `index.html` carries no machinery. What
- * identifies the example, and what to watch for, arrive as attributes.
+ * Tells the page hosting the example's iframe that the example has rendered, which is what the runner
+ * waits on before dropping its loading state. Served, so `index.html` carries no machinery; what
+ * identifies the example and what to watch for arrive as attributes.
  */
 (function () {
     var script = document.currentScript;

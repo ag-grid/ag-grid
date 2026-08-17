@@ -4,9 +4,9 @@ import { exampleRunnerAsset } from '@utils/exampleModules/exampleRunnerAsset';
 const SEEDRANDOM_CDN_URL = `${NPM_CDN}/seedrandom@3.0.5/seedrandom.min.js`;
 
 /**
- * Loads the seedrandom library and initialises the generator with the shared seed, so that an
- * example generating its own data is predictable -- see `public/example-runner/seed-random.js`.
- * The seed travels as an attribute, since it is the site's constant rather than the script's.
+ * Loads seedrandom and initialises the generator with the shared seed, so an example generating its own
+ * data is predictable. The seed travels as an attribute, being the site's constant. See
+ * `public/example-runner/seed-random.js`.
  */
 export const SeedRandom = ({ nonce }: { nonce?: string }) => (
     <>

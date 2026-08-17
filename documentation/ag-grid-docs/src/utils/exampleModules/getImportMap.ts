@@ -4,94 +4,43 @@ import { isReactInternalFramework } from '@utils/framework';
 import { isUsingPublishedPackages } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 
-/**
- * Module resolution for examples: every bare specifier an example (or a package it loads)
- * imports needs an entry here, pointing at a browser-ready ES module.
- *
- * AG Grid packages resolve to the local build, or to the published CDN build when the site
- * is built against published packages. Third-party frameworks always come from a CDN.
- */
-
 export type ImportMap = Record<string, string>;
 
-/**
- * The framework versions examples run against by default, deliberately independent of the
- * versions the docs site itself is built with. Overridable per page load with the
- * `?version=` URL parameter (see `injectImportMap`).
- */
 const DEFAULT_ANGULAR_VERSION = '20.0.0';
 const DEFAULT_REACT_VERSION = '19.2.1';
 const DEFAULT_VUE_VERSION = '3.5.17';
 
-/**
- * Companion packages, pinned rather than overridable: they are not the framework whose
- * version an example is being tried against.
- */
 const RXJS_VERSION = '7.8.1';
 const TSLIB_VERSION = '2.3.1';
 
-/** The URL parameter that overrides the framework version an example runs against */
 export const FRAMEWORK_VERSION_PARAM = 'version';
 
-/**
- * `major.minor.patch`, optionally with a pre-release suffix and a build suffix. Each suffix is
- * matched once rather than as one repeated group, so that no quantifier nests inside another over
- * the same characters -- a version arriving from the URL would otherwise be able to make matching
- * it cost far more than reading it.
- */
 export const FRAMEWORK_VERSION_PATTERN = /^\d+\.\d+\.\d+(?:-[\w.-]+)?(?:\+[\w.-]+)?$/;
 
-/**
- * The URL parameter that picks the framework's build: `prod=false` asks for the development
- * build, any other value for the production one. Absent, the page's own default applies, which
- * is the development build when the page was served by the dev server and the production build
- * otherwise -- as under SystemJS, where the dev server rendered `systemjs.config.dev.js` in
- * place of `systemjs.config.js` for the sake of React's development warnings.
- */
 export const PROD_PARAM = 'prod';
 
-/**
- * How esm.sh is asked for the framework's development build -- React's warnings and its
- * dev-only validations -- which it serves given the `dev` flag, the production build being its
- * default. The flag reaches a URL either as its query or appended to flags already there, so
- * both forms travel together. `ExampleModules` passes placeholders instead of these, so that
- * the browser can pick a build from the URL after the page is built.
- */
 export interface DevFlags {
-    /** Opens the query string of a URL that has none, as `?dev` */
+    /** Opens a query string, as `?dev` */
     query: string;
-    /** Appends to a query already present, as `&dev` */
+    /** Extends a query already present, as `&dev` */
     appended: string;
 }
 
 export const PRODUCTION_FLAGS: DevFlags = { query: '', appended: '' };
 export const DEVELOPMENT_FLAGS: DevFlags = { query: '?dev', appended: '&dev' };
 
-/**
- * Stands in for the framework version in the rendered import map until the browser substitutes
- * the version being run against. Shaped like a version so the entries stay recognisable as URLs.
- */
 export const FRAMEWORK_VERSION_PLACEHOLDER = '0.0.0-ag-framework-version';
 
-/**
- * Stand in for the two forms the development-build flag takes in a URL, so that one rendered
- * map can serve either build.
- */
 export const DEV_FLAG_PLACEHOLDERS: DevFlags = {
     query: '?ag-dev-query',
     appended: '&ag-dev-appended',
 };
 
-/**
- * Identifies the JSON block the page carries the rendered map in, for
- * `public/example-runner/inject-import-map.js` to register.
- */
 export const IMPORT_MAP_OPTIONS_ID = 'ag-import-map';
 
 /**
- * React and React DOM have no ES module build on npm, so they resolve through esm.sh.
- * `external=react` keeps React DOM from bundling a second copy of React, which would give
- * the page two renderers and break hooks.
+ * React and React DOM have no ES module build on npm, so they resolve through esm.sh. `external=react`
+ * keeps React DOM from bundling a second copy of React, which would break hooks.
  */
 const reactImports = (version: string, { query, appended }: DevFlags): ImportMap => ({
     react: `https://esm.sh/react@${version}${query}`,
@@ -123,15 +72,14 @@ const angularImports = (version: string): ImportMap => {
         '@angular/platform-browser': angularPackage('platform-browser'),
         '@angular/platform-browser/animations': angularPackage('platform-browser', 'animations'),
         '@angular/platform-browser-dynamic': angularPackage('platform-browser-dynamic'),
-        // rxjs' own ESM build imports its internals without file extensions, which native
-        // resolution cannot follow, so it comes from esm.sh with those specifiers resolved
+        // rxjs' own ESM build imports its internals without file extensions, which native resolution
+        // cannot follow, so it comes from esm.sh with those specifiers resolved
         rxjs: `https://esm.sh/rxjs@${RXJS_VERSION}`,
         'rxjs/': `https://esm.sh/rxjs@${RXJS_VERSION}&external=rxjs/`,
         tslib: `${NPM_CDN}/tslib@${TSLIB_VERSION}/tslib.es6.js`,
     };
 };
 
-/** The pinned version an example runs against, or undefined for the frameworkless examples */
 export const getDefaultFrameworkVersion = (internalFramework: InternalFramework): string | undefined => {
     if (isReactInternalFramework(internalFramework)) {
         return DEFAULT_REACT_VERSION;
@@ -173,7 +121,6 @@ const getAgPackageVersion = (packageName: string) => {
     return packageName === 'ag-stack' ? agStackVersion : agGridVersion;
 };
 
-/** Package root for AG packages: either the locally served build or the published CDN build */
 const getPackageRoot = (packageName: string) =>
     isUsingPublishedPackages()
         ? `${NPM_CDN}/${packageName}@${getAgPackageVersion(packageName)}`
@@ -182,11 +129,6 @@ const getPackageRoot = (packageName: string) =>
 const esmEntryPoint = (packageName: string, entryPoint = 'dist/package/main.esm.mjs') =>
     `${getPackageRoot(packageName)}/${entryPoint}`;
 
-/**
- * Trailing-slash prefix so stylesheet specifiers resolve too:
- * `import 'ag-grid-community/styles/ag-grid.css'` becomes an `import.meta.resolve` call,
- * which goes through this map (see transformExampleModule).
- */
 const stylesPrefix = (packageName: string) => `${getPackageRoot(packageName)}/styles/`;
 
 export const getImportMap = ({
@@ -199,17 +141,13 @@ export const getImportMap = ({
     internalFramework: InternalFramework;
     isEnterprise: boolean;
     isIntegratedCharts?: boolean;
-    /** Framework version to resolve against; the pinned default when omitted */
     frameworkVersion?: string;
-    /** How to ask for the framework's development build; the production build by default */
     dev?: DevFlags;
 }): ImportMap => {
     const imports: ImportMap = {
         'ag-stack': esmEntryPoint('ag-stack'),
         'ag-grid-community': esmEntryPoint('ag-grid-community'),
         'ag-grid-community/styles/': stylesPrefix('ag-grid-community'),
-        // Every example resolves enterprise, not just the enterprise ones: the generator's
-        // test-id block imports it on demand to look up module names given by `?modules=`
         'ag-grid-enterprise': esmEntryPoint('ag-grid-enterprise'),
         'ag-grid-enterprise/styles/': stylesPrefix('ag-grid-enterprise'),
         '@ag-grid-community/locale': esmEntryPoint('@ag-grid-community/locale'),

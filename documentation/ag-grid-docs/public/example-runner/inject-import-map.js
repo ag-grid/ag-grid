@@ -2,15 +2,12 @@
  * Registers the example page's import map, substituting the framework version and build that
  * `?version=` and `?prod=` ask for -- neither is known when the page is statically generated.
  *
- * Served as a classic script rather than inlined, so that an example's `index.html` carries no
- * machinery. The parser runs it synchronously, which is what puts the map in place before the
- * example's module script, as the import-map spec requires -- a module script here would be
- * deferred, and an import map added after module loading has started is an error.
+ * Served, so `index.html` carries no machinery. Classic so it runs synchronously: a deferred module
+ * script would register the map after module loading starts, which is an error.
  *
- * The page supplies only what varies per example, in `#ag-import-map`: the rendered map, with
- * a token wherever the version or the build appears, and the version and build to use by default.
- * Everything below is fixed, and is checked against its TypeScript counterpart by
- * `injectImportMap.test.ts` so the two cannot drift.
+ * The page supplies only `#ag-import-map` -- the rendered map, tokenised wherever the version or
+ * build appears, plus both defaults. The constants below are checked against their TypeScript
+ * counterparts by `injectImportMap.test.ts`.
  */
 (function () {
     var OPTIONS_ID = 'ag-import-map';
@@ -29,15 +26,13 @@
     var urlParams = new URLSearchParams(window.location.search);
     var requestedVersion = urlParams.get(VERSION_PARAM);
     var requestedProd = urlParams.get(PROD_PARAM);
-    // The page's default build unless the URL asks for one. A page that names no default -- an
-    // export taken before this script asked for one -- gets the production build, since this is
-    // served from a mutable URL and so has to keep reading pages older than itself.
+    // The page's default build unless the URL asks for one. Served from a mutable URL, so it must
+    // still read older pages: one naming no default gets production.
     var isProd = requestedProd === null ? options.defaultProd !== false : requestedProd !== 'false';
     var version = options.defaultVersion;
 
-    // An empty `?version=` is a version that is not a version, not an absent one, so it fails
-    // here rather than quietly loading the default. A well-formed but non-existent one is left
-    // to 404 on its own.
+    // An empty `?version=` counts as malformed, so it fails loudly. A well-formed but non-existent one
+    // is left to 404 on its own.
     if (requestedVersion !== null) {
         if (!new RegExp(VERSION_PATTERN).test(requestedVersion)) {
             var message =
@@ -62,9 +57,8 @@
     var substitutions = Object.assign({}, isProd ? BUILD_TOKENS.production : BUILD_TOKENS.development);
     substitutions[VERSION_PLACEHOLDER] = version;
 
-    // Only the URLs carry tokens, so each is substituted in turn rather than the serialised map
-    // being rewritten as text. Pages older than this script carry the map as a JSON string
-    // instead of an object, and it is served from a mutable URL, so both are read.
+    // Only the URLs carry tokens, so each is substituted in turn. Older pages carry the map as a JSON
+    // string, so both forms are read.
     var rendered = options.imports || JSON.parse(options.template).imports;
     var imports = {};
     Object.keys(rendered).forEach(function (specifier) {
@@ -79,8 +73,7 @@
     importMap.type = 'importmap';
     importMap.textContent = JSON.stringify({ imports: imports });
 
-    // An example may carry a CSP that allows inline scripts only by nonce -- the security-test
-    // examples do -- and a script created here has none, so it takes the nonce of this script.
+    // The security-test examples allow inline scripts only by nonce, so the map takes this script's.
     // Read from the IDL attribute, which keeps the value after the parser hides it.
     if (nonce) {
         importMap.nonce = nonce;
