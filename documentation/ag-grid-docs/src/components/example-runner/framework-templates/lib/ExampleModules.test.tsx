@@ -143,6 +143,25 @@ describe('ExampleModules', () => {
             }
         });
 
+        test('defines `process.env` in the exported page, before the example reads it', async () => {
+            const html = await renderMarkup({ internalFramework, transpileInBrowser: true });
+
+            // The example guards its dev-only validations on `process.env.NODE_ENV` at its top
+            // level, so an export that had to fetch this from us would not load at all if the
+            // request failed
+            const shim = html.indexOf('window.process');
+            const entryModule = html.indexOf('type="module"');
+
+            expect(shim).toBeGreaterThan(-1);
+            expect(shim).toBeLessThan(entryModule);
+        });
+
+        test('leaves `process.env` to the served boilerplate in the runner', async () => {
+            const html = await renderMarkup({ internalFramework });
+
+            expect(html).not.toContain('window.process');
+        });
+
         test('hands the seeded generator its seed as data, for an example that generates its own', async () => {
             const html = await renderMarkup({ internalFramework, usesMathRandom: true });
 

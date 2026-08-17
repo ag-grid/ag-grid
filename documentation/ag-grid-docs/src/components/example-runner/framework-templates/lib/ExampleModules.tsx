@@ -47,7 +47,8 @@ export const ExampleModules = ({
             nonce={nonce}
         />
         {usesMathRandom && <SeedRandom nonce={nonce} />}
-        <ExamplePageBoilerplate nonce={nonce} />
+        {/* `transpileInBrowser` marks the pages that are exported rather than served by us */}
+        <ExamplePageBoilerplate isExported={transpileInBrowser} nonce={nonce} />
         {transpileInBrowser ? (
             <BrowserTranspiler entryFileName={entryFileName} nonce={nonce} />
         ) : (

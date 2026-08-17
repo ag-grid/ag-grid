@@ -7,7 +7,9 @@
  */
 (function () {
     // Examples read `process.env.NODE_ENV` to guard dev-only validations, and nothing in a
-    // browser defines it
+    // browser defines it.
+    // NOTE: exported pages cannot depend on this file being reachable, so they inline the same
+    // definition -- keep `ExamplePageBoilerplate`'s copy in step with this one
     window.process = { env: { NODE_ENV: 'development' } };
 
     // Uncaught errors are reported with the file that threw, which a module stack trace does
