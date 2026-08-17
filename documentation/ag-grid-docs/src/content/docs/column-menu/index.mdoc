@@ -93,9 +93,11 @@ The `defaultItems` list will change on different calls, depending on, for exampl
 
 If you do not override the list of menu items, then the items displayed will be based on the rules above.
 
-The `columnMenu = 'legacy'` rules above apply to the default items only. A token supplied explicitly through `colDef.columnMenuItems`, `getColumnMenuItems()`, `colDef.mainMenuItems` or `getMainMenuItems()` - including the sort tokens, `columnFilter` and `columnChooser` - is still rendered under the legacy menu.
+The `columnMenu = 'legacy'` rules above apply to the default items only. Any token supplied explicitly through `columnMenuItems`, `getColumnMenuItems()`, `mainMenuItems` or `getMainMenuItems()` is still rendered under the legacy menu, including the sort tokens, `columnFilter` and `columnChooser`.
 
-A column allows absolute sorting when it declares an absolute `sort` or `initialSort`, or when its [Sorting Order](./row-sorting/#sorting-order) includes an absolute direction. This adds the absolute items to the default items; it does not remove `sortAscending` and `sortDescending`, which are included unless the column declares both `sort: null` and `initialSort: null`. The default and absolute items are also hidden independently of each other, so a column sorted in absolute ascending order still offers `sortAscending`.
+A column allows absolute sorting when it declares an absolute `sort` or `initialSort`, or when its [Sorting Order](./row-sorting/#sorting-order) includes an absolute direction. The absolute items are then added to the default items rather than replacing `sortAscending` and `sortDescending`, which are dropped only when the column declares both `sort: null` and `initialSort: null`.
+
+Each item is hidden by its own sort type, so a column sorted in absolute ascending order still offers `sortAscending`.
 
 [Columns Tool Panel](./tool-panel-columns/#context-menu) tokens such as `value` can also be returned here, and are shown where they apply to the column.
 
