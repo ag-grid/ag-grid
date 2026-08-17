@@ -14,7 +14,7 @@ test.agExample(import.meta, () => {
         await expect(chooser.locator('.custom-column-label', { hasText: 'Results' })).toBeVisible();
 
         const goldRow = chooser.locator('.ag-column-select-column', {
-            has: chooser.locator('.custom-column-label', { hasText: 'Gold' }),
+            has: page.locator('.custom-column-label', { hasText: 'Gold' }),
         });
         await expect(goldRow.locator('.ag-column-select-checkbox')).toBeVisible();
     });

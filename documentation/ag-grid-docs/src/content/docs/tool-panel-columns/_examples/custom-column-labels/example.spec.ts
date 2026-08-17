@@ -10,7 +10,7 @@ test.agExample(import.meta, () => {
         await expect(toolPanel.locator('.custom-column-label', { hasText: 'Athlete Details' })).toBeVisible();
 
         const athleteRow = toolPanel.locator('.ag-column-select-column', {
-            has: toolPanel.locator('.custom-column-label', { hasText: 'Athlete' }),
+            has: page.locator('.custom-column-label', { hasText: 'Athlete' }),
         });
         await expect(athleteRow.locator('.ag-column-select-checkbox')).toBeVisible();
         await expect(athleteRow.locator('.ag-column-select-column-drag-handle')).toBeVisible();
