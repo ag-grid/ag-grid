@@ -10,23 +10,15 @@ import { SeedRandom } from './SeedRandom';
 interface Props {
     appLocation: string;
     entryFileName: string;
-    /** Every file the example ships, as authored. Only the in-browser transpiler needs these */
     fileNames: string[];
     internalFramework: InternalFramework;
     isEnterprise: boolean;
     isIntegratedCharts?: boolean;
     usesMathRandom?: boolean;
-    /** Whether the page transpiles the sources itself, as Plunker needs (see `BrowserTranspiler`) */
     transpileInBrowser?: boolean;
     nonce?: string;
 }
 
-/**
- * Example modules load natively: an import map resolves the bare package specifiers (see
- * `ExampleImportMap`) and the entry file loads as a module. TypeScript and JSX are transpiled
- * server-side and served as `.js`, so the entry point is requested as such. Plunker is handed the
- * sources as authored; see `transpileInBrowser`.
- */
 export const ExampleModules = ({
     appLocation,
     entryFileName,
@@ -47,7 +39,6 @@ export const ExampleModules = ({
             nonce={nonce}
         />
         {usesMathRandom && <SeedRandom nonce={nonce} />}
-        {/* `transpileInBrowser` marks the exported pages */}
         <ExamplePageBoilerplate isExported={transpileInBrowser} nonce={nonce} />
         {transpileInBrowser ? (
             <BrowserTranspiler

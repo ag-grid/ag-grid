@@ -13,7 +13,7 @@ export default defineConfig({
         include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         exclude: [
             'src/content/**/*', // examples tested via playwright
-            'src/**/*.e2e.{test,spec}.*', // need a build; run via `test:e2e`
+            'src/**/*.e2e.{test,spec}.*',
         ],
         reporters: ['default'],
         coverage: { reportsDirectory: '../../coverage/ag-grid-docs', provider: 'v8' },

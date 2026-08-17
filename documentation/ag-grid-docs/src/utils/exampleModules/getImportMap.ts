@@ -20,9 +20,7 @@ export const FRAMEWORK_VERSION_PATTERN = /^\d+\.\d+\.\d+(?:-[\w.-]+)?(?:\+[\w.-]
 export const PROD_PARAM = 'prod';
 
 export interface DevFlags {
-    /** Opens a query string, as `?dev` */
     query: string;
-    /** Extends a query already present, as `&dev` */
     appended: string;
 }
 
@@ -38,10 +36,6 @@ export const DEV_FLAG_PLACEHOLDERS: DevFlags = {
 
 export const IMPORT_MAP_OPTIONS_ID = 'ag-import-map';
 
-/**
- * React and React DOM have no ES module build on npm, so they resolve through esm.sh. `external=react`
- * keeps React DOM from bundling a second copy of React, which would break hooks.
- */
 const reactImports = (version: string, { query, appended }: DevFlags): ImportMap => ({
     react: `https://esm.sh/react@${version}${query}`,
     'react/': `https://esm.sh/react@${version}${appended}/`,
@@ -49,7 +43,6 @@ const reactImports = (version: string, { query, appended }: DevFlags): ImportMap
     'react-dom/': `https://esm.sh/react-dom@${version}&external=react${appended}/`,
 });
 
-/** `esm-browser` is the build that ships Vue's runtime template compiler */
 const vueImports = (version: string): ImportMap => ({
     vue: `${NPM_CDN}/vue@${version}/dist/vue.esm-browser.js`,
 });
@@ -72,8 +65,6 @@ const angularImports = (version: string): ImportMap => {
         '@angular/platform-browser': angularPackage('platform-browser'),
         '@angular/platform-browser/animations': angularPackage('platform-browser', 'animations'),
         '@angular/platform-browser-dynamic': angularPackage('platform-browser-dynamic'),
-        // rxjs' own ESM build imports its internals without file extensions, which native resolution
-        // cannot follow, so it comes from esm.sh with those specifiers resolved
         rxjs: `https://esm.sh/rxjs@${RXJS_VERSION}`,
         'rxjs/': `https://esm.sh/rxjs@${RXJS_VERSION}&external=rxjs/`,
         tslib: `${NPM_CDN}/tslib@${TSLIB_VERSION}/tslib.es6.js`,

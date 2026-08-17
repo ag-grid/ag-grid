@@ -1,12 +1,12 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { NPM_CDN } from '@constants';
 import { FRAMEWORK_VERSION_PLACEHOLDER, IMPORT_MAP_OPTIONS_ID } from '@utils/exampleModules/getImportMap';
-
-import { TRANSPILER_OPTIONS_ID } from './BrowserTranspiler';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
+
+import { TRANSPILER_OPTIONS_ID } from './BrowserTranspiler';
 
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 
@@ -159,7 +159,7 @@ describe('ExampleModules', () => {
             expect(html).not.toContain('window.process');
         });
 
-        test('names the example\'s own modules to the in-browser transpiler, and nothing else', async () => {
+        test("names the example's own modules to the in-browser transpiler, and nothing else", async () => {
             const html = await renderMarkup({ internalFramework, transpileInBrowser: true });
 
             const options = html.match(new RegExp(`id="${TRANSPILER_OPTIONS_ID}"[^>]*>([\\s\\S]*?)</script>`));

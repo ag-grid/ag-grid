@@ -8,10 +8,6 @@ import { TYPESCRIPT_INTERNAL_FRAMEWORKS } from '../types';
 
 const BOILER_PLATE_FILE_PATH = './documentation/ag-grid-docs/public/example-runner';
 
-/**
- * Angular is the only framework with boilerplate: its bootstrap file. The others need none,
- * as the example runner resolves modules with an import map rather than per-framework config.
- */
 export const getBoilerPlateName = (internalFramework: InternalFramework) =>
     internalFramework === 'angular' ? 'grid-angular-boilerplate' : undefined;
 

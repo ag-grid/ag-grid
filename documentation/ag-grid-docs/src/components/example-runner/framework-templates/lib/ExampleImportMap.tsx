@@ -15,19 +15,12 @@ interface Props {
     internalFramework: InternalFramework;
     isEnterprise: boolean;
     isIntegratedCharts?: boolean;
-    /** Whether the page is exported, so it has no URL to read `?version=` from and may not reach the injector */
     isExported?: boolean;
     nonce?: string;
 }
 
-/**
-/**
- * Tokenises the framework version and build, so one rendered map serves every combination the URL
- * can ask for. A page carrying the map resolved gets the values instead.
- */
 const renderImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts, isExported }: Omit<Props, 'nonce'>) => {
     const defaultVersion = getDefaultFrameworkVersion(internalFramework);
-    // Frameworkless examples have no version to substitute and exports have nothing to substitute from
     const isResolved = isExported || !defaultVersion;
     const dev = getIsDev() ? DEVELOPMENT_FLAGS : PRODUCTION_FLAGS;
     const imports = getImportMap({
@@ -41,18 +34,6 @@ const renderImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts, 
     return { imports, defaultVersion, isResolved };
 };
 
-/**
- * The import map that resolves the example's bare package specifiers.
- *
- * Framework examples register it in the browser, so `?version=` and `?prod=` can pick the framework
- * version and build. The fallback build is fixed when the page is generated: the development one under
- * the dev server, as under SystemJS. The page carries only the rendered map; what substitutes and
- * registers it is served (`public/example-runner/inject-import-map.js`).
- *
- * Exports carry the map resolved, as markup. They have no URL to read a version from, and the map is
- * load-bearing in a way nothing else in an export is: if the injector is unreachable, no specifier
- * resolves and the example never loads.
- */
 export const ExampleImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts, isExported, nonce }: Props) => {
     const { imports, defaultVersion, isResolved } = renderImportMap({
         internalFramework,

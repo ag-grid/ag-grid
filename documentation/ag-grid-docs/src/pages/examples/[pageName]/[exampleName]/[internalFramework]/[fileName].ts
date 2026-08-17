@@ -47,8 +47,6 @@ export async function GET({ params }: { params: Params }) {
             pageName,
             exampleName,
         })) || {};
-    // Examples are authored in TypeScript but loaded natively by the browser, so a request
-    // for `main.js` is served by transpiling `main.ts`
     const moduleSourceFileName = getModuleSourceFileName(fileName, Object.keys(files));
     if (moduleSourceFileName) {
         const code = transformExampleModule({

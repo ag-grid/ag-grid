@@ -16,7 +16,6 @@ export type NamedCompilerOptions = Record<string, string | boolean>;
 
 export const getCompilerOptionNames = (internalFramework: InternalFramework): NamedCompilerOptions => ({
     module: 'ESNext',
-    // ES2022 so the top-level `await` a stylesheet import compiles to is emitted as authored
     target: 'ES2022',
     ...(isReactInternalFramework(internalFramework) ? { jsx: 'React' } : {}),
     ...(internalFramework === 'angular' ? { experimentalDecorators: true, emitDecoratorMetadata: true } : {}),

@@ -23,15 +23,8 @@ const rewriteAstroGeneratedContent = (body: string) => {
 
 const BINARY_EXTENSIONS = ['png', 'webp', 'jpeg', 'jpg'];
 
-/** The example routes whose HTML is shipped to an external site, where a person reads it */
 const EXPORT_ROUTES = ['plunkr', 'codesandbox'];
 
-/**
- * Whether to format the page's HTML. Always for the Plunker and CodeSandbox exports, whose HTML a
- * reader opens, and which are requested only when someone clicks through. Runner pages are formatted
- * for production only: the docs load one per example, so formatting them all would just slow the dev
- * server down.
- */
 function shouldFormat(pathname: string) {
     return getIsProduction() || EXPORT_ROUTES.includes(pathname.replace(/\/$/, '').split('/').pop()!);
 }

@@ -6,8 +6,7 @@ import { getDocsExamplePages } from '@components/docs/utils/pageData';
 import { getIsDev } from '@utils/env';
 
 /**
- * This page is the same as `[exampleName].astro`, but for Plunkr examples, which are shipped the
- * example's TypeScript sources and so have to transpile them in the page
+ * This page is the same as `[exampleName].astro`, but for Plunkr examples
  */
 export async function getStaticPaths() {
     const pages = await getCollection('docs');

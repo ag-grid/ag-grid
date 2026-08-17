@@ -575,11 +575,6 @@ export function handleRowGenericInterface(fileTxt: string, tData: string): strin
     return fileTxt;
 }
 
-/**
- * Every interface `getGenericInterface` declares for a given `tData`. A row type can refer to
- * others (`IAccount.callRecords` is `ICallRecord[]`), and an example that names one of those in
- * its own types needs it imported too.
- */
 const GENERIC_INTERFACE_NAMES: Record<string, string[]> = {
     IOlympicData: ['IOlympicData'],
     IOlympicDataWithId: ['IOlympicDataWithId', 'IOlympicData'],
@@ -591,8 +586,6 @@ export function addGenericInterfaceImport(imports: string[], tData: string, bind
         return;
     }
 
-    // The parsed bindings hold the example's code, so they are what decides whether a
-    // companion interface is referenced at all -- an unused import would only be noise.
     const source = JSON.stringify(bindings);
     const names = (GENERIC_INTERFACE_NAMES[tData] ?? [tData]).filter(
         (name) =>
@@ -823,9 +816,6 @@ export function getEnableAGTestIdLogic(isUmd: boolean = false): string {
     // Support dynamically adding modules during integration testing
     const agGridCommunityImport = isUmd ? '' : `import * as ${community} from 'ag-grid-community';`;
 
-    // Enterprise is imported on demand: only `?modules=` resolves names against it, and a static
-    // import would have every community example load and parse the enterprise bundle for nothing.
-    // A genuinely enterprise example imports it itself and is unaffected.
     const extraModules = isUmd
         ? ''
         : `

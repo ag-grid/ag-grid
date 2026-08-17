@@ -149,16 +149,6 @@ function extractComponentInformation(properties, componentFilenames: string[]): 
     return components;
 }
 
-/**
- * Generates the React entry point for an example.
- *
- * The entry point deliberately mounts the example in `<StrictMode>` (AG-18153): it is React's
- * recommended default, and these examples are copy-paste starting points, so they should mount
- * the way a user's own app would. This is the only React entry point generated - the JS variant
- * is this output passed through `convertTsxToJsx`, so it inherits the choice - and the website
- * runner, Plunker and CodeSandbox are all shipped these same generated files, so the one choice
- * applies to all three surfaces.
- */
 export function vanillaToReactFunctionalTs(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,

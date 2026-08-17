@@ -21,10 +21,6 @@ export const partial = !getIsDev();
 
 const { internalFramework, pageName, exampleName } = Astro.params;
 
-// React examples run on a CodeSandbox template with a real toolchain, which compiles the
-// sources itself. Every other framework runs on the `static` template, which has no build
-// step, so those transpile in the page -- as Plunker does -- rather than being shipped
-// compiled, so that what a user opens is the TypeScript they were reading.
 const ignoreModuleLoader = isReactInternalFramework(internalFramework);
 /**
  * Hide highlighter element that gets added by code sandbox
