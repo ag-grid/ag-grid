@@ -58,7 +58,7 @@
 
 .searchExplainer,
 label.searchBreakingText {
-    line-height: var(--text-lh-tight);
+    line-height: var(--text-lh-ratio-tight);
 
     @media screen and (max-width: $breakpoint-changelog-pipeline-large) {
         display: none;

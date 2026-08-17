@@ -66,7 +66,7 @@
     position: relative;
     display: inline-block;
     padding: ($spacing-size-2 + $spacing-size-1) $spacing-size-1;
-    line-height: var(--text-lh-tight);
+    line-height: var(--text-lh-ratio-tight);
     color: var(--color-fg-tertiary);
     transition: color $transition-default-timing;
     cursor: pointer;

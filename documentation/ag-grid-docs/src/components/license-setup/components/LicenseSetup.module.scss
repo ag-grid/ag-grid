@@ -142,7 +142,7 @@
 
         td {
             padding: 0;
-            line-height: var(--text-lh-tight);
+            line-height: var(--text-lh-ratio-tight);
             font-weight: var(--text-bold);
 
             &:not(:last-child) {

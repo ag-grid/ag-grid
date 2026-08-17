@@ -354,7 +354,7 @@ const ItemContent = styled('div')`
 
 const ItemLabel = styled('div')`
     font-weight: var(--text-semibold);
-    line-height: var(--text-lh-tight);
+    line-height: var(--text-lh-ratio-tight);
 `;
 
 const ItemDocs = styled('div')`
