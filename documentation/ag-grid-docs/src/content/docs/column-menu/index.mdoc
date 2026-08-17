@@ -93,11 +93,7 @@ The `defaultItems` list will change on different calls, depending on, for exampl
 
 If you do not override the list of menu items, then the items displayed will be based on the rules above.
 
-The `columnMenu = 'legacy'` rules above apply to the default items only. Any token supplied explicitly through `columnMenuItems`, `getColumnMenuItems()`, `mainMenuItems` or `getMainMenuItems()` is still rendered under the legacy menu, including the sort tokens, `columnFilter` and `columnChooser`.
-
-A column allows absolute sorting when it declares an absolute `sort` or `initialSort`, or when its [Sorting Order](./row-sorting/#sorting-order) includes an absolute direction. Plain ascending and descending sorts are allowed on the same basis, so a column that allows both ends up with all four sort items.
-
-Each directional item is hidden by its own sort type, so a column sorted in absolute ascending order still offers `sortAscending`.
+The `columnMenu = 'legacy'` rules above apply to the default items only. A token supplied explicitly through `columnMenuItems`, `getColumnMenuItems()`, `mainMenuItems` or `getMainMenuItems()` is still rendered under the legacy menu.
 
 [Columns Tool Panel](./tool-panel-columns/#context-menu) tokens such as `value` can also be returned here, and are shown where they apply to the column.
 

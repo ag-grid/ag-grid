@@ -148,7 +148,7 @@ const gridOptions = {
 
 {% apiDocumentation source="column-properties/properties.json" section="sort" names=["sort", "sortingOrder"] /%}
 
-When a column allows absolute sorting, the [Column Menu](./column-menu/#built-in-menu-items) default items include **Sort Absolute Ascending** and **Sort Absolute Descending**. A column that also allows plain sorting shows **Sort Ascending** and **Sort Descending** as well, and each item is hidden only while the column is already sorted that way.
+Including an absolute sort adds **Sort Absolute Ascending** and **Sort Absolute Descending** to the [Column Menu](./column-menu/#built-in-menu-items) default items. These are additive: the plain **Sort Ascending** and **Sort Descending** items sit alongside them rather than being replaced.
 
 {% gridExampleRunner title="Absolute Value Sorting" name="absolute-sorting" /%}
 
