@@ -290,8 +290,13 @@ jobs:
         # cancels — a fresh stage queues behind a finishing one. The `||` default
         # is required: `needs` is readable even when `concurrency-key` failed, and
         # an empty group would serialise unrelated tickets.
+        # `queue: max` is not optional: the default keeps only one pending entry, so
+        # a third trigger evicts the waiter. `cancel-in-progress: false` is mandatory
+        # (the `true` pairing is a validation error). Rationale: ag-dev-prompts
+        # docs/ai-workflow.md § Normalising the concurrency group.
         concurrency:
             group: ${{ needs.concurrency-key.outputs.group || format('claude-fallback-{0}', github.run_id) }}
+            queue: max
             cancel-in-progress: false
         # Both gates feed this one job: `preflight` for the resume routes +
         # ci-failure-iterate, and `ci-success-handler` for the codex-review
@@ -451,25 +456,23 @@ jobs:
     # status: done, clear AI failure, zero the recovery counter. See the
     # shared action for the full eligibility walk.
     ci-success-handler:
-        # Its OWN group, keyed per COMMIT: duplicate promotes of one commit must
-        # serialise (each writes JIRA, which has no compare-and-swap), but handlers
-        # for DIFFERENT commits must never be able to evict each other — an evicted
-        # promote is a lost green-CI event, i.e. a strand. Kept out of agent-run's
-        # group for the same reason; agent-vs-promote is the interlock's job.
+        # The SAME group as agent-run: no promote may overlap another promote or an
+        # agent (AG-17369). It carried a `-promote-<head_sha>` suffix only to dodge
+        # eviction under `queue: single`; with no eviction the suffix is strictly
+        # worse. Do not put it back. See ag-dev-prompts docs/ai-workflow.md.
         needs: [concurrency-key]
         concurrency:
-            group: ${{ needs.concurrency-key.outputs.group || format('claude-fallback-{0}', github.run_id) }}-promote-${{ github.event.workflow_run.head_sha }}
+            group: ${{ needs.concurrency-key.outputs.group || format('claude-fallback-{0}', github.run_id) }}
+            queue: max
             cancel-in-progress: false
         if: |
             !cancelled() &&
             github.event_name == 'workflow_run' &&
             github.event.workflow_run.conclusion == 'success'
         runs-on: ubuntu-latest
-        # Must be >= agent_interlock_wait_minutes + 5 (below). The interlock
-        # WAITS for an in-flight agent run before promoting; a wait longer than
-        # this job budget would be killed mid-wait and the ticket would never be
-        # promoted at all — a strand worse than the early handback it prevents.
-        timeout-minutes: 25
+        # The interlock is 0 (below), so this is the REST work's own budget. Queue
+        # time is not charged against `timeout-minutes`.
+        timeout-minutes: 10
         permissions:
             contents: read
             actions: read
@@ -499,13 +502,11 @@ jobs:
             - id: handler
               uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-ci-success-handler
               with:
-                  # In-flight-agent interlock (AG-17369). A pr-iterate agent pushes
-                  # mid-run, that push fires CI, CI goes green — and without this the
-                  # handback lands while the agent is still working (AG-17369: 28 min
-                  # early; its later edits hit an already-`done` ticket). Wait for the
-                  # run named by `AI run url` first. Fail-open: an exhausted wait
-                  # promotes anyway. Paired with timeout-minutes above.
-                  agent_interlock_wait_minutes: 20
+                  # In-flight-agent interlock (AG-17369) — DISABLED: made redundant by
+                  # sharing agent-run's group, which is acquired before a runner is even
+                  # assigned and so also closes the race the interlock could not. Kept
+                  # at 0 until the input is retired upstream (AG-18177).
+                  agent_interlock_wait_minutes: 0
                   head_branch: ${{ github.event.workflow_run.head_branch }}
                   head_sha: ${{ github.event.workflow_run.head_sha }}
                   run_url: ${{ github.event.workflow_run.html_url }}
