@@ -1,13 +1,16 @@
+import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
 import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    GRAND_TOTAL_ROW_ID,
+    GROUP_TOTAL_ROW_ID_PREFIX,
     PaginationModule,
     RowSelectionModule,
     enableDevValidations,
 } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import {
     ALL_SEVERITIES,
@@ -18,6 +21,7 @@ import {
     assertSelectedRowsByIndex,
     assertSelectedRowsByIndexFromNodes,
     waitForEvent,
+    waitForNoLoadingRows,
 } from '../test-utils';
 import { fakeFetch } from './group-data';
 import { GridActions } from './utils';
@@ -5023,5 +5027,133 @@ describe('Row Selection Grid Options', () => {
                 });
             });
         });
+    });
+});
+
+describe('SSRM selection with a destroyed footer row node', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [RowSelectionModule, ServerSideRowModelModule, ServerSideRowModelApiModule, RowGroupingModule],
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+    });
+
+    interface FlatRow {
+        id: string;
+        value: number;
+    }
+
+    const flatRows: FlatRow[] = [
+        { id: '1', value: 10 },
+        { id: '2', value: 20 },
+    ];
+
+    test('DefaultStrategy: selecting a destroyed grand total footer is a no-op, not a throw', async () => {
+        const api = gridMgr.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'multiRow' },
+            grandTotalRow: 'bottom',
+            getRowId: (params: GetRowIdParams<FlatRow>) => params.data.id,
+            serverSideDatasource: {
+                getRows(params) {
+                    const rowData: any[] = [...flatRows];
+                    if (params.needsGrandTotal) {
+                        rowData.push({ id: GRAND_TOTAL_ROW_ID, value: 30 });
+                    }
+                    setTimeout(() => params.success({ rowData, rowCount: flatRows.length }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+        expect(grandTotal.footer).toBe(true);
+
+        api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'api' });
+        expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['1']);
+
+        // Clearing the option destroys the grand total node and severs its sibling link.
+        api.setGridOption('grandTotalRow', undefined);
+        await waitFor(() => expect(grandTotal.destroyed).toBe(true));
+        expect(grandTotal.footer).toBe(true);
+        expect(grandTotal.sibling).toBeUndefined();
+
+        // The multi-row path walks every node, the single-node fast path takes the orphan directly.
+        expect(() => api.setNodesSelected({ nodes: [grandTotal], newValue: true, source: 'api' })).not.toThrow();
+        expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['1']);
+
+        expect(() =>
+            api.setNodesSelected({ nodes: [grandTotal], newValue: true, clearSelection: true, source: 'api' })
+        ).not.toThrow();
+        expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['1']);
+    });
+
+    test('GroupSelectsChildrenStrategy: selecting a destroyed group total footer is a no-op, not a throw', async () => {
+        const api = gridMgr.createGrid(null, {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'value', aggFunc: 'sum' },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            groupTotalRow: 'bottom',
+            getRowId: (params: GetRowIdParams<any>) => params.data.id,
+            serverSideDatasource: {
+                getRows(params) {
+                    const isRoot = params.request.groupKeys.length === 0;
+                    const rowData: any[] = isRoot
+                        ? [
+                              {
+                                  id: 'g-Ireland',
+                                  key: 'Ireland',
+                                  country: 'Ireland',
+                                  value: 30,
+                                  group: true,
+                                  leafGroup: true,
+                              },
+                          ]
+                        : [
+                              { id: 'ie-1', country: 'Ireland', value: 10 },
+                              { id: 'ie-2', country: 'Ireland', value: 20 },
+                          ];
+                    setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        api.getRowNode('g-Ireland')!.setExpanded(true);
+        await waitForNoLoadingRows(api);
+
+        const groupTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'g-Ireland')!;
+        expect(groupTotal.footer).toBe(true);
+
+        // `groupSelects: 'descendants'` selection is only readable as the server-side selection state.
+        api.setNodesSelected({ nodes: [api.getRowNode('ie-1')!], newValue: true, source: 'api' });
+        const selectionState = JSON.stringify(api.getServerSideSelectionState());
+        expect(selectionState).toContain('ie-1');
+
+        // Clearing the option destroys the group total node and severs its sibling link.
+        api.setGridOption('groupTotalRow', undefined);
+        await waitFor(() => expect(groupTotal.destroyed).toBe(true));
+        expect(groupTotal.footer).toBe(true);
+        expect(groupTotal.sibling).toBeUndefined();
+
+        expect(() => api.setNodesSelected({ nodes: [groupTotal], newValue: true, source: 'api' })).not.toThrow();
+        expect(JSON.stringify(api.getServerSideSelectionState())).toEqual(selectionState);
+
+        // The single-node path deselects everything before resolving the sibling, so the
+        // pre-existing selection must survive an orphan-only call.
+        expect(() =>
+            api.setNodesSelected({ nodes: [groupTotal], newValue: true, clearSelection: true, source: 'api' })
+        ).not.toThrow();
+        expect(JSON.stringify(api.getServerSideSelectionState())).toEqual(selectionState);
     });
 });

@@ -113,7 +113,12 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 return 0;
             }
             const rowNode = nodes[0];
+            // destroying a footer severs the sibling link but leaves the footer flag set, and the
+            // orphan represents nothing selectable — bail before the branch that clears the selection
             const node = rowNode.footer ? rowNode.sibling : rowNode;
+            if (!node) {
+                return 0;
+            }
             if (newValue && node.selectable) {
                 this.selectedNodes = { [node.id!]: node };
                 this.selectedState = {
@@ -132,6 +137,9 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
         const updateNodeState = (rowNode: RowNode, value = newValue) => {
             const node = rowNode.footer ? rowNode.sibling : rowNode;
+            if (!node) {
+                return;
+            }
             if (value && node.selectable) {
                 this.selectedNodes[node.id!] = node;
             } else {
@@ -151,7 +159,11 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         }
 
         if (nodes.length === 1 && source === 'api') {
-            this.selectionCtx.setRoot(nodes[0].footer ? nodes[0].sibling : nodes[0]);
+            const rowNode = nodes[0];
+            const rootNode = rowNode.footer ? rowNode.sibling : rowNode;
+            if (rootNode) {
+                this.selectionCtx.setRoot(rootNode);
+            }
         }
         return 1;
     }

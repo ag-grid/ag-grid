@@ -427,7 +427,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     ): void {
         const footerNode =
             this.parentRowNode.level > -1 && _getGroupTotalRowCallback(this.gos)({ node: this.parentRowNode });
-        if (footerNode === 'top') {
+        // the callback is re-evaluated here, but the footer sibling is only created when display
+        // indexes are assigned — so the two can disagree, and there may be no sibling to visit
+        if (footerNode === 'top' && this.parentRowNode.sibling) {
             callback(this.parentRowNode.sibling, sequence.value++);
         }
 
@@ -447,7 +449,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
-        if (footerNode === 'bottom') {
+        if (footerNode === 'bottom' && this.parentRowNode.sibling) {
             callback(this.parentRowNode.sibling, sequence.value++);
         }
 

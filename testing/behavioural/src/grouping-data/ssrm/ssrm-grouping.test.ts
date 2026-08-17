@@ -446,3 +446,63 @@ describe('SSRM footer mirrors the group field value', () => {
         expect(api.getCellValue({ rowNode: footerNode, colKey: 'grp' })).toBe('Ireland');
     });
 });
+
+describe('SSRM group total row callback disagreeing with the footer sibling', () => {
+    const gridManager = new TestGridsManager({
+        modules: [CsvExportModule, RowGroupingModule, ServerSideRowModelModule],
+    });
+
+    beforeEach(() => gridManager.reset());
+    afterEach(() => gridManager.reset());
+
+    const createDatasource = (): IServerSideDatasource => ({
+        getRows(params: IServerSideGetRowsParams) {
+            const isRoot = (params.request.groupKeys ?? []).length === 0;
+            setTimeout(() => {
+                params.success?.({
+                    rowData: isRoot
+                        ? [{ id: 'g-Ireland', key: 'Ireland', country: 'Ireland', group: true, leafGroup: true }]
+                        : [
+                              { id: 'ie-1', country: 'Ireland', medals: 2 },
+                              { id: 'ie-2', country: 'Ireland', medals: 3 },
+                          ],
+                });
+            }, 0);
+        },
+    });
+
+    // A function-valued `groupTotalRow` is re-evaluated on export, while the footer sibling row node is
+    // only created when display indexes are assigned. An app whose callback answer changes without a
+    // grid update leaves the two out of step — the export must skip the missing footer, not throw.
+    test.each(['top', 'bottom'] as const)(
+        'export skips a %s group total row with no footer sibling',
+        async (position) => {
+            let footerPosition: 'top' | 'bottom' | undefined = undefined;
+
+            const api = await gridManager.createGridAndWait(null, {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'medals', headerName: 'Medals', aggFunc: 'sum' },
+                ],
+                autoGroupColumnDef: { headerName: 'Country', useValueFormatterForExport: false },
+                rowModelType: 'serverSide',
+                serverSideDatasource: createDatasource(),
+                getRowId: ({ data }: GetRowIdParams) => data.id,
+                groupTotalRow: () => footerPosition,
+            });
+
+            await ssrmExpandAndLoadAll(api);
+            await waitForNoLoadingRows(api);
+
+            expect(api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'g-Ireland')).toBeUndefined();
+
+            footerPosition = position;
+
+            let csv: string | undefined;
+            expect(() => {
+                csv = api.getDataAsCsv({ suppressQuotes: true });
+            }).not.toThrow();
+            expect(csv).not.toContain('Total Ireland');
+        }
+    );
+});

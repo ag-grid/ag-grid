@@ -168,22 +168,36 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
 
         const onlyThisNode = clearSelection && newValue;
-        if (!_isMultiRowSelection(this.gos) || onlyThisNode) {
-            if (nodes.length > 1) {
-                this.error(130);
-                return 0;
+        const singleNodeSelection = !_isMultiRowSelection(this.gos) || onlyThisNode;
+        if (singleNodeSelection && nodes.length > 1) {
+            this.error(130);
+            return 0;
+        }
+
+        // destroying a footer severs the sibling link but leaves the footer flag set, and the orphan
+        // represents nothing selectable — resolve before clearing so an orphan-only call changes nothing
+        const targetNodes: RowNode[] = [];
+        for (const rowNode of nodes) {
+            const node = rowNode.footer ? rowNode.sibling : rowNode;
+            if (node) {
+                targetNodes.push(node);
             }
+        }
+        if (targetNodes.length === 0) {
+            return 0;
+        }
+
+        if (singleNodeSelection) {
             this.deselectAllRowNodes();
         }
 
-        for (const rowNode of nodes) {
-            const node = rowNode.footer ? rowNode.sibling : rowNode;
+        for (const node of targetNodes) {
             const idPathToNode = this.getRouteToNode(node);
             this.recursivelySelectNode(idPathToNode, this.selectedState, newValue);
         }
         this.removeRedundantState();
         if (nodes.length === 1 && source === 'api') {
-            this.selectionCtx.setRoot(nodes[0].footer ? nodes[0].sibling : nodes[0]);
+            this.selectionCtx.setRoot(targetNodes[0]);
         }
         return 1;
     }
