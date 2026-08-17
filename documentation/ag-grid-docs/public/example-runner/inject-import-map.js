@@ -62,14 +62,22 @@
     var substitutions = Object.assign({}, isProd ? BUILD_TOKENS.production : BUILD_TOKENS.development);
     substitutions[VERSION_PLACEHOLDER] = version;
 
-    var importMapJson = options.template;
-    Object.keys(substitutions).forEach(function (token) {
-        importMapJson = importMapJson.split(token).join(substitutions[token]);
+    // Only the URLs carry tokens, so each is substituted in turn rather than the serialised map
+    // being rewritten as text. Pages older than this script carry the map as a JSON string
+    // instead of an object, and it is served from a mutable URL, so both are read.
+    var rendered = options.imports || JSON.parse(options.template).imports;
+    var imports = {};
+    Object.keys(rendered).forEach(function (specifier) {
+        var url = rendered[specifier];
+        Object.keys(substitutions).forEach(function (token) {
+            url = url.split(token).join(substitutions[token]);
+        });
+        imports[specifier] = url;
     });
 
     var importMap = document.createElement('script');
     importMap.type = 'importmap';
-    importMap.textContent = importMapJson;
+    importMap.textContent = JSON.stringify({ imports: imports });
 
     // An example may carry a CSP that allows inline scripts only by nonce -- the security-test
     // examples do -- and a script created here has none, so it takes the nonce of this script.

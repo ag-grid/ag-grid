@@ -32,8 +32,7 @@ const renderImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts }
         dev: defaultVersion ? DEV_FLAG_PLACEHOLDERS : PRODUCTION_FLAGS,
     });
 
-    // Not pretty-printed: nothing reads this in the page, and the indentation is only weight
-    return { template: JSON.stringify({ imports }), defaultVersion };
+    return { imports, defaultVersion };
 };
 
 /**
@@ -47,11 +46,13 @@ const renderImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts }
  * `public/example-runner/inject-import-map.js`.
  */
 export const ExampleImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts, nonce }: Props) => {
-    const { template, defaultVersion } = renderImportMap({ internalFramework, isEnterprise, isIntegratedCharts });
+    const { imports, defaultVersion } = renderImportMap({ internalFramework, isEnterprise, isIntegratedCharts });
 
     if (!defaultVersion) {
         // Nothing to resolve from the URL, so the map is served as rendered
-        return <script nonce={nonce} type="importmap" dangerouslySetInnerHTML={{ __html: template }} />;
+        return (
+            <script nonce={nonce} type="importmap" dangerouslySetInnerHTML={{ __html: JSON.stringify({ imports }) }} />
+        );
     }
 
     return (
@@ -61,7 +62,7 @@ export const ExampleImportMap = ({ internalFramework, isEnterprise, isIntegrated
                 type="application/json"
                 id={IMPORT_MAP_OPTIONS_ID}
                 dangerouslySetInnerHTML={{
-                    __html: JSON.stringify({ template, defaultVersion, defaultProd: !getIsDev() }),
+                    __html: JSON.stringify({ imports, defaultVersion, defaultProd: !getIsDev() }),
                 }}
             />
             <script nonce={nonce} src={exampleRunnerAsset('inject-import-map.js')} />
