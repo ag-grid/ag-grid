@@ -153,10 +153,23 @@ jobs:
                       exit 0
                   fi
 
+                  # A scoped Jira API token is rejected on the classic <site>.atlassian.net
+                  # host and only authenticates via the api.atlassian.com/ex/jira/{cloudId}
+                  # gateway (see the github-triage-pipeline action's executors/jira.ts) — so
+                  # resolve the cloudId first via the unauthenticated tenant_info lookup,
+                  # matching the pipeline's own resolveCloudId(). Hitting the site host
+                  # directly 404s here even with valid credentials.
+                  if ! cloud_id=$(curl -sS --fail --max-time 20 "$JIRA_SITE_URL/_edge/tenant_info" \
+                        | jq -r '.cloudId // empty') || [ -z "$cloud_id" ]; then
+                      echo "::warning title=channel-pin::could not resolve cloudId for $JIRA_SITE_URL — falling back to latest"
+                      emit latest "cloudId lookup failed"
+                      exit 0
+                  fi
+
                   if ! labels=$(curl -sS --fail --max-time 20 \
                         -u "$JIRA_EMAIL:$JIRA_API_TOKEN" \
                         -H 'Accept: application/json' \
-                        "$JIRA_SITE_URL/rest/api/3/issue/$ISSUE_KEY?fields=labels" \
+                        "https://api.atlassian.com/ex/jira/$cloud_id/rest/api/3/issue/$ISSUE_KEY?fields=labels" \
                         | jq -r '.fields.labels[]? // empty'); then
                       # FAIL-SAFE to production. An unreadable ticket must not silently
                       # route a production drag to canary; a dry run losing its pin is
