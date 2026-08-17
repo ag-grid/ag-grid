@@ -184,6 +184,17 @@ const SITE_SCRIPT_HASHES = [
 // third throws uncaught. We are not granting 'unsafe-eval' site-wide for a consent
 // banner, so keep the Enzuzo console configuration free of template placeholders and
 // string-bodied event handlers.
+
+// React and React DOM have no ES module build on npm, so the example runner's import map
+// resolves them through esm.sh. Everything else it loads comes from jsdelivr or our own origin.
+//
+// Ported from `latest` for policy parity, not because this branch needs it: the ES-module
+// runner (AG-17103) lands on `latest` only, and the examples here still load through SystemJS,
+// which takes React from jsdelivr. The release line carries the same policy as `latest` — as
+// it does for the Enzuzo, LinkedIn and Make origins — so the emitted header does not depend
+// on which branch built a given deployment.
+const ESM_SH_HOST = 'https://esm.sh';
+
 const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
 const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
 
@@ -343,6 +354,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.googletagmanager.com',
             'https://www.google-analytics.com', // Universal Analytics analytics.js (GTM-injected after cookie consent)
             'https://cdn.jsdelivr.net',
+            ESM_SH_HOST, // example-runner: React's ES module build (npm ships CJS only)
             'https://cdnjs.cloudflare.com',
             'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
             'https://*.zoominfo.com', // ZoomInfo FormComplete
@@ -393,6 +405,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://flagcdn.com',
             'https://www.googletagmanager.com',
             'https://cdn.jsdelivr.net', // example-runner SystemJS fetches modules as text (XHR)
+            ESM_SH_HOST, // example-runner: React's ES module build
             'https://cdnjs.cloudflare.com', // example-runner legacy deps (XHR)
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
