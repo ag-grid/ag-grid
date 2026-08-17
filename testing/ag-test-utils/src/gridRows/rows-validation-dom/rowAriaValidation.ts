@@ -18,7 +18,10 @@ export function validateRowAriaAttributes(
         return;
     }
 
-    // aria-expanded: should be present on expandable rows, absent on non-expandable rows
+    // aria-expanded: must be absent on a non-expandable row, and where an expandable row carries it, agree
+    // with the model. An expandable row MISSING it is deliberately not claimed - `RowCtrl` stamps the
+    // attribute only while creating the element, so a row that becomes expandable later legitimately has
+    // none, and asserting it here would report the grid rather than the row under test.
     if (bugs.ariaExpanded) {
         const expandable = row.isExpandable();
         const ariaExpanded = el.getAttribute('aria-expanded');

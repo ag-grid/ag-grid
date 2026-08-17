@@ -6,6 +6,9 @@ import { valuesEqual } from '../grid-rows-helpers';
 import type { GridRows } from '../gridRows';
 import { getRowStateFlags, getRowTypePrefix } from './nodeInfo';
 
+/** Control characters and backslashes: only the JSON form carries them through one diagram line. */
+const RAW_UNSAFE = /[\p{Cc}\\]/u;
+
 /** Serialises a value for diagram output. The default path uses `JSON.stringify` (keeping the
  *  established `"abc"` quoting for strings) but rewraps objects/arrays in single quotes when the
  *  JSON output contains embedded `"` characters — that avoids `\"` escapes in the snapshot
@@ -25,15 +28,23 @@ export function serialiseValue(value: unknown): string {
             return '-Infinity';
         }
     }
-    const json = JSON.stringify(value);
+    let json: string | undefined;
+    try {
+        json = JSON.stringify(value);
+    } catch {
+        // Circular, or a nested bigint: a diagram is a description, so describe it rather than making
+        // every check on the row throw.
+        return String(value);
+    }
     // Undefined for a function, a symbol, or an object whose toJSON returns undefined - where the object
     // branch below would throw on `.includes` and the declared string return would be a lie.
     if (json === undefined) {
         return typeof value === 'function' ? 'function' : String(value);
     }
     // STRING containing `"` characters → JSON-encoded form is `"...\"...\""`. Use the raw string
-    // wrapped in single quotes instead, provided it has no single quote of its own.
-    if (typeof value === 'string' && json.includes('\\"') && !value.includes("'")) {
+    // wrapped in single quotes instead, provided it has no single quote of its own. Escapes stay
+    // JSON-encoded: raw, a `\n` would split the row across two diagram lines.
+    if (typeof value === 'string' && json.includes('\\"') && !value.includes("'") && !RAW_UNSAFE.test(value)) {
         return `'${value}'`;
     }
     // OBJECT / ARRAY whose JSON form contains `\"` (an actual escape sequence — a string with

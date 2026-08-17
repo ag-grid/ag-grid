@@ -425,12 +425,16 @@ export class RunLog {
             }
         }
         // Never appearing in `ps` means the child is already gone, and recording that is right: it is a dead
-        // pid, which is exactly what a reader should report.
-        this.writeStatus(
-            started
-                ? { state: 'running', pid: child.pid, pidStart: started, detached: true }
-                : { state: 'died', pid: child.pid }
-        );
+        // pid, which is exactly what a reader should report. Only this process's own claim is replaced: the
+        // child records its own pid as it starts and its exit code when it ends, and a short or cached run
+        // gets there first - overwriting that would report a finished run as `died`.
+        if (this.readStatus(this.dir).pid === process.pid) {
+            this.writeStatus(
+                started
+                    ? { state: 'running', pid: child.pid, pidStart: started, detached: true }
+                    : { state: 'died', pid: child.pid }
+            );
+        }
         console.log(`${this.name} running in the background; check it with ./${script} --wait ${this.id}`);
         return 0;
     }

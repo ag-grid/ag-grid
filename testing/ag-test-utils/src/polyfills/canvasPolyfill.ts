@@ -15,8 +15,12 @@ type NodeCanvasInstance = ConfiguredCanvasInstance;
 
 let initialized = false;
 let originalCreateElement: typeof document.createElement | undefined;
-let originalGlobals: { Path2D: unknown; DOMMatrix: unknown; Image: unknown; OffscreenCanvas: unknown } | undefined;
+/** Descriptors, not values: a global that was absent must go back to absent, or a later
+ *  `'OffscreenCanvas' in globalThis` feature test answers yes for the rest of the worker. */
+let originalGlobals: [string, PropertyDescriptor | undefined][] | undefined;
 let originalSizeDescriptors: [DimensionProp, PropertyDescriptor | undefined][] | undefined;
+
+const PATCHED_GLOBALS = ['Path2D', 'DOMMatrix', 'Image', 'OffscreenCanvas'] as const;
 
 /** The chart's container is `.ag-chart-canvas-wrapper` (`GridChartComp`'s `eChart`). */
 const CHART_CONTAINER_CLASS = 'ag-chart-canvas-wrapper';
@@ -94,7 +98,9 @@ async function init(): Promise<boolean> {
     try {
         return await install();
     } catch (error) {
-        initialized = false;
+        // Whatever `install` had already patched before it threw, restored: a half-installed polyfill
+        // stays with the worker, and the next `init()` would then save the patched state as the original.
+        reset();
         throw error;
     }
 }
@@ -115,12 +121,10 @@ async function install(): Promise<boolean> {
     NodeCanvas = ConfiguredCanvasMixin(Canvas);
 
     const global = globalThis as unknown as Record<string, unknown>;
-    originalGlobals = {
-        Path2D: global.Path2D,
-        DOMMatrix: global.DOMMatrix,
-        Image: global.Image,
-        OffscreenCanvas: global.OffscreenCanvas,
-    };
+    originalGlobals = PATCHED_GLOBALS.map((name): [string, PropertyDescriptor | undefined] => [
+        name,
+        Object.getOwnPropertyDescriptor(global, name),
+    ]);
     // AG Charts measures text through `new OffscreenCanvas(w, h).getContext('2d')`, which happy-dom has no
     // implementation of - without it every layout pass that measures a label throws.
     Object.assign(global, { Path2D, DOMMatrix, Image, OffscreenCanvas: NodeCanvas });
@@ -162,22 +166,29 @@ async function install(): Promise<boolean> {
     return true;
 }
 
+// Each half is restored on its own rather than behind one guard, so this also undoes a partial install.
 function reset(): void {
-    if (!initialized || !originalCreateElement || !originalGlobals) {
-        return;
+    if (originalCreateElement) {
+        document.createElement = originalCreateElement;
+        originalCreateElement = undefined;
     }
-    document.createElement = originalCreateElement;
-    Object.assign(globalThis as unknown as Record<string, unknown>, originalGlobals);
+    for (const [name, descriptor] of originalGlobals ?? []) {
+        restoreProperty(globalThis, name, descriptor);
+    }
     for (const [prop, descriptor] of originalSizeDescriptors ?? []) {
-        if (descriptor) {
-            Object.defineProperty(HTMLElement.prototype, prop, descriptor);
-        } else {
-            // Nothing of its own before: drop the shim so the inherited Element.prototype getter is seen again.
-            Reflect.deleteProperty(HTMLElement.prototype, prop);
-        }
+        // Nothing of its own before: dropping the shim is what makes the inherited Element.prototype
+        // getter visible again.
+        restoreProperty(HTMLElement.prototype, prop, descriptor);
     }
     originalSizeDescriptors = undefined;
-    originalCreateElement = undefined;
     originalGlobals = undefined;
     initialized = false;
+}
+
+function restoreProperty(target: object, name: string, descriptor: PropertyDescriptor | undefined): void {
+    if (descriptor) {
+        Object.defineProperty(target, name, descriptor);
+    } else {
+        Reflect.deleteProperty(target, name);
+    }
 }

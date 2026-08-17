@@ -281,7 +281,9 @@ export class RowDragDispatcher {
         if (!this.settlePromise) {
             this.settlePromise = new Promise<void>((resolve) => {
                 this.resolveSettle = () => {
-                    this.settlePromise = undefined;
+                    // The promise itself is kept (only `reset` clears it): dropping it here left the
+                    // already-settled drag looking like one whose events had not arrived, and `waitForSettle`
+                    // then polled its whole budget away on every successful drag.
                     this.resolveSettle = undefined;
                     resolve();
                 };
@@ -294,8 +296,8 @@ export class RowDragDispatcher {
      * legitimate outcome. A plain poll rather than `@testing-library`'s `waitFor`, whose timeout message
      * calls `prettyDOM`, which throws on a happy-dom document so the rejection never arrives.
      *
-     * The poll is not a per-drag cost: every recorded event creates the promise and only a completing one
-     * clears it, so by here it is already defined and the loop exits without sleeping.
+     * The poll is not a per-drag cost: every recorded event creates the promise and only `reset` clears it,
+     * so by here it is already defined and the loop exits without sleeping.
      */
     private async waitForSettle(): Promise<void> {
         for (let i = 0; this.settlePromise === undefined && i < 50; ++i) {

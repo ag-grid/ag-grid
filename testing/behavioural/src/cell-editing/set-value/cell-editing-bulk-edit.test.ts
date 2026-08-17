@@ -85,7 +85,9 @@ describe('Cell Editing: bulk edit', () => {
         await user.clear(input);
         await user.type(input, 'Bulk Value');
         // Selection is set up last: `user.clear`/`user.type` press the editor input, and that press
-        // reaches the row container and collapses the selection to the cell being edited.
+        // reaches the row container and collapses the selection to the cell being edited - cleared first
+        // because `addCellRange` appends, so that collapsed range would otherwise still be in the set.
+        api.clearCellSelection();
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b'] });
         await user.keyboard('{Control>}{Enter}{/Control}');
         await asyncSetTimeout(0);
@@ -199,7 +201,9 @@ describe('Cell Editing: bulk edit', () => {
         await user.clear(input);
         await user.type(input, 'Bulk Value');
         // Selection is set up last: `user.clear`/`user.type` press the editor input, and that press
-        // reaches the row container and collapses the selection to the cell being edited.
+        // reaches the row container and collapses the selection to the cell being edited - cleared first
+        // because `addCellRange` appends, so that collapsed range would otherwise still be in the set.
+        api.clearCellSelection();
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b'] });
         await user.keyboard('{Control>}{Enter}{/Control}');
         await asyncSetTimeout(0);
@@ -418,7 +422,9 @@ describe('Cell Editing: bulk edit', () => {
         await user.clear(input);
         await user.type(input, 'X');
         // Selection is set up last: `user.clear`/`user.type` press the editor input, and that press
-        // reaches the row container and collapses the selection to the cell being edited.
+        // reaches the row container and collapses the selection to the cell being edited - cleared first
+        // because `addCellRange` appends, so that collapsed range would otherwise still be in the set.
+        api.clearCellSelection();
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b', 'c'] });
         await user.keyboard('{Control>}{Enter}{/Control}');
         await asyncSetTimeout(0);

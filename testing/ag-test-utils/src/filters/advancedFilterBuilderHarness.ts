@@ -202,7 +202,7 @@ export class AdvancedFilterBuilderHarness {
 
     /** Clicks the Remove button on `item` to delete that condition/group. */
     public async removeItem(item: HTMLElement): Promise<this> {
-        const remove = item.querySelector<HTMLElement>('[aria-label="Remove"]');
+        const remove = this.liveItem(item).querySelector<HTMLElement>('[aria-label="Remove"]');
         if (!remove) {
             throw new Error('Remove button not found on builder item');
         }
@@ -228,7 +228,7 @@ export class AdvancedFilterBuilderHarness {
 
     private moveButton(item: HTMLElement, direction: 'up' | 'down'): HTMLElement {
         const label = direction === 'up' ? 'Move Up' : 'Move Down';
-        const button = item.querySelector<HTMLElement>(`[aria-label="${label}"]`);
+        const button = this.liveItem(item).querySelector<HTMLElement>(`[aria-label="${label}"]`);
         if (!button) {
             throw new Error(`"${label}" button not found (is advancedFilterBuilderParams.showMoveButtons set?)`);
         }

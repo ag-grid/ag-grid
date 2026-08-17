@@ -27,8 +27,10 @@ export async function waitForInput(
         container = dialog;
     }
 
+    // The grid itself when no container was named: searching `undefined` can only time out.
+    const root = container ?? gridDiv;
     return await waitFor(() => {
-        const input = container?.querySelector<EditorFormControl>(selector);
+        const input = root.querySelector<EditorFormControl>(selector);
         if (!input) {
             throw new Error(`Input not found in container with selector: "${selector}"`);
         }

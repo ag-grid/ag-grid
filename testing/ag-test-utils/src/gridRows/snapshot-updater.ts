@@ -178,7 +178,19 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
 
         // Deduplicate overlapping replacements
         const deduped: Replacement[] = [];
+        // Ranges a conflict has already disqualified: with three or more claimants the loop below has
+        // dropped the pair by the time the third arrives, and accepting it would write the very snapshot
+        // the conflict says nobody can agree on.
+        const conflicted = new Set<string>();
         for (const r of replacements) {
+            const range = `${r.start}:${r.end}`;
+            if (conflicted.has(range)) {
+                logWarning(
+                    `  ⚠️️ Skipped ${relPath}:${r.line} — "${r.label}" (shared variable produces different snapshots across parameterizations — expand the test.each/describe.each)`
+                );
+                totalSkipped++;
+                continue;
+            }
             if (deduped.length > 0) {
                 const prev = deduped[deduped.length - 1];
                 if (r.end > prev.start) {
@@ -187,6 +199,7 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
                         // Different content for the same target — shared variable with different parameterizations.
                         // Skip BOTH to avoid corruption. The user needs to expand the parameterized test.
                         deduped.pop();
+                        conflicted.add(range);
                         logWarning(
                             `  ⚠️️ Skipped ${relPath}:${prev.line} — "${prev.label}" (shared variable produces different snapshots across parameterizations — expand the test.each/describe.each)`
                         );
@@ -273,9 +286,11 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
 /** The classes a snapshot call must be made on, so an unrelated `.check()` is never rewritten. */
 const SNAPSHOT_CLASS_NAMES = new Set(Object.values(CLASS_NAME_BY_METHOD));
 
+type VarDeclarations = Map<string, { node: any; scope: any } | null>;
+
 /** Walks the receiver chain of a check call to the `new GridRows/GridColumns/FilterDom(...)` behind it, or
  *  undefined when the call belongs to something else entirely. Both passes gate on this. */
-function snapshotReceiver(ts: Typescript, expr: any): any {
+function snapshotReceiver(ts: Typescript, expr: any, varDeclarations?: VarDeclarations): any {
     let cursor: any = expr;
     const unwrapParens = () => {
         while (cursor && ts.isParenthesizedExpression(cursor)) {
@@ -287,6 +302,12 @@ function snapshotReceiver(ts: Typescript, expr: any): any {
         cursor = (cursor as any).expression;
         unwrapParens();
     }
+    // `const rows = new GridRows(api, 'x'); rows.check()` holds the instance in a variable, so without
+    // resolving it the call is unrecognisable and a no-argument one is left to the nearest-line fallback,
+    // which then rewrites whichever other snapshot happens to sit within five lines of it.
+    if (cursor && ts.isIdentifier(cursor)) {
+        cursor = varDeclarations?.get(cursor.text)?.node.initializer ?? cursor;
+    }
     if (!cursor || !ts.isNewExpression(cursor) || !ts.isIdentifier(cursor.expression)) {
         return undefined;
     }
@@ -294,8 +315,8 @@ function snapshotReceiver(ts: Typescript, expr: any): any {
 }
 
 /** LABEL from `new GridRows(api, LABEL)` when it is a static string/template literal, else undefined. */
-function extractGridInstanceLabel(ts: Typescript, expr: any): string | undefined {
-    const labelArg = snapshotReceiver(ts, expr)?.arguments?.[1];
+function receiverLabel(ts: Typescript, receiver: any): string | undefined {
+    const labelArg = receiver?.arguments?.[1];
     if (labelArg && (ts.isStringLiteral(labelArg) || ts.isNoSubstitutionTemplateLiteral(labelArg))) {
         return labelArg.text;
     }
@@ -348,10 +369,11 @@ function findReplacements(
             const expr = node.expression;
             // Match .check(...) / .checkColumns(...) / .checkFilterDom(...) — PropertyAccessExpression
             if (ts.isPropertyAccessExpression(expr) && SNAPSHOT_CHECK_METHODS.has(expr.name.text)) {
-                const label = extractGridInstanceLabel(ts, expr.expression);
+                const receiver = snapshotReceiver(ts, expr.expression, varDeclarations);
+                const label = receiverLabel(ts, receiver);
                 // A no-argument call has no template literal to identify it, so it is only claimed when
                 // the receiver is recognisably one of ours - `destroyedNodeChecker.check()` is not.
-                if (node.arguments.length >= 1 || label !== undefined) {
+                if (node.arguments.length >= 1 || receiver !== undefined) {
                     const callLine = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1; // 1-based
                     checkCalls.push({ callLine, node, arg: node.arguments[0], methodName: expr.name.text, label });
                 }
@@ -547,7 +569,7 @@ function findIndentationFixes(ts: Typescript, source: string, file: string): Rep
 
                     const callLine = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1;
                     // The shared walk, so a label still resolves through a wrapped or chained receiver.
-                    const label = extractGridInstanceLabel(ts, expr) ?? '';
+                    const label = receiverLabel(ts, snapshotReceiver(ts, expr)) ?? '';
 
                     fixes.push({ start, end, newText, line: callLine, label, indentFixed: true });
                 }
