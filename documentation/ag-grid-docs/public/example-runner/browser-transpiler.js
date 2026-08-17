@@ -1,20 +1,15 @@
 /**
- * Transpiles the example in the page, rather than being served the result. Only Plunker and the
- * static CodeSandbox export need this: they host static files with no build step, and have to
- * show the TypeScript the example was authored in, so nothing can transpile the sources before
- * they get there.
+ * Transpiles the example in the page. Plunker and the static CodeSandbox export host files with no
+ * build step, so nothing can transpile the TypeScript before it gets there.
  *
- * Modules become blob URLs, because a browser will not execute TypeScript and there is no other
- * URL to give the transpiled output. That costs the two things a real URL provides, both of
- * which are patched back in per module: relative specifiers (rewritten to the blob URL of the
- * dependency, or to an absolute URL for a non-module asset) and `import.meta.url` (substituted
- * with the module's real URL). Bare specifiers are left alone -- a blob module resolves those
- * through the document's import map like any other.
+ * Each module is compiled to a blob URL, since a browser will not run TypeScript. A blob has no
+ * path, so two things are patched back in per module: relative specifiers, rewritten to the blob
+ * URL of the dependency (or to an absolute URL for an asset), and `import.meta.url`, replaced with
+ * the module's real URL. Bare specifiers are left to the page's import map.
  *
- * Served rather than inlined, so that an example's `index.html` carries no machinery. What the
- * page supplies in `#ag-transpiler-options` is only what this shares with the server-side
- * transform -- the patterns and the compiler options -- so that the two transpilers cannot
- * drift. `typescript` itself is loaded from a CDN by the tag before this one.
+ * The page carries only what this shares with the server-side transform, in
+ * `#ag-transpiler-options`, so the two transpilers cannot drift. `typescript` comes from a CDN,
+ * loaded by the tag before this one.
  */
 /* global ts */
 const options = JSON.parse(document.getElementById('ag-transpiler-options').textContent);
