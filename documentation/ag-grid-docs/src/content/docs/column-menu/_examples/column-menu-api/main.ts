@@ -7,12 +7,7 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import {
-    CalculatedColumnsModule,
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    ContextMenuModule,
-} from 'ag-grid-enterprise';
+import { CalculatedColumnsModule, ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -24,7 +19,6 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
-    ColumnsToolPanelModule,
     ColumnMenuModule,
     ContextMenuModule,
 ]);
@@ -56,20 +50,12 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 };
 
-function showColumnChooser() {
-    gridApi.showColumnChooser();
-}
-
 function showColumnFilter(colKey: string) {
     gridApi.showColumnFilter(colKey);
 }
 
 function showColumnMenu(colKey: string) {
     gridApi.showColumnMenu(colKey);
-}
-
-function hideColumnChooser() {
-    gridApi.hideColumnChooser();
 }
 
 // setup the grid after the page has finished loading

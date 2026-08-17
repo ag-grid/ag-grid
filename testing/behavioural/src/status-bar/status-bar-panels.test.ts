@@ -2,6 +2,9 @@ import type { AggregationStatusPanelAggFunc, GridApi, IStatusPanel } from 'ag-gr
 import { ClientSideRowModelModule, LocaleModule, NumberFilterModule, RowSelectionModule } from 'ag-grid-community';
 import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
 
+// The `@ag-grid-community/locale` package name does not resolve under vitest (its `exports` point at
+// an unbuilt `dist/`), so the shipped locale data is imported from source.
+import { AG_GRID_LOCALE_JP } from '../../../../community-modules/locale/src/ja-JP';
 import { TestGridsManager, waitForEvent } from '../test-utils';
 
 // Reads the rendered value of a name/value status item (total/filtered/selected panels, and the
@@ -221,6 +224,26 @@ describe('Status bar panels', () => {
         expect(getStatusBarValue(gridDiv, 'Min')).toBe('10');
         expect(getStatusBarValue(gridDiv, 'Max')).toBe('40');
         expect(getStatusBarValue(gridDiv, 'Average')).toBe('25');
+    });
+
+    test('agAggregationComponent formats an average with the locale decimal separator', async () => {
+        const api = await gridMgr.createGridAndWait('status-bar-agg-locale', {
+            columnDefs: [{ field: 'value' }],
+            rowData: [
+                { id: 'r1', value: 12345.67 },
+                { id: 'r2', value: 12345.67 },
+            ],
+            getRowId: (params) => params.data?.id,
+            cellSelection: true,
+            statusBar: { statusPanels: [{ statusPanel: 'agAggregationComponent' }] },
+            localeText: AG_GRID_LOCALE_JP,
+        });
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        await selectCellRange(api, 0, 1, ['value']);
+
+        // '平均' is the ja-JP label for Average.
+        expect(getStatusBarValue(gridDiv, '平均')).toBe('12,345.67');
     });
 
     test('agAggregationComponent shows only count for non-numeric ranges', async () => {

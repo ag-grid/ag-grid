@@ -35,8 +35,6 @@ jobs:
   page-verification:
     runs-on: ubuntu-latest
     name: Page Verification (Staging)
-    outputs:
-      prev_run_id: ${{ steps.prev_run.outputs.id }}
     # For manual dispatch: always run.
     # For workflow_run: only proceed if triggered by a push to this repo (not a fork PR),
     # and only if the upstream CI run succeeded. This guards against the untrusted-checkout
@@ -129,10 +127,9 @@ jobs:
             --branch latest \
             --status completed \
             --limit 1 \
-            --json databaseId,headSha,conclusion \
+            --json headSha,conclusion \
             --jq '.[0] // {}')
 
-          echo "id=$(echo "$PREV" | jq -r '.databaseId // ""')" >> $GITHUB_OUTPUT
           echo "sha=$(echo "$PREV" | jq -r '.headSha // ""')" >> $GITHUB_OUTPUT
           echo "outcome=$(echo "$PREV" | jq -r '.conclusion // ""')" >> $GITHUB_OUTPUT
 
@@ -190,17 +187,47 @@ jobs:
           path: csp/current
 
       - name: Download previous CSP report
-        # Absent on the first run after this job is introduced, and whenever the previous run
-        # predates it - the notifier treats a missing baseline as "everything is new".
-        if: needs.page-verification.outputs.prev_run_id != ''
-        continue-on-error: true
+        # The baseline has to be a run that actually produced a report, so this walks back
+        # over recent successful runs rather than trusting the newest: a dispatch against a
+        # hand-given URL succeeds without uploading one, and a run predating this job has
+        # none at all. Once the artifact is known to exist, a failed download is a real
+        # error, so it fails this job rather than quietly reporting the site as all-new.
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh run download ${{ needs.page-verification.outputs.prev_run_id }} \
-            --repo ${{ github.repository }} \
+          set -e
+          # The workflow run is still in progress, so this cannot select the current run.
+          CANDIDATES=$(gh run list \
+            --workflow post-deploy-verification.yml \
+            --branch latest \
+            --status success \
+            --limit 10 \
+            --json databaseId \
+            --jq '.[].databaseId')
+
+          BASELINE=""
+          for ID in $CANDIDATES; do
+            if ! ARTIFACTS=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ID/artifacts" \
+              --jq '.artifacts[] | select(.expired == false) | .name'); then
+              echo "::warning title=CSP baseline::Could not list artifacts for run $ID; skipping it."
+              continue
+            fi
+            if grep -qx csp-violations <<<"$ARTIFACTS"; then
+              BASELINE=$ID
+              break
+            fi
+          done
+
+          if [ -z "$BASELINE" ]; then
+            echo "No recent successful run has a csp-violations artifact; treating this run as having no baseline."
+            exit 0
+          fi
+
+          gh run download "$BASELINE" \
+            --repo "$GITHUB_REPOSITORY" \
             --name csp-violations \
             --dir csp/previous
+          echo "Comparing against run $BASELINE."
 
       - name: Report CSP violations
         env:

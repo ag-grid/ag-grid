@@ -794,8 +794,8 @@ export const AG_GRID_LOCALE_BG = {
     ariaHasNote: 'Тази клетка има бележка.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Текст',

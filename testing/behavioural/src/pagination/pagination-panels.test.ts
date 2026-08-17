@@ -4,12 +4,17 @@ import type { MockInstance } from 'vitest';
 import type { GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    LocaleModule,
     PaginationModule,
     ValidationModule,
     enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
 
+// The `@ag-grid-community/locale` package name does not resolve under vitest (its `exports` point at
+// an unbuilt `dist/`), so the shipped locale data is imported from source.
+import { AG_GRID_LOCALE_FR } from '../../../../community-modules/locale/src/fr-FR';
+import { AG_GRID_LOCALE_JP } from '../../../../community-modules/locale/src/ja-JP';
 import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 const COLUMN_DEFS = [{ field: 'name' }];
@@ -913,5 +918,47 @@ describe('paginationPanels', () => {
             firstBtn.click();
             expect(api.paginationGetCurrentPage()).toBe(0);
         });
+    });
+});
+
+describe('paginationPanels number formatting', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, PaginationModule, LocaleModule],
+    });
+
+    beforeEach(() => {
+        gridsManager.reset();
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    function createLocalisedPaginationGrid(localeText: Record<string, string>) {
+        return gridsManager.createGrid('myGrid', {
+            columnDefs: COLUMN_DEFS,
+            rowData: Array.from({ length: 12345 }, (_, i) => ({ name: `Row ${i + 1}` })),
+            pagination: true,
+            paginationPageSize: 100,
+            localeText,
+        });
+    }
+
+    function getRowSummaryText(api: ReturnType<typeof createLocalisedPaginationGrid>): string {
+        return getPagingPanel(api)!.querySelector<HTMLElement>('.ag-paging-row-summary-panel')!.textContent!;
+    }
+
+    test('ja-JP groups digits with a conventional separator, not full-width prose punctuation', () => {
+        const api = createLocalisedPaginationGrid(AG_GRID_LOCALE_JP);
+
+        expect(getRowSummaryText(api)).toContain('12,345');
+    });
+
+    test('fr-FR groups digits with a no-break space', () => {
+        const api = createLocalisedPaginationGrid(AG_GRID_LOCALE_FR);
+
+        // Escaped, never a typed literal: a plain U+0020 in both the locale source and this
+        // expectation would compare equal and let the wrong character ship.
+        expect(getRowSummaryText(api)).toContain('12\u00A0345');
     });
 });

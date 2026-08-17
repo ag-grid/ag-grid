@@ -227,11 +227,19 @@ jobs:
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-resume')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-browser-verify')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-repro-rebuild')
-            )
+            ) &&
+            needs.preflight.outputs.stage != 'execute' && inputs.stage != 'execute'
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            issues: write
+            # `issues: read`, NOT write — see the `execute` job below. Every GitHub
+            # WRITE in the pipeline lives in execute.ts; every other label call in the
+            # codebase is `jira.addLabel`, not `gh`. So the agent stages (triage /
+            # resume / the browser chain) never needed write, and holding it meant an
+            # agent reading attacker-authored issue text sat in a job that could write
+            # to GitHub. Same argument as #14834: an unused permission is not hardening
+            # work, it is a mistake.
+            issues: read
             packages: read
         outputs:
             # NEW — downstream chain jobs need the mapping-ticket key and the
@@ -263,6 +271,23 @@ jobs:
                   # regardless of preflight's own behaviour.
                   stage: ${{ (github.event.action == 'gh-triage-manual-resume' && 'resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'repro-rebuild') || needs.preflight.outputs.stage || inputs.stage || 'triage' }}
                   product: grid
+                  # claude-code-action refuses to run when the TRIGGERING ACTOR lacks
+                  # write access — and on an `issues` event that actor is the ISSUE
+                  # AUTHOR, a community reporter with `read`. Auto-triage therefore
+                  # failed for every genuine community report ("Actor does not have
+                  # write permissions to the repository") and only ever worked when a
+                  # maintainer happened to touch the issue, which is the opposite of
+                  # the feature. It looked healthy because the first live ticket was
+                  # label-triggered by a maintainer; the first real community report
+                  # (AITGH-28 / #14837) failed on both auto-fires.
+                  #
+                  # Scoped to the `issues` event ALONE: the board drag, the manual
+                  # buttons and workflow_dispatch all already carry a write-capable
+                  # actor, so the gate stays armed there at no cost — and stays armed
+                  # for any trigger added later. Setting this also makes
+                  # claude-code-action best-effort scrub secrets from subprocess
+                  # environments.
+                  allowed_non_write_users: ${{ github.event_name == 'issues' && '*' || '' }}
                   # Provenance for the pin: `post` stamps this channel onto the
                   # mapping ticket so `resolve-channel` can route the NEXT drag to the
                   # same channel. Must match the channel actually installed above.
@@ -270,6 +295,53 @@ jobs:
                   gh_issue: ${{ github.event.issue.number || github.event.client_payload.gh_issue || inputs.gh_issue }}
                   issue_key: ${{ needs.preflight.outputs.issue_key || github.event.client_payload.issue_key || inputs.issue_key }}
                   anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
+
+    # -------------------------------------------------- execute
+    # The ONLY job that may write to GitHub, and the only one that needs to.
+    #
+    # `execute` is MECHANICAL — no agent, no Anthropic key, no browser: it performs the
+    # approved action in deterministic TypeScript (mint the golden AG ticket, post the
+    # reply, apply the label, close the issue). It is split out of `run` purely so that
+    # `issues: write` stops being handed to jobs that run an AGENT over untrusted,
+    # reporter-authored text. Splitting the small mechanical job out is far cheaper than
+    # splitting the large agent job out, and leaves the chain jobs' `needs: [run]`
+    # wiring untouched.
+    #
+    # Reachable only via the two paths that can resolve stage=execute: the board drag
+    # routed here by preflight, and an explicit `workflow_dispatch stage=execute`.
+    execute:
+        needs: [preflight, resolve-channel]
+        if: |
+            !cancelled() &&
+            (
+              (github.event_name == 'repository_dispatch' && needs.preflight.outputs.stage == 'execute')
+              || (github.event_name == 'workflow_dispatch' && inputs.stage == 'execute')
+            )
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            issues: write # mint → reply → label → close, all mechanical
+            packages: read
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
+            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
+              with:
+                  stage: execute
+                  product: grid
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
+                  gh_issue: ${{ github.event.client_payload.gh_issue || inputs.gh_issue }}
+                  issue_key: ${{ needs.preflight.outputs.issue_key || github.event.client_payload.issue_key || inputs.issue_key }}
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
@@ -301,7 +373,19 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            issues: write
+            # NO `issues: write` — deliberately narrower than the `run` job.
+            #
+            # These two stages navigate UNTRUSTED, reporter-authored repro pages, and
+            # they perform ZERO GitHub writes: every write they cause is the pipeline's
+            # own Jira write, authenticated by JIRA_API_TOKEN. Inheriting `issues: write`
+            # therefore handed an injectable agent a credential it never uses — and
+            # "the agent has no write tool" does not mean the token is out of reach,
+            # since it can read the environment and call the GitHub API directly.
+            # Raised twice as a P0 on ag-dev-prompts#840; the full browser-stage
+            # hardening stays deferred for the pilot, but an UNUSED permission is not
+            # hardening work, it is a mistake. See ag-dev-prompts
+            # docs/github-triage-deferred-hardening.md section 1.
+            issues: read
             packages: read
         outputs:
             reproduces: ${{ steps.pipeline.outputs.reproduces }}
@@ -339,7 +423,19 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            issues: write
+            # NO `issues: write` — deliberately narrower than the `run` job.
+            #
+            # These two stages navigate UNTRUSTED, reporter-authored repro pages, and
+            # they perform ZERO GitHub writes: every write they cause is the pipeline's
+            # own Jira write, authenticated by JIRA_API_TOKEN. Inheriting `issues: write`
+            # therefore handed an injectable agent a credential it never uses — and
+            # "the agent has no write tool" does not mean the token is out of reach,
+            # since it can read the environment and call the GitHub API directly.
+            # Raised twice as a P0 on ag-dev-prompts#840; the full browser-stage
+            # hardening stays deferred for the pilot, but an UNUSED permission is not
+            # hardening work, it is a mistake. See ag-dev-prompts
+            # docs/github-triage-deferred-hardening.md section 1.
+            issues: read
             packages: read
         steps:
             - uses: actions/checkout@v4

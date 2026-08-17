@@ -789,8 +789,8 @@ export const AG_GRID_LOCALE_VN = {
     ariaHasNote: 'Ô này có ghi chú.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: '.',
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Văn bản',

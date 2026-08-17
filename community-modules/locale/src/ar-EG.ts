@@ -787,7 +787,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaHasNote: 'تحتوي هذه الخلية على ملاحظة.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '،',
+    thousandSeparator: ',',
     decimalSeparator: '.',
 
     // Data types
