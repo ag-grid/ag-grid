@@ -1,15 +1,11 @@
 /**
- * Transpiles the example in the page. Plunker and the static CodeSandbox export host files with no
- * build step, so nothing can transpile the TypeScript before it gets there.
+ * Transpiles the example in the page, for Plunker and the static CodeSandbox export, which host
+ * files with no build step.
  *
- * Each module is compiled to a blob URL, since a browser will not run TypeScript. A blob has no
- * path, so two things are patched back in per module: relative specifiers, rewritten to the blob
- * URL of the dependency (or to an absolute URL for an asset), and `import.meta.url`, replaced with
- * the module's real URL. Bare specifiers are left to the page's import map.
- *
- * The page carries only what this shares with the server-side transform, in
- * `#ag-transpiler-options`, so the two transpilers cannot drift. `typescript` comes from a CDN,
- * loaded by the tag before this one.
+ * Each module compiles to a blob URL. A blob has no path, so every relative specifier is rewritten
+ * to its dependency's blob (assets to an absolute URL) and `import.meta.url` is patched back in per
+ * module. Bare specifiers are left to the import map. Options come from `#ag-transpiler-options`,
+ * shared with the server-side transform so the two cannot drift. `typescript` comes from a CDN.
  */
 /* global ts */
 const options = JSON.parse(document.getElementById('ag-transpiler-options').textContent);
@@ -21,10 +17,8 @@ const moduleExtensionRegex = new RegExp(options.moduleExtensionRegex, 'i');
 const loader = options.stylesheetLoaderName;
 
 /**
- * Options whose value is a TypeScript enum member, and the enum to read it from. The page names
- * them (`"target": "ES2022"`) rather than numbering them, so that what it carries says what it
- * does; the numbers are this version of `ts`'s own. Mirrors `resolveCompilerOptions` in
- * `transformExampleModule.ts`, which `browserTranspiler.test.ts` checks this against.
+ * The page names its options (`"target": "ES2022"`), so the numbers come from this `ts`. Mirrors
+ * `transformExampleModule.ts`; kept in step by `browserTranspiler.test.ts`.
  */
 const COMPILER_OPTION_ENUMS = { module: 'ModuleKind', target: 'ScriptTarget', jsx: 'JsxEmit' };
 
@@ -36,10 +30,8 @@ const compilerOptions = Object.fromEntries(
 );
 
 /**
- * The counterpart of `STYLESHEET_LOADER`, which the server-side transform injects into the
- * modules it rewrites. Kept as code here rather than passed in as source text, so that an
- * example carrying a CSP does not need `unsafe-eval` to run its own stylesheets. Each module is
- * its own blob, so the loader has to be reachable from all of them -- hence `window`.
+ * Counterpart of the server-side `STYLESHEET_LOADER`. Kept as code here so a CSP example needs no
+ * `unsafe-eval`, and on `window` because every module is its own blob.
  */
 window[loader] = (href) =>
     new Promise((resolve) => {
@@ -63,26 +55,29 @@ const isRelative = (specifier) => specifier.startsWith('./') || specifier.starts
 const blobUrls = new Map();
 
 /**
- * Native resolution has no default extension, and neither do the sources: Angular examples
- * import './app.component'. Each candidate is fetched rather than probed, since the response
- * is what gets compiled anyway.
+ * Every module the example ships, keyed by its URL without the extension: the sources import
+ * './app.component' and native resolution has no default extension. The page names the files it
+ * carries, so a specifier resolves to the file that exists and no probe request 404s.
  */
-const fetchModule = async (url) => {
-    const candidates = moduleExtensionRegex.test(url)
-        ? [url]
-        : options.moduleExtensions.map((extension) => url + extension);
+const moduleUrls = new Map(
+    options.moduleFiles.map((fileName) => {
+        const url = new URL(fileName, document.baseURI).href;
+        return [url.replace(moduleExtensionRegex, ''), url];
+    })
+);
 
-    for (const candidate of candidates) {
-        const response = await fetch(candidate);
-        if (response.ok) {
-            return { url: candidate, source: await response.text() };
-        }
+const fetchModule = async (url) => {
+    const resolved = moduleExtensionRegex.test(url) ? url : moduleUrls.get(url);
+    const response = resolved && (await fetch(resolved));
+
+    if (!response || !response.ok) {
+        throw new Error('Could not resolve example module: ' + url);
     }
 
-    throw new Error('Could not resolve example module: ' + url);
+    return { url: resolved, source: await response.text() };
 };
 
-/** As `rewriteCssImports` server-side, but resolving relative hrefs here rather than in the module */
+/** As `rewriteCssImports` server-side, except that relative hrefs resolve here */
 const rewriteCssImports = (source, url) => {
     const rewritten = source.replace(cssImportRegex(), (match, quote, specifier) => {
         if (!isRelative(specifier)) {

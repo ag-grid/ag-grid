@@ -15,6 +15,10 @@ interface Props {
 
     modifiedTimeMs: number;
     entryFileName: string;
+    /**
+     * Every file the example ships, as authored -- only needed when the page transpiles them itself
+     */
+    fileNames: string[];
 
     styleFiles?: string[];
     scriptFiles: string[];
@@ -38,6 +42,7 @@ const {
     modifiedTimeMs,
     appLocation,
     entryFileName,
+    fileNames,
     styleFiles,
     scriptFiles,
     extraStyles,
@@ -88,6 +93,7 @@ const {
         <ExampleModules
             appLocation={appLocation}
             entryFileName={entryFileName}
+            fileNames={fileNames}
             internalFramework={'angular'}
             isEnterprise={isEnterprise}
             isIntegratedCharts={isIntegratedCharts}

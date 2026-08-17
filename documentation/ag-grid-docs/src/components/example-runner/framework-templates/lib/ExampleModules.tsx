@@ -10,28 +10,27 @@ import { SeedRandom } from './SeedRandom';
 interface Props {
     appLocation: string;
     entryFileName: string;
+    /** Every file the example ships, as authored. Only the in-browser transpiler needs these */
+    fileNames: string[];
     internalFramework: InternalFramework;
     isEnterprise: boolean;
     isIntegratedCharts?: boolean;
     usesMathRandom?: boolean;
-    /**
-     * Whether the example's sources are transpiled in the page rather than served transpiled,
-     * which is what Plunker needs (see `BrowserTranspiler`)
-     */
+    /** Whether the page transpiles the sources itself, as Plunker needs (see `BrowserTranspiler`) */
     transpileInBrowser?: boolean;
     nonce?: string;
 }
 
 /**
- * Example modules are loaded natively by the browser: an import map resolves the bare
- * package specifiers (see `ExampleImportMap`), and the entry file is loaded as a module.
- * TypeScript and JSX sources are transpiled server-side and served as `.js`, so the entry point
- * is requested as such. The exception is Plunker, which is handed the sources as authored --
- * see `transpileInBrowser`.
+ * Example modules load natively: an import map resolves the bare package specifiers (see
+ * `ExampleImportMap`) and the entry file loads as a module. TypeScript and JSX are transpiled
+ * server-side and served as `.js`, so the entry point is requested as such. Plunker is handed the
+ * sources as authored; see `transpileInBrowser`.
  */
 export const ExampleModules = ({
     appLocation,
     entryFileName,
+    fileNames,
     internalFramework,
     isEnterprise,
     isIntegratedCharts,
@@ -48,10 +47,15 @@ export const ExampleModules = ({
             nonce={nonce}
         />
         {usesMathRandom && <SeedRandom nonce={nonce} />}
-        {/* `transpileInBrowser` marks the pages that are exported rather than served by us */}
+        {/* `transpileInBrowser` marks the exported pages */}
         <ExamplePageBoilerplate isExported={transpileInBrowser} nonce={nonce} />
         {transpileInBrowser ? (
-            <BrowserTranspiler entryFileName={entryFileName} internalFramework={internalFramework} nonce={nonce} />
+            <BrowserTranspiler
+                entryFileName={entryFileName}
+                fileNames={fileNames}
+                internalFramework={internalFramework}
+                nonce={nonce}
+            />
         ) : (
             <script nonce={nonce} type="module" src={pathJoin(appLocation, toModuleFileName(entryFileName))} />
         )}

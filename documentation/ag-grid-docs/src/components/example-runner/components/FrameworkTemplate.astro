@@ -68,6 +68,8 @@ const appLocation = relativePath ? '' : exampleUrl;
 const timeNow = Date.now();
 const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
 
+const fileNames = Object.keys(files ?? {});
+
 const usesMathRandom = Object.values(generatedContents?.files).some((file) => file.includes('window.agRandom()'));
 
 const shouldShowTemplate = (framework: InternalFramework) => {
@@ -128,6 +130,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             title={title}
             modifiedTimeMs={timeNow}
             entryFileName={entryFileName!}
+            fileNames={fileNames}
             styleFiles={styleFiles}
             indexFragment={indexFragment!}
             appLocation={appLocation}
@@ -154,6 +157,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             title={title}
             modifiedTimeMs={timeNow}
             entryFileName={entryFileName!}
+            fileNames={fileNames}
             scriptFiles={scriptFiles}
             styleFiles={styleFiles}
             appLocation={appLocation}
@@ -184,6 +188,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             isIntegratedCharts={!!isIntegratedCharts}
             modifiedTimeMs={timeNow}
             entryFileName={entryFileName!}
+            fileNames={fileNames}
             styleFiles={styleFiles}
             scriptFiles={scriptFiles}
             appLocation={appLocation}
@@ -210,6 +215,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             isIntegratedCharts={!!isIntegratedCharts}
             modifiedTimeMs={timeNow}
             entryFileName={entryFileName!}
+            fileNames={fileNames}
             scriptFiles={scriptFiles}
             styleFiles={styleFiles}
             appLocation={appLocation}
