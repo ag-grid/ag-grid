@@ -238,7 +238,6 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                     styleFiles,
                     ignoreDarkMode: false,
                     transformEntryFile,
-                    isDev,
                     exampleConfig: frameworkExampleConfig,
                 });
                 files = result.files;
@@ -256,7 +255,6 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 provideFrameworkFiles,
                 mergedStyleFiles,
                 transformEntryFile,
-                isDev,
                 isIntegratedCharts,
                 mainFileName,
                 folderPath
@@ -353,7 +351,6 @@ async function processProvidedFiles(
     provideFrameworkFiles: any,
     mergedStyleFiles: { [x: string]: string },
     transformEntryFile: TransformEntryFile,
-    isDev: boolean,
     isIntegratedCharts: boolean,
     mainFileName: string,
     folderPath: string
@@ -394,7 +391,7 @@ async function processProvidedFiles(
             delete provideFrameworkFiles[fileName];
         }
 
-        if (!isDev && provideFrameworkFiles[writeToFileName]?.length > 0 && !writeToFileName.endsWith('.css')) {
+        if (provideFrameworkFiles[writeToFileName]?.length > 0 && !writeToFileName.endsWith('.css')) {
             provideFrameworkFiles[writeToFileName] = await formatFile(
                 internalFramework,
                 provideFrameworkFiles[writeToFileName]

@@ -23,6 +23,20 @@ const rewriteAstroGeneratedContent = (body: string) => {
 
 const BINARY_EXTENSIONS = ['png', 'webp', 'jpeg', 'jpg'];
 
+/** The example routes whose HTML is shipped to an external site, and so is read by a person */
+const EXPORT_ROUTES = ['plunkr', 'codesandbox'];
+
+/**
+ * Whether to format the page's HTML. Always for the pages exported to Plunker and CodeSandbox,
+ * where the HTML is one of the files the reader opens -- they are only requested when someone
+ * clicks through to one. The runner pages are formatted for production only: the docs load those
+ * on every example, and formatting them all would slow the dev server down for output nothing
+ * reads.
+ */
+function shouldFormat(pathname: string) {
+    return getIsProduction() || EXPORT_ROUTES.includes(pathname.replace(/\/$/, '').split('/').pop()!);
+}
+
 function isHtml(path: string) {
     const pathItems = path.split('/');
     const fileName = pathItems.slice(-1)[0];
@@ -53,7 +67,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (isHtml(context.url.pathname)) {
         body = rewriteAstroGeneratedContent(body);
 
-        if (getIsProduction()) {
+        if (shouldFormat(context.url.pathname)) {
             try {
                 body = await prettier.format(body, {
                     parser: 'html',
