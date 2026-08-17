@@ -4,7 +4,7 @@ const { executeJiraRequest, saveDataToFile, logger } = require('./utils');
 const CHANGELOG_URL = 'https://ag-grid.atlassian.net/rest/api/3/search/jql?jql=filter=13104+order+by+fixversion+desc';
 const CHANGELOG_LOG = '/home/ubuntu/jira_reports/studio-changelog.log';
 const CHANGELOG_TMP_FILE = '/var/www/html/studio/changelog/studio-changelog.tmp.json';
-const CHANGELOG_FILE = '/var/www/html/studio/changelog/studio-changelog.json';
+const CHANGELOG_FILE = '/var/www/html/studio/changelog/changelog.json';
 const CHANGELOG_BAK_FILE = '/var/www/html/studio/changelog/studio-changelog.bak.json';
 
 try {
