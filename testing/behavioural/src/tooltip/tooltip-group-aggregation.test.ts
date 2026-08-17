@@ -1,11 +1,10 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { TestGridsManager, getVisibleTooltips as getTooltips, waitForTooltips } from 'ag-test-utils';
 
 import { TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import type { GridApi, GridOptions, ITooltipComp, ITooltipParams, Module } from 'ag-grid-community';
 import { RowGroupingModule, ShowValuesAsModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('AG-5004: tooltip on aggregated group-row cells', () => {
     const gridMgr = new TestGridsManager({
@@ -16,11 +15,9 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
     beforeAll(() => setupAgTestIds());
     afterEach(() => gridMgr.reset());
 
-    const TOOLTIP_SHOW_DELAY = 200;
-
-    const getTooltips = () => Array.from(document.querySelectorAll<HTMLElement>('.ag-tooltip, .ag-tooltip-custom'));
-    const waitForTooltips = async (count: number) =>
-        await waitFor(() => expect(getTooltips().length).toBe(count), { timeout: 2000 });
+    // 0 means 0 here: FAST_TEST_TIMINGS lifts the grid's 200ms floor for this suite, so a hover costs
+    // nothing. Every assertion below polls for the outcome rather than sleeping past it.
+    const TOOLTIP_SHOW_DELAY = 0;
 
     const findGroupRowId = (api: GridApi, key: string): string => {
         let id: string | undefined;
@@ -39,11 +36,11 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
         const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell(rowId, colId)));
         await userEvent.hover(cell);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
+        // Polling covers the show delay: a sleep on top of it only pads, since the tooltip count is 0
+        // until the grid's timer fires and 1 after it.
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent(expected);
         await userEvent.unhover(cell);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(0);
     };
 
@@ -59,6 +56,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
                 { country: 'AU', value: 4 },
             ],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('ag5004-grouping-sum', gridOptions);
@@ -82,6 +80,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
                 { country: 'AU', value: 3, total: 20 },
             ],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('ag5004-grouping-value-getter', gridOptions);
@@ -100,6 +99,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
                 { path: ['Parent', 'Child'], value: 4 },
             ],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('ag5004-tree-agg', gridOptions);
@@ -119,6 +119,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
                 { path: ['Parent', 'Child'], value: 4, label: 'child-label' },
             ],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('ag5004-tree-cross-field', gridOptions);
@@ -138,6 +139,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
                 { path: ['Parent', 'Child'], name: 'Child', description: 'the-child-description' },
             ],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('ag5004-tree-distinct-field', gridOptions);
@@ -158,6 +160,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
             ],
             groupDefaultExpanded: 1,
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('ag5004-grouping-leaf', gridOptions);
@@ -185,6 +188,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
                 { path: ['Parent', 'Child'], value: 4, label: 'child-label' },
             ],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('ag5004-tree-footer-ignore-agg', gridOptions);
@@ -206,6 +210,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
             groupDefaultExpanded: -1,
             groupTotalRow: 'bottom',
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('ag5004-grouping-footer', gridOptions);
@@ -244,6 +249,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
                 { country: 'AU', value: 4 },
             ],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('ag5004-grouping-custom-comp', gridOptions);
@@ -251,7 +257,6 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
         const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell(groupRowId, 'value')));
         await userEvent.hover(cell);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(document.querySelector('.custom-agg-tooltip')).not.toBeNull();
         expect(getTooltips()[0]).toHaveTextContent('agg:6');
@@ -273,6 +278,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
                 { country: 'AU', value: 4 },
             ],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('ag5004-grouping-value-getter-comp', gridOptions);
@@ -294,6 +300,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
                 { country: 'US', value: 4 },
             ],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('ag5004-grouping-show-values-as', gridOptions);

@@ -1,9 +1,10 @@
+import { GridColumns, GridRows, TestGridsManager, waitForEvent, waitForNoLoadingRows } from 'ag-test-utils';
+
 import type { GetRowIdParams, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { GRAND_TOTAL_ROW_ID } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { createFakeServer } from '../../columnToolPanel/deferredPivotModeFakeServer';
-import { GridColumns, GridRows, TestGridsManager, waitForEvent, waitForNoLoadingRows } from '../../test-utils';
 
 /**
  * CHARACTERIZATION tests (golden-master) pinning the CURRENT behaviour of SSRM grand-total /

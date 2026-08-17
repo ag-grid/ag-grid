@@ -1,3 +1,5 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -6,8 +8,6 @@ import {
     ValidationModule,
     getGridElement,
 } from 'ag-grid-community';
-
-import { TestGridsManager } from '../test-utils';
 
 const COLUMN_DEFS = [{ field: 'name' }];
 

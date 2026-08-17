@@ -1,5 +1,6 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, waitForInput } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type { ColDef, ValueParserParams } from 'ag-grid-community';
@@ -12,8 +13,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, waitForInput } from '../test-utils';
 
 /**
  * AG-15846 regression: column `valueParser` should not be called repeatedly with the

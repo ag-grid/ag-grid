@@ -1,12 +1,11 @@
 import { _doOnce } from 'ag-stack';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 import { vi } from 'vitest';
 
 import type { GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { FormulaModule, MasterDetailModule, PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid formulas module interop', () => {
     const rowNumberRefreshBufferMs = 25;

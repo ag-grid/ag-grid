@@ -1,9 +1,8 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
 
 const rowData = [{ a: 'a', b: 'b' }];
 

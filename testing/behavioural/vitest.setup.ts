@@ -1,23 +1,23 @@
 import * as jestDomMatchers from '@testing-library/jest-dom/matchers';
+// `ALL_SEVERITIES` comes from the specific module, not the test-utils barrel: the barrel transitively
+// imports `ag-grid-community` at runtime, which would defeat the lazy `ag`-import guard below.
+import { ALL_SEVERITIES } from 'ag-test-utils/dev-validations';
+import { ignoreConsoleLicenseKeyError } from 'ag-test-utils/ignoreKnownNoise';
+import { polyfillDomGlobals } from 'ag-test-utils/polyfills/domGlobals';
 import { afterAll, beforeEach, expect, vitest } from 'vitest';
 
 // Output-volume controls (--no-diff, --stack-trace-len, DEBUG_PRINT_LIMIT) shared with every unit project.
-import '../../vitest.output.setup';
-// `ALL_SEVERITIES` comes from the specific module, not the test-utils barrel: the barrel transitively
-// imports `ag-grid-community` at runtime, which would defeat the lazy `ag`-import guard below.
-import { ALL_SEVERITIES } from './src/test-utils/dev-validations';
-import { ignoreConsoleLicenseKeyError } from './src/test-utils/ignoreConsoleLicenseKeyError';
+import '../shared/vitest/output.setup';
 
 // Register all jest-dom matchers globally.
 expect.extend(jestDomMatchers);
 
-// Dogfood the dev-validation throw mode: a misconfigured grid under test (a deprecation, warning or
-// error diagnostic) fails the test loudly instead of scrolling past in the console. Re-asserted each
-// test because the throw config is global, last-write-wins module state. A test that deliberately
-// exercises a diagnostic opts out with a local `enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [id] })`.
-//
-// `ag-grid-community` is imported lazily (not at module top level) so this setup file does not pull the
-// grid in before a test file's own pre-`ag`-import ordering guards have run (e.g. style-injection).
+polyfillDomGlobals();
+
+// A misconfigured grid under test fails loudly rather than scrolling past in the console. Re-asserted each
+// test because the throw config is global, last-write-wins module state; a test exercising a diagnostic
+// opts out with its own `enableDevValidations({ suppress: [id] })`. Imported lazily so this file does not
+// pull the grid in before a test's own pre-`ag`-import ordering guards have run.
 beforeEach(async () => {
     const { enableDevValidations } = await import('ag-grid-community');
     enableDevValidations({ throwOn: ALL_SEVERITIES });
@@ -27,16 +27,8 @@ beforeEach(async () => {
 // Shim for code that references `jest` — redirect to vitest.
 (globalThis as Record<string, unknown>).jest = vitest;
 
-// --- GridRows snapshot update mode -------------------------------------------
-//
-// When UPDATE_GRID_ROWS_SNAPSHOTS is set, GridRows.check() records mismatches
-// instead of failing. After each test suite, the recorded mismatches are used
-// to rewrite the source files via TypeScript AST-based replacement.
-//
-// Usage:
-//   UPDATE_GRID_ROWS_SNAPSHOTS=1 ./behave.sh        # update all
-//   UPDATE_GRID_ROWS_SNAPSHOTS=dry ./behave.sh       # dry-run, show what would change
-//   ./behave.sh --update-grid-rows                    # convenience alias
+// Under UPDATE_GRID_ROWS_SNAPSHOTS (`./behave.sh --update-grid-rows[=dry]`), GridRows.check() records
+// mismatches instead of failing and the suite rewrites its own sources from them afterwards.
 
 {
     // `process` is absent in browser mode (BENCH_BROWSER); snapshot updating is node-only anyway.
@@ -47,7 +39,7 @@ beforeEach(async () => {
         (globalThis as any).__gridRowsSnapshotUpdates = [];
 
         afterAll(async () => {
-            const { processSnapshotUpdates } = await import('./src/test-utils/gridRows/snapshot-updater');
+            const { processSnapshotUpdates } = await import('ag-test-utils/gridRows/snapshot-updater');
             await processSnapshotUpdates(expect.getState().testPath ?? undefined);
         });
     }

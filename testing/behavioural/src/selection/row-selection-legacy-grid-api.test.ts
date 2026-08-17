@@ -1,3 +1,10 @@
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    assertSelectedRowNodes,
+    assertSelectedRowsByIndex,
+} from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
@@ -8,14 +15,6 @@ import {
     RowSelectionModule,
     enableDevValidations,
 } from 'ag-grid-community';
-
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    assertSelectedRowNodes,
-    assertSelectedRowsByIndex,
-} from '../test-utils';
 
 describe('Row Selection Grid API', () => {
     let consoleErrorSpy: MockInstance;
@@ -95,20 +94,6 @@ describe('Row Selection Grid API', () => {
 
             test('Select single row in multiple selection mode', async () => {
                 const api = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                await new GridColumns(api, `Select single row in multiple selection mode setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `Select single row in multiple selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 const nodes = api.getRenderedNodes();
                 const toSelect = [nodes[3]];
@@ -129,22 +114,6 @@ describe('Row Selection Grid API', () => {
 
             test('Cannot select multiple rows in single selection mode', async () => {
                 const api = createGrid({ columnDefs, rowData, rowSelection: 'single' });
-                await new GridColumns(api, `Cannot select multiple rows in single selection mode setup`).checkColumns(
-                    `
-                        CENTER
-                        └── sport "Sport" width:200
-                    `
-                );
-                await new GridRows(api, `Cannot select multiple rows in single selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 const nodes = api.getRenderedNodes();
                 const toSelect = [nodes[0], nodes[3], nodes[1]];
@@ -165,22 +134,6 @@ describe('Row Selection Grid API', () => {
 
             test('Can select multiple rows in multiple selection mode', async () => {
                 const api = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                await new GridColumns(api, `Can select multiple rows in multiple selection mode setup`).checkColumns(
-                    `
-                        CENTER
-                        └── sport "Sport" width:200
-                    `
-                );
-                await new GridRows(api, `Can select multiple rows in multiple selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 const nodes = api.getRenderedNodes();
                 const toSelect = [nodes[5], nodes[4], nodes[2]];
@@ -203,20 +156,6 @@ describe('Row Selection Grid API', () => {
         describe('selectAll', () => {
             test('Can select all rows in single selection mode', async () => {
                 const api = createGrid({ columnDefs, rowData, rowSelection: 'single' });
-                await new GridColumns(api, `Can select all rows in single selection mode setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `Can select all rows in single selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 api.selectAll();
 
@@ -238,20 +177,6 @@ describe('Row Selection Grid API', () => {
 
             test('Can select all rows in multiple selection mode', async () => {
                 const api = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                await new GridColumns(api, `Can select all rows in multiple selection mode setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `Can select all rows in multiple selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 api.selectAll();
 
@@ -282,21 +207,6 @@ describe('Row Selection Grid API', () => {
                     paginationPageSize: 5,
                     paginationPageSizeSelector: false,
                 });
-                await new GridColumns(api, `Can select all rows on current page in single selection mode setup`)
-                    .checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                await new GridRows(api, `Can select all rows on current page in single selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 api.selectAllOnCurrentPage();
 
@@ -323,23 +233,6 @@ describe('Row Selection Grid API', () => {
                     paginationPageSize: 5,
                     paginationPageSizeSelector: false,
                 });
-                await new GridColumns(api, `Can deselect only rows on current page in single selection mode setup`)
-                    .checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                await new GridRows(api, `Can deselect only rows on current page in single selection mode setup`).check(
-                    `
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `
-                );
 
                 api.selectAll();
                 api.deselectAllOnCurrentPage();
@@ -362,22 +255,6 @@ describe('Row Selection Grid API', () => {
         describe('selectAll("filtered")', () => {
             test('Can select all filtered rows in single selection mode', async () => {
                 const api = createGrid({ columnDefs, rowData, rowSelection: 'single' });
-                await new GridColumns(api, `Can select all filtered rows in single selection mode setup`).checkColumns(
-                    `
-                        CENTER
-                        └── sport "Sport" width:200
-                    `
-                );
-                await new GridRows(api, `Can select all filtered rows in single selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 api.setGridOption('quickFilterText', 'ing');
                 await new GridColumns(
@@ -404,21 +281,6 @@ describe('Row Selection Grid API', () => {
 
             test('Can deselect filtered rows only in single selection mode', async () => {
                 const api = createGrid({ columnDefs, rowData, rowSelection: 'single' });
-                await new GridColumns(api, `Can deselect filtered rows only in single selection mode setup`)
-                    .checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                await new GridRows(api, `Can deselect filtered rows only in single selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 api.selectAll();
 

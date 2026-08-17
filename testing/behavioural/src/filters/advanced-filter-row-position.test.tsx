@@ -1,14 +1,13 @@
 import { waitFor } from '@testing-library/dom';
 import { cleanup, render } from '@testing-library/react';
+import { TestGridsManager } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import React from 'react';
 
 import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
-
-import { TestGridsManager } from '../test-utils';
-import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
 
 const modules = [ClientSideRowModelModule, TextFilterModule, AdvancedFilterModule];
 

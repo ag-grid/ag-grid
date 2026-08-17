@@ -1,9 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, ColumnGroup } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Column Groups', () => {
     const gridsManager = new TestGridsManager({

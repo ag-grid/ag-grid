@@ -1,8 +1,7 @@
 import { getByTestId } from '@testing-library/dom';
+import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import { CellStyleModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Cell Custom Styles', () => {
     const gridMgr = new TestGridsManager({

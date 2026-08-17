@@ -1,6 +1,3 @@
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
-
 import {
     FilterDom,
     GridRows,
@@ -8,7 +5,11 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
+
 import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
 
 /**

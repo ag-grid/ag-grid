@@ -5,8 +5,6 @@ import type { GridApi } from 'ag-grid-community';
 import { CellSpanModule, ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-import { ignoreConsoleLicenseKeyError } from '../test-utils';
-
 /**
  * React coverage. The fix reads `rowCtrl.ariaRowIndex`, which is `null` until the spanned
  * row's `updateRowIndexes()` runs. React fires a child cell's mount effect before its parent row's, so
@@ -27,7 +25,6 @@ function spannedCellRowIndexes(): Array<[string | null, string | null]> {
 describe('row spanning aria-rowindex (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, CellSpanModule, ValidationModule]);
-        ignoreConsoleLicenseKeyError();
     });
 
     afterEach(() => {

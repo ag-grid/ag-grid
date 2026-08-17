@@ -1,5 +1,6 @@
 import { act, cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import React, { useCallback } from 'react';
+import type { MockInstance } from 'vitest';
 
 import type { GridApi, IDoesFilterPassParams } from 'ag-grid-community';
 import {
@@ -48,7 +49,7 @@ const StringFloatingFilter = ({ model, onModelChange }: CustomFloatingFilterProp
     />
 );
 
-const emitted286 = (warnSpy: ReturnType<typeof vi.spyOn>) =>
+const emitted286 = (warnSpy: MockInstance<typeof console.warn>) =>
     warnSpy.mock.calls.some((call) => String(call[0]).includes('warning #286'));
 
 describe('Custom floating filter onModelChange (React)', () => {

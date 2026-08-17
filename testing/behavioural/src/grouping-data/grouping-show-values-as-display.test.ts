@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, ShowValuesAsModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 interface SaleRow {
     id: string;

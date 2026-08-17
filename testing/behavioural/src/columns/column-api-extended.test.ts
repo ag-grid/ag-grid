@@ -1,3 +1,5 @@
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { ColDef, Column } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -7,8 +9,6 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Column API — extended coverage', () => {
     const gridsManager = new TestGridsManager({

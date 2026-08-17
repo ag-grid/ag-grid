@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, RowAutoHeightModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
 
 // Sticky rows overlay the viewport, so each sticky section (top/bottom) is capped to
 // stickyRowsMaxViewportRatio of the viewport height (default 0.5). The behavioural
@@ -17,7 +16,7 @@ describe('ag-grid sticky rows viewport budget', () => {
     });
 
     beforeAll(() => {
-        // The sticky budget is viewport-aware; jsdom offset dimensions are 0 by default
+        // The sticky budget is viewport-aware; happy-dom offset dimensions are 0 by default
         // which makes the budget zero and disables sticky rows entirely.
         mockGridLayout.useRealOffsetDimensions = true;
     });

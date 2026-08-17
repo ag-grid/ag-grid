@@ -1,4 +1,14 @@
 import { waitFor } from '@testing-library/dom';
+import {
+    ALL_SEVERITIES,
+    ColumnFilterHarness,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions, IFilterOptionDef, ITextFilterParams } from 'ag-grid-community';
 import {
@@ -12,17 +22,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { ColumnMenuModule } from 'ag-grid-enterprise';
-
-import {
-    ALL_SEVERITIES,
-    ColumnFilterHarness,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../test-utils';
 
 /**
  * What a `filterOptions` list offers, and what is reported when it cannot: a malformed entry, a `defaultOption`

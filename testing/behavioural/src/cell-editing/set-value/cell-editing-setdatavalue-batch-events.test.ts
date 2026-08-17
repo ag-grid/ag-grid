@@ -1,4 +1,12 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from 'ag-test-utils';
 
 import type { BatchEditingStartedEvent, BatchEditingStoppedEvent, CellValueChangedEvent } from 'ag-grid-community';
 import {
@@ -14,15 +22,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
-
-import {
-    EditEventTracker,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    waitForInput,
-} from '../../test-utils';
 
 /**
  * Tests for event dispatching during setDataValue in batch mode.

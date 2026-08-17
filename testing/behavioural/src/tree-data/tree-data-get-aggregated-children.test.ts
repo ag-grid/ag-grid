@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('IRowNode.getAggregatedChildren() with tree data', () => {
     const gridsManager = new TestGridsManager({

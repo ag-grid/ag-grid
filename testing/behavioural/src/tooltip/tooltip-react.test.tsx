@@ -1,6 +1,7 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { act, cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { asyncSetTimeout, getVisibleTooltips as getTooltips, mockGridLayout } from 'ag-test-utils';
 import React, { forwardRef, useEffect, useImperativeHandle } from 'react';
 
 import { AllCommunityModule, ModuleRegistry, agTestIdFor, setupAgTestIds } from 'ag-grid-community';
@@ -9,17 +10,13 @@ import { FormulaModule, RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 
-import { asyncSetTimeout, ignoreConsoleLicenseKeyError, mockGridLayout } from '../test-utils';
-
 describe('Tooltips (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([AllCommunityModule, RowGroupingModule, FormulaModule]);
         setupAgTestIds();
     });
-    beforeEach(() => ignoreConsoleLicenseKeyError());
     afterEach(() => cleanup());
 
-    const getTooltips = () => Array.from(document.querySelectorAll<HTMLElement>('.ag-tooltip, .ag-tooltip-custom'));
     const hasTooltipText = (text: string) => getTooltips().some((tooltip) => tooltip.textContent?.includes(text));
 
     const TooltipRenderer = (props: CustomCellRendererProps) => {
@@ -48,7 +45,8 @@ describe('Tooltips (React)', () => {
                     columnDefs={columnDefs}
                     rowData={[{ id: 'r1', showDetail: true }]}
                     getRowId={(params) => String(params.data.id)}
-                    tooltipShowDelay={200}
+                    tooltipShowDelay={0}
+                    tooltipSwitchShowDelay={0}
                     onGridReady={(params) => {
                         api = params.api;
                     }}
@@ -97,7 +95,8 @@ describe('Tooltips (React)', () => {
                     columnDefs={columnDefs}
                     rowData={[{ id: 'r1', showDetail: true }]}
                     getRowId={(params) => String(params.data.id)}
-                    tooltipShowDelay={200}
+                    tooltipShowDelay={0}
+                    tooltipSwitchShowDelay={0}
                     onGridReady={(params) => {
                         api = params.api;
                     }}
@@ -149,7 +148,8 @@ describe('Tooltips (React)', () => {
                     columnDefs={[{ field: 'A', cellRenderer: RefreshingTooltipRenderer }]}
                     rowData={[{ id: 'r1', A: 'a1' }]}
                     getRowId={(params) => String(params.data.id)}
-                    tooltipShowDelay={200}
+                    tooltipShowDelay={0}
+                    tooltipSwitchShowDelay={0}
                     onGridReady={(params) => {
                         api = params.api;
                     }}
@@ -203,7 +203,8 @@ describe('Tooltips (React)', () => {
                             },
                         },
                     }}
-                    tooltipShowDelay={200}
+                    tooltipShowDelay={0}
+                    tooltipSwitchShowDelay={0}
                     onGridReady={(params) => {
                         api = params.api;
                     }}
@@ -249,7 +250,8 @@ describe('Tooltips (React)', () => {
                         { country: 'AU', value: 2 },
                         { country: 'AU', value: 4 },
                     ]}
-                    tooltipShowDelay={200}
+                    tooltipShowDelay={0}
+                    tooltipSwitchShowDelay={0}
                     onGridReady={(params) => {
                         api = params.api;
                     }}
@@ -301,7 +303,8 @@ describe('Tooltips (React)', () => {
                         rowData={[{ id: 'r1', A: 'AGE' }]}
                         getRowId={(params) => String(params.data.id)}
                         tooltipShowMode="whenTruncated"
-                        tooltipShowDelay={200}
+                        tooltipShowDelay={0}
+                        tooltipSwitchShowDelay={0}
                     />
                 </div>
             );
@@ -311,7 +314,7 @@ describe('Tooltips (React)', () => {
 
             await userEvent.hover(cell);
             // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples past the 200ms tooltipShowDelay window to prove no whenTruncated tooltip appears
-            await asyncSetTimeout(250);
+            await asyncSetTimeout(50);
             expect(getTooltips()).toHaveLength(0);
         });
 
@@ -332,7 +335,8 @@ describe('Tooltips (React)', () => {
                         rowData={[{ id: 'r1', A: 'AGE' }]}
                         getRowId={(params) => String(params.data.id)}
                         tooltipShowMode="whenTruncated"
-                        tooltipShowDelay={200}
+                        tooltipShowDelay={0}
+                        tooltipSwitchShowDelay={0}
                     />
                 </div>
             );

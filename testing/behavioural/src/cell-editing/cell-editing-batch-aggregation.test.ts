@@ -1,5 +1,6 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, waitForInput } from 'ag-test-utils';
 
 import {
     ClientSideRowModelModule,
@@ -10,8 +11,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { BatchEditModule, PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, waitForInput } from '../test-utils';
 
 describe('Cell Editing: change detection', () => {
     const gridMgr = new TestGridsManager({

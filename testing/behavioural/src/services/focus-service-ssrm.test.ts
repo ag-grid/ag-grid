@@ -1,11 +1,10 @@
 import { getByTestId } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type { GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
 
 describe('SSRM focus restoration', () => {
     const gridsManager = new TestGridsManager({

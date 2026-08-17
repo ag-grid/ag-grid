@@ -1,4 +1,12 @@
 import { waitFor } from '@testing-library/dom';
+import {
+    DRAG_NO_MOVE_INTERACTION_CASES,
+    GridColumns,
+    GridRows,
+    RowDragDispatcher,
+    TestGridsManager,
+    asyncSetTimeout,
+} from 'ag-test-utils';
 
 import {
     ClientSideRowModelModule,
@@ -9,15 +17,6 @@ import {
 } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import {
-    DRAG_NO_MOVE_INTERACTION_CASES,
-    GridColumns,
-    GridRows,
-    RowDragDispatcher,
-    TestGridsManager,
-    asyncSetTimeout,
-} from '../../test-utils';
 
 describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s evt=%s', (noMove, eventType) => {
     const gridsManager = new TestGridsManager({

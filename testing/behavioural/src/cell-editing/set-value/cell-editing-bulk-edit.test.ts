@@ -1,9 +1,5 @@
 import { getByTestId } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-
-import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
-
 import {
     EditEventTracker,
     GridColumns,
@@ -11,7 +7,10 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     waitForInput,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
 describe('Cell Editing: bulk edit', () => {
     const gridMgr = new TestGridsManager({
@@ -81,11 +80,13 @@ describe('Cell Editing: bulk edit', () => {
         const user = userEvent.setup({ skipHover: true });
         const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
         await user.click(cell);
-        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b'] });
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
         const input = await waitForInput(gridDiv, cell);
         await user.clear(input);
         await user.type(input, 'Bulk Value');
+        // Selection is set up last: `user.clear`/`user.type` press the editor input, and that press
+        // reaches the row container and collapses the selection to the cell being edited.
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b'] });
         await user.keyboard('{Control>}{Enter}{/Control}');
         await asyncSetTimeout(0);
 
@@ -193,11 +194,13 @@ describe('Cell Editing: bulk edit', () => {
         const user = userEvent.setup({ skipHover: true });
         const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
         await user.click(cell);
-        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b'] });
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
         const input = await waitForInput(gridDiv, cell);
         await user.clear(input);
         await user.type(input, 'Bulk Value');
+        // Selection is set up last: `user.clear`/`user.type` press the editor input, and that press
+        // reaches the row container and collapses the selection to the cell being edited.
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b'] });
         await user.keyboard('{Control>}{Enter}{/Control}');
         await asyncSetTimeout(0);
 
@@ -343,11 +346,13 @@ describe('Cell Editing: bulk edit', () => {
         const user = userEvent.setup({ skipHover: true });
         const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
         await user.click(cell);
-        api.clearCellSelection(); // Clear any selection
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
         const input = await waitForInput(gridDiv, cell);
         await user.clear(input);
         await user.type(input, 'New Value');
+        // Selection is set up last: `user.clear`/`user.type` press the editor input, and that press
+        // reaches the row container and collapses the selection to the cell being edited.
+        api.clearCellSelection();
         await user.keyboard('{Control>}{Enter}{/Control}');
         await asyncSetTimeout(0);
 
@@ -408,11 +413,13 @@ describe('Cell Editing: bulk edit', () => {
         const user = userEvent.setup({ skipHover: true });
         const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
         await user.click(cell);
-        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b', 'c'] });
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
         const input = await waitForInput(gridDiv, cell);
         await user.clear(input);
         await user.type(input, 'X');
+        // Selection is set up last: `user.clear`/`user.type` press the editor input, and that press
+        // reaches the row container and collapses the selection to the cell being edited.
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b', 'c'] });
         await user.keyboard('{Control>}{Enter}{/Control}');
         await asyncSetTimeout(0);
 
@@ -449,20 +456,20 @@ describe('Cell Editing: bulk edit', () => {
         const user = userEvent.setup({ skipHover: true });
         const cell = gridDiv.querySelectorAll('.ag-row')[0].querySelector<HTMLElement>('[col-id="a"]')!;
         await user.click(cell); // focuses the cell, so Ctrl+Enter has a target
-
-        // Clicking a cell can select it, and addCellRange appends: dropping that first makes the two
-        // ranges below the only ones, whatever the click did.
-        api.clearCellSelection();
-
-        // Two disjoint single-cell ranges: column 'a' of each row.
-        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['a'] });
-        api.addCellRange({ rowStartIndex: 1, rowEndIndex: 1, columns: ['a'] });
-        expect(api.getCellRanges()).toHaveLength(2);
-
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
         const input = await waitForInput(gridDiv, cell);
         await user.clear(input);
         await user.type(input, 'X');
+
+        // Selection is set up last: `user.clear`/`user.type` press the editor input, and that press
+        // reaches the row container and collapses the selection to the cell being edited.
+        // `clearCellSelection` first because `addCellRange` appends: the two disjoint single-cell
+        // ranges below — column 'a' of each row — must be the only ones.
+        api.clearCellSelection();
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['a'] });
+        api.addCellRange({ rowStartIndex: 1, rowEndIndex: 1, columns: ['a'] });
+        expect(api.getCellRanges()).toHaveLength(2);
+
         await user.keyboard('{Control>}{Enter}{/Control}');
         await asyncSetTimeout(0);
 

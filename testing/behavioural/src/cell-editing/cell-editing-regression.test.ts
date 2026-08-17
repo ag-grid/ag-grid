@@ -1,5 +1,16 @@
 import { fireEvent, getByTestId, waitFor, within } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    fakeElementAttribute,
+    getAllRows,
+    getRowHtmlElement,
+    waitForInput,
+    waitForPopup,
+} from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import {
@@ -19,18 +30,6 @@ import {
     RichSelectModule,
     RowDragModule,
 } from 'ag-grid-enterprise';
-
-import {
-    EditEventTracker,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    fakeElementAttribute,
-    getAllRows,
-    getRowHtmlElement,
-    waitForInput,
-    waitForPopup,
-} from '../test-utils';
 
 describe('Cell Editing Regression', () => {
     const gridMgr = new TestGridsManager({
@@ -944,7 +943,7 @@ describe('Cell Editing Regression', () => {
                     await user.click(cell);
                     const target = getByTestId(gridDiv, agTestIdFor.cell('1', 'field'));
 
-                    // Use the grid's built-in selection API, because jsdom's events click event doesn't trigger mouseDown correctly
+                    // Use the grid's built-in selection API, because a synthesised click event doesn't trigger mouseDown correctly
                     api.setFocusedCell(0, 'field');
                     await user.keyboard('{Control>}c{/Control}');
 
@@ -981,12 +980,15 @@ describe('Cell Editing Regression', () => {
 
                     await user.click(source);
                     api.setFocusedCell(0, 'field');
-                    api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['field'] });
 
                     await userEvent.keyboard('1');
                     const input = await waitForInput(gridDiv, source);
                     await userEvent.type(input, '5');
                     await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+                    // Range last: the click selects the cell it lands on and `addCellRange` appends, and
+                    // the press `userEvent.type` sends into the editor collapses it back to that cell.
+                    api.clearCellSelection();
+                    api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['field'] });
                     await userEvent.keyboard('{Control>}{Enter}{/Control}');
                     // Wait on the fill target (row 1), not the edited source row: row 0 already
                     // reads back "15" from the live editor before Ctrl+Enter is pressed.
@@ -1628,7 +1630,9 @@ describe('Cell Editing Regression', () => {
         expect(countryCell).toHaveTextContent('United States');
 
         await userEvent.click(countryCell);
-        // Create a cell range for the clicked cell (simulating proper cell selection)
+        // Create a cell range for the clicked cell (simulating proper cell selection). Cleared first
+        // because the click already selects that cell and `addCellRange` appends rather than replaces.
+        api.clearCellSelection();
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['country'] });
 
         // Verify we are not in edit mode

@@ -1,7 +1,3 @@
-import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, QuickFilterModule, enableDevValidations, getGridElement } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
 import {
     ALL_SEVERITIES,
     GridColumns,
@@ -9,7 +5,11 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     cachedJSONObjects,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi } from 'ag-grid-community';
+import { ClientSideRowModelModule, QuickFilterModule, enableDevValidations, getGridElement } from 'ag-grid-community';
+import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 function getVisibleAutoGroupColIds(api: GridApi): string[] {
     return api

@@ -1,7 +1,7 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
-
-import { TestGridsManager } from '../test-utils';
 
 describe('sourceRowIndex in isRowSelectable', () => {
     const columnDefs = [{ field: 'sport' }];

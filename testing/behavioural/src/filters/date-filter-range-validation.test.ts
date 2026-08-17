@@ -1,5 +1,6 @@
 import { getAllByTestId, getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { DateFilterModel } from 'ag-grid-community';
 import {
@@ -10,8 +11,6 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 async function selectFilterOption(gridDiv: HTMLElement, userSession: any, optionText: string): Promise<void> {
     const pickerDisplay = getAllByTestId(
@@ -284,7 +283,7 @@ describe('Date Range Filter', () => {
         await asyncSetTimeout(0);
 
         // Chrome/Safari focus the invalid control when reportValidity() is called, which
-        // fires `focusin` and re-triggers the (debounced) date validation report. jsdom's
+        // fires `focusin` and re-triggers the (debounced) date validation report. happy-dom's
         // reportValidity is a no-op that does not steal focus, so model that focus steal on
         // the first report to exercise the same re-report path a real browser would take.
         let stolenFocus = false;
@@ -308,8 +307,8 @@ describe('Date Range Filter', () => {
 
             // Let the 500ms date-report debounce window elapse. The assertion below is negative (no
             // second report was scheduled), so it can only be made once the window has closed.
-            // eslint-disable-next-line no-restricted-syntax -- waits for the 500ms date validity-report debounce window (dateCompWrapper.ts) to elapse
-            await asyncSetTimeout(600);
+            // eslint-disable-next-line no-restricted-syntax -- samples past the date validity-report debounce window (dateCompWrapper.ts)
+            await asyncSetTimeout(50);
 
             // The tooltip must render once and stay stable: the focusin from the focus steal recomputes
             // the same validity message, so no second, conflicting report is scheduled.
@@ -364,8 +363,8 @@ describe('Date Range Filter', () => {
         // Let the debounced report from typing land, so the invalid bubble is stably shown. The spy
         // installed below must see zero calls, so the pending debounce has to drain first — there is
         // no positive signal to poll for, only the absence of further reports.
-        // eslint-disable-next-line no-restricted-syntax -- waits for the 500ms date validity-report debounce window (dateCompWrapper.ts) to elapse
-        await asyncSetTimeout(600);
+        // eslint-disable-next-line no-restricted-syntax -- samples past the date validity-report debounce window (dateCompWrapper.ts)
+        await asyncSetTimeout(50);
 
         expect(toDateInput.validity.valid).toBe(false);
 
@@ -377,8 +376,8 @@ describe('Date Range Filter', () => {
             // native validation bubble blinks (disappears then reappears) on every tab return.
             toDateInput.dispatchEvent(new Event('focusin', { bubbles: true }));
 
-            // eslint-disable-next-line no-restricted-syntax -- waits for the 500ms date validity-report debounce window (dateCompWrapper.ts) to elapse; the assertion below is negative
-            await asyncSetTimeout(600);
+            // eslint-disable-next-line no-restricted-syntax -- samples past the date validity-report debounce window (dateCompWrapper.ts); the assertion below is negative
+            await asyncSetTimeout(50);
 
             expect(reportSpy).not.toHaveBeenCalled();
         } finally {
@@ -432,8 +431,8 @@ describe('Date Range Filter', () => {
         // Let the debounced report from typing land, so the invalid bubble is stably shown on `to`.
         // The spy installed below must only see the report triggered by the focus change, so the
         // pending debounce from typing has to drain first — nothing positive to poll for.
-        // eslint-disable-next-line no-restricted-syntax -- waits for the 500ms date validity-report debounce window (dateCompWrapper.ts) to elapse
-        await asyncSetTimeout(600);
+        // eslint-disable-next-line no-restricted-syntax -- samples past the date validity-report debounce window (dateCompWrapper.ts)
+        await asyncSetTimeout(50);
 
         expect(toDateInput.validity.valid).toBe(false);
         // The message names the bound the focused input has to respect: `to` must come after `from`.

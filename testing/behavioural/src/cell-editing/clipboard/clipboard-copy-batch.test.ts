@@ -1,9 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, clipboardUtils } from 'ag-test-utils';
 
 import { TextEditorModule, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, clipboardUtils } from '../../test-utils';
 
 /**
  * Tests verifying that clipboard copy operations use 'batch' source values

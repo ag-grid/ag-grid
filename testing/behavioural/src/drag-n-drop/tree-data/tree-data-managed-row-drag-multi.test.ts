@@ -1,9 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-
-import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
-import type { GridOptions } from 'ag-grid-community';
-import { TreeDataModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -11,7 +6,11 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     getRowHtmlElement,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppressMoveWhenRowDragging) => {
     const gridsManager = new TestGridsManager({

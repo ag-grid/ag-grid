@@ -1,7 +1,3 @@
-import type { GridApi, ISetFilterParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
-import { SetFilterModule } from 'ag-grid-enterprise';
-
 import {
     ALL_SEVERITIES,
     ColumnFilterHarness,
@@ -13,7 +9,11 @@ import {
     installFilterLayoutMock,
     nudgeVirtualList,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi, ISetFilterParams } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 const SET_LIST_SELECTOR = '.ag-filter-menu .ag-set-filter-list';
 

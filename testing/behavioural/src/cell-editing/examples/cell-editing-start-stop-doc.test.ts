@@ -1,5 +1,6 @@
 import { getByTestId } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridOptions, ICellEditorParams } from 'ag-grid-community';
 import {
@@ -23,8 +24,6 @@ import {
     RenderApiModule,
     RowGroupingModule,
 } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 interface PersonRow {
     id: string;

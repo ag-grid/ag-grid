@@ -1,10 +1,9 @@
 import { getByTestId } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from 'ag-test-utils';
 
 import { NumberEditorModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 describe('getEditRowValues returns current editor values during active editing', () => {
     const gridMgr = new TestGridsManager({

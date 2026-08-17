@@ -1,9 +1,5 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-
-import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { BatchEditModule } from 'ag-grid-enterprise';
-
 import {
     EditEventTracker,
     GridColumns,
@@ -11,7 +7,10 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     waitForInput,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { BatchEditModule } from 'ag-grid-enterprise';
 
 describe('Cell Editing: undo/redo', () => {
     const gridMgr = new TestGridsManager({

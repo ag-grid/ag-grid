@@ -1,3 +1,5 @@
+import { TestGridsManager, waitForNoLoadingRows } from 'ag-test-utils';
+
 import type {
     GetDetailRowDataParams,
     GetRowIdParams,
@@ -7,8 +9,6 @@ import type {
 } from 'ag-grid-community';
 import { DETAIL_ROW_ID_PREFIX } from 'ag-grid-community';
 import { MasterDetailModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, waitForNoLoadingRows } from '../../test-utils';
 
 /**
  * CHARACTERIZATION (golden-master) tests pinning CURRENT flat SSRM master/detail behaviour:

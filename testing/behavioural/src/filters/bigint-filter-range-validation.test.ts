@@ -1,6 +1,3 @@
-import type { GridApi } from 'ag-grid-community';
-import { BigIntFilterModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
-
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -9,7 +6,10 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi } from 'ag-grid-community';
+import { BigIntFilterModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 
 const ROW_DATA = [{ val: 1n }, { val: 16n }, { val: 100n }, { val: 255n }];
 

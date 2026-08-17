@@ -1,4 +1,5 @@
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
     ColDef,
@@ -12,8 +13,6 @@ import type {
     TabToNextHeaderParams,
 } from 'ag-grid-community';
 import { PaginationModule, getGridElement } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface RowData {
     athlete: string;

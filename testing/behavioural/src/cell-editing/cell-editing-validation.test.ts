@@ -1,4 +1,5 @@
 import { userEvent } from '@testing-library/user-event';
+import { GridRows, TestGridsManager, waitForInput } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -8,8 +9,6 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-
-import { GridRows, TestGridsManager, waitForInput } from '../test-utils';
 
 interface PersonRow {
     athlete: string;

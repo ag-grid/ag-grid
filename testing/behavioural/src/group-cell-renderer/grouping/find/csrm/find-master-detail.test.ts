@@ -1,7 +1,8 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import { CellStyleModule } from 'ag-grid-community';
 import { FindModule, MasterDetailModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../../../../test-utils';
 import { getTestGenerator } from '../../../util';
 import { rowModelGridOptions } from '../../grid-config';
 import { findSnapshotter, getGridOptions_masterDetail, getTestConcerns_masterDetail } from '../../grouping-test-utils';

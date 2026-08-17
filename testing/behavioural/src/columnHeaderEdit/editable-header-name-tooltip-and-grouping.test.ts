@@ -1,12 +1,17 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import {
+    TestGridsManager,
+    asyncSetTimeout,
+    canvasPolyfill,
+    getVisibleTooltips as getTooltips,
+    waitForTooltips,
+} from 'ag-test-utils';
 
 import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout, canvasPolyfill } from '../test-utils';
 
 /**
  * A renamed header name is stored as an override on the column entity (and the group-id-keyed group
@@ -32,15 +37,12 @@ describe('Editable header name — tooltips', () => {
             columnDefs,
             rowData,
             defaultColDef: { flex: 1, minWidth: 100 },
-            tooltipShowDelay: 200,
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
             ...extraOptions,
         });
         return { api, gridDiv: getGridElement(api)! as HTMLElement };
     }
-
-    const getTooltips = () => Array.from(document.querySelectorAll<HTMLElement>('.ag-tooltip, .ag-tooltip-custom'));
-    const waitForTooltips = async (count: number) =>
-        await waitFor(() => expect(getTooltips().length).toBe(count), { timeout: 2000 });
 
     async function hoverHeader(): Promise<void> {
         const headerCell = await waitFor(

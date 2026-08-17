@@ -1,3 +1,14 @@
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    assertSelectedRowNodes,
+    assertSelectedRowsById,
+    assertSelectedRowsByIndex,
+    waitForEvent,
+} from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
@@ -10,17 +21,6 @@ import {
 } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import {
-    ALL_SEVERITIES,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    applyTransactionChecked,
-    assertSelectedRowElementsById,
-    assertSelectedRowNodes,
-    assertSelectedRowsByIndex,
-    waitForEvent,
-} from '../test-utils';
 import { GROUP_ROW_DATA, fakeFetch } from './group-data';
 import { GridActions } from './utils';
 
@@ -137,21 +137,6 @@ describe('Row Selection Grid API', () => {
                         },
                         { modules: [PaginationModule] }
                     );
-                    await new GridColumns(api, `Cannot select all rows on current page setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Cannot select all rows on current page setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     api.selectAll('currentPage');
 
@@ -181,21 +166,6 @@ describe('Row Selection Grid API', () => {
                         },
                         { modules: [QuickFilterModule] }
                     );
-                    await new GridColumns(api, `Cannot select all filtered rows setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Cannot select all filtered rows setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     api.setGridOption('quickFilterText', 'ing');
                     await new GridColumns(api, `Cannot select all filtered rows after setGridOption quickFilterText`)
@@ -224,21 +194,6 @@ describe('Row Selection Grid API', () => {
                         rowData,
                         rowSelection: { mode: 'singleRow' },
                     });
-                    await new GridColumns(api, `Select single row setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Select single row setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[3]];
@@ -265,21 +220,6 @@ describe('Row Selection Grid API', () => {
                         rowData,
                         rowSelection: { mode: 'singleRow' },
                     });
-                    await new GridColumns(api, `Cannot select multiple rows setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Cannot select multiple rows setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[0], nodes[3], nodes[1]];
@@ -320,11 +260,6 @@ describe('Row Selection Grid API', () => {
                             },
                         },
                     });
-                    await new GridColumns(api, `Prevented from selecting all rows via the API setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
                     await new GridRows(api, `Prevented from selecting all rows via the API setup`).check(`
                         ROOT id:<no-id>
                         └── filler id:rowIndex:0
@@ -364,15 +299,6 @@ describe('Row Selection Grid API', () => {
                         },
                         rowSelection: { mode: 'singleRow' },
                     });
-                    await new GridColumns(api, `Select single row setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Select single row setup`).check(`
-                        ROOT id:<no-id>
-                        └── filler id:rowIndex:0
-                    `);
 
                     await waitForEvent('firstDataRendered', api);
                     const nodes = api.getRenderedNodes();
@@ -408,15 +334,6 @@ describe('Row Selection Grid API', () => {
                         },
                         rowSelection: { mode: 'singleRow' },
                     });
-                    await new GridColumns(api, `Cannot select multiple rows setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Cannot select multiple rows setup`).check(`
-                        ROOT id:<no-id>
-                        └── filler id:rowIndex:0
-                    `);
 
                     await waitForEvent('firstDataRendered', api);
                     const nodes = api.getRenderedNodes();
@@ -444,21 +361,6 @@ describe('Row Selection Grid API', () => {
             describe('setNodesSelected', () => {
                 test('Select single row', async () => {
                     const [api] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
-                    await new GridColumns(api, `Select single row setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Select single row setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[3]];
@@ -479,21 +381,6 @@ describe('Row Selection Grid API', () => {
 
                 test('Can select multiple rows', async () => {
                     const [api] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
-                    await new GridColumns(api, `Can select multiple rows setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Can select multiple rows setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[5], nodes[4], nodes[2]];
@@ -514,24 +401,6 @@ describe('Row Selection Grid API', () => {
 
                 test('API calls will update selection context for bulk selection', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
-                    await new GridColumns(api, `API calls will update selection context for bulk selection setup`)
-                        .checkColumns(`
-                            CENTER
-                            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `API calls will update selection context for bulk selection setup`).check(
-                        `
-                            ROOT id:ROOT_NODE_ID
-                            ├── LEAF id:0 sport:"football"
-                            ├── LEAF id:1 sport:"rugby"
-                            ├── LEAF id:2 sport:"tennis"
-                            ├── LEAF id:3 sport:"cricket"
-                            ├── LEAF id:4 sport:"golf"
-                            ├── LEAF id:5 sport:"swimming"
-                            └── LEAF id:6 sport:"rowing"
-                        `
-                    );
 
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[3]];
@@ -556,21 +425,6 @@ describe('Row Selection Grid API', () => {
             describe('selectAll', () => {
                 test('Can select all rows', async () => {
                     const [api] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
-                    await new GridColumns(api, `Can select all rows setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Can select all rows setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     api.selectAll();
 
@@ -608,15 +462,6 @@ describe('Row Selection Grid API', () => {
                         },
                         rowSelection: { mode: 'multiRow' },
                     });
-                    await new GridColumns(api, `Select single row setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Select single row setup`).check(`
-                        ROOT id:<no-id>
-                        └── filler id:rowIndex:0
-                    `);
 
                     await waitForEvent('firstDataRendered', api);
                     const nodes = api.getRenderedNodes();
@@ -650,15 +495,6 @@ describe('Row Selection Grid API', () => {
                         },
                         rowSelection: { mode: 'multiRow' },
                     });
-                    await new GridColumns(api, `Can select multiple rows setup`).checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Can select multiple rows setup`).check(`
-                        ROOT id:<no-id>
-                        └── filler id:rowIndex:0
-                    `);
 
                     await waitForEvent('firstDataRendered', api);
                     const nodes = api.getRenderedNodes();
@@ -692,18 +528,6 @@ describe('Row Selection Grid API', () => {
                         },
                         rowSelection: { mode: 'multiRow' },
                     });
-                    await new GridColumns(api, `API calls will update selection context for bulk selection setup`)
-                        .checkColumns(`
-                            CENTER
-                            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `API calls will update selection context for bulk selection setup`).check(
-                        `
-                            ROOT id:<no-id>
-                            └── filler id:rowIndex:0
-                        `
-                    );
 
                     await waitForEvent('firstDataRendered', api);
                     const nodes = api.getRenderedNodes();
@@ -853,21 +677,6 @@ describe('Row Selection Grid API', () => {
         describe('CSRM', () => {
             test('selection state maintained after add transaction', async () => {
                 const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
-                await new GridColumns(api, `selection state maintained after add transaction setup`).checkColumns(`
-                    CENTER
-                    ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `selection state maintained after add transaction setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.selectRowsByIndex([2, 4, 6], false);
 
@@ -896,13 +705,6 @@ describe('Row Selection Grid API', () => {
                         return params.data.id;
                     },
                 });
-                await new GridColumns(api, `selection state maintained after update transaction setup`).checkColumns(
-                    `
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `
-                );
                 await new GridRows(api, `selection state maintained after update transaction setup`).check(`
                     ROOT id:ROOT_NODE_ID
                     ├── LEAF id:1 sport:"football"
@@ -940,21 +742,6 @@ describe('Row Selection Grid API', () => {
                         return params.data.id;
                     },
                 });
-                await new GridColumns(api, `selection state updated after remove transaction setup`).checkColumns(`
-                    CENTER
-                    ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `selection state updated after remove transaction setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:1 sport:"football"
-                    ├── LEAF id:2 sport:"rugby"
-                    ├── LEAF id:3 sport:"tennis"
-                    ├── LEAF id:4 sport:"cricket"
-                    ├── LEAF id:5 sport:"golf"
-                    ├── LEAF id:6 sport:"swimming"
-                    └── LEAF id:7 sport:"rowing"
-                `);
 
                 actions.selectRowsByIndex([2, 4, 6], false);
 
@@ -994,58 +781,6 @@ describe('Row Selection Grid API', () => {
                     ...groupGridOptions,
                     rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
                 });
-                await new GridColumns(api, `group selection state updated after add and remove transaction setup`)
-                    .checkColumns(`
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        ├── ag-Grid-AutoColumn "Athlete" width:200
-                        ├── age "Age" width:200
-                        ├── year "Year" width:200
-                        └── date "Date" width:200
-                    `);
-                await new GridRows(api, `group selection state updated after add and remove transaction setup`).check(
-                    `
-                        ROOT id:ROOT_NODE_ID
-                        ├─┬ filler id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
-                        │ ├─┬ LEAF_GROUP id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
-                        │ │ ├── LEAF id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                        │ │ ├── LEAF id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
-                        │ │ ├── LEAF id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                        │ │ ├── LEAF id:3 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:25 year:2008 date:"24/08/2008"
-                        │ │ ├── LEAF id:6 ag-Grid-AutoColumn:"Missy Franklin" country:"United States" sport:"Swimming" age:17 year:2012 date:"12/08/2012"
-                        │ │ ├── LEAF id:7 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                        │ │ ├── LEAF id:8 ag-Grid-AutoColumn:"Allison Schmitt" country:"United States" sport:"Swimming" age:22 year:2012 date:"12/08/2012"
-                        │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
-                        │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
-                        │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                        │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                        │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                        │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                        ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                        │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                        │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
-                        ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
-                        │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                        │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
-                        │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
-                        │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                        ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                        │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                        │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                        ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                        │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                        │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
-                        ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
-                        │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                        │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
-                        ├─┬ filler id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
-                        │ └─┬ LEAF_GROUP id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                        │ · └── LEAF id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                        └─┬ filler id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
-                        · └─┬ LEAF_GROUP id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                        · · └── LEAF id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
-                    `
-                );
 
                 await waitForEvent('firstDataRendered', api);
 
@@ -1063,7 +798,7 @@ describe('Row Selection Grid API', () => {
                     '11',
                     '18',
                 ];
-                assertSelectedRowElementsById(expectedRowIds, api);
+                assertSelectedRowsById(expectedRowIds, api);
 
                 const newRowData = {
                     athlete: 'Foo',
@@ -1082,13 +817,13 @@ describe('Row Selection Grid API', () => {
                 applyTransactionChecked(api, { add: [newRowData], addIndex: 2 });
 
                 // expect swimming group row to no longer be selected
-                assertSelectedRowElementsById(expectedRowIds.slice(1), api);
+                assertSelectedRowsById(expectedRowIds.slice(1), api);
 
                 // remove new row
                 applyTransactionChecked(api, { remove: [newRowData] });
 
                 // expect swimming group to be selected again
-                assertSelectedRowElementsById(expectedRowIds, api);
+                assertSelectedRowsById(expectedRowIds, api);
                 await new GridRows(api, `group selection state updated after add and remove transaction final state`)
                     .check(`
                         ROOT id:ROOT_NODE_ID
@@ -1149,15 +884,6 @@ describe('Row Selection Grid API', () => {
                         },
                     },
                 });
-                await new GridColumns(api, `selection state maintained after add transaction setup`).checkColumns(`
-                    CENTER
-                    ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `selection state maintained after add transaction setup`).check(`
-                    ROOT id:<no-id>
-                    └── filler id:rowIndex:0
-                `);
 
                 await waitForEvent('firstDataRendered', api);
 
@@ -1196,17 +922,6 @@ describe('Row Selection Grid API', () => {
                         },
                     },
                 });
-                await new GridColumns(api, `selection state maintained after update transaction setup`).checkColumns(
-                    `
-                        CENTER
-                        ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                        └── sport "Sport" width:200
-                    `
-                );
-                await new GridRows(api, `selection state maintained after update transaction setup`).check(`
-                    ROOT id:<no-id>
-                    └── filler id:rowIndex:0
-                `);
 
                 await waitForEvent('firstDataRendered', api);
 
@@ -1241,15 +956,6 @@ describe('Row Selection Grid API', () => {
                         },
                     },
                 });
-                await new GridColumns(api, `selection state updated after remove transaction setup`).checkColumns(`
-                    CENTER
-                    ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `selection state updated after remove transaction setup`).check(`
-                    ROOT id:<no-id>
-                    └── filler id:rowIndex:0
-                `);
 
                 await waitForEvent('firstDataRendered', api);
 
@@ -1336,7 +1042,7 @@ describe('Row Selection Grid API', () => {
                         data: d,
                     })),
                 ].map((d) => getRowIdRaw({ ...d, api }));
-                assertSelectedRowElementsById(expectedRowIds, api);
+                assertSelectedRowsById(expectedRowIds, api);
 
                 const newRowData = {
                     athlete: 'Foo',
@@ -1382,7 +1088,7 @@ describe('Row Selection Grid API', () => {
                 `);
 
                 // expect swimming group row to no longer be selected
-                assertSelectedRowElementsById(
+                assertSelectedRowsById(
                     expectedRowIds
                         .slice(0, 3)
                         .concat(getRowIdRaw({ parentKeys: ['United States'], data: newRowData, api }))
@@ -1422,7 +1128,7 @@ describe('Row Selection Grid API', () => {
                 // NOTE: This test encodes the current behaviour but it's possibly a bug:
                 // in CSRM one would expect swimming group to be selected again.
                 // This could just be a limitation of SSRM?
-                assertSelectedRowElementsById(expectedRowIds.slice(1), api);
+                assertSelectedRowsById(expectedRowIds.slice(1), api);
             });
         });
     });

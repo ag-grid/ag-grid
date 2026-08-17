@@ -1,8 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 import { VERSION } from '../version';
 
 describe('Grid State Full Snapshot', () => {

@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 // The builder dialog's VirtualList sizes its viewport from getBoundingClientRect — give it a
 // stable height so item count is deterministic. Other popup/dialog needs (offsetParent,
@@ -476,7 +476,7 @@ describe('Advanced Filter - Builder UI', () => {
     });
 
     // NOTE: Pill picker dropdown interaction (clicking pill → selecting from rich select list)
-    // requires a nested VirtualList popup that doesn't reliably render in jsdom. These
+    // requires a nested VirtualList popup that doesn't reliably render without layout. These
     // interactions should be covered by Playwright E2E tests instead.
 
     describe('Applying filter from builder', () => {

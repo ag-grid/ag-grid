@@ -1,9 +1,5 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-
-import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
-
 import {
     EditEventTracker,
     GridColumns,
@@ -12,7 +8,10 @@ import {
     asyncSetTimeout,
     clipboardUtils,
     waitForEvent,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
 describe('Clipboard Paste Behaviour: paste flows', () => {
     const gridMgr = new TestGridsManager({

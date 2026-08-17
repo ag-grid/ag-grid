@@ -1,4 +1,6 @@
+import { AG_GRID_LOCALE_FR, AG_GRID_LOCALE_JP } from '@ag-grid-community/locale';
 import { userEvent } from '@testing-library/user-event';
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
@@ -10,12 +12,6 @@ import {
     enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
-
-// The `@ag-grid-community/locale` package name does not resolve under vitest (its `exports` point at
-// an unbuilt `dist/`), so the shipped locale data is imported from source.
-import { AG_GRID_LOCALE_FR } from '../../../../community-modules/locale/src/fr-FR';
-import { AG_GRID_LOCALE_JP } from '../../../../community-modules/locale/src/ja-JP';
-import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 const COLUMN_DEFS = [{ field: 'name' }];
 const ROW_DATA = Array.from({ length: 50 }, (_, i) => ({ name: `Row ${i + 1}` }));
