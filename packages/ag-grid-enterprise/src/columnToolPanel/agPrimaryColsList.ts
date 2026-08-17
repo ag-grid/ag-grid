@@ -445,9 +445,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const displayName = colNames.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel');
             const item: ColumnModelItem = new ColumnModelItem(
-                displayName,
+                colNames,
                 columnGroup,
                 depth,
                 true,
@@ -467,9 +466,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const displayName = colNames.getDisplayNameForColumn(column, 'columnToolPanel');
-
-            parentList.push(new ColumnModelItem(displayName, column, depth));
+            parentList.push(new ColumnModelItem(colNames, column, depth));
         };
 
         this.destroyColumnTree();
