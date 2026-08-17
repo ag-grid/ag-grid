@@ -1,0 +1,42 @@
+{
+  "criterion": "03-fit-grid-to-fit-content",
+  "rendered": true,
+  "renderError": null,
+  "consoleClean": true,
+  "console": [],
+  "observed": {
+    "rows": 31,
+    "columns": [
+      {
+        "id": "id",
+        "width": 198
+      },
+      {
+        "id": "name",
+        "width": 200
+      },
+      {
+        "id": "role",
+        "width": 200
+      },
+      {
+        "id": "department",
+        "width": 200
+      },
+      {
+        "id": "location",
+        "width": 200
+      },
+      {
+        "id": "startDate",
+        "width": 200
+      },
+      {
+        "id": "salary",
+        "width": 200
+      }
+    ],
+    "gridWidth": 1398,
+    "totalColumnWidth": 1398
+  }
+}

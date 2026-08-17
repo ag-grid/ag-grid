@@ -15,8 +15,10 @@ import re
 import sys
 
 EVALS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RUNS = os.path.join(EVALS, "runs")
-OUT = os.path.join(EVALS, "results")
+SUITE = sys.argv[1] if len(sys.argv) > 1 else "onboarding-v1"
+SUITE_DIR = os.path.join(EVALS, "suites", SUITE)
+RUNS = os.path.join(SUITE_DIR, "runs")
+OUT = os.path.join(SUITE_DIR, "results")
 
 # Deprecated / removed symbols, each confirmed against packages/ag-grid-*/src.
 # version = the release the deprecation landed in, used for the recency correlation.

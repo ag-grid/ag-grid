@@ -3,22 +3,22 @@
 # Runs against the pristine source the agent wrote, before any instrumentation is injected.
 set -euo pipefail
 
-CRITERION="${1:?usage: verify-code.sh <criterion> <run>}"
-RUN="${2:?usage: verify-code.sh <criterion> <run>}"
+SUITE="${1:?usage: verify-code.sh <suite> <criterion> <run>}"
+CRITERION="${2:?usage: verify-code.sh <suite> <criterion> <run>}"
+RUN="${3:?usage: verify-code.sh <suite> <criterion> <run>}"
 RUN=$(printf '%02d' "$RUN")
 
-REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-EVALS="$REPO/tmp-llm-onboarding-evals"
-CRIT_DIR="$EVALS/criteria/$CRITERION"
-WORK="/tmp/grid-eval/$CRITERION-$RUN"
+EVALS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SUITE_DIR="$EVALS/suites/$SUITE"
+CRIT_DIR="$SUITE_DIR/criteria/$CRITERION"
+RUN_DIR="$SUITE_DIR/runs/$CRITERION/$RUN"
 
-[ -d "$WORK/app" ] || { echo "no implemented app at $WORK" >&2; exit 1; }
-mkdir -p "$WORK/meta"
+[ -d "$RUN_DIR/app" ] || { echo "no implemented app at $RUN_DIR" >&2; exit 1; }
 
 CHECKS=$(awk '/^# Code checks/{f=1;next} /^# /{f=0} f' "$CRIT_DIR/CRITERIA.md")
 
-cat > "$WORK/meta/verify-code.prompt.txt" <<EOF
-Review the source of the application in $WORK/app (ignore node_modules). Do not run it.
+cat > "$RUN_DIR/verify-code.prompt.txt" <<EOF
+Review the source of the application in $RUN_DIR/app (ignore node_modules). Do not run it.
 
 Evaluate each of the following checks by reading the code.
 
@@ -36,7 +36,7 @@ Rules:
 - Record "pass" or "fail" for each. Use "blocked" only if a check genuinely cannot be evaluated.
 - Give concrete evidence for every result: quote the code you saw, with its file and line.
 
-Write your results to $WORK/meta/result-code.json as JSON of exactly this shape, using the check IDs exactly as
+Write your results to $RUN_DIR/result-code.json as JSON of exactly this shape, using the check IDs exactly as
 given above:
 
 {
@@ -50,23 +50,24 @@ Write the file. Your text reply is ignored; result-code.json is the output that 
 EOF
 
 set +e
-claude -p "$(cat "$WORK/meta/verify-code.prompt.txt")" \
+claude -p "$(cat "$RUN_DIR/verify-code.prompt.txt")" \
     --model opus \
     --setting-sources "" \
     --strict-mcp-config \
     --dangerously-skip-permissions \
     --output-format json \
-    > "$WORK/meta/verify-code.json" 2> "$WORK/meta/verify-code.err"
+    > "$RUN_DIR/verify-code.json" 2> "$RUN_DIR/verify-code.err"
 EXIT=$?
 set -e
 
-if [ -f "$WORK/meta/result-code.json" ]; then
+"$EVALS/runner/save-transcript.sh" "$RUN_DIR/verify-code.json" "$RUN_DIR/verify-code.transcript.jsonl" || true
+
+if [ -f "$RUN_DIR/result-code.json" ]; then
     python3 -c "
 import json
-d=json.load(open('$WORK/meta/result-code.json'))
+d=json.load(open('$RUN_DIR/result-code.json'))
 c=d['codeChecks']
 print('$CRITERION/$RUN code:', sum(1 for x in c if x['result']=='pass'), '/', len(c))"
-    "$EVALS/runner/harvest.sh" "$CRITERION" "$RUN" > /dev/null
 else
     echo "CODE VERIFY FAILED (exit $EXIT) — no result-code.json" >&2
     exit 1

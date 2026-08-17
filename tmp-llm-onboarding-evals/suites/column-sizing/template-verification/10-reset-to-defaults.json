@@ -1,0 +1,42 @@
+{
+  "criterion": "10-reset-to-defaults",
+  "rendered": true,
+  "renderError": null,
+  "consoleClean": true,
+  "console": [],
+  "observed": {
+    "rows": 30,
+    "columns": [
+      {
+        "id": "id",
+        "width": 90
+      },
+      {
+        "id": "name",
+        "width": 150
+      },
+      {
+        "id": "role",
+        "width": 170
+      },
+      {
+        "id": "department",
+        "width": 130
+      },
+      {
+        "id": "location",
+        "width": 130
+      },
+      {
+        "id": "startDate",
+        "width": 120
+      },
+      {
+        "id": "salary",
+        "width": 110
+      }
+    ],
+    "gridWidth": 1398,
+    "totalColumnWidth": 900
+  }
+}

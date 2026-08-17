@@ -1,0 +1,42 @@
+{
+  "criterion": "11-strategy-with-changing-data",
+  "rendered": true,
+  "renderError": null,
+  "consoleClean": true,
+  "console": [],
+  "observed": {
+    "rows": 31,
+    "columns": [
+      {
+        "id": "id",
+        "width": 85
+      },
+      {
+        "id": "name",
+        "width": 174
+      },
+      {
+        "id": "role",
+        "width": 246
+      },
+      {
+        "id": "department",
+        "width": 131
+      },
+      {
+        "id": "location",
+        "width": 123
+      },
+      {
+        "id": "startDate",
+        "width": 134
+      },
+      {
+        "id": "salary",
+        "width": 96
+      }
+    ],
+    "gridWidth": 1398,
+    "totalColumnWidth": 989
+  }
+}

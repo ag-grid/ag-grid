@@ -7,34 +7,35 @@
 # drive interactions and observe the result.
 set -euo pipefail
 
-CRITERION="${1:?usage: verify-browser.sh <criterion> <run>}"
-RUN="${2:?usage: verify-browser.sh <criterion> <run>}"
+SUITE="${1:?usage: verify-browser.sh <suite> <criterion> <run>}"
+CRITERION="${2:?usage: verify-browser.sh <suite> <criterion> <run>}"
+RUN="${3:?usage: verify-browser.sh <suite> <criterion> <run>}"
 RUN=$(printf '%02d' "$RUN")
 PORT="${PORT:?PORT must be set (each concurrent run needs its own port)}"
 
-REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-EVALS="$REPO/tmp-llm-onboarding-evals"
-CRIT_DIR="$EVALS/criteria/$CRITERION"
-WORK="/tmp/grid-eval/$CRITERION-$RUN"
+EVALS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SUITE_DIR="$EVALS/suites/$SUITE"
+CRIT_DIR="$SUITE_DIR/criteria/$CRITERION"
+RUN_DIR="$SUITE_DIR/runs/$CRITERION/$RUN"
 
-[ -d "$WORK/app" ] || { echo "no implemented app at $WORK" >&2; exit 1; }
-mkdir -p "$WORK/meta/screenshots"
+[ -d "$RUN_DIR/app" ] || { echo "no implemented app at $RUN_DIR" >&2; exit 1; }
+mkdir -p "$RUN_DIR/screenshots"
 
-# Serve a copy, so app/ stays exactly what the agent wrote. enableDevValidations() is
-# instrumentation we add; it must not pollute the artefact we keep as evidence.
-rm -rf "$WORK/served"
-cp -R "$WORK/app" "$WORK/served"
-if ! grep -rq "enableDevValidations" "$WORK/served/src" 2>/dev/null; then
-    if [ -d "$WORK/served/node_modules/ag-grid-community" ]; then
-        MAIN="$WORK/served/src/main.tsx"
+# AG Grid emits deprecation and missing-module warnings only when validation is opted into, and
+# almost no agent calls enableDevValidations itself. Add it if absent — recorded in meta.json,
+# which captured whether the agent had already done so before this point.
+if ! grep -rq "enableDevValidations" "$RUN_DIR/app/src" 2>/dev/null; then
+    if [ -d "$RUN_DIR/app/node_modules/ag-grid-community" ]; then
+        MAIN="$RUN_DIR/app/src/main.tsx"
         printf "%s\n%s\n" \
             "import { enableDevValidations } from 'ag-grid-community';" \
             "enableDevValidations();" | cat - "$MAIN" > "$MAIN.tmp" && mv "$MAIN.tmp" "$MAIN"
+        echo "injected enableDevValidations() into app/src/main.tsx"
     fi
 fi
 
-cd "$WORK/served"
-npx vite --port "$PORT" --strictPort > "$WORK/meta/vite.log" 2>&1 &
+cd "$RUN_DIR/app"
+npx vite --port "$PORT" --strictPort > "$RUN_DIR/vite.log" 2>&1 &
 VITE_PID=$!
 trap 'kill $VITE_PID 2>/dev/null || true' EXIT
 
@@ -43,14 +44,14 @@ for _ in $(seq 1 40); do
     if curl -sf -o /dev/null "http://localhost:$PORT/"; then break; fi
 done
 
-node "$EVALS/runner/capture-console.mjs" "http://localhost:$PORT/" "$WORK/meta" \
-    > "$WORK/meta/console-capture.log" 2>&1 || true
-cp "$WORK/meta/load.png" "$WORK/meta/screenshots/load.png" 2>/dev/null || true
+node "$EVALS/runner/capture-console.mjs" "http://localhost:$PORT/" "$RUN_DIR" \
+    > "$RUN_DIR/console-capture.log" 2>&1 || true
+cp "$RUN_DIR/load.png" "$RUN_DIR/screenshots/load.png" 2>/dev/null || true
 
 CHECKS=$(awk '/^# Browser checks/{f=1;next} /^# /{f=0} f' "$CRIT_DIR/CRITERIA.md")
-CONSOLE=$(cat "$WORK/meta/console.txt" 2>/dev/null || echo "(console capture failed)")
+CONSOLE=$(cat "$RUN_DIR/console.txt" 2>/dev/null || echo "(console capture failed)")
 
-cat > "$WORK/meta/verify-browser.prompt.txt" <<EOF
+cat > "$RUN_DIR/verify-browser.prompt.txt" <<EOF
 An application written by another developer is running at http://localhost:$PORT/.
 
 Use the Playwright MCP tools to load and interact with it.
@@ -76,9 +77,9 @@ Rules:
 - Record "pass" or "fail" for each. Use "blocked" only if a check genuinely cannot be evaluated,
   for example because the page did not load.
 - Give concrete evidence for every result: what you did and what happened.
-- Save at least one screenshot into $WORK/meta/screenshots/.
+- Save at least one screenshot into $RUN_DIR/screenshots/.
 
-Write your results to $WORK/meta/result-browser.json as JSON of exactly this shape, using the check
+Write your results to $RUN_DIR/result-browser.json as JSON of exactly this shape, using the check
 IDs exactly as given above:
 
 {
@@ -92,26 +93,27 @@ Write the file. Your text reply is ignored; result-browser.json is the output th
 EOF
 
 set +e
-claude -p "$(cat "$WORK/meta/verify-browser.prompt.txt")" \
+claude -p "$(cat "$RUN_DIR/verify-browser.prompt.txt")" \
     --model opus \
     --setting-sources "" \
     --strict-mcp-config \
     --mcp-config "$EVALS/runner/playwright-mcp.json" \
     --dangerously-skip-permissions \
     --output-format json \
-    > "$WORK/meta/verify-browser.json" 2> "$WORK/meta/verify-browser.err"
+    > "$RUN_DIR/verify-browser.json" 2> "$RUN_DIR/verify-browser.err"
 EXIT=$?
 set -e
 
+"$EVALS/runner/save-transcript.sh" "$RUN_DIR/verify-browser.json" "$RUN_DIR/verify-browser.transcript.jsonl" || true
+
 kill $VITE_PID 2>/dev/null || true
 
-if [ -f "$WORK/meta/result-browser.json" ]; then
+if [ -f "$RUN_DIR/result-browser.json" ]; then
     python3 -c "
 import json
-d=json.load(open('$WORK/meta/result-browser.json'))
+d=json.load(open('$RUN_DIR/result-browser.json'))
 c=d['browserChecks']
 print('$CRITERION/$RUN browser:', sum(1 for x in c if x['result']=='pass'), '/', len(c))"
-    "$EVALS/runner/harvest.sh" "$CRITERION" "$RUN" > /dev/null
 else
     echo "BROWSER VERIFY FAILED (exit $EXIT) — no result-browser.json" >&2
     exit 1

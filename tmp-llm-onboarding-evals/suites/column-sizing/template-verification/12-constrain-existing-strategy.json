@@ -1,0 +1,34 @@
+{
+  "criterion": "12-constrain-existing-strategy",
+  "rendered": true,
+  "renderError": null,
+  "consoleClean": true,
+  "console": [],
+  "observed": {
+    "rows": 31,
+    "columns": [
+      {
+        "id": "id",
+        "width": 85
+      },
+      {
+        "id": "name",
+        "width": 174
+      },
+      {
+        "id": "role",
+        "width": 246
+      },
+      {
+        "id": "department",
+        "width": 131
+      },
+      {
+        "id": "comments",
+        "width": 998
+      }
+    ],
+    "gridWidth": 1398,
+    "totalColumnWidth": 1634
+  }
+}

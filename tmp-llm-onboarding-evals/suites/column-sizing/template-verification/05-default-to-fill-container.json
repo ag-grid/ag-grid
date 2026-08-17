@@ -1,0 +1,26 @@
+{
+  "criterion": "05-default-to-fill-container",
+  "rendered": true,
+  "renderError": null,
+  "consoleClean": true,
+  "console": [],
+  "observed": {
+    "rows": 31,
+    "columns": [
+      {
+        "id": "name",
+        "width": 200
+      },
+      {
+        "id": "department",
+        "width": 200
+      },
+      {
+        "id": "salary",
+        "width": 200
+      }
+    ],
+    "gridWidth": 1398,
+    "totalColumnWidth": 600
+  }
+}
