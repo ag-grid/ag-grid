@@ -121,7 +121,12 @@ describe('Editable header name', () => {
         gridDiv.appendChild(wrapper);
         const comp = listPanel['createComponentFromItem'](items[rowIndex], wrapper);
         wrapper.appendChild(comp.getGui());
-        return wrapper.querySelector('.ag-column-select-column-label')?.textContent ?? null;
+        const label = wrapper.querySelector('.ag-column-select-column-label')?.textContent ?? null;
+        // This helper is polled from `waitFor`, so the throwaway row must not outlive the read: a
+        // surviving copy would duplicate the labels that the other helpers select on.
+        listPanel.destroyBean(comp);
+        wrapper.remove();
+        return label;
     }
 
     /** Open the "Edit Column Name" editor for a column via its tool-panel context menu. */
@@ -482,7 +487,7 @@ describe('Editable header name', () => {
         expect(await childColumnLabel(toolPanel, gridDiv, 'athlete')).toBe('Renamed');
     });
 
-    test('the tool-panel search box matches a name edited while the search text is already set', async () => {
+    test('the tool-panel search box matches a name edited before the search text is set', async () => {
         const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete' }, { field: 'age' }]);
 
         const labels = () =>
