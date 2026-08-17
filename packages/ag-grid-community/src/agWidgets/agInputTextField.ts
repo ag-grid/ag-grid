@@ -5,9 +5,15 @@ import type {
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
-import { _exists, _isEventFromPrintableCharacter, _setAriaInvalid, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import {
+    _createAgElement,
+    _exists,
+    _isEventFromPrintableCharacter,
+    _setAriaInvalid,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-stack';
 
-import { _createElement } from '../utils/element';
 import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
 import type { AgInputFieldParams } from './agFieldParams';
@@ -136,7 +142,7 @@ export class AgInputTextField<
     }
 
     private createClearButton(): void {
-        const eClearButton = _createElement<HTMLButtonElement>({
+        const eClearButton = _createAgElement<HTMLButtonElement>({
             tag: 'button',
             cls: 'ag-input-field-clear-button',
             attrs: { type: 'button', tabindex: '-1' },
