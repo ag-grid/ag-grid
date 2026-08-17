@@ -4,7 +4,14 @@ import { vi } from 'vitest';
 
 import type { GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
-import { FormulaModule, MasterDetailModule, PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
+import {
+    CalculatedColumnsModule,
+    FormulaModule,
+    MasterDetailModule,
+    PivotModule,
+    RowGroupingModule,
+    TreeDataModule,
+} from 'ag-grid-enterprise';
 
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
@@ -15,6 +22,7 @@ describe('ag-grid formulas module interop', () => {
         modules: [
             ClientSideRowModelModule,
             FormulaModule,
+            CalculatedColumnsModule,
             MasterDetailModule,
             TreeDataModule,
             RowGroupingModule,
@@ -50,6 +58,14 @@ describe('ag-grid formulas module interop', () => {
         expect(hit).toBe(true);
     }
 
+    function expectNotBlockedWith(service: string) {
+        const encoded = encodeURIComponent(service);
+        const hit = warnSpy!.mock.calls.some((args) =>
+            args.some((arg) => typeof arg === 'string' && (arg.includes(service) || arg.includes(encoded)))
+        );
+        expect(hit).toBe(false);
+    }
+
     const rowData = [
         { id: 'a', group: 'g1', cat: 'x', parent: null, value: 1 },
         { id: 'b', group: 'g1', cat: 'y', parent: null, value: '=REF(COLUMN("value"),ROW("a"))*2' },
@@ -73,6 +89,25 @@ describe('ag-grid formulas module interop', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expectBlockedWith('Master Detail');
+    });
+
+    test('masterDetail supports calculated columns', async () => {
+        const api = gridsManager.createGrid('calculated-columns-interop-master', {
+            calculatedColumns: true,
+            masterDetail: true,
+            detailCellRendererParams: {
+                detailGridOptions: { columnDefs: [{ field: 'value' }] },
+                getDetailRowData: (params: any) => params.successCallback([]),
+            },
+            rowData: [{ id: 'a', value: 2 }],
+            getRowId: (params) => params.data.id,
+            columnDefs: [{ field: 'value' }, { colId: 'doubled', calculatedExpression: '[value] * 2' }],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        const row = api.getRowNode('a')!;
+        expect(api.getCellValue({ rowNode: row, colKey: 'doubled' })).toBe(4);
+        expectNotBlockedWith('Master Detail');
     });
 
     test('treeData blocks formulas', async () => {
