@@ -300,6 +300,32 @@ describe('Rich Select cell editor', () => {
         );
     });
 
+    test('allowTyping with multiSelect does not add a second clear button', async () => {
+        const api = await createGrid({
+            columnDefs: [
+                {
+                    field: 'a',
+                    editable: true,
+                    cellDataType: false,
+                    cellEditor: 'agRichSelectCellEditor',
+                    cellEditorParams: {
+                        values: ['Alpha', 'Beta', 'Gamma'],
+                        allowTyping: true,
+                        multiSelect: true,
+                    },
+                },
+            ],
+            rowData: [{ id: '0', a: ['Alpha'] }],
+            getRowId: (p) => p.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await openEditor(api, gridDiv, 0, 'a');
+
+        const typingField = gridDiv.querySelector<HTMLElement>('.ag-rich-select-field-input')!;
+        expect(typingField.querySelector('.ag-input-field-clear-button')).toBeNull();
+        expect(gridDiv.querySelector('.ag-rich-select-deselect-button')).not.toBeNull();
+    });
+
     // 8. filterList + searchType 'match' filters on a leading-substring match.
     test('searchType "match" filters rows whose text contains the search string', async () => {
         const api = await createGrid({

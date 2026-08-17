@@ -205,12 +205,30 @@ describe('Floating Filters', () => {
                 gridDiv,
                 agTestIdFor.numberFilterInstanceInput({ source: 'floating-filter', colId: 'age' })
             ) as HTMLInputElement;
+            const clearButton = input.parentElement!.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
+            expect(clearButton.classList.contains('ag-hidden')).toBe(true);
 
             typeIntoFloatingFilter(input, '25');
             await asyncSetTimeout(0);
+            expect(clearButton.classList.contains('ag-hidden')).toBe(false);
             expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'equals', filter: 25 });
             await new GridRows(api, 'floating number filter — equals 25').check(`
                 ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 age:25
+                └── LEAF id:2 age:25
+            `);
+
+            fireEvent.mouseDown(clearButton);
+            fireEvent.click(clearButton);
+            await asyncSetTimeout(0);
+
+            expect(input.value).toBe('');
+            expect(document.activeElement).toBe(input);
+            expect(clearButton.classList.contains('ag-hidden')).toBe(true);
+            expect(api.getColumnFilterModel('age')).toBeNull();
+            await new GridRows(api, 'floating number filter — cleared').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 age:23
                 ├── LEAF id:1 age:25
                 └── LEAF id:2 age:25
             `);

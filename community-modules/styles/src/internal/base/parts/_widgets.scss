@@ -97,7 +97,8 @@
         );
     }
 
-    input[class^='ag-'][type='text'].ag-input-field-input-with-clear-button {
+    input[class^='ag-'][type='text'].ag-input-field-input-with-clear-button,
+    input[class^='ag-'][type='number'].ag-input-field-input-with-clear-button {
         @include ag.unthemed-rtl(
             (
                 padding-right: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),

@@ -1,7 +1,7 @@
 import { fireEvent } from '@testing-library/dom';
 
 import type { GridApi, ISetFilterParams, SetFilterValuesFuncParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
 import type { SetFilterHandler } from 'ag-grid-enterprise';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
@@ -17,7 +17,7 @@ const ROW_DATA = [{ country: 'Ireland' }, { country: 'Italy' }];
 
 describe('Filter input clear button', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule, SetFilterModule],
+        modules: [ClientSideRowModelModule, NumberFilterModule, TextFilterModule, SetFilterModule],
     });
 
     beforeAll(() => {
@@ -82,6 +82,30 @@ describe('Filter input clear button', () => {
         expect(api.getColumnFilterModel('country')).toBeNull();
         expect(filterModifiedCount).toBe(1);
         expect(filterChangedCount).toBe(1);
+    });
+
+    test('number filter input displays and applies the clear button', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'age', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: [{ age: 23 }, { age: 25 }],
+        });
+
+        const harness = await ColumnFilterHarness.open(api, 'age');
+        await harness.setNumber(25);
+        expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'equals', filter: 25 });
+
+        const input = harness.input('number');
+        const clearButton = input.parentElement!.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
+        expect(clearButton.classList.contains('ag-hidden')).toBe(false);
+
+        fireEvent.mouseDown(clearButton);
+        fireEvent.click(clearButton);
+        await asyncSetTimeout(0);
+
+        expect(input.value).toBe('');
+        expect(document.activeElement).toBe(input);
+        expect(clearButton.classList.contains('ag-hidden')).toBe(true);
+        expect(api.getColumnFilterModel('age')).toBeNull();
     });
 
     test('excel-mode mini filter clear never applies pending selections, even mid values-refresh', async () => {

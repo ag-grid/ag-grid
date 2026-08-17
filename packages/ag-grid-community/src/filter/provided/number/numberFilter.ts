@@ -161,7 +161,7 @@ export class NumberFilter extends SimpleFilter<
                 new AgInputTextField({ allowedCharPattern, clearButton: true })
             );
         } else {
-            eValue = this.createManagedBean<GridInputNumberField>(new AgInputNumberField());
+            eValue = this.createManagedBean<GridInputNumberField>(new AgInputNumberField({ clearButton: true }));
         }
         eValue.addCss(`ag-filter-${fromTo}`);
         eValue.addCss('ag-filter-filter');

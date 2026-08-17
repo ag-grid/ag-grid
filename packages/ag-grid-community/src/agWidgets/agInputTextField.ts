@@ -19,6 +19,9 @@ import { AgAbstractInputField } from './agAbstractInputField';
 import type { AgInputFieldParams } from './agFieldParams';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
+// date inputs retain their browser-provided clear control; these types need the grid-provided button.
+const CUSTOM_CLEAR_BUTTON_INPUT_TYPES: ReadonlySet<string> = new Set(['number', 'text']);
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgInputTextFieldParams<
     TComponentSelectorType extends string,
@@ -167,7 +170,10 @@ export class AgInputTextField<
             return;
         }
         const supportsClearButton =
-            this.clearButtonEnabled && !this.gos.get('suppressInputClearButton') && eInput.type === 'text';
+            this.clearButtonEnabled &&
+            !this.gos.get('suppressInputClearButton') &&
+            CUSTOM_CLEAR_BUTTON_INPUT_TYPES.has(eInput.type);
+
         const canDisplay = supportsClearButton && !this.isDisabled();
         eInput.classList.toggle('ag-input-field-input-with-clear-button', canDisplay);
         _setDisplayed(eClearButton, canDisplay && !!eInput.value);
