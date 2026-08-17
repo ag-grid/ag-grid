@@ -23,10 +23,13 @@ const PROCESS_SHIM = `window.process = { env: { NODE_ENV: 'development' } };`;
  * The scaffolding every example page carries, none of which is part of the example itself --
  * see `public/example-runner/example-page.js`. Served rather than inlined, so that what a
  * reader sees in `index.html` is the example.
+ *
+ * Requested with CORS, since an exported page fetches it cross-origin: a classic script tag
+ * otherwise sends no `Origin`, which the dev server rejects as a cross-site request.
  */
 export const ExamplePageBoilerplate = ({ isExported, nonce }: Props) => (
     <>
         {isExported && <script nonce={nonce} dangerouslySetInnerHTML={{ __html: PROCESS_SHIM }} />}
-        <script nonce={nonce} src={exampleRunnerAsset('example-page.js')} />
+        <script nonce={nonce} src={exampleRunnerAsset('example-page.js')} crossOrigin="anonymous" />
     </>
 );
