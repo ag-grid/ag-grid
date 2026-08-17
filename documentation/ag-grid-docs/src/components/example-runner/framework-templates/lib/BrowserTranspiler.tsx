@@ -1,3 +1,4 @@
+import type { InternalFramework } from '@ag-grid-types';
 import { exampleRunnerAsset } from '@utils/exampleModules/exampleRunnerAsset';
 import {
     ASSET_REGEX,
@@ -5,13 +6,14 @@ import {
     EXTENSIONS,
     SPECIFIER_REGEX,
     STYLESHEET_LOADER_NAME,
-    getCompilerOptions,
+    getCompilerOptionNames,
 } from '@utils/exampleModules/transformExampleModule';
 import ts from 'typescript';
 
 interface Props {
     /** The example's entry file, as authored -- `main.ts`, not `main.js` */
     entryFileName: string;
+    internalFramework: InternalFramework;
     nonce?: string;
 }
 
@@ -31,14 +33,14 @@ const MODULE_EXTENSION_REGEX = /\.(tsx?|jsx?|mjs|cjs)$/i;
  * Everything the in-page transpiler shares with the server-side transform, so that the two
  * cannot drift. Only these travel with the page; the transpiler itself is served.
  */
-const getTranspilerOptions = (entryFileName: string) => ({
+const getTranspilerOptions = (entryFileName: string, internalFramework: InternalFramework) => ({
     entry: `./${entryFileName}`,
     specifierRegex: SPECIFIER_REGEX.source,
     cssImportRegex: CSS_IMPORT_REGEX.source,
     assetRegex: ASSET_REGEX.source,
     moduleExtensionRegex: MODULE_EXTENSION_REGEX.source,
     moduleExtensions: MODULE_EXTENSIONS,
-    compilerOptions: getCompilerOptions(ts),
+    compilerOptions: getCompilerOptionNames(internalFramework),
     stylesheetLoaderName: STYLESHEET_LOADER_NAME,
 });
 
@@ -48,14 +50,16 @@ const getTranspilerOptions = (entryFileName: string) => ({
  * show the TypeScript the example was authored in, so nothing can transpile the sources before
  * they get there. See `public/example-runner/browser-transpiler.js`.
  */
-export const BrowserTranspiler = ({ entryFileName, nonce }: Props) => (
+export const BrowserTranspiler = ({ entryFileName, internalFramework, nonce }: Props) => (
     <>
         <script nonce={nonce} src={TYPESCRIPT_URL} crossOrigin="anonymous" />
         <script
             nonce={nonce}
             type="application/json"
             id={TRANSPILER_OPTIONS_ID}
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(getTranspilerOptions(entryFileName)) }}
+            dangerouslySetInnerHTML={{
+                __html: JSON.stringify(getTranspilerOptions(entryFileName, internalFramework)),
+            }}
         />
         <script nonce={nonce} type="module" src={exampleRunnerAsset('browser-transpiler.js')} />
     </>

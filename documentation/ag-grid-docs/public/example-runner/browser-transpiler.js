@@ -21,6 +21,21 @@ const moduleExtensionRegex = new RegExp(options.moduleExtensionRegex, 'i');
 const loader = options.stylesheetLoaderName;
 
 /**
+ * Options whose value is a TypeScript enum member, and the enum to read it from. The page names
+ * them (`"target": "ES2022"`) rather than numbering them, so that what it carries says what it
+ * does; the numbers are this version of `ts`'s own. Mirrors `resolveCompilerOptions` in
+ * `transformExampleModule.ts`, which `browserTranspiler.test.ts` checks this against.
+ */
+const COMPILER_OPTION_ENUMS = { module: 'ModuleKind', target: 'ScriptTarget', jsx: 'JsxEmit' };
+
+const compilerOptions = Object.fromEntries(
+    Object.entries(options.compilerOptions).map(([name, value]) => [
+        name,
+        COMPILER_OPTION_ENUMS[name] ? ts[COMPILER_OPTION_ENUMS[name]][value] : value,
+    ])
+);
+
+/**
  * The counterpart of `STYLESHEET_LOADER`, which the server-side transform injects into the
  * modules it rewrites. Kept as code here rather than passed in as source text, so that an
  * example carrying a CSP does not need `unsafe-eval` to run its own stylesheets. Each module is
@@ -107,7 +122,7 @@ const toBlobUrl = async (requestedUrl) => {
         const { url, source } = await fetchModule(requestedUrl);
         const { outputText } = ts.transpileModule(rewriteCssImports(source, url), {
             fileName: url,
-            compilerOptions: options.compilerOptions,
+            compilerOptions: compilerOptions,
         });
         const withRealUrl = outputText.replaceAll('import.meta.url', JSON.stringify(url));
         const code = await rewriteSpecifiers(withRealUrl, url);

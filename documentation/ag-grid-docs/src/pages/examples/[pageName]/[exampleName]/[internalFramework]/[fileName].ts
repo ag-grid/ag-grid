@@ -54,6 +54,7 @@ export async function GET({ params }: { params: Params }) {
         const code = transformExampleModule({
             fileName: moduleSourceFileName,
             source: files[moduleSourceFileName],
+            internalFramework,
         });
 
         return new Response(code, {

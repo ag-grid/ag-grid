@@ -1,3 +1,5 @@
+import type { InternalFramework } from '@ag-grid-types';
+import { isReactInternalFramework } from '@utils/framework';
 import ts from 'typescript';
 
 /**
@@ -16,22 +18,44 @@ export const SPECIFIER_REGEX = /(\bfrom\s*|\bimport\s*\(?\s*|\bexport\s*\*\s*fro
 /** A bare `import 'foo.css';` with no bindings */
 export const CSS_IMPORT_REGEX = /^[ \t]*import\s+(['"])([^'"]+\.css)\1;?[ \t]*$/gm;
 
+/** Options whose value is a TypeScript enum member, and the enum to read it from */
+export const COMPILER_OPTION_ENUMS = { module: 'ModuleKind', target: 'ScriptTarget', jsx: 'JsxEmit' } as const;
+
+export type NamedCompilerOptions = Record<string, string | boolean>;
+
 /**
- * `emitDecoratorMetadata` is what lets the Angular JIT compiler resolve constructor
- * injection: without the emitted `design:paramtypes`, any component or service with
- * constructor dependencies fails to instantiate (NG0202).
+ * The compiler options an example needs, with each enum value named rather than numbered. This is
+ * the form the exported page carries (see `BrowserTranspiler`), where `"target": "ES2022"` says
+ * what `"target": 9` does not.
  *
- * Self-contained, because the Plunker template serialises this function into the page it
- * generates (see `BrowserTranspiler`) so that both transpilers stay on the same options.
+ * Only the options a framework actually needs are included, so that what a reader sees is the
+ * example's own toolchain: `jsx` is React's, and `emitDecoratorMetadata` is what lets Angular's
+ * JIT compiler resolve constructor injection -- without the emitted `design:paramtypes`, a
+ * component with constructor dependencies fails to instantiate (NG0202).
  */
-export const getCompilerOptions = (tsModule: typeof ts): ts.CompilerOptions => ({
-    module: tsModule.ModuleKind.ESNext,
+export const getCompilerOptionNames = (internalFramework: InternalFramework): NamedCompilerOptions => ({
+    module: 'ESNext',
     // ES2022 so the top-level `await` a stylesheet import compiles to is emitted as authored
-    target: tsModule.ScriptTarget.ES2022,
-    jsx: tsModule.JsxEmit.React,
-    experimentalDecorators: true,
-    emitDecoratorMetadata: true,
+    target: 'ES2022',
+    ...(isReactInternalFramework(internalFramework) ? { jsx: 'React' } : {}),
+    ...(internalFramework === 'angular' ? { experimentalDecorators: true, emitDecoratorMetadata: true } : {}),
 });
+
+/**
+ * Resolves the named options against a TypeScript module's own enums. Mirrored in
+ * `public/example-runner/browser-transpiler.js`, which resolves them against the `ts` its page
+ * loads, and checked against this by `browserTranspiler.test.ts`.
+ */
+export const resolveCompilerOptions = (tsModule: typeof ts, named: NamedCompilerOptions): ts.CompilerOptions =>
+    Object.fromEntries(
+        Object.entries(named).map(([name, value]) => [
+            name,
+            COMPILER_OPTION_ENUMS[name] ? tsModule[COMPILER_OPTION_ENUMS[name]][value as string] : value,
+        ])
+    );
+
+export const getCompilerOptions = (tsModule: typeof ts, internalFramework: InternalFramework): ts.CompilerOptions =>
+    resolveCompilerOptions(tsModule, getCompilerOptionNames(internalFramework));
 
 /** Playwright specs live alongside an example but are not part of it, and are never served */
 export const isSpecFile = (fileName: string) => fileName.includes('.spec.') || fileName.includes('.test.');
@@ -124,10 +148,18 @@ const rewriteCssImports = (source: string) => {
     return rewritten === source ? source : `${STYLESHEET_LOADER}${rewritten}`;
 };
 
-export const transformExampleModule = ({ fileName, source }: { fileName: string; source: string }) => {
+export const transformExampleModule = ({
+    fileName,
+    source,
+    internalFramework,
+}: {
+    fileName: string;
+    source: string;
+    internalFramework: InternalFramework;
+}) => {
     const { outputText } = ts.transpileModule(rewriteCssImports(rewriteRelativeSpecifiers(source)), {
         fileName,
-        compilerOptions: getCompilerOptions(ts),
+        compilerOptions: getCompilerOptions(ts, internalFramework),
     });
 
     return outputText;

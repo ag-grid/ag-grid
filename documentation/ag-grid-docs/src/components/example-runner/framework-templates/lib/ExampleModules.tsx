@@ -51,7 +51,7 @@ export const ExampleModules = ({
         {/* `transpileInBrowser` marks the pages that are exported rather than served by us */}
         <ExamplePageBoilerplate isExported={transpileInBrowser} nonce={nonce} />
         {transpileInBrowser ? (
-            <BrowserTranspiler entryFileName={entryFileName} nonce={nonce} />
+            <BrowserTranspiler entryFileName={entryFileName} internalFramework={internalFramework} nonce={nonce} />
         ) : (
             <script nonce={nonce} type="module" src={pathJoin(appLocation, toModuleFileName(entryFileName))} />
         )}

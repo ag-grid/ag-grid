@@ -1,3 +1,5 @@
+import type { InternalFramework } from '@ag-grid-types';
+
 import {
     getModuleSourceFileName,
     isTransformableModule,
@@ -5,7 +7,8 @@ import {
     transformExampleModule,
 } from './transformExampleModule';
 
-const transform = (fileName: string, source: string) => transformExampleModule({ fileName, source });
+const transform = (fileName: string, source: string, internalFramework: InternalFramework = 'typescript') =>
+    transformExampleModule({ fileName, source, internalFramework });
 
 describe('isTransformableModule', () => {
     test.each([
@@ -95,7 +98,8 @@ describe('transformExampleModule', () => {
     test('compiles JSX', () => {
         const code = transform(
             'index.jsx',
-            ["import React from 'react';", 'export const App = () => <div className="grid" />;'].join('\n')
+            ["import React from 'react';", 'export const App = () => <div className="grid" />;'].join('\n'),
+            'reactFunctional'
         );
 
         expect(code).toContain('React.createElement');
@@ -111,7 +115,8 @@ describe('transformExampleModule', () => {
                 'export class AppComponent {',
                 '    constructor(private elementRef: ElementRef) {}',
                 '}',
-            ].join('\n')
+            ].join('\n'),
+            'angular'
         );
 
         expect(code).toContain('Component({');
