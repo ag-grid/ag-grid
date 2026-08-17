@@ -242,7 +242,7 @@ AddCharset utf-8 .md
     RewriteRule "^/?vue-grid/$" "https://www.ag-grid.com/vue-data-grid/getting-started/" [R=301,L]
     RewriteRule "^/?angular-grid-cell-rendering$" "https://www.ag-grid.com/angular-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?features-overview$" "https://www.ag-grid.com/" [R=301,L]
-    RewriteRule "^/?nodejs-server-side-operations$" "https://www.ag-grid.com/javascript-data-grid/server-side-operations-nodejs/" [R=301,L]
+    RewriteRule "^/?nodejs-server-side-operations$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
     RewriteRule "^/?documentation/javascript/integrated-charts-cross-filtering/$" "https://www.ag-grid.com/javascript-data-grid/integrated-charts-api-cross-filter-chart/" [R=301,L]
     RewriteRule "^/?angular-grid-filtering$" "https://www.ag-grid.com/angular-data-grid/filtering/" [R=301,L]
     RewriteRule "^/?javascript-grid-column-definitions$" "https://www.ag-grid.com/javascript-data-grid/column-definitions/" [R=301,L]
@@ -690,10 +690,10 @@ AddCharset utf-8 .md
     Redirect 301 /documentation/angular/server-side-model-tree-data/ /angular-data-grid/server-side-model-tree-data/
     Redirect 301 /documentation/angular/server-side-model-updating/ /angular-data-grid/server-side-model-updating/
     Redirect 301 /documentation/angular/server-side-model/ /angular-data-grid/server-side-model/
-    Redirect 301 /documentation/angular/server-side-operations-graphql/ /angular-data-grid/server-side-operations-graphql/
-    Redirect 301 /documentation/angular/server-side-operations-nodejs/ /angular-data-grid/server-side-operations-nodejs/
-    Redirect 301 /documentation/angular/server-side-operations-oracle/ /angular-data-grid/server-side-operations-oracle/
-    Redirect 301 /documentation/angular/server-side-operations-spark/ /angular-data-grid/server-side-operations-spark/
+    Redirect 301 /documentation/angular/server-side-operations-graphql/ /angular-data-grid/server-side-model/
+    Redirect 301 /documentation/angular/server-side-operations-nodejs/ /angular-data-grid/server-side-model/
+    Redirect 301 /documentation/angular/server-side-operations-oracle/ /angular-data-grid/server-side-model/
+    Redirect 301 /documentation/angular/server-side-operations-spark/ /angular-data-grid/server-side-model/
     Redirect 301 /documentation/angular/side-bar/ /angular-data-grid/side-bar/
     Redirect 301 /documentation/angular/status-bar/ /angular-data-grid/status-bar/
     Redirect 301 /documentation/angular/supported-browsers/ /angular-data-grid/supported-browsers/
@@ -892,10 +892,10 @@ AddCharset utf-8 .md
     Redirect 301 /documentation/javascript/server-side-model-tree-data/ /javascript-data-grid/server-side-model-tree-data/
     Redirect 301 /documentation/javascript/server-side-model-updating/ /javascript-data-grid/server-side-model-updating/
     Redirect 301 /documentation/javascript/server-side-model/ /javascript-data-grid/server-side-model/
-    Redirect 301 /documentation/javascript/server-side-operations-graphql/ /javascript-data-grid/server-side-operations-graphql/
-    Redirect 301 /documentation/javascript/server-side-operations-nodejs/ /javascript-data-grid/server-side-operations-nodejs/
-    Redirect 301 /documentation/javascript/server-side-operations-oracle/ /javascript-data-grid/server-side-operations-oracle/
-    Redirect 301 /documentation/javascript/server-side-operations-spark/ /javascript-data-grid/server-side-operations-spark/
+    Redirect 301 /documentation/javascript/server-side-operations-graphql/ /javascript-data-grid/server-side-model/
+    Redirect 301 /documentation/javascript/server-side-operations-nodejs/ /javascript-data-grid/server-side-model/
+    Redirect 301 /documentation/javascript/server-side-operations-oracle/ /javascript-data-grid/server-side-model/
+    Redirect 301 /documentation/javascript/server-side-operations-spark/ /javascript-data-grid/server-side-model/
     Redirect 301 /documentation/javascript/side-bar/ /javascript-data-grid/side-bar/
     Redirect 301 /documentation/javascript/status-bar/ /javascript-data-grid/status-bar/
     Redirect 301 /documentation/javascript/supported-browsers/ /javascript-data-grid/supported-browsers/
@@ -1086,10 +1086,10 @@ AddCharset utf-8 .md
     Redirect 301 /documentation/react/server-side-model-tree-data/ /react-data-grid/server-side-model-tree-data/
     Redirect 301 /documentation/react/server-side-model-updating/ /react-data-grid/server-side-model-updating/
     Redirect 301 /documentation/react/server-side-model/ /react-data-grid/server-side-model/
-    Redirect 301 /documentation/react/server-side-operations-graphql/ /react-data-grid/server-side-operations-graphql/
-    Redirect 301 /documentation/react/server-side-operations-nodejs/ /react-data-grid/server-side-operations-nodejs/
-    Redirect 301 /documentation/react/server-side-operations-oracle/ /react-data-grid/server-side-operations-oracle/
-    Redirect 301 /documentation/react/server-side-operations-spark/ /react-data-grid/server-side-operations-spark/
+    Redirect 301 /documentation/react/server-side-operations-graphql/ /react-data-grid/server-side-model/
+    Redirect 301 /documentation/react/server-side-operations-nodejs/ /react-data-grid/server-side-model/
+    Redirect 301 /documentation/react/server-side-operations-oracle/ /react-data-grid/server-side-model/
+    Redirect 301 /documentation/react/server-side-operations-spark/ /react-data-grid/server-side-model/
     Redirect 301 /documentation/react/side-bar/ /react-data-grid/side-bar/
     Redirect 301 /documentation/react/status-bar/ /react-data-grid/status-bar/
     Redirect 301 /documentation/react/supported-browsers/ /react-data-grid/supported-browsers/
@@ -1274,10 +1274,10 @@ AddCharset utf-8 .md
     Redirect 301 /documentation/vue/server-side-model-tree-data/ /vue-data-grid/server-side-model-tree-data/
     Redirect 301 /documentation/vue/server-side-model-updating/ /vue-data-grid/server-side-model-updating/
     Redirect 301 /documentation/vue/server-side-model/ /vue-data-grid/server-side-model/
-    Redirect 301 /documentation/vue/server-side-operations-graphql/ /vue-data-grid/server-side-operations-graphql/
-    Redirect 301 /documentation/vue/server-side-operations-nodejs/ /vue-data-grid/server-side-operations-nodejs/
-    Redirect 301 /documentation/vue/server-side-operations-oracle/ /vue-data-grid/server-side-operations-oracle/
-    Redirect 301 /documentation/vue/server-side-operations-spark/ /vue-data-grid/server-side-operations-spark/
+    Redirect 301 /documentation/vue/server-side-operations-graphql/ /vue-data-grid/server-side-model/
+    Redirect 301 /documentation/vue/server-side-operations-nodejs/ /vue-data-grid/server-side-model/
+    Redirect 301 /documentation/vue/server-side-operations-oracle/ /vue-data-grid/server-side-model/
+    Redirect 301 /documentation/vue/server-side-operations-spark/ /vue-data-grid/server-side-model/
     Redirect 301 /documentation/vue/side-bar/ /vue-data-grid/side-bar/
     Redirect 301 /documentation/vue/status-bar/ /vue-data-grid/status-bar/
     Redirect 301 /documentation/vue/supported-browsers/ /vue-data-grid/supported-browsers/
@@ -1305,7 +1305,7 @@ AddCharset utf-8 .md
     Redirect 301 /example-react-redux/ /react-data-grid/getting-started/
     Redirect 301 /features-overview/ https://www.ag-grid.com/
     Redirect 301 /git-color/ https://medium.com/ag-grid/git-on-the-command-line-improving-the-experience-5a604cb14cf6
-    Redirect 301 /graphql-server-side-operations/ /javascript-data-grid/server-side-operations-graphql/
+    Redirect 301 /graphql-server-side-operations/ /javascript-data-grid/server-side-model/
     Redirect 301 /javascript-datagrid/ https://medium.com/ag-grid/8-reasons-to-choose-ag-grid-as-your-javascript-datagrid-eb4a767a351f
     Redirect 301 /javascript-getting-started/ /javascript-data-grid/getting-started/
     Redirect 301 /javascript-grid-accessibility/ /javascript-data-grid/accessibility/
@@ -1663,10 +1663,10 @@ AddCharset utf-8 .md
     Redirect 301 /javascript-data-grid/server-side-model-transactions/ /javascript-data-grid/server-side-model-updating-transactions/
     Redirect 301 /javascript-grid/server-side-model-tree-data/ /javascript-data-grid/server-side-model-tree-data/
     Redirect 301 /javascript-grid/server-side-model-updating/ /javascript-data-grid/server-side-model-updating/
-    Redirect 301 /javascript-grid/server-side-operations-graphql/ /javascript-data-grid/server-side-operations-graphql/
-    Redirect 301 /javascript-grid/server-side-operations-nodejs/ /javascript-data-grid/server-side-operations-nodejs/
-    Redirect 301 /javascript-grid/server-side-operations-oracle/ /javascript-data-grid/server-side-operations-oracle/
-    Redirect 301 /javascript-grid/server-side-operations-spark/ /javascript-data-grid/server-side-operations-spark/
+    Redirect 301 /javascript-grid/server-side-operations-graphql/ /javascript-data-grid/server-side-model/
+    Redirect 301 /javascript-grid/server-side-operations-nodejs/ /javascript-data-grid/server-side-model/
+    Redirect 301 /javascript-grid/server-side-operations-oracle/ /javascript-data-grid/server-side-model/
+    Redirect 301 /javascript-grid/server-side-operations-spark/ /javascript-data-grid/server-side-model/
     Redirect 301 /javascript-grid/side-bar/ /javascript-data-grid/side-bar/
     Redirect 301 /javascript-grid/status-bar/ /javascript-data-grid/status-bar/
     Redirect 301 /javascript-grid/supported-browsers/ /javascript-data-grid/supported-browsers/
@@ -1862,10 +1862,10 @@ AddCharset utf-8 .md
     Redirect 301 /angular-data-grid/server-side-model-transactions/ /angular-data-grid/server-side-model-updating-transactions/
     Redirect 301 /angular-grid/server-side-model-tree-data/ /angular-data-grid/server-side-model-tree-data/
     Redirect 301 /angular-grid/server-side-model-updating/ /angular-data-grid/server-side-model-updating/
-    Redirect 301 /angular-grid/server-side-operations-graphql/ /angular-data-grid/server-side-operations-graphql/
-    Redirect 301 /angular-grid/server-side-operations-nodejs/ /angular-data-grid/server-side-operations-nodejs/
-    Redirect 301 /angular-grid/server-side-operations-oracle/ /angular-data-grid/server-side-operations-oracle/
-    Redirect 301 /angular-grid/server-side-operations-spark/ /angular-data-grid/server-side-operations-spark/
+    Redirect 301 /angular-grid/server-side-operations-graphql/ /angular-data-grid/server-side-model/
+    Redirect 301 /angular-grid/server-side-operations-nodejs/ /angular-data-grid/server-side-model/
+    Redirect 301 /angular-grid/server-side-operations-oracle/ /angular-data-grid/server-side-model/
+    Redirect 301 /angular-grid/server-side-operations-spark/ /angular-data-grid/server-side-model/
     Redirect 301 /angular-grid/side-bar/ /angular-data-grid/side-bar/
     Redirect 301 /angular-grid/status-bar/ /angular-data-grid/status-bar/
     Redirect 301 /angular-grid/supported-browsers/ /angular-data-grid/supported-browsers/
@@ -2067,10 +2067,10 @@ AddCharset utf-8 .md
     Redirect 301 /react-data-grid/server-side-model-transactions/ /react-data-grid/server-side-model-updating-transactions/
     Redirect 301 /react-grid/server-side-model-tree-data/ /react-data-grid/server-side-model-tree-data/
     Redirect 301 /react-grid/server-side-model-updating/ /react-data-grid/server-side-model-updating/
-    Redirect 301 /react-grid/server-side-operations-graphql/ /react-data-grid/server-side-operations-graphql/
-    Redirect 301 /react-grid/server-side-operations-nodejs/ /react-data-grid/server-side-operations-nodejs/
-    Redirect 301 /react-grid/server-side-operations-oracle/ /react-data-grid/server-side-operations-oracle/
-    Redirect 301 /react-grid/server-side-operations-spark/ /react-data-grid/server-side-operations-spark/
+    Redirect 301 /react-grid/server-side-operations-graphql/ /react-data-grid/server-side-model/
+    Redirect 301 /react-grid/server-side-operations-nodejs/ /react-data-grid/server-side-model/
+    Redirect 301 /react-grid/server-side-operations-oracle/ /react-data-grid/server-side-model/
+    Redirect 301 /react-grid/server-side-operations-spark/ /react-data-grid/server-side-model/
     Redirect 301 /react-grid/side-bar/ /react-data-grid/side-bar/
     Redirect 301 /react-grid/status-bar/ /react-data-grid/status-bar/
     Redirect 301 /react-grid/supported-browsers/ /react-data-grid/supported-browsers/
@@ -2266,10 +2266,10 @@ AddCharset utf-8 .md
     Redirect 301 /vue-data-grid/server-side-model-transactions/ /vue-data-grid/server-side-model-updating-transactions/
     Redirect 301 /vue-grid/server-side-model-tree-data/ /vue-data-grid/server-side-model-tree-data/
     Redirect 301 /vue-grid/server-side-model-updating/ /vue-data-grid/server-side-model-updating/
-    Redirect 301 /vue-grid/server-side-operations-graphql/ /vue-data-grid/server-side-operations-graphql/
-    Redirect 301 /vue-grid/server-side-operations-nodejs/ /vue-data-grid/server-side-operations-nodejs/
-    Redirect 301 /vue-grid/server-side-operations-oracle/ /vue-data-grid/server-side-operations-oracle/
-    Redirect 301 /vue-grid/server-side-operations-spark/ /vue-data-grid/server-side-operations-spark/
+    Redirect 301 /vue-grid/server-side-operations-graphql/ /vue-data-grid/server-side-model/
+    Redirect 301 /vue-grid/server-side-operations-nodejs/ /vue-data-grid/server-side-model/
+    Redirect 301 /vue-grid/server-side-operations-oracle/ /vue-data-grid/server-side-model/
+    Redirect 301 /vue-grid/server-side-operations-spark/ /vue-data-grid/server-side-model/
     Redirect 301 /vue-grid/side-bar/ /vue-data-grid/side-bar/
     Redirect 301 /vue-grid/status-bar/ /vue-data-grid/status-bar/
     Redirect 301 /vue-grid/supported-browsers/ /vue-data-grid/supported-browsers/
@@ -2290,8 +2290,8 @@ AddCharset utf-8 .md
     Redirect 301 /vue-grid/view-refresh/ /vue-data-grid/view-refresh/
     Redirect 301 /vue-grid/viewport/ /vue-data-grid/viewport/
     Redirect 301 /vue3/ /vue-data-grid/getting-started/
-    Redirect 301 /nodejs-server-side-operations/ /javascript-data-grid/server-side-operations-nodejs/
-    Redirect 301 /oracle-server-side-operations/ /javascript-data-grid/server-side-operations-oracle/
+    Redirect 301 /nodejs-server-side-operations/ /javascript-data-grid/server-side-model/
+    Redirect 301 /oracle-server-side-operations/ /javascript-data-grid/server-side-model/
     Redirect 301 /quote/ /ecommerce/#/ecommerce/quote-lookup
     Redirect 301 /react-15/ /react-data-grid/getting-started/
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
@@ -2303,7 +2303,7 @@ AddCharset utf-8 .md
     Redirect 301 /react-redux-integration-pt1/ /react-data-grid/getting-started/
     Redirect 301 /react-redux-integration-pt2/ /react-data-grid/getting-started/
     Redirect 301 /review-of-angularjs-grids/ https://medium.com/ag-grid/from-hater-to-fan-how-i-fell-in-love-with-ag-grid-3cbc5976d5e3
-    Redirect 301 /spark-server-side-operations/ /javascript-data-grid/server-side-operations-spark/
+    Redirect 301 /spark-server-side-operations/ /javascript-data-grid/server-side-model/
     Redirect 301 /support.php /
     Redirect 301 /understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/ https://medium.com/ag-grid/understand-packaging-for-javascript-typescript-commonjs-and-everything-else-1fe835f3243a
     Redirect 301 /vue-components/ /vue-data-grid/getting-started/
@@ -2610,6 +2610,22 @@ AddCharset utf-8 .md
     Redirect 301 /angular-data-grid/accented-sort /angular-data-grid/#locale-specific-sort
     Redirect 301 /react-data-grid/accented-sort /react-data-grid/#locale-specific-sort
     Redirect 301 /vue-data-grid/accented-sort /vue-data-grid/#locale-specific-sort
+    Redirect 301 /javascript-data-grid/server-side-operations-nodejs /javascript-data-grid/server-side-model
+    Redirect 301 /angular-data-grid/server-side-operations-nodejs /angular-data-grid/server-side-model
+    Redirect 301 /react-data-grid/server-side-operations-nodejs /react-data-grid/server-side-model
+    Redirect 301 /vue-data-grid/server-side-operations-nodejs /vue-data-grid/server-side-model
+    Redirect 301 /javascript-data-grid/server-side-operations-graphql /javascript-data-grid/server-side-model
+    Redirect 301 /angular-data-grid/server-side-operations-graphql /angular-data-grid/server-side-model
+    Redirect 301 /react-data-grid/server-side-operations-graphql /react-data-grid/server-side-model
+    Redirect 301 /vue-data-grid/server-side-operations-graphql /vue-data-grid/server-side-model
+    Redirect 301 /javascript-data-grid/server-side-operations-oracle /javascript-data-grid/server-side-model
+    Redirect 301 /angular-data-grid/server-side-operations-oracle /angular-data-grid/server-side-model
+    Redirect 301 /react-data-grid/server-side-operations-oracle /react-data-grid/server-side-model
+    Redirect 301 /vue-data-grid/server-side-operations-oracle /vue-data-grid/server-side-model
+    Redirect 301 /javascript-data-grid/server-side-operations-spark /javascript-data-grid/server-side-model
+    Redirect 301 /angular-data-grid/server-side-operations-spark /angular-data-grid/server-side-model
+    Redirect 301 /react-data-grid/server-side-operations-spark /react-data-grid/server-side-model
+    Redirect 301 /vue-data-grid/server-side-operations-spark /vue-data-grid/server-side-model
     RedirectMatch 301 "^/javascript-grid-virtual-paging/.*" "/javascript-data-grid/infinite-scrolling/"
     RedirectMatch 301 "^/javascript-grid-enterprise-model/.*" "/javascript-data-grid/server-side-model/"
     Redirect 301 /javascript-grid-cell-style/ /javascript-data-grid/cell-styles/
