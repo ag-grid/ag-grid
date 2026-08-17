@@ -189,6 +189,16 @@ const SITE_SCRIPT_HASHES = [
 // third throws uncaught. We are not granting 'unsafe-eval' site-wide for a consent
 // banner, so keep the Enzuzo console configuration free of template placeholders and
 // string-bodied event handlers.
+
+// React and React DOM have no ES module build on npm, so the example runner's import map
+// resolves them through esm.sh. Everything else it loads comes from jsdelivr or our own origin.
+//
+// Allowed ahead of the runner itself: today's examples still load through SystemJS, which
+// takes React from jsdelivr, so nothing fetches this origin yet. It is here so the CSP is
+// not what blocks the SystemJS-to-native-ES-modules switch (AG-17103), whose branch carries
+// the same two entries — landing them separately keeps that change free of a policy edit.
+const ESM_SH_HOST = 'https://esm.sh';
+
 const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
 const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
 
@@ -384,6 +394,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.googletagmanager.com',
             'https://www.google-analytics.com', // Universal Analytics analytics.js (GTM-injected after cookie consent)
             'https://cdn.jsdelivr.net',
+            ESM_SH_HOST, // example-runner: React's ES module build (npm ships CJS only)
             'https://cdnjs.cloudflare.com',
             'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
             'https://*.zoominfo.com', // ZoomInfo FormComplete
@@ -434,6 +445,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://flagcdn.com',
             'https://www.googletagmanager.com',
             'https://cdn.jsdelivr.net', // example-runner SystemJS fetches modules as text (XHR)
+            ESM_SH_HOST, // example-runner: React's ES module build
             'https://cdnjs.cloudflare.com', // example-runner legacy deps (XHR)
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
