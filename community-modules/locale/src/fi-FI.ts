@@ -792,7 +792,7 @@ export const AG_GRID_LOCALE_FI = {
     ariaHasNote: 'Tässä solussa on muistiinpano.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ' ',
+    thousandSeparator: ' ', // U+00A0 no-break space
     decimalSeparator: ',',
 
     // Data types
