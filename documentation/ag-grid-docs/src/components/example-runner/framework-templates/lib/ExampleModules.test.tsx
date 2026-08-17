@@ -8,6 +8,14 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 
+/**
+ * Stand-ins for the deployment the page is built for. A base path is set so that an entry the page
+ * renders against the site's own origin is distinguishable from one it renders relative -- an
+ * export resolves the relative one against Plunker instead of us.
+ */
+const SITE_URL = 'https://test.ag-grid.example';
+const BASE_URL = '/deployment-base/';
+
 /** The injector as it is served, so the test registers the map the way the page does */
 const INJECTOR_PATH = '../../../../../public/example-runner/inject-import-map.js';
 
@@ -29,8 +37,8 @@ const renderMarkup = async ({
     // `.env.build.production` sets `PUBLIC_USE_PUBLISHED_PACKAGES`, which `@constants` reads at
     // module scope, so the modules have to be re-evaluated with it in place
     vi.stubEnv('PUBLIC_USE_PUBLISHED_PACKAGES', 'true');
-    vi.stubEnv('PUBLIC_BASE_URL', '/AG-17103/');
-    vi.stubEnv('PUBLIC_SITE_URL', 'https://testing.ag-grid.com');
+    vi.stubEnv('PUBLIC_BASE_URL', BASE_URL);
+    vi.stubEnv('PUBLIC_SITE_URL', SITE_URL);
     vi.resetModules();
 
     const { ExampleModules } = await import('./ExampleModules');
@@ -139,7 +147,7 @@ describe('ExampleModules', () => {
             const served = ['example-page.js', ...(internalFramework === 'typescript' ? [] : ['inject-import-map.js'])];
 
             for (const fileName of served) {
-                expect(html).toContain(`src="https://testing.ag-grid.com/AG-17103/example-runner/${fileName}"`);
+                expect(html).toContain(`src="${SITE_URL}${BASE_URL}example-runner/${fileName}"`);
             }
         });
 
