@@ -55,14 +55,7 @@ type ConfigGenerator = ({
 const AG_GRID_EXPORTED_FUNCS_USED_IN_EXAMPLES_COMPS = ['isCombinedFilterModel'];
 
 export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGenerator>> = {
-    vanilla: async ({
-        bindings,
-        entryFile,
-        indexHtml,
-        componentScriptFiles,
-        otherScriptFiles,
-        transformEntryFile,
-    }) => {
+    vanilla: async ({ bindings, entryFile, indexHtml, componentScriptFiles, otherScriptFiles, transformEntryFile }) => {
         const internalFramework: InternalFramework = 'vanilla';
         const entryFileName = getEntryFileName(internalFramework)!;
         let mainJs = readAsJsFile(entryFile, 'vanilla');

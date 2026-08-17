@@ -28,12 +28,7 @@ interface Props {
  * rendered map can serve every version and build the URL asks for -- unless the page is to carry
  * the map resolved, in which case the values it would be substituted with are rendered in.
  */
-const renderImportMap = ({
-    internalFramework,
-    isEnterprise,
-    isIntegratedCharts,
-    isExported,
-}: Omit<Props, 'nonce'>) => {
+const renderImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts, isExported }: Omit<Props, 'nonce'>) => {
     const defaultVersion = getDefaultFrameworkVersion(internalFramework);
     // Frameworkless examples have no version to substitute, and an exported page has nothing to
     // substitute from, so both carry the map as rendered
@@ -64,13 +59,7 @@ const renderImportMap = ({
  * from, and nothing else in an export is load-bearing the way the map is: a page that cannot reach
  * the injector resolves no specifier at all, so the example does not load.
  */
-export const ExampleImportMap = ({
-    internalFramework,
-    isEnterprise,
-    isIntegratedCharts,
-    isExported,
-    nonce,
-}: Props) => {
+export const ExampleImportMap = ({ internalFramework, isEnterprise, isIntegratedCharts, isExported, nonce }: Props) => {
     const { imports, defaultVersion, isResolved } = renderImportMap({
         internalFramework,
         isEnterprise,
