@@ -1,12 +1,6 @@
 import { LocalEventService } from 'ag-stack';
 
-import type {
-    AgColumn,
-    AgProvidedColumnGroup,
-    ColumnNameService,
-    IEventEmitter,
-    IEventListener,
-} from 'ag-grid-community';
+import type { AgColumn, AgProvidedColumnGroup, BeanCollection, IEventEmitter, IEventListener } from 'ag-grid-community';
 
 type ColumnModelItemEvent = 'expandedChanged';
 export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {
@@ -19,8 +13,13 @@ export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {
     private _expanded: boolean | undefined;
     public passesFilter: boolean;
 
+    private cachedName: string | null = null;
+    /** -1 never matches a real `colDefsVersion`, so the first read always resolves. */
+    private cachedNameVersion: number = -1;
+    private cachedNameOverride: string | null = null;
+
     constructor(
-        private readonly colNames: ColumnNameService,
+        private readonly beans: BeanCollection,
         columnOrGroup: AgColumn | AgProvidedColumnGroup,
         public readonly depth: number,
         public readonly group = false,
@@ -35,13 +34,26 @@ export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {
         }
     }
 
-    // Resolved on read, not cached: names change without the tree being rebuilt, and rows are
-    // recreated from these items on expand/collapse and on scroll recycling.
+    // OPTIMIZATION: resolved on read so a name change is picked up without rebuilding the tree, but
+    // memoised against its only two inputs so a user `headerValueGetter` runs once per change rather
+    // than once per read - search filtering and row recycling both read this for every item.
     public get displayName(): string | null {
-        const { colNames, group, columnGroup, column } = this;
-        return group
-            ? colNames.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel')
-            : colNames.getDisplayNameForColumn(column, 'columnToolPanel');
+        const { beans, group, columnGroup, column } = this;
+        const { colNames, colModel } = beans;
+        const version = colModel.colDefsVersion;
+        const override = group
+            ? (colModel.groupHeaderNameOverrides.get(columnGroup.groupId) ?? null)
+            : column.headerNameOverride;
+
+        if (version !== this.cachedNameVersion || override !== this.cachedNameOverride) {
+            this.cachedNameVersion = version;
+            this.cachedNameOverride = override;
+            this.cachedName = group
+                ? colNames.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel')
+                : colNames.getDisplayNameForColumn(column, 'columnToolPanel');
+        }
+
+        return this.cachedName;
     }
 
     public get expanded(): boolean {
