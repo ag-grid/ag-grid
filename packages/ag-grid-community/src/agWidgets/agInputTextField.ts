@@ -7,6 +7,7 @@ import type {
 } from 'ag-stack';
 import { _exists, _isEventFromPrintableCharacter, _setAriaInvalid, _setAriaLabel, _setDisplayed } from 'ag-stack';
 
+import { _createElement } from '../utils/element';
 import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
 import type { AgInputFieldParams } from './agFieldParams';
@@ -17,6 +18,8 @@ export interface AgInputTextFieldParams<
     TComponentSelectorType extends string,
 > extends AgInputFieldParams<TComponentSelectorType> {
     allowedCharPattern?: string;
+    clearButton?: boolean;
+    onValueClear?: () => void;
 }
 export type AgInputTextFieldEvent = AgAbstractInputFieldEvent | 'fieldValueCleared';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -51,8 +54,16 @@ export class AgInputTextField<
     public override postConstruct() {
         super.postConstruct();
 
-        if (this.config.allowedCharPattern) {
+        const { allowedCharPattern, clearButton, onValueClear } = this.config;
+
+        if (allowedCharPattern) {
             this.preventDisallowedCharacters();
+        }
+        if (clearButton) {
+            this.setClearButtonEnabled(true);
+        }
+        if (onValueClear) {
+            this.onValueClear(onValueClear);
         }
         this.addManagedPropertyListener('suppressInputClearButton', () => this.refreshClearButton());
     }
@@ -125,10 +136,11 @@ export class AgInputTextField<
     }
 
     private createClearButton(): void {
-        const eClearButton = this.eInput.ownerDocument.createElement('button');
-        eClearButton.className = 'ag-input-field-clear-button';
-        eClearButton.type = 'button';
-        eClearButton.tabIndex = -1;
+        const eClearButton = _createElement<HTMLButtonElement>({
+            tag: 'button',
+            cls: 'ag-input-field-clear-button',
+            attrs: { type: 'button', tabindex: '-1' },
+        });
 
         const clearIcon = this.beans.iconSvc.createIconNoSpan('cancel');
         if (clearIcon) {

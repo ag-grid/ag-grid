@@ -42,8 +42,19 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarFind', 'Find');
         const eGui = this.getGui();
+        let findSearchValueTimeout: number | undefined;
+        const flushFindSearchValue = () =>
+            this.gos.updateGridOptions({ options: { findSearchValue: this.eInput.value } });
 
-        this.eInputField = this.createManagedBean<GridInputTextField>(new AgInputTextField());
+        this.eInputField = this.createManagedBean<GridInputTextField>(
+            new AgInputTextField({
+                clearButton: true,
+                onValueClear: () => {
+                    clearTimeout(findSearchValueTimeout);
+                    flushFindSearchValue();
+                },
+            })
+        );
         const { eIconWrapper, eInput } = createToolbarInput(this.beans, this.eInputField, {
             label,
             iconName: 'search',
@@ -76,10 +87,7 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         });
         eGui.appendChild(this.eNextButton);
 
-        const flushFindSearchValue = () =>
-            this.gos.updateGridOptions({ options: { findSearchValue: this.eInput.value } });
         const updateFindSearchValueDebounced = _debounce(this, flushFindSearchValue, INPUT_DEBOUNCE_MS);
-        let findSearchValueTimeout: number | undefined;
 
         this.addManagedElementListeners(this.eInput, {
             input: () => (findSearchValueTimeout = updateFindSearchValueDebounced()),
@@ -95,10 +103,6 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
                     }
                 }
             },
-        });
-        this.eInputField.onValueClear(() => {
-            clearTimeout(findSearchValueTimeout);
-            flushFindSearchValue();
         });
 
         this.addManagedElementListeners(this.ePrevButton, {

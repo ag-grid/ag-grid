@@ -25,11 +25,7 @@ export function createToolbarInput(
         eIconWrapper.appendChild(eIcon);
     }
 
-    eInputField
-        .setClearButtonEnabled(true)
-        .setInputPlaceholder(`${label}...`)
-        .setInputAriaLabel(label)
-        .setValue(initialValue, true);
+    eInputField.setInputPlaceholder(`${label}...`).setInputAriaLabel(label).setValue(initialValue, true);
     eInputField.addCss('ag-toolbar-input-widget');
     const eInput = eInputField.getInputElement();
     eInput.classList.add('ag-toolbar-input-field');

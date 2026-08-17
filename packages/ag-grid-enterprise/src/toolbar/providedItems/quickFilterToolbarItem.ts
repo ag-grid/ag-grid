@@ -29,8 +29,17 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarQuickFilter', 'Filter');
         const eGui = this.getGui();
+        let quickFilterTextTimeout: number | undefined;
 
-        this.eInputField = this.createManagedBean<GridInputTextField>(new AgInputTextField());
+        this.eInputField = this.createManagedBean<GridInputTextField>(
+            new AgInputTextField({
+                clearButton: true,
+                onValueClear: () => {
+                    clearTimeout(quickFilterTextTimeout);
+                    this.gos.updateGridOptions({ options: { quickFilterText: '' } });
+                },
+            })
+        );
         const { eIconWrapper, eInput } = createToolbarInput(this.beans, this.eInputField, {
             label,
             iconName: 'filter',
@@ -47,14 +56,9 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
             () => this.gos.updateGridOptions({ options: { quickFilterText: this.eInput.value } }),
             INPUT_DEBOUNCE_MS
         );
-        let quickFilterTextTimeout: number | undefined;
 
         this.addManagedElementListeners(this.eInput, {
             input: () => (quickFilterTextTimeout = updateQuickFilterText()),
-        });
-        this.eInputField.onValueClear(() => {
-            clearTimeout(quickFilterTextTimeout);
-            this.gos.updateGridOptions({ options: { quickFilterText: '' } });
         });
     }
 

@@ -157,8 +157,9 @@ export class NumberFilter extends SimpleFilter<
     ): GridInputTextField | GridInputNumberField {
         let eValue: GridInputTextField | GridInputNumberField;
         if (allowedCharPattern) {
-            eValue = this.createManagedBean<GridInputTextField>(new AgInputTextField({ allowedCharPattern }));
-            eValue.setClearButtonEnabled(true);
+            eValue = this.createManagedBean<GridInputTextField>(
+                new AgInputTextField({ allowedCharPattern, clearButton: true })
+            );
         } else {
             eValue = this.createManagedBean<GridInputNumberField>(new AgInputNumberField());
         }

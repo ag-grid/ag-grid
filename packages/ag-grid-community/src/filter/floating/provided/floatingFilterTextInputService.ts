@@ -17,8 +17,13 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
     }
 
     public setupGui(parentElement: HTMLElement): void {
-        this.eInput = this.createManagedBean(new AgInputTextField(this.params?.config));
-        this.eInput.setClearButtonEnabled(true).onValueClear(() => this.onValueCleared());
+        this.eInput = this.createManagedBean(
+            new AgInputTextField({
+                ...this.params?.config,
+                clearButton: true,
+                onValueClear: () => this.onValueCleared(),
+            })
+        );
 
         const eInput = this.eInput.getGui();
 

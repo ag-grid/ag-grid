@@ -28,8 +28,9 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
 
     public setupGui(parentElement: HTMLElement): void {
         this.eNumberInput = this.createManagedBean(new AgInputNumberField());
-        this.eTextInput = this.createManagedBean(new AgInputTextField());
-        this.eTextInput.setClearButtonEnabled(true).onValueClear(() => this.onValueCleared());
+        this.eTextInput = this.createManagedBean(
+            new AgInputTextField({ clearButton: true, onValueClear: () => this.onValueCleared() })
+        );
 
         this.eTextInput.setDisabled(true);
 

@@ -81,7 +81,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, GridInputT
     }
 
     private createFromToElement(eCondition: HTMLElement, eValues: GridInputTextField[], fromTo: string): void {
-        const eValue = this.createManagedBean<GridInputTextField>(new AgInputTextField()).setClearButtonEnabled(true);
+        const eValue = this.createManagedBean<GridInputTextField>(new AgInputTextField({ clearButton: true }));
         eValue.addCss(`ag-filter-${fromTo}`);
         eValue.addCss('ag-filter-filter');
         eValues.push(eValue);

@@ -5,6 +5,17 @@ import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import type { AgInputFieldParams } from './agFieldParams';
 
+const NON_AUTOCOMPLETE_INPUT_TYPES: ReadonlySet<string> = new Set([
+    'button',
+    'checkbox',
+    'file',
+    'hidden',
+    'radio',
+    'range',
+    'reset',
+    'submit',
+]);
+
 function buildTemplate<TComponentSelectorType extends string>(
     displayFieldTag: keyof HTMLElementTagNameMap
 ): AgElementParams<TComponentSelectorType> {
@@ -183,7 +194,7 @@ export abstract class AgAbstractInputField<
             return false;
         }
         const { type } = eInput as HTMLInputElement;
-        return !['button', 'checkbox', 'file', 'hidden', 'radio', 'range', 'reset', 'submit'].includes(type);
+        return !NON_AUTOCOMPLETE_INPUT_TYPES.has(type);
     }
 
     private applyAutoComplete(value: boolean | string): void {
