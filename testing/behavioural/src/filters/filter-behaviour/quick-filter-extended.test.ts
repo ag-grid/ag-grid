@@ -1,13 +1,3 @@
-import type { GetQuickFilterTextParams, GridApi } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    QuickFilterModule,
-    TextFilterModule,
-    enableDevValidations,
-    setupAgTestIds,
-} from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
 import {
     ALL_SEVERITIES,
     ColumnFilterHarness,
@@ -17,7 +7,17 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GetQuickFilterTextParams, GridApi } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    QuickFilterModule,
+    TextFilterModule,
+    enableDevValidations,
+    setupAgTestIds,
+} from 'ag-grid-community';
+import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 interface Animal {
     name: string;

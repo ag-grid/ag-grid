@@ -1,3 +1,5 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -14,8 +16,6 @@ import {
     RowGroupingModule,
     SetFilterModule,
 } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 function toJSON(schema: any): any {
     return JSON.parse(JSON.stringify(schema));

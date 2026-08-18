@@ -1,9 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import { AllCommunityModule, ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingEditModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../../test-utils';
 import { createGroupRowData as createRowData } from '../group-edit-test-utils';
 import { distributeGroupValue, gridsManager } from './distribute-test-utils';
 

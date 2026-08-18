@@ -7,6 +7,7 @@ if (process.env.CI != null) {
 
 export default defineConfig({
     test: {
+        pool: 'threads',
         globals: true,
         include: ['src/**/*.test.ts'],
         exclude: ['**/node_modules/**', '**/dist/**'],

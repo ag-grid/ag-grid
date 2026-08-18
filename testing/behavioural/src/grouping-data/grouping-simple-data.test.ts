@@ -1,10 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-
-import type { ColDef, GridOptions, IRowNode } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import type { RowSnapshot } from '../test-utils';
+import type { RowSnapshot } from 'ag-test-utils';
 import {
     GridColumns,
     GridRows,
@@ -14,7 +9,11 @@ import {
     cachedJSONObjects,
     getRowsSnapshot,
     setRowDataChecked,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import type { ColDef, GridOptions, IRowNode } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping simple data', () => {
     const gridsManager = new TestGridsManager({

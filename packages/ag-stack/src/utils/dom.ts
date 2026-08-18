@@ -464,7 +464,7 @@ export function _observeIntersection(
 ): () => void {
     const win = _getWindow(beans);
     const IntersectionObserver = win.IntersectionObserver;
-    // support envs like jsdom that don't have IntersectionObserver
+    // support envs that don't have IntersectionObserver
     const intersectionObserver = IntersectionObserver
         ? new IntersectionObserver((entries) => {
               // use _last because when an element rapidly enters then leaves the screen

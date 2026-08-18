@@ -792,8 +792,8 @@ export const AG_GRID_LOCALE_DK = {
     ariaHasNote: 'Denne celle har en note.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: '.',
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Tekst',

@@ -1,3 +1,12 @@
+import {
+    ALL_SEVERITIES,
+    AdvancedFilterHarness,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+} from 'ag-test-utils';
+
 import type { GridApi, GridOptions, IFilterOptionDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -8,15 +17,6 @@ import {
     getGridElement,
 } from 'ag-grid-community';
 import { AdvancedFilterModule, SetFilterModule } from 'ag-grid-enterprise';
-
-import {
-    ALL_SEVERITIES,
-    AdvancedFilterHarness,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-} from '../../test-utils';
 
 /**
  * Regression baseline for Advanced Filter grid options and current operator behaviour: display-name/colId

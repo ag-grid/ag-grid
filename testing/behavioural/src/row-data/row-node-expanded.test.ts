@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { RowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('RowNode.expanded getter without expansionSvc', () => {
     const gridsManager = new TestGridsManager({

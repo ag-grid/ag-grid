@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from 'ag-test-utils';
+
 import type { ICellRendererParams } from 'ag-grid-community';
 import { InfiniteRowModelModule } from 'ag-grid-community';
 import { TextFilterModule, ValidationModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlays state for Infinite Row Model', () => {
     const gridsManager = new TestGridsManager({

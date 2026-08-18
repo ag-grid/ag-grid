@@ -1,6 +1,3 @@
-import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -9,7 +6,10 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
 
 /**
  * Black-box coverage for agTextColumnFilter conditions: every operator, blank/notBlank, incomplete

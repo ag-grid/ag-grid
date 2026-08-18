@@ -1,8 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
     const gridsManager = new TestGridsManager({

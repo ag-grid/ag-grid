@@ -1,9 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, test } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping edge cases', () => {
     const gridsManager = new TestGridsManager({
@@ -173,7 +172,9 @@ describe('ag-grid grouping edge cases', () => {
             { id: '2', country: 'Italy', year: '2001', athlete: 'Bob' },
         ]);
 
-        const api = gridsManager.createGrid('myGrid', {
+        // `createGridAndWait`: the DOM check below reads the group cell text, which is empty until the
+        // first render — the other tests here assert model state only, so plain `createGrid` is fine there.
+        const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [
                 // Two levels of row grouping: country (index 0), year (index 1).
                 { field: 'country', rowGroup: true, hide: true },

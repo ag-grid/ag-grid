@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
+
 import type { ColDef, Column } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 describe('pivot column identity across columnDefs updates', () => {
     const gridsManager = new TestGridsManager({

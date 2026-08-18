@@ -800,8 +800,8 @@ export const AG_GRID_LOCALE_FR = {
     ariaHasNote: 'Cette cellule a une note.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Texte',

@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid grouping sorting', () => {
     const gridsManager = new TestGridsManager({

@@ -1,3 +1,5 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -7,8 +9,6 @@ import {
     getGridElement,
 } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 // --- Shared test data ---
 
@@ -83,7 +83,7 @@ function isAutocompleteOpen(): boolean {
 /**
  * Selects from the autocomplete by pressing Enter.
  * The autocomplete's internal selection state works independently of VirtualList DOM rendering,
- * so this selects the first matching entry even though items may not be visible in jsdom.
+ * so this selects the first matching entry even though items may not be visible without layout.
  */
 function selectAutocomplete(input: HTMLInputElement): void {
     pressKey(input, 'Enter');

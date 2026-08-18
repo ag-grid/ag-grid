@@ -1,3 +1,5 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -7,8 +9,6 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 // The invalid-property warning id emitted by colDef validation (validationService #307).
 const INVALID_PROPERTY_ID = 307;

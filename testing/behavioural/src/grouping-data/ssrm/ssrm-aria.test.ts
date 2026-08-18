@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { IServerSideGetRowsParams } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../../test-utils';
-import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /** The loading row is the subject of both TC1 assertions, so its presence is the precondition to poll. */
 const waitForLoadingRow = async (): Promise<HTMLElement> => {

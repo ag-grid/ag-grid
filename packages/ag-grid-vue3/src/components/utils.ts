@@ -1688,7 +1688,7 @@ export interface Props<TData> {
          */
     suppressClearOnFillReduction?: boolean,
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-         * @default [null, 'asc', 'desc']
+         * @default ['asc', 'desc', null]
          * @deprecated v33 Use `defaultColDef.sortingOrder` instead
          */
     sortingOrder?: SortDirection[],

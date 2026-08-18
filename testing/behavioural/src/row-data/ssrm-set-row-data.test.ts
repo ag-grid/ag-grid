@@ -9,11 +9,11 @@
  * bug or a surprising quirk, that is intentional: the value recorded is the current
  * mechanic, not the ideal one.
  */
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('SSRM bulk row-data setting (characterisation)', () => {
     const gridsManager = new TestGridsManager({

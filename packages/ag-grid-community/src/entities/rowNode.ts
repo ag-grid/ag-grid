@@ -763,7 +763,9 @@ export class RowNode<TData = any>
     public isSelected(): boolean | undefined {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
         if (this.footer) {
-            return this.sibling.isSelected();
+            // destroying a footer severs the sibling link but leaves the footer flag set
+            const sibling = this.sibling;
+            return sibling ? sibling.isSelected() : false;
         }
         // similarly for manually pinned rows
         const pinnedSibling = this.rowPinned && this.pinnedSibling;

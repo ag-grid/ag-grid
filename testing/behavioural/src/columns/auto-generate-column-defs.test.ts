@@ -1,3 +1,5 @@
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
+
 import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     AutoGenerateColumnsModule,
@@ -6,8 +8,6 @@ import {
     TextFilterModule,
     forEachColDef,
 } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('Auto-Generate Column Defs', () => {
     const gridsManager = new TestGridsManager({

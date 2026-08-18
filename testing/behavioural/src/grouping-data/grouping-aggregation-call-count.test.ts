@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from 'ag-test-utils';
+
 import type { IAggFuncParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid aggregation call count with aggregateOnlyChangedColumns', () => {
     const gridsManager = new TestGridsManager({

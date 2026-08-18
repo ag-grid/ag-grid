@@ -20,14 +20,14 @@ const columns = [
 
 const App = () => <AgGridReact rowData={data} columnDefs={columns} modules={[AllCommunityModule]} />;
 
-describe('React Jsdom column header ', () => {
+describe('React column header ', () => {
     beforeEach(() => {
         cleanup();
     });
 
-    it('Column Header and Cell content displayed in Jsdom', () => {
+    it('Column Header and Cell content displayed without layout', () => {
         render(<App />);
-        // Test validates shows a way to validate the column headers and cell content even in Jsdom
+        // Test validates shows a way to validate the column headers and cell content even without layout
         expect(screen.getAllByRole('columnheader').map((x) => x.textContent?.trim())).toEqual(['GroupName', 'ColumnA']);
         expect(screen.getAllByRole('gridcell').map((x) => x.textContent)).toEqual(['1']);
     });

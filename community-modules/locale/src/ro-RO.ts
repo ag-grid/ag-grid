@@ -794,8 +794,8 @@ export const AG_GRID_LOCALE_RO = {
     ariaHasNote: 'Această celulă are o notă.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: '.',
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Text',

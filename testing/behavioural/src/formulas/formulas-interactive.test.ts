@@ -1,5 +1,13 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    clipboardUtils,
+    initPointerEventPolyfill,
+    waitForEvent,
+} from 'ag-test-utils';
 
 import type { GridOptions, Module } from 'ag-grid-community';
 import {
@@ -11,15 +19,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule, FormulaModule } from 'ag-grid-enterprise';
-
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    clipboardUtils,
-    initPointerEventPolyfill,
-    waitForEvent,
-} from '../test-utils';
 
 describe('ag-grid formulas interactive workflows', () => {
     const gridRowsOpts = { useFormatter: false } as const;

@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Server Side Row Model Transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -62,7 +62,7 @@ describe('Server Side Row Model Transactions', () => {
         expect(api.getDisplayedRowCount()).toBe(100 - toRemove);
 
         expect(api.getDisplayedRowAtIndex(99 - toRemove)?.data.id).toBe(99);
-    }, 30000);
+    });
 
     test('remove transaction honours supplied rowCount', async () => {
         const totalRows = 100;

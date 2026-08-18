@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, getRowsSnapshot } from 'ag-test-utils';
+
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, getRowsSnapshot } from '../../test-utils';
 
 describe('ag-grid grouping treeData is reactive', () => {
     const gridsManager = new TestGridsManager({

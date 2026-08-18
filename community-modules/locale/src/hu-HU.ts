@@ -796,7 +796,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaHasNote: 'Ez a cella jegyzettel rendelkezik.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
     decimalSeparator: ',',
 
     // Data types

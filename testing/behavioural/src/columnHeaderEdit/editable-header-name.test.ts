@@ -1,11 +1,10 @@
 import { findByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
  * Editable header name (UI): opening the editor prefills with the `headerValueGetter` output (called

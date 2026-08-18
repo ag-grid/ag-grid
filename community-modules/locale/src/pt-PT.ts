@@ -794,7 +794,7 @@ export const AG_GRID_LOCALE_PT = {
     ariaHasNote: 'Esta célula tem uma nota.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
     decimalSeparator: ',',
 
     // Data types

@@ -1,8 +1,8 @@
+import { GridRows, TestGridsManager, ssrmExpandAndLoadAll } from 'ag-test-utils';
+
 import type { GetDetailRowDataParams, GetRowIdParams } from 'ag-grid-community';
 import { DETAIL_ROW_ID_PREFIX, ROOT_NODE_ID } from 'ag-grid-community';
 import { MasterDetailModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, ssrmExpandAndLoadAll } from '../../test-utils';
 
 describe('ag-grid SSRM treeData with master detail', () => {
     const gridsManager = new TestGridsManager({

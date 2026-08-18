@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config';
 
-import { unitProjectTestConfig } from '../../vitest.shared';
+import { unitProjectTestConfig } from '../../testing/shared/vitest/shared';
 
 export default defineConfig({
     test: unitProjectTestConfig({
