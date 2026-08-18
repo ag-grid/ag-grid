@@ -13,14 +13,17 @@
 #   browsers - `playwright install`             (browser download only; no apt)
 #
 # Budgets are sized so that the worst case - every attempt hitting its bound, plus the grace
-# period and the delays between attempts - fails the STEP in well under half an hour. That
-# matters: a job cancelled by its `timeout-minutes` makes `cancelled()` true and skips the
-# report upload, whereas a failed step fails the job with the annotation below intact. Keep the
-# worst case comfortably inside the smallest `timeout-minutes` declared by any calling job in
-# .github/workflows/doc-tests.yml (60 at the time of writing).
-#   deps     3 x (600s + 30s grace) + 2 x 20s ~ 32 min
-#   full     2 x (900s + 30s grace) + 1 x 20s ~ 31 min
-#   browsers 2 x (900s + 30s grace) + 1 x 20s ~ 31 min
+# period and the delays between attempts - fails the STEP in about 32 minutes:
+#   deps     3 x (600s + 30s grace) + 2 x 20s = 1930s ~ 32.2 min
+#   full     2 x (900s + 30s grace) + 1 x 20s = 1880s ~ 31.3 min
+#   browsers 2 x (900s + 30s grace) + 1 x 20s = 1880s ~ 31.3 min
+# The step must fail rather than be cancelled: a job cancelled by its `timeout-minutes` makes
+# `cancelled()` true and skips the report upload, whereas a failed step fails the job with the
+# annotation below intact. So ~32 min is the floor for the `timeout-minutes` of any job calling
+# this script: in .github/workflows/doc-tests.yml those are `initialise` and the `test-*` shards,
+# ceilinged at 60 and 90, leaving at least 28 min of margin. (`test-recipes` and `publish-reports`
+# are ceilinged lower but never invoke this script.) Lowering a calling job's ceiling, or raising
+# the budgets here, means re-checking that margin.
 # Healthy installs are 1-3 min, so each bound still carries several times the observed headroom -
 # deliberately, because `timeout` is a wall-clock bound and cannot tell a stalled mirror from a
 # slow but healthy one.
