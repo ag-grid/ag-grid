@@ -150,9 +150,7 @@ export class AgColumn<TValue = any>
     public tooltipFieldContainsDots: boolean = false;
 
     // ── Cold ── structure, transient interaction state, indices, events.
-    /** Index into the resolved `sortingOrder` of the sort last applied by a header-click progression.
-     *  Internal, best-effort: not part of `ColumnState`, never saved/restored, cleared by any sort write,
-     *  and only trusted while it still matches {@link sortDef} — see `SortService`. */
+    /** Position in the resolved `sortingOrder` of the last header-click sort. Internal, not saved. */
     public sortCycleIndex: number | undefined = undefined;
     private frameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined = undefined;
     // Lazy — most columns never get a listener; allocated on first __addEventListener/addEventListener.

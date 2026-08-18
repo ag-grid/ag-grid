@@ -38,10 +38,8 @@ export class SortService extends BeanStub implements NamedBean {
 
     public progressSort(column: AgColumn, multiSort: boolean, source: ColumnEventType): void {
         const { sortDef, index } = this.getNextSortDefAndIndex(column, column.getSortDef(), column.sortCycleIndex);
-        // Clears `sortCycleIndex` (via `setColSort`) for every column it writes, including this one.
         this.setSortForColumn(column, sortDef, multiSort, source);
-        // Remember the position only if the progression is what actually stuck: coupled row-group
-        // derivation, or a non-sortable column, can end up with a different def.
+        // Only remember the position if the progression is what actually stuck.
         if (index >= 0 && areSortDefsEqual(column.getSortDef(), sortDef)) {
             column.sortCycleIndex = index;
         }
@@ -173,10 +171,8 @@ export class SortService extends BeanStub implements NamedBean {
         return this.getNextSortDefAndIndex(column, currentSortDef).sortDef;
     }
 
-    /** Resolve the entry of `sortingOrder` to advance to, and the index it sits at.
-     *  `cachedIndex` (the column's remembered cycle position) is used only while it still describes
-     *  `currentSortDef`; otherwise the first entry matching by value wins, as it always has.
-     *  Returns index `-1` when there is no sorting order to advance through. */
+    /** Next `sortingOrder` entry and its index, `-1` when there is no order to advance through.
+     *  `cachedIndex` is used only while it still matches `currentSortDef`, else the first match wins. */
     private getNextSortDefAndIndex(
         column: AgColumn,
         currentSortDef: SortDef | null,
@@ -376,9 +372,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     private setColSort(column: AgColumn, sortDef: SortDef, source: ColumnEventType): void {
         const prevSortDef = column.getSortDef();
-        // Any sort write invalidates the remembered cycle position; a progression re-stamps it
-        // afterwards. Must be unconditional: re-applying the *same* value is a no-op below but still
-        // means "this sort did not come from a progression".
+        // Any sort write invalidates the remembered position; a progression re-stamps it afterwards.
         column.sortCycleIndex = undefined;
         if (!areSortDefsEqual(prevSortDef, sortDef)) {
             // Presence flip changes membership (drop all); direction/type-only keeps order (drop opts).
