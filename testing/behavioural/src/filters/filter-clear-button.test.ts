@@ -1,17 +1,16 @@
-import { fireEvent } from '@testing-library/dom';
-
-import type { GridApi, ISetFilterParams, SetFilterValuesFuncParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-import type { SetFilterHandler } from 'ag-grid-enterprise';
-import { SetFilterModule } from 'ag-grid-enterprise';
-
+import { fireEvent, waitFor } from '@testing-library/dom';
 import {
     ColumnFilterHarness,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi, ISetFilterParams, SetFilterValuesFuncParams } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import type { SetFilterHandler } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 const ROW_DATA = [{ country: 'Ireland' }, { country: 'Italy' }];
 
@@ -106,6 +105,38 @@ describe('Filter input clear button', () => {
         expect(document.activeElement).toBe(input);
         expect(clearButton.classList.contains('ag-hidden')).toBe(true);
         expect(api.getColumnFilterModel('age')).toBeNull();
+    });
+
+    test('mini filter clear applies immediately rather than waiting for the typing debounce', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { applyMiniFilterWhileTyping: true, debounceMs: 50 } as ISetFilterParams,
+                },
+            ],
+            rowData: ROW_DATA,
+        });
+
+        const harness = await ColumnFilterHarness.open(api, 'country');
+        await harness.miniFilterSearch('Ital');
+        // typing is debounced, so the model only lands once the debounce elapses
+        expect(api.getColumnFilterModel('country')).toBeNull();
+        await waitFor(() =>
+            expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'set', values: ['Italy'] })
+        );
+
+        const miniFilterInput = document.querySelector<HTMLInputElement>('.ag-mini-filter input[type="text"]')!;
+        const clearButton = document.querySelector<HTMLButtonElement>('.ag-mini-filter .ag-input-field-clear-button')!;
+        expect(clearButton.classList.contains('ag-hidden')).toBe(false);
+        fireEvent.mouseDown(clearButton);
+        fireEvent.click(clearButton);
+        await asyncSetTimeout(0);
+
+        // the clear bypasses the debounce, so all values are selected again straight away
+        expect(api.getColumnFilterModel('country')).toBeNull();
+        expect(miniFilterInput.value).toBe('');
     });
 
     test('excel-mode mini filter clear never applies pending selections, even mid values-refresh', async () => {

@@ -1,7 +1,7 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 // the grid registers row mousedown handling on the first supported event of
 // pointerdown/touchstart/mousedown; dispatch all three so whichever the test
