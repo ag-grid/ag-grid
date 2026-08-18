@@ -116,29 +116,32 @@ class OperatorParser implements Parser {
     public expectedNumOperands: number = 0;
     private operator: string = '';
     private parsedOperator: string;
+    /** Last character of the resolved name; set once the region is settled. */
+    private matchEndPosition: number | undefined;
 
     constructor(
         private readonly params: FilterExpressionParserParams,
         public readonly startPosition: number,
-        private readonly baseCellDataType: BaseCellDataType
+        private readonly baseCellDataType: BaseCellDataType,
+        private readonly column: AgColumn | null | undefined
     ) {}
 
     public parse(char: string, position: number): boolean | undefined {
-        if (char === ' ' || char === ')') {
-            const isMatch = this.parseOperator(false, position - 1);
-            if (isMatch) {
-                return true;
-            } else {
+        if (this.matchEndPosition == null) {
+            const isTerminator = char === ' ' || char === ')';
+            if (!isTerminator || !this.parseOperator(false, position - 1)) {
                 this.operator += char;
+                return undefined;
             }
-        } else {
-            this.operator += char;
         }
-        return undefined;
+        // A resolved name may run past the terminator that settled it, so the rest of it is consumed as read.
+        return position <= this.matchEndPosition! ? undefined : true;
     }
 
     public complete(position: number): void {
-        this.parseOperator(true, position);
+        if (this.matchEndPosition == null) {
+            this.parseOperator(true, position);
+        }
     }
 
     public getValidationError(): FilterExpressionValidationError | null {
@@ -159,25 +162,69 @@ class OperatorParser implements Parser {
         return this.parsedOperator;
     }
 
+    /**
+     * Greedy, over the options the column offers: the longest name spelled here wins, so one that another name
+     * starts with - or one containing a terminator - resolves.
+     */
     private parseOperator(fromComplete: boolean, endPosition: number): boolean {
-        const operatorForType = this.params.advFilterExpSvc.getDataTypeExpressionOperator(this.baseCellDataType)!;
-        const parsedOperator = operatorForType.findOperator(this.operator);
+        const { params, startPosition } = this;
+        const expression = params.expression;
+        const advFilterExpSvc = params.advFilterExpSvc;
+        const entries = advFilterExpSvc.getOperatorAutocompleteEntries(this.column, this.baseCellDataType);
         this.endPosition = endPosition;
-        if (parsedOperator) {
-            this.parsedOperator = parsedOperator;
-            const operator = operatorForType.operators[parsedOperator];
+
+        const minLength = endPosition - startPosition + 1;
+        const partialSearchValue = expression.slice(startPosition, endPosition + 1).toLocaleLowerCase() + ' ';
+        let matchedOperator: string | undefined;
+        let matchedLength = 0;
+        let isPartialMatch = false;
+        for (let i = 0, len = entries.length; i < len; ++i) {
+            const entry = entries[i];
+            const displayValue = (entry.displayValue ?? '').toLocaleLowerCase();
+            if (
+                displayValue.length > matchedLength &&
+                displayValue.length >= minLength &&
+                isNameAt(expression, startPosition, displayValue)
+            ) {
+                matchedOperator = entry.key;
+                matchedLength = displayValue.length;
+            }
+            if (displayValue.startsWith(partialSearchValue)) {
+                isPartialMatch = true;
+            }
+        }
+
+        if (matchedOperator) {
+            const matchEndPosition = startPosition + matchedLength - 1;
+            this.parsedOperator = matchedOperator;
+            this.endPosition = matchEndPosition;
+            this.matchEndPosition = matchEndPosition;
+            const operator = advFilterExpSvc.getExpressionOperator(this.baseCellDataType, matchedOperator)!;
             this.expectedNumOperands = operator.numOperands;
             const operatorDisplayValue = operator.displayValue;
-            checkAndUpdateExpression(this.params, this.operator, operatorDisplayValue, endPosition);
+            const userValue = expression.slice(startPosition, matchEndPosition + 1);
+            checkAndUpdateExpression(params, userValue, operatorDisplayValue, matchEndPosition);
             this.operator = operatorDisplayValue;
             return true;
         }
-        const isPartialMatch = parsedOperator === null;
         if (fromComplete || !isPartialMatch) {
             this.valid = false;
         }
         return false;
     }
+}
+
+/**
+ * A name only resolves where a terminator or the expression end follows it: were it allowed to run into the
+ * next character, the caller would drop that character and the text would name an option it does not spell.
+ */
+function isNameAt(expression: string, startPosition: number, lowerCaseDisplayValue: string): boolean {
+    const endPosition = startPosition + lowerCaseDisplayValue.length;
+    const nextChar = expression[endPosition];
+    return (
+        (nextChar === undefined || nextChar === ' ' || nextChar === ')') &&
+        expression.slice(startPosition, endPosition).toLocaleLowerCase() === lowerCaseDisplayValue
+    );
 }
 
 class OperandParser implements Parser {
@@ -360,7 +407,12 @@ export class ColFilterExpressionParser {
                         this.columnParser = new ColumnParser(this.params, i);
                         parser = this.columnParser;
                     } else if (!this.operatorParser) {
-                        this.operatorParser = new OperatorParser(this.params, i, this.columnParser.baseCellDataType);
+                        this.operatorParser = new OperatorParser(
+                            this.params,
+                            i,
+                            this.columnParser.baseCellDataType,
+                            this.columnParser.column
+                        );
                         parser = this.operatorParser;
                     } else {
                         this.operandParser = new OperandParser(

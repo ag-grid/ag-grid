@@ -8,6 +8,7 @@ import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
 export interface FilterExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue> {
     caseSensitive?: boolean;
     includeBlanksInEquals?: boolean;
+    includeBlanksInNotEqual?: boolean;
     includeBlanksInLessThan?: boolean;
     includeBlanksInGreaterThan?: boolean;
     valueConverter: (value: TValue, node: IRowNode) => ConvertedTValue;
@@ -32,7 +33,6 @@ export interface DataTypeFilterExpressionOperators<ConvertedTValue, TValue = Con
         [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue>;
     };
     getEntries(activeOperators?: string[]): AutocompleteEntry[];
-    findOperator(displayValue: string): string | null | undefined;
 }
 
 export abstract class FilterExpressionOperators implements Record<
@@ -113,10 +113,6 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
 
     public getEntries(activeOperators?: string[]): AutocompleteEntry[] {
         return getEntries(this.operators, activeOperators);
-    }
-
-    public findOperator(displayValue: string): string | null | undefined {
-        return findMatch(displayValue, this.operators, ({ displayValue }) => displayValue);
     }
 
     private initOperators(): void {
@@ -206,10 +202,6 @@ export class ScalarFilterExpressionOperators<
         return getEntries(this.operators, activeOperators);
     }
 
-    public findOperator(displayValue: string): string | null | undefined {
-        return findMatch(displayValue, this.operators, ({ displayValue }) => displayValue);
-    }
-
     private initOperators(): void {
         const { translate, equals } = this.params;
         this.operators = {
@@ -234,8 +226,9 @@ export class ScalarFilterExpressionOperators<
                         node,
                         params,
                         operand1!,
-                        !!params.includeBlanksInEquals,
-                        (v, o) => !equals(v, o)
+                        !!params.includeBlanksInNotEqual,
+                        (v, o) => !equals(v, o),
+                        true
                     ),
                 numOperands: 1,
             },
@@ -310,12 +303,19 @@ export class ScalarFilterExpressionOperators<
         params: FilterExpressionEvaluatorParams<ConvertedTValue, TValue>,
         operand: ConvertedTValue,
         nullsMatch: boolean,
-        expression: (value: ConvertedTValue, operand: ConvertedTValue) => boolean
+        expression: (value: ConvertedTValue, operand: ConvertedTValue) => boolean,
+        isNegated?: boolean
     ): boolean {
         if (value == null) {
             return nullsMatch;
         }
-        return expression(params.valueConverter(value, node), operand);
+        const convertedValue = params.valueConverter(value, node);
+        // A value the data type cannot read is nothing to compare against, as the column filter's own validity
+        // gate decides: it matches no comparison, and so matches every negation of one.
+        if (convertedValue == null) {
+            return !!isNegated;
+        }
+        return expression(convertedValue, operand);
     }
 }
 
@@ -328,10 +328,6 @@ export class BooleanFilterExpressionOperators implements DataTypeFilterExpressio
 
     public getEntries(activeOperators?: string[]): AutocompleteEntry[] {
         return getEntries(this.operators, activeOperators);
-    }
-
-    public findOperator(displayValue: string): string | null | undefined {
-        return findMatch(displayValue, this.operators, ({ displayValue }) => displayValue);
     }
 
     private initOperators(): void {

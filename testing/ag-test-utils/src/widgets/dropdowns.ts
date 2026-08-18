@@ -11,7 +11,11 @@ import { firePointerLikeClick } from '../test-utils-events';
 
 const RICH_SELECT_VIEWPORT = '.ag-rich-select-virtual-list-viewport';
 
-/** Nudges a VirtualList viewport so the grid re-runs drawVirtualRows against its (mocked) height. */
+/**
+ * Nudges a VirtualList viewport so the grid re-runs drawVirtualRows against its (mocked) height.
+ * A `waitFor` callback around a nudge that rebuilds rows must `await asyncSetTimeout(0)`, or it re-polls on
+ * that mutation as a microtask and starves its own deadline timer; a stable list re-renders nothing.
+ */
 export function nudgeVirtualList(selector: string, root: ParentNode = document): void {
     const el = root.querySelector<HTMLElement>(selector);
     if (el) {
@@ -66,10 +70,10 @@ export async function selectRichSelectRow(label: string, root: ParentNode = docu
     let rows: HTMLElement[] = [];
     let index = -1;
     // Polled on a time budget, not a tick count: the list mounts a macrotask after the click and a fixed
-    // number of ticks flakes under load. Nudging inside the callback is safe - `waitFor` arms an independent
-    // `setTimeout` for its deadline, so the mutations it observes only add polls.
-    await waitFor(() => {
+    // number of ticks flakes under load.
+    await waitFor(async () => {
         nudgeVirtualList(RICH_SELECT_VIEWPORT, root);
+        await asyncSetTimeout(0);
         rows = Array.from(root.querySelectorAll<HTMLElement>('.ag-rich-select-row'));
         index = rows.findIndex((r) => r.textContent?.trim() === label);
         if (index < 0) {
