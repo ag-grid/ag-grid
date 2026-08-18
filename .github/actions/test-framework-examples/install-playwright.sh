@@ -12,14 +12,18 @@
 #   full     - `playwright install --with-deps` (cache miss: browser download + apt)
 #   browsers - `playwright install`             (browser download only; no apt)
 #
-# Budgets are sized so that the WORST case (every attempt timing out, plus the delays between
-# them) still fails the step well inside the smallest `timeout-minutes` declared by a job that
-# calls it - currently 60 in .github/workflows/doc-tests.yml. That matters: a job cancelled by
-# `timeout-minutes` makes `cancelled()` true and skips the report upload, whereas a failed step
-# fails the job and the shard still appears in the combined report.
-#   deps     3 x 300s + 2 x 20s = 15.7 min
-#   full     2 x 600s + 1 x 20s = 20.3 min
-#   browsers 2 x 600s + 1 x 20s = 20.3 min
+# Budgets are sized so that the worst case - every attempt hitting its bound, plus the grace
+# period and the delays between attempts - fails the STEP in well under half an hour. That
+# matters: a job cancelled by its `timeout-minutes` makes `cancelled()` true and skips the
+# report upload, whereas a failed step fails the job with the annotation below intact. Keep the
+# worst case comfortably inside the smallest `timeout-minutes` declared by any calling job in
+# .github/workflows/doc-tests.yml (60 at the time of writing).
+#   deps     3 x (300s + 30s grace) + 2 x 20s ~ 17 min
+#   full     2 x (900s + 30s grace) + 1 x 20s ~ 31 min
+#   browsers 2 x (900s + 30s grace) + 1 x 20s ~ 31 min
+# Healthy installs are 1-3 min, so each bound still carries several times the observed headroom -
+# deliberately, because `timeout` is a wall-clock bound and cannot tell a stalled mirror from a
+# slow but healthy one.
 set -uo pipefail
 
 MODE="${1:-}"
@@ -35,13 +39,13 @@ case "$MODE" in
         ;;
     full)
         CMD=(npx playwright install --with-deps "${BROWSERS[@]}")
-        DEFAULT_TIMEOUT=600
+        DEFAULT_TIMEOUT=900
         DEFAULT_ATTEMPTS=2
         LABEL="Playwright browser + OS dependency install (playwright install --with-deps)"
         ;;
     browsers)
         CMD=(npx playwright install "${BROWSERS[@]}")
-        DEFAULT_TIMEOUT=600
+        DEFAULT_TIMEOUT=900
         DEFAULT_ATTEMPTS=2
         LABEL="Playwright browser download (playwright install)"
         ;;
@@ -66,7 +70,7 @@ for attempt in $(seq 1 "${MAX_ATTEMPTS}"); do
     fi
 
     if [ "${status}" -eq 124 ] || [ "${status}" -eq 137 ]; then
-        reason="made no progress within ${ATTEMPT_TIMEOUT_SECONDS}s and was killed (stalled package mirror or CDN fetch)"
+        reason="did not complete within its ${ATTEMPT_TIMEOUT_SECONDS}s bound and was killed (stalled or very slow package mirror / CDN fetch)"
     else
         reason="failed with exit code ${status}"
     fi
