@@ -549,16 +549,25 @@ class DefaultTitleBar<
         this.addManagedElementListeners(this.getGui(), {
             click: () => this.dispatchExpandChanged(),
             keydown: (e: KeyboardEvent) => {
+                const { ENTER, SPACE, RIGHT, LEFT, UP, DOWN, PAGE_UP, PAGE_DOWN, PAGE_HOME, PAGE_END } = KeyCode;
                 switch (e.key) {
-                    case KeyCode.ENTER:
-                    case KeyCode.SPACE:
+                    case UP:
+                    case DOWN:
+                    case PAGE_UP:
+                    case PAGE_DOWN:
+                    case PAGE_HOME:
+                    case PAGE_END:
+                        e.preventDefault();
+                        return;
+                    case ENTER:
+                    case SPACE:
                         e.preventDefault();
                         this.dispatchExpandChanged();
                         break;
-                    case KeyCode.RIGHT:
-                    case KeyCode.LEFT:
+                    case RIGHT:
+                    case LEFT:
                         e.preventDefault();
-                        this.dispatchExpandChanged(e.key === KeyCode.RIGHT);
+                        this.dispatchExpandChanged(e.key === RIGHT);
                         break;
                 }
             },
