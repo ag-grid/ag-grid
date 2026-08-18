@@ -34,8 +34,6 @@ export const DEV_FLAG_PLACEHOLDERS: DevFlags = {
     appended: '&ag-dev-appended',
 };
 
-export const IMPORT_MAP_OPTIONS_ID = 'ag-import-map';
-
 const reactImports = (version: string, { query, appended }: DevFlags): ImportMap => ({
     react: `https://esm.sh/react@${version}${query}`,
     'react/': `https://esm.sh/react@${version}${appended}/`,

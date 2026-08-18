@@ -1,6 +1,7 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
 import { cleanIndexHtml } from '@ag-website-shared/utils/cleanIndexHtml';
+import { fetchRuntimeFiles } from '@ag-website-shared/utils/fetchRuntimeFiles';
 import type { FileContents } from '@components/example-generator/types';
 import { stripOutExampleGeneratorCode } from '@components/example-runner/components/stripOutExampleGeneratorCode';
 import { fetchTextFile } from '@utils/fetchTextFile';
@@ -18,6 +19,7 @@ interface Props {
     /** Only used by React examples, which run on a CodeSandbox `create-react-app` template. */
     packageJson?: Record<string, any>;
     isDev: boolean;
+    runtimeFileUrls?: Record<string, string>;
 }
 
 export const OpenInCodeSandbox: FunctionComponent<Props> = ({
@@ -28,18 +30,21 @@ export const OpenInCodeSandbox: FunctionComponent<Props> = ({
     boilerPlateFiles,
     packageJson,
     isDev,
+    runtimeFileUrls,
 }) => {
     return (
         <OpenInCTA
             type="codesandbox"
             onClick={async () => {
                 const html = await fetchTextFile(htmlUrl);
+                const runtimeFiles = await fetchRuntimeFiles(runtimeFileUrls);
                 const indexHtml = isDev ? cleanIndexHtml(html) : html;
                 const localFiles = { ...files };
                 stripOutExampleGeneratorCode(localFiles);
                 // Non-React examples run on the `static` CodeSandbox runtime and resolve AG Grid straight
                 // from `index.html`, so a `package.json` would be misleading and is not sent.
                 const sandboxFiles = {
+                    ...runtimeFiles,
                     ...localFiles,
                     ...(isReactInternalFramework(internalFramework) && packageJson
                         ? { 'package.json': JSON.stringify(packageJson, null, 2) }

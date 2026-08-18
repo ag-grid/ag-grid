@@ -4,7 +4,7 @@ import {
     POST_INIT_MESSAGE_END,
     LIBRARY_INIT_SELECTOR,
 } from '@components/example-runner/constants';
-import { exampleRunnerAsset } from '@utils/exampleModules/exampleRunnerAsset';
+import { ExampleRunnerCall } from '@components/example-runner/framework-templates/lib/ExampleRunnerClient';
 interface Props {
     pageName: string;
     exampleName: string;
@@ -16,11 +16,5 @@ const initSelector = LIBRARY_INIT_SELECTOR;
 ---
 
 <Fragment set:html={POST_INIT_MESSAGE_START} />
-<script
-    is:inline
-    nonce={nonce}
-    src={exampleRunnerAsset('post-init-message.js')}
-    data-page-name={pageName}
-    data-example-name={exampleName}
-    data-init-selector={initSelector}></script>
+<ExampleRunnerCall fn="postInitMessage" args={[{ pageName, exampleName, initSelector }]} nonce={nonce} />
 <Fragment set:html={POST_INIT_MESSAGE_END} />

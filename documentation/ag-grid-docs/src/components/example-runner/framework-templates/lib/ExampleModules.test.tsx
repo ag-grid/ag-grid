@@ -1,12 +1,12 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { NPM_CDN } from '@constants';
-import { FRAMEWORK_VERSION_PLACEHOLDER, IMPORT_MAP_OPTIONS_ID } from '@utils/exampleModules/getImportMap';
+import { FRAMEWORK_VERSION_PLACEHOLDER } from '@utils/exampleModules/getImportMap';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { TRANSPILER_OPTIONS_ID } from './BrowserTranspiler';
+import { EXAMPLE_RUNNER_SCRIPT_FILE_NAME } from './ExampleRunnerClient';
 
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 
@@ -15,7 +15,16 @@ const BASE_URL = '/base/';
 
 const EXAMPLE_FILE_NAMES = ['index.html', 'main.ts', 'useFetchJson.tsx', 'styles.css'];
 
-const INJECTOR_PATH = '../../../../../public/example-runner/inject-import-map.js';
+const CLIENT_PATH = `../../../../../public/example-runner/${EXAMPLE_RUNNER_SCRIPT_FILE_NAME}`;
+
+const callArgs = (html: string, fn: string) => {
+    const call = html.match(new RegExp(`agExampleRunner\\.${fn}\\((.*?)\\);</script>`));
+    if (!call) {
+        throw new Error(`No ${fn} call rendered in:\n${html}`);
+    }
+
+    return JSON.parse(`[${call[1].replaceAll('&quot;', '"')}]`);
+};
 
 const renderMarkup = async ({
     internalFramework,
@@ -58,29 +67,23 @@ const renderImportMap = async (props: { internalFramework: InternalFramework; tr
         return JSON.parse(served[1].replace(/&quot;/g, '"')).imports as Record<string, string>;
     }
 
-    const options = html.match(new RegExp(`<script[^>]*id="${IMPORT_MAP_OPTIONS_ID}"[^>]*>([\\s\\S]*?)</script>`));
-    if (!options) {
-        throw new Error(`No import map rendered in:\n${html}`);
-    }
-
-    return await registerImportMap(options[1].replace(/&quot;/g, '"'));
+    return await registerImportMap(callArgs(html, 'injectImportMap')[0]);
 };
 
-const registerImportMap = async (optionsJson: string) => {
+const registerImportMap = async (options: Record<string, unknown>) => {
     const registered: any[] = [];
 
     vi.stubGlobal('window', { location: { search: '' } });
     vi.stubGlobal('document', {
-        currentScript: null,
-        getElementById: (id: string) => (id === IMPORT_MAP_OPTIONS_ID ? { textContent: optionsJson } : null),
         createElement: () => ({}) as any,
         head: { appendChild: (element: any) => registered.push(element) },
         body: { appendChild: () => undefined },
     });
 
     try {
-        const injector = readFileSync(join(__dirname, INJECTOR_PATH), 'utf8');
-        new Function(injector)();
+        const client = readFileSync(join(__dirname, CLIENT_PATH), 'utf8');
+        new Function(client)();
+        (globalThis as any).window.agExampleRunner.injectImportMap(options);
     } finally {
         vi.unstubAllGlobals();
     }
@@ -114,78 +117,66 @@ describe('ExampleModules', () => {
             expect(exported).toEqual(runner);
         });
 
-        test('serves the page boilerplate once, before the example is loaded', async () => {
+        test('loads the client once, before the example is loaded', async () => {
             const html = await renderMarkup({ internalFramework });
 
-            const boilerplate = html.indexOf('/example-runner/example-page.js');
+            const client = html.indexOf(EXAMPLE_RUNNER_SCRIPT_FILE_NAME);
             const entryModule = html.indexOf('type="module"');
 
-            expect(html.match(/example-page\.js/g)).toHaveLength(1);
-            expect(boilerplate).toBeGreaterThan(-1);
-            expect(boilerplate).toBeLessThan(entryModule);
+            expect(html.match(new RegExp(EXAMPLE_RUNNER_SCRIPT_FILE_NAME, 'g'))).toHaveLength(1);
+            expect(client).toBeGreaterThan(-1);
+            expect(client).toBeLessThan(entryModule);
         });
 
-        test('serves the boilerplate from the site rather than inlining it', async () => {
+        test('serves the client from the site in the runner, so that fixes reach every page', async () => {
             const html = await renderMarkup({ internalFramework });
 
-            const served = ['example-page.js', ...(internalFramework === 'typescript' ? [] : ['inject-import-map.js'])];
+            expect(html).toContain(`src="${SITE_URL}${BASE_URL}example-runner/${EXAMPLE_RUNNER_SCRIPT_FILE_NAME}"`);
+        });
 
-            for (const fileName of served) {
-                expect(html).toContain(`src="${SITE_URL}${BASE_URL}example-runner/${fileName}"`);
-            }
+        test('loads the client from the exported project, so that a saved export keeps working', async () => {
+            const html = await renderMarkup({ internalFramework, transpileInBrowser: true });
+
+            expect(html).toContain(`src="./${EXAMPLE_RUNNER_SCRIPT_FILE_NAME}"`);
+            expect(html).not.toContain(`example-runner/${EXAMPLE_RUNNER_SCRIPT_FILE_NAME}`);
         });
 
         test('resolves the import map in the exported page, rather than leaving it to the injector', async () => {
             const html = await renderMarkup({ internalFramework, transpileInBrowser: true });
 
             expect(html).toContain('type="importmap"');
-            expect(html).not.toContain('inject-import-map.js');
+            expect(html).not.toContain('injectImportMap');
             expect(html).not.toContain(FRAMEWORK_VERSION_PLACEHOLDER);
         });
 
-        test('defines `process.env` in the exported page, before the example reads it', async () => {
-            const html = await renderMarkup({ internalFramework, transpileInBrowser: true });
-
-            const shim = html.indexOf('window.process');
-            const entryModule = html.indexOf('type="module"');
-
-            expect(shim).toBeGreaterThan(-1);
-            expect(shim).toBeLessThan(entryModule);
-        });
-
-        test('leaves `process.env` to the served boilerplate in the runner', async () => {
+        test('sets the page up before the example is loaded', async () => {
             const html = await renderMarkup({ internalFramework });
 
-            expect(html).not.toContain('window.process');
+            const setUp = html.indexOf('setUpPage');
+            const entryModule = html.indexOf('type="module"');
+
+            expect(setUp).toBeGreaterThan(-1);
+            expect(setUp).toBeLessThan(entryModule);
         });
 
         test("names the example's own modules to the in-browser transpiler, and nothing else", async () => {
             const html = await renderMarkup({ internalFramework, transpileInBrowser: true });
 
-            const options = html.match(new RegExp(`id="${TRANSPILER_OPTIONS_ID}"[^>]*>([\\s\\S]*?)</script>`));
-
-            expect(JSON.parse(options![1].replace(/&quot;/g, '"')).moduleFiles).toEqual([
-                'main.ts',
-                'useFetchJson.tsx',
-            ]);
+            expect(callArgs(html, 'runTranspiled')[0].moduleFiles).toEqual(['main.ts', 'useFetchJson.tsx']);
         });
 
-        test('hands the seeded generator its seed as data, for an example that generates its own', async () => {
+        test('hands the seeded generator its seed, for an example that generates its own', async () => {
             const html = await renderMarkup({ internalFramework, usesMathRandom: true });
 
-            expect(html).toContain('/example-runner/seed-random.js');
-            expect(html).toMatch(/seed-random\.js"[^>]*data-seed="[^"]+"/);
+            expect(callArgs(html, 'seedRandom')[0]).toBeTruthy();
         });
 
-        test('carries no script body of its own beyond the data the served scripts read', async () => {
+        test('carries no logic of its own beyond the calls into the client', async () => {
             const html = await renderMarkup({ internalFramework, usesMathRandom: true });
 
             const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/g)];
             const machinery = inline.filter(
-                ([, attributes, body]) =>
-                    !attributes.includes('application/json') &&
-                    !attributes.includes('importmap') &&
-                    !body.includes('__basePath')
+                ([, attributes, body]) => !attributes.includes('importmap') && !body.includes('agExampleRunner.')
             );
 
             expect(machinery.map(([, , body]) => body)).toEqual([]);

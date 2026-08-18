@@ -10,15 +10,15 @@ import { join } from 'node:path';
 import ts from 'typescript';
 import { describe, expect, test } from 'vitest';
 
-const TRANSPILER_PATH = join(__dirname, '../../../../../public/example-runner/browser-transpiler.js');
-const transpilerSource = readFileSync(TRANSPILER_PATH, 'utf8');
+const CLIENT_PATH = join(__dirname, '../../../../../public/example-runner/example-runner.js');
+const clientSource = readFileSync(CLIENT_PATH, 'utf8');
 
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3'];
 
-describe('browser-transpiler.js', () => {
+describe('example-runner.js runTranspiled', () => {
     test('carries the same enum map the options are named against', () => {
-        const match = transpilerSource.match(/const COMPILER_OPTION_ENUMS = (\{[^}]*\});/);
-        expect(match, 'COMPILER_OPTION_ENUMS not found in browser-transpiler.js').not.toBeNull();
+        const match = clientSource.match(/const COMPILER_OPTION_ENUMS = (\{[^}]*\});/);
+        expect(match, 'COMPILER_OPTION_ENUMS not found in example-runner.js').not.toBeNull();
 
         expect(new Function(`return ${match![1]}`)()).toEqual(COMPILER_OPTION_ENUMS);
     });
