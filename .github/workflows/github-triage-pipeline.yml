@@ -501,7 +501,12 @@ jobs:
     confidence-refresh-chain:
         needs: [run, browser-verify-chain, repro-rebuild-chain]
         if: |
-            !cancelled() && needs.run.outputs.confidence_gap == 'true'
+            !cancelled() &&
+            needs.run.outputs.confidence_gap == 'true' &&
+            (
+              github.event_name == 'issues'
+              || (github.event_name == 'workflow_dispatch' && inputs.stage == 'triage')
+            )
         runs-on: ubuntu-latest
         permissions:
             contents: read
