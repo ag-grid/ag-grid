@@ -1,32 +1,17 @@
 #!/usr/bin/env bash
-# Bounded, retrying Playwright install.
-#
-# `playwright install-deps` / `install --with-deps` shell out to `apt-get update`, which has no
-# timeout and no retry: when the Azure mirror stalls (AG-18231, run 32093233856) the step hangs
-# until the 6-hour GitHub Actions job limit cancels the job, and no example test ever runs.
-# Bound each attempt, retry a few times, and fail with a message that names the install - not the
-# tests - as the cause.
+# Bounded, retrying Playwright install. `install-deps` / `install --with-deps` shell out to
+# `apt-get update`, which has no timeout: when the mirror stalls (AG-18231) the step hangs until
+# the 6-hour job limit cancels the job and no test ever runs.
 #
 # Usage: install-playwright.sh <deps|full|browsers> <browser>...
 #   deps     - `playwright install-deps`        (cache hit: OS libraries only; apt)
 #   full     - `playwright install --with-deps` (cache miss: browser download + apt)
 #   browsers - `playwright install`             (browser download only; no apt)
 #
-# Budgets are sized so that the worst case - every attempt hitting its bound, plus the grace
-# period and the delays between attempts - fails the STEP in about 32 minutes:
-#   deps     3 x (600s + 30s grace) + 2 x 20s = 1930s ~ 32.2 min
-#   full     2 x (900s + 30s grace) + 1 x 20s = 1880s ~ 31.3 min
-#   browsers 2 x (900s + 30s grace) + 1 x 20s = 1880s ~ 31.3 min
-# The step must fail rather than be cancelled: a job cancelled by its `timeout-minutes` makes
-# `cancelled()` true and skips the report upload, whereas a failed step fails the job with the
-# annotation below intact. So ~32 min is the floor for the `timeout-minutes` of any job calling
-# this script: in .github/workflows/doc-tests.yml those are `initialise` and the `test-*` shards,
-# ceilinged at 60 and 90, leaving at least 28 min of margin. (`test-recipes` and `publish-reports`
-# are ceilinged lower but never invoke this script.) Lowering a calling job's ceiling, or raising
-# the budgets here, means re-checking that margin.
-# Healthy installs are 1-3 min, so each bound still carries several times the observed headroom -
-# deliberately, because `timeout` is a wall-clock bound and cannot tell a stalled mirror from a
-# slow but healthy one.
+# The step must FAIL rather than be cancelled: a job cancelled by `timeout-minutes` makes
+# `cancelled()` true and skips the report upload. So the budgets below are sized to give up after
+# ~32 min, well inside the 90 min ceiling every doc-tests job now carries. Healthy installs take
+# 1-3 min; the bounds are generous because `timeout` cannot tell a stalled mirror from a slow one.
 set -uo pipefail
 
 MODE="${1:-}"
