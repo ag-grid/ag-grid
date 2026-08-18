@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { TestGridsManager } from 'ag-test-utils';
 
 import type { ColDef, GridApi, HeaderValueGetterParams } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 /**
  * The columns tool panel resolves each entry's display name through `headerValueGetter`, so the name
