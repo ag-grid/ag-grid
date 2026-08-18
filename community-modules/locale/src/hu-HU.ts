@@ -699,6 +699,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaFilterColumnsInput: 'Oszlopok szűrése bevitel',
     ariaFilterFromValue: 'Szűrés értéktől',
     ariaFilterInput: 'Szűrő bevitel',
+    ariaLabelInputClear: 'Törlés',
     ariaFilterList: 'Szűrő lista',
     ariaFilterToValue: 'Szűrés értékig',
     ariaFilterValue: 'Szűrő érték',

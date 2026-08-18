@@ -1,7 +1,7 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 const ROW_DATA = [
     { country: 'UK', athlete: 'Alice' },

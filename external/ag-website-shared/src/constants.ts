@@ -88,3 +88,6 @@ export const YOUTUBE_LICENSE_PRICING_URL = 'https://www.youtube.com/watch?v=VPr_
 
 // Zendesk
 export const ZENDESK_URL = 'https://ag-grid.zendesk.com/hc/en-us';
+
+// Enzuzo consent-management platform: the AG Grid site's cookie policy UUID
+export const AG_GRID_ENZUZO_POLICY_ID = '061e8460-91b3-11f1-98ff-978c2fcf2681';

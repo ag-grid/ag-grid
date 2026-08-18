@@ -1,7 +1,7 @@
 import { _debounce, _setDisabled } from 'ag-stack';
 
-import type { FindChangedEvent, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _createElement } from 'ag-grid-community';
+import type { FindChangedEvent, GridInputTextField, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
+import { AgInputTextField, Component, _createElement } from 'ag-grid-community';
 
 import { createToolbarIconButton, createToolbarInput } from './toolbarItemUtils';
 
@@ -18,6 +18,7 @@ function createMatchCount(inputId: string): HTMLLabelElement {
 }
 
 export class FindToolbarItem extends Component implements IToolbarItemComp {
+    private eInputField!: GridInputTextField;
     private eInput!: HTMLInputElement;
     private eMatchCount!: HTMLLabelElement;
     private ePrevButton!: HTMLButtonElement;
@@ -41,8 +42,20 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarFind', 'Find');
         const eGui = this.getGui();
+        let findSearchValueTimeout: number | undefined;
+        const flushFindSearchValue = () =>
+            this.gos.updateGridOptions({ options: { findSearchValue: this.eInput.value } });
 
-        const { eIconWrapper, eInput } = createToolbarInput(this.beans, {
+        this.eInputField = this.createManagedBean<GridInputTextField>(
+            new AgInputTextField({
+                clearButton: true,
+                onValueClear: () => {
+                    clearTimeout(findSearchValueTimeout);
+                    flushFindSearchValue();
+                },
+            })
+        );
+        const { eIconWrapper, eInput } = createToolbarInput(this.beans, this.eInputField, {
             label,
             iconName: 'search',
             initialValue: this.gos.get('findSearchValue'),
@@ -53,7 +66,7 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
             eGui.appendChild(eIconWrapper);
         }
         this.eInput = eInput;
-        eGui.appendChild(this.eInput);
+        eGui.appendChild(this.eInputField.getGui());
 
         this.eMatchCount = createMatchCount(inputId);
         eGui.appendChild(this.eMatchCount);
@@ -74,12 +87,10 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         });
         eGui.appendChild(this.eNextButton);
 
-        const flushFindSearchValue = () =>
-            this.gos.updateGridOptions({ options: { findSearchValue: this.eInput.value } });
         const updateFindSearchValueDebounced = _debounce(this, flushFindSearchValue, INPUT_DEBOUNCE_MS);
 
         this.addManagedElementListeners(this.eInput, {
-            input: () => updateFindSearchValueDebounced(),
+            input: () => (findSearchValueTimeout = updateFindSearchValueDebounced()),
             keydown: (e: KeyboardEvent) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -112,7 +123,7 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         if (!this.eInput) {
             return false;
         }
-        this.eInput.value = this.gos.get('findSearchValue') ?? '';
+        this.eInputField.setValue(this.gos.get('findSearchValue'), true);
         this.syncMatchState();
         return true;
     }

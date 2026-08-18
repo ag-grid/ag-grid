@@ -1,10 +1,10 @@
+import { clipboardUtils } from 'ag-test-utils/polyfills/clipboard';
 import { bench, suite } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, EventApiModule, TextEditorModule } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
-import { clipboardUtils } from '../test-utils/polyfills/clipboard';
 import { BenchGridsManager, benchDefaults } from './bench-utils';
 
 const modules = [

@@ -1,11 +1,11 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import { getColumnOrder } from '../columns/column-test-utils';
-import { TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 // AG-9664: pivot column sorting against every grid option and column property that governs it.
 describe('pivot column sorting: grid options and column properties', () => {

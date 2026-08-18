@@ -146,7 +146,6 @@
             @include ag.unthemed-rtl(
                 (
                     padding-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
-                    padding-right: var(--ag-grid-size),
                 )
             );
         }
@@ -159,6 +158,11 @@
 
     .ag-toolbar-input-field::placeholder {
         color: var(--ag-disabled-foreground-color);
+    }
+
+    .ag-toolbar-input-widget {
+        flex: 1;
+        min-width: 0;
     }
 
     .ag-toolbar-panel .ag-column-drop-horizontal {

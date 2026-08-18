@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from 'ag-test-utils';
+
 import type { GridApi, GridOptions, IRowNode, RowNode, RowPinnedType } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 interface TreeRowData {
     id: string;

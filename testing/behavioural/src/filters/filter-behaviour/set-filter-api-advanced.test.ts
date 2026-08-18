@@ -1,5 +1,15 @@
-import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import {
+    ColumnFilterHarness,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    getVisibleTooltips,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+    waitForTooltips,
+} from 'ag-test-utils';
 
 import type {
     GridApi,
@@ -12,16 +22,6 @@ import type {
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, TooltipModule, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
-
-import {
-    ColumnFilterHarness,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
 
 /** Set-filter handler (non-deprecated public path). Warns nothing, unlike the ISetFilter instance methods. */
 function handler(api: GridApi, colId: string): SetFilterHandler {
@@ -578,6 +578,10 @@ describe('Set Filter — list rendering', () => {
                 },
             ],
             rowData: [{ country: 'Australia' }, { country: 'Italy' }],
+            // The default 2000ms show delay is not what this test is about, and polling for it left the
+            // wait sitting exactly on its own timeout.
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
         });
 
         await ColumnFilterHarness.open(api, 'country');
@@ -591,12 +595,7 @@ describe('Set Filter — list rendering', () => {
         expect(label).toBeTruthy();
 
         await userEvent.hover(label);
-        // The waitFor below polls up to 2s for the tooltip, so no fixed pre-delay is needed.
-        await waitFor(
-            () => expect(document.querySelectorAll('.ag-tooltip, .ag-tooltip-custom').length).toBeGreaterThan(0),
-            { timeout: 2000 }
-        );
-        const tooltip = document.querySelector<HTMLElement>('.ag-tooltip, .ag-tooltip-custom');
-        expect(tooltip?.textContent).toContain('Italy');
+        await waitForTooltips(1);
+        expect(getVisibleTooltips()[0].textContent).toContain('Italy');
     });
 });

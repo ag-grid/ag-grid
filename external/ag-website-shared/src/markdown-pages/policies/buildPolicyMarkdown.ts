@@ -1,13 +1,14 @@
-import type { PolicyContent, PolicyName } from '@ag-website-shared/components/policies/policyContent';
+import type { PolicyName } from '@ag-website-shared/components/policies/policyContent';
 import { POLICY_CONTENT, policyHeading } from '@ag-website-shared/components/policies/policyContent';
-import cookiesData from '@ag-website-shared/content/policies/cookies-data-07-08-26.json';
 import { htmlInlineToMarkdown } from '@ag-website-shared/markdoc/htmlInlineToMarkdown';
-import { markdownTable } from '@ag-website-shared/markdoc/markdownTable';
 import type { MarkdocConfigLike, MarkdownResolvers } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
 import { renderMarkdocToMarkdown } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
 
+/** Policies whose page renders a `.mdoc` body. `cookies` renders the Enzuzo embed instead. */
+export type MdocPolicyName = Exclude<PolicyName, 'cookies'>;
+
 export interface BuildPolicyMarkdownOptions {
-    policy: PolicyName;
+    policy: MdocPolicyName;
     /** Product name substituted into the heading, e.g. `AG Grid`. */
     name: string;
     /** Raw `.mdoc` source for the policy body. Import it with Vite's `?raw` suffix. */
@@ -51,38 +52,43 @@ export async function buildPolicyMarkdown({
     const policyBody = renderedBody.replace(/^---\n[\s\S]*?\n---\n+/, '').trim();
 
     const document = [
-        [
-            '---',
-            `title: ${JSON.stringify(`${name}: ${content.metaTitle}`)}`,
-            `description: ${JSON.stringify(content.description)}`,
-            '---',
-        ].join('\n'),
+        frontmatter(policy, name),
         `# ${heading}`,
         ...content.meta.map((line) => htmlInlineToMarkdown(line, siteRoot)),
         ...content.intro.map((line) => htmlInlineToMarkdown(line, siteRoot)),
         policyBody,
-        ...cookiesInventory(content.cookiesSection),
     ].filter(Boolean);
 
     return `${document.join('\n\n').trimEnd()}\n`;
 }
 
 /**
- * The cookie inventory the page renders below the policy body via `CookiesTable` (AG-18105), as one
- * markdown table per category. Reads the same JSON the component does, so the two cannot drift.
- * Returns nothing for policies with no such section.
+ * The `/cookies.md` twin. The cookies page renders the Enzuzo embed, which builds the policy in the
+ * browser from an automated scan (AG-18194), so there is no source this can re-render as markdown
+ * the way the other policies' twins re-render their `.mdoc`. Point readers at the page instead of
+ * fetching the embed at build time, which would make the build depend on a third-party request.
  */
-function cookiesInventory(section: PolicyContent['cookiesSection']): string[] {
-    if (!section) {
-        return [];
-    }
-    const categories = cookiesData.categories.flatMap(({ name, description, cookies }) => {
-        // Mirrors the component: a few entries cover a whole domain rather than a named cookie.
-        const rows = cookies.map(({ name: cookieName, subgroup, party, moreInfo }) => {
-            const label = cookieName ?? '—';
-            return [subgroup, moreInfo ? `[${label}](${moreInfo})` : label, party];
-        });
-        return [`### ${name}`, description, markdownTable(['Cookie Subgroup', 'Cookies', 'Cookies used'], rows)];
-    });
-    return [`## ${section.heading}`, section.note, ...categories].filter(Boolean);
+export function buildCookiesMarkdown({ name, siteRoot }: { name: string; siteRoot?: string }): string {
+    const policy = 'cookies';
+    const url = `${(siteRoot ?? '/').replace(/\/$/, '')}/cookies/`;
+
+    const document = [
+        frontmatter(policy, name),
+        `# ${policyHeading(policy, name)}`,
+        `${POLICY_CONTENT[policy].description} It is generated from our consent-management platform, which scans the site for the cookies actually in use, and is published in full at [${url}](${url}).`,
+    ];
+
+    return `${document.join('\n\n').trimEnd()}\n`;
+}
+
+/** The frontmatter block every policy twin opens with, from the copy shared with its page. */
+function frontmatter(policy: PolicyName, name: string): string {
+    const content = POLICY_CONTENT[policy];
+
+    return [
+        '---',
+        `title: ${JSON.stringify(`${name}: ${content.metaTitle}`)}`,
+        `description: ${JSON.stringify(content.description)}`,
+        '---',
+    ].join('\n');
 }

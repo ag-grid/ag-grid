@@ -14,7 +14,8 @@ export type { BaseCssChangeKeys, CssVariable } from './core/baseEnvironment';
 export { BaseRegistry } from './core/baseRegistry';
 export { BaseEventService } from './events/baseEventService';
 export { LocalEventService } from './events/localEventService';
-export { AgManagedFocusFeature, FOCUS_MANAGED_CLASS } from './focus/agManagedFocusFeature';
+export { FAST_TEST_TIMINGS } from './fastTestTimings';
+export { AgManagedFocusFeature } from './focus/agManagedFocusFeature';
 export type { ManagedFocusCallbacks, StopPropagationCallbacks } from './focus/agManagedFocusFeature';
 export { AgTabGuardComp } from './focus/agTabGuardComp';
 export { AgTabGuardFeature } from './focus/agTabGuardFeature';
@@ -236,10 +237,12 @@ export {
 } from './utils/event';
 export type { TempEventHandler } from './utils/event';
 export {
+    FOCUS_MANAGED_CLASS,
     _findFocusableElements,
     _findNextFocusableElement,
     _findTabbableParent,
     _focusInto,
+    _focusIntoTabbableFirst,
     _isKeyboardMode,
     _registerKeyboardFocusEvents,
     _scrollHorizontallyToShow,

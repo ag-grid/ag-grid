@@ -1,10 +1,9 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import { RenderApiModule, TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import type { GridOptions, Module } from 'ag-grid-community';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 // Kept in its own file: the interactive tooltip lock (`isLocked`) is module-global shared state,
 // so a run that leaves it stuck would poison sibling tests. Per-file isolation contains that.

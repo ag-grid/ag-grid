@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "emitDecoratorMetadata": false,
+    "noImplicitAny": true,
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "moduleResolution": "bundler",
+    "types": ["vitest/globals", "node", "@testing-library/jest-dom"],
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "typings.d.ts"]
+}

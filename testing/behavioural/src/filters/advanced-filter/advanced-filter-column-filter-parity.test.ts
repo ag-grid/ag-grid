@@ -1,8 +1,8 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { AdvancedFilterModel, ColumnAdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 interface TestRow {
     id: number;

@@ -1,3 +1,13 @@
+import {
+    ColumnFilterHarness,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
+
 import type {
     GridApi,
     GridOptions,
@@ -8,16 +18,6 @@ import type {
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
-
-import {
-    ColumnFilterHarness,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
 
 /**
  * Black-box coverage for the agSetColumnFilter value model + UI, targeting gaps left by
@@ -544,6 +544,88 @@ describe('Set Filter — value model & UI (coverage)', () => {
             ☑ France
             ☑ Italy
             model: null
+        `);
+    });
+
+    test('(Select All) stays indeterminate when every mounted row of a virtualised list is checked', async () => {
+        // 30 values: the list mounts only what fits its viewport, so the rendered rows can all be checked
+        // while the selection as a whole is partial and (Select All) is correctly indeterminate.
+        const countries = Array.from({ length: 30 }, (_, i) => `C${String(i).padStart(2, '0')}`);
+        const api: GridApi = await gridsManager.createGridAndWait('grid-virtualised-set', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
+            rowData: countries.map((country) => ({ country })),
+        });
+
+        await ColumnFilterHarness.open(api, 'country');
+        // Deselect one value far below the fold, leaving every mounted row checked.
+        await api.setColumnFilterModel('country', { filterType: 'set', values: countries.slice(0, -1) });
+        await api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        const list = document.querySelector('.ag-set-filter-list')!;
+        const items = list.querySelectorAll('.ag-set-filter-item');
+        expect(Number(list.querySelector('[aria-setsize]')!.getAttribute('aria-setsize'))).toBeGreaterThan(
+            items.length
+        );
+
+        const selectAll = items[0];
+        expect(selectAll.textContent).toContain('(Select All)');
+        expect(selectAll.querySelector<HTMLInputElement>('input[type="checkbox"]')!.indeterminate).toBe(true);
+        // The item's aria state sits on the virtual-list row wrapping it, not on the item itself.
+        expect(selectAll.closest('[role="option"]')!.getAttribute('aria-checked')).toBe('mixed');
+        // ▪ is (Select All) indeterminate while every mounted value below it is checked.
+        await new FilterDom(api, 'virtualised set filter', { colId: 'country' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: ""
+            ▪ (Select All)
+            ☑ C00
+            ☑ C01
+            ☑ C02
+            ☑ C03
+            ☑ C04
+            ☑ C05
+            ☑ C06
+            ☑ C07
+            ☑ C08
+            ☑ C09
+            ☑ C10
+            ☑ C11
+            ☑ C12
+            ☑ C13
+            ☑ C14
+            ☑ C15
+            model:
+              filterType: "set"
+              values:
+                - "C00"
+                - "C01"
+                - "C02"
+                - "C03"
+                - "C04"
+                - "C05"
+                - "C06"
+                - "C07"
+                - "C08"
+                - "C09"
+                - "C10"
+                - "C11"
+                - "C12"
+                - "C13"
+                - "C14"
+                - "C15"
+                - "C16"
+                - "C17"
+                - "C18"
+                - "C19"
+                - "C20"
+                - "C21"
+                - "C22"
+                - "C23"
+                - "C24"
+                - "C25"
+                - "C26"
+                - "C27"
+                - "C28"
         `);
     });
 });

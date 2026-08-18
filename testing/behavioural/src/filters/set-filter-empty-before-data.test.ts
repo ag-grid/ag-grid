@@ -1,9 +1,9 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 import type { SetFilter } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface RowData {
     value: string;

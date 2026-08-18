@@ -700,6 +700,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaFilterColumnsInput: 'Εισαγωγή Φιλτραρίσματος Στηλών',
     ariaFilterFromValue: 'Φίλτρο από τιμή',
     ariaFilterInput: 'Εισαγωγή Φίλτρου',
+    ariaLabelInputClear: 'Εκκαθάριση',
     ariaFilterList: 'Λίστα Φίλτρων',
     ariaFilterToValue: 'Φίλτρο σε τιμή',
     ariaFilterValue: 'Τιμή Φίλτρου',

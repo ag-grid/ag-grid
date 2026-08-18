@@ -1,10 +1,9 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Sorting', () => {
     const gridMgr = new TestGridsManager({
@@ -664,5 +663,22 @@ describe('Sorting', () => {
             expect(api.getColumn('sport')!.getSort()).toBe('asc');
             expect(groupCol().getSort()).toBe('asc');
         });
+    });
+
+    test('a hidden column owning sortIndex 0 leaves the displayed sort indices valid', async () => {
+        const api = gridMgr.createGrid('hidden-sort-index', {
+            columnDefs: [
+                { field: 'a', hide: true, sort: 'asc', sortIndex: 0 },
+                { field: 'b', sort: 'asc', sortIndex: 1 },
+                { field: 'c', sort: 'asc', sortIndex: 2 },
+            ],
+            rowData: [{ a: 1, b: 1, c: 1 }],
+        });
+        await new GridColumns(api, 'hidden sort index').checkColumns(`
+            CENTER
+            ├── b "B" width:200 sort:asc sortIndex:1
+            └── c "C" width:200 sort:asc sortIndex:2
+        `);
+        expect(api.getColumn('a')!.getSortIndex()).toBe(0);
     });
 });

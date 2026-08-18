@@ -1,8 +1,7 @@
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, setRowDataChecked } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, InfiniteRowModelModule, enableDevValidations } from 'ag-grid-community';
-
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid overlays infinite scrolling state', () => {
     const gridsManager = new TestGridsManager({

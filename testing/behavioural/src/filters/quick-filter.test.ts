@@ -1,7 +1,7 @@
+import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GetQuickFilterTextParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
-
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface Animal {
     name: string;

@@ -1,11 +1,9 @@
+import { AG_GRID_LOCALE_JP } from '@ag-grid-community/locale';
+import { TestGridsManager, waitForEvent } from 'ag-test-utils';
+
 import type { AggregationStatusPanelAggFunc, GridApi, IStatusPanel } from 'ag-grid-community';
 import { ClientSideRowModelModule, LocaleModule, NumberFilterModule, RowSelectionModule } from 'ag-grid-community';
 import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
-
-// The `@ag-grid-community/locale` package name does not resolve under vitest (its `exports` point at
-// an unbuilt `dist/`), so the shipped locale data is imported from source.
-import { AG_GRID_LOCALE_JP } from '../../../../community-modules/locale/src/ja-JP';
-import { TestGridsManager, waitForEvent } from '../test-utils';
 
 // Reads the rendered value of a name/value status item (total/filtered/selected panels, and the
 // individual aggregation entries) identified by its label text.

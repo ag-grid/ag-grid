@@ -88,12 +88,17 @@ const noteServiceStub = (note?: { text: string; author?: string }) =>
         getNote: () => note,
     }) as any;
 
-describe('excelXlsxFactory Workbook', () => {
-    afterEach(() => {
-        // Clear global factory state between tests.
-        new Workbook().reset();
-    });
+// File scope, not per describe: the factory keeps its sheets, shared strings and comments in module
+// globals, so a test from any describe here — or from another file sharing the worker — leaves state that
+// shifts the sheet index the notes assertions read back. Both hooks, so it neither inherits nor leaks.
+beforeEach(() => {
+    new Workbook().reset();
+});
+afterEach(() => {
+    new Workbook().reset();
+});
 
+describe('excelXlsxFactory Workbook', () => {
     it('orders multi-sheet exports according to supplied data array', () => {
         const workbook = new Workbook();
         const sheetA = workbook.addWorksheet([], basicWorksheet('First', '1'), stubParams({}, workbook));
@@ -730,10 +735,6 @@ describe('excelXlsxFactory Workbook', () => {
 });
 
 describe('excelXlsxFactory custom metadata', () => {
-    afterEach(() => {
-        new Workbook().reset();
-    });
-
     it('writes custom properties using stringified values', () => {
         const xml = createXlsxCustomProperties({
             'MSIP_Label_8f3c2a91-bd44-4e6a-9d7c-5e3b9c2f1a84_Enabled': true,

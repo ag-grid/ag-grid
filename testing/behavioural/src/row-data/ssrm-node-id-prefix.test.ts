@@ -1,8 +1,8 @@
+import { TestGridsManager } from 'ag-test-utils';
+import { ssrmExpandAndLoadAll } from 'ag-test-utils/ssrm-test-utils';
+
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
-import { ssrmExpandAndLoadAll } from '../test-utils/ssrm-test-utils';
 
 /**
  * Black-box coverage for the SSRM generated-id scheme: when getRowId is NOT supplied the grid

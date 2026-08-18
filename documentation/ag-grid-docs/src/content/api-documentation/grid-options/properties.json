@@ -915,6 +915,8 @@
             }
         },
         "tabIndex": {},
+        "suppressInputClearButton": {},
+        "enableInputAutoComplete": {},
         "rowBuffer": {
             "more": {
                 "name": "Row Buffer",

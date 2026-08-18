@@ -1,6 +1,3 @@
-import type { GridApi } from 'ag-grid-community';
-import { BigIntFilterModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
-
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -9,7 +6,10 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi } from 'ag-grid-community';
+import { BigIntFilterModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 
 /**
  * A custom `bigintParser` must be used when building the filter model, not only during input

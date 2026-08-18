@@ -1,9 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { DragEventDispatcher, TestGridsManager } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { DragEventDispatcher, TestGridsManager } from '../test-utils';
 
 /**
  * The columns tool panel builds its drag source once per rendered item, so the drag-ghost label must be
@@ -27,7 +26,7 @@ describe('Editable header name — columns tool panel drag ghost', () => {
             return found!;
         });
         const dispatcher = new DragEventDispatcher('mouse', null, false);
-        // jsdom has no hit-testing; the tool panel is not a drop target, so an empty hit list is correct.
+        // happy-dom has no hit-testing; the tool panel is not a drop target, so an empty hit list is correct.
         const ownerDocument = handle.ownerDocument;
         const originalElementsFromPoint = ownerDocument.elementsFromPoint?.bind(ownerDocument);
         ownerDocument.elementsFromPoint = () => [];

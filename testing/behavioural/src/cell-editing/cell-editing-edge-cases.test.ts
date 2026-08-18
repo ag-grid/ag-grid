@@ -1,9 +1,5 @@
 import { getByTestId } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-
-import { NumberEditorModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
-
 import {
     EditEventTracker,
     GridColumns,
@@ -11,7 +7,10 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     waitForInput,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import { NumberEditorModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
 describe('Cell Editing: edge cases', () => {
     const gridMgr = new TestGridsManager({

@@ -1,9 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-
-import type { AdvancedFilterModel, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
 import {
     AdvancedFilterBuilderHarness,
     FilterDom,
@@ -12,7 +7,11 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { AdvancedFilterModel, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 /**
  * Regression baseline for the Advanced Filter Builder keyboard surface: the item-navigation feature

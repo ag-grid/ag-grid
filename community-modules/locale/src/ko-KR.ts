@@ -694,6 +694,7 @@ export const AG_GRID_LOCALE_KR = {
     ariaFilterColumnsInput: '열 필터 입력',
     ariaFilterFromValue: '값에서 필터',
     ariaFilterInput: '필터 입력',
+    ariaLabelInputClear: '지우기',
     ariaFilterList: '필터 목록',
     ariaFilterToValue: '값까지 필터',
     ariaFilterValue: '필터 값',

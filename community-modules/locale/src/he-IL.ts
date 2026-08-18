@@ -693,6 +693,7 @@ export const AG_GRID_LOCALE_IL = {
     ariaFilterColumnsInput: 'קלט סינון עמודות',
     ariaFilterFromValue: 'סנן מערך',
     ariaFilterInput: 'קלט סינון',
+    ariaLabelInputClear: 'נקה',
     ariaFilterList: 'רשימת סינון',
     ariaFilterToValue: 'סנן לערך',
     ariaFilterValue: 'ערך סינון',

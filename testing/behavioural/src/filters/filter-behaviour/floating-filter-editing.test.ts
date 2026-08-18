@@ -1,4 +1,15 @@
 import { fireEvent } from '@testing-library/dom';
+import {
+    ColumnFilterHarness,
+    FilterDom,
+    FloatingFilterHarness,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    setNativeInputValue,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
 
 import type { GridApi, SuppressHeaderKeyboardEventParams } from 'ag-grid-community';
 import {
@@ -11,18 +22,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
-
-import {
-    ColumnFilterHarness,
-    FilterDom,
-    FloatingFilterHarness,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    setNativeInputValue,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
 
 /**
  * Black-box coverage for editing/displaying floating filters (floatingFilter:true) across text,

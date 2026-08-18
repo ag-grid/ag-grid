@@ -1,8 +1,9 @@
+import { GridColumns, TestGridsManager } from 'ag-test-utils';
+
 import type { ColDef, ColGroupDef, Column } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, TestGridsManager } from '../../test-utils';
 import { getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
 
 describe('Column Order', () => {

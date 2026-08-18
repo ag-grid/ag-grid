@@ -1,4 +1,14 @@
 import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    assertSelectedRowsById,
+    cachedJSONObjects,
+    isElementDisplayed,
+} from 'ag-test-utils';
+
+import {
     ClientSideRowModelModule,
     RowSelectionModule,
     TextFilterModule,
@@ -7,15 +17,6 @@ import {
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../../../selection/utils';
-import {
-    ALL_SEVERITIES,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    assertElementDisplayed,
-    assertSelectedRowElementsById,
-    cachedJSONObjects,
-} from '../../../test-utils';
 
 describe('ag-grid tree selection', () => {
     const gridsManager = new TestGridsManager({
@@ -183,10 +184,10 @@ describe('ag-grid tree selection', () => {
         expect(api.getRowNode('9')?.selectable).toBe(true);
 
         actions.toggleCheckboxById('2');
-        assertSelectedRowElementsById([], api);
+        assertSelectedRowsById([], api);
 
         actions.toggleCheckboxById('9');
-        assertSelectedRowElementsById(['9'], api);
+        assertSelectedRowsById(['9'], api);
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
@@ -237,7 +238,7 @@ describe('ag-grid tree selection', () => {
         expect(api.getRowNode('3')?.selectable).toBe(false);
 
         actions.toggleCheckboxById('2');
-        assertSelectedRowElementsById(['1', '2', '4'], api);
+        assertSelectedRowsById(['1', '2', '4'], api);
     });
 
     // Changing isRowSelectable at runtime must recompute group/filler selectability from the NEW leaf
@@ -519,7 +520,7 @@ describe('ag-grid tree selection', () => {
         const actions = new GridActions(api, '#myGrid');
 
         actions.toggleCheckboxById('2');
-        assertSelectedRowElementsById(['1', '2', '4'], api);
+        assertSelectedRowsById(['1', '2', '4'], api);
         expect(api.getRowNode('3')?.selectable).toBe(false);
     });
 
@@ -570,7 +571,7 @@ describe('ag-grid tree selection', () => {
             { id: '5', displayed: true },
         ];
         for (const { id, displayed } of expectations) {
-            expect(assertElementDisplayed(actions.getCheckboxById(id)!)).toBe(displayed);
+            expect(isElementDisplayed(actions.getCheckboxById(id)!)).toBe(displayed);
         }
     });
 

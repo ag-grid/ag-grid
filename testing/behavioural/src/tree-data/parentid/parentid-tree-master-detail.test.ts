@@ -1,8 +1,8 @@
+import { GridRows, TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
+
 import type { GetDetailRowDataParams, GetRowIdParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../../test-utils';
 
 describe('ag-grid parentId tree with master detail', () => {
     test('nested groups expansion and callback calls', async () => {

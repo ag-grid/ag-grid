@@ -698,6 +698,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaFilterColumnsInput: 'Вход за филтриране на колони',
     ariaFilterFromValue: 'Филтър от стойност',
     ariaFilterInput: 'Вход за филтър',
+    ariaLabelInputClear: 'Изчисти',
     ariaFilterList: 'Списък за филтриране',
     ariaFilterToValue: 'Филтър до стойност',
     ariaFilterValue: 'Стойност на филтъра',

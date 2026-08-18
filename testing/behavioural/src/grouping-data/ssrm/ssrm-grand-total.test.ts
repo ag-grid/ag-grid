@@ -1,4 +1,14 @@
 import { waitFor } from '@testing-library/dom';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    unindentText,
+    waitForEvent,
+    waitForNoLoadingRows,
+} from 'ag-test-utils';
 
 import type {
     GetRowIdParams,
@@ -17,18 +27,13 @@ import {
 } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import {
-    ALL_SEVERITIES,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    unindentText,
-    waitForEvent,
-    waitForNoLoadingRows,
-} from '../../test-utils';
-
 const GRAND_TOTAL_ID = GRAND_TOTAL_ROW_ID;
+
+/** The async-transaction fixtures below add the grand total on a 5ms timer of their own, after `success`
+ *  has already resolved `waitForNoLoadingRows`. Wait for the value, not just the row: a filter change
+ *  removes and re-adds it, so "exists" is true of the stale one too. */
+const waitForGrandTotal = (api: GridApi<any>, value: number) =>
+    waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(value));
 
 describe('SSRM grand total row', () => {
     const gridManager = new TestGridsManager({
@@ -1897,6 +1902,8 @@ describe('SSRM grand total row', () => {
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
 
+        await waitForGrandTotal(api, 60);
+
         const gridRows = new GridRows(api, 'after async grand total applied');
         await gridRows.check(unindentText`
             ROOT id:<no-id>
@@ -2612,6 +2619,8 @@ describe('SSRM grand total row', () => {
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
 
+        await waitForGrandTotal(api, 60);
+
         const gridRows1 = new GridRows(api, 'initial');
         await gridRows1.check(unindentText`
             ROOT id:<no-id>
@@ -2623,6 +2632,8 @@ describe('SSRM grand total row', () => {
 
         api.setFilterModel({ value: { type: 'greaterThan', filter: 15 } });
         await waitForNoLoadingRows(api);
+
+        await waitForGrandTotal(api, 50);
 
         const gridRows2 = new GridRows(api, 'after filter');
         await gridRows2.check(unindentText`

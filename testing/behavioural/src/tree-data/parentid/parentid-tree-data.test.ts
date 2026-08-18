@@ -1,10 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-import type { MockInstance } from 'vitest';
-
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import type { GridOptions } from 'ag-grid-community';
-import { TreeDataModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -12,7 +6,13 @@ import {
     asyncSetTimeout,
     getRowsSnapshot,
     setRowDataChecked,
-} from '../../test-utils';
+} from 'ag-test-utils';
+import type { MockInstance } from 'vitest';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
+import { TreeDataModule } from 'ag-grid-enterprise';
+
 import { simpleParentIdRowsSnapshot } from './simpleParentIdRowsSnapshot';
 
 describe('ag-grid tree data parent id', () => {

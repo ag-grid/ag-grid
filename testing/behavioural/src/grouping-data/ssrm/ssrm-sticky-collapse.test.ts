@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
+
 import type { IServerSideDatasource, IServerSideGetRowsParams, RowNode } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../../test-utils';
 
 describe('SSRM grouping sticky collapse', () => {
     const gridsManager = new TestGridsManager({

@@ -1,5 +1,6 @@
 ---
 import Cookies from '@ag-website-shared/components/policies/pages/cookies.astro';
+import { AG_GRID_ENZUZO_POLICY_ID } from '@ag-website-shared/constants';
 ---
 
-<Cookies name="AG Grid" />
+<Cookies name="AG Grid" enzuzoPolicyId={AG_GRID_ENZUZO_POLICY_ID} />

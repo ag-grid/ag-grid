@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { polyfillOffsetParent } from 'ag-test-utils';
 import React from 'react';
 
 import type { GridApi } from 'ag-grid-community';
@@ -14,9 +15,7 @@ import {
 import type { CustomMenuItemProps } from 'ag-grid-react';
 import { AgGridReact, useGridMenuItem } from 'ag-grid-react';
 
-import { ignoreConsoleLicenseKeyError, polyfillOffsetParent } from '../../test-utils';
-
-// jsdom reports offsetParent as null, which the focus-management utilities read as
+// happy-dom reports offsetParent as null, which the focus-management utilities read as
 // "not visible"; polyfill it so focusable detection inside the menu works.
 Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
     configurable: true,
@@ -32,10 +31,6 @@ const CustomMenuItem = ({ name }: CustomMenuItemProps) => {
 };
 
 describe('React menu initial focus with async framework menu items', () => {
-    beforeEach(() => {
-        ignoreConsoleLicenseKeyError();
-    });
-
     it('places keyboard focus inside the context menu once an async framework item has rendered', async () => {
         const customName = 'Custom Item';
 
@@ -85,12 +80,12 @@ describe('React menu initial focus with async framework menu items', () => {
 
     it('places keyboard focus inside the Columns Tool Panel / Chooser menu once an async framework item has rendered', async () => {
         // The Columns Tool Panel and Column Chooser share ToolPanelContextMenu; the chooser is the
-        // reliably drivable surface in jsdom, so it stands in for both here.
+        // reliably drivable surface without layout, so it stands in for both here.
         const customName = 'Custom Item';
         let api: GridApi | undefined;
 
         // The chooser's virtual list needs the measurement-container-aware offsetParent polyfill to
-        // render its rows in jsdom; the file-level polyfill above is enough only for the open menu.
+        // render its rows without layout; the file-level polyfill above is enough only for the open menu.
         const restoreOffsetParent = polyfillOffsetParent();
 
         render(
@@ -108,7 +103,7 @@ describe('React menu initial focus with async framework menu items', () => {
         await waitFor(() => expect(api).toBeTruthy());
         api!.showColumnChooser();
 
-        // jsdom has no layout engine, so force the chooser's virtual list to render its items.
+        // happy-dom has no layout engine, so force the chooser's virtual list to render its items.
         const viewport = await waitFor(() => {
             const el = document.querySelector('.ag-column-select-virtual-list-viewport') as HTMLElement | null;
             if (!el) {

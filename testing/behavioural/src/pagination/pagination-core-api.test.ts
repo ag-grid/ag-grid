@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, PaginationModule } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 const COLUMN_DEFS = [{ field: 'name' }];
 const ROW_DATA = Array.from({ length: 50 }, (_, i) => ({ id: String(i), name: `Row ${i}` }));

@@ -70,13 +70,15 @@ The full order of precedence is `colDef.columnMenuItems`, then `getColumnMenuIte
 
 The following is a list of all the default built-in menu items with the rules about when they are shown.
 
-- `sortAscending`: Sort the column in ascending order. Not shown when `columnMenu = 'legacy'` or the column is already sorted in ascending order.
-- `sortDescending`: Sort the column in descending order. Not shown when `columnMenu = 'legacy'` or the column is already sorted in descending order.
-- `sortUnSort`: Clear the sort on the column. Not shown when `columnMenu = 'legacy'` or the column is not sorted.
+- `sortAscending`: Sort the column in ascending order. Not included in the default items when `columnMenu = 'legacy'`, or when the column is already sorted in ascending order.
+- `sortDescending`: Sort the column in descending order. Not included in the default items when `columnMenu = 'legacy'`, or when the column is already sorted in descending order.
+- `sortAbsoluteAscending`: Sort the column in ascending order by magnitude, ignoring the sign - see [Absolute Sorting](./row-sorting/#absolute-sorting). Not included in the default items when `columnMenu = 'legacy'`, when the column does not allow absolute sorting, or when the column is already sorted in absolute ascending order.
+- `sortAbsoluteDescending`: Sort the column in descending order by magnitude, ignoring the sign - see [Absolute Sorting](./row-sorting/#absolute-sorting). Not included in the default items when `columnMenu = 'legacy'`, when the column does not allow absolute sorting, or when the column is already sorted in absolute descending order.
+- `sortUnSort`: Clear the sort on the column. Not included in the default items when `columnMenu = 'legacy'`, or when the column is not sorted.
 - `calculatedColumn`: Show the Calculated Columns options. If the column selected is a Calculated Column, the menu will show options to edit and remove the column.
 - `editColumnName`: Rename the column header. Only shown when `headerNameEditable` is set on the column, and never on a calculated column, which is renamed via its **Edit Calculated Column** dialog instead.
-- `columnFilter`: Show the column filter. Not shown when `columnMenu = 'legacy'`, a filter is not enabled, or the header filter button or floating filter button are displayed.
-- `columnChooser`: Show the [Column Chooser](./column-chooser/). Not shown when `columnMenu = 'legacy'`.
+- `columnFilter`: Show the column filter. Not included in the default items when `columnMenu = 'legacy'`, a filter is not enabled, or the header filter button or floating filter button are displayed.
+- `columnChooser`: Show the [Column Chooser](./column-chooser/). Not included in the default items when `columnMenu = 'legacy'`.
 - `pinSubMenu`: Sub-menu for pinning. Always shown.
 - `valueAggSubMenu`: Sub-menu for value aggregation. Always shown.
 - `autoSizeThis`: Auto-size the current column. Always shown.
@@ -90,6 +92,8 @@ The following is a list of all the default built-in menu items with the rules ab
 The `defaultItems` list will change on different calls, depending on, for example, which columns are currently used for grouping.
 
 If you do not override the list of menu items, then the items displayed will be based on the rules above.
+
+The `columnMenu = 'legacy'` rules above apply to the default items only. A token supplied explicitly through `columnMenuItems`, `getColumnMenuItems()`, `mainMenuItems` or `getMainMenuItems()` is still rendered under the legacy menu.
 
 [Columns Tool Panel](./tool-panel-columns/#context-menu) tokens such as `value` can also be returned here, and are shown where they apply to the column.
 
