@@ -18,7 +18,7 @@ const EXAMPLE_FILE_NAMES = ['index.html', 'main.ts', 'useFetchJson.tsx', 'styles
 const CLIENT_PATH = `../../../../../public/example-runner/${EXAMPLE_RUNNER_SCRIPT_FILE_NAME}`;
 
 const callArgs = (html: string, fn: string) => {
-    const call = html.match(new RegExp(`agExampleRunner\\.${fn}\\((.*)\\);`));
+    const call = html.match(new RegExp(`agExampleRunner\\.${fn}\\((.*?)\\);</script>`));
     if (!call) {
         throw new Error(`No ${fn} call rendered in:\n${html}`);
     }
