@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { GridColumns, GridRows, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 

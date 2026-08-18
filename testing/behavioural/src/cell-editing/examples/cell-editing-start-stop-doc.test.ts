@@ -1,4 +1,5 @@
 import { getByTestId } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 

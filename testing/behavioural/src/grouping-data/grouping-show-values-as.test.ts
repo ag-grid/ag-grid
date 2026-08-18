@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom/vitest';
 import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import type { Column, GridApi, IRowNode } from 'ag-grid-community';

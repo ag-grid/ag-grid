@@ -1,4 +1,5 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { act, cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { asyncSetTimeout, getVisibleTooltips as getTooltips, mockGridLayout } from 'ag-test-utils';

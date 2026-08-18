@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom/vitest';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 

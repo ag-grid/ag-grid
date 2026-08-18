@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, NumberEditorModule } from 'ag-grid-community';

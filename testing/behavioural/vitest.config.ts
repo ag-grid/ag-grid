@@ -99,9 +99,6 @@ export default defineConfig(async ({ mode }): Promise<ViteUserConfig> => {
         // A benchmark measures the shipped grid, so it keeps the real delays; only tests get the fast ones.
         resolve: { alias: isBench ? aliases.filter((alias) => alias !== fastTestTimingsAlias) : aliases },
         cacheDir: path.resolve(thisDir, 'node_modules', `.vite-bench-${benchCacheKey}`),
-        // Pre-bundle deps imported by the shared setup file so Vite doesn't discover them mid-run and
-        // reload (which corrupts an in-flight bench). jest-dom is pulled in by vitest.setup.ts.
-        optimizeDeps: { include: ['@testing-library/jest-dom/matchers'] },
         plugins: browserEnabled ? [cssInlinePlugin] : [],
         // Cross-origin isolation → `crossOriginIsolated`, dropping Chromium's `performance.now()` clamp
         // from 100µs to 5µs (essential for fast micro-benches). Browser benches only; tests stay on happy-dom.

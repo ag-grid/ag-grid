@@ -1,4 +1,5 @@
 import { fireEvent, getByTestId, waitFor, within } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import {
     EditEventTracker,

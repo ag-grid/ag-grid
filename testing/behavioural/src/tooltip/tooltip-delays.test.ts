@@ -2,6 +2,7 @@
    is the observation window for "not shown (or hidden) yet", which polling cannot express. Kept apart from
    `tooltip.test.ts` because these are the only tooltip tests that must spend real time. */
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import {
     GridColumns,

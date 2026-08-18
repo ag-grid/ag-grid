@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import {

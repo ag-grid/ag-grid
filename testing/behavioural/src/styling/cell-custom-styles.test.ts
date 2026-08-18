@@ -1,4 +1,5 @@
 import { getByTestId } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import { CellStyleModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';

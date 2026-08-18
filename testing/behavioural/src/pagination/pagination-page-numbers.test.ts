@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom/vitest';
 import { TestGridsManager } from 'ag-test-utils';
 
 import type { GridOptions } from 'ag-grid-community';

@@ -4,6 +4,7 @@
    `fastTestTimings.test.ts` is the guard for), and the delays themselves are asserted in
    `tooltip-delays.test.ts`. */
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import {
     GridColumns,
