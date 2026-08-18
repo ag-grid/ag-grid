@@ -50,6 +50,7 @@ import {
     getChartsEnterpriseScriptPath,
     getGridLocaleScriptPath,
 } from '@utils/gridLibraryPaths';
+import { ExampleRunnerClient } from './lib/ExampleRunnerClient';
 import { SeedRandom } from './lib/SeedRandom';
 
 const siteUrl = Astro.site ? pathJoin(Astro.site, SITE_BASE_URL) : '/';
@@ -87,7 +88,12 @@ const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl)
         >
             window.__basePath = appLocation;
         </script>
-        {usesMathRandom && <SeedRandom nonce={nonce} />}
+        {usesMathRandom && (
+            <>
+                <ExampleRunnerClient nonce={nonce} />
+                <SeedRandom nonce={nonce} />
+            </>
+        )}
         {isIntegratedCharts && <script nonce={nonce} src={chartsScriptEnterprisePath} crossorigin="anonymous" />}
         <script nonce={nonce} src={isEnterprise ? gridScriptEnterprisePath : gridScriptPath} crossorigin="anonymous"
         ></script>
