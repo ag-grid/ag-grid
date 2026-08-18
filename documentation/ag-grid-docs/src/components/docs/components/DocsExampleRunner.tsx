@@ -121,14 +121,11 @@ const DocsExampleRunnerInner = ({
                         }
 
                         // Don't include the example spec files in the example runner for now
-                        const specFiles = Object.keys(json.files).filter(
-                            (file) => file?.includes('.spec.') || file?.includes('.test.')
-                        );
-                        specFiles.forEach((specFile) => {
-                            if (json.files[specFile]) {
+                        Object.keys(json.files)
+                            .filter((file) => file?.includes('.spec.') || file?.includes('.test.'))
+                            .forEach((specFile) => {
                                 delete json.files[specFile];
-                            }
-                        });
+                            });
 
                         return json;
                     }),
@@ -163,7 +160,6 @@ const DocsExampleRunnerInner = ({
             title={title}
             internalFramework={internalFramework}
             exampleFiles={contents.files}
-            exampleBoilerPlateFiles={contents.boilerPlateFiles}
             packageJson={contents.packageJson}
             initialSelectedFile={contents.mainFileName}
             plunkrHtmlUrl={urls.plunkrHtmlUrl}

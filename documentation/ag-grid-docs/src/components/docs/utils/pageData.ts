@@ -1,6 +1,7 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { getGeneratedContents } from '@components/example-generator';
 import { FRAMEWORKS, QUICK_BUILD_PAGES, SHOW_DEBUG_LOGS } from '@constants';
+import { isTransformableModule, toModuleFileName } from '@utils/exampleModules/transformExampleModule';
 import { type DocsPage, getContentRootFileUrl } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 
@@ -193,13 +194,17 @@ export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
                 pageName,
                 exampleName,
             });
-            return filesList.map((fileName) => {
-                return {
+            return filesList.flatMap((fileName) => {
+                const entry = {
                     internalFramework,
                     pageName,
                     exampleName,
                     fileName,
                 };
+
+                return isTransformableModule(fileName)
+                    ? [entry, { ...entry, fileName: toModuleFileName(fileName) }]
+                    : [entry];
             });
         } catch (error) {
             if (SHOW_DEBUG_LOGS) {

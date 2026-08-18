@@ -8,22 +8,8 @@ import { TYPESCRIPT_INTERNAL_FRAMEWORKS } from '../types';
 
 const BOILER_PLATE_FILE_PATH = './documentation/ag-grid-docs/public/example-runner';
 
-export const getBoilerPlateName = (internalFramework: InternalFramework) => {
-    const boilerPlateTemplate = (boilerPlateKey: string) => `grid-${boilerPlateKey}-boilerplate`;
-
-    switch (internalFramework) {
-        case 'reactFunctional':
-            return boilerPlateTemplate('react');
-        case 'reactFunctionalTs':
-            return boilerPlateTemplate('react-ts');
-        case 'typescript':
-        case 'angular':
-        case 'vue3':
-            return boilerPlateTemplate(internalFramework);
-        default:
-            return undefined;
-    }
-};
+export const getBoilerPlateName = (internalFramework: InternalFramework) =>
+    internalFramework === 'angular' ? 'grid-angular-boilerplate' : undefined;
 
 export const getTransformTsFileExt = (internalFramework: InternalFramework): TransformTsFileExt => {
     let transformTsFileExt: TransformTsFileExt;
@@ -38,7 +24,7 @@ export const getTransformTsFileExt = (internalFramework: InternalFramework): Tra
     return transformTsFileExt;
 };
 
-export const getBoilerPlateFiles = async (isDev: boolean, internalFramework: InternalFramework) => {
+export const getBoilerPlateFiles = async (internalFramework: InternalFramework) => {
     const boilerplateName = getBoilerPlateName(internalFramework);
 
     if (!boilerplateName) {
@@ -50,10 +36,6 @@ export const getBoilerPlateFiles = async (isDev: boolean, internalFramework: Int
 
     const files: Record<string, string> = {};
     const fileContentPromises = fileNames.map(async (fileName) => {
-        if (!isDev && fileName === 'systemjs.config.dev.js') {
-            // Ignore systemjs dev file if on production
-            return;
-        }
         const filePath = path.join(boilerPlatePath, fileName);
         try {
             const contents = readFileSync(filePath, 'utf-8');
