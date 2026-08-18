@@ -180,16 +180,18 @@ class OperatorParser implements Parser {
         let isPartialMatch = false;
         for (let i = 0, len = entries.length; i < len; ++i) {
             const entry = entries[i];
-            const displayValue = (entry.displayValue ?? '').toLocaleLowerCase();
+            const displayValue = entry.displayValue ?? '';
+            // Lengths come from the name as written: lower-casing can change them, `İ` becoming two units.
+            const lowerCaseDisplayValue = displayValue.toLocaleLowerCase();
             if (
                 displayValue.length > matchedLength &&
                 displayValue.length >= minLength &&
-                isNameAt(expression, startPosition, displayValue)
+                isNameAt(expression, startPosition, displayValue, lowerCaseDisplayValue)
             ) {
                 matchedOperator = entry.key;
                 matchedLength = displayValue.length;
             }
-            if (displayValue.startsWith(partialSearchValue)) {
+            if (lowerCaseDisplayValue.startsWith(partialSearchValue)) {
                 isPartialMatch = true;
             }
         }
@@ -218,8 +220,13 @@ class OperatorParser implements Parser {
  * A name only resolves where a terminator or the expression end follows it: were it allowed to run into the
  * next character, the caller would drop that character and the text would name an option it does not spell.
  */
-function isNameAt(expression: string, startPosition: number, lowerCaseDisplayValue: string): boolean {
-    const endPosition = startPosition + lowerCaseDisplayValue.length;
+function isNameAt(
+    expression: string,
+    startPosition: number,
+    displayValue: string,
+    lowerCaseDisplayValue: string
+): boolean {
+    const endPosition = startPosition + displayValue.length;
     const nextChar = expression[endPosition];
     return (
         (nextChar === undefined || nextChar === ' ' || nextChar === ')') &&

@@ -589,6 +589,44 @@ describe('Advanced Filter — parser edge cases', () => {
         });
     });
 
+    describe('an operator name whose lowercase is longer than the name', () => {
+        const localeGridsManager = new TestGridsManager({
+            modules: [
+                TextFilterModule,
+                NumberFilterModule,
+                LocaleModule,
+                AdvancedFilterModule,
+                ClientSideRowModelModule,
+            ],
+        });
+
+        afterEach(() => localeGridsManager.reset());
+
+        // `İ` lowercases to two UTF-16 units, so the name is longer lowercased than as typed: a boundary
+        // taken from the lowercased form overruns the name and never matches what the text spells.
+        test('a name containing a dotted capital I parses', async () => {
+            const api = await localeGridsManager.createGridAndWait('grid1', {
+                ...OPTS,
+                localeText: { advancedFilterContains: 'İçerir' },
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.applyExpression('[Athlete] İçerir "e"');
+            await asyncSetTimeout(0);
+
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'text',
+                colId: 'athlete',
+                type: 'contains',
+                filter: 'e',
+            });
+            await new GridRows(api, 'a dotted capital I in the name').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 athlete:"Wei" age:28 big:"10000000000000000001n"
+            `);
+        });
+    });
+
     describe('bigint operand', () => {
         test('a bigint literal beyond Number.MAX_SAFE_INTEGER filters exactly', async () => {
             const api = await gridsManager.createGridAndWait('grid1', OPTS);
