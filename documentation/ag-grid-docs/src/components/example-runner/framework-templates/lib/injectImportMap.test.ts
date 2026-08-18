@@ -174,7 +174,7 @@ describe('inject-import-map.js', () => {
 
     describe('carries the same constants the map is rendered with', () => {
         const literal = (name: string) => {
-            const match = injectorSource.match(new RegExp(`var ${name} = ('[^']*');`));
+            const match = injectorSource.match(new RegExp(`const ${name} = ('[^']*');`));
             expect(match, `${name} not found in inject-import-map.js`).not.toBeNull();
             return new Function(`return ${match![1]}`)() as string;
         };
@@ -193,7 +193,7 @@ describe('inject-import-map.js', () => {
         });
 
         test('BUILD_TOKENS', () => {
-            const tokens = injectorSource.match(/var BUILD_TOKENS = (\{[\s\S]*?\n {4}\});/);
+            const tokens = injectorSource.match(/const BUILD_TOKENS = (\{[\s\S]*?\n {4}\});/);
             expect(tokens, 'BUILD_TOKENS not found in inject-import-map.js').not.toBeNull();
 
             expect(new Function(`return ${tokens![1]}`)()).toEqual({
