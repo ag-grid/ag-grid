@@ -8,6 +8,7 @@ function resolvePath(srcPath: string) {
 export default defineConfig({
     root: __dirname,
     test: {
+        pool: 'threads',
         globals: true,
         environment: 'node',
         include: ['src/**/*.e2e.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],

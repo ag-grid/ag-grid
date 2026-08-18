@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+
 import type { IStatusPanelValueFormatterParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 const getStatusBarValue = (gridDiv: HTMLElement, label: string): string | null => {
     const items = Array.from(gridDiv.querySelectorAll<HTMLElement>('.ag-status-name-value'));

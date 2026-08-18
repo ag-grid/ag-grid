@@ -1,9 +1,9 @@
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { ssrmExpandAndLoadAll, waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type { IServerSideGetRowsParams } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, waitForEvent } from '../../test-utils';
-import { ssrmExpandAndLoadAll, waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
  * CHARACTERIZATION (golden-master) tests pinning the CURRENT behaviour of AG Grid

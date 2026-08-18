@@ -1,4 +1,5 @@
 import { cleanup, render } from '@testing-library/react';
+import { ALL_SEVERITIES, waitForMissingModuleReports } from 'ag-test-utils';
 import React from 'react';
 import type { MockInstance } from 'vitest';
 
@@ -14,8 +15,6 @@ import {
     getGridElement,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-
-import { ALL_SEVERITIES, waitForMissingModuleReports } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
     let consoleWarnSpy: MockInstance | undefined;

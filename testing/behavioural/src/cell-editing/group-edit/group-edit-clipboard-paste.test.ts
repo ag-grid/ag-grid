@@ -1,3 +1,5 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, clipboardUtils, waitForEvent } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 import {
@@ -7,15 +9,6 @@ import {
     RowGroupingEditModule,
     RowGroupingModule,
 } from 'ag-grid-enterprise';
-
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    clipboardUtils,
-    waitForEvent,
-} from '../../test-utils';
 
 describe('Group Edit: clipboard paste', () => {
     const gridMgr = new TestGridsManager({

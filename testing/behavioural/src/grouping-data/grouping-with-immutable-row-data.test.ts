@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid grouping with transactions', () => {
     const gridsManager = new TestGridsManager({

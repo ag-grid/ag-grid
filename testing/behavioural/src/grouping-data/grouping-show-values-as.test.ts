@@ -1,8 +1,9 @@
+import '@testing-library/jest-dom/vitest';
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { Column, GridApi, IRowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { CalculatedColumnsModule, PivotModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 interface SaleRow {
     id: string;

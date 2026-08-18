@@ -6,8 +6,6 @@ import { ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import { ignoreConsoleLicenseKeyError } from '../test-utils';
-
 /**
  * The column header name refresh lives in the shared `headerCellCtrl`, driven by the grid-level
  * `columnHeaderNameChanged` event, but React re-implements the header view (`reactUi/header/headerCellComp.tsx`),
@@ -20,7 +18,6 @@ describe('editable column header name (react)', () => {
 
     beforeAll(() => {
         ModuleRegistry.registerModules([AllEnterpriseModule]);
-        ignoreConsoleLicenseKeyError();
     });
 
     beforeEach(() => {

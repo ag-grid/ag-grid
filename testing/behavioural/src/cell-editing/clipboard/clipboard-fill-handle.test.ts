@@ -1,5 +1,14 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    clipboardUtils,
+    fireGridPointerDown,
+    waitForEvent,
+} from 'ag-test-utils';
 
 import {
     CheckboxEditorModule,
@@ -11,15 +20,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
-
-import {
-    EditEventTracker,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    clipboardUtils,
-    waitForEvent,
-} from '../../test-utils';
 
 describe('Clipboard Paste Behaviour: fill handle', () => {
     const gridMgr = new TestGridsManager({
@@ -121,7 +121,7 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
 
         const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'field')));
         const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
-        cell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        fireGridPointerDown(cell);
         await cellSelectionChanged;
 
         const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
@@ -207,7 +207,7 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         // Select the source cell (column a).
         const sourceCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
         const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
-        sourceCell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        fireGridPointerDown(sourceCell);
         await cellSelectionChanged;
 
         // Drag the fill handle right, over column c. mousedown on the handle, a mousemove past the
@@ -301,7 +301,7 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
 
         const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field')));
         const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
-        cell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        fireGridPointerDown(cell);
         await cellSelectionChanged;
 
         const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
@@ -353,7 +353,7 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
 
             const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', field)));
             const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
-            cell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+            fireGridPointerDown(cell);
             await cellSelectionChanged;
 
             const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));

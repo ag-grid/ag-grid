@@ -1,3 +1,4 @@
+import { FAST_TEST_TIMINGS } from '../fastTestTimings';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -6,6 +7,12 @@ import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
 import { _debounce } from '../utils/function';
 import { AgBeanStub } from './agBeanStub';
+
+/** Coalesces bursts of announcements into one; no grid option reaches it, so tests would out-wait it. */
+const ANNOUNCE_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 200;
+
+/** Gap that makes a screen reader re-announce after the container is blanked; same reasoning. */
+const ANNOUNCE_REPEAT_DELAY = FAST_TEST_TIMINGS ? 0 : 50;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class BaseAriaAnnouncementService<
@@ -28,7 +35,7 @@ export class BaseAriaAnnouncementService<
     constructor() {
         super();
 
-        this.updateAnnouncement = _debounce(this, this.updateAnnouncement.bind(this), 200);
+        this.updateAnnouncement = _debounce(this, this.updateAnnouncement.bind(this), ANNOUNCE_DEBOUNCE);
     }
 
     public setDescriptionContainer(div: HTMLElement): void {
@@ -61,7 +68,7 @@ export class BaseAriaAnnouncementService<
         this.descriptionContainer.textContent = '';
         setTimeout(() => {
             this.handleAnnouncementUpdate(value);
-        }, 50);
+        }, ANNOUNCE_REPEAT_DELAY);
     }
 
     private handleAnnouncementUpdate(value: string): void {

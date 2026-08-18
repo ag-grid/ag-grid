@@ -8,13 +8,6 @@ import {
     _useParamsCss,
 } from './inject';
 
-// jsdom does not implement the CSS namespace, patch it.
-if (typeof (globalThis as { CSS?: unknown }).CSS === 'undefined') {
-    (globalThis as { CSS: Pick<typeof CSS, 'escape'> }).CSS = {
-        escape: (value: string) => value.replace(/[^\w-]/g, '\\$&'),
-    };
-}
-
 const createEnvironment = (): IEnvironment => ({}) as IEnvironment;
 
 const injectedStyles = (container: HTMLElement): HTMLStyleElement[] =>
@@ -23,7 +16,7 @@ const injectedStyles = (container: HTMLElement): HTMLStyleElement[] =>
 const injectedCssTexts = (container: HTMLElement): string[] =>
     injectedStyles(container).map((el) => el.textContent ?? '');
 
-// IS_SSR is true under jsdom (no document.fonts), so injection is off by default; force it on for these tests.
+// IS_SSR is true under happy-dom (no document.fonts), so injection is off by default; force it on for these tests.
 beforeAll(() => {
     _setStyleInjectionEnabledForTesting(true);
 });

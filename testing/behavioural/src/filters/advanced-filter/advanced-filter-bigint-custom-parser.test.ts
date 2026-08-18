@@ -1,7 +1,3 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
-import { BigIntFilterModule, ClientSideRowModelModule, NumberFilterModule, getGridElement } from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
 import {
     AdvancedFilterBuilderHarness,
     FilterDom,
@@ -10,7 +6,11 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { BigIntFilterModule, ClientSideRowModelModule, NumberFilterModule, getGridElement } from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 interface TestRow {
     value: bigint;

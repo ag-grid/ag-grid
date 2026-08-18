@@ -1,9 +1,6 @@
 import { getByTestId } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-
-import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
-
 import {
     EditEventTracker,
     GridColumns,
@@ -11,7 +8,10 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     waitForInput,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
 describe('Cell Editing: single-cell batch styles', () => {
     const gridMgr = new TestGridsManager({

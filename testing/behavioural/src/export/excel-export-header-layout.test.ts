@@ -1,9 +1,8 @@
-import XLSX from 'xlsx';
+import { TestGridsManager, objectUrls } from 'ag-test-utils';
+import * as XLSX from 'xlsx';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, objectUrls } from '../test-utils';
 
 describe('Excel export header layout', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, ExcelExportModule] });

@@ -1,11 +1,11 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { TestGridsManager, asyncSetTimeout, waitForInput } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule } from 'ag-grid-community';
 import type { GridApi, IRowNode } from 'ag-grid-community';
 import { PivotModule, RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForInput } from '../../../test-utils';
 import { editCell } from '../group-edit-test-utils';
 
 type EditEvent = {

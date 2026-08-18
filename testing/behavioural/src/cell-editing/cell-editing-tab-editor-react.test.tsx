@@ -1,6 +1,7 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { asyncSetTimeout, initPointerEventPolyfill, mockGridLayout, waitForPopup } from 'ag-test-utils';
 import React from 'react';
 import { vi } from 'vitest';
 
@@ -18,14 +19,6 @@ import {
 import type { GridApi, GridReadyEvent, ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
-
-import {
-    asyncSetTimeout,
-    ignoreConsoleLicenseKeyError,
-    initPointerEventPolyfill,
-    mockGridLayout,
-    waitForPopup,
-} from '../test-utils';
 
 // Custom editor that records cellStartedEdit and afterGuiAttached calls
 const editorLog: {
@@ -120,10 +113,17 @@ async function renderGrid(props: {
     return { api, gridDiv, user };
 }
 
+// Asserted on the cell the tab should have reached: a whole-grid picker query is satisfied by the cell just
+// left, so it cannot tell an editor that never opened a picker from an edit that never moved.
+const expectPickerIn = async (gridDiv: HTMLElement, rowId: string, colId: string) => {
+    const cell = () => getByTestId(gridDiv, agTestIdFor.cell(rowId, colId));
+    await waitFor(() => expect(cell().querySelector('.ag-rich-select')).toBeTruthy());
+    await waitFor(() => expect(cell().querySelector('.ag-picker-expanded')).toBeTruthy());
+};
+
 describe('Cell Editing: tab into editor in React', () => {
     beforeAll(() => {
         mockGridLayout.init();
-        ignoreConsoleLicenseKeyError();
         initPointerEventPolyfill();
         setupAgTestIds();
     });
@@ -364,21 +364,11 @@ describe('Cell Editing: tab into editor in React', () => {
         // Double-click first cell to start editing
         const cell0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'language'));
         await user.dblClick(cell0);
-
-        // Verify the RichSelect popup/picker opened (aria-expanded)
-        await waitFor(() => {
-            const expanded = gridDiv.querySelector('.ag-picker-expanded');
-            expect(expanded).toBeTruthy();
-        });
+        await expectPickerIn(gridDiv, '0', 'language');
 
         // Tab to next row
         await user.keyboard('{Tab}');
-
-        // Verify the new RichSelect picker opened on the next cell
-        await waitFor(() => {
-            const expanded = gridDiv.querySelector('.ag-picker-expanded');
-            expect(expanded).toBeTruthy();
-        });
+        await expectPickerIn(gridDiv, '1', 'language');
     });
 
     // Bug 2: RichSelect with async values — tabbing shows "loading" popup
@@ -408,19 +398,13 @@ describe('Cell Editing: tab into editor in React', () => {
         await user.dblClick(cell0);
 
         // Verify the RichSelect popup/picker opened (even with async values loading)
-        await waitFor(() => {
-            const expanded = gridDiv.querySelector('.ag-picker-expanded');
-            expect(expanded).toBeTruthy();
-        });
+        await expectPickerIn(gridDiv, '0', 'language');
 
         // Tab to next row before values have loaded
         await user.keyboard('{Tab}');
 
         // Verify the new RichSelect picker opened on the next cell (showing "loading" state)
-        await waitFor(() => {
-            const expanded = gridDiv.querySelector('.ag-picker-expanded');
-            expect(expanded).toBeTruthy();
-        });
+        await expectPickerIn(gridDiv, '1', 'language');
     });
 
     // Bug 3: RichSelect multi-column tabbing in both directions
@@ -447,31 +431,25 @@ describe('Cell Editing: tab into editor in React', () => {
         // Double-click first cell to start editing col 'a' row 0
         const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
         await user.dblClick(cellA);
-
-        // Verify picker opened
-        await waitFor(() => {
-            const expanded = gridDiv.querySelector('.ag-picker-expanded');
-            expect(expanded).toBeTruthy();
-        });
+        await expectPickerIn(gridDiv, '0', 'a');
 
         // Tab forward through: a→b, b→c, c→(next row a) — crosses row boundary
-        for (let i = 0; i < 3; i++) {
+        for (const [rowId, colId] of [
+            ['0', 'b'],
+            ['0', 'c'],
+            ['1', 'a'],
+        ]) {
             await user.keyboard('{Tab}');
-
-            await waitFor(() => {
-                const expanded = gridDiv.querySelector('.ag-picker-expanded');
-                expect(expanded).toBeTruthy();
-            });
+            await expectPickerIn(gridDiv, rowId, colId);
         }
 
         // Shift+Tab backward through: a→(prev row c), c→b — crosses row boundary back
-        for (let i = 0; i < 2; i++) {
+        for (const [rowId, colId] of [
+            ['0', 'c'],
+            ['0', 'b'],
+        ]) {
             await user.keyboard('{Shift>}{Tab}{/Shift}');
-
-            await waitFor(() => {
-                const expanded = gridDiv.querySelector('.ag-picker-expanded');
-                expect(expanded).toBeTruthy();
-            });
+            await expectPickerIn(gridDiv, rowId, colId);
         }
     });
 
@@ -724,10 +702,7 @@ describe('Cell Editing: tab into editor in React', () => {
             await user.dblClick(cellA);
 
             // Verify RichSelect picker opened for focused cell
-            await waitFor(() => {
-                const expanded = gridDiv.querySelector('.ag-picker-expanded');
-                expect(expanded).toBeTruthy();
-            });
+            await expectPickerIn(gridDiv, '0', 'a');
 
             // Tab through a→b, b→c, c→(next row a) — crosses row boundary
             for (let i = 0; i < 3; i++) {
@@ -735,10 +710,7 @@ describe('Cell Editing: tab into editor in React', () => {
             }
 
             // After crossing to row 1, picker should still open for the focused cell
-            await waitFor(() => {
-                const expanded = gridDiv.querySelector('.ag-picker-expanded');
-                expect(expanded).toBeTruthy();
-            });
+            await expectPickerIn(gridDiv, '1', 'a');
         });
     });
 });

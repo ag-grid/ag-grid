@@ -1,8 +1,8 @@
+import { GridRows, TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, DETAIL_ROW_ID_PREFIX, ROOT_NODE_ID } from 'ag-grid-community';
 import { MasterDetailModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('ag-grid grouping with master detail', () => {
     const gridsManager = new TestGridsManager({

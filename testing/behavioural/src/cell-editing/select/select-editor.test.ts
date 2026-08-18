@@ -1,9 +1,8 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
+import { TestGridsManager, firePointerLikeClick, getAllRows } from 'ag-test-utils';
 
 import { SelectEditorModule, getGridElement } from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
-
-import { TestGridsManager, firePointerLikeClick, getAllRows } from '../../test-utils';
 
 /**
  * Behavioural coverage for the Select cell editor (`agSelectCellEditor`) honouring
@@ -79,7 +78,7 @@ describe('Select cell editor', () => {
             const gridDiv = getGridElement(api)! as HTMLElement;
 
             await openEditor(api, 0, 'a');
-            // No layout in jsdom, so highlight navigation gates on checkVisibility — force it true.
+            // No layout in happy-dom, so highlight navigation gates on checkVisibility — force it true.
             document
                 .querySelectorAll<HTMLElement>(OPTION_SELECTOR)
                 .forEach((el) => ((el as any).checkVisibility = () => true));

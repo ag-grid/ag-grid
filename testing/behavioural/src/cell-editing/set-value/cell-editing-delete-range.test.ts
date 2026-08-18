@@ -1,9 +1,5 @@
 import { getByTestId } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-
-import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
-
 import {
     EditEventTracker,
     GridColumns,
@@ -11,7 +7,10 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     waitForInput,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
 describe('Cell Editing: delete and range clearing', () => {
     const gridMgr = new TestGridsManager({
@@ -241,6 +240,9 @@ describe('Cell Editing: delete and range clearing', () => {
         const user = userEvent.setup({ skipHover: true });
         const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field'));
         await user.click(cell);
+        // The click selects the cell it lands on and `addCellRange` appends, so clear first or the
+        // clicked cell ends up inside two overlapping ranges and is deleted twice.
+        api.clearCellSelection();
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['field'] });
         await user.keyboard('{Delete}');
         await asyncSetTimeout(0);
@@ -337,6 +339,7 @@ describe('Cell Editing: delete and range clearing', () => {
         const user = userEvent.setup({ skipHover: true });
         const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
         await user.click(cell);
+        api.clearCellSelection(); // Or the clicked cell sits in two overlapping ranges
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b'] });
         await user.keyboard('{Delete}');
         await asyncSetTimeout(0);
@@ -416,6 +419,7 @@ describe('Cell Editing: delete and range clearing', () => {
         const input = await waitForInput(gridDiv, cell);
         expect(input).toBeTruthy();
 
+        api.clearCellSelection(); // Or the clicked cell sits in two overlapping ranges
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b'] });
         await user.keyboard('{Delete}');
         await asyncSetTimeout(0);

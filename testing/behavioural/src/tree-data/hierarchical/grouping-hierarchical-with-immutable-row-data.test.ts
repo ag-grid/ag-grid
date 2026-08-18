@@ -1,8 +1,8 @@
+import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid grouping treeDataChildrenField with set immutable data', () => {
     const gridsManager = new TestGridsManager({

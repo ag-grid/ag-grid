@@ -1,10 +1,10 @@
+import { ALL_SEVERITIES, GridColumns, TestGridsManager } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { ColDef, ColGroupDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { ALL_SEVERITIES, GridColumns, TestGridsManager } from '../../test-utils';
 import { VERSION } from '../../version';
 import { getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
 

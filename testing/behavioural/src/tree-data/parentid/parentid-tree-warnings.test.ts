@@ -1,9 +1,8 @@
+import { GridRows, TestGridsManager } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager } from '../../test-utils';
 
 describe('ag-grid parentId tree data warnings', () => {
     const gridsManager = new TestGridsManager({

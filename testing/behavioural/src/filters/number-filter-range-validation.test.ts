@@ -1,15 +1,6 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-
-import {
-    ClientSideRowModelModule,
-    NumberFilterModule,
-    TextFilterModule,
-    agTestIdFor,
-    getGridElement,
-    setupAgTestIds,
-} from 'ag-grid-community';
-
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -19,7 +10,16 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import {
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextFilterModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 
 describe('Number Range Filter', () => {
     const gridsManager = new TestGridsManager({

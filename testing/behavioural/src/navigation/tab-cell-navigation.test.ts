@@ -1,7 +1,8 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { CellFocusedEvent, ColDef, GridApi, GridOptions, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
 
 interface RowData {

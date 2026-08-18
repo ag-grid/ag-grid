@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping aggregation options', () => {
     const gridsManager = new TestGridsManager({

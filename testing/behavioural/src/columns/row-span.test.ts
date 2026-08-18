@@ -1,3 +1,5 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
+
 import type { ColDef, ColGroupDef, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
     CellSpanModule,
@@ -9,8 +11,6 @@ import {
     getGridElement,
 } from 'ag-grid-community';
 import { CalculatedColumnsModule, FormulaModule, MasterDetailModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from '../test-utils';
 
 /**
  * Coverage suite for row spanning (`enableCellSpan` + `colDef.spanRows`).
@@ -29,6 +29,9 @@ const settle = async (): Promise<void> => {
     await asyncSetTimeout(0);
     await nextAnimationFrame();
     await nextAnimationFrame();
+    // Trailing macrotask: re-spanning after a value change queues its DOM redraw from inside a frame
+    // callback, so the frames above schedule the work but do not run it.
+    await asyncSetTimeout(0);
 };
 
 describe('row spanning', () => {
@@ -975,6 +978,40 @@ describe('row spanning', () => {
                 · └─┬ detail id:detail_1 country:"A"
                 · · └─┬ ROOT id:ROOT_NODE_ID
                 · · · └── LEAF id:0 country:"A"
+            `);
+        });
+
+        test('a span inside a detail grid does not mark the master rows above it', async () => {
+            const api = createGrid({
+                columnDefs: [{ field: 'country', colId: 'country', spanRows: true }],
+                rowData: [{ country: 'A' }, { country: 'B' }],
+                masterDetail: true,
+                isRowMaster: () => true,
+                detailCellRendererParams: {
+                    // The detail grid spans its own two identical rows, anchored at ITS row index 0 on a
+                    // colId the master also has - the exact collision a whole-tree DOM query conflates.
+                    detailGridOptions: {
+                        enableCellSpan: true,
+                        columnDefs: [{ field: 'country', colId: 'country', spanRows: true }],
+                    },
+                    getDetailRowData: (p: any) =>
+                        p.successCallback([{ country: p.data.country }, { country: p.data.country }]),
+                },
+                groupDefaultExpanded: -1,
+            });
+            await settle();
+            await new GridRows(api, 'detail-grid span rows').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ master id:0 country:"A"
+                │ └─┬ detail id:detail_0 country:"A"
+                │ · └─┬ ROOT id:ROOT_NODE_ID
+                │ · · ├── LEAF id:0 country:"A"↧2
+                │ · · └── LEAF id:1 country:"A"↥
+                └─┬ master id:1 country:"B"
+                · └─┬ detail id:detail_1 country:"B"
+                · · └─┬ ROOT id:ROOT_NODE_ID
+                · · · ├── LEAF id:0 country:"B"↧2
+                · · · └── LEAF id:1 country:"B"↥
             `);
         });
     });

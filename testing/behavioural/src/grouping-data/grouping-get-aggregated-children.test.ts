@@ -1,9 +1,9 @@
+import type { GridRowsOptions } from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberFilterModule, PinnedRowModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
-
-import type { GridRowsOptions } from '../test-utils';
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('IRowNode.getAggregatedChildren()', () => {
     const gridsManager = new TestGridsManager({

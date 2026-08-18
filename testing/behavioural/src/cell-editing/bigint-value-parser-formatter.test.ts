@@ -1,8 +1,7 @@
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent, waitForInput } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, TextEditorModule, getGridElement } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager, waitForEvent, waitForInput } from '../test-utils';
 
 describe('BigInt value parser and formatter', () => {
     const gridMgr = new TestGridsManager({

@@ -21,6 +21,8 @@ Performance benchmarks help detect regressions and validate optimizations.
 
 Behavioural benchmarks run via `./benches.sh`, in a real headless Chromium (Playwright) by **default** so layout-dependent work is measured against a real layout engine. Run `./benches.sh --help` for the full usage — it prints vitest's `bench --help` followed by benches.sh's own options.
 
+An agent must start it in the background, never in the foreground: a benchmark run takes minutes, and a foreground call blocks the session for all of it. Every local run prints its log path first and streams stdout+stderr there (`tmp/_bench-output/<id>/output.log`), so the numbers are readable afterwards without a redirect. Benchmark timings are also the one thing a parallel workload distorts — leave the machine alone while one runs, rather than filling the wait with other work.
+
 ```bash
 # Run all behavioural benchmarks
 ./benches.sh

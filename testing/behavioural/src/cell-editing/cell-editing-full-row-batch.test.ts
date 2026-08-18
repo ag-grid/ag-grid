@@ -1,10 +1,6 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-
-import type { BatchEditingStoppedEvent } from 'ag-grid-community';
-import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { BatchEditModule } from 'ag-grid-enterprise';
-
 import {
     EditEventTracker,
     GridColumns,
@@ -12,7 +8,11 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     waitForInput,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import type { BatchEditingStoppedEvent } from 'ag-grid-community';
+import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { BatchEditModule } from 'ag-grid-enterprise';
 
 describe('Cell Editing: full-row batch', () => {
     const gridMgr = new TestGridsManager({

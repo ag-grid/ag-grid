@@ -1,3 +1,5 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GridOptions, Module } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -7,8 +9,6 @@ import {
     TooltipModule,
 } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /** Row numbers refresh on a debounced path (~10ms), so allow a small buffer before asserting the DOM. */
 const rowNumberRefreshBufferMs = 25;

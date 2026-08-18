@@ -1,4 +1,5 @@
 import { getByTestId } from '@testing-library/dom';
+import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import {
     ClientSideRowModelModule,
@@ -9,8 +10,6 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /** Sets a floating-filter input's value and fires the `input` event the widget listens for. */
 function typeIntoFloatingFilter(input: HTMLInputElement, value: string): void {

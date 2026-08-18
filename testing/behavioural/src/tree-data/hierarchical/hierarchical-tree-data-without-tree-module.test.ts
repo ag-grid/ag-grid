@@ -1,9 +1,8 @@
+import { GridRows, TestGridsManager, waitForMissingModuleReports } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
-
-import { GridRows, TestGridsManager, waitForMissingModuleReports } from '../../test-utils';
 
 describe('ag-grid tree data without tree module', () => {
     const gridsManager = new TestGridsManager({

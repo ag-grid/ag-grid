@@ -1,9 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from 'ag-test-utils';
+import { waitForEvent } from 'ag-test-utils/test-utils-events';
+
 import type { RowSelectedEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
-import { waitForEvent } from '../test-utils/test-utils-events';
 
 describe('ag-grid grouping selection', () => {
     const gridsManager = new TestGridsManager({

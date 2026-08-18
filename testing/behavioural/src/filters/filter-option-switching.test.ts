@@ -1,4 +1,14 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
+import {
+    ColumnFilterHarness,
+    FilterDom,
+    FloatingFilterHarness,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
 
 import type { GetLocaleTextParams, GridApi, IFilterPlaceholderFunctionParams } from 'ag-grid-community';
 import {
@@ -11,17 +21,6 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-
-import {
-    ColumnFilterHarness,
-    FilterDom,
-    FloatingFilterHarness,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../test-utils';
 
 /**
  * Cases the provided filters get wrong when an option's arity or the applied model diverges from the

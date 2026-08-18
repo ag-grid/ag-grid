@@ -1,9 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
+
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ColumnMenuModule, ToolbarModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
-
-// Column chooser dialog focus management checks visibility via `offsetParent`. jsdom does not
+// Column chooser dialog focus management checks visibility via `offsetParent`. happy-dom does not
 // compute layout, so expose attached elements as visible for these behavioural tests.
 const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
 beforeAll(() => {

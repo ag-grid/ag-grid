@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from 'ag-test-utils';
 
 import type { AdvancedFilterModel } from 'ag-grid-community';
 import {
@@ -9,8 +10,6 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlays no matching rows', () => {
     const gridsManager = new TestGridsManager({

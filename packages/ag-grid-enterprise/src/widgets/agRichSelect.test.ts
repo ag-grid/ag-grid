@@ -667,7 +667,7 @@ describe('AgRichSelect', () => {
         secondPill.tabIndex = 0;
         firstInner.tabIndex = -1;
         secondInner.tabIndex = -1;
-        // JSDOM elements are often "not visible" to AG Grid's focus utility unless this is mocked.
+        // Unlaid-out elements are "not visible" to AG Grid's focus utility unless this is mocked.
         (firstPill as any).checkVisibility = () => true;
         (secondPill as any).checkVisibility = () => true;
         (firstInner as any).checkVisibility = () => true;
