@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-vue3-tests",
   "private": true,
-  "version": "36.1.0-beta.20260817.956",
+  "version": "36.1.0-beta.20260818.1041",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,9 +15,9 @@
   "dependencies": {
     "vue": "^3.5.32",
     "vue-router": "^5.0.6",
-    "ag-grid-community": "36.1.0-beta.20260817.956",
-    "ag-grid-enterprise": "36.1.0-beta.20260817.956",
-    "ag-grid-vue3": "36.1.0-beta.20260817.956",
+    "ag-grid-community": "36.1.0-beta.20260818.1041",
+    "ag-grid-enterprise": "36.1.0-beta.20260818.1041",
+    "ag-grid-vue3": "36.1.0-beta.20260818.1041",
     "decimal.js": "^10.6.0"
   },
   "devDependencies": {
