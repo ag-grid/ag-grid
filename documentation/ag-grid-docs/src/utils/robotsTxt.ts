@@ -1,3 +1,4 @@
+import { BUILD_USER_AGENT } from '@ag-website-shared/constants';
 import { SITE_URL } from '@constants';
 
 import { pathJoin } from './pathJoin';
@@ -82,7 +83,7 @@ Sitemap: ${pathJoin(SITE_URL, urlWithBaseUrl('/sitemap-index.xml'))}
 
 export const fetchRobotsDisallow = async (urls: string[]) => {
     const fetches = urls.map((url) =>
-        fetch(url)
+        fetch(url, { headers: { 'User-Agent': BUILD_USER_AGENT } })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
