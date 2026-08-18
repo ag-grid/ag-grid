@@ -70,17 +70,17 @@ The screen shots below show example scenarios where the provided Number floating
 
 ### Controlling Autocomplete on Floating Filters
 
-The `Text` and `Number` floating filters support overriding the browser's autocomplete behaviour on the filter's input field.
-You can control that autocomplete behaviour by passing `browserAutoComplete` parameter in `floatingFilterComponentParams` (as
-defined in `ITextFloatingFilterParams` and `INumberFloatingFilterParams`).
+Browser autocomplete is disabled for grid input fields by default. Set `enableInputAutoComplete` to `true` to enable it for eligible inputs. Inputs that provide grid-owned suggestions, such as Rich Select and Advanced Filter inputs, keep browser autocomplete disabled so the browser UI cannot overlap their suggestion lists.
+
+The `Text` and `Number` floating filters also support overriding this behaviour for an individual input by passing the
+`browserAutoComplete` parameter in `floatingFilterComponentParams` (as defined in `ITextFloatingFilterParams` and
+`INumberFloatingFilterParams`).
 
 Possible values for `browserAutoComplete`:
 
 - `true` to allow the browser's default autocomplete/autofill behaviour.
 - `false` to disable the browser autocomplete/autofill behaviour by setting the `autocomplete` attribute to `off`.
 - A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
-
-**By default**, `browserAutoComplete` is set to `false` to disable autocomplete.
 
 Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
 

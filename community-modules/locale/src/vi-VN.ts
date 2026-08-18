@@ -695,6 +695,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaFilterColumnsInput: 'Đầu vào Lọc Cột',
     ariaFilterFromValue: 'Lọc từ giá trị',
     ariaFilterInput: 'Đầu vào Bộ lọc',
+    ariaLabelInputClear: 'Xóa',
     ariaFilterList: 'Danh sách Lọc',
     ariaFilterToValue: 'Lọc đến giá trị',
     ariaFilterValue: 'Giá trị Lọc',

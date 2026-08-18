@@ -697,6 +697,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaFilterColumnsInput: 'Unos za filtriranje stupaca',
     ariaFilterFromValue: 'Filtriraj od vrijednosti',
     ariaFilterInput: 'Unos filtera',
+    ariaLabelInputClear: 'Očisti',
     ariaFilterList: 'Popis filtera',
     ariaFilterToValue: 'Filtriraj do vrijednosti',
     ariaFilterValue: 'Vrijednost filtera',

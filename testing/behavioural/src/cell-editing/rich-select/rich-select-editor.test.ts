@@ -157,6 +157,7 @@ describe('Rich Select cell editor', () => {
     test('allowTyping filters the list via the typed text', async () => {
         const api = await createGrid({
             columnDefs: [baseColDef({ values: ['Alpha', 'Beta', 'Gamma'], allowTyping: true, filterList: true })],
+            enableInputAutoComplete: true,
             rowData: [{ id: '0', a: 'Alpha' }],
             getRowId: (p) => p.data.id,
         });
@@ -165,6 +166,7 @@ describe('Rich Select cell editor', () => {
 
         const input = gridDiv.querySelector<HTMLInputElement>('.ag-rich-select-field-input input')!;
         expect(input).toBeTruthy();
+        expect(input.getAttribute('autocomplete')).toBe('off');
         input.focus();
         await userEvent.clear(input);
         await userEvent.type(input, 'Be');
@@ -295,6 +297,32 @@ describe('Rich Select cell editor', () => {
         await waitFor(() =>
             expect([...(getAllRows(api)[0].data.a as string[])].sort()).toEqual(['Alpha', 'Beta', 'Gamma'])
         );
+    });
+
+    test('allowTyping with multiSelect does not add a second clear button', async () => {
+        const api = await createGrid({
+            columnDefs: [
+                {
+                    field: 'a',
+                    editable: true,
+                    cellDataType: false,
+                    cellEditor: 'agRichSelectCellEditor',
+                    cellEditorParams: {
+                        values: ['Alpha', 'Beta', 'Gamma'],
+                        allowTyping: true,
+                        multiSelect: true,
+                    },
+                },
+            ],
+            rowData: [{ id: '0', a: ['Alpha'] }],
+            getRowId: (p) => p.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await openEditor(api, gridDiv, 0, 'a');
+
+        const typingField = gridDiv.querySelector<HTMLElement>('.ag-rich-select-field-input')!;
+        expect(typingField.querySelector('.ag-input-field-clear-button')).toBeNull();
+        expect(gridDiv.querySelector('.ag-rich-select-deselect-button')).not.toBeNull();
     });
 
     // 8. filterList + searchType 'match' filters on a leading-substring match.

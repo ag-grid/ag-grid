@@ -79,7 +79,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
 
     public postConstruct(): void {
         this.eAutocompleteInput.onValueChange((value) => this.onValueChanged(value));
-        this.eAutocompleteInput.getInputElement().setAttribute('autocomplete', 'off');
+        this.eAutocompleteInput.setAutoComplete(false);
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
 

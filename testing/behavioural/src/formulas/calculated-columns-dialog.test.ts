@@ -256,6 +256,23 @@ describe('ag-grid calculated columns', () => {
         expect(popup).not.toHaveClass('ag-calculated-column-picker-list');
     });
 
+    test('dialog only disables browser autocomplete for the expression editor', async () => {
+        const api = createGrid('calculated-dialog-browser-autocomplete', {
+            enableInputAutoComplete: true,
+            rowData: [{ id: 'r1', revenue: 10 }],
+            columnDefs: [{ field: 'revenue' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await clickMenuOption('Add Calculated Column');
+        const dialog = await waitFor(() => getCalculatedColumnDialog());
+        const titleInput = dialog.querySelector<HTMLInputElement>('input[type="text"]')!;
+        const expressionInput = getExpressionInput();
+
+        expect(titleInput).not.toHaveAttribute('autocomplete');
+        expect(expressionInput).toHaveAttribute('autocomplete', 'off');
+    });
+
     test('dialog expression suggestions control the virtual list aria state', async () => {
         const api = createGrid('calculated-dialog-inline-aria', {
             rowData: [{ id: 'r1', revenue: 10, revenueTax: 2, cost: 3 }],

@@ -1,3 +1,4 @@
+import { fireEvent } from '@testing-library/dom';
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
@@ -34,6 +35,7 @@ describe('Toolbar find item', () => {
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         const input = gridDiv.querySelector<HTMLInputElement>('.ag-toolbar-input-field');
         expect(input).not.toBeNull();
+        expect(input!.type).toBe('text');
         expect(input!.placeholder).toBe('Find...');
         expect(input!.getAttribute('aria-label')).toBe('Find');
         await new GridRows(api, `renders input with placeholder final state`).check(`
@@ -70,6 +72,20 @@ describe('Toolbar find item', () => {
         await new Promise<void>((resolve) => setTimeout(resolve, 350));
 
         expect(api.getGridOption('findSearchValue')).toBe('Alice');
+        const clearButton = gridDiv.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
+        const findButtons = gridDiv.querySelectorAll<HTMLButtonElement>('.ag-toolbar-find-button');
+        expect(clearButton.classList.contains('ag-hidden')).toBe(false);
+        expect(findButtons).toHaveLength(2);
+        expect(clearButton.compareDocumentPosition(findButtons[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+        input.focus();
+        fireEvent.mouseDown(clearButton);
+        fireEvent.click(clearButton);
+
+        expect(input.value).toBe('');
+        expect(api.getGridOption('findSearchValue')).toBe('');
+        expect(document.activeElement).toBe(input);
+        expect(clearButton.classList.contains('ag-hidden')).toBe(true);
         await new GridRows(api, `sets findSearchValue on input final state`).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice"

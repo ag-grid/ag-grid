@@ -1,3 +1,4 @@
+import { fireEvent } from '@testing-library/dom';
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, QuickFilterModule, enableDevValidations } from 'ag-grid-community';
@@ -37,11 +38,38 @@ describe('Toolbar quickFilter item', () => {
         expect(input).not.toBeNull();
         expect(input!.placeholder).toBe('Filter...');
         expect(input!.getAttribute('aria-label')).toBe('Filter');
+        expect(input!.autocomplete).toBe('off');
         await new GridRows(api, `renders input with placeholder final state`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 name:"Alice"
             └── LEAF id:1 name:"Bob"
         `);
+    });
+
+    test('global input options control toolbar autocomplete and the clear button', async () => {
+        const api = gridMgr.createGrid('quick-filter-input-options', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }, { name: 'Bob' }],
+            quickFilterText: 'Alice',
+            suppressInputClearButton: true,
+            enableInputAutoComplete: true,
+            toolbar: { items: ['agQuickFilterToolbarItem'] },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const input = gridDiv.querySelector<HTMLInputElement>('.ag-toolbar-input-field')!;
+        const clearButton = gridDiv.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
+        expect(input.getAttribute('autocomplete')).toBeNull();
+        expect(clearButton.classList.contains('ag-hidden')).toBe(true);
+        expect(input.classList.contains('ag-input-field-input-with-clear-button')).toBe(false);
+
+        api.setGridOption('suppressInputClearButton', false);
+        expect(clearButton.classList.contains('ag-hidden')).toBe(false);
+        expect(input.classList.contains('ag-input-field-input-with-clear-button')).toBe(true);
+
+        api.setGridOption('enableInputAutoComplete', false);
+        expect(input.autocomplete).toBe('off');
     });
 
     test('sets quickFilterText on input', async () => {
@@ -73,9 +101,21 @@ describe('Toolbar quickFilter item', () => {
         await new Promise<void>((resolve) => setTimeout(resolve, 350));
 
         expect(api.getGridOption('quickFilterText')).toBe('Alice');
+        const clearButton = gridDiv.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
+        expect(clearButton.classList.contains('ag-hidden')).toBe(false);
+
+        input.focus();
+        fireEvent.mouseDown(clearButton);
+        fireEvent.click(clearButton);
+
+        expect(input.value).toBe('');
+        expect(api.getGridOption('quickFilterText')).toBe('');
+        expect(document.activeElement).toBe(input);
+        expect(clearButton.classList.contains('ag-hidden')).toBe(true);
         await new GridRows(api, `sets quickFilterText on input final state`).check(`
             ROOT id:ROOT_NODE_ID
-            └── LEAF id:0 name:"Alice"
+            ├── LEAF id:0 name:"Alice"
+            └── LEAF id:1 name:"Bob"
         `);
     });
 

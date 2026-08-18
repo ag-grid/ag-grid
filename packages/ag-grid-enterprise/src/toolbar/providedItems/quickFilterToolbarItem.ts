@@ -1,13 +1,14 @@
 import { _debounce } from 'ag-stack';
 
-import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component } from 'ag-grid-community';
+import type { GridInputTextField, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
+import { AgInputTextField, Component } from 'ag-grid-community';
 
 import { createToolbarInput } from './toolbarItemUtils';
 
 const INPUT_DEBOUNCE_MS = 300;
 
 export class QuickFilterToolbarItem extends Component implements IToolbarItemComp {
+    private eInputField!: GridInputTextField;
     private eInput!: HTMLInputElement;
 
     constructor() {
@@ -28,8 +29,18 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarQuickFilter', 'Filter');
         const eGui = this.getGui();
+        let quickFilterTextTimeout: number | undefined;
 
-        const { eIconWrapper, eInput } = createToolbarInput(this.beans, {
+        this.eInputField = this.createManagedBean<GridInputTextField>(
+            new AgInputTextField({
+                clearButton: true,
+                onValueClear: () => {
+                    clearTimeout(quickFilterTextTimeout);
+                    this.gos.updateGridOptions({ options: { quickFilterText: '' } });
+                },
+            })
+        );
+        const { eIconWrapper, eInput } = createToolbarInput(this.beans, this.eInputField, {
             label,
             iconName: 'filter',
             initialValue: this.gos.get('quickFilterText'),
@@ -38,7 +49,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
             eGui.appendChild(eIconWrapper);
         }
         this.eInput = eInput;
-        eGui.appendChild(this.eInput);
+        eGui.appendChild(this.eInputField.getGui());
 
         const updateQuickFilterText = _debounce(
             this,
@@ -47,7 +58,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         );
 
         this.addManagedElementListeners(this.eInput, {
-            input: () => updateQuickFilterText(),
+            input: () => (quickFilterTextTimeout = updateQuickFilterText()),
         });
     }
 
@@ -55,7 +66,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         if (!this.eInput) {
             return false;
         }
-        this.eInput.value = this.gos.get('quickFilterText') ?? '';
+        this.eInputField.setValue(this.gos.get('quickFilterText'), true);
         return true;
     }
 }

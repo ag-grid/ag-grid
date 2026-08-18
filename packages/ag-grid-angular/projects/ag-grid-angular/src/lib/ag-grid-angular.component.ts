@@ -1000,6 +1000,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public tabIndex: number | undefined = undefined;
+    /** Set to `true` to hide the clear button shown in supported input fields when they contain a value.
+     * @default false
+     */
+    @Input({ transform: booleanAttribute }) public suppressInputClearButton: boolean | undefined = undefined;
+    /** Set to `true` to enable the browser's autocomplete/autofill behaviour for eligible grid input fields.
+     * Inputs that provide grid-owned suggestions, such as Rich Select and Advanced Filter inputs, keep browser autocomplete disabled.
+     * @default false
+     */
+    @Input({ transform: booleanAttribute }) public enableInputAutoComplete: boolean | undefined = undefined;
     /** The number of rows rendered outside the viewable area the grid renders.
      * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.
      * @default 10

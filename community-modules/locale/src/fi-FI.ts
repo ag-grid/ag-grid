@@ -698,6 +698,7 @@ export const AG_GRID_LOCALE_FI = {
     ariaFilterColumnsInput: 'Suodata sarakkeiden syöte',
     ariaFilterFromValue: 'Suodata arvosta',
     ariaFilterInput: 'Suodattimen syöte',
+    ariaLabelInputClear: 'Tyhjennä',
     ariaFilterList: 'Suodatinlista',
     ariaFilterToValue: 'Suodata arvoon',
     ariaFilterValue: 'Suodattimen arvo',
