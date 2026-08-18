@@ -213,4 +213,68 @@ describe('Set Filter dropdown opened before data arrives (AG-17369)', () => {
         expect(scenarioA.uiValues).toEqual(['one']);
         expect(scenarioA.displayedRowCount).toBe(1);
     });
+
+    // The reporter and QA (plnkr 41sqYmiFjrSjJN3S) drive the filter through grid-level `api.setFilterModel` — a
+    // different entry point from the `api.setColumnFilterModel` the tests above exercise (grid-level queues the
+    // model and replays it against the still-empty client-side row model while inference is pending) — and reuse
+    // ONE `columnDefs` object across a destroy/recreate "Reset": Scenario A on the cold first grid, Scenario B on
+    // the grid recreated with that same column def. Opening the dropdown before data must remain observational.
+    async function runViaGridApi(
+        api: GridApi,
+        openBeforeData: boolean
+    ): Promise<{ ticked: (string | null)[] | null; modelValues: string[] | undefined; displayedRowCount: number }> {
+        api.setFilterModel({ value: { filterType: 'set', values: ['one'] } });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        if (openBeforeData) {
+            await openDropdown(api);
+            api.hideColumnFilter();
+            await asyncSetTimeout(0);
+        }
+
+        api.applyTransaction({ add: [{ value: 'one' }, { value: 'two' }] });
+        await asyncSetTimeout(0);
+
+        await openDropdown(api);
+        const setFilter = await getSetFilter(api);
+        return {
+            ticked: setFilter.getModelFromUi()?.values ?? null,
+            modelValues: api.getColumnFilterModel<{ values: string[] }>('value')?.values,
+            displayedRowCount: api.getDisplayedRowCount(),
+        };
+    }
+
+    test('grid-level api.setFilterModel converges across a shared-column-def reset (plnkr 41sqYmiFjrSjJN3S)', async () => {
+        const sharedColumnDefs: GridOptions<RowData>['columnDefs'] = [{ field: 'value', filter: 'agSetColumnFilter' }];
+
+        const apiA = gridsManager.createGrid<RowData>('qa-grid', {
+            columnDefs: sharedColumnDefs,
+            defaultColDef: { floatingFilter: true },
+            rowData: [],
+        });
+        await asyncSetTimeout(0);
+        const scenarioA = await runViaGridApi(apiA, false);
+
+        apiA.destroy();
+        await asyncSetTimeout(0);
+
+        const apiB = gridsManager.createGrid<RowData>('qa-grid', {
+            columnDefs: sharedColumnDefs,
+            defaultColDef: { floatingFilter: true },
+            rowData: [],
+        });
+        await asyncSetTimeout(0);
+        const scenarioB = await runViaGridApi(apiB, true);
+
+        // Opening the dropdown before data is observational: B converges on A.
+        expect(scenarioB.ticked).toEqual(scenarioA.ticked);
+        expect(scenarioB.modelValues).toEqual(scenarioA.modelValues);
+        expect(scenarioB.displayedRowCount).toBe(scenarioA.displayedRowCount);
+
+        // The converged state applies the reporter's set model — one row, only 'one' ticked.
+        expect(scenarioA.ticked).toEqual(['one']);
+        expect(scenarioA.modelValues).toEqual(['one']);
+        expect(scenarioA.displayedRowCount).toBe(1);
+    });
 });
