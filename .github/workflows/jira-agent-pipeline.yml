@@ -328,8 +328,6 @@ jobs:
             - id: handler
               uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-ci-success-handler
               with:
-                  # DISABLED — sharing agent-run's group supersedes it (AG-18177).
-                  agent_interlock_wait_minutes: 0
                   head_branch: ${{ github.event.workflow_run.head_branch }}
                   head_sha: ${{ github.event.workflow_run.head_sha }}
                   run_url: ${{ github.event.workflow_run.html_url }}
