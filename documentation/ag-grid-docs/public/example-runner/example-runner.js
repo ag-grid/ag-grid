@@ -1,3 +1,17 @@
+/*
+ * Browser-side runtime for documentation examples, exposed as `window.agExampleRunner`.
+ *
+ * Each generated example page calls into it to:
+ *  - set up the page shell (fake `process.env`, global error logging)
+ *  - inject an import map, resolving the `?version=` / `?prod=` query params
+ *  - seed deterministic randomness for screenshot-stable examples
+ *  - notify the parent frame once the example has rendered
+ *  - transpile the example's TypeScript modules with the in-page TypeScript
+ *    compiler, rewriting relative and CSS imports, and run the entry module
+ *
+ * No build step is involved: modules are fetched, transpiled and served to the
+ * browser as blob URLs at load time.
+ */
 /* global ts */
 (function () {
     const VERSION_PARAM = 'version';
