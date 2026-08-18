@@ -260,6 +260,9 @@ jobs:
             # CLAUDE.md § "Auto-chaining browser-verify / repro-rebuild".
             issue_key: ${{ steps.pipeline.outputs.issue_key }}
             confirmed_bug: ${{ steps.pipeline.outputs.confirmed_bug }}
+            # NEW (2026-08-18) — confidence-refresh-chain's own gate. See the
+            # action's CLAUDE.md § "Confidence-gap auto-refresh".
+            confidence_gap: ${{ steps.pipeline.outputs.confidence_gap }}
         steps:
             - uses: actions/checkout@v4
               with:
@@ -463,6 +466,62 @@ jobs:
                   stage: repro-rebuild
                   product: grid
                   issue_key: ${{ needs.run.outputs.issue_key }}
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
+
+    # -------------------------------------------------- confidence-refresh-chain (NEW, 2026-08-18)
+    # Auto-fires ONLY when the ORIGINAL triage recorded an eligible clean-pick
+    # whose OWN confidence was below the execute threshold (confidence_gap ==
+    # 'true') — never a decline, never an already-confident pick. Needs ALL
+    # three prior jobs so the evidence browser-verify-chain/repro-rebuild-chain
+    # gather (if either ran) is already on the ticket by the time this fires;
+    # confidence_gap itself comes from `run` alone, so this still fires even
+    # when browser-verify-chain/repro-rebuild-chain were skipped (e.g. the
+    # `workflow_dispatch stage=triage` gate on browser-verify-chain not met) —
+    # a re-triage informed only by what triage itself gathered is still a
+    # genuine second look, not a no-op.
+    #
+    # Rationale + the AITGH-32/37 finding this is built from (including why it
+    # is NOT a guaranteed confidence bump) are in the action's own CLAUDE.md
+    # § "Confidence-gap auto-refresh". Same job-graph chaining pattern as the
+    # two browser stages above — no new event type, no new execution path:
+    # `resume` still cannot execute on its own regardless of what triggered it.
+    #
+    # SECURITY NOTE: same posture as browser-verify-chain/repro-rebuild-chain —
+    # no dedicated minimal-permission job split yet. This job runs NO browser
+    # and touches no untrusted repro page directly, but it DOES run the same
+    # read-only triage/resume agent `run` does, so it inherits `run`'s own
+    # threat model (an agent reading attacker-authored issue/comment text),
+    # not the two browser stages' — hence `issues: read` (never write) here
+    # too, for the same "an unused permission is a mistake" reason as `run`.
+    confidence-refresh-chain:
+        needs: [run, browser-verify-chain, repro-rebuild-chain]
+        if: |
+            !cancelled() && needs.run.outputs.confidence_gap == 'true'
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            issues: read
+            packages: read
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
+              with:
+                  stage: resume
+                  trigger: confidence-refresh
+                  product: grid
+                  issue_key: ${{ needs.run.outputs.issue_key }}
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
                   anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
