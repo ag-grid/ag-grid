@@ -67,11 +67,16 @@ runs:
       working-directory: documentation/ag-grid-docs
       env:
         PW_BROWSERS: ${{ inputs.browsers == 'all' && 'chromium firefox webkit' || 'chromium' }}
+      # Bounded + retried via the shared wrapper (AG-18231): `install-deps` shells out to
+      # `apt-get update`, which has no timeout, so a stalled mirror used to hang the job until
+      # the 6-hour limit cancelled it. ${GITHUB_WORKSPACE} is needed because this step's
+      # working-directory is documentation/ag-grid-docs.
       run: |
+        PW_INSTALL="${GITHUB_WORKSPACE}/.github/actions/test-framework-examples/install-playwright.sh"
         if [ "${{ steps.pw-cache.outputs.cache-hit }}" = "true" ]; then
-          npx playwright install-deps ${PW_BROWSERS}
+          bash "${PW_INSTALL}" deps ${PW_BROWSERS}
         else
-          npx playwright install --with-deps ${PW_BROWSERS}
+          bash "${PW_INSTALL}" full ${PW_BROWSERS}
         fi
 
     # Run Playwright directly via ./docs-e2e.sh (bypasses Nx) so we avoid the Nx target's
