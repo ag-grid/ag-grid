@@ -575,9 +575,27 @@ export function handleRowGenericInterface(fileTxt: string, tData: string): strin
     return fileTxt;
 }
 
+const GENERIC_INTERFACE_NAMES: Record<string, string[]> = {
+    IOlympicData: ['IOlympicData'],
+    IOlympicDataWithId: ['IOlympicDataWithId', 'IOlympicData'],
+    IAccount: ['IAccount', 'ICallRecord'],
+};
+
 export function addGenericInterfaceImport(imports: string[], tData: string, bindings) {
-    if (tData && !bindings.interfaces.some((i) => i.includes(tData)) && !imports.some((i) => i.includes(tData))) {
-        imports.push(`import { ${tData} } from './interfaces';`);
+    if (!tData) {
+        return;
+    }
+
+    const source = JSON.stringify(bindings);
+    const names = (GENERIC_INTERFACE_NAMES[tData] ?? [tData]).filter(
+        (name) =>
+            (name === tData || new RegExp(`\\b${name}\\b`).test(source)) &&
+            !bindings.interfaces.some((i) => i.includes(name)) &&
+            !imports.some((i) => i.includes(name))
+    );
+
+    if (names.length > 0) {
+        imports.push(`import { ${names.join(', ')} } from './interfaces';`);
     }
 }
 
@@ -797,13 +815,13 @@ export function getEnableAGTestIdLogic(isUmd: boolean = false): string {
 
     // Support dynamically adding modules during integration testing
     const agGridCommunityImport = isUmd ? '' : `import * as ${community} from 'ag-grid-community';`;
-    const agGridEnterpriseImport = isUmd ? '' : `import * as ${enterprise} from 'ag-grid-enterprise';`;
 
     const extraModules = isUmd
         ? ''
         : `
     const modulesCSV = url.get('modules');
     if (modulesCSV) {
+        const ${enterprise} = await import('ag-grid-enterprise');
         ${community}.ModuleRegistry.registerModules(
             modulesCSV.split(',').map(name => ${community}[name] || ${enterprise}[name])
         );
@@ -817,7 +835,6 @@ export function getEnableAGTestIdLogic(isUmd: boolean = false): string {
 
     const method = `
 ${agGridCommunityImport}
-${agGridEnterpriseImport}
 const url = new URLSearchParams(window.location.search);
 const enableTestIds = url.get('enableTestIds');
 if (enableTestIds) {
