@@ -155,14 +155,11 @@ export class NumberFilter extends SimpleFilter<
         fromTo: string,
         allowedCharPattern: string | null
     ): GridInputTextField | GridInputNumberField {
-        let eValue: GridInputTextField | GridInputNumberField;
-        if (allowedCharPattern) {
-            eValue = this.createManagedBean<GridInputTextField>(
-                new AgInputTextField({ allowedCharPattern, clearButton: true })
-            );
-        } else {
-            eValue = this.createManagedBean<GridInputNumberField>(new AgInputNumberField({ clearButton: true }));
-        }
+        const eValue = this.createManagedBean<GridInputTextField | GridInputNumberField>(
+            allowedCharPattern
+                ? new AgInputTextField({ allowedCharPattern, clearButton: true })
+                : new AgInputNumberField({ clearButton: true })
+        );
         eValue.addCss(`ag-filter-${fromTo}`);
         eValue.addCss('ag-filter-filter');
         eValues.push(eValue);
