@@ -1,9 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import { TextEditorModule } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /**
  * Tests for find with data mutations and cell updates.

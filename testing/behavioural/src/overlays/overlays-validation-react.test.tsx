@@ -1,10 +1,9 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
+import { isAgHtmlElementVisible } from 'ag-test-utils';
 import React from 'react';
 
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-
-import { isAgHtmlElementVisible } from '../test-utils';
 
 // The dev validation overlay is a standard grid overlay (OverlayService + an internal component), so it
 // renders the same way under React as the built-in loading/no-rows overlays. Registering ValidationModule

@@ -1,4 +1,4 @@
-import { AgPromise } from 'ag-stack';
+import { AgPromise, FAST_TEST_TIMINGS } from 'ag-stack';
 
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
@@ -11,6 +11,11 @@ import { _attemptToRestoreCellFocus } from '../../utils/gridFocus';
 import type { ComponentSelector } from '../../widgets/component';
 import type { IOverlayComp, OverlayType } from './overlayComponent';
 import { OverlayWrapperComponent, OverlayWrapperSelector } from './overlayWrapperComponent';
+
+/** A floor on how long the export overlay stays up, so a fast export doesn't flash it. Shortened rather
+ *  than removed under the test flag: a test still has to be able to observe the overlay before it goes,
+ *  and one `waitFor` poll on a saturated worker pool is already 50ms. */
+const MIN_EXPORT_OVERLAY_SHOW_TIME = FAST_TEST_TIMINGS ? 150 : 300;
 
 const overlayCompTypeOptionalMethods = ['refresh'];
 const overlayCompType = (name: string): ComponentType => ({ name, optionalMethods: overlayCompTypeOptionalMethods });
@@ -292,9 +297,8 @@ export class OverlayService extends BeanStub implements NamedBean {
         try {
             heavyOperation();
         } finally {
-            // We apply a minimum show time of 300ms to avoid fast exports having a flicker of the overlay
             const elapsed = Date.now() - shownAt;
-            const remaining = Math.max(0, 300 - elapsed);
+            const remaining = Math.max(0, MIN_EXPORT_OVERLAY_SHOW_TIME - elapsed);
 
             const clearExportOverlay = () => {
                 this.exportsInProgress--;

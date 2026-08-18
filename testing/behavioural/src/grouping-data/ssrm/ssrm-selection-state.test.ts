@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
+import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, TestGridsManager } from '../../test-utils';
-import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
  * CHARACTERIZATION (golden-master) tests pinning CURRENT SSRM selection-STATE-API behaviour on a

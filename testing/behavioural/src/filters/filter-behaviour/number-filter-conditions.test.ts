@@ -1,6 +1,3 @@
-import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
-
 import {
     ALL_SEVERITIES,
     ColumnFilterHarness,
@@ -11,7 +8,10 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 
 /**
  * Black-box coverage for `agNumberColumnFilter` conditions: operators, inRange boundary semantics,

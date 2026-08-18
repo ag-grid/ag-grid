@@ -1,10 +1,9 @@
+import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type { FormulaFunctionParams, GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid formulas function semantics', () => {
     const rowNumberRefreshBufferMs = 25;

@@ -1,4 +1,13 @@
 import { waitFor } from '@testing-library/dom';
+import {
+    ColumnFilterHarness,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
 
 import type { FilterChangedEvent, FilterModifiedEvent, GridApi, GridState } from 'ag-grid-community';
 import {
@@ -10,15 +19,6 @@ import {
 } from 'ag-grid-community';
 import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import {
-    ColumnFilterHarness,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
 import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
 
 interface Athlete {

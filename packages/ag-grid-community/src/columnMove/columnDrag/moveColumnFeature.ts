@@ -1,4 +1,4 @@
-import { _exists, _last, _missing } from 'ag-stack';
+import { FAST_TEST_TIMINGS, _exists, _last, _missing } from 'ag-stack';
 
 import { _setColsVisible } from '../../columns/columnStateUtils';
 import { BeanStub } from '../../context/beanStub';
@@ -23,7 +23,8 @@ const MOVE_FAIL_THRESHOLD = 7;
 const SCROLL_MOVE_WIDTH = 100;
 const SCROLL_GAP_NEEDED_BEFORE_MOVE = SCROLL_MOVE_WIDTH / 2;
 const SCROLL_ACCELERATION_RATE = 5;
-const SCROLL_TIME_INTERVAL = 100;
+/** Tick of the hold-at-the-edge loop that scrolls, then pins once scrolling can go no further. */
+const SCROLL_TIME_INTERVAL = FAST_TEST_TIMINGS ? 20 : 100;
 
 export class MoveColumnFeature extends BeanStub implements DropListener {
     private gridBodyCon: GridBodyCtrl;

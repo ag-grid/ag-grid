@@ -1,0 +1,163 @@
+import { GridColumns, GridRows, assertSelectedRowsById } from 'ag-test-utils';
+
+import {
+    columnDefs,
+    createGridAndWait,
+    rowData,
+    setupServerSideRowSelectionSuite,
+} from './serverSideRowSelectionHarness';
+
+describe('Row Selection Grid Options', () => {
+    describe('User Interactions', () => {
+        setupServerSideRowSelectionSuite();
+
+        describe('Header checkbox selection', () => {
+            test('can be used to select and deselect all rows', async () => {
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: { mode: 'multiRow', headerCheckbox: true },
+                });
+                await new GridColumns(api, `can be used to select and deselect all rows setup`).checkColumns(`
+                    CENTER
+                    ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                    └── sport "Sport" width:200
+                `);
+                await new GridRows(api, `can be used to select and deselect all rows setup`).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+
+                actions.toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsById(['0', '1', '2', '3', '4', '5', '6'], api);
+
+                actions.toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsById([], api);
+                await new GridRows(api, `can be used to select and deselect all rows final state`).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+            });
+
+            test('can select multiple pages of data', async () => {
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: { mode: 'multiRow', headerCheckbox: true },
+                    pagination: true,
+                    paginationPageSize: 5,
+                    paginationPageSizeSelector: false,
+                });
+
+                actions.toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsById(['0', '1', '2', '3', '4', '5', '6'], api);
+
+                actions.toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsById([], api);
+                await new GridRows(api, `can select multiple pages of data final state`).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+            });
+
+            test('indeterminate selection state transitions to select all', async () => {
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: { mode: 'multiRow', headerCheckbox: true },
+                });
+
+                actions.toggleCheckboxByIndex(3);
+                assertSelectedRowsById(['3'], api);
+
+                actions.toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsById(['3', '0', '1', '2', '4', '5', '6'], api);
+                await new GridRows(api, `indeterminate selection state transitions to select all final state`).check(
+                    `
+                        ROOT id:<no-id>
+                        ├── LEAF selected id:0 sport:"football"
+                        ├── LEAF selected id:1 sport:"rugby"
+                        ├── LEAF selected id:2 sport:"tennis"
+                        ├── LEAF selected id:3 sport:"cricket"
+                        ├── LEAF selected id:4 sport:"golf"
+                        ├── LEAF selected id:5 sport:"swimming"
+                        └── LEAF selected id:6 sport:"rowing"
+                    `
+                );
+            });
+
+            test('un-selectable rows are not part of the selection', async () => {
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: {
+                        mode: 'multiRow',
+                        headerCheckbox: true,
+                        isRowSelectable: (node) => node.data.sport !== 'football',
+                    },
+                });
+                await new GridRows(api, `un-selectable rows are not part of the selection setup`).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF 🚫 id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+
+                actions.toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsById(['1', '2', '3', '4', '5', '6'], api);
+                await new GridRows(api, `un-selectable rows are not part of the selection final state`).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF 🚫 id:0 sport:"football"
+                    ├── LEAF selected id:1 sport:"rugby"
+                    ├── LEAF selected id:2 sport:"tennis"
+                    ├── LEAF selected id:3 sport:"cricket"
+                    ├── LEAF selected id:4 sport:"golf"
+                    ├── LEAF selected id:5 sport:"swimming"
+                    └── LEAF selected id:6 sport:"rowing"
+                `);
+            });
+        });
+    });
+});

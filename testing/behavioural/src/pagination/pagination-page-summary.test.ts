@@ -1,9 +1,8 @@
 import { userEvent } from '@testing-library/user-event';
+import { TestGridsManager } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, PaginationModule, getGridElement } from 'ag-grid-community';
-
-import { TestGridsManager } from '../test-utils';
 
 const COLUMN_DEFS = [{ field: 'name' }];
 

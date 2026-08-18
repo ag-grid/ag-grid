@@ -4,12 +4,11 @@
  * suppressMultiSort, sortingOrder, defaultColDef.sort, and data mutations.
  */
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { Column, GridApi, SortModelItem } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ColumnMenuModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('SortService', () => {
     const gridMgr = new TestGridsManager({

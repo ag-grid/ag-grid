@@ -5,8 +5,6 @@ import { ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import { ignoreConsoleLicenseKeyError } from '../../test-utils';
-
 /**
  * React coverage. The `gridcell` role is carried by the full-width anchor, which is re-implemented in
  * `reactUi/rows/rowComp.tsx`, so a green vanilla suite does not prove the loading row renders a cell
@@ -15,7 +13,6 @@ import { ignoreConsoleLicenseKeyError } from '../../test-utils';
 describe('SSRM full-width loading row ARIA (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ServerSideRowModelModule, ValidationModule]);
-        ignoreConsoleLicenseKeyError();
     });
 
     afterEach(() => {

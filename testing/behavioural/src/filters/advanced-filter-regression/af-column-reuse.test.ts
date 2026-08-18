@@ -1,7 +1,3 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, setupAgTestIds } from 'ag-grid-community';
-import { SetFilterModule } from 'ag-grid-enterprise';
-
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -10,7 +6,11 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 /**
  * Regression baseline for the column-filter behaviours Advanced Filter will reuse: the built-in

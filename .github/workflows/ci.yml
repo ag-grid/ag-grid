@@ -240,6 +240,8 @@ jobs:
       fail-fast: false
     env:
       NX_PARALLEL: 1
+      # Vite 8 warns once per config that these are not loadable by its future `configLoader: 'native'`.
+      VITE_CONFIG_NATIVE_IGNORE_WARNING: true
     steps:
       - name: Checkout
         id: checkout
@@ -270,7 +272,7 @@ jobs:
         # config emit reports/workspace.xml for this shard.
         if: matrix.shard != 0 && needs.init.outputs.unit_projects != ''
         id: test
-        run: npx vitest run ${{ needs.init.outputs.unit_projects }}
+        run: node_modules/.bin/vitest run ${{ needs.init.outputs.unit_projects }}
           --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
       - name: Type-check test files
         # `build:test` (tsc --noEmit on tsconfig.spec) was previously pulled in as the nx `test` target's

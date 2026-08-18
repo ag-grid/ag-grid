@@ -1,10 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, test } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, GROUP_HIERARCHY_COLUMN_ID_PREFIX } from 'ag-grid-community';
 import { ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, SideBarModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 interface CustomCellDataRow {
     id: string;

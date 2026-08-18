@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridApi, IAggFunc, IRowNode, ShowValuesAsModeDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, LocaleModule } from 'ag-grid-community';
 import { ColumnMenuModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 let restoreOffsetParent: (() => void) | undefined;
 

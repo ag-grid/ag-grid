@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('column tool panel test IDs with virtualization', () => {
     const gridMgr = new TestGridsManager({
@@ -48,7 +47,7 @@ describe('column tool panel test IDs with virtualization', () => {
     function forceVirtualListRender(gridApi: GridApi): HTMLElement {
         const gridEl = getGridElement(gridApi)! as HTMLElement;
         const viewport = gridEl.querySelector('.ag-column-select-virtual-list-viewport') as HTMLElement;
-        // jsdom doesn't have a layout engine so offsetHeight returns 0, which prevents
+        // happy-dom doesn't have a layout engine so offsetHeight returns 0, which prevents
         // the virtual list from rendering items. Override it on the instance.
         Object.defineProperty(viewport, 'offsetHeight', { value: 200, configurable: true });
         // Trigger virtual list render via scroll event

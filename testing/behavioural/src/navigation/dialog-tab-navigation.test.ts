@@ -1,11 +1,11 @@
 import { waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
+import { TestGridsManager } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, NotesDataSource, TabToNextGridContainerParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, PaginationModule } from 'ag-grid-community';
 import { ColumnMenuModule, NotesModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 interface RowData {
     a: number;

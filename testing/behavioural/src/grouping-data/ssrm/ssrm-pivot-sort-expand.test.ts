@@ -1,4 +1,6 @@
 import { waitFor } from '@testing-library/dom';
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridApi, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { ScrollApiModule, TextFilterModule } from 'ag-grid-community';
@@ -11,8 +13,6 @@ import {
 
 import { createFakeServer, createServerSideDatasource } from '../../columnToolPanel/deferredPivotModeFakeServer';
 import { getColumnOrder } from '../../columns/column-test-utils';
-import { GridRows, TestGridsManager, waitForEvent } from '../../test-utils';
-import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
  * Characterization tests pinning the CURRENT behaviour of two Server-Side Row Model pivot-mode cells

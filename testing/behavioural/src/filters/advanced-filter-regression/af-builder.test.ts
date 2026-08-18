@@ -1,3 +1,13 @@
+import {
+    AdvancedFilterBuilderHarness,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
+
 import type { AdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -8,21 +18,11 @@ import {
 } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
-import {
-    AdvancedFilterBuilderHarness,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
-
 /**
  * Regression baseline for the Advanced Filter Builder: the DOM tree (nested conditions, 0-operand
  * operators, `+ add`, validity marks) and editing through the dialog (value/operator pills, group join,
  * condition removal). Needs the layout mock for the builder VirtualList + pill rich-select popups in
- * jsdom. Pinned so AG-8950 (set multi-select pill) and AG-11352 (custom filter component) surface as diffs.
+ * layout. Pinned so AG-8950 (set multi-select pill) and AG-11352 (custom filter component) surface as diffs.
  */
 const DEFAULT_OPTIONS: GridOptions = {
     columnDefs: [

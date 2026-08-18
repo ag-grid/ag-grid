@@ -1,11 +1,10 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
+import { asyncSetTimeout } from 'ag-test-utils';
 import React from 'react';
 
 import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, PinnedRowModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-
-import { asyncSetTimeout, ignoreConsoleLicenseKeyError } from '../test-utils';
 
 const PINNED_TOP_SELECTOR = '.ag-grid-pinned-top-rows [row-id]';
 const PINNED_BOTTOM_SELECTOR = '.ag-grid-pinned-bottom-rows [row-id]';
@@ -17,7 +16,6 @@ const PINNED_BOTTOM_SELECTOR = '.ag-grid-pinned-bottom-rows [row-id]';
 describe('React-driven pinned row data', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, PinnedRowModule]);
-        ignoreConsoleLicenseKeyError();
     });
 
     afterEach(async () => {

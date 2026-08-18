@@ -1,7 +1,8 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import { CellStyleModule, RowSelectionModule } from 'ag-grid-community';
 import { FindModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../../../../test-utils';
 import { getTestGenerator } from '../../../util';
 import { rowModelGridOptions } from '../../grid-config';
 import { findSnapshotter, getGridOptions_checkboxes, getTestConcerns_checkboxes } from '../../grouping-test-utils';

@@ -1,11 +1,11 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnAutoSizeModule, GridStateModule } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
 import type { HideClassRecorder } from './column-delay-render-utils';
 import { isHidden, recordHideClassMutations } from './column-delay-render-utils';
 
@@ -22,7 +22,7 @@ describe('Column delay render', () => {
     let recorder: HideClassRecorder;
 
     beforeAll(() => {
-        // The hide/reveal cycle is driven by measured viewport width, which jsdom reports as 0.
+        // The hide/reveal cycle is driven by measured viewport width, which happy-dom reports as 0.
         mockGridLayout.useRealOffsetDimensions = true;
     });
 

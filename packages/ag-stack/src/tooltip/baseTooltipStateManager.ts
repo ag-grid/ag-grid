@@ -1,4 +1,5 @@
 import { AgBeanStub } from '../core/agBeanStub';
+import { FAST_TEST_TIMINGS } from '../fastTestTimings';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -23,6 +24,8 @@ export enum TooltipTrigger {
 const SHOW_SWITCH_TOOLTIP_DIFF = 1000;
 const FADE_OUT_TOOLTIP_TIMEOUT = 1000;
 const INTERACTIVE_HIDE_DELAY = 100;
+/** Guards against a tooltip flashing past under a moving cursor, so `tooltipShowDelay: 0` still waits. */
+const MIN_TOOLTIP_DELAY = FAST_TEST_TIMINGS ? 0 : 200;
 
 // different instances of tooltipFeature use this to see when the
 // last tooltip was hidden.
@@ -137,7 +140,7 @@ export abstract class BaseTooltipStateManager<
         delayOption: 'tooltipShowDelay' | 'tooltipHideDelay' | 'tooltipSwitchShowDelay'
     ): number {
         const delay = this.gos.get(delayOption)!;
-        return Math.max(200, delay);
+        return Math.max(MIN_TOOLTIP_DELAY, delay);
     }
 
     private getTooltipDelay(type: 'Show' | 'Hide' | 'SwitchShow'): number {

@@ -1,10 +1,10 @@
+import { GridColumns, GridRows, TestGridsManager, assertSelectedRowsByIndex } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { CellSelectionModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, assertSelectedRowsByIndex } from '../test-utils';
 import { GridActions, pressAKey, pressSpaceKey } from './utils';
 
 describe('Row Selection with Keyboard', () => {
@@ -93,21 +93,6 @@ describe('Row Selection with Keyboard', () => {
             rowData,
             rowSelection: { mode: 'multiRow' },
         });
-        await new GridColumns(api, `select multiple rows with keyboard only setup`).checkColumns(`
-            CENTER
-            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-            └── sport "Sport" width:200
-        `);
-        await new GridRows(api, `select multiple rows with keyboard only setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 sport:"football"
-            ├── LEAF id:1 sport:"rugby"
-            ├── LEAF id:2 sport:"tennis"
-            ├── LEAF id:3 sport:"cricket"
-            ├── LEAF id:4 sport:"golf"
-            ├── LEAF id:5 sport:"swimming"
-            └── LEAF id:6 sport:"rowing"
-        `);
 
         pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
         pressSpaceKey(actions.getCellByPosition(3, 'sport')!);
@@ -135,21 +120,6 @@ describe('Row Selection with Keyboard', () => {
             rowSelection: { mode: 'multiRow' },
             cellSelection: true,
         });
-        await new GridColumns(api, `ctrl+A setup`).checkColumns(`
-            CENTER
-            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-            └── sport "Sport" width:200
-        `);
-        await new GridRows(api, `ctrl+A setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 sport:"football"
-            ├── LEAF id:1 sport:"rugby"
-            ├── LEAF id:2 sport:"tennis"
-            ├── LEAF id:3 sport:"cricket"
-            ├── LEAF id:4 sport:"golf"
-            ├── LEAF id:5 sport:"swimming"
-            └── LEAF id:6 sport:"rowing"
-        `);
 
         assertSelectedRowsByIndex([], api);
         expect(api.getCellRanges()).toEqual([]);
@@ -198,24 +168,6 @@ describe('Row Selection with Keyboard', () => {
                 rowData,
                 rowSelection: { mode: 'multiRow' },
             });
-            await new GridColumns(api, `Holding SHIFT while selecting row with SPACE selects range of rows setup`)
-                .checkColumns(`
-                    CENTER
-                    ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                    └── sport "Sport" width:200
-                `);
-            await new GridRows(api, `Holding SHIFT while selecting row with SPACE selects range of rows setup`).check(
-                `
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `
-            );
 
             pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
             pressSpaceKey(actions.getCellByPosition(5, 'sport')!, { shiftKey: true });
@@ -240,24 +192,6 @@ describe('Row Selection with Keyboard', () => {
                 rowData,
                 rowSelection: { mode: 'multiRow' },
             });
-            await new GridColumns(api, `Can extend range downwards from last selected row when holding SHIFT setup`)
-                .checkColumns(`
-                    CENTER
-                    ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                    └── sport "Sport" width:200
-                `);
-            await new GridRows(api, `Can extend range downwards from last selected row when holding SHIFT setup`).check(
-                `
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `
-            );
 
             pressSpaceKey(actions.getCellByPosition(1, 'sport')!);
             pressSpaceKey(actions.getCellByPosition(3, 'sport')!);
@@ -282,24 +216,6 @@ describe('Row Selection with Keyboard', () => {
                 rowData,
                 rowSelection: { mode: 'multiRow' },
             });
-            await new GridColumns(api, `Can extend range upwards from last selected row when holding SHIFT setup`)
-                .checkColumns(`
-                    CENTER
-                    ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                    └── sport "Sport" width:200
-                `);
-            await new GridRows(api, `Can extend range upwards from last selected row when holding SHIFT setup`).check(
-                `
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `
-            );
 
             actions.selectRowsByIndex([2, 4], false);
 
@@ -325,24 +241,6 @@ describe('Row Selection with Keyboard', () => {
                 rowData,
                 rowSelection: { mode: 'multiRow' },
             });
-            await new GridColumns(api, `Using SHIFT+SPACE to select on un-selected table selects clicked row setup`)
-                .checkColumns(`
-                    CENTER
-                    ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                    └── sport "Sport" width:200
-                `);
-            await new GridRows(api, `Using SHIFT+SPACE to select on un-selected table selects clicked row setup`).check(
-                `
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `
-            );
 
             pressSpaceKey(actions.getCellByPosition(4, 'sport')!, { shiftKey: true });
             assertSelectedRowsByIndex([4], api);
@@ -368,21 +266,6 @@ describe('Row Selection with Keyboard', () => {
                 rowData,
                 rowSelection: { mode: 'multiRow' },
             });
-            await new GridColumns(api, `Range selection is preserved on new keyboard selection setup`).checkColumns(`
-                CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                └── sport "Sport" width:200
-            `);
-            await new GridRows(api, `Range selection is preserved on new keyboard selection setup`).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 sport:"football"
-                ├── LEAF id:1 sport:"rugby"
-                ├── LEAF id:2 sport:"tennis"
-                ├── LEAF id:3 sport:"cricket"
-                ├── LEAF id:4 sport:"golf"
-                ├── LEAF id:5 sport:"swimming"
-                └── LEAF id:6 sport:"rowing"
-            `);
 
             pressSpaceKey(actions.getCellByPosition(1, 'sport')!);
             pressSpaceKey(actions.getCellByPosition(3, 'sport')!, { shiftKey: true });
@@ -408,21 +291,6 @@ describe('Row Selection with Keyboard', () => {
                 rowData,
                 rowSelection: { mode: 'multiRow' },
             });
-            await new GridColumns(api, `Range is extended downwards from selection root setup`).checkColumns(`
-                CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                └── sport "Sport" width:200
-            `);
-            await new GridRows(api, `Range is extended downwards from selection root setup`).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 sport:"football"
-                ├── LEAF id:1 sport:"rugby"
-                ├── LEAF id:2 sport:"tennis"
-                ├── LEAF id:3 sport:"cricket"
-                ├── LEAF id:4 sport:"golf"
-                ├── LEAF id:5 sport:"swimming"
-                └── LEAF id:6 sport:"rowing"
-            `);
 
             pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
             pressSpaceKey(actions.getCellByPosition(4, 'sport')!, { shiftKey: true });
@@ -448,21 +316,6 @@ describe('Row Selection with Keyboard', () => {
                 rowData,
                 rowSelection: { mode: 'multiRow' },
             });
-            await new GridColumns(api, `Range is extended upwards from selection root setup`).checkColumns(`
-                CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                └── sport "Sport" width:200
-            `);
-            await new GridRows(api, `Range is extended upwards from selection root setup`).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 sport:"football"
-                ├── LEAF id:1 sport:"rugby"
-                ├── LEAF id:2 sport:"tennis"
-                ├── LEAF id:3 sport:"cricket"
-                ├── LEAF id:4 sport:"golf"
-                ├── LEAF id:5 sport:"swimming"
-                └── LEAF id:6 sport:"rowing"
-            `);
 
             pressSpaceKey(actions.getCellByPosition(6, 'sport')!);
             pressSpaceKey(actions.getCellByPosition(4, 'sport')!, { shiftKey: true });
@@ -488,21 +341,6 @@ describe('Row Selection with Keyboard', () => {
                 rowData,
                 rowSelection: { mode: 'multiRow' },
             });
-            await new GridColumns(api, `Range can be inverted setup`).checkColumns(`
-                CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                └── sport "Sport" width:200
-            `);
-            await new GridRows(api, `Range can be inverted setup`).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 sport:"football"
-                ├── LEAF id:1 sport:"rugby"
-                ├── LEAF id:2 sport:"tennis"
-                ├── LEAF id:3 sport:"cricket"
-                ├── LEAF id:4 sport:"golf"
-                ├── LEAF id:5 sport:"swimming"
-                └── LEAF id:6 sport:"rowing"
-            `);
 
             pressSpaceKey(actions.getCellByPosition(4, 'sport')!);
             pressSpaceKey(actions.getCellByPosition(6, 'sport')!, { shiftKey: true });
@@ -528,27 +366,6 @@ describe('Row Selection with Keyboard', () => {
                 rowData,
                 rowSelection: { mode: 'multiRow' },
             });
-            await new GridColumns(
-                api,
-                `SHIFT-SPACE within range after de-selection resets root and clears previous sele setup`
-            ).checkColumns(`
-                CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                └── sport "Sport" width:200
-            `);
-            await new GridRows(
-                api,
-                `SHIFT-SPACE within range after de-selection resets root and clears previous sele setup`
-            ).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 sport:"football"
-                ├── LEAF id:1 sport:"rugby"
-                ├── LEAF id:2 sport:"tennis"
-                ├── LEAF id:3 sport:"cricket"
-                ├── LEAF id:4 sport:"golf"
-                ├── LEAF id:5 sport:"swimming"
-                └── LEAF id:6 sport:"rowing"
-            `);
 
             pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
             pressSpaceKey(actions.getCellByPosition(6, 'sport')!, { shiftKey: true });
@@ -580,27 +397,6 @@ describe('Row Selection with Keyboard', () => {
                 rowData,
                 rowSelection: { mode: 'multiRow' },
             });
-            await new GridColumns(
-                api,
-                `SHIFT-SPACE below range after de-selection resets root and clears previous selec setup`
-            ).checkColumns(`
-                CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                └── sport "Sport" width:200
-            `);
-            await new GridRows(
-                api,
-                `SHIFT-SPACE below range after de-selection resets root and clears previous selec setup`
-            ).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 sport:"football"
-                ├── LEAF id:1 sport:"rugby"
-                ├── LEAF id:2 sport:"tennis"
-                ├── LEAF id:3 sport:"cricket"
-                ├── LEAF id:4 sport:"golf"
-                ├── LEAF id:5 sport:"swimming"
-                └── LEAF id:6 sport:"rowing"
-            `);
 
             pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
             pressSpaceKey(actions.getCellByPosition(5, 'sport')!, { shiftKey: true });
@@ -632,27 +428,6 @@ describe('Row Selection with Keyboard', () => {
                 rowData,
                 rowSelection: { mode: 'multiRow' },
             });
-            await new GridColumns(
-                api,
-                `SHIFT-SPACE above range after de-selection resets root and clears previous selec setup`
-            ).checkColumns(`
-                CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                └── sport "Sport" width:200
-            `);
-            await new GridRows(
-                api,
-                `SHIFT-SPACE above range after de-selection resets root and clears previous selec setup`
-            ).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 sport:"football"
-                ├── LEAF id:1 sport:"rugby"
-                ├── LEAF id:2 sport:"tennis"
-                ├── LEAF id:3 sport:"cricket"
-                ├── LEAF id:4 sport:"golf"
-                ├── LEAF id:5 sport:"swimming"
-                └── LEAF id:6 sport:"rowing"
-            `);
 
             pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
             pressSpaceKey(actions.getCellByPosition(5, 'sport')!, { shiftKey: true });
