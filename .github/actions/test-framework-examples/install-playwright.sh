@@ -18,7 +18,7 @@
 # report upload, whereas a failed step fails the job with the annotation below intact. Keep the
 # worst case comfortably inside the smallest `timeout-minutes` declared by any calling job in
 # .github/workflows/doc-tests.yml (60 at the time of writing).
-#   deps     3 x (300s + 30s grace) + 2 x 20s ~ 17 min
+#   deps     3 x (600s + 30s grace) + 2 x 20s ~ 32 min
 #   full     2 x (900s + 30s grace) + 1 x 20s ~ 31 min
 #   browsers 2 x (900s + 30s grace) + 1 x 20s ~ 31 min
 # Healthy installs are 1-3 min, so each bound still carries several times the observed headroom -
@@ -33,7 +33,7 @@ BROWSERS=("$@")
 case "$MODE" in
     deps)
         CMD=(npx playwright install-deps "${BROWSERS[@]}")
-        DEFAULT_TIMEOUT=300
+        DEFAULT_TIMEOUT=600
         DEFAULT_ATTEMPTS=3
         LABEL="Playwright OS dependency install (playwright install-deps)"
         ;;
