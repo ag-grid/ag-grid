@@ -39,6 +39,7 @@ jobs:
           PR_ID: ${{ github.event.pull_request.number }}
           PR_URL: ${{ github.event.pull_request.html_url }}
           PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
           EVENT_ACTION: ${{ github.event.action }}
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
           JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -52,6 +53,7 @@ jobs:
             const pr_url = process.env.PR_URL;
             const pr_title = process.env.PR_TITLE;
             const eventAction = process.env.EVENT_ACTION;
+            const headRef = process.env.PR_HEAD_REF || '';
 
             // Expand bare JIRA ticket mentions (#AG-XXXX) into markdown links
             const body = old_body.replace(/#((AG|RTI)-\d{3,})/g, `[$1](https://ag-grid.atlassian.net/browse/$1)`);
@@ -64,6 +66,13 @@ jobs:
             // after opening). The per-PR sentinel dedup below prevents duplicate comments.
             if (eventAction !== 'opened' && eventAction !== 'edited') return;
             if (!process.env.JIRA_API_AUTH) return;
+
+            // AI Workflow Delivery PRs post their own JIRA comment once the run is
+            // actually ready for review, so skip the generic mention comment here.
+            if (headRef.startsWith('ghabot-ag-')) {
+                console.log(`Skipping JIRA mention comment for AI workflow PR (branch ${headRef}).`);
+                return;
+            }
 
             const { addJiraComment, getJiraIssueComments } =
                 require('./scripts/ci/_utils.mjs');
