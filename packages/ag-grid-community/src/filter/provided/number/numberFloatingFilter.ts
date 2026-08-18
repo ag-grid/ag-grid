@@ -106,7 +106,7 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }
 
     private setPlaceholder(input: GridInputTextField | GridInputNumberField, placeholder?: string): void {
-        input.toggleCss('ag-floating-filter-search-icon', !!placeholder);
+        input.setSearchIcon(!!placeholder);
         input.setInputPlaceholder(placeholder);
     }
 

@@ -63,6 +63,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
         this.eFilterTextField
             .setClearButtonEnabled(true)
+            .setSearchIcon(true)
             .onValueChange(() => this.onFilterTextChanged())
             .onValueClear(() => this.onFilterTextCleared());
 

@@ -628,11 +628,7 @@
         opacity: 0.35;
     }
 
-    .ag-column-select-header-filter-wrapper,
-    .ag-filter-toolpanel-search,
-    .ag-mini-filter,
-    .ag-filter-filter,
-    .ag-filter-add-select {
+    .ag-input-field-search {
         .ag-input-wrapper::before {
             position: absolute;
             display: block;
@@ -699,10 +695,7 @@
 }
 
 .ag-theme-quartz-dark {
-    .ag-column-select-header-filter-wrapper,
-    .ag-filter-toolpanel-search,
-    .ag-mini-filter,
-    .ag-filter-filter {
+    .ag-input-field-search {
         .ag-input-wrapper::before {
             opacity: 66%;
             filter: invert(100%);

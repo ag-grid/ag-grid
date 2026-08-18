@@ -34,7 +34,10 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
     public init(params: IDateParams): void {
         this.params = params;
-        this.eDateInput.setClearButtonEnabled(true).onValueClear(() => this.params.onDateCleared?.());
+        this.eDateInput
+            .setClearButtonEnabled(true)
+            .setSearchIcon(true)
+            .onValueClear(() => this.params.onDateCleared?.());
         this.setParams(params);
 
         const inputElement = this.eDateInput.getInputElement();

@@ -29,6 +29,7 @@ export interface AgInputTextFieldParams<
     allowedCharPattern?: string;
     clearButton?: boolean;
     onValueClear?: () => void;
+    searchIcon?: boolean;
 }
 export type AgInputTextFieldEvent = AgAbstractInputFieldEvent | 'fieldValueCleared';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -63,7 +64,7 @@ export class AgInputTextField<
     public override postConstruct() {
         super.postConstruct();
 
-        const { allowedCharPattern, clearButton, onValueClear } = this.config;
+        const { allowedCharPattern, clearButton, onValueClear, searchIcon } = this.config;
 
         if (allowedCharPattern) {
             this.preventDisallowedCharacters();
@@ -73,6 +74,9 @@ export class AgInputTextField<
         }
         if (onValueClear) {
             this.onValueClear(onValueClear);
+        }
+        if (searchIcon) {
+            this.setSearchIcon(true);
         }
         this.addManagedPropertyListener('suppressInputClearButton', () => this.refreshClearButton());
     }
@@ -104,6 +108,11 @@ export class AgInputTextField<
 
     public onValueClear(callbackFn: () => void): this {
         this.addManagedListeners<AgInputTextFieldEvent>(this, { fieldValueCleared: callbackFn });
+        return this;
+    }
+
+    public setSearchIcon(searchIcon: boolean): this {
+        this.toggleCss('ag-input-field-search', searchIcon);
         return this;
     }
 

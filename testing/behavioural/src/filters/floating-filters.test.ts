@@ -306,6 +306,8 @@ describe('Floating Filters', () => {
             const textFilter = getByTestId(gridDiv, getTestId({ source: 'floating-filter', colId: 'country' }));
 
             expect(textFilter.getAttribute('placeholder')).toBe('type here');
+            expect(textFilter.closest('.ag-input-field')).toHaveClass('ag-input-field-search');
+            expect(textFilter.closest('.ag-floating-filter-search-icon')).toBeNull();
 
             // Custom placeholder is presentational only — it applies no filter, so all rows remain.
             expect(api.getDisplayedRowCount()).toBe(3);
