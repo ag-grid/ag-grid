@@ -153,7 +153,11 @@ export class BigIntFilter extends SimpleFilter<
         allowedCharPattern: string | null
     ): GridInputTextField {
         const eValue = this.createManagedBean<GridInputTextField>(
-            new AgInputTextField({ allowedCharPattern: allowedCharPattern ?? undefined, clearButton: true })
+            new AgInputTextField({
+                allowedCharPattern: allowedCharPattern ?? undefined,
+                clearButton: true,
+                searchIcon: true,
+            })
         );
         eValue.addCss(`ag-filter-${fromTo}`);
         eValue.addCss('ag-filter-filter');

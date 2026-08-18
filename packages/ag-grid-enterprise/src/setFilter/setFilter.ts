@@ -583,7 +583,7 @@ export class SetFilter<V = string>
     private initMiniFilter() {
         const { eMiniFilter } = this;
 
-        eMiniFilter.setClearButtonEnabled(true);
+        eMiniFilter.setClearButtonEnabled(true).setSearchIcon(true);
         this.updateMiniFilter();
         eMiniFilter.onValueChange(() => this.onMiniFilterInput()).onValueClear(() => this.onMiniFilterInput(true));
         eMiniFilter.setInputAriaLabel(translateForSetFilter(this, 'ariaSearchFilterValues'));

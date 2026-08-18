@@ -39,6 +39,7 @@ describe('Filter input clear button', () => {
         expect(api.getColumnFilterModel('country')).toEqual(appliedModel);
 
         const input = harness.input('text');
+        expect(input.closest('.ag-input-field')!.classList.contains('ag-input-field-search')).toBe(true);
         const clearButton = input.parentElement!.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
         expect(clearButton.classList.contains('ag-hidden')).toBe(false);
         fireEvent.mouseDown(clearButton);
@@ -94,6 +95,7 @@ describe('Filter input clear button', () => {
         expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'equals', filter: 25 });
 
         const input = harness.input('number');
+        expect(input.closest('.ag-input-field')!.classList.contains('ag-input-field-search')).toBe(true);
         const clearButton = input.parentElement!.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
         expect(clearButton.classList.contains('ag-hidden')).toBe(false);
 
@@ -128,6 +130,7 @@ describe('Filter input clear button', () => {
         );
 
         const miniFilterInput = document.querySelector<HTMLInputElement>('.ag-mini-filter input[type="text"]')!;
+        expect(miniFilterInput.closest('.ag-input-field')!.classList.contains('ag-input-field-search')).toBe(true);
         const clearButton = document.querySelector<HTMLButtonElement>('.ag-mini-filter .ag-input-field-clear-button')!;
         expect(clearButton.classList.contains('ag-hidden')).toBe(false);
         fireEvent.mouseDown(clearButton);

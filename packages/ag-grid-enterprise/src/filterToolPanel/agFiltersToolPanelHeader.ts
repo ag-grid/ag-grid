@@ -51,6 +51,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
 
         this.eFilterTextField
             .setClearButtonEnabled(true)
+            .setSearchIcon(true)
             .setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'))
             .onValueChange(this.onSearchTextChanged.bind(this))
             .onValueClear(() => this.onSearchTextCleared());
