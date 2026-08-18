@@ -1,15 +1,15 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { getIsDev } from '@utils/env';
-import { exampleRunnerAsset } from '@utils/exampleModules/exampleRunnerAsset';
 import {
     DEVELOPMENT_FLAGS,
     DEV_FLAG_PLACEHOLDERS,
     FRAMEWORK_VERSION_PLACEHOLDER,
-    IMPORT_MAP_OPTIONS_ID,
     PRODUCTION_FLAGS,
     getDefaultFrameworkVersion,
     getImportMap,
 } from '@utils/exampleModules/getImportMap';
+
+import { ExampleRunnerCall } from './ExampleRunnerClient';
 
 interface Props {
     internalFramework: InternalFramework;
@@ -49,16 +49,10 @@ export const ExampleImportMap = ({ internalFramework, isEnterprise, isIntegrated
     }
 
     return (
-        <>
-            <script
-                nonce={nonce}
-                type="application/json"
-                id={IMPORT_MAP_OPTIONS_ID}
-                dangerouslySetInnerHTML={{
-                    __html: JSON.stringify({ imports, defaultVersion, defaultProd: !getIsDev() }),
-                }}
-            />
-            <script nonce={nonce} src={exampleRunnerAsset('inject-import-map.js')} />
-        </>
+        <ExampleRunnerCall
+            fn="injectImportMap"
+            args={[{ imports, defaultVersion, defaultProd: !getIsDev(), nonce }]}
+            nonce={nonce}
+        />
     );
 };

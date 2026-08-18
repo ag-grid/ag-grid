@@ -4,7 +4,7 @@ import { pathJoin } from '@utils/pathJoin';
 
 import { BrowserTranspiler } from './BrowserTranspiler';
 import { ExampleImportMap } from './ExampleImportMap';
-import { ExamplePageBoilerplate } from './ExamplePageBoilerplate';
+import { ExampleRunnerCall, ExampleRunnerClient } from './ExampleRunnerClient';
 import { SeedRandom } from './SeedRandom';
 
 interface Props {
@@ -31,6 +31,7 @@ export const ExampleModules = ({
     nonce,
 }: Props) => (
     <>
+        <ExampleRunnerClient isExported={transpileInBrowser} nonce={nonce} />
         <ExampleImportMap
             internalFramework={internalFramework}
             isEnterprise={isEnterprise}
@@ -39,7 +40,7 @@ export const ExampleModules = ({
             nonce={nonce}
         />
         {usesMathRandom && <SeedRandom nonce={nonce} />}
-        <ExamplePageBoilerplate isExported={transpileInBrowser} nonce={nonce} />
+        <ExampleRunnerCall fn="setUpPage" nonce={nonce} />
         {transpileInBrowser ? (
             <BrowserTranspiler
                 entryFileName={entryFileName}

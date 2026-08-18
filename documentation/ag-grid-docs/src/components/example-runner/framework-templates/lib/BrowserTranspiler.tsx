@@ -1,5 +1,4 @@
 import type { InternalFramework } from '@ag-grid-types';
-import { exampleRunnerAsset } from '@utils/exampleModules/exampleRunnerAsset';
 import {
     ASSET_REGEX,
     CSS_IMPORT_REGEX,
@@ -8,6 +7,8 @@ import {
     getCompilerOptionNames,
 } from '@utils/exampleModules/transformExampleModule';
 import ts from 'typescript';
+
+import { ExampleRunnerCall } from './ExampleRunnerClient';
 
 interface Props {
     entryFileName: string;
@@ -18,11 +19,13 @@ interface Props {
 
 const TYPESCRIPT_URL = `https://cdn.jsdelivr.net/npm/typescript@${ts.version}/lib/typescript.js`;
 
-export const TRANSPILER_OPTIONS_ID = 'ag-transpiler-options';
-
 const MODULE_EXTENSION_REGEX = /\.(tsx?|jsx?|mjs|cjs)$/i;
 
-const getTranspilerOptions = (entryFileName: string, fileNames: string[], internalFramework: InternalFramework) => ({
+export const getTranspilerOptions = (
+    entryFileName: string,
+    fileNames: string[],
+    internalFramework: InternalFramework
+) => ({
     entry: `./${entryFileName}`,
     specifierRegex: SPECIFIER_REGEX.source,
     cssImportRegex: CSS_IMPORT_REGEX.source,
@@ -36,14 +39,10 @@ const getTranspilerOptions = (entryFileName: string, fileNames: string[], intern
 export const BrowserTranspiler = ({ entryFileName, fileNames, internalFramework, nonce }: Props) => (
     <>
         <script nonce={nonce} src={TYPESCRIPT_URL} crossOrigin="anonymous" />
-        <script
+        <ExampleRunnerCall
+            fn="runTranspiled"
+            args={[getTranspilerOptions(entryFileName, fileNames, internalFramework)]}
             nonce={nonce}
-            type="application/json"
-            id={TRANSPILER_OPTIONS_ID}
-            dangerouslySetInnerHTML={{
-                __html: JSON.stringify(getTranspilerOptions(entryFileName, fileNames, internalFramework)),
-            }}
         />
-        <script nonce={nonce} type="module" src={exampleRunnerAsset('browser-transpiler.js')} />
     </>
 );
