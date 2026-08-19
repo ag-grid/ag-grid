@@ -88,14 +88,8 @@ const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl)
         >
             window.__basePath = appLocation;
         </script>
-        {
-            usesMathRandom && (
-                <>
-                    <ExampleRunnerClient nonce={nonce} />
-                    <SeedRandom nonce={nonce} />
-                </>
-            )
-        }
+        <ExampleRunnerClient nonce={nonce} />
+        {usesMathRandom && <SeedRandom nonce={nonce} />}
         {isIntegratedCharts && <script nonce={nonce} src={chartsScriptEnterprisePath} crossorigin="anonymous" />}
         <script nonce={nonce} src={isEnterprise ? gridScriptEnterprisePath : gridScriptPath} crossorigin="anonymous"
         ></script>
