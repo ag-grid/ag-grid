@@ -1,3 +1,4 @@
+import { replaceHistoryUrl } from '@ag-website-shared/utils/historyUrl';
 import { type ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 export function useSearchQuery() {
@@ -29,7 +30,7 @@ export function useSearchQuery() {
             } else {
                 url.searchParams.delete('searchQuery');
             }
-            window.history.replaceState(null, '', url.toString());
+            replaceHistoryUrl(url);
         }, 250);
 
         return () => clearTimeout(timeoutId);
