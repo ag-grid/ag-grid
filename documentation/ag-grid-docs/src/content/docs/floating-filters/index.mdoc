@@ -70,21 +70,13 @@ The screen shots below show example scenarios where the provided Number floating
 
 ### Controlling Autocomplete on Floating Filters
 
-Browser autocomplete is disabled for grid input fields by default. Set `enableInputAutoComplete` to `true` to enable it for eligible inputs. Inputs that provide grid-owned suggestions, such as Rich Select and Advanced Filter inputs, keep browser autocomplete disabled so the browser UI cannot overlap their suggestion lists.
+Browser autocomplete on grid inputs is controlled globally by `enableInputAutoComplete` and per input with
+`browserAutoComplete` parameters, see [Input Fields](./input-fields/) for the full behaviour and the accepted values.
 
-Individual inputs can override the global behaviour with a `browserAutoComplete` parameter, available on cell editor
-params, provided filter params (`filterParams`, which floating filter inputs inherit), the Set Filter Mini Filter,
-tool panel params, and the Find / Quick Filter toolbar items (via `toolbarItemParams`). The `Text` and `Number`
-floating filters additionally accept `browserAutoComplete` in `floatingFilterComponentParams` (as defined in
-`ITextFloatingFilterParams` and `INumberFloatingFilterParams`), which takes precedence over the `filterParams` value.
-
-Possible values for `browserAutoComplete`:
-
-- `true` to allow the browser's default autocomplete/autofill behaviour.
-- `false` to disable the browser autocomplete/autofill behaviour by setting the `autocomplete` attribute to `off`.
-- A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
-
-Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
+For floating filters specifically, `browserAutoComplete` can be set in two places: `filterParams` (shared with the
+parent filter's inputs, and inherited by the floating filter input) or `floatingFilterComponentParams` (as defined in
+`ITextFloatingFilterParams` and `INumberFloatingFilterParams`), which applies to the floating filter input only and
+takes precedence over the `filterParams` value.
 
 ### Placeholder Text on Floating Filters
 
