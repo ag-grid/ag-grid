@@ -35,53 +35,87 @@ else
 fi
 
 # The OS libraries are machine-global, but several Nx `setup` targets each call this script, so a
-# single `nx test:e2e` run repeats the apt work once per project. Both outcomes are recorded and
+# single `nx test:e2e` run repeats the apt work once per project. Two outcomes are recorded and
 # reused, because both multiply:
 #
-#   success - skip the apt work the rest of the run, which is what makes it cheap.
-#   failure - fail the rest of the run immediately. This is the one that matters. Nx does not bail
-#             on a failed task, so without it every remaining project pays the full ~30 min budget
-#             against a mirror already known to be stalled; enough of them in series overshoot the
-#             job's `timeout-minutes` and the job is CANCELLED rather than failed, losing the
-#             report upload these bounds exist to preserve. One project pays, the rest report the
-#             same infrastructure error at once.
+#   installed - skip the apt work the rest of the run, which is what makes it cheap.
+#   stalled   - fail the rest of the run immediately. This is the one that matters. Nx does not bail
+#               on a failed task, so without it every remaining project pays the full ~30 min budget
+#               against a mirror already known to be stalled; enough of them in series overshoot the
+#               job's `timeout-minutes` and the job is CANCELLED rather than failed, losing the
+#               report upload these bounds exist to preserve. One project pays, the rest report the
+#               same infrastructure error at once.
 #
-# CI only: GitHub runners are ephemeral, so a marker cannot outlive the machine it describes. A
-# developer machine is long-lived, where a stale marker could skip libraries a later OS change
-# actually needs, or keep failing an install that a mirror recovery has since fixed.
-DEPS_OK_MARKER=""
-DEPS_FAILED_MARKER=""
+# Neither is a lock, and the sequence is deliberately safe without one. Concurrent callers may all
+# find no record and run apt at once, but that is what they do today with no records at all, so it
+# is no worse; apt's own locking serialises them and the retries below absorb it. What must not
+# happen is a caller that lost that race condemning the runner for everyone else, which is why only
+# a stall - never a plain failure - is recorded.
+#
+# CI only: GitHub runners are ephemeral, so this state cannot outlive the machine it describes. A
+# developer machine is long-lived, where it could skip libraries a later OS change actually needs,
+# or keep failing an install that a mirror recovery has since fixed. Being single-runner-scoped is
+# also why nothing here is keyed by Playwright version: one runner is one checkout, so the version
+# cannot change underneath the state. The browser set can and does vary between callers.
+DEPS_INSTALLED_FILE=""
+DEPS_STALLED_MARKER=""
 if [ -n "${GITHUB_ACTIONS:-}" ]; then
-    _marker_dir="${RUNNER_TEMP:-${TMPDIR:-/tmp}}"
-    DEPS_OK_MARKER="${_marker_dir}/.ag-playwright-deps-installed"
-    DEPS_FAILED_MARKER="${_marker_dir}/.ag-playwright-deps-failed"
+    _state_dir="${RUNNER_TEMP:-${TMPDIR:-/tmp}}"
+    DEPS_INSTALLED_FILE="${_state_dir}/.ag-playwright-deps-installed"
+    DEPS_STALLED_MARKER="${_state_dir}/.ag-playwright-deps-stalled"
 fi
 
 # Only the apt-touching modes say anything about the runner's OS libraries. `browsers` is a CDN
-# download, including when `full` was downgraded to it below, so its outcome is never recorded.
-mark_deps() {
+# download, including when `full` is downgraded to it below, so its outcome is never recorded.
+touches_apt() {
     case "$MODE" in
-        deps | full) [ -n "$1" ] && touch "$1" 2>/dev/null || true ;;
+        deps | full) return 0 ;;
+        *) return 1 ;;
     esac
 }
 
-if [ -n "${DEPS_FAILED_MARKER}" ] && [ -e "${DEPS_FAILED_MARKER}" ]; then
-    case "$MODE" in
-        deps | full)
-            fail "Playwright OS dependency install already failed on this runner, so this attempt is skipped rather than repeating a ~30 min stall. See the first failure above for the cause. This is an infrastructure failure in the dependency install step - no tests were run, so it is NOT a test failure."
-            exit 1
-            ;;
-    esac
+# Recorded per browser, because the OS libraries are not the same for each: Firefox and WebKit pull
+# their own, so a chromium-only success must not be read as covering a later chromium+firefox+webkit
+# request. Append-only, one browser per line - concurrent callers can add to it without a lock.
+record_deps_installed() {
+    touches_apt || return 0
+    [ -n "${DEPS_INSTALLED_FILE}" ] || return 0
+    printf '%s\n' "${BROWSERS[@]}" >> "${DEPS_INSTALLED_FILE}" 2>/dev/null || true
+}
+
+# Satisfied only when every browser asked for has already had its dependencies installed.
+deps_already_installed() {
+    [ -n "${DEPS_INSTALLED_FILE}" ] && [ -s "${DEPS_INSTALLED_FILE}" ] || return 1
+    local browser
+    for browser in "${BROWSERS[@]}"; do
+        grep -qxF "${browser}" "${DEPS_INSTALLED_FILE}" 2>/dev/null || return 1
+    done
+    return 0
+}
+
+# Recorded only for a stall - an attempt killed at its bound - never for an install that merely
+# failed. A fast failure has not cost the budget this short-circuit exists to avoid spending twice,
+# and it may well be transient: a caller that lost a race for the dpkg lock fails in seconds, and
+# must not condemn a runner whose dependencies another caller is busy installing correctly.
+record_deps_stalled() {
+    touches_apt || return 0
+    [ -n "${DEPS_STALLED_MARKER}" ] || return 0
+    touch "${DEPS_STALLED_MARKER}" 2>/dev/null || true
+}
+
+if touches_apt && [ -n "${DEPS_STALLED_MARKER}" ] && [ -e "${DEPS_STALLED_MARKER}" ]; then
+    fail "The Playwright OS dependency install already stalled on this runner, so this attempt is skipped rather than repeating a ~30 min stall. See the first failure above for the cause. This is an infrastructure failure in the dependency install step - no tests were run, so it is NOT a test failure."
+    exit 1
 fi
 
-if [ -n "${DEPS_OK_MARKER}" ] && [ -e "${DEPS_OK_MARKER}" ]; then
+if deps_already_installed; then
     case "$MODE" in
         deps)
-            echo "Playwright OS dependencies already installed on this runner - skipping apt."
+            echo "OS dependencies for [${BROWSERS[*]}] already installed on this runner - skipping apt."
             exit 0
             ;;
         full)
-            echo "Playwright OS dependencies already installed on this runner - downloading browsers only."
+            echo "OS dependencies for [${BROWSERS[*]}] already installed on this runner - downloading browsers only."
             MODE=browsers
             ;;
     esac
@@ -134,14 +168,12 @@ if [ -z "${TIMEOUT_BIN}" ]; then
     "${CMD[@]}"
     status=$?
     group_end
-    if [ "${status}" -eq 0 ]; then
-        mark_deps "${DEPS_OK_MARKER}"
-    else
-        mark_deps "${DEPS_FAILED_MARKER}"
-    fi
+    # Nothing was bounded, so a failure here is not a stall and is not recorded as one.
+    [ "${status}" -eq 0 ] && record_deps_installed
     exit "${status}"
 fi
 
+stalled=0
 for attempt in $(seq 1 "${MAX_ATTEMPTS}"); do
     group_start "${LABEL} - attempt ${attempt}/${MAX_ATTEMPTS} (bounded to ${ATTEMPT_TIMEOUT_SECONDS}s)"
     "${TIMEOUT_BIN}" --signal=TERM --kill-after=30s "${ATTEMPT_TIMEOUT_SECONDS}s" "${CMD[@]}"
@@ -149,11 +181,12 @@ for attempt in $(seq 1 "${MAX_ATTEMPTS}"); do
     group_end
 
     if [ "${status}" -eq 0 ]; then
-        mark_deps "${DEPS_OK_MARKER}"
+        record_deps_installed
         exit 0
     fi
 
     if [ "${status}" -eq 124 ] || [ "${status}" -eq 137 ]; then
+        stalled=1
         reason="did not complete within its ${ATTEMPT_TIMEOUT_SECONDS}s bound and was killed (stalled or very slow package mirror / CDN fetch)"
     else
         reason="failed with exit code ${status}"
@@ -166,6 +199,6 @@ for attempt in $(seq 1 "${MAX_ATTEMPTS}"); do
     fi
 done
 
-mark_deps "${DEPS_FAILED_MARKER}"
+[ "${stalled}" -eq 1 ] && record_deps_stalled
 fail "${LABEL} did not complete after ${MAX_ATTEMPTS} attempts, each bounded to ${ATTEMPT_TIMEOUT_SECONDS}s. This is an infrastructure failure in the dependency install step - no tests were run, so it is NOT a test failure."
 exit 1
