@@ -489,9 +489,12 @@ export type {
 export type {
     IToolbarItem,
     IToolbarItemComp,
+    IInputToolbarItemParams,
+    InputToolbarItemName,
     IToolbarItemParams,
     Toolbar,
     ToolbarBuiltInItemDef,
+    ToolbarInputBuiltInItemDef,
     ToolbarButtonItemDef,
     ToolbarCustomItemDef,
     ToolbarItemActionParams,

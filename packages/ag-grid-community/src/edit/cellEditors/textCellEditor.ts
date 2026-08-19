@@ -38,7 +38,11 @@ class TextCellEditorInput<TValue = any> implements CellEditorInput<
     public init(eEditor: GridInputTextField, params: ITextCellEditorParams<any, TValue>): void {
         this.eEditor = eEditor;
         this.params = params;
-        const maxLength = params.maxLength;
+
+        const { maxLength, browserAutoComplete } = params;
+
+        eEditor.setAutoComplete(browserAutoComplete);
+
         if (maxLength != null) {
             eEditor.setMaxLength(maxLength);
         }

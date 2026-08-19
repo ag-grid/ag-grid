@@ -46,6 +46,21 @@ describe('Toolbar quickFilter item', () => {
         `);
     });
 
+    test('toolbarItemParams.browserAutoComplete overrides enableInputAutoComplete', async () => {
+        const api = gridMgr.createGrid('quick-filter-autocomplete-override', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }],
+            enableInputAutoComplete: true,
+            toolbar: {
+                items: [{ toolbarItem: 'agQuickFilterToolbarItem', toolbarItemParams: { browserAutoComplete: false } }],
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        const input = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLInputElement>('.ag-toolbar-input-field')!;
+        expect(input.getAttribute('autocomplete')).toBe('off');
+    });
+
     test('global input options control toolbar autocomplete and the clear button', async () => {
         const api = gridMgr.createGrid('quick-filter-input-options', {
             columnDefs: [{ field: 'name' }],

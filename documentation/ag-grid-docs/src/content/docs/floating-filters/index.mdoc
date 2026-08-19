@@ -72,9 +72,11 @@ The screen shots below show example scenarios where the provided Number floating
 
 Browser autocomplete is disabled for grid input fields by default. Set `enableInputAutoComplete` to `true` to enable it for eligible inputs. Inputs that provide grid-owned suggestions, such as Rich Select and Advanced Filter inputs, keep browser autocomplete disabled so the browser UI cannot overlap their suggestion lists.
 
-The `Text` and `Number` floating filters also support overriding this behaviour for an individual input by passing the
-`browserAutoComplete` parameter in `floatingFilterComponentParams` (as defined in `ITextFloatingFilterParams` and
-`INumberFloatingFilterParams`).
+Individual inputs can override the global behaviour with a `browserAutoComplete` parameter, available on cell editor
+params, provided filter params (`filterParams`, which floating filter inputs inherit), the Set Filter Mini Filter,
+tool panel params, and the Find / Quick Filter toolbar items (via `toolbarItemParams`). The `Text` and `Number`
+floating filters additionally accept `browserAutoComplete` in `floatingFilterComponentParams` (as defined in
+`ITextFloatingFilterParams` and `INumberFloatingFilterParams`), which takes precedence over the `filterParams` value.
 
 Possible values for `browserAutoComplete`:
 

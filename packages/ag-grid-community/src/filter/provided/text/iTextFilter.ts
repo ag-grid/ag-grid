@@ -1,4 +1,5 @@
 import type { BaseColDefParams } from '../../../entities/colDef';
+import type { IAutoCompleteComponentParams } from '../../../interfaces/iAutoComplete';
 import type { IFilterParams } from '../../../interfaces/iFilter';
 import type { IFloatingFilterParams } from '../../floating/floatingFilter';
 import type {
@@ -94,17 +95,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
     trimInput?: boolean;
 }
 
-export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<TextFilter | NumberFilter> {
-    /**
-     * Overrides the browser's autocomplete/autofill behaviour by updating the autocomplete attribute on the input field used in the floating filter input.
-     * Possible values are:
-     * - `true` to allow the **default** browser autocomplete/autofill behaviour.
-     * - `false` to disable the browser autocomplete/autofill behavior by setting the `autocomplete` attribute to `off`.
-     * - A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
-     * If omitted, the value of `enableInputAutoComplete` is used.
-     * Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
-     */
-    browserAutoComplete?: boolean | string;
-}
+export interface ITextInputFloatingFilterParams
+    extends IFloatingFilterParams<TextFilter | NumberFilter>, IAutoCompleteComponentParams {}
 
 export interface ITextFloatingFilterParams extends ITextInputFloatingFilterParams {}

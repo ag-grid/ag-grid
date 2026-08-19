@@ -1,6 +1,7 @@
 import { fireEvent } from '@testing-library/dom';
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
+import type { ToolbarBuiltInItemDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
@@ -42,6 +43,34 @@ describe('Toolbar find item', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice"
         `);
+    });
+
+    test('accepts pre-existing ToolbarBuiltInItemDef typing for input items', async () => {
+        // compile-time compatibility pin: this assignment must keep compiling for released user code
+        const legacyDef: ToolbarBuiltInItemDef = { toolbarItem: 'agFindToolbarItem' };
+        const api = gridMgr.createGrid('find-legacy-def', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }],
+            toolbar: { items: [legacyDef] },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        expect(TestGridsManager.getHTMLElement(api)!.querySelector('.ag-toolbar-input-field')).not.toBeNull();
+    });
+
+    test('toolbarItemParams.browserAutoComplete overrides enableInputAutoComplete', async () => {
+        const api = gridMgr.createGrid('find-autocomplete-override', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }],
+            enableInputAutoComplete: true,
+            toolbar: {
+                items: [{ toolbarItem: 'agFindToolbarItem', toolbarItemParams: { browserAutoComplete: false } }],
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        const input = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLInputElement>('.ag-toolbar-input-field')!;
+        expect(input.getAttribute('autocomplete')).toBe('off');
     });
 
     test('sets findSearchValue on input', async () => {

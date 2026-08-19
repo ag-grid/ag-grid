@@ -993,4 +993,59 @@ describe('Cell Editing: edge cases', () => {
         // No such row, so no controller — the answer must still be about this cell.
         expect(api.isEditing({ rowIndex: 900, rowPinned: null, column: colA })).toBe(false);
     });
+
+    describe('editor input attributes', () => {
+        test('enableInputAutoComplete controls the editor input autocomplete attribute', async () => {
+            const api = await gridMgr.createGridAndWait('editor-autocomplete', {
+                columnDefs: [{ field: 'a', editable: true }],
+                rowData: [{ id: 'ROW_0', a: 'x' }],
+                getRowId: (params) => params.data.id,
+                enableInputAutoComplete: true,
+            });
+
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            await asyncSetTimeout(0);
+            const input = getGridElement(api)!.querySelector<HTMLInputElement>('.ag-text-field-input')!;
+            expect(input.getAttribute('autocomplete')).toBeNull();
+
+            // a live editor reacts to the option changing under it
+            api.setGridOption('enableInputAutoComplete', false);
+            expect(input.autocomplete).toBe('off');
+            api.setGridOption('enableInputAutoComplete', true);
+            expect(input.getAttribute('autocomplete')).toBeNull();
+            api.stopEditing();
+
+            // a freshly created editor reads the current value
+            api.setGridOption('enableInputAutoComplete', false);
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            await asyncSetTimeout(0);
+            const freshInput = getGridElement(api)!.querySelector<HTMLInputElement>('.ag-text-field-input')!;
+            expect(freshInput.autocomplete).toBe('off');
+        });
+
+        test('cellEditorParams.browserAutoComplete overrides enableInputAutoComplete per column', async () => {
+            const api = await gridMgr.createGridAndWait('editor-autocomplete-override', {
+                columnDefs: [
+                    { field: 'a', editable: true, cellEditorParams: { browserAutoComplete: 'email' } },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [{ id: 'ROW_0', a: 'x', b: 'y' }],
+                getRowId: (params) => params.data.id,
+                enableInputAutoComplete: true,
+            });
+
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            await asyncSetTimeout(0);
+            const overridden = getGridElement(api)!.querySelector<HTMLInputElement>('.ag-text-field-input')!;
+            expect(overridden.getAttribute('autocomplete')).toBe('email');
+            api.stopEditing();
+            await asyncSetTimeout(0);
+
+            // a column without the param defers to the grid option
+            api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+            await asyncSetTimeout(0);
+            const deferring = getGridElement(api)!.querySelector<HTMLInputElement>('.ag-text-field-input')!;
+            expect(deferring.getAttribute('autocomplete')).toBeNull();
+        });
+    });
 });
