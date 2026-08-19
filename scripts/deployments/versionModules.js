@@ -9,7 +9,7 @@ const pipe =
 
 const ROOT_PACKAGE_JSON = '../../package.json';
 const packageDirectories = require(ROOT_PACKAGE_JSON).workspaces.packages.filter((d) => !d.startsWith('external/'));
-const SKIPPED_DEPS = new Set(['ag-grid-testing']);
+const SKIPPED_DEPS = new Set(['ag-grid-testing', 'ag-test-utils']);
 
 if (process.argv.length < 4) {
     console.log('Usage: node scripts/deployments/versionModules.js [Grid Version] [Charts Version]');
