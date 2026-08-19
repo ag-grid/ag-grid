@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
-import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
     const gridsManager = new TestGridsManager({

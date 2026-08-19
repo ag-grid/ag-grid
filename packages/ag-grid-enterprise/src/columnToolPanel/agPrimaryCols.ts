@@ -1,6 +1,12 @@
 import { RefPlaceholder } from 'ag-stack';
 
-import type { ColDef, ColGroupDef, ColumnEventType, ColumnMenuItemsSource, ElementParams } from 'ag-grid-community';
+import type {
+    ColDef,
+    ColGroupDef,
+    ColumnEventType,
+    ColumnSelectionPanelSource,
+    ElementParams,
+} from 'ag-grid-community';
 import { Component, PositionableFeature } from 'ag-grid-community';
 
 import agPrimaryColsCSS from './agPrimaryCols.css';
@@ -34,7 +40,7 @@ export class AgPrimaryCols extends Component {
         allowDragging: boolean,
         params: ToolPanelColumnCompParams,
         eventType: ColumnEventType,
-        source: ColumnMenuItemsSource
+        source: ColumnSelectionPanelSource
     ): void {
         const { primaryColsHeaderPanel, primaryColsListPanel } = this;
 

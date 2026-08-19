@@ -695,6 +695,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaFilterColumnsInput: 'ورودی فیلتر ستون‌ها',
     ariaFilterFromValue: 'فیلتر از مقدار',
     ariaFilterInput: 'ورودی فیلتر',
+    ariaLabelInputClear: 'پاک کردن',
     ariaFilterList: 'لیست فیلتر',
     ariaFilterToValue: 'فیلتر تا مقدار',
     ariaFilterValue: 'مقدار فیلتر',
@@ -790,7 +791,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaHasNote: 'این سلول یک یادداشت دارد.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '،',
+    thousandSeparator: ',',
     decimalSeparator: '.',
 
     // Data types

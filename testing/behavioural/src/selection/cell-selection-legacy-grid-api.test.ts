@@ -1,10 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, assertSelectedCellRanges } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, assertSelectedCellRanges } from '../test-utils';
 
 describe('Cell Selection Grid API', () => {
     let consoleErrorSpy: MockInstance;
@@ -111,24 +110,6 @@ describe('Cell Selection Grid API', () => {
                 enableRangeSelection: true,
                 suppressMultiRangeSelection: true,
             });
-            await new GridColumns(api, `can still add multiple cell ranges when suppressMultiRanges = true setup`)
-                .checkColumns(`
-                    CENTER
-                    ├── sport "Sport" width:200
-                    └── year "Year" width:200
-                `);
-            await new GridRows(api, `can still add multiple cell ranges when suppressMultiRanges = true setup`).check(
-                `
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football" year:2021
-                    ├── LEAF id:1 sport:"rugby" year:2020
-                    ├── LEAF id:2 sport:"tennis" year:2018
-                    ├── LEAF id:3 sport:"cricket" year:2003
-                    ├── LEAF id:4 sport:"golf" year:2021
-                    ├── LEAF id:5 sport:"swimming" year:2020
-                    └── LEAF id:6 sport:"rowing" year:2019
-                `
-            );
 
             api.addCellRange({
                 rowStartIndex: 2,

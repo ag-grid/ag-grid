@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import {
     CheckboxEditorModule,
@@ -10,8 +11,6 @@ import {
     TextEditorModule,
 } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 
 /**
  * Tests for getDataValue / setDataValue type conversion correctness.

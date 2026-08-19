@@ -1,4 +1,6 @@
-import { _errorOnce, _warnOnce } from '../utils/log';
+import type { MockInstance } from 'vitest';
+
+import * as logModule from '../utils/log';
 import type { CapturedDiagnostic, MissingModuleReportParams } from './logging';
 import {
     _addDiagnosticListener,
@@ -18,13 +20,11 @@ import {
 } from './logging';
 import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
 
-vi.mock('../utils/log', () => ({
-    _warnOnce: vi.fn(),
-    _errorOnce: vi.fn(),
-}));
-
-const mockWarnOnce = vi.mocked(_warnOnce);
-const mockErrorOnce = vi.mocked(_errorOnce);
+// Spies, not `vi.mock`: a module mock only lands when this file owns its module graph, which is not
+// guaranteed — another file in the same worker may already have imported `../utils/log` unmocked. Spying
+// replaces the live binding `logging.ts` calls through, so it holds either way.
+let mockWarnOnce: MockInstance;
+let mockErrorOnce: MockInstance;
 
 // Attaches a page-level listener (no grid id) that receives every captured diagnostic
 function listenAll(listener: (diagnostic: CapturedDiagnostic) => void): () => void {
@@ -38,8 +38,13 @@ function resetDiagnostics(): void {
 }
 
 beforeEach(() => {
-    vi.clearAllMocks();
+    mockWarnOnce = vi.spyOn(logModule, '_warnOnce').mockImplementation(() => undefined);
+    mockErrorOnce = vi.spyOn(logModule, '_errorOnce').mockImplementation(() => undefined);
     resetDiagnostics();
+});
+
+afterEach(() => {
+    vi.restoreAllMocks();
 });
 
 describe('diagnostic capture', () => {

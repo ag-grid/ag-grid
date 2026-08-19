@@ -182,20 +182,55 @@ const httpsEnabled = !['0', 'false'].includes(PUBLIC_HTTPS_SERVER);
 
 // https://astro.build/config
 export default defineConfig({
+    /**
+     * Site fonts, resolved from the installed `@fontsource-variable` packages rather than
+     * `fontProviders.google()`.
+     *
+     * The Google provider resolves a `fonts.gstatic.com` URL at build time and downloads it
+     * with no retry. Google periodically re-cuts those files without bumping the version in
+     * the URL, and stale CSS lingering on some edge nodes then hands out filenames gstatic
+     * has already deleted - a 404 that fails the whole docs build. Resolving from
+     * node_modules removes the build-time network call entirely and pins the files to the
+     * lockfile.
+     *
+     * Each family ships as one variable woff2, declared at the SAME discrete weights the
+     * Google provider declared (sans 400/500/700, mono 400/700) rather than at the file's
+     * full variable range. That is deliberate: CSS matches a requested weight to the nearest
+     * declared one, so the ~58 `font-weight: 600` call sites in the docs currently resolve to
+     * 700. Exposing the continuous range would let them resolve to a true 600 and lighten
+     * text across the site - a typography change, which does not belong in a build fix.
+     * Widening these to a range is a deliberate follow-up, not a free win.
+     *
+     * No `unicodeRange` here, unlike the faces the Google provider emitted. That descriptor
+     * exists to let a browser skip downloading a subset it has no characters for, which needs
+     * more than one subset to mean anything - there is a single latin file per family, it is
+     * preloaded from Layout.astro regardless, and its coverage is exactly the range fontsource
+     * declares for it. Anything outside that range falls back per glyph either way.
+     */
     fonts: [
         {
-            provider: fontProviders.google(),
+            provider: fontProviders.local(),
             name: 'IBM Plex Sans',
             cssVariable: '--font-ibm-plex-sans',
-            weights: ['400', '500', '700'],
-            styles: ['normal'],
+            options: {
+                variants: [400, 500, 700].map((weight) => ({
+                    weight,
+                    style: 'normal',
+                    src: ['@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2'],
+                })),
+            },
         },
         {
-            provider: fontProviders.google(),
+            provider: fontProviders.local(),
             name: 'JetBrains Mono',
             cssVariable: '--font-jetbrains-mono',
-            weights: ['400', '700'],
-            styles: ['normal'],
+            options: {
+                variants: [400, 700].map((weight) => ({
+                    weight,
+                    style: 'normal',
+                    src: ['@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2'],
+                })),
+            },
         },
     ],
     site: PUBLIC_SITE_URL,

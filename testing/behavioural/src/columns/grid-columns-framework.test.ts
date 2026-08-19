@@ -1,8 +1,8 @@
+import { GridColumns, TestGridsManager } from 'ag-test-utils';
+
 import type { ColDef, ColGroupDef } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, TestGridsManager } from '../test-utils';
 
 describe('GridColumns Framework', () => {
     const gridsManager = new TestGridsManager({

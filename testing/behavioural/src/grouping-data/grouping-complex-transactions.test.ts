@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
+
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('ag-grid grouping complex transactions', () => {
     const gridsManager = new TestGridsManager({

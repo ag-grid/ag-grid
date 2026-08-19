@@ -1,8 +1,8 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { AdvancedFilterModel, ColumnAdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 interface TestRow {
     id: number;
@@ -89,12 +89,10 @@ describe('Advanced Filter matches the column filter', () => {
         { colId: 'athlete', filterType: 'text' as const, filter: 'alpha' },
         { colId: 'age', filterType: 'number' as const, filter: 2 },
     ])('$colId', ({ colId, filterType, filter }) => {
-        // A number column's `notEqual` is not at parity: the Advanced Filter admits blanks to it by
-        // `includeBlanksInEquals`, where the column filter reads `includeBlanksInNotEqual`.
         const valuedOptions =
             filterType === 'text'
                 ? ['contains', 'notContains', 'equals', 'notEqual', 'startsWith', 'endsWith']
-                : ['equals', 'greaterThan', 'greaterThanOrEqual', 'lessThan', 'lessThanOrEqual'];
+                : ['equals', 'notEqual', 'greaterThan', 'greaterThanOrEqual', 'lessThan', 'lessThanOrEqual'];
 
         test.each(valuedOptions)('`%s` filters the same rows', async (type) => {
             const columnFilterIds = await withColumnFilter(colId, { filterType, type, filter });
@@ -120,6 +118,52 @@ describe('Advanced Filter matches the column filter', () => {
             expectFiltered(columnFilterIds);
             expect(advancedFilterIds).toEqual(columnFilterIds);
         });
+    });
+
+    test('`includeBlanksInNotEqual` admits a blank to `notEqual` in both', async () => {
+        const columnFilterIds = await withColumnFilter('age', { filterType: 'number', type: 'notEqual', filter: 2 });
+
+        expect(columnFilterIds).toContain(3); // the row with a null age
+        expect(await withAdvancedFilter({ filterType: 'number', colId: 'age', type: 'notEqual', filter: 2 })).toEqual(
+            columnFilterIds
+        );
+    });
+
+    // The column filter's `isValid(cellValue)` gate keeps an unreadable date out of the comparison; the
+    // Advanced Filter has no equivalent and converts before it compares.
+    test('an unreadable date compares rather than throwing, in both', async () => {
+        expect(await withColumnFilter('date', { filterType: 'date', type: 'equals', dateFrom: '2008-08-24' })).toEqual([
+            0,
+        ]);
+        expect(
+            await withAdvancedFilter({
+                filterType: 'dateString',
+                colId: 'date',
+                type: 'equals',
+                filter: '2008-08-24',
+            })
+        ).toEqual([0]);
+    });
+
+    // The negated half of the same gate, and the only case in which an unreadable value is a match.
+    test('an unreadable date is admitted to `notEqual`, in both', async () => {
+        const columnFilterIds = await withColumnFilter('date', {
+            filterType: 'date',
+            type: 'notEqual',
+            dateFrom: '2008-08-24',
+        });
+
+        expect(columnFilterIds).toContain(1); // whitespace
+        expect(columnFilterIds).toContain(4); // 'not a date'
+        expect(columnFilterIds).not.toContain(2); // null is blank, not unreadable
+        expect(
+            await withAdvancedFilter({
+                filterType: 'dateString',
+                colId: 'date',
+                type: 'notEqual',
+                filter: '2008-08-24',
+            })
+        ).toEqual(columnFilterIds);
     });
 
     // A whitespace date is rejected as an invalid date before either filter asks whether it is blank, so

@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
+import { BUILD_USER_AGENT } from '../constants';
 import { getGitHash } from './gitUtils';
 
 type Logger = Pick<Console, 'info' | 'warn' | 'log'>;
@@ -55,7 +56,12 @@ export const getSitemapXml = async ({
     }
 
     if (xmlSitemap == null) {
-        const response = await fetch(sitemapUrl);
+        const response = await fetch(sitemapUrl, { headers: { 'User-Agent': BUILD_USER_AGENT } });
+        if (!response.ok) {
+            // Without this the error response body is used as the sitemap, silently producing a
+            // broken `/sitemap` page instead of failing the build.
+            throw new Error(`Failed to fetch sitemap ${sitemapUrl}: ${response.status} ${response.statusText}`);
+        }
         xmlSitemap = await response.text();
         logger.log(`⚠️ No cached sitemap found, fetched from live site: ${sitemapUrl}`);
     }

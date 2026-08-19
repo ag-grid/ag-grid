@@ -1,9 +1,10 @@
+import type { GridRowsOptions } from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GridOptions, IRowNode, RowNode, RowPinnedType } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberEditorModule, PinnedRowModule, UndoRedoEditModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../test-utils';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
 
 interface PivotRowData {

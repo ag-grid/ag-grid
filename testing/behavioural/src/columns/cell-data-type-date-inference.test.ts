@@ -1,8 +1,7 @@
+import { TestGridsManager } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
-
-import { TestGridsManager } from '../test-utils';
 
 // A column whose first data set holds date-prefixed filename strings (e.g. `2025-05-23T11-08-35.rtf`)
 // must not be auto-inferred as a date/datetime type. If it were, the sticky inferred type would

@@ -967,8 +967,8 @@
         },
         "showColumnChooser": {
             "more": {
-                "name": "Column Menu API",
-                "url": "./column-menu/#column-menu-api--events"
+                "name": "Column Chooser API",
+                "url": "./column-chooser/#column-chooser-api"
             }
         },
         "showColumnFilter": {
@@ -995,8 +995,8 @@
         },
         "hideColumnChooser": {
             "more": {
-                "name": "Column Menu API",
-                "url": "./column-menu/#column-menu-api--events"
+                "name": "Column Chooser API",
+                "url": "./column-chooser/#column-chooser-api"
             }
         },
         "getSideBar": {

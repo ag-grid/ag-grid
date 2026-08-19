@@ -1,8 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, waitForNoLoadingRows } from 'ag-test-utils';
+
 import type { GridApi, IServerSideDatasource, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { createFakeServer, createServerSideDatasource } from '../../columnToolPanel/deferredPivotModeFakeServer';
-import { GridColumns, GridRows, TestGridsManager, waitForNoLoadingRows } from '../../test-utils';
 
 /**
  * Characterisation (golden-master) tests pinning the CURRENT behaviour of the Server-Side Row Model

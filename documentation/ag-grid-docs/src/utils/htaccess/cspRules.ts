@@ -65,10 +65,9 @@ const UNSAFE_INLINE = "'unsafe-inline'";
 // (see CodeShiki.tsx). Browsers that predate this token fall back to requiring
 // 'unsafe-eval' for WASM.
 const WASM_UNSAFE_EVAL = "'wasm-unsafe-eval'";
-// Allowed only in the 'examples' scope: the standalone example-runner documents
-// load modules with legacy SystemJS (fetches source over XHR and evals it), and
-// the Angular (JIT compiler) and Vue (runtime template compiler) examples also
-// compile code in the browser. Archived doc versions ship the same runner.
+// Allowed only in the 'examples' scope: the Angular (JIT compiler) and Vue (runtime
+// template compiler) examples compile code in the browser. Archived doc versions
+// additionally load modules with legacy SystemJS, which evals fetched source.
 // Ordinary site pages do not need it — the theme builder's CSS parser used to,
 // but now unescapes string literals without eval (see unescapeStringLiteral).
 const UNSAFE_EVAL = "'unsafe-eval'";
@@ -119,19 +118,39 @@ const ASTRO_HYDRATION_SCRIPT_HASHES = [
     "'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='", // <astro-island> hydration runtime
 ];
 
-// SHA-256 of the inline ZoomInfo (WebSights) bootstrap that the shared Google Tag
-// Manager container injects as a Custom HTML tag once the visitor accepts functional
-// cookie consent. Unlike the scripts above, this one is authored in GTM, not this
-// repo — so the value is taken from the browser's CSP violation report, NOT by
-// hashing the GTM source (GTM normalises the injected bytes, so the source does not
-// reproduce this digest).
+// Inline scripts injected by third parties — the shared Google Tag Manager container and the
+// Enzuzo cookie banner — rather than rendered by this repo, authorised by hash so the site
+// scope can stay free of 'unsafe-inline'.
 //
-// FRAGILE — this pins ZoomInfo's exact bytes. If the ZoomInfo tag in GTM is edited,
-// or ZoomInfo regenerates its loader snippet, the hash stops matching and ZoomInfo
-// silently fails to load for consenting users. The GTM tag carries a note pointing
-// back here; if it changes, replace this with the new console-reported hash (here and
-// in the ag-studio / ag-charts CSPs — the GTM container is shared). AG-17134.
+// FRAGILE by nature: each pins another party's exact bytes, so editing the tag or snippet
+// stops it running, silently. To re-derive a digest take it from the browser's CSP violation
+// report, or hash the tag's `vtp_html` string in the gtm.js payload — GTM minifies the body,
+// so hashing what is typed into the GTM UI will not reproduce it. The GTM container is shared,
+// so a changed digest must be updated in the ag-charts and ag-studio CSPs too.
+//
+// A GTM tag is hashable only while it interpolates NO GTM variable: macro values are
+// substituted into the body before injection, so one `{{…}}` reference makes the bytes vary
+// per request and no single hash can cover them. In the container payload a hashable tag's
+// `vtp_html` is a plain JSON string, whereas an interpolating one is a
+// ["template", …, ["macro",N], …] composition — the tell that its hash cannot be pinned.
+
+// ZoomInfo (WebSights) bootstrap, injected once the visitor accepts functional cookie consent.
+// The GTM tag carries a note pointing back here. AG-17134.
 const GTM_ZOOMINFO_HASH = "'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='";
+
+// Hands the visitor's consent choice from the Enzuzo banner to GTM. Recorded as a source
+// string rather than an opaque digest because it is short enough to read, and cspRules.test.ts
+// asserts the string still hashes to the browser-reported value so the two cannot drift. It is
+// a verbatim copy of Enzuzo's bytes, NOT a source of truth like the DARK_MODE_INIT_SCRIPT
+// constants this repo actually renders.
+const ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT = 'if (window.enzuzoGtmConsent) { window.enzuzoGtmConsent(); }';
+
+// UTM attribution: a page-view tag stashing first/last-touch UTMs in localStorage, and an
+// all-pages tag that installs one `submit` listener and POSTs them to MAKE_WEBHOOK_HOST. Both
+// read location.search via URLSearchParams and reach the form through the submit event's
+// target, which is what keeps them free of the interpolation that would unpin these digests.
+const GTM_UTM_CAPTURE_HASH = "'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='";
+const GTM_UTM_WEBHOOK_HASH = "'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='";
 
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
@@ -140,6 +159,9 @@ const SITE_SCRIPT_HASHES = [
     hashInlineScript(KBD_PLATFORM_INIT_SCRIPT),
     ...ASTRO_HYDRATION_SCRIPT_HASHES,
     GTM_ZOOMINFO_HASH,
+    hashInlineScript(ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT),
+    GTM_UTM_CAPTURE_HASH,
+    GTM_UTM_WEBHOOK_HASH,
 ];
 
 // Enzuzo, the cookie-consent banner that replaces OneTrust. Like OneTrust before it,
@@ -166,6 +188,14 @@ const SITE_SCRIPT_HASHES = [
 // third throws uncaught. We are not granting 'unsafe-eval' site-wide for a consent
 // banner, so keep the Enzuzo console configuration free of template placeholders and
 // string-bodied event handlers.
+
+// Packages whose npm build a browser cannot resolve natively come through esm.sh: React and
+// React DOM ship CJS only, and rxjs' ESM build imports its own internals without file
+// extensions. Both are dependencies of the framework examples, so an Angular example needs this
+// host as much as a React one does. Everything else the example runner loads comes from jsdelivr
+// or our own origin.
+const ESM_SH_HOST = 'https://esm.sh';
+
 const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
 const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
 
@@ -191,6 +221,15 @@ const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
 // img-src; add a script-src/connect-src entry only if a violation actually shows up.
 const LINKEDIN_SDK_HOST = 'https://snap.licdn.com';
 const LINKEDIN_BEACON_HOST = 'https://px.ads.linkedin.com';
+
+// The Make (formerly Integromat) webhook that receives UTM attribution, POSTed with fetch()
+// on form submit by the GTM tag behind GTM_UTM_WEBHOOK_HASH. Nothing here references the
+// origin directly, so — as with Enzuzo and LinkedIn — the CSP is the only place the site
+// declares it. connect-src only: the tag itself is covered by that hash, not by an origin.
+//
+// Regional host — Make gives each account a zone-specific webhook domain (eu2 here), so
+// this changes if the automation is recreated in another zone.
+const MAKE_WEBHOOK_HOST = 'https://hook.eu2.make.com';
 
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
 // demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
@@ -352,6 +391,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.googletagmanager.com',
             'https://www.google-analytics.com', // Universal Analytics analytics.js (GTM-injected after cookie consent)
             'https://cdn.jsdelivr.net',
+            ESM_SH_HOST, // example-runner: React's and rxjs' ES module builds
             'https://cdnjs.cloudflare.com',
             'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
             'https://*.zoominfo.com', // ZoomInfo FormComplete
@@ -401,7 +441,8 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://stats.g.doubleclick.net',
             'https://flagcdn.com',
             'https://www.googletagmanager.com',
-            'https://cdn.jsdelivr.net', // example-runner SystemJS fetches modules as text (XHR)
+            'https://cdn.jsdelivr.net', // example-runner: framework and library ES modules
+            ESM_SH_HOST, // example-runner: React's and rxjs' ES module builds
             'https://cdnjs.cloudflare.com', // example-runner legacy deps (XHR)
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
@@ -409,6 +450,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.google.com', // reCAPTCHA (api2/clr XHR)
             ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
             ENZUZO_GVL_HOST, // Enzuzo-hosted IAB TCF Global Vendor List
+            MAKE_WEBHOOK_HOST, // UTM-attribution POST on form submit (injected via GTM)
             'https://www.googleapis.com', // Firebase Auth (ecommerce checkout): identitytoolkit REST
             'https://securetoken.googleapis.com', // Firebase Auth ID-token refresh
             trialFormOrigin,
@@ -556,8 +598,8 @@ export function getExamplesCspIfOverride(options: Omit<CspOptions, 'scope'>, mod
         EXAMPLES_PATH_CONDITION,
         [
             "# Example-runner documents and archived doc versions additionally need 'unsafe-eval'",
-            '# (SystemJS eval-loads modules; the Angular JIT and Vue runtime template compilers',
-            '# also compile in the browser).',
+            '# (the Angular JIT and Vue runtime template compilers compile in the browser;',
+            '# archived versions additionally eval-load modules with SystemJS).',
         ],
         { ...options, scope: 'examples' },
         mode

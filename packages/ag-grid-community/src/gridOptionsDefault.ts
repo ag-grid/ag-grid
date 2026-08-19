@@ -65,6 +65,8 @@ export const GRID_OPTION_DEFAULTS = {
     keepDetailRowsCount: 10,
     detailRowAutoHeight: false,
     tabIndex: 0,
+    suppressInputClearButton: false,
+    enableInputAutoComplete: false,
     rowBuffer: 10,
     stickyRowsMaxViewportRatio: 0.5,
     valueCache: false,

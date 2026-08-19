@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
+import { GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
+import { countLoadingRows, waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { IServerSideGetRowsParams } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from '../../test-utils';
-import { countLoadingRows, waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
  * CHARACTERIZATION (golden-master) tests pinning the CURRENT behaviour of how

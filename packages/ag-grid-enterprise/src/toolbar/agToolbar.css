@@ -148,7 +148,12 @@
     border-radius: var(--ag-input-border-radius);
     width: 100%;
     padding-block: calc(var(--ag-spacing) * 0.5);
-    padding-inline: calc(var(--ag-icon-size) + var(--ag-spacing) * 2) var(--ag-spacing);
+    padding-inline-start: calc(var(--ag-icon-size) + var(--ag-spacing) * 2);
+}
+
+.ag-toolbar-input-widget {
+    flex: 1;
+    min-width: 0;
 }
 
 .ag-toolbar-input-field:focus {

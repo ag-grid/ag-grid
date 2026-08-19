@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, GRAND_TOTAL_ROW_ID, GROUP_TOTAL_ROW_ID_PREFIX } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping display types and footers', () => {
     const gridsManager = new TestGridsManager({
@@ -166,6 +166,55 @@ describe('ag-grid grouping display types and footers', () => {
             ├── gold "Gold" width:200 aggFunc:sum
             └── silver "Silver" width:200 aggFunc:sum
         `);
+    });
+
+    test('isSelected() on a destroyed group total row node does not throw', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', athlete: 'John Smith', sport: 'Sailing', gold: 1 },
+            { id: '2', country: 'Ireland', athlete: 'Jane Doe', sport: 'Soccer', gold: 2 },
+            { id: '3', country: 'Italy', athlete: 'Mario Rossi', sport: 'Soccer', gold: 3 },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'sport' },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // Must be captured before the destroy: the lookup resolves through the group node's
+        // sibling, which the destroy severs.
+        const irelandTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'row-group-country-Ireland')!;
+        expect(irelandTotal.footer).toBe(true);
+        expect(irelandTotal.isSelected()).toBeFalsy();
+
+        // Removing the total rows reaches _destroyRowNodeFooter, which severs both sibling links
+        // but leaves footer === true on the destroyed node.
+        api.setGridOption('groupTotalRow', undefined);
+
+        await new GridRows(api, 'after removing group total rows').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:3
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing" gold:1
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer" gold:2
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" gold:3
+            · └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:3
+        `);
+
+        // Prove the destroy path actually ran, otherwise the assertion below is vacuous.
+        expect(irelandTotal.destroyed).toBe(true);
+        expect(irelandTotal.sibling).toBeUndefined();
+        expect(irelandTotal.footer).toBe(true);
+
+        expect(() => irelandTotal.isSelected()).not.toThrow();
+        expect(irelandTotal.isSelected()).toBe(false);
     });
 
     test('grouping with grand total row at top', async () => {

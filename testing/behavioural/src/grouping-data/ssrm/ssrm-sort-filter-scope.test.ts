@@ -1,8 +1,8 @@
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type { GridApi, GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, waitForEvent } from '../../test-utils';
-import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
  * Characterisation tests (golden-master) pinning the CURRENT sort/filter refresh-scope

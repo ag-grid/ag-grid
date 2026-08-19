@@ -697,6 +697,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaFilterColumnsInput: 'Ввід колонок для фільтрування',
     ariaFilterFromValue: 'Фільтрувати від значення',
     ariaFilterInput: 'Ввід фільтру',
+    ariaLabelInputClear: 'Очистити',
     ariaFilterList: 'Список фільтрів',
     ariaFilterToValue: 'Фільтрувати до значення',
     ariaFilterValue: 'Значення фільтру',

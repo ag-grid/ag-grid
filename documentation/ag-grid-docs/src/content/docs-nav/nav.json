@@ -1591,6 +1591,12 @@
                         },
                         {
                             "type": "item",
+                            "title": "Column Chooser",
+                            "path": "column-chooser",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Context Menu",
                             "path": "context-menu",
                             "isEnterprise": true
@@ -1755,30 +1761,6 @@
                                     "type": "item",
                                     "title": "Master Detail",
                                     "path": "server-side-model-master-detail",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Example Node.js & MySQL",
-                                    "path": "server-side-operations-nodejs",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Example GraphQL & MySQL",
-                                    "path": "server-side-operations-graphql",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Example Java & Oracle",
-                                    "path": "server-side-operations-oracle",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Example Java & Apache",
-                                    "path": "server-side-operations-spark",
                                     "isEnterprise": true
                                 }
                             ]

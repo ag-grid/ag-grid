@@ -1,5 +1,15 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from 'ag-test-utils';
+import type { EditorFormControl } from 'ag-test-utils';
 
 import type { CellValueChangedEvent, ColDef, NewValueParams } from 'ag-grid-community';
 import {
@@ -15,17 +25,13 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 
-import {
-    EditEventTracker,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    waitForInput,
-} from '../test-utils';
-
 /** Asserts the value of a form control, handling number/date/checkbox inputs correctly. */
-function expectInputValue(input: HTMLInputElement, expected: unknown): void {
+function expectInputValue(input: EditorFormControl, expected: unknown): void {
+    // `agLargeTextCellEditor` is a textarea, which has plain text and none of the typed value accessors.
+    if (input instanceof HTMLTextAreaElement) {
+        expect(input.value).toBe(expected == null ? '' : String(expected));
+        return;
+    }
     const type = input.type;
     if (type === 'number' || type === 'range') {
         if (expected == null || (typeof expected === 'number' && isNaN(expected))) {

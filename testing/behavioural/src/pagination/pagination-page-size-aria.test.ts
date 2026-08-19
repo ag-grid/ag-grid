@@ -1,9 +1,8 @@
 import { userEvent } from '@testing-library/user-event';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, PaginationModule, getGridElement } from 'ag-grid-community';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 const COLUMN_DEFS = [{ field: 'name' }];
 const ROW_DATA = Array.from({ length: 50 }, (_, i) => ({ name: `Row ${i + 1}` }));

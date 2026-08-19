@@ -695,6 +695,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaFilterColumnsInput: 'Filtrer kolonner inndata',
     ariaFilterFromValue: 'Filtrer fra verdi',
     ariaFilterInput: 'Filterinndata',
+    ariaLabelInputClear: 'Tøm',
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til verdi',
     ariaFilterValue: 'Filterverdi',
@@ -789,7 +790,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaHasNote: 'Denne cellen har et notat.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
     decimalSeparator: ',',
 
     // Data types

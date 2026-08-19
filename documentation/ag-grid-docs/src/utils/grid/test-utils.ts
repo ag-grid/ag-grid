@@ -5,8 +5,12 @@ import { test as base, expect as playwrightExpect } from '@playwright/test';
 import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
 import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
-import { routeExampleAssetsFromDisk, routeExternalThroughMirror, warnOnNetworkAccess } from './test/localSources';
-import { routeExampleModulesTranspiled } from './test/localTranspile';
+import {
+    routeExampleAssetsFromDisk,
+    routeExternalThroughMirror,
+    routePdfFontsFromDisk,
+    warnOnNetworkAccess,
+} from './test/localSources';
 import { PendingRequests } from './test/pendingRequests';
 import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test/remoteGridapi';
 import { whileTheRequestMatters } from './test/routeGuard';
@@ -170,7 +174,6 @@ const excludeErrors = [
     'InstallTrigger is deprecated and will be removed in the future.',
     'onmozfullscreenchange is deprecated.',
     'onmozfullscreenerror is deprecated.',
-    // Emitted by systemjs@0.19.47 (loaded via the SystemJS plunker template); not under our control
     'Window.fullScreen attribute is deprecated and will be removed in the future.',
     'XML Parsing Error: not well-formed',
     'XML Parsing Error: syntax error',
@@ -357,7 +360,7 @@ export const extended = base.extend<TestFixtures>({
             // served `/example-assets/`.
             await routeExternalThroughMirror(page, siteOrigin);
             await routeExampleAssetsFromDisk(page);
-            await routeExampleModulesTranspiled(page, siteOrigin);
+            await routePdfFontsFromDisk(page, siteOrigin);
             await use();
         },
         { auto: true },

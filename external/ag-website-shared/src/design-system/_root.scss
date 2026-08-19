@@ -61,8 +61,15 @@
     --text-semibold: 600;
     --text-bold: 700;
 
-    --text-lh-tight: 1.2;
-    --text-lh-ultra-tight: 1;
+    // Ratios: a length is inherited as-is, so use these wherever the font-size is inherited, fluid or
+    // unknown. --text-lh-<step> is paired, and valid only alongside its own --text-fs-<step>.
+    --text-lh-ratio-base: 1.4;
+    --text-lh-ratio-tight: 1.2;
+    --text-lh-ratio-ultra-tight: 1;
+
+    // Deprecated: ag-charts and ag-studio still use these names. Remove once both have migrated.
+    --text-lh-tight: var(--text-lh-ratio-tight);
+    --text-lh-ultra-tight: var(--text-lh-ratio-ultra-tight);
 
     --text-fs-2xs: 10px;
     --text-lh-2xs: 1.2;

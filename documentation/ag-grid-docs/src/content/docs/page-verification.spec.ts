@@ -1,16 +1,25 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
+import { createHash } from 'node:crypto';
 
-const isCspIssue = (msg: string) => /Content-Security-Policy|Refused to (load|execute|connect)/i.test(msg);
-// An actual enforced block, as opposed to a report-only policy that's merely being
-// monitored ahead of enforcement. Enforced CSP violation messages vary in verb by
-// directive ("Refused to load/execute/connect...", "Refused to apply inline style...",
-// "Refused to frame...", "Refused to create a worker from...", "Refused to evaluate a
-// string as JavaScript...", etc.) so rather than enumerate every verb, treat any
-// CSP-related message that isn't marked report-only as enforced. Browsers prefix/suffix
-// report-only violation messages with "report-only" or "[Report Only]" text
-// (Chrome/Chromium use a space, not a hyphen, in the "[Report Only]" prefix).
-const isEnforcedCspViolation = (msg: string) => isCspIssue(msg) && !/report[ -]only/i.test(msg);
+import type { CspHashHint, CspViolationRecord } from '../../utils/csp/cspViolationReport';
+import {
+    CSP_HASH_HINT_ANNOTATION,
+    CSP_VIOLATION_ANNOTATION,
+    parseCspHashHint,
+} from '../../utils/csp/cspViolationReport';
+
+declare global {
+    interface Window {
+        __agCspSelfCheck?: boolean;
+    }
+}
+
+/** Inline script the site policy cannot authorise, used to prove CSP capture still works. */
+const CSP_SELF_CHECK_SCRIPT = 'window.__agCspSelfCheck = true;';
+
+// Chromium writes the policy name with spaces in some messages and hyphens in others.
+const isCspIssue = (msg: string) => /Content[- ]Security[- ]Policy|Refused to (load|execute|connect)/i.test(msg);
 
 // Console messages that are known browser/environment noise unrelated to the
 // site under test. Matched by substring so new message formats stay filtered.
@@ -29,174 +38,203 @@ const KNOWN_NOISE = [
     '**************************************',
 ];
 
-// This is a smoke test suite: a page actually failing to load or render
-// (checked via the assertions in each test below) is the main way a test
-// fails. The one other hard-fail signal is a genuinely enforced CSP
-// violation — something the browser actively blocked — since that's a
-// real, actionable break we need to know about immediately, distinct from
-// routine console noise. Everything else (console errors/warnings, uncaught
-// exceptions, and report-only CSP monitoring that hasn't blocked anything
-// yet) is surfaced as a test annotation for visibility in reports without
-// failing the test. KNOWN_NOISE just keeps expected noise out of the
-// annotations; it's report hygiene, not a safety mechanism.
-async function setupPage(page: Page): Promise<string[]> {
-    const cspViolations: string[] = [];
-
-    const handle = (text: string, annotationPrefix: string) => {
+// This is a smoke test suite: a page failing to load or render, per the assertions in
+// each test below, is the only way a test fails here. Everything else the page reports
+// (console errors/warnings, uncaught exceptions, CSP violations) is recorded as a test
+// annotation for visibility without failing the test. CSP is annotated rather than
+// asserted because the policy authorises inline scripts injected by tags authored in
+// Google Tag Manager, outside this repo: editing a tag there invalidates its hash, which
+// must not turn every page in the suite red. The post-deploy workflow reports those
+// annotations to the team that owns the policy instead. KNOWN_NOISE just keeps expected
+// noise out of the annotations; it's report hygiene, not a safety mechanism.
+async function setupPage(page: Page): Promise<void> {
+    const handle = (text: string, annotationPrefix: string, sourceUrl: string) => {
         if (KNOWN_NOISE.some((n) => text.includes(n))) {
             return;
         }
-        if (isEnforcedCspViolation(text)) {
-            cspViolations.push(text);
+        if (isCspIssue(text)) {
+            // What the console adds over the violation event is the hash the browser suggests
+            // for a blocked inline script, which the event doesn't carry.
+            const hint = parseCspHashHint(text, sourceUrl);
+            if (hint) {
+                test.info().annotations.push({
+                    type: CSP_HASH_HINT_ANNOTATION,
+                    description: JSON.stringify(hint),
+                });
+                return;
+            }
+            // Otherwise keep it visible in the report: the violation listener is installed on
+            // documents, so a worker's CSP failure reaches the console and nothing else.
+            test.info().annotations.push({ type: 'warning', description: `[CSP] ${text}` });
             return;
         }
-        const prefix = isCspIssue(text) ? '[CSP]' : annotationPrefix;
-        test.info().annotations.push({ type: 'warning', description: `${prefix} ${text}` });
+        test.info().annotations.push({ type: 'warning', description: `${annotationPrefix} ${text}` });
     };
 
     page.on('console', (msg) => {
         if (msg.type() !== 'error' && msg.type() !== 'warning') {
             return;
         }
-        handle(msg.text(), '[Console]');
+        // The message's own location, not page.url(): a violation inside an iframe is reported
+        // against that frame's document, and a hash has to be matched to the page that needs it.
+        handle(msg.text(), '[Console]', msg.location()?.url || page.url());
     });
 
     page.on('pageerror', (error) => {
-        handle(`Uncaught exception: ${error.message}`, '[Exception]');
+        handle(`Uncaught exception: ${error.message}`, '[Exception]', page.url());
     });
 
-    return cspViolations;
+    await watchCspViolations(page);
+}
+
+const REPORT_CSP_VIOLATION_BINDING = '__agReportCspViolation';
+
+// The browser's own violation event, rather than the console text: it reports the
+// effective directive, what was blocked and whether the policy enforced or merely
+// reported it, and it catches violations that never reach the console at all (a
+// blocked eval surfaces as an exception the calling script can swallow).
+async function watchCspViolations(page: Page): Promise<void> {
+    await page.exposeBinding(REPORT_CSP_VIOLATION_BINDING, (_source, violation: CspViolationRecord) => {
+        test.info().annotations.push({ type: CSP_VIOLATION_ANNOTATION, description: JSON.stringify(violation) });
+    });
+    await page.addInitScript((binding) => {
+        document.addEventListener('securitypolicyviolation', (event) => {
+            const report = (window as unknown as Record<string, (violation: CspViolationRecord) => void>)[binding];
+            report({
+                directive: event.effectiveDirective || event.violatedDirective,
+                blockedUri: event.blockedURI,
+                disposition: event.disposition,
+                sourceFile: event.sourceFile,
+                pageUrl: document.location.href,
+            });
+        });
+    }, REPORT_CSP_VIOLATION_BINDING);
 }
 
 test.describe('Page Verification', () => {
     // --- Homepage ---
 
     test('homepage loads with title and header visible', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/');
         await expect(page).toHaveTitle(/AG Grid/);
         await expect(page.locator('.site-header')).toBeVisible();
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     test('homepage shows Docs and Demos navigation links', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/');
         // Both links appear in the large and small nav – use first() to target the large (desktop) nav
         await expect(page.locator('.site-header').getByRole('link', { name: 'AG Grid Docs' }).first()).toBeVisible();
         await expect(page.locator('.site-header').getByRole('link', { name: 'AG Grid Demos' }).first()).toBeVisible();
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     // --- Core pages ---
 
     test('demos page loads with an example grid', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/example');
         await page.waitForSelector('.ag-root-wrapper', { state: 'visible' });
         await expect(page.locator('.ag-root-wrapper')).toBeVisible();
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     test('theme builder page loads', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/theme-builder/');
         await expect(page).toHaveTitle(/Theme Builder/);
         await expect(page.locator('.site-header')).toBeVisible();
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     test('API reference page loads', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/react-data-grid/reference/');
         await expect(page).toHaveTitle(/Reference/);
         await expect(page.locator('#docs-mobile-nav-collapser')).toBeVisible();
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     test('community page loads', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/community/');
         await expect(page).toHaveTitle(/Community/);
         await expect(page.locator('.site-header')).toBeVisible();
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     test('about page loads', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/about/');
         await expect(page).toHaveTitle(/About AG Grid/);
         await expect(page.locator('.site-header')).toBeVisible();
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     test('contact page loads', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/contact/');
         await expect(page).toHaveTitle(/Contact AG Grid/);
         await expect(page.locator('.site-header')).toBeVisible();
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     test('pricing page loads', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/license-pricing/');
         await expect(page).toHaveTitle(/Licence and Pricing/);
         await expect(page.locator('.site-header')).toBeVisible();
+    });
 
-        expect(cspViolations, 'CSP violations').toEqual([]);
+    // The cookie policy itself is generated by Enzuzo and injected client-side (AG-18194), so this
+    // asserts the shell the site is responsible for — the wrapper and a correctly-addressed loader —
+    // rather than the injected policy, which would make this suite depend on a third-party request.
+    // The loader must stay inside the content wrapper: it inserts the policy as its own next
+    // sibling, so its position is what places the policy on the page.
+    test('cookies page loads with the Enzuzo policy loader in the content wrapper', async ({ page }) => {
+        await setupPage(page);
+
+        await page.goto('/cookies/');
+        await expect(page).toHaveTitle(/Cookies Policy/);
+        await expect(page.locator('.site-header')).toBeVisible();
+
+        const loader = page.locator('.layout-max-width-small > script#__enzuzo-root-script');
+        await expect(loader).toHaveCount(1);
+        await expect(loader).toHaveAttribute('src', /^https:\/\/app\.enzuzo\.com\/scripts\/cookies\/[\da-f-]+$/);
     });
 
     // --- Docs pages ---
 
     test('docs getting-started page loads', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/react-data-grid/getting-started/');
         await expect(page).toHaveTitle(/Quick Start/);
         // Left docs nav is always visible at desktop widths (CSS overrides mobile collapse)
         await expect(page.locator('#docs-mobile-nav-collapser')).toBeVisible();
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     test('clicking a left-nav link navigates to the correct doc page', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/react-data-grid/getting-started/');
         // 'Key Features' is a flat (non-grouped) item in the Getting Started section
         await page.locator('#docs-mobile-nav-collapser').getByRole('link', { name: 'Key Features' }).click();
         await expect(page).toHaveURL(/key-features/);
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     // The header's Docs button only toggles the left docs nav, so it must be gone at every
     // width where DocsNav pins that nav permanently open — from $breakpoint-docs-nav-medium
     // (1100px). Widths straddle that threshold, plus one well above it.
     test('docs button and left docs nav are never both visible', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         const docsButton = page.locator('#top-bar-docs-button');
         const docsNav = page.locator('#docs-mobile-nav-collapser');
@@ -211,15 +249,13 @@ test.describe('Page Verification', () => {
             await expect(docsButton, `docs button at ${width}px`).toBeVisible({ visible: expectButton });
             await expect(docsNav, `docs nav at ${width}px`).toBeVisible({ visible: !expectButton });
         }
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     // A sticky header that is still showing the hamburger is a trap: the open menu is roughly as
     // tall as the page, so it could never scroll out of view. 1110px is below $nav-collapse, so
     // the hamburger is shown; 1250px is above it, where the nav is inline and must still stick.
     test('header only sticks once the nav is inline, not while the hamburger is shown', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         const header = page.locator('.site-header');
         const menuButton = page.getByRole('button', { name: 'Toggle navigation' });
@@ -263,8 +299,6 @@ test.describe('Page Verification', () => {
         await expect(menuButton).toBeHidden();
         await page.evaluate(() => window.scrollTo(0, 1200));
         expect((await boxOf(header)).y, 'inline header stays pinned to the top').toBe(0);
-
-        expect(cspViolations, 'CSP violations').toEqual([]);
     });
 
     // Sense-check the standalone example runner across frameworks by loading a couple of
@@ -280,14 +314,12 @@ test.describe('Page Verification', () => {
     for (const { pageName, exampleName } of exampleRenderChecks) {
         for (const framework of ['reactFunctionalTs', 'vanilla']) {
             test(`example runner renders a grid: ${pageName}/${exampleName} (${framework})`, async ({ page }) => {
-                const cspViolations = await setupPage(page);
+                await setupPage(page);
 
                 // The standalone example page renders the grid directly in the top-level
                 // document (no iframe), unlike the embedded docs-page runner.
                 await page.goto(`/examples/${pageName}/${exampleName}/${framework}`);
                 await expect(page.locator('.ag-root-wrapper')).toBeVisible({ timeout: 30_000 });
-
-                expect(cspViolations, 'CSP violations').toEqual([]);
             });
         }
     }
@@ -295,7 +327,7 @@ test.describe('Page Verification', () => {
     // --- Product switcher ---
 
     test('product switcher opens and shows AG products', async ({ page }) => {
-        const cspViolations = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/');
         // The Products button opens the dropdown on hover (onMouseEnter)
@@ -303,7 +335,62 @@ test.describe('Page Verification', () => {
         // AG Charts and AG Studio links should now be visible in the dropdown
         await expect(page.getByRole('link', { name: /AG Charts/ }).first()).toBeVisible();
         await expect(page.getByRole('link', { name: /AG Studio/ }).first()).toBeVisible();
+    });
 
-        expect(cspViolations, 'CSP violations').toEqual([]);
+    // --- CSP capture ---
+
+    // Since no test fails on a CSP violation any more, a break in the capture path would
+    // otherwise be invisible: the suite would stay green while quietly reporting nothing.
+    // Serving an inline script the policy cannot authorise proves the whole path still works.
+    test('captures a blocked inline script with the hash needed to authorise it', async ({ page }) => {
+        await setupPage(page);
+
+        // Route the URL the run actually resolved, so this holds for a build deployed under
+        // a path prefix as well as at a domain root.
+        await page.goto('/');
+        const annotations = test.info().annotations;
+        const beforeInjection = annotations.length;
+
+        await page.route(page.url(), async (route) => {
+            const response = await route.fetch();
+            const body = (await response.text()).replace('</head>', `<script>${CSP_SELF_CHECK_SCRIPT}</script></head>`);
+            await route.fulfill({ response, body });
+        });
+        await page.reload();
+
+        // Only what the injected reload provoked is this test's own doing: anything the first
+        // navigation reported is a real violation and stays in the report. Removing it before
+        // the assertions means a failure here cannot leak the synthetic violation either.
+        const synthetic = annotations
+            .slice(beforeInjection)
+            .filter(
+                (annotation) =>
+                    annotation.type === CSP_VIOLATION_ANNOTATION || annotation.type === CSP_HASH_HINT_ANNOTATION
+            );
+        annotations.splice(
+            0,
+            annotations.length,
+            ...annotations.filter((annotation) => !synthetic.includes(annotation))
+        );
+
+        expect(await page.evaluate(() => window.__agCspSelfCheck === true), 'injected script ran').toBe(false);
+
+        const violations = synthetic
+            .filter((annotation) => annotation.type === CSP_VIOLATION_ANNOTATION)
+            .map((annotation) => JSON.parse(annotation.description ?? '{}') as CspViolationRecord);
+        expect(violations, 'the injected script reported as blocked').toContainEqual(
+            expect.objectContaining({
+                blockedUri: 'inline',
+                disposition: 'enforce',
+                directive: expect.stringContaining('script-src'),
+            })
+        );
+
+        const hashes = synthetic
+            .filter((annotation) => annotation.type === CSP_HASH_HINT_ANNOTATION)
+            .map((annotation) => (JSON.parse(annotation.description ?? '{}') as CspHashHint).hash);
+        expect(hashes, 'the hash that would authorise the injected script').toContain(
+            `sha256-${createHash('sha256').update(CSP_SELF_CHECK_SCRIPT, 'utf8').digest('base64')}`
+        );
     });
 });

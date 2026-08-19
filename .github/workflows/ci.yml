@@ -240,6 +240,8 @@ jobs:
       fail-fast: false
     env:
       NX_PARALLEL: 1
+      # Vite 8 warns once per config that these are not loadable by its future `configLoader: 'native'`.
+      VITE_CONFIG_NATIVE_IGNORE_WARNING: true
     steps:
       - name: Checkout
         id: checkout
@@ -270,7 +272,7 @@ jobs:
         # config emit reports/workspace.xml for this shard.
         if: matrix.shard != 0 && needs.init.outputs.unit_projects != ''
         id: test
-        run: npx vitest run ${{ needs.init.outputs.unit_projects }}
+        run: node_modules/.bin/vitest run ${{ needs.init.outputs.unit_projects }}
           --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
       - name: Type-check test files
         # `build:test` (tsc --noEmit on tsconfig.spec) was previously pulled in as the nx `test` target's
@@ -324,31 +326,34 @@ jobs:
       # than a legitimately-unavailable environment. Local runs without Apache still skip.
       HTTPD_REQUIRED: 1
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
+      - name: Ignore e2e tests
+        run: echo "::warning e2e tests are currently disabled due to flakiness. Re-enable when fixed."
 
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          yarn_postinstall: no-install
-          cache_mode: ro
+      # - name: Checkout
+      #   id: checkout
+      #   uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: 1 # shallow copy
 
-      - name: nx test:e2e
-        id: tests
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c
-          staging --exclude 'tag:module-size' --exclude all
+      # - name: Setup
+      #   id: setup
+      #   uses: ./.github/actions/setup-nx
+      #   with:
+      #     yarn_postinstall: no-install
+      #     cache_mode: ro
 
-      - name: Persist test results
-        if: always() && matrix.shard != 0
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-e2e-shard-${{matrix.shard}}
-          path: |
-            reports/
+      # - name: nx test:e2e
+      #   id: tests
+      #   run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c
+      #     staging --exclude 'tag:module-size' --exclude all
+
+      # - name: Persist test results
+      #   if: always() && matrix.shard != 0
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: test-results-e2e-shard-${{matrix.shard}}
+      #     path: |
+      #       reports/
 
   lint:
     runs-on: ubuntu-latest

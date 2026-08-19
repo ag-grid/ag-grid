@@ -698,6 +698,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaFilterColumnsInput: 'Вход за филтриране на колони',
     ariaFilterFromValue: 'Филтър от стойност',
     ariaFilterInput: 'Вход за филтър',
+    ariaLabelInputClear: 'Изчисти',
     ariaFilterList: 'Списък за филтриране',
     ariaFilterToValue: 'Филтър до стойност',
     ariaFilterValue: 'Стойност на филтъра',
@@ -794,8 +795,8 @@ export const AG_GRID_LOCALE_BG = {
     ariaHasNote: 'Тази клетка има бележка.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Текст',

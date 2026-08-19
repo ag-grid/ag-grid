@@ -80,7 +80,7 @@ export abstract class TextInputFloatingFilter<
 
         inputSvc.setParams({
             ariaLabel: this.getAriaLabel(column as AgColumn),
-            autoComplete: browserAutoComplete ?? false,
+            autoComplete: browserAutoComplete,
             placeholder,
         });
 
@@ -89,9 +89,14 @@ export abstract class TextInputFloatingFilter<
         if (!readOnly) {
             const debounceMs = getDebounceMs(this.beans.log, filterParams as TextFilterParams, defaultDebounceMs);
             const debouncedSync = _debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs);
+            let debounceTimeout: number | undefined;
             inputSvc.setValueChangedListener((e) => {
                 this.pendingEdit = true;
-                debouncedSync(e);
+                debounceTimeout = debouncedSync(e);
+            });
+            inputSvc.setValueClearedListener(() => {
+                clearTimeout(debounceTimeout);
+                this.syncUpWithParentFilter();
             });
         }
     }
@@ -110,8 +115,8 @@ export abstract class TextInputFloatingFilter<
         inputSvc.setValue(value, true);
     }
 
-    private syncUpWithParentFilter(e: KeyboardEvent): void {
-        const isEnterKey = e.key === KeyCode.ENTER;
+    private syncUpWithParentFilter(e?: KeyboardEvent): void {
+        const isEnterKey = e?.key === KeyCode.ENTER;
 
         const reactive = this.reactive;
         if (reactive) {

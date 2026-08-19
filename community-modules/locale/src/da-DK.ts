@@ -697,6 +697,7 @@ export const AG_GRID_LOCALE_DK = {
     ariaFilterColumnsInput: 'Filtrer Kolonner Input',
     ariaFilterFromValue: 'Filtrer fra værdi',
     ariaFilterInput: 'Filter Input',
+    ariaLabelInputClear: 'Ryd',
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til værdi',
     ariaFilterValue: 'Filtrerværdi',
@@ -791,8 +792,8 @@ export const AG_GRID_LOCALE_DK = {
     ariaHasNote: 'Denne celle har en note.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: '.',
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Tekst',

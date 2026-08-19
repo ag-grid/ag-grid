@@ -1,10 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from 'ag-test-utils';
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import type { IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid hierarchical tree data reset', () => {
     const gridsManager = new TestGridsManager({

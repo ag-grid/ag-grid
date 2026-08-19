@@ -1,4 +1,4 @@
-import { _debounce, _jsonEquals } from 'ag-stack';
+import { _debounce, _hasOwn, _jsonEquals } from 'ag-stack';
 
 import { _getColGroupState, _setColGroupState } from '../../columns/columnGroups/columnGroupState';
 import type { ColumnState, ColumnStateParams } from '../../columns/columnStateUtils';
@@ -661,10 +661,7 @@ export class StateService extends BeanStub implements NamedBean {
         source: 'gridInitializing' | 'api',
         ignoreSet?: Set<GridStateKey>
     ): void {
-        if (
-            ignoreSet?.has('columnGroup') ||
-            (source !== 'api' && !Object.prototype.hasOwnProperty.call(state, 'columnGroup'))
-        ) {
+        if (ignoreSet?.has('columnGroup') || (source !== 'api' && !_hasOwn(state, 'columnGroup'))) {
             return;
         }
 

@@ -1,8 +1,8 @@
+import { ALL_SEVERITIES, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+
 import type { GetRowIdFunc, GetRowIdParams, GridOptions } from 'ag-grid-community';
 import { RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 /**
  * Black-box behavioural tests for SSRM selection, exercised entirely through the public grid API

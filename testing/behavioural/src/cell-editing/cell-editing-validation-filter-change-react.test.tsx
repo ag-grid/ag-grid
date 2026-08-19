@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { act, cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { GridRows, asyncSetTimeout, waitForPopup } from 'ag-test-utils';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { vi } from 'vitest';
 
@@ -21,8 +22,6 @@ import {
 } from 'ag-grid-community';
 import type { CustomCellEditorProps } from 'ag-grid-react';
 import { AgGridReact, useGridCellEditor } from 'ag-grid-react';
-
-import { GridRows, asyncSetTimeout, ignoreConsoleLicenseKeyError, waitForPopup } from '../test-utils';
 
 interface PersonRow {
     athlete: string;
@@ -117,6 +116,17 @@ const NumericEditor = memo((props: CustomCellEditorProps<NumericRow, number>) =>
     );
 });
 
+/**
+ * Flushes a macrotask with React's updates inside `act`. The grid re-renders rows asynchronously, so an
+ * update scheduled by an api call lands in the *next* tick - after a synchronous `act(...)` has closed - and
+ * React reports it as unwrapped. `waitFor` is already act-aware; a bare sleep is not.
+ */
+const flush = async (): Promise<void> => {
+    await act(async () => {
+        await asyncSetTimeout(0);
+    });
+};
+
 async function renderGrid<T>(options: {
     columnDefs: ColDef<T>[];
     rowData: T[];
@@ -144,7 +154,7 @@ async function renderGrid<T>(options: {
     const api = await readyPromise;
     const gridDiv = getGridElement(api)! as HTMLElement;
     const user = userEvent.setup({ skipHover: true });
-    await asyncSetTimeout(0);
+    await flush();
     return { api, gridDiv, user };
 }
 
@@ -164,8 +174,6 @@ describe('Cell editing validation — custom editor state after focus/filter/col
         ]);
         setupAgTestIds();
     });
-
-    beforeEach(() => ignoreConsoleLicenseKeyError());
 
     afterEach(() => {
         cleanup();
@@ -231,7 +239,7 @@ describe('Cell editing validation — custom editor state after focus/filter/col
             api.setColumnsVisible(['hideable'], true);
             api.onFilterChanged();
         });
-        await asyncSetTimeout(0);
+        await flush();
 
         await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
         expect(api.getEditingCells()).toHaveLength(0);
@@ -253,7 +261,7 @@ describe('Cell editing validation — custom editor state after focus/filter/col
         const phoneInput = await inputIn(cellOf(gridDiv, 0, 'phone'), '.phone-cell-editor');
         await user.clear(phoneInput);
         await user.type(phoneInput, 'ab'); // invalid format
-        await asyncSetTimeout(0); // flush editor's async validate()
+        await flush(); // flush editor's async validate()
 
         await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
 
@@ -261,7 +269,7 @@ describe('Cell editing validation — custom editor state after focus/filter/col
             api.setColumnsVisible(['hideable'], true);
             api.onFilterChanged();
         });
-        await asyncSetTimeout(0);
+        await flush();
 
         await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
         expect(api.getEditingCells()).toHaveLength(0);
@@ -295,7 +303,7 @@ describe('Cell editing validation — custom editor state after focus/filter/col
         let phoneInput = await inputIn(cellOf(gridDiv, 0, 'phone'), '.phone-cell-editor');
         await user.clear(phoneInput);
         await user.type(phoneInput, 'ab');
-        await asyncSetTimeout(0);
+        await flush();
 
         await new GridRows(api, 'custom: invalid phone in flight before the filter change').check(`
             ROOT id:ROOT_NODE_ID
@@ -307,7 +315,7 @@ describe('Cell editing validation — custom editor state after focus/filter/col
             api.setColumnsVisible(['hideable'], true);
             api.onFilterChanged();
         });
-        await asyncSetTimeout(0);
+        await flush();
         await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
         await new GridRows(api, 'custom: editor closed by the filter change').check(`
@@ -361,7 +369,7 @@ describe('Cell editing validation — custom editor state after focus/filter/col
         let numberInput = await inputIn(popup, '.numeric-input');
         await user.clear(numberInput);
         await user.type(numberInput, '150'); // invalid: > 100
-        await asyncSetTimeout(0);
+        await flush();
 
         await new GridRows(api, 'popup: invalid value typed in the popup').check(`
             ROOT id:ROOT_NODE_ID
@@ -371,7 +379,7 @@ describe('Cell editing validation — custom editor state after focus/filter/col
 
         // Click out of the grid — stopEditingWhenCellsLoseFocus triggers a stop; block holds it open.
         await user.click(document.body);
-        await asyncSetTimeout(0);
+        await flush();
 
         // Re-open the same cell — a fresh, usable popup editor must appear.
         await user.dblClick(cellOf(gridDiv, 0, 'number'));

@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import {
     ClientSideRowModelModule,
@@ -18,8 +19,6 @@ import {
     RowGroupingModule,
     SideBarModule,
 } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 interface AthleteRow {
     id: string;

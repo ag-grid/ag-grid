@@ -180,10 +180,11 @@ blockquote:where(:not(:last-child)) {
     font-size: var(--text-fs-lg);
     margin-bottom: $spacing-size-8;
     color: var(--color-text-secondary);
-    line-height: var(--text-lh-sm);
+    line-height: var(--text-lh-lg);
 
     :global(code) {
-        font-size: 0.8em;
+        font-size: var(--text-fs-base);
+        line-height: var(--text-lh-base);
     }
 }
 

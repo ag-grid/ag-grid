@@ -85,7 +85,7 @@
     margin: 0 0 $spacing-size-2;
     font-size: var(--text-fs-lg);
     font-weight: var(--text-semibold);
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-lg);
     color: var(--color-util-brand-600);
 
     #{$selector-darkmode} & {
@@ -100,7 +100,8 @@
 
 .heroHeading {
     font-size: 48px;
-    line-height: var(--text-lh-3xl);
+    // Ratio, not px: the font-size is fluid at the large breakpoint, so the line box must scale with it.
+    line-height: 1.1;
     color: var(--color-white);
     margin: 0 0 $spacing-size-4;
 
@@ -111,7 +112,7 @@
 
 .heroBody {
     font-size: var(--text-fs-lg);
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-lg);
     color: var(--color-white);
     opacity: 0.92;
     margin-bottom: $spacing-size-8;
@@ -248,7 +249,7 @@
 .textMediaCopy {
     h2 {
         font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-3xl);
+        line-height: var(--text-lh-2xl);
         margin: 0 0 $spacing-size-4;
     }
 
@@ -372,7 +373,7 @@
 
 .partnershipHeading {
     font-size: var(--text-fs-2xl);
-    line-height: var(--text-lh-3xl);
+    line-height: var(--text-lh-2xl);
     margin: 0 0 $spacing-size-4;
 }
 
@@ -466,7 +467,7 @@
 .miniDemoCopy {
     h2 {
         font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-3xl);
+        line-height: var(--text-lh-2xl);
         margin: 0 0 $spacing-size-4;
     }
 
@@ -618,7 +619,7 @@
 .exampleCardDescription {
     margin: $spacing-size-1 0 0;
     font-size: var(--text-fs-sm);
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-sm);
     color: var(--color-fg-secondary);
 }
 

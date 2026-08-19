@@ -1,3 +1,5 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { ColDef, GridOptions, NavigateToNextCellParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode, PinnedRowModule } from 'ag-grid-community';
 
@@ -7,7 +9,6 @@ import {
     getFocusedRowIndex,
     getFocusedRowPinned,
 } from '../navigation/navigation-test-utils';
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 interface RowData {
     a: string;
@@ -82,7 +83,7 @@ describe('Column Spanning Keyboard Navigation', () => {
 
         dispatchKeyDown(KeyCode.PAGE_DOWN);
 
-        // Page Down moves one row down in jsdom (viewport height ≈ 0 → diff of +1).
+        // Page Down moves one row down without layout (viewport height ≈ 0 → diff of +1).
         // Row 1 has col 'a' spanning over 'b' — focus must be normalised to 'a'.
         expect(getFocusedRowIndex(api)).toBe(1);
         expect(getFocusedColId(api)).toBe('a');

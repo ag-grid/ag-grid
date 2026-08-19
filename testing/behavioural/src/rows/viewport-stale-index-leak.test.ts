@@ -1,7 +1,7 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GridApi, IViewportDatasourceParams } from 'ag-grid-community';
 import { ViewportRowModelModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('viewport stale index + orphaned row ctrl leak', () => {
     const gridsManager = new TestGridsManager({ modules: [ViewportRowModelModule] });

@@ -354,11 +354,11 @@ const ItemContent = styled('div')`
 
 const ItemLabel = styled('div')`
     font-weight: var(--text-semibold);
-    line-height: var(--text-lh-tight);
+    line-height: var(--text-lh-ratio-tight);
 `;
 
 const ItemDocs = styled('div')`
     font-size: var(--text-fs-xs);
-    line-height: var(--text-lh-tight);
+    line-height: var(--text-lh-xs);
     color: var(--color-fg-secondary);
 `;

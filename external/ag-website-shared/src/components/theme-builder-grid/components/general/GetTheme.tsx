@@ -1,4 +1,5 @@
 import { UIPopupButton } from '@ag-website-shared/components/theme-builder/UIPopupButton';
+import { replaceHistoryUrl } from '@ag-website-shared/utils/historyUrl';
 import styled from '@emotion/styled';
 
 import { ThemeImportExportDialog } from './ThemeImportExportDialog';
@@ -16,7 +17,7 @@ export const GetThemeButton = () => (
             initialOpen={hasImportHash()}
             onClose={() => {
                 if (hasImportHash()) {
-                    history.replaceState(null, '', window.location.pathname + window.location.search);
+                    replaceHistoryUrl(window.location.pathname + window.location.search);
                 }
             }}
         >

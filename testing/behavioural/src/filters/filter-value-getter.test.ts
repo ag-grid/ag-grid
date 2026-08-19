@@ -1,5 +1,6 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ValueGetterParams } from 'ag-grid-community';
 import {
@@ -12,8 +13,6 @@ import {
 } from 'ag-grid-community';
 import type { SetFilter } from 'ag-grid-enterprise';
 import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface Person {
     firstName: string;

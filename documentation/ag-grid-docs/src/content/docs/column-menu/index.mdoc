@@ -3,7 +3,7 @@ title: "Column Menu"
 enterprise: true
 ---
 
-The column menu is launched from the grid header, and displays a list of menu items, along with the ability to select columns and display filters.
+The Column Menu is launched from a column header and provides actions such as sorting, pinning and sizing columns. Its **Choose Columns** item opens the separate [Column Chooser](./column-chooser/), while enabled column filters can be opened from the menu or the header filter button.
 
 {% note %}
 AG Grid Community does not have a menu, but can launch [Column Filters](./filtering) if enabled (see [Launching Filters](./filter-api/#launching-filters) for configuration details).
@@ -48,7 +48,7 @@ The menu shows a default set of items. You can add your own items, or change whi
 
 When both are set, `colDef.columnMenuItems` takes priority over `getColumnMenuItems()`.
 
-The `source` param is one of `'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`, so a single callback can tailor the items for the column menu, the [Columns Tool Panel](./tool-panel-columns/#context-menu) context menu, and the [Column Chooser](#customising-the-column-chooser).
+The `source` param is one of `'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`, so a single callback can tailor the items for the column menu, the [Columns Tool Panel](./tool-panel-columns/#context-menu) context menu, and the [Column Chooser](./column-chooser/).
 
 Each item is either a string or a `MenuItemDef`. Use a string to pick a built-in item and a `MenuItemDef` for your own. All built-in tokens share one type, `DefaultColumnMenuItem`, and each is shown only where it applies to the column and grid state. The column menu's [built-in items](#built-in-menu-items) are listed below.
 
@@ -70,13 +70,15 @@ The full order of precedence is `colDef.columnMenuItems`, then `getColumnMenuIte
 
 The following is a list of all the default built-in menu items with the rules about when they are shown.
 
-- `sortAscending`: Sort the column in ascending order. Not shown when `columnMenu = 'legacy'` or the column is already sorted in ascending order.
-- `sortDescending`: Sort the column in descending order. Not shown when `columnMenu = 'legacy'` or the column is already sorted in descending order.
-- `sortUnSort`: Clear the sort on the column. Not shown when `columnMenu = 'legacy'` or the column is not sorted.
+- `sortAscending`: Sort the column in ascending order. Not included in the default items when `columnMenu = 'legacy'`, or when the column is already sorted in ascending order.
+- `sortDescending`: Sort the column in descending order. Not included in the default items when `columnMenu = 'legacy'`, or when the column is already sorted in descending order.
+- `sortAbsoluteAscending`: Sort the column in ascending order by magnitude, ignoring the sign - see [Absolute Sorting](./row-sorting/#absolute-sorting). Not included in the default items when `columnMenu = 'legacy'`, when the column does not allow absolute sorting, or when the column is already sorted in absolute ascending order.
+- `sortAbsoluteDescending`: Sort the column in descending order by magnitude, ignoring the sign - see [Absolute Sorting](./row-sorting/#absolute-sorting). Not included in the default items when `columnMenu = 'legacy'`, when the column does not allow absolute sorting, or when the column is already sorted in absolute descending order.
+- `sortUnSort`: Clear the sort on the column. Not included in the default items when `columnMenu = 'legacy'`, or when the column is not sorted.
 - `calculatedColumn`: Show the Calculated Columns options. If the column selected is a Calculated Column, the menu will show options to edit and remove the column.
 - `editColumnName`: Rename the column header. Only shown when `headerNameEditable` is set on the column, and never on a calculated column, which is renamed via its **Edit Calculated Column** dialog instead.
-- `columnFilter`: Show the column filter. Not shown when `columnMenu = 'legacy'`, a filter is not enabled, or the header filter button or floating filter button are displayed.
-- `columnChooser`: Show the column chooser. Not shown when `columnMenu = 'legacy'`.
+- `columnFilter`: Show the column filter. Not included in the default items when `columnMenu = 'legacy'`, a filter is not enabled, or the header filter button or floating filter button are displayed.
+- `columnChooser`: Show the [Column Chooser](./column-chooser/). Not included in the default items when `columnMenu = 'legacy'`.
 - `pinSubMenu`: Sub-menu for pinning. Always shown.
 - `valueAggSubMenu`: Sub-menu for value aggregation. Always shown.
 - `autoSizeThis`: Auto-size the current column. Always shown.
@@ -90,6 +92,8 @@ The following is a list of all the default built-in menu items with the rules ab
 The `defaultItems` list will change on different calls, depending on, for example, which columns are currently used for grouping.
 
 If you do not override the list of menu items, then the items displayed will be based on the rules above.
+
+The `columnMenu = 'legacy'` rules above apply to the default items only. A token supplied explicitly through `columnMenuItems`, `getColumnMenuItems()`, `mainMenuItems` or `getMainMenuItems()` is still rendered under the legacy menu.
 
 [Columns Tool Panel](./tool-panel-columns/#context-menu) tokens such as `value` can also be returned here, and are shown where they apply to the column.
 
@@ -118,67 +122,15 @@ The following example demonstrates the `colDef.columnMenuItems` property:
 
 {% gridExampleRunner title="Customising the Menu Items" name="customising-menu-items" /%}
 
-## Customising the Column Chooser
+## Column Chooser
 
-The behaviour and appearance of the Columns Menu tab can be customised by supplying `ColumnChooserParams` to the column definition: `colDef.columnChooserParams`. Note that all of the properties are initially set to `false`.
-
-{% interfaceDocumentation interfaceName="ColumnChooserParams" /%}
-
-The following example demonstrates all of the above column chooser properties **except columnLayout** which will be covered later on. Note the following:
-
-- Launch the column chooser by selecting `Choose Columns` from any of the column menus.
-- The column chooser when launched from any column has been configured to ignore column moves in the grid by setting `suppressSyncLayoutWithGrid=true` on the default column definition.
-- The **Name** column chooser doesn't show the top filter section as `suppressColumnFilter`, `suppressColumnSelectAll` and `suppressColumnExpandAll` are all set to `true`.
-- The **Age** column chooser shows the group columns in a collapsed state as `contractColumnSelection` is set to `true`.
-
-{% gridExampleRunner title="Customising Column Chooser" name="customising-column-chooser" /%}
-
-### Custom Column Layout
-
-By default the order of columns in the column chooser is derived from the `columnDefs` supplied in the grid options, and is kept in sync with the grid when columns are moved.
-
-However, a custom column layout can be provided using the **columnLayout** property in the `colDef.columnChooserParams`.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    // original column definitions supplied to the grid
-    columnDefs: [
-        {
-            columnChooserParams: {
-                columnLayout: [{
-                    headerName: 'Group 1', // group doesn't appear in grid
-                    children: [
-                        { field: 'c' }, // custom column order with column "b" omitted
-                        { field: 'a' }
-                    ]
-                }]
-            }
-        },
-        { field: 'b' },
-        { field: 'c' }
-    ]
-}
-```
-
-{% note %}
-When providing a custom columns layout by setting the **columnLayout** property, the `suppressSyncLayoutWithGrid` property will automatically set to true. This means that reordering the columns in the grid will not reorder the columns in the list shown in columns menu tab.
-{% /note %}
-
-The following example demonstrates providing custom column layouts in the column chooser via the **columnLayout** property. Note the following:
-
-- Open the column chooser for the **Name** column and note it shows the custom column order as specified in its `columnLayout`.
-- Open the column chooser for the **Age** column and note it shows the actual column order shown in the grid.
-- Reorder columns in the grid - drag the **Age** column and drop it on the left of the **Name** column.
-- Open the column chooser for the **Age** column and note that the column layout now shows the **Age** column before the **Name** column.
-- Open the column chooser for the **Name** column and note that the column layout still shows the **Name** column followed by the **Age** column (custom column layout is not synchronized with the grid column order).
-
-{% gridExampleRunner title="Customising Columns Layout" name="customising-columns-layout" /%}
+Selecting **Choose Columns** from the column menu opens the Column Chooser, which allows users to show, hide and reorder columns. See [Column Chooser](./column-chooser/) for configuration, custom labels, layouts and API usage.
 
 ## Column Menu API / Events
 
 The `gridApi` has the following methods that can be used to interact with the column menu:
 
-{% apiDocumentation source="grid-api/api.json" section="accessories" names=["showColumnChooser", "showColumnMenu", "hideColumnChooser", "hidePopupMenu"] /%}
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["showColumnMenu", "hidePopupMenu"] /%}
 
 Column filters are not considered part of the menu, so have their own API methods to show/hide.
 

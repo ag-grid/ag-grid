@@ -1,9 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, clipboardUtils } from 'ag-test-utils';
 
 import { NumberEditorModule, TextEditorModule, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule, ClipboardModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, clipboardUtils } from '../test-utils';
 
 describe('showValuesAs copies the transformed value to the clipboard', () => {
     const gridMgr = new TestGridsManager({

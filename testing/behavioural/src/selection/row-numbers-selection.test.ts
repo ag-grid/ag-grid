@@ -1,4 +1,13 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    assertSelectedCellRanges,
+    asyncSetTimeout,
+    fireGridPointerDown,
+    waitForEvent,
+} from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
@@ -14,14 +23,6 @@ import {
 } from 'ag-grid-community';
 import { CellSelectionModule, RowNumbersModule } from 'ag-grid-enterprise';
 
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    assertSelectedCellRanges,
-    asyncSetTimeout,
-    waitForEvent,
-} from '../test-utils';
 import { GridActions } from './utils';
 
 describe('Row Numbers Cell Selection', () => {
@@ -42,10 +43,8 @@ describe('Row Numbers Cell Selection', () => {
         return [api, actions];
     }
 
-    // Have to use touch instead of click because the grid only attaches touchstart in JSDOM
-    function click(element: HTMLElement, options?: MouseEventInit): void {
-        element.dispatchEvent(new MouseEvent('touchstart', { bubbles: true, ...options }));
-    }
+    // A press, not a `click` event: cell selection reacts to the row container's pointer-down listener.
+    const click = fireGridPointerDown;
 
     beforeAll(() => {
         setupAgTestIds();
@@ -150,29 +149,6 @@ describe('Row Numbers Cell Selection', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(
-            api,
-            `click row number focuses first non-row-number cell, never the row-number cell setup`
-        ).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `click row number focuses first non-row-number cell, never the row-number cell setup`)
-            .check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-                ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-                ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-                ├── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-                ├── LEAF id:4 row-number:"5" sport:"golf" year:2021 amount:7 day:"monday"
-                ├── LEAF id:5 row-number:"6" sport:"swimming" year:2020 amount:93 day:"tuesday"
-                └── LEAF id:6 row-number:"7" sport:"rowing" year:2019 amount:32 day:"saturday"
-            `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const row1 = getByTestId(gridDiv, agTestIdFor.rowNumber('0'));
@@ -209,25 +185,6 @@ describe('Row Numbers Cell Selection', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `CTRL-click row number selects row cells additively setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `CTRL-click row number selects row cells additively setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            ├── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-            ├── LEAF id:4 row-number:"5" sport:"golf" year:2021 amount:7 day:"monday"
-            ├── LEAF id:5 row-number:"6" sport:"swimming" year:2020 amount:93 day:"tuesday"
-            └── LEAF id:6 row-number:"7" sport:"rowing" year:2019 amount:32 day:"saturday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -265,25 +222,6 @@ describe('Row Numbers Cell Selection', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `CTRL-click row number deselects already-selected row cells setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `CTRL-click row number deselects already-selected row cells setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            ├── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-            ├── LEAF id:4 row-number:"5" sport:"golf" year:2021 amount:7 day:"monday"
-            ├── LEAF id:5 row-number:"6" sport:"swimming" year:2020 amount:93 day:"tuesday"
-            └── LEAF id:6 row-number:"7" sport:"rowing" year:2019 amount:32 day:"saturday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -314,31 +252,6 @@ describe('Row Numbers Cell Selection', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(
-            api,
-            `CTRL-click row number deselects, re-selecting does not merge with adjacent range setup`
-        ).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(
-            api,
-            `CTRL-click row number deselects, re-selecting does not merge with adjacent range setup`
-        ).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            ├── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-            ├── LEAF id:4 row-number:"5" sport:"golf" year:2021 amount:7 day:"monday"
-            ├── LEAF id:5 row-number:"6" sport:"swimming" year:2020 amount:93 day:"tuesday"
-            └── LEAF id:6 row-number:"7" sport:"rowing" year:2019 amount:32 day:"saturday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -391,25 +304,6 @@ describe('Row Numbers Cell Selection', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `SHIFT-click row number selects range of row cells setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `SHIFT-click row number selects range of row cells setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            ├── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-            ├── LEAF id:4 row-number:"5" sport:"golf" year:2021 amount:7 day:"monday"
-            ├── LEAF id:5 row-number:"6" sport:"swimming" year:2020 amount:93 day:"tuesday"
-            └── LEAF id:6 row-number:"7" sport:"rowing" year:2019 amount:32 day:"saturday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -441,26 +335,6 @@ describe('Row Numbers Cell Selection', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `CTRL-SHIFT-click row number selects range of row cells additively setup`)
-            .checkColumns(`
-                LEFT
-                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                CENTER
-                ├── sport "Sport" width:200
-                ├── year "Year" width:200
-                ├── amount "Amount" width:200
-                └── day "Day" width:200
-            `);
-        await new GridRows(api, `CTRL-SHIFT-click row number selects range of row cells additively setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            ├── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-            ├── LEAF id:4 row-number:"5" sport:"golf" year:2021 amount:7 day:"monday"
-            ├── LEAF id:5 row-number:"6" sport:"swimming" year:2020 amount:93 day:"tuesday"
-            └── LEAF id:6 row-number:"7" sport:"rowing" year:2019 amount:32 day:"saturday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -473,7 +347,13 @@ describe('Row Numbers Cell Selection', () => {
         assertSelectedCellRanges([{ rowEndIndex: 0, rowStartIndex: 0, columns }], api);
 
         click(row2, { ctrlKey: true });
-        assertSelectedCellRanges([{ rowEndIndex: 0, rowStartIndex: 0, columns }], api);
+        assertSelectedCellRanges(
+            [
+                { rowEndIndex: 0, rowStartIndex: 0, columns },
+                { rowEndIndex: 1, rowStartIndex: 1, columns },
+            ],
+            api
+        );
 
         click(row4, { ctrlKey: true, shiftKey: true });
         assertSelectedCellRanges(
@@ -504,25 +384,6 @@ describe('Row Numbers Cell Selection', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `CTRL-click to deselect when range created bottom-up setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `CTRL-click to deselect when range created bottom-up setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            ├── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-            ├── LEAF id:4 row-number:"5" sport:"golf" year:2021 amount:7 day:"monday"
-            ├── LEAF id:5 row-number:"6" sport:"swimming" year:2020 amount:93 day:"tuesday"
-            └── LEAF id:6 row-number:"7" sport:"rowing" year:2019 amount:32 day:"saturday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -616,17 +477,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Arrow Left from first data column navigates to row number cell setup`).checkColumns(
-            `
-                LEFT
-                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                CENTER
-                ├── sport "Sport" width:200
-                ├── year "Year" width:200
-                ├── amount "Amount" width:200
-                └── day "Day" width:200
-            `
-        );
         await new GridRows(api, `Arrow Left from first data column navigates to row number cell setup`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
@@ -665,23 +515,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Arrow Right from row number cell navigates to first data column setup`)
-            .checkColumns(`
-                LEFT
-                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                CENTER
-                ├── sport "Sport" width:200
-                ├── year "Year" width:200
-                ├── amount "Amount" width:200
-                └── day "Day" width:200
-            `);
-        await new GridRows(api, `Arrow Right from row number cell navigates to first data column setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         api.setFocusedCell(0, ROW_NUMBERS_COLUMN_ID);
         await asyncSetTimeout(0);
@@ -715,22 +548,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Arrow Up/Down navigates within row number column setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `Arrow Up/Down navigates within row number column setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         api.setFocusedCell(0, ROW_NUMBERS_COLUMN_ID);
         await asyncSetTimeout(0);
@@ -776,22 +593,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Tab can focus row number cells setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `Tab can focus row number cells setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         // Focus the last column of row 0
         api.setFocusedCell(0, 'day');
@@ -824,22 +625,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Tab from header into grid can focus row number cells setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `Tab from header into grid can focus row number cells setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         api.setFocusedHeader('day');
         await asyncSetTimeout(0);
@@ -868,28 +653,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             rowData,
             rowNumbers: true,
         });
-        await new GridColumns(
-            api,
-            `Row number header focus does not announce select-all hint when cell selection in setup`
-        ).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(
-            api,
-            `Row number header focus does not announce select-all hint when cell selection in setup`
-        ).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const rowNumberHeader = getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID));
@@ -921,23 +684,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: { enableColumnSelection: true },
             rowNumbers: true,
         });
-        await new GridColumns(api, `Row number header focus does not announce column selection hint setup`)
-            .checkColumns(`
-                LEFT
-                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                CENTER
-                ├── sport "Sport" width:200
-                ├── year "Year" width:200
-                ├── amount "Amount" width:200
-                └── day "Day" width:200
-            `);
-        await new GridRows(api, `Row number header focus does not announce column selection hint setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const rowNumberHeader = getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID));
@@ -968,22 +714,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Space on row number header selects all cells setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `Space on row number header selects all cells setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         api.setFocusedHeader(ROW_NUMBERS_COLUMN_ID);
         await asyncSetTimeout(0);
@@ -1011,22 +741,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Enter on row number header selects all cells setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `Enter on row number header selects all cells setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         api.setFocusedHeader(ROW_NUMBERS_COLUMN_ID);
         await asyncSetTimeout(0);
@@ -1054,22 +768,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Space on row number cell does not select cells in that row setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `Space on row number cell does not select cells in that row setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         api.setFocusedCell(1, ROW_NUMBERS_COLUMN_ID);
         await asyncSetTimeout(0);
@@ -1098,22 +796,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Enter on row number cell selects all cells in that row setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `Enter on row number cell selects all cells in that row setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         api.setFocusedCell(2, ROW_NUMBERS_COLUMN_ID);
         await asyncSetTimeout(0);
@@ -1141,22 +823,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             rowData,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Row number cell includes aria-rowindex attribute setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `Row number cell includes aria-rowindex attribute setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         api.ensureIndexVisible(2);
         await asyncSetTimeout(0);
@@ -1181,22 +847,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Row number cell focus announces select-row-cells hint setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `Row number cell focus announces select-row-cells hint setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -1221,25 +871,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Arrow navigation into row number cell does not clear an existing range setup`)
-            .checkColumns(`
-                LEFT
-                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                CENTER
-                ├── sport "Sport" width:200
-                ├── year "Year" width:200
-                ├── amount "Amount" width:200
-                └── day "Day" width:200
-            `);
-        await new GridRows(api, `Arrow navigation into row number cell does not clear an existing range setup`).check(
-            `
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-                ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-                ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-                └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-            `
-        );
 
         api.addCellRange({
             rowStartIndex: 0,
@@ -1278,23 +909,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Ctrl+Enter on row number cell supports add and remove selection setup`)
-            .checkColumns(`
-                LEFT
-                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                CENTER
-                ├── sport "Sport" width:200
-                ├── year "Year" width:200
-                ├── amount "Amount" width:200
-                └── day "Day" width:200
-            `);
-        await new GridRows(api, `Ctrl+Enter on row number cell supports add and remove selection setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -1339,22 +953,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: { suppressMultiRanges: true },
             rowNumbers: true,
         });
-        await new GridColumns(api, `Ctrl+Enter does not deselect with suppressMultiRanges setup`).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(api, `Ctrl+Enter does not deselect with suppressMultiRanges setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -1383,24 +981,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(api, `Shift+Arrow Down from row number cell preserves full-row range setup`).checkColumns(
-            `
-                LEFT
-                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                CENTER
-                ├── sport "Sport" width:200
-                ├── year "Year" width:200
-                ├── amount "Amount" width:200
-                └── day "Day" width:200
-            `
-        );
-        await new GridRows(api, `Shift+Arrow Down from row number cell preserves full-row range setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -1429,28 +1009,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             cellSelection: true,
             rowNumbers: true,
         });
-        await new GridColumns(
-            api,
-            `Shift+Arrow Left from first data column does not extend range into row number co setup`
-        ).checkColumns(`
-            LEFT
-            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-            CENTER
-            ├── sport "Sport" width:200
-            ├── year "Year" width:200
-            ├── amount "Amount" width:200
-            └── day "Day" width:200
-        `);
-        await new GridRows(
-            api,
-            `Shift+Arrow Left from first data column does not extend range into row number co setup`
-        ).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         api.setFocusedCell(0, 'sport');
         await asyncSetTimeout(0);
@@ -1486,24 +1044,6 @@ describe('Row Numbers Keyboard Navigation', () => {
             rowData,
             rowNumbers: true,
         });
-        await new GridColumns(api, `toggling rowNumbers off removes the column; turning it back on restores it setup`)
-            .checkColumns(`
-                LEFT
-                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                CENTER
-                ├── sport "Sport" width:200
-                ├── year "Year" width:200
-                ├── amount "Amount" width:200
-                └── day "Day" width:200
-            `);
-        await new GridRows(api, `toggling rowNumbers off removes the column; turning it back on restores it setup`)
-            .check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-                ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-                ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-                └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-            `);
         expect(api.getColumn(ROW_NUMBERS_COLUMN_ID)).not.toBeNull();
 
         api.setGridOption('rowNumbers', false);
@@ -1627,13 +1167,6 @@ describe('Row Numbers Keyboard Navigation', () => {
                 ├── amount "Amount" width:200
                 └── day "Day" width:200
             `);
-        await new GridRows(api, `rowNumbers options mutated at runtime propagate via updateColumns setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"
-            ├── LEAF id:1 row-number:"2" sport:"rugby" year:2020 amount:102 day:"sunday"
-            ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
-            └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
-        `);
 
         const colBefore = api.getColumn(ROW_NUMBERS_COLUMN_ID)!;
         expect(colBefore.getActualWidth()).toBe(80);

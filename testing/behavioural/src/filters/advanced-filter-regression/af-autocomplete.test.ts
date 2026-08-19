@@ -1,7 +1,3 @@
-import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
 import {
     AdvancedFilterHarness,
     FilterDom,
@@ -10,12 +6,16 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 /**
  * Regression baseline for Advanced Filter autocomplete: Tab completion, the position-aware suggestion
  * list, re-parsing after an edit, and multi-condition join completion. The suggestion list is a
- * VirtualList, so `installFilterLayoutMock` is required for its rows to render in jsdom.
+ * VirtualList, so `installFilterLayoutMock` is required for its rows to render without layout.
  */
 interface Row {
     athlete: string;
@@ -55,6 +55,13 @@ describe('Advanced Filter — autocomplete completion & editing', () => {
     });
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
+
+    test('keeps browser autocomplete disabled when it is enabled for regular grid inputs', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', { ...OPTS, enableInputAutoComplete: true });
+        const af = AdvancedFilterHarness.get(api);
+
+        expect(af.input.getAttribute('autocomplete')).toBe('off');
+    });
 
     test('a column hidden after the list was first built leaves the suggestions', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);

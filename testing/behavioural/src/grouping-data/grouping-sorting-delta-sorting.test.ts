@@ -1,7 +1,7 @@
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('Grouping delta sorting', () => {
     const gridsManager = new TestGridsManager({

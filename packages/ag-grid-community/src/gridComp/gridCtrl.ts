@@ -2,6 +2,7 @@ import {
     Direction,
     _findTabbableParent,
     _focusInto,
+    _focusIntoTabbableFirst,
     _getActiveDomElement,
     _last,
     _observeIntersection,
@@ -38,7 +39,7 @@ export interface OptionalGridComponents {
 }
 
 const focusContainer = (comp: FocusableContainer, up?: boolean): boolean => {
-    return _runWithContainerFocusAllowed(comp, () => _focusInto(comp.getGui(), up, false, true));
+    return _runWithContainerFocusAllowed(comp, () => _focusIntoTabbableFirst(comp.getGui(), up, true));
 };
 
 const getGridContainerName = (container?: FocusableContainer): GridContainerName => {

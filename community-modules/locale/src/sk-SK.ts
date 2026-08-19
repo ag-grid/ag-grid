@@ -694,6 +694,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaFilterColumnsInput: 'Vstup Filtra pre Stĺpce',
     ariaFilterFromValue: 'Filtrovať od hodnoty',
     ariaFilterInput: 'Vstup Filtra',
+    ariaLabelInputClear: 'Vyčistiť',
     ariaFilterList: 'Zoznam Filtrov',
     ariaFilterToValue: 'Filtrovať do hodnoty',
     ariaFilterValue: 'Hodnota Filtra',
@@ -789,7 +790,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaHasNote: 'Táto bunka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
     decimalSeparator: ',',
 
     // Data types

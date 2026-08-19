@@ -697,6 +697,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaFilterColumnsInput: 'Filterkolumnsinmatning',
     ariaFilterFromValue: 'Filtrera från värde',
     ariaFilterInput: 'Filterinmatning',
+    ariaLabelInputClear: 'Rensa',
     ariaFilterList: 'Filterlista',
     ariaFilterToValue: 'Filtrera till värde',
     ariaFilterValue: 'Filtervärde',
@@ -792,8 +793,8 @@ export const AG_GRID_LOCALE_SE = {
     ariaHasNote: 'Denna cell har en anteckning.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Text',

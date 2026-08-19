@@ -18,8 +18,10 @@ import { urlWithPrefix } from '@utils/urlWithPrefix';
 import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
 import {
     AG_GRID_ERRORS,
+    MAX_ERROR_ID,
     type ErrorId,
 } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
+import { VERSION } from '../../../../../../packages/ag-grid-community/src/version';
 
 interface Params {
     framework: Framework;
@@ -31,8 +33,11 @@ interface Props {
 
 export async function getStaticPaths() {
     const errors = await getCollection('errors');
+    // The whole allocated range, not just the live codes: a code dropped from `AG_GRID_ERRORS` still needs
+    // a page for the client-side hop to its archived copy to run on.
+    const codes = Array.from({ length: MAX_ERROR_ID }, (_, index) => index + 1);
     return FRAMEWORKS.flatMap((framework: Framework) => {
-        return Object.keys(AG_GRID_ERRORS).map((codeNum) => {
+        return codes.map((codeNum) => {
             const code = codeNum.toString();
             const errorPage = errors.find(({ id }) => id === code);
             return {
@@ -50,7 +55,11 @@ export async function getStaticPaths() {
 
 const { framework, code } = Astro.params as Params;
 const { errorPage } = Astro.props as Props;
-const errorCode = parseInt(code, 10) as ErrorId;
+const errorCode = parseInt(code, 10);
+// Covers both a code retired since an earlier release and a number never allocated — the two cannot be
+// told apart without a hand-maintained list, so the copy stays version-neutral. It must never reach
+// `getErrorText`, which throws for an unknown code under `astro dev` via `throwDevWarning`.
+const isUnknownCode = !(errorCode in AG_GRID_ERRORS);
 const frameworkDisplayText = framework === 'javascript' ? '' : getFrameworkDisplayText(framework);
 const title = `AG Grid ${frameworkDisplayText} Error #${code}`;
 const description = errorPage?.data.description ? errorPage?.data.description : '';
@@ -62,7 +71,7 @@ const { data: allErrorLinks } = (await getEntry('errorLinks', 'links')) as Colle
 const errorLinks = allErrorLinks.filter((e) => e.errorIds.includes(errorCode)) ?? [];
 const path = Astro.url.pathname;
 const pageName = `errors/${code}`;
-const defaultErrorText = getErrorText({ errorCode });
+const defaultErrorText = isUnknownCode ? '' : getErrorText({ errorCode: errorCode as ErrorId });
 
 const getTabItemSlug = (id: string) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`;
 const topHeading = getTopHeading(title);
@@ -115,21 +124,33 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
 
             <div class={styles.pageSections}>
                 <h2 id={fullErrorTextHeading.slug}>{fullErrorTextHeading.text}</h2>
-                <div class="missing-params-message">
-                    <Warning>
-                        Full error message cannot be shown because there are missing parameters in the URL. Please
-                        follow the full link from the developer tool logs.
-                    </Warning>
-                </div>
-                <div class="full-error-message">
-                    <pre id="errorCodeText">{defaultErrorText}</pre>
-                    <Note>
-                        To show this error text in the dev console, <a
-                            href={urlWithPrefix({ framework, url: './dev-validation' })}
-                            >enable development validations</a
-                        >.
-                    </Note>
-                </div>
+                {
+                    isUnknownCode ? (
+                        <Note>
+                            Error #{code} is not recognised in AG Grid {VERSION}. If you followed this link from an
+                            older version of AG Grid, you will be redirected to that version's documentation.
+                        </Note>
+                    ) : (
+                        <>
+                            <div class="missing-params-message">
+                                <Warning>
+                                    Full error message cannot be shown because there are missing parameters in the URL.
+                                    Please follow the full link from the developer tool logs.
+                                </Warning>
+                            </div>
+                            <div class="full-error-message">
+                                <pre id="errorCodeText">{defaultErrorText}</pre>
+                                <Note>
+                                    To show this error text in the dev console,{' '}
+                                    <a href={urlWithPrefix({ framework, url: './dev-validation' })}>
+                                        enable development validations
+                                    </a>
+                                    .
+                                </Note>
+                            </div>
+                        </>
+                    )
+                }
 
                 {
                     errorLinks.length > 0 ? (
@@ -161,7 +182,10 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
 
 <script>
     import { getErrorText } from '@utils/getErrorText';
-    import type { ErrorId } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
+    import {
+        AG_GRID_ERRORS,
+        type ErrorId,
+    } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
     import { VERSION } from '../../../../../../packages/ag-grid-community/src/version';
     import { getErrorRedirectBaseUrl } from '@utils/getErrorRedirectBaseUrl';
     import { pathJoin } from '@utils/pathJoin';
@@ -172,29 +196,34 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
 
     // Get errorCode from url, so it doesn't need to be passed
     // in from Astro and we can import in this script
-    const errorCode = parseInt(window.location.pathname.split('/').filter(Boolean).slice(-1)[0], 10) as ErrorId;
+    const errorCode = parseInt(window.location.pathname.split('/').filter(Boolean).slice(-1)[0], 10);
     const searchParams = new URLSearchParams(window.location.search);
     const { _version_, ...params } = Object.fromEntries(searchParams.entries());
 
     if (!_version_) {
-        // Missing version number, show a warning message
-        const missingParamsMessage = (document.querySelector(MISSING_PARAMS_MESSAGE_SELECTOR) as HTMLElement)!;
-        const fullErrorMessage = (document.querySelector(FULL_ERROR_MESSAGE_SELECTOR) as HTMLElement)!;
+        // Missing version number, show a warning message. Both blocks are absent on an unknown code's page.
+        const missingParamsMessage = document.querySelector(MISSING_PARAMS_MESSAGE_SELECTOR) as HTMLElement | null;
+        const fullErrorMessage = document.querySelector(FULL_ERROR_MESSAGE_SELECTOR) as HTMLElement | null;
 
-        missingParamsMessage.style.display = 'block';
-        fullErrorMessage.style.display = 'none';
+        if (missingParamsMessage) {
+            missingParamsMessage.style.display = 'block';
+        }
+        if (fullErrorMessage) {
+            fullErrorMessage.style.display = 'none';
+        }
     } else {
-        const errorText = getErrorText({ errorCode, params });
+        // Redirect first, so the hop to the archive can never sit downstream of a failing text lookup.
         const errorRedirectBaseUrl = getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION });
 
         if (errorRedirectBaseUrl) {
+            // `replace` does not halt this script, so the text update below has to be an explicit `else`.
             const redirectUrl = pathJoin(errorRedirectBaseUrl, window.location.pathname, window.location.search);
             window.location.replace(redirectUrl);
-        }
-
-        const errorCodeTextEl = document.getElementById(ERROR_CODE_TEXT_ID);
-        if (errorCodeTextEl) {
-            errorCodeTextEl.textContent = errorText;
+        } else if (errorCode in AG_GRID_ERRORS) {
+            const errorCodeTextEl = document.getElementById(ERROR_CODE_TEXT_ID);
+            if (errorCodeTextEl) {
+                errorCodeTextEl.textContent = getErrorText({ errorCode: errorCode as ErrorId, params });
+            }
         }
     }
 </script>

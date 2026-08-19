@@ -697,6 +697,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaFilterColumnsInput: 'Unos za filtriranje stupaca',
     ariaFilterFromValue: 'Filtriraj od vrijednosti',
     ariaFilterInput: 'Unos filtera',
+    ariaLabelInputClear: 'Očisti',
     ariaFilterList: 'Popis filtera',
     ariaFilterToValue: 'Filtriraj do vrijednosti',
     ariaFilterValue: 'Vrijednost filtera',
@@ -791,8 +792,8 @@ export const AG_GRID_LOCALE_HR = {
     ariaHasNote: 'Ova ćelija ima bilješku.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: '.',
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Tekst',

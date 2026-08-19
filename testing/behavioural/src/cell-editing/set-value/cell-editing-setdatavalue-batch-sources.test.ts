@@ -1,3 +1,5 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import {
     CheckboxEditorModule,
     DateEditorModule,
@@ -9,8 +11,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 
 /**
  * Tests for setDataValue behaviour during batch editing — source routing.
