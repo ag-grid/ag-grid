@@ -193,7 +193,13 @@
             // href, so fall back to the current URL rather than pushing null
             // (which would corrupt the address bar and back/forward behaviour).
             const sessionUrl = link.getAttribute('href') || location.href;
-            history.pushState({ btpSession: videoId }, '', sessionUrl);
+            // Merge onto the existing state rather than replacing it: Astro's ClientRouter keeps
+            // its history index there, and a partial state leaves `index` undefined, which makes
+            // the router read every later traversal as a "back" and turns its next push index
+            // into NaN. This is a classic script served verbatim from public/, so the shared
+            // replaceHistoryUrl() helper is not importable here.
+            // eslint-disable-next-line no-restricted-syntax -- no module system in a public/ script
+            history.pushState({ ...history.state, btpSession: videoId }, '', sessionUrl);
         });
     }
     for (const closer of document.querySelectorAll('[data-session-modal-close]')) {
