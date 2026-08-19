@@ -68,7 +68,6 @@ export class ToolPanelColumnGroupComp extends Component {
     public readonly columnGroup: AgProvidedColumnGroup;
     public readonly columnDepth: number;
 
-    private displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
@@ -82,10 +81,13 @@ export class ToolPanelColumnGroupComp extends Component {
         private readonly source: ColumnSelectionPanelSource
     ) {
         super();
-        const { columnGroup, depth, displayName } = modelItem;
+        const { columnGroup, depth } = modelItem;
         this.columnGroup = columnGroup;
         this.columnDepth = depth;
-        this.displayName = displayName;
+    }
+
+    private get displayName(): string | null {
+        return this.modelItem.displayName;
     }
 
     public postConstruct(): void {
@@ -359,11 +361,6 @@ export class ToolPanelColumnGroupComp extends Component {
         if (event.columnGroup && event.columnGroup.getGroupId() !== this.columnGroup.groupId) {
             return;
         }
-        this.displayName = this.beans.colNames.getDisplayNameForProvidedColumnGroup(
-            null,
-            this.columnGroup,
-            'columnToolPanel'
-        );
         if (this.labelRendererFeature) {
             this.labelRendererFeature.refresh();
         } else {

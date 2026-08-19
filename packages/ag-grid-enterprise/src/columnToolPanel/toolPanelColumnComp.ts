@@ -48,7 +48,6 @@ export class ToolPanelColumnComp extends Component {
     public readonly column: AgColumn;
     public readonly columnDepth: number;
     private eDragHandle: Element;
-    private displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
@@ -63,10 +62,13 @@ export class ToolPanelColumnComp extends Component {
         private readonly source: ColumnSelectionPanelSource
     ) {
         super();
-        const { column, depth, displayName } = modelItem;
+        const { column, depth } = modelItem;
         this.column = column;
         this.columnDepth = depth;
-        this.displayName = displayName;
+    }
+
+    private get displayName(): string | null {
+        return this.modelItem.displayName;
     }
 
     public postConstruct(): void {
@@ -217,12 +219,10 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onColDefChanged(): void {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(this.column, 'columnToolPanel');
-        this.displayName = displayName;
         if (this.labelRendererFeature) {
             this.labelRendererFeature.refresh();
         } else {
-            this.eLabel.textContent = displayName;
+            this.eLabel.textContent = this.displayName;
         }
         this.refreshAriaLabel();
     }
