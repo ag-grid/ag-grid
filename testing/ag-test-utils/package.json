@@ -1,6 +1,6 @@
 {
   "name": "ag-test-utils",
-  "version": "36.1.0-beta.20260818.1531",
+  "version": "36.1.0-beta.20260819.817",
   "private": true,
   "type": "module",
   "description": "Harnesses and assertions shared by the behavioural suite: grid lifecycle, GridRows/GridColumns snapshots, DOM widgets and polyfills. Test-only; never published and never imported by grid source.",
