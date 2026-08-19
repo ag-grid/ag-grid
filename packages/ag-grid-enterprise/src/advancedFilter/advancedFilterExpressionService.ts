@@ -1,4 +1,11 @@
-import { _exists, _parseBigIntOrNull, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-stack';
+import {
+    _exists,
+    _hasOwn,
+    _parseBigIntOrNull,
+    _parseDateTimeFromString,
+    _serialiseDate,
+    _toStringOrNull,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -30,6 +37,15 @@ import {
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
 import { getBigIntParser } from './filterExpressionUtils';
+
+/** The `filterParams` an Advanced Filter evaluator honours; the rest are column-filter UI concerns. */
+const COPIED_FILTER_PARAMS: (keyof FilterExpressionEvaluatorParams<any>)[] = [
+    'caseSensitive',
+    'includeBlanksInEquals',
+    'includeBlanksInNotEqual',
+    'includeBlanksInLessThan',
+    'includeBlanksInGreaterThan',
+];
 
 export class AdvancedFilterExpressionService extends BeanStub implements NamedBean {
     beanName = 'advFilterExpSvc' as const;
@@ -269,9 +285,16 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return entries;
     }
 
-    public getOperatorAutocompleteEntries(column: AgColumn, baseCellDataType: BaseCellDataType): AutocompleteEntry[] {
-        const activeOperators = this.getActiveOperators(column);
-        return this.getDataTypeExpressionOperator(baseCellDataType)!.getEntries(activeOperators);
+    /** The options the column offers: those of the data type that `filterParams.filterOptions` names, or all. */
+    public getOperatorAutocompleteEntries(
+        column: AgColumn | null | undefined,
+        baseCellDataType?: BaseCellDataType
+    ): AutocompleteEntry[] {
+        const operatorForType = this.getDataTypeExpressionOperator(baseCellDataType);
+        if (!operatorForType) {
+            return [];
+        }
+        return operatorForType.getEntries(column ? this.getActiveOperators(column) : undefined);
     }
 
     public getJoinOperatorAutocompleteEntries(): AutocompleteEntry[] {
@@ -293,7 +316,9 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         baseCellDataType?: BaseCellDataType,
         operator?: string
     ): FilterExpressionOperator<any> | undefined {
-        return this.getDataTypeExpressionOperator(baseCellDataType)?.operators?.[operator!];
+        const operators = this.getDataTypeExpressionOperator(baseCellDataType)?.operators;
+        // A model `type` such as `toString` must not resolve to an inherited member.
+        return operators && _hasOwn(operators, operator!) ? operators[operator!] : undefined;
     }
 
     public getExpressionJoinOperators(): { AND: string; OR: string } {
@@ -364,14 +389,13 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         }
         const { filterParams } = column.colDef;
         if (filterParams) {
-            ['caseSensitive', 'includeBlanksInEquals', 'includeBlanksInLessThan', 'includeBlanksInGreaterThan'].forEach(
-                (param: keyof FilterExpressionEvaluatorParams<ConvertedTValue, TValue>) => {
-                    const paramValue = filterParams[param];
-                    if (paramValue) {
-                        params[param] = paramValue;
-                    }
+            for (let i = 0, len = COPIED_FILTER_PARAMS.length; i < len; ++i) {
+                const param = COPIED_FILTER_PARAMS[i];
+                const paramValue = filterParams[param];
+                if (paramValue) {
+                    params[param] = paramValue;
                 }
-            );
+            }
         }
         this.expressionEvaluatorParams[colId] = params;
 

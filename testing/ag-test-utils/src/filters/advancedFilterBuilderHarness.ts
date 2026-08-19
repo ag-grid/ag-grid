@@ -303,9 +303,10 @@ export class AdvancedFilterBuilderHarness {
         this.api.onFilterChanged();
         // Recreating the rows is the whole point of this helper, so poll until the rendered rows are
         // new element instances — the only signal that can distinguish a rebuild from the original render.
-        await waitFor(() => {
+        await waitFor(async () => {
             nudgeVirtualList('.ag-advanced-filter-builder-virtual-list-viewport');
             nudgeVirtualList('.ag-rich-select-virtual-list-viewport');
+            await asyncSetTimeout(0);
             const rowsNow = Array.from(document.querySelectorAll<HTMLElement>(ITEM_WRAPPER));
             if (rowsNow.length === 0 || rowsNow.some((row) => rowsBefore.includes(row))) {
                 throw new Error('builder item rows were not recreated');
