@@ -14,7 +14,9 @@ name: GitHub issue AI triage
 #   ag-dev-prompts → docs/github-triage-pipeline.md
 #
 # Triggers:
-#   issues (opened|labeled)            → triage    (the GitHub-native entry point)
+#   issues (opened|labeled)            → the `redispatch` job ONLY, which re-fires this
+#       workflow as a workflow_dispatch so the triage run carries a bot actor. The agent
+#       is never run on the `issues` event itself — see the `redispatch` job.
 #   repository_dispatch gh-triage-resume → preflight routes execute | resume
 #       (from the single AITGH `→ In Progress` JIRA automation rule:
 #        POST /repos/ag-grid/ag-grid/dispatches
@@ -103,6 +105,44 @@ env:
     DEV_PROMPTS_CHANNEL: ${{ github.event.client_payload.channel || inputs.channel || 'latest' }}
 
 jobs:
+    # -------------------------------------------------- redispatch
+    # The `issues` event does not run the triage itself: it re-fires this workflow as a
+    # `workflow_dispatch`, and that run carries a bot actor which the shared action
+    # allow-lists. Running the agent directly on the `issues` event does not work —
+    # do not collapse this back into a single run.
+    #
+    # Rationale and the required rollout order live in the private ag-dev-prompts repo,
+    # docs/github-triage-pipeline.md § "Why the auto-trigger self-dispatches".
+    # Mirrors the arrangement release-review.yml already uses.
+    #
+    # Deliberately not `|| true`: a failed dispatch means the issue is never triaged, so
+    # this job must go red rather than swallow it.
+    redispatch:
+        if: |
+            github.event_name == 'issues' &&
+            contains(github.event.issue.labels.*.name, 'triage') &&
+            github.event.issue.state == 'open' &&
+            (github.event.action == 'opened' || github.event.label.name == 'triage')
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            # Needed for `gh workflow run`. The job has no checkout and no agent, and the
+            # only issue-derived value it uses is the issue number.
+            actions: write
+        steps:
+            - name: Re-fire as workflow_dispatch (bot actor)
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GH_ISSUE: ${{ github.event.issue.number }}
+              run: |
+                  set -euo pipefail
+                  echo "issue #${GH_ISSUE} is triage-eligible — re-firing as workflow_dispatch so the run carries a bot actor"
+                  gh workflow run github-triage-pipeline.yml \
+                      --repo "${{ github.repository }}" \
+                      -f stage=triage \
+                      -f gh_issue="${GH_ISSUE}" \
+                      -f channel=latest
+
     # -------------------------------------------------- resolve-channel
     # Which @ag-grid/dev-prompts dist-tag should this dispatch run?
     #
@@ -224,18 +264,21 @@ jobs:
 
     # -------------------------------------------------- run
     # The parameterised stage runner (triage / resume / execute / browser-verify /
-    # repro-rebuild). Runs on the issue event (triage), a forced dispatch, a
-    # non-empty preflight route, or one of the three manual-trigger button
-    # events (which — unlike gh-triage-resume — always resolve to ONE specific
-    # stage directly, no preflight/routing involved: the PM's button click IS
-    # the unambiguous intent signal).
+    # repro-rebuild). Runs on a dispatch (forced, or the auto-triage self-dispatch
+    # from `redispatch` above), a non-empty preflight route, or one of the three
+    # manual-trigger button events (which — unlike gh-triage-resume — always resolve
+    # to ONE specific stage directly, no preflight/routing involved: the PM's button
+    # click IS the unambiguous intent signal).
+    #
+    # ⚠️ There is deliberately NO `issues` branch here — the auto-triage path arrives as
+    # the `workflow_dispatch` that `redispatch` fires. Do not add one back; see the
+    # `redispatch` job above.
     run:
         needs: [preflight, resolve-channel]
         if: |
             !cancelled() &&
             (
-              (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'triage') && github.event.issue.state == 'open' && (github.event.action == 'opened' || github.event.label.name == 'triage'))
-              || github.event_name == 'workflow_dispatch'
+              github.event_name == 'workflow_dispatch'
               || (github.event_name == 'repository_dispatch' && needs.preflight.outputs.stage != '')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-resume')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-browser-verify')
@@ -287,23 +330,10 @@ jobs:
                   # regardless of preflight's own behaviour.
                   stage: ${{ (github.event.action == 'gh-triage-manual-resume' && 'resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'repro-rebuild') || needs.preflight.outputs.stage || inputs.stage || 'triage' }}
                   product: grid
-                  # claude-code-action refuses to run when the TRIGGERING ACTOR lacks
-                  # write access — and on an `issues` event that actor is the ISSUE
-                  # AUTHOR, a community reporter with `read`. Auto-triage therefore
-                  # failed for every genuine community report ("Actor does not have
-                  # write permissions to the repository") and only ever worked when a
-                  # maintainer happened to touch the issue, which is the opposite of
-                  # the feature. It looked healthy because the first live ticket was
-                  # label-triggered by a maintainer; the first real community report
-                  # (AITGH-28 / #14837) failed on both auto-fires.
+                  # NOTE: `allowed_non_write_users` is deliberately NOT passed, and must
+                  # stay unset — setting it re-breaks the auto-triage path. The actor is a
+                  # bot, allow-listed inside the composite action. See `redispatch` above.
                   #
-                  # Scoped to the `issues` event ALONE: the board drag, the manual
-                  # buttons and workflow_dispatch all already carry a write-capable
-                  # actor, so the gate stays armed there at no cost — and stays armed
-                  # for any trigger added later. Setting this also makes
-                  # claude-code-action best-effort scrub secrets from subprocess
-                  # environments.
-                  allowed_non_write_users: ${{ github.event_name == 'issues' && '*' || '' }}
                   # Provenance for the pin: `post` stamps this channel onto the
                   # mapping ticket so `resolve-channel` can route the NEXT drag to the
                   # same channel. Must match the channel actually installed above.
@@ -379,13 +409,14 @@ jobs:
     # (B2) — security posture"). Do not treat this job as hardened.
     browser-verify-chain:
         needs: [run]
+        # The former `github.event_name == 'issues'` disjunct is removed, not just unused:
+        # auto-triage now arrives as a `workflow_dispatch stage=triage` (see `redispatch`),
+        # so `run` never executes on an `issues` event. Dead condition branches are not
+        # left in place here.
         if: |
             !cancelled() &&
             needs.run.outputs.confirmed_bug == 'true' &&
-            (
-              github.event_name == 'issues'
-              || (github.event_name == 'workflow_dispatch' && inputs.stage == 'triage')
-            )
+            github.event_name == 'workflow_dispatch' && inputs.stage == 'triage'
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -500,13 +531,13 @@ jobs:
     # too, for the same "an unused permission is a mistake" reason as `run`.
     confidence-refresh-chain:
         needs: [run, browser-verify-chain, repro-rebuild-chain]
+        # Same removal of the dead `issues` disjunct as browser-verify-chain above. The
+        # stage restriction itself is still load-bearing (it stops an ordinary human
+        # resume auto-firing a duplicate resume) — only the unreachable half is gone.
         if: |
             !cancelled() &&
             needs.run.outputs.confidence_gap == 'true' &&
-            (
-              github.event_name == 'issues'
-              || (github.event_name == 'workflow_dispatch' && inputs.stage == 'triage')
-            )
+            github.event_name == 'workflow_dispatch' && inputs.stage == 'triage'
         runs-on: ubuntu-latest
         permissions:
             contents: read
