@@ -1,0 +1,375 @@
+@use 'design-system' as *;
+
+// Wider than most screens, so the demo reads as a full-size app running off the
+// edge rather than a shrunken one.
+$demo-held-width: 1600px;
+$hero-max-width: 480px; // Matches the .hero clamp ceiling.
+$demo-column-gap: $spacing-size-8;
+$demo-gutter-base: $spacing-size-12;
+$demo-gutter-wide: 100px;
+// Where the demo first fits between the wide gutters; derived so it tracks its parts.
+$breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $demo-gutter-wide * 2;
+
+// Deliberately uncapped, unlike every other page: until the demo fits, the card
+// takes the right-hand gutter and runs off the edge of the screen.
+.demoPage {
+    // JS overwrites --demo-height after first paint, so this fallback has to be
+    // right too or the demo renders taller than the window and snaps.
+    --demo-chrome: var(--layout-site-header-height);
+    --demo-height: calc(100vh - var(--demo-chrome));
+
+    --demo-gutter: var(--layout-horizontal-margins);
+
+    display: flex;
+    flex-direction: column;
+    gap: $demo-column-gap;
+    width: 100%;
+    padding: $spacing-size-6 var(--demo-gutter);
+    box-sizing: border-box;
+
+    // Only the slotted mobile notice shows this narrow; give it the space the demo would have filled.
+    min-height: var(--demo-height);
+    justify-content: center;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        min-height: 0;
+        justify-content: flex-start;
+    }
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        --demo-gutter: #{$demo-gutter-base};
+
+        flex-direction: row;
+        align-items: stretch;
+        height: var(--demo-height);
+    }
+
+    @media screen and (min-width: $breakpoint-demo-fits) {
+        --demo-gutter: #{$demo-gutter-wide};
+    }
+}
+
+// The banner pushes this page down, so its single-line height comes out of the
+// space available to the demo.
+:global(html[data-show-announcement='true']) .demoPage {
+    --demo-chrome: calc(var(--layout-site-header-height) + 37px);
+}
+
+.hero {
+    // Its copy sells the demo and its list switches between examples: nothing to offer
+    // while no demo is reachable.
+    display: none;
+    flex-shrink: 0;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        display: flex;
+    }
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        width: clamp(360px, 34vw, 480px);
+        align-items: center;
+    }
+}
+
+.heroInner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    // Full width while stacked, where the hero has the whole page to itself; only
+    // capped once it becomes the narrow left column beside the demo.
+    @media screen and (min-width: $breakpoint-hero-large) {
+        max-width: 440px;
+    }
+}
+
+.eyebrow {
+    margin: 0 0 $spacing-size-3;
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    // Brand shades don't flip with the theme, so brand-600 needs a lighter
+    // substitute on dark backgrounds.
+    color: var(--color-brand-600);
+
+    #{$selector-darkmode} & {
+        color: var(--color-brand-300);
+    }
+}
+
+.title {
+    margin: 0 0 $spacing-size-5;
+    font-size: var(--text-fs-3xl);
+    line-height: var(--text-lh-3xl);
+    font-weight: var(--text-bold);
+    letter-spacing: -0.02em;
+    color: var(--color-fg-primary);
+}
+
+.description {
+    margin: 0 0 $spacing-size-8;
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-base);
+    color: var(--color-fg-secondary);
+}
+
+// Doubles as the demo switcher. A shared rule runs down the left; each item's own
+// transparent border overlays it, colouring in when active.
+.featureList {
+    list-style: none;
+    margin: 0 0 $spacing-size-8;
+    padding: 0;
+    border-left: 2px solid var(--color-border-primary);
+}
+
+.featureItem {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-1;
+    margin-left: -2px;
+    padding: $spacing-size-3 0 $spacing-size-3 $spacing-size-8;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+
+    &:hover .featureTitle {
+        color: var(--color-brand-500);
+    }
+
+    #{$selector-darkmode} &:hover .featureTitle {
+        color: var(--color-brand-300);
+    }
+}
+
+.featureItemActive {
+    border-left-color: var(--color-brand-600);
+
+    .featureTitle {
+        color: var(--color-brand-600);
+    }
+
+    #{$selector-darkmode} & {
+        border-left-color: var(--color-brand-300);
+
+        .featureTitle {
+            color: var(--color-brand-300);
+        }
+    }
+}
+
+.featureTitle {
+    font-size: 18px;
+    font-weight: var(--text-semibold);
+    line-height: var(--text-lh-base);
+    color: var(--color-fg-primary);
+    transition: color $transition-default-timing;
+}
+
+.featureDescription {
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-base);
+    // Undo the global `a` rule's semibold so the title carries the weight.
+    font-weight: var(--text-regular);
+    color: var(--color-fg-tertiary);
+}
+
+.ctaButtons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-size-3;
+}
+
+.contactButton {
+    gap: $spacing-size-2;
+    :global(.icon) {
+        --icon-size: #{$spacing-size-4};
+    }
+}
+
+.demoCard {
+    position: relative;
+    // The demo has no usable small-screen form: it is held at $demo-held-width, so a phone
+    // would show a sliver of it. Hide it until there is room; the page-level mobile notice
+    // stands in, as one inside this card would centre in the held width and land off-screen.
+    display: none;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 70vh;
+    min-height: 480px;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+
+    // Same threshold the mobile notice uses to call an example unavailable.
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        display: block;
+    }
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        height: auto;
+
+        // A clipped demo runs off the screen edge rather than stopping short of it,
+        // since the gutter would only be dead space beside it. updateCutOff
+        // (demo-page.js) measures the un-bled width, so this can't oscillate with
+        // the state that applies it.
+        &:has([data-cutoff='true']) {
+            margin-right: calc(-1 * var(--demo-gutter));
+        }
+    }
+
+    // The expanded stage covers the page opaquely, but this card's border and shadow
+    // would still show behind it. Must follow the bleed above to win on source order.
+    &:has([data-expanded='true']) {
+        margin-right: 0;
+        border-color: transparent;
+        box-shadow: none;
+    }
+}
+
+// The demo is a non-interactive preview (viewport `inert`, overlay swallowing
+// clicks) until launched, then expands to fill the viewport and becomes live.
+.stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    &[data-expanded='true'] {
+        position: fixed;
+        // positionBelowHeader (demo-page.js) writes the sticky header's live
+        // bottom here, so the header stays visible.
+        top: var(--stage-top, 0px);
+        right: 0;
+        bottom: 0;
+        left: 0;
+        // top+bottom own the height; overrides the base height:100%, which would
+        // make it a full viewport tall and overflow below the header.
+        height: auto;
+        box-sizing: border-box;
+        // Generous top band keeps Minimise off the demo; the remaining three sides
+        // share one inset so the frame sits evenly, giving the demo the width the
+        // page gutters would otherwise take.
+        padding: $spacing-size-16 $spacing-size-6 $spacing-size-6;
+        // Below the site header (10002) and banner (10005).
+        z-index: 9999;
+        background: var(--color-bg-primary);
+    }
+}
+
+.stageViewport {
+    width: 100%;
+    height: 100%;
+    // A floor, not a cap: the card clips the overflow, so the demo is cut off on
+    // the right rather than shrinking, and still grows past this when there's room.
+    min-width: $demo-held-width;
+}
+
+// Expanded: take the real available width, framed like the preview card.
+.stage[data-expanded='true'] .stageViewport {
+    min-width: 0;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+// Each demo's own script sizes itself from the viewport bottom, overshooting this
+// container and clipping bottom-pinned content such as the sidebar profile
+// switcher. Pin it to the container instead.
+.stageViewport > :global(*) {
+    height: 100% !important;
+}
+
+// Hit layer that, with the `inert` viewport, makes the preview non-interactive.
+// Transparent on load so the demo reads crisply; the idle zero-blur filter is what
+// lets the hover blur interpolate rather than pop.
+.stageOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    backdrop-filter: blur(0) saturate(1);
+    -webkit-backdrop-filter: blur(0) saturate(1);
+    transition:
+        background $transition-default-timing,
+        backdrop-filter $transition-default-timing,
+        -webkit-backdrop-filter $transition-default-timing;
+
+    &:hover,
+    &:focus-visible {
+        background: color-mix(in srgb, var(--color-bg-primary) 38%, transparent);
+        backdrop-filter: blur(5px) saturate(1.05);
+        -webkit-backdrop-filter: blur(5px) saturate(1.05);
+    }
+}
+
+// Gate interaction only while the demo is cropped; when it all fits, it is live
+// inline with no overlay.
+.stage[data-cutoff='true']:not([data-expanded='true']) .stageOverlay {
+    display: flex;
+}
+
+// Borrows the primary button's tokens so it sits in the site's design language.
+.stageHint {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+    padding: 0.5em 1.15em 0.6em;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-button-primary-bg);
+    color: var(--color-button-primary-fg);
+    border: 1px solid var(--color-button-primary-border);
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-bold);
+    box-shadow: var(--shadow-lg);
+    // Rises into view on hover/focus of the overlay.
+    opacity: 0;
+    transform: translateY($spacing-size-2) scale(0.98);
+    transition:
+        opacity $transition-default-timing,
+        background-color $transition-default-timing,
+        transform $transition-default-timing;
+
+    .stageOverlay:hover &,
+    .stageOverlay:focus-visible & {
+        opacity: 1;
+        background-color: var(--color-button-primary-bg-hover);
+        transform: none;
+    }
+}
+
+.stageHintIcon {
+    flex-shrink: 0;
+}
+
+.stageMinimise {
+    position: absolute;
+    top: $spacing-size-3;
+    // Matches the stage's side padding so it lines up with the demo's left edge.
+    left: $spacing-size-6;
+    z-index: 4;
+    // Colour, border, padding and states come from the global `button-secondary`
+    // class in the markup; this only owns placement and icon + label layout.
+    align-items: center;
+    gap: $spacing-size-2;
+
+    // Scoped selectors out-specify the global button `display: inline-block`.
+    .stage:not([data-expanded='true']) & {
+        display: none;
+    }
+
+    .stage[data-expanded='true'] & {
+        display: inline-flex;
+    }
+}
+
+.stageMinimiseIcon {
+    flex-shrink: 0;
+}
