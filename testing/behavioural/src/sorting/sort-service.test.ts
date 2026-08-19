@@ -1809,6 +1809,30 @@ describe('SortService', () => {
             expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-descending-icon']);
         });
 
+        test('a colDef change resets the cycle so the next header click continues from the first matching entry', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'n', field: 'n', sortingOrder: ['asc', 'desc', 'asc', null] }],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+
+            // Three clicks land on the repeated 'asc' at index 2, so the cycle position is 2.
+            for (let i = 0; i < 3; ++i) {
+                clickHeader(api, 'n');
+                await asyncSetTimeout(0);
+            }
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-ascending-icon']);
+
+            // A new sortingOrder in which index 2 is still 'asc' - only a reset makes the next click
+            // resolve to index 0 and advance to 'desc'; a retained position would wrap back to 'asc'.
+            api.setGridOption('columnDefs', [{ colId: 'n', field: 'n', sortingOrder: ['asc', 'desc', 'asc'] }]);
+            await asyncSetTimeout(0);
+
+            clickHeader(api, 'n');
+            await asyncSetTimeout(0);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-descending-icon']);
+        });
+
         test('a header click after a sort that matches no sortingOrder entry restarts at the first entry', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [{ colId: 'n', field: 'n', sortingOrder: ['asc', 'desc', null] }],

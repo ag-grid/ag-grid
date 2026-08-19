@@ -39,10 +39,7 @@ export class SortService extends BeanStub implements NamedBean {
     public progressSort(column: AgColumn, multiSort: boolean, source: ColumnEventType): void {
         const { sortDef, index } = this.getNextSortDefAndIndex(column, column.getSortDef(), column.sortCycleIndex);
         this.setSortForColumn(column, sortDef, multiSort, source);
-        // Only remember the position if the progression is what actually stuck.
-        if (index >= 0 && areSortDefsEqual(column.getSortDef(), sortDef)) {
-            column.sortCycleIndex = index;
-        }
+        column.sortCycleIndex = index;
     }
 
     public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
@@ -171,35 +168,27 @@ export class SortService extends BeanStub implements NamedBean {
         return this.getNextSortDefAndIndex(column, currentSortDef).sortDef;
     }
 
-    /** Next `sortingOrder` entry and its index, `-1` when there is no order to advance through.
-     *  `cachedIndex` is used only while it still matches `currentSortDef`, else the first match wins. */
+    /** Next `sortingOrder` entry and its index. The scan starts at `cachedIndex` when that is a valid
+     *  position, so a repeated entry resolves to the one the last click landed on rather than always to
+     *  its first occurrence. */
     private getNextSortDefAndIndex(
         column: AgColumn,
         currentSortDef: SortDef | null,
-        cachedIndex?: number
+        cachedIndex = 0
     ): { sortDef: SortDef; index: number } {
         const sortingOrder = getSortingOrder(this.gos, column);
         const len = sortingOrder.length;
         if (len === 0) {
-            return { sortDef: getSortDefFromInput(), index: -1 };
+            return { sortDef: getSortDefFromInput(), index: 0 };
         }
         let current = -1;
-        if (
-            cachedIndex !== undefined &&
-            cachedIndex >= 0 &&
-            cachedIndex < len &&
-            areSortDefsEqual(sortingOrder[cachedIndex], currentSortDef)
-        ) {
-            current = cachedIndex;
-        } else {
-            for (let i = 0; i < len; ++i) {
-                if (areSortDefsEqual(sortingOrder[i], currentSortDef)) {
-                    current = i;
-                    break;
-                }
+        for (let i = cachedIndex < len ? cachedIndex : 0; i < len; ++i) {
+            if (areSortDefsEqual(sortingOrder[i], currentSortDef)) {
+                current = i;
+                break;
             }
         }
-        // No match, or the last entry -> restart at the first entry (unchanged behaviour).
+        // No match, or the last entry -> restart at the first entry.
         const index = current === -1 || current + 1 >= len ? 0 : current + 1;
         return { sortDef: getSortDefFromInput(sortingOrder[index]), index };
     }
