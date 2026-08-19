@@ -1,6 +1,7 @@
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
 import rootESLint from '../../eslint.config.mjs';
+import { noRawHistoryWrites } from '../../external/ag-website-shared/eslint.history-rules.mjs';
 
 export default [
     ...rootESLint,
@@ -69,6 +70,11 @@ export default [
         rules: {
             'no-console': 'off',
             '@typescript-eslint/no-var-requires': 'off',
+        },
+    },
+    {
+        rules: {
+            'no-restricted-syntax': ['error', ...noRawHistoryWrites],
         },
     },
 ];
