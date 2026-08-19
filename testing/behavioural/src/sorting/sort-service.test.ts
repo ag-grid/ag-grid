@@ -1849,6 +1849,60 @@ describe('SortService', () => {
             expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-ascending-icon']);
         });
 
+        test('getNextSortDirection reports what the next header click will apply at a repeated entry', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'n', field: 'n', sortingOrder: ['asc', 'desc', 'asc', null] }],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+
+            // Three clicks land on the repeated 'asc' at index 2, so the next entry is the trailing null.
+            for (let i = 0; i < 3; ++i) {
+                clickHeader(api, 'n');
+                await asyncSetTimeout(0);
+            }
+
+            const column = api.getColumn('n') as any;
+            expect(column.beans.sortSvc.getNextSortDirection(column)).toEqual({ direction: null, type: 'default' });
+
+            clickHeader(api, 'n');
+            await asyncSetTimeout(0);
+            expect(getSortModel(api)).toEqual([]);
+        });
+
+        test('a sort written re-entrantly from a sortChanged listener resets the cycle position', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'n', field: 'n', sortingOrder: ['asc', 'desc', 'asc', null] }],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+
+            // Two clicks leave the cycle at 'desc' (index 1); the third would land on 'asc' at index 2.
+            for (let i = 0; i < 2; ++i) {
+                clickHeader(api, 'n');
+                await asyncSetTimeout(0);
+            }
+
+            // A column-level listener is dispatched synchronously, so its write lands mid-progression.
+            let reapplied = false;
+            api.getColumn('n')!.addEventListener!('sortChanged', () => {
+                if (reapplied) {
+                    return;
+                }
+                reapplied = true;
+                api.applyColumnState({ state: [{ colId: 'n', sort: 'asc' }] });
+            });
+            clickHeader(api, 'n');
+            await asyncSetTimeout(0);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-ascending-icon']);
+
+            // The listener's write is the last one, so the cycle restarts at the first matching entry
+            // ('asc' at index 0) and advances to 'desc' - a retained index 2 would clear the sort instead.
+            clickHeader(api, 'n');
+            await asyncSetTimeout(0);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-descending-icon']);
+        });
+
         test("header click cycles the ticket's mixed absolute sortingOrder: abs-desc -> asc -> abs-asc", async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [
