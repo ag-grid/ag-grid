@@ -16,6 +16,7 @@ import {
     findEndPosition,
     findStartPosition,
     getBigIntParser,
+    getNumberParser,
     getSearchString,
     updateExpression,
 } from './filterExpressionUtils';
@@ -248,14 +249,16 @@ class OperandParser implements Parser {
         BaseCellDataType,
         (modelValue: string | number | bigint | null) => any
     > = {
-        number: () => {
-            if (this.quotes || isNaN(this.modelValue as number)) {
+        // Read from the argument, not `this.modelValue`, which keeps the raw text when the parser rejects it.
+        number: (modelValue) => {
+            // A column's own `numberParser` reports unreadable input as null, where `Number` gives NaN.
+            if (modelValue == null || isNaN(modelValue as number)) {
                 this.valid = false;
                 this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotANumber');
             }
         },
         bigint: () => {
-            if (this.quotes || _parseBigIntOrNull(this.modelValue) === null) {
+            if (_parseBigIntOrNull(this.modelValue) === null) {
                 this.valid = false;
                 this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotABigInt');
             }
@@ -290,7 +293,7 @@ class OperandParser implements Parser {
                 return true;
             }
         } else if (char === ')') {
-            if (this.baseCellDataType === 'number' || !this.quotes) {
+            if (!this.quotes) {
                 this.parseOperand(false, position - 1);
                 return true;
             } else {
@@ -334,7 +337,7 @@ class OperandParser implements Parser {
      * otherwise the text the user typed, which the model value cannot be turned back into.
      */
     public getBuilderValue(): string | number {
-        return this.params.advFilterExpSvc.isOperandModelValueEditable(this.baseCellDataType)
+        return this.params.advFilterExpSvc.isOperandModelValueEditable(this.baseCellDataType, this.column)
             ? this.modelValue
             : this.operand;
     }
@@ -382,7 +385,7 @@ export class ColFilterExpressionParser {
         object: (a: string) => string;
         text: (a: string) => string;
     } = {
-        number: Number,
+        number: (operand) => getNumberParser(this.columnParser!.column)(operand)!,
         bigint: (operand) => getBigIntParser(this.columnParser!.column)(operand)!,
         date: (operand) =>
             this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined) as Date,

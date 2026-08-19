@@ -71,15 +71,6 @@ function applyExpression(gridDiv: HTMLElement, expression: string): void {
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 }
 
-/** Display text of a builder condition row's value pill. */
-function valuePillText(item: HTMLElement): string {
-    return (
-        item
-            .querySelector('.ag-advanced-filter-builder-value-pill .ag-advanced-filter-builder-pill-display')
-            ?.textContent?.trim() ?? ''
-    );
-}
-
 const withParser: GridOptions<TestRow>['columnDefs'] = [
     {
         field: 'value',
@@ -200,7 +191,7 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         const [condition] = await builder.conditionItems();
 
         // The stored decimal model value is displayed through the column's bigintFormatter.
-        expect(valuePillText(condition)).toBe('0xFF');
+        expect(builder.valuePillText(condition)).toBe('0xFF');
         await new FilterDom(api, 'builder pill shows the formatted operand', { mode: 'builder' }).checkFilterDom(`
             BUILDER
             AND
@@ -248,12 +239,12 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         // The builder editor presents the stored operand through the formatter, not as the canonical
         // decimal it is stored as — assert that here, while the builder is still open, so a
         // regression showing `1000`/`255` in the editor cannot hide behind the applied expression.
-        expect(valuePillText(condition)).toBe('0x3E8');
+        expect(builder.valuePillText(condition)).toBe('0x3E8');
 
         await builder.setValue(condition, '255');
         // Re-query: committing the edit re-renders the condition row, detaching the earlier element.
         const [editedCondition] = await builder.conditionItems();
-        expect(valuePillText(editedCondition)).toBe('0xFF');
+        expect(builder.valuePillText(editedCondition)).toBe('0xFF');
 
         await builder.apply();
         await asyncSetTimeout(0);
@@ -284,7 +275,7 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
 
         const builder = await AdvancedFilterBuilderHarness.open(api);
         const [condition] = await builder.conditionItems();
-        expect(valuePillText(condition)).toBe('0x3E8');
+        expect(builder.valuePillText(condition)).toBe('0x3E8');
 
         // Editing must start from the value shown on the pill (the formatter's output, which the
         // column's parser accepts), not the canonical decimal the model stores.
@@ -315,7 +306,7 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
 
         const builder = await AdvancedFilterBuilderHarness.open(api);
         const [condition] = await builder.conditionItems();
-        expect(valuePillText(condition)).toBe('0xff');
+        expect(builder.valuePillText(condition)).toBe('0xff');
         expect((await builder.openValueEditor(condition)).value).toBe('0xff');
         await new FilterDom(api, 'builder keeps the typed operand syntax', { mode: 'builder' }).checkFilterDom(`
             BUILDER
@@ -337,7 +328,7 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         await builder.close();
 
         const reopened = await AdvancedFilterBuilderHarness.open(api);
-        expect(valuePillText((await reopened.conditionItems())[0])).toBe('0xff');
+        expect(reopened.valuePillText((await reopened.conditionItems())[0])).toBe('0xff');
         expect(api.getAdvancedFilterModel()).toEqual({
             filterType: 'bigint',
             colId: 'value',
@@ -370,7 +361,7 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
 
         const builder = await AdvancedFilterBuilderHarness.open(api);
         const [condition] = await builder.conditionItems();
-        expect(valuePillText(condition)).toBe('1000');
+        expect(builder.valuePillText(condition)).toBe('1000');
         expect((await builder.openValueEditor(condition)).value).toBe('1000');
         await new FilterDom(api, 'builder decimal operand with no formatter', { mode: 'builder' }).checkFilterDom(`
             BUILDER

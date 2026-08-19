@@ -11,6 +11,7 @@ import { Component } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import { getNumberParser } from '../filterExpressionUtils';
 import type {
     AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
@@ -119,16 +120,17 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         // Date inputs want iso string, so read straight from model. For numbers, convert to string
         const { filter } = this.filterModel as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>;
         const key = (typeof filter === 'number' || typeof filter === 'bigint' ? _toStringOrNull(filter) : filter) ?? '';
-        const valueFormatter = (value: string) =>
-            this.advFilterExpSvc.getOperandDisplayValue({ ...this.filterModel, filter: value } as any, true);
+        // Read from the model, not from the text handed in: an edit is stored through the column's own
+        // parser, and the display is produced by the default one, which need not read the same syntax.
+        const valueFormatter = () => this.getOperandDisplayValue();
         this.eOperandPill = this.createPill({
             key,
             // Convert from the input format to display format.
             // Input format matches model format except for numbers, but these get stringified anyway
             valueFormatter,
-            // Where the stored operand is not valid input for its type, edit the displayed text instead:
-            // the display value is produced by the same formatter whose output that type's parser accepts.
-            editValueFormatter: this.advFilterExpSvc.isOperandModelValueEditable(this.baseCellDataType)
+            // Where the stored operand is not valid input for the column, edit the displayed text instead:
+            // the column's own parser is what reads an edit back, and its grammar need not be the input's.
+            editValueFormatter: this.advFilterExpSvc.isOperandModelValueEditable(this.baseCellDataType, this.column)
                 ? undefined
                 : valueFormatter,
             baseCellDataType: this.baseCellDataType,
@@ -176,6 +178,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         }
 
         const newColumnDetails = this.advFilterExpSvc.getColumnDetails(colId);
+        const previousColumn = this.column;
         this.column = newColumnDetails.column;
         const newBaseCellDataType = newColumnDetails.baseCellDataType;
         if (this.baseCellDataType !== newBaseCellDataType) {
@@ -191,6 +194,15 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         }
         this.filterModel.colId = colId;
         this.filterModel.filterType = this.baseCellDataType;
+        // The operand editor is chosen from the column's own parser, so it outlives a same-type column.
+        if (this.eOperandPill && previousColumn !== this.column) {
+            _removeFromParent(this.eOperandPill.getGui());
+            this.destroyBean(this.eOperandPill);
+            this.createOperandPill();
+            // The new column's formatter decides what the operand displays as, and an empty display is
+            // what makes the condition incomplete.
+            this.validate();
+        }
     }
 
     private setOperatorKey(operator: string): void {
@@ -214,7 +226,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         let parsedOperand: string | number = operand;
         // Number comes back as string from input, so convert. Dates are already in iso string format
         if (this.baseCellDataType === 'number') {
-            parsedOperand = _exists(operand) ? Number(operand) : '';
+            parsedOperand = operand != null && operand !== '' ? (getNumberParser(this.column)(operand) ?? '') : '';
         }
         (this.filterModel as any).filter = parsedOperand;
         this.validate();

@@ -67,7 +67,7 @@ export class AgInputTextField<
         const { allowedCharPattern, clearButton, onValueClear, searchIcon } = this.config;
 
         if (allowedCharPattern) {
-            this.preventDisallowedCharacters();
+            this.preventDisallowedCharacters(allowedCharPattern);
         }
         if (clearButton) {
             this.setClearButtonEnabled(true);
@@ -188,8 +188,11 @@ export class AgInputTextField<
         _setDisplayed(eClearButton, canDisplay && !!eInput.value);
     }
 
-    private preventDisallowedCharacters(): void {
-        const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
+    private preventDisallowedCharacters(allowedCharPattern: string): void {
+        // Already a character class: wrapping it again would only ever match a two-character string,
+        // so every single keystroke would be rejected.
+        const isCharClass = allowedCharPattern.startsWith('[') && allowedCharPattern.endsWith(']');
+        const pattern = new RegExp(isCharClass ? allowedCharPattern : `[${allowedCharPattern}]`);
 
         const preventCharacters = (event: KeyboardEvent) => {
             if (!_isEventFromPrintableCharacter(event)) {

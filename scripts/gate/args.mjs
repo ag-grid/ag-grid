@@ -134,6 +134,20 @@ export function captureUsage({ runner, quiet = true, width = 30 }) {
             'is never all digits, `--wait 300` is that with a 300s cap.'
         ),
         ...(quiet ? row('--quiet', 'Console gets the paths, the summary and the failures; the log gets all.') : []),
+        ...row(
+            '--log-tail <n>',
+            'Print the last n lines of the log when the run ends, and nothing else.',
+            'Works on --wait and --async-status too, for a run started elsewhere.'
+        ),
+        ...row(
+            '--log-grep <pattern>',
+            'Print the lines of the log matching a regex (or, if it will not compile, a',
+            'substring). Combines with --log-tail for the last n matches.',
+            '',
+            'Both exist so that wanting less than everything is a flag and not a pipe:',
+            'a pipeline exits with its last command status, so `| tail` reports the',
+            "tail's success and hides a failed run."
+        ),
         ...row('--no-log', `No log file, and ${runner} keeps its colours.`),
     ].join('\n');
 }
@@ -145,6 +159,8 @@ const captureFlags = {
     '--kill': { takes: ID, apply: (state, id) => (state.capture.killId = id) },
     '--wait': { takes: ID, timeout: true, apply: (state, id) => (state.capture.waitId = id) },
     '--quiet': { takes: NONE, apply: (state) => (state.capture.quiet = true) },
+    '--log-tail': { takes: NUMBER, hint: 'a line count', apply: (state, n) => (state.capture.logTail = Number(n)) },
+    '--log-grep': { takes: VALUE, hint: 'a regex or substring', apply: (state, p) => (state.capture.logGrep = p) },
     '--no-log': { takes: NONE, apply: (state) => (state.capture.noLog = true) },
     // Internal: the detached child of --async is handed the id its parent already printed.
     '--run-id': { takes: VALUE, apply: (state, id) => (state.capture.runId = id) },

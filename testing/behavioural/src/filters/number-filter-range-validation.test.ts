@@ -407,4 +407,34 @@ describe('Number Range Filter', () => {
         expect(filter.input('number', 0).value).toBe('9');
         expect(filter.input('number', 1).value).toBe('1');
     });
+
+    test('an out-of-order range keeps the next condition disabled across a rebuild', async () => {
+        const columnDefs = (allowedCharPattern: string) => [
+            {
+                field: 'gold',
+                filter: 'agNumberColumnFilter' as const,
+                filterParams: { debounceMs: 0, filterOptions: ['inRange'], allowedCharPattern },
+            },
+        ];
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: columnDefs('\\d\\-\\.'),
+            rowData: [{ gold: 2 }, { gold: 8 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'gold');
+        await filter.setText('9', 0);
+        await filter.setText('1', 1);
+        expect(filter.input('text', 1).validity.valid).toBe(false);
+        // An invalid pair is not a complete condition, so no second one is offered.
+        expect(filter.inputs('text')).toHaveLength(2);
+
+        // The pattern decides the element, so every input is replaced — carrying none of the validity
+        // that decides whether the condition counts as complete.
+        api.setGridOption('columnDefs', columnDefs('\\d\\-\\.,'));
+        await asyncSetTimeout(0);
+
+        expect(filter.input('text', 1).validity.valid).toBe(false);
+        expect(filter.inputs('text')).toHaveLength(2);
+    });
 });

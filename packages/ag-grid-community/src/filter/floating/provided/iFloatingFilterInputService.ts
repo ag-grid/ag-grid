@@ -5,6 +5,8 @@ export interface FloatingFilterInputService extends Bean {
     setEditable(editable: boolean): void;
     isFocused(): boolean;
     getValue(): string | null | undefined;
+    /** The text as typed, which `getValue` drops once the input calls it invalid. */
+    getInputText(): string;
     setValue(value: string | null | undefined, silent?: boolean): void;
     setValueChangedListener(listener: (e: KeyboardEvent) => void): void;
     setValueClearedListener(listener: () => void): void;

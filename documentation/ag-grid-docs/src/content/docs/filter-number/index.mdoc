@@ -76,11 +76,19 @@ The `numberFormatter` should take a number (e.g. from the Filter Model) and conv
 
 An `allowedCharPattern` of `\\d\\-\\.` will give similar behaviour to the default `number` input.
 
+A `text` input is used whenever either `allowedCharPattern` or `numberFormatter` is provided, as a `number` input keeps only its own number syntax and would discard formatted text.
+
+Set `filterInputType` to choose the input yourself. A `numberFormatter` writing text a `number` input can hold, such as `(value) => value.toFixed(2)`, can keep that input with `filterInputType: 'number'`. An `allowedCharPattern` applies to either input, narrowing what a `number` input already accepts.
+
+Provide a `numberParser` alongside a `numberFormatter` to have the format read back. Without one, typed text is read with `parseFloat`, so `1,234` becomes `1`.
+
+Pair both to have the [Advanced Filter](./filter-advanced/) read and display this column's operands in the same format. With only one of them, its operands stay plain numbers.
+
 The following example demonstrates custom number support:
 
 - The first column shows the default Number Filter behaviour.
 - The second column demonstrates custom number support, and uses commas for decimals and allows a dollar sign ($) to be included.
-- Floating filters are enabled and also react to the configuration of `allowedCharPattern`.
+- Floating filters are enabled and also react to the configuration of `allowedCharPattern` and `numberFormatter`.
 
 {% gridExampleRunner title="Custom Number Support" name="custom-number-support" /%}
 

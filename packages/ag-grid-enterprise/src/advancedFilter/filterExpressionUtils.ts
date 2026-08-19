@@ -1,6 +1,13 @@
 import { _parseBigIntOrNull } from 'ag-stack';
 
-import type { AgColumn, ColumnModel, DataTypeService, IRowNode, ValueService } from 'ag-grid-community';
+import type {
+    AgColumn,
+    ColumnModel,
+    DataTypeService,
+    IRowNode,
+    NumberFilterParams,
+    ValueService,
+} from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from './filterExpressionOperators';
@@ -43,6 +50,34 @@ export type FilterExpressionFunction = (
 
 export function getBigIntParser(column: AgColumn | null | undefined): (value: string | null) => bigint | null {
     return column?.colDef.filterParams?.bigintParser ?? _parseBigIntOrNull;
+}
+
+/**
+ * The `filterParams` of a number column whose operands are written in its own syntax rather than as plain
+ * numbers. Both a `numberParser` and a `numberFormatter` are needed: an operand the column cannot write, it
+ * must not read, or a parser reading a syntax the plain number is not in would reinterpret what the grid stored.
+ */
+function customNumberOperandParams(column: AgColumn | null | undefined): NumberFilterParams | undefined {
+    const filterParams = column?.colDef.filterParams;
+    return filterParams?.numberParser != null && filterParams.numberFormatter != null ? filterParams : undefined;
+}
+
+/** `Number` reads blank text as zero, which is not a number anyone wrote. */
+const parseNumberOrNull = (value: string | null): number | null => (value?.trim() ? Number(value) : null);
+
+/** Plain-number reading stays the default: only a column that reads *and* writes its own syntax departs from it. */
+export function getNumberParser(column: AgColumn | null | undefined): (value: string | null) => number | null {
+    return customNumberOperandParams(column)?.numberParser ?? parseNumberOrNull;
+}
+
+export function getNumberFormatter(
+    column: AgColumn | null | undefined
+): ((value: number | null) => string | null) | undefined {
+    return customNumberOperandParams(column)?.numberFormatter;
+}
+
+export function hasCustomNumberOperands(column: AgColumn | null | undefined): boolean {
+    return customNumberOperandParams(column) != null;
 }
 
 export function getSearchString(value: string, position: number, endPosition: number): string {

@@ -57,14 +57,26 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 
 **Never `sleep` to wait for a run.** One you backgrounded wakes the agent by itself; one started elsewhere has `--async-status` (exit 3 = still running) and `--wait`, below. For progress mid-run, grep the log — it is written live.
 
-**Every local run captures itself, and prints the log path as its first line** — `▶ tmp/_behave-output/<id>/output.log`, the whole of stdout and stderr with the colour codes stripped. That line is also the only proof a run happened: piping a gate (`… | tail`) reports the **pipe's** exit status, so one that failed, or that the shell never found, still comes back `0` — read the summary line, and treat a missing `▶` as "nothing ran". So no redirect has to be arranged in advance and a red run needs no second run: grep that file, during the run or after it, or pass `--bail 1` to make the run stop at the first failure itself. Beside it sit the `command` and a `status`, plus `result.json` (vitest's machine-readable results) for `./behave.sh` only. `latest` symlinks the newest and week-old runs are pruned.
+**Never pipe a gate — not into `tail`, `head`, `grep` or anything else.** A pipeline exits with its **last** command's status, so `./behave.sh … | tail -40` reports `tail`'s `0` and a red run arrives labelled green; backgrounded, that bogus `0` is what the completion event carries, so the failure is never surfaced at all. Ask the script for less instead — these filter the console and still exit with the run's own status:
+
+```bash
+./behave.sh --quiet <path>                          # its own summary plus every failure — the usual choice
+./behave.sh --log-tail 30 <path>                    # the end of the log
+./behave.sh --log-grep PROBE <path>                 # an ad-hoc pattern
+./behave.sh --log-grep PROBE --log-tail 5 <path>    # combined: the last 5 matches
+```
+
+**`--quiet` is the one to reach for.** Each gate declares its own `failRe`/`summaryRe`, which is what `--quiet` prints, so hand-writing `--log-grep '×|FAIL|Tests '` is a worse and vitest-only spelling of it. Keep `--log-grep` for what `--quiet` does not show: a probe's `console.log`, or vitest's `Errors  N error` line, which reports a throw from outside a test body and **still exits 0**.
+
+**Every local run captures itself, and prints the log path as its first line** — `▶ tmp/_behave-output/<id>/output.log`, the whole of stdout and stderr with the colour codes stripped. That line is also the only proof a run happened, so treat a missing `▶` as "nothing ran". No redirect has to be arranged in advance and a red run needs no second run: grep that file, during the run or after it, or pass `--bail 1` to make the run stop at the first failure itself. Beside it sit the `command` and a `status`, plus `result.json` (vitest's machine-readable results) for `./behave.sh` only. `latest` symlinks the newest and week-old runs are pruned.
 
 **Under `CI`, run them in the foreground instead.** Backgrounding is there to keep an interactive session reachable, and a workflow has nobody to block, so take the output directly. The scripts capture nothing under `CI` for the same reason, so there is no log to grep and none is needed.
 
 - `--async-status [id]` — has a run finished? Exit 0 passed, 1 failed, **3 still running**. Defaults to the newest run and takes an id or any path containing one, so it also reports on a run started elsewhere.
 - `--wait <id|latest> [secs]` — the same report, waiting up to `secs` for the run to finish.
 - `--kill [id]` — stop a run (the newest by default) and every process it spawned.
-- `--quiet` — console gets the paths, summary and failures only (not `./checks.sh`, which is quiet already); `--no-log` turns capture off.
+- `--quiet` — console gets the paths, summary and failures only (not `./checks.sh`, which is quiet already); it hides a test's own `console.log`, so read the log when probing. `--no-log` turns capture off.
+- `--log-tail <n>` / `--log-grep <pattern>` — print only part of the log when the run ends, instead of piping. Both imply `--quiet`, combine with each other, and leave the exit status the run's. `--log-grep` takes a regex, falling back to a substring if it will not compile.
 
 **Run with `--bail 1` by habit.** `./behave.sh --bail 1 <path>` stops at the first failing test — what you want in a fix-one-error-at-a-time loop, and it skips the rest of the reporting too. `--no-diff` reports names and messages with no diffs, for when a suite fails wholesale. A red run can take minutes where the green one takes seconds: vitest's diff serialisation of grid objects is effectively unbounded. The skill explains why, plus the `--stack-trace-len` trap and how `--bail` reads in a JSON report.
 

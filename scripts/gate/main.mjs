@@ -41,13 +41,16 @@ async function main() {
     const wantsHelp = argv.includes('-h') || argv.includes('--help');
     const state = parseArgs(wantsHelp ? [] : argv, gate.flags ?? {});
     const { async: runAsync, statusId, killId, waitId, waitTimeout = 0, quiet, noLog, runId } = state.capture;
+    const { logTail, logGrep } = state.capture;
+    // Asking for part of the log means the console is not also getting all of it.
+    const filtered = logTail !== undefined || logGrep !== undefined;
 
     // Some modes hand the terminal to the runner and never end on their own (watch, --ui, --debug), so there
     // is nothing to capture and nothing to wait for: the log would grow with every re-run and the status would
     // stay `running` forever. A gate returns the mode's name to refuse `--async` in those words, or just
     // `true` to let the generic "the run log is off" answer stand.
     const endless = gate.endless?.(state);
-    const capture = noLog || isCI || endless ? 'off' : quiet || gate.capture === 'file' ? 'file' : 'stream';
+    const capture = noLog || isCI || endless ? 'off' : quiet || filtered || gate.capture === 'file' ? 'file' : 'stream';
 
     const runLog = new RunLog({
         name: gate.name,
@@ -55,7 +58,8 @@ async function main() {
         id: runId,
         capture,
         // A gate that prints its own verdict would otherwise print the same lines twice.
-        report: gate.report ?? Boolean(quiet),
+        report: gate.report ?? Boolean(quiet || filtered),
+        filter: filtered ? { tail: logTail, grep: logGrep } : undefined,
         failRe: gate.failRe,
         summaryRe: gate.summaryRe,
     });
@@ -80,6 +84,13 @@ async function main() {
         return 2;
     }
 
+    // Before any branch that could return the runner's own exit code: output that was asked for and never
+    // produced must not read as a pass.
+    if (filtered && !runLog.enabled) {
+        console.error('--log-tail/--log-grep need the run log, which is off (CI, --no-log, or an interactive mode)');
+        return 1;
+    }
+
     // Reports on or stops an existing run instead of starting one. Every gate needs the same three branches,
     // and duplicating them is how their spellings drifted apart.
     if (waitId) {
@@ -94,6 +105,11 @@ async function main() {
     if (runAsync) {
         if (typeof endless === 'string') {
             console.error(`${gate.script}: --async cannot combine with ${endless}.`);
+            return 2;
+        }
+        // The detached child's console is /dev/null, so the lines would be written where nobody can read them.
+        if (filtered) {
+            console.error(`${gate.script}: --async cannot combine with --log-tail/--log-grep; use them on --wait.`);
             return 2;
         }
         if (!runLog.enabled) {

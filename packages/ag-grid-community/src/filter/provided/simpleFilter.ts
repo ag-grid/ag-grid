@@ -44,7 +44,7 @@ import {
 } from './simpleFilterUtils';
 
 /** temporary type until `SimpleFilterParams` is updated as breaking change */
-type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
+export type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
     FilterDisplayParams<any, any, M | ICombinedSimpleModel<M>>;
 
 type FilterModelOrCombined<M extends ISimpleFilterModel> = M | ICombinedSimpleModel<M> | null;
@@ -633,7 +633,7 @@ export abstract class SimpleFilter<
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected setElementValue(element: E, value: V | null, fromFloatingFilter?: boolean): void {
+    protected setElementValue(element: E, value: V | string | null, fromFloatingFilter?: boolean): void {
         if (element instanceof AgAbstractInputField) {
             element.setValue(value != null ? String(value) : null, true);
         }
@@ -870,6 +870,15 @@ export abstract class SimpleFilter<
         }
 
         eType.onValueChange(this.listener);
+
+        this.attachInputsOnChange(position);
+    }
+
+    /** Re-attachable on its own: a replaced input carries none of the original's listeners. */
+    protected attachInputsOnChange(position: number): void {
+        if (this.isReadOnly()) {
+            return;
+        }
 
         this.forEachPositionInput(position, (element) => {
             this.attachElementOnChange(element, this.listener);

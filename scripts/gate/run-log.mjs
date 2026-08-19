@@ -139,11 +139,12 @@ export class RunLog {
      * (the console gets nothing, so the gate can report only what matters) or 'off'. `report` closes a run
      * that showed the console nothing with the part a human still needs.
      */
-    constructor({ name, rootDir, id, capture = 'stream', report = false, failRe, summaryRe }) {
+    constructor({ name, rootDir, id, capture = 'stream', report = false, filter, failRe, summaryRe }) {
         this.name = name;
         this.rootDir = rootDir;
         this.capture = capture;
         this.report = report;
+        this.filterOptions = filter;
         this.failRe = failRe;
         this.summaryRe = summaryRe;
         this.root = path.join(rootDir, 'tmp', `_${name}-output`);
@@ -270,7 +271,45 @@ export class RunLog {
         }
         // A streamed log was stripped as it was written, so stripping it again would scan tens of MB to match
         // nothing; a captured one still carries the odd escape (Nx emits a few even under NO_COLOR).
-        return (text.includes(ESC) ? stripAnsi(text) : text).split('\n');
+        const lines = (text.includes(ESC) ? stripAnsi(text) : text).split('\n');
+        // The split of a newline-terminated file ends in an empty element, which is not a line: counted as
+        // one, `--log-tail 1` asks for it and prints nothing.
+        if (lines.at(-1) === '') {
+            lines.pop();
+        }
+        return lines;
+    }
+
+    /**
+     * Part of a log, printed instead of the digest — so wanting less than everything is a flag rather than a
+     * pipe. A pipeline exits with its last command's status, which hides the run's and reports red as green.
+     */
+    printFiltered(file = this.file) {
+        if (!this.filterOptions) {
+            return;
+        }
+        const { tail, grep } = this.filterOptions;
+        let lines = this.lines(file);
+        if (grep) {
+            let matches;
+            try {
+                const re = new RegExp(grep);
+                matches = (line) => re.test(line);
+            } catch {
+                // An unusable pattern is a substring the caller typed, not a reason to lose the output.
+                matches = (line) => line.includes(grep);
+            }
+            lines = lines.filter(matches);
+        }
+        const total = lines.length;
+        if (tail != null && total > tail) {
+            lines = lines.slice(total - tail);
+            console.log(`… ${total - tail} earlier ${grep ? 'matching ' : ''}lines in the log`);
+        }
+        console.log(lines.join('\n').trimEnd());
+        if (grep && !total) {
+            console.log(`(no line matched ${grep})`);
+        }
     }
 
     // The two things worth repeating out of a log: what the runner concluded, and every line it failed on.
@@ -363,37 +402,39 @@ export class RunLog {
         const elapsed = Math.round((Date.now() - this.started) / 1000);
         this.writeStatus({ state: 'exit', code, at: stamp(new Date()), elapsed });
         const tty = process.env.AG_GATE_TTY;
-        if (!this.report && !tty) {
-            return code;
-        }
-        const { summary, failures } = this.digest();
-        if (this.report) {
-            for (const line of [...summary, ...failures]) {
-                console.log(line);
+        // Filtered output is the whole console answer, so the digest it would otherwise print is left out.
+        const report = this.report && !this.filterOptions;
+        if (report || tty) {
+            const { summary, failures } = this.digest();
+            if (report) {
+                for (const line of [...summary, ...failures]) {
+                    console.log(line);
+                }
+                console.log(`▶ ${this.name} exit ${code} after ${elapsed}s → ${this.relative(this.file)}`);
             }
-            console.log(`▶ ${this.name} exit ${code} after ${elapsed}s → ${this.relative(this.file)}`);
-        }
-        // A detached run's own output went to /dev/null, so it reports back to the terminal it was launched
-        // from - the shell there has long since returned to a prompt. Skipped when there was no terminal (an
-        // agent, a cron, a pipe), and best-effort: the terminal may have closed in the meantime.
-        if (tty) {
-            const verdict = code === 0 ? 'passed' : `FAILED (exit ${code})`;
-            try {
-                fs.appendFileSync(
-                    tty,
-                    [
-                        '',
-                        `▶ ${this.name} ${this.id} finished: ${verdict} after ${elapsed}s`,
-                        ...summary,
-                        ...failures,
-                        `▶ ${this.relative(this.file)}`,
-                        '',
-                    ].join('\n')
-                );
-            } catch {
-                // The terminal has closed; the log holds everything this was repeating.
+            // A detached run's own output went to /dev/null, so it reports back to the terminal it was launched
+            // from - the shell there has long since returned to a prompt. Skipped when there was no terminal (an
+            // agent, a cron, a pipe), and best-effort: the terminal may have closed in the meantime.
+            if (tty) {
+                const verdict = code === 0 ? 'passed' : `FAILED (exit ${code})`;
+                try {
+                    fs.appendFileSync(
+                        tty,
+                        [
+                            '',
+                            `▶ ${this.name} ${this.id} finished: ${verdict} after ${elapsed}s`,
+                            ...summary,
+                            ...failures,
+                            `▶ ${this.relative(this.file)}`,
+                            '',
+                        ].join('\n')
+                    );
+                } catch {
+                    // The terminal has closed; the log holds everything this was repeating.
+                }
             }
         }
+        this.printFiltered();
         return code;
     }
 
@@ -500,9 +541,14 @@ export class RunLog {
         if (fs.existsSync(path.join(dir, 'result.json'))) {
             console.log(`▶ ${this.name} json report: ${rel}/result.json`);
         }
-        const { summary, failures } = this.digest(path.join(dir, 'output.log'));
-        for (const line of [...summary, ...failures]) {
-            console.log(line);
+        const logFile = path.join(dir, 'output.log');
+        if (this.filterOptions) {
+            this.printFiltered(logFile);
+        } else {
+            const { summary, failures } = this.digest(logFile);
+            for (const line of [...summary, ...failures]) {
+                console.log(line);
+            }
         }
         return status.state === 'exit' && status.code === 0 ? 0 : 1;
     }

@@ -197,26 +197,44 @@ describe('Advanced Filter — operand parser edge cases', () => {
             `);
         });
 
-        test('a quoted number is rejected on a number column', async () => {
+        // Quotes hold whatever the column's own parser reads, so a number may be written in them too.
+        test('a quoted number operand reads as the number it holds', async () => {
             const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
 
             await AdvancedFilterHarness.get(api).applyExpression('[Age] = "40"');
             await asyncSetTimeout(0);
-            expect(displayedAthletes(api)).toEqual(ALL);
+            expect(displayedAthletes(api)).toEqual(['José']);
             await new FilterDom(api, 'quoted number panel').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Age] = "40""
-                valid: false — Expression has an error. Value is not a number - "40".
+                valid: true
                 buttons: Apply ⊘ | Builder
-                model: null
+                model:
+                  filterType: "number"
+                  colId: "age"
+                  type: "equals"
+                  filter: 40
             `);
             await new GridRows(api, 'quoted-number rows').check(`
                 ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 athlete:"Bolt" country:"Jamaica" age:25
-                ├── LEAF id:1 athlete:"O'Brien" country:"Ireland" age:30
-                ├── LEAF id:2 athlete:"José" country:"España" age:40
-                ├── LEAF id:3 athlete:'say "hi"' country:"United States" age:50
-                └── LEAF id:4 athlete:"123" country:"New Zealand" age:60
+                └── LEAF id:2 athlete:"José" country:"España" age:40
+            `);
+        });
+
+        // Quotes hold text, and blank text is not a number the user wrote, however `Number` reads it.
+        test('a blank quoted number operand is rejected', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+
+            await AdvancedFilterHarness.get(api).applyExpression('[Age] = " "');
+            await asyncSetTimeout(0);
+            expect(displayedAthletes(api)).toEqual(ALL);
+            expect(api.getAdvancedFilterModel()).toBe(null);
+            await new FilterDom(api, 'blank quoted number panel').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Age] = " ""
+                valid: false — Expression has an error. Value is not a number - " ".
+                buttons: Apply ⊘ | Builder
+                model: null
             `);
         });
 
@@ -648,18 +666,18 @@ describe('Advanced Filter — parser edge cases', () => {
             `);
         });
 
-        test('a quoted bigint operand is rejected as not a bigint', async () => {
+        test('a quoted bigint operand reads as the bigint it holds', async () => {
             const api = await gridsManager.createGridAndWait('grid1', OPTS);
             const af = AdvancedFilterHarness.get(api);
 
             await af.type('[Big] = "10000000000000000001"');
             await asyncSetTimeout(0);
 
-            await new FilterDom(api, 'quoted bigint rejected').checkFilterDom(`
+            await new FilterDom(api, 'quoted bigint accepted').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Big] = "10000000000000000001""
-                valid: false — Expression has an error. Value is not a big integer - "10000000000000000001".
-                buttons: Apply ⊘ | Builder
+                valid: true
+                buttons: Apply | Builder
                 model: null
             `);
         });

@@ -9,6 +9,17 @@ export function getAllowedCharPattern(filterParams?: IBigIntFilterParams): strin
     return filterParams?.allowedCharPattern ?? null;
 }
 
+/** The one reading of a typed value: `bigintParser` owns it wherever it is configured. */
+export function stringToBigInt(
+    bigintParser: IBigIntFilterParams['bigintParser'],
+    value?: string | null
+): bigint | null {
+    if (value == null || value.trim() === '') {
+        return null;
+    }
+    return bigintParser ? bigintParser(value) : _parseBigIntOrNull(value);
+}
+
 export function mapValuesFromBigIntFilterModel(
     filterModel: BigIntFilterModel | null,
     optionsFactory: OptionsFactory
