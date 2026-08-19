@@ -15,6 +15,7 @@ interface Props {
     extraStyles?: string;
     extras?: string[];
     usesMathRandom?: boolean;
+    transpileInBrowser?: boolean;
     nonce?: string;
 }
 
@@ -33,6 +34,7 @@ const {
     extraStyles,
     extras,
     usesMathRandom,
+    transpileInBrowser,
     nonce,
 } = Astro.props as Props;
 
@@ -88,7 +90,7 @@ const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl)
         >
             window.__basePath = appLocation;
         </script>
-        <ExampleRunnerClient nonce={nonce} />
+        <ExampleRunnerClient isExported={transpileInBrowser} nonce={nonce} />
         {usesMathRandom && <SeedRandom nonce={nonce} />}
         {isIntegratedCharts && <script nonce={nonce} src={chartsScriptEnterprisePath} crossorigin="anonymous" />}
         <script nonce={nonce} src={isEnterprise ? gridScriptEnterprisePath : gridScriptPath} crossorigin="anonymous"
