@@ -14,7 +14,12 @@
         if (target) {
             event.preventDefault();
             target.scrollIntoView({ behavior: 'smooth' });
-            history.replaceState(null, '', '#pricing');
+            // Preserve the existing state: Astro's ClientRouter keeps its history index and
+            // scroll offsets there, and replacing them breaks back/forward for the whole page.
+            // Classic script served verbatim from public/, so the shared replaceHistoryUrl()
+            // helper is not importable here.
+            // eslint-disable-next-line no-restricted-syntax -- no module system in a public/ script
+            history.replaceState(history.state, '', '#pricing');
         }
     });
 })();
