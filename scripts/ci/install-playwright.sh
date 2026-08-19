@@ -10,8 +10,9 @@
 #
 # In CI the step must FAIL rather than be cancelled: a job cancelled by `timeout-minutes` makes
 # `cancelled()` true and skips the report upload. So the budgets below are sized to give up after
-# ~32 min, well inside the 90 min ceiling the workflow jobs carry. Healthy installs take 1-3 min;
-# the bounds are generous because `timeout` cannot tell a stalled mirror from a slow one.
+# ~35 min (2 bounded attempts, plus the retry and apt-lock waits between them), well inside the
+# 90 min ceiling the workflow jobs carry. Healthy installs take 1-3 min; the bounds are generous
+# because `timeout` cannot tell a stalled mirror from a slow one.
 #
 # This is also the installer behind the Nx `setup` targets, so it runs on developer machines as
 # well as in CI. It keeps its output plain locally and only emits GitHub workflow commands under
@@ -149,6 +150,33 @@ esac
 ATTEMPT_TIMEOUT_SECONDS="${PW_INSTALL_TIMEOUT_SECONDS:-${DEFAULT_TIMEOUT}}"
 MAX_ATTEMPTS="${PW_INSTALL_MAX_ATTEMPTS:-${DEFAULT_ATTEMPTS}}"
 RETRY_DELAY_SECONDS="${PW_INSTALL_RETRY_DELAY_SECONDS:-20}"
+APT_WAIT_SECONDS="${PW_INSTALL_APT_WAIT_SECONDS:-120}"
+MAX_LOCK_RETRIES="${PW_INSTALL_MAX_LOCK_RETRIES:-2}"
+
+# `timeout` signals only its direct child, `npx`. The `apt-get` Playwright starts under sudo is a
+# grandchild, so it survives the kill and keeps /var/lib/apt/lists/lock. A retry on a fixed delay
+# therefore raced a still-dying apt and died on "Could not get lock" in about a second - burning an
+# attempt without ever reaching the mirror (run 32269132733, where the 20s delay was not enough and
+# process 2808 still held the lock). Wait for apt to actually go, rather than guess how long it needs.
+apt_is_busy() {
+    [ -e /var/lib/apt/lists/lock ] || return 1
+    pgrep -x apt-get >/dev/null 2>&1 || pgrep -x dpkg >/dev/null 2>&1
+}
+
+wait_for_apt() {
+    apt_is_busy || return 0
+    echo "Waiting up to ${APT_WAIT_SECONDS}s for a lingering apt/dpkg to release its lock..."
+    waited=0
+    while apt_is_busy && [ "${waited}" -lt "${APT_WAIT_SECONDS}" ]; do
+        sleep 5
+        waited=$((waited + 5))
+    done
+    if apt_is_busy; then
+        warn "apt/dpkg still held its lock after ${waited}s. Retrying anyway."
+    else
+        echo "apt released its lock after ${waited}s."
+    fi
+}
 
 # GNU coreutils `timeout`, absent from a stock macOS (where coreutils installs it as `gtimeout`).
 # Without it the install still runs, just unbounded: the stall this guards against is an
@@ -174,10 +202,18 @@ if [ -z "${TIMEOUT_BIN}" ]; then
 fi
 
 stalled=0
-for attempt in $(seq 1 "${MAX_ATTEMPTS}"); do
+attempt=0
+lock_retries=0
+attempt_log="$(mktemp 2>/dev/null || echo "${TMPDIR:-/tmp}/ag-pw-install-$$.log")"
+trap 'rm -f "${attempt_log}"' EXIT
+
+while [ "${attempt}" -lt "${MAX_ATTEMPTS}" ]; do
+    attempt=$((attempt + 1))
     group_start "${LABEL} - attempt ${attempt}/${MAX_ATTEMPTS} (bounded to ${ATTEMPT_TIMEOUT_SECONDS}s)"
-    "${TIMEOUT_BIN}" --signal=TERM --kill-after=30s "${ATTEMPT_TIMEOUT_SECONDS}s" "${CMD[@]}"
-    status=$?
+    # Tee'd rather than captured, so the install still streams into the log live; the copy is only
+    # read to tell a lock collision apart from a real failure.
+    "${TIMEOUT_BIN}" --signal=TERM --kill-after=30s "${ATTEMPT_TIMEOUT_SECONDS}s" "${CMD[@]}" 2>&1 | tee "${attempt_log}"
+    status=${PIPESTATUS[0]}
     group_end
 
     if [ "${status}" -eq 0 ]; then
@@ -188,14 +224,26 @@ for attempt in $(seq 1 "${MAX_ATTEMPTS}"); do
     if [ "${status}" -eq 124 ] || [ "${status}" -eq 137 ]; then
         stalled=1
         reason="did not complete within its ${ATTEMPT_TIMEOUT_SECONDS}s bound and was killed (stalled or very slow package mirror / CDN fetch)"
+    elif grep -qE "Could not get lock|Unable to lock" "${attempt_log}" 2>/dev/null; then
+        # It never reached the mirror, so it is not evidence about the mirror and must not spend the
+        # budget reserved for finding out. Bounded separately, so a permanently held lock still ends.
+        if [ "${lock_retries}" -lt "${MAX_LOCK_RETRIES}" ]; then
+            lock_retries=$((lock_retries + 1))
+            attempt=$((attempt - 1))
+            warn "${LABEL} could not take the apt lock and never reached the mirror, so it does not count against the ${MAX_ATTEMPTS} attempt budget (lock wait ${lock_retries}/${MAX_LOCK_RETRIES})."
+            wait_for_apt
+            continue
+        fi
+        reason="could not take the apt lock, after waiting for it ${MAX_LOCK_RETRIES} times"
     else
         reason="failed with exit code ${status}"
     fi
     warn "${LABEL} attempt ${attempt}/${MAX_ATTEMPTS} ${reason}."
 
     if [ "${attempt}" -lt "${MAX_ATTEMPTS}" ]; then
-        # Give a TERM-ed apt time to release the dpkg/apt lock before retrying.
         sleep "${RETRY_DELAY_SECONDS}"
+        # The apt this attempt started may outlive the kill; do not race it into the next one.
+        wait_for_apt
     fi
 done
 
