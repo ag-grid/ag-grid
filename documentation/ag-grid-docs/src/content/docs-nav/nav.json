@@ -1206,6 +1206,11 @@
                         },
                         {
                             "type": "item",
+                            "title": "Input Fields",
+                            "path": "input-fields"
+                        },
+                        {
+                            "type": "item",
                             "title": "Accessibility (ARIA)",
                             "path": "accessibility"
                         },

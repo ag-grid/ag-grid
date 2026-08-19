@@ -33,7 +33,10 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     public init(eEditor: GridInputNumberField, params: INumberCellEditorParams): void {
         this.eEditor = eEditor;
         this.params = params;
-        const { max, min, precision, step } = params;
+
+        const { browserAutoComplete, max, min, precision, step } = params;
+
+        eEditor.setAutoComplete(browserAutoComplete);
         if (max != null) {
             eEditor.setMax(max);
         }

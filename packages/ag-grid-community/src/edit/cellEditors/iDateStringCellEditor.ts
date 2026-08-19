@@ -1,10 +1,8 @@
+import type { IAutoCompleteComponentParams } from '../../interfaces/iAutoComplete';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 
-export interface IDateStringCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<
-    TData,
-    string,
-    TContext
-> {
+export interface IDateStringCellEditorParams<TData = any, TContext = any>
+    extends ICellEditorParams<TData, string, TContext>, IAutoCompleteComponentParams {
     /** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
     min?: string | Date;
     /** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */

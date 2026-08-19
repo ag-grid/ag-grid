@@ -91,6 +91,8 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     private setParams(params: IDateParams): void {
+        // re-applied on refresh so params updates re-pin (or clear) the override
+        this.eDateInput.setAutoComplete(params.filterParams?.browserAutoComplete);
         const inputElement = this.eDateInput.getInputElement();
 
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);

@@ -157,6 +157,7 @@ export class BigIntFilter extends SimpleFilter<
                 allowedCharPattern: allowedCharPattern ?? undefined,
                 clearButton: true,
                 searchIcon: true,
+                autoComplete: this.params.browserAutoComplete,
             })
         );
         eValue.addCss(`ag-filter-${fromTo}`);

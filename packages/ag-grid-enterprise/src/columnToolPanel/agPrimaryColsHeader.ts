@@ -85,6 +85,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
     public init(params: ToolPanelColumnCompParams): void {
         this.params = params;
+        this.eFilterTextField.setAutoComplete(params.browserAutoComplete);
 
         const readOnly = this.gos.get('functionsReadOnly');
         this.eSelect.setReadOnly(readOnly);

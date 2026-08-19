@@ -130,6 +130,7 @@ export class SetFilter<V = string>
         super.updateParams(newParams, oldParams);
 
         this.updateMiniFilter();
+        this.eMiniFilter.setAutoComplete(newParams.browserAutoComplete);
 
         if (newParams.suppressSelectAll !== oldParams.suppressSelectAll) {
             this.createVirtualListModel(newParams);
@@ -581,9 +582,9 @@ export class SetFilter<V = string>
     }
 
     private initMiniFilter() {
-        const { eMiniFilter } = this;
+        const { eMiniFilter, params } = this;
 
-        eMiniFilter.setClearButtonEnabled(true).setSearchIcon(true);
+        eMiniFilter.setClearButtonEnabled(true).setSearchIcon(true).setAutoComplete(params.browserAutoComplete);
         this.updateMiniFilter();
         eMiniFilter.onValueChange(() => this.onMiniFilterInput()).onValueClear(() => this.onMiniFilterInput(true));
         eMiniFilter.setInputAriaLabel(translateForSetFilter(this, 'ariaSearchFilterValues'));

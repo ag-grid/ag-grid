@@ -80,7 +80,7 @@ export abstract class TextInputFloatingFilter<
 
         inputSvc.setParams({
             ariaLabel: this.getAriaLabel(column as AgColumn),
-            autoComplete: browserAutoComplete,
+            autoComplete: browserAutoComplete ?? (filterParams as TextFilterParams).browserAutoComplete,
             placeholder,
         });
 

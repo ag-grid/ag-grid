@@ -312,6 +312,7 @@ export type { IShowValuesAsService } from './interfaces/iShowValuesAsService';
 export type { ISideBar, ISideBarService } from './interfaces/iSideBar';
 export type { SortOption } from './interfaces/iSortOption';
 export { _resolveSortOptions } from './sort/sortOptionUtils';
+export type { IAutoCompleteComponentParams } from './interfaces/iAutoComplete';
 export type { IToolbarComp, IToolbarService } from './interfaces/iToolbar';
 export type { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
 export type { ComponentType, UserCompDetails } from './interfaces/iUserCompDetails';

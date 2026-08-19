@@ -155,10 +155,20 @@ export class NumberFilter extends SimpleFilter<
         fromTo: string,
         allowedCharPattern: string | null
     ): GridInputTextField | GridInputNumberField {
+        const { browserAutoComplete } = this.params;
         const eValue = this.createManagedBean<GridInputTextField | GridInputNumberField>(
             allowedCharPattern
-                ? new AgInputTextField({ allowedCharPattern, clearButton: true, searchIcon: true })
-                : new AgInputNumberField({ clearButton: true, searchIcon: true })
+                ? new AgInputTextField({
+                      allowedCharPattern,
+                      clearButton: true,
+                      searchIcon: true,
+                      autoComplete: browserAutoComplete,
+                  })
+                : new AgInputNumberField({
+                      clearButton: true,
+                      searchIcon: true,
+                      autoComplete: browserAutoComplete,
+                  })
         );
         eValue.addCss(`ag-filter-${fromTo}`);
         eValue.addCss('ag-filter-filter');
