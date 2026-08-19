@@ -2,6 +2,7 @@ import type { InternalFramework } from '@ag-grid-types';
 import { getDocExampleFiles } from '@components/docs/utils/pageData';
 import { getGeneratedContents } from '@components/example-generator';
 import { getIsDev } from '@utils/env';
+import { getModuleSourceFileName, transformExampleModule } from '@utils/exampleModules/transformExampleModule';
 import { fileNameToMimeType } from '@utils/mimeType';
 import { getContentRootFileUrl } from '@utils/pages';
 import { getCollection } from 'astro:content';
@@ -46,6 +47,21 @@ export async function GET({ params }: { params: Params }) {
             pageName,
             exampleName,
         })) || {};
+    const moduleSourceFileName = getModuleSourceFileName(fileName, Object.keys(files));
+    if (moduleSourceFileName) {
+        const code = transformExampleModule({
+            fileName: moduleSourceFileName,
+            source: files[moduleSourceFileName],
+            internalFramework,
+        });
+
+        return new Response(code, {
+            headers: {
+                'Content-Type': 'text/javascript',
+            },
+        });
+    }
+
     const file = files && files[fileName];
     const body = file ? file : createErrorBody({ availableFiles: files });
 

@@ -35,7 +35,6 @@ type ConfigGenerator = ({
     styleFiles,
     ignoreDarkMode,
     transformEntryFile,
-    isDev,
     exampleConfig,
 }: {
     entryFile: string;
@@ -48,7 +47,6 @@ type ConfigGenerator = ({
     styleFiles: FileContents;
     ignoreDarkMode?: boolean;
     transformEntryFile?: TransformEntryFile;
-    isDev: boolean;
     exampleConfig: ExampleConfig;
 }) => Promise<FrameworkFiles>;
 
@@ -57,15 +55,7 @@ type ConfigGenerator = ({
 const AG_GRID_EXPORTED_FUNCS_USED_IN_EXAMPLES_COMPS = ['isCombinedFilterModel'];
 
 export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGenerator>> = {
-    vanilla: async ({
-        bindings,
-        entryFile,
-        indexHtml,
-        componentScriptFiles,
-        otherScriptFiles,
-        transformEntryFile,
-        isDev,
-    }) => {
+    vanilla: async ({ bindings, entryFile, indexHtml, componentScriptFiles, otherScriptFiles, transformEntryFile }) => {
         const internalFramework: InternalFramework = 'vanilla';
         const entryFileName = getEntryFileName(internalFramework)!;
         let mainJs = readAsJsFile(entryFile, 'vanilla');
@@ -105,9 +95,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         mainJs = mainJs.replace(/^\s*[\r\n]/, '');
 
         const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };
-        if (!isDev) {
-            mainJs = await formatFile(internalFramework, mainJs);
-        }
+        mainJs = await formatFile(internalFramework, mainJs);
 
         return {
             files: {
@@ -125,7 +113,6 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         componentScriptFiles,
         typedBindings,
         transformEntryFile,
-        isDev,
     }) => {
         const internalFramework: InternalFramework = 'typescript';
         const entryFileName = getEntryFileName(internalFramework)!;
@@ -137,9 +124,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             mainTs = transformEntryFile({ entryFile: mainTs });
         }
 
-        if (!isDev) {
-            mainTs = await formatFile(internalFramework, mainTs);
-        }
+        mainTs = await formatFile(internalFramework, mainTs);
 
         const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };
 
@@ -159,7 +144,6 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         componentScriptFiles,
         styleFiles,
         transformEntryFile,
-        isDev,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'reactFunctional';
@@ -178,9 +162,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             indexJsx = transformEntryFile({ entryFile: indexJsx });
         }
 
-        if (!isDev) {
-            indexJsx = await formatFile(internalFramework, indexJsx);
-        }
+        indexJsx = await formatFile(internalFramework, indexJsx);
 
         return {
             files: {
@@ -199,7 +181,6 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         componentScriptFiles,
         styleFiles,
         transformEntryFile,
-        isDev,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'reactFunctionalTs';
@@ -216,9 +197,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             indexTsx = transformEntryFile({ entryFile: indexTsx });
         }
 
-        if (!isDev) {
-            indexTsx = await formatFile(internalFramework, indexTsx);
-        }
+        indexTsx = await formatFile(internalFramework, indexTsx);
 
         return {
             files: {
@@ -236,12 +215,11 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         componentScriptFiles,
         styleFiles,
         transformEntryFile,
-        isDev,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'angular';
         const entryFileName = getEntryFileName(internalFramework)!;
-        const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
+        const boilerPlateFiles = await getBoilerPlateFiles(internalFramework);
 
         const componentNames = getComponentName(componentScriptFiles);
         let appComponent = vanillaToAngular(
@@ -255,9 +233,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             appComponent = transformEntryFile({ entryFile: appComponent });
         }
 
-        if (!isDev) {
-            appComponent = await formatFile(internalFramework, appComponent);
-        }
+        appComponent = await formatFile(internalFramework, appComponent);
 
         return {
             files: {
@@ -279,7 +255,6 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         componentScriptFiles,
         styleFiles,
         transformEntryFile,
-        isDev,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'vue3';
@@ -295,9 +270,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             mainJs = transformEntryFile({ entryFile: mainJs });
         }
 
-        if (!isDev) {
-            mainJs = await formatFile(internalFramework, mainJs);
-        }
+        mainJs = await formatFile(internalFramework, mainJs);
 
         const entryFileName = getEntryFileName(internalFramework)!;
         const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };
