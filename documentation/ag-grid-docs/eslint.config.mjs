@@ -1,6 +1,7 @@
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
 import rootESLint from '../../eslint.config.mjs';
+import { noRawHistoryWrites } from '../../external/ag-website-shared/eslint.history-rules.mjs';
 
 export default [
     ...rootESLint,
@@ -72,18 +73,8 @@ export default [
         },
     },
     {
-        // Astro's ClientRouter stores its history index and scroll offsets in `history.state`.
-        // A raw write replaces them, after which its popstate handler either bails out or reads
-        // every traversal as a "back", silently breaking back/forward for the whole page.
         rules: {
-            'no-restricted-syntax': [
-                'error',
-                {
-                    selector: 'CallExpression > MemberExpression.callee[property.name=/^(pushState|replaceState)$/]',
-                    message:
-                        'Use replaceHistoryUrl() from @ag-website-shared/utils/historyUrl - a raw history write discards the router state that back/forward depends on.',
-                },
-            ],
+            'no-restricted-syntax': ['error', ...noRawHistoryWrites],
         },
     },
 ];
