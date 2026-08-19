@@ -72,7 +72,7 @@ runs:
       # the 6-hour limit cancelled it. ${GITHUB_WORKSPACE} is needed because this step's
       # working-directory is documentation/ag-grid-docs.
       run: |
-        PW_INSTALL="${GITHUB_WORKSPACE}/.github/actions/test-framework-examples/install-playwright.sh"
+        PW_INSTALL="${GITHUB_WORKSPACE}/scripts/ci/install-playwright.sh"
         if [ "${{ steps.pw-cache.outputs.cache-hit }}" = "true" ]; then
           bash "${PW_INSTALL}" deps ${PW_BROWSERS}
         else

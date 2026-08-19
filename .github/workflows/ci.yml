@@ -63,6 +63,7 @@ permissions:
 jobs:
   detect-changes:
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     name: Detect Changes
     outputs:
       run_code_ci: ${{ steps.decide.outputs.run_code_ci }}
@@ -156,6 +157,7 @@ jobs:
       e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
       e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         id: checkout
@@ -226,6 +228,7 @@ jobs:
 
   test:
     runs-on: ubuntu-24.04
+    timeout-minutes: 45
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
@@ -312,6 +315,7 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     name: e2e Tests
     needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
@@ -326,37 +330,35 @@ jobs:
       # than a legitimately-unavailable environment. Local runs without Apache still skip.
       HTTPD_REQUIRED: 1
     steps:
-      - name: Ignore e2e tests
-        run: echo "::warning e2e tests are currently disabled due to flakiness. Re-enable when fixed."
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
 
-      # - name: Checkout
-      #   id: checkout
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 1 # shallow copy
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          yarn_postinstall: no-install
+          cache_mode: ro
 
-      # - name: Setup
-      #   id: setup
-      #   uses: ./.github/actions/setup-nx
-      #   with:
-      #     yarn_postinstall: no-install
-      #     cache_mode: ro
+      - name: nx test:e2e
+        id: tests
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c
+          staging --exclude 'tag:module-size' --exclude all
 
-      # - name: nx test:e2e
-      #   id: tests
-      #   run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c
-      #     staging --exclude 'tag:module-size' --exclude all
-
-      # - name: Persist test results
-      #   if: always() && matrix.shard != 0
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: test-results-e2e-shard-${{matrix.shard}}
-      #     path: |
-      #       reports/
+      - name: Persist test results
+        if: always() && matrix.shard != 0
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-e2e-shard-${{matrix.shard}}
+          path: |
+            reports/
 
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     name: Lint & Format Check
     needs: [ detect-changes, init ]
     if: ${{ always() && needs.detect-changes.result == 'success' }}
@@ -394,6 +396,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     name: Build
     needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
@@ -440,6 +443,7 @@ jobs:
 
   pr_preview:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     name: PR Preview (UMD)
     needs: [ build ]
     # Same-repo PRs only (fork PRs can't hold the write token) — see pr-review.yml.
@@ -529,6 +533,7 @@ jobs:
 
   docs:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     name: Docs Build & Link Checker
     needs: [ detect-changes, init ]
     if: ${{ (needs.detect-changes.outputs.run_code_ci == 'true' ||
@@ -593,6 +598,7 @@ jobs:
 
   fw_pkg_test:
     runs-on: ubuntu-24.04
+    timeout-minutes: 90
     name: Framework Package Tests (${{ matrix.framework }})
     permissions:
       contents: write
@@ -637,6 +643,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     needs:
       [
         detect-changes,
@@ -821,6 +828,7 @@ jobs:
   sonar_community:
     name: SonarQube Community
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
@@ -845,6 +853,7 @@ jobs:
   sonar_enterprise:
     name: SonarQube Enterprise
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
