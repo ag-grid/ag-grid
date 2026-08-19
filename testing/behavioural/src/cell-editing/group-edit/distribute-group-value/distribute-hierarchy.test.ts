@@ -1,7 +1,9 @@
+import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import { AllCommunityModule, ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingEditModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../../test-utils';
 import { createGroupRowData as createRowData } from '../group-edit-test-utils';
 import { distributeGroupValue, gridsManager } from './distribute-test-utils';
 
@@ -1002,7 +1004,8 @@ describe('distributeGroupValue with refreshAfterGroupEdit', () => {
 
         // Move a2 from region A to region B by editing the row group column
         api.getRowNode('a2')!.setDataValue('region', 'B');
-        await asyncSetTimeout(2);
+        // The move creates a new B/X leaf group; that node only exists once the regroup has run.
+        await waitFor(() => expect(api.getRowNode('row-group-region-B-country-X')).toBeTruthy());
 
         await new GridRows(api, 'after row move').check(`
             ROOT id:ROOT_NODE_ID

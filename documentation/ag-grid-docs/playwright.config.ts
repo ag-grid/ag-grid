@@ -7,7 +7,12 @@ const PRE_34_VERSION = process.env.PRE_34_VERSION;
 const PREV_URL = PRE_34_VERSION && `https://www.ag-grid.com/archive/${PRE_34_VERSION}/`;
 const PROD_URL = process.env['PUBLIC_SITE_URL'];
 const BASE_URL = process.env.BASE_URL;
-const baseURL = BASE_URL || PREV_URL || PROD_URL || 'https://localhost:4610';
+// Tests navigate with base-relative paths so they survive a build deployed under a path prefix
+// (`https://testing.ag-grid.com/<TICKET>/`). `new URL(relative, base)` drops the base's last segment
+// unless it ends in a slash, so a URL passed without one would silently lose the prefix.
+const withTrailingSlash = (url: string): string => (url.endsWith('/') ? url : `${url}/`);
+
+const baseURL = withTrailingSlash(BASE_URL || PREV_URL || PROD_URL || 'https://localhost:4610');
 
 const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
 
@@ -82,11 +87,19 @@ export default defineConfig({
                 outputFile: `ag-grid-examples-interactive-${process.env.FRAMEWORK || 'default'}.json`,
             },
         ],
+        // Only the page-verification project records CSP violations, so every other project
+        // writes an empty report here.
+        ['./scripts/csp/cspViolationReporter.ts'],
     ],
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
         /* Base URL to use in actions like `await page.goto('/')`. */
         baseURL,
+
+        // The dev server's certificate is self-signed. Chromium waives that for localhost but Node does not,
+        // so route handlers that re-request a URL fail without this. Left on for a deployed run, whose
+        // certificate is real and should still be checked.
+        ignoreHTTPSErrors: isLocalRun(baseURL),
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         // Keep this off for CI runs that upload reports: a trace records request headers, so it would

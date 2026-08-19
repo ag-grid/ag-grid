@@ -198,7 +198,6 @@ export class CalculatedColumnForm extends Component {
         this.eTitle
             .setLabel(translate('calculatedColumnTitle', 'Title'))
             .setLabelAlignment('top')
-            .setAutoComplete(false)
             .setValue(this.draft.headerName, true);
         this.eType
             .setLabel(translate('calculatedColumnType', 'Type'))

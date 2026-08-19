@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, ColGroupDef, Column } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, RowSelectionModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Column lookup', () => {
     const gridsManager = new TestGridsManager({

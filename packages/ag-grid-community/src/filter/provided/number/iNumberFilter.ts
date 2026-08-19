@@ -1,9 +1,16 @@
 import type { IFilterParams } from '../../../interfaces/iFilter';
 import type { IScalarFilterParams } from '../iScalarFilter';
-import type { ISimpleFilterModel } from '../iSimpleFilter';
+import type {
+    CustomFilterOptionKey,
+    IFilterOptionDef,
+    ISimpleFilterModel,
+    ScalarFilterOptionKey,
+} from '../iSimpleFilter';
 import type { ITextInputFloatingFilterParams } from '../text/iTextFilter';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
+    /** One of the Number Filter's options, or a Custom Filter Option's `displayKey`. */
+    type?: ScalarFilterOptionKey | CustomFilterOptionKey | null;
     /** Filter type is always `'number'` */
     filterType?: 'number';
     /**
@@ -28,6 +35,10 @@ export type NumberFilterParams<TData = any> = INumberFilterParams & IFilterParam
  */
 
 export interface INumberFilterParams extends IScalarFilterParams {
+    /** Array of filter options to present to the user. */
+    filterOptions?: (IFilterOptionDef | ScalarFilterOptionKey)[];
+    /** The default filter option to be selected. Must be one of the offered options. */
+    defaultOption?: ScalarFilterOptionKey | CustomFilterOptionKey;
     /**
      * When specified, the input field will be of type `text`, and this will be used as a regex of all the characters that are allowed to be typed.
      * This will be compared against any typed character and prevent the character from appearing in the input if it does not match.

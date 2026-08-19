@@ -43,6 +43,10 @@ export class AgTabGuardComp<
         this.tabGuardFeature.forceFocusOutOfContainer(up);
     }
 
+    public focusNextElementOutsideContainer(up: boolean, excludeElements: HTMLElement[]): boolean {
+        return this.tabGuardFeature.focusNextElementOutsideContainer(up, excludeElements);
+    }
+
     public override appendChild(
         newChild: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> | HTMLElement,
         container?: HTMLElement | undefined

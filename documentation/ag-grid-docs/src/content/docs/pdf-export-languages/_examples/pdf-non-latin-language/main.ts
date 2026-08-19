@@ -15,6 +15,8 @@ interface LanguageSample {
 
 let gridApi: GridApi<LanguageSample>;
 
+const fontFamily = 'IBM Plex Sans JP';
+
 const gridOptions: GridOptions<LanguageSample> = {
     columnDefs: [{ field: 'text', headerName: 'Japanese Text', flex: 1 }],
     rowData: [
@@ -25,7 +27,14 @@ const gridOptions: GridOptions<LanguageSample> = {
 };
 
 function onBtExport() {
-    gridApi.exportDataAsPdf();
+    loadFont('IBMPlexSansJP-Regular.ttf').then((data) => {
+        gridApi.setGridOption('defaultPdfExportParams', {
+            fonts: [{ family: fontFamily, faces: [{ data, weight: 400 }] }],
+            defaultCellStyle: { fontFamily },
+            language: 'ja',
+        });
+        gridApi.exportDataAsPdf();
+    });
 }
 
 async function loadFont(fileName: string): Promise<ArrayBuffer> {
@@ -36,20 +45,6 @@ async function loadFont(fileName: string): Promise<ArrayBuffer> {
     return response.arrayBuffer();
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const japaneseRegular = await loadFont('IBMPlexSansJP-Regular.ttf');
-    const fontFamily = 'IBM Plex Sans JP';
-
-    gridOptions.defaultPdfExportParams = {
-        fonts: [
-            {
-                family: fontFamily,
-                faces: [{ data: japaneseRegular, weight: 400 }],
-            },
-        ],
-        defaultCellStyle: { fontFamily },
-        language: 'ja',
-    };
-
+document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 });

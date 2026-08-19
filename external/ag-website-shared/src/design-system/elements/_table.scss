@@ -1,41 +1,5 @@
 @use '../core' as *;
 
-@mixin stack-table() {
-    thead {
-        display: none;
-    }
-
-    tr,
-    td {
-        display: block;
-        text-align: left;
-    }
-
-    tr {
-        padding: $spacing-size-4 0;
-
-        &:nth-child(even) {
-            background-color: unset;
-        }
-    }
-
-    td {
-        padding: 0;
-        line-height: var(--text-lh-tight);
-        font-weight: var(--text-bold);
-
-        &:not(:last-child) {
-            margin-bottom: $spacing-size-2;
-        }
-    }
-
-    td[data-column]::before {
-        content: attr(data-column) ': ';
-        font-weight: var(--text-regular);
-        color: var(--color-fg-secondary);
-    }
-}
-
 table#{$selector-exclude-grid} {
     width: 100%;
     margin-bottom: $spacing-size-4;

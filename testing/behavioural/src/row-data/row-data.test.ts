@@ -1,4 +1,14 @@
 import { waitFor } from '@testing-library/dom';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    cachedJSONObjects,
+    executeTransactionsAsync,
+    setRowDataChecked,
+} from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import {
@@ -11,17 +21,6 @@ import {
     TextFilterModule,
 } from 'ag-grid-community';
 import type { GridOptions, IRowNode, ModelUpdatedEvent } from 'ag-grid-community';
-
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    applyTransactionChecked,
-    asyncSetTimeout,
-    cachedJSONObjects,
-    executeTransactionsAsync,
-    setRowDataChecked,
-} from '../test-utils';
 
 describe('ag-grid row data', () => {
     const gridsManager = new TestGridsManager({

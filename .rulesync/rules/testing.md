@@ -4,391 +4,94 @@ description: 'Testing strategies, Vitest patterns, and verification for AG Grid'
 globs: ['**/*.test.ts', '**/*.spec.ts', 'testing/**/*']
 ---
 
-# Testing Guide
+# Testing — Quick Reference
 
-This guide covers testing strategies and best practices for the AG Grid codebase.
+For the full guide — runner flag reference, Vitest patterns, the complete async-waiting playbook, and snapshot usage — load the `/testing` skill.
 
-## Behavioural Tests — Primary Test Suite
+## Choosing a layer
 
-Behavioural tests in `testing/behavioural/` are the primary test suite for AG Grid. They test the grid as a **black box**, instantiating the full grid to verify complex behaviours and features.
+**Default to a behavioural test.** Behavioural tests in `testing/behavioural/` are the primary suite: they drive the full grid as a black box through the public `GridApi`. A package `*.test.ts` is only for pure logic (formatter, comparator, parser) with no grid-integration surface.
 
-**Key principles:**
-
-- The unit under test is a **behaviour**, not a function, class, method, or file
-- **Avoid mocking** — prefer fakes instead (e.g., fake DOM)
-- Test at the edges of the system to ensure real integration using public APIs
-
-## Choosing a Test Layer
-
-**Default to a behavioural test.** A package `*.test.ts` that instantiates a feature class directly is only for pure logic (formatter, comparator, parser) with no grid-integration surface. Anything that manifests through the running grid belongs in `testing/behavioural/`, driven via the public `GridApi`.
-
-**These are signs you're testing internals — write a behavioural test instead:** casting to `as any` for private state, hand-building `beans`/`gos`/`ctrlsSvc`, calling a private method to reach a branch, or spying on an internal method as the assertion. Such tests pass even when the real code path never runs.
+**Signs you're testing internals — write a behavioural test instead:** casting to `as any` for private state, hand-building `beans`/`gos`/`ctrlsSvc`, calling a private method to reach a branch, or spying on an internal method as the assertion. Such tests pass even when the real code path never runs.
 
 Search `testing/behavioural` for an existing harness before assuming a behaviour can't be black-box tested (e.g. `DragEventDispatcher` drives real header drags); extend the harness rather than dropping to a unit test.
 
-`./behave.sh` runs the merged unit suite in a single Vitest workspace (`vitest.workspace.ts`): the package (London-school) `*.test.ts` files **and** the behavioural (Chicago-school) suite together, no Nx required. `yarn nx test <package>` still runs one package's tests on its own (retained for retrocompat).
+## Wait, don't sleep
 
-## Regression Tests: Cover Every Reproduction Path
-
-A bug rarely has one trigger. The same broken behaviour is usually reachable through several entry points — a programmatic API call, `applyColumnState`, a panel drag, a tool-panel drop — that run **different code paths** to the same end state. A fix that only patches the path in the ticket's first repro step can leave the others broken.
-
-When writing regression tests for a bug fix:
-
-- **Enumerate the reproduction paths named in the ticket, and add a test for each.** If the ticket says the bug reproduces via `addRowGroupColumns`, the Row Group Panel, and the Columns tool-panel drop zone, that is three tests, not one. Interactive entry points count — drive them with the real harness (`DragEventDispatcher` for header/panel drags) rather than skipping them because they're awkward to set up.
-- **Test the plural case, not just N=1.** If the fix reorders, inserts, or buckets a *list* of things, cover adding two or three, not only one. Single-item cases often pass by coincidence (no reordering needed) while the multi-item case is where the logic actually bites.
-- **Assert the observable end state for every path**, e.g. `getColumnOrder(...)`, not just that the operation didn't throw.
-
-Before finishing, re-read the ticket's "Steps to reproduce" and confirm each distinct trigger has a corresponding test. A fix verified through only one of several documented triggers is not fully verified.
-
-## Test Structure
-
-### Directory Layout
-
-```
-testing/
-├── accessibility/     # Accessibility compliance tests
-├── behavioural/       # Grid behaviour verification
-├── csp/               # Content Security Policy tests
-├── module-size/       # Bundle size monitoring
-├── performance/       # Performance regression tests
-└── shared/            # Shared test utilities
-```
-
-### Package Tests
-
-Unit and integration tests are co-located with source code:
-
-```
-packages/ag-grid-community/src/
-├── feature/
-│   ├── featureName.ts
-│   └── featureName.test.ts
-```
-
-## Running Tests
-
-### The merged unit suite (Vitest) — `./behave.sh`
-
-`./behave.sh` is the single command for the whole unit suite: the package unit tests (`ag-stack`, `ag-grid-community`, `ag-grid-enterprise`, `locale`) plus the behavioural suite, run together through the Vitest workspace from the repo root. Watch mode is disabled by default:
-
-```bash
-# Run the whole unit suite (package + behavioural)
-./behave.sh
-
-# Filter by file pattern across every project
-./behave.sh "cell-editing-regression"
-
-# Run a specific test by name
-./behave.sh "cell-editing-regression" -t "should handle"
-
-# Run only one project (its vitest test.name), e.g. behavioural-only
-./behave.sh --project behavioural
-
-# Run every project in the workspace, incl. the node-env tooling suites (docs, ag-website-shared)
-./behave.sh --project all
-
-# Watch mode
-./behave.sh --watch
-```
-
-> `./behave.sh` does not type-check (Vitest strips types via esbuild). Before committing, run `yarn nx run ag-behavioural-testing:build:test` to type-check.
->
-> `./behave.sh` and `./benches.sh` resolve only from the repository root, so an agent whose shell has changed directory — earlier in the same command, or carried over from a previous one — will not find them. Prefix with `cd "$(git rev-parse --show-toplevel)" &&` rather than hardcoding a machine-specific path.
->
-> Some suites take several minutes; `testing/behavioural/src/charts/format-panel-options.test.ts` alone runs ~2.5 minutes. Allow a timeout of at least five minutes, and wait for the run to finish and report its exit status — if the runner detaches the command, collect the result rather than treating silence as success.
->
-> The workspace membership and shared config live in `vitest.workspace.ts`, `vitest.config.ts`, and `vitest.shared.ts` at the repo root; each project keeps its own `vitest.config.ts`. Runner-global options (reporters, `onConsoleLog`, pool) must live in the **root** config — Vitest ignores them in a project config during a workspace run.
-
-### Benchmarks
-
-Behavioural benchmarks live in `testing/behavioural/` and run via `./benches.sh`. They run in a real headless Chromium (Playwright) by **default**, so layout-dependent work is measured against a real layout engine. Run `./benches.sh --help` for the full usage (it prints vitest's `bench --help` followed by benches.sh's own options).
-
-```bash
-# Run all benchmarks
-./benches.sh
-
-# Run specific benchmark file (positional arg forwarded to `vitest bench`)
-./benches.sh "tree-data-path"
-
-# Run a specific benchmark by name within matching files
-./benches.sh "tree-data-path" -t "flattening"
-
-# V8 CPU profile (node-only) — writes a .cpuprofile for method-cost analysis
-./benches.sh --profile "tree-data-path"
-```
-
-For baseline/compare runs, `./benches.sh --bench-compare <base|test|compare|all|backup> [...]` forwards to `bench-compare.mjs` (e.g. `./benches.sh --bench-compare all --runs 3`).
-
-### Per-package unit tests (Nx, retrocompat)
-
-`./behave.sh` already covers these, but an individual package's tests can still be run on their own through Nx. Vitest takes positional file patterns and `-t` for test names — **not** jest's `--testPathPattern`/`--testNamePattern`:
-
-```bash
-# Run all tests for a package
-yarn nx test ag-grid-community
-
-# Run tests in files matching a pattern (forwarded to `vitest run`)
-yarn nx test ag-grid-community -- "featureName"
-
-# Run a specific test by name within matching files
-yarn nx test ag-grid-community -- "featureName" -t "should handle"
-```
-
-(`testing/angular-tests` still uses Jest.)
-
-### E2E Tests (Playwright)
-
-E2E tests run via Playwright against the docs site. `./docs-e2e.sh` runs them directly from the repo root, bypassing Nx, and defaults to chromium only:
-
-```bash
-# Run all E2E tests (chromium)
-./docs-e2e.sh
-
-# Run tests matching a file pattern
-./docs-e2e.sh "toolbar"
-
-# Run a specific test by name
-./docs-e2e.sh "toolbar" --grep "Quick filter"
-
-# Run against all browsers
-./docs-e2e.sh --all-browsers
-
-# Run with a specific framework
-./docs-e2e.sh --framework react
-
-# Open Playwright UI mode
-./docs-e2e.sh --ui
-```
-
-The full Nx target is still available when needed:
-
-```bash
-yarn nx e2e ag-grid-docs
-```
-
-**Note:** Vitest does not support `--testPathPattern` or `--testNamePattern`. Use positional arguments for file matching and `-t` for test name filtering.
-
-## Test Patterns
-
-### Package Unit Tests (Vitest)
-
-Follow the AAA pattern (Arrange, Act, Assert):
+**Poll async grid updates with `waitFor`** (from `@testing-library/dom`). **Never** `await asyncSetTimeout(<fixed n>)` and then assert — a guessed delay is flaky and slow. A `no-restricted-syntax` ESLint rule in `testing/behavioural/eslint.config.mjs` flags every `asyncSetTimeout(n)` where `n > 0`.
 
 ```typescript
-describe('FeatureName', () => {
-    let instance: FeatureName;
-
-    beforeEach(() => {
-        // Arrange - setup
-    });
-
-    afterEach(() => {
-        // Cleanup
-        vi.resetAllMocks();
-    });
-
-    describe('#methodName', () => {
-        it('should handle expected case', () => {
-            // Arrange
-            const input = createInput();
-
-            // Act
-            const result = instance.methodName(input);
-
-            // Assert
-            expect(result).toBe(expected);
-        });
-    });
-});
-```
-
-### Parameterised Tests
-
-Use `it.each()` for testing multiple cases:
-
-```typescript
-it.each([
-    ['case1', input1, expected1],
-    ['case2', input2, expected2],
-])('should handle %s', (_, input, expected) => {
-    expect(functionUnderTest(input)).toBe(expected);
-});
-```
-
-### Test Data Records
-
-For complex test cases, use records:
-
-```typescript
-const EXAMPLES: Record<string, TestCase> = {
-    BASIC: {
-        input: {
-            /* ... */
-        },
-        expected: {
-            /* ... */
-        },
-    },
-    EDGE_CASE: {
-        input: {
-            /* ... */
-        },
-        expected: {
-            /* ... */
-        },
-    },
-};
-
-for (const [name, example] of Object.entries(EXAMPLES)) {
-    it(`handles ${name}`, () => {
-        expect(process(example.input)).toEqual(example.expected);
-    });
-}
-```
-
-### Waiting for Async Grid Updates
-
-Much grid behaviour resolves asynchronously — set-filter values load after the panel attaches, reloads run off a debounce/microtask, and so on. To observe such an update, **poll the condition with `waitFor`** (from `@testing-library/dom`) so the test proceeds the moment the state is ready:
-
-```typescript
-import { waitFor } from '@testing-library/dom';
-
 api.setGridOption('rowData', ATHLETES);
 await waitFor(() => expect(panel.setFilterItemLabels('Athlete')).toEqual(LI_MATCHES));
 ```
 
-**Do not** `await asyncSetTimeout(<fixed n>)` and then assert. A guessed delay is flaky (too short under load) and slow (always waits the full time). Nonzero fixed delays scattered through the suite are legacy, not the pattern to copy. A `no-restricted-syntax` ESLint rule in `testing/behavioural/eslint.config.mjs` flags every `asyncSetTimeout(n)` where `n > 0`.
-
-`await asyncSetTimeout(0)` is fine for its distinct purpose: flushing a single microtask/event-loop tick after a synchronous action (e.g. after setting a native input value) before reading the result.
-
-**`asyncSetTimeout(1)` is the same call as `asyncSetTimeout(0)`.** Node clamps a `0` delay to 1ms, so a `(1)` buys no extra safety over a `(0)` — and no safety at all when the update needs more than one tick. Most of the suite's nonzero delays are spelled `(1)` for this reason. Judge such a site by what follows it, not by the number: if the next line reads async state, it needs `waitFor`.
-
-#### The sleep that looks safe
-
-A fixed sleep placed *before* a call that already polls internally, or before a raw state read, reads as a safety margin and is not one. Both shapes appear here:
+**In a React suite, flush ticks inside `act`.** `waitFor` and `userEvent` are already act-aware, but a bare `await asyncSetTimeout(0)` is not: the grid re-renders rows asynchronously, so an update scheduled by an api call lands in the *next* tick — after a synchronous `act(...)` has closed — and React reports "An update to RowComp inside a test was not wrapped in act(...)". Wrap the flush instead:
 
 ```typescript
-async function clickColumnMenuItem(name: string): Promise<void> {
-    const menuItem = await waitFor(() => { /* ... */ }); // already polls
-    menuItem.click();
-}
-
-async function openEditDialogViaMenu(api: GridApi, colKey: string): Promise<void> {
-    showColumnMenu(api, colKey);
-    await asyncSetTimeout(10); // redundant — the callee already polls
-    await clickColumnMenuItem('Edit Calculated Column');
-    await asyncSetTimeout(1); // a guess gating whatever the caller asserts next
-}
+const flush = async () => { await act(async () => { await asyncSetTimeout(0); }); };
 ```
 
-Delete the first sleep: `clickColumnMenuItem` polls, so waiting before it adds latency and no determinism. Delete the second too, and have the caller poll its own assertion with `waitFor` — a trailing sleep in a helper silently becomes the caller's synchronisation, which is exactly the guess this section forbids.
+`asyncSetTimeout(0)` is fine for flushing a single tick after a synchronous action. `asyncSetTimeout(1)` is the *same call* — Node clamps 0 to 1ms — so it buys nothing.
 
-A genuine timer window the grid debounces on (see `waitForMissingModuleReports`) is the rare exception. Keep the delay and add `// eslint-disable-next-line no-restricted-syntax -- <the window it waits on>`.
+The skill covers the traps that make a `waitFor` unfalsifiable or a sleep load-bearing — negative assertions, polls that were already true, test IDs landing on a debounce, and sleeps that only look like safety margins — plus how to prove a wait is genuinely necessary. **Load it before converting any timing-dependent test.**
 
-#### Negative assertions
+## Regression tests: cover every reproduction path
 
-`waitFor` cannot express "this never happened". It resolves the moment its callback stops throwing, so a poll for something that is already true passes on tick 0 and the test becomes unfalsifiable. When the assertion is that a call was *not* made, or that no *second* event arrived, the delay is not a guessed wait — it is the observation window, and converting it to a poll removes the coverage.
+A bug rarely has one trigger. Enumerate the reproduction paths named in the ticket and add a test for each — a programmatic API call, a panel drag and a tool-panel drop are three tests, not one. Test the plural case, not just N=1, and assert the observable end state for every path.
 
-Look for a positive signal first, and only fall back to the window when none exists:
+**Prefer red before green: write the failing test first.** That is the default, because it forces the discriminating input to be chosen before the fix exists to bias it. The invariant it serves is weaker — see the test fail for the reason you expect, at least once — so when the fix already exists (ported, cherry-picked, or you simply wrote it first), applying the test before the patch or reverting the patch to confirm red is a legitimate route to the same place. A test that fails for the wrong reason — typo'd selector, unregistered module, a `waitFor` already true — is as uninformative as one that never fails.
 
-```typescript
-// Preferred — poll a positive signal, then assert the negative over the settled state.
-await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
-expect(errorSpy).not.toHaveBeenCalled();
+Pick the input that *separates* the two behaviours. A test that passes against both the fixed and the unfixed code proves nothing, however green it is — this is the check that catches a guard which stops a crash by skipping the work the function existed to do.
 
-// Fallback — nothing positive follows the event that must not arrive.
-await waitFor(() => expect(events.length).toBeGreaterThan(0)); // the first, expected event
-// eslint-disable-next-line no-restricted-syntax -- window in which a second, redundant columnEverythingChanged would arrive
-await asyncSetTimeout(10);
-expect(events).toHaveLength(1);
-```
+**Then refactor, on green.** The third step is not optional and it is where tidying belongs: simplifying the fix, extracting a harness, merging same-setup tests, adding the `GridRows`/`GridColumns`/`FilterDom` snapshots. The test suite is what makes that safe, so it must stay green *and unchanged* throughout — if an assertion has to be edited to keep passing, that is a behaviour change wearing a refactor's clothes, and it needs its own red step.
 
-A positive signal only works when it provably lands *after* the thing being ruled out. If it can settle first, it shrinks the window towards zero and is worse than the sleep it replaced — keep the window and say in the disable comment what it is observing.
+## Commands
 
-#### Proving a wait is necessary
+- `./behave.sh` — the whole unit suite (package + behavioural) as one multi-project Vitest run.
+- `./benches.sh` — behavioural benchmarks in headless Chromium.
+- `./docs-e2e.sh` — Playwright E2E against the docs site. The Nx target is `test:e2e`; there is **no** `e2e` target.
 
-The way to show a delay is decoration is to delete it and see the test still pass — but **run that probe at whole-file scope at least, never under `-t "<single test>"`**. Vitest isolation changes what has already happened by the time the assertion fires, so a filtered run can pass on a gate that the full file genuinely needs. A green `-t` run is not evidence that a wait is unnecessary; it is evidence of nothing.
+### Never block on a gate; read its log afterwards
 
-#### The poll that was already true
+**Never run `./behave.sh`, `./checks.sh`, `./benches.sh` or `./docs-e2e.sh` in the foreground** — while a Bash call is in flight the user cannot reach the agent at all. Launch with the harness's background mechanism, which delivers a completion event in a later turn, and do other work meanwhile. (`--async` detaches the script itself and reports back to the terminal it was launched from when it ends — useful to a human, useless to an agent, which cannot be woken that way.)
 
-When the sleep you are replacing sits after a mutation, check what the polled condition evaluated to *before* that mutation. If it was already true, `waitFor` resolves on its first tick and the assertion never sees the new state — the test still passes, and it now passes for any implementation.
+**Never `sleep` to wait for a run.** One you backgrounded wakes the agent by itself; one started elsewhere has `--async-status` (exit 3 = still running) and `--wait`, below. For progress mid-run, grep the log — it is written live.
 
-This bites hardest on "state survives a rebuild" tests, where the state asserted afterwards is the same state that held beforehand. Gate on a signal that can only be true post-mutation — the recreated object is a different instance, a count has changed, a new column has appeared — and then assert. The gate's job is to establish that the mutation landed, not to buy time: if the mutation is synchronous the gate resolves immediately and costs nothing, and it still keeps the assertion falsifiable if the work is later deferred.
+**Every local run captures itself, and prints the log path as its first line** — `▶ tmp/_behave-output/<id>/output.log`, the whole of stdout and stderr with the colour codes stripped. That line is also the only proof a run happened: piping a gate (`… | tail`) reports the **pipe's** exit status, so one that failed, or that the shell never found, still comes back `0` — read the summary line, and treat a missing `▶` as "nothing ran". So no redirect has to be arranged in advance and a red run needs no second run: grep that file, during the run or after it, or pass `--bail 1` to make the run stop at the first failure itself. Beside it sit the `command` and a `status`, plus `result.json` (vitest's machine-readable results) for `./behave.sh` only. `latest` symlinks the newest and week-old runs are pruned.
 
-```typescript
-const groupBeforeRebuild = api.getProvidedColumnGroup(openedIds[0]);
-api.setGridOption('columnDefs', makeDefs());
-await waitFor(() => expect(api.getProvidedColumnGroup(openedIds[0])).not.toBe(groupBeforeRebuild));
-expect(openGroupIds(api)).toEqual(openedIds);
-```
+**Under `CI`, run them in the foreground instead.** Backgrounding is there to keep an interactive session reachable, and a workflow has nobody to block, so take the output directly. The scripts capture nothing under `CI` for the same reason, so there is no log to grep and none is needed.
 
-#### Test IDs land on a debounce
+- `--async-status [id]` — has a run finished? Exit 0 passed, 1 failed, **3 still running**. Defaults to the newest run and takes an id or any path containing one, so it also reports on a run started elsewhere.
+- `--wait <id|latest> [secs]` — the same report, waiting up to `secs` for the run to finish.
+- `--kill [id]` — stop a run (the newest by default) and every process it spawned.
+- `--quiet` — console gets the paths, summary and failures only (not `./checks.sh`, which is quiet already); `--no-log` turns capture off.
 
-`TestIdService` stamps `data-testid` attributes in a debounced pass off grid events, so a freshly rendered cell carries no test ID until a macrotask has elapsed. A sleep that a `*ByTestId` query depends on is therefore load-bearing, and gating on some *other* condition — the range handle existing, a row count, an API value — does not replace it: `waitFor` resolves without yielding a macrotask when its callback passes on the first tick.
+**Run with `--bail 1` by habit.** `./behave.sh --bail 1 <path>` stops at the first failing test — what you want in a fix-one-error-at-a-time loop, and it skips the rest of the reporting too. `--no-diff` reports names and messages with no diffs, for when a suite fails wholesale. A red run can take minutes where the green one takes seconds: vitest's diff serialisation of grid objects is effectively unbounded. The skill explains why, plus the `--stack-trace-len` trap and how `--bail` reads in a JSON report.
 
-Poll the lookup itself, so the gate covers what the test actually reads:
+`./behave.sh --slowest N` reports what a run spent its time on (default 5; `AG_SLOWEST_TESTS`, 0 to silence). Three tables plus a line:
 
-```typescript
-const cellOfRow = (rowIndex: number) => getByTestId(gridDiv, agTestIdFor.cell(`ROW_${rowIndex}`, 'sunshine'));
+- **Slowest tests** and **slowest test files**, each below a floor in `timings.ts`, so a healthy run prints nothing. Read a file by its per-test rate, not its total.
+- **Idle** — files ranked by the off-CPU milliseconds themselves, listed above 1s (`AG_WAITING_MIN_MS`). Usually a fixed timer the test out-waited, so usually time a fix gives back — but `eventLoopUtilization` counts every event-loop wait, so worker↔main RPC and inline-snapshot writes land here too and a snapshot-heavy file can rank high with no timer to remove. The ranking is absolute rather than a share of the file, because 3s inside a 10s file is still 3s.
+- **Worker time** — the run's total worker-seconds, the parallel factor against wall clock, and the split between `load` (importing the grid plus building a happy-dom) and `tests`. Load is a per-file constant and flat across them, so it is a budget line rather than a table: it is what makes an extra file cost something, and once the parallel factor sits at core count, wall time only falls by spending fewer worker-seconds. Read the current figure off the run rather than from here — it is actively being optimised, so any number written down is stale.
 
-await waitFor(() => {
-    expect(gridDiv.querySelector('.ag-range-handle')).toBeTruthy();
-    for (let i = 0, len = rowData.length; i < len; ++i) {
-        cellOfRow(i);
-    }
-});
-```
+All four take `--help` and resolve only from the repo root — from elsewhere call them by path (`../../behave.sh`), not via `cd "$(git rev-parse --show-toplevel)" &&`, which agent harnesses gate on. `./behave.sh` does not type-check; run `yarn nx run ag-behavioural-testing:build:test` before committing. Some suites take minutes — allow a five-minute timeout and collect the exit status rather than treating silence as success.
 
-## Best Practices
+## Speed
 
-1. **Test behaviour, not implementation** - Focus on what the code does, not how
-2. **Keep tests independent** - Each test should be able to run in isolation
-3. **Use descriptive names** - Test names should describe the expected behaviour
-4. **Avoid test helpers that hide behaviour** - Repetition is fine in tests; prefer inline setup over a shared factory so each test reads top-to-bottom. Do not flag duplicated test setup (row data, grid options, column defs) in code review. **Do** flag duplicated test *cases* — i.e. tests that assert the same behaviour twice — within a file or across files, since they add no coverage.
-5. **Merge tests that differ only in assertions** - Same setup → one test with sequential assertions. Avoids test-count bloat.
-6. **Clean up after tests** - Reset mocks and state in `afterEach`
-7. **Review similar tests** - When adding tests, check related tests for consistency
-8. **Wait, don't sleep** - Poll async grid updates with `waitFor`; never assert after a fixed `asyncSetTimeout(n)` delay (see [Waiting for Async Grid Updates](#waiting-for-async-grid-updates)).
-9. **Register the module before using a grid API** - Tests and benchmarks build their own module lists (not `AllCommunityModule`), so a `GridApi` method or feature whose module isn't registered logs `error #200` (`moduleName=…&reasonOrId=api.<method>`) and **no-ops silently**. Before using a new API, find its providing module (grep the method under `packages/*/src`, or read the `moduleName=` in the error URL) and register it. A passing test/bench prints no `error #200`.
+**A test should take well under 4 seconds.** The suite mean is ~70ms, so 4s already means something is wrong. A slower one is reported as a warning and a much slower one fails outright; both thresholds live in `testing/shared/vitest/timings.ts`, and are looser in CI.
 
+**Never pass a timeout to `test()`.** It does not raise the limit — `testing/shared/vitest/output.setup.ts` fails on measured duration, so an override only lets a slow test run to completion and then fail anyway. It hid a 147s test for months. If a test needs more time, the time is the bug.
 
-## GridRows and GridColumns Snapshots
+**A slow test is almost never doing work; it is waiting.** Check CPU before optimising anything: a run at 30% CPU is sleeping, usually on a fixed timer the test could avoid rather than out-wait. Watch for a product timeout that only fires because happy-dom has no layout and no CSS transitions, and for polling on a state the code reaches a second later than the one you can already assert.
 
-For behavioural tests, prefer `GridRows` and `GridColumns` snapshots over raw API assertions where practical. They produce inline snapshots that make the grid state visually readable and update automatically.
+**A hard-coded grid delay can be collapsed for this suite: `FAST_TEST_TIMINGS`.** `packages/ag-stack/src/fastTestTimings.ts` exports a single `false`; `testing/behavioural/vitest.config.ts` aliases that module to a `true` copy, so only behavioural tests are affected — E2E, the docs site and every published bundle read `false`. Each read stays a ternary in the shipped bundle rather than folding, because `ag-stack` is a separate package the grid imports — cheap, but not free, so spend it only where the delay costs the suite real time. Branch where the delay is a constant: `const MIN_TOOLTIP_DELAY = FAST_TEST_TIMINGS ? 0 : 200`. Two rules: a delay a test can set through a **grid option does not go behind the flag** (set the option), and lifting a floor achieves nothing until the test also asks for the small value. Suites that assert the timing itself keep the real values — they are why the constant still has to work.
 
-```typescript
-import { GridColumns, GridRows } from '../test-utils';
+**Read a slow file by its per-test rate, not its total** — `--slowest` prints both. A high total with a normal rate is volume, and there is nothing to reclaim without deleting coverage. A high *rate* is a defect worth chasing.
 
-// Snapshot grid rows (rendered cell values, grouping, selection state, etc.)
-await new GridRows(api, 'description').check();
+**Split a file whose tests are individually fast but numerous.** Vitest parallelises across files, not within one, so a long matrix serialises in a single worker. Split it into sibling suites sharing a harness module — one of the few cases that outweighs the preference for extending an existing suite. Prefer `test.each` over one test looping the matrix, so a failure names the case rather than only the file.
 
-// Snapshot column state (visibility, order, pinning, pivoting, etc.)
-await new GridColumns(api, 'description').checkColumns();
-```
+## Key practices
 
-When behaviour cannot be captured by a snapshot — for example verifying a specific return value, event payload, or count — combine snapshots with targeted API checks:
-
-```typescript
-await new GridRows(api, 'after sort').check();
-expect(api.getDisplayedRowCount()).toBe(3);
-```
-
-Update snapshots after intentional grid state changes:
-
-```bash
-./behave.sh --update-grid-rows # update all
-./behave.sh --update-grid-rows "column-lookup"    # update matching files only
-```
-
-Since our test framrwork and mockGridLayout.ts are written as we go,
-if they do not cover a scenario that arise in a new test, they must be updated and fixed.
-
-## Style in Tests
-
-Tests must respect ESLint rules, but the non-lint-enforced coding-style preferences.
-
-## Coverage
-
-- Aim for meaningful coverage, not 100%
-- Focus on edge cases and error handling
-- Critical paths should have comprehensive tests
+- Prefer `GridRows` / `GridColumns` inline snapshots over raw API assertions where practical; update with `./behave.sh --update-grid-rows`.
+- Repetition is fine in tests — prefer inline setup over shared factories. Do not flag duplicated test *setup* in review; **do** flag duplicated test *cases*.
+- **Register the module before using a grid API.** Tests build their own module lists, so an unregistered API logs `error #200` and **no-ops silently**. A passing test prints no `error #200`.

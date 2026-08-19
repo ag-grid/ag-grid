@@ -694,6 +694,7 @@ export const AG_GRID_LOCALE_JP = {
     ariaFilterColumnsInput: 'フィルター列入力',
     ariaFilterFromValue: '値からフィルター',
     ariaFilterInput: 'フィルター入力',
+    ariaLabelInputClear: 'クリア',
     ariaFilterList: 'フィルターリスト',
     ariaFilterToValue: '値までフィルター',
     ariaFilterValue: 'フィルター値',
@@ -788,8 +789,8 @@ export const AG_GRID_LOCALE_JP = {
     ariaHasNote: 'このセルにはメモがあります。',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '、',
-    decimalSeparator: '。',
+    thousandSeparator: ',',
+    decimalSeparator: '.',
 
     // Data types
     dataTypeText: 'テキスト',

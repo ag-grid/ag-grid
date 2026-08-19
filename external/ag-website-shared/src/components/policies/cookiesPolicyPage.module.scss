@@ -1,0 +1,144 @@
+@use 'design-system' as *;
+
+/*
+ * The cookies page renders the Enzuzo policy embed rather than a `.mdoc` body (AG-18194), so it
+ * needs its own styles — `policyPage.module.scss` targets the hand-written markup the privacy and
+ * modern-slavery pages still use.
+ *
+ * The embed builds its DOM at runtime, which puts it outside Astro's component scoping, so every
+ * rule below is `:global` and nested inside `.cookiesPage` to keep it confined to this page.
+ *
+ * The vendor ships its own inline <style> alongside the markup, injected into the body and so later
+ * in the cascade than ours. The rules in it that reach this policy are scoped under `[ez-policy]` /
+ * `.ez-container` and name no colours — their borders use `currentColor`, which follows our theme for
+ * free — so these rules only have to out-specify them, hence the deliberately matching selector
+ * shapes below. Watch for two traps when extending this file: several design-system rules use
+ * `:where()` and so carry no specificity at all, losing to the vendor on cascade order alone; and a
+ * few vendor rules do use `!important`, so check the computed value rather than assuming a plain
+ * override took.
+ */
+.cookiesPage {
+    margin-top: $spacing-size-12;
+    margin-bottom: calc($spacing-size-12 * 4);
+
+    // The vendor container centres itself in a 1200px box with its own padding and a 14px base
+    // size; the page is already inside `.layout-max-width-small`, so hand layout back to it.
+    :global([ez-policy].ez-container) {
+        max-width: none;
+        width: auto;
+        min-width: 0;
+        padding: 0;
+        font-size: inherit;
+    }
+
+    // `[ez-locale]` holds the country and language pickers, `[ez-powered]` the vendor badge that
+    // links off to enzuzo.com. Both pickers drive their `<select>` from an inline `onchange`, and
+    // the fallback the embed defines for them needs `eval`, so the site CSP blocks them either way
+    // — they would render as two controls that do nothing. The language the policy renders in
+    // follows `<html lang>`, which is what we want regardless.
+    :global([ez-policy] [ez-locale]),
+    :global([ez-policy] [ez-powered]) {
+        display: none;
+    }
+
+    // Rendered unconditionally and left empty when no flat title is configured.
+    :global([ez-policy] [ez-flat-title]:empty) {
+        display: none;
+    }
+
+    // The wrapper around the whole policy body, which the vendor insets by 16px either side. That
+    // pushes every paragraph and table out of line with the heading above them and with the page's
+    // own gutters, so hand the horizontal spacing back to `.layout-max-width-small`.
+    :global([ez-policy] [ez-flat-content]) {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    // The policy's own <h1> is the page heading here. The vendor centres it and pins it at 24px
+    // (`[ez-title]`), which reads as a banner rather than a page title, so restore the h1 size from
+    // `_typography.scss` and the left alignment the sibling policy pages use. The bottom rule
+    // stands in for the `<hr />` they render under theirs.
+    :global([ez-policy] h1) {
+        margin-top: 0;
+        margin-bottom: $spacing-size-4;
+        padding-bottom: $spacing-size-2;
+        border-bottom: 1px solid var(--color-border-primary);
+        font-size: var(--text-fs-2xl);
+        line-height: var(--text-lh-2xl);
+        // The design system's heading weight comes from a `:where()` rule, which carries no
+        // specificity at all, so the vendor's `[ez-policy] h1 { font-weight: inherit }` wins and the
+        // heading renders at body weight. Restate it.
+        font-weight: var(--text-bold);
+        text-align: left;
+    }
+
+    // The design system's body-copy spacing comes from `p:where(:not(:last-child))` and its list
+    // equivalents. `:where()` drops those to a single-element specificity, so the vendor stylesheet
+    // — injected into the body, and therefore later in the cascade — overrides them and the copy
+    // runs together. Restate the same spacing and line height against the same tokens.
+    :global([ez-policy] p),
+    :global([ez-policy] ul),
+    :global([ez-policy] ol) {
+        line-height: var(--text-lh-base);
+
+        &:not(:last-child) {
+            margin-bottom: $spacing-size-5;
+        }
+    }
+
+    // The vendor pins every subheading at 16px and weight 600 and lays it out as a flex row,
+    // flattening the heading scale. Hand both levels back to what `_typography.scss` gives h2 and h3.
+    :global([ez-policy] h2.enzuzo-privacyPolicySubHeader),
+    :global([ez-policy] h3.enzuzo-privacyPolicySubHeader) {
+        display: block;
+        padding-bottom: 0;
+        margin-bottom: $spacing-size-2;
+        font-weight: var(--text-bold);
+    }
+
+    :global([ez-policy] h2.enzuzo-privacyPolicySubHeader) {
+        margin-top: $spacing-size-10;
+        font-size: var(--text-fs-xl);
+        line-height: var(--text-lh-xl);
+    }
+
+    :global([ez-policy] h3.enzuzo-privacyPolicySubHeader) {
+        margin-top: $spacing-size-8;
+        font-size: var(--text-fs-lg);
+        line-height: var(--text-lh-lg);
+    }
+
+    // One container per cookie category. The tables are two columns of short values, so they fit
+    // comfortably down to mobile widths; the scroll container is a guard against an unusually long
+    // cookie name pushing the page into a horizontal scroll rather than the expected layout.
+    :global([ez-policy] .enzuzo-cookie-table-container) {
+        margin: $spacing-size-4 0 $spacing-size-8;
+        overflow-x: auto;
+    }
+
+    // The vendor boxes every row in `1px solid currentColor` — a full-strength text-coloured grid.
+    // Reduce it to the single top rule our own tables use.
+    :global([ez-policy] .enzuzo-cookie-table-row) {
+        border: none;
+        border-top: 1px solid var(--color-border-primary);
+    }
+
+    // `Domain: <host>` rows introducing each block of cookies within a category.
+    :global([ez-policy] .enzuzo-cookie-table-group-header) {
+        padding-top: $spacing-size-4;
+        color: var(--color-fg-secondary);
+        font-weight: var(--text-regular);
+    }
+
+    :global([ez-policy] .enzuzo-cookie-table td) {
+        word-break: break-word;
+    }
+
+    // The generation date the embed closes with, at a hard 12px. Bring it onto the type scale and
+    // mark it as secondary, the way the sibling policy pages treat their effective-date line.
+    :global([ez-policy] [ez-last-updated]) {
+        margin-top: $spacing-size-8;
+        font-size: var(--text-fs-sm);
+        color: var(--color-fg-secondary);
+    }
+}

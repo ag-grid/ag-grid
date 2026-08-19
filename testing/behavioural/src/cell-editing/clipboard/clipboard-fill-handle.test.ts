@@ -1,5 +1,14 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    clipboardUtils,
+    fireGridPointerDown,
+    waitForEvent,
+} from 'ag-test-utils';
 
 import {
     CheckboxEditorModule,
@@ -11,16 +20,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
-
-import {
-    EditEventTracker,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    clipboardUtils,
-    waitForEvent,
-} from '../../test-utils';
 
 describe('Clipboard Paste Behaviour: fill handle', () => {
     const gridMgr = new TestGridsManager({
@@ -120,14 +119,12 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             batchEditingStopped: 0,
         });
 
-        await asyncSetTimeout(1);
-        const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'field'));
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'field')));
         const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
-        cell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        fireGridPointerDown(cell);
         await cellSelectionChanged;
-        await asyncSetTimeout(1);
 
-        const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
         const fillEnd = waitForEvent('fillEnd', api);
         await userEvent.dblClick(fillHandle);
         await fillEnd;
@@ -181,9 +178,8 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columnStart: 'a', columnEnd: 'c' });
         await cellSelectionChanged;
-        await asyncSetTimeout(1);
 
-        expect(getByTestId(gridDiv, agTestIdFor.fillHandle())).toBeTruthy();
+        expect(await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()))).toBeTruthy();
         await new GridRows(api, `fill handle is offered on a contiguous multi-column range final state`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"1" b:"2" c:"3"
@@ -207,26 +203,22 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         });
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
         // Select the source cell (column a).
+        const sourceCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
         const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
-        getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')).dispatchEvent(
-            new MouseEvent('touchstart', { bubbles: true })
-        );
+        fireGridPointerDown(sourceCell);
         await cellSelectionChanged;
-        await asyncSetTimeout(1);
 
         // Drag the fill handle right, over column c. mousedown on the handle, a mousemove past the
         // drag threshold whose target is cell c, then mouseup ends the fill.
-        const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
-        const cellC = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'c'));
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+        const cellC = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'c')));
         const fillEnd = waitForEvent('fillEnd', api);
         fillHandle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 0, clientY: 0 }));
         cellC.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 60, clientY: 0 }));
         cellC.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 60, clientY: 0 }));
         await fillEnd;
-        await asyncSetTimeout(1);
 
         // Source value copied right across b and c.
         await new GridRows(api, 'after horizontal fill').check(`
@@ -250,21 +242,18 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         });
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
 
         // Select the full a..c range, so the fill handle sits on c (right edge).
         const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columnStart: 'a', columnEnd: 'c' });
         await cellSelectionChanged;
-        await asyncSetTimeout(1);
 
-        const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
-        const cellB = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'b'));
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+        const cellB = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'b')));
         fillHandle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 60, clientY: 0 }));
         // Drag inward from the right edge (c) to b → reduceHorizontal.
         cellB.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 30, clientY: 0 }));
         cellB.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 30, clientY: 0 }));
-        await asyncSetTimeout(1);
 
         // The reduce path ran; the grid stays coherent (c cleared as it left the reduced fill range).
         await new GridRows(api, 'after horizontal reduce').check(`
@@ -310,14 +299,12 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             └── LEAF id:ROW_2 field:"Bottom Value 2"
         `);
 
-        await asyncSetTimeout(1);
-        const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field'));
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'field')));
         const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
-        cell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        fireGridPointerDown(cell);
         await cellSelectionChanged;
-        await asyncSetTimeout(1);
 
-        const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
         const fillEnd = waitForEvent('fillEnd', api);
         await userEvent.dblClick(fillHandle);
         await fillEnd;
@@ -364,14 +351,12 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         for (const field of ['text', 'bool', 'date']) {
             editRequests.length = 0;
 
-            await asyncSetTimeout(1);
-            const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', field));
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', field)));
             const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
-            cell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+            fireGridPointerDown(cell);
             await cellSelectionChanged;
-            await asyncSetTimeout(1);
 
-            const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+            const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
             const fillEnd = waitForEvent('fillEnd', api);
             await userEvent.dblClick(fillHandle);
             await fillEnd;
@@ -419,9 +404,8 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
             api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: [field] });
             await cellSelectionChanged;
-            await asyncSetTimeout(1);
 
-            const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+            const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
             const fillEnd = waitForEvent('fillEnd', api);
             await userEvent.dblClick(fillHandle);
             await fillEnd;

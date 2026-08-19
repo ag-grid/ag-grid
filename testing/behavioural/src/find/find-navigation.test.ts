@@ -1,6 +1,6 @@
-import { FindModule } from 'ag-grid-enterprise';
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
+import { FindModule } from 'ag-grid-enterprise';
 
 /**
  * Tests for find navigation functionality (next, previous, goTo).

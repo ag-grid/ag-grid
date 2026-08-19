@@ -952,6 +952,17 @@ export interface GridOptions<TData = any> {
      */
     tabIndex?: number;
     /**
+     * Set to `true` to hide the clear button shown in supported input fields when they contain a value.
+     * @default false
+     */
+    suppressInputClearButton?: boolean;
+    /**
+     * Set to `true` to enable the browser's autocomplete/autofill behaviour for eligible grid input fields.
+     * Inputs that provide grid-owned suggestions, such as Rich Select and Advanced Filter inputs, keep browser autocomplete disabled.
+     * @default false
+     */
+    enableInputAutoComplete?: boolean;
+    /**
      * The number of rows rendered outside the viewable area the grid renders.
      * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.
      * @default 10
@@ -1685,6 +1696,14 @@ export interface GridOptions<TData = any> {
     suppressGroupRowsSticky?: boolean;
 
     /**
+     * Maximum share of the viewport height that each sticky row section (top or bottom) may occupy, as a number between 0 and 1.
+     * Rows that do not fit within the resulting height budget do not stick and scroll normally instead.
+     * @default 0.5
+     * @agModule `RowGroupingModule` / `TreeDataModule` / `ServerSideRowModelModule`
+     */
+    stickyRowsMaxViewportRatio?: number;
+
+    /**
      * Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
      * @agModule `RowGroupingModule`
      */
@@ -2029,7 +2048,7 @@ export interface GridOptions<TData = any> {
     // *** Sorting *** //
     /**
      * Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-     * @default [null, 'asc', 'desc']
+     * @default ['asc', 'desc', null]
      * @deprecated v33 Use `defaultColDef.sortingOrder` instead
      */
     sortingOrder?: SortDirection[];

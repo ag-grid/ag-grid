@@ -1,7 +1,3 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
-
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -10,7 +6,11 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
 interface Row {
     name?: string | null;

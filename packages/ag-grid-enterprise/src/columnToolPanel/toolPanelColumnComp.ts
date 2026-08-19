@@ -3,7 +3,7 @@ import { RefPlaceholder, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } fro
 import type {
     AgColumn,
     ColumnEventType,
-    ColumnMenuItemsSource,
+    ColumnSelectionPanelSource,
     DragItem,
     ElementParams,
     GridCheckbox,
@@ -24,6 +24,10 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
+import {
+    ColumnSelectionLabelRendererFeature,
+    isColumnSelectionLabelRendererEnabled,
+} from './columnSelectionLabelRendererFeature';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { createPivotStateForToolPanel, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
@@ -44,9 +48,9 @@ export class ToolPanelColumnComp extends Component {
     public readonly column: AgColumn;
     public readonly columnDepth: number;
     private eDragHandle: Element;
-    private displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
+    private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
 
     constructor(
         public modelItem: ColumnModelItem,
@@ -55,28 +59,21 @@ export class ToolPanelColumnComp extends Component {
         private readonly focusWrapper: HTMLElement,
         private readonly params: ToolPanelColumnCompParams,
         private readonly eventType: ColumnEventType,
-        private readonly source: ColumnMenuItemsSource
+        private readonly source: ColumnSelectionPanelSource
     ) {
         super();
-        const { column, depth, displayName } = modelItem;
+        const { column, depth } = modelItem;
         this.column = column;
         this.columnDepth = depth;
-        this.displayName = displayName;
+    }
+
+    private get displayName(): string | null {
+        return this.modelItem.displayName;
     }
 
     public postConstruct(): void {
         this.setTemplate(ToolPanelColumnElement, [AgCheckboxSelector]);
-        const {
-            beans,
-            cbSelect,
-            displayName,
-            eLabel,
-            columnDepth: indent,
-            groupsExist,
-            column,
-            gos,
-            focusWrapper,
-        } = this;
+        const { beans, cbSelect, eLabel, columnDepth: indent, groupsExist, column, gos, focusWrapper } = this;
         const eDragHandle = _createIconNoSpan('columnDrag', beans)!;
         this.eDragHandle = eDragHandle;
         eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');
@@ -87,7 +84,20 @@ export class ToolPanelColumnComp extends Component {
         checkboxGui.after(eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
-        eLabel.textContent = displayName;
+        if (isColumnSelectionLabelRendererEnabled(this.params)) {
+            this.labelRendererFeature = this.createManagedBean(
+                new ColumnSelectionLabelRendererFeature(
+                    eLabel,
+                    this.params,
+                    this.source,
+                    this.column,
+                    null,
+                    () => this.displayName
+                )
+            );
+        } else {
+            eLabel.textContent = this.displayName;
+        }
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         if (groupsExist) {
@@ -209,9 +219,11 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onColDefChanged(): void {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(this.column, 'columnToolPanel');
-        this.displayName = displayName;
-        this.eLabel.textContent = displayName;
+        if (this.labelRendererFeature) {
+            this.labelRendererFeature.refresh();
+        } else {
+            this.eLabel.textContent = this.displayName;
+        }
         this.refreshAriaLabel();
     }
 

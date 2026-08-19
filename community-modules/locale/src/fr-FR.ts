@@ -702,6 +702,7 @@ export const AG_GRID_LOCALE_FR = {
     ariaFilterColumnsInput: 'Entrée de filtre de colonnes',
     ariaFilterFromValue: 'Filtrer depuis la valeur',
     ariaFilterInput: 'Entrée de filtre',
+    ariaLabelInputClear: 'Effacer',
     ariaFilterList: 'Liste de filtres',
     ariaFilterToValue: "Filtrer jusqu'à la valeur",
     ariaFilterValue: 'Valeur du filtre',
@@ -799,8 +800,8 @@ export const AG_GRID_LOCALE_FR = {
     ariaHasNote: 'Cette cellule a une note.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Texte',

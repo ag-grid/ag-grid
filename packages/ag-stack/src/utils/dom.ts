@@ -27,7 +27,8 @@ export function _radioCssClass(element: HTMLElement, elementClass: string | null
 }
 
 export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
-export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
+// ag-hidden subtrees are excluded even where CSS keeps them visible (e.g. a tool panel animating closed)
+export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *, .ag-hidden, .ag-hidden *';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isFocusableFormField(element: Element | null): boolean {
@@ -39,7 +40,7 @@ export function _isFocusableFormField(element: Element | null): boolean {
         return false;
     }
     const isNotFocusable = element.matches(FOCUSABLE_EXCLUDE);
-    if (!isNotFocusable) {
+    if (isNotFocusable) {
         return false;
     }
     return _isVisible(element);
@@ -463,7 +464,7 @@ export function _observeIntersection(
 ): () => void {
     const win = _getWindow(beans);
     const IntersectionObserver = win.IntersectionObserver;
-    // support envs like jsdom that don't have IntersectionObserver
+    // support envs that don't have IntersectionObserver
     const intersectionObserver = IntersectionObserver
         ? new IntersectionObserver((entries) => {
               // use _last because when an element rapidly enters then leaves the screen

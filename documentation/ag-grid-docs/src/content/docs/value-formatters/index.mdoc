@@ -16,9 +16,9 @@ In the example below:
 const gridOptions = {
     columnDefs: [
         // simple currency formatter
-        { field: 'price', valueFormatter: params => '$' + params.value },
+        { field: 'price', valueFormatter: params => params.value == null ? '' : '$' + params.value },
         // simple UPPER CASE formatter
-        { field: 'code', valueFormatter: params => params.value.toUpperCase() }
+        { field: 'code', valueFormatter: params => params.value?.toUpperCase() ?? '' }
     ]
 }
 ```
@@ -37,6 +37,8 @@ will lead to better reuse of your Value Formatters.
 
 {% note %}
 If using [Cell Data Types](./cell-data-types/), value formatters are set by default to handle the display of each of the different data types.
+
+`params.value` may also be `null` or `undefined`, e.g. for group rows or rows whose data has not loaded. Value Formatters must handle this themselves. See [TypeScript Generics](./typescript-generics/) for how typing `TValue` surfaces these cases at compile time.
 {% /note %}
 
 If you want more than text formatting, e.g. you need Buttons in the Cell, then use a [Cell Component](./component-cell-renderer/).

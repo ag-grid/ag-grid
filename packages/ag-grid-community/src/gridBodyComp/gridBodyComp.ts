@@ -173,6 +173,9 @@ export class GridBodyComp extends Component implements FocusableContainer {
                 }
             },
             setGridScrollableAreaWidth: (width) => (this.eGridScrollableArea.style.width = width),
+            setPinnedColumnsOverflowing: (overflowing) => {
+                this.eGridViewport.classList.toggle('ag-pinned-columns-overflow', overflowing);
+            },
             setGridRole: (role: 'grid' | 'treegrid') => _setAriaRole(this.eGridViewport, role),
         };
 

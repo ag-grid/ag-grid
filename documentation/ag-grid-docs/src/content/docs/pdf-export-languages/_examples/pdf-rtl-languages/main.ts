@@ -93,7 +93,10 @@ function getDefaultPdfExportParams(fonts: PdfFontFamilyDefinition[]): PdfExportP
 }
 
 function onBtExport() {
-    gridApi.exportDataAsPdf();
+    loadFonts().then((fonts) => {
+        gridApi.setGridOption('defaultPdfExportParams', getDefaultPdfExportParams(fonts));
+        gridApi.exportDataAsPdf();
+    });
 }
 
 async function loadFonts(): Promise<PdfFontFamilyDefinition[]> {
@@ -130,8 +133,6 @@ async function loadFont(fileName: string): Promise<ArrayBuffer> {
     return response.arrayBuffer();
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const fonts = await loadFonts();
-    gridOptions.defaultPdfExportParams = getDefaultPdfExportParams(fonts);
+document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 });

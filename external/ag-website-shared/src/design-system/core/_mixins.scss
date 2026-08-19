@@ -1,0 +1,44 @@
+@use 'variables' as *;
+
+// Collapses a table into one stacked block per row: the header row is dropped and each
+// cell is relabelled from its `data-column` attribute, so every cell stays self-describing
+// once the columns no longer fit. Cells opt in by carrying `data-column="<header text>"`.
+//
+// Lives in `core` rather than beside the table element styles so a component's
+// `.module.scss` can reach it via `@use 'design-system' as *` without pulling the global
+// table CSS in with it.
+@mixin stack-table() {
+    thead {
+        display: none;
+    }
+
+    tr,
+    td {
+        display: block;
+        text-align: left;
+    }
+
+    tr {
+        padding: $spacing-size-4 0;
+
+        &:nth-child(even) {
+            background-color: unset;
+        }
+    }
+
+    td {
+        padding: 0;
+        line-height: var(--text-lh-ratio-tight);
+        font-weight: var(--text-bold);
+
+        &:not(:last-child) {
+            margin-bottom: $spacing-size-2;
+        }
+    }
+
+    td[data-column]::before {
+        content: attr(data-column) ': ';
+        font-weight: var(--text-regular);
+        color: var(--color-fg-secondary);
+    }
+}

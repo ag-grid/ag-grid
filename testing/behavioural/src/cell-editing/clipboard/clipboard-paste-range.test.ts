@@ -1,15 +1,8 @@
+import { waitFor } from '@testing-library/dom';
+import { EditEventTracker, GridColumns, GridRows, TestGridsManager, clipboardUtils, waitForEvent } from 'ag-test-utils';
+
 import { TextEditorModule, UndoRedoEditModule, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
-
-import {
-    EditEventTracker,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    clipboardUtils,
-    waitForEvent,
-} from '../../test-utils';
 
 describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
     const gridMgr = new TestGridsManager({
@@ -217,8 +210,9 @@ describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
         setRange(api, { rowStartIndex: 1, rowEndIndex: 2, columns: ['a'] });
         api.setFocusedCell(1, 'a');
 
+        const pasteEnd = waitForEvent('pasteEnd', api);
         api.pasteFromClipboard();
-        await asyncSetTimeout(5);
+        await pasteEnd;
 
         // Grid shows staged (pending) values
         await new GridRows(api, 'staged').check(`
@@ -234,7 +228,7 @@ describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
         expect(api.getDisplayedRowAtIndex(2)?.data?.a).toBe('a2');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(5);
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(1)?.data?.a).toBe('B0'));
 
         // After commit, data is written through
         await new GridRows(api, 'committed').check(`
@@ -264,8 +258,9 @@ describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
         api.addCellRange({ rowStartIndex: 3, rowEndIndex: 3, columns: ['b'] });
         api.setFocusedCell(0, 'a');
 
+        const pasteEnd = waitForEvent('pasteEnd', api);
         api.pasteFromClipboard();
-        await asyncSetTimeout(5);
+        await pasteEnd;
 
         // Staged values visible
         await new GridRows(api, 'staged multi-range').check(`
@@ -281,7 +276,7 @@ describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
         expect(api.getDisplayedRowAtIndex(3)?.data?.b).toBe('b3');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(5);
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(0)?.data?.a).toBe('Q'));
 
         await new GridRows(api, 'committed multi-range').check(`
             ROOT id:ROOT_NODE_ID
@@ -308,11 +303,11 @@ describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
         setRange(api, { rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b'] });
         api.setFocusedCell(0, 'a');
 
+        const pasteEnd = waitForEvent('pasteEnd', api);
         api.pasteFromClipboard();
-        await asyncSetTimeout(5);
+        await pasteEnd;
 
         api.cancelBatchEdit();
-        await asyncSetTimeout(5);
 
         // Everything reverts to original
         await new GridRows(api, 'after cancel').check(`

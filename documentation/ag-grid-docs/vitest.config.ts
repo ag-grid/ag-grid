@@ -10,15 +10,20 @@ export default defineConfig({
     test: {
         globals: true,
         environment: 'node',
+        pool: 'threads',
         include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         exclude: [
             'src/content/**/*', // examples tested via playwright
+            'src/**/*.e2e.{test,spec}.*',
         ],
         reporters: ['default'],
         coverage: { reportsDirectory: '../../coverage/ag-grid-docs', provider: 'v8' },
     },
     resolve: {
         alias: {
+            // Astro-plugin virtual module that vitest does not load; see the stub for why.
+            'astro:transitions/client': resolvePath('testing/stubs/astro-transitions-client.ts'),
+
             '@ag-website-shared': resolvePath('../../external/ag-website-shared/src'),
 
             // Matches `tsconfig.json`

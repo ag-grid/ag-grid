@@ -333,8 +333,8 @@ const gridOptions = {
             field: 'country',
             filter: 'agSetColumnFilter',
             filterParams: {
-                keyCreator: params => params.value.code,
-                valueFormatter: params => params.value.name,
+                keyCreator: params => params.value?.code ?? '',
+                valueFormatter: params => params.value?.name ?? '',
             },
         }
     ],

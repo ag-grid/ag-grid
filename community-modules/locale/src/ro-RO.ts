@@ -698,6 +698,7 @@ export const AG_GRID_LOCALE_RO = {
     ariaFilterColumnsInput: 'Intrare Filtrare Coloane',
     ariaFilterFromValue: 'Filtrează de la valoare',
     ariaFilterInput: 'Intrare Filtru',
+    ariaLabelInputClear: 'Curăță',
     ariaFilterList: 'Listă de Filtre',
     ariaFilterToValue: 'Filtrează până la valoare',
     ariaFilterValue: 'Valoare Filtrată',
@@ -793,8 +794,8 @@ export const AG_GRID_LOCALE_RO = {
     ariaHasNote: 'Această celulă are o notă.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: '.',
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Text',

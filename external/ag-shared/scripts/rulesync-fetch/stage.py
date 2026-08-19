@@ -16,7 +16,10 @@ checkout should not see ag-charts-specific skills/commands/agents (and vice
 versa). Content from other products' plugins that was staged by a previous
 run (pre-filter manifest, or product changed) is cleaned up at the end of
 ``stage()`` based on the diff between the full manifest and what was staged
-this run.
+this run, unioned with the record of what the previous run staged (see
+``_read_prior_staged``). The manifest diff alone cannot see an item that was
+*dropped* from the manifest between releases — such a path is absent from the
+candidate set, so it would be orphaned in the checkout forever.
 
 Part of AG-17085 Phase 3 (rulesync fetch design); product filtering added
 under AG-17098.
@@ -41,6 +44,13 @@ RULESYNC = REPO_ROOT / ".rulesync"
 MARKER = RULESYNC / ".fetched-from-ag-dev-prompts"
 
 NON_CLAUDE_TARGETS = ["cursor", "codexcli", "geminicli", "copilot", "agentsmd"]
+
+MARKER_HEADER = (
+    "# Managed by external/ag-shared/scripts/rulesync-fetch/stage.py\n"
+    "# Do not edit — regenerated on each setup-prompts run.\n"
+    "# Lines below record what this run staged, so the next run can prune items\n"
+    "# that have since been dropped from the plugin manifest.\n"
+)
 
 # Product plugins — only the current repo's product plugin is staged. Keep in
 # sync with .claude-plugin/marketplace.json. Other plugins (ag-core, ag-prodeng)
@@ -332,10 +342,12 @@ def stage(dry_run: bool = False) -> set[Path]:
         # authoritative source for whichever product tracks it; staging should
         # never clobber it. The `tracked` snapshot is reused from the write
         # guard above.
-        all_possible = _stageable_paths(manifest["plugins"])
+        # The prior-run record covers items dropped from the manifest, which the
+        # manifest diff alone cannot see.
+        all_possible = _stageable_paths(manifest["plugins"]) | _read_prior_staged()
         for stale in sorted(all_possible - staged):
             rel = stale.relative_to(REPO_ROOT) if stale.is_absolute() else stale
-            if rel in tracked:
+            if rel in tracked or _has_tracked_descendant(rel, tracked):
                 print(f"  keeping tracked {rel} (not a stage-leftover)", file=sys.stderr)
                 continue
             if stale.is_symlink() or stale.is_file():
@@ -345,10 +357,7 @@ def stage(dry_run: bool = False) -> set[Path]:
                 shutil.rmtree(stale)
                 print(f"  removed stale {rel}/", file=sys.stderr)
 
-        MARKER.write_text(
-            "# Managed by external/ag-shared/scripts/rulesync-fetch/stage.py\n"
-            "# Do not edit — regenerated on each setup-prompts run.\n"
-        )
+        _write_marker(staged)
 
     print(f"Staged {len(staged)} items into .rulesync/", file=sys.stderr)
     return staged
@@ -373,6 +382,47 @@ def _tracked_files() -> set[Path]:
     except (subprocess.CalledProcessError, FileNotFoundError):
         return set()
     return {Path(line) for line in result.stdout.splitlines() if line}
+
+
+def _has_tracked_descendant(rel: Path, tracked: set[Path]) -> bool:
+    """Whether any tracked file lives under ``rel``.
+
+    Skills stage as directories, and git tracks files rather than directories, so
+    a membership test against ``tracked`` alone never matches a skill directory.
+    Without this, dropping a plugin skill whose name collides with a tracked
+    local skill (e.g. .rulesync/skills/testing/) would rmtree the local one."""
+    return any(rel in candidate.parents for candidate in tracked)
+
+
+def _read_prior_staged() -> set[Path]:
+    """Return the absolute paths recorded by the previous run's marker file.
+
+    The manifest-diff candidate set only covers items the manifest still
+    declares, so an item removed from a plugin's entry would otherwise never be
+    considered for cleanup. Empty for a first run, or for a marker predating
+    this record — both carry no path lines.
+
+    These paths feed the deletion pass, so anything that does not resolve inside
+    .rulesync/ is discarded rather than trusted."""
+    if not MARKER.is_file():
+        return set()
+    out: set[Path] = set()
+    for line in MARKER.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        candidate = (REPO_ROOT / line).resolve()
+        if candidate == RULESYNC.resolve() or RULESYNC.resolve() not in candidate.parents:
+            print(f"  WARN: ignoring out-of-tree marker entry: {line}", file=sys.stderr)
+            continue
+        out.add(REPO_ROOT / line)
+    return out
+
+
+def _write_marker(staged: set[Path]) -> None:
+    """Record the header plus this run's staged paths, repo-relative and sorted."""
+    rels = sorted(str(p.relative_to(REPO_ROOT) if p.is_absolute() else p) for p in staged)
+    MARKER.write_text(MARKER_HEADER + "".join(f"{rel}\n" for rel in rels))
 
 
 def _stageable_paths(plugins: dict) -> set[Path]:

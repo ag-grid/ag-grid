@@ -1,9 +1,11 @@
+import { waitFor } from '@testing-library/dom';
+import type { GridRowsOptions } from 'ag-test-utils';
+import { EditEventTracker, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../test-utils';
-import { EditEventTracker, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import type {
     GroupRowEditableCallback,
     GroupRowValueSetterCallback,
@@ -1284,7 +1286,9 @@ describe('groupRowEditable with pivot mode', () => {
                 },
             });
 
-            await asyncSetTimeout(1);
+            await waitFor(() =>
+                expect(api.getPivotResultColumns()?.some((col) => col.getColId().includes('2020_sales'))).toBe(true)
+            );
 
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
@@ -1376,7 +1380,9 @@ describe('groupRowEditable with pivot mode', () => {
             · └── LEAF hidden id:8 pivot_year_2020_sales:900 pivot_year_2021_sales:900
         `);
 
-        await asyncSetTimeout(1);
+        await waitFor(() =>
+            expect(api.getPivotResultColumns()?.some((col) => col.getColId().includes('2020_sales'))).toBe(true)
+        );
 
         const pivotColumns = api.getPivotResultColumns();
         const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));

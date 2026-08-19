@@ -1,4 +1,5 @@
 import { userEvent } from '@testing-library/user-event';
+import { GridRows, TestGridsManager, waitForInput } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions, ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 import {
@@ -10,8 +11,6 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-
-import { GridRows, TestGridsManager, waitForInput } from '../test-utils';
 
 interface PersonRow {
     athlete: string;
@@ -411,7 +410,7 @@ describe('Cell editing validation — editor types and custom hooks', () => {
 
     describe('Date editor — custom getValidationErrors callback', () => {
         // Date min/max relies on the native date input reporting `valueAsDate`, which is not driven
-        // reliably by simulated typing under jsdom; a custom rule exercises the DateEditor path instead.
+        // reliably by simulated typing under happy-dom; a custom rule exercises the DateEditor path instead.
         const columnDefs: ColDef<PersonRow>[] = [
             { field: 'athlete' },
             {

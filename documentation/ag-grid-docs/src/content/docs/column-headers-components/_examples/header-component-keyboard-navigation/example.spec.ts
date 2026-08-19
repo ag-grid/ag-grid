@@ -34,7 +34,11 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Tab');
         await expect(input).toBeFocused();
 
-        await page.keyboard.press('Tab');
-        await expect(link).toBeFocused();
+        // Safari keeps links out of the tab order, and will not focus them at all, unless full
+        // keyboard access is switched on - a platform default rather than anything the header does.
+        if (test.info().project.name !== 'webkit') {
+            await page.keyboard.press('Tab');
+            await expect(link).toBeFocused();
+        }
     });
 });

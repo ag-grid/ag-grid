@@ -915,6 +915,8 @@
             }
         },
         "tabIndex": {},
+        "suppressInputClearButton": {},
+        "enableInputAutoComplete": {},
         "rowBuffer": {
             "more": {
                 "name": "Row Buffer",
@@ -1593,6 +1595,9 @@
             },
             "restrictModule": ["RowGroupingModule"]
         },
+        "stickyRowsMaxViewportRatio": {
+            "restrictModule": ["RowGroupingModule"]
+        },
         "rowGroupPanelShow": {
             "more": {
                 "name": "Enabling Row Group Panel",
@@ -1710,6 +1715,9 @@
                 "name": "Suppressing Sticky Groups",
                 "url": "./grouping-opening-groups/#prevent-sticky-groups"
             },
+            "restrictModule": ["TreeDataModule"]
+        },
+        "stickyRowsMaxViewportRatio": {
             "restrictModule": ["TreeDataModule"]
         }
     },
@@ -1908,6 +1916,9 @@
                 "name": "SSRM Tree Data",
                 "url": "./server-side-model-tree-data/"
             }
+        },
+        "stickyRowsMaxViewportRatio": {
+            "restrictModule": ["ServerSideRowModelModule"]
         }
     },
     "infiniteRowModel": {

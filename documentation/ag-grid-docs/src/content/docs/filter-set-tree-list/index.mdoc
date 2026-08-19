@@ -36,7 +36,7 @@ const gridOptions = {
         filter: 'agSetColumnFilter',
         filterParams: {
             treeList: true,
-            keyCreator: params => params.value.join('#')
+            keyCreator: params => params.value?.join('#') ?? ''
         },
     },
 }

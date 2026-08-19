@@ -700,6 +700,7 @@ export const AG_GRID_LOCALE_DE = {
     ariaFilterColumnsInput: 'Filterspalteneingang',
     ariaFilterFromValue: 'Filter vom Wert',
     ariaFilterInput: 'Filtereingang',
+    ariaLabelInputClear: 'Löschen',
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filter zum Wert',
     ariaFilterValue: 'Filterwert',

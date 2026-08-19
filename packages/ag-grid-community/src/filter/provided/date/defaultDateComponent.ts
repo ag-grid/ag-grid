@@ -34,6 +34,10 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
     public init(params: IDateParams): void {
         this.params = params;
+        this.eDateInput
+            .setClearButtonEnabled(true)
+            .setSearchIcon(true)
+            .onValueClear(() => this.params.onDateCleared?.());
         this.setParams(params);
 
         const inputElement = this.eDateInput.getInputElement();
@@ -41,7 +45,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         this.addManagedListeners(inputElement, {
             // ensures that the input element is focussed when a clear button is clicked,
             // unless using safari as there is no clear button and focus does not work properly
-            mouseDown: () => {
+            mousedown: () => {
                 if (this.eDateInput.isDisabled() || this.usingSafariDatePicker) {
                     return;
                 }
@@ -101,13 +105,13 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
         if (shouldUseBrowserDatePicker) {
             if (shouldUseDateTimeLocal) {
-                inputElement.type = 'datetime-local';
+                this.eDateInput.setInputType('datetime-local');
                 inputElement.step = '1'; // enforce seconds part to show up by default
             } else {
-                inputElement.type = 'date';
+                this.eDateInput.setInputType('date');
             }
         } else {
-            inputElement.type = 'text';
+            this.eDateInput.setInputType('text');
         }
         const parsedMinValidDate = parseOrConstructDate(this.beans.log, minValidDate, minValidYear, true);
         const parsedMaxValidDate = parseOrConstructDate(this.beans.log, maxValidDate, maxValidYear, false);

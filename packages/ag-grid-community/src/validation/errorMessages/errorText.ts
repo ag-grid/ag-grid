@@ -369,8 +369,7 @@ export const AG_GRID_ERRORS = {
     70: ({ newFilter }: { newFilter: any }) =>
         `Grid option \`quickFilterText\` only supports string inputs, received: ${typeof newFilter}` as const,
     71: () => '`debounceMs` is ignored when apply button is present' as const,
-    72: ({ keys }: { keys: string[] }) => [`ignoring \`FilterOptionDef\` as it doesn't contain one of `, keys] as const,
-    73: () => `invalid \`FilterOptionDef\` supplied as it doesn't contain a \`displayKey\`` as const,
+    72: ({ keys }: { keys: string[] }) => [`ignoring \`FilterOptionDef\` as it is missing `, keys] as const,
     74: () => 'no filter options for filter' as const,
     75: () => 'Unknown button type specified' as const,
     76: ({ filterModelType }: { filterModelType: any }) =>
@@ -947,10 +946,24 @@ export const AG_GRID_ERRORS = {
     },
     325: ({ property, value }: { property: string; value?: unknown }) =>
         `\`${property}\` must be an array with at least one element, currently it is \`[${String(value)}]\``,
+    326: ({ defaultOption }: { defaultOption: string }) =>
+        `ignoring \`defaultOption\` \`${defaultOption}\` as it is not one of the filter's \`filterOptions\`` as const,
+    // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
 export type ErrorId = keyof ErrorMap;
+
+/**
+ * Ceiling of the error-code range the docs site generates a page for, so a code dropped from
+ * `AG_GRID_ERRORS` keeps the page that the client-side hop to `/archive/<version>/` has to run on.
+ *
+ * Pin it and only ever raise it — deriving it from the highest key would shrink when that code is
+ * removed, taking its page with it. `errorText.test.ts` asserts it covers every live code.
+ *
+ * @knipIgnore Read by the docs site's error-page route
+ */
+export const MAX_ERROR_ID = 326;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

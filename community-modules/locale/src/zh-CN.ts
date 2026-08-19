@@ -693,6 +693,7 @@ export const AG_GRID_LOCALE_CN = {
     ariaFilterColumnsInput: '过滤列输入',
     ariaFilterFromValue: '过滤从值',
     ariaFilterInput: '过滤器输入',
+    ariaLabelInputClear: '清除',
     ariaFilterList: '过滤器列表',
     ariaFilterToValue: '过滤至值',
     ariaFilterValue: '过滤值',

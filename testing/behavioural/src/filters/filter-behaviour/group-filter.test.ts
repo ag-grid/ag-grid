@@ -1,13 +1,3 @@
-import type { GridApi } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    NumberFilterModule,
-    TextFilterModule,
-    getGridElement,
-    setupAgTestIds,
-} from 'ag-grid-community';
-import { GroupFilterModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
-
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -20,7 +10,17 @@ import {
     installFilterLayoutMock,
     openPicker,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextFilterModule,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
+import { GroupFilterModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 const AUTO_COL = 'ag-Grid-AutoColumn';
 
@@ -238,7 +238,7 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
             input: "2020"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "equals"
@@ -346,7 +346,7 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
             input: "2020"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "greaterThan"
@@ -396,7 +396,7 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
             input: "an"
             AND
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "text"
               type: "contains"

@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, NumberFilterModule, RowSelectionModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid hierarchical tree aggregation and filter', () => {
     const gridsManager = new TestGridsManager({

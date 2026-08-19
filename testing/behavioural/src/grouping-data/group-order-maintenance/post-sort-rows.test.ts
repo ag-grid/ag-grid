@@ -1,7 +1,7 @@
+import { GridRows, TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager } from '../../test-utils';
 
 describe('group order maintenance / postSortRows', () => {
     const gridsManager = new TestGridsManager({

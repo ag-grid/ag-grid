@@ -141,6 +141,7 @@ export const _NUMBER_GRID_OPTIONS: KeysWithType<number>[] = [
     'rowHeight',
     'detailRowHeight',
     'rowBuffer',
+    'stickyRowsMaxViewportRatio',
     'headerHeight',
     'groupHeaderHeight',
     'groupLockGroupColumns',
@@ -201,6 +202,8 @@ export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysWithType<boolean>[] = [
 // Used in validations to check type of pure boolean inputs
 export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'loadThemeGoogleFonts',
+    'suppressInputClearButton',
+    'enableInputAutoComplete',
     'suppressMakeColumnVisibleAfterUnGroup',
     'suppressRowClickSelection',
     'suppressCellFocus',

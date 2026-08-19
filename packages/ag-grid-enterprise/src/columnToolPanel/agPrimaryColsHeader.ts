@@ -36,7 +36,8 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     private expandState: ExpandState;
     private selectState?: boolean;
 
-    private onFilterTextChangedDebounced: () => void;
+    private onFilterTextChangedDebounced: () => number;
+    private filterTextChangedTimeout: number | undefined;
 
     private params: ToolPanelColumnCompParams;
 
@@ -60,7 +61,11 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         this.addManagedElementListeners(this.eSelect.getInputElement(), { click: this.onSelectClicked.bind(this) });
         this.addManagedPropertyListener('functionsReadOnly', () => this.onFunctionsReadOnlyPropChanged());
 
-        this.eFilterTextField.setAutoComplete(false).onValueChange(() => this.onFilterTextChanged());
+        this.eFilterTextField
+            .setClearButtonEnabled(true)
+            .setSearchIcon(true)
+            .onValueChange(() => this.onFilterTextChanged())
+            .onValueClear(() => this.onFilterTextCleared());
 
         this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
 
@@ -129,7 +134,12 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
             );
         }
 
-        this.onFilterTextChangedDebounced();
+        this.filterTextChangedTimeout = this.onFilterTextChangedDebounced();
+    }
+
+    private onFilterTextCleared(): void {
+        clearTimeout(this.filterTextChangedTimeout);
+        this.dispatchLocalEvent({ type: 'filterChanged', filterText: this.eFilterTextField.getValue() });
     }
 
     private onSelectClicked(): void {

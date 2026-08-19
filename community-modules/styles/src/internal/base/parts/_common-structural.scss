@@ -222,6 +222,12 @@
         }
     }
 
+    // If more pinned columns are retained than the viewport can contain, preserve their widths but clip the
+    // deliberately invalid layout instead of making the whole grid horizontally scrollable.
+    .ag-grid-viewport:where(.ag-pinned-columns-overflow) {
+        overflow-x: hidden;
+    }
+
     .ag-grid-scrollable-area {
         position: relative;
         min-width: 100%;
@@ -284,7 +290,7 @@
     .ag-full-width-anchor {
         position: sticky;
         left: 0;
-        width: var(--ag-internal-fw-anchor-width, 100%);
+        width: var(--ag-internal-grid-viewport-width, 100%);
         height: 100%;
     }
 

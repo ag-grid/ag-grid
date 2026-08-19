@@ -1,5 +1,7 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from 'ag-test-utils';
 
 import type { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 import {
@@ -16,8 +18,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 /**
  * Tests for setDataValue('edit') behaviour — verifying that pushing a value via the 'edit'
@@ -66,20 +66,19 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         api.startBatchEdit();
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         // Open editor on the cell
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
 
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         expect(editor).toBeInTheDocument();
 
         // Type something in the editor
         await userEvent.clear(editor);
         await userEvent.keyboard('typed');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(editor).toHaveValue('typed'));
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
 
@@ -89,7 +88,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Push a different value using 'edit' source
         rowNode.setDataValue('a', 'pushed', 'edit');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(editor).toHaveValue('pushed'));
 
         // Built-in editors implement setEditValue — same element, no recreation
         const editorAfter = gridDiv.querySelector<HTMLInputElement>('input');
@@ -133,27 +132,26 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         api.startBatchEdit();
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         // Open editor and type a value
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
 
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         expect(editor).toBeInTheDocument();
 
         await userEvent.clear(editor);
         await userEvent.keyboard('typed');
-        await asyncSetTimeout(1);
 
-        expect(editor).toHaveValue('typed');
+        await waitFor(() => expect(editor).toHaveValue('typed'));
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
 
         // Push a different value using 'batch' source — should NOT modify the editor
         rowNode.setDataValue('a', 'staged', 'batch');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('staged'));
+        await asyncSetTimeout(0);
 
         // Editor is still open and still shows what the user typed
         const editorAfter = gridDiv.querySelector<HTMLInputElement>('input');
@@ -187,21 +185,19 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         api.startBatchEdit();
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         // Open editor and type a value
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
 
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         expect(editor).toBeInTheDocument();
 
         await userEvent.clear(editor);
         await userEvent.keyboard('typed');
-        await asyncSetTimeout(1);
 
-        expect(editor).toHaveValue('typed');
+        await waitFor(() => expect(editor).toHaveValue('typed'));
 
         // Editor open, user typed 'typed', data still 'initial'
         await new GridRows(api, 'editor open — user typed value').check(`
@@ -213,7 +209,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Push a different value using 'batch' source — editor stays open with 'typed'
         rowNode.setDataValue('a', 'staged', 'batch');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('staged'));
+        await asyncSetTimeout(0);
 
         // Editor is still open and still shows what the user typed
         expect(gridDiv.querySelector<HTMLInputElement>('input')).toBe(editor);
@@ -227,10 +224,9 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Press ESC — editor should close and cell should show the batch pending value
         await userEvent.keyboard('{Escape}');
-        await asyncSetTimeout(1);
 
         // Editor is closed
-        expect(api.getCellEditorInstances()).toHaveLength(0);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
         // Cell shows the batch pending value, not the typed value
         await new GridRows(api, 'after ESC — pending value from batch source').check(`
@@ -253,21 +249,19 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         api.startBatchEdit();
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         // Open editor and type a value
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
 
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         expect(editor).toBeInTheDocument();
 
         await userEvent.clear(editor);
         await userEvent.keyboard('typed');
-        await asyncSetTimeout(1);
 
-        expect(editor).toHaveValue('typed');
+        await waitFor(() => expect(editor).toHaveValue('typed'));
 
         // Editor open, user typed 'typed', data still 'initial'
         await new GridRows(api, 'editor open — user typed value').check(`
@@ -279,7 +273,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Push a different value using 'batch' source — editor stays open with 'typed'
         rowNode.setDataValue('a', 'staged', 'batch');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('staged'));
+        await asyncSetTimeout(0);
 
         // Editor is still open
         expect(gridDiv.querySelector<HTMLInputElement>('input')).toBe(editor);
@@ -293,10 +288,9 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Press Enter — editor value ('typed') should become the pending value
         await userEvent.keyboard('{Enter}');
-        await asyncSetTimeout(1);
 
         // Editor is closed
-        expect(api.getCellEditorInstances()).toHaveLength(0);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
         // Cell shows the typed value as pending (overrides the 'staged' batch value)
         await new GridRows(api, 'after Enter — typed value becomes pending').check(`
@@ -309,9 +303,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Commit and verify the typed value is committed
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
 
-        expect(rowNode.data.a).toBe('typed');
+        await waitFor(() => expect(rowNode.data.a).toBe('typed'));
     });
 
     test("'batch' source with open editor in fullRow mode: ESC closes editor and cell shows batch pending value", async () => {
@@ -327,24 +320,25 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         api.startBatchEdit();
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         // Open full-row editor
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
 
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         await waitForInput(gridDiv, cellA, { popup: false });
 
         // Both cells should have editors in full-row mode
-        const inputs = gridDiv.querySelectorAll<HTMLInputElement>('input');
-        expect(inputs).toHaveLength(2);
+        const inputs = await waitFor(() => {
+            const found = gridDiv.querySelectorAll<HTMLInputElement>('input');
+            expect(found).toHaveLength(2);
+            return found;
+        });
 
         // Type in the 'a' editor
         const inputA = Array.from(inputs).find((i) => i.value === 'A0')!;
         await userEvent.clear(inputA);
         await userEvent.type(inputA, 'typed-a');
-        await asyncSetTimeout(1);
 
         // Full-row editor open: user typed 'typed-a' in col a, col b still 'B0'
         await new GridRows(api, 'full-row editor open — user typed in col a').check(`
@@ -356,7 +350,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Push a batch value to col a — editor stays open
         rowNode.setDataValue('a', 'staged-a', 'batch');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('staged-a'));
+        await asyncSetTimeout(0);
 
         // Editor still open with typed value
         expect(inputA).toHaveValue('typed-a');
@@ -369,9 +364,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Press ESC — editors close, cell shows batch pending value
         await userEvent.keyboard('{Escape}');
-        await asyncSetTimeout(1);
 
-        expect(api.getCellEditorInstances()).toHaveLength(0);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
         await new GridRows(api, 'after ESC — pending value from batch source').check(`
             ROOT id:ROOT_NODE_ID
@@ -397,24 +391,25 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         api.startBatchEdit();
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         // Open full-row editor
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
 
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         await waitForInput(gridDiv, cellA, { popup: false });
 
         // Both cells should have editors in full-row mode
-        const inputs = gridDiv.querySelectorAll<HTMLInputElement>('input');
-        expect(inputs).toHaveLength(2);
+        const inputs = await waitFor(() => {
+            const found = gridDiv.querySelectorAll<HTMLInputElement>('input');
+            expect(found).toHaveLength(2);
+            return found;
+        });
 
         // Type in the 'a' editor
         const inputA = Array.from(inputs).find((i) => i.value === 'A0')!;
         await userEvent.clear(inputA);
         await userEvent.type(inputA, 'typed-a');
-        await asyncSetTimeout(1);
 
         // Full-row editor open: user typed 'typed-a' in col a
         await new GridRows(api, 'full-row editor open — user typed in col a').check(`
@@ -426,7 +421,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Push a batch value to col a — editor stays open
         rowNode.setDataValue('a', 'staged-a', 'batch');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('staged-a'));
+        await asyncSetTimeout(0);
 
         // Editor still open with typed value
         expect(inputA).toHaveValue('typed-a');
@@ -439,9 +435,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Press Enter — editor typed value becomes pending
         await userEvent.keyboard('{Enter}');
-        await asyncSetTimeout(1);
 
-        expect(api.getCellEditorInstances()).toHaveLength(0);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
         // Typed value overrides the batch-staged value
         await new GridRows(api, 'after Enter — typed value becomes pending').check(`
@@ -454,9 +449,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Commit and verify the typed value is committed
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
 
-        expect(rowNode.data.a).toBe('typed-a');
+        await waitFor(() => expect(rowNode.data.a).toBe('typed-a'));
         expect(rowNode.data.b).toBe('B0');
     });
 
@@ -480,9 +474,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Open editor on the cell (no batch mode)
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
 
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         expect(editor).toBeInTheDocument();
 
@@ -490,7 +483,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Push a value using 'edit' source
         rowNode.setDataValue('a', 'pushed', 'edit');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(editor).toHaveValue('pushed'));
 
         // Built-in editors implement setEditValue — same element, no recreation
         const editorAfter = gridDiv.querySelector<HTMLInputElement>('input');
@@ -518,7 +511,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
         });
 
         api.startBatchEdit();
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'staged', 'edit');
@@ -532,9 +525,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
         expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('staged');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
 
-        expect(rowNode.data.a).toBe('staged');
+        await waitFor(() => expect(rowNode.data.a).toBe('staged'));
     });
 
     test("'edit' writes directly to data when no editor and no batch", async () => {
@@ -584,13 +576,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         api.startBatchEdit();
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(0);
 
         // Open editor
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await asyncSetTimeout(1);
 
-        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
         await waitForInput(gridDiv, cellA, { popup: false });
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
@@ -598,7 +589,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
         // Push value via 'edit' source — should NOT fire cellValueChanged
         cellValueChangedSpy.mockClear();
         rowNode.setDataValue('a', 'pushed', 'edit');
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('pushed'));
+        await asyncSetTimeout(0);
 
         expect(cellValueChangedSpy).not.toHaveBeenCalled();
         expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('pushed');
@@ -622,12 +614,11 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await waitForInput(gridDiv, cellA, { popup: false });
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
@@ -636,7 +627,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Push a value via 'edit' source — built-in editors use setEditValue (no recreation)
             rowNode.setDataValue('a', 'new-value', 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector<HTMLInputElement>('input')!.value).toBe('new-value'));
 
             const editorAfter = gridDiv.querySelector<HTMLInputElement>('input');
             expect(editorAfter).toBe(editorBefore);
@@ -660,12 +651,11 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await waitForInput(gridDiv, cellA, { popup: false });
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
@@ -673,7 +663,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             const editorBefore = gridDiv.querySelector<HTMLInputElement>('input');
 
             rowNode.setDataValue('a', 42, 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector<HTMLInputElement>('input')!.value).toBe('42'));
 
             // Built-in editors use setEditValue — same element, no recreation
             const editorAfter = gridDiv.querySelector<HTMLInputElement>('input');
@@ -708,10 +698,10 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector<HTMLInputElement>('input')!.value).toBe('2024-01-15'));
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
@@ -722,7 +712,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             // Push a new Date value
             const newDate = new Date('2025-06-20');
             rowNode.setDataValue('a', newDate, 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector<HTMLInputElement>('input')!.value).toBe('2025-06-20'));
 
             // Same element, no recreation
             const editorAfter = gridDiv.querySelector<HTMLInputElement>('input');
@@ -748,10 +738,10 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector<HTMLInputElement>('input')!.value).toBe('2024-01-15'));
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
@@ -760,7 +750,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(editorBefore!.value).toBe('2024-01-15');
 
             rowNode.setDataValue('a', '2025-06-20', 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector<HTMLInputElement>('input')!.value).toBe('2025-06-20'));
 
             const editorAfter = gridDiv.querySelector<HTMLInputElement>('input');
             expect(editorAfter).toBe(editorBefore);
@@ -792,17 +782,16 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             });
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             rowNode.setDataValue('a', 'gamma', 'edit');
-            await asyncSetTimeout(1);
 
-            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('gamma');
+            await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('gamma'));
             expect(rowNode.data.a).toBe('alpha');
 
             await new GridRows(api, 'after edit push').check(`
@@ -822,10 +811,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
+            await waitFor(() =>
+                expect(gridDiv.querySelector<HTMLInputElement>('input[type="checkbox"]')).toBeInTheDocument()
+            );
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
@@ -834,7 +825,9 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(checkboxBefore!.checked).toBe(false);
 
             rowNode.setDataValue('a', true, 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() =>
+                expect(gridDiv.querySelector<HTMLInputElement>('input[type="checkbox"]')!.checked).toBe(true)
+            );
 
             // Same element, no recreation
             const checkboxAfter = gridDiv.querySelector<HTMLInputElement>('input[type="checkbox"]');
@@ -863,10 +856,10 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector<HTMLTextAreaElement>('textarea')).toBeInTheDocument());
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
@@ -874,7 +867,9 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(textareaBefore).toBeInTheDocument();
 
             rowNode.setDataValue('a', 'updated long text', 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() =>
+                expect(gridDiv.querySelector<HTMLTextAreaElement>('textarea')!.value).toBe('updated long text')
+            );
 
             // Same element, no recreation
             const textareaAfter = gridDiv.querySelector<HTMLTextAreaElement>('textarea');
@@ -918,10 +913,10 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector<HTMLInputElement>('input')!.value).toBe('$100'));
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
@@ -932,7 +927,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Push a new raw value — setEditValue should apply the formatter
             rowNode.setDataValue('a', '200', 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector<HTMLInputElement>('input')!.value).toBe('$200'));
 
             const editorAfter = gridDiv.querySelector<HTMLInputElement>('input');
             expect(editorAfter).toBe(editorBefore);
@@ -971,21 +966,19 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await waitForInput(gridDiv, cellA, { popup: false });
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             rowNode.setDataValue('a', 'pushed', 'edit');
-            await asyncSetTimeout(1);
 
             // The pushed value should be visible via all resolution modes
-            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('pushed');
+            await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('pushed'));
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('pushed');
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('initial');
             expect(rowNode.data.a).toBe('initial');
@@ -1014,27 +1007,24 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await waitForInput(gridDiv, cellA, { popup: false });
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             // Push multiple values in sequence
             rowNode.setDataValue('a', 'first', 'edit');
-            await asyncSetTimeout(1);
-            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('first');
+            await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('first'));
 
             rowNode.setDataValue('a', 'second', 'edit');
-            await asyncSetTimeout(1);
-            expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('second');
+            await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('second'));
 
             rowNode.setDataValue('a', 'third', 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector<HTMLInputElement>('input')!.value).toBe('third'));
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('third');
 
             // Editor should still be open with the last value
@@ -1061,22 +1051,22 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await waitForInput(gridDiv, cellA, { popup: false });
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             rowNode.setDataValue('a', 'committed-value', 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() =>
+                expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('committed-value')
+            );
 
             // Commit the batch — value should now be written to data
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'after commit').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1134,18 +1124,17 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector('.refreshable-editor')).toBeInTheDocument());
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             // Push value — should call refresh() instead of destroying/recreating
             rowNode.setDataValue('a', 'refreshed', 'edit');
-            await asyncSetTimeout(1);
 
-            expect(refreshSpy).toHaveBeenCalledWith('refreshed');
+            await waitFor(() => expect(refreshSpy).toHaveBeenCalledWith('refreshed'));
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('refreshed');
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('refreshed');
 
@@ -1217,18 +1206,17 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector('.custom-both-editor')).toBeInTheDocument());
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             // Custom editors always use refresh(), never setEditValue
             rowNode.setDataValue('a', 'via-refresh', 'edit');
-            await asyncSetTimeout(1);
 
-            expect(refreshSpy).toHaveBeenCalledWith('via-refresh');
+            await waitFor(() => expect(refreshSpy).toHaveBeenCalledWith('via-refresh'));
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('via-refresh');
 
             const editor = gridDiv.querySelector<HTMLInputElement>('.custom-both-editor');
@@ -1292,18 +1280,19 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            expect(initCount).toBe(1);
+            await waitFor(() => expect(initCount).toBe(1));
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             // Push value — should destroy and recreate the editor (no refresh())
             rowNode.setDataValue('a', 'recreated', 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() =>
+                expect(gridDiv.querySelector<HTMLInputElement>('.no-refresh-editor')!.value).toBe('recreated')
+            );
 
             // Editor was recreated (init called again)
             expect(initCount).toBe(2);
@@ -1342,13 +1331,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             // Open editor — cell is UNEDITED: editor open but value unchanged (pendingValue=UNEDITED)
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             const editor = await waitForInput(gridDiv, cellA, { popup: false });
             expect(editor).toBeInTheDocument();
 
@@ -1366,10 +1354,9 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Push a value via 'edit' source — editor value and pending value are set
             rowNode.setDataValue('a', 'pushed', 'edit');
-            await asyncSetTimeout(1);
 
             // Editor DOM reflects the pushed value
-            expect(editor).toHaveValue('pushed');
+            await waitFor(() => expect(editor).toHaveValue('pushed'));
 
             await new GridRows(api, 'after edit push on null cell').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1386,7 +1373,6 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Commit — null cell becomes 'pushed'
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'after commit').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1405,19 +1391,18 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await waitForInput(gridDiv, cellA, { popup: false });
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             // Push null — same as source value: should be treated as no change
             rowNode.setDataValue('a', null, 'edit');
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             // No ⏳ indicator — pending value equals source value
             await new GridRows(api, 'after null push on null cell').check(`
@@ -1431,7 +1416,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // After commit nothing changes
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             expect(rowNode.data.a).toBeNull();
         });
@@ -1444,7 +1429,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             });
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             rowNode.setDataValue('a', 'val', 'batch');
@@ -1460,9 +1445,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.data.a).toBeNull();
 
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
-            expect(rowNode.data.a).toBe('val');
+            await waitFor(() => expect(rowNode.data.a).toBe('val'));
         });
 
         test("'batch' source creates pending from undefined cell (field absent from row data)", async () => {
@@ -1487,7 +1471,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             `);
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
@@ -1504,9 +1488,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.data.a).toBeUndefined();
 
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
-            expect(rowNode.data.a).toBe('val');
+            await waitFor(() => expect(rowNode.data.a).toBe('val'));
             expect(rowNode.getDataValue('a')).toBe('val');
             await new GridRows(
                 api,
@@ -1529,13 +1512,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             // Open editor on 'a' (UNEDITED)
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await waitForInput(gridDiv, cellA, { popup: false });
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
@@ -1544,7 +1526,6 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             rowNode.setDataValue('a', 'a-val', 'edit');
             // Push value to closed null cell via 'batch'
             rowNode.setDataValue('b', 'b-val', 'batch');
-            await asyncSetTimeout(1);
 
             // 'batch' source does not call cleanupEditors(), so it does not forcibly
             // close the editor. Cell 'a' may still transition to pending-only state
@@ -1560,9 +1541,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.getDataValue('b')).toBeNull();
 
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
-            expect(rowNode.data.a).toBe('a-val');
+            await waitFor(() => expect(rowNode.data.a).toBe('a-val'));
             expect(rowNode.data.b).toBe('b-val');
         });
     });
@@ -1576,7 +1556,6 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             });
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'initial — no pending edits').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1585,7 +1564,6 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             rowNode.setDataValue('a', 'staged', 'batch');
-            await asyncSetTimeout(1);
 
             // Pending batch edit created, data unchanged
             await new GridRows(api, 'after batch setDataValue — pending created').check(`
@@ -1599,9 +1577,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('initial');
 
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
-            expect(rowNode.data.a).toBe('staged');
+            await waitFor(() => expect(rowNode.data.a).toBe('staged'));
 
             await new GridRows(api, 'after commit').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1617,13 +1594,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             });
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             // First batch write
             rowNode.setDataValue('a', 'first', 'batch');
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'after first batch setDataValue').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1635,7 +1611,6 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Second batch write — updates the pending value
             rowNode.setDataValue('a', 'second', 'batch');
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'after second batch setDataValue — pending updated').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1647,9 +1622,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Commit writes the latest pending value
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
-            expect(rowNode.data.a).toBe('second');
+            await waitFor(() => expect(rowNode.data.a).toBe('second'));
         });
 
         test("'batch' source setting pending value back to source value removes the edit", async () => {
@@ -1660,13 +1634,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             });
 
             api.startBatchEdit();
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             // Create a pending edit
             rowNode.setDataValue('a', 'changed', 'batch');
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'pending edit exists').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1675,7 +1648,6 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Set back to original value — should remove the pending edit
             rowNode.setDataValue('a', 'initial', 'batch');
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'after setting back to source — no pending').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1686,7 +1658,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Commit — nothing to commit, data unchanged
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             expect(rowNode.data.a).toBe('initial');
         });
@@ -1700,13 +1672,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             // Stage a batch value before opening editor
             rowNode.setDataValue('a', 'staged', 'batch');
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'batch pending before editor opens').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1715,9 +1686,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Now open the editor on the same cell
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             const editor = await waitForInput(gridDiv, cellA, { popup: false });
             expect(editor).toBeInTheDocument();
 
@@ -1734,9 +1704,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             // Type a new value and press Enter — typed value becomes pending
             await userEvent.clear(editor);
             await userEvent.keyboard('typed{Enter}');
-            await asyncSetTimeout(1);
 
-            expect(api.getCellEditorInstances()).toHaveLength(0);
+            await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
             await new GridRows(api, 'after Enter — typed value becomes pending').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1746,9 +1715,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.data.a).toBe('initial');
 
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
-            expect(rowNode.data.a).toBe('typed');
+            await waitFor(() => expect(rowNode.data.a).toBe('typed'));
         });
 
         test("cell already has pending batch edit, editor opens, then setDataValue('batch') updates pending without affecting editor", async () => {
@@ -1760,13 +1728,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             // Stage a batch value before opening editor
             rowNode.setDataValue('a', 'first-batch', 'batch');
-            await asyncSetTimeout(1);
 
             await new GridRows(api, 'first batch pending').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1775,18 +1742,16 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Open the editor
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             const editor = await waitForInput(gridDiv, cellA, { popup: false });
             expect(editor).toBeInTheDocument();
 
             // Type in the editor
             await userEvent.clear(editor);
             await userEvent.keyboard('typed');
-            await asyncSetTimeout(1);
 
-            expect(editor).toHaveValue('typed');
+            await waitFor(() => expect(editor).toHaveValue('typed'));
 
             await new GridRows(api, 'editor open with typed value, first batch pending').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1795,7 +1760,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Now call setDataValue('batch') again — should update pending, leave editor alone
             rowNode.setDataValue('a', 'second-batch', 'batch');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'a', from: 'batch' })).toBe('second-batch'));
+            await asyncSetTimeout(0);
 
             // Editor is still open with typed value
             expect(gridDiv.querySelector<HTMLInputElement>('input')).toBe(editor);
@@ -1811,9 +1777,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // ESC — editor closes, cell shows latest batch pending value
             await userEvent.keyboard('{Escape}');
-            await asyncSetTimeout(1);
 
-            expect(api.getCellEditorInstances()).toHaveLength(0);
+            await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
 
             await new GridRows(api, 'after ESC — latest batch pending shown').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1821,9 +1786,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             `);
 
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
-            expect(rowNode.data.a).toBe('second-batch');
+            await waitFor(() => expect(rowNode.data.a).toBe('second-batch'));
         });
     });
 
@@ -1858,12 +1822,11 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await waitForInput(gridDiv, cellA, { popup: false });
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
@@ -1874,7 +1837,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Push a value that exceeds max=100
             rowNode.setDataValue('a', 200, 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.validateEdit()).not.toEqual([]));
 
             // Validation errors appear after validateEdit()
             const errors = api.validateEdit();
@@ -1913,26 +1876,24 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await waitForInput(gridDiv, cellA, { popup: false });
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
             // Push invalid value — produce errors
             rowNode.setDataValue('a', 200, 'edit');
-            await asyncSetTimeout(1);
 
-            expect(api.validateEdit()).not.toEqual([]);
+            await waitFor(() => expect(api.validateEdit()).not.toEqual([]));
             expect(cellA.classList.contains('ag-cell-editing-error')).toBe(true);
 
             // Push valid value — errors should clear
             rowNode.setDataValue('a', 75, 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.validateEdit()).toEqual([]));
 
             const errors = api.validateEdit();
             expect(errors).toEqual([]);
@@ -1947,9 +1908,8 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.data.a).toBe(50);
 
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
-            expect(rowNode.data.a).toBe(75);
+            await waitFor(() => expect(rowNode.data.a).toBe(75));
         });
 
         test("setDataValue 'edit' with custom getValidationErrors function: errors reported and cleared", async () => {
@@ -1989,12 +1949,11 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
+            await asyncSetTimeout(0);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-            await asyncSetTimeout(1);
 
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+            const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
             await waitForInput(gridDiv, cellA, { popup: false });
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
@@ -2004,7 +1963,7 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Push a value that is too short
             rowNode.setDataValue('a', 'ab', 'edit');
-            await asyncSetTimeout(1);
+            await waitFor(() => expect(api.validateEdit()).not.toEqual([]));
 
             const errors = api.validateEdit();
             expect(errors).not.toEqual([]);
@@ -2013,15 +1972,13 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             // Push a valid value
             rowNode.setDataValue('a', 'valid-value', 'edit');
-            await asyncSetTimeout(1);
 
-            expect(api.validateEdit()).toEqual([]);
+            await waitFor(() => expect(api.validateEdit()).toEqual([]));
             expect(cellA.classList.contains('ag-cell-editing-error')).toBe(false);
 
             api.commitBatchEdit();
-            await asyncSetTimeout(1);
 
-            expect(rowNode.data.a).toBe('valid-value');
+            await waitFor(() => expect(rowNode.data.a).toBe('valid-value'));
             await new GridRows(
                 api,
                 `setDataValue 'edit' with custom getValidationErrors function: errors reported an final state`

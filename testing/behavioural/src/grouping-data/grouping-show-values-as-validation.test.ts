@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule, ShowValuesAsModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 /**
  * Show Values As is clientSide-only. On other row models the property is inert, and the user must be told the

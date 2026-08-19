@@ -6,9 +6,9 @@ import type {
     IDoesFilterPassParams,
 } from '../../interfaces/iFilter';
 import type {
+    FilterOptionKey,
     ICombinedSimpleModel,
     ISimpleFilterModel,
-    ISimpleFilterModelType,
     ISimpleFilterParams,
     MapValuesFromSimpleFilterModel,
     Tuple,
@@ -29,14 +29,16 @@ export abstract class SimpleFilterHandler<
     /** Used to get the filter type for filter models. */
     public abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date';
 
-    protected abstract readonly FilterModelFormatterClass: new (
+    /** Subclasses narrow `filterParams` to their own filter's params type. */
+    protected abstract createModelFormatter(
         optionsFactory: OptionsFactory,
         filterParams: ISimpleFilterParams
-    ) => SimpleFilterModelFormatter<ISimpleFilterParams>;
+    ): SimpleFilterModelFormatter<ISimpleFilterParams>;
 
     protected params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>;
     private optionsFactory: OptionsFactory;
     private filterModelFormatter: SimpleFilterModelFormatter<ISimpleFilterParams>;
+    private readonly warnedKeys = new Set<FilterOptionKey | null | undefined>();
 
     constructor(
         private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<TModel, TValue>,
@@ -45,7 +47,19 @@ export abstract class SimpleFilterHandler<
         super();
     }
 
-    protected abstract evaluateNullValue(filterType?: ISimpleFilterModelType | null): boolean;
+    protected abstract evaluateNullValue(filterType?: FilterOptionKey | null): boolean;
+
+    /**
+     * Once per key, never per row: a log call formats its message and doc URL before the once-per-message guard
+     * discards the duplicate. A Custom Filter Option owns its key, so a skipped predicate is a missing value.
+     */
+    protected warnUnexpectedFilterType(type?: FilterOptionKey | null): void {
+        if (this.optionsFactory.getCustomOption(type) || this.warnedKeys.has(type)) {
+            return;
+        }
+        this.warnedKeys.add(type);
+        this.warn(76, { filterModelType: type });
+    }
 
     protected abstract evaluateNonNullValue(
         range: Tuple<TValue>,
@@ -60,9 +74,7 @@ export abstract class SimpleFilterHandler<
         this.optionsFactory = optionsFactory;
         optionsFactory.init(this.beans.log, filterParams, this.defaultOptions);
 
-        this.filterModelFormatter = this.createManagedBean(
-            new this.FilterModelFormatterClass(optionsFactory, filterParams)
-        );
+        this.filterModelFormatter = this.createManagedBean(this.createModelFormatter(optionsFactory, filterParams));
 
         this.updateParams(params);
 
@@ -125,7 +137,7 @@ export abstract class SimpleFilterHandler<
     ): void {
         const {
             model,
-            filterParams: { filterOptions, maxNumConditions },
+            filterParams: { maxNumConditions },
         } = params;
 
         if (model == null) {
@@ -136,16 +148,11 @@ export abstract class SimpleFilterHandler<
 
         let conditions: TModel[] | null = isCombined ? model.conditions : [model];
 
-        // Invalid when one of the existing condition options is not in new options list
-        const newOptionsList =
-            filterOptions?.map((option) => (typeof option === 'string' ? option : option.displayKey)) ??
-            this.defaultOptions;
+        // Checked against the list the dropdown is built from, so a malformed option does not count as offered.
+        const allConditionsAreOffered =
+            !conditions || conditions.every((condition) => this.optionsFactory.hasOption(condition.type));
 
-        const allConditionsExistInNewOptionsList =
-            !conditions ||
-            conditions.every((condition) => newOptionsList.find((option) => option === condition.type) !== undefined);
-
-        if (!allConditionsExistInNewOptionsList) {
+        if (!allConditionsAreOffered) {
             this.params = {
                 ...params,
                 model: null,

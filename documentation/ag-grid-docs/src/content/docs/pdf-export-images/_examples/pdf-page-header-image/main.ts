@@ -30,9 +30,7 @@ const gridOptions: GridOptions = {
 
 function getHeaderLogo() {
     // exported page colours follow the grid theme, so pick the logo variant that stays visible.
-    const gridBackground = getComputedStyle(
-        document.querySelector<HTMLElement>('#myGrid .ag-root-wrapper')!
-    ).backgroundColor;
+    const gridBackground = getComputedStyle(document.querySelector<HTMLElement>('.ag-root-wrapper')!).backgroundColor;
     const [red = 255, green = 255, blue = 255] = gridBackground.match(/\d+(\.\d+)?/g)?.map(Number) ?? [];
     const isDarkTheme = red * 0.299 + green * 0.587 + blue * 0.114 < 128;
 

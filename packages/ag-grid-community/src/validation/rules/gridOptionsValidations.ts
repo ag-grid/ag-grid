@@ -623,6 +623,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        stickyRowsMaxViewportRatio: {
+            validate({ stickyRowsMaxViewportRatio: ratio }) {
+                if (ratio == null || (typeof ratio === 'number' && ratio >= 0 && ratio <= 1)) {
+                    return null;
+                }
+                return 'stickyRowsMaxViewportRatio: value should be a number between 0 and 1';
+            },
+        },
         tooltipHideDelay: {
             validate: (options) => {
                 if (options.tooltipHideDelay && options.tooltipHideDelay < 0) {

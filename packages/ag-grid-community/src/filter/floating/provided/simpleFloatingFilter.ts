@@ -3,10 +3,10 @@ import type { FilterChangedEvent } from '../../../events';
 import { Component } from '../../../widgets/component';
 import type { IProvidedFilterParams, ProvidedFilterModel } from '../../provided/iProvidedFilter';
 import type {
+    FilterOptionKey,
     ICombinedSimpleModel,
     ISimpleFilter,
     ISimpleFilterModel,
-    ISimpleFilterModelType,
     ISimpleFilterParams,
 } from '../../provided/iSimpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
@@ -36,10 +36,11 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
     protected abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date';
 
-    protected abstract readonly FilterModelFormatterClass: new (
+    /** Subclasses narrow `filterParams` to their own filter's params type. */
+    protected abstract createModelFormatter(
         optionsFactory: OptionsFactory,
         filterParams: ISimpleFilterParams
-    ) => SimpleFilterModelFormatter<ISimpleFilterParams>;
+    ): SimpleFilterModelFormatter<ISimpleFilterParams>;
 
     protected setLastTypeFromModel(model: ProvidedFilterModel): void {
         // if no model provided by the parent filter use default
@@ -99,7 +100,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
         optionsFactory.init(this.beans.log, params.filterParams as ISimpleFilterParams, this.defaultOptions);
 
         this.filterModelFormatter = this.createManagedBean(
-            new this.FilterModelFormatterClass(optionsFactory, params.filterParams as ISimpleFilterParams)
+            this.createModelFormatter(optionsFactory, params.filterParams as ISimpleFilterParams)
         );
 
         this.setSimpleParams(params, false);
@@ -166,7 +167,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     }
 
     private isTypeEditable(type?: string | null): boolean {
-        return !!type && !this.readOnly && getNumberOfInputs(type as ISimpleFilterModelType, this.optionsFactory) === 1;
+        return !!type && !this.readOnly && getNumberOfInputs(type as FilterOptionKey, this.optionsFactory) === 1;
     }
 
     protected getAriaLabel(column: AgColumn): string {

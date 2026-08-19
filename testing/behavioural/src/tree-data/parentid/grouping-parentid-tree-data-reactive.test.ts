@@ -1,8 +1,8 @@
+import { GridRows, TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager } from '../../test-utils';
 
 describe('ag-grid grouping parentId treeData is reactive', () => {
     const gridsManager = new TestGridsManager({

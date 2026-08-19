@@ -5,8 +5,15 @@ import { test as base, expect as playwrightExpect } from '@playwright/test';
 import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
 import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
-import { routeExampleAssetsFromDisk, routeExternalThroughMirror, warnOnNetworkAccess } from './test/localSources';
+import {
+    routeExampleAssetsFromDisk,
+    routeExternalThroughMirror,
+    routePdfFontsFromDisk,
+    warnOnNetworkAccess,
+} from './test/localSources';
+import { PendingRequests } from './test/pendingRequests';
 import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test/remoteGridapi';
+import { whileTheRequestMatters } from './test/routeGuard';
 import { shouldBeAsyncGuard } from './test/shouldBeAsyncGuard';
 import { WAF_BYPASS_HEADER, wafBypassSecret } from './test/wafBypass';
 
@@ -60,23 +67,90 @@ const ALL_FRAMEWORKS = [
 ] as const;
 type AgFramework = (typeof ALL_FRAMEWORKS)[number];
 
-// Filter frameworks based on FRAMEWORK environment variable
-function getFilteredFrameworks(): readonly AgFramework[] {
+const PROD_VARIANT_FRAMEWORK = 'reactFunctionalTs';
+
+/**
+ * The framework this run is pinned to, or null for a run that covers them all. CI shards the suite by
+ * framework, one job per value, so a pinned run must declare nothing outside its own shard.
+ */
+function getPinnedFramework(): AgFramework | null {
     const frameworkFilter = process.env.FRAMEWORK;
-    if (frameworkFilter) {
-        const requestedFramework = frameworkFilter as AgFramework;
-        if (ALL_FRAMEWORKS.includes(requestedFramework)) {
-            return [requestedFramework] as const;
-        } else {
-            throw new Error(
-                `Invalid framework specified in FRAMEWORK environment variable: ${frameworkFilter}. Valid options are: ${ALL_FRAMEWORKS.join(', ')}`
-            );
-        }
+    if (!frameworkFilter) {
+        return null;
+    }
+    const requestedFramework = frameworkFilter as AgFramework;
+    if (!ALL_FRAMEWORKS.includes(requestedFramework)) {
+        throw new Error(
+            `Invalid framework specified in FRAMEWORK environment variable: ${frameworkFilter}. Valid options are: ${ALL_FRAMEWORKS.join(', ')}`
+        );
+    }
+    return requestedFramework;
+}
+
+const PINNED_FRAMEWORK = getPinnedFramework();
+
+/**
+ * React is the only framework declared twice - once on the production build, once forcing the development
+ * one - so running `eachFramework` on both doubles a sixth of the suite for little return. Only one of the
+ * two is used: the development build locally, where its warnings are worth the wall clock, and the
+ * production build in CI. `ALL_FRAMEWORK_VARIANTS=true` (or `--all-variants`) uses both.
+ *
+ * This is an economy applied to `eachFramework`. A spec that names a variant outright -
+ * `test.reactFunctionalTs` or `test.reactFunctionalTs_Dev` - is asserting that this example behaves
+ * differently on that build, so it is always declared and never subject to this. See isFrameworkDeclared.
+ */
+const runAllFrameworkVariants = !!process.env.CI || process.env.ALL_FRAMEWORK_VARIANTS === 'true';
+
+/**
+ * Frameworks that `eachFramework` never runs, so pinning to one leaves only the handful of specs that name
+ * it outright. That makes `--framework reactFunctionalTs_Dev` a quick way to run just those.
+ */
+const EACH_FRAMEWORK_EXCLUDES: readonly AgFramework[] = [reactFunctionalTsDev];
+
+/**
+ * Variants a pinned run declares alongside the framework itself. A CI job is a shard per *framework*, and
+ * the two React builds are variants within one framework rather than two of them - so the React shard owns
+ * the development-build tests too, and CI needs no second job to cover them. Only tests naming the variant
+ * outright are picked up; `eachFramework` stays on the production build (see getEachFrameworkList), which
+ * is what keeps this from doubling a sixth of the suite.
+ */
+const PINNED_FRAMEWORK_VARIANTS: Partial<Record<AgFramework, readonly AgFramework[]>> = {
+    [PROD_VARIANT_FRAMEWORK]: [reactFunctionalTsDev],
+};
+
+/** The frameworks `eachFramework` runs. Tests naming a framework outright use isFrameworkDeclared. */
+function getEachFrameworkList(): readonly AgFramework[] {
+    if (PINNED_FRAMEWORK) {
+        return EACH_FRAMEWORK_EXCLUDES.includes(PINNED_FRAMEWORK) ? [] : [PINNED_FRAMEWORK];
+    }
+    if (!runAllFrameworkVariants) {
+        return ALL_FRAMEWORKS.filter((framework) => framework !== PROD_VARIANT_FRAMEWORK);
     }
     return ALL_FRAMEWORKS;
 }
 
-const FILTERED_FRAMEWORKS = getFilteredFrameworks();
+const EACH_FRAMEWORK_LIST = getEachFrameworkList();
+
+/**
+ * Whether a test naming this framework outright should be declared. Only the CI shard pinning applies -
+ * declaring a test just to skip it produces a fake "skipped" result and still spins up a browser fixture.
+ */
+function isFrameworkDeclared(agFramework: AgFramework): boolean {
+    if (PINNED_FRAMEWORK === null || agFramework === PINNED_FRAMEWORK) {
+        return true;
+    }
+    return PINNED_FRAMEWORK_VARIANTS[PINNED_FRAMEWORK]?.includes(agFramework) ?? false;
+}
+
+// One worker, so a run says once what it is doing rather than once per worker.
+if (process.env.TEST_WORKER_INDEX === '0' && !PINNED_FRAMEWORK) {
+    // eslint-disable-next-line no-console
+    console.log(
+        runAllFrameworkVariants
+            ? `Running eachFramework tests on: ${EACH_FRAMEWORK_LIST.join(', ')}`
+            : `Running eachFramework tests on: ${EACH_FRAMEWORK_LIST.join(', ')} - set ALL_FRAMEWORK_VARIANTS=true to add ${PROD_VARIANT_FRAMEWORK}. Tests naming a framework outright always run.`
+    );
+}
 
 const licenseTexts = [
     '****************************************************************************************************************************',
@@ -100,7 +174,6 @@ const excludeErrors = [
     'InstallTrigger is deprecated and will be removed in the future.',
     'onmozfullscreenchange is deprecated.',
     'onmozfullscreenerror is deprecated.',
-    // Emitted by systemjs@0.19.47 (loaded via the SystemJS plunker template); not under our control
     'Window.fullScreen attribute is deprecated and will be removed in the future.',
     'XML Parsing Error: not well-formed',
     'XML Parsing Error: syntax error',
@@ -123,8 +196,33 @@ const excludeErrors = [
     'Unsupported style property %s. Did you mean %s? white-space-collapse whiteSpaceCollapse',
 ];
 
+// Scoped to the one API the in-flight-data race can reach: an example that fetches its rows and calls
+// `setGridOption('rowData', …)` in the `.then`. Any other API on a destroyed grid is a lifecycle bug.
+const DESTROYED_GRID_WARNING = 'Grid API function `setGridOption()` cannot be called as the grid has been destroyed';
+
 // Markers present in the CloudFront/WAF "Request blocked" error page served instead of the example.
 const wafBlockMarkers = ['Generated by cloudfront', 'The request could not be satisfied'];
+
+// Third-party consent/analytics tags the site loads via GTM. They are irrelevant to what these tests
+// assert and actively break them: the Enzuzo consent banner's `new Function` call trips the site CSP
+// (which deliberately has no 'unsafe-eval' - AG-17134) and its "Allow All" button collides with page
+// locators, while GA rewrites a cookie and logs an `expires` warning. GTM is the single loader for both
+// (the Enzuzo loader is a tag inside the container); the Enzuzo hosts are listed too for defence in depth.
+const BLOCKED_TAG_HOSTS = ['www.googletagmanager.com', 'app.enzuzo.com', 'gvl.enzuzo.com'];
+
+/**
+ * Starves the consent/analytics tags for tests that run against a deployed site, where the page markup
+ * and its CSP come from the deployment rather than from the checkout.
+ */
+export async function blockConsentAndAnalytics(page: Page): Promise<void> {
+    await page.route(
+        (url) => BLOCKED_TAG_HOSTS.includes(url.hostname),
+        // Fulfilled empty rather than aborted: an aborted subresource is a failed network request and the
+        // browser logs its own load-failure message, which `setupConsoleExpectations` catches (hence the
+        // 404 entry in `excludeErrors`). An empty 200 loads cleanly and runs nothing.
+        (route) => route.fulfill({ status: 200, body: '' })
+    );
+}
 
 export function setupConsoleExpectations(page: Page, allowedMessages: string[] = []) {
     const errors: string[] = [];
@@ -178,7 +276,9 @@ async function loadPage(
         enableTestIds: 'true',
     };
 
-    if (loadPageOptions?.prod) {
+    // Stated rather than left to the boilerplate, whose default is the development build - so the two React
+    // variants both loaded it and the production build was never actually exercised.
+    if (loadPageOptions?.prod || (loadPageOptions?.prod === undefined && agFramework === PROD_VARIANT_FRAMEWORK)) {
         queryOptions.prod = 'true';
     } else if (loadPageOptions?.prod === false || agFramework === reactFunctionalTsDev) {
         queryOptions.prod = 'false';
@@ -260,6 +360,7 @@ export const extended = base.extend<TestFixtures>({
             // served `/example-assets/`.
             await routeExternalThroughMirror(page, siteOrigin);
             await routeExampleAssetsFromDisk(page);
+            await routePdfFontsFromDisk(page, siteOrigin);
             await use();
         },
         { auto: true },
@@ -278,11 +379,11 @@ export const extended = base.extend<TestFixtures>({
             const siteOrigin = new URL(baseURL).origin;
             await page.route(
                 (url) => url.origin === siteOrigin,
-                async (route) => {
+                whileTheRequestMatters(async (route) => {
                     const headers = route.request().headers();
                     headers[WAF_BYPASS_HEADER] = secret;
                     await route.fallback({ headers });
-                }
+                })
             );
 
             await use();
@@ -303,11 +404,11 @@ const frameworkTest =
         testBody: (fixtures: TestFixtures) => Promise<void>,
         opts?: { allowedConsoleMessages?: string[] }
     ): void => {
-        // A single-framework test (test.typescript(...), etc.) hardcodes its framework, bypassing the
-        // FRAMEWORK filter that eachFramework applies via FILTERED_FRAMEWORKS. Declaring a test only to
-        // skip it at runtime when the CI job targets another framework produces a fake "skipped" result
-        // and still spins up a browser fixture, so don't declare it at all for a filtered-out framework.
-        if (!FILTERED_FRAMEWORKS.includes(agFramework)) {
+        // A single-framework test (test.typescript(...), etc.) names its framework outright, so only the
+        // CI shard pinning applies - not the React variant economy eachFramework is subject to. Declaring
+        // a test only to skip it at runtime when the job targets another framework produces a fake
+        // "skipped" result and still spins up a browser fixture, so don't declare it at all.
+        if (!isFrameworkDeclared(agFramework)) {
             return;
         }
 
@@ -352,22 +453,33 @@ const frameworkTest =
         };
 
         if (testName) {
-            extended.describe(testName, () => {
-                let errors: string[];
-                extended.beforeEach(async ({ page }) => {
-                    errors = setupConsoleExpectations(page, opts?.allowedConsoleMessages);
-                });
-
-                extended(`${agFramework} (only)`, testWrapper);
-
-                extended.afterEach(async ({ page }) => {
-                    await checkForErrorsAndTearDownExample(errors, page);
-                });
-            });
+            describeWithTeardown(testName, opts, () => extended(`${agFramework} (only)`, testWrapper));
         } else {
             extended(`${agFramework}`, testWrapper);
         }
     };
+
+/** A describe whose tests share the console-error and pending-request tracking its teardown checks. */
+function describeWithTeardown(
+    testName: string,
+    opts: { allowedConsoleMessages?: string[] } | undefined,
+    declareTests: () => void
+) {
+    extended.describe(testName, () => {
+        let errors: string[];
+        let pendingRequests: PendingRequests;
+        extended.beforeEach(async ({ page }) => {
+            errors = setupConsoleExpectations(page, opts?.allowedConsoleMessages);
+            pendingRequests = new PendingRequests(page);
+        });
+
+        declareTests();
+
+        extended.afterEach(async ({ page }) => {
+            await checkForErrorsAndTearDownExample(errors, page, pendingRequests);
+        });
+    });
+}
 
 /**
  * Run the same test against all frameworks (or filtered frameworks based on FRAMEWORK env var).
@@ -379,21 +491,12 @@ const eachFramework = (
     testBody: (fixtures: TestFixtures) => Promise<void>,
     opts?: { allowedConsoleMessages?: string[] }
 ) => {
-    extended.describe(testName, () => {
-        let errors: string[];
-        extended.beforeEach(async ({ page }) => {
-            errors = setupConsoleExpectations(page, opts?.allowedConsoleMessages);
-        });
-
-        FILTERED_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody));
-
-        extended.afterEach(async ({ page }) => {
-            await checkForErrorsAndTearDownExample(errors, page);
-        });
+    describeWithTeardown(testName, opts, () => {
+        EACH_FRAMEWORK_LIST.forEach((framework) => frameworkTest(framework)(undefined, testBody));
     });
 };
 
-async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
+async function checkForErrorsAndTearDownExample(errors: string[], page: Page, pendingRequests: PendingRequests) {
     // If the test was skipped, don't check for errors that might have been logged about a missing example URL
     // or other errors that are expected when skipping a test
     if (test.info().status === 'skipped') {
@@ -406,31 +509,33 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
     }
 
     if (errors.length > 0) {
-        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n${page.url()}`;
-
-        expect(errors.length, errorMessage).toBe(0);
-        errors = [];
+        expect(errors, `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n${page.url()}`).toEqual(
+            []
+        );
     }
 
-    let exampleRemoved = false;
-    await page.evaluate(() => {
+    // Settled first so the example's own fetch applies its rows while the grid is still there.
+    const hadDataRequestInFlight = await pendingRequests.settle(page);
+
+    const exampleRemoved = await page.evaluate(() => {
         const win: any = window;
-        if (win.tearDownExample) {
-            win.tearDownExample();
-            exampleRemoved = true;
+        if (!win.tearDownExample) {
+            return false;
         }
+        win.tearDownExample();
+        return true;
     });
     if (exampleRemoved) {
         const root = page.locator('.ag-root-wrapper');
         await root.waitFor({ state: 'detached' });
     }
 
-    expect(errors, 'Example Errors during destruction').toEqual([]);
-
-    if (errors.length > 0) {
-        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n${page.url()}`;
-        expect(errors.length, errorMessage).toBe(0);
-    }
+    // A data request that outran the settle above can still land on the destroyed grid, which is expected.
+    // With none in flight the same warning is a leaked timer or listener, so it must still fail.
+    const destructionErrors = errors.filter(
+        (error) => !(hadDataRequestInFlight && error.includes(DESTROYED_GRID_WARNING))
+    );
+    expect(destructionErrors, 'Example Errors during destruction').toEqual([]);
 
     // Ensure the routes registered by the fixtures are removed to avoid warnings in the logs
     await page.unrouteAll({ behavior: 'ignoreErrors' });

@@ -39,6 +39,10 @@ Typically column cell values are loaded using a `field`, and then a `valueGetter
 the value requires custom logic. Columns with Value Getters usually have manually provided
 Header Names as the grid cannot derive Header Names from Value Getters like it does with Fields.
 
+As with other value callbacks, `params.data` may be `undefined` for group rows or rows whose data has not
+loaded, so a Value Getter that reads from `data` should handle this case. See [TypeScript Generics](./typescript-generics/)
+for how typing callback params surfaces nullable values at compile time.
+
 ```{% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [

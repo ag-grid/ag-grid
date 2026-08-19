@@ -7,7 +7,13 @@ import type { GridInputNumberField, GridInputTextField } from '../../../widgets/
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
-import type { INumberFloatingFilterParams, NumberFilterModel, NumberFilterParams } from './iNumberFilter';
+import type { OptionsFactory } from '../optionsFactory';
+import type {
+    INumberFilterParams,
+    INumberFloatingFilterParams,
+    NumberFilterModel,
+    NumberFilterParams,
+} from './iNumberFilter';
 import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
 import { getAllowedCharPattern } from './numberFilterUtils';
@@ -16,12 +22,17 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     private eTextInput: GridInputTextField;
     private eNumberInput: GridInputNumberField;
     private onValueChanged: (e: KeyboardEvent) => void = () => {};
+    private onValueCleared: () => void = () => {};
 
     private numberInputActive = true;
 
     public setupGui(parentElement: HTMLElement): void {
-        this.eNumberInput = this.createManagedBean(new AgInputNumberField());
-        this.eTextInput = this.createManagedBean(new AgInputTextField());
+        this.eNumberInput = this.createManagedBean(
+            new AgInputNumberField({ clearButton: true, onValueClear: () => this.onValueCleared() })
+        );
+        this.eTextInput = this.createManagedBean(
+            new AgInputTextField({ clearButton: true, onValueClear: () => this.onValueCleared() })
+        );
 
         this.eTextInput.setDisabled(true);
 
@@ -41,7 +52,7 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         this.eTextInput.setDisplayed(!this.numberInputActive);
     }
 
-    public setAutoComplete(autoComplete: boolean | string): void {
+    public setAutoComplete(autoComplete?: boolean | string): void {
         this.eNumberInput.setAutoComplete(autoComplete);
         this.eTextInput.setAutoComplete(autoComplete);
     }
@@ -66,6 +77,10 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         this.onValueChanged = listener;
     }
 
+    public setValueClearedListener(listener: () => void): void {
+        this.onValueCleared = listener;
+    }
+
     private setupListeners(element: HTMLElement, listener: (e: KeyboardEvent) => void): void {
         this.addManagedListeners(element, {
             input: listener,
@@ -84,16 +99,14 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }): void {
         this.setAriaLabel(ariaLabel);
 
-        if (autoComplete !== undefined) {
-            this.setAutoComplete(autoComplete);
-        }
+        this.setAutoComplete(autoComplete);
 
         this.setPlaceholder(this.eNumberInput, placeholder);
         this.setPlaceholder(this.eTextInput, placeholder);
     }
 
     private setPlaceholder(input: GridInputTextField | GridInputNumberField, placeholder?: string): void {
-        input.toggleCss('ag-floating-filter-search-icon', !!placeholder);
+        input.setSearchIcon(!!placeholder);
         input.setInputPlaceholder(placeholder);
     }
 
@@ -104,10 +117,16 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
 }
 
 export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatingFilterParams, NumberFilterModel> {
-    protected readonly FilterModelFormatterClass = NumberFilterModelFormatter;
     private allowedCharPattern: string | null;
     protected readonly filterType = 'number';
     protected readonly defaultOptions = DEFAULT_NUMBER_FILTER_OPTIONS;
+
+    protected createModelFormatter(
+        optionsFactory: OptionsFactory,
+        filterParams: INumberFilterParams
+    ): NumberFilterModelFormatter {
+        return new NumberFilterModelFormatter(optionsFactory, filterParams);
+    }
 
     protected override updateParams(params: INumberFloatingFilterParams): void {
         const allowedCharPattern = getAllowedCharPattern(params.filterParams as NumberFilterParams);

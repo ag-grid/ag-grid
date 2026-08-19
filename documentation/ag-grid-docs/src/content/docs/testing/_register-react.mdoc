@@ -26,7 +26,7 @@ function createAgGrid() {
             { headerName: 'Model', field: 'model' },
             {
                 field: 'price',
-                valueFormatter: (params) => '$' + params.value.toLocaleString()
+                valueFormatter: (params) => params.value == null ? '' : '$' + params.value.toLocaleString()
             },
         ],
         rowData: [

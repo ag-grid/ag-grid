@@ -1,8 +1,9 @@
+import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import type { GridOptions, ValueParserParams } from 'ag-grid-community';
 
-import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 import type {
     EditableCallback,
     GroupRowEditableCallback,
@@ -491,7 +492,11 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         });
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
-        await asyncSetTimeout(1);
+        await waitFor(() =>
+            expect(
+                gridDiv.querySelector(`[row-id="${api.getDisplayedRowAtIndex(0)!.id}"] [col-id="amount"]`)
+            ).toBeTruthy()
+        );
 
         const groupRowNode = api.getDisplayedRowAtIndex(0);
         expect(groupRowNode?.group).toBe(true);
@@ -503,10 +508,9 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         expect(amountCell).toBeTruthy();
 
         await userEvent.dblClick(amountCell);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
 
         expect(groupRowNode?.expanded).toBe(true);
-        expect(api.getEditingCells()).toHaveLength(1);
     });
 
     test('double-clicking auto group column cell with groupRowEditable starts editing instead of toggling expansion', async () => {
@@ -533,7 +537,11 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         });
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
-        await asyncSetTimeout(1);
+        await waitFor(() =>
+            expect(
+                gridDiv.querySelector(`[row-id="${api.getDisplayedRowAtIndex(0)!.id}"] [col-id="ag-Grid-AutoColumn"]`)
+            ).toBeTruthy()
+        );
 
         const groupRowNode = api.getDisplayedRowAtIndex(0);
         expect(groupRowNode?.group).toBe(true);
@@ -546,10 +554,9 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         expect(autoGroupCell).toBeTruthy();
 
         await userEvent.dblClick(autoGroupCell);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
 
         expect(groupRowNode?.expanded).toBe(true);
-        expect(api.getEditingCells()).toHaveLength(1);
     });
 
     test('double-clicking non-editable auto group column cell toggles expansion normally', async () => {
@@ -571,7 +578,11 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
         });
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
-        await asyncSetTimeout(1);
+        await waitFor(() =>
+            expect(
+                gridDiv.querySelector(`[row-id="${api.getDisplayedRowAtIndex(0)!.id}"] [col-id="ag-Grid-AutoColumn"]`)
+            ).toBeTruthy()
+        );
 
         const groupRowNode = api.getDisplayedRowAtIndex(0);
         expect(groupRowNode?.group).toBe(true);
@@ -583,9 +594,8 @@ describe.each(EDIT_MODES)('groupRowEditable behaviour (%s)', (editMode) => {
 
         // Double-click on non-editable group cell should collapse
         await userEvent.dblClick(autoGroupCell);
-        await asyncSetTimeout(1);
+        await waitFor(() => expect(groupRowNode?.expanded).toBe(false));
 
-        expect(groupRowNode?.expanded).toBe(false);
         expect(api.getEditingCells()).toHaveLength(0);
     });
 

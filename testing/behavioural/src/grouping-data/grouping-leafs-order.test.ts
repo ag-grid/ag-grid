@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
 
 describe('grouping leaf ordering', () => {
     const gridsManager = new TestGridsManager({

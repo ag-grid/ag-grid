@@ -1,7 +1,8 @@
+import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, clipboardUtils } from 'ag-test-utils';
+
 import { TextEditorModule, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, clipboardUtils } from '../../test-utils';
 
 /**
  * Tests verifying that clipboard copy operations use 'batch' source values
@@ -44,7 +45,6 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
 
         // Start batch edit and make a pending change
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('value', 'batch-pending', 'paste'); // Uses batch source
@@ -58,10 +58,9 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
         api.setFocusedCell(0, 'value');
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['value'] });
         api.copyToClipboard();
-        await asyncSetTimeout(1);
 
         // Clipboard should contain the batch value, not the original data
-        expect(clipboardUtils.getText()).toBe('batch-pending');
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('batch-pending'));
 
         api.cancelBatchEdit();
     });
@@ -81,7 +80,6 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
 
         // Start batch edit
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         // First, set a batch pending value
         const rowNode = api.getDisplayedRowAtIndex(0)!;
@@ -89,7 +87,9 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
 
         // Now start editing the cell (simulates user typing)
         api.startEditingCell({ rowIndex: 0, colKey: 'value' });
-        await asyncSetTimeout(1);
+        // The copy below must happen with the editor open, so wait for the editor instance itself —
+        // a staged batch value already counts as an editing cell, so getEditingCells() cannot gate this.
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
 
         // Verify the edit value would be different from batch if we were checking edit source
         // The editor should have 'batch-value' loaded, but if user types 'live-typing',
@@ -104,10 +104,9 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
 
         // Copy while cell is being edited - should copy batch value, not edit value
         api.copyToClipboard();
-        await asyncSetTimeout(1);
 
         // Should copy the batch value
-        expect(clipboardUtils.getText()).toBe('batch-value');
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('batch-value'));
 
         api.stopEditing();
         api.cancelBatchEdit();
@@ -134,7 +133,6 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
 
         // Start batch edit and modify the source cell
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         const sourceRow = api.getDisplayedRowAtIndex(0)!;
         sourceRow.setDataValue('value', 'batch-source', 'paste');
@@ -146,7 +144,6 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
         // Select range from row 0 to row 2 and copy down
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 2, columns: ['value'] });
         api.copySelectedRangeDown();
-        await asyncSetTimeout(1);
 
         // After copyRangeDown, all rows should have the batch value from row 0
         await new GridRows(api, 'after copy range down').check(`
@@ -175,9 +172,8 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
         api.setFocusedCell(0, 'value');
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['value'] });
         api.copyToClipboard();
-        await asyncSetTimeout(1);
 
-        expect(clipboardUtils.getText()).toBe('data-value');
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('data-value'));
     });
 
     test('copy after batch commit copies committed data', async () => {
@@ -197,24 +193,21 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
 
         // Start batch, make change, commit
         api.startBatchEdit();
-        await asyncSetTimeout(1);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('value', 'committed-value', 'paste');
 
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
 
         // Verify data is now committed
-        expect(rowNode.data.value).toBe('committed-value');
+        await waitFor(() => expect(rowNode.data.value).toBe('committed-value'));
 
         // Copy after commit - should copy the committed value
         api.setFocusedCell(0, 'value');
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['value'] });
         api.copyToClipboard();
-        await asyncSetTimeout(1);
 
-        expect(clipboardUtils.getText()).toBe('committed-value');
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('committed-value'));
         await new GridRows(api, `copy after batch commit copies committed data final state`).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 value:"committed-value"

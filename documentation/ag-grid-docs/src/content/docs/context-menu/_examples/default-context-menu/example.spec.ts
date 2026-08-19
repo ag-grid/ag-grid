@@ -16,6 +16,12 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Copy' }).first()).toBeVisible();
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Export' }).first()).toBeVisible();
 
+        // the Export sub menu offers every registered export module
+        await page.locator('.ag-menu-option-text', { hasText: 'Export' }).first().hover();
+        for (const exportItem of ['CSV Export', 'Excel Export', 'PDF Export']) {
+            await expect(page.locator('.ag-menu-option-text', { hasText: exportItem }).first()).toBeVisible();
+        }
+
         await page.keyboard.press('Escape');
         await expect(agIdFor.menu()).toHaveCount(0);
     });

@@ -1,4 +1,5 @@
 import rootESLint from '../../eslint.config.mjs';
+import { noGuessedDelays } from '../shared/eslint/rules.mjs';
 
 export default [
     ...rootESLint,
@@ -15,19 +16,14 @@ export default [
             '@typescript-eslint/no-floating-promises': 2,
             'no-unassigned-vars': 0,
             'no-useless-assignment': 0,
-            // Severity is `warn` while the existing backlog is swept (AG-18026); it becomes `error`
-            // once the sweep completes.
-            'no-restricted-syntax': [
-                'warn',
-                {
-                    selector: "CallExpression[callee.name='asyncSetTimeout'] > Literal[value>0]",
-                    message:
-                        'Guessed delay. Poll with waitFor, or drop the sleep if the next call already polls. asyncSetTimeout(0) is allowed; (1) is identical to (0) in Node. A genuine timer window needs an eslint-disable naming it. See .rulesync/rules/testing.md.',
-                },
-            ],
+            // The remaining legitimate waits carry documented `eslint-disable` comments naming the
+            // product timer window they wait on.
+            'no-restricted-syntax': noGuessedDelays,
         },
     },
     {
-        ignores: ['src/benchmarks/bench-compare.mjs', 'eslint.config.mjs'],
+        // The timestamp file is Vite's, written beside the config for the length of a run and outside every
+        // tsconfig, so linting it errors. A concurrent `./checks.sh` would otherwise fail on someone else's run.
+        ignores: ['src/benchmarks/bench-compare.mjs', 'eslint.config.mjs', 'vitest.config.*.timestamp*'],
     },
 ];

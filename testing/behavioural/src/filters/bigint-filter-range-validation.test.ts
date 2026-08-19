@@ -1,14 +1,15 @@
-import type { GridApi } from 'ag-grid-community';
-import { BigIntFilterModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
-
 import {
     ColumnFilterHarness,
+    FilterDom,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi } from 'ag-grid-community';
+import { BigIntFilterModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 
 const ROW_DATA = [{ val: 1n }, { val: 16n }, { val: 100n }, { val: 255n }];
 
@@ -42,7 +43,7 @@ describe('BigInt Range Filter', () => {
     }
 
     test('an inverted range names the bound each input must respect', async () => {
-        const { filter } = await openRangeFilter('grid1');
+        const { api, filter } = await openRangeFilter('grid1');
 
         await filter.setText('255', 0);
         await filter.setText('16', 1);
@@ -51,6 +52,14 @@ describe('BigInt Range Filter', () => {
         expect(filter.input('text', 1).validity.valid).toBe(false);
         expect(filter.input('text', 1).validationMessage).toBe('Must be greater than 255');
         expect(filter.input('text', 0).validationMessage).toBe('');
+        await new FilterDom(api, 'inverted range, to touched last', { mode: 'column-filter', colId: 'val' })
+            .checkFilterDom(`
+                COLUMN FILTER
+                operator: "Between"
+                input [0]: "255"
+                input [1]: "16" ✗ "Must be greater than 255"
+                model: null
+            `);
 
         // Touching `from` moves the message across, mirrored to name the opposite bound.
         await filter.setText('256', 0);
@@ -58,6 +67,14 @@ describe('BigInt Range Filter', () => {
         expect(filter.input('text', 0).validity.valid).toBe(false);
         expect(filter.input('text', 0).validationMessage).toBe('Must be less than 16');
         expect(filter.input('text', 1).validationMessage).toBe('');
+        await new FilterDom(api, 'inverted range, from touched last', { mode: 'column-filter', colId: 'val' })
+            .checkFilterDom(`
+                COLUMN FILTER
+                operator: "Between"
+                input [0]: "256" ✗ "Must be less than 16"
+                input [1]: "16"
+                model: null
+            `);
     });
 
     test('a from value equal to the to value is invalid', async () => {
@@ -78,7 +95,7 @@ describe('BigInt Range Filter', () => {
     });
 
     test('an unparseable value is reported as invalid rather than compared', async () => {
-        const { filter } = await openRangeFilter('grid1');
+        const { api, filter } = await openRangeFilter('grid1');
 
         await filter.setText('16', 0);
         await filter.setText('12.5', 1);
@@ -86,6 +103,13 @@ describe('BigInt Range Filter', () => {
         // A non-integer is not a BigInt, so the type error is reported instead of a range message.
         expect(filter.input('text', 1).validity.valid).toBe(false);
         expect(filter.input('text', 1).validationMessage).toBe('Invalid BigInt');
+        await new FilterDom(api, 'unparseable to value', { mode: 'column-filter', colId: 'val' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Between"
+            input [0]: "16"
+            input [1]: "12.5" ✗ "Invalid BigInt"
+            model: null
+        `);
     });
 
     test('a valid range clears the validation and filters the rows', async () => {

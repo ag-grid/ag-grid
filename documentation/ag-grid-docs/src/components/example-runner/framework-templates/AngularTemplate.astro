@@ -3,8 +3,7 @@ import { MetaData } from './lib/MetaData';
 import ExampleStyle from './lib/ExampleStyle.astro';
 import Styles from './lib/Styles.astro';
 import Extras from './lib/Extras.astro';
-import { SystemJs } from './lib/SystemJs';
-import { pathJoin } from '@utils/pathJoin';
+import { ExampleModules } from './lib/ExampleModules';
 import { getCacheBustingUrl } from '@utils/gridLibraryPaths';
 import { Scripts } from './lib/Scripts';
 
@@ -12,18 +11,20 @@ interface Props {
     isDev: boolean;
     title: string;
     isEnterprise: boolean;
+    isIntegratedCharts?: boolean;
 
     modifiedTimeMs: number;
     entryFileName: string;
+    fileNames: string[];
 
     styleFiles?: string[];
     scriptFiles: string[];
     appLocation: string;
-    boilerplatePath: string;
     extraStyles?: string;
     headFragment?: string;
     extras?: string[];
     usesMathRandom?: boolean;
+    transpileInBrowser?: boolean;
     nonce?: string;
 }
 
@@ -31,20 +32,20 @@ const {
     title,
     isDev,
     isEnterprise,
+    isIntegratedCharts,
     modifiedTimeMs,
     appLocation,
     entryFileName,
+    fileNames,
     styleFiles,
     scriptFiles,
-    boilerplatePath,
     extraStyles,
     headFragment,
     extras,
     usesMathRandom,
+    transpileInBrowser,
     nonce,
 } = Astro.props as Props;
-
-const startFile = pathJoin(appLocation, entryFileName);
 ---
 
 <html lang="en">
@@ -83,14 +84,15 @@ const startFile = pathJoin(appLocation, entryFileName);
         ></script>
 
         {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />}
-        <SystemJs
-            isDev={isDev}
-            boilerplatePath={boilerplatePath}
+        <ExampleModules
             appLocation={appLocation}
-            startFile={startFile}
+            entryFileName={entryFileName}
+            fileNames={fileNames}
             internalFramework={'angular'}
             isEnterprise={isEnterprise}
+            isIntegratedCharts={isIntegratedCharts}
             usesMathRandom={usesMathRandom}
+            transpileInBrowser={transpileInBrowser}
             nonce={nonce}
         />
         <Styles

@@ -1,3 +1,13 @@
+import {
+    ColumnFilterHarness,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
+
 import type { FilterChangedEvent, GridApi, IRowNode } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -7,15 +17,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
-
-import {
-    ColumnFilterHarness,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
 
 interface Person {
     athlete: string;
@@ -253,6 +254,20 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
         await asyncSetTimeout(0);
         expect(events.length).toBeGreaterThanOrEqual(1);
         expect(events.every((e) => e.source === 'columnFilter')).toBe(true);
+        // The popup holds what was typed, and the age filter it ANDs onto is a separate column's model.
+        await new FilterDom(api, 'athlete popup after editing', { mode: 'column-filter', colId: 'athlete' })
+            .checkFilterDom(`
+                COLUMN FILTER
+                operator: "Contains"
+                input: "Ryan"
+                AND
+                operator: "Contains"
+                input: "" ⟨Filter...⟩
+                model:
+                  filterType: "text"
+                  type: "contains"
+                  filter: "Ryan"
+            `);
         await new GridRows(api, 'filterChanged via columnFilter source').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:5 athlete:"Ryan Lochte" age:27 country:"United States"

@@ -36,14 +36,20 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
     }
 
     public revealColumns(key: ColumnDelayRenderKey): void {
-        if (this.alreadyRevealed || !this.isAlive()) {
-            // If already revealed then we don't want to reveal again
-            // As calling in a loop with setTimeout need to check if alive
+        // Already revealed, or destroyed, so nothing to do. An unknown key means this caller never hid:
+        // callers reveal unconditionally even where their hide was conditional, and such a reveal must
+        // not count, or it marks the grid revealed before anything hid it and no later hide can apply.
+        if (this.alreadyRevealed || !this.isAlive() || !this.requesters.has(key)) {
             return;
         }
         this.requesters.delete(key);
-        if (this.requesters.size > 0) {
-            // If there are still requesters then we don't want to reveal yet
+        this.revealWhenRendered();
+    }
+
+    private revealWhenRendered(): void {
+        // Called on a timer as well as directly, so re-check liveness. Outstanding requesters mean
+        // someone else still wants the columns hidden.
+        if (this.alreadyRevealed || !this.isAlive() || this.requesters.size > 0) {
             return;
         }
 
@@ -53,7 +59,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
             // We add a fail safe to only try this 5 times, after that we reveal anyway.
             if (!renderStatus.areHeaderCellsRendered() && this.timesRetried < 5) {
                 this.timesRetried++;
-                setTimeout(() => this.revealColumns(key));
+                setTimeout(() => this.revealWhenRendered());
                 return;
             }
             this.timesRetried = 0;

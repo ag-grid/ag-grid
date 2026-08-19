@@ -9,6 +9,7 @@ import {
 } from 'ag-stack';
 
 import { AgAbstractInputField } from '../../agWidgets/agAbstractInputField';
+import { AgInputTextField } from '../../agWidgets/agInputTextField';
 import type { ListOption } from '../../agWidgets/agList';
 import { AgRadioButton } from '../../agWidgets/agRadioButton';
 import { AgSelect } from '../../agWidgets/agSelect';
@@ -19,12 +20,13 @@ import { _createElement } from '../../utils/element';
 import type { Component, ComponentSelector } from '../../widgets/component';
 import type { GridInputTextField, GridRadioButton, GridSelect } from '../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
+import { isFilterLocaleTextKey } from '../filterLocaleText';
 import type {
+    FilterOptionKey,
     ICombinedSimpleModel,
     IFilterOptionDef,
     ISimpleFilter,
     ISimpleFilterModel,
-    ISimpleFilterModelType,
     ISimpleFilterParams,
     JoinOperator,
     MapValuesFromSimpleFilterModel,
@@ -33,7 +35,7 @@ import type {
 } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import { ProvidedFilter } from './providedFilter';
-import { getPlaceholderText } from './providedFilterUtils';
+import { getPlaceholderText, translateFilterOption } from './providedFilterUtils';
 import {
     getDefaultJoinOperator,
     getNumberOfInputs,
@@ -173,12 +175,12 @@ export abstract class SimpleFilter<
         return conditions[0];
     }
 
-    protected getConditionTypes(): (ISimpleFilterModelType | null)[] {
-        return this.eTypes.map((eType) => eType.getValue() as ISimpleFilterModelType);
+    protected getConditionTypes(): (FilterOptionKey | null)[] {
+        return this.eTypes.map((eType) => eType.getValue() as FilterOptionKey);
     }
 
-    protected getConditionType(position: number): ISimpleFilterModelType | null {
-        return this.eTypes[position].getValue() as ISimpleFilterModelType;
+    protected getConditionType(position: number): FilterOptionKey | null {
+        return this.eTypes[position].getValue() as FilterOptionKey;
     }
 
     protected getJoinOperator(): JoinOperator {
@@ -375,19 +377,15 @@ export abstract class SimpleFilter<
         eType.setDisabled(filterListOptions.length <= 1);
     }
 
+    /** `translate` is overridden per filter, so a key the grid defines goes through it; any other is its own label. */
     private createBoilerplateListOption(option: string): ListOption {
-        return { value: option, text: this.translate(option as FilterLocaleTextKey) };
+        const text = isFilterLocaleTextKey(option) ? this.translate(option) : this.getLocaleTextFunc()(option, option);
+        return { value: option, text };
     }
 
     private createCustomListOption(option: IFilterOptionDef): ListOption {
-        const { displayKey } = option;
-        const customOption = this.optionsFactory.getCustomOption(option.displayKey);
-        return {
-            value: displayKey,
-            text: customOption
-                ? this.getLocaleTextFunc()(customOption.displayKey, customOption.displayName)
-                : this.translate(displayKey as FilterLocaleTextKey),
-        };
+        const displayKey = option.displayKey;
+        return { value: displayKey, text: translateFilterOption(this, this.optionsFactory, displayKey) };
     }
 
     protected createBodyTemplate(): ElementParams | null {
@@ -620,8 +618,14 @@ export abstract class SimpleFilter<
                       ? globalTranslate('ariaFilterValue', 'Filter Value')
                       : globalTranslate('ariaFilterToValue', 'Filter to Value');
 
-            const filterOptionKey = eTypes[position].getValue() as ISimpleFilterModelType;
-            const placeholderText = getPlaceholderText(this, filterPlaceholder, placeholderKey, filterOptionKey);
+            const filterOptionKey = eTypes[position].getValue() as FilterOptionKey;
+            const placeholderText = getPlaceholderText(
+                this,
+                filterPlaceholder,
+                placeholderKey,
+                filterOptionKey,
+                this.optionsFactory
+            );
 
             element.setInputPlaceholder(placeholderText);
             element.setInputAriaLabel(ariaLabel);
@@ -651,6 +655,9 @@ export abstract class SimpleFilter<
         if (element instanceof AgAbstractInputField) {
             element.onValueChange(listener);
         }
+        if (element instanceof AgInputTextField) {
+            element.onValueClear(() => this.onUiCleared());
+        }
     }
 
     protected forEachInput(cb: (element: E, index: number, position: number, numberOfInputs: number) => void): void {
@@ -669,7 +676,7 @@ export abstract class SimpleFilter<
 
     private forEachPositionTypeInput(
         position: number,
-        type: ISimpleFilterModelType | null,
+        type: FilterOptionKey | null,
         cb: (element: E, index: number, position: number, numberOfInputs: number) => void
     ): void {
         const numberOfInputs = getNumberOfInputs(type, this.optionsFactory);

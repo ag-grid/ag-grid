@@ -1,8 +1,8 @@
+import { TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 // AG-9664: toggling pivotSort reorders existing pivot columns, so it reuses the column-move animation
 // (the `ag-column-moving` class) to slide them rather than jumping.

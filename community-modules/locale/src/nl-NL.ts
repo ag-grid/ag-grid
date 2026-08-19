@@ -696,6 +696,7 @@ export const AG_GRID_LOCALE_NL = {
     ariaFilterColumnsInput: 'Filter Kolommen Invoer',
     ariaFilterFromValue: 'Filter vanuit waarde',
     ariaFilterInput: 'Filter Invoer',
+    ariaLabelInputClear: 'Wissen',
     ariaFilterList: 'Filter Lijst',
     ariaFilterToValue: 'Filter naar waarde',
     ariaFilterValue: 'Filter Waarde',

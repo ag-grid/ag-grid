@@ -6,6 +6,7 @@ import { useSearchQuery } from '@ag-website-shared/components/changelog/useSearc
 import DetailCellRenderer from '@ag-website-shared/components/grid/DetailCellRendererComponent';
 import { Grid } from '@ag-website-shared/components/grid/Grid';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { replaceHistoryUrl } from '@ag-website-shared/utils/historyUrl';
 import { IssueColDef, IssueTypeColDef } from '@ag-website-shared/utils/issueColDefs';
 import ReleaseVersionNotes from '@components/release-notes/ReleaseVersionNotes.jsx';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
@@ -188,7 +189,7 @@ export const Changelog: FunctionComponent<Props> = ({ library }) => {
             }
 
             url.searchParams.set('fixVersion', fixVersion);
-            window.history.replaceState({}, '', url);
+            replaceHistoryUrl(url);
         },
         [setFixVersion]
     );

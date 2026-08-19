@@ -1,10 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GetDetailRowDataParams, GetRowIdParams, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({

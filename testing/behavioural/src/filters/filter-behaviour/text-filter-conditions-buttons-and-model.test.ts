@@ -1,6 +1,3 @@
-import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -10,7 +7,10 @@ import {
     firePointerLikeClick,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
 
 /** Clicks an apply-panel button by label (harness only exposes Apply/Clear; Reset needs this). */
 async function clickPanelButton(label: string): Promise<void> {
@@ -89,7 +89,7 @@ describe('Text Filter — buttons & model round-trip', () => {
         await new FilterDom(api, 'buttons after clear', { colId: 'name' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             buttons: Apply | Clear | Reset
             model:
               filterType: "text"
@@ -113,7 +113,7 @@ describe('Text Filter — buttons & model round-trip', () => {
         await new FilterDom(api, 'buttons after reset', { colId: 'name' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             buttons: Apply | Clear | Reset
             model: null
         `);

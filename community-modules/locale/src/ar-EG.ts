@@ -693,6 +693,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaFilterColumnsInput: 'إدخال فلترة الأعمدة',
     ariaFilterFromValue: 'الفلترة من القيمة',
     ariaFilterInput: 'إدخال الفلترة',
+    ariaLabelInputClear: 'مسح',
     ariaFilterList: 'قائمة الفلترة',
     ariaFilterToValue: 'الفلترة إلى القيمة',
     ariaFilterValue: 'قيمة الفلترة',
@@ -787,7 +788,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaHasNote: 'تحتوي هذه الخلية على ملاحظة.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '،',
+    thousandSeparator: ',',
     decimalSeparator: '.',
 
     // Data types
