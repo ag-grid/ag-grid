@@ -554,7 +554,7 @@ describe('Cell Editing: tab into editor in React', () => {
         });
     });
 
-    // AG-16759: with a function-valued `editable`, Shift+Tab out of the only editable cell must tab out to
+    // With a function-valued `editable`, Shift+Tab out of the only editable cell must tab out to
     // the header rather than letting the browser focus the row element. React twin of the vanilla guard in
     // cell-editing-conditional-editing-navigation.test.ts.
     test('conditional editing: Shift+Tab out of the only editable cell focuses the last header cell', async () => {

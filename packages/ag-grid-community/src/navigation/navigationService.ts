@@ -434,12 +434,9 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
 
         // if we didn't move to next cell, then need to tab out of the cells, ie to the header (if going
-        // backwards).
-        // AG-16759: this is reached only when the backwards walk found no cell at all, which can happen
-        // from any row - not just the first one - e.g. when `editable` is a function and only a later row
-        // is editable, or when every preceding cell is suppressNavigable. So there is deliberately no
-        // first-row check here: whatever the starting row, the correct outcome is to tab out to the
-        // header, mirroring the forwards branch below (which likewise has no row check).
+        // backwards). Reached only when the walk found no cell at all, which can happen from any row -
+        // e.g. a function-valued `editable`, or an entirely suppressNavigable path - so there is
+        // deliberately no first-row check, mirroring the forwards branch below.
         if (backwards) {
             if (gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(beans)) {
                 _focusNextGridCoreContainer(beans, true, 'force');
