@@ -685,6 +685,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public skipHeaderOnAutoSize: boolean | undefined = undefined;
     /** Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents.
+     * Set `events` to also re-run the strategy when those grid events fire.
      * @initial
      * @agModule `ColumnAutoSizeModule`
      */
