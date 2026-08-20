@@ -45,7 +45,11 @@ export class AgManagedFocusFeature<
                     return;
                 }
 
-                const nextRoot = _findNextFocusableElement(this.beans, this.eFocusable, false, e.shiftKey);
+                const nextRoot = _findNextFocusableElement({
+                    beans: this.beans,
+                    rootNode: this.eFocusable,
+                    backwards: e.shiftKey,
+                });
 
                 if (!nextRoot) {
                     return;

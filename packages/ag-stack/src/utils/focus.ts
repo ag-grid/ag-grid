@@ -140,13 +140,15 @@ export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, exclu
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _findNextFocusableElement(
-    beans: UtilBeanCollection,
-    rootNode: HTMLElement,
-    onlyManaged?: boolean | null,
-    backwards?: boolean
-): HTMLElement | null {
-    const focusable = _findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
+export function _findNextFocusableElement(params: {
+    beans: UtilBeanCollection;
+    rootNode: HTMLElement;
+    onlyManaged?: boolean | null;
+    onlyUnmanaged?: boolean;
+    backwards?: boolean;
+}): HTMLElement | null {
+    const { beans, rootNode, onlyManaged, onlyUnmanaged, backwards } = params;
+    const focusable = _findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null, onlyUnmanaged);
     const activeEl = _getActiveDomElement(beans) as HTMLElement;
     let currentIndex: number;
 

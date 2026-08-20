@@ -81,7 +81,7 @@ class AdvancedSettingsMenu extends TabGuardComp {
 
         const backwards = e.shiftKey;
         const panelGui = this.advancedSettingsPanel.getGui();
-        const nextEl = _findNextFocusableElement(this.beans, panelGui, false, backwards);
+        const nextEl = _findNextFocusableElement({ beans: this.beans, rootNode: panelGui, backwards });
 
         if (nextEl) {
             nextEl.focus();
