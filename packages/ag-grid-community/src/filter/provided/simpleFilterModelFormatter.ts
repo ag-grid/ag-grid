@@ -36,10 +36,14 @@ export abstract class SimpleFilterModelFormatter<
 
     constructor(
         private optionsFactory: OptionsFactory,
-        protected filterParams: TFilterParams,
-        protected readonly valueFormatter?: (value: TValue | null) => string | null
+        protected filterParams: TFilterParams
     ) {
         super();
+    }
+
+    /** Read per call, so a `colDef` refresh that replaces the formatter reaches the summary. */
+    protected getValueFormatter(): ((value: TValue | null) => string | null) | undefined {
+        return undefined;
     }
 
     // used by:
@@ -130,7 +134,7 @@ export abstract class SimpleFilterModelFormatter<
     }
 
     protected formatValue(value?: TValue | null): string {
-        const valueFormatter = this.valueFormatter;
+        const valueFormatter = this.getValueFormatter();
         return valueFormatter ? (valueFormatter(value ?? null) ?? '') : String(value);
     }
 }

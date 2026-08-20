@@ -107,12 +107,13 @@ export abstract class TextInputFloatingFilter<
     }
 
     protected recreateFloatingFilterInputService(params: TParams): void {
-        const { inputSvc } = this;
-        const value = inputSvc.getValue();
+        const previous = this.inputSvc;
+        // The text as typed, which the widget's own reader drops once the input calls it invalid.
+        const value = previous.getInputText();
         _clearElement(this.eFloatingFilterInputContainer);
-        this.destroyBean(inputSvc);
+        this.destroyBean(previous);
         this.setupFloatingFilterInputService(params);
-        inputSvc.setValue(value, true);
+        this.inputSvc.setValue(value, true);
     }
 
     private syncUpWithParentFilter(e?: KeyboardEvent): void {

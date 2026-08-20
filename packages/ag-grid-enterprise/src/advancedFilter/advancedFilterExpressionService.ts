@@ -1,11 +1,4 @@
-import {
-    _exists,
-    _hasOwn,
-    _parseBigIntOrNull,
-    _parseDateTimeFromString,
-    _serialiseDate,
-    _toStringOrNull,
-} from 'ag-stack';
+import { _hasOwn, _parseBigIntOrNull, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -20,7 +13,7 @@ import type {
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _toFiniteNumber } from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -36,7 +29,20 @@ import {
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
-import { getBigIntParser } from './filterExpressionUtils';
+import { getBigIntParser, getNumberFormatter, getNumberParser, hasCustomNumberOperands } from './filterExpressionUtils';
+
+/** What an unquoted operand cannot carry: a space or `)` ends it, and a leading quote opens one. */
+function needsQuotes(operand: string): boolean {
+    return operand.includes(' ') || operand.includes(')') || operand.startsWith(`'`) || operand.startsWith('"');
+}
+
+/** The quote a value can be wrapped in, or null when it holds both kinds: either one would end it early. */
+function quoteChar(operand: string): `'` | `"` | null {
+    if (!operand.includes('"')) {
+        return '"';
+    }
+    return operand.includes(`'`) ? null : `'`;
+}
 
 /** The `filterParams` an Advanced Filter evaluator honours; the rest are column-filter UI concerns. */
 const COPIED_FILTER_PARAMS: (keyof FilterExpressionEvaluatorParams<any>)[] = [
@@ -59,18 +65,24 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         BaseCellDataType,
         (model: { filter?: string | number; colId: string }) => string | null
     > = {
-        number: (model) => _toStringOrNull(model.filter) ?? '',
-        bigint: (model) => {
-            const rawValue = _toStringOrNull(model.filter);
+        // Written in the column's own syntax exactly where `getNumberParser` reads that syntax back.
+        number: (model) => {
             const column = this.colModel.getNonPivotCol(model.colId);
-            const formatter = column?.colDef.filterParams?.bigintFormatter;
-            if (!formatter || rawValue == null) {
-                return rawValue ?? '';
-            }
-            // The model already holds the canonical decimal string, so parse it back with the
-            // default parser - the custom parser expects user-facing input and could double-transform.
-            const parsed = _parseBigIntOrNull(rawValue);
-            return (parsed == null ? null : formatter(parsed)) ?? rawValue;
+            return this.formatOperand(
+                model.filter,
+                getNumberFormatter(column),
+                _toFiniteNumber,
+                getNumberParser(column)
+            );
+        },
+        bigint: (model) => {
+            const column = this.colModel.getNonPivotCol(model.colId);
+            return this.formatOperand(
+                model.filter,
+                column?.colDef.filterParams?.bigintFormatter,
+                _parseBigIntOrNull,
+                getBigIntParser(column)
+            );
         },
         date: (model) => {
             const column = this.colModel.getNonPivotCol(model.colId);
@@ -107,7 +119,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         BaseCellDataType,
         (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | null
     > = {
-        number: (operand) => (_exists(operand) ? Number(operand) : null),
+        number: (operand, column) => (operand != null && operand !== '' ? getNumberParser(column)(operand) : null),
         bigint: (operand, column) => {
             const parsed = getBigIntParser(column)(operand);
             return parsed == null ? null : String(parsed);
@@ -172,6 +184,37 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return columnName;
     }
 
+    /**
+     * A stored operand as the column writes it for display. The model value is canonical, so text the
+     * default parser cannot read is already the user's own input and is shown as they typed it.
+     * `readBack` is how the expression reads the display again, and only a format that survives that
+     * is used: the expression is what the operand is parsed back out of, so one that does not round-trip
+     * would quietly rewrite the stored value.
+     */
+    private formatOperand<V>(
+        filter: string | number | undefined,
+        formatter: ((value: V) => string | null) | null | undefined,
+        parse: (rawValue: string) => V | null,
+        readBack: (rawValue: string) => V | null
+    ): string {
+        const rawValue = _toStringOrNull(filter);
+        // Blank is no operand at all, and must not be presented as whatever the formatter makes of zero.
+        if (rawValue == null || rawValue.trim() === '') {
+            return '';
+        }
+        if (!formatter) {
+            return rawValue;
+        }
+        const parsed = parse(rawValue);
+        const formatted = parsed == null ? null : formatter(parsed);
+        // Blank reads back as the value it came from and still leaves the expression without an operand.
+        if (formatted == null || formatted.trim() === '') {
+            return rawValue;
+        }
+        const reread = readBack(formatted);
+        return reread != null && String(reread) === String(parsed) ? formatted : rawValue;
+    }
+
     public getOperatorDisplayValue(model: ColumnAdvancedFilterModel): string | undefined {
         return this.getExpressionOperator(model.filterType, model.type)?.displayValue ?? model.type;
     }
@@ -185,16 +228,17 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     /**
-     * Whether a stored operand is itself valid input for its data type, i.e. whether feeding the model
-     * value back into the expression or the builder editor yields the same value again.
-     *
-     * True for most types: text and number model values are their input form, and dates store the iso
-     * string the editor expects. It is false only for `bigint`, where the model holds the canonical
-     * decimal while input goes through the column's `bigintParser` - so a parser reading a non-decimal
-     * syntax would reinterpret that decimal as a different number. Those operands have to be presented
-     * through `getOperandDisplayValue` (the `bigintFormatter`) or kept as the text the user typed.
+     * Whether feeding the model value back into the expression or the builder editor yields the same value.
+     * False where the column's own parser reads a syntax the model value is not written in: always for
+     * `bigint`, whose model holds the canonical decimal, and for a `number` column naming a `numberParser`.
      */
-    public isOperandModelValueEditable(baseCellDataType: BaseCellDataType): boolean {
+    public isOperandModelValueEditable(
+        baseCellDataType: BaseCellDataType,
+        column: AgColumn | null | undefined
+    ): boolean {
+        if (baseCellDataType === 'number') {
+            return !hasCustomNumberOperands(column);
+        }
         return baseCellDataType !== 'bigint';
     }
 
@@ -204,19 +248,26 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         if (filter == null) {
             return '';
         }
-        let operand1 = this.filterOperandGetters[filterType](
-            model as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>
-        );
-        if (filterType !== 'number' && filterType !== 'bigint') {
-            operand1 ??= _toStringOrNull(filter) ?? '';
-            if (!skipFormatting) {
-                // Quote with the char the value does not contain so a value holding one quote kind
-                // still round-trips (the parser accepts either quote); a value with both fails safe.
-                const quote = operand1.includes('"') && !operand1.includes(`'`) ? `'` : `"`;
+        const canonical = _toStringOrNull(filter) ?? '';
+        let operand1 =
+            this.filterOperandGetters[filterType](
+                model as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>
+            ) ?? canonical;
+        const isNumeric = filterType === 'number' || filterType === 'bigint';
+        // A numeric operand is written bare, so quotes are added only for a format that could not be read
+        // back without them. Text is always quoted, empty included.
+        if (!skipFormatting && (!isNumeric || needsQuotes(operand1))) {
+            const quote = quoteChar(operand1);
+            if (quote) {
                 operand1 = `${quote}${operand1}${quote}`;
+            } else if (isNumeric) {
+                // No quote can wrap this format, so it cannot be read back: write the canonical number instead.
+                operand1 = canonical;
+            } else {
+                operand1 = `"${operand1}"`; // text is the value itself, so there is nothing to fall back to
             }
         }
-        return skipFormatting ? operand1! : ` ${operand1}`;
+        return skipFormatting ? operand1 : ` ${operand1}`;
     }
 
     public parseColumnFilterModel(model: ColumnAdvancedFilterModel): string {

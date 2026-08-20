@@ -18,6 +18,7 @@ const ITEM_WRAPPER = '.ag-advanced-filter-builder-item-wrapper';
 const COLUMN_PILL = '.ag-advanced-filter-builder-column-pill';
 const OPTION_PILL = '.ag-advanced-filter-builder-option-pill';
 const VALUE_PILL = '.ag-advanced-filter-builder-value-pill';
+const PILL_DISPLAY = '.ag-advanced-filter-builder-pill-display';
 const JOIN_PILL = '.ag-advanced-filter-builder-join-pill';
 
 /** Column-pill captions in rendered order — the observable signature of the builder's item list. */
@@ -163,6 +164,11 @@ export class AdvancedFilterBuilderHarness {
     /** The value pills on `item` — a two-input filter option renders one per operand. */
     public valuePills(item: HTMLElement): HTMLElement[] {
         return Array.from(this.liveItem(item).querySelectorAll<HTMLElement>(VALUE_PILL));
+    }
+
+    /** Display text of value pill `index` on `item`. */
+    public valuePillText(item: HTMLElement, index = 0): string {
+        return this.valuePills(item)[index]?.querySelector(PILL_DISPLAY)?.textContent?.trim() ?? '';
     }
 
     /** Clicks value pill `index` on `item` and returns the editor input it opens. */

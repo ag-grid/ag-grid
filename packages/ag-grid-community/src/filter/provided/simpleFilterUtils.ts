@@ -1,4 +1,5 @@
 import type { LogService } from '../../validation/logService';
+import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type { FilterOptionKey, IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
@@ -85,4 +86,16 @@ export function getNumberOfInputs(type: FilterOptionKey | null | undefined, opti
     }
 
     return 1;
+}
+
+/** `from >= to` is not a range; the message goes on whichever end the user is editing. */
+export function getValidityMessageKey<V extends number | bigint>(
+    fromValue: V | null,
+    toValue: V | null,
+    isFrom: boolean
+): FilterLocaleTextKey | null {
+    if (fromValue == null || toValue == null || fromValue < toValue) {
+        return null;
+    }
+    return `strict${isFrom ? 'Max' : 'Min'}ValueValidation`;
 }

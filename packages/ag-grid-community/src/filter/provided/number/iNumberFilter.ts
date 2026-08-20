@@ -40,17 +40,29 @@ export interface INumberFilterParams extends IScalarFilterParams {
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: ScalarFilterOptionKey | CustomFilterOptionKey;
     /**
-     * When specified, the input field will be of type `text`, and this will be used as a regex of all the characters that are allowed to be typed.
+     * When specified, this will be used as a regex of all the characters that are allowed to be typed.
      * This will be compared against any typed character and prevent the character from appearing in the input if it does not match.
+     * Either this or `numberFormatter` makes the input field of type `text`, unless `filterInputType` says otherwise.
      */
     allowedCharPattern?: string;
     /**
+     * The type of input used by the filter. Defaults to `text` when `allowedCharPattern` or `numberFormatter`
+     * is provided, and `number` otherwise. Set it explicitly to keep a `number` input for a formatter whose
+     * output a `number` input can hold, or to take a `text` input without configuring either. An
+     * `allowedCharPattern` applies to either input, narrowing what a `number` input already accepts.
+     * @default undefined
+     */
+    filterInputType?: 'text' | 'number';
+    /**
      * Typically used alongside `allowedCharPattern`, this provides a custom parser to convert the value entered in the filter inputs into a number that can be used for comparisons.
+     * The Advanced Filter reads this column's operands with it only when a `numberFormatter` is provided too:
+     * without one an operand is written as a plain decimal, which the default parser is what reads back.
      */
     numberParser?: (text: string | null) => number | null;
     /**
-     * Typically used alongside `allowedCharPattern`, this provides a custom formatter to convert the number value in the filter model
-     * into a string to be used in the filter input. This is the inverse of the `numberParser`.
+     * Provides a custom formatter to convert the number value in the filter model into a string to be used in the
+     * filter input. This is the inverse of the `numberParser`. Often used alongside `allowedCharPattern`, but either
+     * one on its own makes the filter use a text input, since a number input would discard the formatted text.
      */
     numberFormatter?: (value: number | null) => string | null;
 }
