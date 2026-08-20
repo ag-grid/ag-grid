@@ -71,29 +71,26 @@
     }
 }
 
-/* icon for search inputs */
+/* icon for search inputs - the glyph itself comes from the active icon set, as `.ag-icon-search` */
+.ag-input-field-search-icon {
+    position: absolute;
+    inset-inline-start: var(--ag-spacing);
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.5;
+    pointer-events: none;
+
+    /*
+     * `inputIconColor` must be applied by redefining the icon's own custom property: `.ag-icon` sets
+     * `color: var(--ag-icon-color)` on itself, so an inherited `color` here would never reach the glyph.
+     */
+    --ag-icon-color: var(--ag-input-icon-color);
+}
+
 :where(.ag-input-field-search) {
-    .ag-input-wrapper::before {
-        position: absolute;
-        display: block;
-        margin-left: var(--ag-spacing);
-        width: 12px;
-        height: 12px;
-        color: var(--ag-input-icon-color);
-        background-color: currentcolor;
-
-        /* masked background colour, which must be preserved when printing */
-        print-color-adjust: exact;
-        mask-image: url('data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41Ij48cGF0aCBkPSJNNS4zIDlhMy43IDMuNyAwIDEgMCAwLTcuNSAzLjcgMy43IDAgMCAwIDAgNy41Wk0xMC41IDEwLjUgOC4zIDguMiIvPjwvc3ZnPg==');
-        mask-position: center;
-        mask-repeat: no-repeat;
-        opacity: 0.5;
-        content: '';
-    }
-
     .ag-text-field-input,
     .ag-number-field-input {
-        padding-left: calc(var(--ag-spacing) * 1.5 + 12px);
+        padding-inline-start: calc(var(--ag-icon-size) + var(--ag-spacing) * 2);
     }
 }
 

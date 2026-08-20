@@ -106,6 +106,28 @@
         );
     }
 
+    // the glyph itself comes from the theme's icon font, as `.ag-icon-search`
+    .ag-input-field-search-icon {
+        position: absolute;
+        display: inline-flex;
+        align-items: center;
+        opacity: 0.5;
+        pointer-events: none;
+        inset-inline-start: var(--ag-grid-size);
+    }
+
+    // the `.ag-ltr`/`.ag-rtl` prefix and the input's own class are what lift this above each theme's
+    // `ag.text-input` padding — `.ag-theme-x .ag-ltr input[class^='ag-'][type='text']` in Alpine and
+    // Balham — which is emitted after this file and would otherwise win the cascade
+    .ag-input-field-search input.ag-input-field-input[class^='ag-'][type='text'],
+    .ag-input-field-search input.ag-input-field-input[class^='ag-'][type='number'] {
+        @include ag.unthemed-rtl(
+            (
+                padding-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
+            )
+        );
+    }
+
     input[class^='ag-'][type='number']:not(.ag-number-field-input-stepper) {
         -moz-appearance: textfield;
         &::-webkit-outer-spin-button,

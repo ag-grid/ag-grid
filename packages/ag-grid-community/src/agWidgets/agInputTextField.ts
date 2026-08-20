@@ -55,6 +55,7 @@ export class AgInputTextField<
     AgInputTextFieldEvent | TEventType
 > {
     private eClearButton: HTMLButtonElement | undefined;
+    private eSearchIcon: HTMLElement | undefined;
     private clearButtonEnabled: boolean = false;
 
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
@@ -113,6 +114,14 @@ export class AgInputTextField<
 
     public setSearchIcon(searchIcon: boolean): this {
         this.toggleCss('ag-input-field-search', searchIcon);
+        if (searchIcon && !this.eSearchIcon) {
+            this.createSearchIcon();
+        }
+        const { eSearchIcon } = this;
+        if (eSearchIcon) {
+            // decorative: it stays aria-hidden whether or not it is displayed
+            _setDisplayed(eSearchIcon, searchIcon, { skipAriaHidden: true });
+        }
         return this;
     }
 
@@ -171,6 +180,22 @@ export class AgInputTextField<
         });
         this.eWrapper.appendChild(eClearButton);
         this.eClearButton = eClearButton;
+    }
+
+    private createSearchIcon(): void {
+        const eIcon = this.beans.iconSvc.createIconNoSpan('search');
+        if (!eIcon) {
+            return;
+        }
+        const eSearchIcon = _createAgElement({
+            tag: 'span',
+            cls: 'ag-input-field-search-icon',
+            attrs: { 'aria-hidden': 'true' },
+        });
+        eSearchIcon.appendChild(eIcon);
+        // the search icon leads the input; the clear button trails it
+        this.eWrapper.insertBefore(eSearchIcon, this.eWrapper.firstChild);
+        this.eSearchIcon = eSearchIcon;
     }
 
     private refreshClearButton(): void {
