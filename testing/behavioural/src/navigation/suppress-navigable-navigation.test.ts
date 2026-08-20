@@ -134,4 +134,29 @@ describe('suppressNavigable Navigation', () => {
             expect(getFocusedRowIndex(api)).toBe(1);
         });
     });
+
+    describe('backwards tab out with nowhere to go', () => {
+        // AG-16759: the backwards tab-out is reached whenever the walk finds no cell at all, which
+        // for a row-dependent suppressNavigable happens from a row that is not the first one.
+        let api: GridApi<RowData>;
+
+        beforeEach(() => {
+            const columnDefs: ColDef<RowData>[] = [
+                { field: 'a', colId: 'a', suppressNavigable: (params) => params.data?.a === 'a0' },
+            ];
+            api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+            } as GridOptions<RowData>);
+        });
+
+        test('Shift+Tab from a non-first row moves focus to the header', () => {
+            api.setFocusedCell(1, 'a');
+            dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
+
+            const active = document.activeElement as HTMLElement | null;
+            expect(active?.classList.contains('ag-header-cell')).toBe(true);
+            expect(active?.getAttribute('col-id')).toBe('a');
+        });
+    });
 });
