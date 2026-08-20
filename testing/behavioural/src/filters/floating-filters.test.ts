@@ -310,6 +310,11 @@ describe('Floating Filters', () => {
             expect(textFilter.closest('.ag-input-field')!.classList.contains('ag-input-field-search')).toBe(true);
             expect(textFilter.closest('.ag-floating-filter-search-icon')).toBeNull();
 
+            // the magnifying glass comes from the active icon set, not a bespoke inline SVG
+            const searchIcon = textFilter.closest('.ag-input-field')!.querySelector('.ag-icon.ag-icon-search')!;
+            expect(searchIcon).not.toBeNull();
+            expect(searchIcon.closest('.ag-input-field-search-icon')!.getAttribute('aria-hidden')).toBe('true');
+
             // Custom placeholder is presentational only — it applies no filter, so all rows remain.
             expect(api.getDisplayedRowCount()).toBe(3);
         });

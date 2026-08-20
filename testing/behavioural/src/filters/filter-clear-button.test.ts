@@ -40,6 +40,8 @@ describe('Filter input clear button', () => {
 
         const input = harness.input('text');
         expect(input.closest('.ag-input-field')!.classList.contains('ag-input-field-search')).toBe(true);
+        // the magnifying glass comes from the active icon set, not a bespoke inline SVG
+        expect(input.closest('.ag-input-field')!.querySelector('.ag-icon.ag-icon-search')).not.toBeNull();
         const clearButton = input.parentElement!.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
         expect(clearButton.classList.contains('ag-hidden')).toBe(false);
         fireEvent.mouseDown(clearButton);
@@ -131,6 +133,7 @@ describe('Filter input clear button', () => {
 
         const miniFilterInput = document.querySelector<HTMLInputElement>('.ag-mini-filter input[type="text"]')!;
         expect(miniFilterInput.closest('.ag-input-field')!.classList.contains('ag-input-field-search')).toBe(true);
+        expect(miniFilterInput.closest('.ag-input-field')!.querySelector('.ag-icon.ag-icon-search')).not.toBeNull();
         const clearButton = document.querySelector<HTMLButtonElement>('.ag-mini-filter .ag-input-field-clear-button')!;
         expect(clearButton.classList.contains('ag-hidden')).toBe(false);
         fireEvent.mouseDown(clearButton);
