@@ -700,11 +700,11 @@ export class FocusService extends BeanStub implements NamedBean {
                 const enteringFromTab = !event || event.key === KeyCode.TAB;
 
                 // a horizontal walk cannot leave the entry row, so tabbing in continues the tab walk,
-                // which wraps onto later rows when every cell of the entry row is non-navigable.
-                if (enteringFromTab && !backwards) {
+                // which wraps onto adjacent rows when every cell of the entry row is non-navigable.
+                if (enteringFromTab) {
                     return !!this.navigation?.focusNextTabbableCell(
                         { rowIndex, column, rowPinned: rowPinned || null },
-                        false
+                        backwards
                     );
                 }
 

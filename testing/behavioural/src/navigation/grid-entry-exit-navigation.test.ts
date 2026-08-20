@@ -122,6 +122,66 @@ describe('Grid entry and exit navigation', () => {
             expect(dispatchTab()).toBe(false);
             expect(api.getFocusedCell()).toBeFalsy();
         });
+
+        test('Tab from the last header cell skips a non-navigable first column', async () => {
+            const api = await createGrid({
+                columnDefs: [{ field: 'a', colId: 'a', suppressNavigable: true }, { field: 'b', colId: 'b' }],
+            });
+            api.setFocusedHeader('b');
+            await asyncSetTimeout(0);
+
+            dispatchKeyDown(KeyCode.TAB);
+
+            expect(getFocusedRowIndex(api)).toBe(0);
+            expect(getFocusedColId(api)).toBe('b');
+        });
+
+        test('Tab from the last header cell enters the first pinned column', async () => {
+            const api = await createGrid({
+                columnDefs: [
+                    { field: 'a', colId: 'a', pinned: 'left' },
+                    { field: 'b', colId: 'b', pinned: 'right' },
+                ],
+            });
+            api.setFocusedHeader('b');
+            await asyncSetTimeout(0);
+
+            dispatchKeyDown(KeyCode.TAB);
+
+            expect(getFocusedRowIndex(api)).toBe(0);
+            expect(getFocusedColId(api)).toBe('a');
+        });
+
+        test('down arrow from a header cell focuses the cell below it', async () => {
+            const api = await createGrid();
+            api.setFocusedHeader('a');
+            await asyncSetTimeout(0);
+
+            dispatchKeyDown(KeyCode.DOWN);
+
+            expect(getFocusedRowIndex(api)).toBe(0);
+            expect(getFocusedColId(api)).toBe('a');
+            expect(getFocusedHeaderColId()).toBeNull();
+        });
+
+        test('up arrow from the first row focuses the header cell above it', async () => {
+            const api = await createGrid();
+            api.setFocusedCell(0, 'a');
+
+            dispatchKeyDown(KeyCode.UP);
+
+            expect(getFocusedHeaderColId()).toBe('a');
+        });
+
+        test('Shift+Tab from the first cell leaves the cells when there is no header row', async () => {
+            const api = await createGrid({ headerHeight: 0 });
+            api.setFocusedCell(0, 'a');
+
+            dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
+
+            expect(getFocusedHeaderColId()).toBeNull();
+            expect(document.activeElement).toHaveClass('ag-tab-guard-top');
+        });
     });
 
     describe('entering the grid from outside', () => {
@@ -135,6 +195,17 @@ describe('Grid entry and exit navigation', () => {
             expect(getFocusedHeaderColId()).toBe('a');
         });
 
+        test('Tab from the element before the grid focuses the first cell when the header is suppressed', async () => {
+            const api = await createGrid({ suppressHeaderFocus: true });
+            const user = userEvent.setup();
+            before.focus();
+
+            await user.tab();
+
+            expect(getFocusedRowIndex(api)).toBe(0);
+            expect(getFocusedColId(api)).toBe('a');
+        });
+
         test('Shift+Tab from the element after the grid focuses the last cell', async () => {
             const api = await createGrid();
             const user = userEvent.setup();
@@ -144,6 +215,35 @@ describe('Grid entry and exit navigation', () => {
 
             expect(getFocusedRowIndex(api)).toBe(1);
             expect(getFocusedColId(api)).toBe('b');
+        });
+
+        test('Shift+Tab from the element after the grid skips a non-navigable last row', async () => {
+            // the mirror of the forwards entry: a backwards walk that cannot leave the entry row
+            // used to drop focus entirely, leaving it stranded on the bottom tab guard
+            const api = await createGrid({
+                columnDefs: columnDefs.map((colDef) => ({
+                    ...colDef,
+                    suppressNavigable: (params) => params.data?.a === 'a1',
+                })),
+            });
+            const user = userEvent.setup();
+            after.focus();
+
+            await user.tab({ shift: true });
+
+            expect(getFocusedRowIndex(api)).toBe(0);
+            expect(getFocusedColId(api)).toBe('b');
+        });
+
+        test('Shift+Tab from the element after the grid focuses the header when cell focus is suppressed', async () => {
+            const api = await createGrid({ suppressCellFocus: true });
+            const user = userEvent.setup();
+            after.focus();
+
+            await user.tab({ shift: true });
+
+            expect(api.getFocusedCell()).toBeFalsy();
+            expect(getFocusedHeaderColId()).toBe('b');
         });
     });
 
