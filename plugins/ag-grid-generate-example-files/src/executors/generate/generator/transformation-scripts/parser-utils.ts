@@ -749,14 +749,18 @@ const darkModeTs = `
         // registered before the initial apply, so a change landing during the retry window is kept
         document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);
 
-        // apply the initial themes once both the grid api and the theme mode are available
+        // apply the initial themes once both the grid api and the theme mode are available.
+        // An absent theme mode is not the same as an unresolved one: examples that own their own
+        // theming - standalone/downloaded ones, and iframes that opt out - never get the attribute
+        // at all, so once the retry budget is spent fall back to light rather than giving up.
         const maxTries = 5;
         let tries = 0;
         const trySetInitial = (): void => {
             const themeMode = readThemeMode();
-            if (params.api && themeMode !== undefined) {
-                updateChartThemes(themeMode.includes('dark'));
-            } else if (tries < maxTries) {
+            const lastTry = tries >= maxTries;
+            if (params.api && (themeMode !== undefined || lastTry)) {
+                updateChartThemes(themeMode !== undefined && themeMode.includes('dark'));
+            } else if (!lastTry) {
                 tries++;
                 setTimeout(trySetInitial, 250);
             }
@@ -797,14 +801,18 @@ const darkModeJS = `
         // registered before the initial apply, so a change landing during the retry window is kept
         document.addEventListener('color-scheme-change', handleColorSchemeChange);
 
-        // apply the initial themes once both the grid api and the theme mode are available
+        // apply the initial themes once both the grid api and the theme mode are available.
+        // An absent theme mode is not the same as an unresolved one: examples that own their own
+        // theming - standalone/downloaded ones, and iframes that opt out - never get the attribute
+        // at all, so once the retry budget is spent fall back to light rather than giving up.
         const maxTries = 5;
         let tries = 0;
         const trySetInitial = () => {
             const themeMode = readThemeMode();
-            if (params.api && themeMode !== undefined) {
-                updateChartThemes(themeMode.includes('dark'));
-            } else if (tries < maxTries) {
+            const lastTry = tries >= maxTries;
+            if (params.api && (themeMode !== undefined || lastTry)) {
+                updateChartThemes(themeMode !== undefined && themeMode.includes('dark'));
+            } else if (!lastTry) {
                 tries++;
                 setTimeout(trySetInitial, 250);
             }

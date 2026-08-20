@@ -7,7 +7,7 @@ import { type FunctionComponent, useCallback, useEffect, useRef, useState } from
 
 import styles from './ExampleIFrame.module.scss';
 import exampleRuntimeInjectedStyles from './exampleRuntimeInjectedStyles';
-import { withThemeMode } from './exampleThemeMode';
+import { shouldNavigateExample, withThemeMode } from './exampleThemeMode';
 
 interface Props {
     title: string;
@@ -28,6 +28,8 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [darkMode] = useDarkmode();
     const [isScrolling, setIsScrolling] = useState(false);
+    // The src of an in-flight navigation; `undefined` once the example has loaded.
+    const pendingSrcRef = useRef<string | undefined>(undefined);
 
     useEffect(() => {
         const scrollListener = () => {
@@ -58,8 +60,23 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
     });
 
     useEffect(() => {
-        const currentSrc = iFrameRef.current?.src && new URL(iFrameRef.current.src);
-        if (!isIntersecting || !url || !iFrameRef.current || (currentSrc as URL)?.pathname === url || isScrolling) {
+        const iframe = iFrameRef.current;
+        const currentSrc = iframe?.src && new URL(iframe.src);
+        if (!isIntersecting || !url || !iframe || isScrolling) {
+            return;
+        }
+
+        // `darkMode` is undefined until the store has hydrated, so fall back to reading it
+        // synchronously — the example must be navigated to with the colour scheme already known.
+        const nextSrc = withThemeMode(url, darkMode ?? getDarkmode(), suppressDarkMode);
+
+        const navigate = shouldNavigateExample({
+            currentPathname: (currentSrc as URL)?.pathname,
+            url,
+            nextSrc,
+            pendingSrc: pendingSrcRef.current,
+        });
+        if (!navigate) {
             return;
         }
 
@@ -69,9 +86,8 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
             window.postMessage({ type: EXAMPLE_RELOADING_MESSAGE_TYPE, loadingIFrameId });
         }
 
-        // `darkMode` is undefined until the store has hydrated, so fall back to reading it
-        // synchronously — the example must be navigated to with the colour scheme already known.
-        iFrameRef.current.src = withThemeMode(url, darkMode ?? getDarkmode(), suppressDarkMode);
+        pendingSrcRef.current = nextSrc;
+        iframe.src = nextSrc;
     }, [isIntersecting, url, isScrolling, loadingIFrameId, darkMode, suppressDarkMode]);
 
     // when dark mode is changed, applies it to the iframe.
@@ -83,6 +99,7 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
     }, [darkMode, suppressDarkMode]);
 
     const handleOnLoad = useCallback(() => {
+        pendingSrcRef.current = undefined;
         if (!iFrameRef.current) {
             return;
         }

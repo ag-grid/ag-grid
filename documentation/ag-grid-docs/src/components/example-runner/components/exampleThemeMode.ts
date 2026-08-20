@@ -32,3 +32,30 @@ export const withThemeMode = (url: string, darkMode?: boolean, suppressDarkMode?
 
     return `${resolved.pathname}${resolved.search}${resolved.hash}`;
 };
+
+/**
+ * Whether the example iframe should be (re-)navigated to `nextSrc`.
+ *
+ * A different example - or nothing loaded yet - always navigates. For the example already there,
+ * a colour-scheme change is pushed into the live document instead, so re-navigating for it would
+ * needlessly reload the example. The exception is a navigation still in flight (`pendingSrc` is
+ * set): that one would land carrying the superseded theme mode, which is the very flicker the
+ * query parameter exists to avoid, so it is re-pointed at the current one.
+ */
+export const shouldNavigateExample = ({
+    currentPathname,
+    url,
+    nextSrc,
+    pendingSrc,
+}: {
+    currentPathname?: string;
+    url: string;
+    nextSrc: string;
+    pendingSrc?: string;
+}): boolean => {
+    if (currentPathname !== url) {
+        return true;
+    }
+
+    return pendingSrc !== undefined && pendingSrc !== nextSrc;
+};
