@@ -1,6 +1,11 @@
 import { _debounce } from 'ag-stack';
 
-import type { GridInputTextField, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
+import type {
+    GridInputTextField,
+    IInputToolbarItemParams,
+    IToolbarItemComp,
+    IToolbarItemParams,
+} from 'ag-grid-community';
 import { AgInputTextField, Component } from 'ag-grid-community';
 
 import { createToolbarInput } from './toolbarItemUtils';
@@ -15,7 +20,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         super({ tag: 'div', cls: 'ag-toolbar-item ag-toolbar-input' });
     }
 
-    public init(_params: IToolbarItemParams): void {
+    public init(params: IToolbarItemParams<any, any, IInputToolbarItemParams>): void {
         if (!this.gos.isModuleRegistered('QuickFilter')) {
             this.beans.log.error(302, {
                 itemName: 'agQuickFilterToolbarItem',
@@ -34,6 +39,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         this.eInputField = this.createManagedBean<GridInputTextField>(
             new AgInputTextField({
                 clearButton: true,
+                autoComplete: params.toolbarItemParams?.browserAutoComplete,
                 onValueClear: () => {
                     clearTimeout(quickFilterTextTimeout);
                     this.gos.updateGridOptions({ options: { quickFilterText: '' } });
@@ -62,10 +68,11 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         });
     }
 
-    public refresh(_params: IToolbarItemParams): boolean {
+    public refresh(params: IToolbarItemParams<any, any, IInputToolbarItemParams>): boolean {
         if (!this.eInput) {
             return false;
         }
+        this.eInputField.setAutoComplete(params.toolbarItemParams?.browserAutoComplete);
         this.eInputField.setValue(this.gos.get('quickFilterText'), true);
         return true;
     }

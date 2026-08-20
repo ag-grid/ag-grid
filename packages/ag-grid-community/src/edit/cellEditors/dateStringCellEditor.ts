@@ -41,7 +41,9 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         this.eEditor = eEditor;
         this.params = params;
 
-        const { min, max, step, colDef } = params;
+        const { browserAutoComplete, min, max, step, colDef } = params;
+
+        eEditor.setAutoComplete(browserAutoComplete);
 
         if (min != null) {
             eEditor.setMin(min);

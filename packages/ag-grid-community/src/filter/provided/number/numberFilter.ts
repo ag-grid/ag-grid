@@ -73,6 +73,7 @@ export class NumberFilter extends TextInputSimpleFilter<
                 allowedCharPattern: allowedCharPattern ?? undefined,
                 clearButton: true,
                 searchIcon: true,
+                autoComplete: params.browserAutoComplete,
             })
         );
     }

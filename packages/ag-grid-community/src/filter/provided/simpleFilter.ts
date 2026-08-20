@@ -134,6 +134,12 @@ export abstract class SimpleFilter<
     protected commonUpdateSimpleParams(params: P): void {
         this.setNumConditions(params);
 
+        this.forEachInput((element) => {
+            if (element instanceof AgAbstractInputField) {
+                element.setAutoComplete(params.browserAutoComplete);
+            }
+        });
+
         this.defaultJoinOperator = getDefaultJoinOperator(params.defaultJoinOperator);
         this.filterPlaceholder = params.filterPlaceholder;
 

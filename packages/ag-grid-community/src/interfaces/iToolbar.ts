@@ -2,6 +2,7 @@ import type { IComponent } from 'ag-stack';
 
 import type { ToolbarItemComponentName } from '../context/context';
 import type { IconName } from '../utils/icon';
+import type { IAutoCompleteComponentParams } from './iAutoComplete';
 import type { AgGridCommon } from './iCommon';
 import type { DefaultMenuItem, MenuItemDef } from './menuItem';
 
@@ -81,7 +82,7 @@ export interface ToolbarMenuItemParams<TData = any, TContext = any> {
 export interface ToolbarBuiltInItemDef extends ToolbarItemDefBase {
     /** A built-in toolbar item component name, or `'separator'`. */
     toolbarItem: Exclude<ToolbarItemComponentName, 'agMenuToolbarItem'> | 'separator';
-    /** Built-in items (other than `agMenuToolbarItem`) do not accept params. */
+    /** Not accepted here — `agMenuToolbarItem` and the input items take params via their dedicated variants. */
     toolbarItemParams?: never;
     /** Not used for built-in items — use the Action Button variant for label/icon/action. */
     label?: never;
@@ -111,6 +112,26 @@ export interface ToolbarMenuBuiltInItemDef<TData = any, TContext = any> extends 
     action?: never;
 }
 
+/** The built-in toolbar items that render a text input. */
+export type InputToolbarItemName = 'agFindToolbarItem' | 'agQuickFilterToolbarItem';
+
+/**
+ * Reference to a built-in input toolbar item (`agFindToolbarItem`, `agQuickFilterToolbarItem`),
+ * with `toolbarItemParams` carrying the input configuration.
+ */
+export interface ToolbarInputBuiltInItemDef extends ToolbarItemDefBase {
+    /** A built-in input toolbar item component name. */
+    toolbarItem: InputToolbarItemName;
+    /** Configuration for the input (e.g. `browserAutoComplete`). */
+    toolbarItemParams?: IInputToolbarItemParams;
+    /** Not used for input items — use the Action Button variant for label/icon/action. */
+    label?: never;
+    /** Not used for input items — use the Action Button variant for label/icon/action. */
+    icon?: never;
+    /** Not used for input items — use the Action Button variant for label/icon/action. */
+    action?: never;
+}
+
 /**
  * Reference to a user-provided custom toolbar item component.
  * `toolbarItem` is a component class/function, or the name of a registered custom component.
@@ -133,13 +154,21 @@ export interface ToolbarCustomItemDef<TParams = any, TCustom = any> extends Tool
  * - {@link ToolbarButtonItemDef} — action button shorthand (`label`/`icon`/`action`)
  * - {@link ToolbarBuiltInItemDef} — reference to a built-in component or `'separator'`
  * - {@link ToolbarMenuBuiltInItemDef} — reference to the `agMenuToolbarItem` dropdown menu button
+ * - {@link ToolbarInputBuiltInItemDef} — reference to a built-in input item (`agFindToolbarItem`, `agQuickFilterToolbarItem`)
  * - {@link ToolbarCustomItemDef} — reference to a custom component
  */
 export type ToolbarItemDef<TData = any, TContext = any, TParams = any, TCustom = any> =
     | ToolbarButtonItemDef<TData, TContext>
     | ToolbarBuiltInItemDef
     | ToolbarMenuBuiltInItemDef<TData, TContext>
+    | ToolbarInputBuiltInItemDef
     | ToolbarCustomItemDef<TParams, TCustom>;
+
+/**
+ * Params accepted by the provided input toolbar items (`agFindToolbarItem`, `agQuickFilterToolbarItem`),
+ * supplied via the item definition's `toolbarItemParams`.
+ */
+export interface IInputToolbarItemParams extends IAutoCompleteComponentParams {}
 
 /**
  * Params delivered to a toolbar item component. Mirrors the runtime shape produced by the

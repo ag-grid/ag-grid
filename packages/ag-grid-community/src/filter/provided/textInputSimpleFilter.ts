@@ -68,6 +68,7 @@ export abstract class TextInputSimpleFilter<
                 allowedCharPattern: allowedCharPattern ?? undefined,
                 clearButton: true,
                 searchIcon: true,
+                autoComplete: this.params.browserAutoComplete,
             })
         );
     }

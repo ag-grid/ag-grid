@@ -1,5 +1,6 @@
 import type { IComponent } from 'ag-stack';
 
+import type { IAutoCompleteComponentParams } from './iAutoComplete';
 import type { IColumnSelectionPanelParams } from './iColumnSelectionPanel';
 import type { AgGridCommon } from './iCommon';
 import type { FilterAction } from './iFilter';
@@ -37,7 +38,7 @@ export interface IToolPanel<TData = any, TContext = any, TState = any> {
 export interface IToolPanelComp<TData = any, TContext = any, TState = any>
     extends IToolPanel<TData, TContext, TState>, IComponent<IToolPanelParams<TData, TContext, TState>> {}
 
-export interface IToolPanelColumnCompParams extends IColumnSelectionPanelParams {
+export interface IToolPanelColumnCompParams extends IColumnSelectionPanelParams, IAutoCompleteComponentParams {
     /** Suppress Column Move */
     suppressColumnMove?: boolean;
     /** Suppress Row Groups section */
@@ -52,7 +53,7 @@ export interface IToolPanelColumnCompParams extends IColumnSelectionPanelParams 
     buttons?: ColumnToolPanelAction[];
 }
 
-export interface IToolPanelFiltersCompParams {
+export interface IToolPanelFiltersCompParams extends IAutoCompleteComponentParams {
     /** To suppress Expand / Collapse All */
     suppressExpandAll: boolean;
     /** To suppress the Filter Search */

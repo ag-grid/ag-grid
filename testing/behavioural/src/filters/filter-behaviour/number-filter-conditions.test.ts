@@ -698,6 +698,30 @@ describe('Number Filter — conditions coverage', () => {
         expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'number', type: 'equals', filter: 5 });
     });
 
+    // Two construction sites: the filter builds the `number` input, the shared base builds the `text` one,
+    // and a replacement is built from params rather than copied from the element it replaces.
+    test('an input carries browserAutoComplete, and so does the replacement a colDef change builds', async () => {
+        const columnDefs = (allowedCharPattern?: string) => [
+            {
+                field: 'val',
+                filter: 'agNumberColumnFilter' as const,
+                filterParams: { debounceMs: 0, browserAutoComplete: 'one-time-code', allowedCharPattern },
+            },
+        ];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: columnDefs(),
+            rowData: [{ val: 5 }, { val: 7 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'val');
+        expect(filter.input('number', 0).getAttribute('autocomplete')).toBe('one-time-code');
+
+        api.setGridOption('columnDefs', columnDefs('\\d\\-'));
+        await asyncSetTimeout(0);
+
+        expect(filter.input('text', 0).getAttribute('autocomplete')).toBe('one-time-code');
+    });
+
     // The pattern narrows what can be typed, which a `number` input enforces as readily as a text one.
     test('an allowedCharPattern applies to a `number` input too', async () => {
         const filterParams = { debounceMs: 0, filterInputType: 'number' as const, allowedCharPattern: '\\d' };

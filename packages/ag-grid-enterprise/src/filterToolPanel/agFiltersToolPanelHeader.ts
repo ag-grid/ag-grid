@@ -64,6 +64,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
 
     public init(params: ToolPanelFiltersCompParams): void {
         this.params = params;
+        this.eFilterTextField.setAutoComplete(params.browserAutoComplete);
 
         if (this.beans.colModel.ready) {
             this.showOrHideOptions();
