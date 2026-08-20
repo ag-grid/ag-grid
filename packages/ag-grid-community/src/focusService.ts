@@ -702,12 +702,9 @@ export class FocusService extends BeanStub implements NamedBean {
                 // a horizontal walk cannot leave the entry row, so tabbing in continues the tab walk,
                 // which wraps onto later rows when every cell of the entry row is non-navigable.
                 if (enteringFromTab && !backwards) {
-                    return (
-                        this.navigation?.focusNextTabbableCell({
-                            rowIndex,
-                            column,
-                            rowPinned: rowPinned || null,
-                        }) ?? false
+                    return !!this.navigation?.focusNextTabbableCell(
+                        { rowIndex, column, rowPinned: rowPinned || null },
+                        false
                     );
                 }
 

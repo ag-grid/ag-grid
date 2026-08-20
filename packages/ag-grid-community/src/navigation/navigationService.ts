@@ -523,8 +523,16 @@ export class NavigationService extends BeanStub implements NamedBean {
         } else {
             cellPos = previousCell.getFocusedCellPosition();
         }
-        // find the next cell to start editing
-        const nextCell = this.findNextCellToFocusOn(cellPos, { backwards, startEditing: false });
+        return this.focusNextTabbableCell(cellPos, backwards);
+    }
+
+    /**
+     * Focuses the next cell a tab would reach from `position`, skipping non-navigable cells onto
+     * later rows. Also used when tabbing into the grid lands on a suppressNavigable cell.
+     * @returns whether a cell was focused, or null if no cell was found so navigation should not be performed.
+     */
+    public focusNextTabbableCell(position: CellPosition, backwards: boolean): boolean | null {
+        const nextCell = this.findNextCellToFocusOn(position, { backwards, startEditing: false });
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
@@ -651,26 +659,6 @@ export class NavigationService extends BeanStub implements NamedBean {
             // we successfully tabbed onto a grid cell, so return true
             return nextCell;
         }
-    }
-
-    /**
-     * Focuses the next cell a forwards tab would reach from `position`, skipping non-navigable
-     * cells onto later rows. Used when tabbing into the grid lands on a suppressNavigable cell.
-     * @returns whether a cell was focused.
-     */
-    public focusNextTabbableCell(position: CellPosition): boolean {
-        const nextCell = this.findNextCellToFocusOn(position, { backwards: false, startEditing: false });
-
-        if (nextCell instanceof CellCtrl) {
-            nextCell.focusCell({ forceBrowserFocus: true });
-            return true;
-        }
-
-        if (nextCell) {
-            return this.tryToFocusFullWidthRow(nextCell, false);
-        }
-
-        return false;
     }
 
     private isCellEditable(cell: CellPosition): boolean {
