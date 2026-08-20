@@ -41,9 +41,7 @@ describe('shouldNavigateExample', () => {
     });
 
     test('navigates when the example itself changed', () => {
-        expect(
-            shouldNavigateExample({ currentPathname: '/examples/grid/other/', url, nextSrc: light })
-        ).toBe(true);
+        expect(shouldNavigateExample({ currentPathname: '/examples/grid/other/', url, nextSrc: light })).toBe(true);
     });
 
     test('does not reload a loaded example when the colour scheme changes', () => {
@@ -52,14 +50,10 @@ describe('shouldNavigateExample', () => {
     });
 
     test('re-points an in-flight navigation whose theme mode has been superseded', () => {
-        expect(shouldNavigateExample({ currentPathname: url, url, nextSrc: dark, pendingSrc: light })).toBe(
-            true
-        );
+        expect(shouldNavigateExample({ currentPathname: url, url, nextSrc: dark, pendingSrc: light })).toBe(true);
     });
 
     test('leaves an in-flight navigation alone when its theme mode still matches', () => {
-        expect(shouldNavigateExample({ currentPathname: url, url, nextSrc: dark, pendingSrc: dark })).toBe(
-            false
-        );
+        expect(shouldNavigateExample({ currentPathname: url, url, nextSrc: dark, pendingSrc: dark })).toBe(false);
     });
 });
