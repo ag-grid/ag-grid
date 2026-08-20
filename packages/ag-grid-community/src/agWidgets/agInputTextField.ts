@@ -119,7 +119,8 @@ export class AgInputTextField<
         }
         const { eSearchIcon } = this;
         if (eSearchIcon) {
-            _setDisplayed(eSearchIcon, searchIcon);
+            // decorative: it stays aria-hidden whether or not it is displayed
+            _setDisplayed(eSearchIcon, searchIcon, { skipAriaHidden: true });
         }
         return this;
     }
