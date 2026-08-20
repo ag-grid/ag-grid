@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
 
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
