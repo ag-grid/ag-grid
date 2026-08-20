@@ -412,7 +412,7 @@ AddCharset utf-8 .md
     # long gone, so there is nothing to redirect to. Declaring it Gone tells crawlers to
     # drop it rather than leaving them to infer that from a soft 404, and it beats the
     # catch-all, which would otherwise land visitors on a /blog/ 404.
-    RewriteCond %{HTTP_HOST} ^blog.ag-grid.com$ [NC]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?ag-grid-vs-datatables/?$ - [R=410,L]
 
     # Legacy /amp/ paths: AMP was never enabled and these are not advertised, but they

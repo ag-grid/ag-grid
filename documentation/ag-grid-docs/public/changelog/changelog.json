@@ -21106,7 +21106,7 @@
         "status": "Done",
         "resolution": "Done",
         "features": ["Cell_Editing"],
-        "moreInformation": "You can implement this behavior using the approach and samples here:\r\nhttps://blog.ag-grid.com/deleting-selected-rows-and-cell-ranges-via-key-press/",
+        "moreInformation": "You can implement this behavior using the approach and samples here:\r\nhttps://www.ag-grid.com/blog/deleting-selected-rows-and-cell-ranges-via-key-press/",
         "deprecationNotes": null,
         "breakingChangesNotes": null,
         "documentationUrl": null
