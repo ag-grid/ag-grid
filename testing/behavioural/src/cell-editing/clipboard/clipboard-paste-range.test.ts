@@ -1,7 +1,13 @@
 import { waitFor } from '@testing-library/dom';
 import { EditEventTracker, GridColumns, GridRows, TestGridsManager, clipboardUtils, waitForEvent } from 'ag-test-utils';
 
-import { RowSelectionModule, SELECTION_COLUMN_ID, TextEditorModule, UndoRedoEditModule, setupAgTestIds } from 'ag-grid-community';
+import {
+    RowSelectionModule,
+    SELECTION_COLUMN_ID,
+    TextEditorModule,
+    UndoRedoEditModule,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import {
     BatchEditModule,
     CellSelectionModule,
