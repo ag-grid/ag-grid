@@ -378,4 +378,59 @@ describe('Floating Filters', () => {
         await waitFor(() => expect((getByTestId(gridDiv, inputId) as HTMLInputElement).value).toBe(''));
         expect(api.getColumnFilterModel('country')).toBe(null);
     });
+
+    // The rebuilt input re-reads the model, so the text returns — the caret into it does not, being a
+    // property of the element that held it.
+    test('refreshHeader re-reads a committed value but keeps none of the caret into it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
+            defaultColDef: { floatingFilter: true },
+            rowData: [{ country: 'Ireland' }, { country: 'Italy' }],
+        });
+        await asyncSetTimeout(0);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const inputId = agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'country' });
+        const input = getByTestId(gridDiv, inputId) as HTMLInputElement;
+        typeIntoFloatingFilter(input, 'Ireland');
+        await asyncSetTimeout(0);
+
+        expect(api.getColumnFilterModel('country')).toEqual({
+            filterType: 'text',
+            type: 'contains',
+            filter: 'Ireland',
+        });
+        input.focus();
+        input.setSelectionRange(3, 3);
+        expect(input.selectionStart).toBe(3); // the caret is real here, so its absence below means something
+
+        api.refreshHeader();
+
+        const rebuilt = () => getByTestId(gridDiv, inputId) as HTMLInputElement;
+        await waitFor(() => expect(rebuilt().value).toBe('Ireland'));
+        expect(rebuilt().selectionStart).toBe('Ireland'.length);
+    });
+
+    // Focus is restored to the header position, not to the element that held it: the input is a new node,
+    // so what the user was typing into is gone even though the grid still considers the header focused.
+    test('refreshHeader moves focus from the floating filter input out to its header cell', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
+            defaultColDef: { floatingFilter: true },
+            rowData: [{ country: 'Ireland' }, { country: 'Italy' }],
+        });
+        await asyncSetTimeout(0);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const inputId = agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'country' });
+        const input = getByTestId(gridDiv, inputId) as HTMLInputElement;
+        input.focus();
+        expect(document.activeElement).toBe(input);
+
+        api.refreshHeader();
+
+        const rebuilt = () => getByTestId(gridDiv, inputId) as HTMLInputElement;
+        await waitFor(() => expect(rebuilt()).not.toBe(input));
+        expect(document.activeElement).toBe(rebuilt().closest('.ag-header-cell'));
+    });
 });
