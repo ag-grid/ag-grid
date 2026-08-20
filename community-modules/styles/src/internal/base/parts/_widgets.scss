@@ -116,9 +116,15 @@
         inset-inline-start: var(--ag-grid-size);
     }
 
+    // the `.ag-ltr`/`.ag-rtl` prefix is what lifts this above each theme's own `ag.text-input`
+    // padding, which is emitted after this file and would otherwise win the cascade
     .ag-input-field-search input[class^='ag-'][type='text'],
     .ag-input-field-search input[class^='ag-'][type='number'] {
-        padding-inline-start: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
+        @include ag.unthemed-rtl(
+            (
+                padding-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
+            )
+        );
     }
 
     input[class^='ag-'][type='number']:not(.ag-number-field-input-stepper) {
