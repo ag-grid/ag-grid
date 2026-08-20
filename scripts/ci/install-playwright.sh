@@ -151,13 +151,20 @@ ATTEMPT_TIMEOUT_SECONDS="${PW_INSTALL_TIMEOUT_SECONDS:-${DEFAULT_TIMEOUT}}"
 MAX_ATTEMPTS="${PW_INSTALL_MAX_ATTEMPTS:-${DEFAULT_ATTEMPTS}}"
 RETRY_DELAY_SECONDS="${PW_INSTALL_RETRY_DELAY_SECONDS:-20}"
 APT_WAIT_SECONDS="${PW_INSTALL_APT_WAIT_SECONDS:-120}"
-MAX_LOCK_RETRIES="${PW_INSTALL_MAX_LOCK_RETRIES:-2}"
 
 # `timeout` signals only its direct child, `npx`. The `apt-get` Playwright starts under sudo is a
 # grandchild, so it survives the kill and keeps /var/lib/apt/lists/lock. A retry on a fixed delay
 # therefore raced a still-dying apt and died on "Could not get lock" in about a second - burning an
 # attempt without ever reaching the mirror (run 32269132733, where the 20s delay was not enough and
-# process 2808 still held the lock). Wait for apt to actually go, rather than guess how long it needs.
+# process 2808 still held the lock). So wait for apt to actually go before each attempt, rather than
+# guess how long it needs.
+#
+# Prevention, not detection, and specifically NOT by capturing the attempt's output to classify the
+# failure afterwards: that surviving grandchild also inherits stdout, so piping the attempt through
+# `tee` means the pipe never reaches EOF when `timeout` kills its child. The pipeline then blocks
+# forever and defeats the bound entirely - run 32272425164 hung 90 min to the job cap with `tee`
+# still resident. The attempt must keep writing straight to the step log, with nothing downstream
+# of it that can outlive the kill.
 apt_is_busy() {
     [ -e /var/lib/apt/lists/lock ] || return 1
     pgrep -x apt-get >/dev/null 2>&1 || pgrep -x dpkg >/dev/null 2>&1
@@ -202,18 +209,14 @@ if [ -z "${TIMEOUT_BIN}" ]; then
 fi
 
 stalled=0
-attempt=0
-lock_retries=0
-attempt_log="$(mktemp 2>/dev/null || echo "${TMPDIR:-/tmp}/ag-pw-install-$$.log")"
-trap 'rm -f "${attempt_log}"' EXIT
-
-while [ "${attempt}" -lt "${MAX_ATTEMPTS}" ]; do
-    attempt=$((attempt + 1))
+for attempt in $(seq 1 "${MAX_ATTEMPTS}"); do
+    # Before, not after: the apt a previous attempt started can outlive the kill, and a foreign one
+    # (unattended-upgrades) can hold the lock at any point. Either way, going in while it is held
+    # wastes the attempt on a collision instead of learning anything about the mirror.
+    wait_for_apt
     group_start "${LABEL} - attempt ${attempt}/${MAX_ATTEMPTS} (bounded to ${ATTEMPT_TIMEOUT_SECONDS}s)"
-    # Tee'd rather than captured, so the install still streams into the log live; the copy is only
-    # read to tell a lock collision apart from a real failure.
-    "${TIMEOUT_BIN}" --signal=TERM --kill-after=30s "${ATTEMPT_TIMEOUT_SECONDS}s" "${CMD[@]}" 2>&1 | tee "${attempt_log}"
-    status=${PIPESTATUS[0]}
+    "${TIMEOUT_BIN}" --signal=TERM --kill-after=30s "${ATTEMPT_TIMEOUT_SECONDS}s" "${CMD[@]}"
+    status=$?
     group_end
 
     if [ "${status}" -eq 0 ]; then
@@ -224,17 +227,6 @@ while [ "${attempt}" -lt "${MAX_ATTEMPTS}" ]; do
     if [ "${status}" -eq 124 ] || [ "${status}" -eq 137 ]; then
         stalled=1
         reason="did not complete within its ${ATTEMPT_TIMEOUT_SECONDS}s bound and was killed (stalled or very slow package mirror / CDN fetch)"
-    elif grep -qE "Could not get lock|Unable to lock" "${attempt_log}" 2>/dev/null; then
-        # It never reached the mirror, so it is not evidence about the mirror and must not spend the
-        # budget reserved for finding out. Bounded separately, so a permanently held lock still ends.
-        if [ "${lock_retries}" -lt "${MAX_LOCK_RETRIES}" ]; then
-            lock_retries=$((lock_retries + 1))
-            attempt=$((attempt - 1))
-            warn "${LABEL} could not take the apt lock and never reached the mirror, so it does not count against the ${MAX_ATTEMPTS} attempt budget (lock wait ${lock_retries}/${MAX_LOCK_RETRIES})."
-            wait_for_apt
-            continue
-        fi
-        reason="could not take the apt lock, after waiting for it ${MAX_LOCK_RETRIES} times"
     else
         reason="failed with exit code ${status}"
     fi
@@ -242,8 +234,6 @@ while [ "${attempt}" -lt "${MAX_ATTEMPTS}" ]; do
 
     if [ "${attempt}" -lt "${MAX_ATTEMPTS}" ]; then
         sleep "${RETRY_DELAY_SECONDS}"
-        # The apt this attempt started may outlive the kill; do not race it into the next one.
-        wait_for_apt
     fi
 done
 
