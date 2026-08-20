@@ -215,6 +215,42 @@ describe('Cell Editing Regression', () => {
         `);
     });
 
+    test('tabbing out of the only editable cell moves focus to the adjacent cell', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a' },
+                { field: 'b', editable: (params) => params.node.rowIndex === 1 },
+                { field: 'c' },
+            ],
+            rowData: [
+                { a: 'a0', b: 'b0', c: 'c0' },
+                { a: 'a1', b: 'b1', c: 'c1' },
+            ],
+            // without a focusable header, the backwards search has no target left once it
+            // exhausts the cells, which is the state where focus used to be dropped entirely
+            suppressHeaderFocus: true,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        const editableCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('1', 'b')));
+
+        await userEvent.dblClick(editableCell);
+        await waitForInput(gridDiv, editableCell);
+        await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
+
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+        expect(getByTestId(gridDiv, agTestIdFor.cell('1', 'a'))).toHaveFocus();
+        expect(api.getFocusedCell()?.column.getColId()).toBe('a');
+
+        await userEvent.dblClick(editableCell);
+        await waitForInput(gridDiv, editableCell);
+        await userEvent.keyboard('{Tab}');
+
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+        expect(getByTestId(gridDiv, agTestIdFor.cell('1', 'c'))).toHaveFocus();
+        expect(api.getFocusedCell()?.column.getColId()).toBe('c');
+    });
+
     test('full-row editing closes empty editors when tabbing to next row', async () => {
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'model3' }],

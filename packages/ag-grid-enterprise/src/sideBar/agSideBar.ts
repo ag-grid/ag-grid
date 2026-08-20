@@ -126,7 +126,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         let nextEl: HTMLElement | null = null;
 
         if (openPanel.contains(activeElement)) {
-            nextEl = _findNextFocusableElement(beans, openPanel, undefined, true);
+            nextEl = _findNextFocusableElement({ beans, rootNode: openPanel, backwards: true });
         } else if (isTargetUnderManagedComponent(openPanel, target)) {
             nextEl = findFocusableElementBeforeTabGuard(openPanel, target);
         }

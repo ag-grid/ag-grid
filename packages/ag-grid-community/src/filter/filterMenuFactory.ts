@@ -201,14 +201,14 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         if (
             e.key !== KeyCode.TAB ||
             e.defaultPrevented ||
-            _findNextFocusableElement(this.beans, menu, false, e.shiftKey)
+            _findNextFocusableElement({ beans: this.beans, rootNode: menu, onlyUnmanaged: true, backwards: e.shiftKey })
         ) {
             return;
         }
 
         e.preventDefault();
 
-        _focusInto(menu, e.shiftKey);
+        _focusInto(menu, e.shiftKey, true);
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: AgColumn): void {
