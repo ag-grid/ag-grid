@@ -5,6 +5,7 @@ import {
     ClientSideRowModelModule,
     DateFilterModule,
     NumberFilterModule,
+    RenderApiModule,
     TextFilterModule,
     agTestIdFor,
     getGridElement,
@@ -20,7 +21,7 @@ function typeIntoFloatingFilter(input: HTMLInputElement, value: string): void {
 
 describe('Floating Filters', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule, NumberFilterModule, DateFilterModule],
+        modules: [ClientSideRowModelModule, TextFilterModule, NumberFilterModule, DateFilterModule, RenderApiModule],
     });
 
     beforeAll(() => setupAgTestIds());
@@ -351,5 +352,30 @@ describe('Floating Filters', () => {
             // Inherited placeholder is presentational only — it applies no filter, so all rows remain.
             expect(api.getDisplayedRowCount()).toBe(3);
         });
+    });
+
+    // `refreshHeader` rebuilds the header rows, so a floating filter is a new component rather than an
+    // existing one shown again: text still inside the debounce window belongs to the component that held it.
+    test('refreshHeader discards floating filter text that has not reached the model', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 10_000 } }],
+            defaultColDef: { floatingFilter: true },
+            rowData: [{ country: 'Ireland' }, { country: 'Italy' }],
+        });
+        await asyncSetTimeout(0);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const inputId = agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'country' });
+        typeIntoFloatingFilter(getByTestId(gridDiv, inputId) as HTMLInputElement, 'Ire');
+
+        // Held by the input alone: the debounce has not run, so the model has nothing to rebuild it from.
+        expect((getByTestId(gridDiv, inputId) as HTMLInputElement).value).toBe('Ire');
+        expect(api.getColumnFilterModel('country')).toBe(null);
+
+        api.refreshHeader();
+
+        // The rebuilt input is a different element, so poll for it rather than reading the destroyed one.
+        await waitFor(() => expect((getByTestId(gridDiv, inputId) as HTMLInputElement).value).toBe(''));
+        expect(api.getColumnFilterModel('country')).toBe(null);
     });
 });
