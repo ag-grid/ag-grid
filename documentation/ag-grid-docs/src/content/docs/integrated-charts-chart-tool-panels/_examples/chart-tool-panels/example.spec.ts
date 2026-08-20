@@ -31,4 +31,49 @@ test.agExample(import.meta, () => {
         await page.locator('.ag-tab', { hasText: 'Chart' }).click();
         await expect(page.locator('.ag-chart-settings-mini-charts-container')).toBeVisible();
     });
+
+    // AG-18256 - the example page is loaded with the site's resolved colour scheme on its url, and the
+    // example runner applies it before the deferred entry module runs. Without that the chart is created
+    // against the light theme list while the grid is already dark, which is the mismatch the screenshot
+    // on the ticket shows. Asserted here rather than on the docs page because the docs e2e harness loads
+    // examples at their own url - the same surface the docs page's iframe navigates to.
+    test.describe('chart themes follow the colour scheme the example was loaded with', () => {
+        test.describe('dark', () => {
+            test.use({ loadPageOptions: { agThemeMode: 'dark-blue' } });
+
+            test.eachFramework('chart themes are dark, matching the grid', async ({ page, remoteGrid }) => {
+                await ensureGridReady(page);
+                await waitForGridContent(page);
+                // The chart is auto-created on first data rendered; the tabbed menu is its tool panel.
+                await expect(page.locator('.ag-chart-tabbed-menu')).toBeVisible();
+
+                // Applied synchronously by the runner, so it is already there for the entry module.
+                expect(await page.evaluate(() => document.documentElement.dataset.agThemeMode)).toBe('dark-blue');
+                expect(await page.evaluate(() => document.documentElement.dataset.colorScheme)).toBe('dark');
+
+                const themes = await remoteGrid(page).getGridOption('chartThemes');
+
+                expect(themes).toBeTruthy();
+                expect(themes).not.toHaveLength(0);
+                expect(themes!.filter((theme) => !theme.endsWith('-dark'))).toEqual([]);
+            });
+        });
+
+        test.describe('light', () => {
+            test.use({ loadPageOptions: { agThemeMode: 'light' } });
+
+            test.eachFramework('chart themes stay light', async ({ page, remoteGrid }) => {
+                await ensureGridReady(page);
+                await waitForGridContent(page);
+                await expect(page.locator('.ag-chart-tabbed-menu')).toBeVisible();
+
+                expect(await page.evaluate(() => document.documentElement.dataset.agThemeMode)).toBe('light');
+
+                const themes = await remoteGrid(page).getGridOption('chartThemes');
+
+                expect(themes).toBeTruthy();
+                expect(themes!.filter((theme) => theme.endsWith('-dark'))).toEqual([]);
+            });
+        });
+    });
 });
