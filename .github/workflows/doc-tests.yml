@@ -124,7 +124,7 @@ jobs:
         if: steps.pw-cache.outputs.cache-hit != 'true'
         working-directory: documentation/ag-grid-docs
         # Bounded + retried via the shared wrapper; no --with-deps here, so no apt.
-        run: bash "${GITHUB_WORKSPACE}/.github/actions/test-framework-examples/install-playwright.sh" browsers chromium firefox webkit
+        run: bash "${GITHUB_WORKSPACE}/scripts/ci/install-playwright.sh" browsers chromium firefox webkit
 
   test-vanilla:
     needs: initialise

@@ -200,18 +200,16 @@
     "test:interactive:setup:chromium": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npx playwright install --with-deps chromium"],
-        "parallel": false,
-        "cwd": "documentation/ag-grid-docs"
+        "commands": ["{workspaceRoot}/scripts/ci/install-playwright.sh full chromium"],
+        "parallel": false
       },
       "cache": true
     },
     "test:interactive:setup:all": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npx playwright install --with-deps chromium firefox webkit"],
-        "parallel": false,
-        "cwd": "documentation/ag-grid-docs"
+        "commands": ["{workspaceRoot}/scripts/ci/install-playwright.sh full chromium firefox webkit"],
+        "parallel": false
       },
       "cache": true
     },
