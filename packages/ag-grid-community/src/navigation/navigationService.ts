@@ -419,7 +419,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const movedToNextCell = this.tabToNextCellCommon(previous, backwards, keyboardEvent);
 
         const beans = this.beans;
-        const { ctrlsSvc, focusSvc, gos } = beans;
+        const { ctrlsSvc, pageBounds, focusSvc, gos } = beans;
 
         if (movedToNextCell !== false) {
             // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
@@ -434,15 +434,17 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
 
         // if we didn't move to next cell, then need to tab out of the cells, ie to the header (if going
-        // backwards). Reached only when the walk found no cell at all, which can happen from any row -
-        // e.g. a function-valued `editable`, or an entirely suppressNavigable path - so there is
-        // deliberately no first-row check, mirroring the forwards branch below.
+        // backwards)
         if (backwards) {
-            if (gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(beans)) {
-                _focusNextGridCoreContainer(beans, true, 'force');
-            } else {
-                keyboardEvent.preventDefault();
-                focusSvc.focusPreviousFromFirstCell(keyboardEvent);
+            const { rowIndex, rowPinned } = previous.getRowPosition();
+            const firstRow = rowPinned ? rowIndex === 0 : rowIndex === pageBounds.getFirstRow();
+            if (firstRow) {
+                if (gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(beans)) {
+                    _focusNextGridCoreContainer(beans, true, 'force');
+                } else {
+                    keyboardEvent.preventDefault();
+                    focusSvc.focusPreviousFromFirstCell(keyboardEvent);
+                }
             }
         } else {
             // anchor container navigation on the cell when focus is in an editor or renderer child.
