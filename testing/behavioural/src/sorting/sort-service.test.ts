@@ -4,10 +4,10 @@
  * suppressMultiSort, sortingOrder, defaultColDef.sort, and data mutations.
  */
 import { waitFor } from '@testing-library/dom';
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { Column, GridApi, SortModelItem } from 'ag-grid-community';
-import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ColumnMenuModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('SortService', () => {
@@ -1831,34 +1831,6 @@ describe('SortService', () => {
             clickHeader(api, 'n');
             await asyncSetTimeout(0);
             expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-descending-icon']);
-        });
-
-        test('a grid-level sortingOrder change resets the cycle so the next header click continues from the first matching entry', async () => {
-            // Deliberately exercises the deprecated grid-level `sortingOrder` (#306): the deprecation is
-            // what makes this path distinct from `defaultColDef.sortingOrder`, which resets via the colDef.
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
-            const api = gridMgr.createGrid('g', {
-                columnDefs: [{ colId: 'n', field: 'n' }],
-                sortingOrder: ['asc', 'desc', 'asc', null],
-                rowData: signedRowData,
-                getRowId: (p) => p.data.id,
-            });
-
-            // Three clicks land on the repeated 'asc' at index 2, so the cycle position is 2.
-            for (let i = 0; i < 3; ++i) {
-                clickHeader(api, 'n');
-                await asyncSetTimeout(0);
-            }
-            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-ascending-icon']);
-
-            // A new grid-level order in which index 2 is still 'asc' - a retained position would advance
-            // to the trailing 'desc'; only a reset resolves to index 0 and advances to the null entry.
-            api.setGridOption('sortingOrder', ['asc', null, 'asc', 'desc']);
-            await asyncSetTimeout(0);
-
-            clickHeader(api, 'n');
-            await asyncSetTimeout(0);
-            expect(visibleSortIcons(api, 'n')).toEqual([]);
         });
 
         test('a header click after a sort that matches no sortingOrder entry restarts at the first entry', async () => {

@@ -25,19 +25,6 @@ export class SortService extends BeanStub implements NamedBean {
     private opts: SortOption[] | null = null;
     private multi = false;
 
-    public postConstruct(): void {
-        // The grid-level `sortingOrder` is not a colDef, so nothing else clears the per-column cycle
-        // positions it is an index into; a changed order would leave them pointing at the wrong entry.
-        this.addManagedPropertyListener('sortingOrder', () => this.resetCycleIndexes());
-    }
-
-    private resetCycleIndexes(): void {
-        const allCols = this.beans.colModel.getAllCols();
-        for (let i = 0, len = allCols.length; i < len; ++i) {
-            allCols[i].sortCycleIndex = undefined;
-        }
-    }
-
     public override destroy(): void {
         super.destroy();
         this.invalidate();
