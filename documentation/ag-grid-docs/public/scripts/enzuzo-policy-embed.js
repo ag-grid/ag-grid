@@ -1,20 +1,28 @@
 /*
- * Two clean-ups on the Enzuzo cookie-policy embed (AG-18194), both of which have to happen here
- * rather than in CSS or in the markup:
+ * Renders the Enzuzo cookie-policy embed on /cookies/ (AG-18194), doing three things the markup
+ * and CSS cannot do on their own:
  *
- *  1. Drop the vendor's inline <script>s from the injected policy, before they run. See
- *     `stripVendorScripts` — this is what keeps the page free of an uncaught EvalError.
- *  2. Remove the section promoting Enzuzo's own product — "How was this cookie policy generated?" —
+ *  1. Stop the vendor's inline <script>s from executing, before they are inserted. See
+ *     `stripVendorScripts` — this is what keeps the page free of CSP violations and an uncaught
+ *     EvalError.
+ *  2. Inject the vendor loader, once (1) is in place. See `injectLoader`.
+ *  3. Remove the section promoting Enzuzo's own product — "How was this cookie policy generated?" —
  *     whose body carries an outbound link to enzuzo.com. It is vendor marketing sitting in the
  *     middle of our policy copy. CSS cannot reach it: the section is a heading followed by sibling
  *     paragraphs inside an unclassed <div> with no id, and CSS has no previous-sibling selector to
  *     reach the heading from the paragraph that contains the link. Removing the section also removes
  *     the link, so no separate rule is needed for it.
  *
+ * (2) is what makes (1) reliable, and is the whole reason the loader is not simply a second <script>
+ * tag in cookies.astro. The strip only works if the patch is installed before the loader runs, and
+ * as two sibling <script src> tags that ordering is a race this script loses often enough to matter:
+ * on a full page load it has to win a network round trip against the loader's policy fetch (a ~5ms
+ * handicap is enough to lose), and on an Astro client-side navigation ClientRouter re-inserts both
+ * scripts with createElement, which makes them async and drops document order entirely. Injecting
+ * the loader from here makes the ordering structural instead of a matter of timing.
+ *
  * The embed injects its policy asynchronously (a fetch inside the loader script), so wait for the
- * policy root with a MutationObserver rather than assuming it is present at execution time. This
- * script is loaded immediately after the loader and is neither `async` nor `defer`, so it runs
- * while that fetch is still in flight — which is what lets (1) get in ahead of the injection.
+ * policy root with a MutationObserver rather than assuming it is present at execution time.
  *
  * Externalised to a 'self' script (rather than inlined) so the site Content-Security-Policy can
  * keep script-src free of 'unsafe-inline' without needing a per-build hash. Mirrors the pattern in
@@ -22,6 +30,10 @@
  */
 (function () {
     var POLICY_ROOT = '[ez-policy]';
+    // Set by cookies.astro. Named without the substring 'ez-': the vendor loader scans every
+    // <script> on the page and reads any attribute matching /ez-\w+/ as a policy-mode marker,
+    // which would make it mistake this script's own tag for a second policy embed.
+    var LOADER_SRC_ATTR = 'data-policy-loader-src';
     // Matched on text because the section carries no id or class of its own. Compared
     // case-insensitively with punctuation and whitespace collapsed, so light rewording in the
     // Enzuzo console does not silently reintroduce the section.
@@ -66,6 +78,29 @@
         return function restore() {
             Range.prototype.createContextualFragment = original;
         };
+    }
+
+    /**
+     * Append the vendor loader next to this script, which is both what the loader needs (it inserts
+     * the policy as a sibling after its own <script>, so it has to sit inside the wrapper the
+     * content lays out in) and what keeps the fragment patch above ahead of it.
+     *
+     * The tag is located by attribute rather than `document.currentScript` so the lookup holds
+     * however the script came to run, including Astro's client-side re-execution.
+     */
+    function injectLoader() {
+        var host = document.querySelector('script[' + LOADER_SRC_ATTR + ']');
+
+        if (!host) {
+            return;
+        }
+
+        var loader = document.createElement('script');
+        // Kept for the page-verification suite, which asserts the loader lands in the content
+        // wrapper, and matching the id the vendor loader looks for on its own scan.
+        loader.id = '__enzuzo-root-script';
+        loader.src = host.getAttribute(LOADER_SRC_ATTR);
+        host.parentNode.insertBefore(loader, host.nextSibling);
     }
 
     function normalise(text) {
@@ -138,4 +173,7 @@
         observer.disconnect();
         restoreFragments();
     });
+
+    // Last, so that neither the strip nor the observer can be outrun by the policy it injects.
+    injectLoader();
 })();
