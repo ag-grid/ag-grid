@@ -1,4 +1,4 @@
-import { withThemeMode } from './exampleThemeMode';
+import { shouldNavigateExample, withThemeMode } from './exampleThemeMode';
 
 describe('withThemeMode', () => {
     test('appends the dark theme mode when the site is in dark mode', () => {
@@ -28,5 +28,38 @@ describe('withThemeMode', () => {
 
         expect(new URL(withThemeMode(url, true), 'https://ag-grid.invalid').pathname).toBe(url);
         expect(new URL(withThemeMode(url, false), 'https://ag-grid.invalid').pathname).toBe(url);
+    });
+});
+
+describe('shouldNavigateExample', () => {
+    const url = '/examples/grid/vanilla/';
+    const dark = `${url}?agThemeMode=dark-blue`;
+    const light = `${url}?agThemeMode=light`;
+
+    test('navigates when the iframe has not loaded anything yet', () => {
+        expect(shouldNavigateExample({ currentPathname: undefined, url, nextSrc: light })).toBe(true);
+    });
+
+    test('navigates when the example itself changed', () => {
+        expect(
+            shouldNavigateExample({ currentPathname: '/examples/grid/other/', url, nextSrc: light })
+        ).toBe(true);
+    });
+
+    test('does not reload a loaded example when the colour scheme changes', () => {
+        // The loaded document is re-themed in place, so a reload would only lose the example state.
+        expect(shouldNavigateExample({ currentPathname: url, url, nextSrc: dark })).toBe(false);
+    });
+
+    test('re-points an in-flight navigation whose theme mode has been superseded', () => {
+        expect(shouldNavigateExample({ currentPathname: url, url, nextSrc: dark, pendingSrc: light })).toBe(
+            true
+        );
+    });
+
+    test('leaves an in-flight navigation alone when its theme mode still matches', () => {
+        expect(shouldNavigateExample({ currentPathname: url, url, nextSrc: dark, pendingSrc: dark })).toBe(
+            false
+        );
     });
 });

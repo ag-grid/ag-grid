@@ -28,13 +28,22 @@ describe('getIntegratedDarkModeCode', () => {
         });
 
         it('waits for both the grid api and the theme mode before applying the initial themes', () => {
-            expect(code).toContain('if (params.api && themeMode !== undefined)');
+            expect(code).toContain('if (params.api && (themeMode !== undefined || lastTry))');
+            expect(code).toContain('setTimeout(trySetInitial, 250);');
         });
 
         it('registers the color-scheme-change listener before the initial apply, so a change during the retry window is kept', () => {
             expect(code.indexOf("addEventListener('color-scheme-change'")).toBeLessThan(
                 code.indexOf('trySetInitial();')
             );
+        });
+
+        it('falls back to light once the retry budget is spent, so an example that owns its theming still gets themes', () => {
+            // A standalone/downloaded example, or an iframe opting out of dark mode, never receives
+            // `data-ag-theme-mode` at all - waiting for it forever would leave chartThemes unset.
+            expect(code).toContain('const lastTry = tries >= maxTries;');
+            expect(code).toContain('if (params.api && (themeMode !== undefined || lastTry))');
+            expect(code).toContain("updateChartThemes(themeMode !== undefined && themeMode.includes('dark'));");
         });
 
         it('does not push an unchanged theme list, which would re-render the chart', () => {
