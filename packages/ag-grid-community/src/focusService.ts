@@ -697,13 +697,22 @@ export class FocusService extends BeanStub implements NamedBean {
             }
 
             if (column.isSuppressNavigable(rowNode)) {
-                const isRtl = this.gos.get('enableRtl');
-                let key: string;
-                if (!event || event.key === KeyCode.TAB) {
-                    key = isRtl ? KeyCode.LEFT : KeyCode.RIGHT;
-                } else {
-                    key = event.key;
+                const enteringFromTab = !event || event.key === KeyCode.TAB;
+
+                // a horizontal walk cannot leave the entry row, so tabbing in continues the tab walk,
+                // which wraps onto later rows when every cell of the entry row is non-navigable.
+                if (enteringFromTab && !backwards) {
+                    return (
+                        this.navigation?.focusNextTabbableCell({
+                            rowIndex,
+                            column,
+                            rowPinned: rowPinned || null,
+                        }) ?? false
+                    );
                 }
+
+                const isRtl = this.gos.get('enableRtl');
+                const key: string = enteringFromTab ? (isRtl ? KeyCode.LEFT : KeyCode.RIGHT) : event!.key;
 
                 this.beans.navigation?.navigateToNextCell(
                     null,

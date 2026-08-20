@@ -1,4 +1,4 @@
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
@@ -157,6 +157,34 @@ describe('suppressNavigable Navigation', () => {
             const active = document.activeElement as HTMLElement | null;
             expect(active?.classList.contains('ag-header-cell')).toBe(true);
             expect(active?.getAttribute('col-id')).toBe('a');
+        });
+    });
+
+    describe('forwards tab into the grid with a non-navigable first row', () => {
+        // AG-16759: tabbing off the last header cell enters the grid at the FIRST row. When that
+        // row is entirely non-navigable the entry walk must continue onto later rows - a purely
+        // horizontal walk cannot leave the first row, so focus used to be dropped entirely.
+        let api: GridApi<RowData>;
+
+        beforeEach(() => {
+            const columnDefs: ColDef<RowData>[] = [
+                { field: 'a', colId: 'a', suppressNavigable: (params) => params.data?.a === 'a0' },
+                { field: 'b', colId: 'b', suppressNavigable: (params) => params.data?.a === 'a0' },
+            ];
+            api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+            } as GridOptions<RowData>);
+        });
+
+        test('Tab from the last header cell focuses the first navigable cell of a later row', async () => {
+            api.setFocusedHeader('b');
+            await asyncSetTimeout(0);
+
+            dispatchKeyDown(KeyCode.TAB);
+
+            expect(getFocusedRowIndex(api)).toBe(1);
+            expect(getFocusedColId(api)).toBe('a');
         });
     });
 });

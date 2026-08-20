@@ -653,6 +653,26 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
     }
 
+    /**
+     * Focuses the next cell a forwards tab would reach from `position`, skipping non-navigable
+     * cells onto later rows. Used when tabbing into the grid lands on a suppressNavigable cell.
+     * @returns whether a cell was focused.
+     */
+    public focusNextTabbableCell(position: CellPosition): boolean {
+        const nextCell = this.findNextCellToFocusOn(position, { backwards: false, startEditing: false });
+
+        if (nextCell instanceof CellCtrl) {
+            nextCell.focusCell({ forceBrowserFocus: true });
+            return true;
+        }
+
+        if (nextCell) {
+            return this.tryToFocusFullWidthRow(nextCell, false);
+        }
+
+        return false;
+    }
+
     private isCellEditable(cell: CellPosition): boolean {
         const rowNode = this.lookupRowNodeForCell(cell);
 
