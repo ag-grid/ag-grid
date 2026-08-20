@@ -41,11 +41,12 @@
             margin-left: -3.5em;
             margin-right: 1em;
             text-align: right;
-            color: var(--color-util-brand-500);
-            opacity: 0.33;
+            // Overridable by blocks that paint their own palette.
+            color: var(--color-code-line-number, var(--color-util-brand-500));
+            opacity: var(--color-code-line-number-opacity, 0.33);
 
             #{$selector-darkmode} & {
-                color: var(--color-fg-primary);
+                color: var(--color-code-line-number, var(--color-fg-primary));
             }
         }
     }
