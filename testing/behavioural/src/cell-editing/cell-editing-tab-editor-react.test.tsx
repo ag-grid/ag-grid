@@ -554,39 +554,6 @@ describe('Cell Editing: tab into editor in React', () => {
         });
     });
 
-    // With a function-valued `editable`, Shift+Tab out of the only editable cell must tab out to
-    // the header rather than letting the browser focus the row element. React twin of the vanilla guard in
-    // cell-editing-conditional-editing-navigation.test.ts.
-    test('conditional editing: Shift+Tab out of the only editable cell focuses the last header cell', async () => {
-        const { gridDiv, user } = await renderGrid({
-            rowData: [
-                { id: '0', athlete: 'Alice', age: 23, editable: false },
-                { id: '1', athlete: 'Bob', age: 40, editable: false },
-                { id: '2', athlete: 'Carol', age: 31, editable: true },
-            ],
-            columnDefs: [
-                { field: 'athlete', editable: (params: any) => !!params.data?.editable },
-                { field: 'age', editable: (params: any) => !!params.data?.editable },
-            ],
-            modules: [ClientSideRowModelModule, TextEditorModule, NumberEditorModule],
-        });
-
-        const editableCell = getByTestId(gridDiv, agTestIdFor.cell('2', 'athlete'));
-        await user.dblClick(editableCell);
-
-        await waitFor(() => {
-            expect(editableCell.querySelector('.ag-cell-edit-wrapper input')).toBeTruthy();
-        });
-
-        await user.keyboard('{Shift>}{Tab}{/Shift}');
-
-        await waitFor(() => {
-            const active = document.activeElement as HTMLElement;
-            expect(active?.classList.contains('ag-header-cell')).toBe(true);
-            expect(active?.getAttribute('col-id')).toBe('age');
-        });
-    });
-
     describe('editType: fullRow', () => {
         // fullRow: cellStartedEdit is true for the focused cell on initial dblClick
         test('fullRow: cellStartedEdit is true for the focused cell on initial edit', async () => {
