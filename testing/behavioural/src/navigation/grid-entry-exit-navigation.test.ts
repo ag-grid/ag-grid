@@ -125,7 +125,10 @@ describe('Grid entry and exit navigation', () => {
 
         test('Tab from the last header cell skips a non-navigable first column', async () => {
             const api = await createGrid({
-                columnDefs: [{ field: 'a', colId: 'a', suppressNavigable: true }, { field: 'b', colId: 'b' }],
+                columnDefs: [
+                    { field: 'a', colId: 'a', suppressNavigable: true },
+                    { field: 'b', colId: 'b' },
+                ],
             });
             api.setFocusedHeader('b');
             await asyncSetTimeout(0);
