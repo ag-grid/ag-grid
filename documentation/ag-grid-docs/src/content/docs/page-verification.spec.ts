@@ -203,9 +203,17 @@ test.describe('Page Verification', () => {
         await expect(page).toHaveTitle(/Cookies Policy/);
         await expect(page.locator('.site-header')).toBeVisible();
 
+        // Injected by public/scripts/enzuzo-policy-embed.js rather than rendered, so this also
+        // asserts that script ran: without it the policy never loads at all (AG-18194).
         const loader = page.locator('.layout-max-width-small > script#__enzuzo-root-script');
         await expect(loader).toHaveCount(1);
         await expect(loader).toHaveAttribute('src', /^https:\/\/app\.enzuzo\.com\/scripts\/cookies\/[\da-f-]+$/);
+
+        // The vendor policy HTML ships three inline <script>s that the site CSP refuses; the embed
+        // script strips them before insertion. Asserting zero rather than the policy's presence
+        // keeps this off the vendor's availability — if the fetch fails there is simply no policy
+        // and nothing to strip.
+        await expect(page.locator('[ez-policy] script')).toHaveCount(0);
     });
 
     // --- Docs pages ---
