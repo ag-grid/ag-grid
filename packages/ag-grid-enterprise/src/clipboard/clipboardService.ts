@@ -357,8 +357,24 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const rangeRowCount = rangeSvc.getRangeRowCount(cellRange);
         const isRowMultiple = rangeRowCount >= clipboardRowCount && rangeRowCount % clipboardRowCount === 0;
 
-        const clipboardColCount = clipboardData[0].length;
-        const rangeColCount = cellRange.columns.length;
+        // clipboard data can be ragged (e.g. from processDataFromClipboard), so the widest
+        // row determines how many columns the range must provide
+        let clipboardColCount = 0;
+        for (const clipboardDataRow of clipboardData) {
+            const rowLength = clipboardDataRow.length;
+            if (rowLength > clipboardColCount) {
+                clipboardColCount = rowLength;
+            }
+        }
+
+        // the selection column cannot be pasted into, so it does not count towards the range size
+        const rangeColumns = cellRange.columns;
+        let rangeColCount = 0;
+        for (const column of rangeColumns) {
+            if (!isColumnSelectionCol(column)) {
+                rangeColCount++;
+            }
+        }
         const isColMultiple = rangeColCount >= clipboardColCount && rangeColCount % clipboardColCount === 0;
 
         return {
@@ -373,8 +389,18 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         updatedRowNodes: RowNode[],
         changedPath: ChangedPath | undefined
     ) {
+        const { gos } = this.beans;
+        const processCellFromClipboardFunc = gos.getCallback('processCellFromClipboard');
+
+        // If doing CSRM and NOT tree data, group rows are aggregates and read-only by default.
+        const skipGroupRows = this.clientSideRowModel != null && !gos.get('enableGroupEdit') && !gos.get('treeData');
+
         let indexOffset = 0;
         let dataRowIndex = 0;
+
+        // pasting into the selection column is not supported, so it is excluded from the
+        // paste operation while remaining part of the range itself
+        let pasteColumns: AgColumn[] = [];
 
         const rowCallback: RowCallback = (
             currentRow: RowPosition,
@@ -382,6 +408,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             range: CellRange,
             rangeIndex: number
         ) => {
+            if (rangeIndex === 0) {
+                // each range repeats the clipboard data from its first row
+                indexOffset = 0;
+                dataRowIndex = 0;
+                pasteColumns = (range.columns as AgColumn[]).filter((column) => !isColumnSelectionCol(column));
+            }
+
             const atEndOfClipboardData = rangeIndex - indexOffset >= clipboardData.length;
 
             if (atEndOfClipboardData) {
@@ -396,27 +429,22 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
             const currentRowData = clipboardData[rangeIndex - indexOffset];
 
-            // otherwise we are not the first row, so copy
-            updatedRowNodes.push(rowNode);
+            // a skipped row still consumes its position, so the paste stays aligned with the range
+            dataRowIndex++;
 
-            const processCellFromClipboardFunc = this.gos.getCallback('processCellFromClipboard');
-            const columns = range.columns as AgColumn[];
-
-            // remove the selection column (paste into selection is not supported)
-            // this columns should be removed from the paste operation but not
-            // from the range itself.
-            const selectionColIdx = columns.findIndex(isColumnSelectionCol);
-            if (selectionColIdx !== -1) {
-                columns.splice(selectionColIdx, 1);
+            if (currentRowData.length === 0 || this.shouldSkipPasteRow(rowNode, pasteColumns, skipGroupRows)) {
+                return;
             }
 
-            for (let idx = 0; idx < columns.length; idx++) {
-                const column = columns[idx];
+            updatedRowNodes.push(rowNode);
+
+            for (let idx = 0, len = pasteColumns.length; idx < len; idx++) {
+                const column = pasteColumns[idx];
                 if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
                     continue;
                 }
 
-                // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
+                // repeat data for columns we don't have data for - happens when the range is bigger than copied data range
                 let calculatedIdx = idx;
                 if (idx >= currentRowData.length) {
                     calculatedIdx = idx % currentRowData.length;
@@ -426,7 +454,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                     rowNode,
                     column,
                     currentRowData[calculatedIdx],
-                    EXPORT_TYPE_DRAG_COPY,
+                    EXPORT_TYPE_CLIPBOARD,
                     processCellFromClipboardFunc,
                     true
                 );
@@ -438,8 +466,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 const cellId = _createCellId({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
             }
-
-            dataRowIndex++;
         };
 
         this.iterateActiveRanges(rowCallback, false, this.getPreProcessRangeCallback(clipboardData));
