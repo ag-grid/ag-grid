@@ -84,8 +84,30 @@ const filterIgnoredPages = (page: string) => {
  *
  * Check the sitemap locally at `http://localhost:4611/sitemap-0.xml` and `http://localhost:4611/sitemap`
  */
-export function getSitemapConfig({ chartsSitemap, studioSitemap }: { chartsSitemap?: string; studioSitemap?: string }) {
-    const customSitemaps = [...(chartsSitemap ? [chartsSitemap] : []), ...(studioSitemap ? [studioSitemap] : [])];
+/**
+ * SE-85: `blogSitemap` points at Ghost's own sitemap index (/blog/sitemap.xml), merged exactly as
+ * charts and studio are. Referencing Ghost's index rather than copying its URLs means the blog's
+ * entries stay current on their own — a snapshot would go stale the next time a post is published,
+ * which is precisely how the 282-row redirect map fell nine URLs behind the live 291.
+ *
+ * It also leaves each post's real published/modified dates in Ghost's hands. SE-85 is explicit that
+ * the move must not touch them: a bulk re-save would stamp the whole blog with one date and tell
+ * Google every post changed at once.
+ */
+export function getSitemapConfig({
+    chartsSitemap,
+    studioSitemap,
+    blogSitemap,
+}: {
+    chartsSitemap?: string;
+    studioSitemap?: string;
+    blogSitemap?: string;
+}) {
+    const customSitemaps = [
+        ...(chartsSitemap ? [chartsSitemap] : []),
+        ...(studioSitemap ? [studioSitemap] : []),
+        ...(blogSitemap ? [blogSitemap] : []),
+    ];
 
     return {
         customSitemaps,

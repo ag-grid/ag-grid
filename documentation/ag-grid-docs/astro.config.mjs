@@ -134,6 +134,11 @@ const {
     STUDIO_SITEMAP_INDEX_URL,
 
     /**
+     * SE-85: blog sitemap index to merge (Ghost's own /blog/sitemap.xml)
+     */
+    BLOG_SITEMAP_INDEX_URL,
+
+    /**
      * Studio robots.txt disallow json url to merge
      */
     STUDIO_ROBOTS_DISALLOW_JSON_URL,
@@ -279,6 +284,7 @@ export default defineConfig({
                       getSitemapConfig({
                           chartsSitemap: CHARTS_SITEMAP_INDEX_URL,
                           studioSitemap: STUDIO_SITEMAP_INDEX_URL,
+                          blogSitemap: BLOG_SITEMAP_INDEX_URL,
                       })
                   ),
                   agSitemapFilterNoindex({ enabled: PRODUCTION_SITE_URLS.includes(PUBLIC_SITE_URL) }),
