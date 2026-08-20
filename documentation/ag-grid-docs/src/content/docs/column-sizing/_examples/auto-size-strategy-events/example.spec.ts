@@ -9,7 +9,6 @@ function headerWidth(page: Page, colId: string): Promise<number> {
     return width(page.locator(`.ag-header-cell[col-id="${colId}"]`).first());
 }
 
-/** The configured width of every column, so a content fit having run means a column is narrower. */
 const CONFIGURED_WIDTH = 300;
 
 async function waitForInitialFit(page: Page): Promise<void> {
@@ -26,7 +25,6 @@ test.agExample(import.meta, () => {
 
         await page.locator('button.show-country-button').click();
 
-        // sized to content rather than left at its configured width
         await expect(async () => {
             const countryWidth = await headerWidth(page, 'country');
             expect(countryWidth).toBeGreaterThan(0);
@@ -55,7 +53,6 @@ test.agExample(import.meta, () => {
 
         await page.locator('button.add-row-button').click();
 
-        // the added athlete name is far longer than any already in the grid
         await expect(async () => {
             expect(await headerWidth(page, 'athlete')).toBeGreaterThan(before);
         }).toPass();

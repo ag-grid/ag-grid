@@ -35,15 +35,10 @@ interface AutoSizeColumnParams {
     source?: ColumnEventType;
 }
 
-/** the event sources an auto-size strategy run produces itself */
 const STRATEGY_SOURCES: ReadonlySet<string> = new Set<ColumnEventType>(['autosizeColumns', 'sizeColumnsToFit']);
 
 const STRATEGY_RERUN_DEBOUNCE_MS = 50;
 
-/**
- * Only `source` is read - the strategy re-runs whatever the triggering event was. `type` is here
- * because an all-optional shape is a weak type, which no concrete event would be assignable to.
- */
 interface StrategyTriggerEvent {
     type: string;
     source?: string;
@@ -58,27 +53,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private timesDelayed = 0;
 
     private strategyRunPending = false;
-    /**
-     * True until the setup application of the strategy has run - the width strategies are applied once
-     * the initial columns are loaded, `fitCellContents` on `firstDataRendered`. A re-run requested while
-     * that application is still to come is held for it rather than run,
-     * so lifecycle events in `events` - the initial `modelUpdated`, say - do not size the columns a
-     * second time during startup. Tracking the outstanding application rather than comparing timers
-     * keeps that correct however long setup takes.
-     */
     private strategySetupPending = false;
-    /**
-     * A re-run which is wanted but has not been applied: held until the setup application covers it,
-     * or until the grid has a width to serve it with. Held rather than dropped because a grid in a
-     * hidden tab reports no width, and the request would otherwise be lost until the next configured
-     * event happened to fire.
-     */
     private strategyRunRequested = false;
-    /**
-     * Set while a strategy run is sizing columns. Resizing changes which columns fall inside the
-     * viewport, and the resulting `virtualColumnsChanged` carries no source to recognise the run by -
-     * ignoring every trigger raised inside the run stops it feeding itself.
-     */
     private strategyRunInFlight = false;
     private readonly reRunStrategyDebounced = _debounce(this, () => this.reRunStrategy(), STRATEGY_RERUN_DEBOUNCE_MS);
 
@@ -93,9 +69,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         if (autoSizeStrategy) {
             let shouldHideColumns = false;
             const type = autoSizeStrategy.type;
-            // each strategy is applied once as part of setup, and only the branches below arrange
-            // that - width strategies from `columnModel` once the initial columns are loaded,
-            // `fitCellContents` on `firstDataRendered`
             if (type === 'fitGridWidth' || type === 'fitProvidedWidth') {
                 this.strategySetupPending = true;
                 shouldHideColumns = true;
@@ -123,21 +96,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
 
         const onEvent = (event: StrategyTriggerEvent) => {
-            // a strategy run resizes columns, which re-enters this listener when the configured
-            // events include a sizing event such as `columnResized` - ignoring the sources the
-            // strategy itself uses stops that feedback loop
             if (event.source && STRATEGY_SOURCES.has(event.source)) {
                 return;
             }
-            // the same loop through an event which carries no source to recognise, `virtualColumnsChanged`
-            // above all: the run raised it, so it is not news the run has yet to account for
             if (this.strategyRunInFlight) {
                 return;
             }
             this.strategyRunRequested = true;
-            // the setup application still to come runs after this event, and covers it. The request
-            // stays held rather than being dropped, so that a setup application which cannot size -
-            // a grid started in a hidden tab - leaves it for `gridSizeChanged` to serve
             if (this.strategySetupPending) {
                 return;
             }
@@ -149,12 +114,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
         this.addManagedEventListeners(handlers);
 
-        // a grid which gains a width serves whatever request is being held for one
         this.addManagedEventListeners({
             gridSizeChanged: () => {
                 if (this.strategyRunRequested && !this.strategySetupPending) {
-                    // through the debounce, so that a `gridSizeChanged` which is itself configured
-                    // serves the held request and its own trigger with a single run
                     this.reRunStrategyDebounced();
                 }
             },
@@ -162,24 +124,14 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     private reRunStrategy(): void {
-        // a background tab never services its animation frames, so without this every debounce
-        // window spent hidden would queue another run, all firing at once when the tab is revealed
         if (this.strategyRunPending) {
             return;
         }
         const strategy = this.gos.get('autoSizeStrategy');
-        // a grid with no width - one in a hidden tab, say - cannot serve a re-run: `fitGridWidth`
-        // would collapse the columns onto their minimums and start a `sizeColumnsToFitGridBody` retry
-        // cascade for every run that piles up, and `fitCellContents` measures cells which are laid
-        // out at no width, so it silently sizes nothing. The request is held instead, for
-        // `gridSizeChanged` to serve once there is a width. `fitProvidedWidth` takes its width from
-        // the option rather than the grid, so it is served either way.
         if (strategy && strategy.type !== 'fitProvidedWidth' && getAvailableWidth(this.beans) <= 0) {
             return;
         }
         this.strategyRunPending = true;
-        // wait a frame so frameworks which render asynchronously have painted the changes
-        // caused by the triggering event before we measure
         _requestAnimationFrame(this.beans, () => {
             this.strategyRunPending = false;
             const strategy = this.gos.get('autoSizeStrategy');
@@ -731,16 +683,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.applyStrategyWhenSettled(strategy);
     }
 
-    /** Applies the strategy once the grid has settled, revealing the columns it hid to do so. */
     private applyStrategyWhenSettled(strategy: AutoSizeStrategy): void {
         setTimeout(() => {
             if (!this.isAlive()) {
                 return;
             }
             const type = strategy.type;
-            // this application is what a re-run requested during setup was waiting on, so it clears
-            // the request - unless it had no width to size with, in which case the columns it just
-            // sized are no better off than before and the request is left for `gridSizeChanged`
             const served = type === 'fitProvidedWidth' || getAvailableWidth(this.beans) > 0;
             this.strategySetupPending = false;
             this.applyStrategy(strategy);
