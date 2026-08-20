@@ -711,8 +711,11 @@ export function getIntegratedDarkModeCode(
 }
 
 const darkModeTs = `
-        const isInitialModeDark = document.documentElement.dataset.agThemeMode?.includes("dark");
-                  
+        // Read the theme mode at apply time, not at module time: the example runner applies
+        // 'data-ag-theme-mode' before this module runs, but the browser-transpiled preview path
+        // imports the entry later, so the attribute may not be there yet on the first attempt.
+        const readThemeMode = (): string | undefined => document.documentElement.dataset.agThemeMode;
+
         // update chart themes based on dark mode status
         const updateChartThemes = (isDark: boolean): void => {
             const themes: string[] = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
@@ -723,27 +726,15 @@ const darkModeTs = `
                 ? (isDark ? ['my-custom-theme-dark', 'my-custom-theme-light'] : ['my-custom-theme-light', 'my-custom-theme-dark'])
                 : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));                      
 
+            // no-op when nothing changed, so a repeated push cannot re-render the chart
+            if (currentThemes && currentThemes.length === modifiedThemes.length && currentThemes.every((theme, i) => theme === modifiedThemes[i])) {
+                return;
+            }
+
             // updating the 'chartThemes' grid option will cause the chart to reactively update!
             params.api.setGridOption('chartThemes', modifiedThemes);
         };
         
-        // update chart themes when example first loads
-        let initialSet = false;
-        const maxTries = 5;
-        let tries = 0;
-        const trySetInitial = (delay) => {
-            if(params.api){
-                initialSet = true;
-                updateChartThemes(isInitialModeDark);
-            }else{
-                if(tries < maxTries){
-                    setTimeout(() => trySetInitial(), 250);
-                    tries++;
-                }   
-            }
-        }
-        trySetInitial(0);
-                      
         interface ColorSchemeChangeEventDetail {
             darkMode: boolean;
         }
@@ -755,12 +746,30 @@ const darkModeTs = `
         }
         
         // listen for user-triggered dark mode changes (not removing listener is fine here!)
-        document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);                
+        // registered before the initial apply, so a change landing during the retry window is kept
+        document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);
+
+        // apply the initial themes once both the grid api and the theme mode are available
+        const maxTries = 5;
+        let tries = 0;
+        const trySetInitial = (): void => {
+            const themeMode = readThemeMode();
+            if (params.api && themeMode !== undefined) {
+                updateChartThemes(themeMode.includes('dark'));
+            } else if (tries < maxTries) {
+                tries++;
+                setTimeout(trySetInitial, 250);
+            }
+        };
+        trySetInitial();
     `;
 
 const darkModeJS = `
-        const isInitialModeDark = document.documentElement.dataset.agThemeMode?.includes("dark");
-      
+        // Read the theme mode at apply time, not at module time: the example runner applies
+        // 'data-ag-theme-mode' before this module runs, but the browser-transpiled preview path
+        // imports the entry later, so the attribute may not be there yet on the first attempt.
+        const readThemeMode = () => document.documentElement.dataset.agThemeMode;
+
         const updateChartThemes = (isDark) => { 
             const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
             const currentThemes = params.api.getGridOption('chartThemes');                    
@@ -770,26 +779,14 @@ const darkModeJS = `
                 ? (isDark ? ['my-custom-theme-dark', 'my-custom-theme-light'] : ['my-custom-theme-light', 'my-custom-theme-dark'])
                 : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));                      
 
+            // no-op when nothing changed, so a repeated push cannot re-render the chart
+            if (currentThemes && currentThemes.length === modifiedThemes.length && currentThemes.every((theme, i) => theme === modifiedThemes[i])) {
+                return;
+            }
+
             // updating the 'chartThemes' grid option will cause the chart to reactively update!
             params.api.setGridOption('chartThemes', modifiedThemes);
         };
-
-        // update chart themes when example first loads
-        let initialSet = false;
-        const maxTries = 5;
-        let tries = 0;
-        const trySetInitial = (delay) => {
-            if(params.api){
-                initialSet = true;
-                updateChartThemes(isInitialModeDark);
-            }else{
-                if(tries < maxTries){
-                    setTimeout(() => trySetInitial(), 250);
-                    tries++;
-                }   
-            }
-        }
-        trySetInitial(0);
 
         const handleColorSchemeChange = (event) => {
             const { darkMode } = event.detail;
@@ -797,7 +794,22 @@ const darkModeJS = `
         }
 
         // listen for user-triggered dark mode changes (not removing listener is fine here!)
+        // registered before the initial apply, so a change landing during the retry window is kept
         document.addEventListener('color-scheme-change', handleColorSchemeChange);
+
+        // apply the initial themes once both the grid api and the theme mode are available
+        const maxTries = 5;
+        let tries = 0;
+        const trySetInitial = () => {
+            const themeMode = readThemeMode();
+            if (params.api && themeMode !== undefined) {
+                updateChartThemes(themeMode.includes('dark'));
+            } else if (tries < maxTries) {
+                tries++;
+                setTimeout(trySetInitial, 250);
+            }
+        };
+        trySetInitial();
     `;
 
 export function wrapTearDownExample(method: string) {

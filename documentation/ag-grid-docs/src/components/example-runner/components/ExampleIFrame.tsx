@@ -1,11 +1,13 @@
 import { EXAMPLE_RELOADING_MESSAGE_TYPE } from '@ag-website-shared/components/loading-logo/messages';
 import { useIntersectionObserver } from '@ag-website-shared/utils/hooks/useIntersectionObserver';
+import { getDarkmode } from '@stores/darkmodeStore';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import { type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 
 import styles from './ExampleIFrame.module.scss';
 import exampleRuntimeInjectedStyles from './exampleRuntimeInjectedStyles';
+import { withThemeMode } from './exampleThemeMode';
 
 interface Props {
     title: string;
@@ -67,8 +69,10 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
             window.postMessage({ type: EXAMPLE_RELOADING_MESSAGE_TYPE, loadingIFrameId });
         }
 
-        iFrameRef.current.src = url;
-    }, [isIntersecting, url, isScrolling, loadingIFrameId]);
+        // `darkMode` is undefined until the store has hydrated, so fall back to reading it
+        // synchronously — the example must be navigated to with the colour scheme already known.
+        iFrameRef.current.src = withThemeMode(url, darkMode ?? getDarkmode(), suppressDarkMode);
+    }, [isIntersecting, url, isScrolling, loadingIFrameId, darkMode, suppressDarkMode]);
 
     // when dark mode is changed, applies it to the iframe.
     useEffect(() => {
