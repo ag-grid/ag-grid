@@ -5,7 +5,7 @@
 # the redirect is a single hop.
 
 # --- SE-30 ---
-www	/introducing-the-ag-grid-model-context-protocol-mcp-server/	301	https://blog.ag-grid.com/introducing-the-ag-grid-model-context-protocol-mcp-server/
+www	/introducing-the-ag-grid-model-context-protocol-mcp-server/	301	https://www.ag-grid.com/blog/introducing-the-ag-grid-model-context-protocol-mcp-server/
 
 # --- SE-60 (grid; the /charts/* ones are asserted in the charts section) ---
 www	/javascript-data-grid/grouping-sticky-groups/	301	/javascript-data-grid/grouping-display-types/
@@ -77,3 +77,255 @@ www	/campaigns/beyond-the-prompt/	301	/community/beyond-the-prompt/
 www	/angular-data-grid/getting-started/	200
 www	/react-data-grid/cell-editing/	200
 www	/charts/react/bar-series/	200
+
+# ── SE-91/SE-86: blog.ag-grid.com -> www.ag-grid.com/blog/ ────────────────────────────
+# Every row asserts the SINGLE response, so a Location holding the FINAL target is proof
+# of a single hop. Ordering bugs in the rule block show up here as a Location pointing at
+# an intermediate slug (which Ghost would then redirect again).
+# The catch-all: any sitemap URL, host+prefix swap only
+blog	/whats-new-in-ag-grid-35-3/	301	https://www.ag-grid.com/blog/whats-new-in-ag-grid-35-3/
+blog	/tag/react-data-grid/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/author/adam/	301	https://www.ag-grid.com/blog/author/adam/
+# Published after the 282-row map was built — proves the catch-all does not go stale
+blog	/whats-new-in-ag-grid-36-1/	301	https://www.ag-grid.com/blog/whats-new-in-ag-grid-36-1/
+blog	/redefining-embedded-analytics-with-ag-studio/	301	https://www.ag-grid.com/blog/redefining-embedded-analytics-with-ag-studio/
+# Live posts absent from the sitemap — a sitemap-derived map misses these entirely
+blog	/reducing-angular-library-contributions-to-the-main-bundle/	301	https://www.ag-grid.com/blog/reducing-angular-library-contributions-to-the-main-bundle/
+# Spam target: 410, never a redirect
+blog	/whats-new-in-ag-grid-v24/	410
+# The nine redirects.json sources that are NOT in the sitemap — each must reach its FINAL
+# slug, not /blog/<old-slug>, or Ghost adds a second hop
+blog	/tag/react	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/conferences-ag-grid-amsterdam-june-2022/	301	https://www.ag-grid.com/blog/js-nation-and-react-summit-june-2022-overview/
+blog	/getting-more-from-your-datagrid-introducing-adaptable/	301	https://www.ag-grid.com/blog/adaptable-tools-demo-and-interview/
+blog	/javascript-grid-comparison-column-pinning-ag-grid/	301	https://www.ag-grid.com/blog/heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition/
+blog	/whats-new-in-ag-studio-2/	301	https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/
+blog	/whats-new-in-ag-studio-2-1/	301	https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-1-javascript-embedded-analytics/
+# Leaves the blog entirely — target is a main-site docs page
+blog	/angular-2-0-web-components-and-ag-grid/	301	https://www.ag-grid.com/angular-data-grid/getting-started/
+# The /amp/ overlap: explicit entry must beat the generic /amp/ rule. Both go to the same
+# final post, so a wrong precedence shows as /blog/integrated-charts-community-vs-enterprise/
+blog	/integrated-charts-community-vs-enterprise/amp/	301	https://www.ag-grid.com/blog/enhancing-ag-grid-enterprise-with-ag-charts-enterprise/
+blog	/integrated-charts-community-vs-enterprise/	301	https://www.ag-grid.com/blog/enhancing-ag-grid-enterprise-with-ag-charts-enterprise/
+# Generic /amp/ strip, for a post with no explicit entry
+blog	/whats-new-in-ag-grid-35-3/amp/	301	https://www.ag-grid.com/blog/whats-new-in-ag-grid-35-3/
+# Off-sitemap, from backlink data
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/vuestic-ui-app-with-ag-grid-tutorial/	301	https://epicmax.co/blog/vuestic-ui-with-ag-grid
+# Hotlinked images — one pattern, so a sample suffices
+blog	/content/images/size/w256h256/2021/02/200pxArtboard-5.png	301	https://www.ag-grid.com/blog/content/images/size/w256h256/2021/02/200pxArtboard-5.png
+# Pagination, feeds, sitemap — live but in no sitemap
+blog	/page/2/	301	https://www.ag-grid.com/blog/page/2/
+blog	/tag/react-data-grid/page/2/	301	https://www.ag-grid.com/blog/tag/react-data-grid/page/2/
+blog	/rss/	301	https://www.ag-grid.com/blog/rss/
+blog	/author/adam/rss/	301	https://www.ag-grid.com/blog/author/adam/rss/
+blog	/sitemap-posts.xml	301	https://www.ag-grid.com/blog/sitemap-posts.xml
+# Off-sitemap and already dead on both hosts — 410, decided 2026-08-20
+blog	/ag-grid-vs-datatables/	410
+blog	/showcase/	301	https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/
+blog	/using-playwright-to-test-ag-grid-react-apps/	301	https://www.ag-grid.com/blog/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/
+blog	/using-ag-grid-with-react-and-next-js/	301	https://www.ag-grid.com/blog/using-ag-grid-with-next-js-to-build-a-react-table/
+# --- SE-86 defect fixes (2026-08-21) ---
+# 1. The /amp/ form of a renamed slug must reach the FINAL slug in one hop. Without the
+# optional /amp/ suffix on the rename rules these fall to the generic /amp/ rule and the
+# Location is the intermediate /blog/<old-slug>, which Ghost then redirects again.
+blog	/showcase/amp/	301	https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/
+blog	/using-playwright-to-test-ag-grid-react-apps/amp/	301	https://www.ag-grid.com/blog/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/
+blog	/using-ag-grid-with-react-and-next-js/amp/	301	https://www.ag-grid.com/blog/using-ag-grid-with-next-js-to-build-a-react-table/
+# Same suffix, applied to the whole redirects.json group rather than the three slugs QA found
+blog	/conferences-ag-grid-amsterdam-june-2022/amp/	301	https://www.ag-grid.com/blog/js-nation-and-react-summit-june-2022-overview/
+blog	/angular-2-0-web-components-and-ag-grid/amp/	301	https://www.ag-grid.com/angular-data-grid/getting-started/
+# The /amp/ form must not tunnel past a 410 either
+blog	/whats-new-in-ag-grid-v24/amp/	410
+blog	/ag-grid-vs-datatables/amp/	410
+# 2. Fourth rename: "condtional" (old, typo) -> "conditional" (live)
+blog	/condtional-formatting-for-cells-in-ag-grid/	301	https://www.ag-grid.com/blog/conditional-formatting-for-cells-in-ag-grid/
+blog	/condtional-formatting-for-cells-in-ag-grid/amp/	301	https://www.ag-grid.com/blog/conditional-formatting-for-cells-in-ag-grid/
+# 3. Ghost's private-site route: straight to the blog index, so no 302 in the chain
+blog	/private/	301	https://www.ag-grid.com/blog/
+# ag-studio 2.0: both -2 and -2-0 must reach the full slug, not /blog/whats-new-in-ag-studio-2-0/ (404)
+blog	/whats-new-in-ag-studio-2/	301	https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/
+blog	/whats-new-in-ag-studio-2-0/	301	https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/
+blog	/whats-new-in-ag-studio-2-0/amp/	301	https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/
+# 4. Retired tags. Synonyms of a surviving tag are mapped; the other 31 are 410
+blog	/tag/angular-grid/	301	https://www.ag-grid.com/blog/tag/angular/
+blog	/tag/angular-table/	301	https://www.ag-grid.com/blog/tag/angular/
+blog	/tag/react-grid/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/react-table/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/vue-grid/	301	https://www.ag-grid.com/blog/tag/vuejs/
+blog	/tag/vue-table/	301	https://www.ag-grid.com/blog/tag/vuejs/
+blog	/tag/enzyme/	301	https://www.ag-grid.com/blog/tag/testing/
+# PR 14926 [P1]: the /amp/ form of a tag rule must not fall to the generic /amp/ rule,
+# which strips /amp/ and 301s onto /blog/tag/<retired>/ -- a 404.
+blog	/tag/angular-grid/amp/	301	https://www.ag-grid.com/blog/tag/angular/
+blog	/tag/react-table/amp/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/vue-grid/amp/	301	https://www.ag-grid.com/blog/tag/vuejs/
+blog	/tag/jest/amp/	301	https://www.ag-grid.com/blog/tag/testing/
+blog	/tag/redux/amp/	410
+blog	/tag/sorting/amp/	410
+# PR 14926 [P2]: pagination and feed variants of a retired tag must not bypass the tag
+# rules onto a dead /blog/tag/<retired>/... destination.
+blog	/tag/redux/page/2/	410
+blog	/tag/redux/rss/	410
+blog	/tag/sorting/page/3/	410
+# Synonyms: pagination goes to the surviving tag ROOT (vuejs and testing have no page 2),
+# feeds go to the surviving tag's feed.
+blog	/tag/angular-grid/page/2/	301	https://www.ag-grid.com/blog/tag/angular/
+blog	/tag/react-table/page/5/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/vue-grid/page/2/	301	https://www.ag-grid.com/blog/tag/vuejs/
+blog	/tag/angular-grid/rss/	301	https://www.ag-grid.com/blog/tag/angular/rss/
+blog	/tag/jest/rss/	301	https://www.ag-grid.com/blog/tag/testing/rss/
+# PR 14926 [P2b]: the pre-existing tag/react alias needed the same treatment.
+blog	/tag/react/rss/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+blog	/tag/react/page/2/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/react/amp/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+# Regression: react-data-grid itself must not be swallowed by the tag/react rule.
+blog	/tag/react-data-grid/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/react-data-grid/rss/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+# Regression: a SURVIVING tag's pagination and feed must still take the generic rules.
+blog	/tag/angular/page/2/	301	https://www.ag-grid.com/blog/tag/angular/page/2/
+blog	/tag/angular/rss/	301	https://www.ag-grid.com/blog/tag/angular/rss/
+blog	/tag/jest/	301	https://www.ag-grid.com/blog/tag/testing/
+blog	/tag/redux/	410
+blog	/tag/sorting/	410
+blog	/tag/vuex/	410
+blog	/tag/row-styling/	410
+blog	/tag/server-side-row-model/	410
+# A surviving tag must still take the catch-all, not the 410 list
+blog	/tag/themes-styles/	301	https://www.ag-grid.com/blog/tag/themes-styles/
+
+# SE-93 adversarial variant-suffix audit. A 410 must reject every shape under the slug:
+# matching only an enumerated suffix set let /feed/, stacked suffixes and case variants
+# 301 out to www, where the blog's own case-normalising redirect delivered the LIVE page
+# (verified in production: blog/WHATS-NEW-IN-AG-GRID-V24/ -> 200 in two hops).
+blog	/whats-new-in-ag-grid-v24/feed/	410
+blog	/whats-new-in-ag-grid-v24/rss/	410
+blog	/whats-new-in-ag-grid-v24/page/2/	410
+blog	/whats-new-in-ag-grid-v24/amp/amp/	410
+blog	/whats-new-in-ag-grid-v24/comment-page-1/	410
+blog	/WHATS-NEW-IN-AG-GRID-V24/	410
+blog	/Whats-New-In-AG-Grid-v24/	410
+blog	/ag-grid-vs-datatables/feed/	410
+blog	/ag-grid-vs-datatables/amp/amp/	410
+blog	/Ag-Grid-Vs-DataTables/	410
+blog	/tag/redux/feed/	410
+blog	/tag/redux/rss/amp/	410
+blog	/tag/redux/page/2/amp/	410
+blog	/tag/redux/page/2/rss/	410
+blog	/tag/redux/amp/amp/	410
+blog	/tag/Redux/	410
+blog	/tag/REDUX/	410
+blog	/tag/web-development/feed/	410
+
+# tag/react is a renamed tag: /rss, /feed and /page/N must land on the NEW slug, not the
+# dead pre-rename one (previously 301'd to /blog/tag/react/rss/, a 404).
+blog	/tag/react/rss/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+blog	/tag/react/feed/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+blog	/tag/react/page/2/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/react/amp/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+
+# The WordPress-era feed suffix is /feed; it must reach the new slug's /rss in one hop
+# rather than 301 onto the dead old slug and then through the blog's /feed -> /rss hop.
+blog	/tag/react-grid/feed/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+blog	/tag/angular-table/feed/	301	https://www.ag-grid.com/blog/tag/angular/rss/
+blog	/tag/vue-grid/feed/	301	https://www.ag-grid.com/blog/tag/vuejs/rss/
+blog	/tag/enzyme/feed/	301	https://www.ag-grid.com/blog/tag/testing/rss/
+# /feed on a SURVIVING tag/author, and the site feed, must go straight to /rss -- mapping
+# feed -> feed cost a second hop via Ghost's own feed->rss redirect (verified 2 hops live).
+blog	/feed/	301	https://www.ag-grid.com/blog/rss/
+blog	/tag/angular/feed/	301	https://www.ag-grid.com/blog/tag/angular/rss/
+blog	/author/sean/feed/	301	https://www.ag-grid.com/blog/author/sean/rss/
+# rss forms must be unchanged by that split.
+blog	/rss/	301	https://www.ag-grid.com/blog/rss/
+blog	/tag/angular/rss/	301	https://www.ag-grid.com/blog/tag/angular/rss/
+blog	/author/sean/rss/	301	https://www.ag-grid.com/blog/author/sean/rss/
+# A RewriteRule pattern is case-sensitive unless the RULE carries [NC] -- the flag does
+# NOT inherit from the preceding RewriteCond. Without it a case variant fell to the
+# catch-all and reached the right page only via www's case-normalising redirect (3 hops).
+blog	/Showcase/	301	https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/
+blog	/Tag/React/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/Vuestic-UI-App-With-AG-Grid-Tutorial/	301	https://epicmax.co/blog/vuestic-ui-with-ag-grid
+blog	/CONDTIONAL-FORMATTING-FOR-CELLS-IN-AG-GRID/	301	https://www.ag-grid.com/blog/conditional-formatting-for-cells-in-ag-grid/
+# /private/amp/ previously routed via the generic /amp/ rule onto /blog/private/, which
+# Ghost answers with a 302 -- a 302 in the chain, which SE-86 rules out.
+blog	/private/amp/	301	https://www.ag-grid.com/blog/
+
+# vuestic was the one renamed-slug source missing the optional /amp, so the amp variant
+# 301'd to /blog/vuestic-.../ instead of the off-site destination the bare slug uses.
+blog	/vuestic-ui-app-with-ag-grid-tutorial/amp/	301	https://epicmax.co/blog/vuestic-ui-with-ag-grid
+
+# Guard the widened 410 patterns against over-matching neighbouring live slugs.
+blog	/tag/react-data-grid/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/data-grid-and-more/	301	https://www.ag-grid.com/blog/tag/data-grid-and-more/
+blog	/whats-new-in-ag-grid-v24-part-2/	301	https://www.ag-grid.com/blog/whats-new-in-ag-grid-v24-part-2/
+blog	/tag/statement/	301	https://www.ag-grid.com/blog/tag/statement/
+
+# Exhaustive WordPress-era + retired-post coverage. Every /index.php/ and bare dated path
+# in the Wayback archive (26 of them) with its target status-verified against production,
+# plus the retired posts and infrastructure endpoints declared Gone.
+blog	/2018/08/13/get-started-with-angular-grid-in-5-minutes	301	https://www.ag-grid.com/blog/get-started-with-angular-grid-in-5-minutes/
+blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/index.php/2018/06/26/a-plain-english-introduction-to-json-web-tokens-jwt-what-it-is-and-what-it-isnt/	301	https://www.ag-grid.com/blog/a-plain-english-introduction-to-json-web-tokens-jwt-what-it-is-and-what-it-isnt/
+blog	/index.php/2018/07/23/using-angular-forms-with-ag-grid/	301	https://www.ag-grid.com/blog/using-angular-forms-with-ag-grid/
+blog	/index.php/2018/08/07/get-started-with-react-grid-in-5-minutes/	301	https://www.ag-grid.com/blog/react-get-started-with-react-grid-in-5-minutes/
+blog	/index.php/2018/08/13/get-started-with-angular-grid-in-5-minutes/	301	https://www.ag-grid.com/blog/get-started-with-angular-grid-in-5-minutes/
+blog	/index.php/2018/08/15/get-started-with-javascript-grid-in-5-minutes/	301	https://www.ag-grid.com/blog/get-started-with-javascript-grid-in-5-minutes/
+blog	/index.php/2018/09/07/introducing-version-19-of-ag-grid	301	https://www.ag-grid.com/blog/introducing-version-19-of-ag-grid/
+blog	/index.php/2018/09/07/introducing-version-19-of-ag-grid/	301	https://www.ag-grid.com/blog/introducing-version-19-of-ag-grid/
+blog	/index.php/2018/10/16/customise-react-grid/	301	https://www.ag-grid.com/blog/learn-to-customize-react-grid-in-less-than-10-minutes/
+blog	/index.php/2018/10/30/customize-angular-grid/	301	https://www.ag-grid.com/blog/learn-to-customize-angular-grid-in-less-than-10-minutes/
+blog	/index.php/2018/10/30/customize-javascript-grid/	301	https://www.ag-grid.com/blog/learn-to-customize-javascript-grid-in-less-than-10-minutes/
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/feed/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/index.php/author/maxkoretskyi/	301	https://www.ag-grid.com/blog/author/maxkoretskyi/
+blog	/index.php/category/angular	301	https://www.ag-grid.com/blog/tag/angular/
+blog	/index.php/category/angular/	301	https://www.ag-grid.com/blog/tag/angular/
+blog	/index.php/category/javascript	301	https://www.ag-grid.com/blog/tag/javascript/
+blog	/index.php/category/javascript/	301	https://www.ag-grid.com/blog/tag/javascript/
+blog	/index.php/category/react/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/index.php/comments/feed/	301	https://www.ag-grid.com/blog/rss/
+blog	/index.php/feed/	301	https://www.ag-grid.com/blog/rss/
+blog	/index.php/page/2/	301	https://www.ag-grid.com/blog/page/2/
+blog	/index.php/wp-json/	410
+blog	/index.php/wp-json/oembed/1.0/embed	410
+blog	/avoiding-react-18-double-mount/	410
+blog	/avoiding-react-18-double-mount/amp/	410
+blog	/email-sign-up/	410
+blog	/5-tips-for-fixing-a-memory-leak-in-angular/	410
+blog	/angular-nations-ag-grid-music-video/	410
+blog	/deleting-selected-rows-and-cell-ranges-via-key-press/	410
+blog	/untitled/	410
+blog	/wp-includes/wlwmanifest.xml	410
+blog	/wp-content/plugins/ultimate-social-media-icons/	410
+blog	/rsslatest.xml	410
+blog	/.well-known/nodeinfo	410
+blog	/.ghost/activitypub/nodeinfo/2.1	410
+# PR 14931 [P2]: the non-greedy capture swallowed a /feed suffix, landing on
+# /blog/<slug>/feed/ (a 404); and /index.php/tag/react/ took a second hop through
+# the renamed tag. Both must now resolve in a single hop.
+blog	/index.php/2018/08/13/get-started-with-angular-grid-in-5-minutes/feed/	301	https://www.ag-grid.com/blog/get-started-with-angular-grid-in-5-minutes/
+blog	/2018/08/13/get-started-with-angular-grid-in-5-minutes/feed/	301	https://www.ag-grid.com/blog/get-started-with-angular-grid-in-5-minutes/
+blog	/index.php/tag/react/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+# regressions: a non-renamed tag and a plain dated post must be unaffected
+blog	/index.php/tag/angular/	301	https://www.ag-grid.com/blog/tag/angular/
+blog	/index.php/2018/07/23/using-angular-forms-with-ag-grid/	301	https://www.ag-grid.com/blog/using-angular-forms-with-ag-grid/
+# PR 14931 [P2 #3]: /feed/ variants of the RENAMED slugs must reach the new slug, not
+# fall to the generic rule which strips /feed but keeps the obsolete slug (a 404).
+blog	/index.php/2018/10/30/customize-angular-grid/feed/	301	https://www.ag-grid.com/blog/learn-to-customize-angular-grid-in-less-than-10-minutes/
+blog	/index.php/2018/10/16/customise-react-grid/feed/	301	https://www.ag-grid.com/blog/learn-to-customize-react-grid-in-less-than-10-minutes/
+blog	/index.php/2018/08/07/get-started-with-react-grid-in-5-minutes/feed/	301	https://www.ag-grid.com/blog/react-get-started-with-react-grid-in-5-minutes/
+blog	/index.php/2018/10/30/customize-javascript-grid/feed/	301	https://www.ag-grid.com/blog/learn-to-customize-javascript-grid-in-less-than-10-minutes/
+# PR 14932 [P2]: the fifth renamed-slug remap carries TWO adjacent optional groups,
+# (?:-in-react)?(?:/feed)?. Full variant matrix below. The bare-dated forms are the
+# ones that actually exercise this rule -- the /index.php/ forms are caught earlier
+# by the unanchored legacy inside-fiber rule, so on their own they prove nothing.
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm/feed/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/feed/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm/feed/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/feed/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+

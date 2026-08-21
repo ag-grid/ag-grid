@@ -87,17 +87,17 @@
                                 },
                                 {
                                     "title": "Playwright",
-                                    "url": "https://blog.ag-grid.com/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/",
+                                    "url": "https://www.ag-grid.com/blog/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/",
                                     "frameworks": ["react"]
                                 },
                                 {
                                     "title": "Cypress",
-                                    "url": "https://blog.ag-grid.com/end-to-end-testing-for-ag-grid-in-react-with-cypress/",
+                                    "url": "https://www.ag-grid.com/blog/end-to-end-testing-for-ag-grid-in-react-with-cypress/",
                                     "frameworks": ["react"]
                                 },
                                 {
                                     "title": "React Testing Library",
-                                    "url": "https://blog.ag-grid.com/unit-testing-ag-grid-react-tables-with-react-testing-library-and-vitest/",
+                                    "url": "https://www.ag-grid.com/blog/unit-testing-ag-grid-react-tables-with-react-testing-library-and-vitest/",
                                     "frameworks": ["react"]
                                 }
                             ]

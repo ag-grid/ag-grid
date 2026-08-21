@@ -13,10 +13,10 @@
     },
     {
         "icon": "blog",
-        "url": "https://blog.ag-grid.com"
+        "url": "https://www.ag-grid.com/blog/"
     },
     {
         "icon": "email",
-        "url": "https://blog.ag-grid.com/newsletter"
+        "url": "https://www.ag-grid.com/blog/newsletter/"
     }
 ]
