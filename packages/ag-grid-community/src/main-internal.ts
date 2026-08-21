@@ -204,6 +204,7 @@ export {
     _isGroupMultiAutoColumn,
     _isGroupRowsSticky,
     _isGroupUseEntireRow,
+    _isHiddenSingleChildGroup,
     _isLegacyMenuEnabled,
     _isMultiRowSelection,
     _isRowNumbers,

@@ -338,6 +338,15 @@ export function _canSkipShowingRowGroup(gos: GridOptionsService, node: RowNode):
     return false;
 }
 
+/**
+ * Returns true when a single-child group row is hidden from the UI (and from exports)
+ * due to `groupHideParentOfSingleChild` (or its deprecated equivalents).
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isHiddenSingleChildGroup(gos: GridOptionsService, node: RowNode): boolean {
+    return node.allChildrenCount === 1 && node.childrenAfterGroup?.length === 1 && _canSkipShowingRowGroup(gos, node);
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getMaxConcurrentDatasourceRequests(gos: GridOptionsService): number | undefined {
     const res = gos.get('maxConcurrentDatasourceRequests');
