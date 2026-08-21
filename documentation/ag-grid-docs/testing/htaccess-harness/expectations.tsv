@@ -310,4 +310,10 @@ blog	/index.php/tag/react/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
 # regressions: a non-renamed tag and a plain dated post must be unaffected
 blog	/index.php/tag/angular/	301	https://www.ag-grid.com/blog/tag/angular/
 blog	/index.php/2018/07/23/using-angular-forms-with-ag-grid/	301	https://www.ag-grid.com/blog/using-angular-forms-with-ag-grid/
+# PR 14931 [P2 #3]: /feed/ variants of the RENAMED slugs must reach the new slug, not
+# fall to the generic rule which strips /feed but keeps the obsolete slug (a 404).
+blog	/index.php/2018/10/30/customize-angular-grid/feed/	301	https://www.ag-grid.com/blog/learn-to-customize-angular-grid-in-less-than-10-minutes/
+blog	/index.php/2018/10/16/customise-react-grid/feed/	301	https://www.ag-grid.com/blog/learn-to-customize-react-grid-in-less-than-10-minutes/
+blog	/index.php/2018/08/07/get-started-with-react-grid-in-5-minutes/feed/	301	https://www.ag-grid.com/blog/react-get-started-with-react-grid-in-5-minutes/
+blog	/index.php/2018/10/30/customize-javascript-grid/feed/	301	https://www.ag-grid.com/blog/learn-to-customize-javascript-grid-in-less-than-10-minutes/
 

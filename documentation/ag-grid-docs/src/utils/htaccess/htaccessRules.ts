@@ -262,15 +262,15 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     # checked and its derived target status-verified: 15 resolve, 6 needed an explicit
     # remap because the slug changed. The remaps MUST precede the generic dated rule.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/get-started-with-react-grid-in-5-minutes/?$ https://www.ag-grid.com/blog/react-get-started-with-react-grid-in-5-minutes/ [R=301,NC,L]
+    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/get-started-with-react-grid-in-5-minutes(?:/feed)?/?$ https://www.ag-grid.com/blog/react-get-started-with-react-grid-in-5-minutes/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/customise-react-grid/?$ https://www.ag-grid.com/blog/learn-to-customize-react-grid-in-less-than-10-minutes/ [R=301,NC,L]
+    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/customise-react-grid(?:/feed)?/?$ https://www.ag-grid.com/blog/learn-to-customize-react-grid-in-less-than-10-minutes/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/customize-angular-grid/?$ https://www.ag-grid.com/blog/learn-to-customize-angular-grid-in-less-than-10-minutes/ [R=301,NC,L]
+    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/customize-angular-grid(?:/feed)?/?$ https://www.ag-grid.com/blog/learn-to-customize-angular-grid-in-less-than-10-minutes/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/customize-javascript-grid/?$ https://www.ag-grid.com/blog/learn-to-customize-javascript-grid-in-less-than-10-minutes/ [R=301,NC,L]
+    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/customize-javascript-grid(?:/feed)?/?$ https://www.ag-grid.com/blog/learn-to-customize-javascript-grid-in-less-than-10-minutes/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm(?:-in-react)?/?$ https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/ [R=301,NC,L]
+    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm(?:-in-react)?(?:/feed)?/?$ https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/ [R=301,NC,L]
 
     # Generic dated permalink: the slug survived the WordPress -> Ghost move.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
