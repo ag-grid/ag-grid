@@ -316,4 +316,16 @@ blog	/index.php/2018/10/30/customize-angular-grid/feed/	301	https://www.ag-grid.
 blog	/index.php/2018/10/16/customise-react-grid/feed/	301	https://www.ag-grid.com/blog/learn-to-customize-react-grid-in-less-than-10-minutes/
 blog	/index.php/2018/08/07/get-started-with-react-grid-in-5-minutes/feed/	301	https://www.ag-grid.com/blog/react-get-started-with-react-grid-in-5-minutes/
 blog	/index.php/2018/10/30/customize-javascript-grid/feed/	301	https://www.ag-grid.com/blog/learn-to-customize-javascript-grid-in-less-than-10-minutes/
+# PR 14932 [P2]: the fifth renamed-slug remap carries TWO adjacent optional groups,
+# (?:-in-react)?(?:/feed)?. Full variant matrix below. The bare-dated forms are the
+# ones that actually exercise this rule -- the /index.php/ forms are caught earlier
+# by the unanchored legacy inside-fiber rule, so on their own they prove nothing.
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm/feed/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/feed/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm/feed/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/feed/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
 
