@@ -301,3 +301,13 @@ blog	/wp-content/plugins/ultimate-social-media-icons/	410
 blog	/rsslatest.xml	410
 blog	/.well-known/nodeinfo	410
 blog	/.ghost/activitypub/nodeinfo/2.1	410
+# PR 14931 [P2]: the non-greedy capture swallowed a /feed suffix, landing on
+# /blog/<slug>/feed/ (a 404); and /index.php/tag/react/ took a second hop through
+# the renamed tag. Both must now resolve in a single hop.
+blog	/index.php/2018/08/13/get-started-with-angular-grid-in-5-minutes/feed/	301	https://www.ag-grid.com/blog/get-started-with-angular-grid-in-5-minutes/
+blog	/2018/08/13/get-started-with-angular-grid-in-5-minutes/feed/	301	https://www.ag-grid.com/blog/get-started-with-angular-grid-in-5-minutes/
+blog	/index.php/tag/react/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+# regressions: a non-renamed tag and a plain dated post must be unaffected
+blog	/index.php/tag/angular/	301	https://www.ag-grid.com/blog/tag/angular/
+blog	/index.php/2018/07/23/using-angular-forms-with-ag-grid/	301	https://www.ag-grid.com/blog/using-angular-forms-with-ag-grid/
+
