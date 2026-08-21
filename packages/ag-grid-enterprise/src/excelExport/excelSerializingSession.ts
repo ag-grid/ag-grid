@@ -25,7 +25,12 @@ import type {
     RowHeightCallbackParams,
     RowNode,
 } from 'ag-grid-community';
-import { BaseGridSerializingSession, _addGridCommonParams, _mergeDeep } from 'ag-grid-community';
+import {
+    BaseGridSerializingSession,
+    _addGridCommonParams,
+    _isHiddenSingleChildGroup,
+    _mergeDeep,
+} from 'ag-grid-community';
 
 import type { InternalExcelCell } from './assets/excelInterfaces';
 import { getHeightFromProperty } from './assets/excelUtils';
@@ -338,16 +343,12 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             return;
         }
 
-        const padding = node.footer ? 1 : 0;
+        // group footers sit one level deeper so they fold with the group's children (grand totals have no group)
+        const padding = node.footer && node.level !== -1 ? 1 : 0;
         const currentRow = _last(this.rows);
 
-        // if level is different than uiLevel, the parent is hidden
-        // due to `groupHideParentOfSingleChild`
-        if (node.uiLevel == null || node.level === node.uiLevel) {
-            // Excel only supports up to 7 levels of outline
-            const outlineLevel = Math.min(node.level + padding, 7);
-            currentRow.outlineLevel = outlineLevel;
-        }
+        // Excel only supports up to 7 levels of outline
+        currentRow.outlineLevel = Math.min(this.getExportedLevel(node) + padding, 7);
 
         if (rowGroupExpandState === 'expanded') {
             return;
@@ -366,6 +367,27 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             // or if it is a child of the root node
             node.parent.level !== -1 &&
             (collapseAll || this.isAnyParentCollapsed(node.parent));
+    }
+
+    /**
+     * Depth counting only ancestor group rows that are exported (parents hidden by
+     * `groupHideParentOfSingleChild` are skipped, matching the serializer's row skipping).
+     * `uiLevel` cannot be used here: it is only maintained for currently displayed rows,
+     * so it is stale for rows inside collapsed groups.
+     */
+    private getExportedLevel(node: RowNode): number {
+        const gos = this.gos;
+        let level = 0;
+        let pointer = node.parent;
+
+        while (pointer && pointer.level !== -1) {
+            if (!_isHiddenSingleChildGroup(gos, pointer)) {
+                level++;
+            }
+            pointer = pointer.parent;
+        }
+
+        return level;
     }
 
     private isAnyParentCollapsed(node?: RowNode | null): boolean {
