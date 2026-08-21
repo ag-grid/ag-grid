@@ -34,8 +34,9 @@ const updateHtml = (darkmode: boolean | undefined) => {
         iframe.contentWindow?.postMessage(darkModeEvent);
     });
 
-    // Send on event on page for charts that are embeded on the page
-    window.dispatchEvent(new CustomEvent('message', { detail: darkModeEvent }));
+    // No `message` CustomEvent on `window` here. A CustomEvent has no `origin`, so a third-party
+    // `message` listener that expects a real postMessage throws on it: reCAPTCHA's api.js parses
+    // `event.origin` as a URL, which breaks the captcha on any page carrying the contact form.
 };
 
 $darkmode.listen(updateHtml);

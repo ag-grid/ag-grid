@@ -1,5 +1,12 @@
+export interface CaptchaTicker {
+    /** Writes the frozen timestamp back into the hidden input, just before submitting. */
+    reapply: () => void;
+    /** Stops the ticker. Call on unmount, or it keeps running for the life of the page. */
+    stop: () => void;
+}
+
 /**
- * Starts Salesforce's captcha timestamp ticker.
+ * Starts Salesforce's captcha timestamp ticker for one rendered reCAPTCHA widget.
  *
  * `onTimestamp` receives every value written, so the caller can render it back into the
  * hidden input: React resets a controlled input on re-render, and `form.submit()` only
@@ -10,7 +17,7 @@
  * The ticker stops once the captcha is solved, freezing `ts` at solve time, which is the
  * elapsed-time signal Salesforce validates.
  */
-export function initCaptcha(onTimestamp?: (ts: string) => void): () => void {
+export function initCaptcha(container: HTMLElement, onTimestamp?: (ts: string) => void): CaptchaTicker {
     let latest = '';
 
     function write(ts: string) {
@@ -24,14 +31,21 @@ export function initCaptcha(onTimestamp?: (ts: string) => void): () => void {
     }
 
     function timestamp() {
-        const response = document.getElementById('g-recaptcha-response') as HTMLInputElement;
-        if (response == null || response.value.trim() == '') {
+        // Scoped to this widget's own container: reCAPTCHA only names the first widget's field
+        // `g-recaptcha-response`, and suffixes every later one (`g-recaptcha-response-1` and so
+        // on), so a lookup by bare id silently misses any widget rendered after the first.
+        const response = container.querySelector<HTMLTextAreaElement>('textarea[name="g-recaptcha-response"]');
+        if (response == null || response.value.trim() === '') {
             latest = JSON.stringify(new Date().getTime());
             write(latest);
             onTimestamp?.(latest);
         }
     }
-    setInterval(timestamp, 500);
 
-    return () => write(latest);
+    const ticker = setInterval(timestamp, 500);
+
+    return {
+        reapply: () => write(latest),
+        stop: () => clearInterval(ticker),
+    };
 }
