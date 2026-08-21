@@ -102,9 +102,16 @@ function renderFeatureMatrix(heading: string, sections: FeatureSection[], siteRo
 function renderPlans(siteRoot?: string): string {
     const rows = DEV_LICENSE_DATA.map((plan) => {
         const suffix = plan.description ? ` (${htmlToText(plan.description)})` : '';
-        const price = plan.priceFullDollars === '0' ? 'Free' : `$${plan.priceFullDollars} USD per developer`;
-        const cta = plan.id === 'community' ? 'Get started' : 'Buy now';
-        const buyLink = toAbsoluteUrl(plan.buyLink, siteRoot);
+        // Quoted plans carry no price, and their buy link is an anchor on the pricing page itself,
+        // which is no use once the markdown is read out of context — resolve it to the page.
+        const isQuoted = !plan.priceFullDollars;
+        const price = isQuoted
+            ? 'Contact us'
+            : plan.priceFullDollars === '0'
+              ? 'Free'
+              : `$${plan.priceFullDollars} USD per developer`;
+        const cta = isQuoted ? 'Contact us' : plan.id === 'community' ? 'Get started' : 'Buy now';
+        const buyLink = toAbsoluteUrl(isQuoted ? `/license-pricing/${plan.buyLink}` : plan.buyLink, siteRoot);
         return [`${plan.subHeading}${suffix}`, price, `[${cta}](${buyLink})`];
     });
     return `## Plans\n\n${markdownTable(['Plan', 'Price', 'Buy'], rows)}`;

@@ -14,11 +14,19 @@ describe('buildLicensePricingMarkdown', () => {
 
     it('lists the plans with prices in a table', () => {
         expect(output).toContain('## Plans');
-        expect(output).toContain('AG Grid Enterprise');
+        expect(output).toContain('Grid Enterprise');
         expect(output).toContain('$999 USD per developer');
-        // Community plans are free; the bundle folds its description into the plan name.
+        // Community plans are free; every plan folds its description into the plan name.
         expect(output).toContain('Free');
-        expect(output).toContain('Enterprise Bundle (AG Grid Enterprise & AG Charts Enterprise)');
+        expect(output).toContain('Enterprise Bundle (Combine Grid and Charts for unrivalled performance)');
+    });
+
+    it('renders quoted plans as a contact link into the pricing page', () => {
+        // The Custom plan has no price, and its buy link is an anchor on the pricing page, which
+        // has to be resolved for a reader who only has the markdown.
+        expect(output).toContain(
+            '| Contact us | [Contact us](https://www.ag-grid.com/license-pricing/#contact-sales) |'
+        );
     });
 
     it('renders both feature-comparison matrices with tick/cross marks and resolved links', () => {

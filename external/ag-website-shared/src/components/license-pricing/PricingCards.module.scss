@@ -1,0 +1,188 @@
+@use '../../design-system/' as *;
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-size-4;
+    // Cards stretch to a common height so the price and feature list of each plan line up
+    // across the row, which is what makes them comparable at a glance.
+    align-items: stretch;
+    margin-top: $spacing-size-5;
+
+    @media screen and (max-width: $breakpoint-pricing-large) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media screen and (max-width: $breakpoint-pricing-medium) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-size-6 $spacing-size-5;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-primary);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-fg-primary);
+
+    p {
+        margin: 0;
+    }
+}
+
+.cardBody {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.cardHeading {
+    margin-bottom: $spacing-size-2;
+    // Sized so the longest plan name — "Enterprise Bundle" — stays on one line at the narrowest
+    // card width, keeping the prices and buttons on a shared baseline across the row.
+    font-size: var(--text-fs-xl);
+    line-height: var(--text-lh-ratio-tight);
+    font-weight: var(--text-bold);
+}
+
+.cardDescription {
+    color: var(--color-text-tertiary);
+    line-height: var(--text-lh-ratio-tight);
+    text-wrap: pretty;
+}
+
+// `margin-top: auto` on the price — and on the spacer that stands in for it on quoted plans —
+// absorbs the slack above it, so every card's price, button and feature list share a baseline.
+.price,
+.priceGap {
+    margin-top: auto;
+}
+
+.price {
+    display: flex;
+    align-items: baseline;
+    gap: $spacing-size-2;
+    padding-top: $spacing-size-6;
+    padding-bottom: $spacing-size-4;
+}
+
+.priceCost {
+    font-size: 44px;
+    line-height: var(--text-lh-ratio-ultra-tight);
+    font-weight: var(--text-bold);
+    letter-spacing: -0.04em;
+}
+
+.priceUnit {
+    color: var(--color-text-tertiary);
+    font-size: var(--text-fs-base);
+}
+
+.priceGap {
+    min-height: $spacing-size-8;
+}
+
+.cardCta {
+    --icon-size: #{$spacing-size-5};
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-size-2;
+    width: 100%;
+    text-align: center;
+}
+
+.featureList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-3;
+    margin: 0;
+    padding: 0;
+    padding-top: $spacing-size-6;
+    list-style: none;
+
+    li {
+        --icon-size: #{$spacing-size-5};
+        --icon-color: var(--color-text-brand-primary);
+
+        display: flex;
+        align-items: center;
+        gap: $spacing-size-2;
+        margin: 0;
+        line-height: var(--text-lh-ratio-tight);
+    }
+}
+
+// The brand solid is dark in both themes, so this card inverts rather than following the page.
+.highlighted {
+    border-color: var(--color-bg-brand-solid);
+    background-color: var(--color-bg-brand-solid);
+    color: var(--color-fg-white);
+
+    .cardDescription {
+        color: color-mix(in srgb, var(--color-fg-white), transparent 15%);
+    }
+
+    .featureList li {
+        --icon-color: var(--color-fg-white);
+    }
+}
+
+// Retints the tertiary button against the inverted card, keeping its padding, radius, focus
+// ring and transitions. The card's own fill doubles as the button's text colour.
+.highlightedCta {
+    --color-button-tertiary-bg: var(--color-fg-white);
+    --color-button-tertiary-fg: var(--color-bg-brand-solid);
+    --color-button-tertiary-border: var(--color-fg-white);
+    --color-button-tertiary-bg-hover: color-mix(in srgb, var(--color-fg-white), var(--color-bg-brand-solid) 8%);
+    --color-button-tertiary-bg-active: color-mix(in srgb, var(--color-fg-white), var(--color-bg-brand-solid) 16%);
+    --color-button-tertiary-shadow-focus: color-mix(in srgb, var(--color-fg-white), transparent 60%);
+}
+
+/* The desktop feature table is hidden below this breakpoint, so each card offers its own. */
+.toggleFeatureBreakdownButton {
+    display: none;
+}
+
+.mobileFeatureMatrix {
+    display: none;
+}
+
+@media screen and (max-width: $breakpoint-pricing-medium) {
+    .toggleFeatureBreakdownButton {
+        display: block;
+        width: 100%;
+        margin-top: $spacing-size-6;
+        padding: 0;
+        border: none;
+        background: none;
+        box-shadow: none;
+        text-align: center;
+        color: var(--color-link);
+        font-weight: var(--text-semibold);
+
+        &:hover {
+            background: none;
+            color: var(--color-link-hover);
+        }
+    }
+
+    .mobileFeatureMatrix {
+        display: block;
+        padding-top: $spacing-size-4;
+        text-align: left;
+    }
+
+    .categoryTableHeader {
+        margin-top: $spacing-size-3;
+        margin-bottom: $spacing-size-2;
+        padding: $spacing-size-3;
+        border: 1px solid var(--color-border-secondary);
+        background-color: var(--color-bg-secondary);
+        color: var(--color-text-secondary);
+    }
+}

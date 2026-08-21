@@ -116,16 +116,13 @@
     }
 }
 
-.licensesOuter {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    margin-top: $spacing-size-5;
+.desktopTableHeader {
+    margin-top: $spacing-size-12;
 }
 
-// Cards and feature table are separate blocks spanning the same four columns, so one shared gradient
-// is what makes a tint read as a continuous column; its stops are the third and fourth column edges.
+// The tint deepens towards the bundle across the table's four columns; its stops are the third and
+// fourth column edges. The pricing cards above are discrete and carry no tint of their own.
 @media screen and (min-width: $breakpoint-pricing-medium) {
-    .licensesOuter,
     .desktopTableContainer {
         background: linear-gradient(
             to right,
@@ -952,14 +949,9 @@ a.fwAction {
 }
 
 /* mobile breakpoint responsive */
+// Below this width the feature table is replaced by the per-card breakdowns in PricingCards.
 @media screen and (max-width: $breakpoint-pricing-medium) {
-    .licensesOuter {
-        display: flex;
-        flex-direction: column;
-        gap: $spacing-size-8;
-        padding-top: $spacing-size-3;
-    }
-
+    .desktopTableHeader,
     .desktopTableContainer {
         display: none;
     }

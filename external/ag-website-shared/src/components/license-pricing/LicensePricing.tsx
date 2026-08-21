@@ -16,11 +16,12 @@ import type { FunctionComponent } from 'react';
 
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';
-import { Licenses } from './Licenses';
+import { PricingCards } from './PricingCards';
 import SocialProof from './SocialProof';
 import { ComparisonTable } from './comparison-table/ComparisonTable';
+import { ComparisonTableHeader } from './comparison-table/ComparisonTableHeader';
 import styles from './license-pricing.module.scss';
-import { DEV_LICENSE_DATA } from './licenseData';
+import { CONTACT_SALES_ANCHOR_ID, DEV_LICENSE_DATA } from './licenseData';
 
 export type LicenseTab = 'grid' | 'charts';
 
@@ -31,7 +32,7 @@ interface Props {
 export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) => {
     const [showFullWidthBar, setShowFullWidthBar] = useState(false);
 
-    const licensesOuterRef = useRef(null);
+    const pricingCardsOuterRef = useRef(null);
     const stickyBarAnchorRef = useRef(null);
     const framework = useFrameworkFromStore();
 
@@ -45,8 +46,8 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
     useEffect(() => {
         const handleScroll = () => {
             // Only show the bar once the pricing cards have been scrolled past.
-            const scrolledPastLicenses = licensesOuterRef.current
-                ? licensesOuterRef.current.getBoundingClientRect().bottom < 200
+            const scrolledPastLicenses = pricingCardsOuterRef.current
+                ? pricingCardsOuterRef.current.getBoundingClientRect().bottom < 200
                 : false;
 
             // ...and hide it again as the trial/contact section comes into view.
@@ -80,11 +81,16 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
     const featuresData = chartsIsSelected ? chartsFeaturesData : gridFeaturesData;
     const licenseData = chartsIsSelected ? chartsLicenseData : gridLicenseData;
+    // The sticky bar mirrors the purchasable plans, so quoted plans are left out of it.
+    const pricedLicenseData = licenseData.filter((license) => license.priceFullDollars);
+    const tableColumns = licenseData
+        .map((license) => license.tableColumn)
+        .filter((column): column is NonNullable<typeof column> => Boolean(column));
 
     return (
         <>
             <div className={classnames('layout-max-width-small', styles.container)}>
-                <div className={styles.salesForm}>
+                <div id={CONTACT_SALES_ANCHOR_ID} className={styles.salesForm}>
                     <div className={styles.salesFormCopy}>
                         <h3 className="text-2xl">
                             <span>Contact Our Sales Team</span>
@@ -112,14 +118,8 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
             <div className={classnames(styles.fullWidthBar, { [styles.active]: showFullWidthBar })}>
                 <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
-                    {licenseData.map((license, i) => {
+                    {pricedLicenseData.map((license, i) => {
                         const isCommunity = license.id === 'community';
-                        const ctaId =
-                            license.id === 'community'
-                                ? 'get-started'
-                                : license.id.includes('enterprise')
-                                  ? 'buy-now'
-                                  : 'bundle-buy-now';
 
                         return (
                             <div className={styles.fullWidthBarItem} key={i}>
@@ -138,7 +138,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                     </span>
 
                                     <a
-                                        id={ctaId}
+                                        id={license.ctaId}
                                         className={classnames(
                                             styles.fwAction,
                                             isCommunity ? 'button-tertiary' : 'button'
@@ -184,8 +184,12 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
             <div className={classnames('layout-max-width-small', styles.container)}>
                 <div className={styles.topSection}>
                     <div className={styles.intro}>
-                        <div ref={licensesOuterRef} className={styles.licensesOuter}>
-                            <Licenses className={styles.licensesInfo} isChecked={chartsIsSelected} />
+                        <div ref={pricingCardsOuterRef}>
+                            <PricingCards isChecked={chartsIsSelected} />
+                        </div>
+
+                        <div className={styles.desktopTableHeader}>
+                            <ComparisonTableHeader columns={tableColumns} />
                         </div>
 
                         <div className={styles.desktopTableContainer}>
