@@ -213,4 +213,24 @@ describe('Excel export outlines', () => {
             undefined,
         ]);
     });
+
+    test('emits no row outline data when groupHideOpenParents is enabled', async () => {
+        const api = gridsManager.createGrid('excel-hide-open-parents-outline', {
+            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'sport' }],
+            groupHideOpenParents: true,
+            groupDefaultExpanded: -1,
+            rowData,
+        });
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBeGreaterThan(0));
+
+        // group rows are omitted from the export, so their children must not carry
+        // outline levels pointing at absent summary rows, even when collapsing
+        const sheetXml = api.getSheetDataForExcel({ rowGroupExpandState: 'collapsed' })!;
+        const rowOutlineLevels = getRowOutlineLevels(sheetXml);
+        expect(rowOutlineLevels.length).toBeGreaterThan(1);
+        expect(rowOutlineLevels.every((level) => level === undefined)).toBe(true);
+        expect(getSheetFormatPr(sheetXml).outlineLevelRow).toBeUndefined();
+        expect(sheetXml).not.toContain('hidden="1"');
+        expect(sheetXml).not.toContain('collapsed="1"');
+    });
 });
