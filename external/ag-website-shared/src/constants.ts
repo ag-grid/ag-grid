@@ -79,6 +79,16 @@ export const STUDIO_FORM_DATA = {
 export const SITEMAP_CACHE_DIR = '.astro/cache/sitemap';
 
 /**
+ * Scratch folder for the sitemap bookkeeping `buildWithSitemapCache` needs across the two builds it
+ * may run — currently the record of which sitemap the first build's sitemap pages rendered from.
+ *
+ * Deliberately outside `SITEMAP_CACHE_DIR`: the cached sitemap is a declared nx input for the docs
+ * `build` target (a change to it has to re-run the build), and this bookkeeping changes on every
+ * build without changing what the site renders, so it must not feed that hash.
+ */
+export const SITEMAP_BUILD_DIR = '.astro/cache/sitemap-build';
+
+/**
  * `User-Agent` identifying build-time fetches against the live AG sites (sitemaps, robots disallow
  * lists), which are not served to the default agent.
  */
