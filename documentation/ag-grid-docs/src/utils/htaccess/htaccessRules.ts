@@ -278,6 +278,17 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
 
     # WordPress categories became Ghost tags. "react" was itself renamed, so it is
     # mapped directly -- via /blog/tag/react/ it would take a second hop.
+    # Feed variants of the WordPress taxonomy URLs. These come FIRST: the generic rules
+    # below capture with (.+?), which swallows a trailing /feed and lands on
+    # /blog/<taxonomy>/<term>/feed/ -- a 404. Ghost serves /rss, so feeds map to /rss
+    # exactly as the non-index.php equivalents do. "react" is additionally a renamed tag.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/(?:category|tag)/react(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/react-data-grid/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/category/([^/]+)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/$1/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/((?:tag|author)/[^/]+)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/$1/rss/ [R=301,NC,L]
+
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?index\\.php/category/react/?$ https://www.ag-grid.com/blog/tag/react-data-grid/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
@@ -285,7 +296,7 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?index\\.php/tag/react/?$ https://www.ag-grid.com/blog/tag/react-data-grid/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?index\\.php/(author|tag|page)/(.+?)/?$ https://www.ag-grid.com/blog/$1/$2/ [R=301,NC,L]
+    RewriteRule ^/?index\\.php/(author|tag|page)/(.+?)(?:/feed)?/?$ https://www.ag-grid.com/blog/$1/$2/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?index\\.php/(?:comments/)?feed/?$ https://www.ag-grid.com/blog/rss/ [R=301,NC,L]
 

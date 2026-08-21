@@ -328,4 +328,20 @@ blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algori
 blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
 blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/feed/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
 blog	/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+# PR 14934 [P2]: the WordPress taxonomy rules captured with (.+?), which swallowed a
+# trailing /feed and landed on /blog/<taxonomy>/<term>/feed/ (a 404). Feeds now map to
+# /rss, mirroring the non-index.php rules. Full matrix across the family.
+blog	/index.php/tag/react/feed/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+blog	/index.php/tag/react/rss/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+blog	/index.php/category/react/feed/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+blog	/index.php/tag/angular/feed/	301	https://www.ag-grid.com/blog/tag/angular/rss/
+blog	/index.php/category/javascript/feed/	301	https://www.ag-grid.com/blog/tag/javascript/rss/
+blog	/index.php/author/sean/feed/	301	https://www.ag-grid.com/blog/author/sean/rss/
+blog	/index.php/author/maxkoretskyi/feed/	301	https://www.ag-grid.com/blog/author/maxkoretskyi/rss/
+# backstop: a paginated feed has no Ghost equivalent, so it lands on the page itself
+blog	/index.php/page/2/feed/	301	https://www.ag-grid.com/blog/page/2/
+# regressions: the non-feed forms must be unaffected
+blog	/index.php/tag/react/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/index.php/category/angular/	301	https://www.ag-grid.com/blog/tag/angular/
+blog	/index.php/author/maxkoretskyi/	301	https://www.ag-grid.com/blog/author/maxkoretskyi/
 
