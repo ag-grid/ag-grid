@@ -59,20 +59,28 @@ interface Props {
 }
 
 const RECAPTCHA_READY_CALLBACK = 'agOnRecaptchaReady';
-
-let recaptchaReady: Promise<void> | undefined;
+const RECAPTCHA_READY_PROMISE = 'agRecaptchaReady';
 
 /**
- * Loads reCAPTCHA once per page session, in explicit-render mode.
+ * Loads reCAPTCHA once per page, in explicit-render mode.
  *
  * `api.js` auto-renders every `.g-recaptcha` container exactly once, when it first executes.
  * The Astro client router swaps pages without a reload, so `window.grecaptcha` outlives the
  * container it rendered into and a later visit to this page is left with a fresh, empty one.
  * Explicit mode hands rendering to the caller, which renders on each mount instead.
+ *
+ * The in-flight promise lives on `window` rather than in a module variable because what it
+ * guards is global: the injected script tag and the `grecaptcha` it defines. A second module
+ * instance has to join the load already under way instead of appending a duplicate script.
  */
 function loadRecaptcha(): Promise<void> {
-    recaptchaReady ??= new Promise<void>((resolve, reject) => {
-        (window as any)[RECAPTCHA_READY_CALLBACK] = resolve;
+    const globals = window as any;
+    globals[RECAPTCHA_READY_PROMISE] ??= new Promise<void>((resolve, reject) => {
+        if (globals.grecaptcha?.render != null) {
+            resolve();
+            return;
+        }
+        globals[RECAPTCHA_READY_CALLBACK] = resolve;
         const script = document.createElement('script');
         script.id = 'grecaptcha-script';
         script.src = `${RECAPTCHA_URL}?render=explicit&onload=${RECAPTCHA_READY_CALLBACK}`;
@@ -80,12 +88,12 @@ function loadRecaptcha(): Promise<void> {
         script.defer = true;
         script.onerror = (error) => {
             // Drop the cached promise so a later mount retries the load.
-            recaptchaReady = undefined;
+            globals[RECAPTCHA_READY_PROMISE] = undefined;
             reject(error);
         };
         document.head.appendChild(script);
     });
-    return recaptchaReady;
+    return globals[RECAPTCHA_READY_PROMISE];
 }
 
 export const ContactForm: FunctionComponent<Props> = ({
