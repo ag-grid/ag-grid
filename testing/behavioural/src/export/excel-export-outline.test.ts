@@ -14,6 +14,12 @@ const getRowOutlineLevels = (sheetXml: string): (string | undefined)[] =>
 const getSheetFormatPr = (sheetXml: string): Record<string, string> =>
     getXmlAttributes(sheetXml.match(/<sheetFormatPr [^>]*\/>/)![0]);
 
+const getColOutlines = (sheetXml: string): { min?: string; max?: string; outlineLevel?: string; width?: string }[] =>
+    [...sheetXml.matchAll(/<col [^>]*\/>/g)].map((match) => {
+        const { min, max, outlineLevel, width } = getXmlAttributes(match[0]);
+        return { min, max, outlineLevel, width };
+    });
+
 describe('Excel export outlines', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, ExcelExportModule, RowGroupingModule],
@@ -98,6 +104,89 @@ describe('Excel export outlines', () => {
         const sheetXml = api.getSheetDataForExcel()!;
         // header row, Ireland leaf (hidden parent, level 0), Spain group, 2 leaves
         expect(getRowOutlineLevels(sheetXml)).toEqual([undefined, undefined, undefined, '1', '1']);
+    });
+
+    test('creates per-column outline levels for collapsible column groups, preserving widths', async () => {
+        const api = gridsManager.createGrid('excel-column-group-outline', {
+            columnDefs: [
+                {
+                    headerName: 'Details',
+                    openByDefault: true,
+                    children: [
+                        { field: 'a', width: 150 },
+                        { field: 'b', width: 120, columnGroupShow: 'open' },
+                        { field: 'c', width: 130, columnGroupShow: 'open' },
+                    ],
+                },
+                { field: 'd', width: 90 },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+        });
+        await waitForDisplayedRowCount(api, 1);
+
+        const sheetXml = api.getSheetDataForExcel()!;
+        // one <col> per exported column, no extra overlapping records for the collapsible range
+        expect(getColOutlines(sheetXml)).toEqual([
+            { min: '1', max: '1', outlineLevel: undefined, width: '21' },
+            { min: '2', max: '2', outlineLevel: '1', width: '17' },
+            { min: '3', max: '3', outlineLevel: '1', width: '18' },
+            { min: '4', max: '4', outlineLevel: undefined, width: '13' },
+        ]);
+        expect(getSheetFormatPr(sheetXml).outlineLevelCol).toBe('1');
+    });
+
+    test('nests column outline levels for nested column groups without inflating them via padded rows', async () => {
+        const api = gridsManager.createGrid('excel-nested-column-group-outline', {
+            columnDefs: [
+                {
+                    headerName: 'Outer',
+                    openByDefault: true,
+                    children: [
+                        { field: 'a', suppressSpanHeaderHeight: true },
+                        { field: 'b', columnGroupShow: 'open', suppressSpanHeaderHeight: true },
+                        {
+                            headerName: 'Inner',
+                            openByDefault: true,
+                            children: [{ field: 'c' }, { field: 'd', columnGroupShow: 'open' }],
+                        },
+                    ],
+                },
+                { field: 'e' },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4, e: 5 }],
+        });
+        await waitForDisplayedRowCount(api, 1);
+
+        const sheetXml = api.getSheetDataForExcel()!;
+        expect(getColOutlines(sheetXml).map(({ min, outlineLevel }) => [min, outlineLevel])).toEqual([
+            ['1', undefined],
+            ['2', '1'],
+            ['3', undefined],
+            ['4', '2'],
+            ['5', undefined],
+        ]);
+        expect(getSheetFormatPr(sheetXml).outlineLevelCol).toBe('2');
+    });
+
+    test('suppressColumnOutline omits all column outline data', async () => {
+        const api = gridsManager.createGrid('excel-suppress-column-outline', {
+            columnDefs: [
+                {
+                    headerName: 'Details',
+                    openByDefault: true,
+                    children: [{ field: 'a' }, { field: 'b', columnGroupShow: 'open' }],
+                },
+                { field: 'c' },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3 }],
+        });
+        await waitForDisplayedRowCount(api, 1);
+
+        const sheetXml = api.getSheetDataForExcel({ suppressColumnOutline: true })!;
+        const cols = getColOutlines(sheetXml);
+        expect(cols).toHaveLength(3);
+        expect(cols.every((col) => col.outlineLevel === undefined)).toBe(true);
+        expect(getSheetFormatPr(sheetXml).outlineLevelCol).toBeUndefined();
     });
 
     test('places group footers one outline level deeper and grand totals at the top level', async () => {

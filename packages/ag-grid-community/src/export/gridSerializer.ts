@@ -386,7 +386,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
     }
 
     private withCollapsibleGroupRanges(cell: GridHeaderCell, columnsToExport: AgColumn[]): GridHeaderCell {
-        if (cell.type !== 'group' && cell.type !== 'padding') {
+        // only real group cells contribute ranges: padding cells wrapping an expandable chain
+        // would re-emit the same range once per padded row, inflating the outline nesting
+        if (cell.type !== 'group') {
             return cell;
         }
         if (!cell.column?.isExpandable()) {
