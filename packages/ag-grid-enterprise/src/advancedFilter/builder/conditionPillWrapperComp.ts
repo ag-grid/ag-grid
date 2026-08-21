@@ -226,7 +226,8 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         let parsedOperand: string | number = operand;
         // Number comes back as string from input, so convert. Dates are already in iso string format
         if (this.baseCellDataType === 'number') {
-            parsedOperand = operand != null && operand !== '' ? (getNumberParser(this.column)(operand) ?? '') : '';
+            parsedOperand =
+                operand != null && operand !== '' ? (getNumberParser(this.column, this.gos)(operand) ?? '') : '';
         }
         (this.filterModel as any).filter = parsedOperand;
         this.validate();

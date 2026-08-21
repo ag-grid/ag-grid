@@ -1,4 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
+import type { Column } from '../../interfaces/iColumn';
 import type {
     DoesFilterPassParams,
     FilterHandler,
@@ -16,7 +17,7 @@ import type {
 import { isCombinedFilterModel } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import type { SimpleFilterModelFormatter } from './simpleFilterModelFormatter';
-import { evaluateCustomFilter } from './simpleFilterUtils';
+import { evaluateCustomFilter, getConditionLimit } from './simpleFilterUtils';
 
 export abstract class SimpleFilterHandler<
     TModel extends ISimpleFilterModel,
@@ -32,7 +33,8 @@ export abstract class SimpleFilterHandler<
     /** Subclasses narrow `filterParams` to their own filter's params type. */
     protected abstract createModelFormatter(
         optionsFactory: OptionsFactory,
-        filterParams: ISimpleFilterParams
+        filterParams: ISimpleFilterParams,
+        column: Column
     ): SimpleFilterModelFormatter<ISimpleFilterParams>;
 
     protected params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>;
@@ -74,7 +76,9 @@ export abstract class SimpleFilterHandler<
         this.optionsFactory = optionsFactory;
         optionsFactory.init(this.beans.log, filterParams, this.defaultOptions);
 
-        this.filterModelFormatter = this.createManagedBean(this.createModelFormatter(optionsFactory, filterParams));
+        this.filterModelFormatter = this.createManagedBean(
+            this.createModelFormatter(optionsFactory, filterParams, params.column)
+        );
 
         this.updateParams(params);
 
@@ -118,6 +122,11 @@ export abstract class SimpleFilterHandler<
             models.push(model as TModel);
         }
 
+        // A model joining no conditions constrains nothing, where `OR` would instead fail every row.
+        if (!models.length) {
+            return true;
+        }
+
         const combineFunction = operator && operator === 'OR' ? 'some' : 'every';
 
         const cellValue = this.params.getValue(params.node);
@@ -146,13 +155,11 @@ export abstract class SimpleFilterHandler<
 
         const isCombined = isCombinedFilterModel(model);
 
-        let conditions: TModel[] | null = isCombined ? model.conditions : [model];
+        // A hand-written combined model can omit `conditions`; read as empty so the caller gets back what they set.
+        let conditions: TModel[] = (isCombined ? model.conditions : [model]) ?? [];
 
         // Checked against the list the dropdown is built from, so a malformed option does not count as offered.
-        const allConditionsAreOffered =
-            !conditions || conditions.every((condition) => this.optionsFactory.hasOption(condition.type));
-
-        if (!allConditionsAreOffered) {
+        if (!conditions.every((condition) => this.optionsFactory.hasOption(condition.type))) {
             this.params = {
                 ...params,
                 model: null,
@@ -165,33 +172,30 @@ export abstract class SimpleFilterHandler<
 
         const filterType = this.filterType;
 
-        if (
-            (conditions && !conditions.every((condition) => condition.filterType === filterType)) ||
-            model.filterType !== filterType
-        ) {
+        if (!conditions.every((condition) => condition.filterType === filterType) || model.filterType !== filterType) {
             // need to add filterType to model
             conditions = conditions.map((condition) => ({ ...condition, filterType }));
             needsUpdate = true;
         }
 
-        // Check number of conditions vs maxNumConditions
-        if (typeof maxNumConditions === 'number' && conditions && conditions.length > maxNumConditions) {
-            conditions = conditions.slice(0, maxNumConditions);
+        const conditionLimit = getConditionLimit(maxNumConditions);
+        if (conditionLimit !== null && conditions.length > conditionLimit) {
+            conditions = conditions.slice(0, conditionLimit);
             needsUpdate = true;
         }
 
         if (needsUpdate) {
-            const updatedModel =
-                conditions.length > 1
-                    ? {
-                          ...(model as ICombinedSimpleModel<TModel>),
-                          filterType,
-                          conditions,
-                      }
-                    : {
-                          ...conditions[0],
-                          filterType,
-                      };
+            let updatedModel: TModel | ICombinedSimpleModel<TModel>;
+            if (conditions.length === 1) {
+                updatedModel = { ...conditions[0], filterType };
+            } else {
+                // Zero conditions stays combined: collapsing would invent a lone condition with no type, and
+                // a list the caller never set is not one to hand back.
+                updatedModel = { ...(model as ICombinedSimpleModel<TModel>), filterType };
+                if (isCombined && model.conditions) {
+                    updatedModel.conditions = conditions;
+                }
+            }
             this.params = {
                 ...params,
                 model: updatedModel,

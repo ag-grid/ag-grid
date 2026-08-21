@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_RO = {
     // Editor Validation Errors
     minDateValidation: 'Data trebuie să fie după ${variable}',
     maxDateValidation: 'Data trebuie să fie înainte de ${variable}',
+    minDateInclusiveValidation: 'Data trebuie să fie ${variable} sau ulterioară',
+    maxDateInclusiveValidation: 'Data trebuie să fie ${variable} sau anterioară',
     maxLengthValidation: 'Trebuie să fie cel mult ${variable} caractere.',
     minValueValidation: 'Trebuie să fie mai mare sau egal cu ${variable}',
     maxValueValidation: 'Trebuie să fie mai mic sau egal cu ${variable}',

@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_PK = {
     // Editor Validation Errors
     minDateValidation: 'تاریخ ${variable} کے بعد کی ہونی چاہیے',
     maxDateValidation: 'تاریخ ${variable} سے پہلے کی ہونی چاہیے',
+    minDateInclusiveValidation: 'تاریخ ${variable} یا اس کے بعد کی ہونی چاہیے',
+    maxDateInclusiveValidation: 'تاریخ ${variable} یا اس سے پہلے کی ہونی چاہیے',
     maxLengthValidation: '${variable} حروف یا کم ہونا چاہیے۔',
     minValueValidation: '${variable} کے برابر یا اس سے زیادہ ہونا چاہیے',
     maxValueValidation: '${variable} کے برابر یا کم ہونا چاہیے',

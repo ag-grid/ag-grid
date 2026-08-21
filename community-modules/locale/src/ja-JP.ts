@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_JP = {
     // Editor Validation Errors
     minDateValidation: '日付は${variable}より後でなければなりません',
     maxDateValidation: '日付は${variable}より前でなければなりません',
+    minDateInclusiveValidation: '日付は${variable}以降でなければなりません',
+    maxDateInclusiveValidation: '日付は${variable}以前でなければなりません',
     maxLengthValidation: '${variable}文字以内でなければなりません。',
     minValueValidation: '${variable}以上でなければなりません',
     maxValueValidation: '${variable}以下である必要があります',

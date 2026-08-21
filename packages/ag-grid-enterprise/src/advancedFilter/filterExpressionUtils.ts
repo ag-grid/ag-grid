@@ -1,9 +1,12 @@
 import { _parseBigIntOrNull } from 'ag-stack';
 
+import { _bindFilterCallback } from 'ag-grid-community';
 import type {
     AgColumn,
     ColumnModel,
     DataTypeService,
+    GridOptionsService,
+    IBigIntFilterParams,
     IRowNode,
     NumberFilterParams,
     ValueService,
@@ -14,6 +17,7 @@ import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from '
 
 export interface FilterExpressionParserParams {
     expression: string;
+    gos: GridOptionsService;
     colModel: ColumnModel;
     dataTypeSvc?: DataTypeService;
     valueSvc: ValueService;
@@ -48,9 +52,20 @@ export type FilterExpressionFunction = (
     params: FilterExpressionFunctionParams
 ) => boolean;
 
-export function getBigIntParser(column: AgColumn | null | undefined): (value: string | null) => bigint | null {
-    return column?.colDef.filterParams?.bigintParser ?? _parseBigIntOrNull;
-}
+type FilterOperandParser<V> = (value: string | null) => V | null;
+
+const bigIntParams = (column: AgColumn | null | undefined): IBigIntFilterParams | undefined =>
+    column?.colDef.filterParams;
+
+/** Read unpaired, unlike the number equivalent, so hex and the like can be typed with a parser alone. */
+export const getBigIntParser = (
+    column: AgColumn | null | undefined,
+    gos: GridOptionsService
+): FilterOperandParser<bigint> =>
+    _bindFilterCallback(bigIntParams(column)?.bigintParser, gos, column) ?? _parseBigIntOrNull;
+
+export const getBigIntFormatter = (column: AgColumn | null | undefined, gos: GridOptionsService) =>
+    _bindFilterCallback(bigIntParams(column)?.bigintFormatter, gos, column);
 
 /**
  * The `filterParams` of a number column whose operands are written in its own syntax rather than as plain
@@ -66,15 +81,14 @@ function customNumberOperandParams(column: AgColumn | null | undefined): NumberF
 const parseNumberOrNull = (value: string | null): number | null => (value?.trim() ? Number(value) : null);
 
 /** Plain-number reading stays the default: only a column that reads *and* writes its own syntax departs from it. */
-export function getNumberParser(column: AgColumn | null | undefined): (value: string | null) => number | null {
-    return customNumberOperandParams(column)?.numberParser ?? parseNumberOrNull;
-}
+export const getNumberParser = (
+    column: AgColumn | null | undefined,
+    gos: GridOptionsService
+): FilterOperandParser<number> =>
+    _bindFilterCallback(customNumberOperandParams(column)?.numberParser, gos, column) ?? parseNumberOrNull;
 
-export function getNumberFormatter(
-    column: AgColumn | null | undefined
-): ((value: number | null) => string | null) | undefined {
-    return customNumberOperandParams(column)?.numberFormatter;
-}
+export const getNumberFormatter = (column: AgColumn | null | undefined, gos: GridOptionsService) =>
+    _bindFilterCallback(customNumberOperandParams(column)?.numberFormatter, gos, column);
 
 export function hasCustomNumberOperands(column: AgColumn | null | undefined): boolean {
     return customNumberOperandParams(column) != null;

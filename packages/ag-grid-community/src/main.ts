@@ -324,6 +324,7 @@ export type {
     FilterHandlerParams,
     FilterHandlers,
     FilterHandlerSource,
+    FilterInputCallbackParams,
     FilterModel,
     FilterWrapperParams,
     IDoesFilterPassParams,

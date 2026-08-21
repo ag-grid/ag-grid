@@ -1,5 +1,6 @@
 import { _parseBigIntOrNull } from 'ag-stack';
 
+import type { Column } from '../../../interfaces/iColumn';
 import type { Comparator } from '../iScalarFilter';
 import type { OptionsFactory } from '../optionsFactory';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
@@ -16,9 +17,10 @@ export class BigIntFilterHandler extends ScalarFilterHandler<BigIntFilterModel, 
 
     protected createModelFormatter(
         optionsFactory: OptionsFactory,
-        filterParams: IBigIntFilterParams
+        filterParams: IBigIntFilterParams,
+        column: Column
     ): BigIntFilterModelFormatter {
-        return new BigIntFilterModelFormatter(optionsFactory, filterParams);
+        return new BigIntFilterModelFormatter(optionsFactory, filterParams, column);
     }
 
     protected override comparator(): Comparator<bigint> {

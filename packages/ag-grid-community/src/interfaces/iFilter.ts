@@ -293,6 +293,17 @@ export interface FilterWrapperParams {
     readOnly?: boolean;
 }
 
+/**
+ * Passed to a filter callback that reads or judges a value rather than a row, such as a parser, a formatter
+ * or an input rule. It names the column so that one callback can serve every column it is configured on.
+ */
+export interface FilterInputCallbackParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The column definition for the column this filter is on. */
+    colDef: ColDef<TData>;
+    /** The column this filter is on. */
+    column: Column;
+}
+
 export interface SharedFilterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column this filter is for. */
     column: Column;

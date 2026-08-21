@@ -2,7 +2,7 @@ import { AgInputNumberField } from '../../../agWidgets/agInputNumberField';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { ICombinedSimpleModel } from '../iSimpleFilter';
-import { getValidityMessageKey } from '../simpleFilterUtils';
+import { _bindFilterCallback, getValidityMessageKey } from '../simpleFilterUtils';
 import type { RenderChange } from '../textInputSimpleFilter';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
@@ -55,22 +55,20 @@ export class NumberFilter extends TextInputSimpleFilter<
         text: string | null | undefined,
         params: NumberFilterDisplayParams | undefined
     ): number | null {
-        return processNumberFilterValue(stringToFloat(params?.numberParser, text));
+        return processNumberFilterValue(stringToFloat(params?.numberParser, text, this.gos, this.params.column));
     }
 
     protected override getValueFormatter(): ((value: number | null) => string | null) | undefined {
-        return this.params.numberFormatter;
+        return _bindFilterCallback(this.params.numberFormatter, this.gos, this.params.column);
     }
 
     protected override createInputWidget(): NumberInput {
         const params = this.params;
-        const allowedCharPattern = getAllowedCharPattern(params);
         if (usesTextInput(params)) {
-            return this.createTextInput(allowedCharPattern);
+            return this.createTextInput();
         }
         return this.createBean(
             new AgInputNumberField({
-                allowedCharPattern: allowedCharPattern ?? undefined,
                 clearButton: true,
                 searchIcon: true,
                 autoComplete: params.browserAutoComplete,
@@ -78,15 +76,24 @@ export class NumberFilter extends TextInputSimpleFilter<
         );
     }
 
-    protected override refreshInputPairValidation(from: NumberInput, to: NumberInput, isFrom = false): void {
-        const fromValue = this.readValue(from, true);
-        const toValue = this.readValue(to, true);
-        const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
-        const validityMessage = localeKey ? this.translate(localeKey, [String(isFrom ? toValue : fromValue)]) : '';
+    protected override refreshInputPairValidation(
+        from: NumberInput,
+        to: NumberInput,
+        isFrom: boolean,
+        numberOfInputs: number
+    ): void {
+        // Only a two-value option has an order to be out of, and reading a value runs the column's own parser.
+        let validityMessage = '';
+        if (numberOfInputs >= 2) {
+            const fromValue = this.readValue(from, true);
+            const toValue = this.readValue(to, true);
+            const localeKey = getValidityMessageKey(fromValue, toValue, isFrom, this.params.inRangeInclusive);
+            validityMessage = localeKey ? this.translate(localeKey, [String(isFrom ? toValue : fromValue)]) : '';
+        }
         (isFrom ? from : to).setCustomValidity(validityMessage); // Set validity error state for target input
         (isFrom ? to : from).setCustomValidity(''); // Reset validity error state for other input
         if (validityMessage.length > 0) {
-            this.beans.ariaAnnounce.announceValue(validityMessage, 'dateFilter');
+            this.beans.ariaAnnounce.announceValue(validityMessage, 'filterValidation');
         }
     }
 

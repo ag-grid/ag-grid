@@ -10,14 +10,15 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi } from 'ag-grid-community';
+import type { FilterInputCallbackParams, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberFilterModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 
 /**
  * Black-box coverage for `agNumberColumnFilter` conditions: operators, inRange boundary semantics,
- * blank handling, `allowedCharPattern`/`numberParser`/`numberFormatter`/`filterInputType`, which element
- * type an input is built as and how a `colDef` refresh replaces it, AND/OR compounds, model round-trip.
- * Complements number-filter-range-validation.test.ts (validation-focused) — no overlap.
+ * blank handling, `numberParser`/`numberFormatter`/`filterInputType`, which element type an input is built
+ * as and how a `colDef` refresh replaces it, AND/OR compounds, condition limits, model round-trip.
+ * Complements number-filter-range-validation.test.ts (validation) and allowed-char-pattern.test.ts (which
+ * characters an input admits) — no overlap.
  */
 describe('Number Filter — conditions coverage', () => {
     const gridsManager = new TestGridsManager({
@@ -213,6 +214,35 @@ describe('Number Filter — conditions coverage', () => {
             ├── LEAF id:2 val:0
             ├── LEAF id:3 val:3
             └── LEAF id:4 val:7.5
+        `);
+    });
+
+    // A strict range of one value matches nothing, but an inclusive one is an exact match, so reporting it
+    // as out of order would leave a legitimate filter that can never be applied.
+    test('inRange accepts a single-value range when inRangeInclusive is true', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'val',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { debounceMs: 0, inRangeInclusive: true },
+                },
+            ],
+            rowData: MIXED,
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'val');
+        await filter.selectOperator('Between');
+        await filter.setNumber(3, 0);
+        await filter.setNumber(3, 1);
+        await asyncSetTimeout(0);
+
+        expect(filter.input('number', 0).validity.valid).toBe(true);
+        expect(filter.input('number', 1).validity.valid).toBe(true);
+        expect(filter.getModel()).toEqual({ filterType: 'number', type: 'inRange', filter: 3, filterTo: 3 });
+        await new GridRows(api, 'an inclusive range of one value is an exact match').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:3 val:3
         `);
     });
 
@@ -735,10 +765,15 @@ describe('Number Filter — conditions coverage', () => {
 
         const filter = await ColumnFilterHarness.open(api, 'val');
         const inputs = [filter.input('number', 0), FloatingFilterHarness.get(api, 'floating').input()];
+        // A `number` input reports its text as blank until it parses, so the edit is what can be observed.
+        const admits = (input: HTMLInputElement, data: string): boolean =>
+            input.dispatchEvent(
+                new InputEvent('beforeinput', { inputType: 'insertText', data, cancelable: true, bubbles: true })
+            );
         for (const input of inputs) {
             expect(input.type).toBe('number');
-            expect(input.dispatchEvent(new KeyboardEvent('keydown', { key: 'e', cancelable: true }))).toBe(false);
-            expect(input.dispatchEvent(new KeyboardEvent('keydown', { key: '5', cancelable: true }))).toBe(true);
+            expect(admits(input, 'e')).toBe(false);
+            expect(admits(input, '5')).toBe(true);
         }
     });
 
@@ -1002,12 +1037,13 @@ describe('Number Filter — conditions coverage', () => {
 
         // Hand-written models reach the grid: a join operator with no conditions must not break filtering,
         // and the open panel must still follow it.
-        await api.setColumnFilterModel('val', { filterType: 'number', operator: 'AND' } as any);
+        await api.setColumnFilterModel('val', { filterType: 'number', operator: 'AND' });
         api.onFilterChanged();
         await asyncSetTimeout(0);
 
         expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #77');
         expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'number', operator: 'AND' });
+        // The panel is back to one condition, with nothing before the first for a join to join it to.
         await new FilterDom(api, 'conditionless combined model panel', { colId: 'val' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Equals"
@@ -1026,6 +1062,22 @@ describe('Number Filter — conditions coverage', () => {
             └── LEAF id:5 val:10
         `);
 
+        // `OR` is the operator that separates passing every row from failing every one of them: joining no
+        // conditions with `some` would match nothing, where `every` over an empty list already matched all.
+        await api.setColumnFilterModel('val', { filterType: 'number', operator: 'OR' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'a conditionless OR matches every row too').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 val:-10
+            ├── LEAF id:1 val:-2.5
+            ├── LEAF id:2 val:0
+            ├── LEAF id:3 val:3
+            ├── LEAF id:4 val:7.5
+            └── LEAF id:5 val:10
+        `);
+
         // A well-formed model applied over it still takes effect.
         await api.setColumnFilterModel('val', { filterType: 'number', type: 'greaterThan', filter: 7 });
         api.onFilterChanged();
@@ -1035,6 +1087,170 @@ describe('Number Filter — conditions coverage', () => {
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:4 val:7.5
             └── LEAF id:5 val:10
+        `);
+    });
+
+    test('a floating filter follows a combined model with no conditions rather than throwing', async () => {
+        // No popup is built here, so the malformed model reaches the floating filter without warning #77 first.
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'val', filter: 'agNumberColumnFilter', floatingFilter: true, filterParams: { debounceMs: 0 } },
+            ],
+            rowData: MIXED,
+        });
+
+        // Filled first, or an emptied input cannot be told from one that was never given anything.
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'equals', filter: 3 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(FloatingFilterHarness.get(api, 'val').input().value).toBe('3');
+
+        await api.setColumnFilterModel('val', { filterType: 'number', operator: 'AND' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // Strict: a key that was never there must not be matched by one rewritten to `undefined`.
+        expect(api.getColumnFilterModel('val')).toStrictEqual({ filterType: 'number', operator: 'AND' });
+        // No condition to read back, so the floating filter shows nothing rather than a value it does not have.
+        expect(FloatingFilterHarness.get(api, 'val').input().value).toBe('');
+    });
+
+    test('`maxNumConditions` below one leaves a lone condition alone rather than rewriting it forever', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0, maxNumConditions: 0 } },
+            ],
+            rowData: MIXED,
+        });
+
+        await api.setColumnFilterModel('val', { filterType: 'number', type: 'greaterThan', filter: 0 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'number', type: 'greaterThan', filter: 0 });
+
+        let modelChanges = 0;
+        api.addEventListener('filterChanged', () => modelChanges++);
+
+        // Only a refresh re-validates, so repeating one is what separates a limit that leaves the model
+        // alone from one that rewrites it a little further on every pass.
+        for (let pass = 0; pass < 2; pass++) {
+            api.setGridOption('columnDefs', [
+                {
+                    field: 'val',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { debounceMs: 0, maxNumConditions: 0 },
+                },
+            ]);
+            await asyncSetTimeout(0);
+        }
+
+        expect(modelChanges).toBe(0);
+        expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'number', type: 'greaterThan', filter: 0 });
+    });
+
+    // `NaN` is the case a bare `< 1` test misses: every comparison against it is false, so an unfloored
+    // limit would cap nothing and hand back both conditions.
+    test.each([
+        ['below one', 0],
+        ['not a number', Number.NaN],
+    ])('`maxNumConditions` %s keeps one condition rather than emptying the model', async (_name, maxNumConditions) => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0, maxNumConditions } },
+            ],
+            rowData: MIXED,
+        });
+
+        await api.setColumnFilterModel('val', {
+            filterType: 'number',
+            operator: 'AND',
+            conditions: [
+                { filterType: 'number', type: 'greaterThan', filter: 0 },
+                { filterType: 'number', type: 'lessThan', filter: 5 },
+            ],
+        });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // The first condition survives and filters: emptying the list would leave a model nothing can show.
+        expect(api.getColumnFilterModel('val')).toEqual({ filterType: 'number', type: 'greaterThan', filter: 0 });
+        await new GridRows(api, 'the one surviving condition filters').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:3 val:3
+            ├── LEAF id:4 val:7.5
+            └── LEAF id:5 val:10
+        `);
+    });
+
+    // Characterises a mismatch rather than asserting a fix: `maxNumConditions` caps what the panel builds,
+    // and where it is unset the model keeps every condition the caller set, so a filter can evaluate more
+    // conditions than the panel can show. Capping the model instead would silently drop a condition from a
+    // working `setFilterModel` call, which is why it is left as it is.
+    test('an unset `maxNumConditions` leaves the model every condition it was given', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: MIXED,
+        });
+
+        await api.setColumnFilterModel('val', {
+            filterType: 'number',
+            operator: 'AND',
+            conditions: [
+                { filterType: 'number', type: 'greaterThan', filter: 0 },
+                { filterType: 'number', type: 'lessThan', filter: 8 },
+                { filterType: 'number', type: 'notEqual', filter: 3 },
+            ],
+        });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(api.getColumnFilterModel('val')).toEqual({
+            filterType: 'number',
+            operator: 'AND',
+            conditions: [
+                { filterType: 'number', type: 'greaterThan', filter: 0 },
+                { filterType: 'number', type: 'lessThan', filter: 8 },
+                { filterType: 'number', type: 'notEqual', filter: 3 },
+            ],
+        });
+        // 3 is what proves the third condition is evaluated: the first two admit it.
+        await new GridRows(api, 'all three conditions filter, past what the panel would show').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:4 val:7.5
+        `);
+    });
+
+    // The two limits are floored on the display as well as in the model, and the message names the floor.
+    // `NaN` is the case a bare `< 1` test misses, leaving a limit every later comparison reads as no limit.
+    test.each([
+        ['below one', 0],
+        ['not a number', Number.NaN],
+    ])('a condition limit %s is reported as needing to be at least one', async (_name, limit) => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [79, 80] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'val',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { debounceMs: 0, maxNumConditions: limit, numAlwaysVisibleConditions: limit },
+                },
+            ],
+            rowData: MIXED,
+        });
+
+        await ColumnFilterHarness.open(api, 'val');
+
+        const warnings = warnSpy.mock.calls.flat().join(' ');
+        expect(warnings).toContain('`filterParams.maxNumConditions` must be greater than or equal to one.');
+        expect(warnings).toContain('`filterParams.numAlwaysVisibleConditions` must be greater than or equal to one.');
+        // Both floored to one, so the panel shows a single condition and nothing to join it to.
+        await new FilterDom(api, 'both condition limits floored to one', { colId: 'val' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Equals"
+            input: "" ⟨Filter...⟩
+            model: null
         `);
     });
 
@@ -1397,5 +1613,47 @@ describe('Number Filter — conditions coverage', () => {
         expect([after.selectionStart, after.selectionEnd]).toEqual([2, 2]);
         // Equals takes one input, so the replacements must not arrive showing the unused second one.
         expect(filter.inputs('text', 0)).toHaveLength(1);
+    });
+
+    test('the parser and the formatter are given the api and the context', async () => {
+        const context = { tag: 'number' };
+        // Kept apart: one array cannot tell "both were given it" from "only one of them ran".
+        const parserSaw: FilterInputCallbackParams[] = [];
+        const formatterSaw: FilterInputCallbackParams[] = [];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            context,
+            columnDefs: [
+                {
+                    field: 'val',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: {
+                        debounceMs: 0,
+                        numberParser: (text: string | null, common: FilterInputCallbackParams) => {
+                            parserSaw.push(common);
+                            // `Number('')` is `0`, which would read an emptied input as a real value.
+                            return text ? Number(text) : null;
+                        },
+                        numberFormatter: (value: number | null, common: FilterInputCallbackParams) => {
+                            formatterSaw.push(common);
+                            return value == null ? null : String(value);
+                        },
+                    },
+                },
+            ],
+            rowData: [{ val: 1 }, { val: 5 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'val');
+        await filter.setText('5');
+
+        expect(parserSaw.length).toBeGreaterThan(0);
+        expect(formatterSaw.length).toBeGreaterThan(0);
+        for (const common of [...parserSaw, ...formatterSaw]) {
+            expect(common.api).toBe(api);
+            expect(common.context).toBe(context);
+            // The column too, so one callback on `defaultColDef` can tell which one it is working on.
+            expect(common.column.getColId()).toBe('val');
+            expect(common.colDef).toBe(common.column.getColDef());
+        }
     });
 });

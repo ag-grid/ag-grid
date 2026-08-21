@@ -1,3 +1,4 @@
+import { userEvent } from '@testing-library/user-event';
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -9,7 +10,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi } from 'ag-grid-community';
+import type { FilterInputCallbackParams, GridApi } from 'ag-grid-community';
 import { BigIntFilterModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 
 /**
@@ -122,34 +123,9 @@ describe('BigInt Filter — custom bigintParser', () => {
         `);
     });
 
-    // A pattern is used as a character class, so one already written as a class must not be wrapped twice.
-    test.each([
-        ['bare characters', '\\dxXa-fA-F'],
-        ['a character class', '[\\dxXa-fA-F]'],
-    ])('allowedCharPattern written as %s admits the same keys', async (_name, allowedCharPattern) => {
-        const api: GridApi = await gridsManager.createGridAndWait('grid10', {
-            columnDefs: [
-                {
-                    field: 'val',
-                    cellDataType: 'bigint' as const,
-                    filter: 'agBigIntColumnFilter' as const,
-                    filterParams: { debounceMs: 0, allowedCharPattern },
-                },
-            ],
-            rowData: [{ val: 255n }],
-        });
-        const filter = await ColumnFilterHarness.open(api, 'val');
-        const rejectsKey = (key: string): boolean => {
-            const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
-            filter.inputs('text', 0)[0].dispatchEvent(event);
-            return event.defaultPrevented;
-        };
-
-        expect([rejectsKey('5'), rejectsKey('F'), rejectsKey('x')]).toEqual([false, false, false]);
-        expect(rejectsKey('z')).toBe(true);
-    });
-
-    test('an allowedCharPattern replaced at runtime reaches inputs built before the change', async () => {
+    // Here rather than in `allowed-char-pattern.test.ts` because the swap also has to reach the parser:
+    // what the new pattern admits has to survive being read back into the model.
+    test('an allowedCharPattern replaced at runtime is read back by the parser', async () => {
         const columnDefs = (allowedCharPattern: string) => [
             {
                 field: 'val',
@@ -158,7 +134,14 @@ describe('BigInt Filter — custom bigintParser', () => {
                 filterParams: {
                     debounceMs: 0,
                     allowedCharPattern,
-                    bigintParser: (text: string | null) => (text == null || text.trim() === '' ? null : BigInt(text)),
+                    // Typing reaches the parser mid-value, where `0x` is not yet a bigint.
+                    bigintParser: (text: string | null) => {
+                        try {
+                            return text?.trim() ? BigInt(text) : null;
+                        } catch {
+                            return null;
+                        }
+                    },
                 },
             },
         ];
@@ -172,20 +155,23 @@ describe('BigInt Filter — custom bigintParser', () => {
         // Built before the swap: an input reads `allowedCharPattern` once, when it is created.
         const filter = await ColumnFilterHarness.open(api, 'val');
 
-        // The pattern is a keydown guard, so only a real keystroke shows which pattern an input is holding.
-        const rejectsKey = (key: string): boolean => {
-            const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
-            filter.inputs('text', 0)[0].dispatchEvent(event);
-            return event.defaultPrevented;
+        // The pattern refuses the edit, so only real typing shows which pattern an input is holding.
+        const userSession = userEvent.setup();
+        const typeHex = async (): Promise<string> => {
+            const input = filter.inputs('text', 0)[0];
+            await userSession.clear(input);
+            await userSession.type(input, '0xF');
+            return input.value;
         };
 
-        expect(rejectsKey('F')).toBe(true);
+        // Decimal only, so both `x` and `F` are dropped where they were typed.
+        expect(await typeHex()).toBe('0');
 
         api.setGridOption('columnDefs', columnDefs('\\dxXa-fA-F'));
         await asyncSetTimeout(0);
 
         // Only a replaced element carries the new pattern; the guard is installed once, at build time.
-        expect(rejectsKey('F')).toBe(false);
+        expect(await typeHex()).toBe('0xF');
 
         await filter.selectOperator('Equals');
         await filter.setText('0xFF', 0);
@@ -318,5 +304,47 @@ describe('BigInt Filter — custom bigintParser', () => {
         await asyncSetTimeout(0);
 
         expect(FloatingFilterHarness.get(api, 'val').input().value).toBe('16');
+    });
+
+    test('the parser and the formatter are given the api and the context', async () => {
+        const context = { tag: 'bigint' };
+        // Kept apart: one array cannot tell "both were given it" from "only one of them ran".
+        const parserSaw: FilterInputCallbackParams[] = [];
+        const formatterSaw: FilterInputCallbackParams[] = [];
+        const api: GridApi = await gridsManager.createGridAndWait('grid5', {
+            context,
+            columnDefs: [
+                {
+                    field: 'val',
+                    cellDataType: 'bigint' as const,
+                    filter: 'agBigIntColumnFilter' as const,
+                    filterParams: {
+                        debounceMs: 0,
+                        bigintParser: (text: string | null, common: FilterInputCallbackParams) => {
+                            parserSaw.push(common);
+                            return text == null || text.trim() === '' ? null : BigInt(text);
+                        },
+                        bigintFormatter: (value: bigint | null, common: FilterInputCallbackParams) => {
+                            formatterSaw.push(common);
+                            return value == null ? null : String(value);
+                        },
+                    },
+                },
+            ],
+            rowData: [{ val: 1n }, { val: 5n }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'val');
+        await filter.setText('5');
+
+        expect(parserSaw.length).toBeGreaterThan(0);
+        expect(formatterSaw.length).toBeGreaterThan(0);
+        for (const common of [...parserSaw, ...formatterSaw]) {
+            expect(common.api).toBe(api);
+            expect(common.context).toBe(context);
+            // The column too, so one callback on `defaultColDef` can tell which one it is working on.
+            expect(common.column.getColId()).toBe('val');
+            expect(common.colDef).toBe(common.column.getColDef());
+        }
     });
 });

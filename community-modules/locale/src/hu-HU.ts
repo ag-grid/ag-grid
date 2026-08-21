@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_HU = {
     // Editor Validation Errors
     minDateValidation: 'A dátumnak későbbinek kell lennie, mint ${variable}',
     maxDateValidation: 'A dátumnak korábbinak kell lennie, mint ${variable}',
+    minDateInclusiveValidation: 'A dátumnak ${variable} vagy annál későbbinek kell lennie',
+    maxDateInclusiveValidation: 'A dátumnak ${variable} vagy annál korábbinak kell lennie',
     maxLengthValidation: 'Legfeljebb ${variable} karakter hosszú lehet.',
     minValueValidation: 'Az értéknek nagyobbnak vagy egyenlőnek kell lennie ${variable}-val/vel',
     maxValueValidation: 'Kisebbnek vagy egyenlőnek kell lennie, mint ${variable}',

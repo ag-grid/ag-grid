@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_NL = {
     // Editor Validation Errors
     minDateValidation: 'Datum moet na ${variable} zijn',
     maxDateValidation: 'Datum moet voor ${variable} zijn',
+    minDateInclusiveValidation: 'Datum moet ${variable} of later zijn',
+    maxDateInclusiveValidation: 'Datum moet ${variable} of eerder zijn',
     maxLengthValidation: 'Moet ${variable} tekens of minder zijn.',
     minValueValidation: 'Moet groter dan of gelijk aan ${variable} zijn',
     maxValueValidation: 'Moet minder dan of gelijk aan ${variable} zijn',

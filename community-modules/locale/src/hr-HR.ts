@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_HR = {
     // Editor Validation Errors
     minDateValidation: 'Datum mora biti nakon ${variable}',
     maxDateValidation: 'Datum mora biti prije ${variable}',
+    minDateInclusiveValidation: 'Datum mora biti ${variable} ili kasnije',
+    maxDateInclusiveValidation: 'Datum mora biti ${variable} ili ranije',
     maxLengthValidation: 'Mora imati ${variable} znakova ili manje.',
     minValueValidation: 'Mora biti veće ili jednako ${variable}',
     maxValueValidation: 'Mora biti manje ili jednako ${variable}',
