@@ -13,6 +13,11 @@ export interface DemoTab {
     altDark: string;
 }
 
+// The video tour of the demos. Linked from the header of every demo page and from the markdown
+// twins, so the label and URL live here rather than being repeated per page.
+export const VIDEO_TOUR_URL = 'https://youtu.be/bcMvTUVbMvI';
+export const VIDEO_TOUR_TEXT = 'Video Tour';
+
 export const demoTabs: DemoTab[] = [
     {
         key: 'complete',
