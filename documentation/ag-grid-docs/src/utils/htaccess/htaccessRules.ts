@@ -248,6 +248,13 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?whats-new-in-ag-studio-2-1/?$ https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-1-javascript-embedded-analytics/ [R=301,L]
 
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?showcase/?$ https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/ [R=301,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?using-playwright-to-test-ag-grid-react-apps/?$ https://www.ag-grid.com/blog/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/ [R=301,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?using-ag-grid-with-react-and-next-js/?$ https://www.ag-grid.com/blog/using-ag-grid-with-next-js-to-build-a-react-table/ [R=301,L]
+
     # This one leaves the blog entirely -- redirects.json sends it to the main-site docs,
     # so the destination is not under /blog/ at all.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]

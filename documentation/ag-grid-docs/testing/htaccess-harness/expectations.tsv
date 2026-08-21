@@ -122,3 +122,6 @@ blog	/author/adam/rss/	301	https://www.ag-grid.com/blog/author/adam/rss/
 blog	/sitemap-posts.xml	301	https://www.ag-grid.com/blog/sitemap-posts.xml
 # Off-sitemap and already dead on both hosts — 410, decided 2026-08-20
 blog	/ag-grid-vs-datatables/	410
+blog	/showcase/	301	https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/
+blog	/using-playwright-to-test-ag-grid-react-apps/	301	https://www.ag-grid.com/blog/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/
+blog	/using-ag-grid-with-react-and-next-js/	301	https://www.ag-grid.com/blog/using-ag-grid-with-next-js-to-build-a-react-table/
