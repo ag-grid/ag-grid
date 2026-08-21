@@ -163,6 +163,21 @@ blog	/tag/vue-grid/amp/	301	https://www.ag-grid.com/blog/tag/vuejs/
 blog	/tag/jest/amp/	301	https://www.ag-grid.com/blog/tag/testing/
 blog	/tag/redux/amp/	410
 blog	/tag/sorting/amp/	410
+# PR 14926 [P2]: pagination and feed variants of a retired tag must not bypass the tag
+# rules onto a dead /blog/tag/<retired>/... destination.
+blog	/tag/redux/page/2/	410
+blog	/tag/redux/rss/	410
+blog	/tag/sorting/page/3/	410
+# Synonyms: pagination goes to the surviving tag ROOT (vuejs and testing have no page 2),
+# feeds go to the surviving tag's feed.
+blog	/tag/angular-grid/page/2/	301	https://www.ag-grid.com/blog/tag/angular/
+blog	/tag/react-table/page/5/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/vue-grid/page/2/	301	https://www.ag-grid.com/blog/tag/vuejs/
+blog	/tag/angular-grid/rss/	301	https://www.ag-grid.com/blog/tag/angular/rss/
+blog	/tag/jest/rss/	301	https://www.ag-grid.com/blog/tag/testing/rss/
+# Regression: a SURVIVING tag's pagination and feed must still take the generic rules.
+blog	/tag/angular/page/2/	301	https://www.ag-grid.com/blog/tag/angular/page/2/
+blog	/tag/angular/rss/	301	https://www.ag-grid.com/blog/tag/angular/rss/
 blog	/tag/jest/	301	https://www.ag-grid.com/blog/tag/testing/
 blog	/tag/redux/	410
 blog	/tag/sorting/	410
