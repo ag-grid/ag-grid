@@ -1,9 +1,9 @@
 # GENERATED behavioural regression rows (main + charts), validated against real Apache.
 # Regenerate with gen-main-expectations.mjs / gen-charts-expectations.mjs after intentional rule changes; review the diff.
 # host	path	expect_status	expect_location_substring
-www	/introducing-the-ag-grid-model-context-protocol-mcp-server/	301	https://blog.ag-grid.com/introducing-the-ag-grid-model-context-protocol-mcp-server/
+www	/introducing-the-ag-grid-model-context-protocol-mcp-server/	301	https://www.ag-grid.com/blog/introducing-the-ag-grid-model-context-protocol-mcp-server/
 www	/introducing-the-ag-grid-model-context-protocol-mcp-server/child	301	/introducing-the-ag-grid-model-context-protocol-mcp-server/child/
-www	/introducing-the-ag-grid-model-context-protocol-mcp-server/child/	301	https://blog.ag-grid.com/introducing-the-ag-grid-model-context-protocol-mcp-server/child/
+www	/introducing-the-ag-grid-model-context-protocol-mcp-server/child/	301	https://www.ag-grid.com/blog/introducing-the-ag-grid-model-context-protocol-mcp-server/child/
 www	/javascript-data-grid/grouping-sticky-groups/	301	/javascript-data-grid/grouping-display-types/
 www	/javascript-data-grid/grouping-sticky-groups/child	301	/javascript-data-grid/grouping-sticky-groups/child/
 www	/javascript-data-grid/grouping-sticky-groups/child/	301	/javascript-data-grid/grouping-display-types/child/
