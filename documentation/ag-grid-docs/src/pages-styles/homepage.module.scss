@@ -163,6 +163,9 @@ body {
 .heroLinks {
     position: relative;
     display: flex;
+    // Wraps because the row now carries four CTAs — without it the trial and pricing buttons
+    // push the row past the viewport on narrow screens.
+    flex-wrap: wrap;
     gap: $spacing-size-2;
     align-items: center;
     margin: $spacing-size-4 0 0;

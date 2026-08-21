@@ -1,8 +1,5 @@
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
-import { demoTabs } from '@components/demos/demosData';
-
-// The video-tour link shown on the /example page header (example.astro).
-const VIDEO_TOUR_URL = 'https://youtu.be/bcMvTUVbMvI';
+import { VIDEO_TOUR_TEXT, VIDEO_TOUR_URL, demoTabs } from '@components/demos/demosData';
 
 /**
  * Build the markdown twin of the /example (demo) page. The page is almost entirely a live
@@ -22,7 +19,7 @@ export function buildExampleMarkdown({ siteRoot }: { siteRoot?: string } = {}): 
         .join('\n');
 
     const resources = [
-        `- [See the video tour](${VIDEO_TOUR_URL})`,
+        `- [${VIDEO_TOUR_TEXT}](${VIDEO_TOUR_URL})`,
         `- [Contact Us](${toAbsoluteUrl('/contact/', siteRoot)})`,
     ].join('\n');
 

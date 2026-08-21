@@ -27,7 +27,7 @@ describe('buildExampleMarkdown', () => {
     });
 
     it('includes the video and contact resources', () => {
-        expect(output).toContain('[See the video tour](https://youtu.be/bcMvTUVbMvI)');
+        expect(output).toContain('[Video Tour](https://youtu.be/bcMvTUVbMvI)');
         expect(output).toContain('[Contact Us](https://www.ag-grid.com/contact/)');
     });
 

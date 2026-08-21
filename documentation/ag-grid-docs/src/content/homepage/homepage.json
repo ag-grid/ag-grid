@@ -6,7 +6,11 @@
         "seeDemosText": "See demos",
         "seeDemosUrl": "./example/",
         "githubText": "View on GitHub",
-        "githubUrl": "https://github.com/ag-grid/ag-grid-demos/tree/main/finance"
+        "githubUrl": "https://github.com/ag-grid/ag-grid-demos/tree/main/finance",
+        "freeTrialText": "Free Trial",
+        "freeTrialUrl": "./community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence",
+        "buyNowText": "Buy Now",
+        "buyNowUrl": "/license-pricing/"
     },
     "sections": [
         {
@@ -14,9 +18,15 @@
             "tag": "Unbeatable Speed & Performance",
             "heading": "The Fastest Data Grid In The World",
             "subHeading": "Handle millions of rows, and thousands of updates per second out of the box, without compromising on performance",
-            "ctaTitle": "Get Started For Free",
+            "ctaTitle": "Explore the Docs",
             "ctaUrl": "./getting-started",
             "ctaId": "get-started-for-free",
+            "secondaryCta": {
+                "title": "Try Enterprise Free",
+                "url": "./community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence",
+                "id": "try-enterprise-free-cta",
+                "isFramework": true
+            },
             "isFramework": true,
             "showBackgroundGradient": true
         },
@@ -38,6 +48,12 @@
             "ctaTitle": "Explore Integrated Charts",
             "ctaUrl": "./integrated-charts/",
             "ctaId": "integrated-charting-cta",
+            "secondaryCta": {
+                "title": "Free Trial",
+                "url": "./community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence",
+                "id": "integrated-charting-free-trial-cta",
+                "isFramework": true
+            },
             "isFramework": true,
             "showBackgroundGradient": true
         },
