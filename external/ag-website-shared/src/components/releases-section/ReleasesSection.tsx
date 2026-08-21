@@ -50,7 +50,7 @@ export const ReleasesSection: React.FC<ReleasesSectionProps> = ({
                 {filteredVersions.map((version) => (
                     <div key={version.version} className={styles.rtsReleaseCard}>
                         <a
-                            href={`https://blog.ag-grid.com/whats-new-in-ag-grid-${version.version}/${utm}`}
+                            href={`https://www.ag-grid.com/blog/whats-new-in-ag-grid-${version.version}/${utm}`}
                             target="_blank"
                             rel="noopener noreferrer"
                         >

@@ -84,8 +84,39 @@ const filterIgnoredPages = (page: string) => {
  *
  * Check the sitemap locally at `http://localhost:4611/sitemap-0.xml` and `http://localhost:4611/sitemap`
  */
-export function getSitemapConfig({ chartsSitemap, studioSitemap }: { chartsSitemap?: string; studioSitemap?: string }) {
-    const customSitemaps = [...(chartsSitemap ? [chartsSitemap] : []), ...(studioSitemap ? [studioSitemap] : [])];
+/**
+ * SE-85: `blogSitemaps` lists Ghost's FLAT child sitemaps (posts, pages, authors, tags), not its
+ * index at /blog/sitemap.xml.
+ *
+ * That distinction matters. `customSitemaps` entries are emitted as <sitemap> members of our own
+ * sitemap index, and the protocol requires those to be sitemap FILES — an index may not contain
+ * another index, and crawlers ignore one that does, so nesting Ghost's index here would hide all
+ * 291 blog URLs. Charts and studio already reference flat files (`sitemap-0.xml` is a <urlset>
+ * despite the env var being named ..._INDEX_URL), so this matches them rather than inventing a
+ * second shape.
+ *
+ * Referencing Ghost's files rather than copying their URLs means the blog's entries stay current on
+ * their own — a snapshot would go stale the next time a post is published, which is precisely how
+ * the 282-row redirect map fell nine URLs behind the live 291. It also leaves each post's real
+ * published/modified dates in Ghost's hands: SE-85 is explicit that the move must not touch them.
+ *
+ * The trade-off is that the four filenames are pinned in config. Ghost's set is fixed, but if it
+ * ever gains a type, /blog/sitemap.xml is the place to spot it.
+ */
+export function getSitemapConfig({
+    chartsSitemap,
+    studioSitemap,
+    blogSitemaps,
+}: {
+    chartsSitemap?: string;
+    studioSitemap?: string;
+    blogSitemaps?: string[];
+}) {
+    const customSitemaps = [
+        ...(chartsSitemap ? [chartsSitemap] : []),
+        ...(studioSitemap ? [studioSitemap] : []),
+        ...(blogSitemaps ?? []),
+    ];
 
     return {
         customSitemaps,

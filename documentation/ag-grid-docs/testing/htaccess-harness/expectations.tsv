@@ -5,7 +5,7 @@
 # the redirect is a single hop.
 
 # --- SE-30 ---
-www	/introducing-the-ag-grid-model-context-protocol-mcp-server/	301	https://blog.ag-grid.com/introducing-the-ag-grid-model-context-protocol-mcp-server/
+www	/introducing-the-ag-grid-model-context-protocol-mcp-server/	301	https://www.ag-grid.com/blog/introducing-the-ag-grid-model-context-protocol-mcp-server/
 
 # --- SE-60 (grid; the /charts/* ones are asserted in the charts section) ---
 www	/javascript-data-grid/grouping-sticky-groups/	301	/javascript-data-grid/grouping-display-types/
@@ -77,3 +77,48 @@ www	/campaigns/beyond-the-prompt/	301	/community/beyond-the-prompt/
 www	/angular-data-grid/getting-started/	200
 www	/react-data-grid/cell-editing/	200
 www	/charts/react/bar-series/	200
+
+# ── SE-91/SE-86: blog.ag-grid.com -> www.ag-grid.com/blog/ ────────────────────────────
+# Every row asserts the SINGLE response, so a Location holding the FINAL target is proof
+# of a single hop. Ordering bugs in the rule block show up here as a Location pointing at
+# an intermediate slug (which Ghost would then redirect again).
+# The catch-all: any sitemap URL, host+prefix swap only
+blog	/whats-new-in-ag-grid-35-3/	301	https://www.ag-grid.com/blog/whats-new-in-ag-grid-35-3/
+blog	/tag/react-data-grid/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/author/adam/	301	https://www.ag-grid.com/blog/author/adam/
+# Published after the 282-row map was built — proves the catch-all does not go stale
+blog	/whats-new-in-ag-grid-36-1/	301	https://www.ag-grid.com/blog/whats-new-in-ag-grid-36-1/
+blog	/redefining-embedded-analytics-with-ag-studio/	301	https://www.ag-grid.com/blog/redefining-embedded-analytics-with-ag-studio/
+# Live posts absent from the sitemap — a sitemap-derived map misses these entirely
+blog	/reducing-angular-library-contributions-to-the-main-bundle/	301	https://www.ag-grid.com/blog/reducing-angular-library-contributions-to-the-main-bundle/
+# Spam target: 410, never a redirect
+blog	/whats-new-in-ag-grid-v24/	410
+# The nine redirects.json sources that are NOT in the sitemap — each must reach its FINAL
+# slug, not /blog/<old-slug>, or Ghost adds a second hop
+blog	/tag/react	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/conferences-ag-grid-amsterdam-june-2022/	301	https://www.ag-grid.com/blog/js-nation-and-react-summit-june-2022-overview/
+blog	/getting-more-from-your-datagrid-introducing-adaptable/	301	https://www.ag-grid.com/blog/adaptable-tools-demo-and-interview/
+blog	/javascript-grid-comparison-column-pinning-ag-grid/	301	https://www.ag-grid.com/blog/heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition/
+blog	/whats-new-in-ag-studio-2/	301	https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/
+blog	/whats-new-in-ag-studio-2-1/	301	https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-1-javascript-embedded-analytics/
+# Leaves the blog entirely — target is a main-site docs page
+blog	/angular-2-0-web-components-and-ag-grid/	301	https://www.ag-grid.com/angular-data-grid/getting-started/
+# The /amp/ overlap: explicit entry must beat the generic /amp/ rule. Both go to the same
+# final post, so a wrong precedence shows as /blog/integrated-charts-community-vs-enterprise/
+blog	/integrated-charts-community-vs-enterprise/amp/	301	https://www.ag-grid.com/blog/enhancing-ag-grid-enterprise-with-ag-charts-enterprise/
+blog	/integrated-charts-community-vs-enterprise/	301	https://www.ag-grid.com/blog/enhancing-ag-grid-enterprise-with-ag-charts-enterprise/
+# Generic /amp/ strip, for a post with no explicit entry
+blog	/whats-new-in-ag-grid-35-3/amp/	301	https://www.ag-grid.com/blog/whats-new-in-ag-grid-35-3/
+# Off-sitemap, from backlink data
+blog	/index.php/2018/11/29/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm/	301	https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/
+blog	/vuestic-ui-app-with-ag-grid-tutorial/	301	https://epicmax.co/blog/vuestic-ui-with-ag-grid
+# Hotlinked images — one pattern, so a sample suffices
+blog	/content/images/size/w256h256/2021/02/200pxArtboard-5.png	301	https://www.ag-grid.com/blog/content/images/size/w256h256/2021/02/200pxArtboard-5.png
+# Pagination, feeds, sitemap — live but in no sitemap
+blog	/page/2/	301	https://www.ag-grid.com/blog/page/2/
+blog	/tag/react-data-grid/page/2/	301	https://www.ag-grid.com/blog/tag/react-data-grid/page/2/
+blog	/rss/	301	https://www.ag-grid.com/blog/rss/
+blog	/author/adam/rss/	301	https://www.ag-grid.com/blog/author/adam/rss/
+blog	/sitemap-posts.xml	301	https://www.ag-grid.com/blog/sitemap-posts.xml
+# Off-sitemap and already dead on both hosts — 410, decided 2026-08-20
+blog	/ag-grid-vs-datatables/	410

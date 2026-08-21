@@ -134,6 +134,12 @@ const {
     STUDIO_SITEMAP_INDEX_URL,
 
     /**
+     * SE-85: Ghost's flat child sitemaps to merge, comma-separated. NOT its index — see
+     * getSitemapConfig; an index inside an index is invalid and crawlers ignore it.
+     */
+    BLOG_SITEMAP_URLS,
+
+    /**
      * Studio robots.txt disallow json url to merge
      */
     STUDIO_ROBOTS_DISALLOW_JSON_URL,
@@ -279,6 +285,9 @@ export default defineConfig({
                       getSitemapConfig({
                           chartsSitemap: CHARTS_SITEMAP_INDEX_URL,
                           studioSitemap: STUDIO_SITEMAP_INDEX_URL,
+                          blogSitemaps: BLOG_SITEMAP_URLS?.split(',')
+                              .map((url) => url.trim())
+                              .filter(Boolean),
                       })
                   ),
                   agSitemapFilterNoindex({ enabled: PRODUCTION_SITE_URLS.includes(PUBLIC_SITE_URL) }),

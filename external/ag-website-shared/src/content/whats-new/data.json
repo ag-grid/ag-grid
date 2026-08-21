@@ -1,14 +1,14 @@
 {
     "grid": {
         "name": "AG Grid",
-        "blogPrefix": "https://blog.ag-grid.com/whats-new-in-ag-grid-"
+        "blogPrefix": "https://www.ag-grid.com/blog/whats-new-in-ag-grid-"
     },
     "charts": {
         "name": "AG Charts",
-        "blogPrefix": "https://blog.ag-grid.com/whats-new-in-ag-charts-"
+        "blogPrefix": "https://www.ag-grid.com/blog/whats-new-in-ag-charts-"
     },
     "studio": {
         "name": "AG Studio",
-        "blogPrefix": "https://blog.ag-grid.com/whats-new-in-ag-studio-"
+        "blogPrefix": "https://www.ag-grid.com/blog/whats-new-in-ag-studio-"
     }
 }

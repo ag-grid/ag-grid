@@ -398,9 +398,12 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
 export const SITE_301_REDIRECTS: Redirect[] = [
     // SE-30: legacy MCP announcement slug that 404s on www -> the blog post (same slug) where the
     // announcement actually lives, preserving the content for external links / historical index entries.
+    // SE-91: retargeted from blog.ag-grid.com to the self-hosted /blog/ path. Left pointing at the old
+    // host this becomes two hops after cutover -- www -> blog.ag-grid.com -> www/blog/ -- which fails
+    // SE-86's single-hop requirement. The slug is unchanged, so the destination is the same content.
     {
         from: '/introducing-the-ag-grid-model-context-protocol-mcp-server/',
-        to: 'https://blog.ag-grid.com/introducing-the-ag-grid-model-context-protocol-mcp-server/',
+        to: 'https://www.ag-grid.com/blog/introducing-the-ag-grid-model-context-protocol-mcp-server/',
     },
 
     // SE-60: legacy URLs returning 404 that are still internally linked.

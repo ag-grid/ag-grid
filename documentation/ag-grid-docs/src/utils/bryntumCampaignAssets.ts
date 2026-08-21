@@ -53,7 +53,7 @@ export const withBryntumUtm = (url: string): string => {
 
 // Path prefixes inside curated body_html that originated from bryntum.com and
 // must be repointed at the Bryntum site. Anything else (e.g. absolute URLs to
-// blog.ag-grid.com) is left alone so /campaigns/bryntum- pages don't end up
+// www.ag-grid.com/blog) is left alone so /campaigns/bryntum- pages don't end up
 // rewriting genuinely AG-bound anchors.
 const BRYNTUM_RELATIVE_PATH_RE = /^\/?(?:products|download|store|company|contact|examples|changelog)(?:[/?#]|$)/i;
 

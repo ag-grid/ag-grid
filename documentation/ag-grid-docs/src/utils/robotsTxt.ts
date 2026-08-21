@@ -54,6 +54,34 @@ export const AI_CRAWLERS = [
 // content, so they are NOT opened — they stay blocked for AI just as they are for search.
 const isAiOpenExamplePath = (path: string) => /example/i.test(path) && !path.includes('/debug/');
 
+/**
+ * SE-89: the self-hosted Ghost blog is reverse-proxied under /blog/, so its robots rules have to
+ * live in the main site's robots.txt — a crawler only ever reads /robots.txt at the domain root, and
+ * Ghost's own /blog/robots.txt is never fetched.
+ *
+ * These are Ghost's internal endpoints, prefixed for the proxy. They are the blog's original
+ * disallow list and nothing more.
+ *
+ * Deliberately NOT here:
+ * - No blanket `Disallow: /blog/`. Blocking a path hides the 301s on it from Google, which is the
+ *   opposite of what the migration needs — the old URLs redirect here and those redirects have to be
+ *   crawlable to transfer anything.
+ * - No disallow on the post, tag or author paths. Tags that stay noindexed do so with a page-level
+ *   meta tag (SE-25), and that only works while Google can still crawl the page to read it. A robots
+ *   block would hide the noindex, not enforce it.
+ *
+ * These apply to the AI groups as well as the wildcard: `isAiOpenExamplePath` only relaxes example
+ * paths, so admin and API endpoints stay blocked for every agent.
+ */
+const BLOG_DISALLOW_PATHS = [
+    '/blog/ghost/',
+    '/blog/email/',
+    '/blog/members/api/',
+    '/blog/r/',
+    '/blog/webmentions/receive/',
+    '/blog/.ghost/analytics/api/',
+];
+
 const buildGroup = (userAgents: string[], allowPaths: string[], disallowPaths: string[]) =>
     [
         ...userAgents.map((userAgent) => `User-agent: ${userAgent}`),
@@ -61,8 +89,15 @@ const buildGroup = (userAgents: string[], allowPaths: string[], disallowPaths: s
         `Allow: ${urlWithBaseUrl('/')}`,
         `Allow: ${urlWithBaseUrl('/charts/')}`,
         `Allow: ${urlWithBaseUrl('/studio/')}`,
+        // SE-89: explicit, matching /charts/ and /studio/. The blanket `Allow: /` above already
+        // covers it; stating it makes the intent unmissable to anyone reading the file, since the
+        // migration depends on /blog/ staying crawlable.
+        `Allow: ${urlWithBaseUrl('/blog/')}`,
         ...allowPaths.map((path) => `Allow: ${path}`),
         ...disallowPaths.map((path) => `Disallow: ${path}`),
+        // After the Allow lines: robots.txt precedence is longest-match, not document order, so
+        // `Disallow: /blog/ghost/` beats `Allow: /blog/` regardless of position.
+        ...BLOG_DISALLOW_PATHS.map((path) => `Disallow: ${urlWithBaseUrl(path)}`),
     ].join('\n');
 
 export const productionRobotsTxt = (allowPaths: string[] = [], disallowPaths: string[] = []) => {
