@@ -5,14 +5,7 @@ import type {
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
-import {
-    _createAgElement,
-    _exists,
-    _isEventFromPrintableCharacter,
-    _setAriaInvalid,
-    _setAriaLabel,
-    _setDisplayed,
-} from 'ag-stack';
+import { _createAgElement, _exists, _setAriaInvalid, _setAriaLabel, _setDisplayed } from 'ag-stack';
 
 import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
@@ -26,7 +19,6 @@ const CUSTOM_CLEAR_BUTTON_INPUT_TYPES: ReadonlySet<string> = new Set(['number', 
 export interface AgInputTextFieldParams<
     TComponentSelectorType extends string,
 > extends AgInputFieldParams<TComponentSelectorType> {
-    allowedCharPattern?: string;
     clearButton?: boolean;
     onValueClear?: () => void;
     searchIcon?: boolean;
@@ -65,11 +57,8 @@ export class AgInputTextField<
     public override postConstruct() {
         super.postConstruct();
 
-        const { allowedCharPattern, clearButton, onValueClear, searchIcon } = this.config;
+        const { clearButton, onValueClear, searchIcon } = this.config;
 
-        if (allowedCharPattern) {
-            this.preventDisallowedCharacters(allowedCharPattern);
-        }
         if (clearButton) {
             this.setClearButtonEnabled(true);
         }
@@ -211,34 +200,6 @@ export class AgInputTextField<
         const canDisplay = supportsClearButton && !this.isDisabled();
         eInput.classList.toggle('ag-input-field-input-with-clear-button', canDisplay);
         _setDisplayed(eClearButton, canDisplay && !!eInput.value);
-    }
-
-    private preventDisallowedCharacters(allowedCharPattern: string): void {
-        // Already a character class: wrapping it again would only ever match a two-character string,
-        // so every single keystroke would be rejected.
-        const isCharClass = allowedCharPattern.startsWith('[') && allowedCharPattern.endsWith(']');
-        const pattern = new RegExp(isCharClass ? allowedCharPattern : `[${allowedCharPattern}]`);
-
-        const preventCharacters = (event: KeyboardEvent) => {
-            if (!_isEventFromPrintableCharacter(event)) {
-                return;
-            }
-
-            if (event.key && !pattern.test(event.key)) {
-                event.preventDefault();
-            }
-        };
-
-        this.addManagedListeners(this.eInput, {
-            keydown: preventCharacters,
-            paste: (e: ClipboardEvent) => {
-                const text = e.clipboardData?.getData('text');
-
-                if (text?.split('').some((c) => !pattern.test(c))) {
-                    e.preventDefault();
-                }
-            },
-        });
     }
 }
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

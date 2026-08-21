@@ -1,3 +1,4 @@
+import type { Column } from '../../../interfaces/iColumn';
 import type { FilterHandlerParams, IDoesFilterPassParams } from '../../../interfaces/iFilter';
 import type { FilterOptionKey, ICombinedSimpleModel, TextFilterOptionKey, Tuple } from '../iSimpleFilter';
 import { isCombinedFilterModel } from '../iSimpleFilter';
@@ -60,9 +61,10 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
 
     protected createModelFormatter(
         optionsFactory: OptionsFactory,
-        filterParams: ITextFilterParams
+        filterParams: ITextFilterParams,
+        column: Column
     ): TextFilterModelFormatter {
-        return new TextFilterModelFormatter(optionsFactory, filterParams);
+        return new TextFilterModelFormatter(optionsFactory, filterParams, column);
     }
 
     protected override updateParams(

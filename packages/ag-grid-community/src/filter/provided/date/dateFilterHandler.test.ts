@@ -166,19 +166,65 @@ describe('getOrRefreshRangeCacheItem', () => {
         vi.useRealTimers();
     });
 
-    it('returns cached range for the same key before expiry', () => {
+    // Start the clock away from midnight: at the epoch an expiry timestamp and an elapsed time are the same
+    // number, so a cache that never hits still looks like one that does.
+    it.each([
+        ['at the epoch', new Date(0), new Date(1000)],
+        ['later the same day', new Date('2026-08-10T09:00:00Z'), new Date('2026-08-10T09:00:01Z')],
+    ])('returns cached range for the same key before expiry, %s', (_name, start, next) => {
+        vi.setSystemTime(start);
         const handler = new DateFilterHandler();
         const rangeFn = vi.fn(() => [new Date(1), new Date(2)] as [Date, Date]);
 
         const first = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        vi.setSystemTime(next);
         const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
 
         expect(rangeFn).toHaveBeenCalledTimes(1);
-        expect(first.from).toBe(second.from);
-        expect(first.to).toBe(second.to);
+        expect([first.fromTime, first.toTime]).toStrictEqual([1, 2]);
+        expect([second.fromTime, second.toTime]).toStrictEqual([1, 2]);
+    });
+
+    // The range reaches a user `comparator` as dates it is free to normalise, so the cache keeps times:
+    // there is nothing in it a caller holds a reference to.
+    it('caches times rather than the dates the range function built', () => {
+        const handler = new DateFilterHandler();
+        const built: Date[] = [];
+        const rangeFn = vi.fn(() => {
+            const range: [Date, Date] = [new Date(1_000), new Date(2_000)];
+            built.push(...range);
+            return range;
+        });
+
+        const cached = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        for (const date of built) {
+            date.setTime(999_999);
+        }
+
+        expect(Object.values(cached).every((value) => typeof value === 'number')).toBe(true);
+        expect([cached.fromTime, cached.toTime]).toStrictEqual([1_000, 2_000]);
+    });
+
+    // Built from local parts, since the expiry is the next *local* midnight: pinning the clock to a UTC
+    // offset would put the boundary an hour out in any zone the suite is not run in.
+    const MIDMORNING = new Date(2026, 7, 10, 9, 0, 0);
+    const NEXT_MIDNIGHT = new Date(2026, 7, 11, 0, 0, 0);
+
+    // The ranges are half-open, so the expiry instant already belongs to the day the cached range excludes.
+    it('refreshes the cache at the instant it expires', () => {
+        vi.setSystemTime(MIDMORNING);
+        const handler = new DateFilterHandler();
+        const rangeFn = vi.fn(() => [new Date(1), new Date(2)] as [Date, Date]);
+
+        handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        vi.setSystemTime(NEXT_MIDNIGHT);
+        handler.getOrRefreshRangeCacheItem(key, rangeFn);
+
+        expect(rangeFn).toHaveBeenCalledTimes(2);
     });
 
     it('refreshes the cache when expired', () => {
+        vi.setSystemTime(MIDMORNING);
         const handler = new DateFilterHandler();
         const rangeFn = vi
             .fn()
@@ -187,14 +233,13 @@ describe('getOrRefreshRangeCacheItem', () => {
 
         const first = handler.getOrRefreshRangeCacheItem(key, rangeFn);
 
-        vi.setSystemTime(new Date(86_400_001));
+        vi.setSystemTime(new Date(NEXT_MIDNIGHT.getTime() + 1));
 
         const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
 
         expect(rangeFn).toHaveBeenCalledTimes(2);
-        expect(first.from).not.toBe(second.from);
-        expect(first.to).not.toBe(second.to);
-        expect([second.from, second.to].map((date) => date.getTime())).toStrictEqual([3, 4]);
+        expect([first.fromTime, first.toTime]).toStrictEqual([1, 2]);
+        expect([second.fromTime, second.toTime]).toStrictEqual([3, 4]);
     });
 
     it('keeps separate caches per key', () => {
@@ -207,7 +252,7 @@ describe('getOrRefreshRangeCacheItem', () => {
 
         expect(rangeFnToday).toHaveBeenCalledTimes(1);
         expect(rangeFnYesterday).toHaveBeenCalledTimes(1);
-        expect([today.from, today.to].map((date) => date.getTime())).toStrictEqual([10, 20]);
-        expect([yesterday.from, yesterday.to].map((date) => date.getTime())).toStrictEqual([30, 40]);
+        expect([today.fromTime, today.toTime]).toStrictEqual([10, 20]);
+        expect([yesterday.fromTime, yesterday.toTime]).toStrictEqual([30, 40]);
     });
 });

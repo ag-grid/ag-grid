@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_VN = {
     // Editor Validation Errors
     minDateValidation: 'Ngày phải sau ${variable}',
     maxDateValidation: 'Ngày phải trước ${variable}',
+    minDateInclusiveValidation: 'Ngày phải là ${variable} hoặc sau đó',
+    maxDateInclusiveValidation: 'Ngày phải là ${variable} hoặc trước đó',
     maxLengthValidation: 'Phải có ${variable} ký tự hoặc ít hơn.',
     minValueValidation: 'Phải lớn hơn hoặc bằng ${variable}',
     maxValueValidation: 'Phải nhỏ hơn hoặc bằng ${variable}',

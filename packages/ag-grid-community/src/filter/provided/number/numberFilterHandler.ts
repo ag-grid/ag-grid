@@ -1,3 +1,4 @@
+import type { Column } from '../../../interfaces/iColumn';
 import type { Comparator } from '../iScalarFilter';
 import type { OptionsFactory } from '../optionsFactory';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
@@ -14,9 +15,10 @@ export class NumberFilterHandler extends ScalarFilterHandler<NumberFilterModel, 
 
     protected createModelFormatter(
         optionsFactory: OptionsFactory,
-        filterParams: INumberFilterParams
+        filterParams: INumberFilterParams,
+        column: Column
     ): NumberFilterModelFormatter {
-        return new NumberFilterModelFormatter(optionsFactory, filterParams);
+        return new NumberFilterModelFormatter(optionsFactory, filterParams, column);
     }
 
     protected override comparator(): Comparator<number> {

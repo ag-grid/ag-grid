@@ -1,9 +1,7 @@
 import { RefPlaceholder, _getActiveDomElement } from 'ag-stack';
 
-import type { AgInputTextFieldParams } from '../../../agWidgets/agInputTextField';
 import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';
-import type { AgComponentSelectorType } from '../../../widgets/component';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';
 
@@ -12,20 +10,23 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
     private onValueChanged: (e: KeyboardEvent) => void = () => {};
     private onValueCleared: () => void = () => {};
 
-    constructor(private readonly params?: { config?: AgInputTextFieldParams<AgComponentSelectorType> }) {
+    /** A hook, not the pattern itself: importing the guard here would put it in the text filter's bundle. */
+    constructor(private readonly onInputCreated?: (field: GridInputTextField) => void) {
         super();
     }
 
     public setupGui(parentElement: HTMLElement): void {
-        this.eInput = this.createManagedBean(
+        const field = this.createManagedBean<GridInputTextField>(
             new AgInputTextField({
-                ...this.params?.config,
                 clearButton: true,
                 onValueClear: () => this.onValueCleared(),
             })
         );
+        this.eInput = field;
 
-        const eInput = this.eInput.getGui();
+        this.onInputCreated?.(field);
+
+        const eInput = field.getGui();
 
         parentElement.appendChild(eInput);
 

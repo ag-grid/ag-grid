@@ -77,8 +77,12 @@ const FILTER_LOCALE_TEXT = {
     filterSummaryTextQuote: (variableValues: string[]) => `"${variableValues[0]}"`,
     minDateValidation: (variableValues: string[]) => `Date must be after ${variableValues[0]}`,
     maxDateValidation: (variableValues: string[]) => `Date must be before ${variableValues[0]}`,
+    minDateInclusiveValidation: (variableValues: string[]) => `Date must be on or after ${variableValues[0]}`,
+    maxDateInclusiveValidation: (variableValues: string[]) => `Date must be on or before ${variableValues[0]}`,
     strictMinValueValidation: (variableValues: string[]) => `Must be greater than ${variableValues[0]}`,
     strictMaxValueValidation: (variableValues: string[]) => `Must be less than ${variableValues[0]}`,
+    minValueValidation: (variableValues: string[]) => `Must be greater than or equal to ${variableValues[0]}`,
+    maxValueValidation: (variableValues: string[]) => `Must be less than or equal to ${variableValues[0]}`,
 };
 
 export type FilterLocaleTextKey = keyof typeof FILTER_LOCALE_TEXT;

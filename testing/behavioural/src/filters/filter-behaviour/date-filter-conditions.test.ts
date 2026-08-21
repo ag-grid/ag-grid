@@ -1,6 +1,8 @@
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
+    FloatingFilterHarness,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -9,7 +11,7 @@ import {
 } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, DateFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { ClientSideRowModelModule, DateFilterModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 
 /**
  * Black-box coverage for `agDateColumnFilter` conditions (operators, inRange boundaries, validation,
@@ -26,7 +28,63 @@ describe('Date Filter — conditions coverage', () => {
         installFilterLayoutMock();
     });
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => gridsManager.reset());
+    afterEach(() => {
+        // Restored first: a throw from `reset` would otherwise leave `console.warn` mocked for the rest of
+        // the file. The global `beforeEach` puts the validation config back on its own.
+        vi.restoreAllMocks();
+        gridsManager.reset();
+    });
+
+    // A date component is built inside an `AgPromise` that settles inline, so one reporting from its own
+    // `init` drives the filter's callbacks before the condition it belongs to has its type widget.
+    test('a date component reporting a change while it initialises builds one whole condition', async () => {
+        class EagerDateComp {
+            private eGui!: HTMLInputElement;
+            public init(params: { onDateChanged: () => void }): void {
+                this.eGui = document.createElement('input');
+                params.onDateChanged();
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public getDate(): Date | null {
+                return null;
+            }
+            public setDate(): void {}
+        }
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    filter: 'agDateColumnFilter',
+                    dateComponent: EagerDateComp,
+                    filterParams: { debounceMs: 0 },
+                },
+            ],
+            rowData: ASCENDING,
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'date');
+        // One whole condition, not two: reporting mid-build must not leave a half-registered condition behind
+        // for the completeness pass to count and then build a successor to.
+        await new FilterDom(api, 'a panel whose component reported before its type widget existed', {
+            mode: 'column-filter',
+            colId: 'date',
+        }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Equals"
+            model: null
+        `);
+        expect(filter.getModel()).toBe(null);
+        await new GridRows(api, 'a filter whose component reported early still filters nothing').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 date:"2024-01-10"
+            ├── LEAF id:1 date:"2024-03-15"
+            ├── LEAF id:2 date:"2024-05-20"
+            └── LEAF id:3 date:"2024-07-04"
+        `);
+    });
 
     const ASCENDING = [{ date: '2024-01-10' }, { date: '2024-03-15' }, { date: '2024-05-20' }, { date: '2024-07-04' }];
 
@@ -44,6 +102,49 @@ describe('Date Filter — conditions coverage', () => {
         expect(body!.hasAttribute('role')).toBe(false);
     });
 
+    test('a filterParams `includeTime` column shows the date it was given', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            // `includeTime` is the only thing saying the input takes a time; no cell data type implies one.
+            columnDefs: [
+                { field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0, includeTime: true } },
+            ],
+            rowData: ASCENDING,
+        });
+
+        await api.setColumnFilterModel('date', { filterType: 'date', type: 'equals', dateFrom: '2024-03-15 14:30:00' });
+        api.onFilterChanged();
+        const filter = await ColumnFilterHarness.open(api, 'date');
+        await asyncSetTimeout(0);
+
+        const input = filter.input('date', 0);
+        expect(input.type).toBe('datetime-local');
+        // Written for the input the params asked for, not the one the cell data type implies.
+        expect(input.value).toBe('2024-03-15T14:30');
+    });
+
+    test('a filterParams `includeTime` floating filter shows the date it was given', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    filter: 'agDateColumnFilter',
+                    floatingFilter: true,
+                    filterParams: { debounceMs: 0, includeTime: true },
+                },
+            ],
+            rowData: ASCENDING,
+        });
+
+        await api.setColumnFilterModel('date', { filterType: 'date', type: 'equals', dateFrom: '2024-03-15 14:30:00' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // The floating filter is handed the same `filterParams`, so it builds the same kind of input.
+        const input = FloatingFilterHarness.get(api, 'date').input();
+        expect(input.type).toBe('datetime-local');
+        expect(input.value).toBe('2024-03-15T14:30');
+    });
+
     test('comparison operators over an ascending date dataset', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0 } }],
@@ -56,7 +157,7 @@ describe('Date Filter — conditions coverage', () => {
         await filter.selectOperator('Equals');
         await filter.setDate('2024-03-15', 0);
         await asyncSetTimeout(0);
-        await new FilterDom(api, 'equals panel', { colId: 'date' }).checkFilterDom(`
+        await new FilterDom(api, 'equals panel', { mode: 'column-filter', colId: 'date' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Equals"
             input: "2024-03-15"
@@ -125,7 +226,7 @@ describe('Date Filter — conditions coverage', () => {
 
         await filter.selectOperator('Blank');
         await asyncSetTimeout(0);
-        await new FilterDom(api, 'blank panel', { colId: 'date' }).checkFilterDom(`
+        await new FilterDom(api, 'blank panel', { mode: 'column-filter', colId: 'date' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Blank"
             AND
@@ -174,7 +275,7 @@ describe('Date Filter — conditions coverage', () => {
         await filter.setDate('2024-07-04', 1);
         await asyncSetTimeout(0);
 
-        await new FilterDom(api, 'inRange exclusive panel', { colId: 'date' }).checkFilterDom(`
+        await new FilterDom(api, 'inRange exclusive panel', { mode: 'column-filter', colId: 'date' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Between"
             input [0]: "2024-03-15"
@@ -245,7 +346,7 @@ describe('Date Filter — conditions coverage', () => {
         await filter.setDate('2024-03-15', 0);
         await asyncSetTimeout(0);
 
-        await new FilterDom(api, 'inRange incomplete panel', { colId: 'date' }).checkFilterDom(`
+        await new FilterDom(api, 'inRange incomplete panel', { mode: 'column-filter', colId: 'date' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Between"
             input [0]: "2024-03-15"
@@ -440,7 +541,7 @@ describe('Date Filter — conditions coverage', () => {
         await filter.setDate('2024-09-01', 1);
         await asyncSetTimeout(0);
 
-        await new FilterDom(api, 'AND panel', { colId: 'date' }).checkFilterDom(`
+        await new FilterDom(api, 'AND panel', { mode: 'column-filter', colId: 'date' }).checkFilterDom(`
             COLUMN FILTER
             operator: "After"
             input: "2024-01-10"
@@ -491,7 +592,7 @@ describe('Date Filter — conditions coverage', () => {
         await filter.setDate('2024-09-01', 1);
         await asyncSetTimeout(0);
 
-        await new FilterDom(api, 'OR panel', { colId: 'date' }).checkFilterDom(`
+        await new FilterDom(api, 'OR panel', { mode: 'column-filter', colId: 'date' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Equals"
             input: "2024-01-10"
@@ -548,7 +649,7 @@ describe('Date Filter — conditions coverage', () => {
 
         // Re-opening the popup reflects the programmatic model in its inputs.
         await ColumnFilterHarness.open(api, 'date');
-        await new FilterDom(api, 'round-trip panel', { colId: 'date' }).checkFilterDom(`
+        await new FilterDom(api, 'round-trip panel', { mode: 'column-filter', colId: 'date' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Between"
             input [0]: "2024-03-15"
@@ -561,6 +662,158 @@ describe('Date Filter — conditions coverage', () => {
               dateTo: "2024-07-04"
               filterType: "date"
               type: "inRange"
+        `);
+    });
+
+    // A read-only filter builds no replacement for a condition a model removed, so it is the one panel that
+    // can be attached holding none at all.
+    test('a read-only filter opens on a combined model with no conditions rather than throwing', async () => {
+        // Deliberate: a combined model without `conditions` is reported as warning #77.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [77] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0, readOnly: true } },
+            ],
+            rowData: ASCENDING,
+        });
+
+        await api.setColumnFilterModel('date', { filterType: 'date', operator: 'AND' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await ColumnFilterHarness.open(api, 'date');
+        await asyncSetTimeout(0);
+
+        // The panel itself is the subject: a model with nothing to show must leave it empty rather than
+        // holding a condition built out of the gap.
+        await new FilterDom(api, 'a read-only panel built from a conditionless model', {
+            mode: 'column-filter',
+            colId: 'date',
+        }).checkFilterDom(`
+            COLUMN FILTER
+            model:
+              filterType: "date"
+              operator: "AND"
+        `);
+
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #77');
+        expect(api.getColumnFilterModel('date')).toEqual({ filterType: 'date', operator: 'AND' });
+        await new GridRows(api, 'a conditionless read-only date model matches every row').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 date:"2024-01-10"
+            ├── LEAF id:1 date:"2024-03-15"
+            ├── LEAF id:2 date:"2024-05-20"
+            └── LEAF id:3 date:"2024-07-04"
+        `);
+    });
+
+    // The read-only panel is the one that can be left holding nothing, so it is the one that rebuilds
+    // from zero, where a join operator has no condition in front of it to join to.
+    test('a model arriving at a read-only panel holding no conditions joins them from the second on', async () => {
+        // Deliberate: the conditionless model on the way in is reported as warning #77.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [77] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0, readOnly: true } },
+            ],
+            rowData: ASCENDING,
+        });
+
+        await api.setColumnFilterModel('date', { filterType: 'date', operator: 'AND' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        await ColumnFilterHarness.open(api, 'date');
+        await asyncSetTimeout(0);
+
+        await api.setColumnFilterModel('date', {
+            filterType: 'date',
+            operator: 'AND',
+            conditions: [
+                { filterType: 'date', type: 'greaterThan', dateFrom: '2024-02-01' },
+                { filterType: 'date', type: 'lessThan', dateFrom: '2024-06-01' },
+            ],
+        });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #77');
+        // Counted in the DOM: the snapshot renders the join from its own loop over conditions, so a panel
+        // mounted ahead of the first one is invisible there.
+        expect(document.querySelectorAll('.ag-filter-menu .ag-filter-condition')).toHaveLength(1);
+
+        await new FilterDom(api, 'two conditions joined by one operator between them', {
+            mode: 'column-filter',
+            colId: 'date',
+        }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "After"
+            input: "2024-02-01"
+            AND
+            operator: "Before"
+            input: "2024-06-01"
+            model:
+              filterType: "date"
+              operator: "AND"
+              conditions:
+                - filterType: "date"
+                  type: "greaterThan"
+                  dateFrom: "2024-02-01"
+                - filterType: "date"
+                  type: "lessThan"
+                  dateFrom: "2024-06-01"
+        `);
+    });
+
+    // The read-only panel is the only one that stays at zero conditions, and a simple model addresses the
+    // first by index, so it has to build one before it writes to it.
+    test('a simple model arriving at a read-only panel holding no conditions builds one to hold it', async () => {
+        // Deliberate: the conditionless model on the way in is reported as warning #77.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [77] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0, readOnly: true } },
+            ],
+            rowData: ASCENDING,
+        });
+
+        await api.setColumnFilterModel('date', { filterType: 'date', operator: 'AND' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        await ColumnFilterHarness.open(api, 'date');
+        await asyncSetTimeout(0);
+
+        await api.setColumnFilterModel('date', {
+            filterType: 'date',
+            type: 'greaterThan',
+            dateFrom: '2024-02-01',
+        });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #77');
+        await new FilterDom(api, 'a simple model shown by a panel that had been left with no conditions', {
+            mode: 'column-filter',
+            colId: 'date',
+        }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "After"
+            input: "2024-02-01"
+            model:
+              filterType: "date"
+              type: "greaterThan"
+              dateFrom: "2024-02-01"
+        `);
+        await new GridRows(api, 'the simple model reaching an emptied read-only panel still filters').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 date:"2024-03-15"
+            ├── LEAF id:2 date:"2024-05-20"
+            └── LEAF id:3 date:"2024-07-04"
         `);
     });
 });

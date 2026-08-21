@@ -8,7 +8,7 @@ import { _createElement } from '../../../utils/element';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
-import { getNumberOfInputs, removeItems } from '../simpleFilterUtils';
+import { removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import type { ValidationReportMode } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
@@ -40,19 +40,9 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         super('dateFilter', mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
     }
 
-    public override afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        super.afterGuiAttached(params);
-
-        this.dateConditionFromComps[0].afterGuiAttached(params);
-
-        this.refreshInputValidation();
-    }
-
-    protected override shouldKeepInvalidInputState(): boolean {
-        // We deliberately keep invalid input state for inRange filters when not in Firefox
-        // to mimic the behaviour for incomplete date and datetime inputs (which are cleared
-        // in Firefox but not in Chrome/Safari)
-        return !_isBrowserFirefox() && this.hasInvalidInputs() && this.getConditionTypes().includes('inRange');
+    protected override onGuiAttached(params?: IAfterGuiAttachedParams): void {
+        // A read-only filter builds no replacement for a condition a model removed, so there may be none.
+        this.dateConditionFromComps[0]?.afterGuiAttached(params);
     }
 
     protected override commonUpdateSimpleParams(params: DateFilterDisplayParams): void {
@@ -93,26 +83,24 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
     }
 
-    private refreshInputValidation(): void {
-        for (let i = 0; i < this.dateConditionFromComps.length; i++) {
-            this.refreshInputPairValidation(i, false, 'immediate');
-        }
+    protected override refreshPositionValidation(position: number, isFrom = false, reattached?: boolean): void {
+        // A picker keeps its message across a close, so re-opening is no change for `debounceIfChanged` to find.
+        this.refreshInputPairValidation(position, isFrom, reattached ? 'immediate' : 'debounceIfChanged');
     }
 
-    private refreshInputPairValidation(
-        position: number,
-        isFrom = false,
-        reportMode: ValidationReportMode = 'debounce'
-    ): void {
-        const { dateConditionFromComps, dateConditionToComps, beans } = this;
-        const from = dateConditionFromComps[position];
-        const to = dateConditionToComps[position];
-
-        const numberOfInputs = getNumberOfInputs(this.getConditionType(position), this.optionsFactory);
+    private refreshInputPairValidation(position: number, isFrom: boolean, reportMode: ValidationReportMode): void {
+        const [from, to] = this.getInputs(position);
+        if (!from || !to) {
+            return; // A destroyed picker can still report focus, and the pair it belonged to is gone.
+        }
 
         const fromDate = from.getDate();
         const toDate = to.getDate();
-        const localeKey = numberOfInputs >= 2 ? getRangeValidityMessageKey(fromDate, toDate, isFrom) : null;
+        // An option taking one value has no order an input can be reported as out of.
+        const isRange = this.conditionNumberOfInputs(position) >= 2;
+        const localeKey = isRange
+            ? getRangeValidityMessageKey(fromDate, toDate, isFrom, this.params.inRangeInclusive)
+            : null;
         const message = localeKey ? this.translate(localeKey, [String(isFrom ? toDate : fromDate)]) : '';
 
         // FF seems to handle cursors/focus sufficiently well for the validation to be left as synchronous.
@@ -127,37 +115,46 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         (isFrom ? to : from).setCustomValidity('', effectiveMode); // Reset validity error state for other input
 
         if (message.length > 0) {
-            beans.ariaAnnounce.announceValue(message, 'dateFilter');
+            this.beans.ariaAnnounce.announceValue(message, 'filterValidation');
         }
     }
 
-    private createDateCompWrapper(element: HTMLElement, position: number, fromTo: 'from' | 'to'): DateCompWrapper {
+    private createDateCompWrapper(element: HTMLElement, fromTo: 'from' | 'to'): DateCompWrapper {
         const {
             beans: { userCompFactory, context, gos },
             params,
         } = this;
         const isFrom = fromTo === 'from';
-        const dateCompWrapper = new DateCompWrapper(
+        // Read per event, never captured: removing a condition from the middle shifts every later one.
+        const panels = isFrom ? this.eConditionPanelsFrom : this.eConditionPanelsTo;
+        const refreshValidation = (reportMode: ValidationReportMode) =>
+            this.refreshInputPairValidation(panels.indexOf(element), isFrom, reportMode);
+        return new DateCompWrapper(
             context,
             userCompFactory,
             params.colDef,
             _addGridCommonParams<IDateParams>(gos, {
                 onDateChanged: () => {
-                    this.refreshInputPairValidation(position, isFrom, 'debounce');
+                    refreshValidation('debounce');
                     this.onUiChanged();
                 },
                 onDateCleared: () => {
-                    this.refreshInputPairValidation(position, isFrom, 'immediate');
+                    refreshValidation('immediate');
                     this.onUiCleared();
                 },
-                onFocusIn: () => this.refreshInputPairValidation(position, isFrom, 'debounceIfChanged'),
+                onFocusIn: () => refreshValidation('debounceIfChanged'),
                 filterParams: params as any,
                 location: 'filter',
             }),
             element
         );
-        this.addDestroyFunc(() => dateCompWrapper.destroy());
-        return dateCompWrapper;
+    }
+
+    /** Not beans, and replaced as conditions come and go, so nothing else tears them down. */
+    public override destroy(): void {
+        this.removeDateComps(this.dateConditionFromComps, 0);
+        this.removeDateComps(this.dateConditionToComps, 0);
+        super.destroy();
     }
 
     protected override getState(): { isInvalid: boolean } {
@@ -205,7 +202,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const eConditionPanel = _createElement({ tag: 'div', cls: `ag-filter-${fromTo} ag-filter-date-${fromTo}` });
         eConditionPanels.push(eConditionPanel);
         eCondition.appendChild(eConditionPanel);
-        dateConditionComps.push(this.createDateCompWrapper(eConditionPanel, eConditionPanels.length - 1, fromTo));
+        dateConditionComps.push(this.createDateCompWrapper(eConditionPanel, fromTo));
     }
 
     protected removeEValues(startPosition: number, deleteCount?: number): void {
@@ -248,25 +245,14 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         return true;
     }
 
-    protected override hasInvalidInputs(): boolean {
-        let invalidInputs = false;
-        // Default validity state to true -> if theres no validity state, everything is fine
-        // ignore incomplete date values (getDate() == null)
-        this.forEachInput(
-            (element) => (invalidInputs ||= element.getDate() != null && !(element.getValidity()?.valid ?? true))
-        );
-        return invalidInputs;
+    /** No validity state means nothing has rejected the value, so it is fine. */
+    protected override isInputInvalid(element: DateCompWrapper): boolean {
+        return !(element.getValidity()?.valid ?? true);
     }
 
-    protected override positionHasInvalidInputs(position: number): boolean {
-        let invalidInputs = false;
-        // Default validity state to true -> if theres no validity state, everything is fine
-        this.forEachPositionInput(position, (element) => (invalidInputs ||= !(element.getValidity()?.valid ?? true)));
-        return invalidInputs;
-    }
-
-    protected override canApply(_model: DateFilterModel | ICombinedSimpleModel<DateFilterModel> | null): boolean {
-        return !this.hasInvalidInputs();
+    /** A date is read only once whole, so a part-typed one is not a value the picker has rejected. */
+    protected override isInputValueSettled(element: DateCompWrapper): boolean {
+        return element.getDate() != null;
     }
 
     protected override isConditionUiComplete(position: number): boolean {
@@ -317,17 +303,6 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         };
     }
 
-    protected override removeConditionsAndOperators(startPosition: number, deleteCount?: number | undefined): void {
-        if (this.hasInvalidInputs()) {
-            // When there are invalid inputs (which currently can only be when there is an invalid range in the last condition)
-            // we don't want to remove those conditions, to prevent the condition from disappearing just as the user finishes
-            // editing it.
-            return;
-        }
-
-        return super.removeConditionsAndOperators(startPosition, deleteCount);
-    }
-
     protected override resetPlaceholder(): void {
         const globalTranslate = this.getLocaleTextFunc();
         const placeholder = this.translate('dateFormatOoo');
@@ -341,7 +316,8 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
 
     protected getInputs(position: number): Tuple<DateCompWrapper> {
         const { dateConditionFromComps, dateConditionToComps } = this;
-        if (position >= dateConditionFromComps.length) {
+        // Bounded below too: the position is looked up with `indexOf`, which reports a gone comp as -1.
+        if (position < 0 || position >= dateConditionFromComps.length) {
             return [null, null];
         }
         return [dateConditionFromComps[position], dateConditionToComps[position]];
@@ -372,11 +348,16 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
 function getRangeValidityMessageKey(
     fromDate: Date | null,
     toDate: Date | null,
-    isFrom: boolean
+    isFrom: boolean,
+    inclusive?: boolean
 ): FilterLocaleTextKey | null {
-    const isInvalid = fromDate != null && toDate != null && fromDate >= toDate;
+    // An inclusive range of one date is an exact match, so only a strict one has nothing left to match.
+    const isInvalid = fromDate != null && toDate != null && (inclusive ? fromDate > toDate : fromDate >= toDate);
     if (!isInvalid) {
         return null;
     }
-    return `${isFrom ? 'max' : 'min'}DateValidation`;
+    if (inclusive) {
+        return isFrom ? 'maxDateInclusiveValidation' : 'minDateInclusiveValidation';
+    }
+    return isFrom ? 'maxDateValidation' : 'minDateValidation';
 }

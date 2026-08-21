@@ -3,10 +3,12 @@ import { _getActiveDomElement } from 'ag-stack';
 import { AgInputNumberField } from '../../../agWidgets/agInputNumberField';
 import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';
+import type { Column } from '../../../interfaces/iColumn';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
+import { installAllowedCharPattern } from '../allowedCharPattern';
 import type { OptionsFactory } from '../optionsFactory';
 import type {
     INumberFilterParams,
@@ -26,26 +28,30 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
 
     private numberInputActive = true;
 
-    constructor(private readonly allowedCharPattern: string | null) {
+    /** Matches the text service: a hook, so the guard is imported by the filters that offer it. */
+    constructor(private readonly onInputCreated?: (field: GridInputNumberField) => void) {
         super();
     }
 
     public setupGui(parentElement: HTMLElement): void {
-        this.eNumberInput = this.createManagedBean(
+        const numberField = this.createManagedBean<GridInputNumberField>(
             new AgInputNumberField({
-                allowedCharPattern: this.allowedCharPattern ?? undefined,
                 clearButton: true,
                 onValueClear: () => this.onValueCleared(),
             })
         );
-        this.eTextInput = this.createManagedBean(
+        this.eNumberInput = numberField;
+        this.onInputCreated?.(numberField);
+
+        const textField = this.createManagedBean<GridInputTextField>(
             new AgInputTextField({ clearButton: true, onValueClear: () => this.onValueCleared() })
         );
+        this.eTextInput = textField;
+        // Never typed into: it stands in for the number input while the filter is not editable.
+        textField.setDisabled(true);
 
-        this.eTextInput.setDisabled(true);
-
-        const eNumberInput = this.eNumberInput.getGui();
-        const eTextInput = this.eTextInput.getGui();
+        const eNumberInput = numberField.getGui();
+        const eTextInput = textField.getGui();
 
         parentElement.appendChild(eNumberInput);
         parentElement.appendChild(eTextInput);
@@ -136,9 +142,10 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatin
 
     protected createModelFormatter(
         optionsFactory: OptionsFactory,
-        filterParams: INumberFilterParams
+        filterParams: INumberFilterParams,
+        column: Column
     ): NumberFilterModelFormatter {
-        return new NumberFilterModelFormatter(optionsFactory, filterParams);
+        return new NumberFilterModelFormatter(optionsFactory, filterParams, column);
     }
 
     protected override updateParams(params: INumberFloatingFilterParams): void {
@@ -154,18 +161,19 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatin
         const filterParams = params.filterParams as NumberFilterParams;
         const allowedCharPattern = getAllowedCharPattern(filterParams);
         this.allowedCharPattern = allowedCharPattern;
-        this.isTextInput = usesTextInput(filterParams);
-        if (this.isTextInput) {
-            return this.createManagedBean(
-                new FloatingFilterTextInputService(allowedCharPattern ? { config: { allowedCharPattern } } : undefined)
-            );
-        }
-        return this.createManagedBean(new FloatingFilterNumberInputService(allowedCharPattern));
+        const isTextInput = usesTextInput(filterParams);
+        this.isTextInput = isTextInput;
+        const install = (el: GridInputTextField | GridInputNumberField) =>
+            installAllowedCharPattern(el, allowedCharPattern, this.beans);
+        return this.createManagedBean(
+            isTextInput ? new FloatingFilterTextInputService(install) : new FloatingFilterNumberInputService(install)
+        );
     }
 
     /** Read back through `numberParser`, which is the only thing that can read what a `numberFormatter` wrote. */
     protected override convertValue<TValue>(value: string | null | undefined): TValue | null {
-        const numberParser = (this.params.filterParams as NumberFilterParams | undefined)?.numberParser;
-        return processNumberFilterValue(stringToFloat(numberParser, value)) as TValue | null;
+        const { gos, params } = this;
+        const numberParser = (params.filterParams as NumberFilterParams | undefined)?.numberParser;
+        return processNumberFilterValue(stringToFloat(numberParser, value, gos, params.column)) as TValue | null;
     }
 }

@@ -1,7 +1,7 @@
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { ICombinedSimpleModel } from '../iSimpleFilter';
-import { getValidityMessageKey } from '../simpleFilterUtils';
+import { _bindFilterCallback, getValidityMessageKey } from '../simpleFilterUtils';
 import type { RenderChange } from '../textInputSimpleFilter';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
@@ -43,40 +43,44 @@ export class BigIntFilter extends TextInputSimpleFilter<
         text: string | null | undefined,
         params: BigIntFilterDisplayParams | undefined
     ): bigint | null {
-        return stringToBigInt(params?.bigintParser, text);
+        return stringToBigInt(params?.bigintParser, text, this.gos, this.params.column);
     }
 
     protected override getValueFormatter(): ((value: bigint | null) => string | null) | undefined {
-        return this.params.bigintFormatter;
+        return _bindFilterCallback(this.params.bigintFormatter, this.gos, this.params.column);
     }
 
     protected override createInputWidget(): GridInputTextField {
-        return this.createTextInput(getAllowedCharPattern(this.params));
+        return this.createTextInput();
     }
 
     protected override refreshInputPairValidation(
         from: GridInputTextField,
         to: GridInputTextField,
-        isFrom = false
+        isFrom: boolean,
+        numberOfInputs: number
     ): void {
-        const fromValue = this.readValue(from, true);
-        const toValue = this.readValue(to, true);
-        const fromInvalid = this.isInvalidValue(from, fromValue);
-        const toInvalid = this.isInvalidValue(to, toValue);
+        // Past the condition's arity an input is mounted but unused, so reading it parses what nothing uses.
+        const isRange = numberOfInputs >= 2;
+        const fromValue = numberOfInputs > 0 ? this.readValue(from, true) : null;
+        const toValue = isRange ? this.readValue(to, true) : null;
+        const fromInvalid = numberOfInputs > 0 && this.isInvalidValue(from, fromValue);
+        const toInvalid = isRange && this.isInvalidValue(to, toValue);
 
-        const target = isFrom ? from : to;
-        const other = isFrom ? to : from;
-        const targetInvalid = isFrom ? fromInvalid : toInvalid;
-        const otherInvalid = isFrom ? toInvalid : fromInvalid;
+        // Ordered by the edited input, except that a one-value option filters on `from` alone.
+        const targetIsFrom = isFrom || !isRange;
+        const target = targetIsFrom ? from : to;
+        const other = targetIsFrom ? to : from;
+        const targetInvalid = targetIsFrom ? fromInvalid : toInvalid;
+        const otherInvalid = targetIsFrom ? toInvalid : fromInvalid;
 
         let validityMessage = '';
         if (targetInvalid) {
-            const translate = this.getLocaleTextFunc();
-            validityMessage = translate('invalidBigInt', 'Invalid BigInt');
-        } else if (!fromInvalid && !toInvalid) {
-            const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
+            validityMessage = this.getLocaleTextFunc()('invalidBigInt', 'Invalid BigInt');
+        } else if (isRange && !otherInvalid) {
+            const localeKey = getValidityMessageKey(fromValue, toValue, isFrom, this.params.inRangeInclusive);
             if (localeKey) {
-                validityMessage = this.translate(localeKey, [String(isFrom ? to.getValue() : from.getValue())]);
+                validityMessage = this.translate(localeKey, [String(other.getValue())]);
             }
         }
 
@@ -85,7 +89,7 @@ export class BigIntFilter extends TextInputSimpleFilter<
             other.setCustomValidity('');
         }
         if (validityMessage.length > 0) {
-            this.beans.ariaAnnounce.announceValue(validityMessage, 'dateFilter');
+            this.beans.ariaAnnounce.announceValue(validityMessage, 'filterValidation');
         }
     }
 

@@ -98,12 +98,9 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
         this.usingSafariDatePicker = shouldUseBrowserDatePicker && _isBrowserSafari();
 
-        const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons, includeTime, colDef } =
-            params.filterParams || {};
+        const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
 
-        const dataTypeSvc = this.beans.dataTypeSvc;
-        const shouldUseDateTimeLocal =
-            includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag?.(colDef.cellDataType) ?? false;
+        const shouldUseDateTimeLocal = this.includesTime(params);
 
         if (shouldUseBrowserDatePicker) {
             if (shouldUseDateTimeLocal) {
@@ -141,9 +138,13 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public setDate(date: Date): void {
-        const colType = this.params.filterParams.colDef.cellDataType;
-        const includeTime = this.beans.dataTypeSvc?.getDateIncludesTimeFlag(colType) ?? false;
-        this.eDateInput.setValue(_serialiseDate(date, includeTime));
+        // Must match the input type `setParams` chose: a picker blanks a value it cannot read.
+        this.eDateInput.setValue(_serialiseDate(date, this.includesTime(this.params)));
+    }
+
+    private includesTime(params: IDateParams): boolean {
+        const { includeTime, colDef } = params.filterParams || {};
+        return includeTime ?? this.beans.dataTypeSvc?.getDateIncludesTimeFlag?.(colDef?.cellDataType) ?? false;
     }
 
     public setInputPlaceholder(placeholder: string): void {

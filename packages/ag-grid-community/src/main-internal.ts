@@ -143,6 +143,7 @@ export type { FilterValueService } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
+export { _bindFilterCallback } from './filter/provided/simpleFilterUtils';
 export type { FocusService } from './focusService';
 export { _getGlobalGridOption } from './globalGridOptions';
 export { GridCoreCreator } from './grid';

@@ -1,4 +1,4 @@
-import type { IFilterParams } from '../../../interfaces/iFilter';
+import type { FilterInputCallbackParams, IFilterParams } from '../../../interfaces/iFilter';
 import type { IScalarFilterParams } from '../iScalarFilter';
 import type {
     CustomFilterOptionKey,
@@ -29,20 +29,24 @@ export interface NumberFilterModel extends ISimpleFilterModel {
  * Parameters provided by the grid to the `init` method of a `NumberFilter`.
  * Do not use in `colDef.filterParams` - see `INumberFilterParams` instead.
  */
-export type NumberFilterParams<TData = any> = INumberFilterParams & IFilterParams<TData>;
+export type NumberFilterParams<TData = any, TContext = any> = INumberFilterParams<TData, TContext> &
+    IFilterParams<TData, TContext>;
 /**
  * Parameters used in `colDef.filterParams` to configure a Number Filter (`agNumberColumnFilter`).
  */
 
-export interface INumberFilterParams extends IScalarFilterParams {
+export interface INumberFilterParams<TData = any, TContext = any> extends IScalarFilterParams {
     /** Array of filter options to present to the user. */
     filterOptions?: (IFilterOptionDef | ScalarFilterOptionKey)[];
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: ScalarFilterOptionKey | CustomFilterOptionKey;
     /**
      * When specified, this will be used as a regex of all the characters that are allowed to be typed.
-     * This will be compared against any typed character and prevent the character from appearing in the input if it does not match.
-     * Either this or `numberFormatter` makes the input field of type `text`, unless `filterInputType` says otherwise.
+     * It is compared against each character an edit brings in, and a keystroke, paste or drop bringing in a
+     * character it does not admit is refused whole. Text committed by an IME or another composing keyboard
+     * is not held to it, since a composition cannot be cancelled.
+     * Either this or `numberFormatter` makes the input field of type `text`, unless `filterInputType`
+     * says otherwise.
      */
     allowedCharPattern?: string;
     /**
@@ -58,13 +62,13 @@ export interface INumberFilterParams extends IScalarFilterParams {
      * The Advanced Filter reads this column's operands with it only when a `numberFormatter` is provided too:
      * without one an operand is written as a plain decimal, which the default parser is what reads back.
      */
-    numberParser?: (text: string | null) => number | null;
+    numberParser?: (text: string | null, params: FilterInputCallbackParams<TData, TContext>) => number | null;
     /**
      * Provides a custom formatter to convert the number value in the filter model into a string to be used in the
      * filter input. This is the inverse of the `numberParser`. Often used alongside `allowedCharPattern`, but either
      * one on its own makes the filter use a text input, since a number input would discard the formatted text.
      */
-    numberFormatter?: (value: number | null) => string | null;
+    numberFormatter?: (value: number | null, params: FilterInputCallbackParams<TData, TContext>) => string | null;
 }
 
 export interface INumberFloatingFilterParams extends ITextInputFloatingFilterParams {}

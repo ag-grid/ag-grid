@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_SE = {
     // Editor Validation Errors
     minDateValidation: 'Datum måste vara efter ${variable}',
     maxDateValidation: 'Datum måste vara före ${variable}',
+    minDateInclusiveValidation: 'Datum måste vara ${variable} eller senare',
+    maxDateInclusiveValidation: 'Datum måste vara ${variable} eller tidigare',
     maxLengthValidation: 'Måste vara ${variable} tecken eller färre.',
     minValueValidation: 'Måste vara större än eller lika med ${variable}',
     maxValueValidation: 'Måste vara mindre än eller lika med ${variable}',

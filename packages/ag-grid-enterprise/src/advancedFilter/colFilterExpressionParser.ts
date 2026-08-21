@@ -385,8 +385,8 @@ export class ColFilterExpressionParser {
         object: (a: string) => string;
         text: (a: string) => string;
     } = {
-        number: (operand) => getNumberParser(this.columnParser!.column)(operand)!,
-        bigint: (operand) => getBigIntParser(this.columnParser!.column)(operand)!,
+        number: (operand) => getNumberParser(this.columnParser!.column, this.params.gos)(operand)!,
+        bigint: (operand) => getBigIntParser(this.columnParser!.column, this.params.gos)(operand)!,
         date: (operand) =>
             this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined) as Date,
         dateString: (operand) => this.operandValueGetters.date(operand),

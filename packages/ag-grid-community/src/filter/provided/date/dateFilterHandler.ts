@@ -1,3 +1,4 @@
+import type { Column } from '../../../interfaces/iColumn';
 import type { Comparator } from '../iScalarFilter';
 import type { ISimpleFilterModelPresetType, Tuple } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
@@ -21,7 +22,7 @@ function defaultDateComparator(filterDate: Date, cellValue: any): number {
     return 0;
 }
 
-type Range = { from: Date; to: Date };
+type Range = { fromTime: number; toTime: number };
 
 interface RangeCacheItem extends Range {
     expires: number;
@@ -37,21 +38,28 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
 
     protected createModelFormatter(
         optionsFactory: OptionsFactory,
-        filterParams: IDateFilterParams
+        filterParams: IDateFilterParams,
+        column: Column
     ): DateFilterModelFormatter {
-        return new DateFilterModelFormatter(optionsFactory, filterParams);
+        return new DateFilterModelFormatter(optionsFactory, filterParams, column);
     }
 
-    getOrRefreshRangeCacheItem(key: ISimpleFilterModelPresetType, rangeFn: (s: Date, e: Date) => [Date, Date]): Range {
+    /** Times rather than dates: nothing a user `comparator` can normalise ever reaches the cache. */
+    public getOrRefreshRangeCacheItem(
+        key: ISimpleFilterModelPresetType,
+        rangeFn: (s: Date, e: Date) => [Date, Date]
+    ): Range {
         const { filterTypeToRangeCache } = this;
         const now = Date.now();
         let cache = filterTypeToRangeCache.get(key);
-        if (cache && cache.expires < now) {
+        // The ranges are half-open, so at the instant it expires the cached one already excludes `now`.
+        if (cache && cache.expires <= now) {
             cache = undefined;
         }
         if (!cache) {
             const [from, to] = rangeFn(new Date(now), new Date(now));
-            cache = { from, to, expires: setStartOfNextDay(new Date(now)).getTime() - now };
+            const expires = setStartOfNextDay(new Date(now)).getTime();
+            cache = { fromTime: from.getTime(), toTime: to.getTime(), expires };
             filterTypeToRangeCache.set(key, cache);
         }
         return cache;
@@ -72,7 +80,6 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
         filterModel: DateFilterModel
     ): boolean {
         const type = filterModel.type;
-        const comparator = this.comparator();
 
         if (!this.isValid(cellValue)) {
             return type === 'notEqual' || type === 'notBlank';
@@ -83,8 +90,19 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
             | undefined;
         if (presetDateRangeFn) {
             // user selected a preset, calculate what they mean
-            const { from, to } = this.getOrRefreshRangeCacheItem(maybeTypeAsPreset, presetDateRangeFn);
-            return comparator(from, cellValue) >= 0 && comparator(to, cellValue) < 0;
+            const { fromTime, toTime } = this.getOrRefreshRangeCacheItem(maybeTypeAsPreset, presetDateRangeFn);
+            const userComparator = this.params.filterParams.comparator;
+            if (userComparator) {
+                // Dates of its own, built for each of the rows this runs on: a user comparator is free to
+                // keep or to normalise whatever it is handed.
+                return (
+                    userComparator(new Date(fromTime), cellValue) >= 0 &&
+                    userComparator(new Date(toTime), cellValue) < 0
+                );
+            }
+            // Half-open, as `defaultDateComparator` makes it, and compared as times since nothing is handed a date.
+            const cellTime = +cellValue;
+            return cellTime >= fromTime && cellTime < toTime;
         }
 
         return super.evaluateNonNullValue(values, cellValue, filterModel);

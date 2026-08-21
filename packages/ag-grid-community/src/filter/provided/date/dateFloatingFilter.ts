@@ -4,6 +4,7 @@ import { AgInputTextFieldSelector } from '../../../agWidgets/agInputTextField';
 import type { AgColumn } from '../../../entities/agColumn';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
+import type { Column } from '../../../interfaces/iColumn';
 import type { ElementParams } from '../../../utils/element';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';
@@ -44,9 +45,10 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
 
     protected createModelFormatter(
         optionsFactory: OptionsFactory,
-        filterParams: IDateFilterParams
+        filterParams: IDateFilterParams,
+        column: Column
     ): DateFilterModelFormatter {
-        return new DateFilterModelFormatter(optionsFactory, filterParams);
+        return new DateFilterModelFormatter(optionsFactory, filterParams, column);
     }
 
     protected override setParams(params: IFloatingFilterParams<DateFilter>): void {

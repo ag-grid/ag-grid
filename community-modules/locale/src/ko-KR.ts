@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_KR = {
     // Editor Validation Errors
     minDateValidation: '날짜는 ${variable} 이후여야 합니다.',
     maxDateValidation: '날짜는 ${variable} 이전이어야 합니다.',
+    minDateInclusiveValidation: '날짜는 ${variable} 또는 그 이후여야 합니다.',
+    maxDateInclusiveValidation: '날짜는 ${variable} 또는 그 이전이어야 합니다.',
     maxLengthValidation: '${variable}자 이내여야 합니다.',
     minValueValidation: '${variable}보다 크거나 같아야 합니다.',
     maxValueValidation: '${variable} 이하이어야 합니다.',

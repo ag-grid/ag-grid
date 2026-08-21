@@ -1,11 +1,10 @@
-import { _getActiveDomElement, _isBrowserFirefox } from 'ag-stack';
+import { _getActiveDomElement } from 'ag-stack';
 
 import { AgInputTextField } from '../../agWidgets/agInputTextField';
-import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { _createElement } from '../../utils/element';
 import type { GridInputNumberField, GridInputTextField } from '../../widgets/gridWidgetTypes';
-import type { ProvidedFilterParams } from './iProvidedFilter';
-import type { ICombinedSimpleModel, ISimpleFilterModel, Tuple } from './iSimpleFilter';
+import { installAllowedCharPattern } from './allowedCharPattern';
+import type { ISimpleFilterModel, Tuple } from './iSimpleFilter';
 import type { SimpleFilterDisplayParams } from './simpleFilter';
 import { SimpleFilter } from './simpleFilter';
 
@@ -32,7 +31,8 @@ export abstract class TextInputSimpleFilter<
     M extends ISimpleFilterModel,
     V,
     E extends GridInputTextField | GridInputNumberField,
-    P extends SimpleFilterDisplayParams<M>,
+    /** Only the number and bigint filters extend this; `TextFilter` extends `SimpleFilter` directly. */
+    P extends SimpleFilterDisplayParams<M> & { allowedCharPattern?: string },
 > extends SimpleFilter<M, V, E, P> {
     /** Held by position: removing a condition shifts every later one. */
     protected readonly eValuesFrom: E[] = [];
@@ -53,19 +53,25 @@ export abstract class TextInputSimpleFilter<
     /** What the new parameters need done to the mounted inputs, if anything. */
     protected abstract getRenderChange(params: P, previous: P | undefined): RenderChange | undefined;
 
-    protected abstract refreshInputPairValidation(from: E, to: E, isFrom?: boolean): void;
-
     protected override defaultDebounceMs = 500;
 
-    protected override shouldKeepInvalidInputState(): boolean {
-        // Mimics incomplete date and datetime inputs, which Firefox clears and Chrome/Safari keep.
-        return !_isBrowserFirefox() && this.hasInvalidInputs() && this.getConditionTypes().includes('inRange');
+    protected override isInputInvalid(element: E): boolean {
+        return !element.getInputElement().validity.valid;
     }
 
-    protected createTextInput(allowedCharPattern: string | null): GridInputTextField {
+    /** `numberOfInputs` says how much of the pair the option in force filters on; past it an input is unused. */
+    protected abstract refreshInputPairValidation(from: E, to: E, isFrom: boolean, numberOfInputs: number): void;
+
+    protected override refreshPositionValidation(position: number, isFrom = false): void {
+        const [from, to] = this.getInputs(position);
+        if (from && to) {
+            this.refreshInputPairValidation(from, to, isFrom, this.conditionNumberOfInputs(position));
+        }
+    }
+
+    protected createTextInput(): GridInputTextField {
         return this.createBean(
             new AgInputTextField({
-                allowedCharPattern: allowedCharPattern ?? undefined,
                 clearButton: true,
                 searchIcon: true,
                 autoComplete: this.params.browserAutoComplete,
@@ -75,35 +81,11 @@ export abstract class TextInputSimpleFilter<
 
     private buildInput(fromTo: 'from' | 'to'): E {
         const element = this.createInputWidget();
+        // Every input is built here, so the pattern cannot be bypassed by the element that holds it.
+        installAllowedCharPattern(element, this.params.allowedCharPattern, this.beans);
         element.addCss(`ag-filter-${fromTo}`);
         element.addCss('ag-filter-filter');
         return element;
-    }
-
-    public override afterGuiAttached(params?: IAfterGuiAttachedParams | undefined): void {
-        super.afterGuiAttached(params);
-
-        this.refreshInputValidation();
-    }
-
-    public override refresh(legacyNewParams: ProvidedFilterParams): boolean {
-        const result = super.refresh(legacyNewParams);
-
-        const { state: newState, additionalEventAttributes } = legacyNewParams as unknown as P;
-        const oldState = this.state;
-
-        const fromAction = additionalEventAttributes?.fromAction;
-        const forceRefreshValidation = fromAction && fromAction != 'apply';
-
-        if (
-            forceRefreshValidation ||
-            newState.model !== oldState.model ||
-            !this.areStatesEqual(newState.state, oldState.state)
-        ) {
-            this.refreshInputValidation();
-        }
-
-        return result;
     }
 
     /** Non-model UI state, so validity changes reach the UI through `ProvidedFilter.refresh`. */
@@ -113,31 +95,6 @@ export abstract class TextInputSimpleFilter<
 
     protected override areStatesEqual(stateA?: { isInvalid: boolean }, stateB?: { isInvalid: boolean }): boolean {
         return (stateA?.isInvalid ?? false) === (stateB?.isInvalid ?? false);
-    }
-
-    protected override hasInvalidInputs(): boolean {
-        let invalidInputs = false;
-        this.forEachInput((element) => (invalidInputs ||= !element.getInputElement().validity.valid));
-        return invalidInputs;
-    }
-
-    protected override positionHasInvalidInputs(position: number): boolean {
-        let invalidInputs = false;
-        this.forEachPositionInput(position, (element) => (invalidInputs ||= !element.getInputElement().validity.valid));
-        return invalidInputs;
-    }
-
-    protected override canApply(_model: M | ICombinedSimpleModel<M> | null): boolean {
-        return !this.hasInvalidInputs();
-    }
-
-    protected override removeConditionsAndOperators(startPosition: number, deleteCount?: number | undefined): void {
-        // An invalid range lives in the last condition, which must survive until the user finishes editing it.
-        if (this.hasInvalidInputs()) {
-            return;
-        }
-
-        return super.removeConditionsAndOperators(startPosition, deleteCount);
     }
 
     protected override commonUpdateSimpleParams(params: P): void {
@@ -182,7 +139,10 @@ export abstract class TextInputSimpleFilter<
 
     protected override getInputs(position: number): Tuple<E> {
         const eValuesFrom = this.eValuesFrom;
-        return position < eValuesFrom.length ? [eValuesFrom[position], this.eValuesTo[position]] : [null, null];
+        // Bounded below too: the position is looked up with `indexOf`, which reports a gone element as -1.
+        return position >= 0 && position < eValuesFrom.length
+            ? [eValuesFrom[position], this.eValuesTo[position]]
+            : [null, null];
     }
 
     protected override getValues(position: number): Tuple<V> {
@@ -229,21 +189,16 @@ export abstract class TextInputSimpleFilter<
         return rendered?.text === element.getInputElement().value ? rendered : undefined;
     }
 
-    /** Re-validates every mounted condition; a replaced element carries none of the original's validity. */
-    protected refreshInputValidation(): void {
-        const { eValuesFrom, eValuesTo } = this;
-        for (let i = 0, len = eValuesFrom.length; i < len; ++i) {
-            this.refreshInputPairValidation(eValuesFrom[i], eValuesTo[i]);
-        }
-    }
-
     /** A pair's own listeners, re-attached whenever either element is replaced. */
     private attachInputPairListeners(from: E, to: E): void {
-        this.attachInputListeners(from, () => this.refreshInputPairValidation(from, to, true));
-        this.attachInputListeners(to, () => this.refreshInputPairValidation(from, to, false));
+        this.attachInputListeners(from, true);
+        this.attachInputListeners(to, false);
     }
 
-    private attachInputListeners(element: E, refreshValidation: () => void): void {
+    private attachInputListeners(element: E, isFrom: boolean): void {
+        const eValues = isFrom ? this.eValuesFrom : this.eValuesTo;
+        // Looked up per event, never captured: removing a condition from the middle shifts every later one.
+        const refreshValidation = () => this.refreshPositionValidation(eValues.indexOf(element), isFrom);
         element.onValueChange(() => {
             // Typing makes the text the user's own, so the value the filter wrote no longer stands for it.
             this.renderedValues.delete(element);
@@ -265,15 +220,10 @@ export abstract class TextInputSimpleFilter<
             this.refreshInputElement(position, 'to', rebuild, previous);
             if (rebuild) {
                 // A replacement element carries none of the original's listeners, so re-attach them all.
-                this.attachInputsOnChange(position);
+                // Validity first, as when they are built: the UI listener reads it to decide whether to apply.
                 this.attachInputPairListeners(eValuesFrom[position], eValuesTo[position]);
+                this.attachInputsOnChange(position);
             }
-        }
-        // Before the visibility pass: a replacement carries no validity, and an invalid condition is
-        // not a complete one.
-        this.refreshInputValidation();
-        if (rebuild) {
-            this.updateUiVisibility(); // the replacements start visible and enabled, whatever the condition is
         }
     }
 

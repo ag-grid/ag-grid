@@ -8,7 +8,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { FilterInputCallbackParams, GridApi, GridOptions } from 'ag-grid-community';
 import { BigIntFilterModule, ClientSideRowModelModule, NumberFilterModule, getGridElement } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
@@ -98,6 +98,53 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
+    test('the parser and the formatter are given the api and the context', async () => {
+        const context = { tag: 'advanced-bigint' };
+        const parserSaw: FilterInputCallbackParams[] = [];
+        const formatterSaw: FilterInputCallbackParams[] = [];
+        const api = gridsManager.createGrid('grid1', {
+            context,
+            columnDefs: [
+                {
+                    field: 'value',
+                    cellDataType: 'bigint',
+                    filter: 'agBigIntColumnFilter',
+                    filterParams: {
+                        bigintParser: (text: string | null, common: FilterInputCallbackParams) => {
+                            parserSaw.push(common);
+                            return text == null ? null : parseBigInt(text);
+                        },
+                        bigintFormatter: (value: bigint | null, common: FilterInputCallbackParams) => {
+                            formatterSaw.push(common);
+                            return value == null ? null : formatBigInt(value);
+                        },
+                    },
+                },
+            ],
+            rowData: [{ value: 10n }, { value: 255n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        applyExpression(gridDiv, '[Value] = 0xFF');
+        await asyncSetTimeout(0);
+
+        // The operand is read on apply and written back when the expression is re-displayed.
+        api.setAdvancedFilterModel(api.getAdvancedFilterModel());
+        await asyncSetTimeout(0);
+
+        expect(parserSaw.length).toBeGreaterThan(0);
+        expect(formatterSaw.length).toBeGreaterThan(0);
+        for (const common of [...parserSaw, ...formatterSaw]) {
+            expect(common.api).toBe(api);
+            expect(common.context).toBe(context);
+            // The column too, so one callback on `defaultColDef` can tell which one it is working on.
+            expect(common.column.getColId()).toBe('value');
+            expect(common.colDef).toBe(common.column.getColDef());
+        }
+    });
+
     test('hex typed via text input matches and displays with formatter', async () => {
         const api = gridsManager.createGrid('grid1', {
             columnDefs: withParser,
@@ -164,6 +211,18 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         `);
         api.setAdvancedFilterModel(api.getAdvancedFilterModel());
         expect(getService(api).getExpressionDisplayValue()).toBe('[Value] = 255');
+
+        // With no formatter the operand is written as the canonical decimal and read back through the
+        // column's own parser, so re-applying what is displayed must not reinterpret it.
+        applyExpression(gridDiv, '[Value] = 255');
+        await asyncSetTimeout(0);
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'bigint',
+            colId: 'value',
+            type: 'equals',
+            filter: '255',
+        });
+
         await new FilterDom(api, 'no formatter falls back to decimal', { mode: 'advanced-filter' }).checkFilterDom(`
             ADVANCED FILTER
             input: "[Value] = 255"

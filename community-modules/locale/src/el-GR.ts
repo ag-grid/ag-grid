@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_GR = {
     // Editor Validation Errors
     minDateValidation: 'Η ημερομηνία πρέπει να είναι μετά από ${variable}',
     maxDateValidation: 'Η ημερομηνία πρέπει να είναι πριν από ${variable}',
+    minDateInclusiveValidation: 'Η ημερομηνία πρέπει να είναι ${variable} ή μεταγενέστερη',
+    maxDateInclusiveValidation: 'Η ημερομηνία πρέπει να είναι ${variable} ή προγενέστερη',
     maxLengthValidation: 'Πρέπει να είναι ${variable} χαρακτήρες ή λιγότερο.',
     minValueValidation: 'Πρέπει να είναι μεγαλύτερο ή ίσο με ${variable}',
     maxValueValidation: 'Πρέπει να είναι μικρότερο ή ίσο με ${variable}',

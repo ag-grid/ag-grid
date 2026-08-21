@@ -29,7 +29,13 @@ import {
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
-import { getBigIntParser, getNumberFormatter, getNumberParser, hasCustomNumberOperands } from './filterExpressionUtils';
+import {
+    getBigIntFormatter,
+    getBigIntParser,
+    getNumberFormatter,
+    getNumberParser,
+    hasCustomNumberOperands,
+} from './filterExpressionUtils';
 
 /** What an unquoted operand cannot carry: a space or `)` ends it, and a leading quote opens one. */
 function needsQuotes(operand: string): boolean {
@@ -70,18 +76,18 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             const column = this.colModel.getNonPivotCol(model.colId);
             return this.formatOperand(
                 model.filter,
-                getNumberFormatter(column),
+                getNumberFormatter(column, this.gos),
                 _toFiniteNumber,
-                getNumberParser(column)
+                getNumberParser(column, this.gos)
             );
         },
         bigint: (model) => {
             const column = this.colModel.getNonPivotCol(model.colId);
             return this.formatOperand(
                 model.filter,
-                column?.colDef.filterParams?.bigintFormatter,
+                getBigIntFormatter(column, this.gos),
                 _parseBigIntOrNull,
-                getBigIntParser(column)
+                getBigIntParser(column, this.gos)
             );
         },
         date: (model) => {
@@ -119,9 +125,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         BaseCellDataType,
         (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | null
     > = {
-        number: (operand, column) => (operand != null && operand !== '' ? getNumberParser(column)(operand) : null),
+        number: (operand, column) =>
+            operand != null && operand !== '' ? getNumberParser(column, this.gos)(operand) : null,
         bigint: (operand, column) => {
-            const parsed = getBigIntParser(column)(operand);
+            const parsed = getBigIntParser(column, this.gos)(operand);
             return parsed == null ? null : String(parsed);
         },
         date: (operand, column, baseCellDataType) =>

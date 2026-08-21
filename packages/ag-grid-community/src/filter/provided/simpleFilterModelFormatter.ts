@@ -1,4 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
+import type { Column } from '../../interfaces/iColumn';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
 import type { ProvidedFilterModel } from './iProvidedFilter';
@@ -36,7 +37,9 @@ export abstract class SimpleFilterModelFormatter<
 
     constructor(
         private optionsFactory: OptionsFactory,
-        protected filterParams: TFilterParams
+        protected filterParams: TFilterParams,
+        /** Named so a `numberFormatter` shared across columns can tell which one it is rendering. */
+        protected readonly column: Column
     ) {
         super();
     }

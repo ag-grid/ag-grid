@@ -63,6 +63,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams, IAutoComplet
     defaultJoinOperator?: JoinOperator;
     /**
      * Maximum number of conditions allowed in the filter.
+     * Must be at least one - anything smaller is treated as one.
      *
      * @default 2
      */
@@ -72,6 +73,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams, IAutoComplet
      * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.
      * Conditions will be disabled until the previous conditions have been entered.
      * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored.
+     * Must be at least one - anything smaller is treated as one.
      *
      * @default 1
      */

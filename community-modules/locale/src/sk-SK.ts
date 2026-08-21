@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_SK = {
     // Editor Validation Errors
     minDateValidation: 'Dátum musí byť po ${variable}',
     maxDateValidation: 'Dátum musí byť pred ${variable}',
+    minDateInclusiveValidation: 'Dátum musí byť ${variable} alebo neskorší',
+    maxDateInclusiveValidation: 'Dátum musí byť ${variable} alebo skorší',
     maxLengthValidation: 'Musí mať ${variable} znakov alebo menej.',
     minValueValidation: 'Musí byť väčšie alebo rovné ${variable}',
     maxValueValidation: 'Musí byť menej alebo rovné ${variable}',

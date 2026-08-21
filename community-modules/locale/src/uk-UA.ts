@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_UA = {
     // Editor Validation Errors
     minDateValidation: 'Дата повинна бути після ${variable}',
     maxDateValidation: 'Дата повинна бути до ${variable}',
+    minDateInclusiveValidation: 'Дата повинна бути ${variable} або пізніше',
+    maxDateInclusiveValidation: 'Дата повинна бути ${variable} або раніше',
     maxLengthValidation: 'Повинно бути ${variable} символів або менше.',
     minValueValidation: 'Повинно бути більше або дорівнювати ${variable}',
     maxValueValidation: 'Має бути меншим або дорівнювати ${variable}',

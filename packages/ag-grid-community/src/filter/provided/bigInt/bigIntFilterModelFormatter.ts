@@ -1,6 +1,7 @@
 import { _parseBigIntOrNull } from 'ag-stack';
 
 import { SCALAR_FILTER_TYPE_KEYS, SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
+import { _bindFilterCallback } from '../simpleFilterUtils';
 import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
 
 export class BigIntFilterModelFormatter extends SimpleFilterModelFormatter<
@@ -11,7 +12,7 @@ export class BigIntFilterModelFormatter extends SimpleFilterModelFormatter<
     protected readonly filterTypeKeys = SCALAR_FILTER_TYPE_KEYS;
 
     protected override getValueFormatter(): ((value: bigint | null) => string | null) | undefined {
-        return this.filterParams.bigintFormatter;
+        return _bindFilterCallback(this.filterParams.bigintFormatter, this.gos, this.column);
     }
 
     protected conditionToString(

@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_TR = {
     // Editor Validation Errors
     minDateValidation: 'Tarih ${variable} tarihinden sonra olmalıdır',
     maxDateValidation: 'Tarih ${variable} tarihinden önce olmalıdır',
+    minDateInclusiveValidation: 'Tarih ${variable} tarihinde veya sonrasında olmalıdır',
+    maxDateInclusiveValidation: 'Tarih ${variable} tarihinde veya öncesinde olmalıdır',
     maxLengthValidation: 'En fazla ${variable} karakter olmalıdır.',
     minValueValidation: 'En az ${variable} veya daha büyük olmalıdır',
     maxValueValidation: "${variable}' değerinden küçük veya eşit olmalıdır",

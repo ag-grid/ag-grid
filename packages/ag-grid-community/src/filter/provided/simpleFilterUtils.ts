@@ -1,7 +1,42 @@
+import type { GridOptionsService } from '../../gridOptionsService';
+import { _addGridCommonParams } from '../../gridOptionsUtils';
+import type { Column } from '../../interfaces/iColumn';
+import type { FilterInputCallbackParams } from '../../interfaces/iFilter';
 import type { LogService } from '../../validation/logService';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type { FilterOptionKey, IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
+
+/** Built per call, not per binding: `context` is a grid option, so a captured one would go stale. */
+export function filterCallbackParams(gos: GridOptionsService, column: Column): FilterInputCallbackParams {
+    return _addGridCommonParams<FilterInputCallbackParams>(gos, { column, colDef: column.getColDef() });
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _bindFilterCallback<A, R>(
+    callback: ((value: A, params: FilterInputCallbackParams) => R) | undefined,
+    gos: GridOptionsService,
+    column: Column | null | undefined
+): ((value: A) => R) | undefined {
+    // A column is needed to name the callback's subject, so without one the default reading stands.
+    return callback && column ? (value) => callback(value, filterCallbackParams(gos, column)) : undefined;
+}
+
+/** `NaN` is below it too: every comparison against it is false, so left through it would cap nothing. */
+export function isBelowConditionFloor(count: number): boolean {
+    return count < 1 || Number.isNaN(count);
+}
+
+/**
+ * Absent where nothing was configured, so a model set through the API keeps every condition it was given;
+ * otherwise whole and at least one, as the display counts conditions.
+ */
+export function getConditionLimit(maxNumConditions: number | undefined): number | null {
+    if (typeof maxNumConditions !== 'number') {
+        return null;
+    }
+    return isBelowConditionFloor(maxNumConditions) ? 1 : Math.floor(maxNumConditions);
+}
 
 export function removeItems<T>(items: T[], startPosition: number, deleteCount?: number): T[] {
     return deleteCount == null ? items.splice(startPosition) : items.splice(startPosition, deleteCount);
@@ -88,14 +123,19 @@ export function getNumberOfInputs(type: FilterOptionKey | null | undefined, opti
     return 1;
 }
 
-/** `from >= to` is not a range; the message goes on whichever end the user is editing. */
+/** `from` must be below `to`, or equal where the range is inclusive; the message goes on the end being edited. */
 export function getValidityMessageKey<V extends number | bigint>(
     fromValue: V | null,
     toValue: V | null,
-    isFrom: boolean
+    isFrom: boolean,
+    inclusive?: boolean
 ): FilterLocaleTextKey | null {
-    if (fromValue == null || toValue == null || fromValue < toValue) {
+    // An inclusive range of one value is an exact match, so only a strict one has nothing left to match.
+    if (fromValue == null || toValue == null || fromValue < toValue || (inclusive && fromValue === toValue)) {
         return null;
     }
-    return `strict${isFrom ? 'Max' : 'Min'}ValueValidation`;
+    if (inclusive) {
+        return isFrom ? 'maxValueValidation' : 'minValueValidation';
+    }
+    return isFrom ? 'strictMaxValueValidation' : 'strictMinValueValidation';
 }

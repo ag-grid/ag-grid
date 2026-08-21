@@ -8,7 +8,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridOptions } from 'ag-grid-community';
+import type { FilterInputCallbackParams, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
@@ -67,6 +67,50 @@ describe('Advanced Filter - number custom parser and formatter', () => {
     beforeAll(() => installFilterLayoutMock());
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
+
+    test('the parser and the formatter are given the api and the context', async () => {
+        const context = { tag: 'advanced' };
+        const parserSaw: FilterInputCallbackParams[] = [];
+        const formatterSaw: FilterInputCallbackParams[] = [];
+        const api = gridsManager.createGrid('grid1', {
+            context,
+            columnDefs: [
+                {
+                    field: 'value',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: {
+                        numberParser: (text: string | null, common: FilterInputCallbackParams) => {
+                            parserSaw.push(common);
+                            return parseGrouped(text);
+                        },
+                        numberFormatter: (value: number | null, common: FilterInputCallbackParams) => {
+                            formatterSaw.push(common);
+                            return value == null ? null : value.toLocaleString('en-US');
+                        },
+                    },
+                },
+            ],
+            rowData: ROW_DATA,
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        await AdvancedFilterHarness.get(api).applyExpression('[Value] = 1,234');
+        await asyncSetTimeout(0);
+
+        // The operand is read on apply and written back when the expression is re-displayed.
+        api.setAdvancedFilterModel(api.getAdvancedFilterModel());
+        await asyncSetTimeout(0);
+
+        expect(parserSaw.length).toBeGreaterThan(0);
+        expect(formatterSaw.length).toBeGreaterThan(0);
+        for (const common of [...parserSaw, ...formatterSaw]) {
+            expect(common.api).toBe(api);
+            expect(common.context).toBe(context);
+            // The column too, so one callback on `defaultColDef` can tell which one it is working on.
+            expect(common.column.getColId()).toBe('value');
+            expect(common.colDef).toBe(common.column.getColDef());
+        }
+    });
 
     // Both round-trip: the model holds the plain number, so only the formatter can put the grouping back.
     test.each([

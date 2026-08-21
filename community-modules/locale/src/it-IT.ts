@@ -183,6 +183,8 @@ export const AG_GRID_LOCALE_IT = {
     // Editor Validation Errors
     minDateValidation: 'La data deve essere successiva a ${variable}',
     maxDateValidation: 'La data deve essere precedente a ${variable}',
+    minDateInclusiveValidation: 'La data deve essere ${variable} o successiva',
+    maxDateInclusiveValidation: 'La data deve essere ${variable} o precedente',
     maxLengthValidation: 'Deve essere di ${variable} caratteri o meno.',
     minValueValidation: 'Deve essere maggiore o uguale a ${variable}',
     maxValueValidation: 'Deve essere minore o uguale a ${variable}',

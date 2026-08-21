@@ -182,6 +182,8 @@ export const AG_GRID_LOCALE_FI = {
     // Editor Validation Errors
     minDateValidation: 'Päivämäärän on oltava jälkeen ${variable}',
     maxDateValidation: 'Päivämäärän on oltava ennen ${variable}',
+    minDateInclusiveValidation: 'Päivämäärän on oltava ${variable} tai myöhempi',
+    maxDateInclusiveValidation: 'Päivämäärän on oltava ${variable} tai aiempi',
     maxLengthValidation: 'Saa olla enintään ${variable} merkkiä.',
     minValueValidation: 'Täytyy olla suurempi tai yhtä suuri kuin ${variable}',
     maxValueValidation: 'On oltava vähemmän tai yhtä suuri kuin ${variable}',
