@@ -2,6 +2,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 import { BUILD_USER_AGENT } from '../constants';
+import { type ConsumedSitemapRecord, writeConsumedSitemapRecord } from './consumedSitemapRecord';
 import { getGitHash } from './gitUtils';
 
 type Logger = Pick<Console, 'info' | 'warn' | 'log'>;
@@ -11,6 +12,12 @@ type GetSitemapXmlOptions = {
     sitemapUrl: string;
     logger?: Logger;
     gitHash?: string;
+    /**
+     * When set, the resolved sitemap is recorded here so `buildWithSitemapCache` can tell whether
+     * the sitemap this page rendered from matches the one the build then generated, and skip the
+     * second build when it does. Omit to record nothing.
+     */
+    recordDir?: string;
 };
 
 const readCachedHash = async (cachedMetaPath: string) => {
@@ -32,6 +39,7 @@ export const getSitemapXml = async ({
     sitemapUrl,
     logger = console,
     gitHash,
+    recordDir,
 }: GetSitemapXmlOptions): Promise<string> => {
     const cacheFolder = path.resolve(cacheDir);
     const cachedSitemapPath = path.join(cacheFolder, 'sitemap-0.xml');
@@ -39,6 +47,7 @@ export const getSitemapXml = async ({
     const currentHash = gitHash ?? getGitHash();
 
     let xmlSitemap: string | null = null;
+    let source: ConsumedSitemapRecord['source'] = 'cache';
     try {
         await fs.access(cachedSitemapPath);
         const cachedHash = await readCachedHash(cachedMetaPath);
@@ -63,7 +72,22 @@ export const getSitemapXml = async ({
             throw new Error(`Failed to fetch sitemap ${sitemapUrl}: ${response.status} ${response.statusText}`);
         }
         xmlSitemap = await response.text();
+        source = 'live';
         logger.log(`⚠️ No cached sitemap found, fetched from live site: ${sitemapUrl}`);
+    }
+
+    if (recordDir) {
+        try {
+            await writeConsumedSitemapRecord({
+                recordDir,
+                xmlSitemap,
+                source,
+                sitemapUrl: source === 'live' ? sitemapUrl : undefined,
+            });
+        } catch (error) {
+            // Only costs a redundant second build, so never fail the page over it.
+            logger.warn(`⚠️ Could not record the sitemap this build rendered from: ${error}`);
+        }
     }
 
     return xmlSitemap;
