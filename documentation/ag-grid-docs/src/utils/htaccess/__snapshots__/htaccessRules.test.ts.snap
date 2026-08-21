@@ -349,106 +349,97 @@ AddCharset utf-8 .md
     RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
     RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
 
-    # SE-91/SE-86: blog.ag-grid.com -> www.ag-grid.com/blog/ . Host-scoped, so none of
-    # this affects www or apex. ORDER MATTERS: every specific rule must precede the
-    # catch-all host swap at the end, or the catch-all wins and the specific target is
-    # never reached. All targets are FINAL destinations -- www, never the apex, and never
-    # an intermediate slug -- because SE-86 requires a single hop.
-    #
-    # Verified 2026-08-20: both sitemaps carry the same 291 URLs with identical paths, so
-    # the catch-all covers the whole sitemap set and no per-post rows are needed. The
-    # explicit rules below are only the cases the catch-all would get wrong.
-
-    # 410, NOT a redirect. /whats-new-in-ag-grid-v24/ is the target of a spam campaign
-    # (5,869 inbound links flagged spam). 301ing it would carry those signals onto the
-    # main domain, so it is declared gone. Must precede the catch-all.
+    # blog.ag-grid.com -> www.ag-grid.com/blog/ (SE-86/SE-91). Host-scoped, so www and
+    # apex are unaffected. ORDER MATTERS: specific rules first, catch-all host swap last.
+    # Targets are final destinations, not intermediate slugs -- SE-86 requires one hop.
+    # The 410s are deliberate: those posts are gone, not moved. They swallow any sub-path and
+    # are [NC], because a 410 that only matches an enumerated suffix set is walkable: /feed/,
+    # /amp/amp/ and case variants otherwise fell through to the catch-all and www's own
+    # case-normalising redirect then served the live page, handing the spam links their equity.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?whats-new-in-ag-grid-v24/?$ - [R=410,L]
-
-    # Ghost's own redirects.json holds 12 slug redirects that still run on the new
-    # instance. Host-swapping these sources would land on /blog/<old-slug>, where Ghost
-    # would redirect again -- two hops, silently. So each maps straight to its FINAL slug.
-    # Three of the twelve are in the sitemap and already in the SE-91 map; these are the
-    # nine that are not, so nothing else surfaces them.
-    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?tag/react/?$ https://www.ag-grid.com/blog/tag/react-data-grid/ [R=301,L]
-    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?conferences-ag-grid-amsterdam-june-2022/?$ https://www.ag-grid.com/blog/js-nation-and-react-summit-june-2022-overview/ [R=301,L]
-    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?getting-more-from-your-datagrid-introducing-adaptable/?$ https://www.ag-grid.com/blog/adaptable-tools-demo-and-interview/ [R=301,L]
-    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?javascript-grid-comparison-column-pinning-ag-grid/?$ https://www.ag-grid.com/blog/heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition/ [R=301,L]
-    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?whats-new-in-ag-studio-2/?$ https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/ [R=301,L]
-    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?whats-new-in-ag-studio-2-1/?$ https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-1-javascript-embedded-analytics/ [R=301,L]
+    RewriteRule ^/?whats-new-in-ag-grid-v24(?:/.*)?$ - [R=410,NC,L]
 
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?showcase/?$ https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/ [R=301,L]
+    RewriteRule ^/?tag/react(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/react-data-grid/rss/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?using-playwright-to-test-ag-grid-react-apps/?$ https://www.ag-grid.com/blog/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/ [R=301,L]
+    RewriteRule ^/?tag/react(?:/amp|/page/[0-9]+)?/?$ https://www.ag-grid.com/blog/tag/react-data-grid/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?using-ag-grid-with-react-and-next-js/?$ https://www.ag-grid.com/blog/using-ag-grid-with-next-js-to-build-a-react-table/ [R=301,L]
+    RewriteRule ^/?conferences-ag-grid-amsterdam-june-2022(?:/amp)?/?$ https://www.ag-grid.com/blog/js-nation-and-react-summit-june-2022-overview/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?getting-more-from-your-datagrid-introducing-adaptable(?:/amp)?/?$ https://www.ag-grid.com/blog/adaptable-tools-demo-and-interview/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?javascript-grid-comparison-column-pinning-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?whats-new-in-ag-studio-2(?:-0)?(?:/amp)?/?$ https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?whats-new-in-ag-studio-2-1(?:/amp)?/?$ https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-1-javascript-embedded-analytics/ [R=301,NC,L]
 
-    # This one leaves the blog entirely -- redirects.json sends it to the main-site docs,
-    # so the destination is not under /blog/ at all.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?angular-2-0-web-components-and-ag-grid/?$ https://www.ag-grid.com/angular-data-grid/getting-started/ [R=301,L]
+    RewriteRule ^/?showcase(?:/amp)?/?$ https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?using-playwright-to-test-ag-grid-react-apps(?:/amp)?/?$ https://www.ag-grid.com/blog/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?using-ag-grid-with-react-and-next-js(?:/amp)?/?$ https://www.ag-grid.com/blog/using-ag-grid-with-next-js-to-build-a-react-table/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?condtional-formatting-for-cells-in-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/conditional-formatting-for-cells-in-ag-grid/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?angular-2-0-web-components-and-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/angular-data-grid/getting-started/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?integrated-charts-community-vs-enterprise(?:/amp)?/?$ https://www.ag-grid.com/blog/enhancing-ag-grid-enterprise-with-ag-charts-enterprise/ [R=301,NC,L]
 
-    # The /amp/ form is an explicit redirects.json source AND would match the generic
-    # /amp/ rule below. It is listed first so the explicit target wins; otherwise the
-    # generic rule strips /amp/ and hands off to Ghost for a second hop.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?integrated-charts-community-vs-enterprise/amp/?$ https://www.ag-grid.com/blog/enhancing-ag-grid-enterprise-with-ag-charts-enterprise/ [R=301,L]
-    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?integrated-charts-community-vs-enterprise/?$ https://www.ag-grid.com/blog/enhancing-ag-grid-enterprise-with-ag-charts-enterprise/ [R=301,L]
+    RewriteRule ^/?vuestic-ui-app-with-ag-grid-tutorial(?:/amp)?/?$ https://epicmax.co/blog/vuestic-ui-with-ag-grid [R=301,NC,L]
 
-    # Off-sitemap, from backlink data. The Vuestic tutorial is handed back to its authors
-    # at Epicmax by decision 2026-08-20 -- note this sends the link equity off-domain and
-    # depends on their URL surviving. Our own copy stays live but unreachable from here.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?vuestic-ui-app-with-ag-grid-tutorial/?$ https://epicmax.co/blog/vuestic-ui-with-ag-grid [R=301,L]
+    RewriteRule ^/?index\\.php/2018/11/29/inside-fiber https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/ [R=301,NC,L]
 
-    # Legacy pre-Ghost WordPress permalink for the React Fiber article -- the single
-    # highest-value genuine backlink target in the set. Matched by prefix because the
-    # dated path is long and only its stem is documented.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?index\\.php/2018/11/29/inside-fiber https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/ [R=301,L]
+    RewriteRule ^/?ag-grid-vs-datatables(?:/.*)?$ - [R=410,NC,L]
 
-    # 410, decided 2026-08-20. Off-sitemap, and already 404 on both hosts -- the post is
-    # long gone, so there is nothing to redirect to. Declaring it Gone tells crawlers to
-    # drop it rather than leaving them to infer that from a soft 404, and it beats the
-    # catch-all, which would otherwise land visitors on a /blog/ 404.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?ag-grid-vs-datatables/?$ - [R=410,L]
+    RewriteRule ^/?private(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
 
-    # Legacy /amp/ paths: AMP was never enabled and these are not advertised, but they
-    # still attract links. Strip /amp/ and send to the post rather than a dead
-    # /blog/<post>/amp/. Must follow the explicit /amp/ rule above.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?(.+?)/amp/?$ https://www.ag-grid.com/blog/$1/ [R=301,L]
+    RewriteRule ^/?tag/(?:angular-grid|angular-table)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/angular/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:angular-grid|angular-table)(?:/amp|/page/[0-9]+)?/?$ https://www.ag-grid.com/blog/tag/angular/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:react-grid|react-table)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/react-data-grid/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:react-grid|react-table)(?:/amp|/page/[0-9]+)?/?$ https://www.ag-grid.com/blog/tag/react-data-grid/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:vue-grid|vue-table)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/vuejs/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:vue-grid|vue-table)(?:/amp|/page/[0-9]+)?/?$ https://www.ag-grid.com/blog/tag/vuejs/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:enzyme|jest)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/testing/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:enzyme|jest)(?:/amp|/page/[0-9]+)?/?$ https://www.ag-grid.com/blog/tag/testing/ [R=301,NC,L]
 
-    # Hotlinked images. 21 are known from backlink data but the paths were never
-    # enumerated; verified 2026-08-20 that content paths are preserved byte-for-byte under
-    # /blog/, so one pattern covers all of them plus any hotlink nobody found.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?content/(.*)$ https://www.ag-grid.com/blog/content/$1 [R=301,L]
+    RewriteRule ^/?tag/(?:ag-grid|column-header|columns|data-grid|data-table|date|datepicker|detail|editing|export|filtering|formatting|graphql|localstorage|master|mongodb|multi-line|pdf|range-selection|range-selection-styles|redux|row-background-color|row-selection|row-styling|server-side-row-model|sorting|state|styling-table-rows|tabs|vuex|web-development)(?:/.*)?$ - [R=410,NC,L]
 
-    # Pagination, feeds and the sitemap: live URLs that appear in no sitemap, so the map
-    # never surfaced them. Paths are identical under /blog/, so they only need the swap.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?(page/[0-9]+|(?:tag|author)/[^/]+/page/[0-9]+)/?$ https://www.ag-grid.com/blog/$1/ [R=301,L]
-    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?(rss|feed|(?:tag|author)/[^/]+/rss)/?$ https://www.ag-grid.com/blog/$1/ [R=301,L]
-    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?(sitemap[^/]*\\.xml)$ https://www.ag-grid.com/blog/$1 [R=301,L]
+    RewriteRule ^/?(.+?)/amp/?$ https://www.ag-grid.com/blog/$1/ [R=301,NC,L]
 
-    # Catch-all host swap. LAST, so everything above wins. Covers all 291 sitemap URLs
-    # (posts, tags, authors, pages) plus anything not enumerated, in one rule that cannot
-    # go stale when a post is published -- which is exactly how the 282-row map fell nine
-    # URLs behind the live 291.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?(.*)$ https://www.ag-grid.com/blog/$1 [R=301,L]
+    RewriteRule ^/?content/(.*)$ https://www.ag-grid.com/blog/content/$1 [R=301,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(page/[0-9]+|(?:tag|author)/[^/]+/page/[0-9]+)/?$ https://www.ag-grid.com/blog/$1/ [R=301,NC,L]
+    # /feed is the WordPress-era spelling and Ghost answers it with its own 301 to /rss,
+    # so mapping feed -> feed cost a second hop. Send feed straight to rss.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?feed/?$ https://www.ag-grid.com/blog/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?((?:tag|author)/[^/]+)/feed/?$ https://www.ag-grid.com/blog/$1/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(rss|(?:tag|author)/[^/]+/rss)/?$ https://www.ag-grid.com/blog/$1/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(sitemap[^/]*\\.xml)$ https://www.ag-grid.com/blog/$1 [R=301,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(.*)$ https://www.ag-grid.com/blog/$1 [R=301,NC,L]
 
     # SE-80: content-negotiate docs pages to their per-page markdown variant when a
     # client asks for it via Accept: text/markdown (typically an AI agent — browsers
