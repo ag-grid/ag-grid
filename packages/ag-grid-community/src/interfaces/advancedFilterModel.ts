@@ -31,7 +31,7 @@ export type ScalarAdvancedFilterModelType =
     | 'blank'
     | 'notBlank';
 
-export type BooleanAdvancedFilterModelType = 'true' | 'false';
+export type BooleanAdvancedFilterModelType = 'true' | 'false' | 'blank' | 'notBlank';
 
 /** Represents a single filter condition for a text column */
 export interface TextAdvancedFilterModel {

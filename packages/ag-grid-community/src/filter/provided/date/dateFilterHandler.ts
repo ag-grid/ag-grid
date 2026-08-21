@@ -1,3 +1,5 @@
+import { _hasOwn } from 'ag-stack';
+
 import type { Column } from '../../../interfaces/iColumn';
 import type { Comparator } from '../iScalarFilter';
 import type { ISimpleFilterModelPresetType, Tuple } from '../iSimpleFilter';
@@ -82,12 +84,12 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
         const type = filterModel.type;
 
         if (!this.isValid(cellValue)) {
-            return type === 'notEqual' || type === 'notBlank';
+            return type === 'notEqual';
         }
         const maybeTypeAsPreset = type as ISimpleFilterModelPresetType;
-        const presetDateRangeFn = presetDateFilterTypeRelativeFromToMap[maybeTypeAsPreset] as
-            | RelativeRangeFn
-            | undefined;
+        const presetDateRangeFn = _hasOwn(presetDateRanges, maybeTypeAsPreset)
+            ? presetDateRanges[maybeTypeAsPreset]
+            : undefined;
         if (presetDateRangeFn) {
             // user selected a preset, calculate what they mean
             const { fromTime, toTime } = this.getOrRefreshRangeCacheItem(maybeTypeAsPreset, presetDateRangeFn);
@@ -292,24 +294,7 @@ const tomorrow: RelativeRangeFn = (from: Date, to: Date) => {
  * Last 24 months          last24Months        [startOfToday − 24 months, startOfTomorrow)
  * @knipIgnore Used in tests
  */
-export const presetDateFilterTypeRelativeFromToMap: Record<
-    | ISimpleFilterModelPresetType
-    | 'setStartOfDay'
-    | 'setStartOfWeek'
-    | 'setStartOfNextDay'
-    | 'setStartOfNextWeek'
-    | 'setStartOfMonth'
-    | 'setStartOfNextMonth'
-    | 'setStartOfQuarter'
-    | 'setStartOfNextQuarter'
-    | 'setStartOfYear'
-    | 'setStartOfNextYear'
-    | 'setPreviousDay'
-    | 'setPreviousWeek'
-    | 'setPreviousMonth'
-    | 'setPreviousQuarter',
-    RelativeRangeFn | RelativeDateFn
-> = {
+export const presetDateRanges: Record<ISimpleFilterModelPresetType, RelativeRangeFn> = {
     today,
     yesterday,
     tomorrow,
@@ -332,6 +317,13 @@ export const presetDateFilterTypeRelativeFromToMap: Record<
     last6Months,
     last12Months,
     last24Months,
+};
+
+/**
+ * The pieces the ranges are built from. Not options: each returns one date where a range needs two.
+ * @knipIgnore Used in tests
+ */
+export const relativeDateHelpers = {
     setStartOfDay,
     setStartOfWeek,
     setStartOfNextDay,
@@ -346,4 +338,4 @@ export const presetDateFilterTypeRelativeFromToMap: Record<
     setPreviousWeek,
     setPreviousMonth,
     setPreviousQuarter,
-};
+} satisfies Record<string, RelativeDateFn>;

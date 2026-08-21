@@ -710,7 +710,10 @@ describe('getStructuredSchema - filter feature', () => {
                         field: 'name',
                         filter: 'agTextColumnFilter',
                         filterParams: {
-                            filterOptions: ['contains', { displayKey: 'customEquals' }],
+                            filterOptions: [
+                                'contains',
+                                { displayKey: 'customEquals', displayName: 'Custom Equals', predicate: () => true },
+                            ],
                         },
                     },
                 ],

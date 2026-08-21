@@ -17,7 +17,7 @@ import type {
 import { isCombinedFilterModel } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import type { SimpleFilterModelFormatter } from './simpleFilterModelFormatter';
-import { evaluateCustomFilter, getConditionLimit } from './simpleFilterUtils';
+import { evaluateCustomFilter, getConditionLimit, isBlank } from './simpleFilterUtils';
 
 export abstract class SimpleFilterHandler<
     TModel extends ISimpleFilterModel,
@@ -40,7 +40,6 @@ export abstract class SimpleFilterHandler<
     protected params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>;
     private optionsFactory: OptionsFactory;
     private filterModelFormatter: SimpleFilterModelFormatter<ISimpleFilterParams>;
-    private readonly warnedKeys = new Set<FilterOptionKey | null | undefined>();
 
     constructor(
         private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<TModel, TValue>,
@@ -50,18 +49,6 @@ export abstract class SimpleFilterHandler<
     }
 
     protected abstract evaluateNullValue(filterType?: FilterOptionKey | null): boolean;
-
-    /**
-     * Once per key, never per row: a log call formats its message and doc URL before the once-per-message guard
-     * discards the duplicate. A Custom Filter Option owns its key, so a skipped predicate is a missing value.
-     */
-    protected warnUnexpectedFilterType(type?: FilterOptionKey | null): void {
-        if (this.optionsFactory.getCustomOption(type) || this.warnedKeys.has(type)) {
-            return;
-        }
-        this.warnedKeys.add(type);
-        this.warn(76, { filterModelType: type });
-    }
 
     protected abstract evaluateNonNullValue(
         range: Tuple<TValue>,
@@ -215,8 +202,18 @@ export abstract class SimpleFilterHandler<
             return customFilterResult;
         }
 
+        const type = filterModel.type;
+        // Answered ahead of every type-specific path: blankness is a property of the value alone, so it needs
+        // no comparison, no matcher, and none of the validity gates a comparison is held to.
+        if (type === 'blank') {
+            return isBlank(cellValue);
+        }
+        if (type === 'notBlank') {
+            return !isBlank(cellValue);
+        }
+
         if (cellValue == null) {
-            return this.evaluateNullValue(filterModel.type);
+            return this.evaluateNullValue(type);
         }
 
         return this.evaluateNonNullValue(values, cellValue, filterModel, params);

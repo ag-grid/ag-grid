@@ -55,7 +55,11 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 
 **Never run `./behave.sh`, `./checks.sh`, `./benches.sh` or `./docs-e2e.sh` in the foreground** — while a Bash call is in flight the user cannot reach the agent at all. Launch with the harness's background mechanism, which delivers a completion event in a later turn, and do other work meanwhile. (`--async` detaches the script itself and reports back to the terminal it was launched from when it ends — useful to a human, useless to an agent, which cannot be woken that way.)
 
-**Never `sleep` to wait for a run.** One you backgrounded wakes the agent by itself; one started elsewhere has `--async-status` (exit 3 = still running) and `--wait`, below. For progress mid-run, grep the log — it is written live.
+**Locally, never `sleep` to wait for a run — no exceptions, and no duration is the right one.** A backgrounded run wakes the agent by itself, so after starting one there are exactly two correct moves: **do other work**, or **end the turn**. Ending the turn is not giving up; it is the mechanism. One started elsewhere has `--async-status` (exit 3 = still running) and `--wait`, below. For progress mid-run, grep the log — it is written live. (This rule exists to keep an interactive session reachable, so like the foreground rule below it is local-only: under `CI` the gate runs in the foreground and there is nothing to wait on.)
+
+**If you are typing a duration, you are guessing, and the guess is always wrong.** Too short and the call buys nothing but still has to be repeated; too long and it is killed at the harness's 2-minute cap, so it does not even finish the wait it blocked the console for.
+
+**`sleep N; grep …` is how this gets past the rule.** As a compound it reads like *checking*, not like *waiting*, so it never trips. Any `sleep` anywhere in a command line is the violation, whatever follows the semicolon — as is a poll loop, or "just a short one to let the log settle". The three rationalisations to kill by name: *"I want to report in this turn"* (that pull is the whole cause — the user needs the console free, not the answer inside one turn), *"the notification came but the log looks stale"* (if the notification came, the run is over: re-read in a fresh call), and *"it's only a small suite"* (size judgement is what keeps failing, and backgrounding costs nothing, so there is nothing to trade).
 
 **Never pipe a gate — not into `tail`, `head`, `grep` or anything else.** A pipeline exits with its **last** command's status, so `./behave.sh … | tail -40` reports `tail`'s `0` and a red run arrives labelled green; backgrounded, that bogus `0` is what the completion event carries, so the failure is never surfaced at all. Ask the script for less instead — these filter the console and still exit with the run's own status:
 
@@ -66,7 +70,11 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 ./behave.sh --log-grep PROBE --log-tail 5 <path>    # combined: the last 5 matches
 ```
 
+**`2>&1 | tail -N` is how this rule gets broken.** It is the reflex ending for any long-running shell command, typed without a thought, so it never registers as a decision about exit status. **The tell is the `|` character, not the intent** — before running a gate, look at the line for a pipe, and if there is one, a flag above replaces it. `--log-tail 30` *is* `| tail -30`, minus the lost verdict; there is no filtering a pipe can do that the flags cannot.
+
 **`--quiet` is the one to reach for.** Each gate declares its own `failRe`/`summaryRe`, which is what `--quiet` prints, so hand-writing `--log-grep '×|FAIL|Tests '` is a worse and vitest-only spelling of it. Keep `--log-grep` for what `--quiet` does not show: a probe's `console.log`, or vitest's `Errors  N error` line, which reports a throw from outside a test body and **still exits 0**.
+
+**A killed run's `0` is not a pass.** `--kill` ends the run, but the completion event that follows still reports `exit code 0`. After killing, re-run — never read the dead run's status as a verdict.
 
 **Every local run captures itself, and prints the log path as its first line** — `▶ tmp/_behave-output/<id>/output.log`, the whole of stdout and stderr with the colour codes stripped. That line is also the only proof a run happened, so treat a missing `▶` as "nothing ran". No redirect has to be arranged in advance and a red run needs no second run: grep that file, during the run or after it, or pass `--bail 1` to make the run stop at the first failure itself. Beside it sit the `command` and a `status`, plus `result.json` (vitest's machine-readable results) for `./behave.sh` only. `latest` symlinks the newest and week-old runs are pruned.
 

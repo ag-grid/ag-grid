@@ -4,6 +4,22 @@ import type { IFilterOptionDef, ISimpleFilterParams } from './iSimpleFilter';
 /** An entry missing any of these cannot be offered; they are listed so the warning can name the missing one. */
 const REQUIRED_OPTION_PROPERTIES: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
 
+/**
+ * The properties that stop an entry being offered, or `null` when it can be. Shared so a list read at column
+ * definition time and the same list read again for the dropdown cannot disagree about what is malformed.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getMissingOptionProperties(option: IFilterOptionDef): (keyof IFilterOptionDef)[] | null {
+    let missing: (keyof IFilterOptionDef)[] | null = null;
+    for (let i = 0, len = REQUIRED_OPTION_PROPERTIES.length; i < len; ++i) {
+        const name = REQUIRED_OPTION_PROPERTIES[i];
+        if (option[name] == null) {
+            (missing ??= []).push(name);
+        }
+    }
+    return missing;
+}
+
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
     private customFilterOptions: Map<string, IFilterOptionDef>;
@@ -50,8 +66,8 @@ export class OptionsFactory {
             } else if (typeof option === 'string') {
                 offered.set(option, offered.get(option) ?? option); // a definition already stored outranks a bare key
             } else {
-                const missing = REQUIRED_OPTION_PROPERTIES.filter((name) => option[name] == null);
-                if (missing.length) {
+                const missing = _getMissingOptionProperties(option);
+                if (missing) {
                     log.warn(72, { keys: missing });
                     continue;
                 }

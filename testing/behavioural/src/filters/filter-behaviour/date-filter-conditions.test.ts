@@ -255,6 +255,35 @@ describe('Date Filter — conditions coverage', () => {
         expect(filter.getModel()).toMatchObject({ type: 'notBlank' });
     });
 
+    // A date column holds strings, so it has an empty one to account for: blankness is a property of the
+    // value, not of whether the date parser could read it.
+    test('an empty or whitespace date is blank, where an unreadable one is not', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: [{ date: '2024-01-10' }, { date: '' }, { date: null }, { date: '   ' }, { date: 'not a date' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'date');
+
+        await filter.selectOperator('Blank');
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'blank rows').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 date:""
+            ├── LEAF id:2 date:null
+            └── LEAF id:3 date:""
+        `);
+
+        // Row 4 holds `'not a date'`, which the column's formatter prints as empty: unreadable, not blank.
+        await filter.selectOperator('Not blank');
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'notBlank rows').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 date:"2024-01-10"
+            └── LEAF id:4 date:""
+        `);
+    });
+
     const BOUNDARY = [
         { date: '2024-01-10' },
         { date: '2024-03-15' },

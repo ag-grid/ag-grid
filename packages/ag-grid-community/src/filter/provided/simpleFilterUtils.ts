@@ -42,6 +42,11 @@ export function removeItems<T>(items: T[], startPosition: number, deleteCount?: 
     return deleteCount == null ? items.splice(startPosition) : items.splice(startPosition, deleteCount);
 }
 
+/**
+ * What every filter means by blank, so `blank` cannot mean one thing in a column filter and another in the
+ * Advanced Filter.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export function isBlank<V>(cellValue: V) {
     return cellValue == null || (typeof cellValue === 'string' && cellValue.trim().length === 0);
 }

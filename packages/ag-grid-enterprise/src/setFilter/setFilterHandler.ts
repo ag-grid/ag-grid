@@ -247,7 +247,8 @@ export class SetFilterHandler<TValue = string>
         if (valueToFormat == null || typeof valueToFormat !== 'string') {
             return valueToFormat;
         }
-        return this.caseSensitive ? valueToFormat : (valueToFormat.toUpperCase() as T);
+        // Locale-aware, as every filter's case folding is: the Turkish dotted and dotless I are two letters.
+        return this.caseSensitive ? valueToFormat : (valueToFormat.toLocaleUpperCase() as T);
     }
 
     private addEventListenersForDataChanges(): void {
