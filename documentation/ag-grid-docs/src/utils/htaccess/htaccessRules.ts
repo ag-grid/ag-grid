@@ -260,16 +260,16 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteRule ^/?private/?$ https://www.ag-grid.com/blog/ [R=301,L]
 
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?tag/(?:angular-grid|angular-table)/?$ https://www.ag-grid.com/blog/tag/angular/ [R=301,L]
+    RewriteRule ^/?tag/(?:angular-grid|angular-table)(?:/amp)?/?$ https://www.ag-grid.com/blog/tag/angular/ [R=301,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?tag/(?:react-grid|react-table)/?$ https://www.ag-grid.com/blog/tag/react-data-grid/ [R=301,L]
+    RewriteRule ^/?tag/(?:react-grid|react-table)(?:/amp)?/?$ https://www.ag-grid.com/blog/tag/react-data-grid/ [R=301,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?tag/(?:vue-grid|vue-table)/?$ https://www.ag-grid.com/blog/tag/vuejs/ [R=301,L]
+    RewriteRule ^/?tag/(?:vue-grid|vue-table)(?:/amp)?/?$ https://www.ag-grid.com/blog/tag/vuejs/ [R=301,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?tag/(?:enzyme|jest)/?$ https://www.ag-grid.com/blog/tag/testing/ [R=301,L]
+    RewriteRule ^/?tag/(?:enzyme|jest)(?:/amp)?/?$ https://www.ag-grid.com/blog/tag/testing/ [R=301,L]
 
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?tag/(?:ag-grid|column-header|columns|data-grid|data-table|date|datepicker|detail|editing|export|filtering|formatting|graphql|localstorage|master|mongodb|multi-line|pdf|range-selection|range-selection-styles|redux|row-background-color|row-selection|row-styling|server-side-row-model|sorting|state|styling-table-rows|tabs|vuex|web-development)/?$ - [R=410,L]
+    RewriteRule ^/?tag/(?:ag-grid|column-header|columns|data-grid|data-table|date|datepicker|detail|editing|export|filtering|formatting|graphql|localstorage|master|mongodb|multi-line|pdf|range-selection|range-selection-styles|redux|row-background-color|row-selection|row-styling|server-side-row-model|sorting|state|styling-table-rows|tabs|vuex|web-development)(?:/amp)?/?$ - [R=410,L]
 
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?(.+?)/amp/?$ https://www.ag-grid.com/blog/$1/ [R=301,L]

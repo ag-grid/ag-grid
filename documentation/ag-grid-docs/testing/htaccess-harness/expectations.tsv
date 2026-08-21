@@ -155,6 +155,14 @@ blog	/tag/react-table/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
 blog	/tag/vue-grid/	301	https://www.ag-grid.com/blog/tag/vuejs/
 blog	/tag/vue-table/	301	https://www.ag-grid.com/blog/tag/vuejs/
 blog	/tag/enzyme/	301	https://www.ag-grid.com/blog/tag/testing/
+# PR 14926 [P1]: the /amp/ form of a tag rule must not fall to the generic /amp/ rule,
+# which strips /amp/ and 301s onto /blog/tag/<retired>/ -- a 404.
+blog	/tag/angular-grid/amp/	301	https://www.ag-grid.com/blog/tag/angular/
+blog	/tag/react-table/amp/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/vue-grid/amp/	301	https://www.ag-grid.com/blog/tag/vuejs/
+blog	/tag/jest/amp/	301	https://www.ag-grid.com/blog/tag/testing/
+blog	/tag/redux/amp/	410
+blog	/tag/sorting/amp/	410
 blog	/tag/jest/	301	https://www.ag-grid.com/blog/tag/testing/
 blog	/tag/redux/	410
 blog	/tag/sorting/	410
