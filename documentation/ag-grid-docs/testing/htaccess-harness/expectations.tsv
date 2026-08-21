@@ -175,6 +175,13 @@ blog	/tag/react-table/page/5/	301	https://www.ag-grid.com/blog/tag/react-data-gr
 blog	/tag/vue-grid/page/2/	301	https://www.ag-grid.com/blog/tag/vuejs/
 blog	/tag/angular-grid/rss/	301	https://www.ag-grid.com/blog/tag/angular/rss/
 blog	/tag/jest/rss/	301	https://www.ag-grid.com/blog/tag/testing/rss/
+# PR 14926 [P2b]: the pre-existing tag/react alias needed the same treatment.
+blog	/tag/react/rss/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+blog	/tag/react/page/2/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/react/amp/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+# Regression: react-data-grid itself must not be swallowed by the tag/react rule.
+blog	/tag/react-data-grid/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/react-data-grid/rss/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
 # Regression: a SURVIVING tag's pagination and feed must still take the generic rules.
 blog	/tag/angular/page/2/	301	https://www.ag-grid.com/blog/tag/angular/page/2/
 blog	/tag/angular/rss/	301	https://www.ag-grid.com/blog/tag/angular/rss/
@@ -186,3 +193,69 @@ blog	/tag/row-styling/	410
 blog	/tag/server-side-row-model/	410
 # A surviving tag must still take the catch-all, not the 410 list
 blog	/tag/themes-styles/	301	https://www.ag-grid.com/blog/tag/themes-styles/
+
+# SE-93 adversarial variant-suffix audit. A 410 must reject every shape under the slug:
+# matching only an enumerated suffix set let /feed/, stacked suffixes and case variants
+# 301 out to www, where the blog's own case-normalising redirect delivered the LIVE page
+# (verified in production: blog/WHATS-NEW-IN-AG-GRID-V24/ -> 200 in two hops).
+blog	/whats-new-in-ag-grid-v24/feed/	410
+blog	/whats-new-in-ag-grid-v24/rss/	410
+blog	/whats-new-in-ag-grid-v24/page/2/	410
+blog	/whats-new-in-ag-grid-v24/amp/amp/	410
+blog	/whats-new-in-ag-grid-v24/comment-page-1/	410
+blog	/WHATS-NEW-IN-AG-GRID-V24/	410
+blog	/Whats-New-In-AG-Grid-v24/	410
+blog	/ag-grid-vs-datatables/feed/	410
+blog	/ag-grid-vs-datatables/amp/amp/	410
+blog	/Ag-Grid-Vs-DataTables/	410
+blog	/tag/redux/feed/	410
+blog	/tag/redux/rss/amp/	410
+blog	/tag/redux/page/2/amp/	410
+blog	/tag/redux/page/2/rss/	410
+blog	/tag/redux/amp/amp/	410
+blog	/tag/Redux/	410
+blog	/tag/REDUX/	410
+blog	/tag/web-development/feed/	410
+
+# tag/react is a renamed tag: /rss, /feed and /page/N must land on the NEW slug, not the
+# dead pre-rename one (previously 301'd to /blog/tag/react/rss/, a 404).
+blog	/tag/react/rss/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+blog	/tag/react/feed/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+blog	/tag/react/page/2/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/react/amp/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+
+# The WordPress-era feed suffix is /feed; it must reach the new slug's /rss in one hop
+# rather than 301 onto the dead old slug and then through the blog's /feed -> /rss hop.
+blog	/tag/react-grid/feed/	301	https://www.ag-grid.com/blog/tag/react-data-grid/rss/
+blog	/tag/angular-table/feed/	301	https://www.ag-grid.com/blog/tag/angular/rss/
+blog	/tag/vue-grid/feed/	301	https://www.ag-grid.com/blog/tag/vuejs/rss/
+blog	/tag/enzyme/feed/	301	https://www.ag-grid.com/blog/tag/testing/rss/
+# /feed on a SURVIVING tag/author, and the site feed, must go straight to /rss -- mapping
+# feed -> feed cost a second hop via Ghost's own feed->rss redirect (verified 2 hops live).
+blog	/feed/	301	https://www.ag-grid.com/blog/rss/
+blog	/tag/angular/feed/	301	https://www.ag-grid.com/blog/tag/angular/rss/
+blog	/author/sean/feed/	301	https://www.ag-grid.com/blog/author/sean/rss/
+# rss forms must be unchanged by that split.
+blog	/rss/	301	https://www.ag-grid.com/blog/rss/
+blog	/tag/angular/rss/	301	https://www.ag-grid.com/blog/tag/angular/rss/
+blog	/author/sean/rss/	301	https://www.ag-grid.com/blog/author/sean/rss/
+# A RewriteRule pattern is case-sensitive unless the RULE carries [NC] -- the flag does
+# NOT inherit from the preceding RewriteCond. Without it a case variant fell to the
+# catch-all and reached the right page only via www's case-normalising redirect (3 hops).
+blog	/Showcase/	301	https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/
+blog	/Tag/React/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/Vuestic-UI-App-With-AG-Grid-Tutorial/	301	https://epicmax.co/blog/vuestic-ui-with-ag-grid
+blog	/CONDTIONAL-FORMATTING-FOR-CELLS-IN-AG-GRID/	301	https://www.ag-grid.com/blog/conditional-formatting-for-cells-in-ag-grid/
+# /private/amp/ previously routed via the generic /amp/ rule onto /blog/private/, which
+# Ghost answers with a 302 -- a 302 in the chain, which SE-86 rules out.
+blog	/private/amp/	301	https://www.ag-grid.com/blog/
+
+# vuestic was the one renamed-slug source missing the optional /amp, so the amp variant
+# 301'd to /blog/vuestic-.../ instead of the off-site destination the bare slug uses.
+blog	/vuestic-ui-app-with-ag-grid-tutorial/amp/	301	https://epicmax.co/blog/vuestic-ui-with-ag-grid
+
+# Guard the widened 410 patterns against over-matching neighbouring live slugs.
+blog	/tag/react-data-grid/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
+blog	/tag/data-grid-and-more/	301	https://www.ag-grid.com/blog/tag/data-grid-and-more/
+blog	/whats-new-in-ag-grid-v24-part-2/	301	https://www.ag-grid.com/blog/whats-new-in-ag-grid-v24-part-2/
+blog	/tag/statement/	301	https://www.ag-grid.com/blog/tag/statement/
