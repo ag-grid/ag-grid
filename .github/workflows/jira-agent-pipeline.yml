@@ -186,6 +186,9 @@ jobs:
         permissions:
             contents: read
             packages: read
+            pull-requests: read
+            checks: read
+            statuses: read
         steps:
             - uses: actions/checkout@v4
               with:
