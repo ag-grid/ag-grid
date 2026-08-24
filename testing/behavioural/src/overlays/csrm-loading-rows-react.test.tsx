@@ -2,7 +2,7 @@ import { cleanup, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, RowStyleModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, RenderApiModule, RowStyleModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 interface RowData {
@@ -12,7 +12,7 @@ interface RowData {
 
 describe('CSRM loading rows (React)', () => {
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowStyleModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule, RenderApiModule, RowStyleModule]);
     });
 
     afterEach(() => {

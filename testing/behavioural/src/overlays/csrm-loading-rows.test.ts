@@ -1,10 +1,12 @@
 import { waitFor } from '@testing-library/dom';
 import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout, isAgHtmlElementVisible } from 'ag-test-utils';
 
+import type { ColDef } from 'ag-grid-community';
 import {
     CellSpanModule,
     CellStyleModule,
     ClientSideRowModelModule,
+    RenderApiModule,
     RowAutoHeightModule,
     RowStyleModule,
     enableDevValidations,
@@ -12,7 +14,14 @@ import {
 
 describe('CSRM loading rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CellSpanModule, CellStyleModule, RowAutoHeightModule, RowStyleModule],
+        modules: [
+            ClientSideRowModelModule,
+            CellSpanModule,
+            CellStyleModule,
+            RenderApiModule,
+            RowAutoHeightModule,
+            RowStyleModule,
+        ],
     });
     const columnDefs = [{ field: 'athlete' }, { field: 'country' }];
 
@@ -156,7 +165,7 @@ describe('CSRM loading rows', () => {
             getBusinessKeyForNode: 0,
         };
         const noCallsWithMissingData = { ...callsWithMissingData };
-        const makeCallbackColumnDefs = () => [
+        const makeCallbackColumnDefs = (): ColDef[] => [
             {
                 colId: 'total',
                 valueGetter: (params) => {
