@@ -1,11 +1,32 @@
+import ButtonGroup from '@ag-website-shared/components/button-group/ButtonGroup';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
 import classnames from 'classnames';
 import type { FunctionComponent } from 'react';
+import { useState } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { CopyButton } from '../chrome/CopyButton';
 import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
+
+const GROUP_BUTTONS = ['JavaScript', 'React', 'Angular', 'Vue'];
+
+/** Live `ButtonGroup`, which needs an owner for the active index. */
+const ButtonGroupDemo: FunctionComponent = () => {
+    const [active, setActive] = useState('React');
+
+    return (
+        <ButtonGroup
+            preText="Framework"
+            buttons={GROUP_BUTTONS.map((text) => ({
+                text,
+                active: text === active,
+                onClick: () => setActive(text),
+            }))}
+        />
+    );
+};
 
 const VARIANTS = [
     {
@@ -187,6 +208,76 @@ export const Buttons: FunctionComponent = () => (
             </Specimen>
         </Block>
 
+        <Block
+            title="Button group"
+            note={
+                <p>
+                    A segmented control: mutually exclusive options where exactly one is selected. Every button is a{' '}
+                    <code>.button-secondary</code> underneath, so the group is a layout and selection wrapper rather
+                    than a new variant.
+                </p>
+            }
+        >
+            <Specimen
+                code={`<ButtonGroup
+    preText="Framework"
+    buttons={frameworks.map((text) => ({
+        text,
+        active: text === selected,
+        onClick: () => setSelected(text),
+    }))}
+/>`}
+            >
+                <ButtonGroupDemo />
+            </Specimen>
+            <p>
+                Each entry is <code>{'{ text, active?, onClick?, className? }'}</code> and <code>text</code> doubles as
+                the React key, so the labels within a group have to be unique. <code>preText</code> is optional leading
+                copy - it renders as bare text beside the group rather than as a <code>&lt;label&gt;</code>, so it does
+                not announce as the group&rsquo;s name.
+            </p>
+        </Block>
+
+        <Block
+            title="Open-in CTA"
+            note={
+                <p>
+                    The icon-only control that opens an example elsewhere - a new tab, Plunker, StackBlitz, CodeSandbox.
+                    It takes either an <code>href</code> or an <code>onClick</code> and renders an{' '}
+                    <code>&lt;a&gt;</code> or a <code>&lt;button&gt;</code> to match, so the element is always right for
+                    what the control actually does.
+                </p>
+            }
+        >
+            <Specimen
+                row
+                code={`<OpenInCTA type="newTab" href={exampleUrl} />
+<OpenInCTA type="plunker" onClick={openInPlunker} tracking={trackPlunker} />
+
+<!-- markdoc -->
+{% openInCTA type="stackblitz" href="…" text="Open in" /%}`}
+            >
+                {(['newTab', 'plunker', 'stackblitz', 'codesandbox'] as const).map((type) => (
+                    <Variant key={type} name={type}>
+                        <OpenInCTA type={type} href="#buttons" />
+                    </Variant>
+                ))}
+            </Specimen>
+            <p>
+                The label comes from <code>type</code>, both as the visible tooltip and as the <code>aria-label</code>,
+                so there is nothing to write and nothing to get out of step. The optional <code>tracking</code> callback
+                fires alongside the navigation for analytics. Links always open in a new tab with{' '}
+                <code>rel=&quot;noreferrer&quot;</code>.
+            </p>
+            <p>
+                Two behaviours are worth knowing before you reuse it. The tooltip is CSS-only and always in the DOM, so
+                its text is announced in addition to the <code>aria-label</code> - the same word twice. And the button
+                branch is hidden outright on Mobile Safari, via an <code>@supports (-webkit-touch-callout: none)</code>{' '}
+                query in the stylesheet, because the sandboxes it opens do not work there. Anything you add as a{' '}
+                <code>button</code> rather than a link inherits that disappearance.
+            </p>
+        </Block>
+
         <Gotcha>
             The focus ring is a <code>box-shadow</code>, not an <code>outline</code> - so overriding{' '}
             <code>box-shadow</code> on a button silently removes it. Re-declare it if you restyle. Buttons inside a form
@@ -211,6 +302,22 @@ export const Buttons: FunctionComponent = () => (
                 <code>.button-style-none</code> to do the same in <code>elements/_button.scss</code>. Until then, any
                 usage that does not set its own colour has an invisible hover state - there are around a dozen, in the
                 docs navigation, the tab strip, the video player and the example runner&rsquo;s code viewer.
+            </p>
+            <p>
+                <code>OpenInCTA.astro</code> does{' '}
+                <code>
+                    import {'{'} type CtaType {'}'}
+                </code>{' '}
+                from <code>OpenInCTA.tsx</code>, but <code>CtaType</code> is declared there without <code>export</code>.
+                It is an unresolved import that survives only because <code>.astro</code> files are not covered by the
+                type-check gate; the <code>Props</code> interface it annotates is therefore not actually constrained to
+                the four valid values.
+            </p>
+            <p>
+                <code>OpenInCTA</code>&rsquo;s button branch uses <code>.button-style-none</code>, so it is subject to
+                the hover defect above. It gets away with it because the control&rsquo;s visible content is an{' '}
+                <code>&lt;svg&gt;</code> icon with its own <code>fill</code> rather than text, and the reset does not
+                touch <code>fill</code>.
             </p>
         </KnownIssue>
     </Section>
