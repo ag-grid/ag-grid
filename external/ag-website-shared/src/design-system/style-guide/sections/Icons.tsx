@@ -1,11 +1,13 @@
+import { EnterpriseIcon } from '@ag-website-shared/components/icon/EnterpriseIcon';
 import { CHARTS_ICON_MAP, ICON_MAP, Icon, SOCIALS_ICON_MAP } from '@ag-website-shared/components/icon/Icon';
 import type { IconName } from '@ag-website-shared/components/icon/Icon';
+import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
 import type { CSSProperties, FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { useStyleGuide, useTokens } from '../StyleGuideContext';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Gotcha, Section } from '../chrome/Section';
+import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 import { TokenTable } from '../chrome/TokenTable';
 
@@ -136,12 +138,82 @@ export const Icons: FunctionComponent = () => {
                 );
             })}
 
+            <Block
+                title="Composed icons"
+                note={
+                    <p>
+                        Two components wrap <code>Icon</code> with meaning attached, so the meaning stays consistent
+                        across the sites. Use these rather than reaching for the underlying icon name.
+                    </p>
+                }
+            >
+                <Specimen
+                    label={
+                        <>
+                            <code>EnterpriseIcon</code> - marks a feature as Enterprise-only
+                        </>
+                    }
+                    code={`<EnterpriseIcon />
+
+{/* markdoc */}
+Row grouping {% enterpriseIcon /%} requires an Enterprise licence.`}
+                >
+                    <p>
+                        Row grouping <EnterpriseIcon /> requires an Enterprise licence.
+                    </p>
+                </Specimen>
+                <p>
+                    It renders the literal text <code>(e)</code> beside the icon, and the CSS hides one of the two
+                    depending on context - so the mark degrades to something readable rather than vanishing. Its only
+                    prop is <code>style</code>, which accepts a JSON <em>string</em> as well as an object, because
+                    markdoc attributes can only be strings.
+                </p>
+
+                <Specimen
+                    label={
+                        <>
+                            <code>LinkIcon</code> - the click-to-copy anchor on a heading
+                        </>
+                    }
+                    code={`<h3 id="my-section">
+    My section
+    <LinkIcon href="#my-section" />
+</h3>`}
+                >
+                    <h4 className={styles.linkIconDemo}>
+                        Hover this heading to reveal it <LinkIcon href="#icons" />
+                    </h4>
+                </Specimen>
+                <p>
+                    Copies the absolute URL to the clipboard, updates the address bar with{' '}
+                    <code>history.replaceState</code> so no history entry is added, and swaps its tooltip to &ldquo;Link
+                    copied!&rdquo;. It is hidden at <code>opacity: 0</code> until the heading is hovered, which is why
+                    it has to be inside the heading element rather than beside it - and it is what puts the copy links
+                    on the section headings in this guide. Passing <code>exampleLink</code> switches it to the{' '}
+                    <code>OpenInCTA</code> styling instead, for the row of controls above a code example.
+                </p>
+            </Block>
+
             <Gotcha>
                 The SVG carries no accessible name, so an icon-only control needs an <code>aria-label</code>. Change
                 colour through <code>--icon-color</code> rather than targeting the <code>svg</code>, or hover states
                 stop following. Don&rsquo;t recolour a third-party brand mark - use the monochrome variant where one
                 exists, such as <code>stackoverflowMonochrome</code>.
             </Gotcha>
+
+            <KnownIssue>
+                <p>
+                    Every <code>LinkIcon</code> on a page has the same <code>aria-label</code>, the literal string{' '}
+                    <code>&quot;Heading link&quot;</code>. A screen-reader user listing a documentation page&rsquo;s
+                    links hears it once per heading with nothing to distinguish them, when the heading text it sits
+                    inside is right there to use.
+                </p>
+                <p>
+                    Its tooltip is revealed on <code>:hover</code> and while <code>.active</code>, but not on{' '}
+                    <code>:focus-visible</code> - which the icon itself is. A keyboard user sees the control appear and
+                    can activate it, but never sees the label that says what activating it does.
+                </p>
+            </KnownIssue>
         </Section>
     );
 };

@@ -995,3 +995,49 @@
 .cardDemo {
     min-width: 200px;
 }
+
+// Disclosure, media, docs authoring
+// ===============================================
+.disclosureDemo {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    align-items: flex-start;
+    // The panel is width-constrained rather than the demo, so the collapsed state does not
+    // reserve a full-width empty row.
+    width: 100%;
+    max-width: 480px;
+}
+
+.disclosurePanel {
+    padding: $spacing-size-4;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-secondary);
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.consentDemo {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    max-width: 420px;
+}
+
+.numberHeadingDemo {
+    // NumberHeading draws a vertical rule between consecutive steps, so it only reads correctly
+    // with more than one of them.
+    max-width: 560px;
+}
+
+.linkIconDemo {
+    // Has to be a real heading: LinkIcon's reveal rule is `h1..h6:hover .docsHeaderIcon`, so on any
+    // other element the icon stays at opacity 0 with nothing visible to hover.
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    font-size: var(--text-fs-lg);
+}
