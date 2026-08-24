@@ -86,7 +86,8 @@
     ],
     "deny": [
       "Read(.env.local)",
-      "Read(credentials/)"
+      "Read(credentials/)",
+      "Read(credentials/**)"
     ]
   },
   "hooks": {
