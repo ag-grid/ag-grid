@@ -31,12 +31,12 @@ jobs:
       issues: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           sparse-checkout:
             'scripts/ci/_utils.mjs'
       - name: Check if PR is merged
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         continue-on-error: true
         env:
           PR_ID: ${{ github.event.inputs.debug_pr_id || github.event.pull_request.number }}

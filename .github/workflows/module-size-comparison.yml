@@ -51,7 +51,7 @@ jobs:
     steps:
       - name: Resolve PR details
         id: resolve
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           SHARD_COUNT: ${{ env.SHARD_COUNT }}
         with:
@@ -107,12 +107,12 @@ jobs:
       relevant: ${{ steps.filter.outputs.size }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - name: Detect file changes
         id: filter
-        uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3.0.3
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         with:
           filters: |
             size:
@@ -139,7 +139,7 @@ jobs:
       base-sha: ${{ steps.get-merge-base.outputs.sha }}
     steps:
       - name: Checkout to find merge base
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.prepare.outputs.head-sha }}
           fetch-depth: 0
@@ -163,7 +163,7 @@ jobs:
 
       - name: Check cache for base results
         id: cache-check
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ./base-results.json
           key: module-size-base-${{ steps.get-merge-base.outputs.sha }}
@@ -181,7 +181,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout for actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.prepare.outputs.head-sha }}
           fetch-depth: 1
@@ -207,7 +207,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout for actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.prepare.outputs.head-sha }}
           fetch-depth: 1
@@ -231,18 +231,18 @@ jobs:
     if: always() && needs.module-size-base.result == 'success'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           sparse-checkout: |
             scripts/ci/merge-module-size-results.mjs
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 
       - name: Download all base shard results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: module-size-base-shard-*-${{ needs.prepare.outputs.pr-number }}
           path: ./base-shards
@@ -253,7 +253,7 @@ jobs:
           node scripts/ci/merge-module-size-results.mjs ./base-shards ./base-results.json
 
       - name: Save to cache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ./base-results.json
           key: module-size-base-${{ needs.check-base-cache.outputs.base-sha }}
@@ -274,19 +274,19 @@ jobs:
       BASE_SHA: ${{ needs.check-base-cache.outputs.base-sha }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           sparse-checkout: |
             scripts/ci/compare-module-sizes.mjs
             scripts/ci/merge-module-size-results.mjs
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 
       - name: Download all PR shard results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: module-size-pr-shard-*-${{ env.PR_NUMBER }}
           path: ./pr-shards
@@ -299,7 +299,7 @@ jobs:
       # If cache hit, restore from cache
       - name: Restore base results from cache
         if: env.CACHE_HIT == 'true'
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ./base-results.json
           key: module-size-base-${{ env.BASE_SHA }}
@@ -308,7 +308,7 @@ jobs:
       # If cache miss, download artifacts and merge
       - name: Download all base shard results
         if: env.CACHE_HIT != 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: module-size-base-shard-*-${{ env.PR_NUMBER }}
           path: ./base-shards
@@ -329,7 +329,7 @@ jobs:
 
       - name: Find existing comment
         id: find-comment
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           result-encoding: string
           script: |
@@ -347,7 +347,7 @@ jobs:
             return botComment ? botComment.id : '';
 
       - name: Post or update comment
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           COMMENT_ID: ${{ steps.find-comment.outputs.result }}
         with:
@@ -380,7 +380,7 @@ jobs:
             }
 
       - name: Upload comparison report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: module-size-comparison-${{ env.PR_NUMBER }}
           path: ./comparison-report.md

@@ -246,7 +246,7 @@ jobs:
             stage: ${{ steps.pf.outputs.stage }}
             issue_key: ${{ steps.pf.outputs.issue_key }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -307,7 +307,7 @@ jobs:
             # action's CLAUDE.md § "Confidence-gap auto-refresh".
             confidence_gap: ${{ steps.pipeline.outputs.confidence_gap }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -374,7 +374,7 @@ jobs:
             issues: write # mint → reply → label → close, all mechanical
             packages: read
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -437,7 +437,7 @@ jobs:
         outputs:
             reproduces: ${{ steps.pipeline.outputs.reproduces }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -485,7 +485,7 @@ jobs:
             issues: read
             packages: read
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -544,7 +544,7 @@ jobs:
             issues: read
             packages: read
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts

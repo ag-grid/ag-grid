@@ -179,7 +179,7 @@ runs:
         - name: Restore node_modules
           if: inputs.cache_mode == 'ro'
           id: cache_ro
-          uses: actions/cache/restore@v4
+          uses: actions/cache/restore@v6
           with:
               path: ${{ inputs.node_modules_paths }}
               key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, inputs.node_modules_hash) || inputs.node_modules_hash }}
@@ -189,12 +189,12 @@ runs:
 
         - name: Restore node_modules
           # Restore only; saved by the explicit "Save node_modules" step after yarn install.
-          # actions/cache@v4's post-save hook cannot be used: expression contexts are lost
+          # actions/cache@v6's post-save hook cannot be used: expression contexts are lost
           # in post steps of nested composite actions (actions/runner#2009), so its `path`
           # resolves empty and the save is silently skipped.
           if: inputs.cache_mode == 'rw'
           id: cache_rw
-          uses: actions/cache/restore@v4
+          uses: actions/cache/restore@v6
           with:
               path: ${{ inputs.node_modules_paths }}
               key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, inputs.node_modules_hash) || inputs.node_modules_hash }}
@@ -205,7 +205,7 @@ runs:
           # Post-save works here only because `path` is a literal (see "Restore node_modules");
           # do not parameterise it via inputs.
           if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false'
-          uses: actions/cache@v4
+          uses: actions/cache@v6
           with:
               path: |
                   .nx/cache
@@ -216,7 +216,7 @@ runs:
         - name: Restore Nx
           if: inputs.cache_mode == 'ro' && inputs.nx_restore != 'false'
           id: cache_nx_ro
-          uses: actions/cache/restore@v4
+          uses: actions/cache/restore@v6
           with:
               path: |
                   .nx/cache
@@ -227,7 +227,7 @@ runs:
 
         - name: Setup Node.js
           id: setup_node
-          uses: actions/setup-node@v4
+          uses: actions/setup-node@v7
           with:
               node-version-file: package.json
 
@@ -268,7 +268,7 @@ runs:
           # wasted (matters only on an inexact node_modules restore — a degraded path).
           if: inputs.cache_mode != 'off' && inputs.yarn_postinstall != 'no-install' && (inputs.yarn_postinstall != 'false' || inputs.cache_mode == 'rw') && steps.cache_rw.outputs.cache-hit != 'true' && steps.cache_ro.outputs.cache-hit != 'true'
           id: yarn_cache
-          uses: actions/cache/restore@v4
+          uses: actions/cache/restore@v6
           with:
               path: ${{ steps.yarn_cache_dir.outputs.dir }}
               key: yarn-cache-${{ runner.os }}-${{ inputs.node_modules_hash }}
@@ -348,7 +348,7 @@ runs:
           # why the post-save hook cannot be used). Skipped on an exact restore — the
           # cache already exists under this key.
           if: inputs.cache_mode == 'rw' && steps.cache_rw.outputs.cache-hit != 'true'
-          uses: actions/cache/save@v4
+          uses: actions/cache/save@v6
           with:
               path: ${{ inputs.node_modules_paths }}
               key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, inputs.node_modules_hash) || inputs.node_modules_hash }}
@@ -364,7 +364,7 @@ runs:
           # (nothing new to save otherwise). Without this, an exact-node_modules-hit job would
           # skip the restore yet still attempt a save of an unpopulated/stale cache dir.
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall != 'no-install' && steps.cache_rw.outputs.cache-hit != 'true' && steps.yarn_cache.outputs.cache-hit != 'true'
-          uses: actions/cache/save@v4
+          uses: actions/cache/save@v6
           with:
               path: ${{ steps.yarn_cache_dir.outputs.dir }}
               key: yarn-cache-${{ runner.os }}-${{ inputs.node_modules_hash }}

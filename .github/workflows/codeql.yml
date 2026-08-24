@@ -46,7 +46,7 @@ jobs:
 
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   fetch-depth: 1 # shallow copy
 
@@ -64,7 +64,7 @@ jobs:
                   yarn nx pack:verify --prod
 
             - name: Initialize CodeQL (PR)
-              uses: github/codeql-action/init@v3
+              uses: github/codeql-action/init@v4
               if: steps.setup.outputs.type == 'pr'
               with:
                   config-file: ./.github/codeql/codeql-config-pr.yml
@@ -73,7 +73,7 @@ jobs:
                   trap-caching: false
 
             - name: Initialize CodeQL (latest)
-              uses: github/codeql-action/init@v3
+              uses: github/codeql-action/init@v4
               if: steps.setup.outputs.type != 'pr'
               with:
                   config-file: ./.github/codeql/codeql-config-latest.yml
@@ -82,6 +82,6 @@ jobs:
                   trap-caching: false
 
             - name: Perform CodeQL Analysis
-              uses: github/codeql-action/analyze@v3
+              uses: github/codeql-action/analyze@v4
               with:
                   category: '/language:${{matrix.language}}'

@@ -23,7 +23,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 1
 
@@ -57,7 +57,7 @@ runs:
 
     - name: Restore Playwright browsers
       id: pw-cache
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@v6
       with:
         path: ~/.cache/ms-playwright
         key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
@@ -90,7 +90,7 @@ runs:
     
     - name: Upload Test Report
       id: upload-recipes-report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       if: ${{ !cancelled() }}
       with:
         name: playwright-${{ inputs.framework }}-examples-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}

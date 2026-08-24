@@ -25,14 +25,14 @@ jobs:
     steps:
       - name: Checkout repository
         if: github.event.action == 'opened' || github.event.action == 'edited'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           sparse-checkout:
             'scripts/ci/_utils.mjs'
 
       - name: Replace mention with jira link
         id: notify-start
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         continue-on-error: true
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
