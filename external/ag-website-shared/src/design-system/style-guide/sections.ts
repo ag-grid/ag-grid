@@ -6,10 +6,13 @@ import { Code } from './sections/Code';
 import { Colour } from './sections/Colour';
 import { Alerts, Containers, Pills } from './sections/Components';
 import { Contributing } from './sections/Contributing';
+import { Disclosure } from './sections/Disclosure';
+import { DocsAuthoring } from './sections/DocsAuthoring';
 import { Forms } from './sections/Forms';
 import { Icons } from './sections/Icons';
 import { Introduction } from './sections/Introduction';
 import { Breakpoints, LayoutSection } from './sections/LayoutAndBreakpoints';
+import { Media } from './sections/Media';
 import { Motion } from './sections/Motion';
 import { Radii, Shadows, Spacing } from './sections/Scales';
 import { Tables } from './sections/Tables';
@@ -56,7 +59,10 @@ export const SECTIONS: SectionEntry[] = [
     { id: 'alerts', label: 'Alerts', group: 'Components', Component: Alerts },
     { id: 'containers', label: 'Cards and tabs', group: 'Components', Component: Containers },
     { id: 'pills', label: 'Pills', group: 'Components', Component: Pills },
+    { id: 'disclosure', label: 'Disclosure', group: 'Components', Component: Disclosure },
+    { id: 'media', label: 'Images and video', group: 'Components', Component: Media },
 
+    { id: 'docs-authoring', label: 'Docs authoring tags', group: 'Practice', Component: DocsAuthoring },
     { id: 'accessibility', label: 'Accessibility', group: 'Practice', Component: Accessibility },
     { id: 'contributing', label: 'Extending the system', group: 'Practice', Component: Contributing },
 ];

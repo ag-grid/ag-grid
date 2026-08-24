@@ -1,10 +1,76 @@
+import { ConsentCheckbox } from '@ag-website-shared/components/consent-fields/ConsentCheckbox';
+import { Select } from '@ag-website-shared/components/select/Select';
 import classnames from 'classnames';
 import type { FunctionComponent, ReactNode } from 'react';
+import { useState } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { CopyButton } from '../chrome/CopyButton';
 import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
+
+interface FrameworkOption {
+    value: string;
+    label: string;
+}
+
+const FRAMEWORKS: FrameworkOption[] = [
+    { value: 'javascript', label: 'JavaScript' },
+    { value: 'react', label: 'React' },
+    { value: 'angular', label: 'Angular' },
+    { value: 'vue', label: 'Vue' },
+];
+
+/** Live `Select`, which is controlled and so needs somewhere to keep the value. */
+const SelectDemo: FunctionComponent = () => {
+    const [framework, setFramework] = useState(FRAMEWORKS[0]);
+    const [large, setLarge] = useState(FRAMEWORKS[1]);
+
+    return (
+        <div className={styles.formDemo}>
+            <Select
+                options={FRAMEWORKS}
+                value={framework}
+                onChange={setFramework}
+                triggerAriaLabel="Framework"
+                isPopper
+            />
+            <Select
+                options={FRAMEWORKS}
+                value={large}
+                onChange={setLarge}
+                triggerAriaLabel="Framework, large"
+                isLarge
+                isPopper
+            />
+        </div>
+    );
+};
+
+/** Live `ConsentCheckbox`, including the nested and error variants it exists for. */
+const ConsentDemo: FunctionComponent = () => {
+    const [optIn, setOptIn] = useState(false);
+    const [terms, setTerms] = useState(false);
+
+    return (
+        <div className={styles.consentDemo}>
+            <ConsentCheckbox
+                id="sg-consent-terms"
+                label={<>I accept the terms of the licence agreement</>}
+                error={terms ? undefined : 'You must accept the terms to continue'}
+                inputProps={{ checked: terms, onChange: (event) => setTerms(event.target.checked) }}
+            />
+            <ConsentCheckbox
+                id="sg-consent-optin"
+                label={<>Email me about new releases</>}
+                inputProps={{ checked: optIn, onChange: (event) => setOptIn(event.target.checked) }}
+            />
+            {optIn && (
+                <ConsentCheckbox id="sg-consent-nested" label={<>Include beta releases</>} nested inputProps={{}} />
+            )}
+        </div>
+    );
+};
 
 const STATES = ['Default', 'Hover', 'Focus', 'Disabled'] as const;
 type State = (typeof STATES)[number];
@@ -284,6 +350,90 @@ export const Forms: FunctionComponent = () => (
             </Specimen>
         </Block>
 
+        <Block
+            title="Select"
+            note={
+                <p>
+                    A Radix-backed listbox, used wherever a native <code>&lt;select&gt;</code> cannot be styled far
+                    enough - the framework selector, version pickers, the docs navigation. It is generic over the option
+                    type rather than taking <code>{'{ value, label }'}</code> pairs, so it can be driven straight from
+                    whatever list you already have.
+                </p>
+            }
+        >
+            <Specimen
+                label="Controlled, with the default and large sizes"
+                code={`const [framework, setFramework] = useState(FRAMEWORKS[0]);
+
+<Select
+    options={FRAMEWORKS}
+    value={framework}
+    onChange={setFramework}
+    triggerAriaLabel="Framework"
+    isPopper
+/>`}
+            >
+                <SelectDemo />
+            </Specimen>
+
+            <Specimen
+                label="Props"
+                code={`options: O[]                  // required
+value: O                      // required; controlled
+onChange: (next: O) => void   // required
+triggerAriaLabel?: string     // DEFAULTS TO "Framework selector"
+getKey?: (item: O) => string  // default: item.value, or the string itself
+getLabel?: (item: O) => string        // default: item.label
+getGroupLabel?: (item: O) => string   // default: item.groupLabel - groups the list
+renderItem?: (item: O) => ReactNode   // full control over the option's contents
+placeholder?: string
+isPopper?: boolean            // anchor to the trigger rather than align to the item
+isLarge?: boolean
+constrainHeight?: boolean     // cap the dropdown and scroll inside it
+side?: 'top' | 'right' | 'bottom' | 'left'   // isPopper only
+className?: string            // on the trigger
+contentClassName?: string     // on the dropdown, e.g. to match the trigger width`}
+            >
+                <p>
+                    Returning a <code>groupLabel</code> from <code>getGroupLabel</code> is all it takes to get grouped
+                    options with headings - there is no separate group API, and options sharing a label are collected
+                    together in first-seen order.
+                </p>
+            </Specimen>
+        </Block>
+
+        <Block
+            title="Consent checkbox"
+            note={
+                <p>
+                    A checkbox whose label is a block of prose - licence terms, marketing opt-ins - rather than a word.
+                    It wires up <code>aria-invalid</code> and <code>aria-describedby</code> from the <code>error</code>{' '}
+                    prop, which is the part hand-rolled consent checkboxes routinely miss.
+                </p>
+            }
+        >
+            <Specimen
+                label="Tick the opt-in to reveal the nested checkbox"
+                code={`<ConsentCheckbox
+    id="terms"
+    label={<>I accept the <a href="/eula">terms</a></>}
+    error={accepted ? undefined : 'You must accept the terms to continue'}
+    inputProps={{ checked: accepted, onChange: (e) => setAccepted(e.target.checked) }}
+/>
+
+{/* nested indents a checkbox that only the one above it reveals */}
+<ConsentCheckbox id="beta" label={<>Include beta releases</>} nested inputProps={{}} />`}
+            >
+                <ConsentDemo />
+            </Specimen>
+            <p>
+                <code>label</code> is a <code>ReactNode</code>, so it can contain links - which is the point, since
+                consent copy almost always has to link to the agreement. The whole label is inside{' '}
+                <code>&lt;label&gt;</code> and therefore clickable, so keep it to the sentence being consented to and
+                put anything longer beside it.
+            </p>
+        </Block>
+
         <Gotcha>
             <code>.input-error</code> and <code>.req</code> are visual only - pair them with <code>aria-invalid</code>,{' '}
             <code>aria-describedby</code> and <code>required</code> so the state is actually announced. Never use a
@@ -296,6 +446,19 @@ export const Forms: FunctionComponent = () => (
                 <code>--color-input-error</code> is the bare keyword <code>red</code> rather than a palette token, so it
                 is the same value in both themes and sits outside the colour system entirely. Its contrast against the
                 dark background is poor.
+            </p>
+            <p>
+                <code>Select</code> defaults <code>triggerAriaLabel</code> to the string{' '}
+                <code>&quot;Framework selector&quot;</code>. Every caller that does not pass one - and the prop is
+                optional, so it is easy to miss - announces itself as a framework selector regardless of what it
+                actually selects.
+            </p>
+            <p>
+                <code>Select</code> wraps <code>getOptionContent</code> in a <code>useCallback</code> with an empty
+                dependency array while it closes over the <code>getKey</code>, <code>getLabel</code> and{' '}
+                <code>renderItem</code> props. A caller that passes an inline arrow - the normal way to pass these -
+                gets the first render&rsquo;s version pinned for the component&rsquo;s lifetime, so an option renderer
+                that depends on anything outside <code>options</code> silently goes stale.
             </p>
             <p>
                 Disabled text inputs set <code>cursor: pointer</code> alongside <code>pointer-events: none</code> in{' '}
