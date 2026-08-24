@@ -734,15 +734,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
 
-        let containerHeight = this.pageBounds.getCurrentPageHeight();
-        // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
-        // we still want the scroll to be present, otherwise there would be no way to scroll the header
-        // which might be needed us user wants to access columns
-        // on the RHS - and if that was where the filter was that cause no rows to be presented, there
-        // is no way to remove the filter.
-        if (containerHeight === 0) {
-            containerHeight = 1;
-        }
+        const containerHeight = this.pageBounds.getCurrentPageHeight();
 
         rowContainerHeight.setModelHeight(containerHeight + additionalHeight);
     }
