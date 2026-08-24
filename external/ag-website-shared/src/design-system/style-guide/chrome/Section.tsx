@@ -1,3 +1,4 @@
+import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
 import classnames from 'classnames';
 import type { FunctionComponent, ReactNode } from 'react';
 
@@ -31,6 +32,9 @@ export const Section: FunctionComponent<SectionProps> = ({ id, title, lede, sour
                     <a href={`#${id}`} className={styles.anchorLink}>
                         {title}
                     </a>
+                    {/* Same click-to-copy affordance the docs headings use, so a section can be linked
+                        without hand-assembling the URL. */}
+                    <LinkIcon href={`#${id}`} />
                 </h2>
                 {sources.length > 0 && (
                     <p className={styles.sectionSource}>
