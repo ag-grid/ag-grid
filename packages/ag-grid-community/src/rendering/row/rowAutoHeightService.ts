@@ -4,7 +4,7 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
-import { _getRowHeightForNode } from '../../gridOptionsUtils';
+import { _getRowHeightForNode, _isClientSideLoadingRow } from '../../gridOptionsUtils';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import type { CellCtrl } from '../cell/cellCtrl';
@@ -35,6 +35,9 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
         let anyNodeChanged = false;
         const updateDisplayedRowHeights = (row: RowNode) => {
+            if (_isClientSideLoadingRow(this.gos, row)) {
+                return;
+            }
             const autoHeights = row.__autoHeights;
 
             let newRowHeight = _getRowHeightForNode(this.beans, row).height;
@@ -140,7 +143,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
      * @returns whether or not auto height has been set up on this cell
      */
     public setupCellAutoHeight(cellCtrl: CellCtrl, eCellWrapper: HTMLElement | undefined, compBean: BeanStub): boolean {
-        if (!cellCtrl.column.isAutoHeight() || !eCellWrapper) {
+        if (_isClientSideLoadingRow(this.gos, cellCtrl.rowNode) || !cellCtrl.column.isAutoHeight() || !eCellWrapper) {
             return false;
         }
 

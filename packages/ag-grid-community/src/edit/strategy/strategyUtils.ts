@@ -4,6 +4,7 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
 import type { GridOptionsService } from '../../gridOptionsService';
+import { _isClientSideLoadingRow } from '../../gridOptionsUtils';
 import type { EditPosition, EditSource } from '../../interfaces/iEditService';
 
 /** File is used to contain logic about whether a strategy is required.
@@ -82,6 +83,10 @@ export function isCellEditable(beans: BeanCollection, editPosition: Required<Edi
 
     if (!rowNode) {
         return existingEditing(beans, editPosition);
+    }
+
+    if (_isClientSideLoadingRow(beans.gos, rowNode)) {
+        return false;
     }
 
     const editable = colDef.editable;

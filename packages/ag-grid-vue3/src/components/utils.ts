@@ -74,6 +74,7 @@ import type {
     IsServerSideGroup,
     IsServerSideGroupOpenByDefault,
     LoadingCellRendererSelectorFunc,
+    LoadingOptions,
     LocaleText,
     MenuItemDef,
     NavigateToNextCell,
@@ -885,13 +886,14 @@ export interface Props<TData> {
          * @initial
          */
     debug?: boolean,
-    /** Show or hide the loading overlay.
+    /** Show or hide the loading UI.
          * - `true`: the loading overlay is shown.
          * - `false`: the loading overlay is hidden.
+         * - `LoadingOptions`: configure the loading UI.
          * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
          * @default undefined
          */
-    loading?: boolean,
+    loading?: boolean | LoadingOptions,
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
          *
          * -     **Prefer `overlayComponent` / `overlayComponentSelector`**

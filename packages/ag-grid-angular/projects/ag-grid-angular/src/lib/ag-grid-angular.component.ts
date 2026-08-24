@@ -162,6 +162,7 @@ import type {
     IsServerSideGroup,
     IsServerSideGroupOpenByDefault,
     LoadingCellRendererSelectorFunc,
+    LoadingOptions,
     LocaleText,
     MenuItemDef,
     ModelUpdatedEvent,
@@ -1060,13 +1061,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public debug: boolean | undefined = undefined;
-    /** Show or hide the loading overlay.
+    /** Show or hide the loading UI.
      * - `true`: the loading overlay is shown.
      * - `false`: the loading overlay is hidden.
+     * - `LoadingOptions`: configure the loading UI.
      * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
      * @default undefined
      */
-    @Input({ transform: booleanAttribute }) public loading: boolean | undefined = undefined;
+    @Input() public loading: boolean | LoadingOptions | undefined = undefined;
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      *
      * -     **Prefer `overlayComponent` / `overlayComponentSelector`**

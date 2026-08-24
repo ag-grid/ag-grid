@@ -1026,13 +1026,14 @@ export interface GridOptions<TData = any> {
 
     // *** Overlays *** //
     /**
-     * Show or hide the loading overlay.
+     * Show or hide the loading UI.
      * - `true`: the loading overlay is shown.
      * - `false`: the loading overlay is hidden.
+     * - `LoadingOptions`: configure the loading UI.
      * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
      * @default undefined
      */
-    loading?: boolean;
+    loading?: boolean | LoadingOptions;
 
     /**
      * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
@@ -3248,6 +3249,19 @@ export interface LoadingCellRendererSelectorResult {
     /**
      * Equivalent of setting `loadingCellRendererParams` */
     params?: any;
+}
+
+export interface LoadingOptions {
+    /**
+     * Loading UI to display. Loading rows are only supported by the Client-Side Row Model.
+     * @default 'overlay'
+     */
+    type: 'overlay' | 'rows';
+    /**
+     * Number of skeleton rows displayed while loading.
+     * @default 10
+     */
+    rowCount?: number;
 }
 
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';

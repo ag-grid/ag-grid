@@ -6,6 +6,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowAbove, _getRowBelow } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
+import { _isClientSideLoadingRow } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode } from '../interfaces/iRowNode';
 
@@ -298,6 +299,9 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     public isSuppressNavigable(column: AgColumn, rowNode: IRowNode): boolean {
+        if (_isClientSideLoadingRow(this.gos, rowNode)) {
+            return true;
+        }
         const { suppressNavigable } = column.colDef;
         // if boolean set, then just use it
         if (typeof suppressNavigable === 'boolean') {
