@@ -63,11 +63,8 @@
     line-height: var(--text-lh-tight);
     font-weight: var(--text-regular);
     color: var(--color-fg-secondary);
-    // The 2px inset is the active marker's slot, so becoming active does not shift the text.
-    box-shadow: inset 2px 0 0 transparent;
     transition:
         background-color $transition-default-timing,
-        box-shadow $transition-default-timing,
         color $transition-default-timing;
 
     &:where([href]):hover {
@@ -76,9 +73,9 @@
     }
 }
 
+// Matches the docs "On this page" nav: a tinted row plus brand-coloured text, with no edge marker.
 .sidebarLinkActive {
     background-color: var(--color-util-brand-50);
-    box-shadow: inset 2px 0 0 var(--color-link);
     color: var(--color-link);
     font-weight: var(--text-semibold);
 }
