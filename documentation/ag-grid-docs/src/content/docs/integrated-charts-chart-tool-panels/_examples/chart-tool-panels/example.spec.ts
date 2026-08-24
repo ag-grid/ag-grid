@@ -1,5 +1,4 @@
 import type { Page } from '@playwright/test';
-
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 /** Midpoint of the 0-255 luminance range, above which a background reads as light. */
