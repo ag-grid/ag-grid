@@ -32,7 +32,7 @@ import { Component, _addGridCommonParams, _errMsg, _focusGridInnerElement, _merg
 import { Dialog } from '../../widgets/dialog';
 import type { AgChartsExports } from '../agChartsExports';
 import type { CrossFilteringContext } from '../chartService';
-import { ChartController, DEFAULT_THEMES } from './chartController';
+import { ChartController, getAvailableChartThemes } from './chartController';
 import { AreaChartProxy } from './chartProxies/cartesian/areaChartProxy';
 import { BarChartProxy } from './chartProxies/cartesian/barChartProxy';
 import { LineChartProxy } from './chartProxies/cartesian/lineChartProxy';
@@ -544,7 +544,11 @@ export class GridChartComp extends Component {
     }
 
     private getThemeName(): string {
-        const availableChartThemes = this.gos.get('chartThemes') || DEFAULT_THEMES;
+        const availableChartThemes = getAvailableChartThemes(
+            this.gos.get('chartThemes'),
+            this.beans.eGridDiv,
+            (this.beans.agChartsExports as AgChartsExports)._Theme.themes
+        );
 
         if (availableChartThemes.length === 0) {
             throw new Error(_errMsg(254));

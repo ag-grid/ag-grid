@@ -24,6 +24,7 @@ import { isStockTheme } from './chartProxies/chartTheme';
 import type { ChartDataModel, ChartModelParams, ColState } from './model/chartDataModel';
 import { DEFAULT_CHART_CATEGORY } from './model/chartDataModel';
 import { validateUpdateParams } from './utils/chartParamsValidator';
+import { isDarkColorScheme, toDarkThemeNames } from './utils/colorScheme';
 import type { ChartSeriesType } from './utils/seriesTypeMapper';
 import {
     getMaxNumCategories,
@@ -32,7 +33,26 @@ import {
     supportsInvertedCategorySeries,
 } from './utils/seriesTypeMapper';
 
-export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+
+/**
+ * The chart themes an integrated chart can be shown in, in the order the settings panel offers them.
+ *
+ * `chartThemes` is the application's own choice and is never second-guessed. Without it the stock
+ * themes are used - and their dark variants when the grid itself renders dark, because the chart is
+ * drawn to a canvas and so cannot inherit the grid's colour scheme from CSS (AG-18256).
+ */
+export function getAvailableChartThemes(
+    chartThemes: string[] | undefined,
+    eGridDiv: HTMLElement | null | undefined,
+    stockThemes: Record<string, unknown>
+): string[] {
+    if (chartThemes) {
+        return chartThemes;
+    }
+
+    return isDarkColorScheme(eGridDiv) ? toDarkThemeNames(DEFAULT_THEMES, stockThemes) : DEFAULT_THEMES;
+}
 
 type ChartControllerEvent =
     | 'chartUpdated'
@@ -408,7 +428,11 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public getThemeNames(): string[] {
-        return this.gos.get('chartThemes') || DEFAULT_THEMES;
+        return getAvailableChartThemes(
+            this.gos.get('chartThemes'),
+            this.beans.eGridDiv,
+            this.agChartsExports._Theme.themes
+        );
     }
 
     public getThemes(): IChartTheme[] {
