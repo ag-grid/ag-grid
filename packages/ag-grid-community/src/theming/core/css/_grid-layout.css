@@ -311,44 +311,55 @@
     margin-left: 3px;
 }
 
-.ag-row-highlight-above::after,
-.ag-row-highlight-inside::after,
-.ag-row-highlight-below::after {
-    content: '';
+.ag-grid-pinned-left-cells::after,
+.ag-grid-scrolling-cells::after,
+.ag-grid-pinned-right-cells::after,
+.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
+    content: var(--ag-internal-row-highlight-content, none);
     position: absolute;
-    width: calc(100% - 1px);
+    inset: var(--ag-internal-row-highlight-inset, auto);
     height: var(--ag-row-drag-indicator-width);
     background-color: var(--ag-row-drag-indicator-color);
     border-radius: calc(var(--ag-row-drag-indicator-width) / 2);
-    left: 1px;
     pointer-events: none;
 }
 
-.ag-row-highlight-above::after {
-    top: 0;
+/* a nested grid must not inherit the highlight of the row hosting it */
+.ag-root-wrapper {
+    --ag-internal-row-highlight-content: initial;
 }
 
-.ag-row-highlight-below::after {
-    bottom: 0;
+.ag-row-highlight-above {
+    --ag-internal-row-highlight-content: '';
+    --ag-internal-row-highlight-inset: 0 0 auto;
 }
 
-.ag-row-highlight-indent::after {
-    display: block;
-    width: auto;
-    left: calc(
+.ag-row-highlight-below {
+    --ag-internal-row-highlight-content: '';
+    --ag-internal-row-highlight-inset: auto 0 0;
+}
+
+.ag-row-highlight-indent .ag-grid-scrolling-cells::after,
+.ag-row-highlight-indent.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
+    margin-left: calc(
         2 * (var(--ag-cell-widget-spacing) + var(--ag-icon-size)) + var(--ag-cell-horizontal-padding) +
             var(--ag-row-highlight-level) * var(--ag-row-group-indent-size)
     );
-    right: 1px;
 }
 
-.ag-row-highlight-inside::after {
-    display: block;
-    width: auto;
-    height: auto;
-    inset: 0;
-    background-color: var(--ag-selected-row-background-color);
-    border: 1px solid var(--ag-range-selection-border-color);
+.ag-row-highlight-inside {
+    .ag-grid-pinned-left-cells::after,
+    .ag-grid-scrolling-cells::after,
+    .ag-grid-pinned-right-cells::after,
+    &.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
+        --ag-internal-row-highlight-content: '';
+
+        inset: 0;
+        height: auto;
+        border-radius: 0;
+        background-color: var(--ag-selected-row-background-color);
+        border: 1px solid var(--ag-range-selection-border-color);
+    }
 }
 
 .ag-grid-scrolling-rows,
