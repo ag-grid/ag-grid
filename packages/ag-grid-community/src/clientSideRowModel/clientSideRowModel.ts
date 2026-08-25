@@ -937,7 +937,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        return this.rowsToRender.indexOf(rowNode) >= 0;
+        return this.rowsToRender.includes(rowNode);
     }
 
     public getRowIndexAtPixel(pixelToMatch: number): number {

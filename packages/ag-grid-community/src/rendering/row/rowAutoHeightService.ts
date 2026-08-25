@@ -30,7 +30,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
     private readonly _debouncedCalculateRowHeights = _debounce(this, this.calculateRowHeights.bind(this), 1);
     private calculateRowHeights() {
-        const { visibleCols, rowModel, rowSpanSvc, pinnedRowModel } = this.beans;
+        const { visibleCols, rowModel, pinnedRowModel } = this.beans;
         const displayedAutoHeightCols = visibleCols.autoHeightCols;
 
         let anyNodeChanged = false;
@@ -38,43 +38,14 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             if (_isClientSideLoadingRow(this.gos, row)) {
                 return;
             }
-            const autoHeights = row.__autoHeights;
 
-            let newRowHeight = _getRowHeightForNode(this.beans, row).height;
-            for (const col of displayedAutoHeightCols) {
-                let cellHeight = autoHeights?.[col.colId];
-
-                const spannedCell = rowSpanSvc?.getCellSpan(col, row);
-                if (spannedCell) {
-                    // only last row gets additional auto height of spanned cell
-                    if (spannedCell.getLastNode() !== row) {
-                        continue;
-                    }
-
-                    cellHeight = rowSpanSvc?.getCellSpan(col, row)?.getLastNodeAutoHeight();
-                    // if this is the last row, but no span value, skip this row as auto height not ready
-                    if (!cellHeight) {
-                        return;
-                    }
-                }
-
-                // if no cell height, auto height not ready skip row
-                if (cellHeight == null) {
-                    // if using col span then the cell might be omitted due to being spanned
-                    // if so auto height for that cell is not needed
-                    if (this.colSpanSkipCell(col, row)) {
-                        continue;
-                    }
-                    return;
-                }
-
-                newRowHeight = Math.max(cellHeight, newRowHeight);
+            const newRowHeight = this.getRowAutoHeight(row, displayedAutoHeightCols);
+            if (newRowHeight == null || newRowHeight === row.rowHeight) {
+                return;
             }
 
-            if (newRowHeight !== row.rowHeight) {
-                row.setRowHeight(newRowHeight);
-                anyNodeChanged = true;
-            }
+            row.setRowHeight(newRowHeight);
+            anyNodeChanged = true;
         };
 
         pinnedRowModel?.forEachPinnedRow?.('top', updateDisplayedRowHeights);
@@ -84,6 +55,41 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         if (anyNodeChanged) {
             (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged?.();
         }
+    }
+
+    private getRowAutoHeight(row: RowNode, displayedAutoHeightCols: AgColumn[]): number | undefined {
+        const { rowSpanSvc } = this.beans;
+        const autoHeights = row.__autoHeights;
+        let rowHeight = _getRowHeightForNode(this.beans, row).height;
+
+        for (const col of displayedAutoHeightCols) {
+            let cellHeight = autoHeights?.[col.colId];
+            const spannedCell = rowSpanSvc?.getCellSpan(col, row);
+
+            if (spannedCell) {
+                // only the last row gets the additional auto height of a spanned cell.
+                if (spannedCell.getLastNode() !== row) {
+                    continue;
+                }
+
+                cellHeight = spannedCell.getLastNodeAutoHeight();
+                if (!cellHeight) {
+                    return;
+                }
+            }
+
+            if (cellHeight == null) {
+                // a cell omitted by column spanning does not need an auto-height value.
+                if (this.colSpanSkipCell(col, row)) {
+                    continue;
+                }
+                return;
+            }
+
+            rowHeight = Math.max(cellHeight, rowHeight);
+        }
+
+        return rowHeight;
     }
 
     /**
