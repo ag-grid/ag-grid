@@ -34,12 +34,12 @@ jobs:
     #     runs-on: ubuntu-latest
     #     steps:
     #         - name: Checkout
-    #           uses: actions/checkout@v4
+    #           uses: actions/checkout@v7
     #           with:
     #               fetch-depth: 1
     #
     #         - name: Setup Node
-    #           uses: actions/setup-node@v4
+    #           uses: actions/setup-node@v7
     #           with:
     #               node-version-file: '.nvmrc'
     #               cache: 'yarn'
@@ -85,7 +85,7 @@ jobs:
         steps:
             - name: Checkout
               id: checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   fetch-depth: 1
 
@@ -109,7 +109,7 @@ jobs:
 
             - name: Persist scan results
               if: always()
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: code-dependency-scan
                   path: ${{ env.OUTPUT_DIR }}
@@ -126,7 +126,7 @@ jobs:
         steps:
             - name: Checkout
               id: checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   fetch-depth: 1
 
@@ -142,7 +142,7 @@ jobs:
 
             - name: Persist scan results
               if: always()
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: sast-code-scan
                   path: ${{ env.OUTPUT_DIR }}
@@ -159,16 +159,16 @@ jobs:
       runs-on: ubuntu-latest
       if: ${{ always() }}
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v7
           with:
             fetch-depth: 1
 
-        - uses: actions/download-artifact@v4
+        - uses: actions/download-artifact@v8
           with:
             path: ${{ env.OUTPUT_DIR }}
 
         - name: Combine reports
-          uses: actions/github-script@v7
+          uses: actions/github-script@v9
           if: ${{ github.event_name == 'schedule' || inputs.notify }}
           with:
             script: |
@@ -201,7 +201,7 @@ jobs:
 
         - name: Get previous run commit SHA
           id: prev-commit-sha
-          uses: actions/cache/restore@v4
+          uses: actions/cache/restore@v6
           with:
             restore-keys: |
               security-prev-commit-
@@ -252,7 +252,7 @@ jobs:
           run: echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
 
         - name: Save Current Commit Hash
-          uses: actions/cache/save@v4
+          uses: actions/cache/save@v6
           with:
             path: ${{ env.PREV_COMMIT_SHA_FILE }}
             key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}

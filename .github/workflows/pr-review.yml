@@ -67,12 +67,12 @@ jobs:
             packages: read
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   fetch-depth: 1
 
             - name: Setup Node (GitHub Packages for @ag-grid scope)
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version-file: package.json
                   registry-url: https://npm.pkg.github.com

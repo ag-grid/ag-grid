@@ -94,7 +94,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - name: Warm node_modules and Nx caches
@@ -116,7 +116,7 @@ jobs:
         run: echo "version=$(node -e "console.log(require('@playwright/test/package.json').version)")" >> "$GITHUB_OUTPUT"
       - name: Cache Playwright browsers
         id: pw-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
@@ -142,7 +142,7 @@ jobs:
         shardIndex: [1, 2]
         shardTotal: [2]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/test-framework-examples
         with:
           base_url: ${{github.event.inputs.base_url}}
@@ -164,7 +164,7 @@ jobs:
         shardIndex: [1]
         shardTotal: [1]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/test-framework-examples
         with:
           base_url: ${{github.event.inputs.base_url}}
@@ -186,7 +186,7 @@ jobs:
         shardIndex: [1, 2, 3]
         shardTotal: [3]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/test-framework-examples
         with:
           base_url: ${{github.event.inputs.base_url}}
@@ -208,7 +208,7 @@ jobs:
         shardIndex: [1]
         shardTotal: [1]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/test-framework-examples
         with:
           base_url: ${{github.event.inputs.base_url}}
@@ -230,7 +230,7 @@ jobs:
         shardIndex: [1, 2]
         shardTotal: [2]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/test-framework-examples
         with:
           base_url: ${{github.event.inputs.base_url}}
@@ -248,7 +248,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
@@ -261,7 +261,7 @@ jobs:
         run: yarn nx run ag-grid-public-e2e-testing-recipes:test:recipes -c staging
       - name: Upload Test Report
         id: upload-recipes-report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-recipes
@@ -285,12 +285,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
       - name: Download all test reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: combined-reports
 
@@ -304,7 +304,7 @@ jobs:
       # summary always renders.
       - name: Publish Combined Test Report
         id: ctrf
-        uses: ctrf-io/github-test-reporter@bb6b54d6514e0952c3eea739be0c641143d1f06c # v1.0.17
+        uses: ctrf-io/github-test-reporter@e500b992f936420eb633c91644cf10d4d71df700 # v1.1.0
         with:
           report-path: 'combined-reports/**/*.json'
           summary-report: true
@@ -319,7 +319,7 @@ jobs:
 
       - name: Upload combined CTRF report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ctrf-report
           path: ${{ env.CTRF_FILE }}
@@ -327,7 +327,7 @@ jobs:
 
       - name: Get previous run commit SHA
         id: prev-commit-sha
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           restore-keys: |
             doc-tests-prev-commit-
@@ -379,7 +379,7 @@ jobs:
           echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
 
       - name: Save Current Commit Hash
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ${{ env.PREV_COMMIT_SHA_FILE }}
           key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}

@@ -66,7 +66,7 @@ jobs:
     steps:
       - name: Resolve release tag and test branch
         id: resolve
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           SHARD_COUNT: ${{ env.SHARD_COUNT }}
           INPUT_TAG: ${{ inputs.release_tag }}
@@ -120,7 +120,7 @@ jobs:
     steps:
       - name: Check cache for release results
         id: cache-check
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ./release-results.json
           key: module-size-release-${{ needs.prepare.outputs.release-tag }}
@@ -139,7 +139,7 @@ jobs:
       TEST_BRANCH: ${{ needs.prepare.outputs.test-branch }}
     steps:
       - name: Checkout for actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ env.TEST_BRANCH }}
           fetch-depth: 1
@@ -167,7 +167,7 @@ jobs:
       TEST_BRANCH: ${{ needs.prepare.outputs.test-branch }}
     steps:
       - name: Checkout for actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ env.TEST_BRANCH }}
           fetch-depth: 1
@@ -192,19 +192,19 @@ jobs:
       TEST_BRANCH: ${{ needs.prepare.outputs.test-branch }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ env.TEST_BRANCH }}
           sparse-checkout: |
             scripts/ci/merge-module-size-results.mjs
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 
       - name: Download all release shard results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: module-size-release-shard-*
           path: ./release-shards
@@ -215,7 +215,7 @@ jobs:
           node scripts/ci/merge-module-size-results.mjs ./release-shards ./release-results.json
 
       - name: Save to cache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ./release-results.json
           key: module-size-release-${{ needs.prepare.outputs.release-tag }}
@@ -235,7 +235,7 @@ jobs:
       TEST_BRANCH: ${{ needs.prepare.outputs.test-branch }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ env.TEST_BRANCH }}
           sparse-checkout: |
@@ -243,12 +243,12 @@ jobs:
             scripts/ci/merge-module-size-results.mjs
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 
       - name: Download all latest shard results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: module-size-latest-shard-*
           path: ./latest-shards
@@ -261,7 +261,7 @@ jobs:
       # If cache hit, restore from cache
       - name: Restore release results from cache
         if: env.CACHE_HIT == 'true'
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ./release-results.json
           key: module-size-release-${{ env.RELEASE_TAG }}
@@ -270,7 +270,7 @@ jobs:
       # If cache miss, download artifacts and merge
       - name: Download all release shard results
         if: env.CACHE_HIT != 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: module-size-release-shard-*
           path: ./release-shards
@@ -295,7 +295,7 @@ jobs:
           cat ./comparison-report.md >> $GITHUB_STEP_SUMMARY
 
       - name: Upload comparison report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: module-size-vs-release-${{ env.RELEASE_TAG }}
           path: ./comparison-report.md

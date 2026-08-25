@@ -46,7 +46,7 @@ jobs:
        github.event.workflow_run.head_repository.full_name == github.repository)
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Check out the default-branch HEAD (github.sha). In a workflow_run
           # context this is the branch the run was triggered on; combined with the
@@ -57,7 +57,7 @@ jobs:
           fetch-depth: 1
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: '.nvmrc'
 
@@ -93,7 +93,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: page-verification-results
           path: |
@@ -107,7 +107,7 @@ jobs:
       # while describing a different site.
       - name: Upload CSP report
         if: always() && inputs.staging_url == ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: csp-violations
           path: reports/ag-grid-csp-violations.json
@@ -167,13 +167,13 @@ jobs:
       needs.page-verification.result != 'cancelled'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.sha }}
           fetch-depth: 1
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: '.nvmrc'
 
@@ -181,7 +181,7 @@ jobs:
         # Tolerated: the suite can die before writing one, and that failure is the
         # verification job's to report.
         continue-on-error: true
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: csp-violations
           path: csp/current

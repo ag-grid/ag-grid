@@ -34,14 +34,14 @@ runs:
   using: composite
   steps:
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         ref: ${{ inputs.ref }}
         fetch-depth: 1
 
     - name: Checkout actions from actions-ref
       if: inputs.actions-ref != '' && inputs.actions-ref != inputs.ref
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         ref: ${{ inputs.actions-ref }}
         sparse-checkout: |
@@ -86,7 +86,7 @@ runs:
         mv module-size-results.json module-size-results-shard-${{ inputs.shard }}.json
 
     - name: Upload shard results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ inputs.artifact-prefix }}-shard-${{ inputs.shard }}${{ inputs.artifact-suffix && format('-{0}', inputs.artifact-suffix) || '' }}
         path: testing/module-size/module-size-results-shard-${{ inputs.shard }}.json

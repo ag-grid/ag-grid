@@ -62,7 +62,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1 # shallow copy
 
@@ -100,7 +100,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1 # shallow copy
 
@@ -118,7 +118,7 @@ jobs:
 
       - name: Persist test results
         if: always() && matrix.shard != 0
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-e2e-accessiblity-shard-${{matrix.shard}}
           path: ${{ env.REPORTS_PATH }}
@@ -131,7 +131,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
@@ -147,13 +147,13 @@ jobs:
           cache_mode: ro
 
       - name: Download all test reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: ${{ env.REPORTS_PATH }}/
 
       - name: Publish Combined Test Report
         id: ctrf
-        uses: ctrf-io/github-test-reporter@bb6b54d6514e0952c3eea739be0c641143d1f06c # v1.0.17
+        uses: ctrf-io/github-test-reporter@e500b992f936420eb633c91644cf10d4d71df700 # v1.1.0
         with:
           report-path: '${{ env.REPORTS_PATH }}/**/*.json'
           summary-report: true
@@ -164,7 +164,7 @@ jobs:
 
       - name: Get previous run commit SHA
         id: prev-commit-sha
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           restore-keys: |
             accessibility-prev-commit-
@@ -216,7 +216,7 @@ jobs:
           echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
 
       - name: Save Current Commit Hash
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ${{ env.PREV_COMMIT_SHA_FILE }}
           key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}

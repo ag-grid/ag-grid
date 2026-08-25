@@ -30,7 +30,7 @@ jobs:
     steps:
       # Needed for the local shared action below; the action clones gh-pages itself.
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
