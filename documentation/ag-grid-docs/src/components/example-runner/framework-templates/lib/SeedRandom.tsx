@@ -1,6 +1,5 @@
+import { ExampleRunnerCall } from '@ag-website-shared/components/example-runner/components/ExampleRunnerClient';
 import { EXAMPLE_RANDOM_SEED, NPM_CDN } from '@constants';
-
-import { ExampleRunnerCall } from './ExampleRunnerClient';
 
 const SEEDRANDOM_CDN_URL = `${NPM_CDN}/seedrandom@3.0.5/seedrandom.min.js`;
 
