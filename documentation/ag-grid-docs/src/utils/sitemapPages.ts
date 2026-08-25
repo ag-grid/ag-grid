@@ -37,6 +37,9 @@ export async function getSitemapAllowPaths() {
         urlWithBaseUrl('/campaigns/bryntum-scheduler'),
         urlWithBaseUrl('/campaigns/bryntum-scheduler-pro'),
         urlWithBaseUrl('/campaigns/bryntum-task-board'),
+        // Allowed back past the /studio/campaigns/ disallow ag-studio publishes. Not
+        // urlWithBaseUrl: it is not an ag-grid page, so it does not move with the base.
+        '/studio/campaigns/launch-week',
     ];
 
     return allowPaths.map(addTrailingSlash);
