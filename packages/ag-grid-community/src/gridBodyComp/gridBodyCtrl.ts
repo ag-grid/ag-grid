@@ -153,6 +153,7 @@ export class GridBodyCtrl extends BeanStub {
             pinnedRowsChanged: setPinnedRowsHeights,
             headerHeightChanged: setPinnedRowsHeights,
             gridSizeChanged: onGridSizeChanged,
+            gridViewportWidthChanged: onGridSizeChanged,
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
             rowResizeStarted: toggleRowResizeStyle,

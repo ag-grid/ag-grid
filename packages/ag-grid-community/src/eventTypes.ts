@@ -138,6 +138,7 @@ const _INTERNAL_EVENTS = [
     'columnPanelItemDragStart',
     'columnPanelItemDragEnd',
     'bodyHeightChanged',
+    'gridViewportWidthChanged',
     'columnContainerWidthChanged',
     'displayedColumnsWidthChanged',
     'scrollVisibilityChanged',
