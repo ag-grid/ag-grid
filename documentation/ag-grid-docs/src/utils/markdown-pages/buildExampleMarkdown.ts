@@ -1,16 +1,20 @@
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
+import { demoContent } from '@components/demos/demoContent';
 import { VIDEO_TOUR_TEXT, VIDEO_TOUR_URL, demoTabs } from '@components/demos/demosData';
 
 /**
  * Build the markdown twin of the /example (demo) page. The page is almost entirely a live
- * interactive grid, so the twin is a short index: the page description, each demo with its
- * live and GitHub links (shared with the page via demosData), and the video / contact links.
+ * interactive grid, so the twin carries the performance demo's copy — the same copy the page
+ * renders, so the two cannot drift — followed by an index of every demo with its live and GitHub
+ * links (shared with the page via demosData) and the video / contact links.
  */
 export function buildExampleMarkdown({ siteRoot }: { siteRoot?: string } = {}): string {
+    const content = demoContent('performance');
+
     const frontmatter = [
         '---',
-        'title: "AG Grid Demos"',
-        'description: "Example showing grid performance with adjustable rows and columns."',
+        `title: ${JSON.stringify(content.seoTitle)}`,
+        `description: ${JSON.stringify(content.seoDescription)}`,
         '---',
     ].join('\n');
 
@@ -25,8 +29,8 @@ export function buildExampleMarkdown({ siteRoot }: { siteRoot?: string } = {}): 
 
     const document = [
         frontmatter,
-        '# AG Grid Demos',
-        'Example showing grid performance with adjustable rows and columns. Explore the live demos below.',
+        `# ${content.seoH1}`,
+        content.intro,
         `## Demos\n\n${demos}`,
         `## Resources\n\n${resources}`,
     ].join('\n\n');

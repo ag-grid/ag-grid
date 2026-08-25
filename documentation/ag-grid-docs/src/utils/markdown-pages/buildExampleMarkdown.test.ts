@@ -1,14 +1,18 @@
+import { demoContent } from '@components/demos/demoContent';
 import { describe, expect, it } from 'vitest';
 
 import { buildExampleMarkdown } from './buildExampleMarkdown';
 
 describe('buildExampleMarkdown', () => {
     const output = buildExampleMarkdown({ siteRoot: 'https://www.ag-grid.com/' });
+    const performance = demoContent('performance');
 
-    it('emits frontmatter and the page H1', () => {
+    it('emits frontmatter and the page H1 from the performance demo the page renders', () => {
         expect(output.startsWith('---\n')).toBe(true);
-        expect(output).toContain('title: "AG Grid Demos"');
-        expect(output).toContain('\n# AG Grid Demos');
+        expect(output).toContain(`title: ${JSON.stringify(performance.seoTitle)}`);
+        expect(output).toContain(`description: ${JSON.stringify(performance.seoDescription)}`);
+        expect(output).toContain(`\n# ${performance.seoH1}`);
+        expect(output).toContain(performance.intro);
     });
 
     it('lists the four demos, each with a live-demo and its own GitHub link', () => {

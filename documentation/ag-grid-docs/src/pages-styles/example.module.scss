@@ -32,6 +32,12 @@ $nav-height: 200px;
     container-name: header-title;
 }
 
+// The 1 to 2 sentence indexable intro under the H1 (SE-125). Capped so it wraps as readable
+// prose rather than one line across the full 1800px layout.
+.intro {
+    max-width: 85ch;
+}
+
 .topHeader {
     display: flex;
     justify-content: space-between;

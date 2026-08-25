@@ -1,9 +1,31 @@
+import { demoContent, demoNames } from '@components/demos/demoContent';
 import { expect, test } from '@playwright/test';
 import { blockConsentAndAnalytics, setupConsoleExpectations } from '@utils/grid/test-utils';
 
 // These could be extended to actually interact with the examples more
 // but for now just a basic load test to ensure no errors / warnings in console
 // and the grid loads without issues
+
+// The demo pages' title, meta description and H1 come from the frontmatter contract in
+// content/demos/demos.json (SE-125). Asserting them here guards the copy against a page that
+// stops reading the contract — the failure that left every demo on a "Demo - {name}" title.
+test.describe('Demo page SEO copy', () => {
+    for (const demo of demoNames) {
+        test(`${demo} serves its title, meta description and H1`, async ({ page }) => {
+            const content = demoContent(demo);
+            await page.goto(content.href.replace(/^\//, ''));
+
+            await expect(page).toHaveTitle(content.seoTitle);
+            await expect(page.locator('head meta[name="description"]')).toHaveAttribute(
+                'content',
+                content.seoDescription
+            );
+            await expect(page.locator('head meta[property="og:title"]')).toHaveAttribute('content', content.seoTitle);
+            await expect(page.getByRole('heading', { level: 1 })).toHaveText(content.seoH1);
+            await expect(page.getByText(content.intro)).toBeVisible();
+        });
+    }
+});
 
 test.describe(`Demo Examples`, async () => {
     let errors: string[];
