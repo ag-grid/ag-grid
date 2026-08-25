@@ -16,6 +16,8 @@
 (function () {
     const VERSION_PARAM = 'version';
     const PROD_PARAM = 'prod';
+    const THEME_MODE_PARAM = 'agThemeMode';
+    const THEME_MODES = { 'dark-blue': 'dark', light: 'light' };
     const VERSION_PLACEHOLDER = '0.0.0-ag-framework-version';
     const VERSION_PATTERN = '^\\d+\\.\\d+\\.\\d+(?:-[\\w.-]+)?(?:\\+[\\w.-]+)?$';
     const BUILD_TOKENS = {
@@ -25,8 +27,25 @@
 
     const COMPILER_OPTION_ENUMS = { module: 'ModuleKind', target: 'ScriptTarget', jsx: 'JsxEmit' };
 
+    function applyThemeMode() {
+        const themeMode = new URLSearchParams(window.location.search).get(THEME_MODE_PARAM);
+        const colorScheme =
+            themeMode !== null && Object.prototype.hasOwnProperty.call(THEME_MODES, themeMode)
+                ? THEME_MODES[themeMode]
+                : undefined;
+
+        if (!colorScheme) {
+            return;
+        }
+
+        document.documentElement.dataset.agThemeMode = themeMode;
+        document.documentElement.dataset.colorScheme = colorScheme;
+    }
+
     function setUpPage() {
         window.process = { env: { NODE_ENV: 'development' } };
+
+        applyThemeMode();
 
         window.addEventListener('error', function (e) {
             console.error('ERROR', e.message, e.filename);

@@ -16,8 +16,9 @@ type PlaywrightFixtures = ExtractFixtures<typeof base>;
 
 type AgIdFor = ReturnType<typeof wrapAgTestIdFor<Locator>>;
 type LoadPageOptions = {
-    prod: boolean;
-    version: string;
+    prod?: boolean;
+    version?: string;
+    agThemeMode?: 'dark-blue' | 'light';
 };
 
 type RemoteGrid = ((page: Page, gridId?: string) => AsyncGridApi) & {
@@ -161,6 +162,10 @@ async function loadPage(
 
     if (loadPageOptions?.version) {
         queryOptions.version = loadPageOptions.version;
+    }
+
+    if (loadPageOptions?.agThemeMode) {
+        queryOptions.agThemeMode = loadPageOptions.agThemeMode;
     }
 
     if (agModules && agModules.length > 0) {
