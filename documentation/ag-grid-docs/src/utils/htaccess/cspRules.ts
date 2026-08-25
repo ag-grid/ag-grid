@@ -312,6 +312,7 @@ const AG_GRID_HOSTS = 'https://*.ag-grid.com';
 const BLOG_SCRIPT_HOSTS = [
     'https://platform.twitter.com', // embedded tweets (widgets.js)
     'https://widget.spreaker.com', // podcast embeds
+    'https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js',
 ];
 
 const BLOG_STYLE_HOSTS = ['https://cdn-images.mailchimp.com']; // Mailchimp embed stylesheet
@@ -663,6 +664,42 @@ export function getBranchBuildsCspIfOverride(mode: CspMode): string {
         `<If "${BRANCH_BUILDS_PATH_CONDITION}">`,
         `    Header always unset ${headerName}`,
         '</If>',
+    ].join('\n');
+}
+
+/**
+ * The vhost override applying the 'blog' policy to the reverse-proxied Ghost blog
+ * matched by BLOG_PATH_CONDITION.
+ *
+ * Deliberately NOT an `<If>` block, and deliberately not part of
+ * getScopedCspHtaccessBlock. Two things make the blog unlike every other scope here:
+ *
+ *  - A proxied request never reads the docroot `.htaccess`. `ProxyPass /blog/` maps the
+ *    request to the proxy handler instead of the filesystem, so anything emitted into the
+ *    generated `.htaccess` simply does not apply to /blog/*. These lines belong in the
+ *    vhost.
+ *  - `<If>` does not fire on a proxied response. `<If>` sections are merged during request
+ *    mapping, which proxying skips, so the header would never appear. The mod_headers
+ *    `expr=` third argument is evaluated in that module's own output filter instead, which
+ *    does run for proxied responses.
+ *
+ * `always` is required so non-2xx Ghost responses (404s in particular) are covered too.
+ *
+ * The `unset` is not tidiness. Requests reaching the Mirror box traverse two Apache
+ * instances, and `always` writes to err_headers_out while the upstream instance's copy sits
+ * in headers_out — Apache emits both tables, so `set` alone appends a second header rather
+ * than replacing the first. Browsers enforce the intersection of multiple CSP headers, so
+ * two copies that ever diverge would silently narrow the policy to their overlap.
+ */
+export function getBlogCspExprOverride(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
+    const headerName = getCspHeaderName(mode);
+    const condition = `"expr=${BLOG_PATH_CONDITION}"`;
+    // No comment lines in the emitted output — the rationale above is for whoever reads this
+    // function, not for the Apache config, and getBlogVhostHeaderFragment already heads the
+    // block it goes into.
+    return [
+        `Header always unset ${headerName} ${condition}`,
+        `${getCspHtaccessLine({ ...options, scope: 'blog' }, mode)} ${condition}`,
     ].join('\n');
 }
 

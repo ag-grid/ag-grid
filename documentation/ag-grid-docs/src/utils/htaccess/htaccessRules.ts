@@ -2,8 +2,10 @@
 // astro.config.mjs bundles without tsconfig path resolution (as with plugins/agDevMarkdownNegotiation).
 import { markdownPathAlternation } from '../markdownPages';
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
-import type { CspEnv } from './cspRules';
+import type { CspEnv, CspMode } from './cspRules';
 import {
+    BLOG_PATH_CONDITION,
+    getBlogCspExprOverride,
     getBranchBuildsCspIfOverride,
     getCampaignsCspIfOverride,
     getCspHtaccessBlock,
@@ -20,6 +22,13 @@ export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
 // Staging always enforces the split. Exported for the tests, which assert
 // different output per phase.
 export const PRODUCTION_CSP_PHASE: 'report-only' | 'enforce' = 'enforce';
+
+// The two non-CSP security header values, shared by the generated .htaccess (main site) and
+// the blog vhost fragment (getBlogVhostHeaderFragment) so the two cannot drift. The blog is
+// reverse-proxied, so it never reads the generated .htaccess and needs its own copy of these
+// applied with mod_headers' expr= condition — see getBlogVhostHeaderFragment.
+export const REFERRER_POLICY_VALUE = 'strict-origin-when-cross-origin';
+export const PERMISSIONS_POLICY_VALUE = 'geolocation=(), microphone=(), camera=()';
 
 /**
  * Note: when changing this file please add/update the tests in
@@ -481,8 +490,8 @@ ${getModRewriteRules()}
 # X-Frame-Options intentionally omitted: it can't allow-list subdomains, so it blocks
 # blog.ag-grid.com (and other *.ag-grid.com) from embedding examples. Clickjacking
 # protection is handled by the CSP frame-ancestors directive instead (see cspRules.ts).
-Header always set Referrer-Policy "strict-origin-when-cross-origin"
-Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+Header always set Referrer-Policy "${REFERRER_POLICY_VALUE}"
+Header always set Permissions-Policy "${PERMISSIONS_POLICY_VALUE}"
 
 ${markdownVaryHeader}
 
@@ -523,6 +532,48 @@ ${getCspHtaccessBlock({ env: 'production', scope: 'examples' }, 'enforce')}
 ${getCampaignsCspIfOverride({ env: 'production' }, 'enforce')}
 
 ${getScopedCspHtaccessBlock({ env: 'production' }, 'report-only')}`;
+}
+
+/**
+ * Build the complete set of `/blog/` security headers for the Apache VHOST on the Ghost box.
+ *
+ * This is the counterpart to the generated `.htaccess` for a path the `.htaccess` cannot
+ * govern. `/blog/` is reverse-proxied to Ghost, so a request there is mapped to the proxy
+ * handler and never reads the docroot file, and `<If>` never fires on the response. Every
+ * line here therefore carries mod_headers' `expr=` condition instead, and belongs in the
+ * vhost rather than in getHtaccessContent's output.
+ *
+ * Deploy to the Ghost/primary box only. The Mirror box deliberately sets no /blog/ headers:
+ * it proxies to this box's Apache, so it inherits these, and setting its own would produce a
+ * second copy of each (see the `unset` note below).
+ *
+ * Every header is `unset` before being `set`. On the Mirror path a request traverses two
+ * Apache instances; `always` writes to err_headers_out while the upstream copy sits in
+ * headers_out, and Apache emits both tables — so `set` alone appends rather than replaces.
+ * Duplicate CSP headers are the dangerous case, because browsers enforce their intersection.
+ *
+ * X-Robots-Tag is unset with no matching `set`, deliberately. /blog/ carried
+ * "noindex, nofollow" while the migrated instance was staged alongside the live blog; that
+ * must be gone now the old URLs redirect here, since a page that is both redirected-to and
+ * noindexed is invisible to search. The bare `unset` is not redundant — it strips any copy
+ * arriving from the upstream Apache on the Mirror path.
+ */
+export function getBlogVhostHeaderFragment(options: { env: CspEnv }, mode: CspMode): string {
+    const condition = `"expr=${BLOG_PATH_CONDITION}"`;
+    return [
+        '# Security headers for /blog/ — GENERATED, do not hand-edit.',
+        '#   npx tsx documentation/ag-grid-docs/scripts/csp/generate-csp.ts --env=production --mode=enforce --format=vhost --scope=blog',
+        '# Paste inside the *:443 ag-grid.com <VirtualHost> on the Ghost box only.',
+        '',
+        '# /blog/ must NOT be noindexed: the old URLs 301 here. Unset with no matching set, which',
+        '# also strips any copy inherited from the upstream Apache on the Mirror path.',
+        `Header always unset X-Robots-Tag ${condition}`,
+        `Header always unset Referrer-Policy ${condition}`,
+        `Header always set Referrer-Policy "${REFERRER_POLICY_VALUE}" ${condition}`,
+        `Header always unset Permissions-Policy ${condition}`,
+        `Header always set Permissions-Policy "${PERMISSIONS_POLICY_VALUE}" ${condition}`,
+        getBlogCspExprOverride(options, mode),
+    ].join('\n');
 }
 
 export function getHtaccessContent(options: { env: HtaccessEnv }): string {
