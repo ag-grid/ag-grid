@@ -14,13 +14,6 @@ interface Params {
     fileName: string;
 }
 
-/**
- * Dev only: served on demand. `getStaticPaths` has to enumerate the generated file list of every
- * example, which would defeat just-in-time generation by building all of them on the first example
- * file request. Production builds prerender exactly as before.
- */
-export const prerender = !import.meta.env.DEV;
-
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
     const exampleFiles = await getDocExampleFiles({

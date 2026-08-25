@@ -56,9 +56,13 @@ const readContentJson = async (params: GeneratedExampleParams) => {
     }
 
     if (!result) {
-        if (!useCache) {
-            // Dev only: generate this example on demand rather than up front. See `jitGenerate`.
-            await ensureGeneratedExample(params);
+        if (getIsDev()) {
+            // Generated on demand rather than up front. See `jitGenerate`.
+            await ensureGeneratedExample({
+                pageName: params.pageName,
+                exampleName: params.exampleName,
+                framework: params.framework,
+            });
         }
 
         const buffer = await fs.readFile(jsonPath);

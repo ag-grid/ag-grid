@@ -21,6 +21,7 @@ import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constant
 import buildTime from './plugins/agBuildTime';
 import agDevCsp from './plugins/agDevCsp';
 import agDevExampleAssetCors from './plugins/agDevExampleAssetCors';
+import agDevExampleFiles from './plugins/agDevExampleFiles';
 import agDevMarkdownNegotiation from './plugins/agDevMarkdownNegotiation';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
@@ -178,6 +179,7 @@ const plugins = [
     agHotModuleReload(),
     agDevCsp(),
     agDevExampleAssetCors(),
+    agDevExampleFiles(),
     agDevMarkdownNegotiation(),
 ];
 if (NODE_ENV !== 'test') {
