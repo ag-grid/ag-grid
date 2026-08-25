@@ -16,7 +16,9 @@ The following example demonstrates most of the provided overlays.
 
 ## Loading
 
-The loading overlay is displayed when the grid property `loading` is set to `true` and takes precedence over the other provided overlays.
+The loading overlay is displayed when the grid property `loading` is set to `true` or to `LoadingOptions` with `type='overlay'`, and takes precedence over the other provided overlays.
+
+With the Client-Side Row Model, `LoadingOptions` can instead display [Loading Rows](./loading-rows/).
 
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading"] /%}
 

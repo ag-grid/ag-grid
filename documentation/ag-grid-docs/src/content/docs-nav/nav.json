@@ -719,6 +719,11 @@
                         },
                         {
                             "type": "item",
+                            "title": "Loading Rows",
+                            "path": "loading-rows"
+                        },
+                        {
+                            "type": "item",
                             "title": "Row Spanning",
                             "path": "row-spanning"
                         },
@@ -1709,8 +1714,7 @@
                                 {
                                     "type": "item",
                                     "title": "Loading Component",
-                                    "path": "component-loading-cell-renderer",
-                                    "isEnterprise": true
+                                    "path": "component-loading-cell-renderer"
                                 },
                                 {
                                     "type": "item",

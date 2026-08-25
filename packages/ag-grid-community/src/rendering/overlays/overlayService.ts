@@ -4,7 +4,7 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { GridOptionsService } from '../../gridOptionsService';
-import { _addGridCommonParams, _isClientSideRowModel } from '../../gridOptionsUtils';
+import { _addGridCommonParams, _isClientSideLoadingRows, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _attemptToRestoreCellFocus } from '../../utils/gridFocus';
@@ -53,7 +53,7 @@ const LoadingOverlayDef: OverlayDef = {
     paramsKey: 'loadingOverlayComponentParams',
     isSuppressed: (gos: GridOptionsService) => {
         const isLoading = gos.get('loading');
-        return isLoading === false || (gos.get('suppressLoadingOverlay') === true && isLoading !== true);
+        return isLoading === false || (gos.get('suppressLoadingOverlay') === true && !isLoading);
     },
 } as const;
 
@@ -233,7 +233,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     public showLoadingOverlay(): void {
         this.showInitialOverlay = false;
         const gos = this.gos;
-        if (!this.eWrapper || gos.get('activeOverlay') || this.devErrorOverlayActive) {
+        if (!this.eWrapper || gos.get('activeOverlay') || this.devErrorOverlayActive || _isClientSideLoadingRows(gos)) {
             return;
         }
         if (this.isDisabled(LoadingOverlayDef)) {
@@ -441,7 +441,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (loadingDefined) {
             this.disableInitialOverlay();
             if (loading) {
-                return LoadingOverlayDef;
+                return _isClientSideLoadingRows(gos) ? null : LoadingOverlayDef;
             }
         } else if (this.showInitialOverlay) {
             const noColumnDefs = !gos.get('columnDefs') && !gos.get('autoGenerateColumnDefs');

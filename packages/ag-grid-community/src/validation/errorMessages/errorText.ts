@@ -433,7 +433,7 @@ export const AG_GRID_ERRORS = {
     98: () =>
         'popup cellEditor does not work with fullRowEdit - you cannot use them both - either turn off fullRowEdit, or stop using popup editors.' as const,
     99: () =>
-        'Since v32, `api.hideOverlay()` does not hide the loading overlay when `loading=true`. Set `loading=false` instead.' as const,
+        'Since v32, `api.hideOverlay()` does not hide the loading UI when the `loading` grid option is set. Set `loading=false` instead.' as const,
     // 100: ({ rowModelType }: { rowModelType: RowModelType }) =>
     //     `selectAll only available when rowModelType='clientSide', ie not ${rowModelType}` as const,
     101: ({

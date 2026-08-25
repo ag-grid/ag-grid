@@ -10,7 +10,7 @@ import type { AgColumn } from './entities/agColumn';
 import { _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
-import { _getDomData } from './gridOptionsUtils';
+import { _getDomData, _isClientSideLoadingRow } from './gridOptionsUtils';
 import { DOM_DATA_KEY_HEADER_CTRL } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
 import { getFocusHeaderRowCount, isHeaderPositionEqual } from './headerRendering/headerUtils';
@@ -697,6 +697,12 @@ export class FocusService extends BeanStub implements NamedBean {
             }
 
             if (column.isSuppressNavigable(rowNode)) {
+                if (_isClientSideLoadingRow(this.gos, rowNode)) {
+                    if (backwards && !_isHeaderFocusSuppressed(this.beans)) {
+                        return this.focusLastHeader();
+                    }
+                    return canFocusOverlay && this.focusOverlay(backwards);
+                }
                 const isRtl = this.gos.get('enableRtl');
                 let key: string;
                 if (!event || event.key === KeyCode.TAB) {

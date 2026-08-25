@@ -569,6 +569,34 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        loading: {
+            validate({ loading, rowModelType }) {
+                if (loading == null || typeof loading === 'boolean') {
+                    return null;
+                }
+                if (typeof loading !== 'object' || Array.isArray(loading)) {
+                    return _createValidationWarning(321, {
+                        property: 'loading',
+                        expected: 'a boolean or an object',
+                    });
+                }
+                if (loading.type !== 'overlay' && loading.type !== 'rows') {
+                    return _createValidationWarning(320, {
+                        property: 'loading.type',
+                        allowed: ['overlay', 'rows'],
+                        value: loading.type,
+                    });
+                }
+                if (loading.type === 'rows' && rowModelType != null && rowModelType !== 'clientSide') {
+                    return '`loading.type="rows"` is only supported with the Client-Side Row Model.';
+                }
+                const rowCount = loading.rowCount;
+                if (rowCount != null && (!Number.isInteger(rowCount) || rowCount < 1)) {
+                    return 'loading.rowCount: value should be an integer greater than or equal to 1';
+                }
+                return null;
+            },
+        },
         notesDataSource: {
             validate: ({ getRowId }) => {
                 if (!getRowId) {
