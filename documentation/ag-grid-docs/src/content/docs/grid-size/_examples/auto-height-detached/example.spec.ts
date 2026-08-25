@@ -10,8 +10,10 @@ test.agExample(import.meta, () => {
             expect(await readCount(page)).toBeGreaterThan(0);
         }).toPass();
 
-        // The grid must not render the whole dataset before it is measurable.
-        expect(await readCount(page)).toBeLessThan(25);
+        // The grid renders a window of rows, but must not render the whole dataset before it is measurable.
+        const rendered = await readCount(page);
+        expect(rendered).toBeGreaterThan(1);
+        expect(rendered).toBeLessThan(25);
     });
 });
 
