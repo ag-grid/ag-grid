@@ -22,6 +22,8 @@ export interface ContactPoint {
     telephone?: string;
     email?: string;
     availableLanguage?: string | string[];
+    /** Geographic area the contact point serves, e.g. `Worldwide`. */
+    areaServed?: string | string[];
 }
 
 export interface OrganizationFounder {
@@ -43,6 +45,16 @@ export interface OrganizationAddress {
     addressRegion?: string;
 }
 
+/**
+ * A registry identifier for the organisation, emitted as a schema.org
+ * `PropertyValue`. `propertyID` names the register (e.g. `Companies House`,
+ * `VAT`) so each value is attributable to the source that issued it.
+ */
+export interface OrganizationIdentifier {
+    propertyID: string;
+    value: string;
+}
+
 interface OrgInput {
     canonicalUrlBase: string;
     name: string;
@@ -56,6 +68,11 @@ interface OrgInput {
     foundingDate?: string;
     /** Optional registered address, emitted as a nested schema.org `PostalAddress`. */
     address?: OrganizationAddress;
+    /**
+     * Optional registry identifiers (company number, VAT number, etc.), emitted
+     * as an `identifier` array of schema.org `PropertyValue` nodes.
+     */
+    identifiers?: OrganizationIdentifier[];
     /** Optional founder, emitted as a nested schema.org `Person`. */
     founder?: OrganizationFounder;
     /**
@@ -165,6 +182,7 @@ export function buildOrganization({
     legalName,
     foundingDate,
     address,
+    identifiers,
     founder,
     contactPoints,
 }: OrgInput): JsonLdObject {
@@ -187,6 +205,9 @@ export function buildOrganization({
     }
     if (address) {
         result.address = { '@type': 'PostalAddress', ...address };
+    }
+    if (identifiers && identifiers.length > 0) {
+        result.identifier = identifiers.map((identifier) => ({ '@type': 'PropertyValue', ...identifier }));
     }
     if (founder) {
         const founderNode: JsonLdObject = { '@type': 'Person', name: founder.name };

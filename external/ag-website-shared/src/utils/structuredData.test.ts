@@ -19,7 +19,7 @@ describe('buildOrganization', () => {
             canonicalUrlBase: CANONICAL_URL_BASE,
             name: 'AG Grid',
             logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
-            sameAs: ['https://github.com/ag-grid/ag-grid', 'https://twitter.com/ag_grid'],
+            sameAs: ['https://github.com/ag-grid/ag-grid', 'https://x.com/ag_grid'],
         });
 
         expect(result).toEqual({
@@ -28,7 +28,7 @@ describe('buildOrganization', () => {
             name: 'AG Grid',
             url: `${CANONICAL_URL_BASE}/`,
             logo: `${CANONICAL_URL_BASE}/images/logo.png`,
-            sameAs: ['https://github.com/ag-grid/ag-grid', 'https://twitter.com/ag_grid'],
+            sameAs: ['https://github.com/ag-grid/ag-grid', 'https://x.com/ag_grid'],
         });
         expect(result['@context']).toBeUndefined();
         expect(result.contactPoint).toBeUndefined();
@@ -41,10 +41,16 @@ describe('buildOrganization', () => {
             logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
             sameAs: [],
             contactPoints: [
-                { contactType: 'sales', url: `${CANONICAL_URL_BASE}/contact/`, availableLanguage: 'English' },
+                {
+                    contactType: 'sales',
+                    url: `${CANONICAL_URL_BASE}/contact/`,
+                    areaServed: 'Worldwide',
+                    availableLanguage: 'English',
+                },
                 {
                     contactType: 'technical support',
                     url: 'https://ag-grid.zendesk.com/',
+                    areaServed: 'Worldwide',
                     availableLanguage: 'English',
                 },
             ],
@@ -55,12 +61,14 @@ describe('buildOrganization', () => {
                 '@type': 'ContactPoint',
                 contactType: 'sales',
                 url: `${CANONICAL_URL_BASE}/contact/`,
+                areaServed: 'Worldwide',
                 availableLanguage: 'English',
             },
             {
                 '@type': 'ContactPoint',
                 contactType: 'technical support',
                 url: 'https://ag-grid.zendesk.com/',
+                areaServed: 'Worldwide',
                 availableLanguage: 'English',
             },
         ]);
@@ -93,25 +101,43 @@ describe('buildOrganization', () => {
             name: 'AG Grid',
             logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
             sameAs: [],
-            legalName: 'AG Grid Ltd.',
+            legalName: 'AG Grid Ltd',
             foundingDate: '2010-07-19',
             address: {
-                streetAddress: '70 Wilson St',
+                streetAddress: '70 Wilson Street',
                 addressLocality: 'London',
                 postalCode: 'EC2A 2DB',
                 addressCountry: 'GB',
             },
         });
 
-        expect(result.legalName).toBe('AG Grid Ltd.');
+        expect(result.legalName).toBe('AG Grid Ltd');
         expect(result.foundingDate).toBe('2010-07-19');
         expect(result.address).toEqual({
             '@type': 'PostalAddress',
-            streetAddress: '70 Wilson St',
+            streetAddress: '70 Wilson Street',
             addressLocality: 'London',
             postalCode: 'EC2A 2DB',
             addressCountry: 'GB',
         });
+    });
+
+    test('emits a typed identifier array of PropertyValue nodes when identifiers are provided', () => {
+        const result = buildOrganization({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            name: 'AG Grid',
+            logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
+            sameAs: [],
+            identifiers: [
+                { propertyID: 'Companies House', value: '07318192' },
+                { propertyID: 'VAT', value: 'GB998360167' },
+            ],
+        });
+
+        expect(result.identifier).toEqual([
+            { '@type': 'PropertyValue', propertyID: 'Companies House', value: '07318192' },
+            { '@type': 'PropertyValue', propertyID: 'VAT', value: 'GB998360167' },
+        ]);
     });
 
     test('omits description and founder when not provided, and a founder without sameAs has no sameAs key', () => {
@@ -126,6 +152,16 @@ describe('buildOrganization', () => {
         expect(withoutOptionals.legalName).toBeUndefined();
         expect(withoutOptionals.foundingDate).toBeUndefined();
         expect(withoutOptionals.address).toBeUndefined();
+        expect(withoutOptionals.identifier).toBeUndefined();
+
+        const emptyIdentifiers = buildOrganization({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            name: 'AG Grid',
+            logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
+            sameAs: [],
+            identifiers: [],
+        });
+        expect(emptyIdentifiers.identifier).toBeUndefined();
 
         const bareFounder = buildOrganization({
             canonicalUrlBase: CANONICAL_URL_BASE,
