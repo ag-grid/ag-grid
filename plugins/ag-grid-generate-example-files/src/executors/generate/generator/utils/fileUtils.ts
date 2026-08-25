@@ -5,8 +5,9 @@ import { JsxEmit, ModuleKind, ScriptTarget, transpileModule } from 'typescript';
 
 import type { InternalFramework, TransformTsFileExt } from '../types';
 import { TYPESCRIPT_INTERNAL_FRAMEWORKS } from '../types';
+import { getWorkspaceRoot } from './workspaceRoot';
 
-const BOILER_PLATE_FILE_PATH = './documentation/ag-grid-docs/public/example-runner';
+const getBoilerPlateFilePath = () => path.join(getWorkspaceRoot(), 'documentation/ag-grid-docs/public/example-runner');
 
 export const getBoilerPlateName = (internalFramework: InternalFramework) =>
     internalFramework === 'angular' ? 'grid-angular-boilerplate' : undefined;
@@ -30,7 +31,7 @@ export const getBoilerPlateFiles = async (internalFramework: InternalFramework) 
     if (!boilerplateName) {
         return {};
     }
-    const boilerPlatePath = path.join(BOILER_PLATE_FILE_PATH, boilerplateName);
+    const boilerPlatePath = path.join(getBoilerPlateFilePath(), boilerplateName);
 
     const fileNames = readdirSync(boilerPlatePath);
 

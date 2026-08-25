@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { ensureGeneratedExample } from './jitGenerate';
 import type { GeneratedContents, InternalFramework } from './types';
 
 export type GeneratedExampleParams = ExampleParams & DocsExampleParams;
@@ -55,6 +56,11 @@ const readContentJson = async (params: GeneratedExampleParams) => {
     }
 
     if (!result) {
+        if (!useCache) {
+            // Dev only: generate this example on demand rather than up front. See `jitGenerate`.
+            await ensureGeneratedExample(params);
+        }
+
         const buffer = await fs.readFile(jsonPath);
         result = JSON.parse(buffer.toString('utf-8')) as GeneratedContents;
     }

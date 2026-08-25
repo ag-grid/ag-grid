@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 
 import type { InternalFramework } from '../types';
+import { getWorkspaceRoot } from './workspaceRoot';
 
 interface Params {
     isLocale: boolean;
@@ -11,9 +12,10 @@ interface Params {
 export const agChartsVersion = 'latest'; // TODO have this set properly
 
 function getPackageJsonVersion(packageName: string, isModule: boolean = false) {
+    const workspaceRoot = getWorkspaceRoot();
     const path = isModule
-        ? `${process.cwd()}/community-modules/${packageName}/package.json`
-        : `${process.cwd()}/packages/${packageName}/package.json`;
+        ? `${workspaceRoot}/community-modules/${packageName}/package.json`
+        : `${workspaceRoot}/packages/${packageName}/package.json`;
     const packageJsonStr = readFileSync(path, 'utf-8');
     const packageJson = JSON.parse(packageJsonStr);
     // Strip pre-release suffix (e.g. "35.1.0-beta.20260218.1143" → "35.1.0")

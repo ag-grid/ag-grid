@@ -1,6 +1,8 @@
+import path from 'path';
 import ts from 'typescript';
 
 import { _GET_ALL_GRID_OPTIONS } from '../src/executors/generate/generator/_copiedFromCore/propertyKeys';
+import { getWorkspaceRoot } from '../src/executors/generate/generator/utils/workspaceRoot';
 
 function getTypes(node: ts.Node) {
     let typesToInclude: string[] = [];
@@ -59,5 +61,7 @@ export function getGridOptionsType(): Record<
         typesToInclude: string[];
     }
 > {
-    return getTypeLookupFunc('./plugins/ag-grid-generate-example-files/gridOptionsTypes/baseGridOptions.ts');
+    return getTypeLookupFunc(
+        path.join(getWorkspaceRoot(), 'plugins/ag-grid-generate-example-files/gridOptionsTypes/baseGridOptions.ts')
+    );
 }
