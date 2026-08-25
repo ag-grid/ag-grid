@@ -189,6 +189,7 @@
     --color-bg-disabled_subtle: var(--color-gray-50);
     --color-bg-toolbar: var(--color-gray-100);
     --color-bg-code: var(--color-gray-100);
+    --color-bg-code-hover: var(--color-gray-200);
     --color-bg-site-header: var(--color-brand-500);
     --color-bg-mobile-nav: var(--color-bg-site-header); //TODO, review & replace color
     --color-code-background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 70%);
@@ -357,6 +358,7 @@ html[data-dark-mode='true'] {
     --color-bg-disabled_subtle: var(--color-gray-800);
     --color-bg-toolbar: var(--color-bg-primary);
     --color-bg-code: var(--color-gray-700);
+    --color-bg-code-hover: var(--color-gray-600);
     --color-bg-site-header: var(--color-brand-500);
     --color-bg-mobile-nav: var(--color-bg-primary);
 
