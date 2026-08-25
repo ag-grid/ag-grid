@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-csp",
-  "version": "36.1.0-beta.20260819.1342",
+  "version": "36.1.0-beta.20260825.14",
   "description": "CSP testing for AG Grid",
   "main": "index.js",
   "scripts": {},
