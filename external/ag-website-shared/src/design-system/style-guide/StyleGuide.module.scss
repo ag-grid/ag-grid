@@ -381,7 +381,7 @@
 
     &:hover,
     &:focus-visible {
-        background-color: var(--color-util-brand-100);
+        background-color: var(--color-bg-code-hover);
         // The base `button` hover rule sets `color: var(--color-button-primary-fg)`, and
         // `.button-style-none` resets only the background and border - so without this the label
         // turns near-black on the brand fill in dark mode. See the Buttons section for the
@@ -400,7 +400,7 @@
 
     &:hover,
     &:focus-visible {
-        background-color: var(--color-util-brand-50);
+        background-color: var(--color-bg-code-hover);
     }
 }
 
@@ -410,6 +410,10 @@
     :where(.icon) {
         opacity: 1;
     }
+}
+
+#{$selector-darkmode} .copyButtonCopied {
+    --icon-color: var(--color-green-300);
 }
 
 .copyButtonLabel {
