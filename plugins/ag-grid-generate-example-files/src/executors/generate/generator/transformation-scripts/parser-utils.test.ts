@@ -14,8 +14,6 @@ describe('getIntegratedDarkModeCode', () => {
         expect(code).not.toContain('params.api');
     });
 
-    // The typescript and javascript bodies are maintained separately, and a change applied to only
-    // one of them is a silent half-fix across the frameworks that use the other.
     describe.each([
         ['typescript', true],
         ['javascript', false],
@@ -39,8 +37,6 @@ describe('getIntegratedDarkModeCode', () => {
         });
 
         it('falls back to light once the retry budget is spent, so an example that owns its theming still gets themes', () => {
-            // A standalone/downloaded example, or an iframe opting out of dark mode, never receives
-            // `data-ag-theme-mode` at all - waiting for it forever would leave chartThemes unset.
             expect(code).toContain('const lastTry = tries >= maxTries;');
             expect(code).toContain('if (params.api && (themeMode !== undefined || lastTry))');
             expect(code).toContain("updateChartThemes(themeMode !== undefined && themeMode.includes('dark'));");

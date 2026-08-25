@@ -28,7 +28,6 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [darkMode] = useDarkmode();
     const [isScrolling, setIsScrolling] = useState(false);
-    // The src of an in-flight navigation; `undefined` once the example has loaded.
     const pendingSrcRef = useRef<string | undefined>(undefined);
 
     useEffect(() => {
@@ -66,8 +65,6 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
             return;
         }
 
-        // `darkMode` is undefined until the store has hydrated, so fall back to reading it
-        // synchronously — the example must be navigated to with the colour scheme already known.
         const nextSrc = withThemeMode(url, darkMode ?? getDarkmode(), suppressDarkMode);
 
         const navigate = shouldNavigateExample({

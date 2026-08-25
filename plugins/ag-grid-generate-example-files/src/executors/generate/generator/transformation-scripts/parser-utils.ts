@@ -711,9 +711,6 @@ export function getIntegratedDarkModeCode(
 }
 
 const darkModeTs = `
-        // Read the theme mode at apply time, not at module time: the example runner applies
-        // 'data-ag-theme-mode' before this module runs, but the browser-transpiled preview path
-        // imports the entry later, so the attribute may not be there yet on the first attempt.
         const readThemeMode = (): string | undefined => document.documentElement.dataset.agThemeMode;
 
         // update chart themes based on dark mode status
@@ -726,7 +723,6 @@ const darkModeTs = `
                 ? (isDark ? ['my-custom-theme-dark', 'my-custom-theme-light'] : ['my-custom-theme-light', 'my-custom-theme-dark'])
                 : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));                      
 
-            // no-op when nothing changed, so a repeated push cannot re-render the chart
             if (currentThemes && currentThemes.length === modifiedThemes.length && currentThemes.every((theme, i) => theme === modifiedThemes[i])) {
                 return;
             }
@@ -746,13 +742,8 @@ const darkModeTs = `
         }
         
         // listen for user-triggered dark mode changes (not removing listener is fine here!)
-        // registered before the initial apply, so a change landing during the retry window is kept
         document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);
 
-        // apply the initial themes once both the grid api and the theme mode are available.
-        // An absent theme mode is not the same as an unresolved one: examples that own their own
-        // theming - standalone/downloaded ones, and iframes that opt out - never get the attribute
-        // at all, so once the retry budget is spent fall back to light rather than giving up.
         const maxTries = 5;
         let tries = 0;
         const trySetInitial = (): void => {
@@ -769,9 +760,6 @@ const darkModeTs = `
     `;
 
 const darkModeJS = `
-        // Read the theme mode at apply time, not at module time: the example runner applies
-        // 'data-ag-theme-mode' before this module runs, but the browser-transpiled preview path
-        // imports the entry later, so the attribute may not be there yet on the first attempt.
         const readThemeMode = () => document.documentElement.dataset.agThemeMode;
 
         const updateChartThemes = (isDark) => { 
@@ -783,7 +771,6 @@ const darkModeJS = `
                 ? (isDark ? ['my-custom-theme-dark', 'my-custom-theme-light'] : ['my-custom-theme-light', 'my-custom-theme-dark'])
                 : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));                      
 
-            // no-op when nothing changed, so a repeated push cannot re-render the chart
             if (currentThemes && currentThemes.length === modifiedThemes.length && currentThemes.every((theme, i) => theme === modifiedThemes[i])) {
                 return;
             }
@@ -798,13 +785,8 @@ const darkModeJS = `
         }
 
         // listen for user-triggered dark mode changes (not removing listener is fine here!)
-        // registered before the initial apply, so a change landing during the retry window is kept
         document.addEventListener('color-scheme-change', handleColorSchemeChange);
 
-        // apply the initial themes once both the grid api and the theme mode are available.
-        // An absent theme mode is not the same as an unresolved one: examples that own their own
-        // theming - standalone/downloaded ones, and iframes that opt out - never get the attribute
-        // at all, so once the retry budget is spent fall back to light rather than giving up.
         const maxTries = 5;
         let tries = 0;
         const trySetInitial = () => {

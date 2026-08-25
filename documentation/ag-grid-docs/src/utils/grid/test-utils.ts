@@ -26,12 +26,6 @@ type AgIdFor = ReturnType<typeof wrapAgTestIdFor<Locator>>;
 type LoadPageOptions = {
     prod?: boolean;
     version?: string;
-    /**
-     * The colour scheme the example page is loaded with, as the docs site itself passes it on the
-     * example iframe's src. The example runner applies it before the example's entry module runs,
-     * so an integrated-charts example is created with the matching chart themes rather than being
-     * re-themed afterwards (AG-18256).
-     */
     agThemeMode?: 'dark-blue' | 'light';
 };
 

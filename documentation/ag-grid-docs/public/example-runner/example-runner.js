@@ -28,10 +28,6 @@
     const COMPILER_OPTION_ENUMS = { module: 'ModuleKind', target: 'ScriptTarget', jsx: 'JsxEmit' };
 
     function applyThemeMode() {
-        // The parent frame only applies the colour scheme on the iframe's `load` event, which is
-        // after this page's deferred entry module has already created its grid and chart. The
-        // `?agThemeMode=` parameter lets us apply it here instead, synchronously, before any
-        // example code runs. Absence of the parameter means the example owns its own theming.
         const themeMode = new URLSearchParams(window.location.search).get(THEME_MODE_PARAM);
         const colorScheme =
             themeMode !== null && Object.prototype.hasOwnProperty.call(THEME_MODES, themeMode)

@@ -45,7 +45,6 @@ describe('shouldNavigateExample', () => {
     });
 
     test('does not reload a loaded example when the colour scheme changes', () => {
-        // The loaded document is re-themed in place, so a reload would only lose the example state.
         expect(shouldNavigateExample({ currentPathname: url, url, nextSrc: dark })).toBe(false);
     });
 
