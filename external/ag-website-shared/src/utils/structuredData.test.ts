@@ -238,6 +238,7 @@ describe('buildSoftwareApplication', () => {
         expect(result.softwareVersion).toBe('34.0.0');
         expect(result.publisher).toEqual({ '@id': `${CANONICAL_URL_BASE}/#organization` });
         expect(result.offers).toBeUndefined();
+        expect(result.sameAs).toBeUndefined();
     });
 
     test('honours caller-supplied applicationCategory, operatingSystem and offers', () => {
@@ -253,6 +254,25 @@ describe('buildSoftwareApplication', () => {
         expect(result.applicationCategory).toBe('BusinessApplication');
         expect(result.operatingSystem).toBe('iOS');
         expect(result.offers).toEqual([{ '@type': 'Offer', price: '0', priceCurrency: 'USD' }]);
+    });
+
+    test('emits sameAs entries identifying the application, e.g. its npm package', () => {
+        const result = buildSoftwareApplication({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            name: 'AG Grid',
+            version: '34.0.0',
+            sameAs: ['https://www.npmjs.com/package/ag-grid-community'],
+        });
+
+        expect(result.sameAs).toEqual(['https://www.npmjs.com/package/ag-grid-community']);
+
+        const emptySameAs = buildSoftwareApplication({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            name: 'AG Grid',
+            version: '34.0.0',
+            sameAs: [],
+        });
+        expect(emptySameAs.sameAs).toBeUndefined();
     });
 });
 

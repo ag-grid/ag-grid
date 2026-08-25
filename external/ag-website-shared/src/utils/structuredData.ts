@@ -96,6 +96,12 @@ interface SoftwareApplicationInput {
     applicationCategory?: string;
     operatingSystem?: string;
     offers?: JsonLdObject[];
+    /**
+     * Authoritative entries for the application itself, e.g. its npm package
+     * page. These identify the software, not the company that publishes it —
+     * company-level profiles belong on the Organization's `sameAs`.
+     */
+    sameAs?: string[];
 }
 
 interface TechArticleInput {
@@ -244,6 +250,7 @@ export function buildSoftwareApplication({
     applicationCategory = 'DeveloperApplication',
     operatingSystem = 'Web Browser',
     offers,
+    sameAs,
 }: SoftwareApplicationInput): JsonLdObject {
     const result: JsonLdObject = {
         '@type': 'SoftwareApplication',
@@ -257,6 +264,9 @@ export function buildSoftwareApplication({
     };
     if (offers && offers.length > 0) {
         result.offers = offers;
+    }
+    if (sameAs && sameAs.length > 0) {
+        result.sameAs = sameAs;
     }
     return result;
 }

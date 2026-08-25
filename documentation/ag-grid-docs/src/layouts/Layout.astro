@@ -109,13 +109,14 @@ const organizationLogoUrl = `${siteRoot}images/ag-logos/png-logos/AG-Grid-Logo_L
 const licensePricingUrl = `${siteRoot}license-pricing/`;
 // Authoritative entries for the company, appended to the footer-derived social profiles so
 // Google can tie the site, the Wikidata entry and the Knowledge Graph panel to the same entity.
-// npm and Crunchbase serve the same purpose for the package and the company record.
+// Only pages identifying the company itself belong here — the npm package identifies the
+// software, so it goes on the SoftwareApplication node instead.
 const organizationSameAs = [
     ...sameAsUrls,
-    'https://www.npmjs.com/package/ag-grid-community',
     'https://www.crunchbase.com/organization/ag-grid',
     'https://www.wikidata.org/wiki/Q128283374',
 ];
+const softwareApplicationSameAs = ['https://www.npmjs.com/package/ag-grid-community'];
 const organizationDescription =
     'AG Grid is a JavaScript data grid and charting library for building enterprise web applications, developed by AG Grid Ltd. Its product family is AG Grid, AG Charts and AG Studio.';
 const organizationFounder = {
@@ -177,6 +178,7 @@ const structuredData: JsonLdObject[] = includeStructuredData
               canonicalUrlBase: metadata.canonicalUrlBase,
               name: 'AG Grid',
               version: agGridVersion.split('-')[0],
+              sameAs: softwareApplicationSameAs,
               offers: [
                   {
                       '@type': 'Offer',
