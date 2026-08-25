@@ -10,6 +10,33 @@ const EXAMPLE_FILE_PATH = /^\/examples\/([^/]+)\/([^/]+)\/([^/]+)\/([^/]+\.[^/.]
 /** Sibling routes that also end in a dotted segment but have their own handlers. */
 const NOT_EXAMPLE_FILES = new Set(['contents.json']);
 
+/** Astro's dev request handlers, added last in its own `configureServer` post-hook. */
+const ASTRO_ROUTER_HANDLERS = new Set(['astroDevPrerenderHandler', 'astroDevHandler']);
+
+/**
+ * Inserts the handler immediately in front of astro's router, so that a request for an example file
+ * still passes through everything the router itself sits behind — vite's host check, astro's
+ * `secFetch` and trailing-slash guards, and this repo's dev CSP plugin — and only the routing is
+ * replaced. Prepending it to the stack instead would end the request in front of all of them.
+ */
+function useBeforeAstroRouter(server: ViteDevServer, handle: Connect.NextHandleFunction) {
+    const { stack } = server.middlewares;
+    const routerIndex = stack.findIndex(
+        ({ handle: middleware }) => typeof middleware === 'function' && ASTRO_ROUTER_HANDLERS.has(middleware.name)
+    );
+
+    if (routerIndex < 0) {
+        // Astro renamed or restructured its handlers: still serve the files, but say so, because the
+        // middleware in front of them is now being skipped.
+        // eslint-disable-next-line no-console
+        console.warn(`[ag-dev-example-files] astro's dev router was not found; serving example files first instead.`);
+        stack.unshift({ route: '', handle });
+        return;
+    }
+
+    stack.splice(routerIndex, 0, { route: '', handle });
+}
+
 /**
  * Serves example files through the route's own `GET` instead of astro's router.
  *
@@ -56,7 +83,7 @@ export default function agDevExampleFiles(): Plugin {
                         });
                 };
 
-                server.middlewares.stack.unshift({ route: '', handle: serveExampleFile });
+                useBeforeAstroRouter(server, serveExampleFile);
             };
         },
     };
