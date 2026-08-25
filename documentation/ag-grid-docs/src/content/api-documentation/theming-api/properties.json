@@ -42,6 +42,7 @@
         "headerHeight": {},
         "rowHeight": {},
         "autoHeightMinBodyHeight": {},
+        "autoHeightMaxBodyHeight": {},
         "listItemHeight": {},
         "paginationPanelHeight": {},
         "widgetContainerHorizontalPadding": {},

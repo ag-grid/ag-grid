@@ -68,7 +68,7 @@ you want, then you have a CSS layout issue in your application.
 There are three DOM Layout values the grid can have 'normal', 'autoHeight' and 'print'. They are used as follows:
 
 - **normal**: This is the default if nothing is specified. The grid fits the width and height of the div you provide and scrolls in both directions.
-- **autoHeight**: The grid's height is set to fit the number of rows so no vertical scrollbar is provided by the grid. The grid scrolls horizontally as normal. Note that if using this with the SSRM the grid will attempt to load every row and may cause undesired side-effects (such as excessive datasource requests or too many loaded rows).
+- **autoHeight**: The grid's height adjusts to fit the number of rows, with optional minimum and maximum height.
 - **print**: No scroll bars are used and the grid renders all rows and columns. This layout is explained in [Printing](./printing/).
 
 ## Normal Layout
@@ -104,15 +104,7 @@ To allow the grid to auto-size its height to fit rows, set grid property `domLay
 When `domLayout='autoHeight'` then your application **should not** set height on the grid div, as the div should be allowed flow naturally to fit the grid contents. When auto height is off then your application **should** set height on the grid div, as the grid will fill the div you provide it.
 
 {% warning %}
-If using Grid Auto Height, then the grid will render all rows
-into the DOM. This is different to normal operation where the grid will only render
-rows that are visible inside the grid's scrollable viewport. For large grids (eg >1,000
-rows) the draw time of the grid will be slow, or for very large grids, your application
-can freeze. This is not a problem with the grid, it is a limitation on browsers
-on how much data they can easily display on one web page. For this reason, if showing
-large amounts of data, it is not advisable to use Grid Auto Height. Instead use
-the grid as normal and the grid's row virtualisation will take care of this problem
-for you.
+There is no default maximum height, which means that the grid will render all rows. When using the Server-Side Row Model, this will mean loading the entire data set. For large grids (eg >1,000 rows) the draw time of the grid will be slow, or for very large grids, your application can freeze. This is not a problem with the grid, it is a limitation on browsers on how much data they can easily display on one web page. For this reason, if showing large amounts of data, set a [max height](#minimum-and-maximum-height-with-auto-height) to limit the number of rows rendered.
 {% /warning %}
 
 The example below demonstrates the autoHeight feature. Notice the following:
@@ -133,23 +125,20 @@ When viewed inline below, the scroll bars shown are for the containing iframe, n
 
 ### Min Height with Auto Height
 
-When using Auto Height, the grid rows section has a minimum height of 150px. This is to avoid a zero-height grid which looks weird.
-
-Use the `autoHeightMinBodyHeight` [theme parameter](./theming-parameters/) to change this minimum:
+You can constrain the height of the grid body - the scrolling rows, excluding headers and pinned rows. By default the minimum height is 150px (because a zero-height grid looks weird) and there is no maximum height. This can be customised using two [theme parameters](./theming-parameters/):
 
 ```js
 const myTheme = themeQuartz.withParams({
-    autoHeightMinBodyHeight: 40,
+    autoHeightMinBodyHeight: 0,
+    autoHeightMaxBodyHeight: 400,
 });
 ```
 
-It is not possible to specify a max height when using auto-height.
+Once the height of the available rows exceeds the maximum height, the grid stops growing and scrolls instead, using [virtualisation](./dom-virtualisation/) to ensure that large datasets are rendered efficiently.
 
-{% note %}
-Users ask is it possible to set a max height when using auto-height? The answer is no.
-If using auto-height, the grid is set up to work in a different way. It is not possible to switch.
-If you do need to switch, you will need to turn auto-height off.
-{% /note %}
+You can see the effect of minimum and maximum heights with different numbers of rows in the following example:
+
+{% gridExampleRunner title="Max Height with Auto Height" name="auto-height-max"  exampleHeight=520 /%}
 
 ## Print Layout
 

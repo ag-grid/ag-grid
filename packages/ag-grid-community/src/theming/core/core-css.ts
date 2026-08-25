@@ -54,6 +54,11 @@ export interface CoreParams extends SharedThemeParams {
     advancedFilterBuilderValuePillColor: ColorValue;
 
     /**
+     * Maximum height of the grid's scrolling rows when using auto-height layout - this excludes any pinned or header rows. Once the rows exceed this height the grid stops growing and scrolls internally with row virtualisation. Defaults to `none`, so the grid grows to fit all of its rows. Has no effect in normal or print layout.
+     */
+    autoHeightMaxBodyHeight: LengthValue;
+
+    /**
      * Minimum height of the grid's rows section when using auto-height or print layout. This prevents an empty grid from collapsing to nothing. Set to `0` to remove the minimum height.
      */
     autoHeightMinBodyHeight: LengthValue;
@@ -923,6 +928,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     cellHorizontalPaddingScale: 1,
     autoHeightMinBodyHeight: 150,
+    autoHeightMaxBodyHeight: 'none',
     rowGroupIndentSize: {
         calc: 'cellWidgetSpacing + iconSize',
     },

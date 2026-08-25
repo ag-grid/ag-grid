@@ -467,6 +467,20 @@
     }
 }
 
+/* reset these to prevent inheritance by detail grids. */
+.ag-grid-viewport {
+    --ag-internal-header-rows-height: 0px;
+    --ag-internal-top-rows-height: 0px;
+    --ag-internal-bottom-rows-height: 0px;
+}
+
+.ag-grid-viewport.ag-layout-auto-height {
+    max-height: calc(
+        var(--ag-auto-height-max-body-height) + var(--ag-internal-header-rows-height) +
+            var(--ag-internal-top-rows-height) + var(--ag-internal-bottom-rows-height)
+    );
+}
+
 .ag-overlay-loading-wrapper,
 .ag-overlay-exporting-wrapper,
 .ag-overlay-modal-wrapper {

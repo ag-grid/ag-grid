@@ -1,0 +1,36 @@
+<div class="test-header">
+    <div>
+        <label for="row-count">Rows</label>
+        <input id="row-count" type="number" min="0" max="50" value="5" oninput="onRowCountChanged()" />
+    </div>
+    <div>
+        <label for="min-body-height">autoHeightMinBodyHeight</label>
+        <input
+            id="min-body-height"
+            type="number"
+            min="0"
+            max="600"
+            step="10"
+            value="100"
+            oninput="onMinBodyHeightChanged()"
+        />
+    </div>
+    <div>
+        <label for="max-body-height">autoHeightMaxBodyHeight (blank for none)</label>
+        <input
+            id="max-body-height"
+            type="number"
+            min="0"
+            max="600"
+            step="10"
+            value="250"
+            oninput="onMaxBodyHeightChanged()"
+        />
+    </div>
+</div>
+
+<div id="myGrid"></div>
+
+<div class="under-grid">
+    <p>This text sits under the grid and moves up and down as the grid resizes to fit its rows.</p>
+</div>

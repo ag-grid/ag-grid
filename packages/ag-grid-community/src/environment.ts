@@ -20,6 +20,7 @@ const cssVariable = <K extends keyof CssChangeKeys>(
     cacheDefault?: boolean
 ): CssVariable<CssChangeKeys> => ({ changeKey, type, defaultValue, noWarn, cacheDefault });
 
+const AUTO_HEIGHT_MAX_BODY_HEIGHT = cssVariable('autoHeightMaxBodyHeight', 'length', 0, true);
 const CELL_HORIZONTAL_PADDING = cssVariable('cellHorizontalPadding', 'length', 16);
 const INDENTATION_LEVEL = cssVariable('indentationLevel', 'length', 0, true, true);
 const ROW_GROUP_INDENT_SIZE = cssVariable('rowGroupIndentSize', 'length', 0);
@@ -79,6 +80,10 @@ export class Environment
 
     public getDefaultHeaderHeight(): number {
         return this.getCSSVariablePixelValue(HEADER_HEIGHT);
+    }
+
+    public getAutoHeightMaxBodyHeight(): number {
+        return this.getCSSVariablePixelValue(AUTO_HEIGHT_MAX_BODY_HEIGHT);
     }
 
     public getDefaultCellHorizontalPadding(): number {
@@ -184,6 +189,7 @@ export class Environment
 }
 
 interface CssChangeKeys extends BaseCssChangeKeys {
+    autoHeightMaxBodyHeight: true;
     headerHeight: true;
     headerRowBorderWidth: true;
     rowHeight: true;
