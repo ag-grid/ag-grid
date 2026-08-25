@@ -189,6 +189,7 @@ jobs:
             pull-requests: read
             checks: read
             statuses: read
+            actions: read
         steps:
             - uses: actions/checkout@v7
               with:
