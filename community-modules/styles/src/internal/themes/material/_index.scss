@@ -173,6 +173,12 @@
         }
     }
 
+    // The text-input mixin above pads the input at the bottom, which lifts its text above the
+    // wrapper's centre line; pull the search icon up by the same amount so it tracks the text.
+    .ag-input-field-search-icon {
+        bottom: var(--ag-grid-size);
+    }
+
     // Toolbar: button hover animation matching header cells
     .ag-toolbar-button-wrapper {
         transition: background-color 0.5s;

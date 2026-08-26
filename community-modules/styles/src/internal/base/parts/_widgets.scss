@@ -114,6 +114,9 @@
         opacity: 0.5;
         pointer-events: none;
         inset-inline-start: var(--ag-grid-size);
+        // anchor the block axis explicitly rather than relying on the flex wrapper's static
+        // position; themes that pad the input on one side shift the icon off the text otherwise
+        inset-block: 0;
     }
 
     // the `.ag-ltr`/`.ag-rtl` prefix and the input's own class are what lift this above each theme's

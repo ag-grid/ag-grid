@@ -136,7 +136,13 @@
     inset-inline-start: var(--ag-spacing);
 }
 
-.ag-toolbar-input-field {
+/*
+ * Specificity is deliberately 2 classes: the input also carries `.ag-input-field-input`, whose
+ * theming rule sets the `padding-inline` shorthand and is injected after this file — at equal
+ * specificity that shorthand wipes the icon gutter below and the placeholder runs under the glyph.
+ */
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar-input .ag-toolbar-input-field {
     color: var(--ag-text-color);
     font-size: var(--ag-font-size);
     font-family: inherit;
@@ -156,12 +162,14 @@
     min-width: 0;
 }
 
-.ag-toolbar-input-field:focus {
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar-input .ag-toolbar-input-field:focus {
     box-shadow: var(--ag-focus-shadow);
     border: var(--ag-input-focus-border);
 }
 
-.ag-toolbar-input-field::placeholder {
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar-input .ag-toolbar-input-field::placeholder {
     color: var(--ag-input-placeholder-text-color);
 }
 
