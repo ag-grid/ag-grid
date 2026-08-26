@@ -75,9 +75,11 @@ describe('Continuous Column Autosize', () => {
             const api = createGrid();
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
 
-            api.applyColumnState({ state: [{ colId: 'eligible', width: START_WIDTH }] });
-            api.setGridOption('rowData', LONGER_DATA);
+            // `setColumnWidths` is an api resize, so it widens the column without taking ownership
+            api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
+            expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
 
+            api.setGridOption('rowData', LONGER_DATA);
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
         });
 
@@ -114,8 +116,8 @@ describe('Continuous Column Autosize', () => {
             const draggedWidth = widthOf(api, 'dragged');
             expect(draggedWidth).toBeGreaterThan(MEASURED_WIDTH);
 
-            // force `eligible` back up so its return to 120 proves the follow-up sizing pass ran
-            api.applyColumnState({ state: [{ colId: 'eligible', width: START_WIDTH }] });
+            // widen `eligible` without owning it, so its return to 120 proves the follow-up pass ran
+            api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
             api.setGridOption('rowData', [{ dragged: 'a much longer value', eligible: 'b much longer value' }]);
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
 
@@ -341,11 +343,13 @@ describe('Continuous Column Autosize', () => {
             expect(widthOf(api, 'suppressed')).toBe(START_WIDTH);
         });
 
+        // `colDef.flex` alongside `autoSizeStrategy` is a validated conflict (warning #318), so flex is
+        // applied through column state — the one route that legally produces a flexing column here.
         test('flex columns are excluded from the candidate set', async () => {
             const seen: string[][] = [];
             const api = createGrid({
                 columnDefs: [
-                    { colId: 'flexed', field: 'flexed', flex: 1, minWidth: MEASURED_WIDTH },
+                    { colId: 'flexed', field: 'flexed', initialWidth: START_WIDTH, minWidth: MEASURED_WIDTH },
                     { colId: 'eligible', field: 'eligible', initialWidth: START_WIDTH, minWidth: MEASURED_WIDTH },
                 ],
                 autoSizeStrategy: {
@@ -358,6 +362,11 @@ describe('Continuous Column Autosize', () => {
                     },
                 },
             });
+            await waitFor(() => expect(widthOf(api, 'flexed')).toBe(MEASURED_WIDTH));
+
+            api.applyColumnState({ state: [{ colId: 'flexed', flex: 1 }] });
+            await waitFor(() => expect(api.getColumn('flexed')!.getFlex()).toBe(1));
+            seen.length = 0;
 
             api.setGridOption('rowData', [{ flexed: 'a', eligible: 'b' }]);
             await waitFor(() => expect(seen.length).toBeGreaterThan(0));
