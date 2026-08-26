@@ -66,9 +66,10 @@ export interface AutoSizeColumnsTriggerParams<TData = any, TContext = any> exten
 export interface ContinuousAutoSizeOptions<TData = any, TContext = any> {
     /**
      * If `true`, the strategy is re-applied whenever the grid changes in a way that affects column widths,
-     * not only on first render. Which changes count depends on the strategy: every type responds to data and
-     * displayed-column changes and to grid resizes, and `fitCellContents` additionally responds to viewport
-     * changes, because scrolling is what makes new cell content measurable.
+     * not only on first render. Every type responds to displayed-column changes and to grid resizes. Beyond
+     * that, `fitCellContents` responds to any row data change and to viewport changes, because both change
+     * what there is to measure, while the width-distribution strategies respond to new data, a page change
+     * and a scrollbar appearing or disappearing — the changes to the width there is to share out.
      *
      * A column the user has resized themselves is left alone and treated as fixed width — a header drag, a
      * keyboard resize or a double-click auto-size — as is one given an explicit width through

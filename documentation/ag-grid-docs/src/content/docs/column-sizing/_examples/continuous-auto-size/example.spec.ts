@@ -32,7 +32,7 @@ test.agExample(import.meta, () => {
         expect(await columnWidth(page, 'athlete')).toBe(athleteWidth);
     });
 
-    test.eachFramework('the column with an explicit width keeps it after the initial sizing', async ({ page }) => {
+    test.eachFramework('the `suppressAutoSize` column keeps its starting width', async ({ page }) => {
         await waitForGridContent(page);
         await waitForWidths(page);
 

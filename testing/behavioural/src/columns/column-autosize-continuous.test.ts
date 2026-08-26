@@ -13,7 +13,7 @@
  * moving first — proof the sizing pass actually ran — and only then assert the protected width.
  */
 import { waitFor } from '@testing-library/dom';
-import { DragEventDispatcher, TestGridsManager } from 'ag-test-utils';
+import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { AutoSizeColumnsTriggerParams, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnAutoSizeModule } from 'ag-grid-community';
@@ -32,6 +32,15 @@ describe('Continuous Column Autosize', () => {
     });
 
     const widthOf = (api: GridApi, colId: string): number => api.getColumn(colId)!.getActualWidth();
+
+    /**
+     * Lets a continuous re-size scheduled by the preceding statement run, so that "no re-size happened" is
+     * asserted after the frame rather than ahead of it. Every assertion using this is negative, so there is
+     * nothing to poll for: the scheduler's `setTimeout(0)` plus animation frame is the window being sampled
+     * past (`scheduleContinuousAutoSize` in `columnAutosizeService.ts`).
+     */
+    // eslint-disable-next-line no-restricted-syntax -- samples past the continuous-resize scheduling frame; every assertion that follows it is negative
+    const flushScheduledResize = (): Promise<void> => asyncSetTimeout(50);
 
     const expectWidth = (api: GridApi, colId: string, width: number): Promise<void> =>
         waitFor(() => expect(widthOf(api, colId)).toBe(width));
@@ -89,8 +98,9 @@ describe('Continuous Column Autosize', () => {
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
         });
 
-        test('an explicit `width` is owned from construction and survives a data change', async () => {
+        test('`suppressAutoSize` holds a column at its starting width through a data change', async () => {
             const api = createGrid();
+            // the eligible column moving is proof the pass ran; `pinned` opted out, so it did not move
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
 
             expect(widthOf(api, 'pinned')).toBe(START_WIDTH);
@@ -239,14 +249,47 @@ describe('Continuous Column Autosize', () => {
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
         });
 
-        test('sorting alone is not reported as a data change', async () => {
+        test('sorting is a data change for the content strategy, which re-measures what is rendered', async () => {
             const { api, reasons } = createGridRecordingReasons();
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
             reasons.length = 0;
 
             api.applyColumnState({ state: [{ colId: 'eligible', sort: 'asc' }] });
-            await waitFor(() => expect(api.getColumn('eligible')!.getSort()).toBe('asc'));
 
+            await waitFor(() => expect(reasons).toContain('dataChanged'));
+        });
+
+        test('sorting alone is not a data change for the width-distribution strategies', async () => {
+            const reasons: string[] = [];
+            const api = createGrid({
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                ],
+                autoSizeStrategy: {
+                    type: 'fitGridWidth',
+                    continuous: true,
+                    shouldAutoSizeColumns: ({ reason }) => {
+                        reasons.push(reason);
+                        return true;
+                    },
+                },
+            });
+            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
+            // startup schedules an initial pass of its own; let it land before clearing, or it turns up
+            // afterwards and looks like a re-size the statement under test caused
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+
+            // applying the sort re-creates the displayed columns, so `columnsChanged` is the frame this waits
+            // on. `dataChanged` outranks it, so a sort that had scheduled one would be reported in its place
+            // and this would time out rather than silently pass.
+            await waitFor(() => expect(reasons).toContain('columnsChanged'));
+            await flushScheduledResize();
+
+            // re-ordering rows changes neither the column set nor the width to share out
             expect(reasons).not.toContain('dataChanged');
         });
 
@@ -282,6 +325,7 @@ describe('Continuous Column Autosize', () => {
             api.applyColumnState({ state: [{ colId: 'eligible', width: START_WIDTH }] });
             api.setGridOption('rowData', LONGER_DATA);
             await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+            await flushScheduledResize();
 
             expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
         });
@@ -336,9 +380,19 @@ describe('Continuous Column Autosize', () => {
             expect(widthOf(api, 'pinnedWidth')).toBe(200);
         });
 
-        test('the width-distribution strategies do not re-run on a horizontal scroll', async () => {
+        /**
+         * A real horizontal scroll is not drivable in happy-dom — there is no laid-out body viewport to
+         * scroll — so this covers the registration instead: `virtualColumnsChanged` and `viewportChanged` do
+         * fire during startup and on a column change, and would be reported here if the width-distribution
+         * strategies had been wired to them. The scroll itself is covered by the docs e2e suite.
+         */
+        test('the width-distribution strategies never report a viewport change', async () => {
             const reasons: string[] = [];
-            createGrid({
+            const api = createGrid({
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                ],
                 autoSizeStrategy: {
                     type: 'fitGridWidth',
                     continuous: true,
@@ -349,6 +403,14 @@ describe('Continuous Column Autosize', () => {
                 },
             });
             await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
+            // startup schedules an initial pass of its own; let it land before clearing, or it turns up
+            // afterwards and looks like a re-size the statement under test caused
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            api.setColumnsVisible(['b'], false);
+            await waitFor(() => expect(reasons).toContain('columnsChanged'));
+            await flushScheduledResize();
 
             expect(reasons).not.toContain('viewportChanged');
         });
@@ -374,7 +436,7 @@ describe('Continuous Column Autosize', () => {
 
             const last = seen[seen.length - 1];
             expect(last.api).toBe(api);
-            // only `eligible` is a candidate — `owned` has an explicit `colDef.width`
+            // only `eligible` is a candidate — `pinned` sets `suppressAutoSize`
             expect(last.columns.map((col) => col.getColId())).toEqual(['eligible']);
             expect(['dataChanged', 'columnsChanged', 'viewportChanged', 'gridSizeChanged']).toContain(last.reason);
         });

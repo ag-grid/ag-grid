@@ -41,6 +41,9 @@ const UI_MENU_SOURCES: ReadonlySet<ColumnEventType> = new Set(['columnMenu', 'co
 
 type AutoSizeReason = AutoSizeColumnsTriggerParams['reason'];
 
+/** Escalating waits for a continuous re-size that arrived before the grid had a width. */
+const CONTINUOUS_RETRY_DELAYS: readonly number[] = [0, 100, 500];
+
 /** Most to least significant; the reason reported when several triggers coalesce into one frame. */
 const CONTINUOUS_REASON_PRIORITY: readonly AutoSizeReason[] = [
     'dataChanged',
@@ -62,6 +65,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private continuousRunning = false;
     private continuousFrameScheduled = false;
     private pendingReasons: Set<AutoSizeReason> | null = null;
+    private continuousRetries = 0;
+    private continuousRetryScheduled = false;
 
     public postConstruct(): void {
         const { gos } = this;
@@ -678,6 +683,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             displayedColumnsChanged: () => this.scheduleContinuousAutoSize('columnsChanged'),
             newColumnsLoaded: () => this.scheduleContinuousAutoSize('columnsChanged'),
             gridSizeChanged: () => this.scheduleContinuousAutoSize('gridSizeChanged'),
+            // a scrollbar appearing or disappearing changes the width there is to work with. A row count
+            // change is the usual cause, and a transaction reports neither `newData` nor `newPage`, so for
+            // the width-distribution strategies this is the only signal that one happened
+            scrollVisibilityChanged: () => this.scheduleContinuousAutoSize('gridSizeChanged'),
         });
 
         // `rowNode.setData`/`updateData` and pinned-row replacements report per row, not through the model
@@ -741,11 +750,14 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        // an unlaid-out grid measures nothing and has no width to distribute, so drop the trigger rather
-        // than churning until it has a size. `fitProvidedWidth` depends on neither, so it still runs.
+        // an unlaid-out grid measures nothing and has no width to distribute. `fitProvidedWidth` depends on
+        // neither, so it still runs; the others retry on the same escalating schedule as the one-shot
+        // `fitGridWidth` pass, so a grid that is hidden when the trigger arrives is still sized once shown.
         if (strategy.type !== 'fitProvidedWidth' && getAvailableWidth(this.beans) <= 0) {
+            this.retryContinuousWhenSized(reason);
             return;
         }
+        this.continuousRetries = 0;
 
         const candidates = this.getAutoSizeCandidates(strategy);
         if (!candidates.length) {
@@ -805,6 +817,23 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             });
         }
         return Promise.resolve();
+    }
+
+    /** Re-tries a re-size that found no width, on an escalating schedule, then gives up. */
+    private retryContinuousWhenSized(reason: AutoSizeReason): void {
+        const delay = CONTINUOUS_RETRY_DELAYS[this.continuousRetries];
+        // one chain at a time: a trigger arriving mid-wait is covered by the retry already pending
+        if (delay === undefined || this.continuousRetryScheduled) {
+            return;
+        }
+        this.continuousRetries++;
+        this.continuousRetryScheduled = true;
+        window.setTimeout(() => {
+            this.continuousRetryScheduled = false;
+            if (this.isAlive()) {
+                this.runContinuousNow(reason);
+            }
+        }, delay);
     }
 
     private onContinuousAutoSizeComplete(): void {
