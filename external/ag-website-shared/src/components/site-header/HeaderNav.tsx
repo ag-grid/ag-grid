@@ -82,6 +82,7 @@ const HeaderLinks = ({
                             id={`${toggleIsOpen ? 'mobile-' : ''}${slugger.slug(title)}-nav`}
                             className={styles.navLink}
                             href={href}
+                            tabIndex={0}
                             onClick={() => {
                                 if (isOpen) {
                                     toggleIsOpen?.();

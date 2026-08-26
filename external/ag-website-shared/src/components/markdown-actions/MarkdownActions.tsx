@@ -92,7 +92,7 @@ export const MarkdownActions: FunctionComponent<Props> = ({ markdownHref, framew
 
     return (
         <div className={styles.markdownActions}>
-            <button type="button" className={styles.primaryAction} onClick={copyMarkdown}>
+            <button type="button" tabIndex={0} className={styles.primaryAction} onClick={copyMarkdown}>
                 {/* The hidden copy reserves room for the longest label so confirming a
                     copy cannot resize the button and shift the controls beside it. */}
                 <span className={styles.labelStack}>
@@ -104,7 +104,7 @@ export const MarkdownActions: FunctionComponent<Props> = ({ markdownHref, framew
             </button>
 
             <DropdownMenu.Root>
-                <DropdownMenu.Trigger className={styles.trigger} aria-label="More markdown actions">
+                <DropdownMenu.Trigger tabIndex={0} className={styles.trigger} aria-label="More markdown actions">
                     <ChevronDown className={styles.chevron} />
                 </DropdownMenu.Trigger>
 
