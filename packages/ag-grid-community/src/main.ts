@@ -11,6 +11,7 @@ export { isColumnGroup } from './entities/agColumnGroup';
 export { isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 
 export type {
+    AutoSizeColumnsTriggerParams,
     AutoSizeStrategy,
     IColumnLimit,
     ISizeAllColumnsToContentParams,

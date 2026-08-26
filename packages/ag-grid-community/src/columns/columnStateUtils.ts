@@ -395,6 +395,9 @@ function applyFieldState(
             // Apply width only if valid (>= min), else keep the old width.
             const minColWidth = column.colDef.minWidth ?? beans.environment.getDefaultColumnMinWidth();
             if (minColWidth != null && width >= minColWidth) {
+                // an explicit valid width is intent, so it takes ownership; an omitted or `null`
+                // width leaves ownership as it was
+                column.setUserSized(true);
                 column.setActualWidth(width, source);
             }
         }
@@ -496,6 +499,9 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         for (let i = 0, len = primaryCols.length; i < len; ++i) {
             const col = primaryCols[i];
             col.pivotSort = _resolvePivotSortFromColDef(col.colDef);
+            // the state above carries `width ?? initialWidth`, so `applyFieldState` cannot tell them
+            // apart and would wrongly mark an `initialWidth` column as owned
+            col.initWidthOwnership();
         }
 
         // Order from the now-current service cols: auto cols may have been recreated above (their colIds change

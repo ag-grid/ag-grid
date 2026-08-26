@@ -1,4 +1,5 @@
 import type { Column } from './iColumn';
+import type { AgGridCommon } from './iCommon';
 
 interface WidthLimits {
     /** Defines a minimum width for this column (does not override the column minimum width) */
@@ -46,6 +47,17 @@ export interface SizeColumnsToContentColumnLimits extends WidthLimits {
     colId: string;
 }
 
+/** Params for the `shouldAutoSizeColumns` callback of the continuous `fitCellContents` strategy. */
+export interface AutoSizeColumnsTriggerParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** What changed in the grid to make it want to re-size columns. */
+    reason: 'dataChanged' | 'columnsChanged' | 'viewportChanged' | 'gridSizeChanged';
+    /**
+     * All eligible columns — those not owned by the developer or user, and not otherwise excluded.
+     * The grid may only be able to measure the subset of these that is currently rendered.
+     */
+    columns: Column[];
+}
+
 /**
  * Auto-size columns to fit their cell contents.
  *
@@ -53,6 +65,25 @@ export interface SizeColumnsToContentColumnLimits extends WidthLimits {
  */
 export interface SizeColumnsToContentStrategy extends ISizeAllColumnsToContentParams {
     type: 'fitCellContents';
+    /**
+     * If `true`, columns are re-sized to fit their cell contents whenever the data, the displayed columns,
+     * the viewport or the grid size changes — not only after the first data render.
+     *
+     * Columns whose width is owned by the developer or the user are left alone: an explicit `colDef.width`,
+     * a header drag resize, a double-click auto-size, or `applyColumnState` with an explicit `width`.
+     * Use `colDef.initialWidth` instead of `colDef.width` to seed a width that stays eligible for re-sizing.
+     *
+     * Only currently rendered cells can be measured, so scrolling may progressively size columns as more
+     * content is rendered. Flex columns are excluded.
+     * @default false
+     */
+    continuous?: boolean;
+    /**
+     * Called before each continuous auto-size, with the columns eligible to be re-sized and the reason the
+     * grid wants to re-size them. Return `false` to skip this one; the columns are neither measured nor
+     * resized. Has no effect unless `continuous` is `true`.
+     */
+    shouldAutoSizeColumns?: (params: AutoSizeColumnsTriggerParams) => boolean;
     /**
      * If `true`, the Column Menu and Context Menu auto-size actions reuse this strategy's options.
      * @default false

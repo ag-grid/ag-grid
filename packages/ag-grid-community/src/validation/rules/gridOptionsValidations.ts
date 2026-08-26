@@ -103,6 +103,9 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     suppressContentVisibilityAuto: { version: '36.1', message: 'Use `enableContentVisibilityAuto` instead.' },
 });
 
+/** Options that only the `fitCellContents` auto-size strategy supports. */
+const CONTENT_ONLY_STRATEGY_OPTIONS = ['continuous', 'shouldAutoSizeColumns'] as const;
+
 function toConstrainedNum(key: keyof GridOptions, value: any, min: number): string | ValidationWarning | null {
     if (typeof value === 'number' || value == null) {
         if (value == null) {
@@ -802,6 +805,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 }
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
+                }
+                if (type === 'fitCellContents') {
+                    if (autoSizeStrategy.shouldAutoSizeColumns !== undefined && !autoSizeStrategy.continuous) {
+                        return `The \`shouldAutoSizeColumns\` auto-size option only applies when \`continuous\` is true.`;
+                    }
+                } else {
+                    const unsupported = CONTENT_ONLY_STRATEGY_OPTIONS.filter((key) => key in autoSizeStrategy);
+                    if (unsupported.length) {
+                        const names = unsupported.map((key) => `\`${key}\``).join(' and ');
+                        const verb = unsupported.length > 1 ? 'options are' : 'option is';
+                        return `The ${names} auto-size ${verb} only supported by the 'fitCellContents' strategy, but the '${type}' strategy was configured.`;
+                    }
                 }
                 return null;
             },
