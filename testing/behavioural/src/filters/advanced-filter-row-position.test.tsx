@@ -25,7 +25,7 @@ const rowData: Athlete[] = [
 /**
  * The advanced filter bar is absolutely positioned inside the top section (`.ag-grid-pinned-top-rows`),
  * so the only thing stopping the first row rendering behind it is the height the top section reserves
- * for it (`--ag-top-rows-height`). If that stays 0 the bar overlaps the first row.
+ * for it (`--ag-internal-top-rows-height`, set on the viewport). If that stays 0 the bar overlaps the first row.
  */
 const expectTopSectionToReserveAdvancedFilterHeight = async () => {
     // The bar and the header cells are both mounted by the time the grid's layout has settled.
@@ -35,10 +35,10 @@ const expectTopSectionToReserveAdvancedFilterHeight = async () => {
     });
 
     const advancedFilterBar = document.querySelector<HTMLElement>('.ag-advanced-filter-header')!;
-    const topSection = document.querySelector<HTMLElement>('.ag-grid-pinned-top-rows')!;
+    const gridViewport = document.querySelector<HTMLElement>('.ag-grid-viewport')!;
 
     const advancedFilterHeight = Number.parseFloat(advancedFilterBar.style.height);
-    const reservedHeight = Number.parseFloat(topSection.style.getPropertyValue('--ag-top-rows-height'));
+    const reservedHeight = Number.parseFloat(gridViewport.style.getPropertyValue('--ag-internal-top-rows-height'));
 
     expect(advancedFilterHeight).toBeGreaterThan(0);
     expect(reservedHeight).toBe(advancedFilterHeight);

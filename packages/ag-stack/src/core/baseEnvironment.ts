@@ -175,7 +175,7 @@ export abstract class BaseEnvironment<
             return cached;
         }
         const measurement = this.measureSizeEl(variable);
-        if (measurement === 'detached' || measurement === 'no-styles') {
+        if (typeof measurement !== 'number') {
             if (variable.cacheDefault) {
                 this.lastKnownValues.set(variable, variable.defaultValue);
             }
@@ -185,16 +185,20 @@ export abstract class BaseEnvironment<
         return measurement;
     }
 
-    private measureSizeEl(variable: CssVariable<TChangeKeys>): number | 'detached' | 'no-styles' {
+    private measureSizeEl(variable: CssVariable<TChangeKeys>): number | 'detached' | 'no-styles' | 'no-length' {
         const sizeEl = this.getSizeEl(variable);
         if (sizeEl.offsetParent == null) {
             return 'detached';
         }
-        const newSize = sizeEl.offsetWidth;
+        // subtract 1px measurement offset. We add this at apply time to distinguish between 0 and 'none'
+        const newSize = sizeEl.offsetWidth - 1;
         if (newSize === NO_VALUE_SENTINEL) {
             return 'no-styles';
         }
         this.sizesMeasured = true;
+        if (newSize < 0) {
+            return 'no-length';
+        }
         return newSize;
     }
 
@@ -239,7 +243,7 @@ export abstract class BaseEnvironment<
             if (newMeasurement === 'detached' || newMeasurement === 'no-styles') {
                 return;
             }
-            this.lastKnownValues.set(variable, newMeasurement);
+            this.lastKnownValues.set(variable, newMeasurement === 'no-length' ? variable.defaultValue : newMeasurement);
             if (newMeasurement !== lastMeasurement) {
                 lastMeasurement = newMeasurement;
                 this.fireStylesChangedEvent(variable.changeKey);
@@ -258,12 +262,17 @@ export abstract class BaseEnvironment<
                 cssName = cssName.slice(0, -6);
             }
             sizeEl.className = 'ag-measurement-element-border';
+            // add 1px measurement offset to match lengths. The same trick to distinguish 0 and 'none'
+            // does not work for borders, but we still need to compensate for the 1px subtracted at measurement time
+            sizeEl.style.paddingLeft = '1px';
             sizeEl.style.setProperty(
                 '--ag-internal-measurement-border',
                 `var(${cssName}, solid ${NO_VALUE_SENTINEL}px)`
             );
         } else {
-            sizeEl.style.width = `var(${cssName}, ${NO_VALUE_SENTINEL}px)`;
+            // add 1px measurement offset using calc, to distinguish explicit zero (evaluates to 1px width)
+            // from 'none' or non-number value (evaluates to 0px width)
+            sizeEl.style.width = `calc(var(${cssName}, ${NO_VALUE_SENTINEL}px) + 1px)`;
         }
         return cssName;
     }

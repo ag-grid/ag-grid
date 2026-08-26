@@ -7,8 +7,8 @@ import { GridHeaderCtrl } from 'ag-grid-community';
 import { BeansContext } from '../beansContext';
 import HeaderRowsComp from './headerRowsComp';
 
-const GridHeaderComp = ({ eTopSection, eGridViewport }: { eTopSection: HTMLElement; eGridViewport: HTMLElement }) => {
-    const { context, environment } = useContext(BeansContext);
+const GridHeaderComp = ({ eGridViewport }: { eGridViewport: HTMLElement }) => {
+    const { context } = useContext(BeansContext);
 
     const gridHeaderCtrlRef = useRef<GridHeaderCtrl>();
     const cssManager = useRef<CssClassManager>();
@@ -29,7 +29,6 @@ const GridHeaderComp = ({ eTopSection, eGridViewport }: { eTopSection: HTMLEleme
             eGui.current = eRef;
             setHeaderElement(eRef);
             if (!eRef || context.isDestroyed()) {
-                eTopSection.style.removeProperty('--ag-header-rows-height');
                 gridHeaderCtrlRef.current = context.destroyBean(gridHeaderCtrlRef.current);
                 setMounted(false);
                 return;
@@ -39,21 +38,13 @@ const GridHeaderComp = ({ eTopSection, eGridViewport }: { eTopSection: HTMLEleme
 
             const compProxy: IGridHeaderComp = {
                 toggleCss: (name, on) => cssManager.current!.toggleCss(name, on),
-                setHeightAndMinHeight: (height) => {
-                    const borderWidth = environment.getHeaderRowBorderWidth();
-                    const heightWithBorder = height + borderWidth;
-                    eTopSection.style.setProperty('--ag-header-rows-height', `${heightWithBorder}px`);
-                    if (eGui.current) {
-                        eGui.current.style.height = `${heightWithBorder}px`;
-                    }
-                },
             };
 
             gridHeaderCtrlRef.current = context.createBean(new GridHeaderCtrl());
-            gridHeaderCtrlRef.current.setComp(compProxy, eRef);
+            gridHeaderCtrlRef.current.setComp(compProxy, eRef, eGridViewport);
             setMounted(true);
         },
-        [context, environment, eTopSection]
+        [context, eGridViewport]
     );
 
     return (

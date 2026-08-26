@@ -84,6 +84,17 @@ export function _isDomLayout(gos: GridOptionsService, domLayout: DomLayoutType) 
     return gos.get('domLayout') === domLayout;
 }
 
+/**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _canScrollVertically(beans: BeanCollection): boolean {
+    const { gos, environment } = beans;
+    return (
+        _isDomLayout(gos, 'normal') ||
+        (_isDomLayout(gos, 'autoHeight') && environment.getAutoHeightMaxBodyHeight() != null)
+    );
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isRowSelection(gos: GridOptionsService): boolean {
     return _getRowSelectionMode(gos) !== undefined;

@@ -29,16 +29,10 @@ export class GridHeaderComp extends BeanStub {
 
         const compProxy: IGridHeaderComp = {
             toggleCss: (cssClassName, on) => this.eHeaderWrapper.classList.toggle(cssClassName, on),
-            setHeightAndMinHeight: (height) => {
-                const borderWidth = this.beans.environment.getHeaderRowBorderWidth();
-                const heightWithBorder = height + borderWidth;
-                this.eTopSection.style.setProperty('--ag-header-rows-height', `${heightWithBorder}px`);
-                this.eHeaderWrapper.style.height = `${heightWithBorder}px`;
-            },
         };
 
         this.gridHeaderCtrl = this.createManagedBean(new GridHeaderCtrl());
-        this.gridHeaderCtrl.setComp(compProxy, this.eHeaderWrapper);
+        this.gridHeaderCtrl.setComp(compProxy, this.eHeaderWrapper, this.eGridViewport);
 
         this.createManagedBean(
             new HeaderRowsComp(this.eHeaderWrapper, this.eGridViewport, (elements) =>
@@ -49,7 +43,6 @@ export class GridHeaderComp extends BeanStub {
 
     public override destroy(): void {
         this.gridHeaderCtrl = undefined;
-        this.eTopSection.style.removeProperty('--ag-header-rows-height');
         this.eHeaderWrapper.remove();
         super.destroy();
     }
