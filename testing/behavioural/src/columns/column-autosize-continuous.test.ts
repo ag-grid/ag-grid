@@ -253,6 +253,73 @@ describe('Continuous Column Autosize', () => {
         });
     });
 
+    describe('all strategy types', () => {
+        test('`fitProvidedWidth` re-distributes the provided width on a data change', async () => {
+            const api = createGrid({
+                columnDefs: [
+                    { colId: 'owned', field: 'owned', width: 200 },
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                ],
+                autoSizeStrategy: { type: 'fitProvidedWidth', width: 800, continuous: true },
+            });
+            await waitFor(() => expect(widthOf(api, 'a') + widthOf(api, 'b')).toBe(600));
+
+            // the owned column is held out of the distribution and stays exactly where the colDef put it
+            expect(widthOf(api, 'owned')).toBe(200);
+
+            api.setColumnWidths([
+                { key: 'a', newWidth: 100 },
+                { key: 'b', newWidth: 100 },
+            ]);
+            api.setGridOption('rowData', [{ owned: 'x', a: 'y', b: 'z' }]);
+
+            await waitFor(() => expect(widthOf(api, 'a') + widthOf(api, 'b')).toBe(600));
+            expect(widthOf(api, 'owned')).toBe(200);
+        });
+
+        test('`fitGridWidth` re-runs on a data change and holds owned columns fixed', async () => {
+            const api = createGrid({
+                columnDefs: [
+                    { colId: 'owned', field: 'owned', width: 200 },
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                ],
+                autoSizeStrategy: { type: 'fitGridWidth', continuous: true },
+            });
+            await waitFor(() => expect(widthOf(api, 'a')).not.toBe(200));
+
+            const distributed = widthOf(api, 'a') + widthOf(api, 'b');
+            expect(widthOf(api, 'owned')).toBe(200);
+
+            api.setColumnWidths([
+                { key: 'a', newWidth: 50 },
+                { key: 'b', newWidth: 50 },
+            ]);
+            api.setGridOption('rowData', [{ owned: 'x', a: 'y', b: 'z' }]);
+
+            await waitFor(() => expect(widthOf(api, 'a') + widthOf(api, 'b')).toBe(distributed));
+            expect(widthOf(api, 'owned')).toBe(200);
+        });
+
+        test('the width-distribution strategies do not re-run on a horizontal scroll', async () => {
+            const reasons: string[] = [];
+            createGrid({
+                autoSizeStrategy: {
+                    type: 'fitGridWidth',
+                    continuous: true,
+                    shouldAutoSizeColumns: ({ reason }) => {
+                        reasons.push(reason);
+                        return true;
+                    },
+                },
+            });
+            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
+
+            expect(reasons).not.toContain('viewportChanged');
+        });
+    });
+
     describe('shouldAutoSizeColumns callback', () => {
         test('receives the reason, the eligible columns and the api', async () => {
             const seen: AutoSizeColumnsTriggerParams[] = [];
@@ -392,6 +459,30 @@ describe('Continuous Column Autosize', () => {
             await expectWidth(api, 'listed', MEASURED_WIDTH);
 
             expect(widthOf(api, 'unlisted')).toBe(START_WIDTH);
+        });
+
+        test('`suppressSizeToFit` columns are excluded from the width-distribution strategies', async () => {
+            const seen: string[][] = [];
+            const api = createGrid({
+                columnDefs: [
+                    { colId: 'pinnedWidth', field: 'pinnedWidth', suppressSizeToFit: true },
+                    { colId: 'eligible', field: 'eligible' },
+                ],
+                autoSizeStrategy: {
+                    type: 'fitProvidedWidth',
+                    width: 800,
+                    continuous: true,
+                    shouldAutoSizeColumns: ({ columns }) => {
+                        seen.push(columns.map((col) => col.getColId()));
+                        return true;
+                    },
+                },
+            });
+
+            api.setGridOption('rowData', [{ pinnedWidth: 'a', eligible: 'b' }]);
+            await waitFor(() => expect(seen.length).toBeGreaterThan(0));
+
+            expect(seen[seen.length - 1]).toEqual(['eligible']);
         });
 
         test('an empty grid is safe and leaves widths untouched', async () => {
