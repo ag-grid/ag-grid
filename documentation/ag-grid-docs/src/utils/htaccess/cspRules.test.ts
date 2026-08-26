@@ -249,11 +249,11 @@ describe('cspRules', () => {
             expect(site).toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='"); // webhook POST (live)
         });
 
-        it('also authorises the previewed capturing-phase webhook listener, pending publish', () => {
-            // GTM preview "env-55" trials a version of the webhook tag whose submit listener
-            // adds a third `true` argument to addEventListener (capturing phase) — otherwise
-            // byte-identical to the live tag. Kept alongside the live hash above until the
-            // change is published and the old one is confirmed unused. AG-3390.
+        it('also authorises the updated capturing-phase webhook listener', () => {
+            // The submit listener now adds a third `true` argument to addEventListener
+            // (capturing phase) — otherwise byte-identical to the live tag above. Kept
+            // alongside it until the rollout is complete and the old hash is confirmed
+            // unused. AG-3390.
             const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
             expect(site).toContain("'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='");
         });

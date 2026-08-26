@@ -152,12 +152,10 @@ const ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT = 'if (window.enzuzoGtmConsent) { window.
 const GTM_UTM_CAPTURE_HASH = "'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='";
 const GTM_UTM_WEBHOOK_HASH = "'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='";
 
-// The GTM UTM-webhook tag above is being trialled in GTM preview (container version "env-55",
-// not yet published): the submit listener adds a third `true` argument to addEventListener,
-// switching it to the capturing phase — otherwise byte-identical, confirmed by diffing the
-// live vs. preview gtm.js payloads. Staging renders whichever version the visitor's GTM
-// session is previewing, so both hashes need to stay allowed until the change is published
-// and the old one is confirmed unused. AG-3390.
+// An updated version of the GTM UTM-webhook tag above: the submit listener adds a third
+// `true` argument to addEventListener, switching it to the capturing phase — otherwise
+// byte-identical to GTM_UTM_WEBHOOK_HASH. Kept alongside it until the rollout is complete
+// and the old hash is confirmed unused. AG-3390.
 const GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH = "'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='";
 
 const SITE_SCRIPT_HASHES = [
