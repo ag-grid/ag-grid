@@ -20,7 +20,7 @@ const cssVariable = <K extends keyof CssChangeKeys>(
     cacheDefault?: boolean
 ): CssVariable<CssChangeKeys> => ({ changeKey, type, defaultValue, noWarn, cacheDefault });
 
-const AUTO_HEIGHT_MAX_BODY_HEIGHT = cssVariable('autoHeightMaxBodyHeight', 'length', 0, true);
+const AUTO_HEIGHT_MAX_BODY_HEIGHT = cssVariable('autoHeightMaxBodyHeight', 'length', Infinity, true);
 const CELL_HORIZONTAL_PADDING = cssVariable('cellHorizontalPadding', 'length', 16);
 const INDENTATION_LEVEL = cssVariable('indentationLevel', 'length', 0, true, true);
 const ROW_GROUP_INDENT_SIZE = cssVariable('rowGroupIndentSize', 'length', 0);
@@ -82,8 +82,10 @@ export class Environment
         return this.getCSSVariablePixelValue(HEADER_HEIGHT);
     }
 
-    public getAutoHeightMaxBodyHeight(): number {
-        return this.getCSSVariablePixelValue(AUTO_HEIGHT_MAX_BODY_HEIGHT);
+    /** Null if there is no maximum. */
+    public getAutoHeightMaxBodyHeight(): number | null {
+        const maxHeight = this.getCSSVariablePixelValue(AUTO_HEIGHT_MAX_BODY_HEIGHT);
+        return maxHeight < Infinity ? maxHeight : null;
     }
 
     public getDefaultCellHorizontalPadding(): number {

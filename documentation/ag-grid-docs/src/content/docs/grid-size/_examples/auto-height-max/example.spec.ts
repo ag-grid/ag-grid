@@ -43,6 +43,16 @@ test.agExample(import.meta, () => {
         await expectGridBodyHeight(page, 50 * ROW_HEIGHT);
         await expect(page.locator('.ag-grid-scrolling-container .ag-row')).toHaveCount(50);
     });
+
+    test.eachFramework('caps the body at zero and still virtualises the rows', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+        await setControls(page, { rows: 50, minBodyHeight: 0, maxBodyHeight: 0 });
+
+        await expect(page.locator('.ag-body-vertical-scroll')).toBeVisible();
+        await expectGridBodyHeight(page, 0);
+        expect(await page.locator('.ag-grid-scrolling-container .ag-row').count()).toBeLessThan(25);
+    });
 });
 
 async function setControls(

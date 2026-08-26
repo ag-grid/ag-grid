@@ -90,7 +90,8 @@ export function _isDomLayout(gos: GridOptionsService, domLayout: DomLayoutType) 
 export function _canScrollVertically(beans: BeanCollection): boolean {
     const { gos, environment } = beans;
     return (
-        _isDomLayout(gos, 'normal') || (_isDomLayout(gos, 'autoHeight') && environment.getAutoHeightMaxBodyHeight() > 0)
+        _isDomLayout(gos, 'normal') ||
+        (_isDomLayout(gos, 'autoHeight') && environment.getAutoHeightMaxBodyHeight() != null)
     );
 }
 
