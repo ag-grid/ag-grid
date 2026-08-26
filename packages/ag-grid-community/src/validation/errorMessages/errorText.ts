@@ -950,6 +950,9 @@ export const AG_GRID_ERRORS = {
         `ignoring \`defaultOption\` \`${defaultOption}\` as it is not one of the filter's \`filterOptions\`` as const,
     327: ({ pattern }: { pattern: string }) =>
         `ignoring \`filterParams.allowedCharPattern\` \`${pattern}\` as it does not compile to a character pattern` as const,
+    328: ({ rowModel }: { rowModel: string }) =>
+        `continuous \`fitCellContents\` auto-sizing is not supported by the '${rowModel}' row model, so it has been ignored` as const,
+    329: ({ error }: { error: unknown }) => ['`shouldAutoSizeColumns` threw, so the auto-size was skipped:', error],
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -965,7 +968,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 327;
+export const MAX_ERROR_ID = 329;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

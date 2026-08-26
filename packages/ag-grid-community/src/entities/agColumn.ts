@@ -130,6 +130,8 @@ export class AgColumn<TValue = any>
     public actualWidth: number = 0;
     public minWidth: number = 0;
     private maxWidth: number = 0;
+    /** Width set by a deliberate user resize, so continuous auto-sizing must not change it. */
+    private userSized: boolean = false;
     public flex: number | null = null;
     public pinned: ColumnPinnedType = null;
     public left: number | null = null;
@@ -358,6 +360,11 @@ export class AgColumn<TValue = any>
 
     private initTooltip(): void {
         this.beans.tooltipSvc?.initCol(this);
+    }
+
+    /** Kept apart from `resetActualWidth`, which `sizeColumnsToFit` also uses and must not change ownership. */
+    public resetWidthOwnership(): void {
+        this.userSized = false;
     }
 
     public resetActualWidth(source: ColumnEventType): void {
@@ -745,6 +752,14 @@ export class AgColumn<TValue = any>
         return this.actualWidth;
     }
 
+    public isUserSized(): boolean {
+        return this.userSized;
+    }
+
+    public setUserSized(userSized: boolean): void {
+        this.userSized = userSized;
+    }
+
     public getAutoHeaderHeight(): number | null {
         return this.autoHeaderHeight;
     }
@@ -781,6 +796,11 @@ export class AgColumn<TValue = any>
     public setActualWidth(actualWidth: number, source: ColumnEventType, silent: boolean = false): void {
         actualWidth = Math.max(actualWidth, this.minWidth);
         actualWidth = Math.min(actualWidth, this.maxWidth);
+        // every user-driven resize arrives with this source and takes ownership. Not widened to all
+        // sources: flex, `sizeColumnsToFit` and the auto-size API must leave ownership alone.
+        if (source === 'uiColumnResized') {
+            this.userSized = true;
+        }
         if (this.actualWidth !== actualWidth) {
             // disable flex for this column if it was manually resized.
             this.actualWidth = actualWidth;

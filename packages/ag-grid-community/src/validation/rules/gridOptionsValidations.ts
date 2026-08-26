@@ -803,6 +803,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
                 }
+                if (autoSizeStrategy.shouldAutoSizeColumns !== undefined && !autoSizeStrategy.continuous) {
+                    return `The \`shouldAutoSizeColumns\` auto-size option only applies when \`continuous\` is true.`;
+                }
                 return null;
             },
         },
