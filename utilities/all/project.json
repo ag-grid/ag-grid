@@ -146,13 +146,7 @@
     },
     "dev": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "startElapsedBuildTime",
-        "^build:types",
-        "^build:package",
-        "^build:umd",
-        "generate-doc-references"
-      ],
+      "dependsOn": ["startElapsedBuildTime", "^build:types", "^build:package", "^build:umd", "generate-doc-references"],
       "inputs": [],
       "outputs": [],
       "cache": false,
