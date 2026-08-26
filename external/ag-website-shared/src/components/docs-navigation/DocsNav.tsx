@@ -61,7 +61,7 @@ function Item({ itemData, framework, pageName }: { itemData?: any; framework?: F
     return (
         isCorrectFramework && (
             <>
-                <a href={linkUrl} className={className} {...(isExternalURL && { target: '_blank' })}>
+                <a href={linkUrl} tabIndex={0} className={className} {...(isExternalURL && { target: '_blank' })}>
                     {itemData.icon && <Icon name={itemData.icon} svgClasses={styles.itemIcon} />}
 
                     <span>
@@ -167,7 +167,7 @@ function Group({
 
     return (
         <div ref={groupRef} className={classnames(styles.group, isOpen ? styles.isOpen : '')}>
-            <button className={classnames('button-style-none', styles.groupTitle)} onClick={handleClick}>
+            <button tabIndex={0} className={classnames('button-style-none', styles.groupTitle)} onClick={handleClick}>
                 <Icon name="chevronRight" svgClasses={styles.groupChevron} />
 
                 <span>{groupData.title}</span>
@@ -266,7 +266,9 @@ export function DocsNav({
                 <div className={styles.docsNavInner}>
                     {showWhatsNew && (
                         <div className={styles.whatsNewLink}>
-                            <a href={urlWithBaseUrl('/whats-new')}>What's New</a>
+                            <a tabIndex={0} href={urlWithBaseUrl('/whats-new')}>
+                                What's New
+                            </a>
                         </div>
                     )}
 
