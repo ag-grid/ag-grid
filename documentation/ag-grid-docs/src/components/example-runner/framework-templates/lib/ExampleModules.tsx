@@ -1,10 +1,13 @@
 import type { InternalFramework } from '@ag-grid-types';
-import { toModuleFileName } from '@utils/exampleModules/transformExampleModule';
+import {
+    ExampleRunnerCall,
+    ExampleRunnerClient,
+} from '@ag-website-shared/components/example-runner/components/ExampleRunnerClient';
+import { toModuleFileName } from '@ag-website-shared/components/example-runner/utils/transformExampleModule';
 import { pathJoin } from '@utils/pathJoin';
 
 import { BrowserTranspiler } from './BrowserTranspiler';
 import { ExampleImportMap } from './ExampleImportMap';
-import { ExampleRunnerCall, ExampleRunnerClient } from './ExampleRunnerClient';
 import { SeedRandom } from './SeedRandom';
 
 interface Props {

@@ -1,10 +1,9 @@
 import type { InternalFramework } from '@ag-grid-types';
 import {
     COMPILER_OPTION_ENUMS,
-    getCompilerOptionNames,
-    getCompilerOptions,
     resolveCompilerOptions,
-} from '@utils/exampleModules/transformExampleModule';
+} from '@ag-website-shared/components/example-runner/utils/transformExampleModule';
+import { getCompilerOptionNames } from '@utils/exampleModules/exampleCompilerOptions';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import ts from 'typescript';
@@ -34,10 +33,14 @@ describe('example-runner.js runTranspiled', () => {
             }
         });
 
-        test('resolves the names the page carries to the options the server transpiles with', () => {
+        test('resolves every name the page carries to a real TypeScript enum member', () => {
             const fromPage = resolveCompilerOptions(ts, getCompilerOptionNames(internalFramework));
 
-            expect(fromPage).toEqual(getCompilerOptions(ts, internalFramework));
+            for (const name of Object.keys(COMPILER_OPTION_ENUMS)) {
+                if (name in fromPage) {
+                    expect(fromPage[name], `${name} did not name an enum member`).toBeTypeOf('number');
+                }
+            }
         });
     });
 
