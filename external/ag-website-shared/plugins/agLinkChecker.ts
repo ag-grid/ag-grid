@@ -10,6 +10,12 @@ const { TestSuites, TestSuite, TestCase } = junitProcessor;
 type Options = {
     include: boolean;
     prefix?: string;
+    /**
+     * Framework agnostic redirect pages, eg `/r/{page}`, which forward the visitor's query
+     * and fragment on to `/{framework}/{page}`. Their own markup is a redirecting stub, so
+     * anchor links to them are validated against the framework pages they forward to.
+     */
+    frameworkRedirect?: { path: string; frameworks: readonly string[] };
 };
 
 const IGNORED_PATHS = ['/archive'];
@@ -80,7 +86,7 @@ function outputJunitReport(validationResults: any) {
 const checkLinks = async (dir: string, files: string[], options: Options) => {
     const anchors = new Set<string>();
     const linksToValidate: Record<string, { filePaths: Set<string> }> = {};
-    const { prefix } = options;
+    const { prefix, frameworkRedirect } = options;
 
     for (let i = 0; i < files.length; i++) {
         const filePath = files[i];
@@ -177,6 +183,25 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
         }
     }
 
+    const hasAnchor = (link: string) => anchors.has(link) || anchors.has(link.replace('#', '/#'));
+
+    /**
+     * The framework specific equivalents of a link to a framework agnostic redirect page,
+     * which sends the visitor on to whichever framework they last used, fragment included.
+     * Empty for any other link, and when the site has no such pages.
+     */
+    const frameworkRedirectLinks = (link: string): string[] => {
+        if (frameworkRedirect == null) {
+            return [];
+        }
+        const { path, frameworks } = frameworkRedirect;
+        const redirectPrefix = `/${path}/`;
+        if (!link.startsWith(redirectPrefix)) {
+            return [];
+        }
+        return frameworks.map((framework) => `/${framework}/${link.slice(redirectPrefix.length)}`);
+    };
+
     // for junit reporting
     const validationResults = {};
 
@@ -225,8 +250,10 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
             validationResults[link] = { error };
             return;
         } else {
-            // Check if the hash exists in the file
-            if (!anchors.has(linkWithoutPrefix) && !anchors.has(linkWithoutPrefix.replace('#', '/#'))) {
+            // Check if the hash exists in the file, or in the pages a framework redirect
+            // page forwards the fragment on to
+            const candidates = [linkWithoutPrefix, ...frameworkRedirectLinks(linkWithoutPrefix)];
+            if (!candidates.some(hasAnchor)) {
                 errors.push(
                     `Link to ${originalLink} could not be resolved in (${filePathsString(filePaths, options)}).`
                 );
