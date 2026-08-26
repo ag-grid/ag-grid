@@ -12,6 +12,11 @@ import versionsData from '../../content/versions/ag-grid-versions.json';
 const FRAMEWORK = 'javascript';
 const NUM_WHATS_NEW = 3;
 
+interface SecondaryCta {
+    title: string;
+    url: string;
+    isFramework?: boolean;
+}
 interface HomepageSection {
     id: string;
     tag?: string;
@@ -22,6 +27,7 @@ interface HomepageSection {
     ctaTitle?: string;
     ctaUrl?: string;
     ctaUrlIsBaseUrl?: boolean;
+    secondaryCta?: SecondaryCta;
 }
 interface FaqItem {
     question: string;
@@ -36,16 +42,25 @@ interface VersionEntry {
     highlights?: VersionHighlight[];
 }
 
-function resolveCtaUrl(section: HomepageSection, siteRoot?: string): string | undefined {
-    if (!section.ctaUrl) {
+function resolveCtaUrl(ctaUrl: string | undefined, siteRoot?: string): string | undefined {
+    if (!ctaUrl) {
         return undefined;
     }
     // Framework CTAs store a './'-relative path resolved by the grid framework prefix at render;
     // the rest are already root-relative.
-    const url = section.ctaUrl.startsWith('./')
-        ? urlWithPrefix({ framework: FRAMEWORK, url: section.ctaUrl })
-        : section.ctaUrl;
+    const url = ctaUrl.startsWith('./') ? urlWithPrefix({ framework: FRAMEWORK, url: ctaUrl }) : ctaUrl;
     return toAbsoluteUrl(url, siteRoot);
+}
+
+/** The section's CTA links in the order the page renders them: main CTA, then any secondary CTA. */
+function ctaLinks(section: HomepageSection, siteRoot?: string): string[] {
+    const mainUrl = resolveCtaUrl(section.ctaUrl, siteRoot);
+    const { secondaryCta } = section;
+
+    return [
+        ...(mainUrl && section.ctaTitle ? [`[${section.ctaTitle}](${mainUrl})`] : []),
+        ...(secondaryCta ? [`[${secondaryCta.title}](${resolveCtaUrl(secondaryCta.url, siteRoot)})`] : []),
+    ];
 }
 
 function whatsNewSection(): string {
@@ -90,9 +105,9 @@ function sectionBlock(section: HomepageSection, siteRoot?: string): string {
     if (subHeading) {
         parts.push(subHeading);
     }
-    const ctaUrl = resolveCtaUrl(section, siteRoot);
-    if (ctaUrl && section.ctaTitle) {
-        parts.push(`[${section.ctaTitle}](${ctaUrl})`);
+    const ctas = ctaLinks(section, siteRoot);
+    if (ctas.length) {
+        parts.push(ctas.join(' | '));
     }
     if (section.id === 'whats-new') {
         parts.push(whatsNewSection());
@@ -119,6 +134,8 @@ export function buildHomepageMarkdown({ siteRoot }: { siteRoot?: string } = {}):
     ].join('\n');
 
     const heroLinks = [
+        `[${hero.freeTrialText}](${toAbsoluteUrl(urlWithPrefix({ framework: FRAMEWORK, url: hero.freeTrialUrl }), siteRoot)})`,
+        `[${hero.buyNowText}](${toAbsoluteUrl(urlWithPrefix({ framework: FRAMEWORK, url: hero.buyNowUrl }), siteRoot)})`,
         `[${hero.seeDemosText}](${toAbsoluteUrl(urlWithPrefix({ framework: FRAMEWORK, url: hero.seeDemosUrl }), siteRoot)})`,
         `[${hero.githubText}](${hero.githubUrl})`,
     ].join(' | ');

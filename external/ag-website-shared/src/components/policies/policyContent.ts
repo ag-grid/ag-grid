@@ -20,12 +20,6 @@ export interface PolicyContent {
     meta: string[];
     /** Introductory paragraphs, as inline HTML (`<strong>` only). */
     intro: string[];
-    /** Framing for a data-driven section rendered below the policy body (the cookie inventory). */
-    cookiesSection?: {
-        id: string;
-        heading: string;
-        note: string;
-    };
 }
 
 export const POLICY_CONTENT = {
@@ -43,22 +37,17 @@ export const POLICY_CONTENT = {
             'We strongly recommend you read our policy and understand what we collect, how we collect it, what we do with it, how we protect it, and your rights regarding information, <strong>before</strong> you use or access any of our services.',
         ],
     },
+    /**
+     * The cookies page renders the Enzuzo policy embed, which supplies its own heading, body and
+     * cookie inventory (AG-18194) — so unlike the other policies, only the document metadata here
+     * reaches the page. `heading` is used by the `/cookies.md` twin.
+     */
     cookies: {
-        heading: 'Cookies Policy',
+        heading: '{name} Cookies Policy',
         metaTitle: 'Cookies Policy',
         description: 'This page outlines our policy in relation to the cookies that we collect on our website.',
-        meta: ['Effective Date: May 17, 2018'],
+        meta: [],
         intro: [],
-        /**
-         * The cookie inventory rendered below the policy body, from
-         * `@ag-website-shared/content/policies/cookies-data-*.json` (AG-18105). Shared so the
-         * `CookiesTable` section on the page and the `/cookies.md` twin carry the same framing.
-         */
-        cookiesSection: {
-            id: 'cookies-we-use',
-            heading: 'Cookies We Use',
-            note: 'The cookies listed below were last reviewed on 7 August 2026.',
-        },
     },
     'modern-slavery': {
         heading: '{name} Modern Slavery and Human Trafficking Statement',

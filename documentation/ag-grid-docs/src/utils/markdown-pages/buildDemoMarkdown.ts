@@ -1,4 +1,5 @@
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
+import { VIDEO_TOUR_TEXT, VIDEO_TOUR_URL } from '@components/demos/demosData';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 import demosData from '../../content/demos/demos.json';
@@ -32,6 +33,7 @@ export function buildDemoMarkdown({ demo, siteRoot }: { demo: DemoName; siteRoot
         [
             `[See on GitHub](${content.githubUrl})`,
             `[View the demo](${toAbsoluteUrl(urlWithBaseUrl(`/example-${demo}/`), siteRoot)})`,
+            `[${VIDEO_TOUR_TEXT}](${VIDEO_TOUR_URL})`,
             `[Contact us](${toAbsoluteUrl(urlWithBaseUrl('/contact/'), siteRoot)})`,
         ].join(' | '),
     ];
