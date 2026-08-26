@@ -134,6 +134,13 @@
     opacity: 0.5;
     pointer-events: none;
     inset-inline-start: var(--ag-spacing);
+
+    /*
+     * The icon precedes the input in the DOM and `.ag-input-wrapper` is itself positioned, so
+     * without this the input's opaque background paints over the glyph. The Find item hid the
+     * problem by making its input transparent; the Quick Filter item showed no icon at all.
+     */
+    z-index: 1;
 }
 
 .ag-toolbar-input-field {
@@ -148,6 +155,17 @@
     border-radius: var(--ag-input-border-radius);
     width: 100%;
     padding-block: calc(var(--ag-spacing) * 0.5);
+}
+
+/*
+ * The leading gap that keeps the text clear of the search icon needs a second class to survive
+ * the cascade: the shared input-style part sets `padding-inline` on `.ag-input-field-input` at
+ * the same (0,1,0) specificity, and its stylesheet is emitted after this one. The legacy
+ * stylesheet climbs the same ladder for the same reason (`internal/base/parts/_toolbar.scss`).
+ */
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar-input .ag-toolbar-input-field {
     padding-inline-start: calc(var(--ag-icon-size) + var(--ag-spacing) * 2);
 }
 
