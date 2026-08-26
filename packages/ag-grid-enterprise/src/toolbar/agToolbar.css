@@ -214,7 +214,7 @@
     border: var(--ag-input-focus-border);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity, no-descending-specificity */
 .ag-toolbar-find .ag-toolbar-input-field {
     border: none;
     background-color: transparent;
