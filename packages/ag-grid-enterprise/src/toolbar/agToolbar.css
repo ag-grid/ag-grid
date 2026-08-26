@@ -136,11 +136,6 @@
     inset-inline-start: var(--ag-spacing);
 }
 
-/*
- * Specificity is deliberately 2 classes: the input also carries `.ag-input-field-input`, whose
- * theming rule sets the `padding-inline` shorthand and is injected after this file — at equal
- * specificity that shorthand wipes the icon gutter below and the placeholder runs under the glyph.
- */
 /* stylelint-disable-next-line selector-max-specificity */
 .ag-toolbar-input .ag-toolbar-input-field {
     color: var(--ag-text-color);
