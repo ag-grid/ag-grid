@@ -14,9 +14,16 @@ test.agExample(import.meta, () => {
         const rendered = await readCount(page);
         expect(rendered).toBeGreaterThan(1);
         expect(rendered).toBeLessThan(25);
+
+        // Row heights are estimated while the grid is capped, so getRowHeight is not asked for every row.
+        expect(await readNumber(page, '#heightCalls')).toBeLessThan(200);
     });
 });
 
 async function readCount(page: Page) {
-    return Number(await page.locator('#count').textContent());
+    return readNumber(page, '#count');
+}
+
+async function readNumber(page: Page, selector: string) {
+    return Number(await page.locator(selector).textContent());
 }

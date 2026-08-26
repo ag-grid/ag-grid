@@ -16,6 +16,8 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const ROW_COUNT = 200;
 
+let getRowHeightCalls = 0;
+
 const gridOptions: GridOptions = {
     theme: themeQuartz.withParams({
         autoHeightMinBodyHeight: 0,
@@ -25,6 +27,10 @@ const gridOptions: GridOptions = {
     columnDefs: [{ field: 'id' }],
     defaultColDef: { flex: 1 },
     rowData: Array.from({ length: ROW_COUNT }, (_, i) => ({ id: 'D' + (1000 + i) })),
+    getRowHeight: () => {
+        getRowHeightCalls++;
+        return 25;
+    },
 };
 
 // The container never enters the document, so the grid has nothing to measure.
@@ -36,4 +42,5 @@ createGrid(eGridDiv, gridOptions);
 function onMeasure() {
     const rendered = eGridDiv.querySelectorAll('.ag-grid-scrolling-container .ag-row').length;
     document.querySelector<HTMLElement>('#count')!.textContent = `${rendered}`;
+    document.querySelector<HTMLElement>('#heightCalls')!.textContent = `${getRowHeightCalls}`;
 }
