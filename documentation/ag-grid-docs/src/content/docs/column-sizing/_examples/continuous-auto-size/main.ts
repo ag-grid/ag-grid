@@ -21,7 +21,7 @@ interface IRow {
 }
 
 const columnDefs: ColDef<IRow>[] = [
-    { field: 'athlete', width: 150 },
+    { field: 'athlete', width: 150, suppressAutoSize: true },
     { field: 'country', initialWidth: 120 },
     { field: 'sport' },
 ];

@@ -130,7 +130,7 @@ export class AgColumn<TValue = any>
     public actualWidth: number = 0;
     public minWidth: number = 0;
     private maxWidth: number = 0;
-    /** Width explicitly owned by the developer or user, so continuous auto-sizing must not change it. */
+    /** Width set by a deliberate user resize, so continuous auto-sizing must not change it. */
     private userSized: boolean = false;
     public flex: number | null = null;
     public pinned: ColumnPinnedType = null;
@@ -311,12 +311,7 @@ export class AgColumn<TValue = any>
             // Read `flex` after the state update so a flex→fixed switch applies before width.
             const colFlex = this.flex;
             if (colFlex == null || colFlex <= 0) {
-                const mergedWidth = merged.width;
-                // an explicit `width` re-establishes ownership; its absence leaves ownership alone
-                if (mergedWidth != null) {
-                    this.userSized = true;
-                }
-                this.setActualWidth(mergedWidth ?? this.actualWidth, source);
+                this.setActualWidth(merged.width ?? this.actualWidth, source);
             }
         }
     }
@@ -340,7 +335,6 @@ export class AgColumn<TValue = any>
         this.initState();
         this.initMinAndMaxWidths();
         this.resetActualWidth('gridInitializing');
-        this.initWidthOwnership();
         this.initDotNotation();
         this.initTooltip();
     }
@@ -369,8 +363,8 @@ export class AgColumn<TValue = any>
     }
 
     /** Kept apart from `resetActualWidth`, which `sizeColumnsToFit` also uses and must not change ownership. */
-    public initWidthOwnership(): void {
-        this.userSized = this.colDef.width != null;
+    public resetWidthOwnership(): void {
+        this.userSized = false;
     }
 
     public resetActualWidth(source: ColumnEventType): void {

@@ -118,9 +118,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public autoSizeCols(paramsInput: AutoSizeColumnParams): void {
-        this.autoSizeColsAsync(this.withUiActionStrategyParams(paramsInput)).then((columnsAutoSized) =>
-            dispatchColumnResizedEvent(this.beans.eventSvc, Array.from(columnsAutoSized), true, 'autosizeColumns')
+        this.autoSizeColsAsync(this.withUiActionStrategyParams(paramsInput)).then((cols) =>
+            this.dispatchAutoSized(cols)
         );
+    }
+
+    private dispatchAutoSized(columnsAutoSized: Set<AgColumn>): void {
+        dispatchColumnResizedEvent(this.beans.eventSvc, Array.from(columnsAutoSized), true, 'autosizeColumns');
     }
 
     /**
@@ -605,9 +609,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }
             const type = autoSizeStrategy.type;
             if (this.continuousStrategy) {
-                // ownership must hold from the first pass, else a `colDef.width` is distributed away before
-                // continuous mode starts protecting it
-                this.reapplyStrategy(autoSizeStrategy, this.getAutoSizeCandidates(autoSizeStrategy));
+                this.runContinuousNow('dataChanged');
             } else if (type === 'fitGridWidth') {
                 const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = autoSizeStrategy;
                 const columnLimits = propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
@@ -637,9 +639,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             const source = 'autosizeColumns';
 
             if (this.continuousStrategy) {
-                // ownership must hold from the first pass, else `colDef.width` is measured away before
-                // continuous mode starts protecting it
-                this.autoSizeCols({ ...params, source, colKeys: this.getAutoSizeCandidates(strategy) });
+                this.runContinuousNow('dataChanged');
             } else if (colKeys) {
                 this.autoSizeCols({ ...params, source, colKeys });
             } else {
@@ -713,26 +713,33 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     private runContinuousAutoSize(): void {
+        if (!this.pendingReasons?.size) {
+            return;
+        }
+        const pendingReasons = this.pendingReasons;
+        this.pendingReasons = null;
+        this.runContinuousNow(CONTINUOUS_REASON_PRIORITY.find((candidate) => pendingReasons.has(candidate))!);
+    }
+
+    /**
+     * The one guarded path to a continuous re-size: the initial strategy pass uses it too, so the callback
+     * gets to veto that pass and it cannot overlap a trigger that has already started one.
+     */
+    private runContinuousNow(reason: AutoSizeReason): void {
         const strategy = this.continuousStrategy;
-        if (!strategy || this.continuousRunning || !this.pendingReasons?.size) {
+        if (!strategy || this.continuousRunning) {
             return;
         }
 
         // an unlaid-out grid measures nothing, so drop the trigger rather than churning until it has a size
         if (getAvailableWidth(this.beans) <= 0) {
-            this.pendingReasons = null;
             return;
         }
-
-        const pendingReasons = this.pendingReasons;
-        this.pendingReasons = null;
 
         const candidates = this.getAutoSizeCandidates(strategy);
         if (!candidates.length) {
             return;
         }
-
-        const reason = CONTINUOUS_REASON_PRIORITY.find((candidate) => pendingReasons.has(candidate))!;
         const callback = strategy.shouldAutoSizeColumns;
         if (callback) {
             let shouldAutoSize: boolean;
@@ -768,7 +775,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 columnLimits,
                 scaleUpToFitGridWidth,
                 source: 'autosizeColumns',
-            });
+            }).then((cols) => this.dispatchAutoSized(cols));
         }
 
         if (type === 'fitProvidedWidth') {

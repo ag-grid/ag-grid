@@ -499,9 +499,9 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         for (let i = 0, len = primaryCols.length; i < len; ++i) {
             const col = primaryCols[i];
             col.pivotSort = _resolvePivotSortFromColDef(col.colDef);
-            // the state above carries `width ?? initialWidth`, so `applyFieldState` cannot tell them
-            // apart and would wrongly mark an `initialWidth` column as owned
-            col.initWidthOwnership();
+            // the state above carries the colDef width, which `applyFieldState` would otherwise read as a
+            // deliberate resize
+            col.resetWidthOwnership();
         }
 
         // Order from the now-current service cols: auto cols may have been recreated above (their colIds change

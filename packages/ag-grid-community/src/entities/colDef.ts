@@ -1059,16 +1059,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Initial width in pixels for the cell.
      * If no width or flex properties set, cell width will default to 200 pixels.
-     *
-     * This width is owned by the application, so continuous `fitCellContents` auto-sizing leaves it alone.
-     * Use `initialWidth` to seed a width that stays eligible for auto-sizing.
      */
     width?: number;
     /**
      * Same as `width`, except only applied when creating a new column. Not applied when updating column definitions.
-     *
-     * Unlike `width`, this only seeds the width, so the column stays eligible for continuous
-     * `fitCellContents` auto-sizing.
      * @initial
      */
     initialWidth?: number;

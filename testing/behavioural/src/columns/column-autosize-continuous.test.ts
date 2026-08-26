@@ -37,16 +37,22 @@ describe('Continuous Column Autosize', () => {
         waitFor(() => expect(widthOf(api, colId)).toBe(width));
 
     /**
-     * `owned` starts at 300 via an explicit `width`, `eligible` starts at 300 via `initialWidth`. Both
-     * have a `minWidth` of 120, so only an eligible column ends up at 120 once measured.
+     * `pinned` opts out explicitly with `suppressAutoSize`; `eligible` is left for the grid to manage. Both
+     * start at 300 with a `minWidth` of 120, so only an eligible column ends up at 120 once measured.
      */
     const createGrid = (options: GridOptions = {}): GridApi =>
         gridsManager.createGrid('myGrid', {
             columnDefs: [
-                { colId: 'owned', field: 'owned', width: START_WIDTH, minWidth: MEASURED_WIDTH },
+                {
+                    colId: 'pinned',
+                    field: 'pinned',
+                    width: START_WIDTH,
+                    minWidth: MEASURED_WIDTH,
+                    suppressAutoSize: true,
+                },
                 { colId: 'eligible', field: 'eligible', initialWidth: START_WIDTH, minWidth: MEASURED_WIDTH },
             ],
-            rowData: [{ owned: 'a', eligible: 'b' }],
+            rowData: [{ pinned: 'a', eligible: 'b' }],
             autoSizeStrategy: { type: 'fitCellContents', continuous: true, skipHeader: true },
             ...options,
         });
@@ -68,7 +74,7 @@ describe('Continuous Column Autosize', () => {
         return { api, reasons };
     };
 
-    const LONGER_DATA = [{ owned: 'a much longer value', eligible: 'b much longer value' }];
+    const LONGER_DATA = [{ pinned: 'a much longer value', eligible: 'b much longer value' }];
 
     describe('ownership', () => {
         test('`initialWidth` is not owned, so a data change re-sizes the column', async () => {
@@ -87,7 +93,7 @@ describe('Continuous Column Autosize', () => {
             const api = createGrid();
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
 
-            expect(widthOf(api, 'owned')).toBe(START_WIDTH);
+            expect(widthOf(api, 'pinned')).toBe(START_WIDTH);
         });
 
         test('a header drag resize takes ownership, and survives a later data change', async () => {
@@ -124,30 +130,48 @@ describe('Continuous Column Autosize', () => {
             expect(widthOf(api, 'dragged')).toBe(draggedWidth);
         });
 
-        test('a reused definition with an updated `width` becomes owned', async () => {
+        test('a `colDef.width` is only a starting width, so the column is still re-sized', async () => {
+            const api = createGrid({
+                columnDefs: [{ colId: 'eligible', field: 'eligible', width: START_WIDTH, minWidth: MEASURED_WIDTH }],
+            });
+
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+        });
+
+        test('a reused definition with an updated `width` is still re-sized', async () => {
             const api = createGrid();
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
 
             api.setGridOption('columnDefs', [
-                { colId: 'owned', field: 'owned', width: START_WIDTH, minWidth: MEASURED_WIDTH },
+                { colId: 'pinned', field: 'pinned', minWidth: MEASURED_WIDTH, suppressAutoSize: true },
                 { colId: 'eligible', field: 'eligible', width: 280, minWidth: MEASURED_WIDTH },
             ]);
             api.setGridOption('rowData', LONGER_DATA);
 
-            await waitFor(() => expect(widthOf(api, 'eligible')).toBe(280));
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
         });
 
-        test('a reused definition without a `width` preserves prior ownership', async () => {
+        test('a user resize survives a column-definition update', async () => {
             const api = createGrid();
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
 
-            api.setGridOption('columnDefs', [
-                { colId: 'owned', field: 'owned', minWidth: MEASURED_WIDTH },
-                { colId: 'eligible', field: 'eligible', initialWidth: START_WIDTH, minWidth: MEASURED_WIDTH },
-            ]);
-            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            const eResize = document.querySelector('[col-id="eligible"] .ag-header-cell-resize');
+            const dispatcher = new DragEventDispatcher('mouse', null, false);
+            await dispatcher.startDrag(eResize!, 100, 10);
+            await dispatcher.movePointer(eResize!, 220, 10);
+            await dispatcher.finishDrag();
 
-            expect(widthOf(api, 'owned')).toBe(START_WIDTH);
+            const draggedWidth = widthOf(api, 'eligible');
+            expect(draggedWidth).toBeGreaterThan(MEASURED_WIDTH);
+
+            api.setGridOption('columnDefs', [
+                { colId: 'pinned', field: 'pinned', minWidth: MEASURED_WIDTH, suppressAutoSize: true },
+                { colId: 'eligible', field: 'eligible', minWidth: MEASURED_WIDTH },
+            ]);
+            api.setGridOption('rowData', LONGER_DATA);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+
+            expect(widthOf(api, 'eligible')).toBe(draggedWidth);
         });
 
         test('`applyColumnState` with an explicit width takes ownership', async () => {
@@ -186,21 +210,21 @@ describe('Continuous Column Autosize', () => {
 
             // the colDef declares `initialWidth`, so the column is eligible again
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
-            expect(widthOf(api, 'owned')).toBe(START_WIDTH);
+            expect(widthOf(api, 'pinned')).toBe(START_WIDTH);
         });
     });
 
     describe('triggers', () => {
         test('data replacement re-sizes eligible columns', async () => {
             const api = createGrid({ rowData: [] });
-            api.setGridOption('rowData', [{ owned: 'a', eligible: 'b' }]);
+            api.setGridOption('rowData', [{ pinned: 'a', eligible: 'b' }]);
 
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
         });
 
         test('a transaction update re-sizes eligible columns', async () => {
             const api = createGrid({ rowData: [] });
-            api.applyTransaction({ add: [{ owned: 'a', eligible: 'b' }] });
+            api.applyTransaction({ add: [{ pinned: 'a', eligible: 'b' }] });
 
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
         });
@@ -221,7 +245,7 @@ describe('Continuous Column Autosize', () => {
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
             reasons.length = 0;
 
-            api.setColumnsVisible(['owned'], false);
+            api.setColumnsVisible(['pinned'], false);
             await waitFor(() => expect(reasons).toContain('columnsChanged'));
         });
 
@@ -230,9 +254,9 @@ describe('Continuous Column Autosize', () => {
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
             reasons.length = 0;
 
-            api.setGridOption('rowData', [{ owned: 'a', eligible: 'b' }]);
-            api.setGridOption('rowData', [{ owned: 'c', eligible: 'd' }]);
-            api.setGridOption('rowData', [{ owned: 'e', eligible: 'f' }]);
+            api.setGridOption('rowData', [{ pinned: 'a', eligible: 'b' }]);
+            api.setGridOption('rowData', [{ pinned: 'c', eligible: 'd' }]);
+            api.setGridOption('rowData', [{ pinned: 'e', eligible: 'f' }]);
 
             await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
             expect(reasons).toEqual(['dataChanged']);
@@ -257,7 +281,7 @@ describe('Continuous Column Autosize', () => {
         test('`fitProvidedWidth` re-distributes the provided width on a data change', async () => {
             const api = createGrid({
                 columnDefs: [
-                    { colId: 'owned', field: 'owned', width: 200 },
+                    { colId: 'pinnedWidth', field: 'pinnedWidth', width: 200, suppressSizeToFit: true },
                     { colId: 'a', field: 'a' },
                     { colId: 'b', field: 'b' },
                 ],
@@ -265,23 +289,23 @@ describe('Continuous Column Autosize', () => {
             });
             await waitFor(() => expect(widthOf(api, 'a') + widthOf(api, 'b')).toBe(600));
 
-            // the owned column is held out of the distribution and stays exactly where the colDef put it
-            expect(widthOf(api, 'owned')).toBe(200);
+            // the opted-out column is held out of the distribution and stays where the colDef put it
+            expect(widthOf(api, 'pinnedWidth')).toBe(200);
 
             api.setColumnWidths([
                 { key: 'a', newWidth: 100 },
                 { key: 'b', newWidth: 100 },
             ]);
-            api.setGridOption('rowData', [{ owned: 'x', a: 'y', b: 'z' }]);
+            api.setGridOption('rowData', [{ pinnedWidth: 'x', a: 'y', b: 'z' }]);
 
             await waitFor(() => expect(widthOf(api, 'a') + widthOf(api, 'b')).toBe(600));
-            expect(widthOf(api, 'owned')).toBe(200);
+            expect(widthOf(api, 'pinnedWidth')).toBe(200);
         });
 
-        test('`fitGridWidth` re-runs on a data change and holds owned columns fixed', async () => {
+        test('`fitGridWidth` re-runs on a data change and holds opted-out columns fixed', async () => {
             const api = createGrid({
                 columnDefs: [
-                    { colId: 'owned', field: 'owned', width: 200 },
+                    { colId: 'pinnedWidth', field: 'pinnedWidth', width: 200, suppressSizeToFit: true },
                     { colId: 'a', field: 'a' },
                     { colId: 'b', field: 'b' },
                 ],
@@ -290,16 +314,16 @@ describe('Continuous Column Autosize', () => {
             await waitFor(() => expect(widthOf(api, 'a')).not.toBe(200));
 
             const distributed = widthOf(api, 'a') + widthOf(api, 'b');
-            expect(widthOf(api, 'owned')).toBe(200);
+            expect(widthOf(api, 'pinnedWidth')).toBe(200);
 
             api.setColumnWidths([
                 { key: 'a', newWidth: 50 },
                 { key: 'b', newWidth: 50 },
             ]);
-            api.setGridOption('rowData', [{ owned: 'x', a: 'y', b: 'z' }]);
+            api.setGridOption('rowData', [{ pinnedWidth: 'x', a: 'y', b: 'z' }]);
 
             await waitFor(() => expect(widthOf(api, 'a') + widthOf(api, 'b')).toBe(distributed));
-            expect(widthOf(api, 'owned')).toBe(200);
+            expect(widthOf(api, 'pinnedWidth')).toBe(200);
         });
 
         test('the width-distribution strategies do not re-run on a horizontal scroll', async () => {
@@ -335,7 +359,7 @@ describe('Continuous Column Autosize', () => {
                 },
             });
 
-            api.setGridOption('rowData', [{ owned: 'a', eligible: 'b' }]);
+            api.setGridOption('rowData', [{ pinned: 'a', eligible: 'b' }]);
             await waitFor(() => expect(seen.length).toBeGreaterThan(0));
 
             const last = seen[seen.length - 1];
@@ -489,7 +513,7 @@ describe('Continuous Column Autosize', () => {
             const api = createGrid({ rowData: [] });
             await waitFor(() => expect(api.getDisplayedRowCount()).toBe(0));
 
-            expect(widthOf(api, 'owned')).toBe(START_WIDTH);
+            expect(widthOf(api, 'pinned')).toBe(START_WIDTH);
             expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
         });
     });

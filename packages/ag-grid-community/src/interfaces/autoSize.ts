@@ -52,7 +52,7 @@ export interface AutoSizeColumnsTriggerParams<TData = any, TContext = any> exten
     /** What changed in the grid to make it want to re-size columns. */
     reason: 'dataChanged' | 'columnsChanged' | 'viewportChanged' | 'gridSizeChanged';
     /**
-     * All eligible columns — those not owned by the developer or user, and not otherwise excluded.
+     * All eligible columns — those the user has not resized, and not otherwise excluded.
      * For `fitCellContents`, the grid may only be able to measure the subset that is currently rendered.
      */
     columns: Column[];
@@ -66,9 +66,10 @@ export interface ContinuousAutoSizeOptions {
      * displayed-column changes and to grid resizes, and `fitCellContents` additionally responds to viewport
      * changes, because scrolling is what makes new cell content measurable.
      *
-     * Columns whose width is owned by the developer or the user are left alone and treated as fixed width:
-     * an explicit `colDef.width`, a header drag resize, a double-click auto-size, or `applyColumnState` with
-     * an explicit `width`. Use `colDef.initialWidth` to seed a width that stays eligible for re-sizing.
+     * A column the user has resized themselves is left alone and treated as fixed width — a header drag, a
+     * keyboard resize or a double-click auto-size — as is one given an explicit width through
+     * `applyColumnState`. `colDef.width` is only a starting width and stays eligible; to hold a column at a
+     * fixed width, set `suppressAutoSize` or `suppressSizeToFit` on it.
      * @default false
      */
     continuous?: boolean;
