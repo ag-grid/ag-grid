@@ -31,14 +31,18 @@ export interface SizeColumnsToFitGridColumnLimits extends WidthLimits {
 }
 
 /** Auto-size columns to fit the grid width. */
-export interface SizeColumnsToFitGridStrategy extends DefaultWidthLimits, ContinuousAutoSizeOptions {
+export interface SizeColumnsToFitGridStrategy<TData = any, TContext = any>
+    extends DefaultWidthLimits, ContinuousAutoSizeOptions<TData, TContext> {
     type: 'fitGridWidth';
     /** Provide to limit specific column widths when sizing. */
     columnLimits?: SizeColumnsToFitGridColumnLimits[];
 }
 
 /** Auto-size columns to fit a provided width. */
-export interface SizeColumnsToFitProvidedWidthStrategy extends ContinuousAutoSizeOptions {
+export interface SizeColumnsToFitProvidedWidthStrategy<TData = any, TContext = any> extends ContinuousAutoSizeOptions<
+    TData,
+    TContext
+> {
     type: 'fitProvidedWidth';
     width: number;
 }
@@ -59,7 +63,7 @@ export interface AutoSizeColumnsTriggerParams<TData = any, TContext = any> exten
 }
 
 /** Opt-in re-running of an auto-size strategy, shared by every strategy type. */
-export interface ContinuousAutoSizeOptions {
+export interface ContinuousAutoSizeOptions<TData = any, TContext = any> {
     /**
      * If `true`, the strategy is re-applied whenever the grid changes in a way that affects column widths,
      * not only on first render. Which changes count depends on the strategy: every type responds to data and
@@ -77,7 +81,7 @@ export interface ContinuousAutoSizeOptions {
      * Called before each continuous re-size, with the columns eligible to be re-sized and the reason the
      * grid wants to re-size them. Return `false` to skip this one. Requires `continuous`.
      */
-    shouldAutoSizeColumns?: (params: AutoSizeColumnsTriggerParams) => boolean;
+    shouldAutoSizeColumns?: (params: AutoSizeColumnsTriggerParams<TData, TContext>) => boolean;
 }
 
 /**
@@ -85,7 +89,8 @@ export interface ContinuousAutoSizeOptions {
  *
  * Not supported by the Viewport Row Model
  */
-export interface SizeColumnsToContentStrategy extends ISizeAllColumnsToContentParams, ContinuousAutoSizeOptions {
+export interface SizeColumnsToContentStrategy<TData = any, TContext = any>
+    extends ISizeAllColumnsToContentParams, ContinuousAutoSizeOptions<TData, TContext> {
     type: 'fitCellContents';
     /**
      * If `true`, the Column Menu and Context Menu auto-size actions reuse this strategy's options.
@@ -110,7 +115,7 @@ export interface ISizeColumnsToContentParams extends ISizeAllColumnsToContentPar
     colIds?: string[];
 }
 
-export type AutoSizeStrategy =
-    | SizeColumnsToFitGridStrategy
-    | SizeColumnsToFitProvidedWidthStrategy
-    | SizeColumnsToContentStrategy;
+export type AutoSizeStrategy<TData = any, TContext = any> =
+    | SizeColumnsToFitGridStrategy<TData, TContext>
+    | SizeColumnsToFitProvidedWidthStrategy<TData, TContext>
+    | SizeColumnsToContentStrategy<TData, TContext>;

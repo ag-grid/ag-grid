@@ -8,7 +8,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
-import type { BodyScrollEvent, ColumnEventType } from '../events';
+import type { BodyScrollEvent, ColumnEventType, ModelUpdatedEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -665,14 +665,24 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         this.addManagedEventListeners({
             // the one content-changed signal every row model dispatches: CSRM replacements and transactions,
-            // SSRM and infinite store loads, and pagination. Its `newData`/`newPage` flags are not usable as a
-            // filter because SSRM always reports both as false.
-            modelUpdated: () => this.scheduleContinuousAutoSize('dataChanged'),
-            // an edit need not refresh the model, so it is not covered above
+            // SSRM and infinite store loads, and pagination. It also covers sorting, filtering and expansion,
+            // which change what a cell renders — so the content strategy wants all of them, while the
+            // width-distribution strategies only care about genuinely new rows.
+            modelUpdated: (event: ModelUpdatedEvent) => {
+                if (measuresContent || event.newData || event.newPage || event.newPageSize) {
+                    this.scheduleContinuousAutoSize('dataChanged');
+                }
+            },
+            // neither an edit nor `rowNode.setData` need refresh the model, so they are not covered above
             cellValueChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
             displayedColumnsChanged: () => this.scheduleContinuousAutoSize('columnsChanged'),
             newColumnsLoaded: () => this.scheduleContinuousAutoSize('columnsChanged'),
             gridSizeChanged: () => this.scheduleContinuousAutoSize('gridSizeChanged'),
+        });
+
+        // `rowNode.setData`/`updateData` and pinned-row replacements report per row, not through the model
+        this.addManagedEventListeners({
+            rowNodeDataChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
         });
 
         if (!measuresContent) {
@@ -731,8 +741,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        // an unlaid-out grid measures nothing, so drop the trigger rather than churning until it has a size
-        if (getAvailableWidth(this.beans) <= 0) {
+        // an unlaid-out grid measures nothing and has no width to distribute, so drop the trigger rather
+        // than churning until it has a size. `fitProvidedWidth` depends on neither, so it still runs.
+        if (strategy.type !== 'fitProvidedWidth' && getAvailableWidth(this.beans) <= 0) {
             return;
         }
 

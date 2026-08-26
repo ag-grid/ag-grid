@@ -229,6 +229,16 @@ describe('Continuous Column Autosize', () => {
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
         });
 
+        test('`rowNode.setData` re-sizes eligible columns', async () => {
+            const api = createGrid();
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+
+            api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
+            api.getDisplayedRowAtIndex(0)!.setData({ pinned: 'x', eligible: 'a much longer value' });
+
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+        });
+
         test('sorting alone is not reported as a data change', async () => {
             const { api, reasons } = createGridRecordingReasons();
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
