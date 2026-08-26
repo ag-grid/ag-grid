@@ -246,13 +246,23 @@ describe('cspRules', () => {
         it('authorises both capture tags by hash in the site scope', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
             expect(site).toContain("'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='"); // page-view capture
-            expect(site).toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='"); // webhook POST
+            expect(site).toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='"); // webhook POST (live)
+        });
+
+        it('also authorises the previewed capturing-phase webhook listener, pending publish', () => {
+            // GTM preview "env-55" trials a version of the webhook tag whose submit listener
+            // adds a third `true` argument to addEventListener (capturing phase) — otherwise
+            // byte-identical to the live tag. Kept alongside the live hash above until the
+            // change is published and the old one is confirmed unused. AG-3390.
+            const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(site).toContain("'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='");
         });
 
         it('is site-scope only, since examples keeps unsafe-inline', () => {
             const examples = getCspDirectives({ env: 'production', scope: 'examples' })['script-src'];
             expect(examples).not.toContain("'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='");
             expect(examples).not.toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='");
+            expect(examples).not.toContain("'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='");
         });
     });
 
