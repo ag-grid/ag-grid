@@ -25,10 +25,10 @@ on:
                 type: string
                 required: true
             driver:
-                description: 'Review engine. claude (default) = Claude Code orchestrates a chunked Codex review — same standard pass, split across per-turn-safe chunks (survives large PRs that exceed Codex per-turn input limits). codex = legacy single-turn Codex review (can fail on large PRs that exceed the per-turn input limit).'
+                description: 'Review engine. explore is the default; claude and codex are deprecated. See ag-dev-prompts docs/installation.md.'
                 type: choice
-                options: [claude, codex]
-                default: claude
+                options: [explore, claude, codex]
+                default: explore
                 required: false
             quiet:
                 description: 'Quiet/soak mode: post nothing to the PR; upload the review as an artifact (pr-review-<driver>-<pr#>) instead. Use to compare drivers without touching the PR.'
@@ -119,10 +119,6 @@ jobs:
                   pr-author: ${{ steps.pr-meta.outputs.pr-author }}
                   github-token: ${{ github.token }}
                   inline-comments: 'true'
-                  # claude is the default driver. pull_request / plain /pr-review supply
-                  # no driver input, so they fall through to the `|| 'claude'` default.
-                  # To force codex on a one-off, dispatch with driver=codex. quiet stays
-                  # false → claude reviews post to the PR as normal.
-                  driver: ${{ inputs.driver || 'claude' }}
+                  # See ag-dev-prompts docs/installation.md.
+                  driver: ${{ inputs.driver || 'explore' }}
                   quiet: ${{ inputs.quiet || 'false' }}
-                  anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
