@@ -18,9 +18,9 @@ export const PAGE_CONTENT = {
             'Engineers and experts from AG Grid, Bryntum, and beyond who spoke about what it takes to build applications that hold up in production.',
     },
     notify: {
-        location: 'New York · October 2026',
+        location: 'New York',
         heading: 'Get notified',
-        lead: "The series continues in New York this October. Leave your email and we'll let you know as soon as registration opens.",
+        lead: "The series continues in New York. Leave your email and we'll let you know as soon as registration opens.",
     },
 };
 
