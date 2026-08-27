@@ -3,12 +3,12 @@
         "items": [
             {
                 "title": "AG Charts",
-                "url": "https://www.ag-grid.com/charts",
+                "url": "https://www.ag-grid.com/charts/",
                 "isCollapsed": true
             },
             {
                 "title": "AG Studio",
-                "url": "https://www.ag-grid.com/studio",
+                "url": "https://www.ag-grid.com/studio/",
                 "isCollapsed": true
             },
             {

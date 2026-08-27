@@ -2628,10 +2628,10 @@ AddCharset utf-8 .md
     Redirect 301 /license-pricing.php /license-pricing/
     Redirect 301 /example.php /example/
     Redirect 301 /ag-grid-jobs-board.php /ag-grid-jobs-board
-    Redirect 301 /react-data-grid/whats-new /whats-new
-    Redirect 301 /vue-data-grid/whats-new /whats-new
-    Redirect 301 /angular-data-grid/whats-new /whats-new
-    Redirect 301 /javascript-data-grid/whats-new /whats-new
+    Redirect 301 /react-data-grid/whats-new /whats-new/
+    Redirect 301 /vue-data-grid/whats-new /whats-new/
+    Redirect 301 /angular-data-grid/whats-new /whats-new/
+    Redirect 301 /javascript-data-grid/whats-new /whats-new/
     Redirect 301 /vue-data-grid/framework-data-flow /vue-data-grid/getting-started/
     Redirect 301 /react-data-grid/licensing/ /react-data-grid/community-vs-enterprise/
     Redirect 301 /vue-data-grid/licensing/ /vue-data-grid/community-vs-enterprise/
