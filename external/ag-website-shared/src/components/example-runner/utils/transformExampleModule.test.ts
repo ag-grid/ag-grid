@@ -1,5 +1,3 @@
-import type { InternalFramework } from '@ag-grid-types';
-
 import {
     getModuleSourceFileName,
     isTransformableModule,
@@ -7,8 +5,7 @@ import {
     transformExampleModule,
 } from './transformExampleModule';
 
-const transform = (fileName: string, source: string, internalFramework: InternalFramework = 'typescript') =>
-    transformExampleModule({ fileName, source, internalFramework });
+const transform = (fileName: string, source: string) => transformExampleModule({ fileName, source });
 
 describe('isTransformableModule', () => {
     test.each([
@@ -51,15 +48,15 @@ describe('transformExampleModule', () => {
         const code = transform(
             'main.ts',
             [
-                "import type { ColDef } from 'ag-grid-community';",
-                "import { createGrid } from 'ag-grid-community';",
-                'const columnDefs: ColDef[] = [{ field: "make" }];',
-                'createGrid(document.body, { columnDefs });',
+                "import type { AgCartesianChartOptions } from 'ag-charts-community';",
+                "import { AgCharts } from 'ag-charts-community';",
+                'const options: AgCartesianChartOptions = { container: document.body };',
+                'AgCharts.create(options);',
             ].join('\n')
         );
 
-        expect(code).toContain("from 'ag-grid-community'");
-        expect(code).not.toContain('ColDef[]');
+        expect(code).toContain("from 'ag-charts-community'");
+        expect(code).not.toContain('AgCartesianChartOptions');
     });
 
     test('gives relative specifiers the extension native resolution needs', () => {
@@ -98,8 +95,7 @@ describe('transformExampleModule', () => {
     test('compiles JSX', () => {
         const code = transform(
             'index.jsx',
-            ["import React from 'react';", 'export const App = () => <div className="grid" />;'].join('\n'),
-            'reactFunctional'
+            ["import React from 'react';", 'export const App = () => <div className="grid" />;'].join('\n')
         );
 
         expect(code).toContain('React.createElement');
@@ -115,25 +111,28 @@ describe('transformExampleModule', () => {
                 'export class AppComponent {',
                 '    constructor(private elementRef: ElementRef) {}',
                 '}',
-            ].join('\n'),
-            'angular'
+            ].join('\n')
         );
 
         expect(code).toContain('Component({');
+        // design:paramtypes is what makes constructor injection resolvable (NG0202 without it)
         expect(code).toContain('design:paramtypes');
     });
 
     test('turns package stylesheet imports into a link element', () => {
-        const code = transform('main.ts', "import 'ag-grid-community/styles/ag-grid.css';");
+        const code = transform('main.ts', "import 'ag-charts-community/styles/ag-charts.css';");
 
-        expect(code).toContain("await __agLoadStylesheet(import.meta.resolve('ag-grid-community/styles/ag-grid.css'))");
+        expect(code).toContain(
+            'await __agLoadStylesheet(import.meta.resolve("ag-charts-community/styles/ag-charts.css"))'
+        );
         expect(code).toContain("link.rel = 'stylesheet'");
     });
 
     test('turns relative stylesheet imports into a link element too, awaited before the module runs', () => {
         const code = transform('main.ts', ["import './styles.css';", 'export const x = 1;'].join('\n'));
 
-        expect(code).toContain("await __agLoadStylesheet(import.meta.resolve('./styles.css'))");
+        expect(code).toContain('await __agLoadStylesheet(import.meta.resolve("./styles.css"))');
+        // The template links the stylesheet itself for some frameworks, so it must not be loaded twice
         expect(code).toContain('link[rel="stylesheet"]');
     });
 
@@ -144,6 +143,25 @@ describe('transformExampleModule', () => {
         );
 
         expect(code).toContain('process.env.NODE_ENV');
+    });
+
+    test('rewrites the path of a specifier that carries a query or fragment, keeping the suffix', () => {
+        const code = transformExampleModule({
+            fileName: 'main.ts',
+            source: "export { default as worker } from './worker.ts?v=1';\nexport { m } from './mod#frag';\n",
+        });
+
+        expect(code).toContain("'./worker.js?v=1'");
+        expect(code).toContain("'./mod.js#frag'");
+    });
+
+    test('leaves an asset that carries a query as authored', () => {
+        const code = transformExampleModule({
+            fileName: 'main.ts',
+            source: "export { default as data } from './data.json?v=1';\n",
+        });
+
+        expect(code).toContain("'./data.json?v=1'");
     });
 });
 
