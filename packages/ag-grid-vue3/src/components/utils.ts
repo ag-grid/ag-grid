@@ -178,6 +178,7 @@ import type {
     ContextMenuVisibleChangedEvent,
     CutEndEvent,
     CutStartEvent,
+    DiagnosticRaisedEvent,
     DisplayedColumnsChangedEvent,
     DragCancelledEvent,
     DragStartedEvent,
@@ -2157,6 +2158,7 @@ export interface Props<TData> {
    'onDrag-stopped'?: DragStoppedEvent<TData>,
    'onDrag-cancelled'?: DragCancelledEvent<TData>,
    'onState-updated'?: StateUpdatedEvent<TData>,
+   'onDiagnostic-raised'?: DiagnosticRaisedEvent<TData>,
    'onPagination-changed'?: PaginationChangedEvent<TData>,
    'onRow-drag-enter'?: RowDragEnterEvent<TData>,
    'onRow-drag-move'?: RowDragMoveEvent<TData>,
@@ -2679,7 +2681,8 @@ export function getProps() {
         'onBulk-editing-started': undefined,
         'onBulk-editing-stopped': undefined,
         'onBatch-editing-started': undefined,
-        'onBatch-editing-stopped': undefined
+        'onBatch-editing-stopped': undefined,
+        'onDiagnostic-raised': undefined
 // @END_EVENT_PROPS@
 
      };

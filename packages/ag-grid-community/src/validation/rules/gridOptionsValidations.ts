@@ -153,6 +153,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     masterDetail: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'MasterDetail',
     notesDataSource: 'Notes',
+    onDiagnosticRaised: 'Validation',
     pagination: 'Pagination',
     pinnedBottomRowData: 'PinnedRow',
     pinnedTopRowData: 'PinnedRow',

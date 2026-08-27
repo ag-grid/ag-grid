@@ -147,6 +147,7 @@ import type { SyncService } from '../syncService';
 import type { TooltipService } from '../tooltip/tooltipService';
 import type { TooltipTouchCoordinator } from '../tooltip/tooltipTouchCoordinator';
 import type { UndoRedoService } from '../undoRedo/undoRedoService';
+import type { DiagnosticEventService } from '../validation/diagnosticEventService';
 import type { ErrorOverlayService } from '../validation/errorOverlay/errorOverlayService';
 import type { LogService } from '../validation/logService';
 import type { ValidationService } from '../validation/validationService';
@@ -344,6 +345,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     stateSvc?: StateService;
     overlays?: OverlayService;
     errorOverlay?: ErrorOverlayService;
+    diagnosticEvents?: DiagnosticEventService;
     pinnedRowModel?: IPinnedRowModel;
     menuSvc?: MenuService;
     apiEventSvc?: ApiEventService;
