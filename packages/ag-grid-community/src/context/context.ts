@@ -43,6 +43,7 @@ import type { Environment } from '../environment';
 import type { AgEventTypeParams, AgGlobalEventListener } from '../events';
 import type { GridSerializer } from '../export/gridSerializer';
 import type { ColumnFilterService } from '../filter/columnFilterService';
+import type { FilterConfigService } from '../filter/filterConfigService';
 import type { FilterManager } from '../filter/filterManager';
 import type { FilterValueService } from '../filter/filterValueService';
 import type { QuickFilterService } from '../filter/quickFilterService';
@@ -307,6 +308,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     dragAndDrop?: DragAndDropService;
     sortSvc?: SortService;
     colFilter?: ColumnFilterService;
+    filterConfigSvc?: FilterConfigService;
     filterManager?: FilterManager;
     rowContainerHeight: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;

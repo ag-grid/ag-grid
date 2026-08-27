@@ -1,6 +1,13 @@
 import { _focusInto, _getActiveDomElement, _isNothingFocused, _setAriaRole } from 'ag-stack';
 
-import type { ContainerType, IAfterGuiAttachedParams, IMultiFilterDef, SharedFilterUi } from 'ag-grid-community';
+import type {
+    Column,
+    ContainerType,
+    IAfterGuiAttachedParams,
+    IMultiFilterParams,
+    MultiFilterChild,
+    SharedFilterUi,
+} from 'ag-grid-community';
 import { AgPromise, KeyCode, TabGuardComp, _createElement } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../agStack/agGroupComponent';
@@ -15,7 +22,16 @@ export interface BaseFilterComponent {
 }
 
 export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
-    protected filterDefs: IMultiFilterDef[] = [];
+    /** Each child paired with the resolution it was built under, so the two cannot be mismatched. */
+    protected children: MultiFilterChild[] = [];
+
+    /**
+     * The children this Multi Filter has, each with its own resolution. Resolved here rather than at each
+     * call site so a child can only ever be created against the configuration it was resolved under.
+     */
+    protected resolveChildren(column: Column, params: IMultiFilterParams): void {
+        this.children = this.beans.filterConfigSvc!.getChildren(column, params);
+    }
     private readonly guiDestroyFuncs: (() => void)[] = [];
     // this could be the accordion/sub menu element depending on the display type
     private filterGuis: (HTMLElement | null)[] = [];
@@ -53,7 +69,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                 }
                 const filter = this.getFilterFromWrapper(wrapper);
                 const comp = this.getCompFromWrapper(wrapper);
-                const filterDef = this.filterDefs[index];
+                const filterDef = this.children[index].def;
                 const filterTitle = getFilterTitle(filter, filterDef);
                 let filterGuiPromise: AgPromise<HTMLElement>;
 
@@ -221,12 +237,12 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
         const suppressFocus = params?.suppressFocus;
 
         refreshPromise.then(() => {
-            const { filterDefs, filterGuis, beans } = this;
+            const { children, filterGuis, beans } = this;
             const wrappers = this.getFilterWrappers();
             // don't want to focus later if focus suppressed
             let hasFocused = !!suppressFocus;
-            if (filterDefs) {
-                forEachReverse(filterDefs, (filterDef, index) => {
+            if (children) {
+                forEachReverse(children, ({ def: filterDef }, index) => {
                     const isFirst = index === 0;
                     const notInlineDisplayType = filterDef.display && filterDef.display !== 'inline';
                     const suppressFocusForFilter = suppressFocus || !isFirst || notInlineDisplayType;

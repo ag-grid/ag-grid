@@ -1,5 +1,5 @@
 import type { AgEvent } from 'ag-stack';
-import { KeyCode, _clearElement, _setDisabled } from 'ag-stack';
+import { KeyCode, _clearElement, _hasOwn, _setDisabled } from 'ag-stack';
 
 import type { FilterAction } from '../interfaces/iFilter';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
@@ -7,9 +7,11 @@ import type { ElementParams } from '../utils/element';
 import { _createElement } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
+import { BUTTON_ACTIONS } from './provided/resolvedFilterConfig';
 
 interface FilterButtonCompParams {
     className?: string;
+    buttonsReported?: boolean;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -40,10 +42,13 @@ export class FilterButtonComp extends Component<FilterAction> {
     private validationMessage: string | null = null;
     private readonly className: string;
 
+    private readonly buttonsReported: boolean;
+
     constructor(config?: FilterButtonCompParams) {
-        const { className = 'ag-filter-apply-panel' } = config ?? {};
+        const { className = 'ag-filter-apply-panel', buttonsReported = false } = config ?? {};
         super(getElement(className));
         this.className = className;
+        this.buttonsReported = buttonsReported;
     }
 
     public updateButtons(buttons: FilterButton[], useForm?: boolean): void {
@@ -72,10 +77,15 @@ export class FilterButtonComp extends Component<FilterAction> {
                     event,
                 });
             };
-            if (!['apply', 'clear', 'reset', 'cancel'].includes(type)) {
-                this.beans.log.warn(75);
+            // Nothing dispatches an action the filter does not have, so rendering it would put a blank,
+            // dead button in the panel. Judged here for every producer of a button list; a column filter's
+            // is judged where it is configured, so that one opts out rather than reporting it twice.
+            if (!_hasOwn(BUTTON_ACTIONS, type)) {
+                if (!this.buttonsReported) {
+                    this.beans.log.warn(75, { type });
+                }
+                return;
             }
-
             const isApply = type === 'apply';
             const buttonType = isApply && useForm ? 'submit' : 'button';
             const button = _createElement({

@@ -4,18 +4,9 @@ import type {
     FilterDisplayParams,
     IMultiFilterDef,
     IMultiFilterModel,
-    IMultiFilterParams,
     SharedFilterUi,
 } from 'ag-grid-community';
 import { ProvidedFilter } from 'ag-grid-community';
-
-export function getMultiFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
-    const { filters } = params;
-
-    return filters && filters.length > 0
-        ? filters
-        : [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
-}
 
 export function forEachReverse<T>(list: T[] | null | undefined, action: (value: T, index: number) => void): void {
     if (list == null) {

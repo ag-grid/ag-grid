@@ -97,7 +97,7 @@ export class FilterComp extends Component {
                 filterGui = comp.getGui();
 
                 if (!_exists(filterGui)) {
-                    this.beans.log.warn(69, { guiFromFilter: filterGui });
+                    this.beans.log.warn(69, { guiFromFilter: filterGui, colId: this.column.colId });
                 }
             }
             this.appendChild(filterGui);

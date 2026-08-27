@@ -3,20 +3,18 @@ import { _getActiveDomElement } from 'ag-stack';
 import { AgInputNumberField } from '../../../agWidgets/agInputNumberField';
 import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';
-import type { Column } from '../../../interfaces/iColumn';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { installAllowedCharPattern } from '../allowedCharPattern';
-import type { OptionsFactory } from '../optionsFactory';
+import type { ResolvedSimpleFilterConfig } from '../resolvedFilterConfig';
 import type {
     INumberFilterParams,
     INumberFloatingFilterParams,
     NumberFilterModel,
     NumberFilterParams,
 } from './iNumberFilter';
-import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
 import { getAllowedCharPattern, processNumberFilterValue, stringToFloat, usesTextInput } from './numberFilterUtils';
 
@@ -138,14 +136,12 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatin
     private allowedCharPattern: string | null;
     private isTextInput: boolean;
     protected readonly filterType = 'number';
-    protected readonly defaultOptions = DEFAULT_NUMBER_FILTER_OPTIONS;
 
     protected createModelFormatter(
-        optionsFactory: OptionsFactory,
-        filterParams: INumberFilterParams,
-        column: Column
+        filterConfig: ResolvedSimpleFilterConfig,
+        filterParams: INumberFilterParams
     ): NumberFilterModelFormatter {
-        return new NumberFilterModelFormatter(optionsFactory, filterParams, column);
+        return new NumberFilterModelFormatter(filterConfig, filterParams);
     }
 
     protected override updateParams(params: INumberFloatingFilterParams): void {
@@ -159,12 +155,12 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatin
 
     protected createFloatingFilterInputService(params: INumberFloatingFilterParams): FloatingFilterInputService {
         const filterParams = params.filterParams as NumberFilterParams;
-        const allowedCharPattern = getAllowedCharPattern(filterParams);
-        this.allowedCharPattern = allowedCharPattern;
+        this.allowedCharPattern = getAllowedCharPattern(filterParams);
         const isTextInput = usesTextInput(filterParams);
         this.isTextInput = isTextInput;
-        const install = (el: GridInputTextField | GridInputNumberField) =>
-            installAllowedCharPattern(el, allowedCharPattern, this.beans);
+        // Read for these params rather than from the field: a recreate runs before the base has taken them on.
+        const pattern = this.beans.filterConfigSvc!.getSimple(params.column, filterParams, 'number').allowedCharPattern;
+        const install = (el: GridInputTextField | GridInputNumberField) => installAllowedCharPattern(el, pattern);
         return this.createManagedBean(
             isTextInput ? new FloatingFilterTextInputService(install) : new FloatingFilterNumberInputService(install)
         );

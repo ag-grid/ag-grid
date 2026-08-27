@@ -1,4 +1,5 @@
 import {
+    ALL_SEVERITIES,
     AdvancedFilterHarness,
     FilterDom,
     GridRows,
@@ -9,7 +10,13 @@ import {
 } from 'ag-test-utils';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextFilterModule,
+    enableDevValidations,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 /**
@@ -54,7 +61,11 @@ describe('Advanced Filter — autocomplete completion & editing', () => {
         installFilterLayoutMock();
     });
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => gridsManager.reset());
+    afterEach(() => {
+        gridsManager.reset();
+        vi.restoreAllMocks();
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
+    });
 
     test('keeps browser autocomplete disabled when it is enabled for regular grid inputs', async () => {
         const api = await gridsManager.createGridAndWait('grid1', { ...OPTS, enableInputAutoComplete: true });
@@ -135,6 +146,11 @@ describe('Advanced Filter — autocomplete completion & editing', () => {
     });
 
     test('an inherited property name in filterOptions is not offered as an operator', async () => {
+        // `toString` is an inherited Object.prototype name, not a filter option, so it is reported and
+        // dropped when the column definitions are read.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [72] });
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {
@@ -148,7 +164,7 @@ describe('Advanced Filter — autocomplete completion & editing', () => {
         });
         const af = AdvancedFilterHarness.get(api);
 
-        // `toString` is an inherited Object.prototype name, not an AF operator — only `equals` is offered.
+        expect(warn.mock.calls.flat().join(' ')).toContain('warning #72');
         await af.type('[Name] ');
         expect(af.autocompleteEntries()).toEqual(['equals']);
     });

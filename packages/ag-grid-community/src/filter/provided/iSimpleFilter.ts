@@ -2,7 +2,7 @@ import type { IAutoCompleteComponentParams } from '../../interfaces/iAutoComplet
 import type { IFilterParams } from '../../interfaces/iFilter';
 import type { IFloatingFilterParent } from '../floating/floatingFilter';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from './iProvidedFilter';
-import type { OptionsFactory } from './optionsFactory';
+import type { ResolvedSimpleFilterConfig } from './resolvedFilterConfig';
 
 export interface IFilterOptionDef {
     /** A unique key that does not clash with the built-in filter keys. */
@@ -19,7 +19,7 @@ export type JoinOperator = 'AND' | 'OR';
 /** Interface contract for the public aspects of the SimpleFilter implementation(s). */
 
 export interface ISimpleFilter extends IProvidedFilter, IFloatingFilterParent {
-    readonly filterType: 'text' | 'number' | 'bigint' | 'date';
+    readonly filterType: SimpleFilterType;
 }
 
 export interface IFilterPlaceholderFunctionParams {
@@ -49,8 +49,8 @@ export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParam
  */
 export interface ISimpleFilterParams extends IProvidedFilterParams, IAutoCompleteComponentParams {
     /**
-     * Array of filter options to present to the user.
-     * A key the filter cannot evaluate is reported when a value is tested against it under the built-in matching.
+     * Array of filter options to present to the user. An entry this filter cannot evaluate is reported and
+     * left out of the dropdown; a `textMatcher` may answer any key, so none is left out where one is given.
      */
     filterOptions?: (IFilterOptionDef | ISimpleFilterModelType)[];
     /** The default filter option to be selected. Must be one of the offered options. */
@@ -119,6 +119,12 @@ export type CustomFilterOptionKey = string & Record<never, never>;
 /** A built-in filter option key, or the `displayKey` of a Custom Filter Option. */
 export type FilterOptionKey = ISimpleFilterModelType | CustomFilterOptionKey;
 
+/**
+ * Which of the four provided simple filters a definition names; what its `filterParams` mean depends on it.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export type SimpleFilterType = 'text' | 'number' | 'bigint' | 'date';
+
 /** Valid on every simple filter: `'empty'` selects no condition, `'blank'`/`'notBlank'` test presence, not a value. */
 export type CommonFilterOptionKey = 'empty' | 'blank' | 'notBlank';
 
@@ -168,5 +174,5 @@ export type Tuple<T> = (T | null)[];
 
 export type MapValuesFromSimpleFilterModel<TModel extends ISimpleFilterModel, TValue> = (
     filterModel: TModel | null,
-    optionsFactory: OptionsFactory
+    filterConfig: ResolvedSimpleFilterConfig
 ) => Tuple<TValue>;

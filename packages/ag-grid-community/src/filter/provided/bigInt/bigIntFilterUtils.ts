@@ -3,8 +3,8 @@ import { _parseBigIntOrNull } from 'ag-stack';
 import type { GridOptionsService } from '../../../gridOptionsService';
 import type { Column } from '../../../interfaces/iColumn';
 import type { Tuple } from '../iSimpleFilter';
-import type { OptionsFactory } from '../optionsFactory';
-import { filterCallbackParams, getNumberOfInputs } from '../simpleFilterUtils';
+import type { ResolvedSimpleFilterConfig } from '../resolvedFilterConfig';
+import { filterCallbackParams } from '../simpleFilterUtils';
 import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
 
 export function getAllowedCharPattern(filterParams?: IBigIntFilterParams): string | null {
@@ -27,8 +27,8 @@ export function stringToBigInt(
 
 export function mapValuesFromBigIntFilterModel(
     filterModel: BigIntFilterModel | null,
-    optionsFactory: OptionsFactory
+    filterConfig: ResolvedSimpleFilterConfig
 ): Tuple<bigint> {
     const { filter, filterTo, type } = filterModel || {};
-    return [_parseBigIntOrNull(filter), _parseBigIntOrNull(filterTo)].slice(0, getNumberOfInputs(type, optionsFactory));
+    return [_parseBigIntOrNull(filter), _parseBigIntOrNull(filterTo)].slice(0, filterConfig.numberOfInputs(type));
 }

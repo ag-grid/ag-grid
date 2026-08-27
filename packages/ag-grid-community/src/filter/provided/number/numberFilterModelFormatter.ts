@@ -10,7 +10,7 @@ export class NumberFilterModelFormatter extends SimpleFilterModelFormatter<
     protected readonly filterTypeKeys = SCALAR_FILTER_TYPE_KEYS;
 
     protected override getValueFormatter(): ((value: number | null) => string | null) | undefined {
-        return _bindFilterCallback(this.filterParams.numberFormatter, this.gos, this.column);
+        return _bindFilterCallback(this.filterParams.numberFormatter, this.gos, this.filterConfig.column);
     }
 
     protected conditionToString(

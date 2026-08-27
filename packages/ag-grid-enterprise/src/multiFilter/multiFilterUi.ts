@@ -6,22 +6,18 @@ import type {
     FilterHandler,
     FilterWrapperParams,
     IComponent,
-    IMultiFilterDef,
     IMultiFilterModel,
     IMultiFilterParams,
+    MultiFilterChild,
     SharedFilterUi,
+    WithFilterConfig,
 } from 'ag-grid-community';
 import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi } from 'ag-grid-community';
 
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
 import type { MultiFilterHandler } from './multiFilterHandler';
-import {
-    getFilterModelForIndex,
-    getMultiFilterDefs,
-    getUpdatedMultiFilterModel,
-    updateGetValue,
-} from './multiFilterUtil';
+import { getFilterModelForIndex, getUpdatedMultiFilterModel, updateGetValue } from './multiFilterUtil';
 
 // This version of multi filter is only used when `enableFilterHandlers = true`
 export class MultiFilterUi
@@ -38,24 +34,22 @@ export class MultiFilterUi
 
     public init(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): AgPromise<void> {
         this.params = params;
-        const filterDefs = getMultiFilterDefs(params).map((filterDef) => {
-            if (filterDef.filterParams?.buttons) {
-                this.beans.log.warn(292, { colId: params.column.getColId() });
-                const newParams = { ...filterDef.filterParams };
-                delete newParams.buttons;
-                return {
-                    ...filterDef,
-                    filterParams: newParams,
-                };
+        this.resolveChildren(params.column, params);
+        // The Multi Filter renders one button bar for all its children, so a child's own is never used.
+        this.children = this.children.map((child) => {
+            const childParams = child.def.filterParams;
+            if (!childParams?.buttons) {
+                return child;
             }
-            return filterDef;
+            const newParams = { ...childParams };
+            delete newParams.buttons;
+            return { ...child, def: { ...child.def, filterParams: newParams } };
         });
-        this.filterDefs = filterDefs;
 
         this.allState = params.state;
 
-        const filterPromises: AgPromise<FilterDisplayComp | null>[] = this.filterDefs.map((filterDef, index) =>
-            this.createFilter(filterDef, index)
+        const filterPromises: AgPromise<FilterDisplayComp | null>[] = this.children.map((child, index) =>
+            this.createFilter(child, index)
         );
 
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
@@ -134,10 +128,11 @@ export class MultiFilterUi
         return wrapper;
     }
 
-    private createFilter(filterDef: IMultiFilterDef, index: number): AgPromise<FilterDisplayComp | null> {
+    private createFilter(child: MultiFilterChild, index: number): AgPromise<FilterDisplayComp | null> {
         const userCompFactory = this.beans.userCompFactory;
+        const filterDef = child.def;
 
-        const filterParams = this.updateParams(filterDef, this.params, index);
+        const filterParams = this.updateParams(child, this.params, index);
 
         const compDetails = _getFilterDetails<FilterDisplayComp>(
             userCompFactory,
@@ -153,10 +148,11 @@ export class MultiFilterUi
     }
 
     private updateParams(
-        filterDef: IMultiFilterDef,
+        child: MultiFilterChild,
         params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>,
         index: number
-    ): FilterDisplayParams {
+    ): FilterDisplayParams & WithFilterConfig {
+        const filterDef = child.def;
         const {
             doesRowPassOtherFilter,
             model,
@@ -189,6 +185,7 @@ export class MultiFilterUi
         return {
             ...colFilter.createBaseFilterParams(column as AgColumn),
             ...filterDef,
+            filterConfig: child.config,
             doesRowPassOtherFilter: (node) =>
                 doesRowPassOtherFilter(node) &&
                 this.getHandler().doesFilterPass(

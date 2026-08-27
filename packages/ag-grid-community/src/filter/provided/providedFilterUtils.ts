@@ -1,25 +1,10 @@
 import type { LocaleTextFunc } from 'ag-stack';
 
 import type { FilterWrapperParams } from '../../interfaces/iFilter';
-import type { LogService } from '../../validation/logService';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateFilterOptionKey, translateForFilter } from '../filterLocaleText';
-import type { IProvidedFilterParams } from './iProvidedFilter';
 import type { FilterOptionKey, FilterPlaceholderFunction } from './iSimpleFilter';
-import type { OptionsFactory } from './optionsFactory';
-
-export function getDebounceMs(log: LogService, params: IProvidedFilterParams, debounceDefault: number): number {
-    const { debounceMs } = params;
-    if (_isUseApplyButton(params)) {
-        if (debounceMs != null) {
-            log.warn(71);
-        }
-
-        return 0;
-    }
-
-    return debounceMs ?? debounceDefault;
-}
+import type { ResolvedSimpleFilterConfig } from './resolvedFilterConfig';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isUseApplyButton(params: FilterWrapperParams): boolean {
@@ -29,10 +14,10 @@ export function _isUseApplyButton(params: FilterWrapperParams): boolean {
 /** A Custom Filter Option has no built-in locale entry, so its own `displayKey`/`displayName` are the lookup. */
 export function translateFilterOption(
     bean: { getLocaleTextFunc(): LocaleTextFunc },
-    optionsFactory: OptionsFactory,
+    filterConfig: ResolvedSimpleFilterConfig,
     filterOptionKey: FilterOptionKey
 ): string {
-    const customOption = optionsFactory.getCustomOption(filterOptionKey);
+    const customOption = filterConfig.getCustomOption(filterOptionKey);
     return customOption
         ? bean.getLocaleTextFunc()(customOption.displayKey, customOption.displayName)
         : translateFilterOptionKey(bean, filterOptionKey);
@@ -43,11 +28,11 @@ export function getPlaceholderText(
     filterPlaceholder: string | FilterPlaceholderFunction | undefined,
     defaultPlaceholder: FilterLocaleTextKey,
     filterOptionKey: FilterOptionKey,
-    optionsFactory: OptionsFactory
+    filterConfig: ResolvedSimpleFilterConfig
 ): string {
     let placeholder = translateForFilter(bean, defaultPlaceholder);
     if (typeof filterPlaceholder === 'function') {
-        const filterOption = translateFilterOption(bean, optionsFactory, filterOptionKey);
+        const filterOption = translateFilterOption(bean, filterConfig, filterOptionKey);
         placeholder = filterPlaceholder({
             filterOptionKey,
             filterOption,

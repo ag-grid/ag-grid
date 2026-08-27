@@ -1,4 +1,4 @@
-import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import {
     ClientSideRowModelModule,
@@ -6,6 +6,7 @@ import {
     DateFilterModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     AdvancedFilterModule,
@@ -710,7 +711,10 @@ describe('getStructuredSchema - filter feature', () => {
                         field: 'name',
                         filter: 'agTextColumnFilter',
                         filterParams: {
-                            filterOptions: ['contains', { displayKey: 'customEquals' }],
+                            filterOptions: [
+                                'contains',
+                                { displayKey: 'customEquals', displayName: 'Custom Equals', predicate: () => true },
+                            ],
                         },
                     },
                 ],
@@ -733,6 +737,34 @@ describe('getStructuredSchema - filter feature', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 name:"Alice"
             `);
+        });
+
+        // The schema offers what the dropdown offers, so an entry the filter cannot evaluate is in neither.
+        test('omits an option the filter rejected, rather than offering a key it cannot evaluate', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [72] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'name',
+                        filter: 'agTextColumnFilter',
+                        // No `displayName` and no `predicate`, so nothing can show or evaluate it.
+                        filterParams: { filterOptions: ['contains', { displayKey: 'customEquals' }] },
+                    },
+                ],
+                rowData: [{ name: 'Alice' }],
+            });
+            await new GridRows(api, `omits an option the filter rejected setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const nameFilter = resolveNullable(schema.properties.filter.properties.filterModel.properties.name);
+            expect(nameFilter.properties.conditions.items.properties.type.enum).toEqual(['contains']);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #72');
+            warn.mockRestore();
+            enableDevValidations({ throwOn: ALL_SEVERITIES });
         });
 
         test('ignores unrecognised filter keys', async () => {

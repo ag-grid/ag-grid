@@ -116,7 +116,7 @@ export class FilterWrapperComp extends Component {
 
             this.applyActive = _isUseApplyButton(this.params!);
             if (!eButtonsPanel) {
-                eButtonsPanel = this.createBean(new FilterButtonComp());
+                eButtonsPanel = this.createBean(new FilterButtonComp({ buttonsReported: true }));
                 this.appendChild(eButtonsPanel.getGui());
                 const column = this.column;
                 const getListener =

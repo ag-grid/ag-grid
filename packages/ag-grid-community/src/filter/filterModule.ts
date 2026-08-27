@@ -21,6 +21,7 @@ import {
 } from './columnFilterApi';
 import { ColumnFilterService } from './columnFilterService';
 import { isAnyFilterPresent, onFilterChanged } from './filterApi';
+import { FilterConfigService } from './filterConfigService';
 import { FilterManager } from './filterManager';
 import { FilterMenuFactory } from './filterMenuFactory';
 import { FilterValueService } from './filterValueService';
@@ -70,7 +71,7 @@ export const FilterValueModule: _ModuleWithoutApi = {
 export const ColumnFilterModule: _ModuleWithApi<_ColumnFilterGridApi> = {
     moduleName: 'ColumnFilter',
     version: VERSION,
-    beans: [ColumnFilterService, FilterMenuFactory],
+    beans: [ColumnFilterService, FilterConfigService, FilterMenuFactory],
     dynamicBeans: { headerFilterCellCtrl: HeaderFilterCellCtrl as any },
     icons: {
         // open filter button - header, floating filter, menu

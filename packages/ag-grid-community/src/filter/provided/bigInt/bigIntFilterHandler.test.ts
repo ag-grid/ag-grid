@@ -1,3 +1,4 @@
+import { ResolvedSimpleFilterConfig } from '../resolvedFilterConfig';
 import { BigIntFilterHandler } from './bigIntFilterHandler';
 
 describe('BigIntFilterHandler', () => {
@@ -5,12 +6,20 @@ describe('BigIntFilterHandler', () => {
 
     beforeEach(() => {
         handler = new BigIntFilterHandler();
-        (handler as any).beans = { log: { warn: () => {}, error: () => {}, deprecated: () => {} } };
+        (handler as any).beans = {
+            log: { warn: () => {}, error: () => {}, deprecated: () => {} },
+            // No column holds a resolution here, so the service resolves from the params it is handed.
+            filterConfigSvc: {
+                getSimple: (column: any, params: any, filterType: any) =>
+                    new ResolvedSimpleFilterConfig(column, params, filterType),
+            },
+        };
         (handler as any).createManagedBean = (bean: any) => bean;
         (handler as any).addDestroyFunc = () => {};
     });
 
     const createParams = (filterParams: any = {}, model: any = null): any => ({
+        column: { colId: 'bigIntCol' },
         filterParams: {
             filterOptions: [
                 'equals',

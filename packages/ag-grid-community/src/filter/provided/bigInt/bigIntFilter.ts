@@ -4,7 +4,6 @@ import type { ICombinedSimpleModel } from '../iSimpleFilter';
 import { _bindFilterCallback, getValidityMessageKey } from '../simpleFilterUtils';
 import type { RenderChange } from '../textInputSimpleFilter';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
-import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { getAllowedCharPattern, mapValuesFromBigIntFilterModel, stringToBigInt } from './bigIntFilterUtils';
 import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
 
@@ -21,7 +20,7 @@ export class BigIntFilter extends TextInputSimpleFilter<
     public readonly filterType = 'bigint' as const;
 
     constructor() {
-        super('bigintFilter', mapValuesFromBigIntFilterModel, DEFAULT_BIGINT_FILTER_OPTIONS);
+        super('bigintFilter', mapValuesFromBigIntFilterModel);
     }
 
     protected override getRenderChange(
