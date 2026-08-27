@@ -500,7 +500,7 @@
         "diagnosticRaised": {
             "more": {
                 "name": "Development Validation",
-                "url": "./dev-validation/"
+                "url": "./dev-validation/#reacting-to-diagnostics-in-code"
             }
         }
     },

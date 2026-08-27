@@ -103,6 +103,8 @@ The event provides:
 - `message` — the diagnostic text, as written to the console at that severity
 - `attributedToThisGrid` — whether this grid raised the diagnostic (see below)
 
+Like the rest of development validation, the event needs the `ValidationModule` registered. Without it no diagnostics are captured, so the callback is inert rather than an error — a callback left in a production build costs nothing but never fires.
+
 The event is not filtered by `showOverlayOn` or `throwOn`: it fires for every diagnostic regardless of which are shown in the overlay, and it fires before a matching `throwOn` throws. Diagnostics you have [suppressed](#suppressing-diagnostics) do not fire the event, as suppressing an id opts out of it entirely.
 
 In the example below, a column definition includes a property the grid does not recognise, and the resulting diagnostics are listed under the grid:
