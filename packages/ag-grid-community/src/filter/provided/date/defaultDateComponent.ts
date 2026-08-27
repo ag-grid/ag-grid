@@ -4,9 +4,9 @@ import { AgInputTextFieldSelector } from '../../../agWidgets/agInputTextField';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { ElementParams } from '../../../utils/element';
-import type { LogService } from '../../../validation/logService';
 import { Component } from '../../../widgets/component';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
+import { resolveDateBounds } from './dateFilterBounds';
 
 const DefaultDateElement: ElementParams = {
     tag: 'div',
@@ -98,8 +98,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
         this.usingSafariDatePicker = shouldUseBrowserDatePicker && _isBrowserSafari();
 
-        const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
-
+        const filterParams = params.filterParams;
         const shouldUseDateTimeLocal = this.includesTime(params);
 
         if (shouldUseBrowserDatePicker) {
@@ -112,20 +111,17 @@ export class DefaultDateComponent extends Component implements IDateComp {
         } else {
             this.eDateInput.setInputType('text');
         }
-        const parsedMinValidDate = parseOrConstructDate(this.beans.log, minValidDate, minValidYear, true);
-        const parsedMaxValidDate = parseOrConstructDate(this.beans.log, maxValidDate, maxValidYear, false);
-
-        if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
-            this.beans.log.warn(87);
+        // The same resolution the filter and the configuration-time report read, so what the input admits
+        // and what the filter accepts cannot differ. A custom date component gets no column, hence no
+        // resolved config to share - only the rule.
+        const { minBound, maxBound } = resolveDateBounds(filterParams ?? {});
+        if (minBound) {
+            inputElement.min = _serialiseDate(minBound, shouldUseDateTimeLocal)!;
         }
-
-        if (parsedMinValidDate) {
-            inputElement.min = _serialiseDate(parsedMinValidDate, shouldUseDateTimeLocal)!;
+        if (maxBound) {
+            inputElement.max = _serialiseDate(maxBound, shouldUseDateTimeLocal)!;
         }
-        if (parsedMaxValidDate) {
-            inputElement.max = _serialiseDate(parsedMaxValidDate, shouldUseDateTimeLocal)!;
-        }
-        this.isApply = params.location === 'floatingFilter' && !!buttons?.includes('apply');
+        this.isApply = params.location === 'floatingFilter' && !!filterParams?.buttons?.includes('apply');
     }
 
     public refresh(params: IDateParams): void {
@@ -168,24 +164,4 @@ export class DefaultDateComponent extends Component implements IDateComp {
     private shouldUseBrowserDatePicker(params: IDateParams): boolean {
         return params?.filterParams?.browserDatePicker ?? true;
     }
-}
-
-function parseOrConstructDate(
-    log: LogService,
-    date: string | Date | undefined,
-    year: number | undefined,
-    isMin: boolean
-): null | Date {
-    if (date && year) {
-        log.warn(isMin ? 85 : 86);
-    }
-    if (date instanceof Date) {
-        return date;
-    }
-    if (date) {
-        return _parseDateTimeFromString(date);
-    } else if (year) {
-        return _parseDateTimeFromString(`${year}-${isMin ? '01-01' : '12-31'}`);
-    }
-    return null;
 }

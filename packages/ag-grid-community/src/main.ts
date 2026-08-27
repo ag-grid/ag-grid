@@ -254,6 +254,7 @@ export type {
     ISimpleFilterParams,
     JoinOperator,
     ScalarFilterOptionKey,
+    SimpleFilterType,
     SimpleFilterParams,
     TextFilterOptionKey,
 } from './filter/provided/iSimpleFilter';

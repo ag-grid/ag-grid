@@ -1,24 +1,25 @@
-import type { BeanCollection } from '../../context/context';
 import type { GridInputNumberField, GridInputTextField } from '../../widgets/gridWidgetTypes';
 
-/** Holds an input to the characters its column admits. */
+/**
+ * Wrapping a character class again would only ever match two characters. No `g`, or `lastIndex` would
+ * carry between the characters `test` is asked about one by one.
+ */
+export const compileCharPattern = (allowedCharPattern: string): RegExp | null => {
+    const isCharClass = allowedCharPattern.startsWith('[') && allowedCharPattern.endsWith(']');
+    try {
+        return new RegExp(isCharClass ? allowedCharPattern : `[${allowedCharPattern}]`);
+    } catch {
+        return null; // Reported at configuration; not thrown, as this runs while the header and panel are built.
+    }
+};
+
+/** Holds an input to the characters its column admits, sharing the pattern its column already compiled. */
 export const installAllowedCharPattern = (
     field: GridInputTextField | GridInputNumberField,
-    allowedCharPattern: string | null | undefined,
-    beans: BeanCollection
+    pattern: RegExp | null | undefined
 ): void => {
-    if (!allowedCharPattern) {
+    if (!pattern) {
         return;
-    }
-    // Wrapping a character class again would only ever match two characters. No `g`, or `lastIndex` would
-    // carry between the characters `test` is asked about one by one.
-    const isCharClass = allowedCharPattern.startsWith('[') && allowedCharPattern.endsWith(']');
-    let pattern: RegExp;
-    try {
-        pattern = new RegExp(isCharClass ? allowedCharPattern : `[${allowedCharPattern}]`);
-    } catch {
-        beans.log.warn(327, { pattern: allowedCharPattern });
-        return; // Not thrown: this runs while the header and the filter panel are built.
     }
 
     field.addManagedElementListeners(field.getInputElement(), {

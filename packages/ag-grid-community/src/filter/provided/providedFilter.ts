@@ -22,7 +22,7 @@ import type {
     ProvidedFilterModel,
     ProvidedFilterParams,
 } from './iProvidedFilter';
-import { _isUseApplyButton, getDebounceMs } from './providedFilterUtils';
+import type { ResolvedFilterConfig } from './resolvedFilterConfig';
 
 /** temporary type until `ProvidedFilterParams` is updated as breaking change */
 type ProvidedFilterDisplayParams<M extends ProvidedFilterModel> = IProvidedFilterParams &
@@ -48,6 +48,8 @@ export abstract class ProvidedFilter<
     protected params: P;
 
     private applyActive = false;
+    /** Narrowed by `SimpleFilter`, which resolves more of the params than the shared ones. */
+    protected filterConfig: ResolvedFilterConfig;
     // a debounce of the apply method
     private applyDebounced: () => void;
     private debouncePending = false;
@@ -148,8 +150,15 @@ export abstract class ProvidedFilter<
         this.commonUpdateParams(newParams, oldParams);
     }
 
+    /** Overridden by `SimpleFilter`, which resolves more of the params than the shared ones. */
+    protected resolveFilterConfig(params: P): ResolvedFilterConfig {
+        return this.beans.filterConfigSvc!.get(params.column, params);
+    }
+
     private commonUpdateParams(newParams: P, _oldParams?: P): void {
-        this.applyActive = _isUseApplyButton(newParams);
+        const filterConfig = this.resolveFilterConfig(newParams);
+        this.filterConfig = filterConfig;
+        this.applyActive = filterConfig.useApplyButton;
         this.setupApplyDebounced();
     }
 
@@ -182,7 +191,7 @@ export abstract class ProvidedFilter<
     protected defaultDebounceMs: number = 0;
 
     private setupApplyDebounced(): void {
-        const debounceMs = getDebounceMs(this.beans.log, this.params, this.defaultDebounceMs);
+        const debounceMs = this.filterConfig.debounceMs ?? this.defaultDebounceMs;
         const debounceFunc = _debounce(this, this.checkApplyDebounce.bind(this), debounceMs);
         this.applyDebounced = () => {
             this.debouncePending = true;

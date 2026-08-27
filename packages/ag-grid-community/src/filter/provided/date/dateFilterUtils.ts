@@ -1,13 +1,12 @@
 import { _parseDateTimeFromString } from 'ag-stack';
 
 import type { Tuple } from '../iSimpleFilter';
-import type { OptionsFactory } from '../optionsFactory';
-import { getNumberOfInputs } from '../simpleFilterUtils';
+import type { ResolvedSimpleFilterConfig } from '../resolvedFilterConfig';
 import type { DateFilterModel } from './iDateFilter';
 
 export function mapValuesFromDateFilterModel(
     filterModel: DateFilterModel | null,
-    optionsFactory: OptionsFactory
+    filterConfig: ResolvedSimpleFilterConfig
 ): Tuple<Date> {
     // unlike the other filters, we do two things here:
     // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
@@ -21,5 +20,5 @@ export function mapValuesFromDateFilterModel(
     return [
         (dateFrom && _parseDateTimeFromString(dateFrom, undefined, true)) || null,
         (dateTo && _parseDateTimeFromString(dateTo, undefined, true)) || null,
-    ].slice(0, getNumberOfInputs(type, optionsFactory));
+    ].slice(0, filterConfig.numberOfInputs(type));
 }

@@ -12,7 +12,7 @@ export class BigIntFilterModelFormatter extends SimpleFilterModelFormatter<
     protected readonly filterTypeKeys = SCALAR_FILTER_TYPE_KEYS;
 
     protected override getValueFormatter(): ((value: bigint | null) => string | null) | undefined {
-        return _bindFilterCallback(this.filterParams.bigintFormatter, this.gos, this.column);
+        return _bindFilterCallback(this.filterParams.bigintFormatter, this.gos, this.filterConfig.column);
     }
 
     protected conditionToString(

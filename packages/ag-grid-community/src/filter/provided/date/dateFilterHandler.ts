@@ -1,9 +1,7 @@
-import type { Column } from '../../../interfaces/iColumn';
 import type { Comparator } from '../iScalarFilter';
 import type { ISimpleFilterModelPresetType, Tuple } from '../iSimpleFilter';
-import type { OptionsFactory } from '../optionsFactory';
+import type { ResolvedSimpleFilterConfig } from '../resolvedFilterConfig';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
-import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
 import { mapValuesFromDateFilterModel } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
@@ -33,15 +31,14 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
     private readonly filterTypeToRangeCache = new Map<ISimpleFilterModelPresetType, RangeCacheItem>();
 
     constructor() {
-        super(mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
+        super(mapValuesFromDateFilterModel);
     }
 
     protected createModelFormatter(
-        optionsFactory: OptionsFactory,
-        filterParams: IDateFilterParams,
-        column: Column
+        filterConfig: ResolvedSimpleFilterConfig,
+        filterParams: IDateFilterParams
     ): DateFilterModelFormatter {
-        return new DateFilterModelFormatter(optionsFactory, filterParams, column);
+        return new DateFilterModelFormatter(filterConfig, filterParams);
     }
 
     /** Times rather than dates: nothing a user `comparator` can normalise ever reaches the cache. */

@@ -440,7 +440,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         const { valueFormatted, value } = this.cellRendererParams;
         let valueToRender = (valueFormatted == null ? value : valueFormatted) ?? this.translate('blanks');
         if (typeof valueToRender !== 'string') {
-            this.beans.log.warn(208);
+            this.beans.log.warn(208, { colId: this.params.column.getColId() });
             valueToRender = '';
         }
 

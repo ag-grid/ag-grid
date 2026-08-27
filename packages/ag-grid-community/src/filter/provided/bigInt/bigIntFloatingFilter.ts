@@ -1,10 +1,8 @@
-import type { Column } from '../../../interfaces/iColumn';
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { installAllowedCharPattern } from '../allowedCharPattern';
-import type { OptionsFactory } from '../optionsFactory';
-import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
+import type { ResolvedSimpleFilterConfig } from '../resolvedFilterConfig';
 import { BigIntFilterModelFormatter } from './bigIntFilterModelFormatter';
 import { getAllowedCharPattern, stringToBigInt } from './bigIntFilterUtils';
 import type {
@@ -18,14 +16,12 @@ export class BigIntFloatingFilter extends TextInputFloatingFilter<IBigIntFloatin
     private allowedCharPattern: string | null;
     private bigintParser: BigIntFilterParams['bigintParser'] | undefined;
     protected readonly filterType = 'bigint';
-    protected readonly defaultOptions = DEFAULT_BIGINT_FILTER_OPTIONS;
 
     protected createModelFormatter(
-        optionsFactory: OptionsFactory,
-        filterParams: IBigIntFilterParams,
-        column: Column
+        filterConfig: ResolvedSimpleFilterConfig,
+        filterParams: IBigIntFilterParams
     ): BigIntFilterModelFormatter {
-        return new BigIntFilterModelFormatter(optionsFactory, filterParams, column);
+        return new BigIntFilterModelFormatter(filterConfig, filterParams);
     }
 
     protected override updateParams(params: IBigIntFloatingFilterParams): void {
@@ -40,12 +36,13 @@ export class BigIntFloatingFilter extends TextInputFloatingFilter<IBigIntFloatin
 
     protected createFloatingFilterInputService(params: IBigIntFloatingFilterParams): FloatingFilterInputService {
         const filterParams = params.filterParams as BigIntFilterParams;
-        const allowedCharPattern = getAllowedCharPattern(filterParams);
-        this.allowedCharPattern = allowedCharPattern;
+        this.allowedCharPattern = getAllowedCharPattern(filterParams);
         this.bigintParser = filterParams?.bigintParser;
 
+        // Read for these params rather than from the field: a recreate runs before the base has taken them on.
+        const pattern = this.beans.filterConfigSvc!.getSimple(params.column, filterParams, 'bigint').allowedCharPattern;
         return this.createManagedBean(
-            new FloatingFilterTextInputService((el) => installAllowedCharPattern(el, allowedCharPattern, this.beans))
+            new FloatingFilterTextInputService((el) => installAllowedCharPattern(el, pattern))
         );
     }
 

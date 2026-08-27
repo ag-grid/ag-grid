@@ -360,7 +360,7 @@ export class ColumnFilterService
         const filter = filterWrapper.filter;
         if (filter) {
             if (typeof filter.getModel !== 'function') {
-                this.warn(66);
+                this.warn(66, { colId });
                 return null;
             }
 
@@ -391,12 +391,12 @@ export class ColumnFilterService
     }
 
     private updateActiveFilters(): AgPromise<void> {
-        const isFilterActive = (filter: IFilter | null) => {
+        const isFilterActive = (filter: IFilter | null, colId: string) => {
             if (!filter) {
                 return false;
             } // this never happens, including to avoid compile error
             if (!filter.isFilterActive) {
-                this.warn(67);
+                this.warn(67, { colId });
                 return false;
             }
             return filter.isFilterActive();
@@ -438,7 +438,7 @@ export class ColumnFilterService
                 if (promise) {
                     promises.push(
                         promise.then((filter) => {
-                            addFilter(column, isFilterActive(filter), {
+                            addFilter(column, isFilterActive(filter, colId), {
                                 colId,
                                 isHandler: false,
                                 comp: filter!,
@@ -522,7 +522,7 @@ export class ColumnFilterService
                 const comp = filter.comp;
                 if (typeof comp.doesFilterPass !== 'function') {
                     // because users can do custom filters, give nice error message
-                    this.error(91);
+                    this.error(91, { colId });
                     continue;
                 }
 
@@ -799,13 +799,6 @@ export class ColumnFilterService
         }
 
         const { compDetails, createFilterUi } = filterCompDetails;
-
-        if (this.isGlobalButtons) {
-            const hasLocalButtons = !!(compDetails.params as FilterWrapperParams)?.buttons?.length;
-            if (!hasLocalButtons) {
-                this.warn(281, { colId: column.getColId() });
-            }
-        }
 
         return {
             compDetails,
@@ -1670,7 +1663,7 @@ export class ColumnFilterService
             if (uiPromise) {
                 uiPromise.then((filter) => {
                     if (typeof filter?.setModel !== 'function') {
-                        this.warn(65);
+                        this.warn(65, { colId: filterWrapper.column.colId });
                         resolve();
                         return;
                     }
@@ -1840,7 +1833,13 @@ export class ColumnFilterService
     }
 
     public setGlobalButtons(isGlobal: boolean): void {
+        // The panel re-declares its buttons on every params update, and the columns it would judge have not
+        // changed; only the transition is new information.
+        const becameGlobal = isGlobal && !this.isGlobalButtons;
         this.isGlobalButtons = isGlobal;
+        if (becameGlobal) {
+            this.beans.filterConfigSvc?.reportButtons();
+        }
         this.dispatchLocalEvent<FilterGlobalButtonsEvent>({
             type: 'filterGlobalButtons',
             isGlobal,

@@ -5,7 +5,7 @@ import type { ElementParams } from '../../../utils/element';
 import type { BigIntFilterModel } from '../../provided/bigInt/iBigIntFilter';
 import type { FilterOptionKey, ISimpleFilterParams } from '../../provided/iSimpleFilter';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
-import { _isUseApplyButton, getDebounceMs, getPlaceholderText } from '../../provided/providedFilterUtils';
+import { getPlaceholderText } from '../../provided/providedFilterUtils';
 import type {
     ITextInputFloatingFilterParams,
     TextFilterModel,
@@ -71,11 +71,11 @@ export abstract class TextInputFloatingFilter<
         const { inputSvc, defaultDebounceMs, readOnly } = this;
         const { filterPlaceholder, column, browserAutoComplete, filterParams } = params;
 
-        const filterOptionKey = (this.lastType ?? this.optionsFactory.defaultOption!) as FilterOptionKey;
+        const filterOptionKey = (this.lastType ?? this.filterConfig.defaultOption!) as FilterOptionKey;
         const parentFilterPlaceholder = (params.filterParams as ISimpleFilterParams).filterPlaceholder;
         const placeholder =
             filterPlaceholder === true
-                ? getPlaceholderText(this, parentFilterPlaceholder, 'filterOoo', filterOptionKey, this.optionsFactory)
+                ? getPlaceholderText(this, parentFilterPlaceholder, 'filterOoo', filterOptionKey, this.filterConfig)
                 : filterPlaceholder || undefined;
 
         inputSvc.setParams({
@@ -84,10 +84,10 @@ export abstract class TextInputFloatingFilter<
             placeholder,
         });
 
-        this.applyActive = _isUseApplyButton(filterParams as TextFilterParams);
+        this.applyActive = this.filterConfig.useApplyButton;
 
         if (!readOnly) {
-            const debounceMs = getDebounceMs(this.beans.log, filterParams as TextFilterParams, defaultDebounceMs);
+            const debounceMs = this.filterConfig.debounceMs ?? defaultDebounceMs;
             const debouncedSync = _debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs);
             let debounceTimeout: number | undefined;
             inputSvc.setValueChangedListener((e) => {
@@ -148,7 +148,7 @@ export abstract class TextInputFloatingFilter<
                     : ({
                           ...(model ?? {
                               filterType: this.filterType,
-                              type: lastType ?? this.optionsFactory.defaultOption,
+                              type: lastType ?? this.filterConfig.defaultOption,
                           }),
                           filter: parsedValue,
                       } as M);

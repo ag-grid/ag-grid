@@ -6,7 +6,6 @@ import { _bindFilterCallback, getValidityMessageKey } from '../simpleFilterUtils
 import type { RenderChange } from '../textInputSimpleFilter';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
-import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import {
     getAllowedCharPattern,
     mapValuesFromNumberFilterModel,
@@ -30,7 +29,7 @@ export class NumberFilter extends TextInputSimpleFilter<
     public readonly filterType = 'number' as const;
 
     constructor() {
-        super('numberFilter', mapValuesFromNumberFilterModel, DEFAULT_NUMBER_FILTER_OPTIONS);
+        super('numberFilter', mapValuesFromNumberFilterModel);
     }
 
     protected override getRenderChange(

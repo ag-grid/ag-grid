@@ -6,20 +6,14 @@ import type {
     FilterHandler,
     FilterHandlerBaseParams,
     FilterHandlerParams,
-    IMultiFilterDef,
     MultiFilterHandler as IMultiFilterHandler,
     IMultiFilterModel,
     IMultiFilterParams,
+    MultiFilterChild,
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
-import {
-    forEachReverse,
-    getFilterModelForIndex,
-    getMultiFilterDefs,
-    getUpdatedMultiFilterModel,
-    updateGetValue,
-} from './multiFilterUtil';
+import { forEachReverse, getFilterModelForIndex, getUpdatedMultiFilterModel, updateGetValue } from './multiFilterUtil';
 
 interface HandlerWrapper {
     handler: FilterHandler;
@@ -37,14 +31,14 @@ export class MultiFilterHandler
     private readonly handlerWrappers: (HandlerWrapper | undefined)[] = [];
     /** ui active. could still have null model */
     private activeFilterIndices: number[] = [];
-    private filterDefs: IMultiFilterDef[] = [];
+    private children: MultiFilterChild[] = [];
 
     public init(params: FilterHandlerParams<any, any, IMultiFilterModel, IMultiFilterParams>): void {
         this.params = params;
 
-        const filterDefs = getMultiFilterDefs(params.filterParams);
-        this.filterDefs = filterDefs;
-        filterDefs.forEach((def, index) => {
+        const children = this.beans.filterConfigSvc!.getChildren(params.column, params.filterParams);
+        this.children = children;
+        children.forEach(({ def }, index) => {
             const wrapper = this.beans.colFilter!.createHandler(params.column as AgColumn, def, 'agTextColumnFilter');
             this.handlerWrappers.push(wrapper);
             if (!wrapper) {
@@ -53,7 +47,7 @@ export class MultiFilterHandler
             }
             const { handler, handlerParams } = wrapper;
             handler.init?.({
-                ...this.updateHandlerParams(handlerParams, index, true),
+                ...this.updateHandlerParams(handlerParams, index),
                 model: getFilterModelForIndex(params.model, index),
                 source: 'init',
             });
@@ -64,11 +58,14 @@ export class MultiFilterHandler
     public refresh(params: FilterHandlerParams<any, any, IMultiFilterModel> & IMultiFilterParams): void {
         this.params = params;
         const { model, source, filterParams } = params;
-        const filters = filterParams?.filters;
+        // Re-resolved, so a definition that gained or lost children cannot be read past its end, and each
+        // child is judged against the definition it actually has now.
+        this.children = this.beans.filterConfigSvc!.getChildren(params.column, filterParams);
+        const children = this.children;
 
         this.handlerWrappers.forEach((wrapper, index) => {
             if (wrapper) {
-                const updatedParams = this.updateHandlerParams(params, index, false, filters?.[index].filterParams);
+                const updatedParams = this.updateHandlerParams(params, index, children[index]?.def.filterParams);
                 wrapper.handlerParams = updatedParams;
                 wrapper.handler.refresh?.({
                     ...updatedParams,
@@ -91,7 +88,6 @@ export class MultiFilterHandler
     private updateHandlerParams(
         params: FilterHandlerBaseParams,
         index: number,
-        isInit: boolean,
         providedFilterParams?: any
     ): FilterHandlerBaseParams {
         const { onModelChange, doesRowPassOtherFilter, getValue } = params;
@@ -105,29 +101,21 @@ export class MultiFilterHandler
             doesRowPassOtherFilter: (node) =>
                 doesRowPassOtherFilter(node) &&
                 this.doesFilterPass({ node, data: node.data, model: this.params.model, handlerParams }, index),
-            getValue: updateGetValue(this.beans, params.column as AgColumn, this.filterDefs[index], getValue),
-            filterParams: this.updateFilterParams(params, isInit, providedFilterParams),
+            getValue: updateGetValue(this.beans, params.column as AgColumn, this.children[index].def, getValue),
+            filterParams: this.updateFilterParams(params, index, providedFilterParams),
         };
         return handlerParams;
     }
 
-    private updateFilterParams(params: FilterHandlerBaseParams, isInit: boolean, providedFilterParams?: any): any {
-        const originalFilterParams = params.filterParams;
-        if (providedFilterParams?.buttons && isInit) {
-            this.warn(292, { colId: params.column.getColId() });
-        }
-        const filterParamsForFilter = providedFilterParams
-            ? { ...originalFilterParams, ...providedFilterParams }
-            : originalFilterParams;
-        if (!filterParamsForFilter.buttons) {
-            return filterParamsForFilter;
-        }
-        if (providedFilterParams) {
-            delete filterParamsForFilter.buttons;
-            return filterParamsForFilter;
-        }
-        const { buttons: _, ...filterParamsForFilterWithoutButtons } = filterParamsForFilter;
-        return filterParamsForFilterWithoutButtons;
+    private updateFilterParams(params: FilterHandlerBaseParams, index: number, providedFilterParams?: any): any {
+        const filterParamsForFilter = {
+            ...params.filterParams,
+            ...providedFilterParams,
+            filterConfig: this.children[index]?.config,
+        };
+        // The Multi Filter renders one button bar for all its children, so a child's own is never used.
+        delete filterParamsForFilter.buttons;
+        return filterParamsForFilter;
     }
 
     public doesFilterPass(params: DoesFilterPassParams<any, IMultiFilterModel>, indexToSkip?: number): boolean {

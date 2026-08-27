@@ -24,7 +24,7 @@ import {
 import { MultiFilter } from './multiFilter';
 import type { MultiFilterHandler } from './multiFilterHandler';
 import { MultiFilterUi } from './multiFilterUi';
-import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
+import { getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 const MultiFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -124,8 +124,8 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         const filterParams = params.filterParams as MultiFilterParams;
         const currentParentModel = params.currentParentModel;
 
-        const filterDefs = getMultiFilterDefs(filterParams);
-        filterDefs.forEach((filterDef, index) => {
+        const children = this.beans.filterConfigSvc!.getChildren(params.column, filterParams);
+        children.forEach(({ def: filterDef }, index) => {
             const floatingFilterParams: IFloatingFilterParams<IFilter> = {
                 ...params,
                 // set the parent filter instance for each floating filter to the relevant child filter instance
@@ -150,7 +150,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                     onModelChange(
                         getUpdatedMultiFilterModel(
                             (this.params as unknown as FloatingFilterDisplayParams).model,
-                            filterDefs.length,
+                            children.length,
                             newModel,
                             index
                         ),
@@ -223,7 +223,8 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private parentMultiFilterInstance(cb: (instance: MultiFilter | MultiFilterUi) => void): void {
         this.params.parentFilterInstance((parent) => {
             if (!(parent instanceof MultiFilter || parent instanceof MultiFilterUi)) {
-                this.beans.log.error(120);
+                this.beans.log.error(120, { colId: this.params.column.getColId() });
+                return;
             }
 
             cb(parent);

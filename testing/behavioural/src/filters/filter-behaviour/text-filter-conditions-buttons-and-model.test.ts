@@ -1,5 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     GridRows,
@@ -11,7 +12,7 @@ import {
 } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 
 /** Clicks an apply-panel button by label (harness only exposes Apply/Clear; Reset needs this). */
 async function clickPanelButton(label: string): Promise<void> {
@@ -39,7 +40,10 @@ describe('Text Filter — buttons & model round-trip', () => {
         installFilterLayoutMock();
     });
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => gridsManager.reset());
+    afterEach(() => {
+        gridsManager.reset();
+        vi.restoreAllMocks();
+    });
 
     test('buttons defer the model until Apply; Clear wipes the form but keeps the active filter, Reset removes it', async () => {
         // No debounceMs: it is ignored (and warns) when an apply button is present.
@@ -218,6 +222,9 @@ describe('Text Filter — buttons & model round-trip', () => {
     ] as const)(
         'a combined %s-conditions %s model with a wrong filterType leaves every row through',
         async (_name, operator, conditions) => {
+            // A model omitting `conditions` is reported as #77 where it arrives, whether or not it is displayed.
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [77] });
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 columnDefs: [{ field: 'name', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
                 rowData: [{ name: 'Alice' }, { name: 'Bob' }],
@@ -239,6 +246,8 @@ describe('Text Filter — buttons & model round-trip', () => {
             expect(api.getColumnFilterModel('name')).toStrictEqual({ ...combined, filterType: 'text' });
             // A model that constrains nothing is still a model, so the column keeps advertising a filter.
             expect(api.isColumnFilterPresent()).toBe(true);
+            const warnings = warnSpy.mock.calls.flat().join(' ');
+            expect(warnings.includes('warning #77')).toBe(conditions === undefined);
             await new GridRows(api, 'unfiltered').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 name:"Alice"

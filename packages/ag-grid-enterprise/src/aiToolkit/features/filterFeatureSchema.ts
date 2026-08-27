@@ -1,21 +1,22 @@
-import type { BeanCollection, StructuredSchemaParams } from 'ag-grid-community';
+import type {
+    AgColumn,
+    BeanCollection,
+    FilterConfigService,
+    ResolvedFilterConfig,
+    SimpleFilterType,
+    StructuredSchemaParams,
+} from 'ag-grid-community';
+import { ResolvedSimpleFilterConfig } from 'ag-grid-community';
 
 import type { MultiFilterHandler } from '../../multiFilter/multiFilterHandler';
-import { getMultiFilterDefs } from '../../multiFilter/multiFilterUtil';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
 import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
 import { buildAdvancedFilterFeatureSchema } from './advancedFilterFeatureSchema';
 
-const TextFilterKey = 'agTextColumnFilter';
-const NumberFilterKey = 'agNumberColumnFilter';
-const DateFilterKey = 'agDateColumnFilter';
-
 const SetFilterKey = 'agSetColumnFilter';
 
 const MultiFilterKey = 'agMultiColumnFilter';
-
-const SimpleFilterKeys = [TextFilterKey, NumberFilterKey, DateFilterKey];
 
 export const buildFilterFeatureSchema = (beans: BeanCollection, params?: StructuredSchemaParams) => {
     const { advancedFilter } = beans;
@@ -28,9 +29,10 @@ export const buildFilterFeatureSchema = (beans: BeanCollection, params?: Structu
 };
 
 const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: StructuredSchemaParams) => {
-    const { gos, colFilter, colModel } = beans;
+    const { gos, colFilter, colModel, filterConfigSvc } = beans;
 
-    if (!colFilter) {
+    // Both live in `ColumnFilterModule`, so either both are here or neither is.
+    if (!colFilter || !filterConfigSvc) {
         return;
     }
 
@@ -52,9 +54,12 @@ const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: Structur
         const includeSetValues = columnParams?.includeSetValues ?? false;
 
         const filter = buildColumnFilterSchema(
+            filterConfigSvc,
+            column,
             colDef.filter,
             colDef.filterParams,
             defaultFilter,
+            undefined,
             (isMulti: boolean = false, multiIndex: number = 0) => {
                 if (!includeSetValues) {
                     return [];
@@ -88,12 +93,16 @@ const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: Structur
         .nullable();
 };
 
-function buildColumnFilterSchema(
+const buildColumnFilterSchema = (
+    filterConfigSvc: FilterConfigService,
+    column: AgColumn,
     filter: any,
     filterParams: any | undefined,
     defaultFilter: string,
+    /** The child's own resolution where this is a Multi Filter child; the column's own otherwise. */
+    filterConfig: ResolvedFilterConfig | null | undefined,
     getKeys?: (isMulti?: boolean, index?: number) => (string | null)[]
-): SchemaBuilder | null {
+): SchemaBuilder | null => {
     let filterKey: string | undefined = undefined;
 
     if (typeof filter === 'string') {
@@ -108,47 +117,60 @@ function buildColumnFilterSchema(
         return null;
     }
 
-    if (SimpleFilterKeys.includes(filterKey)) {
-        const maxConditions = filterParams?.maxNumConditions;
-        const filterOptions = filterParams?.filterOptions
-            ? filterParams.filterOptions
-                  .map((option: any) => {
-                      if (typeof option === 'string') {
-                          return option;
-                      }
-                      if (typeof option === 'object' && option.displayKey) {
-                          return option.displayKey;
-                      }
-                      return null;
-                  })
-                  .filter(Boolean)
-            : undefined;
-        const useIsoSeparator = filterParams?.useIsoSeparator || false;
-
-        return buildSimpleFilterSchema(filterKey, { maxConditions, filterOptions, useIsoSeparator });
+    // The column's own resolution decides whether this is a simple filter and which one, so the schema
+    // cannot offer an option the dropdown rejected, nor disagree with it about the filter's type.
+    const config = filterConfig ?? filterConfigSvc.get(column, filterParams ?? {});
+    if (config instanceof ResolvedSimpleFilterConfig) {
+        return buildSimpleFilterSchema(config.filterType, {
+            maxConditions: config.conditionCounts.maxNumConditions,
+            filterOptions: config.filterOptions.map((o) => (typeof o === 'string' ? o : o.displayKey)),
+            useIsoSeparator: filterParams?.useIsoSeparator || false,
+        });
     } else if (filterKey === SetFilterKey) {
         return buildSetFilterSchema(getKeys);
     } else if (filterKey === MultiFilterKey) {
-        return buildMultiFilterSchema(getMultiFilterDefs(filterParams ?? {}), defaultFilter, getKeys);
+        return buildMultiFilterSchema(filterConfigSvc, column, filterParams, defaultFilter, getKeys);
     }
 
     return null;
-}
+};
 
 type SimpleFilterSchemaParams = {
-    filterOptions?: string[];
-    maxConditions?: number;
+    /** What the column resolved to, which is exactly what its dropdown offers. */
+    filterOptions: string[];
+    maxConditions: number;
     useIsoSeparator: boolean;
 };
 
-const buildSimpleFilterSchema = (filterKey: string, params: SimpleFilterSchemaParams) => {
-    if (filterKey === DateFilterKey) {
-        return buildDateFilterSchema(params);
-    } else if (filterKey === NumberFilterKey) {
-        return buildNumberFilterSchema(params);
-    } else {
-        return buildTextFilterSchema(params);
-    }
+const buildSimpleFilterSchema = (filterType: SimpleFilterType, params: SimpleFilterSchemaParams) =>
+    // Only a date's model names its values differently; the rest vary by type literal and value shape alone.
+    filterType === 'date' ? buildDateFilterSchema(params) : buildValueFilterSchema(filterType, params);
+
+const FILTER_TYPE_LABELS = { text: 'text', number: 'number', bigint: 'big int' } as const;
+
+/**
+ * Every model whose values sit on `filter`/`filterTo`. A Big Int carries its as strings, so a schema
+ * describing them as numbers would lose the precision the filter exists to keep.
+ */
+const buildValueFilterSchema = (filterType: 'text' | 'number' | 'bigint', params: SimpleFilterSchemaParams) => {
+    const label = FILTER_TYPE_LABELS[filterType];
+    const value = (description: string) => {
+        if (filterType === 'number') {
+            return s.number(description);
+        }
+        if (filterType === 'bigint') {
+            return s.string({ pattern: '^-?\\d+$', description });
+        }
+        return s.string(description);
+    };
+    const schema = s.object({
+        filterType: s.literal(filterType, `Filter type identifier for ${label} filters`),
+        type: s.enum(params.filterOptions, `${label} filter operation type`),
+        filter: value('Primary filter value').nullable(),
+        filterTo: value('Secondary filter value for range operations').nullable(),
+    });
+
+    return buildJoinSchema(schema, filterType, params.maxConditions);
 };
 
 const buildJoinSchema = (schema: SchemaBuilder, filterType: string, maxConditions: number = 2) => {
@@ -166,69 +188,14 @@ const buildJoinSchema = (schema: SchemaBuilder, filterType: string, maxCondition
     });
 };
 
-const buildTextFilterSchema = (params: SimpleFilterSchemaParams) => {
-    const options = params.filterOptions ?? [
-        'contains',
-        'notContains',
-        'equals',
-        'notEqual',
-        'startsWith',
-        'endsWith',
-        'blank',
-        'notBlank',
-    ];
-
-    const schema = s.object({
-        filterType: s.literal('text', 'Filter type identifier for text filters'),
-        type: s.enum(options, 'Text filter operation type'),
-        filter: s.string('Primary filter value').nullable(),
-        filterTo: s.string('Secondary filter value for range operations').nullable(),
-    });
-
-    return buildJoinSchema(schema, 'text', params.maxConditions);
-};
-
-const buildNumberFilterSchema = (params: SimpleFilterSchemaParams) => {
-    const options = params.filterOptions ?? [
-        'equals',
-        'notEqual',
-        'greaterThan',
-        'greaterThanOrEqual',
-        'lessThan',
-        'lessThanOrEqual',
-        'inRange',
-        'blank',
-        'notBlank',
-    ];
-
-    const schema = s.object({
-        filterType: s.literal('number', 'Filter type identifier for number filters'),
-        type: s.enum(options, 'Number filter operation type'),
-        filter: s.number('Primary filter value').nullable(),
-        filterTo: s.number('Secondary filter value for range operations').nullable(),
-    });
-
-    return buildJoinSchema(schema, 'number', params.maxConditions);
-};
-
 const buildDateFilterSchema = (params: SimpleFilterSchemaParams) => {
-    const options = params.filterOptions ?? [
-        'equals',
-        'notEqual',
-        'lessThan',
-        'greaterThan',
-        'inRange',
-        'blank',
-        'notBlank',
-    ];
-
     const pattern = params.useIsoSeparator
         ? '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$'
         : '^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$';
 
     const schema = s.object({
         filterType: s.literal('date', 'Filter type identifier for date filters'),
-        type: s.enum(options, 'Date filter operation type'),
+        type: s.enum(params.filterOptions, 'Date filter operation type'),
         dateFrom: s
             .string({ pattern, description: 'Primary date filter value in YYYY-MM-DD HH:mm:ss format' })
             .nullable(),
@@ -256,13 +223,24 @@ const buildSetFilterSchema = (getKeys?: () => (string | null)[]) => {
 };
 
 const buildMultiFilterSchema = (
-    filters: any[],
+    filterConfigSvc: FilterConfigService,
+    column: AgColumn,
+    filterParams: any,
     defaultFilter: string,
     getKeys: (isMulti: boolean, index?: number) => (string | null)[] = () => []
 ): SchemaBuilder | null => {
-    const childSchemas = filters
-        .map((filter: any, index: number) =>
-            buildColumnFilterSchema(filter.filter, filter.filterParams, defaultFilter, () => getKeys(true, index))
+    const children = filterConfigSvc.getChildren(column, filterParams);
+    const childSchemas = children
+        .map(({ def: filter }, index: number) =>
+            buildColumnFilterSchema(
+                filterConfigSvc,
+                column,
+                filter.filter,
+                filter.filterParams,
+                defaultFilter,
+                children[index]?.config,
+                () => getKeys(true, index)
+            )
         )
         .filter((schema: SchemaBuilder | null): schema is SchemaBuilder => schema !== null);
 

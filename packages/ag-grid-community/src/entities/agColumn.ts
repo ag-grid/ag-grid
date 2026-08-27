@@ -7,6 +7,7 @@ import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType } from '../events';
+import type { ResolvedFilterConfig } from '../filter/provided/resolvedFilterConfig';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
@@ -83,6 +84,18 @@ const DEFAULT_ABSOLUTE_SORTING_ORDER: (SortDef | SortDirection)[] = [
 /** Origin of an `AgColumn`. `user` = application-supplied ColDef; others = grid-generated.
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ColKind = 'user' | 'auto-group' | 'selection' | 'row-number' | 'hierarchy';
+
+/** Not yet read by `FilterConfigService`. */
+export const FILTER_CONFIG_STATE_PENDING = 0;
+/** Read: {@link AgColumn.filterConfig} holds the result, or `null` where the column has no filter. */
+export const FILTER_CONFIG_STATE_SETTLED = 1;
+/** Holds params only the component factory can apply, so the first filter to ask resolves and reports it. */
+export const FILTER_CONFIG_STATE_DEFERRED = 2;
+
+type FilterConfigState =
+    | typeof FILTER_CONFIG_STATE_PENDING
+    | typeof FILTER_CONFIG_STATE_SETTLED
+    | typeof FILTER_CONFIG_STATE_DEFERRED;
 
 // Runtime wrapper around a (logic-free) column definition, holding all runtime state plus logic.
 // Child of either the original or the displayed tree; each group class implements only its own tree's interface.
@@ -211,6 +224,12 @@ export class AgColumn<TValue = any>
     /** Public so the free `_getAvailableSortTypes` sort helper can cache on the column; nulled in {@link setColDef}. */
     public cachedSortTypes: Set<SortType> | null = null;
 
+    /** What this column's `filterParams` resolve to; a Multi Filter's owns its children. `null` until
+     *  {@link filterConfigState} says otherwise. Nulled in {@link setColDef}, so it cannot outlive its definition. */
+    public filterConfig: ResolvedFilterConfig | null = null;
+    /** How far `FilterConfigService` got with this definition; see the `FILTER_CONFIG_STATE_*` constants. */
+    public filterConfigState: FilterConfigState = FILTER_CONFIG_STATE_PENDING;
+
     /** User-edited header name that takes precedence over `colDef.headerName`. Persisted in column state. */
     public headerNameOverride: string | null = null;
 
@@ -273,6 +292,8 @@ export class AgColumn<TValue = any>
         }
         ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
+        this.filterConfig = null; // filterParams may have changed
+        this.filterConfigState = FILTER_CONFIG_STATE_PENDING;
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
         this.beans.showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only

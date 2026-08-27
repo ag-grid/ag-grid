@@ -1,12 +1,10 @@
-import type { Column } from '../../../interfaces/iColumn';
 import type { FilterHandlerParams, IDoesFilterPassParams } from '../../../interfaces/iFilter';
 import type { FilterOptionKey, ICombinedSimpleModel, TextFilterOptionKey, Tuple } from '../iSimpleFilter';
 import { isCombinedFilterModel } from '../iSimpleFilter';
-import type { OptionsFactory } from '../optionsFactory';
+import type { ResolvedSimpleFilterConfig } from '../resolvedFilterConfig';
 import { SimpleFilterHandler } from '../simpleFilterHandler';
 import { isBlank } from '../simpleFilterUtils';
 import type { ITextFilterParams, TextFilterModel, TextFormatter, TextMatcher } from './iTextFilter';
-import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
 import { TextFilterModelFormatter } from './textFilterModelFormatter';
 import { mapValuesFromTextFilterModel, trimInputForFilter } from './textFilterUtils';
 
@@ -56,15 +54,14 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
     private formatter: TextFormatter;
 
     constructor() {
-        super(mapValuesFromTextFilterModel, DEFAULT_TEXT_FILTER_OPTIONS);
+        super(mapValuesFromTextFilterModel);
     }
 
     protected createModelFormatter(
-        optionsFactory: OptionsFactory,
-        filterParams: ITextFilterParams,
-        column: Column
+        filterConfig: ResolvedSimpleFilterConfig,
+        filterParams: ITextFilterParams
     ): TextFilterModelFormatter {
-        return new TextFilterModelFormatter(optionsFactory, filterParams, column);
+        return new TextFilterModelFormatter(filterConfig, filterParams);
     }
 
     protected override updateParams(
@@ -93,7 +90,7 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
         // Presence is decided without the matcher, so an unusable key is reported for a blank column too.
         if (filterType !== 'blank' && filterType !== 'notBlank' && this.isUnmatchable(filterType)) {
             this.warnUnexpectedFilterType(filterType);
-            return false;
+            return true;
         }
         return filterType === 'notEqual' || filterType === 'notContains' || filterType === 'blank';
     }
@@ -123,7 +120,7 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
 
         if (this.isUnmatchable(type)) {
             this.warnUnexpectedFilterType(type);
-            return false;
+            return true;
         }
 
         const matcher = this.matcher;

@@ -1,10 +1,9 @@
 import { BeanStub } from '../../context/beanStub';
-import type { Column } from '../../interfaces/iColumn';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
 import type { ProvidedFilterModel } from './iProvidedFilter';
 import type { FilterOptionKey, ICombinedSimpleModel, ISimpleFilterModel, ISimpleFilterParams } from './iSimpleFilter';
-import type { OptionsFactory } from './optionsFactory';
+import type { ResolvedSimpleFilterConfig } from './resolvedFilterConfig';
 
 export const SCALAR_FILTER_TYPE_KEYS = {
     equals: 'Equals',
@@ -36,10 +35,8 @@ export abstract class SimpleFilterModelFormatter<
     protected abstract readonly filterTypeKeys: TKeys;
 
     constructor(
-        private optionsFactory: OptionsFactory,
-        protected filterParams: TFilterParams,
-        /** Named so a `numberFormatter` shared across columns can tell which one it is rendering. */
-        protected readonly column: Column
+        protected filterConfig: ResolvedSimpleFilterConfig,
+        protected filterParams: TFilterParams
     ) {
         super();
     }
@@ -71,7 +68,7 @@ export abstract class SimpleFilterModelFormatter<
                 : translate(model.type, model.type);
         } else {
             const condition = model;
-            const customOption = this.optionsFactory.getCustomOption(condition.type);
+            const customOption = this.filterConfig.getCustomOption(condition.type);
 
             // For custom filter options we display the Name of the filter instead
             // of displaying the `from` value, as it wouldn't be relevant
@@ -98,9 +95,9 @@ export abstract class SimpleFilterModelFormatter<
         customDisplayName: string | undefined
     ): string;
 
-    public updateParams(params: { optionsFactory: OptionsFactory; filterParams: TFilterParams }) {
-        const { optionsFactory, filterParams } = params;
-        this.optionsFactory = optionsFactory;
+    public updateParams(params: { filterConfig: ResolvedSimpleFilterConfig; filterParams: TFilterParams }) {
+        const { filterConfig, filterParams } = params;
+        this.filterConfig = filterConfig;
         this.filterParams = filterParams;
     }
 

@@ -1020,6 +1020,24 @@ describe('Number Filter — conditions coverage', () => {
         `);
     });
 
+    test('a combined model with no conditions reports when it is set, not when the filter is opened', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [77] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: MIXED,
+        });
+
+        await api.setColumnFilterModel('val', { filterType: 'number', operator: 'AND' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // The model is judged where it arrives. Reported from the display instead, a model set through the
+        // API and never looked at is never reported at all.
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #77');
+    });
+
     test('a combined model with no conditions is tolerated rather than throwing', async () => {
         // Deliberate: a combined model without `conditions` is reported as warning #77.
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [77] });
@@ -1091,7 +1109,9 @@ describe('Number Filter — conditions coverage', () => {
     });
 
     test('a floating filter follows a combined model with no conditions rather than throwing', async () => {
-        // No popup is built here, so the malformed model reaches the floating filter without warning #77 first.
+        // No popup is built here, so the floating filter is the only thing that has to follow the model.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [77] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 { field: 'val', filter: 'agNumberColumnFilter', floatingFilter: true, filterParams: { debounceMs: 0 } },
@@ -1113,15 +1133,19 @@ describe('Number Filter — conditions coverage', () => {
         expect(api.getColumnFilterModel('val')).toStrictEqual({ filterType: 'number', operator: 'AND' });
         // No condition to read back, so the floating filter shows nothing rather than a value it does not have.
         expect(FloatingFilterHarness.get(api, 'val').input().value).toBe('');
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #77');
     });
 
     test('`maxNumConditions` below one leaves a lone condition alone rather than rewriting it forever', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [79] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 { field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0, maxNumConditions: 0 } },
             ],
             rowData: MIXED,
         });
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #79');
 
         await api.setColumnFilterModel('val', { filterType: 'number', type: 'greaterThan', filter: 0 });
         api.onFilterChanged();
@@ -1154,12 +1178,15 @@ describe('Number Filter — conditions coverage', () => {
         ['below one', 0],
         ['not a number', Number.NaN],
     ])('`maxNumConditions` %s keeps one condition rather than emptying the model', async (_name, maxNumConditions) => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [79] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 { field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0, maxNumConditions } },
             ],
             rowData: MIXED,
         });
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #79');
 
         await api.setColumnFilterModel('val', {
             filterType: 'number',
@@ -1243,8 +1270,12 @@ describe('Number Filter — conditions coverage', () => {
         await ColumnFilterHarness.open(api, 'val');
 
         const warnings = warnSpy.mock.calls.flat().join(' ');
-        expect(warnings).toContain('`filterParams.maxNumConditions` must be greater than or equal to one.');
-        expect(warnings).toContain('`filterParams.numAlwaysVisibleConditions` must be greater than or equal to one.');
+        expect(warnings).toContain(
+            '`filterParams.maxNumConditions` on column `val` must be greater than or equal to one.'
+        );
+        expect(warnings).toContain(
+            '`filterParams.numAlwaysVisibleConditions` on column `val` must be greater than or equal to one.'
+        );
         // Both floored to one, so the panel shows a single condition and nothing to join it to.
         await new FilterDom(api, 'both condition limits floored to one', { colId: 'val' }).checkFilterDom(`
             COLUMN FILTER

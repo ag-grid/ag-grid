@@ -88,6 +88,14 @@ export class Registry
         }
     }
 
+    /**
+     * The params hook a module registered against a default component, without asking for the component -
+     * so a caller judging a configuration is not also reporting the component as missing.
+     */
+    public getDefaultProcessParams(name: string): ProcessParamsFunc | undefined {
+        return this.agGridDefaultOverrides[name as UserComponentName]?.processParams;
+    }
+
     public getUserComponent(
         propertyName: string,
         name: string

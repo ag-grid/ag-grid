@@ -16,6 +16,7 @@ import type {
     IFilterComp,
     IFilterParams,
 } from '../interfaces/iFilter';
+import type { IMultiFilterDef, IMultiFilterParams } from '../interfaces/iMultiFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 
 export const FILTER_HANDLER_MAP = {
@@ -29,6 +30,13 @@ export const FILTER_HANDLER_MAP = {
 } as const;
 
 export const FILTER_HANDLERS = new Set(Object.values(FILTER_HANDLER_MAP));
+
+/**
+ * The children a Multi Filter definition names, or the two it has when it names none.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export const _getMultiFilterDefs = (params: IMultiFilterParams | null | undefined): IMultiFilterDef[] =>
+    params?.filters?.length ? params.filters : [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
 
 export type FilterHandlerName = (typeof FILTER_HANDLER_MAP)[keyof typeof FILTER_HANDLER_MAP];
 

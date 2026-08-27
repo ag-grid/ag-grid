@@ -13,9 +13,9 @@ import type {
     IFilterComp,
     IFilterParams,
     IMultiFilter,
-    IMultiFilterDef,
     IMultiFilterModel,
     IMultiFilterParams,
+    MultiFilterChild,
     MultiFilterParams,
     ProvidedFilterModel,
     RowNode,
@@ -33,7 +33,7 @@ import {
 
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
-import { getFilterModelForIndex, getMultiFilterDefs, updateGetValue } from './multiFilterUtil';
+import { getFilterModelForIndex, updateGetValue } from './multiFilterUtil';
 
 interface MultiFilterWrapper {
     filter: IFilterComp;
@@ -63,7 +63,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
     public init(params: MultiFilterParams): AgPromise<void> {
         this.params = params;
-        this.filterDefs = getMultiFilterDefs(params);
+        this.resolveChildren(params.column, params);
 
         const initialModel = _getFilterModel(this.beans.colFilter!.model, params.column.getColId());
 
@@ -71,9 +71,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
         this.filterChangedCallback = filterChangedCallback;
 
-        const filterPromises = this.filterDefs.map((filterDef, index) =>
-            this.createFilter(filterDef, index, initialModel)
-        );
+        const filterPromises = this.children.map((child, index) => this.createFilter(child, index, initialModel));
 
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
         return new AgPromise<void>((resolve) => {
@@ -287,11 +285,12 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     }
 
     private createFilter(
-        filterDef: IMultiFilterDef,
+        child: MultiFilterChild,
         index: number,
         initialModel: IMultiFilterModel | null
     ): AgPromise<MultiFilterWrapper | null> {
         const column = this.params.column as AgColumn;
+        const filterDef = child.def;
 
         let initialModelForFilter: any = null;
         let createWrapperComp: ((filter: IFilterComp<any> | null) => FilterWrapperComp) | undefined;
@@ -337,6 +336,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             (defaultParams, isHandler) => {
                 const updatedParams = {
                     ...defaultParams,
+                    filterConfig: child.config,
                     filterChangedCallback: isHandler
                         ? () => {}
                         : (additionalEventAttributes?: any) => {

@@ -20,8 +20,8 @@ export const SetFilterModule: _ModuleWithoutApi = {
             params: {
                 useForm: true,
             } as FilterWrapperParams,
-            processParams: (params, beans) => {
-                applyExcelModeOptions(params, beans);
+            processParams: (params) => {
+                applyExcelModeOptions(params);
                 return params;
             },
         },

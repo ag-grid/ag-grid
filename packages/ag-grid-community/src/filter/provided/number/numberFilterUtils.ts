@@ -1,8 +1,8 @@
 import type { GridOptionsService } from '../../../gridOptionsService';
 import type { Column } from '../../../interfaces/iColumn';
 import type { Tuple } from '../iSimpleFilter';
-import type { OptionsFactory } from '../optionsFactory';
-import { filterCallbackParams, getNumberOfInputs } from '../simpleFilterUtils';
+import type { ResolvedSimpleFilterConfig } from '../resolvedFilterConfig';
+import { filterCallbackParams } from '../simpleFilterUtils';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
 
 export function getAllowedCharPattern(filterParams?: INumberFilterParams): string | null {
@@ -50,11 +50,11 @@ export function processNumberFilterValue(value?: number | null): number | null {
 
 export function mapValuesFromNumberFilterModel(
     filterModel: NumberFilterModel | null,
-    optionsFactory: OptionsFactory
+    filterConfig: ResolvedSimpleFilterConfig
 ): Tuple<number> {
     const { filter, filterTo, type } = filterModel || {};
     return [processNumberFilterValue(filter), processNumberFilterValue(filterTo)].slice(
         0,
-        getNumberOfInputs(type, optionsFactory)
+        filterConfig.numberOfInputs(type)
     );
 }

@@ -2,6 +2,7 @@ import { _debounce, _last, _makeNull, _toStringOrNull } from 'ag-stack';
 
 import type {
     AgColumn,
+    ColDef,
     DoesFilterPassParams,
     FilterHandler,
     FilterHandlerParams,
@@ -14,7 +15,12 @@ import type {
     SetFilterModelValue,
     ValueFormatterParams,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _isClientSideRowModel } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _isClientSideRowModel,
+    _setFilterNeedsValueFormatter,
+} from 'ag-grid-community';
 
 import { CsrmValuesExtractor } from './csrmValueExtractor';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
@@ -107,7 +113,7 @@ export class SetFilterHandler<TValue = string>
         this.groupingTreeList = !!this.beans.rowGroupColsSvc?.columns.length && !!treeList && isGroupCol;
         const resolvedKeyCreator = keyCreator ?? colDef.keyCreator;
         this.createKey = this.generateCreateKey(resolvedKeyCreator, this.isTreeDataOrGrouping());
-        this.setValueFormatter(valueFormatter, resolvedKeyCreator, !!treeList, !!colDef.refData);
+        this.setValueFormatter(valueFormatter, params.filterParams, colDef, !!colDef.refData);
     }
 
     public doesFilterPass(params: DoesFilterPassParams<any, SetFilterModel>): boolean {
@@ -405,14 +411,14 @@ export class SetFilterHandler<TValue = string>
 
     private setValueFormatter(
         providedValueFormatter: ((params: ValueFormatterParams) => string) | undefined,
-        keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined,
-        treeList: boolean,
+        filterParams: ISetFilterParams<any, TValue>,
+        colDef: ColDef,
         isRefData: boolean
     ) {
         let valueFormatter = providedValueFormatter;
         if (!valueFormatter) {
-            if (keyCreator && !treeList) {
-                this.error(249);
+            // The predicate the configuration reports on, so the filter cannot act on a different rule.
+            if (_setFilterNeedsValueFormatter(filterParams, colDef)) {
                 return;
             }
             this.noValueFormatterSupplied = true;

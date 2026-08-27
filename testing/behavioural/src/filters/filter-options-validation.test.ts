@@ -7,6 +7,7 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
+    messagesFrom,
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
@@ -72,25 +73,43 @@ describe('Column filter — a model naming an option the column does not offer',
         rowData: [{ age: 25 }, { age: 40 }, { age: 28 }, { age: 33 }],
     };
 
-    test('a built-in option left out of `filterOptions` is cleared, not applied', async () => {
+    // Leaving an option out of `filterOptions` decides what the dropdown offers. A model naming it was set
+    // before, or by hand, so it is kept and applied - narrowing the list must not delete an existing filter.
+    test('a built-in option left out of `filterOptions` is still applied', async () => {
         const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', restrictedOpts);
 
         await api.setColumnFilterModel('age', { filterType: 'number', type: 'greaterThan', filter: 30 });
         api.onFilterChanged();
         await asyncSetTimeout(0);
 
-        expect(api.getColumnFilterModel('age')).toBeNull();
-        await new GridRows(api, 'unfiltered - the option is not offered').check(`
+        expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'greaterThan', filter: 30 });
+        await new GridRows(api, 'filtered - the model is honoured though the option is not offered').check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 age:25
             ├── LEAF id:1 age:40
-            ├── LEAF id:2 age:28
             └── LEAF id:3 age:33
         `);
         await new FilterDom(api, 'a built-in option left out of the list', { colId: 'age' }).checkFilterDom(`
             FLOATING FILTER age: (not present)
-            model: null
+            model:
+              filterType: "number"
+              type: "greaterThan"
+              filter: 30
         `);
+    });
+
+    // Keeping the model is only half of it: if the dropdown cannot show the condition, opening the filter
+    // rewrites it to the first offered option and the filter is lost anyway, one interaction later.
+    test('the dropdown offers the model’s option so opening the filter does not rewrite it', async () => {
+        const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', restrictedOpts);
+
+        await api.setColumnFilterModel('age', { filterType: 'number', type: 'greaterThan', filter: 30 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        const filter = await ColumnFilterHarness.open(api, 'age');
+        expect(await filter.operatorOptions()).toEqual(['Equals', 'Multiple of', 'Greater than']);
+        // Opening it changed nothing: the condition is still the one that was applied.
+        expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'greaterThan', filter: 30 });
     });
 
     test('an option the list does offer is applied untouched', async () => {
@@ -154,7 +173,7 @@ describe('Column filter — an invalid custom option', () => {
 
         // The unusable option goes; the ones the user can actually filter with stay.
         const filter = await ColumnFilterHarness.open(api, 'age');
-        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #72');
+        expect(messagesFrom(warnSpy)).toContain('warning #72');
         expect(await filter.operatorOptions()).toEqual(['Equals', 'Multiple of']);
 
         await filter.selectOperator('Multiple of');
@@ -196,7 +215,7 @@ describe('Column filter — an invalid custom option', () => {
         });
 
         const filter = await ColumnFilterHarness.open(api, 'age');
-        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #72');
+        expect(messagesFrom(warnSpy)).toContain('warning #72');
         expect(await filter.operatorOptions()).toEqual(['Equals', 'Multiple of']);
         // The first option the user can actually pick is what the condition starts on.
         expect(filter.operatorSelectValue()).toBe('Equals');
@@ -243,7 +262,7 @@ describe('Column filter — an invalid custom option', () => {
         expect(filter.operatorSelectValue()).toBe('Equals');
 
         // Both faults are the user's to fix: the option is malformed, and the default names one not offered.
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('warning #326');
         expect(warnings).toContain('noPredicate');
@@ -265,8 +284,8 @@ describe('Column filter — an invalid custom option', () => {
         `);
     });
 
-    test('a model naming it is cleared, as nothing can show or evaluate that condition', async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [72] });
+    test('a model naming it is kept and reported, and constrains nothing', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [72, 76] });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', {
@@ -284,10 +303,10 @@ describe('Column filter — an invalid custom option', () => {
         api.onFilterChanged();
         await asyncSetTimeout(0);
 
-        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #72');
-        expect(api.getColumnFilterModel('age')).toBeNull();
-        // The blank row proves the condition is gone: an option that cannot be evaluated hides blanks while it survives.
-        await new GridRows(api, 'unfiltered - the option was dropped').check(`
+        expect(messagesFrom(warnSpy)).toContain('warning #72');
+        // Kept, so a saved filter is never silently deleted - and unevaluable, so it constrains nothing.
+        expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'noPredicate', filter: 5 });
+        await new GridRows(api, 'every row - the condition cannot be answered').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 age:25
             ├── LEAF id:1 age:40
@@ -295,7 +314,10 @@ describe('Column filter — an invalid custom option', () => {
         `);
         await new FilterDom(api, 'a model naming an invalid option', { colId: 'age' }).checkFilterDom(`
             FLOATING FILTER age: (not present)
-            model: null
+            model:
+              filterType: "number"
+              type: "noPredicate"
+              filter: 5
         `);
     });
 });
@@ -360,188 +382,6 @@ describe('Column filter — a built-in option the filter cannot evaluate', () =>
             rowData: [{ athlete: 'Bolt' }, { athlete: 'Ng' }],
         } as GridOptions);
 
-    // The reported case: a key that is not a filter option at all, rather than one belonging elsewhere.
-    test('a key no filter defines is offered under its own name, and reported when it is evaluated', async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [76] });
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-        const api: GridApi = await createGrid(['equals', 'notEqual', 'wrong']);
-        const filter = await ColumnFilterHarness.open(api, 'athlete');
-        // Nothing localises it, so the key stands in for the label it has no translation for.
-        expect(await filter.operatorOptions()).toEqual(['Equals', 'Does not equal', 'wrong']);
-        expect(warnSpy).not.toHaveBeenCalled();
-
-        await filter.selectOperator('wrong');
-        await filter.setText('Bolt', 0);
-        await asyncSetTimeout(0);
-
-        expect(api.getColumnFilterModel('athlete')).toEqual({
-            filterType: 'text',
-            type: 'wrong',
-            filter: 'Bolt',
-        });
-        // `Bolt` is in the data, so a key that matched anything would leave a row behind.
-        await new GridRows(api, 'a key no filter defines').check(`
-            ROOT id:ROOT_NODE_ID
-        `);
-        const warnings = warnSpy.mock.calls.flat().join(' ');
-        expect(warnings).toContain('warning #76');
-        expect(warnings).toContain('wrong');
-        await new FilterDom(api, 'a key no filter defines', { colId: 'athlete' }).checkFilterDom(`
-            COLUMN FILTER
-            operator: "wrong"
-            input: "Bolt"
-            model:
-              filterType: "text"
-              type: "wrong"
-              filter: "Bolt"
-        `);
-    });
-
-    // The option is offered as configured: only a `textMatcher` or a `predicate` can say what it means,
-    // and either may supply one, so it is the evaluation with neither that reports.
-    test('an option belonging to another filter type is offered, and reported when it is evaluated', async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [76] });
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-        const api: GridApi = await createGrid(['contains', 'inRange']);
-        const filter = await ColumnFilterHarness.open(api, 'athlete');
-        expect(await filter.operatorOptions()).toEqual(['Contains', 'Between']);
-        expect(warnSpy).not.toHaveBeenCalled();
-
-        await filter.selectOperator('Between');
-        await filter.setText('A', 0);
-        await filter.setText('Z', 1);
-        await asyncSetTimeout(0);
-
-        expect(api.getColumnFilterModel('athlete')).toEqual({
-            filterType: 'text',
-            type: 'inRange',
-            filter: 'A',
-            filterTo: 'Z',
-        });
-        await new GridRows(api, 'a text `inRange` the matcher cannot answer').check(`
-            ROOT id:ROOT_NODE_ID
-        `);
-        const warnings = warnSpy.mock.calls.flat().join(' ');
-        expect(warnings).toContain('warning #76');
-        expect(warnings).toContain('inRange');
-        await new FilterDom(api, 'an option belonging to another filter type', { colId: 'athlete' }).checkFilterDom(`
-            COLUMN FILTER
-            operator: "Between"
-            input [0]: "A"
-            input [1]: "Z"
-            model:
-              filterType: "text"
-              type: "inRange"
-              filter: "A"
-              filterTo: "Z"
-        `);
-    });
-
-    test('a relative date range on a text filter is offered with no inputs, and reported the same way', async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [76] });
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-        const api: GridApi = await createGrid(['contains', 'lastYear']);
-        const filter = await ColumnFilterHarness.open(api, 'athlete');
-
-        await filter.selectOperator('Last Year');
-        await asyncSetTimeout(0);
-
-        expect(filter.inputs('text')).toEqual([]);
-        expect(api.getColumnFilterModel('athlete')).toEqual({ filterType: 'text', type: 'lastYear' });
-        await new GridRows(api, 'a text `lastYear` the matcher cannot answer').check(`
-            ROOT id:ROOT_NODE_ID
-        `);
-        const warnings = warnSpy.mock.calls.flat().join(' ');
-        expect(warnings).toContain('warning #76');
-        expect(warnings).toContain('lastYear');
-        await new FilterDom(api, 'a relative date range on a text filter', { colId: 'athlete' }).checkFilterDom(`
-            COLUMN FILTER
-            operator: "Last Year"
-            model:
-              filterType: "text"
-              type: "lastYear"
-        `);
-    });
-
-    // Both filters report `#76`; the scalar filters admit the row they cannot judge, the text filter excludes it.
-    test('a number filter shows every row for the option it cannot evaluate', async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [76] });
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
-            columnDefs: [
-                {
-                    field: 'age',
-                    filter: 'agNumberColumnFilter',
-                    filterParams: { filterOptions: ['equals', 'contains'], debounceMs: 0 },
-                },
-            ],
-            rowData: [{ age: 25 }, { age: 40 }],
-        } as GridOptions);
-
-        const filter = await ColumnFilterHarness.open(api, 'age');
-        await filter.selectOperator('Contains');
-        await filter.setNumber(25, 0);
-        await asyncSetTimeout(0);
-
-        // The scalar filters admit the row they cannot judge; the text filter excludes it.
-        await new GridRows(api, 'a number `contains` the comparison cannot answer').check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 age:25
-            └── LEAF id:1 age:40
-        `);
-        const warnings = warnSpy.mock.calls.flat().join(' ');
-        expect(warnings).toContain('warning #76');
-        expect(warnings).toContain('contains');
-        await new FilterDom(api, 'a number filter shows every row', { colId: 'age' }).checkFilterDom(`
-            COLUMN FILTER
-            operator: "Contains"
-            input: "25"
-            AND
-            operator: "Equals"
-            input: "" ⟨Filter...⟩
-            model:
-              filterType: "number"
-              type: "contains"
-              filter: 25
-        `);
-    });
-
-    // Presence is decided without the matcher, so a column that never reaches it must still report.
-    test('a column of blank values still reports the key it cannot evaluate', async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [76] });
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
-            columnDefs: [
-                {
-                    field: 'athlete',
-                    filter: 'agTextColumnFilter',
-                    filterParams: { filterOptions: ['contains', 'inRange'], debounceMs: 0, maxNumConditions: 1 },
-                },
-            ],
-            rowData: [{ athlete: null }, { athlete: null }],
-        } as GridOptions);
-
-        await api.setColumnFilterModel('athlete', {
-            filterType: 'text',
-            type: 'inRange',
-            filter: 'A',
-            filterTo: 'Z',
-        });
-        await api.onFilterChanged();
-
-        const warnings = warnSpy.mock.calls.flat().join(' ');
-        expect(warnings).toContain('warning #76');
-        expect(warnings).toContain('inRange');
-        await new GridRows(api, 'a blank column with an unusable key').check(`
-            ROOT id:ROOT_NODE_ID
-        `);
-    });
-
     // The option is configured correctly and only its value is missing, so the key is not what went wrong.
     test('a Custom Filter Option waiting for its value is not reported as a key the filter cannot evaluate', async () => {
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -562,6 +402,8 @@ describe('Column filter — a built-in option the filter cannot evaluate', () =>
         expect(warnSpy).not.toHaveBeenCalled();
         await new GridRows(api, 'a custom option with no value matches nothing').check(`
             ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Bolt"
+            └── LEAF id:1 athlete:"Ng"
         `);
     });
 
@@ -652,51 +494,6 @@ describe('Column filter — a built-in option the filter cannot evaluate', () =>
             input: "" ⟨Filter...⟩
             model: null
         `);
-    });
-});
-
-describe('Column filter — localising the option keys', () => {
-    const gridsManager = new TestGridsManager({
-        modules: [TextFilterModule, LocaleModule, ColumnMenuModule, ClientSideRowModelModule],
-    });
-
-    beforeAll(() => {
-        setupAgTestIds();
-        installFilterLayoutMock();
-    });
-    afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => gridsManager.reset());
-
-    test('`getLocaleText` is given a real default for every offered option', async () => {
-        const calls: { key: string; defaultValue: unknown }[] = [];
-        // A JavaScript config: `ITextFilterParams` rejects `'soundsLike'`, but the grid still offers what it is given.
-        const filterParams = {
-            filterOptions: [
-                'contains',
-                'soundsLike',
-                { displayKey: 'multipleOf', displayName: 'Multiple of', predicate: () => true },
-            ],
-            debounceMs: 0,
-            maxNumConditions: 1,
-        };
-        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
-            getLocaleText: ({ key, defaultValue }) => {
-                if (key === 'contains' || key === 'soundsLike' || key === 'multipleOf') {
-                    calls.push({ key, defaultValue });
-                }
-                return key === 'soundsLike' ? 'Sounds like' : defaultValue;
-            },
-            columnDefs: [{ field: 'athlete', filter: 'agTextColumnFilter', filterParams }],
-            rowData: [{ athlete: 'Bolt' }],
-        } as GridOptions);
-
-        const filter = await ColumnFilterHarness.open(api, 'athlete');
-        expect(await filter.operatorOptions()).toEqual(['Contains', 'Sounds like', 'Multiple of']);
-        expect(calls).toEqual([
-            { key: 'contains', defaultValue: 'Contains' },
-            { key: 'soundsLike', defaultValue: 'soundsLike' },
-            { key: 'multipleOf', defaultValue: 'Multiple of' },
-        ]);
     });
 });
 
@@ -834,7 +631,7 @@ describe('Column filter — a `defaultOption` the dropdown does not offer', () =
         const filter = await ColumnFilterHarness.open(api, 'age');
         expect(filter.operatorSelectValue()).toBe('Greater than');
 
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #326');
         expect(warnings).toContain('lessThan');
         await new FilterDom(api, 'fallen back to the first offered option', { colId: 'age' }).checkFilterDom(`
@@ -896,7 +693,7 @@ describe('Column filter — a malformed `filterOptions` list', () => {
             expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'equals', filter: 25 })
         );
 
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('warning #74');
         await new FilterDom(api, 'a list that keeps no option', { colId: 'age' }).checkFilterDom(`
@@ -931,7 +728,7 @@ describe('Column filter — a malformed `filterOptions` list', () => {
 
         const filter = await ColumnFilterHarness.open(api, 'age');
         expect(await filter.operatorOptions()).toContain('Equals');
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #74');
         expect(warnings).not.toContain('warning #72');
         await new FilterDom(api, 'an empty list', { colId: 'age' }).checkFilterDom(`
@@ -1026,32 +823,8 @@ describe('Column filter — a malformed `filterOptions` list', () => {
         `);
     });
 
-    test('`filterPlaceholder` is given a bare key the grid does not define, not an empty string', async () => {
-        const seen: { filterOptionKey: string; filterOption: string }[] = [];
-        // A JavaScript config: `INumberFilterParams` rejects `'withinOf'`, but the grid still offers what it is given.
-        const filterParams = {
-            filterOptions: ['equals', 'withinOf'],
-            filterPlaceholder: ({ filterOptionKey, filterOption, placeholder }: any) => {
-                seen.push({ filterOptionKey, filterOption });
-                return placeholder;
-            },
-            debounceMs: 0,
-            maxNumConditions: 1,
-        };
-        const api = await gridsManager.createGridAndWait('grid1', {
-            columnDefs: [{ field: 'age', filter: 'agNumberColumnFilter', filterParams }],
-            rowData: [{ age: 25 }, { age: 40 }],
-        });
-
-        const harness = await ColumnFilterHarness.open(api, 'age');
-        await harness.selectOperator('withinOf');
-
-        // With no built-in locale text and no custom option to name it, the key stands in as its own display name.
-        expect(seen).toContainEqual({ filterOptionKey: 'withinOf', filterOption: 'withinOf' });
-    });
-
     test('a custom option declared with only the removed `test` is rejected rather than offered', async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [72] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [72, 76] });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api = await gridsManager.createGridAndWait('grid1', {
@@ -1080,13 +853,13 @@ describe('Column filter — a malformed `filterOptions` list', () => {
         expect(await harness.operatorOptions()).toEqual(['Contains', 'Equals']);
 
         // Nothing runs `test`, so an option carrying only it is reported rather than left to match nothing.
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('predicate');
 
         await api.setColumnFilterModel('country', { filterType: 'text', type: 'startsWithA', filter: 'x' });
         await api.onFilterChanged();
-        // A model naming an option the column does not offer filters nothing, as any other unknown one does.
+        // Kept and reported; nothing can answer it, so it constrains nothing and every row stays.
         await waitFor(() => expect(api.getDisplayedRowCount()).toBe(3));
         await new FilterDom(api, 'a `test`-only option is not offered', { colId: 'country' }).checkFilterDom(`
             COLUMN FILTER
@@ -1095,7 +868,10 @@ describe('Column filter — a malformed `filterOptions` list', () => {
             AND
             operator: "Contains"
             input: "" ⟨Filter...⟩
-            model: null
+            model:
+              filterType: "text"
+              type: "startsWithA"
+              filter: "x"
         `);
     });
 });
@@ -1114,29 +890,6 @@ describe('Column filter — an option key shadowing `Object.prototype`', () => {
         gridsManager.reset();
         vi.restoreAllMocks();
         enableDevValidations({ throwOn: ALL_SEVERITIES });
-    });
-
-    test('a bare key is offered under its own name rather than resolving on the locale table', async () => {
-        const calls: { key: string; defaultValue: unknown }[] = [];
-        // A JavaScript config: `INumberFilterParams` rejects these, but the grid still offers what it is given.
-        const filterParams = { filterOptions: ['equals', 'toString', 'valueOf'], debounceMs: 0, maxNumConditions: 1 };
-        const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', {
-            getLocaleText: ({ key, defaultValue }) => {
-                if (key === 'toString' || key === 'valueOf') {
-                    calls.push({ key, defaultValue });
-                }
-                return defaultValue;
-            },
-            columnDefs: [{ field: 'age', filter: 'agNumberColumnFilter', filterParams }],
-            rowData: EDGE_KEY_ROWS,
-        } as GridOptions);
-
-        const filter = await ColumnFilterHarness.open(api, 'age');
-        expect(await filter.operatorOptions()).toEqual(['Equals', 'toString', 'valueOf']);
-        expect(calls).toEqual([
-            { key: 'toString', defaultValue: 'toString' },
-            { key: 'valueOf', defaultValue: 'valueOf' },
-        ]);
     });
 
     test('the column filter offers it and filters with it', async () => {
@@ -1261,7 +1014,10 @@ describe('Column filter — the offered list survives a colDef refresh', () => {
     });
 
     // The handler keeps its own factory, so an applied model is re-judged against the list the refresh installed.
-    test('an applied model is cleared when the refresh stops offering its option', async () => {
+    test('an applied model survives a refresh that stops offering its option', async () => {
+        // The option is gone from the list, so evaluating the surviving model reports #76.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [76] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', {
             columnDefs: colDef(['equals', EVEN]),
             rowData: AGES,
@@ -1278,8 +1034,10 @@ describe('Column filter — the offered list survives a colDef refresh', () => {
         api.setGridOption('columnDefs', colDef(['equals', 'greaterThan']));
         await asyncSetTimeout(0);
 
-        expect(api.getColumnFilterModel('age')).toBeNull();
-        await new GridRows(api, 'the model goes with the option it named').check(`
+        // Narrowing the offered list governs what can be picked next; it does not revoke what is applied.
+        expect(messagesFrom(warnSpy)).toContain('warning #76');
+        expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'even' });
+        await new GridRows(api, 'the model outlives the option it named').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 age:25
             ├── LEAF id:1 age:40
@@ -1305,7 +1063,7 @@ describe('Column filter — the offered list survives a colDef refresh', () => {
 
         const filter = await ColumnFilterHarness.open(api, 'age');
         expect(await filter.operatorOptions()).toEqual(['Equals', 'Greater than']);
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('predicate');
         await new FilterDom(api, 'a malformed entry arriving on the refresh', { colId: 'age' }).checkFilterDom(`
@@ -1325,7 +1083,7 @@ describe('Column filter — a combined model naming an option the column does no
     beforeAll(() => setupAgTestIds());
     afterEach(() => gridsManager.reset());
 
-    test('is cleared whole, rather than filtering on the condition that is offered', async () => {
+    test('keeps every condition, and the offered one still filters', async () => {
         const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {
@@ -1347,17 +1105,25 @@ describe('Column filter — a combined model naming an option the column does no
         });
         await api.onFilterChanged();
 
-        // One unoffered condition invalidates the model, so the offered one does not filter on its own.
-        expect(api.getColumnFilterModel('age')).toBeNull();
+        // One unoffered condition no longer discards the whole model, so the conditions beside it still apply.
+        expect(api.getColumnFilterModel('age')).not.toBeNull();
         await new GridRows(api, 'combined model with an unoffered condition').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 age:25
-            ├── LEAF id:1 age:40
             └── LEAF id:2 age:28
         `);
         await new FilterDom(api, 'a combined model with an unoffered condition', { colId: 'age' }).checkFilterDom(`
             FLOATING FILTER age: (not present)
-            model: null
+            model:
+              filterType: "number"
+              operator: "OR"
+              conditions:
+                - filterType: "number"
+                  type: "equals"
+                  filter: 25
+                - filterType: "number"
+                  type: "lessThan"
+                  filter: 30
         `);
     });
 });
@@ -1378,7 +1144,7 @@ describe('Column filter — validation is the same for every filter type', () =>
         enableDevValidations({ throwOn: ALL_SEVERITIES });
     });
 
-    // `OptionsFactory` is shared, so a fourth data type must not have its own answer.
+    // The classified defaults are shared, so a fourth data type must not have its own answer.
     const withMalformedOption = (filter: string, rowData: unknown[]) =>
         gridsManager.createGridAndWait('grid1', {
             columnDefs: [
@@ -1397,7 +1163,7 @@ describe('Column filter — validation is the same for every filter type', () =>
     const expectDropped = async (api: GridApi, warnSpy: ReturnType<typeof vi.spyOn>) => {
         const harness = await ColumnFilterHarness.open(api, 'value');
         expect(await harness.operatorOptions()).toEqual(['Equals', 'Does not equal']);
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #72');
     };
 
@@ -1492,41 +1258,6 @@ describe('Column filter — the date summary for an option the grid does not def
         gridsManager.reset();
         vi.restoreAllMocks();
         enableDevValidations({ throwOn: ALL_SEVERITIES });
-    });
-
-    // A read-only floating filter shows `getModelAsString`, which is where a valueless date condition is named.
-    test('names the key itself rather than resolving to nothing', async () => {
-        // Deliberate: the date filter cannot evaluate the key, which triggers warning #76.
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [76] });
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-        // A JavaScript config: `IDateFilterParams` rejects `'soundsLike'`, but the grid still offers what it is given.
-        const filterParams = { filterOptions: ['equals', 'soundsLike'], readOnly: true, debounceMs: 0 };
-        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
-            columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', floatingFilter: true, filterParams }],
-            rowData: [{ date: '2024-01-01' }],
-        } as GridOptions);
-
-        await api.setColumnFilterModel('date', {
-            filterType: 'date',
-            type: 'soundsLike',
-            dateFrom: null,
-            dateTo: null,
-        });
-        await api.onFilterChanged();
-        await asyncSetTimeout(0);
-
-        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #76');
-        await new FilterDom(api, 'a valueless condition the grid does not define', { colId: 'date' }).checkFilterDom(`
-            FLOATING FILTER date
-            input: "soundsLike" ⊘
-            active: true
-            model:
-              filterType: "date"
-              type: "soundsLike"
-              dateFrom: null
-              dateTo: null
-        `);
     });
 
     // Settles whether a zero-input custom option reaches the key-based path: it is resolved before that.

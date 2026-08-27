@@ -129,6 +129,7 @@ export { BaseGridSerializingSession } from './export/baseGridSerializingSession'
 
 export {
     _getFilterModel,
+    _getMultiFilterDefs,
     _refreshFilterUi,
     _refreshHandlerAndUi,
     _updateFilterModel,
@@ -136,6 +137,11 @@ export {
 export { AgFilterButtonSelector, FilterButtonComp } from './filter/filterButtonComp';
 export type { FilterButton, FilterButtonEvent } from './filter/filterButtonComp';
 export { FilterComp } from './filter/filterComp';
+export type { FilterConfigService, MultiFilterChild } from './filter/filterConfigService';
+export { _setFilterNeedsValueFormatter } from './filter/filterConfigService';
+export type { ResolvedFilterConfig } from './filter/provided/resolvedFilterConfig';
+export { ResolvedSimpleFilterConfig, _handedFilterConfig } from './filter/provided/resolvedFilterConfig';
+export type { WithFilterConfig } from './filter/provided/resolvedFilterConfig';
 export { _getDefaultSimpleFilter, _getFilterParamsForDataType } from './filter/filterDataTypeUtils';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export type { FilterManager } from './filter/filterManager';

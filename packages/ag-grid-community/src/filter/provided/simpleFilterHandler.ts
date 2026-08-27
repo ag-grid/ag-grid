@@ -1,5 +1,4 @@
 import { BeanStub } from '../../context/beanStub';
-import type { Column } from '../../interfaces/iColumn';
 import type {
     DoesFilterPassParams,
     FilterHandler,
@@ -12,12 +11,13 @@ import type {
     ISimpleFilterModel,
     ISimpleFilterParams,
     MapValuesFromSimpleFilterModel,
+    SimpleFilterType,
     Tuple,
 } from './iSimpleFilter';
 import { isCombinedFilterModel } from './iSimpleFilter';
-import { OptionsFactory } from './optionsFactory';
+import type { ResolvedSimpleFilterConfig } from './resolvedFilterConfig';
 import type { SimpleFilterModelFormatter } from './simpleFilterModelFormatter';
-import { evaluateCustomFilter, getConditionLimit } from './simpleFilterUtils';
+import { evaluateCustomFilter } from './simpleFilterUtils';
 
 export abstract class SimpleFilterHandler<
     TModel extends ISimpleFilterModel,
@@ -28,24 +28,20 @@ export abstract class SimpleFilterHandler<
     implements FilterHandler<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
 {
     /** Used to get the filter type for filter models. */
-    public abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date';
+    public abstract readonly filterType: SimpleFilterType;
 
     /** Subclasses narrow `filterParams` to their own filter's params type. */
     protected abstract createModelFormatter(
-        optionsFactory: OptionsFactory,
-        filterParams: ISimpleFilterParams,
-        column: Column
+        filterConfig: ResolvedSimpleFilterConfig,
+        filterParams: ISimpleFilterParams
     ): SimpleFilterModelFormatter<ISimpleFilterParams>;
 
     protected params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>;
-    private optionsFactory: OptionsFactory;
+    private filterConfig: ResolvedSimpleFilterConfig;
     private filterModelFormatter: SimpleFilterModelFormatter<ISimpleFilterParams>;
     private readonly warnedKeys = new Set<FilterOptionKey | null | undefined>();
 
-    constructor(
-        private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<TModel, TValue>,
-        private readonly defaultOptions: string[]
-    ) {
+    constructor(private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<TModel, TValue>) {
         super();
     }
 
@@ -56,11 +52,11 @@ export abstract class SimpleFilterHandler<
      * discards the duplicate. A Custom Filter Option owns its key, so a skipped predicate is a missing value.
      */
     protected warnUnexpectedFilterType(type?: FilterOptionKey | null): void {
-        if (this.optionsFactory.getCustomOption(type) || this.warnedKeys.has(type)) {
+        if (this.filterConfig.getCustomOption(type) || this.warnedKeys.has(type)) {
             return;
         }
         this.warnedKeys.add(type);
-        this.warn(76, { filterModelType: type });
+        this.warn(76, { filterModelType: type, colId: this.filterConfig.column.colId });
     }
 
     protected abstract evaluateNonNullValue(
@@ -72,13 +68,10 @@ export abstract class SimpleFilterHandler<
 
     public init(params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>): void {
         const filterParams = params.filterParams;
-        const optionsFactory = new OptionsFactory();
-        this.optionsFactory = optionsFactory;
-        optionsFactory.init(this.beans.log, filterParams, this.defaultOptions);
+        const filterConfig = this.beans.filterConfigSvc!.getSimple(params.column, filterParams, this.filterType);
+        this.filterConfig = filterConfig;
 
-        this.filterModelFormatter = this.createManagedBean(
-            this.createModelFormatter(optionsFactory, filterParams, params.column)
-        );
+        this.filterModelFormatter = this.createManagedBean(this.createModelFormatter(filterConfig, filterParams));
 
         this.updateParams(params);
 
@@ -88,9 +81,9 @@ export abstract class SimpleFilterHandler<
     public refresh(params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>): void {
         if (params.source === 'colDef') {
             const filterParams = params.filterParams;
-            const optionsFactory = this.optionsFactory;
-            optionsFactory.refresh(this.beans.log, filterParams, this.defaultOptions);
-            this.filterModelFormatter.updateParams({ optionsFactory, filterParams });
+            const filterConfig = this.beans.filterConfigSvc!.getSimple(params.column, filterParams, this.filterType);
+            this.filterConfig = filterConfig;
+            this.filterModelFormatter.updateParams({ filterConfig, filterParams });
 
             this.updateParams(params);
         }
@@ -144,10 +137,7 @@ export abstract class SimpleFilterHandler<
     protected validateModel(
         params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
     ): void {
-        const {
-            model,
-            filterParams: { maxNumConditions },
-        } = params;
+        const model = params.model;
 
         if (model == null) {
             return;
@@ -157,15 +147,10 @@ export abstract class SimpleFilterHandler<
 
         // A hand-written combined model can omit `conditions`; read as empty so the caller gets back what they set.
         let conditions: TModel[] = (isCombined ? model.conditions : [model]) ?? [];
-
-        // Checked against the list the dropdown is built from, so a malformed option does not count as offered.
-        if (!conditions.every((condition) => this.optionsFactory.hasOption(condition.type))) {
-            this.params = {
-                ...params,
-                model: null,
-            };
-            params.onModelChange(null);
-            return;
+        if (isCombined && model.conditions == null) {
+            // Judged where the model arrives, not where it is displayed: one set through the API and never
+            // looked at would otherwise never be reported.
+            this.warn(77, { colId: this.filterConfig.column.colId });
         }
 
         let needsUpdate = false;
@@ -178,7 +163,7 @@ export abstract class SimpleFilterHandler<
             needsUpdate = true;
         }
 
-        const conditionLimit = getConditionLimit(maxNumConditions);
+        const conditionLimit = this.filterConfig.conditionCounts.conditionLimit;
         if (conditionLimit !== null && conditions.length > conditionLimit) {
             conditions = conditions.slice(0, conditionLimit);
             needsUpdate = true;
@@ -206,13 +191,20 @@ export abstract class SimpleFilterHandler<
 
     /** returns true if the row passes the said condition */
     private individualConditionPasses(params: IDoesFilterPassParams, filterModel: TModel, cellValue: any) {
-        const optionsFactory = this.optionsFactory;
-        const values = this.mapValuesFromModel(filterModel, optionsFactory);
-        const customFilterOption = optionsFactory.getCustomOption(filterModel.type);
+        const filterConfig = this.filterConfig;
+        const values = this.mapValuesFromModel(filterModel, filterConfig);
+        const customFilterOption = filterConfig.getCustomOption(filterModel.type);
 
         const customFilterResult = evaluateCustomFilter<TValue>(customFilterOption, values, cellValue);
         if (customFilterResult != null) {
             return customFilterResult;
+        }
+
+        // Nothing can answer this condition, so it constrains nothing - blanks included, which the per-type
+        // blank rules would otherwise decide on its behalf. Reported instead, once per key.
+        if (!filterConfig.canEvaluate(filterModel.type)) {
+            this.warnUnexpectedFilterType(filterModel.type);
+            return true;
         }
 
         if (cellValue == null) {

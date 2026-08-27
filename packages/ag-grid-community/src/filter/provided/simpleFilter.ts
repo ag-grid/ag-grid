@@ -34,16 +34,11 @@ import type {
     SimpleFilterParams,
     Tuple,
 } from './iSimpleFilter';
-import { OptionsFactory } from './optionsFactory';
+import { isCombinedFilterModel } from './iSimpleFilter';
 import { ProvidedFilter } from './providedFilter';
 import { getPlaceholderText, translateFilterOption } from './providedFilterUtils';
-import {
-    getDefaultJoinOperator,
-    getNumberOfInputs,
-    isBelowConditionFloor,
-    removeItems,
-    validateAndUpdateConditions,
-} from './simpleFilterUtils';
+import type { ResolvedSimpleFilterConfig } from './resolvedFilterConfig';
+import { removeItems, validateAndUpdateConditions } from './simpleFilterUtils';
 
 /** temporary type until `SimpleFilterParams` is updated as breaking change */
 export type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
@@ -89,12 +84,12 @@ export abstract class SimpleFilter<
     private joinOperatorId = 0;
     private filterListOptions: ListOption[];
 
-    protected optionsFactory: OptionsFactory;
+    /** Narrows the base's: a simple filter resolves its options, limits and bounds as well as the shared params. */
+    protected override filterConfig: ResolvedSimpleFilterConfig;
 
     constructor(
         filterNameKey: FilterLocaleTextKey,
-        private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<M, V>,
-        private readonly defaultOptions: string[]
+        private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<M, V>
     ) {
         super(filterNameKey, 'simple-filter');
     }
@@ -127,15 +122,15 @@ export abstract class SimpleFilter<
     }
 
     protected conditionNumberOfInputs(position: number): number {
-        return getNumberOfInputs(this.getConditionType(position), this.optionsFactory);
+        return this.filterConfig.numberOfInputs(this.getConditionType(position));
+    }
+
+    protected override resolveFilterConfig(params: P): ResolvedSimpleFilterConfig {
+        return this.beans.filterConfigSvc!.getSimple(params.column, params, this.filterType);
     }
 
     protected override setParams(params: P): void {
         super.setParams(params);
-
-        const optionsFactory = new OptionsFactory();
-        this.optionsFactory = optionsFactory;
-        optionsFactory.init(this.beans.log, params, this.defaultOptions);
 
         this.commonUpdateSimpleParams(params);
 
@@ -144,8 +139,6 @@ export abstract class SimpleFilter<
     }
 
     protected override updateParams(newParams: P, oldParams: P): void {
-        this.optionsFactory.refresh(this.beans.log, newParams, this.defaultOptions);
-
         super.updateParams(newParams, oldParams);
 
         this.commonUpdateSimpleParams(newParams);
@@ -155,7 +148,7 @@ export abstract class SimpleFilter<
     }
 
     protected commonUpdateSimpleParams(params: P): void {
-        this.setNumConditions(params);
+        this.setNumConditions();
 
         this.forEachInput((element) => {
             if (element instanceof AgAbstractInputField) {
@@ -163,7 +156,7 @@ export abstract class SimpleFilter<
             }
         });
 
-        this.defaultJoinOperator = getDefaultJoinOperator(params.defaultJoinOperator);
+        this.defaultJoinOperator = this.filterConfig.defaultJoinOperator;
         this.filterPlaceholder = params.filterPlaceholder;
 
         this.createFilterListOptions();
@@ -184,7 +177,7 @@ export abstract class SimpleFilter<
 
     private setTypeFromFloatingFilter(type?: string | null): void {
         this.eTypes.forEach((eType, position) => {
-            const value = position === 0 ? type : this.optionsFactory.defaultOption;
+            const value = position === 0 ? type : this.filterConfig.defaultOption;
             eType.setValue(value, true);
         });
     }
@@ -267,13 +260,15 @@ export abstract class SimpleFilter<
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<M>;
 
-            let conditions = combinedModel.conditions;
-            if (conditions == null) {
-                conditions = [];
-                this.beans.log.warn(77);
-            }
+            // Reported by the handler, where the model arrives; read as empty so the display follows it.
+            const conditions = combinedModel.conditions ?? [];
 
-            const numConditions = validateAndUpdateConditions<M>(this.beans.log, conditions, this.maxNumConditions);
+            const numConditions = validateAndUpdateConditions<M>(
+                this.beans.log,
+                this.filterConfig.column.colId,
+                conditions,
+                this.maxNumConditions
+            );
             const numPrevConditions = this.getNumConditions();
             if (numConditions < numPrevConditions) {
                 this.removeConditionsForModel(numConditions);
@@ -317,25 +312,10 @@ export abstract class SimpleFilter<
         return AgPromise.resolve();
     }
 
-    private setNumConditions(params: P): void {
-        // Whole counts, so that what the display will build matches the limit a model is held to.
-        let maxNumConditions = Math.floor(params.maxNumConditions ?? 2);
-        if (isBelowConditionFloor(maxNumConditions)) {
-            this.beans.log.warn(79);
-            maxNumConditions = 1;
-        }
-        this.maxNumConditions = maxNumConditions;
-
-        let numAlwaysVisibleConditions = Math.floor(params.numAlwaysVisibleConditions ?? 1);
-        if (isBelowConditionFloor(numAlwaysVisibleConditions)) {
-            this.beans.log.warn(80);
-            numAlwaysVisibleConditions = 1;
-        }
-        if (numAlwaysVisibleConditions > maxNumConditions) {
-            this.beans.log.warn(81);
-            numAlwaysVisibleConditions = maxNumConditions;
-        }
-        this.numAlwaysVisibleConditions = numAlwaysVisibleConditions;
+    private setNumConditions(): void {
+        const counts = this.filterConfig.conditionCounts;
+        this.maxNumConditions = counts.maxNumConditions;
+        this.numAlwaysVisibleConditions = counts.numAlwaysVisibleConditions;
     }
 
     private createOption(): void {
@@ -391,7 +371,26 @@ export abstract class SimpleFilter<
     }
 
     private createFilterListOptions(): void {
-        this.filterListOptions = this.optionsFactory.filterOptions.map((option) =>
+        const filterConfig = this.filterConfig;
+        const options = [...filterConfig.filterOptions];
+        // A model applied before the list narrowed still names an option the list now lacks. It is offered
+        // alongside, so that opening the filter shows the condition instead of rewriting it to the first
+        // offered one - which would lose the filter the moment the user looked at it.
+        const model = this.params.model;
+        let conditions: (ISimpleFilterModel | null)[] = [];
+        if (model != null) {
+            conditions = isCombinedFilterModel(model) ? (model.conditions ?? []) : [model];
+        }
+        const added = new Set<string>();
+        for (let i = 0, len = conditions.length; i < len; ++i) {
+            const type = conditions[i]?.type;
+            if (type == null || added.has(type) || filterConfig.hasOption(type) || !filterConfig.canEvaluate(type)) {
+                continue;
+            }
+            added.add(type);
+            options.push(filterConfig.getCustomOption(type) ?? type);
+        }
+        this.filterListOptions = options.map((option) =>
             typeof option === 'string' ? this.createBoilerplateListOption(option) : this.createCustomListOption(option)
         );
     }
@@ -415,7 +414,7 @@ export abstract class SimpleFilter<
 
     private createCustomListOption(option: IFilterOptionDef): ListOption {
         const displayKey = option.displayKey;
-        return { value: displayKey, text: translateFilterOption(this, this.optionsFactory, displayKey) };
+        return { value: displayKey, text: translateFilterOption(this, this.filterConfig, displayKey) };
     }
 
     protected createBodyTemplate(): ElementParams | null {
@@ -676,7 +675,7 @@ export abstract class SimpleFilter<
                 filterPlaceholder,
                 placeholderKey,
                 filterOptionKey,
-                this.optionsFactory
+                this.filterConfig
             );
 
             element.setInputPlaceholder(placeholderText);
@@ -731,7 +730,7 @@ export abstract class SimpleFilter<
         type: FilterOptionKey | null,
         cb: (element: E, index: number, position: number, numberOfInputs: number) => void
     ): void {
-        const numberOfInputs = getNumberOfInputs(type, this.optionsFactory);
+        const numberOfInputs = this.filterConfig.numberOfInputs(type);
         const inputs = this.getInputs(position);
         for (let index = 0; index < inputs.length; index++) {
             const input = inputs[index];
@@ -846,7 +845,7 @@ export abstract class SimpleFilter<
         const translate = this.getLocaleTextFunc();
         const filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         eType
-            .setValue(this.optionsFactory.defaultOption, true)
+            .setValue(this.filterConfig.defaultOption, true)
             .setAriaLabel(filteringLabel)
             .setDisabled(this.isReadOnly() || this.filterListOptions.length <= 1);
     }
@@ -905,7 +904,7 @@ export abstract class SimpleFilter<
 
     // puts model values into the UI
     private setConditionIntoUi(model: M | null, position: number): void {
-        const values = this.mapValuesFromModel(model, this.optionsFactory);
+        const values = this.mapValuesFromModel(model, this.filterConfig);
         this.forEachInput((element, index, elPosition) => {
             if (elPosition !== position) {
                 return;

@@ -4,8 +4,7 @@ import type { Column } from '../../interfaces/iColumn';
 import type { FilterInputCallbackParams } from '../../interfaces/iFilter';
 import type { LogService } from '../../validation/logService';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
-import type { FilterOptionKey, IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
-import type { OptionsFactory } from './optionsFactory';
+import type { IFilterOptionDef, Tuple } from './iSimpleFilter';
 
 /** Built per call, not per binding: `context` is a grid option, so a captured one would go stale. */
 export function filterCallbackParams(gos: GridOptionsService, column: Column): FilterInputCallbackParams {
@@ -22,32 +21,12 @@ export function _bindFilterCallback<A, R>(
     return callback && column ? (value) => callback(value, filterCallbackParams(gos, column)) : undefined;
 }
 
-/** `NaN` is below it too: every comparison against it is false, so left through it would cap nothing. */
-export function isBelowConditionFloor(count: number): boolean {
-    return count < 1 || Number.isNaN(count);
-}
-
-/**
- * Absent where nothing was configured, so a model set through the API keeps every condition it was given;
- * otherwise whole and at least one, as the display counts conditions.
- */
-export function getConditionLimit(maxNumConditions: number | undefined): number | null {
-    if (typeof maxNumConditions !== 'number') {
-        return null;
-    }
-    return isBelowConditionFloor(maxNumConditions) ? 1 : Math.floor(maxNumConditions);
-}
-
 export function removeItems<T>(items: T[], startPosition: number, deleteCount?: number): T[] {
     return deleteCount == null ? items.splice(startPosition) : items.splice(startPosition, deleteCount);
 }
 
 export function isBlank<V>(cellValue: V) {
     return cellValue == null || (typeof cellValue === 'string' && cellValue.trim().length === 0);
-}
-
-export function getDefaultJoinOperator(defaultJoinOperator?: JoinOperator): JoinOperator {
-    return defaultJoinOperator === 'AND' || defaultJoinOperator === 'OR' ? defaultJoinOperator : 'AND';
 }
 
 export function evaluateCustomFilter<V>(
@@ -68,59 +47,19 @@ export function evaluateCustomFilter<V>(
     // No custom filter invocation, indicate that to the caller.
 }
 
-export function validateAndUpdateConditions<M>(log: LogService, conditions: M[], maxNumConditions: number): number {
+export function validateAndUpdateConditions<M>(
+    log: LogService,
+    colId: string,
+    conditions: M[],
+    maxNumConditions: number
+): number {
     let numConditions = conditions.length;
     if (numConditions > maxNumConditions) {
         conditions.splice(maxNumConditions);
-        // 'Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.'
-        log.warn(78);
+        log.warn(78, { colId });
         numConditions = maxNumConditions;
     }
     return numConditions;
-}
-
-const zeroInputTypes: ReadonlySet<string> = new Set<ISimpleFilterModelType>([
-    'empty',
-    'notBlank',
-    'blank',
-    'today',
-    'yesterday',
-    'tomorrow',
-    'thisWeek',
-    'lastWeek',
-    'nextWeek',
-    'thisMonth',
-    'lastMonth',
-    'nextMonth',
-    'thisQuarter',
-    'lastQuarter',
-    'nextQuarter',
-    'thisYear',
-    'lastYear',
-    'nextYear',
-    'yearToDate',
-    'last7Days',
-    'last30Days',
-    'last90Days',
-    'last6Months',
-    'last12Months',
-    'last24Months',
-]);
-
-export function getNumberOfInputs(type: FilterOptionKey | null | undefined, optionsFactory: OptionsFactory): number {
-    const customOpts = optionsFactory.getCustomOption(type);
-    if (customOpts) {
-        const { numberOfInputs } = customOpts;
-        return numberOfInputs != null ? numberOfInputs : 1;
-    }
-
-    if (type && zeroInputTypes.has(type)) {
-        return 0;
-    } else if (type === 'inRange') {
-        return 2;
-    }
-
-    return 1;
 }
 
 /** `from` must be below `to`, or equal where the range is inclusive; the message goes on the end being edited. */

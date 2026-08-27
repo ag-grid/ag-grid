@@ -113,7 +113,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         const comp = column ? this.createBean(new FilterComp(column, 'COLUMN_MENU')) : undefined;
         if (!comp?.hasFilter() || !column) {
             this.destroyBean(comp);
-            this.error(57);
+            this.error(57, { colId: column?.colId });
             return false;
         }
 

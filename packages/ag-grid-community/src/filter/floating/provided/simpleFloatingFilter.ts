@@ -1,6 +1,5 @@
 import type { AgColumn } from '../../../entities/agColumn';
 import type { FilterChangedEvent } from '../../../events';
-import type { Column } from '../../../interfaces/iColumn';
 import { Component } from '../../../widgets/component';
 import type { IProvidedFilterParams, ProvidedFilterModel } from '../../provided/iProvidedFilter';
 import type {
@@ -9,10 +8,10 @@ import type {
     ISimpleFilter,
     ISimpleFilterModel,
     ISimpleFilterParams,
+    SimpleFilterType,
 } from '../../provided/iSimpleFilter';
-import { OptionsFactory } from '../../provided/optionsFactory';
+import type { ResolvedSimpleFilterConfig } from '../../provided/resolvedFilterConfig';
 import type { SimpleFilterModelFormatter } from '../../provided/simpleFilterModelFormatter';
-import { getNumberOfInputs } from '../../provided/simpleFilterUtils';
 import type { FloatingFilterDisplayParams, IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 
 export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams<ISimpleFilter>>
@@ -21,7 +20,6 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 {
     protected abstract onModelUpdated(model: ProvidedFilterModel): void;
 
-    protected abstract readonly defaultOptions: string[];
     protected abstract setEditable(editable: boolean): void;
 
     protected filterModelFormatter: SimpleFilterModelFormatter<ISimpleFilterParams>;
@@ -29,25 +27,24 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     protected params: TParams;
 
     protected lastType: string | null | undefined;
-    protected optionsFactory: OptionsFactory;
+    protected filterConfig: ResolvedSimpleFilterConfig;
     protected readOnly: boolean;
     protected defaultDebounceMs: number = 0;
 
     protected reactive: boolean;
 
-    protected abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date';
+    protected abstract readonly filterType: SimpleFilterType;
 
     /** Subclasses narrow `filterParams` to their own filter's params type. */
     protected abstract createModelFormatter(
-        optionsFactory: OptionsFactory,
-        filterParams: ISimpleFilterParams,
-        column: Column
+        filterConfig: ResolvedSimpleFilterConfig,
+        filterParams: ISimpleFilterParams
     ): SimpleFilterModelFormatter<ISimpleFilterParams>;
 
     protected setLastTypeFromModel(model: ProvidedFilterModel): void {
         // if no model provided by the parent filter use default
         if (!model) {
-            this.lastType = this.optionsFactory.defaultOption;
+            this.lastType = this.filterConfig.defaultOption;
             return;
         }
 
@@ -63,7 +60,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
         }
 
         // A combined model joining no conditions names no type, so the default stands as it does for no model.
-        this.lastType = condition ? condition.type : this.optionsFactory.defaultOption;
+        this.lastType = condition ? condition.type : this.filterConfig.defaultOption;
     }
 
     protected canWeEditAfterModelFromParentFilter(model: ProvidedFilterModel): boolean {
@@ -98,19 +95,17 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     }
 
     protected setParams(params: TParams): void {
-        const optionsFactory = new OptionsFactory();
-        this.optionsFactory = optionsFactory;
-        optionsFactory.init(this.beans.log, params.filterParams as ISimpleFilterParams, this.defaultOptions);
+        const filterParams = params.filterParams as ISimpleFilterParams;
+        const filterConfig = this.beans.filterConfigSvc!.getSimple(params.column, filterParams, this.filterType);
+        this.filterConfig = filterConfig;
 
-        this.filterModelFormatter = this.createManagedBean(
-            this.createModelFormatter(optionsFactory, params.filterParams as ISimpleFilterParams, params.column)
-        );
+        this.filterModelFormatter = this.createManagedBean(this.createModelFormatter(filterConfig, filterParams));
 
         this.setSimpleParams(params, false);
     }
 
     private setSimpleParams(params: TParams, update: boolean = true): void {
-        const defaultOption = this.optionsFactory.defaultOption;
+        const defaultOption = this.filterConfig.defaultOption;
         // Initial call
         if (!update) {
             this.lastType = defaultOption;
@@ -146,15 +141,13 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     }
 
     protected updateParams(params: TParams): void {
-        const optionsFactory = this.optionsFactory;
-        optionsFactory.refresh(this.beans.log, params.filterParams as ISimpleFilterParams, this.defaultOptions);
+        const filterParams = params.filterParams as ISimpleFilterParams;
+        const filterConfig = this.beans.filterConfigSvc!.getSimple(params.column, filterParams, this.filterType);
+        this.filterConfig = filterConfig;
 
         this.setSimpleParams(params);
 
-        this.filterModelFormatter.updateParams({
-            optionsFactory,
-            filterParams: params.filterParams as ISimpleFilterParams,
-        });
+        this.filterModelFormatter.updateParams({ filterConfig, filterParams });
     }
 
     public onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void {
@@ -170,7 +163,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     }
 
     private isTypeEditable(type?: string | null): boolean {
-        return !!type && !this.readOnly && getNumberOfInputs(type as FilterOptionKey, this.optionsFactory) === 1;
+        return !!type && !this.readOnly && this.filterConfig.numberOfInputs(type as FilterOptionKey) === 1;
     }
 
     protected getAriaLabel(column: AgColumn): string {

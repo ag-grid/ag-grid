@@ -231,13 +231,18 @@ export function _getFilterParamsForDataType(
     const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
     const filterParamsGetter = filterParamsMap[dataTypeDefinition.baseDataType];
     const newFilterParams = filterParamsGetter({ dataTypeDefinition, formatValue, t: translate });
-    const filterParams =
-        typeof existingFilterParams === 'object'
-            ? {
-                  ...newFilterParams,
-                  ...existingFilterParams,
-              }
-            : newFilterParams;
+    let filterParams: any;
+    if (typeof existingFilterParams === 'function') {
+        // Wrapped rather than called: the column's function wants the params the component factory builds,
+        // so composing keeps it deferred while the data type still supplies what the column left out.
+        filterParams = (params: any) => ({ ...newFilterParams, ...existingFilterParams(params) });
+    } else if (existingFilterParams) {
+        filterParams = { ...newFilterParams, ...existingFilterParams };
+    } else {
+        // Left as it came, so a Multi Filter child naming none still inherits the parent's rather than
+        // finding an empty object of its own.
+        filterParams = newFilterParams;
+    }
     return { filterParams, filterValueGetter };
 }
 

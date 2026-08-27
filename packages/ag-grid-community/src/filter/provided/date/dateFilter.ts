@@ -1,4 +1,4 @@
-import { _isBrowserFirefox, _parseDateTimeFromString, _serialiseDate } from 'ag-stack';
+import { _isBrowserFirefox, _serialiseDate } from 'ag-stack';
 
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
@@ -11,12 +11,8 @@ import { SimpleFilter } from '../simpleFilter';
 import { removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import type { ValidationReportMode } from './dateCompWrapper';
-import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { mapValuesFromDateFilterModel } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
-
-const DEFAULT_MIN_YEAR = 1000;
-const DEFAULT_MAX_YEAR = Infinity;
 
 /** temporary type until `DateFilterParams` is updated as breaking change */
 type DateFilterDisplayParams = IDateFilterParams &
@@ -29,58 +25,15 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     private readonly dateConditionFromComps: DateCompWrapper[] = [];
     private readonly dateConditionToComps: DateCompWrapper[] = [];
 
-    private minValidYear: number = DEFAULT_MIN_YEAR;
-    private maxValidYear: number = DEFAULT_MAX_YEAR;
-    private minValidDate: Date | null = null;
-    private maxValidDate: Date | null = null;
-
     public readonly filterType = 'date' as const;
 
     constructor() {
-        super('dateFilter', mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
+        super('dateFilter', mapValuesFromDateFilterModel);
     }
 
     protected override onGuiAttached(params?: IAfterGuiAttachedParams): void {
         // A read-only filter builds no replacement for a condition a model removed, so there may be none.
         this.dateConditionFromComps[0]?.afterGuiAttached(params);
-    }
-
-    protected override commonUpdateSimpleParams(params: DateFilterDisplayParams): void {
-        super.commonUpdateSimpleParams(params);
-
-        const yearParser = (param: 'minValidYear' | 'maxValidYear', fallback: number) => {
-            const value = params[param];
-            if (value != null) {
-                if (!isNaN(value)) {
-                    return value == null ? fallback : Number(value);
-                } else {
-                    this.beans.log.warn(82, { param });
-                }
-            }
-
-            return fallback;
-        };
-
-        const minValidYear = yearParser('minValidYear', DEFAULT_MIN_YEAR);
-        const maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
-        this.minValidYear = minValidYear;
-        this.maxValidYear = maxValidYear;
-
-        if (minValidYear > maxValidYear) {
-            this.beans.log.warn(83);
-        }
-
-        const { minValidDate, maxValidDate } = params;
-
-        const parsedMinValidDate = minValidDate instanceof Date ? minValidDate : _parseDateTimeFromString(minValidDate);
-        this.minValidDate = parsedMinValidDate;
-
-        const parsedMaxValidDate = maxValidDate instanceof Date ? maxValidDate : _parseDateTimeFromString(maxValidDate);
-        this.maxValidDate = parsedMaxValidDate;
-
-        if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate > parsedMaxValidDate) {
-            this.beans.log.warn(84);
-        }
     }
 
     protected override refreshPositionValidation(position: number, isFrom = false, reattached?: boolean): void {
@@ -224,7 +177,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             return false;
         }
 
-        const { minValidDate, maxValidDate, minValidYear, maxValidYear } = this;
+        const { minValidDate, maxValidDate, minValidYear, maxValidYear } = this.filterConfig.dateBounds!;
 
         if (minValidDate) {
             if (value < minValidDate) {

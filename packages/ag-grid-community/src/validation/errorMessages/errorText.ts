@@ -349,7 +349,10 @@ export const AG_GRID_ERRORS = {
     55: () => '`addRowDropZone` - A container target needs to be provided' as const,
     56: () =>
         '`addRowDropZone` - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.' as const,
-    57: () => 'unable to show popup filter, filter instantiation failed' as const,
+    57: ({ colId }: { colId?: string }) => {
+        const onColumn = colId ? ' for column `' + colId + '`' : '';
+        return `unable to show popup filter${onColumn}, filter instantiation failed` as const;
+    },
     58: () => 'no values found for select cellEditor' as const,
     59: () => 'cannot select pinned rows' as const,
     60: () => 'cannot select node until it has finished loading' as const,
@@ -360,45 +363,74 @@ export const AG_GRID_ERRORS = {
         `\`setFilterModel()\` - unable to fully apply model, filtering disabled for colId: ${colId}` as const,
     64: ({ colId }: { colId: string }) =>
         `\`setFilterModel()\` - unable to fully apply model, unable to create filter for colId: ${colId}` as const,
-    65: () => 'filter missing setModel method, which is needed for `setFilterModel`' as const,
-    66: () => 'filter API missing getModel method, which is needed for `getFilterModel`' as const,
-    67: () => 'Filter is missing `isFilterActive()` method' as const,
+    65: ({ colId }: { colId: string }) =>
+        `filter on column \`${colId}\` missing setModel method, which is needed for \`setFilterModel\`` as const,
+    66: ({ colId }: { colId: string }) =>
+        `filter API on column \`${colId}\` missing getModel method, which is needed for \`getFilterModel\`` as const,
+    67: ({ colId }: { colId: string }) =>
+        `Filter on column \`${colId}\` is missing \`isFilterActive()\` method` as const,
     68: () => 'Column Filter API methods have been disabled as Advanced Filters are enabled.' as const,
-    69: ({ guiFromFilter }: { guiFromFilter: any }) =>
-        `\`getGui\` method from filter returned \`${guiFromFilter}\`; it should be a DOM element.` as const,
+    69: ({ guiFromFilter, colId }: { guiFromFilter: any; colId: string }) =>
+        `\`getGui\` method from the filter on column \`${colId}\` returned \`${guiFromFilter}\`; it should be a DOM element.` as const,
     70: ({ newFilter }: { newFilter: any }) =>
         `Grid option \`quickFilterText\` only supports string inputs, received: ${typeof newFilter}` as const,
-    71: () => '`debounceMs` is ignored when apply button is present' as const,
-    72: ({ keys }: { keys: string[] }) => [`ignoring \`FilterOptionDef\` as it is missing `, keys] as const,
-    74: () => 'no filter options for filter' as const,
-    75: () => 'Unknown button type specified' as const,
-    76: ({ filterModelType }: { filterModelType: any }) =>
+    71: ({ colId }: { colId: string }) =>
+        `\`debounceMs\` is ignored on column \`${colId}\` as an apply button is present` as const,
+    72: ({
+        colId,
+        index,
+        displayKey,
+        missing,
+    }: {
+        colId: string;
+        index: number;
+        displayKey?: string;
+        missing?: string[];
+    }) => {
+        const named = displayKey ? ' `' + displayKey + '`' : '';
+        const entry = `\`filterOptions[${index}]\`${named} on column \`${colId}\``;
+        return missing?.length
+            ? ([`ignoring ${entry} as it is missing `, missing] as const)
+            : (`ignoring ${entry} as this filter cannot evaluate it` as const);
+    },
+    74: ({ colId }: { colId: string }) =>
+        `no usable filter options for the filter on column \`${colId}\`, so the built-in options are used` as const,
+    75: ({ type, colId }: { type: string; colId?: string }) => {
+        const onColumn = colId ? ' on column `' + colId + '`' : '';
+        return `ignoring unknown \`buttons\` type \`${type}\`${onColumn}` as const;
+    },
+    76: ({ filterModelType, colId }: { filterModelType: any; colId: string }) =>
         [
-            'Unexpected type of filter "',
+            `Unexpected type of filter on column \`${colId}\`: "`,
             filterModelType,
             '", it looks like the filter was configured with incorrect Filter Options',
         ] as const,
-    77: () => `Filter model is missing \`conditions\`` as const,
-    78: () =>
-        'Filter Model contains more conditions than `filterParams.maxNumConditions`. Additional conditions have been ignored.' as const,
-    79: () => '`filterParams.maxNumConditions` must be greater than or equal to one.' as const,
-    80: () => '`filterParams.numAlwaysVisibleConditions` must be greater than or equal to one.' as const,
-    81: () =>
-        '`filterParams.numAlwaysVisibleConditions` cannot be greater than `filterParams.maxNumConditions`.' as const,
-    82: ({ param }: { param: any }) => `\`DateFilter\` \`${param}\` is not a number` as const,
-    83: () => `\`DateFilter\` \`minValidYear\` should be <= \`maxValidYear\`` as const,
-    84: () => `\`DateFilter\` \`minValidDate\` should be <= \`maxValidDate\`` as const,
-    85: () =>
-        '`DateFilter` should not have both `minValidDate` and `minValidYear` parameters set at the same time! `minValidYear` will be ignored.' as const,
-    86: () =>
-        '`DateFilter` should not have both `maxValidDate` and `maxValidYear` parameters set at the same time! `maxValidYear` will be ignored.' as const,
-    87: () =>
-        '`DateFilter` parameter `minValidDate` should always be lower than or equal to parameter `maxValidDate`.' as const,
+    77: ({ colId }: { colId: string }) => `Filter model on column \`${colId}\` is missing \`conditions\`` as const,
+    78: ({ colId }: { colId: string }) =>
+        `Filter Model on column \`${colId}\` contains more conditions than \`filterParams.maxNumConditions\`. Additional conditions have been ignored.` as const,
+    79: ({ colId }: { colId: string }) =>
+        `\`filterParams.maxNumConditions\` on column \`${colId}\` must be greater than or equal to one.` as const,
+    80: ({ colId }: { colId: string }) =>
+        `\`filterParams.numAlwaysVisibleConditions\` on column \`${colId}\` must be greater than or equal to one.` as const,
+    81: ({ colId }: { colId: string }) =>
+        `\`filterParams.numAlwaysVisibleConditions\` cannot be greater than \`filterParams.maxNumConditions\` on column \`${colId}\`.` as const,
+    82: ({ param, colId }: { param: any; colId: string }) =>
+        `\`DateFilter\` \`${param}\` on column \`${colId}\` is not a number` as const,
+    83: ({ colId }: { colId: string }) =>
+        `\`DateFilter\` \`minValidYear\` should be <= \`maxValidYear\` on column \`${colId}\`` as const,
+    84: ({ colId }: { colId: string }) =>
+        `\`DateFilter\` \`minValidDate\` should be <= \`maxValidDate\` on column \`${colId}\`` as const,
+    85: ({ colId }: { colId: string }) =>
+        `\`DateFilter\` on column \`${colId}\` should not have both \`minValidDate\` and \`minValidYear\` parameters set at the same time! \`minValidYear\` will be ignored.` as const,
+    86: ({ colId }: { colId: string }) =>
+        `\`DateFilter\` on column \`${colId}\` should not have both \`maxValidDate\` and \`maxValidYear\` parameters set at the same time! \`maxValidYear\` will be ignored.` as const,
+    87: ({ colId }: { colId: string }) =>
+        `\`DateFilter\` on column \`${colId}\`: the earliest valid date should always be lower than or equal to the latest, whether each comes from a date or a year.` as const,
     88: ({ index }: { index: number }) => `Invalid row index for \`ensureIndexVisible\`: ${index}` as const,
     89: () =>
         `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)` as const,
     90: () => `datasource is missing \`getRows\` method` as const,
-    91: () => 'Filter is missing method `doesFilterPass`' as const,
+    91: ({ colId }: { colId: string }) => `Filter on column \`${colId}\` is missing method \`doesFilterPass\`` as const,
     92: () => `\`AnimationFrameService\` called but animation frames are off` as const,
     93: () => 'cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`' as const,
     94: ({
@@ -477,16 +509,20 @@ export const AG_GRID_ERRORS = {
     110: () => '`groupHideOpenParents` only works when specifying specific columns for `colDef.showRowGroup`' as const,
     111: () =>
         'Invalid selection state. When `groupSelects` is enabled, the state must conform to `IServerSideGroupSelectionState`.' as const,
-    113: () =>
-        'Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values' as const,
+    113: ({ colId }: { colId: string }) =>
+        `Set Filter on column \`${colId}\` cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values` as const,
     114: ({ component }: { component: string }) =>
         `Could not find component with name of \`${component}\`. Is it in \`Vue.components\`?` as const,
     // 115: () => 'The provided selection state should be an object.' as const,
     116: () => 'Invalid selection state. The state must conform to `IServerSideSelectionState`.' as const,
     117: () => '`selectAll` must be of boolean type.' as const,
     118: () => 'Infinite scrolling must be enabled in order to set the row count.' as const,
-    119: () => 'Unable to instantiate filter',
-    120: () => '`MultiFloatingFilterComp` expects `MultiFilter` as its parent',
+    119: ({ colId }: { colId?: string }) => {
+        const onColumn = colId ? ' on column `' + colId + '`' : '';
+        return `Unable to instantiate filter${onColumn}` as const;
+    },
+    120: ({ colId }: { colId: string }) =>
+        `\`MultiFloatingFilterComp\` on column \`${colId}\` expects \`MultiFilter\` as its parent` as const,
     121: () =>
         'a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a `colDef.keyCreator` (see AG Grid docs) or b) to `toString()` on the object to return a key' as const,
     122: () => 'could not find the document, document is empty' as const,
@@ -646,14 +682,14 @@ export const AG_GRID_ERRORS = {
     205: ({ duplicateIdText }: { duplicateIdText: string }) =>
         `Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.` as const,
     206: () => 'getRowId callback must be implemented for transactions to work. Transaction was ignored.' as const,
-    207: () =>
-        'The Set Filter Parameter `defaultToNothingSelected` value was ignored because it does not work when `excelMode` is used.' as const,
-    208: () =>
-        `Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects.` as const,
-    209: () =>
-        `Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects. See ${baseDocLink}/filter-set-filter-list/#filter-value-types` as const,
-    210: () =>
-        'Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects?' as const,
+    207: ({ colId }: { colId: string }) =>
+        `The Set Filter Parameter \`defaultToNothingSelected\` on column \`${colId}\` was ignored because it does not work when \`excelMode\` is used.` as const,
+    208: ({ colId }: { colId: string }) =>
+        `Set Filter Value Formatter on column \`${colId}\` must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects.` as const,
+    209: ({ colId }: { colId: string }) =>
+        `Set Filter Key Creator on column \`${colId}\` is returning null for provided values and provided values are primitives. Please provide complex objects. See ${baseDocLink}/filter-set-filter-list/#filter-value-types` as const,
+    210: ({ colId }: { colId: string }) =>
+        `Set Filter on column \`${colId}\` has a Key Creator, but provided values are primitives. Did you mean to provide complex objects?` as const,
     211: () =>
         'property `treeList=true` for Set Filter params, but you did not provide a `treeListPathGetter` or values of type Date.' as const,
     212: () =>
@@ -706,8 +742,10 @@ export const AG_GRID_ERRORS = {
     246: () => 'Failed to deserialize state - Every `toggledNode` requires an associated string id.' as const,
     247: () =>
         `Row selection state could not be parsed due to invalid data. Ensure all child state has \`toggledNodes\` or does not conform with the parent rule. \nPlease rebuild the selection state and reapply it.` as const,
-    248: () => '`SetFloatingFilter` expects `SetFilter` as its parent' as const,
-    249: () => 'Must supply a Value Formatter in Set Filter params when using a Key Creator' as const,
+    248: ({ colId }: { colId: string }) =>
+        `\`SetFloatingFilter\` on column \`${colId}\` expects \`SetFilter\` as its parent` as const,
+    249: ({ colId }: { colId: string }) =>
+        `Must supply a Value Formatter in Set Filter params on column \`${colId}\` when using a Key Creator` as const,
     250: () =>
         'Must supply a Key Creator in Set Filter params when `treeList = true` on a group column, and Tree Data or Row Grouping is enabled.' as const,
     251: ({ chartType }: { chartType: string }) =>
@@ -791,8 +829,12 @@ export const AG_GRID_ERRORS = {
     279: (_: { name: DynamicBeanName }) => {}, // `Unable to create dynamic bean \`${name}\` during module init lifecycle, dynamic beans must be initialised on first use.` as const,
     280: ({ colId }: { colId: string }) =>
         `\`name\` must be provided for custom filter components for column \`${colId}\`` as const,
-    281: ({ colId }: { colId: string }) =>
-        `Filter for column \`${colId}\` does not have \`filterParams.buttons\`, but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
+    281: ({ colIds }: { colIds: string[] }) =>
+        [
+            'Filters on columns ',
+            colIds,
+            ' do not have `filterParams.buttons`, but the new Filters Tool Panel has buttons configured. Either configure buttons for those filters, or disable buttons on the Filters Tool Panel.',
+        ] as const,
     282: () => 'New filter tool panel requires `enableFilterHandlers: true`.' as const,
     283: () =>
         'As of v34, use the same method on the filter handler (`api.getColumnFilterHandler(colKey)`) instead.' as const,
@@ -946,10 +988,10 @@ export const AG_GRID_ERRORS = {
     },
     325: ({ property, value }: { property: string; value?: unknown }) =>
         `\`${property}\` must be an array with at least one element, currently it is \`[${String(value)}]\``,
-    326: ({ defaultOption }: { defaultOption: string }) =>
-        `ignoring \`defaultOption\` \`${defaultOption}\` as it is not one of the filter's \`filterOptions\`` as const,
-    327: ({ pattern }: { pattern: string }) =>
-        `ignoring \`filterParams.allowedCharPattern\` \`${pattern}\` as it does not compile to a character pattern` as const,
+    326: ({ defaultOption, colId }: { defaultOption: string; colId: string }) =>
+        `ignoring \`defaultOption\` \`${defaultOption}\` on column \`${colId}\` as it is not one of the filter's \`filterOptions\`` as const,
+    327: ({ pattern, colId }: { pattern: string; colId: string }) =>
+        `ignoring \`filterParams.allowedCharPattern\` \`${pattern}\` on column \`${colId}\` as it does not compile to a character pattern` as const,
     328: ({ rowModel }: { rowModel: string }) =>
         `continuous \`fitCellContents\` auto-sizing is not supported by the '${rowModel}' row model, so it has been ignored` as const,
     329: ({ error }: { error: unknown }) => ['`shouldAutoSizeColumns` threw, so the auto-size was skipped:', error],

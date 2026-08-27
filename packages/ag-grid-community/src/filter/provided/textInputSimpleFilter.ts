@@ -82,7 +82,7 @@ export abstract class TextInputSimpleFilter<
     private buildInput(fromTo: 'from' | 'to'): E {
         const element = this.createInputWidget();
         // Every input is built here, so the pattern cannot be bypassed by the element that holds it.
-        installAllowedCharPattern(element, this.params.allowedCharPattern, this.beans);
+        installAllowedCharPattern(element, this.filterConfig.allowedCharPattern);
         element.addCss(`ag-filter-${fromTo}`);
         element.addCss('ag-filter-filter');
         return element;

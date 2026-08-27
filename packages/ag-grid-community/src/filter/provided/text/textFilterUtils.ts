@@ -1,6 +1,5 @@
 import type { Tuple } from '../iSimpleFilter';
-import type { OptionsFactory } from '../optionsFactory';
-import { getNumberOfInputs } from '../simpleFilterUtils';
+import type { ResolvedSimpleFilterConfig } from '../resolvedFilterConfig';
 import type { TextFilterModel } from './iTextFilter';
 
 export function trimInputForFilter(value?: string | null): string | null | undefined {
@@ -12,8 +11,8 @@ export function trimInputForFilter(value?: string | null): string | null | undef
 
 export function mapValuesFromTextFilterModel(
     filterModel: TextFilterModel | null,
-    optionsFactory: OptionsFactory
+    filterConfig: ResolvedSimpleFilterConfig
 ): Tuple<string> {
     const { filter, filterTo, type } = filterModel || {};
-    return [filter || null, filterTo || null].slice(0, getNumberOfInputs(type, optionsFactory));
+    return [filter || null, filterTo || null].slice(0, filterConfig.numberOfInputs(type));
 }
