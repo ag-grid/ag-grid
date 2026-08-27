@@ -39,9 +39,6 @@ const isRedirectPage = (page: string) => {
         (!page.endsWith('/landing-pages/javascript-data-grid/') && page.endsWith('/javascript-data-grid/')) ||
         (!page.endsWith('/landing-pages/vue-data-grid/') && page.endsWith('/vue-data-grid/')) ||
         page.includes(`/${FRAMEWORK_REDIRECT_PATH}/`) ||
-        // SE-165: /reference/ and /licensing/ are FrameworkRedirectPage stubs like the above, but their
-        // destination (e.g. /react-data-grid/reference/) ends with the same segment, so an endsWith
-        // suffix would wrongly exclude the destination too - match the bare top-level path instead.
         ['/reference/', '/licensing/'].includes(new URL(page).pathname)
     );
 };
