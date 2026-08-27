@@ -954,7 +954,7 @@ export const AG_GRID_ERRORS = {
         `continuous \`fitCellContents\` auto-sizing is not supported by the '${rowModel}' row model, so it has been ignored` as const,
     329: ({ error }: { error: unknown }) => ['`shouldAutoSizeColumns` threw, so the auto-size was skipped:', error],
     330: ({ fontFamily, registeredFamilies }: { fontFamily: string; registeredFamilies: string[] }) =>
-        `PDF font family "${fontFamily}" is not registered. Registered families: ${registeredFamilies.join(', ')}.`,
+        `PDF font family "${fontFamily}" is not registered. Registered families: ${(registeredFamilies ?? []).join(', ')}.`,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
