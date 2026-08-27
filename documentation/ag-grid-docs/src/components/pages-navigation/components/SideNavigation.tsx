@@ -1,6 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { replaceHistoryUrl } from '@ag-website-shared/utils/historyUrl';
-import { scrollIntoViewById } from '@ag-website-shared/utils/navigation';
+import { navigate, scrollIntoViewById } from '@ag-website-shared/utils/navigation';
 import { useScrollSpy } from '@components/pages-navigation/hooks/useScrollSpy';
 import { addNonBreakingSpaceBetweenLastWords } from '@utils/addNonBreakingSpaceBetweenLastWords';
 import type { MarkdownHeading } from 'astro';
@@ -35,7 +34,11 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                                     onClick={(event) => {
                                         event.preventDefault();
                                         scrollIntoViewById(slug);
-                                        replaceHistoryUrl(`#${slug}`);
+                                        navigate({
+                                            pathname: window.location.pathname,
+                                            search: window.location.search,
+                                            hash: slug,
+                                        });
                                     }}
                                 >
                                     {addNonBreakingSpaceBetweenLastWords(displayText)}
@@ -52,7 +55,11 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                         onClick={(event) => {
                             event.preventDefault();
                             scrollIntoViewById('top');
-                            replaceHistoryUrl('#top');
+                            navigate({
+                                pathname: window.location.pathname,
+                                search: window.location.search,
+                                hash: 'top',
+                            });
                         }}
                     >
                         <Icon name="backToTop" svgClasses={styles.backToTopIcon} />
