@@ -29,6 +29,29 @@ describe('OpenType PDF shaping', () => {
         expect(run.glyphs.map((glyph) => glyph.glyphId)).toEqual([1, 3, 2]);
     });
 
+    it('retains the solidus when an Arabic font does not contain its glyph', () => {
+        const baseFont = createShapingFont();
+        const font: TrueTypeFont = {
+            ...baseFont,
+            getGlyphId: (codePoint) => {
+                if (codePoint >= 0x30 && codePoint <= 0x39) {
+                    return codePoint;
+                }
+                return 0;
+            },
+        };
+        const run = shapeTrueTypeText('27\u200f/8\u200f/2026', font, 'rtl', 'ar');
+
+        expect(run.glyphs.map((glyph) => glyph.unicode).join('')).toBe('27/8/2026');
+        expect(run.glyphs.filter((glyph) => glyph.unicode === '/').map((glyph) => glyph.glyphId)).toEqual([0, 0]);
+    });
+
+    it('retains Latin shaping for Latin text using an Arabic locale', () => {
+        const run = shapeTrueTypeText('fi', createShapingFont(createLigatureGsub()), 'ltr', 'ar');
+
+        expect(run.glyphs).toEqual([expect.objectContaining({ glyphId: 3, unicode: 'fi' })]);
+    });
+
     it('shapes canonically equivalent decomposed text as NFC', () => {
         const font = createShapingFont();
 

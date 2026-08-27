@@ -39,6 +39,8 @@ const gridOptions = {
 
 Font files are not fetched by AG Grid. The application is responsible for loading the bytes before starting the export and for complying with the font's licence. When the font's embedding permissions allow it, PDF Export embeds only the characters used by the document instead of the complete font file. This process, known as font subsetting, reduces the size of the exported PDF. Fonts that prohibit subsetting are embedded in full.
 
+The `fontFamily` value must exactly match a registered or built-in family. If it does not, PDF Export reports the unknown family and the available alternatives, then cancels the export without creating a file.
+
 Each family can contain Regular, Medium, Bold, Italic, or other faces. PDF Export selects the closest face for the requested `fontWeight` and `fontStyle`.
 
 ## Multiple Languages
@@ -112,7 +114,7 @@ The fonts used by the examples are unmodified Noto and IBM Plex files distribute
 
 - The built-in PDF fonts support WinAnsi characters only. Register an appropriate TrueType font to export other characters.
 - PDF Export does not discover or load browser and system fonts. Applications must load the font data and register each required family and face before exporting.
-- Automatic font fallback is not supported. The selected font must contain every character used by the exported element, or `processStyleCallback` must select an appropriate registered family.
+- PDF Export uses a built-in PDF font when a registered font omits printable ASCII characters such as `/` or `:`. Automatic fallback between registered font families is not supported, so the selected font must contain every non-ASCII character used by the exported element, or `processStyleCallback` must select an appropriate registered family.
 - Only static TrueType fonts with `glyf` outlines are supported. OpenType fonts with CFF outlines, variable fonts, TrueType Collections, WOFF, and WOFF2 are not supported.
 - GPOS mark-to-ligature positioning (lookup type 5) is not supported. OpenType lookup filtering flags, including `IgnoreMarks` and mark-filtering sets, are also not supported. Diacritics attached to ligatures may therefore be positioned incorrectly.
 - Vertical writing is not supported.
