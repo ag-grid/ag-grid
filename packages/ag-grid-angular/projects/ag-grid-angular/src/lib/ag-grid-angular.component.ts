@@ -689,7 +689,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `ColumnAutoSizeModule`
      */
-    @Input() public autoSizeStrategy: AutoSizeStrategy | undefined = undefined;
+    @Input() public autoSizeStrategy: AutoSizeStrategy<TData> | undefined = undefined;
     /** Set to `true` to animate changes to column width when auto-sizing the columns.
      * @default false
      */
