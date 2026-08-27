@@ -15,14 +15,10 @@ import { themeQuartz } from './theming/parts/theme/themes';
 const cssVariable = <K extends keyof CssChangeKeys>(
     changeKey: K,
     type: ParamType,
-    defaultValue: number,
-    noWarn?: boolean,
-    cacheDefault?: boolean
-): CssVariable<CssChangeKeys> => ({ changeKey, type, defaultValue, noWarn, cacheDefault });
+    defaultValue: number
+): CssVariable<CssChangeKeys> => ({ changeKey, type, defaultValue });
 
 const CELL_HORIZONTAL_PADDING = cssVariable('cellHorizontalPadding', 'length', 16);
-const INDENTATION_LEVEL = cssVariable('indentationLevel', 'length', 0, true, true);
-const ROW_GROUP_INDENT_SIZE = cssVariable('rowGroupIndentSize', 'length', 0);
 const ROW_HEIGHT = cssVariable('rowHeight', 'length', 42);
 const HEADER_HEIGHT = cssVariable('headerHeight', 'length', 48);
 const ROW_BORDER_WIDTH = cssVariable('rowBorderWidth', 'border', 1);
@@ -83,19 +79,6 @@ export class Environment
 
     public getDefaultCellHorizontalPadding(): number {
         return this.getCSSVariablePixelValue(CELL_HORIZONTAL_PADDING);
-    }
-
-    private getCellPaddingLeft(): number {
-        // calc(var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size)*var(--ag-indentation-level))
-        const cellHorizontalPadding = this.getDefaultCellHorizontalPadding();
-        const indentationLevel = this.getCSSVariablePixelValue(INDENTATION_LEVEL);
-        const rowGroupIndentSize = this.getCSSVariablePixelValue(ROW_GROUP_INDENT_SIZE);
-        return cellHorizontalPadding - 1 + rowGroupIndentSize * indentationLevel;
-    }
-
-    public getCellPadding(): number {
-        const cellPaddingRight = this.getDefaultCellHorizontalPadding() - 1;
-        return this.getCellPaddingLeft() + cellPaddingRight;
     }
 
     public getDefaultColumnMinWidth(): number {
@@ -190,6 +173,4 @@ interface CssChangeKeys extends BaseCssChangeKeys {
     rowBorderWidth: true;
     pinnedRowBorderWidth: true;
     cellHorizontalPadding: true;
-    indentationLevel: true;
-    rowGroupIndentSize: true;
 }
