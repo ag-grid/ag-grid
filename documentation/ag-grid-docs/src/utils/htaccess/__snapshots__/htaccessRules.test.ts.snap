@@ -2855,6 +2855,7 @@ AddCharset utf-8 .md
     RedirectMatch 301 "^/community-forums/$" "/community/"
     RedirectMatch 410 "^/forum/.+"
     Redirect 410 /testimonials.php
+    Redirect 410 /blog/whats-new-in-ag-grid-v24/
     Redirect 301 /start-trial.php /license-pricing/
     Redirect 301 /options/series/radial-column/ https://www.ag-grid.com/charts/options/series/radial-column/
     Redirect 301 /options/series/area/ https://www.ag-grid.com/charts/options/series/area/
