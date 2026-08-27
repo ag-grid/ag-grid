@@ -1,11 +1,10 @@
 import type { ISimpleFilterModelPresetType } from '../iSimpleFilter';
-import { DateFilterHandler, presetDateFilterTypeRelativeFromToMap } from './dateFilterHandler';
+import { DateFilterHandler, presetDateRanges, relativeDateHelpers } from './dateFilterHandler';
 
-type PresetKey = keyof typeof presetDateFilterTypeRelativeFromToMap;
-type RangeFn = (from: Date, to: Date) => [Date, Date];
-type DateFn = (date: Date) => Date;
+type PresetKey = keyof typeof presetDateRanges;
+type HelperKey = keyof typeof relativeDateHelpers;
 
-describe('presetDateFilterTypeRelativeFromToMap', () => {
+describe('presetDateRanges', () => {
     beforeAll(() => {
         if (typeof navigator === 'undefined') {
             return;
@@ -89,11 +88,9 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
         ['last24Months', [ANSWERS.startOfTodayMinus24months, ANSWERS.startOfTomorrow]],
     ])('%s', (fnName, expected) =>
         it('returns correct from/to', () =>
-            expect(
-                (presetDateFilterTypeRelativeFromToMap[fnName] as RangeFn)(FROM, TO).map((d: Date) => d.toString())
-            ).toStrictEqual(expected))
+            expect(presetDateRanges[fnName](FROM, TO).map((d: Date) => d.toString())).toStrictEqual(expected))
     );
-    describe.each<[PresetKey, string]>([
+    describe.each<[HelperKey, string]>([
         ['setStartOfDay', ANSWERS.startOfToday],
         ['setStartOfWeek', ANSWERS.startOfCurrentWeek],
         ['setStartOfNextDay', ANSWERS.startOfTomorrow],
@@ -109,8 +106,7 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
         ['setPreviousMonth', ANSWERS.previousMonth],
         ['setPreviousQuarter', ANSWERS.previousQuarter],
     ])('%s', (fnName, expected) =>
-        it('works', () =>
-            expect((presetDateFilterTypeRelativeFromToMap[fnName] as DateFn)(FROM).toString()).toContain(expected))
+        it('works', () => expect(relativeDateHelpers[fnName](FROM).toString()).toContain(expected))
     );
 });
 
@@ -146,8 +142,8 @@ describe('getFirstDayOfWeek', () => {
             value: { language: 'en-US', languages: ['en-US'] },
         });
 
-        const { presetDateFilterTypeRelativeFromToMap: map } = await import('./dateFilterHandler');
-        const result = (map.setStartOfWeek as DateFn)(new Date(base));
+        const { relativeDateHelpers: helpers } = await import('./dateFilterHandler');
+        const result = helpers.setStartOfWeek(new Date(base));
         expect(result.toUTCString()).toContain('Sun, 05 Apr 2020');
 
         expect(getWeekInfo).toHaveBeenCalledTimes(1);

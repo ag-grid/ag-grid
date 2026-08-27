@@ -12,6 +12,7 @@ import type {
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
 import type { ISetFilterParams } from '../interfaces/iSetFilter';
+import { _getUsableFilterOptions } from './filterOptionSupport';
 import type { IBigIntFilterParams } from './provided/bigInt/iBigIntFilter';
 import type { IDateFilterParams } from './provided/date/iDateFilter';
 import type { ISimpleFilterParams } from './provided/iSimpleFilter';
@@ -75,7 +76,11 @@ function setFilterBigIntComparator<TValue = any>(a: TValue | null, b: TValue | n
     return String(a).localeCompare(String(b));
 }
 
-function isValidDate(value: any): boolean {
+/**
+ * What a date column means by a readable date, shared so the Advanced Filter cannot mean something else.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isValidDate(value: any): boolean {
     return value instanceof Date && !isNaN(value.getTime());
 }
 
@@ -122,9 +127,12 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
                 predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
                 numberOfInputs: 0,
             },
+            // Offered as they are by every other data type, and as the Advanced Filter already offers them here.
+            'blank',
+            'notBlank',
         ],
     }),
-    date: () => ({ isValidDate }),
+    date: () => ({ isValidDate: _isValidDate }),
     dateString: ({ dataTypeDefinition }) => ({
         comparator: (filterDate: Date, cellValue: string | undefined) => {
             const cellAsDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(cellValue)!;
@@ -138,7 +146,7 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
         },
         isValidDate: (value: any) =>
             typeof value === 'string' &&
-            isValidDate((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value)),
+            _isValidDate((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value)),
     }),
     dateTime: (args) => filterParamsForEachDataType.date(args),
     dateTimeString: (args) => filterParamsForEachDataType.dateString(args),
@@ -238,6 +246,14 @@ export function _getFilterParamsForDataType(
                   ...existingFilterParams,
               }
             : newFilterParams;
+    // Here rather than where the filter is built: a column filter is built when the user opens it, so a list
+    // validated there says nothing until someone clicks. Both branches above are freshly allocated.
+    if (filterParams) {
+        const usableOptions = _getUsableFilterOptions(beans.log, filter, filterParams);
+        if (usableOptions !== filterParams.filterOptions) {
+            filterParams.filterOptions = usableOptions;
+        }
+    }
     return { filterParams, filterValueGetter };
 }
 

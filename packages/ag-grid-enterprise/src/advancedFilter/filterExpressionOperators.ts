@@ -1,16 +1,23 @@
 import { _hasOwn } from 'ag-stack';
 
-import type { BaseCellDataType, IRowNode } from 'ag-grid-community';
+import type { BaseCellDataType, IRowNode, TextFormatter } from 'ag-grid-community';
+import { _TEXT_FILTER_PREDICATES, _getTextFormatter, _isBlank, _trimInputForFilter } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
 
 export interface FilterExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue> {
-    caseSensitive?: boolean;
     includeBlanksInEquals?: boolean;
     includeBlanksInNotEqual?: boolean;
     includeBlanksInLessThan?: boolean;
     includeBlanksInGreaterThan?: boolean;
+    /** The column's own comparison and validity gate, read only by the scalar operators. */
+    comparator?: (operand: ConvertedTValue, value: any) => number;
+    isValidDate?: (value: any) => boolean;
+    /** The column's own text normalisation, matching and trimming, read only by the text operators. */
+    textFormatter?: TextFormatter;
+    textMatches?: (filterOption: string, value: string, filterText: string, node: IRowNode) => boolean;
+    trimInput?: boolean;
     valueConverter: (value: TValue, node: IRowNode) => ConvertedTValue;
 }
 
@@ -97,6 +104,9 @@ function getEntries<ConvertedTValue, TValue = ConvertedTValue>(
     return entries;
 }
 
+/** Only reached for a condition whose column no longer resolves, which has no `filterParams` to read. */
+const defaultTextFormatter: TextFormatter = _getTextFormatter({});
+
 interface FilterExpressionOperatorsParams {
     translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => string;
 }
@@ -115,77 +125,81 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
         return getEntries(this.operators, activeOperators);
     }
 
+    /** The predicate is read from the key, so the two cannot name different comparisons. */
+    private textOperator(
+        displayValue: string,
+        filterOption: keyof typeof _TEXT_FILTER_PREDICATES,
+        nullsMatch: boolean
+    ): FilterExpressionOperator<string, TValue> {
+        const expression = _TEXT_FILTER_PREDICATES[filterOption];
+        return {
+            displayValue,
+            evaluator: (value, node, params, operand1) =>
+                this.evaluateExpression(value, node, params, operand1!, nullsMatch, expression, filterOption),
+            numOperands: 1,
+        };
+    }
+
     private initOperators(): void {
         const { translate } = this.params;
         this.operators = {
-            contains: {
-                displayValue: translate('advancedFilterContains'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.includes(o)),
-                numOperands: 1,
-            },
-            notContains: {
-                displayValue: translate('advancedFilterNotContains'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, true, (v, o) => !v.includes(o)),
-                numOperands: 1,
-            },
-            equals: {
-                displayValue: translate('advancedFilterTextEquals'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v === o),
-                numOperands: 1,
-            },
-            notEqual: {
-                displayValue: translate('advancedFilterTextNotEqual'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, true, (v, o) => v != o),
-                numOperands: 1,
-            },
-            startsWith: {
-                displayValue: translate('advancedFilterStartsWith'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.startsWith(o)),
-                numOperands: 1,
-            },
-            endsWith: {
-                displayValue: translate('advancedFilterEndsWith'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.endsWith(o)),
-                numOperands: 1,
-            },
+            contains: this.textOperator(translate('advancedFilterContains'), 'contains', false),
+            notContains: this.textOperator(translate('advancedFilterNotContains'), 'notContains', true),
+            equals: this.textOperator(translate('advancedFilterTextEquals'), 'equals', false),
+            notEqual: this.textOperator(translate('advancedFilterTextNotEqual'), 'notEqual', true),
+            startsWith: this.textOperator(translate('advancedFilterStartsWith'), 'startsWith', false),
+            endsWith: this.textOperator(translate('advancedFilterEndsWith'), 'endsWith', false),
+            // The column filter's own test, so `blank` means one thing whichever filter asks a text column.
             blank: {
                 displayValue: translate('advancedFilterBlank'),
-                evaluator: (value) => value == null || (typeof value === 'string' && value.trim().length === 0),
+                evaluator: (value) => _isBlank(value),
                 numOperands: 0,
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
-                evaluator: (value) => value != null && (typeof value !== 'string' || value.trim().length > 0),
+                evaluator: (value) => !_isBlank(value),
                 numOperands: 0,
             },
         };
     }
 
+    /** The column filter's own order: trim the filter text, normalise both sides through one formatter, then
+     * match. A supplied `textMatcher` replaces the comparison itself, exactly as it does in the column filter. */
     private evaluateExpression(
         value: TValue | null | undefined,
         node: IRowNode,
         params: FilterExpressionEvaluatorParams<string, TValue>,
         operand: string,
         nullsMatch: boolean,
-        expression: (value: string, operand: string) => boolean
+        expression: (value: string, operand: string) => boolean,
+        filterOption: string
     ): boolean {
         if (value == null) {
             return nullsMatch;
         }
-        return params.caseSensitive
-            ? expression(params.valueConverter(value, node), operand)
-            : expression(params.valueConverter(value, node).toLocaleLowerCase(), operand.toLocaleLowerCase());
+        const format = params.textFormatter ?? defaultTextFormatter;
+        const filterText = format(params.trimInput ? _trimInputForFilter(operand) : operand) ?? '';
+        const formattedValue = format(params.valueConverter(value, node)) ?? '';
+        const textMatches = params.textMatches;
+        return textMatches
+            ? textMatches(filterOption, formattedValue, filterText, node)
+            : expression(formattedValue, filterText);
     }
 }
 
+/** The sign tests a comparison result is read through, named so a flame graph says which one ran. */
+const isZero = (compareResult: number): boolean => compareResult === 0;
+const isNotZero = (compareResult: number): boolean => compareResult !== 0;
+const isAfter = (compareResult: number): boolean => compareResult > 0;
+const isAtOrAfter = (compareResult: number): boolean => compareResult >= 0;
+const isBefore = (compareResult: number): boolean => compareResult < 0;
+const isAtOrBefore = (compareResult: number): boolean => compareResult <= 0;
+
 interface ScalarFilterExpressionOperatorsParams<ConvertedTValue> extends FilterExpressionOperatorsParams {
-    equals: (value: ConvertedTValue, operand: ConvertedTValue) => boolean;
+    /** The data type's own comparison, in the sign convention a column `comparator` uses. */
+    compare: (operand: ConvertedTValue, value: ConvertedTValue) => number;
+    /** What the comparison can read, mirroring each column filter handler's own gate. */
+    isValid: (value: any) => boolean;
 }
 
 export class ScalarFilterExpressionOperators<
@@ -203,31 +217,24 @@ export class ScalarFilterExpressionOperators<
     }
 
     private initOperators(): void {
-        const { translate, equals } = this.params;
+        const translate = this.params.translate;
         this.operators = {
             equals: {
                 displayValue: translate('advancedFilterEquals'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateSingleOperandExpression(
-                        value,
-                        node,
-                        params,
-                        operand1!,
-                        !!params.includeBlanksInEquals,
-                        equals
-                    ),
+                    this.evaluateComparison(value, node, params, operand1!, !!params.includeBlanksInEquals, isZero),
                 numOperands: 1,
             },
             notEqual: {
                 displayValue: translate('advancedFilterNotEqual'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateSingleOperandExpression(
+                    this.evaluateComparison(
                         value,
                         node,
                         params,
                         operand1!,
                         !!params.includeBlanksInNotEqual,
-                        (v, o) => !equals(v, o),
+                        isNotZero,
                         true
                     ),
                 numOperands: 1,
@@ -235,87 +242,93 @@ export class ScalarFilterExpressionOperators<
             greaterThan: {
                 displayValue: translate('advancedFilterGreaterThan'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateSingleOperandExpression(
+                    this.evaluateComparison(
                         value,
                         node,
                         params,
                         operand1!,
                         !!params.includeBlanksInGreaterThan,
-                        (v, o) => v > o
+                        isAfter
                     ),
                 numOperands: 1,
             },
             greaterThanOrEqual: {
                 displayValue: translate('advancedFilterGreaterThanOrEqual'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateSingleOperandExpression(
+                    this.evaluateComparison(
                         value,
                         node,
                         params,
                         operand1!,
                         !!params.includeBlanksInGreaterThan,
-                        (v, o) => v >= o
+                        isAtOrAfter
                     ),
                 numOperands: 1,
             },
             lessThan: {
                 displayValue: translate('advancedFilterLessThan'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateSingleOperandExpression(
-                        value,
-                        node,
-                        params,
-                        operand1!,
-                        !!params.includeBlanksInLessThan,
-                        (v, o) => v < o
-                    ),
+                    this.evaluateComparison(value, node, params, operand1!, !!params.includeBlanksInLessThan, isBefore),
                 numOperands: 1,
             },
             lessThanOrEqual: {
                 displayValue: translate('advancedFilterLessThanOrEqual'),
                 evaluator: (value, node, params, operand1) =>
-                    this.evaluateSingleOperandExpression(
+                    this.evaluateComparison(
                         value,
                         node,
                         params,
                         operand1!,
                         !!params.includeBlanksInLessThan,
-                        (v, o) => v <= o
+                        isAtOrBefore
                     ),
                 numOperands: 1,
             },
             blank: {
                 displayValue: translate('advancedFilterBlank'),
-                evaluator: (value) => value == null,
+                evaluator: (value) => _isBlank(value),
                 numOperands: 0,
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
-                evaluator: (value) => value != null,
+                evaluator: (value) => !_isBlank(value),
                 numOperands: 0,
             },
         };
     }
 
-    private evaluateSingleOperandExpression(
+    /**
+     * The column filter's own order: the validity gate, then the comparison, then the sign of its result.
+     * A value the comparison cannot read matches nothing, and so matches every negation of a comparison.
+     */
+    private evaluateComparison(
         value: TValue | null | undefined,
         node: IRowNode,
         params: FilterExpressionEvaluatorParams<ConvertedTValue, TValue>,
         operand: ConvertedTValue,
         nullsMatch: boolean,
-        expression: (value: ConvertedTValue, operand: ConvertedTValue) => boolean,
+        passes: (compareResult: number) => boolean,
         isNegated?: boolean
     ): boolean {
         if (value == null) {
             return nullsMatch;
         }
-        const convertedValue = params.valueConverter(value, node);
-        // A value the data type cannot read is nothing to compare against, as the column filter's own validity
-        // gate decides: it matches no comparison, and so matches every negation of one.
-        if (convertedValue == null) {
+        // Handed the value the column filter hands it, unconverted: a string date column's `isValidDate`
+        // reads the string itself, and one written for that column must not be given something else.
+        const isValidDate = params.isValidDate;
+        if (isValidDate && !isValidDate(value)) {
             return !!isNegated;
         }
-        return expression(convertedValue, operand);
+        const comparator = params.comparator;
+        if (comparator) {
+            return passes(comparator(operand, value));
+        }
+        const convertedValue = params.valueConverter(value, node);
+        // The data type's own gate, on the value its comparison is about to read rather than on the raw one.
+        if (convertedValue == null || !this.params.isValid(convertedValue)) {
+            return !!isNegated;
+        }
+        return passes(this.params.compare(operand, convertedValue));
     }
 }
 
@@ -345,12 +358,12 @@ export class BooleanFilterExpressionOperators implements DataTypeFilterExpressio
             },
             blank: {
                 displayValue: translate('advancedFilterBlank'),
-                evaluator: (value) => value == null,
+                evaluator: (value) => _isBlank(value),
                 numOperands: 0,
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
-                evaluator: (value) => value != null,
+                evaluator: (value) => !_isBlank(value),
                 numOperands: 0,
             },
         };

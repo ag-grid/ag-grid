@@ -141,6 +141,8 @@ The available options are as follows:
 
 For `text` and `object` Cell Data Types, `caseSensitive = true` can be set to enable case sensitivity.
 
+Where the column's own filter is the Text Filter, its `textMatcher`, `textFormatter` and `trimInput` decide the matching for the Advanced Filter too, so a column that normalises or replaces its own matching is filtered the same way by both. Likewise, where the column's own filter is the Date Filter, its `comparator` and `isValidDate` decide the comparison. A column using a different filter is unaffected: these properties mean different things to a Set Filter.
+
 For `number`, `date`, `dateString`, `dateTime` and `dateTimeString` Cell Data Types, the following properties can be set to include blank values for the relevant options:
 
 - `includeBlanksInEquals = true`

@@ -13,7 +13,7 @@ import type {
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _toFiniteNumber } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _getTextFormatter, _isValidDate, _toFiniteNumber } from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -50,9 +50,33 @@ function quoteChar(operand: string): `'` | `"` | null {
     return operand.includes(`'`) ? null : `'`;
 }
 
+/**
+ * Each data type's own comparison, in the sign convention a column `comparator` uses: positive where the cell
+ * value sorts after the operand. The validity gates mirror each column filter handler's `isValid`, so a value
+ * the comparison cannot read is rejected before it, rather than compared as if it could be.
+ */
+const compareOrdered = <V extends number | bigint>(operand: V, value: V): number => {
+    if (value === operand) {
+        return 0;
+    }
+    if (value > operand) {
+        return 1;
+    }
+    if (value < operand) {
+        return -1;
+    }
+    // Neither equal nor ordered, as a NaN is: no comparison holds against it, and every negation of one does.
+    return NaN;
+};
+
+const compareDates = (operand: Date, value: Date): number => compareOrdered(operand.getTime(), value.getTime());
+
+const isReadableNumber = (value: number): boolean => !isNaN(value);
+
+const isReadableBigInt = (value: unknown): boolean => _parseBigIntOrNull(value) !== null;
+
 /** The `filterParams` an Advanced Filter evaluator honours; the rest are column-filter UI concerns. */
 const COPIED_FILTER_PARAMS: (keyof FilterExpressionEvaluatorParams<any>)[] = [
-    'caseSensitive',
     'includeBlanksInEquals',
     'includeBlanksInNotEqual',
     'includeBlanksInLessThan',
@@ -189,6 +213,15 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             columnName = colId;
         }
         return columnName;
+    }
+
+    /** The filter this column would build, so a `filterParams` name is read only as that filter means it. */
+    private getOwnFilterName(column: AgColumn): string | undefined {
+        const filter = column.colDef.filter;
+        if (filter === true) {
+            return this.beans.colFilter?.getDefaultFilter(column);
+        }
+        return typeof filter === 'string' ? filter : undefined;
     }
 
     /**
@@ -417,6 +450,13 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             return { valueConverter: (v: any) => v };
         }
 
+        const { filterParams } = column.colDef;
+        // Each of these names belongs to one filter: `comparator` sorts a Set Filter's values list where it
+        // compares a Date Filter's, so reading it from the wrong filter inverts the comparison silently.
+        const ownFilter = this.getOwnFilterName(column);
+        const dateFilterParams = ownFilter === 'agDateColumnFilter' ? filterParams : undefined;
+        const textFilterParams = ownFilter === 'agTextColumnFilter' ? filterParams : undefined;
+
         const baseCellDataType = this.dataTypeSvc?.getBaseDataType(column);
         switch (baseCellDataType) {
             case 'dateTimeString':
@@ -445,7 +485,32 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 params = { valueConverter: (v: any) => v };
                 break;
         }
-        const { filterParams } = column.colDef;
+        // `caseSensitive` from any column, since every filter means the same thing by it; the formatter itself
+        // only from the filter that means normalising the value it is about to compare.
+        const textFormatter = textFilterParams?.textFormatter;
+        params.textFormatter = _getTextFormatter({ caseSensitive: filterParams?.caseSensitive, textFormatter });
+        if (dateFilterParams) {
+            params.comparator = dateFilterParams.comparator;
+            params.isValidDate = dateFilterParams.isValidDate;
+        }
+        if (textFilterParams) {
+            params.trimInput = textFilterParams.trimInput;
+            const textMatcher = textFilterParams.textMatcher;
+            if (textMatcher) {
+                // Bound to the column here, where the grid params are to hand, so the operators need only the row.
+                const columnParams = _addGridCommonParams(this.gos, { column, colDef: column.colDef });
+                params.textMatches = (filterOption, value, filterText, node) =>
+                    textMatcher({
+                        ...columnParams,
+                        node,
+                        data: node.data,
+                        filterOption,
+                        value,
+                        filterText,
+                        textFormatter,
+                    });
+            }
+        }
         if (filterParams) {
             for (let i = 0, len = COPIED_FILTER_PARAMS.length; i < len; ++i) {
                 const param = COPIED_FILTER_PARAMS[i];
@@ -469,17 +534,18 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     public generateExpressionOperators(): FilterExpressionOperators {
         const translate = (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) =>
             this.translate(key, variableValues);
-        const dateOperatorsParams = {
-            translate,
-            equals: (v: Date, o: Date) => v.getTime() === o.getTime(),
-        };
+        const dateOperatorsParams = { translate, compare: compareDates, isValid: _isValidDate };
+        const orderedOperatorsParams = { translate, compare: compareOrdered, isValid: isReadableNumber };
 
         return {
             text: new TextFilterExpressionOperators({ translate }),
             boolean: new BooleanFilterExpressionOperators({ translate }),
             object: new TextFilterExpressionOperators<any>({ translate }),
-            number: new ScalarFilterExpressionOperators<number>({ translate, equals: (v, o) => v === o }),
-            bigint: new ScalarFilterExpressionOperators<bigint>({ translate, equals: (v, o) => v === o }),
+            number: new ScalarFilterExpressionOperators<number>(orderedOperatorsParams),
+            bigint: new ScalarFilterExpressionOperators<bigint>({
+                ...orderedOperatorsParams,
+                isValid: isReadableBigInt,
+            }),
             date: new ScalarFilterExpressionOperators<Date>(dateOperatorsParams),
             dateString: new ScalarFilterExpressionOperators<Date, string>(dateOperatorsParams),
             dateTime: new ScalarFilterExpressionOperators<Date>(dateOperatorsParams),

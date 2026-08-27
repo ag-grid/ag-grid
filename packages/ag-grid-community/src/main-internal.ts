@@ -136,14 +136,19 @@ export {
 export { AgFilterButtonSelector, FilterButtonComp } from './filter/filterButtonComp';
 export type { FilterButton, FilterButtonEvent } from './filter/filterButtonComp';
 export { FilterComp } from './filter/filterComp';
-export { _getDefaultSimpleFilter, _getFilterParamsForDataType } from './filter/filterDataTypeUtils';
+export { _getDefaultSimpleFilter, _getFilterParamsForDataType, _isValidDate } from './filter/filterDataTypeUtils';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
-export { _bindFilterCallback } from './filter/provided/simpleFilterUtils';
+export { _bindFilterCallback, isBlank as _isBlank } from './filter/provided/simpleFilterUtils';
+export {
+    _TEXT_FILTER_PREDICATES,
+    _getTextFormatter,
+    trimInputForFilter as _trimInputForFilter,
+} from './filter/provided/text/textFilterUtils';
 export type { FocusService } from './focusService';
 export { _getGlobalGridOption } from './globalGridOptions';
 export { GridCoreCreator } from './grid';

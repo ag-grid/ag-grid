@@ -1,7 +1,6 @@
 import type { Comparator, IScalarFilterParams } from './iScalarFilter';
 import type { FilterOptionKey, ISimpleFilterModel, Tuple } from './iSimpleFilter';
 import { SimpleFilterHandler } from './simpleFilterHandler';
-import { isBlank } from './simpleFilterUtils';
 
 export abstract class ScalarFilterHandler<
     TModel extends ISimpleFilterModel,
@@ -49,10 +48,6 @@ export abstract class ScalarFilterHandler<
                     return true;
                 }
                 break;
-            case 'blank':
-                return true;
-            case 'notBlank':
-                return false;
         }
 
         return false;
@@ -61,7 +56,7 @@ export abstract class ScalarFilterHandler<
     protected evaluateNonNullValue(values: Tuple<TValue>, cellValue: TValue, filterModel: TModel): boolean {
         const type = filterModel.type;
         if (!this.isValid(cellValue)) {
-            return type === 'notEqual' || type === 'notBlank';
+            return type === 'notEqual';
         }
 
         const comparator = this.comparator();
@@ -94,15 +89,8 @@ export abstract class ScalarFilterHandler<
                     : compareResult > 0 && compareToResult < 0;
             }
 
-            case 'blank':
-                return isBlank(cellValue);
-
-            case 'notBlank':
-                return !isBlank(cellValue);
-
             default:
-                this.warnUnexpectedFilterType(type);
-                return true;
+                return false;
         }
     }
 }
