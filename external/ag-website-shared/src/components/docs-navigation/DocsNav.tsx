@@ -266,7 +266,7 @@ export function DocsNav({
                 <div className={styles.docsNavInner}>
                     {showWhatsNew && (
                         <div className={styles.whatsNewLink}>
-                            <a href={urlWithBaseUrl('/whats-new')}>What's New</a>
+                            <a href={urlWithBaseUrl('/whats-new/')}>What's New</a>
                         </div>
                     )}
 

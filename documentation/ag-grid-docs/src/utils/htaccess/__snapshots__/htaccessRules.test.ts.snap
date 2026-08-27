@@ -2613,14 +2613,14 @@ AddCharset utf-8 .md
     Redirect 301 /react-data-grid/component-cell-editor-imperative-react/ /react-data-grid/cell-editors/
     Redirect 301 /cookies.php /cookies/
     Redirect 301 /privacy.php /privacy/
-    Redirect 301 /about.php /about
+    Redirect 301 /about.php /about/
     Redirect 301 /license-pricing.php /license-pricing/
     Redirect 301 /example.php /example/
     Redirect 301 /ag-grid-jobs-board.php /ag-grid-jobs-board
-    Redirect 301 /react-data-grid/whats-new /whats-new
-    Redirect 301 /vue-data-grid/whats-new /whats-new
-    Redirect 301 /angular-data-grid/whats-new /whats-new
-    Redirect 301 /javascript-data-grid/whats-new /whats-new
+    Redirect 301 /react-data-grid/whats-new /whats-new/
+    Redirect 301 /vue-data-grid/whats-new /whats-new/
+    Redirect 301 /angular-data-grid/whats-new /whats-new/
+    Redirect 301 /javascript-data-grid/whats-new /whats-new/
     Redirect 301 /vue-data-grid/framework-data-flow /vue-data-grid/getting-started/
     Redirect 301 /react-data-grid/licensing/ /react-data-grid/community-vs-enterprise/
     Redirect 301 /vue-data-grid/licensing/ /vue-data-grid/community-vs-enterprise/
@@ -2855,6 +2855,7 @@ AddCharset utf-8 .md
     RedirectMatch 301 "^/community-forums/$" "/community/"
     RedirectMatch 410 "^/forum/.+"
     Redirect 410 /testimonials.php
+    Redirect 410 /blog/whats-new-in-ag-grid-v24/
     Redirect 301 /start-trial.php /license-pricing/
     Redirect 301 /options/series/radial-column/ https://www.ag-grid.com/charts/options/series/radial-column/
     Redirect 301 /options/series/area/ https://www.ag-grid.com/charts/options/series/area/

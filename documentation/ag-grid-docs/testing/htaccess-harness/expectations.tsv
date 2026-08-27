@@ -73,6 +73,11 @@ www	/react-grid/rxjs/	301	https://www.ag-grid.com/react-data-grid/data-update/
 # --- AG-17694: Beyond the Prompt moved /campaigns/ -> /community/ ---
 www	/campaigns/beyond-the-prompt/	301	/community/beyond-the-prompt/
 
+# --- SE-166: /blog/whats-new-in-ag-grid-v24/ is gone on www too, and must not swallow -part-2 ---
+www	/blog/whats-new-in-ag-grid-v24/	410
+www	/blog/whats-new-in-ag-grid-v24/amp/	410
+www	/blog/whats-new-in-ag-grid-v24-part-2/	200
+
 # --- No-shadow negatives: real live pages must NOT be redirected (expect 200) ---
 www	/angular-data-grid/getting-started/	200
 www	/react-data-grid/cell-editing/	200
