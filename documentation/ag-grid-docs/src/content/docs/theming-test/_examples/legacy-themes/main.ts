@@ -27,6 +27,12 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs,
     theme: 'legacy',
+    defaultColDef: {
+        filter: true,
+    },
+    toolbar: {
+        items: ['agQuickFilterToolbarItem'],
+    },
 };
 
 function useTheme(theme: string, isDark: boolean) {
