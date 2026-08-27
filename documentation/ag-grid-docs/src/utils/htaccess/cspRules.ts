@@ -149,6 +149,9 @@ const GTM_UTM_WEBHOOK_HASH = "'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K
 // and the old hash is confirmed unused. AG-3390.
 const GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH = "'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='";
 
+// Inline script used by the contact form.
+const CONTACT_FORM_SCRIPT_HASH = "'sha256-D3cdipua6lhS2IQ0W0AlSNVVsS+2b/sXycSE8m8PkxY='";
+
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
     hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
@@ -159,6 +162,7 @@ const SITE_SCRIPT_HASHES = [
     GTM_UTM_CAPTURE_HASH,
     GTM_UTM_WEBHOOK_HASH,
     GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH,
+    CONTACT_FORM_SCRIPT_HASH,
 ];
 
 // Enzuzo, the cookie-consent banner that replaces OneTrust. Like OneTrust before it,
