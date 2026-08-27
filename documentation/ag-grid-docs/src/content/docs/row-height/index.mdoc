@@ -8,6 +8,9 @@ individually to give each row a different height.
 {% note %}
 You cannot use variable row height when using either the [Viewport Row Model](./viewport/) or [Infinite Row Model](./infinite-scrolling/).
 This is because these row models need to work out the position of rows that are not loaded and hence need to assume the row height is fixed.
+
+A _uniform_ row height — set via the `rowHeight` grid option or derived from a theme size parameter — applies in every row model.
+It is only _variable_ per-row height, including `api.resetRowHeights()` and [Auto Row Height](#auto-row-height), that is restricted to the Client-Side and Server-Side Row Models.
 {% /note %}
 
 ## rowHeight Property

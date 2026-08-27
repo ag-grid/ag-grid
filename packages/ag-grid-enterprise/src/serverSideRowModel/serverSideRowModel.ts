@@ -26,6 +26,7 @@ import type {
     SortModelItem,
     SortService,
     StoreRefreshAfterParams,
+    StylesChangedEvent,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -100,6 +101,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private pivotResultFields?: string[];
 
+    /** Last row height applied via `resetRowHeights`, used to skip no-op resets from `stylesChanged`. */
+    private lastAppliedRowHeight?: number;
+
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(): boolean {
         return false;
@@ -132,6 +136,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             columnPivotChanged: this.onPivotChanged.bind(this),
             columnRowGroupChanged: resetListener,
             columnPivotModeChanged: resetListener,
+            stylesChanged: this.onGridStylesChanges.bind(this),
         });
 
         this.addManagedPropertyListeners(
@@ -348,7 +353,23 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         pivotResultCols?.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
     }
 
+    private onGridStylesChanges(e: StylesChangedEvent): void {
+        if (!e.rowHeightChanged || this.beans.rowAutoHeight?.active) {
+            return;
+        }
+        const rowHeight = _getRowHeightAsNumber(this.beans);
+        if (rowHeight === this.lastAppliedRowHeight) {
+            return;
+        }
+        this.resetRowHeights();
+    }
+
     public resetRowHeights(): void {
+        if (!this.rootNode) {
+            return;
+        }
+
+        this.lastAppliedRowHeight = _getRowHeightAsNumber(this.beans);
         const atLeastOne = this.resetRowHeightsForAllRowNodes();
 
         const rootNodeHeight = _getRowHeightForNode(this.beans, this.rootNode);
@@ -381,7 +402,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
             if (rowNode.sibling) {
                 const siblingRowHeight = _getRowHeightForNode(this.beans, rowNode.sibling);
-                detailNode?.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
+                rowNode.sibling.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
             }
             atLeastOne = true;
         });

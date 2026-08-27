@@ -3,6 +3,7 @@ import { _jsonEquals } from 'ag-stack';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { RowNode } from '../entities/rowNode';
+import type { StylesChangedEvent } from '../events';
 import { _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
@@ -78,15 +79,30 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
             sortChanged: this.reset.bind(this),
             newColumnsLoaded: this.onColumnEverything.bind(this),
             storeUpdated: this.dispatchModelUpdatedEvent.bind(this),
+            stylesChanged: this.onGridStylesChanges.bind(this),
         });
 
         this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gos.get('datasource')));
         this.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
-        this.addManagedPropertyListener('rowHeight', () => {
-            this.rowHeight = _getRowHeightAsNumber(this.beans);
-            this.cacheParams.rowHeight = this.rowHeight;
-            this.updateRowHeights();
-        });
+        this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeight());
+    }
+
+    private onGridStylesChanges(e: StylesChangedEvent): void {
+        if (e.rowHeightChanged) {
+            this.refreshRowHeight();
+        }
+    }
+
+    private refreshRowHeight(): void {
+        const rowHeight = _getRowHeightAsNumber(this.beans);
+        if (rowHeight === this.rowHeight) {
+            return;
+        }
+        this.rowHeight = rowHeight;
+        if (this.cacheParams) {
+            this.cacheParams.rowHeight = rowHeight;
+        }
+        this.updateRowHeights();
     }
 
     private onColumnEverything(): void {
