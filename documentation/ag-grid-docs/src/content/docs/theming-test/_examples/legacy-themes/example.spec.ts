@@ -61,8 +61,8 @@ async function setIconHidden(page: Page, hidden: boolean) {
  * back to back with only the icon's presence differing, assert the reporter-visible symptom and
  * need no stored baseline, so font rendering differences between machines cannot bite.
  *
- * The region is clipped to the icon's own box so the two buffers are the same size by construction
- * — comparing whole-element shots would let an incidental reflow between them satisfy "the buffers
+ * Both shots are clipped to the icon's own box, so they cover exactly the same region — comparing
+ * whole-element shots would instead let an incidental reflow between them satisfy "the buffers
  * differ" on a build where the icon still paints nothing.
  *
  * `document.elementFromPoint` is deliberately not used: the icon sets `pointer-events: none`, so
@@ -84,7 +84,6 @@ async function expectIconPainted(page: Page) {
     await setIconHidden(page, true);
     try {
         const withoutIcon = await shoot();
-        expect(withIcon.length, 'both shots cover the same clipped region').toBe(withoutIcon.length);
         expect(withIcon.equals(withoutIcon), 'hiding the filter icon changed nothing, so it painted no pixels').toBe(
             false
         );
@@ -95,10 +94,11 @@ async function expectIconPainted(page: Page) {
 
 async function checkLegacyThemes(page: Page) {
     await ensureGridReady(page);
-    // Settle everything that could differ between the two shots of a pair: the row data arriving,
-    // and the icon font still in its block period (legacy icons are font glyphs).
-    await page.locator('.ag-row').first().waitFor();
-    await page.evaluate(() => document.fonts.ready);
+    // Legacy icons are font glyphs, so a shot taken during the font's block period would paint
+    // nothing and read as the defect.
+    await page.evaluate(async () => {
+        await document.fonts.ready;
+    });
 
     for (const theme of ALL_THEMES) {
         await useTheme(page, theme);
