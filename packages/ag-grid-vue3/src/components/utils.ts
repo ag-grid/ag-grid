@@ -519,7 +519,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `ColumnAutoSizeModule`
          */
-    autoSizeStrategy?: AutoSizeStrategy,
+    autoSizeStrategy?: AutoSizeStrategy<TData>,
     /** Set to `true` to animate changes to column width when auto-sizing the columns.
          * @default false
          */
