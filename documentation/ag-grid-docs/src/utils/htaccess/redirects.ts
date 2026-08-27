@@ -3321,6 +3321,9 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/community-forums/$', to: '/community/' },
     { fromPattern: '^/forum/.+', gone: true },
     { from: '/testimonials.php', gone: true },
+    // The trailing slash is required: Apache's `Redirect` prefix-matches, so without it this
+    // would also swallow the live /blog/whats-new-in-ag-grid-v24-part-2/.
+    { from: '/blog/whats-new-in-ag-grid-v24/', gone: true },
     { from: '/start-trial.php', to: '/license-pricing/' },
     { from: '/options/series/radial-column/', to: 'https://www.ag-grid.com/charts/options/series/radial-column/' },
     { from: '/options/series/area/', to: 'https://www.ag-grid.com/charts/options/series/area/' },
