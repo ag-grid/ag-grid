@@ -94,6 +94,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
                     {showExampleDevToolbar && <ExampleDevToolbar framework={framework} exampleName={exampleName} />}
                     <button
                         className={classnames(styles.previewCodeToggle, 'button-secondary')}
+                        tabIndex={0}
                         onClick={() => {
                             setShowCode(!showCode);
                         }}

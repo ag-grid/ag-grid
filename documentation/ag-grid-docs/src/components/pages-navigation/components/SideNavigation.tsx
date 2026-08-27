@@ -31,6 +31,7 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                                 <a
                                     href={`#${slug}`}
                                     className="nav-link"
+                                    tabIndex={0}
                                     onClick={(event) => {
                                         event.preventDefault();
                                         scrollIntoViewById(slug);
@@ -47,6 +48,7 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                     <a
                         href="#top"
                         className="nav-link"
+                        tabIndex={0}
                         onClick={(event) => {
                             event.preventDefault();
                             scrollIntoViewById('top');
