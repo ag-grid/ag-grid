@@ -6883,6 +6883,10 @@ www	/charts/vue-charts/license-pricing/	200
 www	/charts/vue-charts/license-pricing	301	/charts/vue-charts/license-pricing/
 
 # converted shadowed /{fw}-grid/<subpage>/ rules — apex single-hop coverage
+apex	/react-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+apex	/vue-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+apex	/angular-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+apex	/javascript-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
 apex	/javascript-grid/cell-rendering/	301	https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/
 apex	/javascript-grid/client-side-model/	301	https://www.ag-grid.com/javascript-data-grid/row-models/
 apex	/javascript-grid/component-cell-editor/	301	https://www.ag-grid.com/javascript-data-grid/cell-editors/
