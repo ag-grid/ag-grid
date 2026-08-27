@@ -48,7 +48,7 @@ export const Roadmap: React.FC<RoadmapProps> = ({ roadmapData, versionData }) =>
                             >
                                 Release Notes <Icon name="chevronRight" />
                             </a>
-                            <a href={urlWithBaseUrl('./whats-new')} target="_blank" className={styles.heroCta}>
+                            <a href={urlWithBaseUrl('./whats-new/')} target="_blank" className={styles.heroCta}>
                                 What's New <Icon name="chevronRight" />
                             </a>
                         </div>
