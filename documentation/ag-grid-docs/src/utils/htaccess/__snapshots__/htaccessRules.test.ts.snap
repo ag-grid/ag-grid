@@ -75,7 +75,7 @@ AddCharset utf-8 .md
     RewriteEngine On
 
     RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]
-    RewriteRule ^ - [S=235]
+    RewriteRule ^ - [S=239]
 
     # SE-64 / SE-66: single-hop chain shortening. These run before the https-upgrade and
     # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
