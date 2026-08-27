@@ -3118,7 +3118,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // SE-64: target the final (trailing-slashed) page directly to remove the extra hop
     { from: '/cookies.php', to: '/cookies/' },
     { from: '/privacy.php', to: '/privacy/' },
-    { from: '/about.php', to: '/about' },
+    { from: '/about.php', to: '/about/' },
     { from: '/license-pricing.php', to: '/license-pricing/' },
     { from: '/example.php', to: '/example/' },
     { from: '/ag-grid-jobs-board.php', to: '/ag-grid-jobs-board' },
