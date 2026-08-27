@@ -1,5 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { navigate, scrollIntoViewById } from '@ag-website-shared/utils/navigation';
+import { replaceHistoryUrl } from '@ag-website-shared/utils/historyUrl';
+import { scrollIntoViewById } from '@ag-website-shared/utils/navigation';
 import { useScrollSpy } from '@components/pages-navigation/hooks/useScrollSpy';
 import { addNonBreakingSpaceBetweenLastWords } from '@utils/addNonBreakingSpaceBetweenLastWords';
 import type { MarkdownHeading } from 'astro';
@@ -33,7 +34,7 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                                     onClick={(event) => {
                                         event.preventDefault();
                                         scrollIntoViewById(slug);
-                                        navigate({ search: window.location.search, hash: slug });
+                                        replaceHistoryUrl(`#${slug}`);
                                     }}
                                 >
                                     {addNonBreakingSpaceBetweenLastWords(displayText)}
@@ -49,7 +50,7 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                         onClick={(event) => {
                             event.preventDefault();
                             scrollIntoViewById('top');
-                            navigate({ search: window.location.search, hash: 'top' });
+                            replaceHistoryUrl('#top');
                         }}
                     >
                         <Icon name="backToTop" svgClasses={styles.backToTopIcon} />
