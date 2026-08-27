@@ -273,7 +273,7 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
                 title="Recent improvements"
                 subtitle="The latest updates and improvements to AG Grid"
                 viewAllButtonText="View recent releases"
-                viewAllButtonUrl="/whats-new"
+                viewAllButtonUrl="/whats-new/"
             />
 
             <section className={styles.rtsTrustedSection}>
