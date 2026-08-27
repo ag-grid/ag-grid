@@ -541,7 +541,7 @@
                         {
                             "type": "item",
                             "title": "See AG Charts",
-                            "url": "https://www.ag-grid.com/charts"
+                            "url": "https://www.ag-grid.com/charts/"
                         }
                     ]
                 },
@@ -552,7 +552,7 @@
                         {
                             "type": "item",
                             "title": "See AG Studio",
-                            "url": "https://www.ag-grid.com/studio"
+                            "url": "https://www.ag-grid.com/studio/"
                         }
                     ]
                 },
