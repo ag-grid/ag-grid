@@ -17,34 +17,38 @@ export interface ResolvedDateBounds {
     readonly maxBound: Date | null;
 }
 
-function readYear(
+const readYear = (
     params: IDateFilterParams,
     param: 'minValidYear' | 'maxValidYear',
     fallback: number,
     log: LogService | undefined,
     colId: string
-): number {
+): number => {
     const value = params[param];
     if (value == null) {
         return fallback;
     }
-    if (isNaN(value as number)) {
+    const year = Number(value);
+    if (Number.isNaN(year)) {
         log?.warn(82, { param, colId }); // a validity year that is not a number
         return fallback;
     }
-    return Number(value);
-}
+    return year;
+};
 
 /** Built from the resolved year, so a year the filter fell back on is not held to the one it rejected. */
-function yearEdge(named: unknown, year: number, monthDay: string): Date | null {
-    return named != null && Number.isFinite(year) ? _parseDateTimeFromString(`${year}-${monthDay}`) : null;
-}
+const yearEdge = (named: unknown, year: number, monthDay: string): Date | null =>
+    named != null && Number.isFinite(year) ? _parseDateTimeFromString(`${year}-${monthDay}`) : null;
 
 /**
  * One definition, so the bounds the filter holds inputs to and the bounds reported at configuration
  * cannot describe different rules.
  */
-export function resolveDateBounds(params: IDateFilterParams, log?: LogService, colId: string = ''): ResolvedDateBounds {
+export const resolveDateBounds = (
+    params: IDateFilterParams,
+    log?: LogService,
+    colId: string = ''
+): ResolvedDateBounds => {
     const minValidYear = readYear(params, 'minValidYear', DEFAULT_MIN_YEAR, log, colId);
     const maxValidYear = readYear(params, 'maxValidYear', DEFAULT_MAX_YEAR, log, colId);
     const yearsInverted = minValidYear > maxValidYear;
@@ -77,4 +81,4 @@ export function resolveDateBounds(params: IDateFilterParams, log?: LogService, c
     }
 
     return { minValidYear, maxValidYear, minValidDate, maxValidDate, minBound, maxBound };
-}
+};

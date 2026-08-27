@@ -63,6 +63,9 @@ export const _setFilterNeedsValueFormatter = (params: ISetFilterParams<any, any>
 export class FilterConfigService extends BeanStub implements NamedBean {
     beanName = 'filterConfigSvc' as const;
 
+    /** -1 never matches a real `colDefsVersion`, so the first pass always reports. */
+    private reportedButtonsVersion: number = -1;
+
     public postConstruct(): void {
         const buildAll = this.buildAll.bind(this);
         this.addManagedEventListeners({
@@ -83,7 +86,13 @@ export class FilterConfigService extends BeanStub implements NamedBean {
                 this.buildColumn(column);
             }
         }
-        this.reportButtons();
+        // `gridColumnsChanged` fires on visibility, pinning and order too, and only a definition can change
+        // what this reports. The panel declaring its buttons calls in separately.
+        const version = this.beans.colModel.colDefsVersion;
+        if (version !== this.reportedButtonsVersion) {
+            this.reportedButtonsVersion = version;
+            this.reportButtons();
+        }
     }
 
     /** Resolves the column's filter, and a Multi Filter's children onto the config that owns them. */
@@ -107,38 +116,39 @@ export class FilterConfigService extends BeanStub implements NamedBean {
             return;
         }
         const filter = this.resolveFilterName(column, colDef);
-        if (filter !== 'agMultiColumnFilter') {
-            column.filterConfig = this.buildOne(column, filter, filterParams);
-            return;
-        }
+        column.filterConfig =
+            filter === 'agMultiColumnFilter'
+                ? this.buildMulti(column, filterParams)
+                : this.buildOne(column, filter, filterParams);
+    }
 
+    /** A Multi Filter's own resolution, owning a resolution for each child whose params could be read. */
+    private buildMulti(column: AgColumn, filterParams: IMultiFilterParams | null | undefined): ResolvedFilterConfig {
         // A Multi Filter naming no children still has two, and their inherited params still report.
         const defs = _getMultiFilterDefs(filterParams);
-        // A child's function defers the whole tree: resolving the others would leave a config claiming to
-        // describe children it could not read. Each child then resolves and reports its own.
-        if (defs.some((def) => typeof def.filterParams === 'function')) {
-            column.filterConfigState = FILTER_CONFIG_STATE_DEFERRED;
-            return;
-        }
         // Only the handlers implementation renders one button bar for the whole filter; without it a child
         // keeps its own, so saying they are ignored would be false.
         const childButtonsIgnored = this.gos.get('enableFilterHandlers');
-        const children: ResolvedFilterConfig[] = [];
+        const children: (ResolvedFilterConfig | undefined)[] = [];
         for (let i = 0, len = defs.length; i < len; ++i) {
             const child = defs[i];
             const childParams = child.filterParams;
+            if (typeof childParams === 'function') {
+                children.push(undefined);
+                continue;
+            }
             if (childButtonsIgnored && childParams?.buttons) {
                 this.beans.log.warn(292, { colId: column.colId }); // child `buttons` ignored; the parent's stand
             }
             // A child naming no params of its own is configured by the Multi Filter's, under its own type.
-            let params = childParams ?? filterParams;
+            let params: IProvidedFilterParams | undefined = childParams ?? filterParams ?? undefined;
             // Judging a child on `buttons` it will never be handed would report an apply button it lacks.
             if (childButtonsIgnored && params?.buttons) {
                 params = { ...params, buttons: undefined };
             }
             children.push(this.buildOne(column, this.resolveFilterName(column, child), params));
         }
-        column.filterConfig = this.buildOne(column, filter, filterParams, children);
+        return this.buildOne(column, 'agMultiColumnFilter', filterParams, children);
     }
 
     /**
@@ -199,7 +209,7 @@ export class FilterConfigService extends BeanStub implements NamedBean {
         filter: string | undefined,
         filterParams: any,
         /** A Multi Filter's resolved children, so the parent is reported like any other definition. */
-        children?: readonly ResolvedFilterConfig[]
+        children?: readonly (ResolvedFilterConfig | undefined)[]
     ): ResolvedFilterConfig {
         // Only a filter the grid implements reads `filterParams` under the documented meanings.
         const provided = !!filter && _hasOwn(FILTER_HANDLER_MAP, filter);
@@ -269,7 +279,17 @@ export class FilterConfigService extends BeanStub implements NamedBean {
      * reading of the definition, so a child cannot be created against another child's configuration.
      */
     public getChildren(column: Column, params: IMultiFilterParams | null | undefined): MultiFilterChild[] {
-        const config = this.built(column as AgColumn);
+        const agColumn = column as AgColumn;
+        let config = this.built(agColumn);
+        // A deferred tree resolves here, where the params the column could not read have been applied. Left
+        // to the children, the first to ask would store its own resolution as the column's for the rest.
+        if (
+            agColumn.filterConfigState === FILTER_CONFIG_STATE_DEFERRED &&
+            !(config instanceof ResolvedMultiFilterConfig)
+        ) {
+            config = this.buildMulti(agColumn, params);
+            agColumn.filterConfig = config;
+        }
         const children = config instanceof ResolvedMultiFilterConfig ? config.children : undefined;
         return _getMultiFilterDefs(params).map((def, index) => ({ def, config: children?.[index] }));
     }
@@ -289,8 +309,8 @@ export class FilterConfigService extends BeanStub implements NamedBean {
         if (config instanceof ResolvedSimpleFilterConfig) {
             return config;
         }
-        // Only a deferred definition reports here, and the first filter to resolve one keeps it. Anything
-        // else reaching this is a Multi Filter child its owner handed nothing, already reported by the tree.
+        // A deferred column's first filter resolves and reports for it. A Multi Filter child also lands here
+        // where its own params are a function, and takes neither: the column's slot belongs to the tree.
         const deferred = agColumn.filterConfigState === FILTER_CONFIG_STATE_DEFERRED;
         const resolved = new ResolvedSimpleFilterConfig(
             agColumn,

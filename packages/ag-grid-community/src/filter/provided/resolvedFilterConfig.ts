@@ -190,7 +190,7 @@ export class ResolvedMultiFilterConfig extends ResolvedFilterConfig {
     public constructor(
         column: AgColumn,
         params: IProvidedFilterParams,
-        public readonly children: readonly ResolvedFilterConfig[],
+        public readonly children: readonly (ResolvedFilterConfig | undefined)[],
         log?: LogService
     ) {
         super(column, params, log);

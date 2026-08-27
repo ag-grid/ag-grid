@@ -7,6 +7,7 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
+    messagesFrom,
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
@@ -83,12 +84,7 @@ describe('Filter warnings are raised at configuration and name the column', () =
             rowData: ROW_DATA,
             ...options,
         });
-        // The doc link every warning carries ends `&colId=<colId>`, which would satisfy a check that the
-        // message names the column on its own. Dropped so those assertions read the message and nothing else.
-        return warn.mock.calls
-            .flat()
-            .join(' ')
-            .replace(/https?:\/\/\S+/g, '');
+        return messagesFrom(warn);
     }
 
     test('71 - `debounceMs` is ignored when an apply button is present', async () => {
@@ -167,10 +163,7 @@ describe('Filter warnings are raised at configuration and name the column', () =
 
         // The Key Creator builds the keys and the Value Formatter renders them, so one without the other
         // leaves nothing readable to show. Both come from the definition, so neither needs a filter to exist.
-        const errors = error.mock.calls
-            .flat()
-            .join(' ')
-            .replace(/https?:\/\/\S+/g, '');
+        const errors = messagesFrom(error);
         expect(errors).toContain('error #249');
         expect(errors).toContain('athlete');
     });
@@ -191,7 +184,7 @@ describe('Filter warnings are raised at configuration and name the column', () =
         } as GridOptions<Row>);
         await api.getColumnFilterInstance('athlete');
 
-        const warnings = warn.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warn);
         expect(warnings).toContain('warning #71');
         expect(warnings).toContain('athlete');
     });
@@ -216,7 +209,7 @@ describe('Filter warnings are raised at configuration and name the column', () =
         // Builds the filter, so the assertion fails only where nothing reports it at all.
         await api.getColumnFilterInstance('athlete');
 
-        const errors = error.mock.calls.flat().join(' ');
+        const errors = messagesFrom(error);
         expect(errors).toContain('error #249');
         expect(errors).toContain('athlete');
     });
@@ -241,8 +234,8 @@ describe('Filter warnings are raised at configuration and name the column', () =
         // the call: proceeding replaced it with `getChildFilterInstance is not a function` further down.
         api.setFilterModel({ athlete: { filterType: 'text', type: 'contains', filter: 'Ada' } });
 
-        await waitFor(() => expect(error.mock.calls.flat().join(' ')).toContain('error #120'));
-        expect(error.mock.calls.flat().join(' ')).toContain('athlete');
+        await waitFor(() => expect(messagesFrom(error)).toContain('error #120'));
+        expect(messagesFrom(error)).toContain('athlete');
     });
 
     test('79 - `maxNumConditions` below one names the column', async () => {
@@ -450,8 +443,8 @@ describe('Filter warnings are raised at configuration and name the column', () =
                     filterParams: { filterOptions: ['contains', NO_PREDICATE] },
                 },
             ]);
-            await waitFor(() => expect(warn.mock.calls.flat().join(' ')).toContain('warning #72'));
-            expect(warn.mock.calls.flat().join(' ')).toContain('athlete');
+            await waitFor(() => expect(messagesFrom(warn)).toContain('warning #72'));
+            expect(messagesFrom(warn)).toContain('athlete');
         });
 
         // A column added after the grid exists has no configs, which a grid-wide version would not notice.
@@ -467,8 +460,8 @@ describe('Filter warnings are raised at configuration and name the column', () =
                 { field: 'athlete' },
                 { field: 'age', filter: 'agNumberColumnFilter', filterParams: { filterOptions: [NO_PREDICATE] } },
             ]);
-            await waitFor(() => expect(warn.mock.calls.flat().join(' ')).toContain('warning #72'));
-            expect(warn.mock.calls.flat().join(' ')).toContain('age');
+            await waitFor(() => expect(messagesFrom(warn)).toContain('warning #72'));
+            expect(messagesFrom(warn)).toContain('age');
         });
 
         // A grid option can put the mistake there without any `columnDefs` call: the merged definition is
@@ -483,8 +476,8 @@ describe('Filter warnings are raised at configuration and name the column', () =
             expect(warn).not.toHaveBeenCalled();
 
             api.setGridOption('defaultColDef', { filterParams: { filterOptions: ['contains', NO_PREDICATE] } });
-            await waitFor(() => expect(warn.mock.calls.flat().join(' ')).toContain('warning #72'));
-            expect(warn.mock.calls.flat().join(' ')).toContain('athlete');
+            await waitFor(() => expect(messagesFrom(warn)).toContain('warning #72'));
+            expect(messagesFrom(warn)).toContain('athlete');
         });
 
         // The wrapper renders the button bar for whatever filter it wraps, so `buttons` are the grid's
@@ -726,7 +719,7 @@ describe('An option the filter cannot evaluate is kept out of the dropdown', () 
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api: GridApi = await gridsManager.createGridAndWait('grid1', options);
         const filter = await ColumnFilterHarness.open(api, colId);
-        return { filter, api, warnings: warn.mock.calls.flat().join(' ') };
+        return { filter, api, warnings: messagesFrom(warn) };
     }
 
     const textGrid = (filterOptions: (string | IFilterOptionDef)[]): GridOptions =>
@@ -756,7 +749,7 @@ describe('An option the filter cannot evaluate is kept out of the dropdown', () 
         } as GridOptions);
         await ColumnFilterHarness.open(api, 'athlete');
 
-        expect(warn.mock.calls.flat().join(' ')).toContain('warning #75');
+        expect(messagesFrom(warn)).toContain('warning #75');
         // Nothing can dispatch it, so a button saying it is ignored and then appearing is the warning lying.
         await new FilterDom(api, 'unknown button not rendered', { colId: 'athlete' }).checkFilterDom(`
             COLUMN FILTER
@@ -872,7 +865,7 @@ describe('An option the filter cannot evaluate is kept out of the dropdown', () 
             filter: 'A',
             filterTo: 'Z',
         });
-        expect(warn.mock.calls.flat().join(' ')).toContain('warning #76');
+        expect(messagesFrom(warn)).toContain('warning #76');
         // Nothing can answer the condition, so it constrains nothing - the rows stay and the report is what
         // says so. Matching no row would empty the grid over a condition the user cannot see or correct.
         await new GridRows(api, 'a model naming a dropped key').check(`
@@ -995,7 +988,7 @@ describe('An option the filter cannot evaluate is reported at configuration', ()
             rowData: ROW_DATA,
         } as GridOptions<Row>);
 
-        const warnings = warn.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warn);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('athlete');
         expect(warnings).toContain('greaterThan');
@@ -1016,7 +1009,7 @@ describe('An option the filter cannot evaluate is reported at configuration', ()
             rowData: ROW_DATA,
         } as GridOptions<Row>);
 
-        const warnings = warn.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warn);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('equalz');
     });
@@ -1072,7 +1065,7 @@ describe('A warning names each misconfigured column separately', () => {
             rowData: ROW_DATA,
         } as GridOptions<Row>);
 
-        const warnings = warn.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warn);
         expect(warnings).toContain('athlete');
         expect(warnings).toContain('age');
     });
@@ -1105,11 +1098,39 @@ describe('A `filter: true` column is judged against the filter its data type giv
             rowData: ROW_DATA,
         } as GridOptions<Row>);
 
-        const warnings = warn.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warn);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('contains');
         expect(warnings).toContain('age');
         expect(warnings).not.toContain('greaterThan');
+    });
+});
+
+describe('A column named filter is judged once its data type is known', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [TextFilterModule, SetFilterModule, ClientSideRowModelModule],
+    });
+
+    beforeAll(() => setupAgTestIds());
+    afterEach(() => {
+        gridsManager.reset();
+        vi.restoreAllMocks();
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
+    });
+
+    test('a Set Filter with a Key Creator is not reported before inference supplies its formatter', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [] });
+        const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+        await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'date', filter: 'agSetColumnFilter', keyCreator: ({ value }: any) => String(value) }],
+            rowData: ROW_DATA,
+        } as GridOptions<Row>);
+
+        // The inferred `dateString` type gives the Set Filter a tree list and a formatter, so the Key
+        // Creator does have something to render with. Judging before they arrive reports a mistake
+        // that is not one, and the column is never judged again.
+        expect(messagesFrom(error)).not.toContain('error #249');
     });
 });
 
@@ -1140,7 +1161,7 @@ describe('A `filter: true` column under `suppressSetFilterByDefault`', () => {
             rowData: ROW_DATA,
         } as GridOptions<Row>);
 
-        const warnings = warn.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warn);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('contains');
         expect(warnings).toContain('age');
@@ -1207,11 +1228,8 @@ describe('The Filters Tool Panel judges every column against its own buttons', (
         } as GridOptions<Row>);
 
         // The panel initialises lazily on show, and declaring its buttons is what triggers the report.
-        await waitFor(() => expect(warn.mock.calls.flat().join(' ')).toContain('warning #281'));
-        const warnings = warn.mock.calls
-            .flat()
-            .join(' ')
-            .replace(/https?:\/\/\S+/g, '');
+        await waitFor(() => expect(messagesFrom(warn)).toContain('warning #281'));
+        const warnings = messagesFrom(warn);
         // One report naming every offender, not one per column: the panel's own buttons are the cause, so a
         // grid of fifty buttonless columns would otherwise print fifty lines saying the same thing.
         expect(warnings.split('warning #281')).toHaveLength(2);

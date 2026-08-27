@@ -150,7 +150,7 @@ export abstract class ProvidedFilter<
         this.commonUpdateParams(newParams, oldParams);
     }
 
-    /** Overridden by {@link SimpleFilter}, which resolves more of the params than the shared ones. */
+    /** Overridden by `SimpleFilter`, which resolves more of the params than the shared ones. */
     protected resolveFilterConfig(params: P): ResolvedFilterConfig {
         return this.beans.filterConfigSvc!.get(params.column, params);
     }

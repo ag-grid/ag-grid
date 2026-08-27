@@ -7,6 +7,7 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
+    messagesFrom,
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
@@ -172,7 +173,7 @@ describe('Column filter — an invalid custom option', () => {
 
         // The unusable option goes; the ones the user can actually filter with stay.
         const filter = await ColumnFilterHarness.open(api, 'age');
-        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #72');
+        expect(messagesFrom(warnSpy)).toContain('warning #72');
         expect(await filter.operatorOptions()).toEqual(['Equals', 'Multiple of']);
 
         await filter.selectOperator('Multiple of');
@@ -214,7 +215,7 @@ describe('Column filter — an invalid custom option', () => {
         });
 
         const filter = await ColumnFilterHarness.open(api, 'age');
-        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #72');
+        expect(messagesFrom(warnSpy)).toContain('warning #72');
         expect(await filter.operatorOptions()).toEqual(['Equals', 'Multiple of']);
         // The first option the user can actually pick is what the condition starts on.
         expect(filter.operatorSelectValue()).toBe('Equals');
@@ -261,7 +262,7 @@ describe('Column filter — an invalid custom option', () => {
         expect(filter.operatorSelectValue()).toBe('Equals');
 
         // Both faults are the user's to fix: the option is malformed, and the default names one not offered.
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('warning #326');
         expect(warnings).toContain('noPredicate');
@@ -302,7 +303,7 @@ describe('Column filter — an invalid custom option', () => {
         api.onFilterChanged();
         await asyncSetTimeout(0);
 
-        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #72');
+        expect(messagesFrom(warnSpy)).toContain('warning #72');
         // Kept, so a saved filter is never silently deleted - and unevaluable, so it constrains nothing.
         expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'noPredicate', filter: 5 });
         await new GridRows(api, 'every row - the condition cannot be answered').check(`
@@ -630,7 +631,7 @@ describe('Column filter — a `defaultOption` the dropdown does not offer', () =
         const filter = await ColumnFilterHarness.open(api, 'age');
         expect(filter.operatorSelectValue()).toBe('Greater than');
 
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #326');
         expect(warnings).toContain('lessThan');
         await new FilterDom(api, 'fallen back to the first offered option', { colId: 'age' }).checkFilterDom(`
@@ -692,7 +693,7 @@ describe('Column filter — a malformed `filterOptions` list', () => {
             expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'equals', filter: 25 })
         );
 
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('warning #74');
         await new FilterDom(api, 'a list that keeps no option', { colId: 'age' }).checkFilterDom(`
@@ -727,7 +728,7 @@ describe('Column filter — a malformed `filterOptions` list', () => {
 
         const filter = await ColumnFilterHarness.open(api, 'age');
         expect(await filter.operatorOptions()).toContain('Equals');
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #74');
         expect(warnings).not.toContain('warning #72');
         await new FilterDom(api, 'an empty list', { colId: 'age' }).checkFilterDom(`
@@ -852,7 +853,7 @@ describe('Column filter — a malformed `filterOptions` list', () => {
         expect(await harness.operatorOptions()).toEqual(['Contains', 'Equals']);
 
         // Nothing runs `test`, so an option carrying only it is reported rather than left to match nothing.
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('predicate');
 
@@ -1034,7 +1035,7 @@ describe('Column filter — the offered list survives a colDef refresh', () => {
         await asyncSetTimeout(0);
 
         // Narrowing the offered list governs what can be picked next; it does not revoke what is applied.
-        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #76');
+        expect(messagesFrom(warnSpy)).toContain('warning #76');
         expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'even' });
         await new GridRows(api, 'the model outlives the option it named').check(`
             ROOT id:ROOT_NODE_ID
@@ -1062,7 +1063,7 @@ describe('Column filter — the offered list survives a colDef refresh', () => {
 
         const filter = await ColumnFilterHarness.open(api, 'age');
         expect(await filter.operatorOptions()).toEqual(['Equals', 'Greater than']);
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #72');
         expect(warnings).toContain('predicate');
         await new FilterDom(api, 'a malformed entry arriving on the refresh', { colId: 'age' }).checkFilterDom(`
@@ -1162,7 +1163,7 @@ describe('Column filter — validation is the same for every filter type', () =>
     const expectDropped = async (api: GridApi, warnSpy: ReturnType<typeof vi.spyOn>) => {
         const harness = await ColumnFilterHarness.open(api, 'value');
         expect(await harness.operatorOptions()).toEqual(['Equals', 'Does not equal']);
-        const warnings = warnSpy.mock.calls.flat().join(' ');
+        const warnings = messagesFrom(warnSpy);
         expect(warnings).toContain('warning #72');
     };
 

@@ -1,4 +1,4 @@
-import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES, TestGridsManager, messagesFrom } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -140,7 +140,7 @@ describe('Filter configuration resolves what the filter actually obeys', () => {
             // - and with it the limit, leaving every condition the model named in place.
             const model: any = api.getColumnFilterModel('athlete');
             expect(model.filterModels[0].conditions).toHaveLength(5);
-            expect(warn.mock.calls.flat().join(' ')).toContain('warning #78');
+            expect(messagesFrom(warn)).toContain('warning #78');
         });
 
         test('the late resolution is the same object on every read, not rebuilt per update', async () => {
@@ -186,7 +186,7 @@ describe('Filter configuration resolves what the filter actually obeys', () => {
                     },
                 ],
             });
-            expect(warn.mock.calls.flat().join(' ')).toContain('warning #71');
+            expect(messagesFrom(warn)).toContain('warning #71');
             const parent = configOf(api, 'athlete');
             expect(parent.children).toHaveLength(2);
             // The parent owns the button bar, so its own resolution says so - and no child's may, or a
@@ -196,6 +196,82 @@ describe('Filter configuration resolves what the filter actually obeys', () => {
             expect(parent.children[1]).not.toBe(parent);
             expect(parent.children[0].useApplyButton).toBe(false);
             expect(parent.children[1].useApplyButton).toBe(false);
+        });
+
+        test('a child whose params are a function does not hand its siblings its resolution', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [78] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = await createGrid({
+                columnDefs: [
+                    {
+                        field: 'age',
+                        filter: 'agMultiColumnFilter',
+                        cellDataType: false,
+                        filterParams: {
+                            filters: [
+                                { filter: 'agTextColumnFilter', filterParams: { filterOptions: ['contains'] } },
+                                { filter: 'agNumberColumnFilter', filterParams: () => ({ maxNumConditions: 1 }) },
+                            ],
+                        },
+                    },
+                ],
+            });
+            // Only the child the grid cannot read defers; the other is resolved once, under the tree.
+            const config = configOf(api, 'age');
+            expect(config.children).toHaveLength(2);
+            expect(config.children[0].filterOptions).toEqual(['contains']);
+            expect(config.children[1]).toBeUndefined();
+
+            const first = { filterType: 'number', type: 'greaterThan', filter: 10 };
+            const second = { filterType: 'number', type: 'lessThan', filter: 100 };
+            await api.setColumnFilterModel('age', {
+                filterType: 'multi',
+                filterModels: [null, { filterType: 'number', operator: 'OR', conditions: [first, second] }],
+            });
+            await api.onFilterChanged();
+            // The deferred child taking the settled sibling's resolution would give it that child's limit of
+            // two, so both conditions would stand and nothing would report it.
+            const model: any = api.getColumnFilterModel('age');
+            expect(model.filterModels[1]).toEqual(first);
+            expect(messagesFrom(warn)).toContain('warning #78');
+        });
+
+        test('a Multi Filter whose own params are a function resolves each child, not just the first', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [78] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = await createGrid({
+                columnDefs: [
+                    {
+                        field: 'age',
+                        filter: 'agMultiColumnFilter',
+                        cellDataType: false,
+                        // Defers the whole column, so the tree is resolved once the factory has applied it.
+                        filterParams: () => ({
+                            filters: [
+                                { filter: 'agTextColumnFilter', filterParams: { filterOptions: ['contains'] } },
+                                { filter: 'agNumberColumnFilter', filterParams: { maxNumConditions: 1 } },
+                            ],
+                        }),
+                    },
+                ],
+            });
+            const first = { filterType: 'number', type: 'greaterThan', filter: 10 };
+            const second = { filterType: 'number', type: 'lessThan', filter: 100 };
+            await api.setColumnFilterModel('age', {
+                filterType: 'multi',
+                filterModels: [null, { filterType: 'number', operator: 'OR', conditions: [first, second] }],
+            });
+            await api.onFilterChanged();
+            // The first child to ask claiming the column's slot would leave the second reading a text
+            // resolution: its own limit of one would never be applied.
+            const model: any = api.getColumnFilterModel('age');
+            expect(model.filterModels[1]).toEqual(first);
+            expect(messagesFrom(warn)).toContain('warning #78');
+
+            const config = configOf(api, 'age');
+            expect(config.children).toHaveLength(2);
+            expect(config.children[0].filterOptions).toEqual(['contains']);
+            expect(config.children[1].conditionCounts.maxNumConditions).toBe(1);
         });
 
         test('a definition change resolves the whole tree again, not whatever a filter reached for first', async () => {
@@ -250,7 +326,7 @@ describe('Filter configuration resolves what the filter actually obeys', () => {
                 advancedFilterParams: { buttons: ['apply', 'bogus'] as any },
                 columnDefs: [{ field: 'athlete' }],
             });
-            const warnings = warn.mock.calls.flat().join(' ');
+            const warnings = messagesFrom(warn);
             expect(warnings).toContain('warning #75');
             expect(warnings).toContain('bogus');
         });
