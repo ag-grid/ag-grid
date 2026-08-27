@@ -24,30 +24,18 @@ async function useTheme(page: Page, theme: string) {
     await page.getByRole('button', { name: theme, exact: true }).click();
 }
 
-function toolbarInput(page: Page) {
-    return page.locator('.ag-toolbar-input').first();
+function toolbarInputIcon(page: Page) {
+    return page.locator('.ag-toolbar-input').first().locator('.ag-toolbar-input-icon');
 }
 
 async function expectIconHasABox(page: Page) {
-    const icon = toolbarInput(page).locator('.ag-toolbar-input-icon');
+    const icon = toolbarInputIcon(page);
     await expect(icon).toBeAttached();
     const box = await icon.boundingBox();
     expect(box?.width ?? 0, 'filter icon width').toBeGreaterThan(0);
     expect(box?.height ?? 0, 'filter icon height').toBeGreaterThan(0);
 }
 
-/**
- * Assert the quick-filter icon is actually PAINTED inside the toolbar input.
- *
- * AG-18347 is a paint-order defect: the icon is in the DOM with a non-zero box and the input
- * reserves padding for it, but the input's opaque background paints over the glyph — so a DOM or
- * bounding-box assertion passes on a broken build. Two element screenshots of the same input,
- * taken back to back with only the icon's presence differing, assert the reporter-visible symptom
- * and need no stored baseline, so font rendering differences between machines cannot bite.
- *
- * `document.elementFromPoint` is deliberately not used: the icon sets `pointer-events: none`, so
- * hit-testing skips it whether or not it is visible.
- */
 async function setIconHidden(page: Page, hidden: boolean) {
     await page.evaluate(
         ({ id, hide }) => {
@@ -64,16 +52,39 @@ async function setIconHidden(page: Page, hidden: boolean) {
     );
 }
 
+/**
+ * Assert the quick-filter icon is actually PAINTED inside the toolbar input.
+ *
+ * AG-18347 is a paint-order defect: the icon is in the DOM with a non-zero box and the input
+ * reserves padding for it, but the input's opaque background paints over the glyph — so a DOM or
+ * bounding-box assertion passes on a broken build. Two screenshots of the same fixed region, taken
+ * back to back with only the icon's presence differing, assert the reporter-visible symptom and
+ * need no stored baseline, so font rendering differences between machines cannot bite.
+ *
+ * The region is clipped to the icon's own box so the two buffers are the same size by construction
+ * — comparing whole-element shots would let an incidental reflow between them satisfy "the buffers
+ * differ" on a build where the icon still paints nothing.
+ *
+ * `document.elementFromPoint` is deliberately not used: the icon sets `pointer-events: none`, so
+ * hit-testing skips it whether or not it is visible.
+ */
 async function expectIconPainted(page: Page) {
-    const input = toolbarInput(page);
-    await expect(input).toBeVisible();
+    const box = await toolbarInputIcon(page).boundingBox();
+    expect(box, 'filter icon bounding box').not.toBeNull();
 
-    const shoot = () => input.screenshot({ animations: 'disabled', caret: 'hide' });
+    const clip = {
+        x: Math.floor(box!.x),
+        y: Math.floor(box!.y),
+        width: Math.ceil(box!.width),
+        height: Math.ceil(box!.height),
+    };
+    const shoot = () => page.screenshot({ clip, animations: 'disabled', caret: 'hide' });
 
     const withIcon = await shoot();
     await setIconHidden(page, true);
     try {
         const withoutIcon = await shoot();
+        expect(withIcon.length, 'both shots cover the same clipped region').toBe(withoutIcon.length);
         expect(withIcon.equals(withoutIcon), 'hiding the filter icon changed nothing, so it painted no pixels').toBe(
             false
         );
@@ -84,6 +95,10 @@ async function expectIconPainted(page: Page) {
 
 async function checkLegacyThemes(page: Page) {
     await ensureGridReady(page);
+    // Settle everything that could differ between the two shots of a pair: the row data arriving,
+    // and the icon font still in its block period (legacy icons are font glyphs).
+    await page.locator('.ag-row').first().waitFor();
+    await page.evaluate(() => document.fonts.ready);
 
     for (const theme of ALL_THEMES) {
         await useTheme(page, theme);
@@ -96,11 +111,17 @@ async function checkLegacyThemes(page: Page) {
 }
 
 test.agExample(import.meta, () => {
-    test.typescript('quick filter toolbar icon is visible in every legacy theme', async ({ page }) => {
-        await checkLegacyThemes(page);
-    });
+    test.typescript(
+        'quick filter toolbar icon is present in every legacy theme and painted in quartz',
+        async ({ page }) => {
+            await checkLegacyThemes(page);
+        }
+    );
 
-    test.vanilla('quick filter toolbar icon is visible in every legacy theme', async ({ page }) => {
-        await checkLegacyThemes(page);
-    });
+    test.vanilla(
+        'quick filter toolbar icon is present in every legacy theme and painted in quartz',
+        async ({ page }) => {
+            await checkLegacyThemes(page);
+        }
+    );
 });

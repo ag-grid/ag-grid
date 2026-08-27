@@ -127,6 +127,7 @@
         // The icon precedes the input in the DOM and `.ag-input-wrapper` is itself positioned, so
         // without this the input's opaque background paints over the glyph. The Find item hid the
         // problem by making its input transparent; the Quick Filter item showed no icon at all.
+        // Mirrors the same rule in `packages/ag-grid-enterprise/src/toolbar/agToolbar.css`.
         z-index: 1;
     }
 
