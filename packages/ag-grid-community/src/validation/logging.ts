@@ -426,6 +426,16 @@ function stringifyValue(value: any) {
     return output;
 }
 /**
+ * The diagnostic's text, as written to the console at its severity but without the `<severity> #<id>`
+ * prefix, which the `id` and `severity` already carry.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getDiagnosticMessage(diagnostic: CapturedDiagnostic): string {
+    const { id, params, defaultMessage } = diagnostic;
+    return getErrorParts(id, params, defaultMessage).map(stringifyValue).join(' ');
+}
+
+/**
  * Formats a string, or the literal `null`/`undefined`, into a human-readable string.
  */
 export function toStringWithNullUndefined(str: string | null | undefined) {
