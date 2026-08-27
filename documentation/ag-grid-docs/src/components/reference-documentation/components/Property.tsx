@@ -3,7 +3,6 @@ import Code from '@ag-website-shared/components/code/Code';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
 import styles from '@ag-website-shared/components/reference-documentation/ApiReference.module.scss';
-import { useScrollToAnchor } from '@ag-website-shared/utils/navigation';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { Fragment, type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
@@ -240,7 +239,6 @@ export const Property: FunctionComponent<{
 
     const propertyRef = useRef<HTMLTableRowElement>(null);
     const [isExpanded, setExpanded] = useState(config.defaultExpand);
-    const scrollToAnchor = useScrollToAnchor();
 
     useEffect(() => {
         const hashId = location.hash.slice(1); // Remove the '#' symbol
@@ -271,7 +269,6 @@ export const Property: FunctionComponent<{
                             <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
                             <LinkIcon
                                 href={`#${idName}`}
-                                onClick={scrollToAnchor}
                                 className={styles.linkIcon}
                                 aria-label={`Link to ${name} property`}
                             />
