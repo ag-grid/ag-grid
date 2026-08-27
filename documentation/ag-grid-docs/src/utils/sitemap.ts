@@ -1,5 +1,4 @@
 import { FRAMEWORK_REDIRECT_PATH } from '../constants';
-import { STATIC_PAGE_CONTENT } from './markdown-pages/staticPageContent';
 
 /**
  * Example runner pages
@@ -30,19 +29,6 @@ export const isTestPage = (page: string) => {
 };
 
 /*
- * Static pages that only forward on to a framework-specific docs page (e.g. `/reference/` redirects
- * to `/react-data-grid/reference/`). Any `STATIC_PAGE_CONTENT` entry with a `redirectPageName` is one
- * of these stubs, so deriving the list from there catches new ones automatically instead of requiring
- * a new hardcoded suffix here each time (SE-165).
- *
- * Matched against the page's pathname, not just a suffix - the destination the stub redirects to
- * (e.g. `/react-data-grid/reference/`) ends with the same page name and must stay in the sitemap.
- */
-const staticRedirectPagePaths = Object.entries(STATIC_PAGE_CONTENT)
-    .filter(([, content]) => 'redirectPageName' in content)
-    .map(([pageName]) => `/${pageName}/`);
-
-/*
  * Documentation redirect pages
  */
 const isRedirectPage = (page: string) => {
@@ -53,7 +39,10 @@ const isRedirectPage = (page: string) => {
         (!page.endsWith('/landing-pages/javascript-data-grid/') && page.endsWith('/javascript-data-grid/')) ||
         (!page.endsWith('/landing-pages/vue-data-grid/') && page.endsWith('/vue-data-grid/')) ||
         page.includes(`/${FRAMEWORK_REDIRECT_PATH}/`) ||
-        staticRedirectPagePaths.includes(new URL(page).pathname)
+        // SE-165: /reference/ and /licensing/ are FrameworkRedirectPage stubs like the above, but their
+        // destination (e.g. /react-data-grid/reference/) ends with the same segment, so an endsWith
+        // suffix would wrongly exclude the destination too - match the bare top-level path instead.
+        ['/reference/', '/licensing/'].includes(new URL(page).pathname)
     );
 };
 
