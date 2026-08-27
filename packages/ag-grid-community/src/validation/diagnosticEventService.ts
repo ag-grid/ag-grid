@@ -1,7 +1,8 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import { _errorOnce } from '../utils/log';
 import type { CapturedDiagnostic } from './logging';
-import { _addDiagnosticListener, _getDiagnosticMessage } from './logging';
+import { _addDiagnosticListener, _errMsg, _getDiagnosticMessage } from './logging';
 
 /**
  * Dev-only bean (ValidationModule) that turns captured diagnostics into the public `diagnosticRaised`
@@ -38,9 +39,9 @@ export class DiagnosticEventService extends BeanStub implements NamedBean {
                 attributedToThisGrid: diagnostic.gridId !== undefined,
             });
         } catch (e) {
-            // A handler that throws must not break the code path that raised the diagnostic, nor stop the
-            // remaining diagnostic listeners (the overlay shares this listener set).
-            this.beans.log.error(330, { error: e });
+            // Reported straight to the console rather than raised as a diagnostic: raising it would throw
+            // again under a matching `throwOn`, from inside the listener loop the guard exists to protect.
+            _errorOnce(_errMsg(330, { error: e }));
         } finally {
             this.dispatching = false;
         }
