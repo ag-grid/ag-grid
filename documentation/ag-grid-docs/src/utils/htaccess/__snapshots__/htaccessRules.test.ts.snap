@@ -81,6 +81,10 @@ AddCharset utf-8 .md
     # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
     # scheme) lands on its final www URL in ONE 301. Inbound query strings are preserved
     # (targets carry none). See SITE_SINGLE_HOP_REWRITES in redirects.ts.
+    RewriteRule "^/?react-data-grid/whats-new$" "https://www.ag-grid.com/whats-new/" [R=301,L]
+    RewriteRule "^/?vue-data-grid/whats-new$" "https://www.ag-grid.com/whats-new/" [R=301,L]
+    RewriteRule "^/?angular-data-grid/whats-new$" "https://www.ag-grid.com/whats-new/" [R=301,L]
+    RewriteRule "^/?javascript-data-grid/whats-new$" "https://www.ag-grid.com/whats-new/" [R=301,L]
     RewriteRule "^/?javascript-grid/cell-rendering/$" "https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?javascript-grid/client-side-model/$" "https://www.ag-grid.com/javascript-data-grid/row-models/" [R=301,L]
     RewriteRule "^/?javascript-grid/component-cell-editor/$" "https://www.ag-grid.com/javascript-data-grid/cell-editors/" [R=301,L]
@@ -2617,10 +2621,10 @@ AddCharset utf-8 .md
     Redirect 301 /license-pricing.php /license-pricing/
     Redirect 301 /example.php /example/
     Redirect 301 /ag-grid-jobs-board.php /ag-grid-jobs-board
-    Redirect 301 /react-data-grid/whats-new /whats-new/
-    Redirect 301 /vue-data-grid/whats-new /whats-new/
-    Redirect 301 /angular-data-grid/whats-new /whats-new/
-    Redirect 301 /javascript-data-grid/whats-new /whats-new/
+    Redirect 301 /react-data-grid/whats-new /whats-new
+    Redirect 301 /vue-data-grid/whats-new /whats-new
+    Redirect 301 /angular-data-grid/whats-new /whats-new
+    Redirect 301 /javascript-data-grid/whats-new /whats-new
     Redirect 301 /vue-data-grid/framework-data-flow /vue-data-grid/getting-started/
     Redirect 301 /react-data-grid/licensing/ /react-data-grid/community-vs-enterprise/
     Redirect 301 /vue-data-grid/licensing/ /vue-data-grid/community-vs-enterprise/

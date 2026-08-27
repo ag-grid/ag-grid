@@ -33,6 +33,12 @@ const pageForAllFrameworks = (from: string, to: string): Redirect[] => [
 // no query string, so Apache preserves any inbound query). Destinations were derived by
 // replaying the current redirect rules to their fixpoint.
 export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
+    // The slash-less framework whats-new paths, which would otherwise pick up the
+    // add-trailing-slash 301 first and reach /whats-new/ in two hops.
+    { from: '/react-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
+    { from: '/vue-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
+    { from: '/angular-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
+    { from: '/javascript-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
     // Shadowed /{framework}-grid/<subpage>/ rules converted to single hop. The broad /{fw}-grid/
     // prefix rule (mod_alias, first-match) otherwise shadows these specifics: 128 took 2 hops and 14
     // landed on the wrong (404) page. As mod_rewrite, these run before mod_alias so each resolves in
@@ -3123,10 +3129,13 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/example.php', to: '/example/' },
     { from: '/ag-grid-jobs-board.php', to: '/ag-grid-jobs-board' },
 
-    { from: '/react-data-grid/whats-new', to: '/whats-new/' },
-    { from: '/vue-data-grid/whats-new', to: '/whats-new/' },
-    { from: '/angular-data-grid/whats-new', to: '/whats-new/' },
-    { from: '/javascript-data-grid/whats-new', to: '/whats-new/' },
+    // Targets are deliberately slash-less: `Redirect` prefix-matches and appends the remainder,
+    // so the slashed request lands on /whats-new/ exactly, while a slashed target yields
+    // /whats-new//. The slash-less request is handled by SITE_SINGLE_HOP_REWRITES above.
+    { from: '/react-data-grid/whats-new', to: '/whats-new' },
+    { from: '/vue-data-grid/whats-new', to: '/whats-new' },
+    { from: '/angular-data-grid/whats-new', to: '/whats-new' },
+    { from: '/javascript-data-grid/whats-new', to: '/whats-new' },
     { from: '/vue-data-grid/framework-data-flow', to: '/vue-data-grid/getting-started/' },
 
     { from: '/react-data-grid/licensing/', to: '/react-data-grid/community-vs-enterprise/' },
