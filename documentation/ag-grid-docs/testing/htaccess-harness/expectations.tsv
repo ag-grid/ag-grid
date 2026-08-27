@@ -78,6 +78,16 @@ www	/blog/whats-new-in-ag-grid-v24/	410
 www	/blog/whats-new-in-ag-grid-v24/amp/	410
 www	/blog/whats-new-in-ag-grid-v24-part-2/	200
 
+# --- SE-166: framework whats-new must reach /whats-new/ in ONE hop, and never /whats-new// ---
+www	/react-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+www	/vue-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+www	/angular-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+www	/javascript-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+www	/react-data-grid/whats-new/	301	/whats-new/
+www	/vue-data-grid/whats-new/	301	/whats-new/
+www	/angular-data-grid/whats-new/	301	/whats-new/
+www	/javascript-data-grid/whats-new/	301	/whats-new/
+
 # --- No-shadow negatives: real live pages must NOT be redirected (expect 200) ---
 www	/angular-data-grid/getting-started/	200
 www	/react-data-grid/cell-editing/	200

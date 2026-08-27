@@ -6052,13 +6052,13 @@ www	/about.php	301	/about/
 www	/license-pricing.php	301	/license-pricing/
 www	/example.php	301	/example/
 www	/ag-grid-jobs-board.php	301	/ag-grid-jobs-board
-www	/react-data-grid/whats-new	301	/react-data-grid/whats-new/
+www	/react-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
 www	/react-data-grid/whats-new/	301	/whats-new/
-www	/vue-data-grid/whats-new	301	/vue-data-grid/whats-new/
+www	/vue-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
 www	/vue-data-grid/whats-new/	301	/whats-new/
-www	/angular-data-grid/whats-new	301	/angular-data-grid/whats-new/
+www	/angular-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
 www	/angular-data-grid/whats-new/	301	/whats-new/
-www	/javascript-data-grid/whats-new	301	/javascript-data-grid/whats-new/
+www	/javascript-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
 www	/javascript-data-grid/whats-new/	301	/whats-new/
 www	/vue-data-grid/framework-data-flow	301	/vue-data-grid/framework-data-flow/
 www	/vue-data-grid/framework-data-flow/	301	/vue-data-grid/getting-started/
@@ -6851,6 +6851,10 @@ www	/charts/vue-charts/license-pricing/	200
 www	/charts/vue-charts/license-pricing	301	/charts/vue-charts/license-pricing/
 
 # converted shadowed /{fw}-grid/<subpage>/ rules — apex single-hop coverage
+apex	/react-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+apex	/vue-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+apex	/angular-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+apex	/javascript-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
 apex	/javascript-grid/cell-rendering/	301	https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/
 apex	/javascript-grid/client-side-model/	301	https://www.ag-grid.com/javascript-data-grid/row-models/
 apex	/javascript-grid/component-cell-editor/	301	https://www.ag-grid.com/javascript-data-grid/cell-editors/
