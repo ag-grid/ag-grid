@@ -18,6 +18,8 @@ const ALL_THEMES = [
 // Every theme still gets the cheap structural check.
 const PAINT_CHECKED_THEMES = ['Quartz', 'Quartz Dark'];
 
+const HIDE_ICON_STYLE_ID = 'ag-18347-hide-toolbar-input-icon';
+
 async function useTheme(page: Page, theme: string) {
     await page.getByRole('button', { name: theme, exact: true }).click();
 }
@@ -46,6 +48,22 @@ async function expectIconHasABox(page: Page) {
  * `document.elementFromPoint` is deliberately not used: the icon sets `pointer-events: none`, so
  * hit-testing skips it whether or not it is visible.
  */
+async function setIconHidden(page: Page, hidden: boolean) {
+    await page.evaluate(
+        ({ id, hide }) => {
+            document.getElementById(id)?.remove();
+            if (!hide) {
+                return;
+            }
+            const style = document.createElement('style');
+            style.id = id;
+            style.textContent = '.ag-toolbar-input-icon { display: none !important; }';
+            document.head.appendChild(style);
+        },
+        { id: HIDE_ICON_STYLE_ID, hide: hidden }
+    );
+}
+
 async function expectIconPainted(page: Page) {
     const input = toolbarInput(page);
     await expect(input).toBeVisible();
@@ -53,16 +71,14 @@ async function expectIconPainted(page: Page) {
     const shoot = () => input.screenshot({ animations: 'disabled', caret: 'hide' });
 
     const withIcon = await shoot();
-    const style = await page.addStyleTag({
-        content: '.ag-toolbar-input-icon { display: none !important; }',
-    });
+    await setIconHidden(page, true);
     try {
         const withoutIcon = await shoot();
         expect(withIcon.equals(withoutIcon), 'hiding the filter icon changed nothing, so it painted no pixels').toBe(
             false
         );
     } finally {
-        await style.evaluate((el) => el.remove());
+        await setIconHidden(page, false);
     }
 }
 
