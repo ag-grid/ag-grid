@@ -1158,6 +1158,7 @@ export { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 export { TooltipModule } from './tooltip/tooltipModule';
 export { enableDevValidations, ValidationModule } from './validation/validationModule';
 export type { DevValidationOptions } from './validation/validationConfig';
+export type { ErrorId } from './validation/errorMessages/errorText';
 export type { Severity } from './validation/logging';
 export { CellApiModule, ValueCacheModule } from './valueService/valueModule';
 

@@ -118,6 +118,7 @@ export const _PUBLIC_EVENTS = [
     'bulkEditingStopped',
     'batchEditingStarted',
     'batchEditingStopped',
+    'diagnosticRaised',
 ] as const;
 
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
@@ -194,6 +195,11 @@ export type AgInternalEventType = (typeof _INTERNAL_EVENTS)[number];
 export type AgEventType = AgPublicEventType | AgInternalEventType;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set(['gridPreDestroyed', 'fillStart', 'pasteStart']);
+export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set([
+    'gridPreDestroyed',
+    'fillStart',
+    'pasteStart',
+    'diagnosticRaised',
+]);
 
 export type BuildEventTypeMap<TEventTypes extends string, T extends { [K in TEventTypes]: AgEvent<K> }> = T;

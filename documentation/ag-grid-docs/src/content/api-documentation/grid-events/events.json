@@ -489,6 +489,21 @@
             }
         }
     },
+    "validation": {
+        "meta": {
+            "displayName": "Validation",
+            "page": {
+                "name": "Development Validation",
+                "url": "./dev-validation/"
+            }
+        },
+        "diagnosticRaised": {
+            "more": {
+                "name": "Development Validation",
+                "url": "./dev-validation/#reacting-to-diagnostics-in-code"
+            }
+        }
+    },
     "viewport": {
         "meta": {
             "displayName": "Viewport"

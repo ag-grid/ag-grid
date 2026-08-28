@@ -77,6 +77,59 @@ Defaults to `[]` (never throws).
 
 `throwOn` throws synchronously wherever a matching diagnostic is raised. That is not only at start-up, it also happens during API calls, data updates, and rendering. A throw can interrupt an operation part-way and leave the grid in an inconsistent state. Use `throwOn` with harnesses that recreate the grid on failure rather than carrying on with the same instance, and never in production.
 
+### Reacting to Diagnostics in Code
+
+The `diagnosticRaised` event fires for every captured diagnostic, so tooling can react to problems programmatically instead of watching the console. This suits CI gates, test harnesses and AI-assisted development loops that need to collect diagnostics and act on them.
+
+```js
+const gridOptions = {
+    onDiagnosticRaised: (event) => {
+        // { id: 307, severity: 'warning', message: '...', attributedToThisGrid: true }
+        collectForReport(event);
+    },
+};
+```
+
+As with any grid event, you can also subscribe with the API:
+
+```js
+api.addEventListener('diagnosticRaised', (event) => collectForReport(event));
+```
+
+The event provides:
+
+- `id` — the diagnostic's number, as shown in the console message and the overlay, for example `307`
+- `severity` — one of the [severities](#overlay) above
+- `message` — the diagnostic text, as written to the console at that severity
+- `attributedToThisGrid` — whether this grid raised the diagnostic (see below)
+
+Like the rest of development validation, the event needs the `ValidationModule` registered. Without it no diagnostics are captured, so the callback is inert rather than an error — a callback left in a production build costs nothing but never fires.
+
+The event is not filtered by `showOverlayOn` or `throwOn`: it fires for every diagnostic regardless of which are shown in the overlay, and it fires before a matching `throwOn` throws. Diagnostics you have [suppressed](#suppressing-diagnostics) do not fire the event, as suppressing an id opts out of it entirely.
+
+In the example below, a column definition includes a property the grid does not recognise, and the resulting diagnostics are listed under the grid:
+
+{% gridExampleRunner title="Reacting to Diagnostics" name="diagnostic-raised" /%}
+
+The same diagnostic can be raised more than once. The event fires each time, so deduplicate in your handler if you only want each distinct problem once:
+
+```js
+const seen = new Set();
+const gridOptions = {
+    onDiagnosticRaised: (event) => {
+        const key = `${event.severity}#${event.id}:${event.message}`;
+        if (!seen.has(key)) {
+            seen.add(key);
+            collectForReport(event);
+        }
+    },
+};
+```
+
+Some diagnostics cannot be attributed to a particular grid — a theme created outside any grid, or an API call on a grid that has already been destroyed. These are delivered to every live grid with `attributedToThisGrid: false`. Check the flag if you only want this grid's own problems.
+
+Diagnostics raised before the grid exists — such as a row model with no row-model module registered, which stops the grid being created at all — are reported to the console and the standalone panel, but not through this event, as there is no grid to fire it from.
+
 ### Suppressing Diagnostics
 
 {% warning %}

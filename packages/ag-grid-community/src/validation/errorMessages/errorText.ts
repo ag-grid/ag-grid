@@ -953,6 +953,7 @@ export const AG_GRID_ERRORS = {
     328: ({ rowModel }: { rowModel: string }) =>
         `continuous \`fitCellContents\` auto-sizing is not supported by the '${rowModel}' row model, so it has been ignored` as const,
     329: ({ error }: { error: unknown }) => ['`shouldAutoSizeColumns` threw, so the auto-size was skipped:', error],
+    330: ({ error }: { error: unknown }) => ['`onDiagnosticRaised` threw:', error],
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -968,7 +969,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 329;
+export const MAX_ERROR_ID = 330;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =
