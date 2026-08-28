@@ -9,7 +9,7 @@ export const PAGE_CONTENT = {
         heading: 'Getting to a prototype with AI is easy. Production is not.',
         body: [
             'Beyond the Prompt is a series of events exploring the tension between how easy it is to prototype with AI and how hard it is to make that work hold up in production. Performance degrades, edge cases multiply, and the application you built is not the one you need. That is the point where AI helps less, and where the real engineering begins.',
-            'London was the first stop. The day brought together engineers and experts to talk honestly about what it takes to build applications that hold up in production, with time to connect with our teams over lunch, coffee, and drinks. The series continues later this year in New York.',
+            'London was the first stop. The day brought together engineers and experts to talk honestly about what it takes to build applications that hold up in production, with time to connect with our teams over lunch, coffee, and drinks. The series continues in New York.',
         ],
     },
     programme: {
