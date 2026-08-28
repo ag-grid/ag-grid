@@ -21,11 +21,11 @@ export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
 // different output per phase.
 export const PRODUCTION_CSP_PHASE: 'report-only' | 'enforce' = 'enforce';
 
-// Archive versions under active release testing. These are redeployed repeatedly for days,
-// so they must stay fresh; released archives are immutable and deliberately are not listed.
-// Add a version when the archive is cut, remove it at GA - no archive rebuild needed either
-// way, since the rule lives in the root .htaccess rather than the archive's own copy.
-export const UNCACHED_ARCHIVES: readonly string[] = [];
+// The release archive under test, if any - only one is ever in flight. It is redeployed
+// repeatedly for days so it must stay fresh; released archives are immutable and are not
+// listed. Set it when the archive is cut, clear it at GA (scripts/uncached-archives.mjs).
+// No archive rebuild either way: the rule lives in the root .htaccess, not the archive's copy.
+export const UNCACHED_ARCHIVE: string | null = null;
 
 /**
  * Note: when changing this file please add/update the tests in
@@ -55,22 +55,19 @@ Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQ
 // is ~10% of age, so an hour after a deploy it is already stale for 6 minutes, and silently:
 // the tester holds that iteration's hashed assets too, so the page renders consistently old.
 // Emitted last so it overrides both the archive exclusion above and the hashed-asset rule.
-export function getInFlightArchiveRules(versions: readonly string[]): string {
-    if (!versions.length) {
+export function getInFlightArchiveRule(version: string | null): string {
+    if (!version) {
         return '';
     }
     // Single backslash in the emitted regex, so Apache reads a literal dot.
-    const rules = versions
-        .map((v) => v.replace(/\./g, '\\.'))
-        .map((v) => `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/${v}/#"`)
-        .join('\n');
+    const escaped = version.replace(/\./g, '\\.');
     return `
-# Release archives under test - always revalidate, overriding the rules above.
-${rules}
+# Release archive under test - always revalidate, overriding the rules above.
+Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/${escaped}/#"
 `;
 }
 
-const inFlightArchiveRules = getInFlightArchiveRules(UNCACHED_ARCHIVES);
+const inFlightArchiveRules = getInFlightArchiveRule(UNCACHED_ARCHIVE);
 
 const modDeflateRules = `
 <IfModule mod_deflate.c>
