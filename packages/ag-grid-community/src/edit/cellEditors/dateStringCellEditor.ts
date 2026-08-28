@@ -101,7 +101,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
 
         if (getValidationErrors) {
             return getValidationErrors({
-                value: this.getValue(),
+                value: this.parseEditorValue(value),
                 cellEditorParams: params,
                 internalErrors,
             });
@@ -115,10 +115,14 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 
     public getValue(): string | null | undefined {
-        const { params, eEditor } = this;
+        const value = this.formatDate(this.eEditor.getDate());
+        return this.parseEditorValue(value);
+    }
+
+    private parseEditorValue(value: string | undefined): string | null | undefined {
+        const { params } = this;
         // Key the cache on the formatted date string — the exact input to parseValue —
         // so the cache cannot diverge from what the parser would actually receive.
-        const value = this.formatDate(eEditor.getDate());
         if (Object.is(this.cachedRaw, value)) {
             return this.cachedParsed;
         }

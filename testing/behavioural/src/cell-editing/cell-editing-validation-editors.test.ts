@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { GridRows, TestGridsManager, waitForInput } from 'ag-test-utils';
 
@@ -491,6 +492,54 @@ describe('Cell editing validation — editor types and custom hooks', () => {
                 ├── LEAF id:0 athlete:"Alice" when:"2020-01-15"
                 └── LEAF id:1 athlete:"Bob" when:"2020-06-10"
             `);
+        });
+    });
+
+    describe('Date string editor — custom getValidationErrors callback', () => {
+        test('a required error clears after the native input receives a complete date', async () => {
+            interface Row {
+                when?: string;
+            }
+
+            const validationValues: Array<string | null | undefined> = [];
+            const rowData: Row[] = [{}];
+            const api = await gridsManager.createGridAndWait('date-string-required', {
+                columnDefs: [
+                    {
+                        field: 'when',
+                        editable: true,
+                        cellEditor: 'agDateStringCellEditor',
+                        cellEditorParams: {
+                            getValidationErrors: ({ value }: { value: string | null | undefined }) => {
+                                validationValues.push(value);
+                                return value == null || value === '' ? ['Required'] : null;
+                            },
+                        },
+                    },
+                ],
+                rowData,
+                invalidEditValueMode: 'block',
+            } satisfies GridOptions<Row>);
+
+            api.startEditingCell({ rowIndex: 0, colKey: 'when' });
+            const whenCell = cell(api, 0, 'when');
+            const whenInput = await waitForInput(getGridElement(api)!, whenCell);
+
+            // An incomplete native date has no value, so the required rule marks it invalid.
+            whenInput.value = '';
+            whenInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await waitFor(() => expect(whenInput.validationMessage).toBe('Required'));
+            expect(validationValues.at(-1)).toBeUndefined();
+
+            // The previous custom validity must not hide the newly completed date from the callback.
+            whenInput.value = '2012-12-12';
+            whenInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await waitFor(() => expect(validationValues.at(-1)).toBe('2012-12-12'));
+            expect(whenInput.validationMessage).toBe('');
+            expect(whenInput.getAttribute('aria-invalid')).toBe('false');
+
+            api.stopEditing();
+            expect(rowData[0].when).toBe('2012-12-12');
         });
     });
 
