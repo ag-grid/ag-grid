@@ -25,7 +25,9 @@ export interface SharedThemeParams {
     accentColor: ColorValue;
 
     /**
-     * Background color of the grid. Many UI elements are semi-transparent, so their color blends with the background color.
+     * Background color of the grid. Many UI elements are semi-transparent, so their color blends with the background
+     * color. Must be opaque - components like dialog boxes rely on this color being opaque to avoid the UI underneath
+     * from showing through.
      */
     backgroundColor: ColorValue;
 
@@ -50,7 +52,7 @@ export interface SharedThemeParams {
     browserColorScheme: ColorSchemeValue;
 
     /**
-     * Default shadow for elements that float above the grid and are intended to appear elevated byt still attached e.g. dropdowns and cell editors
+     * Default shadow for elements that float above the grid and are intended to appear elevated but still attached e.g. dropdowns and cell editors
      */
     cardShadow: ShadowValue;
 
