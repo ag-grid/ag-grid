@@ -27,7 +27,7 @@ describe('Text Filter — conditions coverage', () => {
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
-    // Distinctive rows: null and '' exercise the null-value / isBlank branches of every operator.
+    // Distinctive rows: null and '' exercise the null-value / blank branches of every operator.
     const OPERATOR_ROWS = [
         { name: 'Apple' },
         { name: 'Banana' },

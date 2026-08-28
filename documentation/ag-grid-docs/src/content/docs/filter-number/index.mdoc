@@ -205,7 +205,7 @@ Applying the Number Filter is described in more detail in the following sections
 
 ## Blank Cells
 
-If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInNotEqual`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
+If the row data contains blanks (i.e. `null`, `undefined`, or an empty or whitespace-only string), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInNotEqual`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
 
 ```js
 const filterParams = {

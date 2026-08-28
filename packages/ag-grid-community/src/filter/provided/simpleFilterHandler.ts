@@ -51,6 +51,11 @@ export abstract class SimpleFilterHandler<
 
     protected abstract evaluateNullValue(filterType?: FilterOptionKey | null): boolean;
 
+    /** An empty string is a value the text filter can match, so only a scalar filter widens absence beyond `null`. */
+    protected isNullValue(cellValue: unknown): boolean {
+        return cellValue == null;
+    }
+
     /**
      * Once per key, never per row: a log call formats its message and doc URL before the once-per-message guard
      * discards the duplicate. A Custom Filter Option owns its key, so a skipped predicate is a missing value.
@@ -215,7 +220,7 @@ export abstract class SimpleFilterHandler<
             return customFilterResult;
         }
 
-        if (cellValue == null) {
+        if (this.isNullValue(cellValue)) {
             return this.evaluateNullValue(filterModel.type);
         }
 

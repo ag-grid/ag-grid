@@ -1,29 +1,38 @@
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { AdvancedFilterModel, ColumnAdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
+import {
+    BigIntFilterModule,
+    ClientSideRowModelModule,
+    DateFilterModule,
+    NumberFilterModule,
+    TextFilterModule,
+} from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 interface TestRow {
     id: number;
     athlete: string | null;
-    age: number | null;
+    age: number | string | null;
     date: string | null;
+    qty: bigint | string | number | null;
 }
 
 const ROW_DATA: TestRow[] = [
-    { id: 0, athlete: 'Alpha', age: 1, date: '2008-08-24' },
-    { id: 1, athlete: 'alpha beta', age: 2, date: '   ' },
-    { id: 2, athlete: '', age: 3, date: null },
-    { id: 3, athlete: '   ', age: null, date: '2020-07-23' },
-    { id: 4, athlete: null, age: 0, date: 'not a date' },
-    { id: 5, athlete: 'Beta', age: -2, date: '2012-08-05' },
+    { id: 0, athlete: 'Alpha', age: 1, date: '2008-08-24', qty: 10n },
+    { id: 1, athlete: 'alpha beta', age: 2, date: '   ', qty: '10' },
+    { id: 2, athlete: '', age: 3, date: null, qty: 10 },
+    { id: 3, athlete: '   ', age: null, date: '2020-07-23', qty: null },
+    { id: 4, athlete: null, age: 0, date: 'not a date', qty: 'nope' },
+    { id: 5, athlete: 'Beta', age: -2, date: '2012-08-05', qty: -5n },
+    { id: 6, athlete: 'Gamma', age: '', date: '', qty: '' },
 ];
 
 const COLUMN_DEFS: GridOptions<TestRow>['columnDefs'] = [
     { field: 'athlete', filter: 'agTextColumnFilter' },
-    { field: 'age', filter: 'agNumberColumnFilter', filterParams: { includeBlanksInNotEqual: true } },
+    { field: 'age', filter: 'agNumberColumnFilter' },
     { field: 'date', cellDataType: 'dateString', filter: 'agDateColumnFilter' },
+    { field: 'qty', cellDataType: 'bigint', filter: 'agBigIntColumnFilter' },
 ];
 
 function getDisplayedIds(api: GridApi<TestRow>): number[] {
@@ -40,6 +49,7 @@ describe('Advanced Filter matches the column filter', () => {
             TextFilterModule,
             NumberFilterModule,
             DateFilterModule,
+            BigIntFilterModule,
             AdvancedFilterModule,
             ClientSideRowModelModule,
         ],
@@ -48,8 +58,8 @@ describe('Advanced Filter matches the column filter', () => {
     afterEach(() => gridsManager.reset());
 
     /** The rows a column filter shows for `model`, applied to a grid with no Advanced Filter. */
-    async function withColumnFilter(colId: string, model: object): Promise<number[]> {
-        const api = gridsManager.createGrid('columnFilterGrid', { columnDefs: COLUMN_DEFS, rowData: ROW_DATA });
+    async function withColumnFilter(colId: string, model: object, columnDefs = COLUMN_DEFS): Promise<number[]> {
+        const api = gridsManager.createGrid('columnFilterGrid', { columnDefs, rowData: ROW_DATA });
         await asyncSetTimeout(0);
         await api.setColumnFilterModel(colId, model);
         api.onFilterChanged();
@@ -60,9 +70,9 @@ describe('Advanced Filter matches the column filter', () => {
     }
 
     /** The rows the Advanced Filter shows for the equivalent condition. */
-    async function withAdvancedFilter(model: AdvancedFilterModel): Promise<number[]> {
+    async function withAdvancedFilter(model: AdvancedFilterModel, columnDefs = COLUMN_DEFS): Promise<number[]> {
         const api = gridsManager.createGrid('advancedFilterGrid', {
-            columnDefs: COLUMN_DEFS,
+            columnDefs,
             rowData: ROW_DATA,
             enableAdvancedFilter: true,
         });
@@ -121,12 +131,50 @@ describe('Advanced Filter matches the column filter', () => {
     });
 
     test('`includeBlanksInNotEqual` admits a blank to `notEqual` in both', async () => {
-        const columnFilterIds = await withColumnFilter('age', { filterType: 'number', type: 'notEqual', filter: 2 });
+        const defs = COLUMN_DEFS!.map((def) =>
+            (def as { field?: string }).field === 'age'
+                ? { ...def, filterParams: { includeBlanksInNotEqual: true } }
+                : def
+        );
+        const columnFilterIds = await withColumnFilter(
+            'age',
+            { filterType: 'number', type: 'notEqual', filter: 2 },
+            defs
+        );
 
         expect(columnFilterIds).toContain(3); // the row with a null age
-        expect(await withAdvancedFilter({ filterType: 'number', colId: 'age', type: 'notEqual', filter: 2 })).toEqual(
-            columnFilterIds
-        );
+        expect(columnFilterIds).toContain(6); // and the row with an empty-string age
+        expect(
+            await withAdvancedFilter({ filterType: 'number', colId: 'age', type: 'notEqual', filter: 2 }, defs)
+        ).toEqual(columnFilterIds);
+    });
+
+    // Boolean has no column-filter counterpart to compare against — its options are `true`/`false`, not
+    // `blank` — so this is the Advanced Filter alone, pinning that it answers blank the way every other type does.
+    test('a boolean column answers blank for an empty or whitespace-only value', async () => {
+        const defs = [
+            { field: 'id' },
+            { field: 'active', cellDataType: 'boolean' as const, filter: 'agTextColumnFilter' },
+        ];
+        const rowData = [
+            { id: 0, active: true },
+            { id: 1, active: false },
+            { id: 2, active: null },
+            { id: 3, active: '' },
+            { id: 4, active: '   ' },
+        ];
+        const api = gridsManager.createGrid('booleanGrid', { columnDefs: defs, rowData, enableAdvancedFilter: true });
+        await asyncSetTimeout(0);
+
+        api.setAdvancedFilterModel({ filterType: 'boolean', colId: 'active', type: 'blank' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(getDisplayedIds(api as GridApi<TestRow>)).toEqual([2, 3, 4]);
+
+        api.setAdvancedFilterModel({ filterType: 'boolean', colId: 'active', type: 'notBlank' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(getDisplayedIds(api as GridApi<TestRow>)).toEqual([0, 1]);
     });
 
     // The column filter's `isValid(cellValue)` gate keeps an unreadable date out of the comparison; the
@@ -153,9 +201,10 @@ describe('Advanced Filter matches the column filter', () => {
             dateFrom: '2008-08-24',
         });
 
-        expect(columnFilterIds).toContain(1); // whitespace
-        expect(columnFilterIds).toContain(4); // 'not a date'
-        expect(columnFilterIds).not.toContain(2); // null is blank, not unreadable
+        expect(columnFilterIds).toContain(4); // 'not a date' is unreadable
+        expect(columnFilterIds).not.toContain(1); // whitespace is blank, not unreadable
+        expect(columnFilterIds).not.toContain(2); // and so are null
+        expect(columnFilterIds).not.toContain(6); // and the empty string
         expect(
             await withAdvancedFilter({
                 filterType: 'dateString',
@@ -164,16 +213,5 @@ describe('Advanced Filter matches the column filter', () => {
                 filter: '2008-08-24',
             })
         ).toEqual(columnFilterIds);
-    });
-
-    // A whitespace date is rejected as an invalid date before either filter asks whether it is blank, so
-    // `isBlank`'s treatment of whitespace never reaches it. Pinned because it is the surprise.
-    test('a whitespace `dateString` is not blank to either', async () => {
-        const columnFilterIds = await withColumnFilter('date', { filterType: 'date', type: 'blank' });
-
-        expect(columnFilterIds).toEqual([2]);
-        expect(await withAdvancedFilter({ filterType: 'dateString', colId: 'date', type: 'blank' })).toEqual(
-            columnFilterIds
-        );
     });
 });

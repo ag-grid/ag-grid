@@ -216,10 +216,18 @@ describe('Date Filter — conditions coverage', () => {
         expect(filter.getModel()).toMatchObject({ type: 'greaterThan', dateFrom: '2024-03-15' });
     });
 
-    test('blank and notBlank partition null vs non-null rows', async () => {
+    test('blank, notBlank and equals partition every way of writing no date', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', filterParams: { debounceMs: 0 } }],
-            rowData: [{ date: '2024-01-10' }, { date: null }, { date: '2024-05-20' }, { date: null }],
+            // A non-breaking space is whitespace to `trim`, and so blank, however printable its code point.
+            rowData: [
+                { date: '2024-01-10' },
+                { date: null },
+                { date: '2024-05-20' },
+                { date: null },
+                { date: '' },
+                { date: '\u00A0' },
+            ],
         });
 
         const filter = await ColumnFilterHarness.open(api, 'date');
@@ -241,9 +249,13 @@ describe('Date Filter — conditions coverage', () => {
         await new GridRows(api, 'blank rows').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 date:null
-            └── LEAF id:3 date:null
+            ├── LEAF id:3 date:null
+            ├── LEAF id:4 date:""
+            └── LEAF id:5 date:""
         `);
         expect(filter.getModel()).toMatchObject({ type: 'blank' });
+        // Both blank rows serialise as `date:""`, so the ids are what say which is the non-breaking space.
+        expect(api.getDisplayedRowAtIndex(3)!.data.date).toBe('\u00A0');
 
         await filter.selectOperator('Not blank');
         await asyncSetTimeout(0);
@@ -253,6 +265,63 @@ describe('Date Filter — conditions coverage', () => {
             └── LEAF id:2 date:"2024-05-20"
         `);
         expect(filter.getModel()).toMatchObject({ type: 'notBlank' });
+
+        // Blanks are out of an `equals` unless asked for, whichever way they are written.
+        await filter.selectOperator('Equals');
+        await filter.setDate('2024-01-10', 0);
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'equals rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 date:"2024-01-10"
+        `);
+        expect(filter.getModel()).toMatchObject({ type: 'equals', dateFrom: '2024-01-10' });
+    });
+
+    test('includeBlanksInEquals admits an empty string as well as a null', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    filter: 'agDateColumnFilter',
+                    filterParams: { debounceMs: 0, includeBlanksInEquals: true },
+                },
+            ],
+            rowData: [{ date: '2024-01-10' }, { date: null }, { date: '2024-05-20' }, { date: '' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'date');
+        await filter.selectOperator('Equals');
+        await filter.setDate('2024-01-10', 0);
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'equals with blanks included').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 date:"2024-01-10"
+            ├── LEAF id:1 date:null
+            └── LEAF id:3 date:""
+        `);
+    });
+
+    // A lenient `comparator` reports "equal" for input it cannot parse, so a blank must not reach it.
+    test('an empty string never reaches the comparator', async () => {
+        const comparator = vi.fn(dayMonthYearComparator);
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'date', filter: 'agDateColumnFilter', cellDataType: false, filterParams: { comparator } },
+            ],
+            rowData: [{ date: null }, { date: '' }, { date: '25/10/2016' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'date');
+        await filter.selectOperator('Equals');
+        await filter.setDate('2016-10-25', 0);
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'only the row that holds the date').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 date:"25/10/2016"
+        `);
+        expect(comparator.mock.calls.map(([, cellValue]) => cellValue)).toEqual(['25/10/2016']);
     });
 
     const BOUNDARY = [
@@ -817,6 +886,19 @@ describe('Date Filter — conditions coverage', () => {
         `);
     });
 });
+
+/** Reads `dd/mm/yyyy` and reports "equal" for anything it cannot parse. */
+function dayMonthYearComparator(filterDate: Date, cellValue: string): number {
+    const [day, month, year] = cellValue.split('/');
+    const cellDate = new Date(Number(year), Number(month) - 1, Number(day));
+    if (cellDate < filterDate) {
+        return -1;
+    }
+    if (cellDate > filterDate) {
+        return 1;
+    }
+    return 0;
+}
 
 /** Day-granularity date comparator (cell vs filter): ignores the time-of-day component. */
 function sameDayComparator(filterDate: Date, cellValue: Date): number {

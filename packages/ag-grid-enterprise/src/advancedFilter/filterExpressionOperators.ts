@@ -1,5 +1,6 @@
 import { _hasOwn } from 'ag-stack';
 
+import { _hasValue, _isBlank } from 'ag-grid-community';
 import type { BaseCellDataType, IRowNode } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
@@ -156,12 +157,12 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
             },
             blank: {
                 displayValue: translate('advancedFilterBlank'),
-                evaluator: (value) => value == null || (typeof value === 'string' && value.trim().length === 0),
+                evaluator: _isBlank,
                 numOperands: 0,
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
-                evaluator: (value) => value != null && (typeof value !== 'string' || value.trim().length > 0),
+                evaluator: _hasValue,
                 numOperands: 0,
             },
         };
@@ -286,12 +287,12 @@ export class ScalarFilterExpressionOperators<
             },
             blank: {
                 displayValue: translate('advancedFilterBlank'),
-                evaluator: (value) => value == null,
+                evaluator: _isBlank,
                 numOperands: 0,
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
-                evaluator: (value) => value != null,
+                evaluator: _hasValue,
                 numOperands: 0,
             },
         };
@@ -306,7 +307,9 @@ export class ScalarFilterExpressionOperators<
         expression: (value: ConvertedTValue, operand: ConvertedTValue) => boolean,
         isNegated?: boolean
     ): boolean {
-        if (value == null) {
+        // A scalar has no use for a blank string, so it counts as absent — as it does in the column filter.
+        // The `== null` half is what narrows `value`; `_isBlank` alone would not.
+        if (value == null || _isBlank(value)) {
             return nullsMatch;
         }
         const convertedValue = params.valueConverter(value, node);
@@ -345,12 +348,12 @@ export class BooleanFilterExpressionOperators implements DataTypeFilterExpressio
             },
             blank: {
                 displayValue: translate('advancedFilterBlank'),
-                evaluator: (value) => value == null,
+                evaluator: _isBlank,
                 numOperands: 0,
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
-                evaluator: (value) => value != null,
+                evaluator: _hasValue,
                 numOperands: 0,
             },
         };

@@ -25,11 +25,13 @@ export class BigIntFilterHandler extends ScalarFilterHandler<BigIntFilterModel, 
 
     protected override comparator(): Comparator<bigint> {
         return (left: bigint, right: bigint): number => {
-            if (left === right) {
+            // The cell holds whatever the row data does — `10n`, `'10'` or `10` — and `10n === 10` is false.
+            const cellValue = _parseBigIntOrNull(right)!;
+            if (left === cellValue) {
                 return 0;
             }
 
-            return left < right ? 1 : -1;
+            return left < cellValue ? 1 : -1;
         };
     }
 

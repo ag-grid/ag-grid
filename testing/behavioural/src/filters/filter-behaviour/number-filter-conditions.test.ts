@@ -285,6 +285,50 @@ describe('Number Filter — conditions coverage', () => {
         `);
     });
 
+    // An empty string orders as a zero against every bound, but never equals one: `0 === ''` is false.
+    test('an empty string is a blank, not a zero', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: [{ val: 5 }, { val: '' }, { val: null }, { val: -3 }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'val');
+
+        await filter.selectOperator('Less than');
+        await filter.setNumber(0, 0);
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'lessThan excludes the empty string alongside the null').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:3 val:-3
+        `);
+
+        // Below the empty string's own coercion to zero, so ordering it as a value would let it through here.
+        await filter.selectOperator('Greater than');
+        await filter.setNumber(-1, 0);
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'greaterThan excludes it too').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 val:5
+        `);
+
+        await filter.selectOperator('Does not equal');
+        await filter.setNumber(9, 0);
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'notEqual drops it with the null, though it equals nothing').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 val:5
+            └── LEAF id:3 val:-3
+        `);
+
+        await filter.selectOperator('Between');
+        await filter.setNumber(-1, 0);
+        await filter.setNumber(1, 1);
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'inRange spanning zero no longer contains it').check(`
+            ROOT id:ROOT_NODE_ID
+        `);
+    });
+
     test('notEqual excludes blank rows by default', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
@@ -387,18 +431,20 @@ describe('Number Filter — conditions coverage', () => {
                     filterParams: { debounceMs: 0, includeBlanksInLessThan: true },
                 },
             ],
-            rowData: [{ val: 1 }, { val: null }, { val: 9 }],
+            rowData: [{ val: 1 }, { val: null }, { val: 9 }, { val: '' }, { val: -5 }],
         });
 
         const filter = await ColumnFilterHarness.open(api, 'val');
+        // Negative, so the empty string can only arrive as a blank: ordered as a value it coerces to zero.
         await filter.selectOperator('Less than');
-        await filter.setNumber(5, 0);
+        await filter.setNumber(-1, 0);
         await asyncSetTimeout(0);
 
         await new GridRows(api, 'lessThan includes blank rows').check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 val:1
-            └── LEAF id:1 val:null
+            ├── LEAF id:1 val:null
+            ├── LEAF id:3 val:"Invalid Number"
+            └── LEAF id:4 val:-5
         `);
     });
 

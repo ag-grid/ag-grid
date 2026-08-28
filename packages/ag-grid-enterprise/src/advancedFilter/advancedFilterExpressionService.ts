@@ -437,6 +437,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                     };
                 }
                 break;
+            case 'bigint':
+                // `10n === 10` is false, so a cell holding `'10'` or `10` has to be parsed before it compares.
+                params = { valueConverter: (v: any) => _parseBigIntOrNull(v) };
+                break;
             case 'text':
             case undefined:
                 params = { valueConverter: (v: any) => _toStringOrNull(v) };
