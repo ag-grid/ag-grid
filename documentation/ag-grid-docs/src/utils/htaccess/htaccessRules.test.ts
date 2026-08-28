@@ -90,6 +90,174 @@ describe('htaccessRules', () => {
         });
     });
 
+    describe('Caching phase 1: content-addressed asset headers', () => {
+        // Pulls the expr= regexes out of the GENERATED output rather than re-declaring them:
+        // a copy would let the rule and its test drift apart.
+        const getCacheRuleMatcher = (content: string) => {
+            const line = content.split('\n').find((l) => l.includes('max-age=604800'));
+            expect(line).toBeDefined();
+            const patterns = [...line!.matchAll(/m#([^#]+)#/g)].map(([, re]) => new RegExp(re));
+            expect(patterns).toHaveLength(2);
+            return (uri: string) => patterns.some((re) => re.test(uri));
+        };
+
+        it('should set Cache-Control on production', () => {
+            expect(productionContent).toContain('Header set Cache-Control');
+            expect(productionContent).toContain('max-age=604800');
+            expect(productionContent).toContain('s-maxage=31536000');
+        });
+
+        it('should NOT long-cache on staging, so testers never see a stale asset', () => {
+            // Staging carries the no-cache document rule but no max-age of any kind.
+            expect(stagingContent).not.toContain('max-age');
+        });
+
+        it('should NOT use immutable, which would make a mistake unfixable for a year', () => {
+            // Scoped to the Cache-Control line on purpose: the site has legitimate
+            // /immutable-data/ redirect URLs, so a site-wide assertion is a false positive.
+            const line = productionContent.split('\n').find((l) => l.includes('max-age=604800'));
+            expect(line).toBeDefined();
+            expect(line).not.toContain('immutable');
+        });
+
+        it('should have removed the inert mod_expires block', () => {
+            // Never took effect (module not loaded, <IfModule> skips silently), and its
+            // ExpiresDefault "access plus 1 year" would have fired if anyone enabled it.
+            expect(productionContent).not.toContain('mod_expires');
+            expect(productionContent).not.toContain('ExpiresActive');
+            expect(productionContent).not.toContain('ExpiresDefault');
+            expect(productionContent).not.toContain('ExpiresByType');
+        });
+
+        it('should not guard the rule with <IfModule>, so a missing module fails loudly', () => {
+            const lines = productionContent.split('\n');
+            const idx = lines.findIndex((l) => l.includes('max-age=604800'));
+            const preceding = lines.slice(0, idx).join('\n');
+            const openGuards = (preceding.match(/<IfModule/g) ?? []).length;
+            const closeGuards = (preceding.match(/<\/IfModule>/g) ?? []).length;
+            expect(openGuards).toBe(closeGuards);
+        });
+
+        describe('matches every content-hashed shape the build emits', () => {
+            const hashed = [
+                // name.HASH8.ext -- Vite's default, 126 of 128 live references
+                '/_astro/design-system.BcXAtF3c.css',
+                '/_astro/_pageName_.C5AIcGk_.css',
+                '/_astro/_pageName_.astro_astro_type_script_index_0_lang.D12oPI3R.js',
+                '/_astro/ag-grid-alpine-quartz-themes.tErC2lp7.png',
+                // fonts/HASH16.ext -- whole basename is a 16-char hex hash
+                '/_astro/fonts/2eb6e0e4fc33dd24.woff2',
+                // archive assets live at /archive/<v>/_astro/, so the pattern must be unanchored
+                '/archive/32.3.9/_astro/DocsExampleRunner.CiSTQ4_g.css',
+                '/charts/archive/11.0.0/_astro/example-finance.bBLOPnBQ.css',
+            ];
+
+            hashed.forEach((uri) => {
+                it(`caches ${uri}`, () => {
+                    expect(getCacheRuleMatcher(productionContent)(uri)).toBe(true);
+                });
+            });
+        });
+
+        describe('does not match anything mutable', () => {
+            // Everything here is a stable URL with mutable content. Caching any of it could
+            // hide a fix from users and testers, which phase 1 must not be able to do.
+            const mutable = [
+                '/react-data-grid/column-moving/',
+                '/archive/32.3.9/react-data-grid/getting-started/',
+                '/documentation-archive',
+                '/charts/documentation-archive/',
+                '/sitemap-index.xml',
+                '/llms.txt',
+                '/robots.txt',
+                '/images/logo.png',
+                '/theme-icons/alpine.svg',
+                '/example-assets/olympic-winners.json',
+                '/example/foo.js',
+                '/scripts/main.js',
+                '/favicon.ico',
+                // In _astro but NOT hash-shaped: matching on shape rather than directory is
+                // what makes an unhashed file added to the build later fall through safely.
+                '/_astro/unhashed-file.css',
+                '/_astro/name.SHORT.css',
+                '/_astro/name.TOOLONGHASH9.css',
+                '/_astro/fonts/notahexhash1234.woff2',
+            ];
+
+            mutable.forEach((uri) => {
+                it(`does not cache ${uri}`, () => {
+                    expect(getCacheRuleMatcher(productionContent)(uri)).toBe(false);
+                });
+            });
+        });
+    });
+
+    describe('Caching phase 2: Vary: User-Agent removed', () => {
+        it('should not send Vary: User-Agent, which forks a shared cache per UA string', () => {
+            // It was appended inside the mod_deflate block alongside BrowserMatch workarounds for
+            // Netscape 4 and IE6. Harmless to browsers (a given browser's UA is constant) but it
+            // would hold the CloudFront hit rate near zero, so it has to go before edge caching.
+            expect(productionContent).not.toMatch(/Vary\s+User-Agent/);
+            expect(stagingContent).not.toMatch(/Vary\s+User-Agent/);
+        });
+
+        it('should not carry the obsolete BrowserMatch gzip workarounds', () => {
+            expect(productionContent).not.toContain('BrowserMatch');
+        });
+
+        it('should keep Vary: Accept, which is a different mechanism (SE-80 markdown negotiation)', () => {
+            expect(productionContent).toContain('Header append Vary Accept');
+        });
+
+        it('should keep compressing the same content types', () => {
+            // Removing BrowserMatch must not disturb the DEFLATE filter list.
+            ['text/html', 'text/css', 'text/javascript', 'application/json', 'image/svg+xml'].forEach((type) => {
+                expect(productionContent).toContain(`AddOutputFilterByType DEFLATE ${type}`);
+            });
+        });
+    });
+
+    describe('Caching phase 2: no heuristic caching of current pages', () => {
+        // With Last-Modified but no Cache-Control, browsers invent a freshness lifetime of
+        // ~10% of the document's age, growing without bound since the last deploy. That is the
+        // stale-page-until-hard-refresh behaviour. no-cache removes it.
+        const getNoCacheRule = (content: string) => {
+            const line = content.split('\n').find((l) => l.includes('"no-cache"'));
+            expect(line).toBeDefined();
+            return line!;
+        };
+
+        it('should set no-cache on current pages, in both envs', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                expect(getNoCacheRule(content)).toContain('Cache-Control "no-cache"');
+            });
+        });
+
+        it('should scope it to HTML documents, not assets', () => {
+            expect(getNoCacheRule(productionContent)).toContain('%{CONTENT_TYPE} =~ m#^text/html#');
+        });
+
+        it('should exclude archived versions, which are immutable', () => {
+            const rule = getNoCacheRule(productionContent);
+            expect(rule).toContain('!(');
+            expect(rule).toContain('archive/[0-9]');
+        });
+
+        it('should use no-cache rather than no-store, to keep back/forward navigation', () => {
+            expect(productionContent).not.toContain('no-store');
+        });
+
+        it('should not override the hashed-asset long cache', () => {
+            // The two rules have disjoint conditions (text/html vs a hashed filename), but the
+            // asset rule is emitted after the document rule so it wins on any future overlap.
+            const lines = productionContent.split('\n');
+            const noCacheAt = lines.findIndex((l) => l.includes('"no-cache"'));
+            const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
+            expect(noCacheAt).toBeGreaterThan(-1);
+            expect(assetAt).toBeGreaterThan(noCacheAt);
+        });
+    });
+
     describe('SE-81: agent-useful Link header', () => {
         it('should include a Link header pointing at llms.txt, the sitemap index and the MCP server', () => {
             expect(productionContent).toContain('Header set Link');
@@ -224,9 +392,11 @@ describe('htaccessRules', () => {
             expect(stagingContent).not.toContain('https://www.ag-grid.com/$1 [R=301,L]');
         });
 
-        it('should include mod_expires rules in production only', () => {
-            expect(productionContent).toContain('mod_expires.c');
-            expect(stagingContent).not.toContain('mod_expires.c');
+        it('should include the asset cache header in production only', () => {
+            // Replaces an assertion that the (inert, now removed) mod_expires block was
+            // present. Staging gets no max-age so testers never hit a stale asset.
+            expect(productionContent).toContain('max-age=604800');
+            expect(stagingContent).not.toContain('max-age');
         });
 
         it('should include CORS headers in production only', () => {
