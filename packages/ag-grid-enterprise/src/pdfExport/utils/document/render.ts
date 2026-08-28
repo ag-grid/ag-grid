@@ -489,26 +489,27 @@ function renderEncodedText(
     textY: number,
     style: ResolvedCellStyle
 ): void {
-    const run = encoded.glyphRun;
-    const cids = encoded.cids;
-    const trueType = style.font.trueType;
-    if (!run || !cids || !trueType) {
+    const glyphs = encoded.positionedGlyphs;
+    if (!glyphs) {
         pageParts.push(`1 0 0 1 ${fmt(textX)} ${fmt(textY)} Tm ${encoded.operatorValue} Tj`);
         return;
     }
 
     pageParts.push(`/Span << /ActualText ${encodePdfUnicodeString(encoded.logicalText)} >> BDC`);
-    const scale = style.fontSize / trueType.unitsPerEm;
+    let currentFontKey = style.font.key;
+    pageParts.push(`/${currentFontKey} ${fmt(style.fontSize)} Tf`);
     let cursorX = textX;
     let cursorY = textY;
-    for (let index = 0; index < run.glyphs.length; index++) {
-        const glyph = run.glyphs[index];
-        const cid = cids[index];
-        const glyphX = cursorX + glyph.xOffset * scale;
-        const glyphY = cursorY + glyph.yOffset * scale;
-        pageParts.push(`1 0 0 1 ${fmt(glyphX)} ${fmt(glyphY)} Tm <${cid.toString(16).padStart(4, '0')}> Tj`);
-        cursorX += glyph.xAdvance * scale;
-        cursorY += glyph.yAdvance * scale;
+    for (const glyph of glyphs) {
+        if (glyph.fontKey !== currentFontKey) {
+            currentFontKey = glyph.fontKey;
+            pageParts.push(`/${currentFontKey} ${fmt(style.fontSize)} Tf`);
+        }
+        const glyphX = cursorX + glyph.xOffset * style.fontSize;
+        const glyphY = cursorY + glyph.yOffset * style.fontSize;
+        pageParts.push(`1 0 0 1 ${fmt(glyphX)} ${fmt(glyphY)} Tm ${glyph.operatorValue} Tj`);
+        cursorX += glyph.xAdvance * style.fontSize;
+        cursorY += glyph.yAdvance * style.fontSize;
     }
     pageParts.push('EMC');
 }
@@ -523,29 +524,31 @@ function renderRotatedEncodedText(
     originY: number,
     watermark: ResolvedPdfWatermark
 ): void {
-    const run = encoded.glyphRun;
-    const cids = encoded.cids;
-    const trueType = watermark.font.trueType;
-    if (!run || !cids || !trueType) {
+    const glyphs = encoded.positionedGlyphs;
+    if (!glyphs) {
         pageParts.push(
             `${fmt(cosine)} ${fmt(sine)} ${fmt(-sine)} ${fmt(cosine)} ${fmt(originX)} ${fmt(originY)} Tm ${encoded.operatorValue} Tj`
         );
         return;
     }
 
-    const scale = fontSize / trueType.unitsPerEm;
+    let currentFontKey = watermark.font.key;
+    pageParts.push(`/${currentFontKey} ${fmt(fontSize)} Tf`);
     let cursorX = 0;
     let cursorY = 0;
-    for (let index = 0; index < run.glyphs.length; index++) {
-        const glyph = run.glyphs[index];
-        const localX = cursorX + glyph.xOffset * scale;
-        const localY = cursorY + glyph.yOffset * scale;
+    for (const glyph of glyphs) {
+        if (glyph.fontKey !== currentFontKey) {
+            currentFontKey = glyph.fontKey;
+            pageParts.push(`/${currentFontKey} ${fmt(fontSize)} Tf`);
+        }
+        const localX = cursorX + glyph.xOffset * fontSize;
+        const localY = cursorY + glyph.yOffset * fontSize;
         const glyphX = originX + cosine * localX - sine * localY;
         const glyphY = originY + sine * localX + cosine * localY;
         pageParts.push(
-            `${fmt(cosine)} ${fmt(sine)} ${fmt(-sine)} ${fmt(cosine)} ${fmt(glyphX)} ${fmt(glyphY)} Tm <${cids[index].toString(16).padStart(4, '0')}> Tj`
+            `${fmt(cosine)} ${fmt(sine)} ${fmt(-sine)} ${fmt(cosine)} ${fmt(glyphX)} ${fmt(glyphY)} Tm ${glyph.operatorValue} Tj`
         );
-        cursorX += glyph.xAdvance * scale;
-        cursorY += glyph.yAdvance * scale;
+        cursorX += glyph.xAdvance * fontSize;
+        cursorY += glyph.yAdvance * fontSize;
     }
 }

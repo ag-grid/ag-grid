@@ -5,6 +5,7 @@ import { BaseCreator } from 'ag-grid-community';
 
 import { PdfSerializingSession } from './pdfSerializingSession';
 import { resolvePdfCellStyleColors } from './utils/colors';
+import { PdfFontFamilyNotRegisteredError } from './utils/fontRegistry';
 import {
     getThemePdfColors,
     mergeDocumentHeadingStyle,
@@ -84,7 +85,10 @@ export class PdfCreator
 
         this.runExport(() => {
             const mergedParams = this.getMergedParams(userParams);
-            _downloadFile(this.resolveFileName(mergedParams), this.createPdfBlob(mergedParams));
+            const blob = this.createPdfBlob(mergedParams);
+            if (blob) {
+                _downloadFile(this.resolveFileName(mergedParams), blob);
+            }
         });
     }
 
@@ -110,9 +114,20 @@ export class PdfCreator
         return this.createPdfBlob(this.getMergedParams(params));
     }
 
-    private createPdfBlob(mergedParams: PdfExportParams): Blob {
-        const data = this.getData(mergedParams);
-        return new Blob([data], { type: mergedParams.mimeType || 'application/pdf' });
+    private createPdfBlob(mergedParams: PdfExportParams): Blob | undefined {
+        try {
+            const data = this.getData(mergedParams);
+            return new Blob([data], { type: mergedParams.mimeType || 'application/pdf' });
+        } catch (error) {
+            if (error instanceof PdfFontFamilyNotRegisteredError) {
+                this.error(330, {
+                    fontFamily: error.family,
+                    registeredFamilies: error.registeredFamilies,
+                });
+                return undefined;
+            }
+            throw error;
+        }
     }
 
     /**

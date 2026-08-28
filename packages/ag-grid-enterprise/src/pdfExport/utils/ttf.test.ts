@@ -1,4 +1,4 @@
-import { PdfFontRegistry } from './fontRegistry';
+import { PdfFontFamilyNotRegisteredError, PdfFontRegistry } from './fontRegistry';
 import { buildPdf } from './pdfObjectStore';
 import { parseTrueTypeFont } from './ttf';
 
@@ -63,6 +63,27 @@ describe('PDF TrueType fonts', () => {
         expect(registry.resolve('Test Sans', 600, 'normal').weight).toBe(700);
     });
 
+    it('rejects font families that are neither registered nor built in', () => {
+        const registry = new PdfFontRegistry([
+            {
+                family: 'Noto Sans Arabic',
+                faces: [{ data: createTestFont() }],
+            },
+        ]);
+
+        expect(() => registry.resolve('Noto Sans Arabik', 400, 'normal')).toThrow(
+            new PdfFontFamilyNotRegisteredError('Noto Sans Arabik', [
+                'Noto Sans Arabic',
+                'Helvetica',
+                'Helvetica-Bold',
+                'Times-Roman',
+                'Times-Bold',
+                'Courier',
+                'Courier-Bold',
+            ])
+        );
+    });
+
     it('uses embedded font ascent and descent for automatic line height', () => {
         const registry = new PdfFontRegistry([
             {
@@ -84,14 +105,35 @@ describe('PDF TrueType fonts', () => {
         ]);
         const font = registry.resolve('Test Sans', 400, 'normal');
 
-        expect(registry.encodeText('B', font).operatorValue).toBe('<0001>');
-        expect(registry.encodeText('C', font).operatorValue).toBe('<0002>');
+        expect(registry.encodeText('\u0100', font).operatorValue).toBe('<0001>');
+        expect(registry.encodeText('\u0102', font).operatorValue).toBe('<0002>');
         expect(font.mappingByCid).toEqual(
             new Map([
-                [1, { glyphId: 0, unicode: 'B' }],
-                [2, { glyphId: 0, unicode: 'C' }],
+                [1, { glyphId: 0, unicode: '\u0100' }],
+                [2, { glyphId: 0, unicode: '\u0102' }],
             ])
         );
+    });
+
+    it('uses a built-in font for printable ASCII omitted by an embedded font', () => {
+        const registry = new PdfFontRegistry([
+            {
+                family: 'Test Sans',
+                faces: [{ data: createTestFont() }],
+            },
+        ]);
+        const font = registry.resolve('Test Sans', 400, 'normal');
+
+        expect(registry.measureText('A/A', 10, font, 'rtl', 'ar')).toBeCloseTo(12.78);
+        const encoded = registry.encodeText('A/A', font, 'rtl', 'ar');
+
+        expect(encoded.visualText).toBe('A/A');
+        expect(encoded.positionedGlyphs).toEqual([
+            expect.objectContaining({ fontKey: font.key, operatorValue: '<0001>' }),
+            expect.objectContaining({ fontKey: 'F2', operatorValue: '(/)', xAdvance: 0.278 }),
+            expect.objectContaining({ fontKey: font.key, operatorValue: '<0001>' }),
+        ]);
+        expect(registry.getUsedFonts().map((usedFont) => usedFont.family)).toEqual(['Test Sans', 'Helvetica']);
     });
 
     it('preserves decomposed logical text when the glyph run is normalised', () => {
