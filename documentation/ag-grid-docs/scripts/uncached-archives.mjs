@@ -5,21 +5,29 @@
 // it is excluded from the caching released archives get. No archive rebuild either way - the
 // rule lives in the root .htaccess.
 //
-//   node scripts/uncached-archives.mjs set 36.2.0     # start of a release cycle
-//   node scripts/uncached-archives.mjs clear          # at GA - clears whatever is set
-//   node scripts/uncached-archives.mjs clear 36.2.0   # at GA - clears only if it is 36.2.0
+// Run from the repo root (the path resolves the same from anywhere):
+//
+//   node documentation/ag-grid-docs/scripts/uncached-archives.mjs set 36.2.0
+//   node documentation/ag-grid-docs/scripts/uncached-archives.mjs clear
+//   node documentation/ag-grid-docs/scripts/uncached-archives.mjs clear 36.2.0
+//
+// set <version>     start of a release cycle; version required
+// clear             at GA - clears whatever is set
+// clear <version>   at GA - clears only if that version is the one set
 //
 // The guarded form is the safer one at GA: if a different version is in flight it refuses
 // rather than clearing someone else's cycle.
 //
 // Then update the snapshot (./behave.sh --project ag-grid-docs htaccessRules -u) and deploy.
+// On b36.1.0 and older the project filter is --project all.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const FILE = join(dirname(fileURLToPath(import.meta.url)), '../src/utils/htaccess/htaccessRules.ts');
 const DECL = /(export const UNCACHED_ARCHIVE: string \| null = )(.+?)(;)/;
-const USAGE = 'usage: uncached-archives.mjs set <version> | clear [version]';
+const USAGE =
+    'usage: node documentation/ag-grid-docs/scripts/uncached-archives.mjs set <version> | clear [version]';
 
 const [action, version] = process.argv.slice(2);
 
