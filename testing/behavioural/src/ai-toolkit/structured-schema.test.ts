@@ -1424,40 +1424,38 @@ describe('getStructuredSchema - advanced filter', () => {
 
         const schema = toJSON(api.getStructuredSchema());
 
-        // Found by the column each def names, not by the suffix: the suffix follows column order, so
-        // reading it positionally would swap the two silently if the columnDefs were reordered.
-        const defFor = (colId: string) =>
-            Object.values(schema.$defs).find((def: any) => def?.properties?.colId?.enum?.includes(colId)) as any;
+        // A def per column AND arity: the operands a model must carry are the chosen operator's, so operators
+        // taking different counts cannot share one schema. Found by what each def names rather than by suffix.
+        const defsFor = (colId: string) =>
+            (Object.values(schema.$defs) as any[]).filter((def: any) => def?.properties?.colId?.enum?.includes(colId));
+        const defFor = (colId: string, ...operatorKeys: string[]) =>
+            defsFor(colId).find((def: any) => def.properties.type.enum.join() === operatorKeys.join());
 
-        // The suffix scheme is then a claim of its own: the first group of a data type keeps the bare name.
-        expect(Object.keys(schema.$defs).filter((key) => key.startsWith('numberAdvancedFilterModel'))).toEqual([
-            'numberAdvancedFilterModel',
-            'numberAdvancedFilterModel2',
-        ]);
+        const ageOneValue = defFor('age', 'equals');
+        expect(ageOneValue.properties.filterTo).toBeUndefined();
+        expect(ageOneValue.required).toEqual(['filterType', 'colId', 'type', 'filter']);
 
-        const narrowed = defFor('age');
-        expect(narrowed.properties.colId.enum).toEqual(['age']);
-        expect(narrowed.properties.type.enum).toEqual(['equals', 'betweenExclusive']);
-        expect(narrowed.properties.filterTo).toBeDefined();
-        // The operators in one group need not share an arity, so a model naming the one-value `equals` must
-        // validate without `filterTo`, and `blank` below without either. The model declares both optional.
-        expect(narrowed.required).toEqual(['filterType', 'colId', 'type']);
+        const ageTwoValue = defFor('age', 'betweenExclusive');
+        expect(ageTwoValue.properties.filterTo).toBeDefined();
+        expect(ageTwoValue.required).toEqual(['filterType', 'colId', 'type', 'filter', 'filterTo']);
 
-        const builtIns = defFor('score');
-        expect(builtIns.properties.colId.enum).toEqual(['score']);
-        expect(builtIns.properties.type.enum).toEqual([
+        // The built-in sibling splits the same way: its blanks take no value, the rest take one.
+        const scoreNoValue = defFor('score', 'blank', 'notBlank');
+        expect(scoreNoValue.properties.filter).toBeUndefined();
+        expect(scoreNoValue.required).toEqual(['filterType', 'colId', 'type']);
+
+        const scoreOneValue = defFor(
+            'score',
             'equals',
             'notEqual',
             'greaterThan',
             'greaterThanOrEqual',
             'lessThan',
-            'lessThanOrEqual',
-            'blank',
-            'notBlank',
-        ]);
-        expect(builtIns.properties.filterTo).toBeUndefined();
-        // `blank` and `notBlank` take no value, so `filter` cannot be required here either.
-        expect(builtIns.required).toEqual(['filterType', 'colId', 'type']);
+            'lessThanOrEqual'
+        );
+        expect(scoreOneValue.properties.colId.enum).toEqual(['score']);
+        expect(scoreOneValue.required).toEqual(['filterType', 'colId', 'type', 'filter']);
+        expect(scoreOneValue.properties.filterTo).toBeUndefined();
     });
 
     test('a boolean column carries no value slot, since none of its operators takes one', async () => {

@@ -15,9 +15,6 @@ import type {
 export interface SchemaBuilder {
     toJSON(): JSONSchema;
     nullable(): SchemaBuilder;
-    /** Kept out of the owning object's `required`, for a property the model itself declares optional. */
-    optional(): SchemaBuilder;
-    _optional?: boolean;
 }
 
 abstract class BaseSchemaBuilder<TType extends JSONSchemaType> {
@@ -26,7 +23,6 @@ abstract class BaseSchemaBuilder<TType extends JSONSchemaType> {
 
     _defs: Record<string, JSONSchema> = {};
     _nullable: boolean = false;
-    _optional: boolean = false;
 
     constructor(description?: string) {
         this.description = description;
@@ -61,11 +57,6 @@ abstract class BaseSchemaBuilder<TType extends JSONSchemaType> {
 
     nullable(): this {
         this._nullable = true;
-        return this;
-    }
-
-    optional(): this {
-        this._optional = true;
         return this;
     }
 
@@ -272,7 +263,7 @@ class ObjectSchemaBuilder extends BaseSchemaBuilder<'object'> {
         this._defs = allDefs;
 
         return this._toJSON({
-            required: Object.keys(this.properties).filter((key) => !this.properties[key]._optional),
+            required: Object.keys(this.properties),
             additionalProperties: false,
             properties: propertySchemas,
         });
@@ -281,7 +272,6 @@ class ObjectSchemaBuilder extends BaseSchemaBuilder<'object'> {
 
 class UnionSchemaBuilder {
     private _nullable: boolean = false;
-    public _optional: boolean = false;
     private _defs: Record<string, JSONSchema> = {};
 
     constructor(
@@ -295,11 +285,6 @@ class UnionSchemaBuilder {
 
     nullable(): this {
         this._nullable = true;
-        return this;
-    }
-
-    optional(): this {
-        this._optional = true;
         return this;
     }
 
@@ -343,16 +328,9 @@ class UnionSchemaBuilder {
 }
 
 class ReferenceSchemaBuilder {
-    public _optional: boolean = false;
-
     constructor(private readonly id: string) {}
 
     nullable(): this {
-        return this;
-    }
-
-    optional(): this {
-        this._optional = true;
         return this;
     }
 

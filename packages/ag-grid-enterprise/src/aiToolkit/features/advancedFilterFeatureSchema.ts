@@ -7,36 +7,38 @@ import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
 import type { JSONSchema } from '../schemaTypes';
 
-/** Columns sharing a data type and the same operators, which a column's `filterOptions` can narrow or extend. */
+/** Columns sharing a data type, an arity and the same operators of that arity. */
 interface OperatorGroup {
     readonly dataType: BaseCellDataType;
     readonly colIds: string[];
     readonly operatorKeys: string[];
-    readonly maxOperands: number;
+    readonly numOperands: number;
 }
 
 /**
  * Read from the expression service rather than listed here, so a column's Custom Filter Options are offered
- * to a caller under the same keys, and the same arity, that an expression would accept.
+ * to a caller under the same keys, and the same arity, that an expression would accept. Split by arity: the
+ * operands a model must carry are the chosen operator's, and one schema spanning several cannot say that.
  */
-function getColumnOperatorGroup(
+function getColumnOperatorKeysByArity(
     advFilterExpSvc: AdvancedFilterExpressionService,
     column: AgColumn,
     dataType: BaseCellDataType
-): Omit<OperatorGroup, 'colIds'> {
+): Map<number, string[]> {
     const columnOperators = advFilterExpSvc.getColumnOperators(dataType, column);
     const entries = columnOperators?.operators.getEntries(columnOperators.activeOperators) ?? [];
-    const operatorKeys: string[] = [];
-    let maxOperands = 0;
+    const byArity = new Map<number, string[]>();
     for (let i = 0, len = entries.length; i < len; ++i) {
         const key = entries[i].key;
-        operatorKeys.push(key);
         const numOperands = _getOwn(columnOperators!.operators.operators, key)?.numOperands ?? 0;
-        if (numOperands > maxOperands) {
-            maxOperands = numOperands;
+        const keys = byArity.get(numOperands);
+        if (keys) {
+            keys.push(key);
+        } else {
+            byArity.set(numOperands, [key]);
         }
     }
-    return { dataType, operatorKeys, maxOperands };
+    return byArity;
 }
 
 export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc, advFilterExpSvc }: BeanCollection) => {
@@ -54,15 +56,17 @@ export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc, advFil
         if (!dataType) {
             continue;
         }
-        const group = getColumnOperatorGroup(expSvc, col, dataType);
-        // JSON rather than a join: a `displayKey` is author-written and may hold the separator itself.
-        const groupKey = `${dataType} ${group.maxOperands} ${JSON.stringify(group.operatorKeys)}`;
-        const existing = groups.get(groupKey);
-        if (existing) {
-            existing.colIds.push(col.colId);
-        } else {
-            groups.set(groupKey, { ...group, colIds: [col.colId] });
-        }
+        const byArity = getColumnOperatorKeysByArity(expSvc, col, dataType);
+        byArity.forEach((operatorKeys, numOperands) => {
+            // JSON rather than a join: a `displayKey` is author-written and may hold the separator itself.
+            const groupKey = `${dataType} ${numOperands} ${JSON.stringify(operatorKeys)}`;
+            const existing = groups.get(groupKey);
+            if (existing) {
+                existing.colIds.push(col.colId);
+            } else {
+                groups.set(groupKey, { dataType, operatorKeys, numOperands, colIds: [col.colId] });
+            }
+        });
     }
 
     const columnFilterModels: JSONSchema[] = [];
@@ -166,7 +170,7 @@ const DataTypeSchemas: Record<BaseCellDataType, DataTypeSchema> = {
     text: { filterType: 'text', noun: 'text', titleNoun: 'Text', value: () => s.string('Text value to filter by') },
 };
 
-/** The second value only exists where an option takes one, which today means a Custom Filter Option. */
+/** One arity per schema, so the value slots it declares are exactly the ones its operators require. */
 function buildFilterSchema(group: OperatorGroup): SchemaBuilder {
     const { filterType, noun, titleNoun, value } = DataTypeSchemas[group.dataType];
     const props: Record<string, SchemaBuilder> = {
@@ -174,14 +178,14 @@ function buildFilterSchema(group: OperatorGroup): SchemaBuilder {
         colId: s.enum(group.colIds, `Column identifier for the ${noun} column to filter`),
         type: s.enum(group.operatorKeys, `${titleNoun} filter operation type`),
     };
-    // Optional, not merely nullable: the operators in one group need not share an arity, so `blank` beside
-    // `equals` must be writable without its operands, exactly as the model declares them.
-    const { maxOperands } = group;
-    if (maxOperands > 0) {
-        props.filter = value().nullable().optional();
+    // Required, because every operator in this group takes them: a condition short of its operands is not a
+    // narrower filter, it is one the parser rejects, and rejecting one discards the whole model.
+    const { numOperands } = group;
+    if (numOperands > 0) {
+        props.filter = value().nullable();
     }
-    if (maxOperands > 1) {
-        props.filterTo = value().nullable().optional();
+    if (numOperands > 1) {
+        props.filterTo = value().nullable();
     }
     return s.object(props);
 }
