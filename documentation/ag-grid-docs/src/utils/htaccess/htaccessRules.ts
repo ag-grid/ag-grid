@@ -52,11 +52,12 @@ const hashedAssetCacheRules = `
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
 `;
 
-// Studio archives are not cached at all for now - simpler than tracking a third independent
-// version line, and Studio traffic is a small fraction of archive traffic. Emitted after the
-// hashed-asset rule so it covers Studio's assets as well as its HTML.
+// Archived Studio versions are not cached for now - simpler than tracking a third independent
+// version line, and they are a small fraction of archive traffic. Scoped to /studio/archive/
+// only: the live Studio site caches normally like the rest of the site. Emitted after the
+// hashed-asset rule so it covers archived Studio assets as well as their HTML.
 const studioArchiveNoCacheRules = `
-# Studio archives: never cached.
+# Archived Studio versions: never cached. Does not apply to /studio/ itself.
 Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
 `;
 
