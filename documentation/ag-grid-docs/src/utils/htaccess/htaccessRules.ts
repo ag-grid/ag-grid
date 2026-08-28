@@ -34,26 +34,23 @@ export const PERMISSIONS_POLICY_VALUE = 'geolocation=(), microphone=(), camera=(
  * Note: when changing this file please add/update the tests in
  * documentation/ag-grid-docs/testing/htaccess-harness
  */
-const modExpiresRules = `
-<IfModule mod_expires.c>
-    # Adds caching headers
-    ExpiresActive On
+// Without Cache-Control, browsers heuristically cache for ~10% of a page's age - the
+// "had to hard-refresh" behaviour. no-cache (store, but always revalidate) removes it while
+// keeping back/forward navigation. Archived versions keep the heuristic window: immutable,
+// and cheaper to leave cached.
+const documentNoCacheRules = `
+# Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
+Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
+`;
 
-    # Default directive
-    ExpiresDefault "access plus 1 year"
-
-    ExpiresByType application/json "access plus 1 hour"
-    ExpiresByType text/html "access plus 1 hour"
-    ExpiresByType text/markdown "access plus 1 hour"
-    ExpiresByType text/plain "access plus 1 hour"
-    ExpiresByType text/richtext "access plus 1 hour"
-    ExpiresByType text/xml "access plus 1 hour"
-    ExpiresByType text/xsd "access plus 1 hour"
-    ExpiresByType text/xsl "access plus 1 hour"
-
-    # CSS
-    ExpiresByType text/css "access plus 1 month"
-</IfModule>
+// Long-cache content-addressed assets. Matched on hash SHAPE rather than the /_astro/
+// directory so anything unhashed is never cached: a changed hash is a different URL, so a
+// fix can never be served stale. Replaces an inert mod_expires block - hence no <IfModule>
+// guard here, so a missing module fails loudly rather than silently.
+const hashedAssetCacheRules = `
+# Content-addressed assets - the filename carries a content hash, so changed content is
+# always a different URL. Matched by hash shape, so anything unhashed is not cached.
+Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
 `;
 
 const modDeflateRules = `
@@ -82,12 +79,6 @@ const modDeflateRules = `
     AddOutputFilterByType DEFLATE text/markdown
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/xml
-
-    # Remove browser bugs (only needed for really old browsers)
-    BrowserMatch ^Mozilla/4 gzip-only-text/html
-    BrowserMatch ^Mozilla/4\\.0[678] no-gzip
-    BrowserMatch \\bMSIE !no-gzip !gzip-only-text/html
-    Header append Vary User-Agent
 </IfModule>
 `;
 
@@ -464,6 +455,7 @@ AddCharset utf-8 .md
 
 function getStagingHtaccessContent(): string {
     return `${baseRules}
+${documentNoCacheRules}
 
 ${markdownNegotiationBlock}
 
@@ -483,7 +475,8 @@ Options -Indexes
 
 function getProductionHtaccessContent(): string {
     return `${baseRules}
-${modExpiresRules}
+${documentNoCacheRules}
+${hashedAssetCacheRules}
 ${modDeflateRules}
 ${getModRewriteRules()}
 
