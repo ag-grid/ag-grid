@@ -67,8 +67,12 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
     extends SharedFilter, ReadOnlyFloatingFilterParent<TModel> {
     /** Optional: Called once when the handler is created. */
     init?(params: FilterHandlerParams<TData, TContext, TModel, TCustomParams>): void;
-    /** Optional: Called every time the handler is updated, e.g. when the model changes. */
-    refresh?(params: FilterHandlerParams<TData, TContext, TModel, TCustomParams>): void;
+    /**
+     * Optional: Called every time the handler is updated, e.g. when the model changes.
+     * When `source` is `'colDef'`, return `false` if the new params cannot be applied and the grid will
+     * recreate the handler with a null model. The return value is ignored for every other source.
+     */
+    refresh?(params: FilterHandlerParams<TData, TContext, TModel, TCustomParams>): void | boolean;
     /**
      * The grid will ask each active filter, in turn, whether each row in the grid passes. If any
      * filter fails, then the row will be excluded from the final set.
@@ -244,7 +248,14 @@ export interface IFilter extends BaseFilter {
 }
 
 export interface FilterDisplay<TData = any, TContext = any, TModel = any, TState = any> extends SharedFilterUi {
-    /** Called when the column definition, state or model is updated. */
+    /**
+     * Called when the column definition, state or model is updated.
+     *
+     * @returns {boolean} - `true` means that the component should be refreshed and kept.
+     * `false` means that it will be destroyed and a new instance created, which is what to return when
+     * the new params are not compatible with the existing component. Only honoured when the column
+     * definition changed; the return value is ignored for a state or model update.
+     */
     refresh(newParams: FilterDisplayParams<TData, TContext, TModel, TState>): boolean;
 }
 
