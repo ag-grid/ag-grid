@@ -46,7 +46,13 @@ import type {
 } from '../interfaces/iFilter';
 import { isColumnFilterComp } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
-import type { FilterHandlerName, FilterUi, FilterWrapper, LegacyFilterWrapper } from './columnFilterUtils';
+import type {
+    FilterHandlerName,
+    FilterUi,
+    FilterWrapper,
+    HandlerFilterWrapper,
+    LegacyFilterWrapper,
+} from './columnFilterUtils';
 import {
     FILTER_HANDLERS,
     FILTER_HANDLER_MAP,
@@ -79,6 +85,11 @@ interface HandlerDoesFilterPassWrapper {
 }
 
 type DoesFilterPassWrapper = CompDoesFilterPassWrapper | HandlerDoesFilterPassWrapper;
+
+interface HandlerFunc {
+    filterHandler: CreateFilterHandlerFunc;
+    handlerNameOrCallback?: FilterHandlerName | ((params: DoesFilterPassParams) => boolean);
+}
 
 export interface FilterDisplayWrapper {
     comp: IFilterComp | FilterDisplayComp;
@@ -959,16 +970,7 @@ export class ColumnFilterService
         };
     }
 
-    private createHandlerFunc(
-        column: AgColumn,
-        filterDef: IFilterDef,
-        defaultFilter: string
-    ):
-        | {
-              filterHandler: CreateFilterHandlerFunc;
-              handlerNameOrCallback?: FilterHandlerName | ((params: DoesFilterPassParams) => boolean);
-          }
-        | undefined {
+    private createHandlerFunc(column: AgColumn, filterDef: IFilterDef, defaultFilter: string): HandlerFunc | undefined {
         const { gos, frameworkOverrides, registry } = this.beans;
         // need to keep track of this so we can compare when col defs change
         let doesFilterPass: ((params: DoesFilterPassParams) => boolean) | undefined;
@@ -1336,6 +1338,60 @@ export class ColumnFilterService
         };
     }
 
+    /** Returns whether the model was cleared, which happens only when the handler could not take the new params. */
+    private refreshOrRecreateHandler(
+        filterWrapper: HandlerFilterWrapper,
+        handlerFunc: HandlerFunc,
+        compDetails: UserCompDetails | null,
+        newFilterParams: any,
+        source: FilterChangedEventSourceType
+    ): boolean {
+        const column = filterWrapper.column;
+        const colId = column.getColId();
+        const handlerGenerator = handlerFunc.handlerNameOrCallback ?? handlerFunc.filterHandler;
+        const existingModel = _getFilterModel(this.model, colId);
+        let recreateHandler = filterWrapper.handlerGenerator != handlerGenerator;
+        if (!recreateHandler) {
+            // `false` means the handler cannot take the new params
+            const handlerParams = this.createHandlerParams(column, compDetails?.params);
+            filterWrapper.handlerParams = handlerParams;
+            recreateHandler =
+                filterWrapper.handler.refresh?.({
+                    ...handlerParams,
+                    source: 'colDef',
+                    model: existingModel,
+                }) === false;
+        }
+        if (!recreateHandler) {
+            return false;
+        }
+
+        const oldHandler = filterWrapper.handler;
+        const { handler, handlerParams } = this.createHandlerFromFunc(
+            column,
+            handlerFunc.filterHandler,
+            newFilterParams
+        );
+        filterWrapper.handler = handler;
+        filterWrapper.handlerParams = handlerParams;
+        filterWrapper.handlerGenerator = handlerGenerator;
+
+        delete this.model[colId];
+        // the ui state describes the model that has just gone
+        this.state.delete(colId);
+        handler.init?.({ ...handlerParams, source: 'init', model: null });
+        // destroy the old handler after creating and assigning the new one in case anything
+        // is listening to events on the handler and needs to resubscribe to the new one
+        this.destroyBean(oldHandler);
+        if (existingModel != null) {
+            this.beans.filterManager?.onFilterChanged({
+                columns: [column],
+                source,
+            });
+        }
+        return true;
+    }
+
     public filterParamsChanged(colId: string, source: FilterChangedEventSourceType = 'api'): void {
         const filterWrapper = this.allColumnFilters.get(colId);
         if (!filterWrapper) {
@@ -1377,46 +1433,13 @@ export class ColumnFilterService
         // a cleared model makes the params derived above stale, so the ui must re-derive them
         let modelCleared = false;
         if (wasHandler) {
-            const handlerGenerator = handlerFunc?.handlerNameOrCallback ?? handlerFunc?.filterHandler;
-            const existingModel = _getFilterModel(this.model, colId);
-            let recreateHandler = filterWrapper.handlerGenerator != handlerGenerator;
-            if (!recreateHandler) {
-                // `false` means the handler cannot take the new params
-                const handlerParams = this.createHandlerParams(column, compDetails?.params);
-                filterWrapper.handlerParams = handlerParams;
-                recreateHandler =
-                    filterWrapper.handler.refresh?.({
-                        ...handlerParams,
-                        source: 'colDef',
-                        model: existingModel,
-                    }) === false;
-            }
-            if (recreateHandler) {
-                const oldHandler = filterWrapper.handler;
-                const { handler, handlerParams } = this.createHandlerFromFunc(
-                    column,
-                    handlerFunc!.filterHandler,
-                    newFilterParams
-                );
-                filterWrapper.handler = handler;
-                filterWrapper.handlerParams = handlerParams;
-                filterWrapper.handlerGenerator = handlerGenerator!;
-
-                delete this.model[colId];
-                // the ui state describes the model that has just gone
-                this.state.delete(colId);
-                modelCleared = true;
-                handler.init?.({ ...handlerParams, source: 'init', model: null });
-                // destroy the old handler after creating and assigning the new one in case anything
-                // is listening to events on the handler and needs to resubscribe to the new one
-                this.destroyBean(oldHandler);
-                if (existingModel != null) {
-                    this.beans.filterManager?.onFilterChanged({
-                        columns: [column],
-                        source,
-                    });
-                }
-            }
+            modelCleared = this.refreshOrRecreateHandler(
+                filterWrapper,
+                handlerFunc!,
+                compDetails,
+                newFilterParams,
+                source
+            );
         }
 
         const filterUi = filterWrapper.filterUi;
