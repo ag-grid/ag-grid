@@ -26,7 +26,9 @@
 
 .ag-toolbar-button-wrapper {
     display: inline-flex;
-    padding: calc(var(--ag-spacing) * 0.25);
+
+    /* always at least 3 pixels of padding to allow for the focus outline */
+    padding: max(var(--ag-spacing) * 0.25, 3px);
     height: 100%;
 }
 
@@ -45,6 +47,7 @@
     line-height: 1;
     white-space: nowrap;
     outline: none;
+    border-radius: 1px;
 }
 
 :where(.ag-toolbar-button) .ag-icon {
