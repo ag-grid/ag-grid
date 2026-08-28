@@ -1,3 +1,4 @@
+import type { BrandedType } from './brandedType';
 import type { EditingCellPosition } from './iCellEditor';
 import type { CellPosition } from './iCellPosition';
 import type { ChartToolbarMenuItemOptions, DefaultChartMenuItem } from './iChartOptions';
@@ -313,6 +314,8 @@ export interface ProcessRowParams<TData = any, TContext = any> extends AgGridCom
 }
 
 export type FillOperation<TData = any, TContext = any> = (params: FillOperationParams<TData, TContext>) => any;
+/** A Fill Handle callback result created by a helper on `FillOperationParams`. */
+export type FillOperationResult = BrandedType<object, 'FillOperationResult'>;
 export interface FillOperationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The mouse event for the fill operation. */
     event: MouseEvent;
@@ -334,6 +337,15 @@ export interface FillOperationParams<TData = any, TContext = any> extends AgGrid
     currentCellValue: any;
     /** The direction of the Fill Operation. */
     direction: 'up' | 'down' | 'left' | 'right';
+    /**
+     * Returns a value from `setFillValue` and adds it to the `values` passed to subsequent calls,
+     * even when it is the same as `currentCellValue`.
+     */
+    useValue: (value: any) => FillOperationResult;
+    /** Skips the current cell without adding its value to the `values` passed to subsequent calls. */
+    skipCell: () => FillOperationResult;
+    /** Uses the grid's default Fill Handle behaviour for the current cell. */
+    useDefault: () => FillOperationResult;
 }
 
 export type GetRowHeight<TData = any, TContext = any> = (
