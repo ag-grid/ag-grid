@@ -65,18 +65,17 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
 
     public getValidationErrors(): string[] | null {
         const { eEditor, params } = this;
-        const raw = eEditor.getInputElement().value;
-        const value = this.formatDate(this.parseDate(raw ?? undefined));
+        const date = _parseDateTimeFromString(eEditor.getInputElement().value) ?? undefined;
+        const value = this.formatDate(date);
         const { min, max, getValidationErrors } = params;
         let internalErrors: string[] | null = [];
 
-        if (value) {
-            const date = new Date(value);
+        if (date) {
             const translate = this.getLocaleTextFunc();
 
             if (min) {
-                const minDate = new Date(min);
-                if (date < minDate) {
+                const minDate = min instanceof Date ? min : _parseDateTimeFromString(min);
+                if (minDate && date < minDate) {
                     const minDateString = minDate.toLocaleDateString();
                     internalErrors.push(
                         translate('minDateValidation', `Date must be after ${minDateString}`, [minDateString])
@@ -85,8 +84,8 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
             }
 
             if (max) {
-                const maxDate = new Date(max);
-                if (date > maxDate) {
+                const maxDate = max instanceof Date ? max : _parseDateTimeFromString(max);
+                if (maxDate && date > maxDate) {
                     const maxDateString = maxDate.toLocaleDateString();
                     internalErrors.push(
                         translate('maxDateValidation', `Date must be before ${maxDateString}`, [maxDateString])

@@ -496,11 +496,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
     });
 
     describe('Date string editor — custom getValidationErrors callback', () => {
-        test('a required error clears after the native input receives a complete date', async () => {
+        test('a required error clears and exposes the custom-formatted value after a complete date', async () => {
             interface Row {
                 when?: string;
             }
 
+            const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
             const validationValues: Array<string | null | undefined> = [];
             const rowData: Row[] = [{}];
             const api = await gridsManager.createGridAndWait('date-string-required', {
@@ -508,6 +509,7 @@ describe('Cell editing validation — editor types and custom hooks', () => {
                     {
                         field: 'when',
                         editable: true,
+                        cellDataType: 'customDateString',
                         cellEditor: 'agDateStringCellEditor',
                         cellEditorParams: {
                             getValidationErrors: ({ value }: { value: string | null | undefined }) => {
@@ -517,13 +519,31 @@ describe('Cell editing validation — editor types and custom hooks', () => {
                         },
                     },
                 ],
+                dataTypeDefinitions: {
+                    customDateString: {
+                        baseDataType: 'dateString',
+                        extendsDataType: 'dateString',
+                        valueParser: ({ newValue }) => (datePattern.test(newValue) ? newValue : null),
+                        dataTypeMatcher: (value) => typeof value === 'string' && datePattern.test(value),
+                        dateParser: (value) => {
+                            const match = value?.match(datePattern);
+                            return match
+                                ? new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]))
+                                : undefined;
+                        },
+                        dateFormatter: (value) =>
+                            value
+                                ? `${String(value.getDate()).padStart(2, '0')}/${String(value.getMonth() + 1).padStart(2, '0')}/${value.getFullYear()}`
+                                : undefined,
+                    },
+                },
                 rowData,
                 invalidEditValueMode: 'block',
             } satisfies GridOptions<Row>);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'when' });
             const whenCell = cell(api, 0, 'when');
-            const whenInput = await waitForInput(getGridElement(api)!, whenCell);
+            const whenInput = await waitForInput(getGridElement(api)! as HTMLElement, whenCell);
 
             // An incomplete native date has no value, so the required rule marks it invalid.
             whenInput.value = '';
@@ -534,12 +554,12 @@ describe('Cell editing validation — editor types and custom hooks', () => {
             // The previous custom validity must not hide the newly completed date from the callback.
             whenInput.value = '2012-12-12';
             whenInput.dispatchEvent(new Event('input', { bubbles: true }));
-            await waitFor(() => expect(validationValues.at(-1)).toBe('2012-12-12'));
+            await waitFor(() => expect(validationValues.at(-1)).toBe('12/12/2012'));
             expect(whenInput.validationMessage).toBe('');
             expect(whenInput.getAttribute('aria-invalid')).toBe('false');
 
             api.stopEditing();
-            expect(rowData[0].when).toBe('2012-12-12');
+            expect(rowData[0].when).toBe('12/12/2012');
         });
     });
 
