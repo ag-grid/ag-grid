@@ -118,11 +118,70 @@ const zeroInputTypes: ReadonlySet<string> = new Set<ISimpleFilterModelType>([
     'last24Months',
 ]);
 
+/** An entry missing any of these cannot be offered; they are listed so the warning can name the missing one. */
+const REQUIRED_OPTION_PROPERTIES: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
+
+/**
+ * What a `filterOptions` list offers, keyed in the order it first names them, and the Custom Filter Options
+ * among them. One definition, so the column filter and the Advanced Filter cannot disagree over any one
+ * entry; what each does with a list that keeps nothing is still its own.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _classifyFilterOptions(
+    configuredOptions: (IFilterOptionDef | string)[],
+    warnMissing: (keys: string[]) => void
+): { offered: Map<string, IFilterOptionDef | string>; customOptions: Map<string, IFilterOptionDef> } {
+    // A `Map` holds a key at the position it was first set in, so it dedupes without reordering the dropdown.
+    const offered = new Map<string, IFilterOptionDef | string>();
+    const customOptions = new Map<string, IFilterOptionDef>();
+    for (let i = 0, len = configuredOptions.length; i < len; ++i) {
+        const option = configuredOptions[i];
+        if (option == null) {
+            continue; // `typeof null` is `'object'`, so a hole would read as an option with no properties
+        } else if (typeof option === 'string') {
+            offered.set(option, offered.get(option) ?? option); // a definition already stored outranks a bare key
+        } else {
+            const missing = REQUIRED_OPTION_PROPERTIES.filter((name) => option[name] == null);
+            if (missing.length) {
+                warnMissing(missing);
+                continue;
+            }
+            const key = option.displayKey;
+            offered.set(key, option);
+            customOptions.set(key, option);
+        }
+    }
+    return { offered, customOptions };
+}
+
+/**
+ * The name a Custom Filter Option is shown and written under: its localised text, then its `displayName`,
+ * then its key, as a column falls back from `headerName` to its field. A stray space cannot be spelled in
+ * an expression, hence the trim; a key is not a `string` to a JS caller, hence `String`.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getCustomOptionDisplayName(
+    option: IFilterOptionDef,
+    translate: (key: string, defaultValue: string) => string
+): string {
+    const displayKey = String(option.displayKey);
+    return translate(displayKey, option.displayName).trim() || displayKey.trim();
+}
+
+/**
+ * How many values a Custom Filter Option takes, so the Advanced Filter cannot disagree with the column
+ * filter about one. The declared `0 | 1 | 2` is no check on a JS caller, hence the clamp.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getCustomOptionNumberOfInputs(option: IFilterOptionDef): number {
+    const count = Math.trunc(option.numberOfInputs ?? 1);
+    return count > 0 ? Math.min(count, 2) : 0;
+}
+
 export function getNumberOfInputs(type: FilterOptionKey | null | undefined, optionsFactory: OptionsFactory): number {
     const customOpts = optionsFactory.getCustomOption(type);
     if (customOpts) {
-        const { numberOfInputs } = customOpts;
-        return numberOfInputs != null ? numberOfInputs : 1;
+        return _getCustomOptionNumberOfInputs(customOpts);
     }
 
     if (type && zeroInputTypes.has(type)) {

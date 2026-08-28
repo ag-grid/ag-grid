@@ -150,6 +150,70 @@ For `number`, `date`, `dateString`, `dateTime` and `dateTimeString` Cell Data Ty
 
 These settings only apply when using the Client-Side Row Model. You need to implement support for these in your server-side filtering logic when using the Server-Side Row Model.
 
+### Custom Filter Options
+
+`filterOptions` also accepts [Custom Filter Options](./filter-conditions/#custom-filter-options). The Advanced Filter evaluates the same `predicate` as the column filter, and supports options taking 0, 1 or 2 values. As with the settings above, the `predicate` runs only under the Client-Side Row Model: with the Server-Side Row Model the option reaches the server as its `displayKey` in the filter model, where the server-side filtering logic decides what it means.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            filterParams: {
+                filterOptions: [
+                    'equals',
+                    {
+                        displayKey: 'evenNumbers',
+                        displayName: 'Even Numbers',
+                        numberOfInputs: 0,
+                        predicate: (_values, cellValue) => cellValue != null && cellValue % 2 === 0,
+                    },
+                    {
+                        displayKey: 'betweenExclusive',
+                        displayName: 'Between (Exclusive)',
+                        numberOfInputs: 2,
+                        predicate: ([from, to], cellValue) => cellValue != null && cellValue > from && cellValue < to,
+                    },
+                ],
+            },
+        },
+    ],
+}
+```
+
+An option is written in an expression under its `displayName`, or its [localised](./localisation/) text where the `displayKey` has an entry, followed by as many values as it takes. An option whose name is blank once resolved is written under its `displayKey` instead, so it stays usable. Two values are separated by a comma, and are conventionally wrapped in brackets, which are optional:
+
+```text
+[Age] Even Numbers
+[Age] Between (Exclusive) (30, 40)
+```
+
+Each value is quoted according to its Cell Data Type, as for the built-in options: `number` and `bigint` values are unquoted, all others are quoted. A value that would otherwise end early — one containing a space or a closing bracket, starting with a quote, or holding the comma that separates a pair — is quoted whatever its type. A `number` or `bigint` value that contains both kinds of quote cannot be wrapped in either, so it is written as the plain number instead.
+
+The filter model stores the `displayKey` in `type`, and the values in `filter` and `filterTo`:
+
+```js
+const advancedFilterModel = {
+    filterType: 'number',
+    colId: 'age',
+    type: 'betweenExclusive',
+    filter: 30,
+    filterTo: 40,
+};
+```
+
+A `displayKey` is resolved against the column being filtered, so different columns can reuse the same key. Reusing an Option Key from the table above replaces that built-in option for the column, the same as it does in the column filter.
+
+A column's list decides what the Advanced Filter suggests for it, not what it can read. An expression naming an option the list leaves out — one saved before the list was narrowed, for example — still applies, so changing `filterOptions` does not discard filters that have already been stored. Where a list names no option the Advanced Filter has, such as the relative date presets, the column keeps the standard options for its Cell Data Type.
+
+The following example demonstrates custom filter options taking different numbers of values:
+
+- The **Athlete** column has `Starts With A` (no values) and `Does Not Start With` (one value).
+- The **Age** column has `Even Numbers` (no values) and `Between (Exclusive)` (two values).
+- The **Date** column has `Leap Year` (no values) and `Between (Exclusive)` (two dates).
+
+{% gridExampleRunner title="Custom Filter Options" name="custom-filter-options" /%}
+
 ## Filter Model / API
 
 The Advanced Filter model describes the current state of the Advanced Filter. This is represented by an `AdvancedFilterModel`, which is either a `ColumnAdvancedFilterModel` for a single condition, or a `JoinAdvancedFilterModel` for multiple conditions:

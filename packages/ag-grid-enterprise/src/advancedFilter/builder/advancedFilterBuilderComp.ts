@@ -1,4 +1,4 @@
-import { RefPlaceholder, _exists, _removeFromParent } from 'ag-stack';
+import { RefPlaceholder, _removeFromParent } from 'ag-stack';
 
 import type {
     AdvancedFilterModel,
@@ -19,6 +19,7 @@ import { VirtualList } from '../../widgets/virtualList';
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
 import type { AdvancedFilterService } from '../advancedFilterService';
+import type { PartialColumnFilterModel } from '../filterExpressionUtils';
 import { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemAddComp } from './advancedFilterBuilderItemAddComp';
 import { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
@@ -572,12 +573,6 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     }
 
     private validateItems(): void {
-        const clearOperator = (filterModel: ColumnAdvancedFilterModel) => {
-            filterModel.type = undefined as any;
-        };
-        const clearOperand = (filterModel: ColumnAdvancedFilterModel) => {
-            delete (filterModel as any).filter;
-        };
         for (const item of this.items) {
             if (!item.valid || !item.filterModel || item.filterModel.filterType === 'join') {
                 continue;
@@ -585,25 +580,21 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             const { filterModel } = item;
             const { colId } = filterModel;
             const hasColumn = this.advFilterExpSvc.getColumnAutocompleteEntries().find(({ key }) => key === colId);
-            const columnDetails = this.advFilterExpSvc.getColumnDetails(filterModel.colId);
-            if (!hasColumn || !columnDetails.column) {
+            const { column, baseCellDataType } = this.advFilterExpSvc.getColumnDetails(colId);
+            if (!hasColumn || !column) {
                 item.valid = false;
-                filterModel.colId = undefined as any;
-                clearOperator(filterModel);
-                clearOperand(filterModel);
-                continue;
-            }
-            const operatorForType = this.advFilterExpSvc.getDataTypeExpressionOperator(columnDetails.baseCellDataType)!;
-            const operator = operatorForType.operators[filterModel.type];
-            if (!operator) {
+                delete (filterModel as PartialColumnFilterModel).colId;
+                clearCondition(filterModel);
+            } else if (!this.advFilterExpSvc.getExpressionOperator(baseCellDataType, filterModel.type, column)) {
                 item.valid = false;
-                clearOperator(filterModel);
-                clearOperand(filterModel);
-                continue;
-            }
-            if (operator.numOperands > 0 && !_exists((filterModel as any).filter)) {
-                item.valid = false;
+                clearCondition(filterModel);
             }
         }
     }
 }
+
+const clearCondition = (filterModel: PartialColumnFilterModel) => {
+    delete filterModel.type;
+    delete filterModel.filter;
+    delete filterModel.filterTo;
+};

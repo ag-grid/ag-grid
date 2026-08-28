@@ -1,10 +1,9 @@
-import { _hasOwn, _parseBigIntOrNull, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-stack';
+import { _getOwn, _parseBigIntOrNull, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-stack';
 
 import type {
     AgColumn,
     BaseCellDataType,
     BeanCollection,
-    BooleanAdvancedFilterModel,
     ColumnAdvancedFilterModel,
     ColumnModel,
     ColumnNameService,
@@ -13,11 +12,12 @@ import type {
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _toFiniteNumber } from 'ag-grid-community';
+import { BeanStub, _classifyFilterOptions, _toFiniteNumber } from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import { COL_FILTER_EXPRESSION_END_CHAR, COL_FILTER_EXPRESSION_START_CHAR } from './colFilterExpressionParser';
+import { createCustomOptionOperators, getColumnFilterOptions } from './customFilterOptions';
 import type {
     DataTypeFilterExpressionOperators,
     FilterExpressionEvaluatorParams,
@@ -29,6 +29,7 @@ import {
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
+import type { ColumnFilterModelOperands } from './filterExpressionUtils';
 import {
     getBigIntFormatter,
     getBigIntParser,
@@ -37,9 +38,18 @@ import {
     hasCustomNumberOperands,
 } from './filterExpressionUtils';
 
-/** What an unquoted operand cannot carry: a space or `)` ends it, and a leading quote opens one. */
-function needsQuotes(operand: string): boolean {
-    return operand.includes(' ') || operand.includes(')') || operand.startsWith(`'`) || operand.startsWith('"');
+/**
+ * What an unquoted operand cannot carry: a space or `)` ends it, a leading quote opens one, and inside a
+ * comma-separated pair a `,` ends it too.
+ */
+function needsQuotes(operand: string, inPair?: boolean): boolean {
+    return (
+        operand.includes(' ') ||
+        operand.includes(')') ||
+        operand.startsWith(`'`) ||
+        operand.startsWith('"') ||
+        (!!inPair && operand.includes(','))
+    );
 }
 
 /** The quote a value can be wrapped in, or null when it holds both kinds: either one would end it early. */
@@ -59,6 +69,12 @@ const COPIED_FILTER_PARAMS: (keyof FilterExpressionEvaluatorParams<any>)[] = [
     'includeBlanksInGreaterThan',
 ];
 
+/** A column's operators and the keys it narrows them to, classified together from its one `filterOptions`. */
+interface ColumnOperators {
+    readonly operators: DataTypeFilterExpressionOperators<any>;
+    readonly activeOperators: string[] | undefined;
+}
+
 export class AdvancedFilterExpressionService extends BeanStub implements NamedBean {
     beanName = 'advFilterExpSvc' as const;
 
@@ -74,7 +90,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         // Written in the column's own syntax exactly where `getNumberParser` reads that syntax back.
         number: (model) => {
             const column = this.colModel.getNonPivotCol(model.colId);
-            return this.formatOperand(
+            return this.applyOperandFormatter(
                 model.filter,
                 getNumberFormatter(column, this.gos),
                 _toFiniteNumber,
@@ -83,7 +99,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         },
         bigint: (model) => {
             const column = this.colModel.getNonPivotCol(model.colId);
-            return this.formatOperand(
+            return this.applyOperandFormatter(
                 model.filter,
                 getBigIntFormatter(column, this.gos),
                 _parseBigIntOrNull,
@@ -166,10 +182,23 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     private expressionOperators: FilterExpressionOperators;
     private expressionJoinOperators: { AND: string; OR: string };
     private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams<any> } = Object.create(null);
+    /** Keyed by data type as well as column: a model's `filterType` need not be the column's current one. */
+    private columnExpressionOperators: { [dataType: string]: WeakMap<AgColumn, ColumnOperators> } = Object.create(null);
 
     public postConstruct(): void {
         this.expressionJoinOperators = this.generateExpressionJoinOperators();
         this.expressionOperators = this.generateExpressionOperators();
+        // Everything cached here is keyed on a column's name, visibility or definition, and each of these
+        // changes one of them without going through `newColumnsLoaded`.
+        const resetColumnCaches = this.resetColumnCaches.bind(this);
+        this.addManagedEventListeners({
+            newColumnsLoaded: resetColumnCaches,
+            columnVisible: resetColumnCaches,
+            columnRowGroupChanged: resetColumnCaches,
+            columnPivotModeChanged: resetColumnCaches,
+            columnPivotChanged: resetColumnCaches,
+            columnHeaderNameChanged: resetColumnCaches,
+        });
     }
 
     public parseJoinOperator(model: JoinAdvancedFilterModel): string {
@@ -198,7 +227,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
      * is used: the expression is what the operand is parsed back out of, so one that does not round-trip
      * would quietly rewrite the stored value.
      */
-    private formatOperand<V>(
+    private applyOperandFormatter<V>(
         filter: string | number | undefined,
         formatter: ((value: V) => string | null) | null | undefined,
         parse: (rawValue: string) => V | null,
@@ -223,7 +252,11 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     public getOperatorDisplayValue(model: ColumnAdvancedFilterModel): string | undefined {
-        return this.getExpressionOperator(model.filterType, model.type)?.displayValue ?? model.type;
+        return this.getModelOperator(model)?.displayValue ?? model.type;
+    }
+
+    private getModelOperator(model: ColumnAdvancedFilterModel): FilterExpressionOperator<any> | undefined {
+        return this.getExpressionOperator(model.filterType, model.type, this.colModel.getNonPivotColById(model.colId));
     }
 
     public getOperandModelValue(
@@ -249,32 +282,48 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return baseCellDataType !== 'bigint';
     }
 
-    public getOperandDisplayValue(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
-        const { filter, filterType } = model as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>;
-
-        if (filter == null) {
+    /** The whole operand region: one value, or the comma-separated bracketed pair an option taking two writes. */
+    private getOperandDisplayValue(model: ColumnAdvancedFilterModel): string {
+        const { filter, filterTo } = model as ColumnFilterModelOperands;
+        const numOperands = this.getModelOperator(model)?.numOperands;
+        // A slot the option does not take is not its value, and writing it spells an expression nothing parses.
+        if (numOperands === 0) {
             return '';
         }
-        const canonical = _toStringOrNull(filter) ?? '';
-        let operand1 =
-            this.filterOperandGetters[filterType](
-                model as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>
-            ) ?? canonical;
+        if (numOperands !== 2) {
+            return filter == null ? '' : ` ${this.formatOperand(model, filter)}`;
+        }
+        return ` (${this.formatOperand(model, filter, false, true)}, ${this.formatOperand(model, filterTo, false, true)})`;
+    }
+
+    /** One operand of a model, quoted for the expression unless the caller shows it on its own. */
+    public formatOperand(
+        model: ColumnAdvancedFilterModel,
+        value: string | number | undefined,
+        skipFormatting?: boolean,
+        inPair?: boolean
+    ): string {
+        if (value == null) {
+            return '';
+        }
+        const { filterType, colId } = model;
+        const canonical = _toStringOrNull(value) ?? '';
+        let operand = _getOwn(this.filterOperandGetters, filterType)?.({ filter: value, colId }) ?? canonical;
         const isNumeric = filterType === 'number' || filterType === 'bigint';
         // A numeric operand is written bare, so quotes are added only for a format that could not be read
         // back without them. Text is always quoted, empty included.
-        if (!skipFormatting && (!isNumeric || needsQuotes(operand1))) {
-            const quote = quoteChar(operand1);
+        if (!skipFormatting && (!isNumeric || needsQuotes(operand, inPair))) {
+            const quote = quoteChar(operand);
             if (quote) {
-                operand1 = `${quote}${operand1}${quote}`;
+                operand = `${quote}${operand}${quote}`;
             } else if (isNumeric) {
                 // No quote can wrap this format, so it cannot be read back: write the canonical number instead.
-                operand1 = canonical;
+                operand = canonical;
             } else {
-                operand1 = `"${operand1}"`; // text is the value itself, so there is nothing to fall back to
+                operand = `"${operand}"`; // text is the value itself, so there is nothing to fall back to
             }
         }
-        return skipFormatting ? operand1 : ` ${operand1}`;
+        return operand;
     }
 
     public parseColumnFilterModel(model: ColumnAdvancedFilterModel): string {
@@ -340,6 +389,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             }
             return 0;
         });
+        this.columnAutocompleteEntries = entries;
         return entries;
     }
 
@@ -348,11 +398,8 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         column: AgColumn | null | undefined,
         baseCellDataType?: BaseCellDataType
     ): AutocompleteEntry[] {
-        const operatorForType = this.getDataTypeExpressionOperator(baseCellDataType);
-        if (!operatorForType) {
-            return [];
-        }
-        return operatorForType.getEntries(column ? this.getActiveOperators(column) : undefined);
+        const columnOperators = this.getColumnOperators(baseCellDataType, column);
+        return columnOperators ? columnOperators.operators.getEntries(columnOperators.activeOperators) : [];
     }
 
     public getJoinOperatorAutocompleteEntries(): AutocompleteEntry[] {
@@ -364,19 +411,78 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return this.generateAutocompleteListParams(this.getColumnAutocompleteEntries(), 'column', searchString);
     }
 
-    public getDataTypeExpressionOperator(
-        baseCellDataType?: BaseCellDataType
-    ): DataTypeFilterExpressionOperators<any> | undefined {
-        return this.expressionOperators[baseCellDataType!];
-    }
-
     public getExpressionOperator(
         baseCellDataType?: BaseCellDataType,
-        operator?: string
+        operator?: string,
+        column?: AgColumn | null
     ): FilterExpressionOperator<any> | undefined {
-        const operators = this.getDataTypeExpressionOperator(baseCellDataType)?.operators;
         // A model `type` such as `toString` must not resolve to an inherited member.
-        return operators && _hasOwn(operators, operator!) ? operators[operator!] : undefined;
+        return _getOwn(this.getColumnOperators(baseCellDataType, column)?.operators.operators, operator!);
+    }
+
+    /**
+     * Whether the column's dropdown lists this operator - offered, not merely resolvable. Only a pill the
+     * user is retargeting asks: an expression already written is read against everything the column resolves.
+     */
+    public isOperatorOffered(
+        baseCellDataType: BaseCellDataType | undefined,
+        operator: string | undefined,
+        column: AgColumn | null | undefined
+    ): boolean {
+        const columnOperators = this.getColumnOperators(baseCellDataType, column);
+        if (!operator || !_getOwn(columnOperators?.operators.operators, operator)) {
+            return false;
+        }
+        const activeOperators = columnOperators!.activeOperators;
+        return !activeOperators || activeOperators.includes(operator);
+    }
+
+    /**
+     * A data type's built-ins with the column's own options over them, so a `displayKey` is per column, and
+     * the keys the column narrows its suggestions to — everything it can resolve, and what it offers of that.
+     */
+    public getColumnOperators(
+        baseCellDataType: BaseCellDataType | undefined,
+        column: AgColumn | null | undefined
+    ): ColumnOperators | undefined {
+        const dataTypeOperators = this.expressionOperators[baseCellDataType!];
+        if (!dataTypeOperators) {
+            return undefined;
+        }
+        if (!column) {
+            return { operators: dataTypeOperators, activeOperators: undefined };
+        }
+        const byDataType = this.columnExpressionOperators;
+        let forDataType = byDataType[baseCellDataType!];
+        if (!forDataType) {
+            forDataType = new WeakMap();
+            byDataType[baseCellDataType!] = forDataType;
+        }
+        let columnOperators = forDataType.get(column);
+        if (!columnOperators) {
+            columnOperators = this.createColumnOperators(dataTypeOperators, column);
+            forDataType.set(column, columnOperators);
+        }
+        return columnOperators;
+    }
+
+    private createColumnOperators(
+        dataTypeOperators: DataTypeFilterExpressionOperators<any>,
+        column: AgColumn
+    ): ColumnOperators {
+        const filterOptions = getColumnFilterOptions(column);
+        if (!filterOptions) {
+            return { operators: dataTypeOperators, activeOperators: undefined };
+        }
+        // Reported here as well as by `OptionsFactory`, because a column filtered only through the Advanced
+        // Filter never builds one.
+        const { offered, customOptions } = _classifyFilterOptions(filterOptions, (keys) => this.warn(72, { keys }));
+        const localeTextFunc = this.getLocaleTextFunc();
+        const operators = customOptions.size
+            ? createCustomOptionOperators(dataTypeOperators, customOptions, localeTextFunc)
+            : dataTypeOperators;
+        const activeOperators = [...offered.keys()].filter((key) => _getOwn(operators.operators, key));
+        return { operators, activeOperators: activeOperators.length ? activeOperators : undefined };
     }
 
     public getExpressionJoinOperators(): { AND: string; OR: string } {
@@ -502,18 +608,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         };
     }
 
-    private getActiveOperators(column: AgColumn): string[] | undefined {
-        const filterOptions = column.colDef.filterParams?.filterOptions;
-        if (!filterOptions) {
-            return undefined;
-        }
-        const isValid = filterOptions.every((filterOption: any) => typeof filterOption === 'string');
-        return isValid ? filterOptions : undefined;
-    }
-
     public resetColumnCaches(): void {
         this.columnAutocompleteEntries = null;
         this.columnNameToIdMap = Object.create(null);
         this.expressionEvaluatorParams = Object.create(null);
+        this.columnExpressionOperators = Object.create(null);
     }
 }

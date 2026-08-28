@@ -3,6 +3,7 @@ import {
     ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
+    FloatingFilterHarness,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -982,6 +983,59 @@ describe('Column filter — a malformed `filterOptions` list', () => {
         `);
     });
 
+    // The summary reads the same count the inputs did, so it names both values rather than only the first.
+    test('a numeric string `numberOfInputs` counts for the summary too', async () => {
+        const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'age',
+                    filter: 'agNumberColumnFilter',
+                    floatingFilter: true,
+                    filterParams: { filterOptions: [{ ...ANY_OF_TWO, numberOfInputs: '2' }] as any, debounceMs: 0 },
+                },
+            ],
+            rowData: [{ age: 25 }, { age: 40 }],
+        });
+
+        await api.setColumnFilterModel('age', { filterType: 'number', type: 'anyOfTwo', filter: 25, filterTo: 40 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(FloatingFilterHarness.get(api, 'age').input().value).toBe('25-40');
+    });
+
+    // The declared `0 | 1 | 2` is no check on a JS caller, so a count outside it is clamped into the range
+    // rather than believed: the inputs, the model and the summary then cannot disagree about the arity.
+    test('a count above the range is taken as two, and one below it as none', async () => {
+        const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'age',
+                    filter: 'agNumberColumnFilter',
+                    floatingFilter: true,
+                    filterParams: { filterOptions: [{ ...ANY_OF_TWO, numberOfInputs: 3 }] as any, debounceMs: 0 },
+                },
+                {
+                    field: 'age',
+                    colId: 'below',
+                    filter: 'agNumberColumnFilter',
+                    floatingFilter: true,
+                    filterParams: { filterOptions: [{ ...ANY_OF_TWO, numberOfInputs: -1 }] as any, debounceMs: 0 },
+                },
+            ],
+            rowData: [{ age: 25 }, { age: 40 }],
+        });
+
+        await api.setColumnFilterModel('age', { filterType: 'number', type: 'anyOfTwo', filter: 25, filterTo: 40 });
+        await api.setColumnFilterModel('below', { filterType: 'number', type: 'anyOfTwo', filter: 25, filterTo: 40 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(FloatingFilterHarness.get(api, 'age').input().value).toBe('25-40');
+        // No values, so the summary is the option's name and neither value is shown.
+        expect(FloatingFilterHarness.get(api, 'below').input().value).toBe('Any Of Two');
+    });
+
     test('`filterPlaceholder` is given the custom option, not an unresolved key', async () => {
         const seen: { filterOptionKey: string; filterOption: string }[] = [];
         const api = await gridsManager.createGridAndWait('grid1', {
@@ -1551,6 +1605,36 @@ describe('Column filter — the date summary for an option the grid does not def
         await new FilterDom(api, 'a zero-input custom option', { colId: 'date' }).checkFilterDom(`
             FLOATING FILTER date
             input: "Is weekend" ⊘
+            active: true
+            model:
+              filterType: "date"
+              type: "isWeekend"
+              dateFrom: null
+              dateTo: null
+        `);
+    });
+
+    test('a zero-input custom option whose `displayName` is blank is named by its key', async () => {
+        const filterParams = {
+            filterOptions: [
+                'equals',
+                { displayKey: 'isWeekend', displayName: '', numberOfInputs: 0, predicate: () => true },
+            ],
+            readOnly: true,
+            debounceMs: 0,
+        };
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', floatingFilter: true, filterParams }],
+            rowData: [{ date: '2024-01-01' }],
+        } as GridOptions);
+
+        await api.setColumnFilterModel('date', { filterType: 'date', type: 'isWeekend', dateFrom: null, dateTo: null });
+        await api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await new FilterDom(api, 'a zero-input custom option with a blank name', { colId: 'date' }).checkFilterDom(`
+            FLOATING FILTER date
+            input: "isWeekend" ⊘
             active: true
             model:
               filterType: "date"

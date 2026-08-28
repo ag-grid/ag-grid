@@ -11,7 +11,10 @@ export interface IFilterOptionDef {
     displayName: string;
     /** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */
     predicate?: (filterValues: any[], cellValue: any) => boolean;
-    /** Number of inputs to display for this option. Defaults to `1` if unspecified. */
+    /**
+     * Number of inputs to display for this option, and the number of values an Advanced Filter expression
+     * writes for it. Defaults to `1` if unspecified; a value outside the range is clamped into it.
+     */
     numberOfInputs?: 0 | 1 | 2;
 }
 
@@ -49,7 +52,7 @@ export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParam
  */
 export interface ISimpleFilterParams extends IProvidedFilterParams, IAutoCompleteComponentParams {
     /**
-     * Array of filter options to present to the user.
+     * Array of filter options to present to the user, and the options the Advanced Filter offers for the column.
      * A key the filter cannot evaluate is reported when a value is tested against it under the built-in matching.
      */
     filterOptions?: (IFilterOptionDef | ISimpleFilterModelType)[];

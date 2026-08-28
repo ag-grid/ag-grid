@@ -136,14 +136,25 @@ export {
 export { AgFilterButtonSelector, FilterButtonComp } from './filter/filterButtonComp';
 export type { FilterButton, FilterButtonEvent } from './filter/filterButtonComp';
 export { FilterComp } from './filter/filterComp';
-export { _getDefaultSimpleFilter, _getFilterParamsForDataType } from './filter/filterDataTypeUtils';
+export {
+    _getDefaultSimpleFilter,
+    _getFilterParamsForDataType,
+    _isGridSuppliedFilterOptions,
+} from './filter/filterDataTypeUtils';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
-export { _bindFilterCallback, _isBlank, _hasValue } from './filter/provided/simpleFilterUtils';
+export {
+    _bindFilterCallback,
+    _classifyFilterOptions,
+    _getCustomOptionDisplayName,
+    _getCustomOptionNumberOfInputs,
+    _hasValue,
+    _isBlank,
+} from './filter/provided/simpleFilterUtils';
 export type { FocusService } from './focusService';
 export { _getGlobalGridOption } from './globalGridOptions';
 export { GridCoreCreator } from './grid';

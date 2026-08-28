@@ -15,6 +15,18 @@ import type {
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from './filterExpressionOperators';
 
+/** The operand slots every `ColumnAdvancedFilterModel` member shares, which the union itself cannot express. */
+export interface ColumnFilterModelOperands {
+    filter?: string | number;
+    filterTo?: string | number;
+}
+
+/** A condition the Builder is still assembling: each slot is absent until the user has chosen it. */
+export interface PartialColumnFilterModel extends ColumnFilterModelOperands {
+    colId?: string;
+    type?: string;
+}
+
 export interface FilterExpressionParserParams {
     expression: string;
     gos: GridOptionsService;
@@ -109,18 +121,28 @@ export function updateExpression(
     updatedValuePart: string,
     appendSpace?: boolean,
     appendQuote?: boolean,
-    empty?: boolean
+    empty?: boolean,
+    appendBracket?: boolean
 ): AutocompleteUpdate {
-    const secondPartStartPosition = endPosition + (!expression.length || empty ? 0 : 1);
+    let secondPartStartPosition = endPosition + (!expression.length || empty ? 0 : 1);
     let positionOffset = 0;
     if (appendSpace) {
-        if (expression[secondPartStartPosition] === ' ') {
-            // already a space, just move the position
+        const hasSpace = expression[secondPartStartPosition] === ' ';
+        if (hasSpace && !appendBracket && !appendQuote) {
+            // already a space and nothing to open after it, so just move the position
             positionOffset = 1;
         } else {
             updatedValuePart += ' ';
+            // An option taking two values opens their bracketed list, then the first value's quote. These
+            // have to be written past the space, so an existing one is rewritten rather than kept.
+            if (appendBracket) {
+                updatedValuePart += '(';
+            }
             if (appendQuote) {
                 updatedValuePart += `"`;
+            }
+            if (hasSpace) {
+                secondPartStartPosition++;
             }
         }
     }

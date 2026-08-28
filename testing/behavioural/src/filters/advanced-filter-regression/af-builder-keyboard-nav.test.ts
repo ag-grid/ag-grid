@@ -16,9 +16,10 @@ import { AdvancedFilterModule } from 'ag-grid-enterprise';
 /**
  * Regression baseline for the Advanced Filter Builder keyboard surface: the item-navigation feature
  * (Enter to focus into a row's pills, Escape to return focus to the row, focus highlight) and the
- * keyboard-accessible reorder via the Move Up/Down buttons (shown by `showMoveButtons`). Reordering
- * AND siblings does not change the result, so the observable behaviour is the model's condition order
- * and the builder tree — both asserted, alongside a GridRows check that the filter still applies.
+ * keyboard-accessible reorder via the Move Up/Down buttons (shown by
+ * `showMoveButtons`). Reordering AND siblings does not change the result, so the observable behaviour is
+ * the model's condition order and the builder tree — both asserted, alongside a GridRows check that the
+ * filter still applies.
  */
 interface Row {
     athlete: string;

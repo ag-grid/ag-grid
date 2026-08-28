@@ -703,14 +703,24 @@ describe('getStructuredSchema - filter feature', () => {
             );
         });
 
-        test('extracts displayKey from object-style filterOptions', async () => {
+        // The filter's own definition of a usable entry decides, so the schema cannot offer a `type` the
+        // filter drops: `customEquals` has no `displayName` or `predicate`, `startsA` has both.
+        test('extracts displayKey from object-style filterOptions, and drops an entry the filter would', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     {
                         field: 'name',
                         filter: 'agTextColumnFilter',
                         filterParams: {
-                            filterOptions: ['contains', { displayKey: 'customEquals' }],
+                            filterOptions: [
+                                'contains',
+                                { displayKey: 'customEquals' },
+                                {
+                                    displayKey: 'startsA',
+                                    displayName: 'Starts With A',
+                                    predicate: (_v: any[], cellValue: any) => cellValue?.startsWith('A'),
+                                },
+                            ],
                         },
                     },
                 ],
@@ -728,7 +738,7 @@ describe('getStructuredSchema - filter feature', () => {
             const schema = toJSON(api.getStructuredSchema());
             const nameFilter = resolveNullable(schema.properties.filter.properties.filterModel.properties.name);
             const conditionType = nameFilter.properties.conditions.items.properties.type;
-            expect(conditionType.enum).toEqual(['contains', 'customEquals']);
+            expect(conditionType.enum).toEqual(['contains', 'startsA']);
             await new GridRows(api, `extracts displayKey from object-style filterOptions final state`).check(`
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 name:"Alice"
@@ -1383,6 +1393,86 @@ describe('getStructuredSchema - advanced filter', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice"
         `);
+    });
+
+    // The operators come from the expression service, so a Custom Filter Option is offered under the same
+    // key an expression would accept, and only to the column that declares it.
+    test('a column custom option reaches the schema, and a sibling of the same type keeps the built-ins', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                {
+                    field: 'age',
+                    cellDataType: 'number',
+                    filterParams: {
+                        filterOptions: [
+                            'equals',
+                            {
+                                displayKey: 'betweenExclusive',
+                                displayName: 'Between (Exclusive)',
+                                numberOfInputs: 2,
+                                predicate: ([from, to]: any[], cellValue: any) =>
+                                    cellValue != null && cellValue > from && cellValue < to,
+                            },
+                        ],
+                    },
+                },
+                { field: 'score', cellDataType: 'number' },
+            ],
+            rowData: [{ age: 25, score: 10 }],
+            enableAdvancedFilter: true,
+        });
+
+        const schema = toJSON(api.getStructuredSchema());
+
+        // Found by the column each def names, not by the suffix: the suffix follows column order, so
+        // reading it positionally would swap the two silently if the columnDefs were reordered.
+        const defFor = (colId: string) =>
+            Object.values(schema.$defs).find((def: any) => def?.properties?.colId?.enum?.includes(colId)) as any;
+
+        // The suffix scheme is then a claim of its own: the first group of a data type keeps the bare name.
+        expect(Object.keys(schema.$defs).filter((key) => key.startsWith('numberAdvancedFilterModel'))).toEqual([
+            'numberAdvancedFilterModel',
+            'numberAdvancedFilterModel2',
+        ]);
+
+        const narrowed = defFor('age');
+        expect(narrowed.properties.colId.enum).toEqual(['age']);
+        expect(narrowed.properties.type.enum).toEqual(['equals', 'betweenExclusive']);
+        expect(narrowed.properties.filterTo).toBeDefined();
+        // The operators in one group need not share an arity, so a model naming the one-value `equals` must
+        // validate without `filterTo`, and `blank` below without either. The model declares both optional.
+        expect(narrowed.required).toEqual(['filterType', 'colId', 'type']);
+
+        const builtIns = defFor('score');
+        expect(builtIns.properties.colId.enum).toEqual(['score']);
+        expect(builtIns.properties.type.enum).toEqual([
+            'equals',
+            'notEqual',
+            'greaterThan',
+            'greaterThanOrEqual',
+            'lessThan',
+            'lessThanOrEqual',
+            'blank',
+            'notBlank',
+        ]);
+        expect(builtIns.properties.filterTo).toBeUndefined();
+        // `blank` and `notBlank` take no value, so `filter` cannot be required here either.
+        expect(builtIns.required).toEqual(['filterType', 'colId', 'type']);
+    });
+
+    test('a boolean column carries no value slot, since none of its operators takes one', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'active', cellDataType: 'boolean' }],
+            rowData: [{ active: true }],
+            enableAdvancedFilter: true,
+        });
+
+        const schema = toJSON(api.getStructuredSchema());
+
+        const model = schema.$defs.booleanAdvancedFilterModel;
+        expect(model.properties.type.enum).toEqual(['true', 'false', 'blank', 'notBlank']);
+        expect(model.properties.filter).toBeUndefined();
+        expect(model.properties.filterTo).toBeUndefined();
     });
 });
 

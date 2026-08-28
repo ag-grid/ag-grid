@@ -1,31 +1,67 @@
-import type { BaseCellDataType, BeanCollection } from 'ag-grid-community';
+import { _getOwn } from 'ag-stack';
 
+import type { AgColumn, BaseCellDataType, BeanCollection } from 'ag-grid-community';
+
+import type { AdvancedFilterExpressionService } from '../../advancedFilter/advancedFilterExpressionService';
+import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
 import type { JSONSchema } from '../schemaTypes';
 
-export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc }: BeanCollection) => {
-    if (!dataTypeSvc) {
+/** Columns sharing a data type and the same operators, which a column's `filterOptions` can narrow or extend. */
+interface OperatorGroup {
+    readonly dataType: BaseCellDataType;
+    readonly colIds: string[];
+    readonly operatorKeys: string[];
+    readonly maxOperands: number;
+}
+
+/**
+ * Read from the expression service rather than listed here, so a column's Custom Filter Options are offered
+ * to a caller under the same keys, and the same arity, that an expression would accept.
+ */
+function getColumnOperatorGroup(
+    advFilterExpSvc: AdvancedFilterExpressionService,
+    column: AgColumn,
+    dataType: BaseCellDataType
+): Omit<OperatorGroup, 'colIds'> {
+    const columnOperators = advFilterExpSvc.getColumnOperators(dataType, column);
+    const entries = columnOperators?.operators.getEntries(columnOperators.activeOperators) ?? [];
+    const operatorKeys: string[] = [];
+    let maxOperands = 0;
+    for (let i = 0, len = entries.length; i < len; ++i) {
+        const key = entries[i].key;
+        operatorKeys.push(key);
+        const numOperands = _getOwn(columnOperators!.operators.operators, key)?.numOperands ?? 0;
+        if (numOperands > maxOperands) {
+            maxOperands = numOperands;
+        }
+    }
+    return { dataType, operatorKeys, maxOperands };
+}
+
+export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc, advFilterExpSvc }: BeanCollection) => {
+    if (!dataTypeSvc || !advFilterExpSvc) {
         return;
     }
+    const expSvc = advFilterExpSvc as AdvancedFilterExpressionService;
 
     const columns = colModel.getCols();
 
-    const dataTypes: Record<BaseCellDataType, string[]> = {
-        boolean: [],
-        object: [],
-        date: [],
-        dateString: [],
-        dateTime: [],
-        dateTimeString: [],
-        number: [],
-        bigint: [],
-        text: [],
-    };
-
+    // Keyed on the operators as well as the data type, so one column's options never reach a sibling's schema.
+    const groups = new Map<string, OperatorGroup>();
     for (const col of columns) {
         const dataType = dataTypeSvc.getBaseDataType(col);
-        if (dataType) {
-            dataTypes[dataType].push(col.colId);
+        if (!dataType) {
+            continue;
+        }
+        const group = getColumnOperatorGroup(expSvc, col, dataType);
+        // JSON rather than a join: a `displayKey` is author-written and may hold the separator itself.
+        const groupKey = `${dataType} ${group.maxOperands} ${JSON.stringify(group.operatorKeys)}`;
+        const existing = groups.get(groupKey);
+        if (existing) {
+            existing.colIds.push(col.colId);
+        } else {
+            groups.set(groupKey, { ...group, colIds: [col.colId] });
         }
     }
 
@@ -33,13 +69,15 @@ export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc }: Bean
 
     const defs: Record<string, JSONSchema> = {};
 
-    for (const key of Object.keys(dataTypes) as BaseCellDataType[]) {
-        if (dataTypes[key].length > 0) {
-            const ref = `${key}AdvancedFilterModel`;
-            const builder = DataTypeSchemaBuilders[key];
-            defs[ref] = builder(dataTypes[key]);
-            columnFilterModels.push({ $ref: `#/$defs/${ref}` });
-        }
+    const refCounts: Partial<Record<BaseCellDataType, number>> = {};
+    for (const group of groups.values()) {
+        const { dataType } = group;
+        // The first group of a data type keeps the unsuffixed name, which is the only one most grids have.
+        const count = (refCounts[dataType] ?? 0) + 1;
+        refCounts[dataType] = count;
+        const ref = `${dataType}AdvancedFilterModel${count > 1 ? count : ''}`;
+        defs[ref] = buildFilterSchema(group).toJSON();
+        columnFilterModels.push({ $ref: `#/$defs/${ref}` });
     }
 
     defs.joinAdvancedFilterModel = s.object({
@@ -68,191 +106,82 @@ export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc }: Bean
     return schema;
 };
 
-const buildBooleanFilterSchema = (colIds: string[]) => {
-    return s.object({
-        filterType: s.literal('boolean', 'Filter type identifier for boolean column filters'),
-        colId: s.enum(colIds, 'Column identifier for the boolean column to filter'),
-        type: s.enum(['true', 'false'], 'Boolean value to filter by'),
-    });
-};
+/** What a data type contributes: the literal its model writes, the nouns its text reads in, and its value. */
+interface DataTypeSchema {
+    readonly filterType: string;
+    readonly noun: string;
+    readonly titleNoun: string;
+    readonly value: () => SchemaBuilder;
+}
 
-const buildObjectFilterSchema = (colIds: string[]) => {
-    return s.object({
-        filterType: s.literal('object', 'Filter type identifier for object column filters'),
-        colId: s.enum(colIds, 'Column identifier for the object column to filter'),
-        filter: s.string('Filter value to compare against object column values').nullable(),
-        type: s.enum(
-            ['equals', 'notEqual', 'contains', 'notContains', 'startsWith', 'endsWith', 'blank', 'notBlank'],
-            'Object filter operation type'
-        ),
-    });
-};
+const dateValue = () => s.string({ pattern: '^\\d{4}-\\d{2}-\\d{2}$', description: 'Date value in YYYY-MM-DD format' });
 
-const buildDateFilterSchema = (colIds: string[]) => {
-    return s.object({
-        filterType: s.literal('date', 'Filter type identifier for date column filters'),
-        colId: s.enum(colIds, 'Column identifier for the date column to filter'),
-        filter: s
-            .string({ pattern: '^\\d{4}-\\d{2}-\\d{2}$', description: 'Date value in YYYY-MM-DD format' })
-            .nullable(),
-        type: s.enum(
-            [
-                'equals',
-                'notEqual',
-                'lessThan',
-                'lessThanOrEqual',
-                'greaterThan',
-                'greaterThanOrEqual',
-                'blank',
-                'notBlank',
-            ],
-            'Date filter operation type'
-        ),
-    });
-};
-
-const buildDateStringFilterSchema = (colIds: string[]) => {
-    return s.object({
-        filterType: s.literal('date', 'Filter type identifier for date string column filters'),
-        colId: s.enum(colIds, 'Column identifier for the date string column to filter'),
-        filter: s
-            .string({ pattern: '^\\d{4}-\\d{2}-\\d{2}$', description: 'Date value in YYYY-MM-DD format' })
-            .nullable(),
-        type: s.enum(
-            [
-                'equals',
-                'notEqual',
-                'lessThan',
-                'lessThanOrEqual',
-                'greaterThan',
-                'greaterThanOrEqual',
-                'blank',
-                'notBlank',
-            ],
-            'Date string filter operation type'
-        ),
-    });
-};
-
-const buildDateTimeFilterSchema = (colIds: string[]) => {
-    return s.object({
-        filterType: s.literal('dateTime', 'Filter type identifier for datetime column filters'),
-        colId: s.enum(colIds, 'Column identifier for the datetime column to filter'),
-        filter: s
-            .string({
+const DataTypeSchemas: Record<BaseCellDataType, DataTypeSchema> = {
+    boolean: {
+        filterType: 'boolean',
+        noun: 'boolean',
+        titleNoun: 'Boolean',
+        value: () => s.string('Filter value to compare against boolean column values'),
+    },
+    object: {
+        filterType: 'object',
+        noun: 'object',
+        titleNoun: 'Object',
+        value: () => s.string('Filter value to compare against object column values'),
+    },
+    date: { filterType: 'date', noun: 'date', titleNoun: 'Date', value: dateValue },
+    dateString: { filterType: 'dateString', noun: 'date string', titleNoun: 'Date string', value: dateValue },
+    dateTime: {
+        filterType: 'dateTime',
+        noun: 'datetime',
+        titleNoun: 'DateTime',
+        value: () =>
+            s.string({
                 pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$',
                 description: 'DateTime value in YYYY-MM-DDTHH:mm:ss format',
-            })
-            .nullable(),
-        type: s.enum(
-            [
-                'equals',
-                'notEqual',
-                'lessThan',
-                'lessThanOrEqual',
-                'greaterThan',
-                'greaterThanOrEqual',
-                'blank',
-                'notBlank',
-            ],
-            'DateTime filter operation type'
-        ),
-    });
-};
-
-const buildDateTimeStringFilterSchema = (colIds: string[]) => {
-    return s.object({
-        filterType: s.literal('dateTimeString', 'Filter type identifier for datetime string column filters'),
-        colId: s.enum(colIds, 'Column identifier for the datetime string column to filter'),
-        filter: s
-            .string({
+            }),
+    },
+    dateTimeString: {
+        filterType: 'dateTimeString',
+        noun: 'datetime string',
+        titleNoun: 'DateTime string',
+        value: () =>
+            s.string({
                 pattern: '^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$',
                 description: 'DateTime value in YYYY-MM-DD HH:mm:ss format',
-            })
-            .nullable(),
-        type: s.enum(
-            [
-                'equals',
-                'notEqual',
-                'lessThan',
-                'lessThanOrEqual',
-                'greaterThan',
-                'greaterThanOrEqual',
-                'blank',
-                'notBlank',
-            ],
-            'DateTime string filter operation type'
-        ),
-    });
+            }),
+    },
+    number: {
+        filterType: 'number',
+        noun: 'number',
+        titleNoun: 'Number',
+        value: () => s.number('Numeric value to filter by'),
+    },
+    bigint: {
+        filterType: 'bigint',
+        noun: 'bigint',
+        titleNoun: 'BigInt',
+        value: () => s.string({ pattern: '^-?\\d+$', description: 'BigInt value to filter by' }),
+    },
+    text: { filterType: 'text', noun: 'text', titleNoun: 'Text', value: () => s.string('Text value to filter by') },
 };
 
-const buildNumberFilterSchema = (colIds: string[]) => {
-    return s.object({
-        filterType: s.literal('number', 'Filter type identifier for number column filters'),
-        colId: s.enum(colIds, 'Column identifier for the number column to filter'),
-        filter: s.number('Numeric value to filter by').nullable(),
-        type: s.enum(
-            [
-                'equals',
-                'notEqual',
-                'lessThan',
-                'lessThanOrEqual',
-                'greaterThan',
-                'greaterThanOrEqual',
-                'blank',
-                'notBlank',
-            ],
-            'Number filter operation type'
-        ),
-    });
-};
-
-const buildBigIntFilterSchema = (colIds: string[]) => {
-    return s.object({
-        filterType: s.literal('bigint', 'Filter type identifier for bigint column filters'),
-        colId: s.enum(colIds, 'Column identifier for the bigint column to filter'),
-        filter: s
-            .string({
-                pattern: '^-?\\d+$',
-                description: 'BigInt value to filter by',
-            })
-            .nullable(),
-        type: s.enum(
-            [
-                'equals',
-                'notEqual',
-                'lessThan',
-                'lessThanOrEqual',
-                'greaterThan',
-                'greaterThanOrEqual',
-                'blank',
-                'notBlank',
-            ],
-            'BigInt filter operation type'
-        ),
-    });
-};
-
-const buildTextFilterSchema = (colIds: string[]) => {
-    return s.object({
-        filterType: s.literal('text', 'Filter type identifier for text column filters'),
-        colId: s.enum(colIds, 'Column identifier for the text column to filter'),
-        filter: s.string('Text value to filter by').nullable(),
-        type: s.enum(
-            ['equals', 'notEqual', 'contains', 'notContains', 'startsWith', 'endsWith', 'blank', 'notBlank'],
-            'Text filter operation type'
-        ),
-    });
-};
-
-const DataTypeSchemaBuilders: Record<BaseCellDataType, (colIds: string[]) => any> = {
-    boolean: buildBooleanFilterSchema,
-    object: buildObjectFilterSchema,
-    date: buildDateFilterSchema,
-    dateString: buildDateStringFilterSchema,
-    dateTime: buildDateTimeFilterSchema,
-    dateTimeString: buildDateTimeStringFilterSchema,
-    number: buildNumberFilterSchema,
-    bigint: buildBigIntFilterSchema,
-    text: buildTextFilterSchema,
-};
+/** The second value only exists where an option takes one, which today means a Custom Filter Option. */
+function buildFilterSchema(group: OperatorGroup): SchemaBuilder {
+    const { filterType, noun, titleNoun, value } = DataTypeSchemas[group.dataType];
+    const props: Record<string, SchemaBuilder> = {
+        filterType: s.literal(filterType, `Filter type identifier for ${noun} column filters`),
+        colId: s.enum(group.colIds, `Column identifier for the ${noun} column to filter`),
+        type: s.enum(group.operatorKeys, `${titleNoun} filter operation type`),
+    };
+    // Optional, not merely nullable: the operators in one group need not share an arity, so `blank` beside
+    // `equals` must be writable without its operands, exactly as the model declares them.
+    const { maxOperands } = group;
+    if (maxOperands > 0) {
+        props.filter = value().nullable().optional();
+    }
+    if (maxOperands > 1) {
+        props.filterTo = value().nullable().optional();
+    }
+    return s.object(props);
+}

@@ -36,7 +36,10 @@ export type BigIntFilterParams<TData = any, TContext = any> = IBigIntFilterParam
  * Parameters used in `colDef.filterParams` to configure a BigInt Filter (`agBigIntColumnFilter`).
  */
 export interface IBigIntFilterParams<TData = any, TContext = any> extends IScalarFilterParams {
-    /** Array of filter options to present to the user. */
+    /**
+     * Array of filter options to present to the user, and the options the Advanced Filter offers for the column.
+     * A key the filter cannot evaluate is reported when a value is tested against it under the built-in matching.
+     */
     filterOptions?: (IFilterOptionDef | ScalarFilterOptionKey)[];
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: ScalarFilterOptionKey | CustomFilterOptionKey;
