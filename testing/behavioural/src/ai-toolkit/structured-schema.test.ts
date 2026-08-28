@@ -703,8 +703,7 @@ describe('getStructuredSchema - filter feature', () => {
             );
         });
 
-        // The filter's own definition of a usable entry decides, so the schema cannot offer a `type` the
-        // filter drops: `customEquals` has no `displayName` or `predicate`, `startsA` has both.
+        // The filter decides what is usable, so the schema cannot offer a `type` it drops.
         test('extracts displayKey from object-style filterOptions, and drops an entry the filter would', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
@@ -1395,8 +1394,7 @@ describe('getStructuredSchema - advanced filter', () => {
         `);
     });
 
-    // The operators come from the expression service, so a Custom Filter Option is offered under the same
-    // key an expression would accept, and only to the column that declares it.
+    // From the expression service, so an option is offered under the key an expression would accept.
     test('a column custom option reaches the schema, and a sibling of the same type keeps the built-ins', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -1424,8 +1422,7 @@ describe('getStructuredSchema - advanced filter', () => {
 
         const schema = toJSON(api.getStructuredSchema());
 
-        // A def per column AND arity: the operands a model must carry are the chosen operator's, so operators
-        // taking different counts cannot share one schema. Found by what each def names rather than by suffix.
+        // A def per column AND arity: operators taking different counts cannot share one schema.
         const defsFor = (colId: string) =>
             (Object.values(schema.$defs) as any[]).filter((def: any) => def?.properties?.colId?.enum?.includes(colId));
         const defFor = (colId: string, ...operatorKeys: string[]) =>

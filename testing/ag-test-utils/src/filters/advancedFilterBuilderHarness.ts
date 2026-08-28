@@ -248,6 +248,17 @@ export class AdvancedFilterBuilderHarness {
 
     /** Clicks the builder Apply button, committing the staged edits to the grid (and closing the dialog). */
     public async apply(): Promise<this> {
+        await firePointerLikeClick(this.applyButton());
+        await asyncSetTimeout(0);
+        return this;
+    }
+
+    /** Whether Apply is shut — the whole list's verdict, including rows the virtual list has not mounted. */
+    public applyDisabled(): boolean {
+        return this.applyButton().disabled;
+    }
+
+    private applyButton(): HTMLButtonElement {
         const panel = document.querySelector(`${BUILDER} .ag-filter-apply-panel`);
         const button = Array.from(panel?.querySelectorAll<HTMLButtonElement>('button') ?? []).find(
             (b) => b.textContent?.trim() === 'Apply'
@@ -255,9 +266,7 @@ export class AdvancedFilterBuilderHarness {
         if (!button) {
             throw new Error('Builder Apply button not found');
         }
-        await firePointerLikeClick(button);
-        await asyncSetTimeout(0);
-        return this;
+        return button;
     }
 
     /**

@@ -10,10 +10,7 @@ import {
 import type { DataTypeFilterExpressionOperators, FilterExpressionOperator } from './filterExpressionOperators';
 import { getEntries } from './filterExpressionOperators';
 
-/**
- * A list the column author wrote, as opposed to the one a data type supplies for every column of its kind.
- * An empty list narrows to nothing, so it is not a list this column offers anything from.
- */
+/** A list the column author wrote, as opposed to the one its data type supplies; an empty list narrows nothing. */
 function getAuthoredFilterOptions(filterParams: any): (string | IFilterOptionDef)[] | undefined {
     const filterOptions = filterParams?.filterOptions;
     return !filterOptions?.length || _isGridSuppliedFilterOptions(filterOptions) ? undefined : filterOptions;
@@ -22,8 +19,7 @@ function getAuthoredFilterOptions(filterParams: any): (string | IFilterOptionDef
 /** The options a column narrows itself to, or `undefined` where it narrows nothing of its own. */
 export function getColumnFilterOptions(column: AgColumn): (string | IFilterOptionDef)[] | undefined {
     const filterParams = column.colDef.filterParams;
-    // A Multi Filter's own params carry its children, and `filterOptions` is written on a child rather than
-    // on them. Its own level is read after the children, for a list written there.
+    // A Multi Filter writes `filterOptions` on a child, so its own level is read only after them.
     const filters: { filterParams?: any }[] | undefined = filterParams?.filters;
     for (let i = 0, len = filters?.length ?? 0; i < len; ++i) {
         const childOptions = getAuthoredFilterOptions(filters![i]?.filterParams);
@@ -56,8 +52,7 @@ function createCustomOptionOperator(
 ): FilterExpressionOperator<any> {
     const predicate = option.predicate!;
     const numOperands = _getCustomOptionNumberOfInputs(option);
-    // Arity bound here rather than branched on per row; the predicate gets the raw cell value, as it does
-    // in the column filter.
+    // Arity bound here rather than branched on per row; the predicate gets the raw cell value.
     let evaluator: FilterExpressionOperator<any>['evaluator'];
     if (numOperands === 0) {
         evaluator = (value) => predicate([], value);

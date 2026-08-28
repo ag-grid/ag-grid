@@ -1,9 +1,7 @@
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
- * Own properties only: a lookup table keyed by a user-supplied string otherwise resolves `toString` and friends
- * off `Object.prototype` and hands back a function where a value was expected. `__proto__` is refused outright
- * rather than tested, as no table means it as a key and a parsed payload can plant it as an own property.
+ * Own properties only, `__proto__` refused outright: a user-supplied key otherwise resolves off `Object.prototype`.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _hasOwn(obj: object, key: PropertyKey): boolean {

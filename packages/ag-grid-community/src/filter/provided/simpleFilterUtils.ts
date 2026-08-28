@@ -122,9 +122,7 @@ const zeroInputTypes: ReadonlySet<string> = new Set<ISimpleFilterModelType>([
 const REQUIRED_OPTION_PROPERTIES: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
 
 /**
- * What a `filterOptions` list offers, keyed in the order it first names them, and the Custom Filter Options
- * among them. One definition, so the column filter and the Advanced Filter cannot disagree over any one
- * entry; what each does with a list that keeps nothing is still its own.
+ * One definition of what a `filterOptions` list offers, so the column filter and the Advanced Filter cannot disagree.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _classifyFilterOptions(
@@ -155,9 +153,7 @@ export function _classifyFilterOptions(
 }
 
 /**
- * The name a Custom Filter Option is shown and written under: its localised text, then its `displayName`,
- * then its key, as a column falls back from `headerName` to its field. A stray space cannot be spelled in
- * an expression, hence the trim; a key is not a `string` to a JS caller, hence `String`.
+ * The name an option is shown and written under: localised text, then `displayName`, then its key.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getCustomOptionDisplayName(
@@ -169,8 +165,7 @@ export function _getCustomOptionDisplayName(
 }
 
 /**
- * How many values a Custom Filter Option takes, so the Advanced Filter cannot disagree with the column
- * filter about one. The declared `0 | 1 | 2` is no check on a JS caller, hence the clamp.
+ * How many values an option takes; the declared `0 | 1 | 2` is no check on a JS caller, hence the clamp.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getCustomOptionNumberOfInputs(option: IFilterOptionDef): number {

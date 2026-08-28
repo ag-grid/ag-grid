@@ -22,15 +22,9 @@ import {
 } from 'ag-grid-community';
 import { AdvancedFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
-/**
- * Regression baseline for Advanced Filter grid options and current operator behaviour: display-name/colId
- * resolution, `includeHiddenColumnsInAdvancedFilter`, `suppressAdvancedFilterEval`, `advancedFilterParent`;
- * operators not offered today (the relative date presets, `inRange`); Set Filter columns treated as text;
- * and a Custom Filter Option's `displayKey` being rejected as a name. Locks each so a change is a visible diff.
- */
+/** Regression baseline for Advanced Filter grid options and the operators not offered today. */
 
-// The suggestion list is virtualised, so without a layout it renders a single row and every assertion on
-// its contents reads that truncation rather than what the column offers.
+// The suggestion list virtualises, so without a layout it renders one row and assertions read that truncation.
 beforeAll(() => installFilterLayoutMock());
 afterAll(() => uninstallFilterLayoutMock());
 
@@ -108,8 +102,7 @@ describe('Advanced Filter — grid options', () => {
             await asyncSetTimeout(0);
             expect(api.getDisplayedRowCount()).toBe(1);
 
-            // Cleared first: an invalid expression leaves the previous filter applied, which would read as
-            // the old name still resolving.
+            // Cleared first: an invalid expression leaves the previous filter applied, reading as the old name.
             await af.applyExpression('');
             await asyncSetTimeout(0);
             api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Runner' }] });
@@ -355,8 +348,7 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
             `);
         });
 
-        // A preset key names no AF option, so the list leaves only `equals` to suggest. The grammar is the
-        // data type's either way, so an operator typed rather than picked still reads.
+        // A preset names no AF option, so only `equals` is suggested; the grammar is the data type's either way.
         test('an operator absent from the preset list is not suggested, but still reads', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
             const af = AdvancedFilterHarness.get(api);
@@ -411,10 +403,7 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
     });
 });
 
-/**
- * `filterOptions` naming a Custom Filter Option: where the option has a `displayName`, its `displayKey` is
- * not a name an expression can use.
- */
+/** Where a Custom Filter Option has a `displayName`, its `displayKey` is not a name an expression can use. */
 describe('Advanced Filter — custom filterOptions entries', () => {
     const gridsManager = new TestGridsManager({
         modules: [TextFilterModule, NumberFilterModule, AdvancedFilterModule, ClientSideRowModelModule],
@@ -508,8 +497,7 @@ describe('Advanced Filter — string filterOptions restrict the options', () => 
         `);
     });
 
-    // The list decides what is suggested; the data type decides what can be written. An option left out is
-    // absent from the suggestions and still read where an expression names it.
+    // The list decides what is suggested; the data type decides what can be written.
     test('an option the list omits is not suggested, but an expression naming it applies', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', optionsWithNotContainsNamed());
         const af = AdvancedFilterHarness.get(api);
@@ -541,8 +529,7 @@ describe('Advanced Filter — string filterOptions restrict the options', () => 
     test('an omitted longer name beats the shorter offered one it starts with', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', optionsWithNotContainsNamed('equals not'));
 
-        // `equals not` names the omitted `notContains`. The offered `equals` matches first, and the wider
-        // set then lengthens the match rather than being consulted only when nothing matched at all.
+        // The offered `equals` matches first, and the wider set then lengthens it into the omitted `notContains`.
         await AdvancedFilterHarness.get(api).applyExpression('[Name] equals not "Bolt"');
         await asyncSetTimeout(0);
 
@@ -559,9 +546,7 @@ describe('Advanced Filter — string filterOptions restrict the options', () => 
         `);
     });
 
-    // Presets have no expression form here, so a list of only presets names nothing this filter can offer:
-    // narrowing to nothing would leave the column unusable, so the built-ins stand as they do for a list
-    // whose every entry was dropped.
+    // A list of only presets names nothing this filter offers, so the built-ins stand rather than nothing.
     test('a list naming no Advanced Filter option leaves the built-ins standing', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [

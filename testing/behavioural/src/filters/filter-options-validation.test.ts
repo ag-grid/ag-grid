@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
+    AdvancedFilterHarness,
     ColumnFilterHarness,
     FilterDom,
     FloatingFilterHarness,
@@ -22,12 +23,9 @@ import {
     enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { ColumnMenuModule } from 'ag-grid-enterprise';
+import { AdvancedFilterModule, ColumnMenuModule } from 'ag-grid-enterprise';
 
-/**
- * What a `filterOptions` list offers, and what is reported when it cannot: a malformed entry, a `defaultOption`
- * the list does not contain, a key one filter cannot evaluate, and a `displayKey` colliding with a built-in one.
- */
+/** What a `filterOptions` list offers, and what is reported when it cannot. */
 interface AgeRow {
     age: number;
 }
@@ -399,8 +397,7 @@ describe('Column filter — a built-in option the filter cannot evaluate', () =>
         `);
     });
 
-    // The option is offered as configured: only a `textMatcher` or a `predicate` can say what it means,
-    // and either may supply one, so it is the evaluation with neither that reports.
+    // Either a `textMatcher` or a `predicate` can say what it means, so only evaluation with neither reports.
     test('an option belonging to another filter type is offered, and reported when it is evaluated', async () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [76] });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -1004,8 +1001,7 @@ describe('Column filter — a malformed `filterOptions` list', () => {
         expect(FloatingFilterHarness.get(api, 'age').input().value).toBe('25-40');
     });
 
-    // The declared `0 | 1 | 2` is no check on a JS caller, so a count outside it is clamped into the range
-    // rather than believed: the inputs, the model and the summary then cannot disagree about the arity.
+    // Clamped rather than believed, so the inputs, the model and the summary cannot disagree about the arity.
     test('a count above the range is taken as two, and one below it as none', async () => {
         const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
@@ -1290,8 +1286,7 @@ describe('Column filter — the offered list survives a colDef refresh', () => {
         `);
     });
 
-    // A `colDef` is replaced, never edited, so editing the list it was given is not a change the grid acts on:
-    // the applied model survives an option disappearing from under it.
+    // A `colDef` is replaced, never edited, so the applied model survives an option disappearing from under it.
     test('a list mutated in place is not a refresh at all', async () => {
         const options: (string | IFilterOptionDef)[] = ['equals', EVEN];
         const api: GridApi<AgeRow> = await gridsManager.createGridAndWait('grid1', {
@@ -1642,5 +1637,79 @@ describe('Column filter — the date summary for an option the grid does not def
               dateFrom: null
               dateTo: null
         `);
+    });
+});
+
+describe('Column filter — the list a data type supplies', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [TextFilterModule, ColumnMenuModule, AdvancedFilterModule, ClientSideRowModelModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+        installFilterLayoutMock();
+    });
+    afterAll(() => uninstallFilterLayoutMock());
+    afterEach(() => gridsManager.reset());
+
+    const SHOUT: IFilterOptionDef = {
+        displayKey: 'shout',
+        displayName: 'Shout',
+        numberOfInputs: 0,
+        predicate: () => true,
+    };
+
+    const booleanColumns: ColDef[] = [
+        { field: 'won', filter: 'agTextColumnFilter' },
+        { field: 'lost', filter: 'agTextColumnFilter' },
+    ];
+
+    test('a list edited on one boolean column does not reach another', async () => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: booleanColumns,
+            rowData: [{ won: true, lost: false }],
+        });
+        await asyncSetTimeout(0);
+
+        const [won] = api.getColumnDefs()! as ColDef[];
+        won.filterParams.filterOptions.push(SHOUT);
+
+        expect(await (await ColumnFilterHarness.open(api, 'lost')).operatorOptions()).toEqual([
+            'Choose one',
+            'True',
+            'False',
+        ]);
+    });
+
+    // The grid knows its own list by content, so an edited one is the column's: both filters then offer it,
+    // where recognising the list by where it came from would have left the Advanced Filter ignoring the edit.
+    test('an edited list is offered by the Advanced Filter as well as the column filter', async () => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: booleanColumns,
+            rowData: [{ won: true, lost: false }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+
+        const af = AdvancedFilterHarness.get(api);
+        // The control: an untouched column is still the grid's, so it offers the Advanced Filter's own operators.
+        await af.type('[Lost] ');
+        expect(af.autocompleteEntries()).toEqual(['is true', 'is false', 'is blank', 'is not blank']);
+
+        const [won] = api.getColumnDefs()! as ColDef[];
+        won.filterParams.filterOptions.push(SHOUT);
+
+        await af.type('');
+        await af.type('[Won] ');
+        expect(af.autocompleteEntries()).toEqual(['True', 'False', 'Shout']);
+
+        api.setGridOption('enableAdvancedFilter', false);
+        await asyncSetTimeout(0);
+        expect(await (await ColumnFilterHarness.open(api, 'won')).operatorOptions()).toEqual([
+            'Choose one',
+            'True',
+            'False',
+            'Shout',
+        ]);
     });
 });

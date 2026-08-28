@@ -6,7 +6,7 @@ import { Component } from 'ag-grid-community';
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import type { ColumnFilterModelOperands, PartialColumnFilterModel } from '../filterExpressionUtils';
-import { getNumberParser } from '../filterExpressionUtils';
+import { OPERAND_KEYS, getNumberParser, hasEveryOperand } from '../filterExpressionUtils';
 import type {
     AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
@@ -14,9 +14,6 @@ import type {
 } from './iAdvancedFilterBuilder';
 import type { InputPillComp } from './inputPillComp';
 import type { SelectPillComp } from './selectPillComp';
-
-/** The model names its two operands rather than listing them, so an operand index maps to a key. */
-const OPERAND_KEYS = ['filter', 'filterTo'] as const;
 
 export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEvents> {
     private advFilterExpSvc: AdvancedFilterExpressionService;
@@ -143,8 +140,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         this.getGui().appendChild(eOperandPill.getGui());
     }
 
-    /** Two pills both called "Value" are indistinguishable to a screen reader, so the pair takes the column
-     * filter's own from/to labels rather than composing one, which no locale could reorder. */
+    /** Two pills both called "Value" are indistinguishable to a screen reader, hence the from/to labels. */
     private getOperandAriaLabel(index: number): string {
         if (this.numOperands < 2) {
             return this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderValue');
@@ -218,8 +214,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         this.filterModel.colId = colId;
         this.filterModel.filterType = baseCellDataType;
 
-        // A data type change takes the operator with it; within one data type the column's own options decide,
-        // as an operator can be unavailable on another column of the same type, or offered under another name.
+        // A data type change takes the operator with it; within one type the column's own options decide.
         const keepOperator =
             !dataTypeChanged && this.advFilterExpSvc.isOperatorOffered(baseCellDataType, this.filterModel.type, column);
         if (!keepOperator) {
@@ -233,8 +228,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
             this.destroyBean(this.eOperatorPill);
             this.createOperatorPill();
         }
-        // A pill's editor and display come from the column's own parser and formatter. A data type change
-        // has already dropped the operator, so `syncOperandPills` clears the values it took.
+        // A pill's editor and display come from the column's own parser and formatter.
         if (previousColumn !== column) {
             this.destroyOperandPills();
         }
@@ -277,7 +271,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
             validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationSelectColumn');
         } else if (!filterModel.type) {
             validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationSelectOption');
-        } else if (!this.hasEveryOperand()) {
+        } else if (!hasEveryOperand(this.advFilterExpSvc, filterModel, this.numOperands)) {
             validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationEnterValue');
         }
 
@@ -288,21 +282,6 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
                 type: 'advancedFilterBuilderValidChanged',
             });
         }
-    }
-
-    /** Judged on the display, not the model: what the column's formatter cannot write is not a value it holds. */
-    private hasEveryOperand(): boolean {
-        for (let i = 0, len = this.numOperands; i < len; ++i) {
-            const displayValue = this.advFilterExpSvc.formatOperand(
-                this.filterModel,
-                this.getOperandModelValue(i),
-                true
-            );
-            if (!displayValue) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private getDefaultColumnDisplayValue(): string {

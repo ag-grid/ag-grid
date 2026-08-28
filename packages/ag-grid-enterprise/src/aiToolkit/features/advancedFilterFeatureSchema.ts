@@ -15,11 +15,7 @@ interface OperatorGroup {
     readonly numOperands: number;
 }
 
-/**
- * Read from the expression service rather than listed here, so a column's Custom Filter Options are offered
- * to a caller under the same keys, and the same arity, that an expression would accept. Split by arity: the
- * operands a model must carry are the chosen operator's, and one schema spanning several cannot say that.
- */
+/** Read from the expression service, so a caller is offered the keys and arity an expression would accept. */
 function getColumnOperatorKeysByArity(
     advFilterExpSvc: AdvancedFilterExpressionService,
     column: AgColumn,
@@ -178,8 +174,7 @@ function buildFilterSchema(group: OperatorGroup): SchemaBuilder {
         colId: s.enum(group.colIds, `Column identifier for the ${noun} column to filter`),
         type: s.enum(group.operatorKeys, `${titleNoun} filter operation type`),
     };
-    // Required, because every operator in this group takes them: a condition short of its operands is not a
-    // narrower filter, it is one the parser rejects, and rejecting one discards the whole model.
+    // Required: the parser rejects a condition short of its operands, and that discards the whole model.
     const { numOperands } = group;
     if (numOperands > 0) {
         props.filter = value().nullable();

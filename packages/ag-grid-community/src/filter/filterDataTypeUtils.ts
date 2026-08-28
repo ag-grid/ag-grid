@@ -101,8 +101,7 @@ type FilterParamsDefMap = CheckDataTypes<{
     object: FilterParamCallback<ITextFilterParams, any>;
 }>;
 
-/** One list shared by every boolean column, so it can be recognised as the grid's rather than the column's. */
-const BOOLEAN_FILTER_OPTIONS: (string | IFilterOptionDef)[] = [
+const BOOLEAN_FILTER_OPTIONS: readonly (string | IFilterOptionDef)[] = [
     'empty',
     {
         displayKey: 'true',
@@ -119,11 +118,20 @@ const BOOLEAN_FILTER_OPTIONS: (string | IFilterOptionDef)[] = [
 ];
 
 /**
- * Whether the list is the grid's own for the cell data type, rather than options the column author wrote.
+ * Whether the list is still exactly what the grid supplied for the cell data type. Content rather than
+ * identity, so a list edited after the fact reads as the column's and both filters go on offering the same.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _isGridSuppliedFilterOptions(filterOptions: unknown): boolean {
-    return filterOptions === BOOLEAN_FILTER_OPTIONS;
+    if (!Array.isArray(filterOptions) || filterOptions.length !== BOOLEAN_FILTER_OPTIONS.length) {
+        return false;
+    }
+    for (let i = 0, len = BOOLEAN_FILTER_OPTIONS.length; i < len; ++i) {
+        if (filterOptions[i] !== BOOLEAN_FILTER_OPTIONS[i]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 // using an object here to enforce dev to not forget to implement new types as they are added
@@ -133,7 +141,8 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
     boolean: () => ({
         maxNumConditions: 1,
         debounceMs: 0,
-        filterOptions: BOOLEAN_FILTER_OPTIONS,
+        // A copy per column, so editing the list one colDef carries cannot reach the others.
+        filterOptions: [...BOOLEAN_FILTER_OPTIONS],
     }),
     date: () => ({ isValidDate }),
     dateString: ({ dataTypeDefinition }) => ({

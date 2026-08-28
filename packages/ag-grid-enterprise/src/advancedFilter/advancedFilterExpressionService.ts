@@ -38,10 +38,7 @@ import {
     hasCustomNumberOperands,
 } from './filterExpressionUtils';
 
-/**
- * What an unquoted operand cannot carry: a space or `)` ends it, a leading quote opens one, and inside a
- * comma-separated pair a `,` ends it too.
- */
+/** What an unquoted operand cannot carry: a space or `)` ends it, a quote opens one, a `,` ends it in a pair. */
 function needsQuotes(operand: string, inPair?: boolean): boolean {
     return (
         operand.includes(' ') ||
@@ -188,8 +185,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     public postConstruct(): void {
         this.expressionJoinOperators = this.generateExpressionJoinOperators();
         this.expressionOperators = this.generateExpressionOperators();
-        // Everything cached here is keyed on a column's name, visibility or definition, and each of these
-        // changes one of them without going through `newColumnsLoaded`.
+        // Each of these changes a column's name, visibility or definition without a `newColumnsLoaded`.
         const resetColumnCaches = this.resetColumnCaches.bind(this);
         this.addManagedEventListeners({
             newColumnsLoaded: resetColumnCaches,
@@ -420,10 +416,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return _getOwn(this.getColumnOperators(baseCellDataType, column)?.operators.operators, operator!);
     }
 
-    /**
-     * Whether the column's dropdown lists this operator - offered, not merely resolvable. Only a pill the
-     * user is retargeting asks: an expression already written is read against everything the column resolves.
-     */
+    /** Offered, not merely resolvable: only a pill being retargeted asks, an expression reads against all. */
     public isOperatorOffered(
         baseCellDataType: BaseCellDataType | undefined,
         operator: string | undefined,
@@ -437,10 +430,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return !activeOperators || activeOperators.includes(operator);
     }
 
-    /**
-     * A data type's built-ins with the column's own options over them, so a `displayKey` is per column, and
-     * the keys the column narrows its suggestions to — everything it can resolve, and what it offers of that.
-     */
+    /** A data type's built-ins with the column's own options over them, plus the keys it narrows suggestions to. */
     public getColumnOperators(
         baseCellDataType: BaseCellDataType | undefined,
         column: AgColumn | null | undefined
@@ -474,8 +464,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         if (!filterOptions) {
             return { operators: dataTypeOperators, activeOperators: undefined };
         }
-        // Reported here as well as by `OptionsFactory`, because a column filtered only through the Advanced
-        // Filter never builds one.
+        // Reported here too: a column filtered only through the Advanced Filter never builds an `OptionsFactory`.
         const { offered, customOptions } = _classifyFilterOptions(filterOptions, (keys) => this.warn(72, { keys }));
         const localeTextFunc = this.getLocaleTextFunc();
         const operators = customOptions.size

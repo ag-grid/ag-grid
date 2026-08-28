@@ -11,7 +11,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { AdvancedFilterModel, GridApi, GridOptions, IFilterOptionDef } from 'ag-grid-community';
+import type { AdvancedFilterModel, ColDef, GridApi, GridOptions, IFilterOptionDef } from 'ag-grid-community';
 import {
     BigIntFilterModule,
     ClientSideRowModelModule,
@@ -24,11 +24,7 @@ import {
 } from 'ag-grid-community';
 import { AdvancedFilterModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
-/**
- * Custom Filter Options from `colDef.filterParams.filterOptions` in the Advanced Filter: which options a
- * column offers, the 0/1/2-value expression grammar, the model round-trip, the Builder, and evaluation
- * running the same `predicate` as the column filter.
- */
+/** Custom Filter Options in the Advanced Filter: what a column offers, the grammar, the model, the Builder. */
 interface TestRow {
     athlete: string;
     age: number | null;
@@ -167,8 +163,7 @@ describe('Advanced Filter - custom filter options', () => {
             expect(af.autocompleteEntries()).toEqual(['is true', 'is false', 'is blank', 'is not blank']);
         });
 
-        // `inRange` is a column-filter option this filter has no operator for, so narrowing to it would
-        // narrow to nothing: no suggestions, an unpickable Builder row and an unsatisfiable AI schema.
+        // This filter has no `inRange` operator, so narrowing to it alone would narrow to nothing.
         test('a list naming only options this filter cannot resolve leaves the built-ins standing', async () => {
             const api = gridsManager.createGrid('grid1', {
                 columnDefs: [
@@ -196,8 +191,7 @@ describe('Advanced Filter - custom filter options', () => {
             `);
         });
 
-        // A boolean column takes its `filterOptions` from the grid, and identity is what tells that list
-        // apart from an authored one — so a colDef copied through the API must carry the same array.
+        // Identity tells the grid's list from an authored one, so a copied colDef must carry the same array.
         test('the grid-supplied boolean list survives a columnDefs round trip', async () => {
             const api = gridsManager.createGrid('grid1', {
                 columnDefs: [{ field: 'won', filter: 'agTextColumnFilter' }],
@@ -250,8 +244,7 @@ describe('Advanced Filter - custom filter options', () => {
             expect(af.value).toBe('[Athlete] Starts With "A"');
         });
 
-        // What a column narrows away is missing from the suggestions, not from the grammar: an expression
-        // written before the list narrowed is still one the column can read.
+        // Narrowing removes a name from the suggestions, not from the grammar.
         test('a built-in the column omits is not offered, but an expression naming it still applies', async () => {
             const api = gridsManager.createGrid('grid1', opts());
             await asyncSetTimeout(0);
@@ -303,9 +296,7 @@ describe('Advanced Filter - custom filter options', () => {
             expect(api.getAdvancedFilterModel()).toEqual(savedModel);
         });
 
-        // Three names running into one another: `contain`, the longer `contain both` beside it, and the
-        // built-in `contains` the list leaves out. A name is only matched where it ends at a space, a
-        // bracket or the expression, so the offered pair neither swallows the omitted one nor loses to it.
+        // A name only matches where it ends at a space, a bracket or the expression, hence these three.
         test('an option name another name starts with resolves each of the three', async () => {
             const CONTAIN: IFilterOptionDef = {
                 displayKey: 'contain',
@@ -371,8 +362,7 @@ describe('Advanced Filter - custom filter options', () => {
             });
         });
 
-        // An offered name ending where a longer omitted one continues: `is` terminates at the space that
-        // `is blank` runs through, so the offered match has to be lengthened rather than taken as final.
+        // `is` terminates at the space `is blank` runs through, so the offered match must be lengthened.
         test('an offered name does not cut short a longer option the list leaves out', async () => {
             const IS: IFilterOptionDef = {
                 displayKey: 'isValue',
@@ -417,8 +407,7 @@ describe('Advanced Filter - custom filter options', () => {
             });
         });
 
-        // The Builder lists what the column offers, so a restored condition naming something else has to
-        // survive the pass that clears one the column cannot resolve at all.
+        // A restored condition naming an unlisted option must survive the pass that clears unresolvable ones.
         test('the Builder keeps a restored condition whose option the column no longer offers', async () => {
             const api = gridsManager.createGrid('grid1', opts());
             await asyncSetTimeout(0);
@@ -575,8 +564,7 @@ describe('Advanced Filter - custom filter options', () => {
             });
         }
 
-        // The child is where `filterOptions` belongs: the parent's own params are `IMultiFilterParams`, which
-        // carries `filters` and nothing about options.
+        // `filterOptions` belongs on the child; `IMultiFilterParams` carries `filters` and nothing about options.
         test('takes the options its child filter declares, as the column filter does', async () => {
             const params = {
                 filters: [
@@ -613,15 +601,13 @@ describe('Advanced Filter - custom filter options', () => {
             expect(af.autocompleteEntries()).toEqual(['contains', 'Starts With A']);
         });
 
-        // Which list wins, where more than one is written: the first child that declares one, over a
-        // second child and over the parent's own params.
+        // The first child that declares a list wins, over a second child and over the parent's own params.
         test('the first child that declares a list is the one read', async () => {
             const advanced = multiFilterGrid(
                 {
                     ...STARTS_A_ONLY,
                     filters: [
-                        // An empty list is not a list this child offers anything from, so it is passed over
-                        // rather than being the first one found.
+                        // An empty list offers nothing, so it is passed over rather than being the first found.
                         { filter: 'agTextColumnFilter', filterParams: { filterOptions: [] } },
                         { filter: 'agTextColumnFilter', filterParams: { filterOptions: [REGULAR_EXPRESSION] } },
                         { filter: 'agTextColumnFilter', filterParams: STARTS_A_ONLY },
@@ -764,8 +750,7 @@ describe('Advanced Filter - custom filter options', () => {
                 └── LEAF id:2 athlete:"Ada" age:28 won:true
             `);
 
-            // Cleared first: a rejected expression leaves the previous filter applied, so re-asserting the
-            // bracketed form's own model would pass whether or not the unbracketed one parsed.
+            // Cleared first: a rejected expression leaves the previous filter applied, so this would pass either way.
             await af.applyExpression('');
             await asyncSetTimeout(0);
             expect(api.getAdvancedFilterModel()).toBeNull();
@@ -1075,8 +1060,7 @@ describe('Advanced Filter - custom filter options', () => {
             `);
         });
 
-        // Every cell data type the expression format names as quoted: text and dateString have their own
-        // tests above, so this covers the two `Date`-valued ones.
+        // Text and dateString have their own tests above, so this covers the two `Date`-valued types.
         test('two dates and two date-times are quoted, and round-trip through the model', async () => {
             const api = gridsManager.createGrid('grid1', {
                 columnDefs: [
@@ -1408,8 +1392,7 @@ describe('Advanced Filter - custom filter options', () => {
             const applyBoth = async (colId: 'athlete' | 'age', model: any, expected: string[]) => {
                 advanced.setAdvancedFilterModel({ ...model, colId });
                 advanced.onFilterChanged();
-                // An advanced model replaces the previous one; column filters are per column and would
-                // otherwise stack, so the other column is cleared before each pair.
+                // Column filters are per column and would otherwise stack, so the other is cleared each time.
                 await column.setColumnFilterModel(colId === 'athlete' ? 'age' : 'athlete', null);
                 await column.setColumnFilterModel(colId, model);
                 column.onFilterChanged();
@@ -1425,9 +1408,7 @@ describe('Advanced Filter - custom filter options', () => {
             ]);
         });
 
-        // The operand list is built per call, so a predicate that keeps or edits what it is handed cannot
-        // reach the next call. Driven through ONE option used twice: two options would each have their own
-        // operator object, and a list hoisted onto the operator would still look clean.
+        // One option used twice: with two, a list hoisted onto the operator would still look clean.
         test('a predicate that mutates its operands does not reach the next call', async () => {
             const seen: any[][] = [];
             const api = gridsManager.createGrid('grid1', {
@@ -1464,8 +1445,7 @@ describe('Advanced Filter - custom filter options', () => {
         });
     });
 
-    // What survives classification, and what the survivors are called: two functions, but both are about
-    // an option the grid has to make sense of rather than one written the way the docs describe.
+    // What survives classification, and what the survivors are called.
     describe('malformed options and name resolution', () => {
         test('an entry missing a required property is dropped and reported', async () => {
             // Deliberate: the option is missing `displayName`/`predicate`, which triggers warning #72.
@@ -1493,8 +1473,7 @@ describe('Advanced Filter - custom filter options', () => {
             expect(message).toContain('predicate');
         });
 
-        // The name is a locale lookup on the `displayKey`, so a translation replaces the `displayName`
-        // rather than sitting beside it: the expression is written in whichever wins.
+        // A locale lookup on the `displayKey` replaces the `displayName` rather than sitting beside it.
         test('a localised name is the one the expression is written in', async () => {
             const api = gridsManager.createGrid('grid1', {
                 columnDefs: [
@@ -1522,8 +1501,7 @@ describe('Advanced Filter - custom filter options', () => {
                 └── LEAF id:2 athlete:"Ada"
             `);
 
-            // Cleared first: an invalid expression leaves the previous filter applied, which would read as
-            // the untranslated name still resolving.
+            // Cleared first: an invalid expression leaves the previous filter applied, reading as the old name.
             await af.applyExpression('');
             await asyncSetTimeout(0);
             await af.applyExpression('[Athlete] Starts With A');
@@ -1592,8 +1570,7 @@ describe('Advanced Filter - custom filter options', () => {
             expect(af.value).toBe('[Athlete] startsA');
         });
 
-        // A key is written by whoever wrote the option, so standing in as a name it faces the grammar the
-        // display names already do.
+        // A key stands in as a name, so it faces the grammar the display names already do.
         test('a displayKey standing in as the name carries a space, and round-trips', async () => {
             const api = gridsManager.createGrid('grid1', {
                 columnDefs: [
@@ -1869,8 +1846,7 @@ describe('Advanced Filter - custom filter options', () => {
                 'Filter to value',
             ]);
             expect(pills.map((pill, index) => builder.valuePillText(condition, index))).toEqual(['24', '30']);
-            // Tab order is the browser's own, which happy-dom does not walk, so what is asserted is the thing
-            // that decides it: zero or above, since absent reads as `-1` and so does a skipped pill.
+            // happy-dom does not walk tab order, so assert what decides it: absent reads `-1`, as a skip does.
             expect(pills.map((pill) => pill.tabIndex)).toEqual([0, 0]);
 
             // One value, so there is no pair to tell apart, and the pill left behind is still in the tab order.
@@ -1960,8 +1936,6 @@ describe('Advanced Filter - custom filter options', () => {
             expect(builder.valuePills(condition)).toHaveLength(0);
         });
 
-        // `validateItems` no longer checks the operands, so what holds Apply shut for an emptied pill is the
-        // invalidity `refreshList` carries across a rebuild rather than a re-derivation.
         test('an emptied value keeps Apply shut across an external model change', async () => {
             const api = gridsManager.createGrid('grid1', opts());
             await asyncSetTimeout(0);
@@ -2022,8 +1996,84 @@ describe('Advanced Filter - custom filter options', () => {
                   type: "evenNumbers"
             `);
         });
+
+        // Only a mounted row validates itself, so the all-items pass must catch a scrolled-out incomplete one.
+        test('an option that gains a second input shuts Apply for a condition the list has not mounted', async () => {
+            const api = gridsManager.createGrid('grid1', { ...opts(), columnDefs: ageColumnDefs(1) });
+            await asyncSetTimeout(0);
+            api.setAdvancedFilterModel(longModelEndingInNearly());
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            // The `Nearly` row must not be among them, or its own component would validate it.
+            expect((await builder.conditionItems()).length).toBeLessThan(TAIL_CONDITIONS + 1);
+
+            api.setGridOption('columnDefs', ageColumnDefs(2));
+            await rebuildBuilderList(api);
+
+            expect(builder.applyDisabled()).toBe(true);
+        });
+
+        // The control: the same rebuild with the arity left alone, so Apply is proven to enable at all.
+        test('a condition the list has not mounted leaves Apply open while its option still takes one value', async () => {
+            const api = gridsManager.createGrid('grid1', { ...opts(), columnDefs: ageColumnDefs(1) });
+            await asyncSetTimeout(0);
+            api.setAdvancedFilterModel(longModelEndingInNearly());
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            expect((await builder.conditionItems()).length).toBeLessThan(TAIL_CONDITIONS + 1);
+
+            api.setGridOption('columnDefs', ageColumnDefs(1));
+            await rebuildBuilderList(api);
+
+            expect(builder.applyDisabled()).toBe(false);
+        });
     });
 });
+
+/** Enough leading conditions that the last one sits outside the builder's rendered window. */
+const TAIL_CONDITIONS = 30;
+
+/** Its arity is what a colDef refresh changes; `evenNumbers` takes none, so only `Nearly` can go incomplete. */
+const nearlyOption = (numberOfInputs: 1 | 2): IFilterOptionDef => ({
+    displayKey: 'nearly',
+    displayName: 'Nearly',
+    numberOfInputs,
+    predicate: ([from, to], cellValue) => cellValue != null && cellValue >= from && (to == null || cellValue <= to),
+});
+
+const ageColumnDefs = (numberOfInputs: 1 | 2): ColDef<TestRow>[] => [
+    {
+        field: 'age',
+        filter: 'agNumberColumnFilter',
+        filterParams: { filterOptions: [EVEN_NUMBERS, nearlyOption(numberOfInputs)] },
+    },
+];
+
+/** Reseeds every row valid and makes the builder's model differ from the applied one, so Apply turns on validity. */
+async function rebuildBuilderList(api: GridApi<TestRow>): Promise<void> {
+    api.setAdvancedFilterModel({ filterType: 'number', colId: 'age', type: 'evenNumbers' });
+    api.onFilterChanged();
+    await asyncSetTimeout(0);
+}
+
+/** Every visible row valid whatever the arity, and one single-valued `Nearly` below the fold. */
+function longModelEndingInNearly(): AdvancedFilterModel {
+    return {
+        filterType: 'join',
+        type: 'AND',
+        conditions: [
+            ...Array.from(
+                { length: TAIL_CONDITIONS },
+                () => ({ filterType: 'number', colId: 'age', type: 'evenNumbers' }) as const
+            ),
+            { filterType: 'number', colId: 'age', type: 'nearly', filter: 20 },
+        ],
+    };
+}
 
 /** The expected list is named, so two grids that both filtered nothing cannot pass for agreement. */
 function expectSameAthletes(advanced: GridApi<TestRow>, column: GridApi<TestRow>, expected: string[]): void {

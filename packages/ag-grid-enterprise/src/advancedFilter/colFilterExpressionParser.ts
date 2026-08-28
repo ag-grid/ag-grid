@@ -190,12 +190,7 @@ class OperatorParser implements Parser {
         return { key, length, isPartialMatch };
     }
 
-    /**
-     * The longest name written here wins, so one that another name starts with - or one containing a
-     * terminator - resolves. What the column offers is searched first; the rest it can resolve is a
-     * fallback that may only lengthen the match, so an option left out of `filterOptions` stays spellable
-     * and an offered name whose end another name runs past cannot cut it short.
-     */
+    /** Longest match wins, offered names first, so a name another starts with or contains still resolves. */
     private parseOperator(fromComplete: boolean, endPosition: number): boolean {
         const { params, startPosition } = this;
         const expression = params.expression;
@@ -466,7 +461,6 @@ class OperandsParser implements Parser {
             return undefined;
         }
 
-        // Inside quotes every character is content, spaces and brackets included.
         if (parser && !this.expectSeparator && parser.isInsideQuotes()) {
             return this.delegate(char, position);
         }
@@ -492,7 +486,6 @@ class OperandsParser implements Parser {
                 this.finishOperand(position - 1);
             }
             if (this.isComplete() && !this.hasOpenBracket) {
-                // Past the last value an unbracketed region is over, exactly as it is at a space.
                 return true;
             }
             this.parser = undefined;
@@ -505,8 +498,7 @@ class OperandsParser implements Parser {
                 this.finishOperand(position - 1);
             }
             if (!this.hasOpenBracket) {
-                // The enclosing group's bracket, so the region ended on the previous char. `complete` is not
-                // reached once the region has ended, so a value still outstanding has to be reported here.
+                // The enclosing group's bracket ended the region, so `complete` never runs to report a gap.
                 if (!this.isComplete()) {
                     this.reject('advancedFilterValidationMissingValue');
                 }
@@ -750,8 +742,7 @@ export class ColFilterExpressionParser {
         const numOperands = this.getNumOperandsFor(baseCellDataType, updateEntry.key);
         const hasOperand = numOperands > 0;
         const operatorParser = this.operatorParser;
-        // The default span is a point insert, for a caret in between multiple spaces; only a caret at or
-        // past the operator replaces text.
+        // A point insert by default, for a caret between spaces; only one at or past the operator replaces.
         let startPosition = position;
         let endPosition = position;
         let empty = false;

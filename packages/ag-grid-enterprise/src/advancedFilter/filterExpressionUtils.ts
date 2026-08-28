@@ -3,6 +3,7 @@ import { _parseBigIntOrNull } from 'ag-stack';
 import { _bindFilterCallback } from 'ag-grid-community';
 import type {
     AgColumn,
+    ColumnAdvancedFilterModel,
     ColumnModel,
     DataTypeService,
     GridOptionsService,
@@ -19,6 +20,23 @@ import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from '
 export interface ColumnFilterModelOperands {
     filter?: string | number;
     filterTo?: string | number;
+}
+
+/** The model names its two operands rather than listing them, so an operand index maps to a key. */
+export const OPERAND_KEYS = ['filter', 'filterTo'] as const;
+
+/** Judged on the display: what the column's formatter cannot write is not a value the model holds. */
+export function hasEveryOperand(
+    advFilterExpSvc: AdvancedFilterExpressionService,
+    model: ColumnAdvancedFilterModel,
+    numOperands: number
+): boolean {
+    for (let i = 0; i < numOperands; ++i) {
+        if (!advFilterExpSvc.formatOperand(model, (model as ColumnFilterModelOperands)[OPERAND_KEYS[i]], true)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 /** A condition the Builder is still assembling: each slot is absent until the user has chosen it. */
@@ -133,8 +151,7 @@ export function updateExpression(
             positionOffset = 1;
         } else {
             updatedValuePart += ' ';
-            // An option taking two values opens their bracketed list, then the first value's quote. These
-            // have to be written past the space, so an existing one is rewritten rather than kept.
+            // A two-value option opens its bracket then the first quote, both past the space, so one there is rewritten.
             if (appendBracket) {
                 updatedValuePart += '(';
             }

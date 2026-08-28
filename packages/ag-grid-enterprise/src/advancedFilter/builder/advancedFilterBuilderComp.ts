@@ -20,6 +20,7 @@ import type { AdvancedFilterExpressionService } from '../advancedFilterExpressio
 import type { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
 import type { AdvancedFilterService } from '../advancedFilterService';
 import type { PartialColumnFilterModel } from '../filterExpressionUtils';
+import { hasEveryOperand } from '../filterExpressionUtils';
 import { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemAddComp } from './advancedFilterBuilderItemAddComp';
 import { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
@@ -572,22 +573,29 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         this.eButtons?.updateValidity(isValid, validationMessage);
     }
 
+    /** The only pass every item gets: a row the virtual list has not mounted has no component to validate it. */
     private validateItems(): void {
+        const advFilterExpSvc = this.advFilterExpSvc;
         for (const item of this.items) {
             if (!item.valid || !item.filterModel || item.filterModel.filterType === 'join') {
                 continue;
             }
             const { filterModel } = item;
             const { colId } = filterModel;
-            const hasColumn = this.advFilterExpSvc.getColumnAutocompleteEntries().find(({ key }) => key === colId);
-            const { column, baseCellDataType } = this.advFilterExpSvc.getColumnDetails(colId);
+            const hasColumn = advFilterExpSvc.getColumnAutocompleteEntries().find(({ key }) => key === colId);
+            const { column, baseCellDataType } = advFilterExpSvc.getColumnDetails(colId);
             if (!hasColumn || !column) {
                 item.valid = false;
                 delete (filterModel as PartialColumnFilterModel).colId;
                 clearCondition(filterModel);
-            } else if (!this.advFilterExpSvc.getExpressionOperator(baseCellDataType, filterModel.type, column)) {
+                continue;
+            }
+            const operator = advFilterExpSvc.getExpressionOperator(baseCellDataType, filterModel.type, column);
+            if (!operator) {
                 item.valid = false;
                 clearCondition(filterModel);
+            } else if (!hasEveryOperand(advFilterExpSvc, filterModel, operator.numOperands)) {
+                item.valid = false;
             }
         }
     }
