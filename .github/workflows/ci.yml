@@ -172,9 +172,6 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
-          # Diff against the branch this PR targets. Without it base_ref defaults to
-          # 'latest', so a PR onto a release branch diffs the whole latest<->release
-          # divergence: wrong affected set, and the wrong node_modules cache key.
           base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           cache_mode: 'rw'
 
@@ -260,9 +257,6 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
-          # Diff against the branch this PR targets. Without it base_ref defaults to
-          # 'latest', so a PR onto a release branch diffs the whole latest<->release
-          # divergence: wrong affected set, and the wrong node_modules cache key.
           base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           # ro consumers restore the node_modules cache warmed by `init` (which already ran
           # postinstall before saving), so no yarn execution is needed. no-install skips it,
@@ -342,9 +336,6 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
-          # Diff against the branch this PR targets. Without it base_ref defaults to
-          # 'latest', so a PR onto a release branch diffs the whole latest<->release
-          # divergence: wrong affected set, and the wrong node_modules cache key.
           base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           yarn_postinstall: no-install
           cache_mode: ro
@@ -381,9 +372,6 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
-          # Diff against the branch this PR targets. Without it base_ref defaults to
-          # 'latest', so a PR onto a release branch diffs the whole latest<->release
-          # divergence: wrong affected set, and the wrong node_modules cache key.
           base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           yarn_postinstall: no-install
           cache_mode: ro
@@ -422,9 +410,6 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
-          # Diff against the branch this PR targets. Without it base_ref defaults to
-          # 'latest', so a PR onto a release branch diffs the whole latest<->release
-          # divergence: wrong affected set, and the wrong node_modules cache key.
           base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           yarn_postinstall: no-install
           cache_mode: ro
@@ -558,9 +543,6 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
-          # Diff against the branch this PR targets. Without it base_ref defaults to
-          # 'latest', so a PR onto a release branch diffs the whole latest<->release
-          # divergence: wrong affected set, and the wrong node_modules cache key.
           base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           yarn_postinstall: no-install
           cache_mode: ro
@@ -630,9 +612,6 @@ jobs:
         if: matrix.framework != 'none'
         uses: ./.github/actions/setup-nx
         with:
-          # Diff against the branch this PR targets. Without it base_ref defaults to
-          # 'latest', so a PR onto a release branch diffs the whole latest<->release
-          # divergence: wrong affected set, and the wrong node_modules cache key.
           base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           yarn_postinstall: no-install
           cache_mode: ro
