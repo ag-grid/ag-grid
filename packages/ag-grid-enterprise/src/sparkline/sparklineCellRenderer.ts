@@ -65,9 +65,20 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         listener();
     }
 
+    private getWidgetWidth(): number {
+        const params = this.params;
+        if (params?.node.rowPinned != null) {
+            return 0; // pinned rows don't have widgets
+        }
+
+        const colDef = params?.colDef;
+        const widgets = (colDef?.rowDrag ? 1 : 0) + (colDef?.checkboxSelection ? 1 : 0) + (colDef?.dndSource ? 1 : 0);
+        return widgets * (this.env.getDefaultIconSize() + this.env.getDefaultCellWidgetSpacing());
+    }
+
     private updateSize(newWidth: number, newHeight: number, batch = true) {
-        // account for cell padding
-        newWidth -= 2 * (this.env.getDefaultCellHorizontalPadding() - 1);
+        // account for the cell's border and padding, and any widgets sharing the cell
+        newWidth -= 2 * this.env.getDefaultCellHorizontalPadding() + this.getWidgetWidth();
 
         if (newWidth !== this.cachedWidth || newHeight !== this.cachedHeight) {
             this.cachedWidth = newWidth;
