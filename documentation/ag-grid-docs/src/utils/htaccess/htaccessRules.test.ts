@@ -4,7 +4,13 @@ import {
     ECOMMERCE_PATH_CONDITION,
     EXAMPLES_PATH_CONDITION,
 } from './cspRules';
-import { PRODUCTION_CSP_PHASE, UNCACHED_ARCHIVE, getHtaccessContent, getInFlightArchiveRule } from './htaccessRules';
+import {
+    PRODUCTION_CSP_PHASE,
+    UNCACHED_CHARTS_ARCHIVE,
+    UNCACHED_GRID_ARCHIVE,
+    getHtaccessContent,
+    getInFlightArchiveRules,
+} from './htaccessRules';
 import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 describe('htaccessRules', () => {
@@ -258,63 +264,90 @@ describe('htaccessRules', () => {
         });
     });
 
-    describe('In-flight release archive', () => {
-        // A released archive keeps its long heuristic cache. The one under test is redeployed
-        // for days and fixes must appear within minutes, so it is excluded from that.
-        const ruleFor = (version) => getInFlightArchiveRule(version).trim();
+    describe('In-flight release archives', () => {
+        // Grid and Charts ship together at independent version numbers (Grid 36.x, Charts 14.x)
+        // and are tested in the same window, so both must be named. Studio is never cached.
+        const inFlight = (grid, charts) =>
+            getHtaccessContent({ env: 'production', uncachedGridArchive: grid, uncachedChartsArchive: charts });
 
-        it('emits nothing when no archive is in flight', () => {
-            expect(getInFlightArchiveRule(null)).toBe('');
+        it('emits nothing when nothing is in flight', () => {
+            expect(getInFlightArchiveRules(null, null)).toBe('');
         });
 
-        it('is unset by default, so a stale value cannot silently suppress caching', () => {
-            expect(UNCACHED_ARCHIVE).toBeNull();
-            expect(productionContent).not.toContain('Release archive under test');
+        it('is unset by default, so stale values cannot silently suppress caching', () => {
+            expect(UNCACHED_GRID_ARCHIVE).toBeNull();
+            expect(UNCACHED_CHARTS_ARCHIVE).toBeNull();
+            expect(productionContent).not.toContain('Release archives under test');
         });
 
-        it('escapes dots so the version matches literally', () => {
-            // Unescaped, 36.2.0 would also match 36X2X0.
-            expect(ruleFor('36.2.0')).toContain('archive/36\\.2\\.0/#');
-            expect(ruleFor('36.2.0')).not.toContain('archive/36.2.0/#');
+        it('matches grid and charts at their own version numbers', () => {
+            const rule = getInFlightArchiveRules('36.2.0', '14.3.0');
+            expect(rule).toContain('m#^/archive/36\\.2\\.0/#');
+            expect(rule).toContain('m#^/charts/archive/14\\.3\\.0/#');
         });
 
-        it('covers the charts and studio archive roots', () => {
-            expect(ruleFor('36.2.0')).toContain('^/(charts/|studio/)?archive/');
+        it('does not apply the grid version to the charts archive', () => {
+            // The bug this replaced: one version behind an optional (charts/)? prefix, so a grid
+            // version silently claimed to cover a charts archive that is numbered differently.
+            const rule = getInFlightArchiveRules('36.2.0', '14.3.0');
+            expect(rule).not.toContain('charts/archive/36\\.2\\.0');
+            expect(rule).not.toContain('(charts/|studio/)?');
+        });
+
+        it('emits only the product that is in flight', () => {
+            expect(getInFlightArchiveRules('36.2.0', null)).not.toContain('charts/archive');
+            expect(getInFlightArchiveRules(null, '14.3.0')).not.toContain('m#^/archive/');
+        });
+
+        it('escapes dots so versions match literally', () => {
+            expect(getInFlightArchiveRules('36.2.0', null)).not.toContain('archive/36.2.0/#');
         });
 
         it('uses no-cache, not no-store, so revalidation is a cheap 304', () => {
-            expect(ruleFor('36.2.0')).toContain('Cache-Control "no-cache"');
-            expect(ruleFor('36.2.0')).not.toContain('no-store');
+            expect(getInFlightArchiveRules('36.2.0', '14.3.0')).not.toContain('no-store');
         });
 
         it('is emitted after the hashed-asset rule, so it wins for in-flight assets', () => {
-            // It must override BOTH the document rule (which excludes archives) and the 7-day
-            // asset cache, or a tester keeps stale assets for the whole cycle. Generated with a
-            // version in flight so the archive rule is actually present to be positioned - with
-            // the committed empty value this assertion would hold even if the rule were deleted.
-            const lines = getHtaccessContent({ env: 'production', uncachedArchive: '36.2.0' }).split('\n');
+            const lines = inFlight('36.2.0', '14.3.0').split('\n');
             const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
-            const archiveAt = lines.findIndex((l) => l.includes('archive/36\\.2\\.0/#'));
-            const deflateAt = lines.findIndex((l) => l.includes('<IfModule mod_deflate.c>'));
+            const gridAt = lines.findIndex((l) => l.includes('^/archive/36\\.2\\.0/#'));
+            const chartsAt = lines.findIndex((l) => l.includes('^/charts/archive/14\\.3\\.0/#'));
             expect(assetAt).toBeGreaterThan(-1);
-            expect(archiveAt).toBeGreaterThan(assetAt);
-            expect(deflateAt).toBeGreaterThan(archiveAt);
+            expect(gridAt).toBeGreaterThan(assetAt);
+            expect(chartsAt).toBeGreaterThan(assetAt);
         });
 
         it('applies to staging too, where release testing happens', () => {
-            // Staging has no long-cache rule, but its document rule also excludes archives, so
-            // an in-flight archive would otherwise keep heuristic caching there as well. Assert
-            // the archive-specific expression: staging already contains "no-cache" via the
-            // document rule, so a bare substring check would pass without the wiring.
-            const staging = getHtaccessContent({ env: 'staging', uncachedArchive: '36.2.0' });
-            expect(staging).toContain('archive/36\\.2\\.0/#');
-            expect(staging).toContain('Release archive under test');
+            const staging = getHtaccessContent({
+                env: 'staging',
+                uncachedGridArchive: '36.2.0',
+                uncachedChartsArchive: '14.3.0',
+            });
+            expect(staging).toContain('^/archive/36\\.2\\.0/#');
+            expect(staging).toContain('^/charts/archive/14\\.3\\.0/#');
+        });
+    });
+
+    describe('Studio archives are never cached', () => {
+        it('blanket no-cache for /studio/archive/, in both envs', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                expect(content).toContain('m#^/studio/archive/#');
+            });
         });
 
-        it('emits nothing in either env when nothing is in flight', () => {
-            (['production', 'staging'] as const).forEach((env) => {
-                expect(getHtaccessContent({ env, uncachedArchive: null })).not.toContain('Release archive under test');
-            });
+        it('is emitted after the hashed-asset rule, so it covers studio assets too', () => {
+            const lines = productionContent.split('\n');
+            const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
+            const studioAt = lines.findIndex((l) => l.includes('m#^/studio/archive/#'));
+            expect(assetAt).toBeGreaterThan(-1);
+            expect(studioAt).toBeGreaterThan(assetAt);
+        });
+
+        it('is not carved out of the document no-cache rule', () => {
+            // Released grid/charts archives keep their heuristic window; studio must not.
+            const doc = productionContent.split('\n').find((l) => l.includes('CONTENT_TYPE'));
+            expect(doc).toContain('^/(charts/)?archive/[0-9]');
+            expect(doc).not.toContain('studio');
         });
     });
 

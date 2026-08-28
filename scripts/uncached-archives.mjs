@@ -1,22 +1,19 @@
 #!/usr/bin/env node
-// Set or clear the release archive that is exempt from caching. Only one is ever in flight.
+// Set or clear the release archives that are exempt from caching.
 //
-// An archive under test is redeployed for days and its fixes must appear within minutes, so
-// it is excluded from the caching released archives get. No archive rebuild either way - the
-// rule lives in the root .htaccess.
+// Grid and Charts ship together at their own version numbers (Grid 36.x, Charts 14.x), so both
+// are named. An archive under test is redeployed for days and its fixes must appear within
+// minutes, so it is excluded from the caching released archives get. No archive rebuild either
+// way - the rule lives in the root .htaccess.
 //
-// Run from the repo root (the path resolves the same from anywhere):
+// Studio archives are never cached, so they need no entry here.
 //
-//   node scripts/uncached-archives.mjs set 36.2.0
-//   node scripts/uncached-archives.mjs clear
-//   node scripts/uncached-archives.mjs clear 36.2.0
+//   node scripts/uncached-archives.mjs set 36.2.0 14.3.0   # start of a release cycle
+//   node scripts/uncached-archives.mjs clear               # at GA
+//   node scripts/uncached-archives.mjs clear 36.2.0 14.3.0 # at GA - only if those are set
 //
-// set <version>     start of a release cycle; version required
-// clear             at GA - clears whatever is set
-// clear <version>   at GA - clears only if that version is the one set
-//
-// The guarded form is the safer one at GA: if a different version is in flight it refuses
-// rather than clearing someone else's cycle.
+// The guarded form is the safer one at GA: if different versions are in flight it refuses
+// rather than ending someone else's cycle.
 //
 // Then update the snapshot (./behave.sh --project ag-grid-docs htaccessRules -u) and deploy.
 // On b36.1.0 and older the project filter is --project all.
@@ -28,48 +25,66 @@ const FILE = join(
     dirname(fileURLToPath(import.meta.url)),
     '../documentation/ag-grid-docs/src/utils/htaccess/htaccessRules.ts'
 );
-const DECL = /(export const UNCACHED_ARCHIVE: string \| null = )(.+?)(;)/;
-const USAGE = 'usage: node scripts/uncached-archives.mjs set <version> | clear [version]';
+const DECL = (name) => new RegExp(`(export const ${name}: string \\| null = )(.+?)(;)`);
+const GRID = 'UNCACHED_GRID_ARCHIVE';
+const CHARTS = 'UNCACHED_CHARTS_ARCHIVE';
+const USAGE = 'usage: node scripts/uncached-archives.mjs set <grid> <charts> | clear [grid charts]';
 
-const [action, version] = process.argv.slice(2);
+const [action, grid, charts] = process.argv.slice(2);
 
 if (!['set', 'clear'].includes(action)) {
     console.error(USAGE);
     process.exit(2);
 }
-if (action === 'set' && !version) {
-    console.error(`set needs a version.\n${USAGE}`);
+if (action === 'set' && (!grid || !charts)) {
+    console.error(`set needs both a grid and a charts version.\n${USAGE}`);
     process.exit(2);
 }
-if (version && !/^\d+\.\d+\.\d+$/.test(version)) {
-    console.error(`'${version}' is not a version of the form 36.2.0`);
+if (action === 'clear' && Boolean(grid) !== Boolean(charts)) {
+    console.error(`a guarded clear needs both versions, or neither.\n${USAGE}`);
     process.exit(2);
+}
+for (const v of [grid, charts].filter(Boolean)) {
+    if (!/^\d+\.\d+\.\d+$/.test(v)) {
+        console.error(`'${v}' is not a version of the form 36.2.0`);
+        process.exit(2);
+    }
 }
 
 const source = readFileSync(FILE, 'utf8');
-const match = source.match(DECL);
-if (!match) {
-    console.error(`Could not find the UNCACHED_ARCHIVE declaration in ${FILE}`);
-    process.exit(1);
-}
-const current = match[2] === 'null' ? null : match[2].replace(/'/g, '');
+const read = (name) => {
+    const m = source.match(DECL(name));
+    if (!m) {
+        console.error(`Could not find the ${name} declaration in ${FILE}`);
+        process.exit(1);
+    }
+    return m[2] === 'null' ? null : m[2].replace(/'/g, '');
+};
+const current = { grid: read(GRID), charts: read(CHARTS) };
+const show = (g, c) => (g || c ? `grid ${g ?? 'null'}, charts ${c ?? 'null'}` : 'nothing in flight');
 
-if (action === 'clear' && !current) {
-    console.log('Nothing is in flight; all archives cache normally.');
+if (action === 'clear' && !current.grid && !current.charts) {
+    console.log('Nothing is in flight; released archives cache normally.');
     process.exit(0);
 }
 // Guarded clear: refuse rather than clear a cycle that is not the one named.
-if (action === 'clear' && version && current !== version) {
-    console.error(`${current} is in flight, not ${version}. Refusing to clear.`);
+if (action === 'clear' && grid && (current.grid !== grid || current.charts !== charts)) {
+    console.error(
+        `${show(current.grid, current.charts)} is in flight, not grid ${grid}, charts ${charts}. Refusing to clear.`
+    );
     process.exit(1);
 }
 
-const next = action === 'set' ? `'${version}'` : 'null';
-writeFileSync(FILE, source.replace(DECL, `$1${next}$3`));
+const next = action === 'set' ? { grid, charts } : { grid: null, charts: null };
+const rendered = (v) => (v ? `'${v}'` : 'null');
+writeFileSync(
+    FILE,
+    source.replace(DECL(GRID), `$1${rendered(next.grid)}$3`).replace(DECL(CHARTS), `$1${rendered(next.charts)}$3`)
+);
 
-console.log(`  was: ${current ?? 'null'}\n  now: ${action === 'set' ? version : 'null'}`);
+console.log(`  was: ${show(current.grid, current.charts)}\n  now: ${show(next.grid, next.charts)}`);
 console.log(
     action === 'set'
-        ? `\n${version} will not be cached while it is in flight.`
-        : `\n${current} will now be cached like every other released archive.`
+        ? `\nGrid ${grid} and Charts ${charts} will not be cached while in flight.`
+        : `\nThose archives will now be cached like every other released archive.`
 );
