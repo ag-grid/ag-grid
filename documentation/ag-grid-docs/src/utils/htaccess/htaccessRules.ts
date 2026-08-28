@@ -30,11 +30,13 @@ export const PRODUCTION_CSP_PHASE: 'report-only' | 'enforce' = 'enforce';
 export const REFERRER_POLICY_VALUE = 'strict-origin-when-cross-origin';
 export const PERMISSIONS_POLICY_VALUE = 'geolocation=(), microphone=(), camera=()';
 
-// The release archive under test, if any - only one is ever in flight. It is redeployed
-// repeatedly for days so it must stay fresh; released archives are immutable and are not
-// listed. Set it when the archive is cut, clear it at GA (scripts/uncached-archives.mjs).
-// No archive rebuild either way: the rule lives in the root .htaccess, not the archive's copy.
-export const UNCACHED_ARCHIVE: string | null = null;
+// The archives under release testing, if any. Grid and Charts ship together, at their own
+// version numbers (Grid 36.x, Charts 14.x), so both are named. They are redeployed for days
+// during a cycle so they must stay fresh; released archives are immutable and are not listed.
+// Set both when the archives are cut, clear at GA (scripts/uncached-archives.mjs). No archive
+// rebuild either way: the rule lives in the root .htaccess, not the archive's own copy.
+export const UNCACHED_GRID_ARCHIVE: string | null = null;
+export const UNCACHED_CHARTS_ARCHIVE: string | null = null;
 
 /**
  * Note: when changing this file please add/update the tests in
@@ -46,7 +48,7 @@ export const UNCACHED_ARCHIVE: string | null = null;
 // and cheaper to leave cached.
 const documentNoCacheRules = `
 # Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
-Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
+Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
 `;
 
 // Long-cache content-addressed assets. Matched on hash SHAPE rather than the /_astro/
@@ -59,20 +61,33 @@ const hashedAssetCacheRules = `
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
 `;
 
-// In-flight release archives. Released archives keep their long heuristic cache, but one
-// under test is redeployed for days and fixes must show within minutes - heuristic freshness
-// is ~10% of age, so an hour after a deploy it is already stale for 6 minutes, and silently:
-// the tester holds that iteration's hashed assets too, so the page renders consistently old.
-// Emitted last so it overrides both the archive exclusion above and the hashed-asset rule.
-export function getInFlightArchiveRule(version: string | null): string {
-    if (!version) {
+// Studio archives are not cached at all for now - simpler than tracking a third independent
+// version line, and Studio traffic is a small fraction of archive traffic. Emitted after the
+// hashed-asset rule so it covers Studio's assets as well as its HTML.
+const studioArchiveNoCacheRules = `
+# Studio archives: never cached.
+Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
+`;
+
+// In-flight release archives. Released archives keep their long heuristic cache, but one under
+// test is redeployed for days and fixes must show within minutes - heuristic freshness is ~10%
+// of age, so an hour after a deploy it is already stale for 6 minutes, and silently: the tester
+// holds that iteration's hashed assets too, so the page renders consistently old. Grid and
+// Charts are versioned independently and released together, so both are matched by their own
+// version. Emitted last so it overrides the archive exclusion and the hashed-asset rule.
+export function getInFlightArchiveRules(grid: string | null, charts: string | null): string {
+    // Single backslash in the emitted regex, so Apache reads a literal dot.
+    const escape = (v: string) => v.replace(/\./g, '\\.');
+    const rules = [
+        grid && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/archive/${escape(grid)}/#"`,
+        charts && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/charts/archive/${escape(charts)}/#"`,
+    ].filter(Boolean);
+    if (!rules.length) {
         return '';
     }
-    // Single backslash in the emitted regex, so Apache reads a literal dot.
-    const escaped = version.replace(/\./g, '\\.');
     return `
-# Release archive under test - always revalidate, overriding the rules above.
-Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/${escaped}/#"
+# Release archives under test - always revalidate, overriding the rules above.
+${rules.join('\n')}
 `;
 }
 
@@ -479,6 +494,7 @@ AddCharset utf-8 .md
 function getStagingHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
+${studioArchiveNoCacheRules}
 ${inFlightArchiveRules}
 
 ${markdownNegotiationBlock}
@@ -501,6 +517,7 @@ function getProductionHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${hashedAssetCacheRules}
+${studioArchiveNoCacheRules}
 ${inFlightArchiveRules}
 ${modDeflateRules}
 ${getModRewriteRules()}
@@ -594,12 +611,17 @@ export function getBlogVhostHeaderFragment(options: { env: CspEnv }, mode: CspMo
     ].join('\n');
 }
 
-// uncachedArchive defaults to the committed UNCACHED_ARCHIVE. It is overridable so the
-// tests can generate output with a version in flight - otherwise every assertion about the
-// in-flight rule runs against output where that rule is absent, and passes vacuously.
-export function getHtaccessContent(options: { env: HtaccessEnv; uncachedArchive?: string | null }): string {
-    const inFlight = getInFlightArchiveRule(
-        options.uncachedArchive === undefined ? UNCACHED_ARCHIVE : options.uncachedArchive
+// The archive versions default to the committed constants. They are overridable so the tests
+// can generate output with archives in flight - otherwise every assertion about the in-flight
+// rules runs against output where they are absent, and passes vacuously.
+export function getHtaccessContent(options: {
+    env: HtaccessEnv;
+    uncachedGridArchive?: string | null;
+    uncachedChartsArchive?: string | null;
+}): string {
+    const inFlight = getInFlightArchiveRules(
+        options.uncachedGridArchive === undefined ? UNCACHED_GRID_ARCHIVE : options.uncachedGridArchive,
+        options.uncachedChartsArchive === undefined ? UNCACHED_CHARTS_ARCHIVE : options.uncachedChartsArchive
     );
     return options.env === 'staging' ? getStagingHtaccessContent(inFlight) : getProductionHtaccessContent(inFlight);
 }
