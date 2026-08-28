@@ -328,7 +328,14 @@ describe('htaccessRules', () => {
         });
     });
 
-    describe('Studio archives are never cached', () => {
+    describe('Archived Studio versions are never cached', () => {
+        it('does not apply to the live Studio site, which caches normally', () => {
+            // The rule is anchored to /studio/archive/ - /studio/ itself must keep the normal
+            // document rule and the long hashed-asset cache.
+            const line = productionContent.split('\n').find((l) => l.includes('/studio/archive/'));
+            expect(line).toContain('m#^/studio/archive/#');
+        });
+
         it('blanket no-cache for /studio/archive/, in both envs', () => {
             [productionContent, stagingContent].forEach((content) => {
                 expect(content).toContain('m#^/studio/archive/#');
