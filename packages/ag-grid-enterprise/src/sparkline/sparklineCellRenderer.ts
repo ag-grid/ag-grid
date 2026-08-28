@@ -67,12 +67,19 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     private getWidgetWidth(): number {
         const params = this.params;
-        if (params?.node.rowPinned != null) {
-            return 0; // pinned rows don't have widgets
+        const column = params?.column as AgColumn | undefined;
+        if (!column) {
+            return 0;
         }
 
         const colDef = params?.colDef;
-        const widgets = (colDef?.rowDrag ? 1 : 0) + (colDef?.checkboxSelection ? 1 : 0) + (colDef?.dndSource ? 1 : 0);
+        const widgets =
+            // row drag reserves space for an icon even if it's a callback that returns false
+            (colDef?.rowDrag ? 1 : 0) +
+            // checkboxSelection is deprecated, but it's the only way a sparkline renderer can have a checkbox
+            (colDef?.checkboxSelection ? 1 : 0) +
+            // DnD source does not reserve space, so check if it's actually enabled for the row
+            (column.isDndSource(params.node) ? 1 : 0);
         return widgets * (this.env.getDefaultIconSize() + this.env.getDefaultCellWidgetSpacing());
     }
 
