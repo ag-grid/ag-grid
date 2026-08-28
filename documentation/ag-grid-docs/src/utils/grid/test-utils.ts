@@ -5,6 +5,7 @@ import { test as base, expect as playwrightExpect } from '@playwright/test';
 import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
 import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
+import { checkFocusShadows, reportFocusIssues } from './test/focusShadow';
 import {
     routeExampleAssetsFromDisk,
     routeExternalThroughMirror,
@@ -442,6 +443,7 @@ const frameworkTest =
             }
 
             await loadPage(page, agExampleUrl, agFramework, loadPageOptions, agModules);
+            reportFocusIssues(await checkFocusShadows(page), page);
             await applyCpuThrottle({ page, cpuThrottle }, testInfo);
             await testBody({
                 page,
@@ -518,6 +520,10 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page, pe
             []
         );
     }
+
+    // Audited before teardown, while the grid is still in the page, and after the test body so that focusing
+    // every element cannot perturb the assertions.
+    reportFocusIssues(await checkFocusShadows(page), page);
 
     // Settled first so the example's own fetch applies its rows while the grid is still there.
     const hadDataRequestInFlight = await pendingRequests.settle(page);
