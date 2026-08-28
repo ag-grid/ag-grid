@@ -20,14 +20,14 @@
 //
 // Then update the snapshot (./behave.sh --project ag-grid-docs htaccessRules -u) and deploy.
 // On b36.1.0 and older the project filter is --project all.
+/* eslint-disable no-console -- a CLI: its output is the interface */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const FILE = join(dirname(fileURLToPath(import.meta.url)), '../src/utils/htaccess/htaccessRules.ts');
 const DECL = /(export const UNCACHED_ARCHIVE: string \| null = )(.+?)(;)/;
-const USAGE =
-    'usage: node documentation/ag-grid-docs/scripts/uncached-archives.mjs set <version> | clear [version]';
+const USAGE = 'usage: node documentation/ag-grid-docs/scripts/uncached-archives.mjs set <version> | clear [version]';
 
 const [action, version] = process.argv.slice(2);
 
