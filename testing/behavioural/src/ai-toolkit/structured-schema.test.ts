@@ -703,14 +703,23 @@ describe('getStructuredSchema - filter feature', () => {
             );
         });
 
-        test('extracts displayKey from object-style filterOptions', async () => {
+        // The filter decides what is usable, so the schema cannot offer a `type` it drops.
+        test('extracts displayKey from object-style filterOptions, and drops an entry the filter would', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     {
                         field: 'name',
                         filter: 'agTextColumnFilter',
                         filterParams: {
-                            filterOptions: ['contains', { displayKey: 'customEquals' }],
+                            filterOptions: [
+                                'contains',
+                                { displayKey: 'customEquals' },
+                                {
+                                    displayKey: 'startsA',
+                                    displayName: 'Starts With A',
+                                    predicate: (_v: any[], cellValue: any) => cellValue?.startsWith('A'),
+                                },
+                            ],
                         },
                     },
                 ],
@@ -728,7 +737,7 @@ describe('getStructuredSchema - filter feature', () => {
             const schema = toJSON(api.getStructuredSchema());
             const nameFilter = resolveNullable(schema.properties.filter.properties.filterModel.properties.name);
             const conditionType = nameFilter.properties.conditions.items.properties.type;
-            expect(conditionType.enum).toEqual(['contains', 'customEquals']);
+            expect(conditionType.enum).toEqual(['contains', 'startsA']);
             await new GridRows(api, `extracts displayKey from object-style filterOptions final state`).check(`
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 name:"Alice"
@@ -1383,6 +1392,82 @@ describe('getStructuredSchema - advanced filter', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice"
         `);
+    });
+
+    // From the expression service, so an option is offered under the key an expression would accept.
+    test('a column custom option reaches the schema, and a sibling of the same type keeps the built-ins', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                {
+                    field: 'age',
+                    cellDataType: 'number',
+                    filterParams: {
+                        filterOptions: [
+                            'equals',
+                            {
+                                displayKey: 'betweenExclusive',
+                                displayName: 'Between (Exclusive)',
+                                numberOfInputs: 2,
+                                predicate: ([from, to]: any[], cellValue: any) =>
+                                    cellValue != null && cellValue > from && cellValue < to,
+                            },
+                        ],
+                    },
+                },
+                { field: 'score', cellDataType: 'number' },
+            ],
+            rowData: [{ age: 25, score: 10 }],
+            enableAdvancedFilter: true,
+        });
+
+        const schema = toJSON(api.getStructuredSchema());
+
+        // A def per column AND arity: operators taking different counts cannot share one schema.
+        const defsFor = (colId: string) =>
+            (Object.values(schema.$defs) as any[]).filter((def: any) => def?.properties?.colId?.enum?.includes(colId));
+        const defFor = (colId: string, ...operatorKeys: string[]) =>
+            defsFor(colId).find((def: any) => def.properties.type.enum.join() === operatorKeys.join());
+
+        const ageOneValue = defFor('age', 'equals');
+        expect(ageOneValue.properties.filterTo).toBeUndefined();
+        expect(ageOneValue.required).toEqual(['filterType', 'colId', 'type', 'filter']);
+
+        const ageTwoValue = defFor('age', 'betweenExclusive');
+        expect(ageTwoValue.properties.filterTo).toBeDefined();
+        expect(ageTwoValue.required).toEqual(['filterType', 'colId', 'type', 'filter', 'filterTo']);
+
+        // The built-in sibling splits the same way: its blanks take no value, the rest take one.
+        const scoreNoValue = defFor('score', 'blank', 'notBlank');
+        expect(scoreNoValue.properties.filter).toBeUndefined();
+        expect(scoreNoValue.required).toEqual(['filterType', 'colId', 'type']);
+
+        const scoreOneValue = defFor(
+            'score',
+            'equals',
+            'notEqual',
+            'greaterThan',
+            'greaterThanOrEqual',
+            'lessThan',
+            'lessThanOrEqual'
+        );
+        expect(scoreOneValue.properties.colId.enum).toEqual(['score']);
+        expect(scoreOneValue.required).toEqual(['filterType', 'colId', 'type', 'filter']);
+        expect(scoreOneValue.properties.filterTo).toBeUndefined();
+    });
+
+    test('a boolean column carries no value slot, since none of its operators takes one', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'active', cellDataType: 'boolean' }],
+            rowData: [{ active: true }],
+            enableAdvancedFilter: true,
+        });
+
+        const schema = toJSON(api.getStructuredSchema());
+
+        const model = schema.$defs.booleanAdvancedFilterModel;
+        expect(model.properties.type.enum).toEqual(['true', 'false', 'blank', 'notBlank']);
+        expect(model.properties.filter).toBeUndefined();
+        expect(model.properties.filterTo).toBeUndefined();
     });
 });
 

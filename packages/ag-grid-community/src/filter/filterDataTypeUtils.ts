@@ -14,7 +14,7 @@ import type {
 import type { ISetFilterParams } from '../interfaces/iSetFilter';
 import type { IBigIntFilterParams } from './provided/bigInt/iBigIntFilter';
 import type { IDateFilterParams } from './provided/date/iDateFilter';
-import type { ISimpleFilterParams } from './provided/iSimpleFilter';
+import type { IFilterOptionDef, ISimpleFilterParams } from './provided/iSimpleFilter';
 import type { INumberFilterParams } from './provided/number/iNumberFilter';
 import type { ITextFilterParams } from './provided/text/iTextFilter';
 
@@ -101,6 +101,39 @@ type FilterParamsDefMap = CheckDataTypes<{
     object: FilterParamCallback<ITextFilterParams, any>;
 }>;
 
+const BOOLEAN_FILTER_OPTIONS: readonly (string | IFilterOptionDef)[] = [
+    'empty',
+    {
+        displayKey: 'true',
+        displayName: 'True',
+        predicate: (_filterValues: any[], cellValue: any) => cellValue,
+        numberOfInputs: 0,
+    },
+    {
+        displayKey: 'false',
+        displayName: 'False',
+        predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
+        numberOfInputs: 0,
+    },
+];
+
+/**
+ * Whether the list is still exactly what the grid supplied for the cell data type. Content rather than
+ * identity, so a list edited after the fact reads as the column's and both filters go on offering the same.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isGridSuppliedFilterOptions(filterOptions: unknown): boolean {
+    if (!Array.isArray(filterOptions) || filterOptions.length !== BOOLEAN_FILTER_OPTIONS.length) {
+        return false;
+    }
+    for (let i = 0, len = BOOLEAN_FILTER_OPTIONS.length; i < len; ++i) {
+        if (filterOptions[i] !== BOOLEAN_FILTER_OPTIONS[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 // using an object here to enforce dev to not forget to implement new types as they are added
 const filterParamsForEachDataType: FilterParamsDefMap = {
     number: () => undefined,
@@ -108,21 +141,8 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
     boolean: () => ({
         maxNumConditions: 1,
         debounceMs: 0,
-        filterOptions: [
-            'empty',
-            {
-                displayKey: 'true',
-                displayName: 'True',
-                predicate: (_filterValues: any[], cellValue: any) => cellValue,
-                numberOfInputs: 0,
-            },
-            {
-                displayKey: 'false',
-                displayName: 'False',
-                predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
-                numberOfInputs: 0,
-            },
-        ],
+        // A copy per column, so editing the list one colDef carries cannot reach the others.
+        filterOptions: [...BOOLEAN_FILTER_OPTIONS],
     }),
     date: () => ({ isValidDate }),
     dateString: ({ dataTypeDefinition }) => ({

@@ -3,6 +3,7 @@ import { _parseBigIntOrNull } from 'ag-stack';
 import { _bindFilterCallback } from 'ag-grid-community';
 import type {
     AgColumn,
+    ColumnAdvancedFilterModel,
     ColumnModel,
     DataTypeService,
     GridOptionsService,
@@ -14,6 +15,35 @@ import type {
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from './filterExpressionOperators';
+
+/** The operand slots every `ColumnAdvancedFilterModel` member shares, which the union itself cannot express. */
+export interface ColumnFilterModelOperands {
+    filter?: string | number;
+    filterTo?: string | number;
+}
+
+/** The model names its two operands rather than listing them, so an operand index maps to a key. */
+export const OPERAND_KEYS = ['filter', 'filterTo'] as const;
+
+/** Judged on the display: what the column's formatter cannot write is not a value the model holds. */
+export function hasEveryOperand(
+    advFilterExpSvc: AdvancedFilterExpressionService,
+    model: ColumnAdvancedFilterModel,
+    numOperands: number
+): boolean {
+    for (let i = 0; i < numOperands; ++i) {
+        if (!advFilterExpSvc.formatOperand(model, (model as ColumnFilterModelOperands)[OPERAND_KEYS[i]], true)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** A condition the Builder is still assembling: each slot is absent until the user has chosen it. */
+export interface PartialColumnFilterModel extends ColumnFilterModelOperands {
+    colId?: string;
+    type?: string;
+}
 
 export interface FilterExpressionParserParams {
     expression: string;
@@ -109,18 +139,27 @@ export function updateExpression(
     updatedValuePart: string,
     appendSpace?: boolean,
     appendQuote?: boolean,
-    empty?: boolean
+    empty?: boolean,
+    appendBracket?: boolean
 ): AutocompleteUpdate {
-    const secondPartStartPosition = endPosition + (!expression.length || empty ? 0 : 1);
+    let secondPartStartPosition = endPosition + (!expression.length || empty ? 0 : 1);
     let positionOffset = 0;
     if (appendSpace) {
-        if (expression[secondPartStartPosition] === ' ') {
-            // already a space, just move the position
+        const hasSpace = expression[secondPartStartPosition] === ' ';
+        if (hasSpace && !appendBracket && !appendQuote) {
+            // already a space and nothing to open after it, so just move the position
             positionOffset = 1;
         } else {
             updatedValuePart += ' ';
+            // A two-value option opens its bracket then the first quote, both past the space, so one there is rewritten.
+            if (appendBracket) {
+                updatedValuePart += '(';
+            }
             if (appendQuote) {
                 updatedValuePart += `"`;
+            }
+            if (hasSpace) {
+                secondPartStartPosition++;
             }
         }
     }

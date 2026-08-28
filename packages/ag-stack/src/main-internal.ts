@@ -252,6 +252,7 @@ export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {
     _defaultComparator,
     _exists,
+    _getOwn,
     _hasOwn,
     _jsonEquals,
     _makeNull,

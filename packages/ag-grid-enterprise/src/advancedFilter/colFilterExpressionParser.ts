@@ -6,6 +6,7 @@ import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import type {
     AutocompleteUpdate,
+    ColumnFilterModelOperands,
     FilterExpressionFunction,
     FilterExpressionFunctionParams,
     FilterExpressionParserParams,
@@ -22,15 +23,12 @@ import {
 } from './filterExpressionUtils';
 
 interface Parser {
-    type: string;
     parse(char: string, position: number): boolean | undefined;
     complete(position: number): void;
     getValidationError(): FilterExpressionValidationError | null;
 }
 
 class ColumnParser implements Parser {
-    public readonly type = 'column';
-
     public valid = true;
     public endPosition: number | undefined;
     public baseCellDataType: BaseCellDataType;
@@ -110,8 +108,6 @@ class ColumnParser implements Parser {
 }
 
 class OperatorParser implements Parser {
-    public readonly type = 'operator';
-
     public valid = true;
     public endPosition: number | undefined;
     public expectedNumOperands: number = 0;
@@ -163,21 +159,16 @@ class OperatorParser implements Parser {
         return this.parsedOperator;
     }
 
-    /**
-     * Greedy, over the options the column offers: the longest name spelled here wins, so one that another name
-     * starts with - or one containing a terminator - resolves.
-     */
-    private parseOperator(fromComplete: boolean, endPosition: number): boolean {
+    /** The longest name in `entries` written at the start position, and whether one is still being typed. */
+    private matchOperatorName(
+        entries: AutocompleteEntry[],
+        minLength: number,
+        partialSearchValue: string
+    ): { key: string | undefined; length: number; isPartialMatch: boolean } {
         const { params, startPosition } = this;
         const expression = params.expression;
-        const advFilterExpSvc = params.advFilterExpSvc;
-        const entries = advFilterExpSvc.getOperatorAutocompleteEntries(this.column, this.baseCellDataType);
-        this.endPosition = endPosition;
-
-        const minLength = endPosition - startPosition + 1;
-        const partialSearchValue = expression.slice(startPosition, endPosition + 1).toLocaleLowerCase() + ' ';
-        let matchedOperator: string | undefined;
-        let matchedLength = 0;
+        let key: string | undefined;
+        let length = 0;
         let isPartialMatch = false;
         for (let i = 0, len = entries.length; i < len; ++i) {
             const entry = entries[i];
@@ -185,24 +176,58 @@ class OperatorParser implements Parser {
             // Lengths come from the name as written: lower-casing can change them, `İ` becoming two units.
             const lowerCaseDisplayValue = displayValue.toLocaleLowerCase();
             if (
-                displayValue.length > matchedLength &&
+                displayValue.length > length &&
                 displayValue.length >= minLength &&
                 isNameAt(expression, startPosition, displayValue, lowerCaseDisplayValue)
             ) {
-                matchedOperator = entry.key;
-                matchedLength = displayValue.length;
+                key = entry.key;
+                length = displayValue.length;
             }
             if (lowerCaseDisplayValue.startsWith(partialSearchValue)) {
                 isPartialMatch = true;
             }
         }
+        return { key, length, isPartialMatch };
+    }
+
+    /** Longest match wins, offered names first, so a name another starts with or contains still resolves. */
+    private parseOperator(fromComplete: boolean, endPosition: number): boolean {
+        const { params, startPosition } = this;
+        const expression = params.expression;
+        const columnOperators = params.advFilterExpSvc.getColumnOperators(this.baseCellDataType, this.column);
+        this.endPosition = endPosition;
+
+        const minLength = endPosition - startPosition + 1;
+        const partialSearchValue = expression.slice(startPosition, endPosition + 1).toLocaleLowerCase() + ' ';
+        const activeOperators = columnOperators?.activeOperators;
+        let match = this.matchOperatorName(
+            columnOperators?.operators.getEntries(activeOperators) ?? [],
+            minLength,
+            partialSearchValue
+        );
+        // Only a narrowing column has a second list; without one the two are the same scan.
+        if (activeOperators) {
+            const resolvable = this.matchOperatorName(
+                columnOperators!.operators.getEntries(),
+                minLength,
+                partialSearchValue
+            );
+            if (resolvable.length > match.length || (!match.key && resolvable.isPartialMatch)) {
+                match = resolvable;
+            }
+        }
+        const { key: matchedOperator, isPartialMatch } = match;
 
         if (matchedOperator) {
-            const matchEndPosition = startPosition + matchedLength - 1;
+            const matchEndPosition = startPosition + match.length - 1;
             this.parsedOperator = matchedOperator;
             this.endPosition = matchEndPosition;
             this.matchEndPosition = matchEndPosition;
-            const operator = advFilterExpSvc.getExpressionOperator(this.baseCellDataType, matchedOperator)!;
+            const operator = params.advFilterExpSvc.getExpressionOperator(
+                this.baseCellDataType,
+                matchedOperator,
+                this.column
+            )!;
             this.expectedNumOperands = operator.numOperands;
             const operatorDisplayValue = operator.displayValue;
             const userValue = expression.slice(startPosition, matchEndPosition + 1);
@@ -236,9 +261,6 @@ function isNameAt(
 }
 
 class OperandParser implements Parser {
-    public readonly type = 'operand';
-
-    public valid = true;
     public endPosition: number | undefined;
     private quotes: `'` | `"` | undefined;
     private operand = '';
@@ -253,19 +275,16 @@ class OperandParser implements Parser {
         number: (modelValue) => {
             // A column's own `numberParser` reports unreadable input as null, where `Number` gives NaN.
             if (modelValue == null || isNaN(modelValue as number)) {
-                this.valid = false;
                 this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotANumber');
             }
         },
         bigint: () => {
             if (_parseBigIntOrNull(this.modelValue) === null) {
-                this.valid = false;
                 this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotABigInt');
             }
         },
         date: (modelValue) => {
             if (modelValue == null) {
-                this.valid = false;
                 this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationInvalidDate');
             }
         },
@@ -303,6 +322,7 @@ class OperandParser implements Parser {
             this.quotes = char;
         } else if (this.quotes && char === this.quotes) {
             this.parseOperand(false, position);
+            this.quotes = undefined;
             return false;
         } else {
             this.operand += char;
@@ -322,6 +342,10 @@ class OperandParser implements Parser {
                   endPosition: this.endPosition ?? this.params.expression.length - 1,
               }
             : null;
+    }
+
+    public isInsideQuotes(): boolean {
+        return this.quotes != null;
     }
 
     public getRawValue(): string {
@@ -348,10 +372,8 @@ class OperandParser implements Parser {
         this.modelValue = this.operand;
         if (fromComplete && this.quotes) {
             // missing end quote
-            this.valid = false;
             this.validationMessage = advFilterExpSvc.translate('advancedFilterValidationMissingQuote');
         } else if (this.modelValue === '') {
-            this.valid = false;
             this.validationMessage = advFilterExpSvc.translate('advancedFilterValidationMissingValue');
         } else {
             const modelValue = advFilterExpSvc.getOperandModelValue(this.operand, this.baseCellDataType, this.column!);
@@ -360,6 +382,173 @@ class OperandParser implements Parser {
             }
             this.filterValidationSetters[this.baseCellDataType](modelValue);
         }
+    }
+}
+
+/** One value is the operand alone, with no syntax of its own; two are a comma-separated pair in optional brackets. */
+class OperandsParser implements Parser {
+    private readonly parsers: OperandParser[] = [];
+    private parser: OperandParser | undefined;
+    private expectSeparator = false;
+    private hasOpenBracket = false;
+    private validationMessage: string | null = null;
+    /** Also marks the region as rejected: the rest of the text belongs to the error reported at this position. */
+    private validationEndPosition: number | undefined;
+
+    constructor(
+        private readonly params: FilterExpressionParserParams,
+        public readonly startPosition: number,
+        private readonly baseCellDataType: BaseCellDataType,
+        private readonly column: AgColumn | null | undefined,
+        private readonly expectedNumOperands: number
+    ) {}
+
+    public parse(char: string, position: number): boolean | undefined {
+        if (this.expectedNumOperands > 1) {
+            return this.parseSeveral(char, position);
+        }
+        this.startOperand(position); // one value, so no separator syntax of its own
+        return this.parser!.parse(char, position);
+    }
+
+    public complete(position: number): void {
+        if (this.parser && !this.expectSeparator) {
+            this.finishOperand(position);
+        }
+        if (this.expectedNumOperands < 2) {
+            return;
+        }
+        if (this.parsers.length < this.expectedNumOperands) {
+            this.reject('advancedFilterValidationMissingValue');
+        } else if (this.hasOpenBracket) {
+            this.reject('advancedFilterValidationMissingEndBracket');
+        }
+    }
+
+    public getValidationError(): FilterExpressionValidationError | null {
+        // An operand's own fault has a span and names the character at issue, so it beats the region's.
+        const { validationMessage, validationEndPosition, parsers } = this;
+        for (let i = 0, len = parsers.length; i < len; ++i) {
+            const error = parsers[i].getValidationError();
+            if (error) {
+                return error;
+            }
+        }
+        if (validationMessage) {
+            // With no span of its own the fault is that the expression stopped, not that something in it is wrong.
+            const atEnd = this.params.expression.length;
+            return {
+                message: validationMessage,
+                startPosition: validationEndPosition == null ? atEnd : this.startPosition,
+                endPosition: validationEndPosition ?? atEnd,
+            };
+        }
+        return null;
+    }
+
+    public isComplete(): boolean {
+        return this.parsers.length >= this.expectedNumOperands;
+    }
+
+    public getParsers(): OperandParser[] {
+        return this.parsers;
+    }
+
+    private parseSeveral(char: string, position: number): boolean | undefined {
+        // Read live throughout: `finishOperand` sets `expectSeparator`, and the reads below straddle it.
+        const parser = this.parser;
+        if (this.validationEndPosition != null) {
+            return undefined;
+        }
+
+        if (parser && !this.expectSeparator && parser.isInsideQuotes()) {
+            return this.delegate(char, position);
+        }
+
+        if (char === ' ') {
+            if (parser && !this.expectSeparator) {
+                this.finishOperand(position - 1);
+            }
+            // Spacing between the values; past the last one an unbracketed region is over.
+            return this.expectSeparator && this.isComplete() && !this.hasOpenBracket ? true : undefined;
+        }
+
+        if (char === '(' && !parser && !this.hasOpenBracket && !this.parsers.length) {
+            this.hasOpenBracket = true;
+            return undefined;
+        }
+
+        if (char === ',') {
+            if (!parser) {
+                return this.reject('advancedFilterValidationMissingValue', position);
+            }
+            if (!this.expectSeparator) {
+                this.finishOperand(position - 1);
+            }
+            if (this.isComplete() && !this.hasOpenBracket) {
+                return true;
+            }
+            this.parser = undefined;
+            this.expectSeparator = false;
+            return this.isComplete() ? this.reject('advancedFilterValidationMissingEndBracket', position) : undefined;
+        }
+
+        if (char === ')') {
+            if (parser && !this.expectSeparator) {
+                this.finishOperand(position - 1);
+            }
+            if (!this.hasOpenBracket) {
+                // The enclosing group's bracket ended the region, so `complete` never runs to report a gap.
+                if (!this.isComplete()) {
+                    this.reject('advancedFilterValidationMissingValue');
+                }
+                return true;
+            }
+            return this.isComplete() ? false : this.reject('advancedFilterValidationMissingValue', position);
+        }
+
+        if (this.expectSeparator) {
+            // Past the last value the fault is the bracket left open; before it, the missing separator.
+            return this.reject(
+                this.isComplete()
+                    ? 'advancedFilterValidationMissingEndBracket'
+                    : 'advancedFilterValidationMissingValue',
+                position
+            );
+        }
+
+        this.startOperand(position);
+        return this.delegate(char, position);
+    }
+
+    private delegate(char: string, position: number): boolean | undefined {
+        // The inner parser only reports back on a closing quote, which ends the operand but not the region.
+        if (this.parser!.parse(char, position) != null) {
+            this.expectSeparator = true;
+        }
+        return undefined;
+    }
+
+    private startOperand(position: number): void {
+        if (this.parser) {
+            return;
+        }
+        this.parser = new OperandParser(this.params, position, this.baseCellDataType, this.column);
+        this.parsers.push(this.parser);
+    }
+
+    private finishOperand(position: number): void {
+        this.parser!.complete(position);
+        this.expectSeparator = true;
+    }
+
+    /** Returns undefined, so the region keeps the rest of the text rather than being abandoned and restarted. */
+    private reject(key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, position?: number): undefined {
+        this.validationMessage ??= this.params.advFilterExpSvc.translate(key);
+        if (position != null) {
+            this.validationEndPosition ??= position;
+        }
+        return undefined;
     }
 }
 
@@ -372,7 +561,7 @@ export class ColFilterExpressionParser {
     private parser: Parser | undefined;
     private columnParser: ColumnParser | undefined;
     private operatorParser: OperatorParser | undefined;
-    private operandParser: OperandParser | undefined;
+    private operandsParser: OperandsParser | undefined;
 
     private readonly operandValueGetters: {
         number: (a: string) => number;
@@ -425,13 +614,15 @@ export class ColFilterExpressionParser {
                         );
                         parser = this.operatorParser;
                     } else {
-                        this.operandParser = new OperandParser(
+                        // One region for the whole operand list, so a resumed parse keeps what it already read.
+                        this.operandsParser ??= new OperandsParser(
                             this.params,
                             i,
                             this.columnParser.baseCellDataType,
-                            this.columnParser.column
+                            this.columnParser.column,
+                            this.operatorParser.expectedNumOperands
                         );
-                        parser = this.operandParser;
+                        parser = this.operandsParser;
                     }
                     this.parser = parser;
                 }
@@ -451,19 +642,15 @@ export class ColFilterExpressionParser {
     }
 
     public isValid(): boolean {
-        return (
-            this.isComplete() &&
-            this.columnParser!.valid &&
-            this.operatorParser!.valid &&
-            (!this.operandParser || this.operandParser.valid)
-        );
+        // Every parser that can be invalid reports a message when it is, so the one error source decides.
+        return this.isComplete() && this.getValidationError() == null;
     }
 
     public getValidationError(): FilterExpressionValidationError | null {
         const validationError =
             this.columnParser?.getValidationError() ??
             this.operatorParser?.getValidationError() ??
-            this.operandParser?.getValidationError();
+            this.operandsParser?.getValidationError();
         if (validationError) {
             return validationError;
         }
@@ -473,7 +660,7 @@ export class ColFilterExpressionParser {
             translateKey = 'advancedFilterValidationMissingColumn';
         } else if (!this.operatorParser) {
             translateKey = 'advancedFilterValidationMissingOption';
-        } else if (this.operatorParser.expectedNumOperands && !this.operandParser) {
+        } else if (this.operatorParser.expectedNumOperands && !this.operandsParser) {
             translateKey = 'advancedFilterValidationMissingValue';
         }
         if (translateKey) {
@@ -487,15 +674,33 @@ export class ColFilterExpressionParser {
     }
 
     public getFunction(params: FilterExpressionFunctionParams): FilterExpressionFunction {
-        return this.getFunctionCommon(params, (operandIndex, operatorIndex, colId, evaluatorParamsIndex) => {
-            return (expressionProxy, node, p) =>
-                p.operators[operatorIndex].evaluator(
-                    expressionProxy.getValue(colId, node),
-                    node,
-                    p.evaluatorParams[evaluatorParamsIndex],
-                    operandIndex == null ? undefined : p.operands[operandIndex]
-                );
-        });
+        const columnParser = this.columnParser!;
+        const colId = columnParser.getColId();
+        const { operators, evaluatorParams, operands } = params;
+        const advFilterExpSvc = this.params.advFilterExpSvc;
+        const operatorIndex = addToListAndGetIndex(
+            operators,
+            advFilterExpSvc.getExpressionOperator(
+                columnParser.baseCellDataType,
+                this.operatorParser?.getOperatorKey(),
+                columnParser.column
+            )
+        );
+        const evaluatorParamsIndex = addToListAndGetIndex(
+            evaluatorParams,
+            advFilterExpSvc.getExpressionEvaluatorParams(colId)
+        );
+        const [from, to] = this.getOperandParsers();
+        const fromIndex = from ? addToListAndGetIndex(operands, this.getOperandValue(from)) : -1;
+        const toIndex = to ? addToListAndGetIndex(operands, this.getOperandValue(to)) : -1;
+        return (expressionProxy, node, p) =>
+            p.operators[operatorIndex].evaluator(
+                expressionProxy.getValue(colId, node),
+                node,
+                p.evaluatorParams[evaluatorParamsIndex],
+                fromIndex < 0 ? undefined : p.operands[fromIndex],
+                toIndex < 0 ? undefined : p.operands[toIndex]
+            );
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams | undefined {
@@ -517,116 +722,88 @@ export class ColFilterExpressionParser {
         type?: string
     ): AutocompleteUpdate | null {
         const { expression } = this.params;
+        const columnParser = this.columnParser;
         if (this.isColumnPosition(position)) {
             return updateExpression(
-                this.params.expression,
+                expression,
                 this.startPosition,
-                this.columnParser?.getColId()
-                    ? this.columnParser.endPosition!
+                columnParser?.getColId()
+                    ? columnParser.endPosition!
                     : findEndPosition(expression, position).endPosition,
                 this.params.advFilterExpSvc.getColumnValue(updateEntry),
                 true
             );
-        } else if (this.isOperatorPosition(position)) {
-            const baseCellDataType = this.getBaseCellDataTypeFromOperatorAutocompleteType(type);
-            const hasOperand = this.hasOperand(baseCellDataType, updateEntry.key);
-            const doesOperandNeedQuotes = hasOperand && this.doesOperandNeedQuotes(baseCellDataType);
-            let update: AutocompleteUpdate;
-            if (this.operatorParser?.startPosition != null && position < this.operatorParser.startPosition) {
-                // in between multiple spaces, just insert direct
-                update = updateExpression(
-                    expression,
-                    position,
-                    position,
-                    updateEntry.displayValue ?? updateEntry.key,
-                    hasOperand,
-                    doesOperandNeedQuotes
-                );
-            } else {
-                let endPosition: number;
-                let empty = false;
-                if (this.operatorParser?.getOperatorKey()) {
-                    endPosition = this.operatorParser.endPosition!;
-                } else {
-                    const { endPosition: calculatedEndPosition, isEmpty } = findEndPosition(
-                        expression,
-                        position,
-                        true,
-                        true
-                    );
-                    endPosition = calculatedEndPosition;
-                    empty = isEmpty;
-                }
-                update = updateExpression(
-                    expression,
-                    findStartPosition(expression, this.columnParser!.endPosition! + 1, endPosition),
-                    endPosition,
-                    updateEntry.displayValue ?? updateEntry.key,
-                    hasOperand,
-                    doesOperandNeedQuotes,
-                    empty
-                );
-            }
-            return { ...update, hideAutocomplete: !hasOperand };
         }
-        return null;
+        if (!this.isOperatorPosition(position)) {
+            return null;
+        }
+
+        const baseCellDataType = this.getBaseCellDataTypeFromOperatorAutocompleteType(type);
+        const numOperands = this.getNumOperandsFor(baseCellDataType, updateEntry.key);
+        const hasOperand = numOperands > 0;
+        const operatorParser = this.operatorParser;
+        // A point insert by default, for a caret between spaces; only one at or past the operator replaces.
+        let startPosition = position;
+        let endPosition = position;
+        let empty = false;
+        if (operatorParser?.startPosition == null || position >= operatorParser.startPosition) {
+            if (operatorParser?.getOperatorKey()) {
+                endPosition = operatorParser.endPosition!;
+            } else {
+                const found = findEndPosition(expression, position, true, true);
+                endPosition = found.endPosition;
+                empty = found.isEmpty;
+            }
+            startPosition = findStartPosition(expression, columnParser!.endPosition! + 1, endPosition);
+        }
+        const update = updateExpression(
+            expression,
+            startPosition,
+            endPosition,
+            updateEntry.displayValue ?? updateEntry.key,
+            hasOperand,
+            hasOperand && this.doesOperandNeedQuotes(baseCellDataType),
+            empty,
+            numOperands > 1
+        );
+        return { ...update, hideAutocomplete: !hasOperand };
     }
 
     public getModel(forBuilder?: boolean): AdvancedFilterModel {
-        const colId = this.columnParser!.getColId();
-        const model = {
-            filterType: this.columnParser!.baseCellDataType,
-            colId,
-            type: this.operatorParser!.getOperatorKey(),
-        };
-        if (this.operatorParser!.expectedNumOperands) {
-            const operandParser = this.operandParser!;
-            (model as any).filter = forBuilder ? operandParser.getBuilderValue() : operandParser.getModelValue();
+        const columnParser = this.columnParser!;
+        const [from, to] = this.getOperandParsers();
+        const operands: ColumnFilterModelOperands = {};
+        if (from) {
+            operands.filter = forBuilder ? from.getBuilderValue() : from.getModelValue();
         }
-        return model as AdvancedFilterModel;
+        if (to) {
+            operands.filterTo = forBuilder ? to.getBuilderValue() : to.getModelValue();
+        }
+        // The parse decides the member by `filterType`, which the union itself cannot express.
+        return {
+            filterType: columnParser.baseCellDataType,
+            colId: columnParser.getColId(),
+            type: this.operatorParser!.getOperatorKey(),
+            ...operands,
+        } as AdvancedFilterModel;
     }
 
-    private getFunctionCommon<T>(
-        params: FilterExpressionFunctionParams,
-        processFunc: (
-            operandIndex: number | undefined,
-            operatorIndex: number,
-            colId: string,
-            evaluatorParamsIndex: number
-        ) => T
-    ) {
-        const colId = this.columnParser!.getColId();
-        const operator = this.operatorParser?.getOperatorKey();
-        const { operators, evaluatorParams, operands } = params;
-        const operatorForColumn = this.params.advFilterExpSvc.getExpressionOperator(
-            this.columnParser!.baseCellDataType,
-            operator
-        );
-        const operatorIndex = this.addToListAndGetIndex(operators, operatorForColumn);
-        const evaluatorParamsForColumn = this.params.advFilterExpSvc.getExpressionEvaluatorParams(colId);
-        const evaluatorParamsIndex = this.addToListAndGetIndex(evaluatorParams, evaluatorParamsForColumn);
-        const operandIndex =
-            this.operatorParser?.expectedNumOperands === 0
-                ? undefined
-                : this.addToListAndGetIndex(operands, this.getOperandValue());
-        return processFunc(operandIndex, operatorIndex, colId, evaluatorParamsIndex);
-    }
-
-    private getOperandValue(): any {
+    private getOperandValue(operandParser: OperandParser): any {
         const { baseCellDataType, column } = this.columnParser!;
-        const operand = this.operandValueGetters[baseCellDataType](this.operandParser!.getRawValue());
+        const operand = this.operandValueGetters[baseCellDataType](operandParser.getRawValue());
         if (baseCellDataType === 'dateString' || baseCellDataType === 'dateTimeString') {
             return this.params.dataTypeSvc?.getDateParserFunction(column)(operand as string) ?? operand;
         }
         return operand;
     }
 
+    private getOperandParsers(): OperandParser[] {
+        return this.operandsParser?.getParsers() ?? [];
+    }
+
     private isComplete(): boolean {
-        return !!(
-            this.operatorParser &&
-            (!this.operatorParser.expectedNumOperands ||
-                (this.operatorParser.expectedNumOperands && this.operandParser))
-        );
+        const operatorParser = this.operatorParser;
+        return !!operatorParser && (!operatorParser.expectedNumOperands || !!this.operandsParser?.isComplete());
     }
 
     private isColumnPosition(position: number): boolean {
@@ -702,21 +879,19 @@ export class ColFilterExpressionParser {
         return type?.replace('operator-', '') as BaseCellDataType;
     }
 
-    private hasOperand(baseCellDataType?: BaseCellDataType, operator?: string): boolean {
-        return (
-            !baseCellDataType ||
-            !operator ||
-            (this.params.advFilterExpSvc.getExpressionOperator(baseCellDataType, operator)?.numOperands ?? 0) > 0
-        );
+    private getNumOperandsFor(baseCellDataType: BaseCellDataType | undefined, operator: string): number {
+        if (!baseCellDataType || !operator) {
+            return 1;
+        }
+        const column = this.columnParser?.column;
+        return this.params.advFilterExpSvc.getExpressionOperator(baseCellDataType, operator, column)?.numOperands ?? 0;
     }
 
     private doesOperandNeedQuotes(baseCellDataType?: BaseCellDataType): boolean {
         return baseCellDataType !== 'number' && baseCellDataType !== 'bigint';
     }
+}
 
-    private addToListAndGetIndex<T>(list: T[], value: T): number {
-        const index = list.length;
-        list.push(value);
-        return index;
-    }
+function addToListAndGetIndex<T>(list: T[], value: T): number {
+    return list.push(value) - 1;
 }

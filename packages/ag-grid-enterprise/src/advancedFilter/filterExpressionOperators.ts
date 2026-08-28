@@ -1,4 +1,4 @@
-import { _hasOwn } from 'ag-stack';
+import { _getOwn } from 'ag-stack';
 
 import { _hasValue, _isBlank } from 'ag-grid-community';
 import type { BaseCellDataType, IRowNode } from 'ag-grid-community';
@@ -77,7 +77,7 @@ export function findMatch<T>(
     }
 }
 
-function getEntries<ConvertedTValue, TValue = ConvertedTValue>(
+export function getEntries<ConvertedTValue, TValue = ConvertedTValue>(
     operators: { [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue> },
     activeOperatorKeys?: string[]
 ): AutocompleteEntry[] {
@@ -87,7 +87,7 @@ function getEntries<ConvertedTValue, TValue = ConvertedTValue>(
     let count = 0;
     for (let i = 0; i < len; ++i) {
         const key = keys[i];
-        const operator = _hasOwn(operators, key) ? operators[key] : undefined;
+        const operator = _getOwn(operators, key);
         if (operator) {
             entries[count++] = { key, displayValue: operator.displayValue };
         }

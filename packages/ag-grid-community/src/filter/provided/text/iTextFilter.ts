@@ -67,7 +67,7 @@ export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TD
  */
 
 export interface ITextFilterParams extends ISimpleFilterParams {
-    /** Array of filter options to present to the user. */
+    /** Array of filter options to present to the user, and the options the Advanced Filter offers for the column. */
     filterOptions?: (IFilterOptionDef | TextFilterOptionKey)[];
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: TextFilterOptionKey | CustomFilterOptionKey;
