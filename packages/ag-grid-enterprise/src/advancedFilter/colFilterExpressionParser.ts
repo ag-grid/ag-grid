@@ -205,7 +205,7 @@ class OperatorParser implements Parser {
             minLength,
             partialSearchValue
         );
-        // Only a narrowing column has a second list; without one the two are the same scan.
+        // A second list only where what is offered is less than what resolves; otherwise the same scan twice.
         if (activeOperators) {
             const resolvable = this.matchOperatorName(
                 columnOperators!.operators.getEntries(),

@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_CN = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: '介于',
     advancedFilterTrue: '为真',
     advancedFilterFalse: '为假',
     advancedFilterAnd: '且',

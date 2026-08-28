@@ -142,6 +142,12 @@ export {
     _isGridSuppliedFilterOptions,
 } from './filter/filterDataTypeUtils';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
+export type { FilterLocaleTextKey as _FilterLocaleTextKey } from './filter/filterLocaleText';
+export {
+    PRESET_DATE_FILTER_TYPES as _PRESET_DATE_FILTER_TYPES,
+    RelativeDateRangeCache as _RelativeDateRangeCache,
+    presetDateFilterTypeRelativeFromToMap as _PRESET_DATE_FILTER_RANGES,
+} from './filter/provided/date/relativeDateRanges';
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';

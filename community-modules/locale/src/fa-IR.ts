@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_IR = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'بین',
     advancedFilterTrue: 'درست است',
     advancedFilterFalse: 'نادرست است',
     advancedFilterAnd: 'و',

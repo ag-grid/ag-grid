@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_VN = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'giữa',
     advancedFilterTrue: 'đúng',
     advancedFilterFalse: 'sai',
     advancedFilterAnd: 'VÀ',

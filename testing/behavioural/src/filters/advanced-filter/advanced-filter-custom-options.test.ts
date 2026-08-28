@@ -163,14 +163,15 @@ describe('Advanced Filter - custom filter options', () => {
             expect(af.autocompleteEntries()).toEqual(['is true', 'is false', 'is blank', 'is not blank']);
         });
 
-        // This filter has no `inRange` operator, so narrowing to it alone would narrow to nothing.
+        // `empty` is the column filter's placeholder entry and names no operator here, so narrowing to it
+        // would narrow to nothing: no suggestions, an unpickable Builder row, an unsatisfiable AI schema.
         test('a list naming only options this filter cannot resolve leaves the built-ins standing', async () => {
             const api = gridsManager.createGrid('grid1', {
                 columnDefs: [
                     {
                         field: 'age',
                         filter: 'agNumberColumnFilter',
-                        filterParams: { filterOptions: ['inRange'] },
+                        filterParams: { filterOptions: ['empty'] },
                     },
                 ],
                 rowData: ROW_DATA,
@@ -181,7 +182,17 @@ describe('Advanced Filter - custom filter options', () => {
 
             await af.type('[Age] ');
             // Every built-in, not just one of them: "standing" is the whole list, not a survivor from it.
-            expect(af.autocompleteEntries()).toEqual(['=', '!=', '>', '>=', '<', '<=', 'is blank', 'is not blank']);
+            expect(af.autocompleteEntries()).toEqual([
+                '=',
+                '!=',
+                '>',
+                '>=',
+                '<',
+                '<=',
+                'between',
+                'is blank',
+                'is not blank',
+            ]);
 
             await af.applyExpression('[Age] = 25');
             await asyncSetTimeout(0);

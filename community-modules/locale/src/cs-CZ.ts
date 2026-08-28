@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_CZ = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'mezi',
     advancedFilterTrue: 'je pravda',
     advancedFilterFalse: 'je nepravda',
     advancedFilterAnd: 'A',

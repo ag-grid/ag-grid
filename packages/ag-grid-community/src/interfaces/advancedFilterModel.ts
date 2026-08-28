@@ -1,5 +1,5 @@
 import type { CheckDataTypes } from '../entities/dataType';
-import type { CustomFilterOptionKey } from '../filter/provided/iSimpleFilter';
+import type { CustomFilterOptionKey, ISimpleFilterModelPresetType } from '../filter/provided/iSimpleFilter';
 
 export type AdvancedFilterModel = JoinAdvancedFilterModel | ColumnAdvancedFilterModel;
 
@@ -29,8 +29,12 @@ export type ScalarAdvancedFilterModelType =
     | 'lessThanOrEqual'
     | 'greaterThan'
     | 'greaterThanOrEqual'
+    | 'inRange'
     | 'blank'
     | 'notBlank';
+
+/** A date column additionally offers the Date Filter's relative options, which take no value. */
+export type DateAdvancedFilterModelType = ScalarAdvancedFilterModelType | ISimpleFilterModelPresetType;
 
 export type BooleanAdvancedFilterModelType = 'true' | 'false' | 'blank' | 'notBlank';
 
@@ -79,7 +83,7 @@ export interface DateAdvancedFilterModel {
     /** The ID of the column being filtered. */
     colId: string;
     /** The filter option that is being applied. */
-    type: ScalarAdvancedFilterModelType | CustomFilterOptionKey;
+    type: DateAdvancedFilterModelType | CustomFilterOptionKey;
     /** The value to filter on. This is in format `YYYY-MM-DD`. */
     filter?: string;
     /** The second value to filter on, where the filter option takes two. */
@@ -92,7 +96,7 @@ export interface DateStringAdvancedFilterModel {
     /** The ID of the column being filtered. */
     colId: string;
     /** The filter option that is being applied. */
-    type: ScalarAdvancedFilterModelType | CustomFilterOptionKey;
+    type: DateAdvancedFilterModelType | CustomFilterOptionKey;
     /** The value to filter on. This is in format `YYYY-MM-DD`. */
     filter?: string;
     /** The second value to filter on, where the filter option takes two. */
@@ -130,7 +134,7 @@ export interface DateTimeAdvancedFilterModel {
     /** The ID of the column being filtered. */
     colId: string;
     /** The filter option that is being applied. */
-    type: ScalarAdvancedFilterModelType | CustomFilterOptionKey;
+    type: DateAdvancedFilterModelType | CustomFilterOptionKey;
     /** The value to filter on. This is in format `YYYY-MM-DDTHH:mm:ss`. */
     filter?: string;
     /** The second value to filter on, where the filter option takes two. */
@@ -142,7 +146,7 @@ export interface DateTimeStringAdvancedFilterModel {
     /** The ID of the column being filtered. */
     colId: string;
     /** The filter option that is being applied. */
-    type: ScalarAdvancedFilterModelType | CustomFilterOptionKey;
+    type: DateAdvancedFilterModelType | CustomFilterOptionKey;
     /** The value to filter on. This is in format `YYYY-MM-DD HH:mm:ss`. */
     filter?: string;
     /** The second value to filter on, where the filter option takes two. */

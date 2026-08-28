@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_JP = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'の間',
     advancedFilterTrue: '真',
     advancedFilterFalse: '偽',
     advancedFilterAnd: 'かつ',

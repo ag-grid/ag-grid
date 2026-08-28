@@ -1,11 +1,14 @@
 import type { ISimpleFilterModelPresetType } from '../iSimpleFilter';
-import { DateFilterHandler, presetDateFilterTypeRelativeFromToMap } from './dateFilterHandler';
+import {
+    RelativeDateRangeCache,
+    presetDateFilterTypeRelativeFromToMap,
+    relativeDateHelperFns,
+} from './relativeDateRanges';
 
 type PresetKey = keyof typeof presetDateFilterTypeRelativeFromToMap;
-type RangeFn = (from: Date, to: Date) => [Date, Date];
-type DateFn = (date: Date) => Date;
+type HelperKey = keyof typeof relativeDateHelperFns;
 
-describe('presetDateFilterTypeRelativeFromToMap', () => {
+describe('relative date ranges', () => {
     beforeAll(() => {
         if (typeof navigator === 'undefined') {
             return;
@@ -90,10 +93,10 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
     ])('%s', (fnName, expected) =>
         it('returns correct from/to', () =>
             expect(
-                (presetDateFilterTypeRelativeFromToMap[fnName] as RangeFn)(FROM, TO).map((d: Date) => d.toString())
+                presetDateFilterTypeRelativeFromToMap[fnName](FROM, TO).map((d: Date) => d.toString())
             ).toStrictEqual(expected))
     );
-    describe.each<[PresetKey, string]>([
+    describe.each<[HelperKey, string]>([
         ['setStartOfDay', ANSWERS.startOfToday],
         ['setStartOfWeek', ANSWERS.startOfCurrentWeek],
         ['setStartOfNextDay', ANSWERS.startOfTomorrow],
@@ -109,8 +112,7 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
         ['setPreviousMonth', ANSWERS.previousMonth],
         ['setPreviousQuarter', ANSWERS.previousQuarter],
     ])('%s', (fnName, expected) =>
-        it('works', () =>
-            expect((presetDateFilterTypeRelativeFromToMap[fnName] as DateFn)(FROM).toString()).toContain(expected))
+        it('works', () => expect(relativeDateHelperFns[fnName](FROM).toString()).toContain(expected))
     );
 });
 
@@ -146,15 +148,15 @@ describe('getFirstDayOfWeek', () => {
             value: { language: 'en-US', languages: ['en-US'] },
         });
 
-        const { presetDateFilterTypeRelativeFromToMap: map } = await import('./dateFilterHandler');
-        const result = (map.setStartOfWeek as DateFn)(new Date(base));
+        const { relativeDateHelperFns: helpers } = await import('./relativeDateRanges');
+        const result = helpers.setStartOfWeek(new Date(base));
         expect(result.toUTCString()).toContain('Sun, 05 Apr 2020');
 
         expect(getWeekInfo).toHaveBeenCalledTimes(1);
     });
 });
 
-describe('getOrRefreshRangeCacheItem', () => {
+describe('RelativeDateRangeCache', () => {
     const key = 'today' as ISimpleFilterModelPresetType;
 
     beforeEach(() => {
@@ -173,12 +175,12 @@ describe('getOrRefreshRangeCacheItem', () => {
         ['later the same day', new Date('2026-08-10T09:00:00Z'), new Date('2026-08-10T09:00:01Z')],
     ])('returns cached range for the same key before expiry, %s', (_name, start, next) => {
         vi.setSystemTime(start);
-        const handler = new DateFilterHandler();
+        const cache = new RelativeDateRangeCache();
         const rangeFn = vi.fn(() => [new Date(1), new Date(2)] as [Date, Date]);
 
-        const first = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        const first = cache.getRange(key, rangeFn);
         vi.setSystemTime(next);
-        const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        const second = cache.getRange(key, rangeFn);
 
         expect(rangeFn).toHaveBeenCalledTimes(1);
         expect([first.fromTime, first.toTime]).toStrictEqual([1, 2]);
@@ -188,7 +190,7 @@ describe('getOrRefreshRangeCacheItem', () => {
     // The range reaches a user `comparator` as dates it is free to normalise, so the cache keeps times:
     // there is nothing in it a caller holds a reference to.
     it('caches times rather than the dates the range function built', () => {
-        const handler = new DateFilterHandler();
+        const cache = new RelativeDateRangeCache();
         const built: Date[] = [];
         const rangeFn = vi.fn(() => {
             const range: [Date, Date] = [new Date(1_000), new Date(2_000)];
@@ -196,7 +198,7 @@ describe('getOrRefreshRangeCacheItem', () => {
             return range;
         });
 
-        const cached = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        const cached = cache.getRange(key, rangeFn);
         for (const date of built) {
             date.setTime(999_999);
         }
@@ -213,29 +215,29 @@ describe('getOrRefreshRangeCacheItem', () => {
     // The ranges are half-open, so the expiry instant already belongs to the day the cached range excludes.
     it('refreshes the cache at the instant it expires', () => {
         vi.setSystemTime(MIDMORNING);
-        const handler = new DateFilterHandler();
+        const cache = new RelativeDateRangeCache();
         const rangeFn = vi.fn(() => [new Date(1), new Date(2)] as [Date, Date]);
 
-        handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        cache.getRange(key, rangeFn);
         vi.setSystemTime(NEXT_MIDNIGHT);
-        handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        cache.getRange(key, rangeFn);
 
         expect(rangeFn).toHaveBeenCalledTimes(2);
     });
 
     it('refreshes the cache when expired', () => {
         vi.setSystemTime(MIDMORNING);
-        const handler = new DateFilterHandler();
+        const cache = new RelativeDateRangeCache();
         const rangeFn = vi
             .fn()
             .mockImplementationOnce(() => [new Date(1), new Date(2)] as [Date, Date])
             .mockImplementationOnce(() => [new Date(3), new Date(4)] as [Date, Date]);
 
-        const first = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        const first = cache.getRange(key, rangeFn);
 
         vi.setSystemTime(new Date(NEXT_MIDNIGHT.getTime() + 1));
 
-        const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
+        const second = cache.getRange(key, rangeFn);
 
         expect(rangeFn).toHaveBeenCalledTimes(2);
         expect([first.fromTime, first.toTime]).toStrictEqual([1, 2]);
@@ -243,12 +245,12 @@ describe('getOrRefreshRangeCacheItem', () => {
     });
 
     it('keeps separate caches per key', () => {
-        const handler = new DateFilterHandler();
+        const cache = new RelativeDateRangeCache();
         const rangeFnToday = vi.fn(() => [new Date(10), new Date(20)] as [Date, Date]);
         const rangeFnYesterday = vi.fn(() => [new Date(30), new Date(40)] as [Date, Date]);
 
-        const today = handler.getOrRefreshRangeCacheItem('today', rangeFnToday);
-        const yesterday = handler.getOrRefreshRangeCacheItem('yesterday', rangeFnYesterday);
+        const today = cache.getRange('today', rangeFnToday);
+        const yesterday = cache.getRange('yesterday', rangeFnYesterday);
 
         expect(rangeFnToday).toHaveBeenCalledTimes(1);
         expect(rangeFnYesterday).toHaveBeenCalledTimes(1);

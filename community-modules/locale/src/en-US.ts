@@ -126,6 +126,7 @@ export const AG_GRID_LOCALE_EN = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'between',
     advancedFilterTrue: 'is true',
     advancedFilterFalse: 'is false',
     advancedFilterAnd: 'AND',

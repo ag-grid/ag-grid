@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_FI = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'välillä',
     advancedFilterTrue: 'on tosi',
     advancedFilterFalse: 'on epätosi',
     advancedFilterAnd: 'JA',

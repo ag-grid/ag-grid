@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_PK = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'کے درمیان',
     advancedFilterTrue: 'درست ہے',
     advancedFilterFalse: 'غلط ہے',
     advancedFilterAnd: 'اور',

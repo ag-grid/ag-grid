@@ -214,4 +214,132 @@ describe('Advanced Filter matches the column filter', () => {
             })
         ).toEqual(columnFilterIds);
     });
+    // `inRange` takes two values rather than one, so it cannot ride on the shared table above.
+    describe('inRange', () => {
+        test('a number range filters the same rows, exclusive of both ends', async () => {
+            const model = { filterType: 'number' as const, type: 'inRange' as const, filter: -1, filterTo: 3 };
+            const columnFilterIds = await withColumnFilter('age', model);
+
+            expect(columnFilterIds).not.toContain(2); // age 3 is the excluded upper end
+            expectFiltered(columnFilterIds);
+            expect(await withAdvancedFilter({ ...model, colId: 'age' })).toEqual(columnFilterIds);
+        });
+
+        test('`inRangeInclusive` admits both ends in both', async () => {
+            const defs = COLUMN_DEFS!.map((def) =>
+                (def as { field?: string }).field === 'age' ? { ...def, filterParams: { inRangeInclusive: true } } : def
+            );
+            const model = { filterType: 'number' as const, type: 'inRange' as const, filter: -1, filterTo: 3 };
+            const columnFilterIds = await withColumnFilter('age', model, defs);
+
+            expect(columnFilterIds).toContain(2); // age 3 is now the included upper end
+            expectFiltered(columnFilterIds);
+            expect(await withAdvancedFilter({ ...model, colId: 'age' }, defs)).toEqual(columnFilterIds);
+        });
+
+        test('`includeBlanksInRange` admits a blank in both', async () => {
+            const defs = COLUMN_DEFS!.map((def) =>
+                (def as { field?: string }).field === 'age'
+                    ? { ...def, filterParams: { includeBlanksInRange: true } }
+                    : def
+            );
+            const model = { filterType: 'number' as const, type: 'inRange' as const, filter: -1, filterTo: 3 };
+            const columnFilterIds = await withColumnFilter('age', model, defs);
+
+            expect(columnFilterIds).toContain(3); // the row with a null age
+            expect(columnFilterIds).toContain(6); // and the row with an empty-string age
+            expectFiltered(columnFilterIds);
+            expect(await withAdvancedFilter({ ...model, colId: 'age' }, defs)).toEqual(columnFilterIds);
+        });
+
+        // `bigint` reaches `evaluateRangeExpression` through its own parser and converter, not the number one.
+        test('a bigint range filters the same rows', async () => {
+            const columnFilterIds = await withColumnFilter('qty', {
+                filterType: 'bigint',
+                type: 'inRange',
+                filter: '-6',
+                filterTo: '10',
+            });
+
+            expectFiltered(columnFilterIds);
+            expect(
+                await withAdvancedFilter({
+                    filterType: 'bigint',
+                    colId: 'qty',
+                    type: 'inRange',
+                    filter: '-6',
+                    filterTo: '10',
+                })
+            ).toEqual(columnFilterIds);
+        });
+
+        test('a date range filters the same rows', async () => {
+            const columnFilterIds = await withColumnFilter('date', {
+                filterType: 'date',
+                type: 'inRange',
+                dateFrom: '2008-01-01',
+                dateTo: '2013-01-01',
+            });
+
+            expect(columnFilterIds).not.toContain(3); // 2020 is outside the range
+            expectFiltered(columnFilterIds);
+            expect(
+                await withAdvancedFilter({
+                    filterType: 'dateString',
+                    colId: 'date',
+                    type: 'inRange',
+                    filter: '2008-01-01',
+                    filterTo: '2013-01-01',
+                })
+            ).toEqual(columnFilterIds);
+        });
+
+        // The two params were proven on `number` above; the date path converts through a different
+        // `valueConverter` before it reaches the same comparison.
+        test('`inRangeInclusive` and `includeBlanksInRange` behave the same on a date column', async () => {
+            const withDateParams = (filterParams: object) =>
+                COLUMN_DEFS!.map((def) =>
+                    (def as { field?: string }).field === 'date' ? { ...def, filterParams } : def
+                );
+            const model = {
+                filterType: 'date' as const,
+                type: 'inRange' as const,
+                dateFrom: '2008-08-24',
+                dateTo: '2020-07-23',
+            };
+            const advancedModel = {
+                filterType: 'dateString' as const,
+                colId: 'date',
+                type: 'inRange' as const,
+                filter: '2008-08-24',
+                filterTo: '2020-07-23',
+            };
+
+            const inclusiveDefs = withDateParams({ inRangeInclusive: true });
+            const inclusiveIds = await withColumnFilter('date', model, inclusiveDefs);
+            expect(inclusiveIds).toContain(0); // 2008-08-24 is now the included lower end
+            expectFiltered(inclusiveIds);
+            expect(await withAdvancedFilter(advancedModel, inclusiveDefs)).toEqual(inclusiveIds);
+
+            const blanksDefs = withDateParams({ includeBlanksInRange: true });
+            const blanksIds = await withColumnFilter('date', model, blanksDefs);
+            expect(blanksIds).toContain(2); // the row with a null date
+            expectFiltered(blanksIds);
+            expect(await withAdvancedFilter(advancedModel, blanksDefs)).toEqual(blanksIds);
+        });
+
+        // Ordering is unvalidated in the Advanced Filter, so a reversed date pair applies and matches
+        // nothing rather than being rejected. Dates compare as `Date` objects, not as numbers.
+        test('a reversed date range applies and matches no row', async () => {
+            expect(
+                await withAdvancedFilter({
+                    filterType: 'dateString',
+                    colId: 'date',
+                    type: 'inRange',
+                    filter: '2020-07-23',
+                    filterTo: '2008-08-24',
+                })
+            ).toEqual([]);
+        });
+    });
 });

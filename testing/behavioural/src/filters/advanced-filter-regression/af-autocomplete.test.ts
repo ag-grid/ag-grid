@@ -592,7 +592,17 @@ describe('Advanced Filter — column & operator editing branches', () => {
         await af.type('[Age]    > 20', 6);
         await asyncSetTimeout(0);
         // Position precedes the operator's own start, so the search string is empty → full operator list.
-        expect(af.autocompleteEntries()).toEqual(['=', '!=', '>', '>=', '<', '<=', 'is blank', 'is not blank']);
+        expect(af.autocompleteEntries()).toEqual([
+            '=',
+            '!=',
+            '>',
+            '>=',
+            '<',
+            '<=',
+            'between',
+            'is blank',
+            'is not blank',
+        ]);
 
         await af.tabComplete();
         await asyncSetTimeout(0);
@@ -607,7 +617,17 @@ describe('Advanced Filter — column & operator editing branches', () => {
         // resolved yet, so the end position is scanned and the bracket marks the operand region as empty.
         await af.type('[Age]  (', 7);
         await asyncSetTimeout(0);
-        expect(af.autocompleteEntries()).toEqual(['=', '!=', '>', '>=', '<', '<=', 'is blank', 'is not blank']);
+        expect(af.autocompleteEntries()).toEqual([
+            '=',
+            '!=',
+            '>',
+            '>=',
+            '<',
+            '<=',
+            'between',
+            'is blank',
+            'is not blank',
+        ]);
 
         await af.tabComplete();
         await asyncSetTimeout(0);

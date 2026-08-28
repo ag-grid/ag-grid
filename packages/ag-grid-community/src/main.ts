@@ -282,6 +282,7 @@ export type {
     BooleanAdvancedFilterModelType,
     ColumnAdvancedFilterModel,
     DateAdvancedFilterModel,
+    DateAdvancedFilterModelType,
     DateStringAdvancedFilterModel,
     DateTimeAdvancedFilterModel,
     DateTimeStringAdvancedFilterModel,

@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_GR = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'μεταξύ',
     advancedFilterTrue: 'είναι αληθές',
     advancedFilterFalse: 'είναι ψευδές',
     advancedFilterAnd: 'ΚΑΙ',

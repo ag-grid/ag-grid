@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_RO = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'între',
     advancedFilterTrue: 'este adevărat',
     advancedFilterFalse: 'este fals',
     advancedFilterAnd: 'ȘI',

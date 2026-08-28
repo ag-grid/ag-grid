@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_TR = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'arasında',
     advancedFilterTrue: 'doğru',
     advancedFilterFalse: 'yanlış',
     advancedFilterAnd: 'VE',

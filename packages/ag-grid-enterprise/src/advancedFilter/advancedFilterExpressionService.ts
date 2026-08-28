@@ -11,8 +11,9 @@ import type {
     JoinAdvancedFilterModel,
     NamedBean,
     ValueService,
+    _FilterLocaleTextKey,
 } from 'ag-grid-community';
-import { BeanStub, _classifyFilterOptions, _toFiniteNumber } from 'ag-grid-community';
+import { BeanStub, _classifyFilterOptions, _toFiniteNumber, _translateForFilter } from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -64,6 +65,8 @@ const COPIED_FILTER_PARAMS: (keyof FilterExpressionEvaluatorParams<any>)[] = [
     'includeBlanksInNotEqual',
     'includeBlanksInLessThan',
     'includeBlanksInGreaterThan',
+    'includeBlanksInRange',
+    'inRangeInclusive',
 ];
 
 /** A column's operators and the keys it narrows them to, classified together from its one `filterOptions`. */
@@ -440,7 +443,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             return undefined;
         }
         if (!column) {
-            return { operators: dataTypeOperators, activeOperators: undefined };
+            return { operators: dataTypeOperators, activeOperators: dataTypeOperators.defaultOperators };
         }
         const byDataType = this.columnExpressionOperators;
         let forDataType = byDataType[baseCellDataType!];
@@ -462,7 +465,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     ): ColumnOperators {
         const filterOptions = getColumnFilterOptions(column);
         if (!filterOptions) {
-            return { operators: dataTypeOperators, activeOperators: undefined };
+            return { operators: dataTypeOperators, activeOperators: dataTypeOperators.defaultOperators };
         }
         // Reported here too: a column filtered only through the Advanced Filter never builds an `OptionsFactory`.
         const { offered, customOptions } = _classifyFilterOptions(filterOptions, (keys) => this.warn(72, { keys }));
@@ -471,7 +474,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             ? createCustomOptionOperators(dataTypeOperators, customOptions, localeTextFunc)
             : dataTypeOperators;
         const activeOperators = [...offered.keys()].filter((key) => _getOwn(operators.operators, key));
-        return { operators, activeOperators: activeOperators.length ? activeOperators : undefined };
+        return {
+            operators,
+            activeOperators: activeOperators.length ? activeOperators : dataTypeOperators.defaultOperators,
+        };
     }
 
     public getExpressionJoinOperators(): { AND: string; OR: string } {
@@ -568,17 +574,20 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     public generateExpressionOperators(): FilterExpressionOperators {
         const translate = (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) =>
             this.translate(key, variableValues);
+        const translateFilter = (key: _FilterLocaleTextKey) => _translateForFilter(this, key);
+        const baseParams = { translate, translateFilter };
         const dateOperatorsParams = {
-            translate,
+            ...baseParams,
             equals: (v: Date, o: Date) => v.getTime() === o.getTime(),
+            relativeDates: true,
         };
 
         return {
-            text: new TextFilterExpressionOperators({ translate }),
-            boolean: new BooleanFilterExpressionOperators({ translate }),
-            object: new TextFilterExpressionOperators<any>({ translate }),
-            number: new ScalarFilterExpressionOperators<number>({ translate, equals: (v, o) => v === o }),
-            bigint: new ScalarFilterExpressionOperators<bigint>({ translate, equals: (v, o) => v === o }),
+            text: new TextFilterExpressionOperators(baseParams),
+            boolean: new BooleanFilterExpressionOperators(baseParams),
+            object: new TextFilterExpressionOperators<any>(baseParams),
+            number: new ScalarFilterExpressionOperators<number>({ ...baseParams, equals: (v, o) => v === o }),
+            bigint: new ScalarFilterExpressionOperators<bigint>({ ...baseParams, equals: (v, o) => v === o }),
             date: new ScalarFilterExpressionOperators<Date>(dateOperatorsParams),
             dateString: new ScalarFilterExpressionOperators<Date, string>(dateOperatorsParams),
             dateTime: new ScalarFilterExpressionOperators<Date>(dateOperatorsParams),
