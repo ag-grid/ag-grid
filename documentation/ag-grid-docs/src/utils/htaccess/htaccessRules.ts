@@ -76,8 +76,6 @@ Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/(charts/|studio/
 `;
 }
 
-const inFlightArchiveRules = getInFlightArchiveRule(UNCACHED_ARCHIVE);
-
 const modDeflateRules = `
 <IfModule mod_deflate.c>
     # Compress HTML, CSS, JavaScript, Text, XML and fonts
@@ -478,7 +476,7 @@ AddType text/markdown md
 AddCharset utf-8 .md
 `;
 
-function getStagingHtaccessContent(): string {
+function getStagingHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${inFlightArchiveRules}
@@ -499,7 +497,7 @@ Options -Indexes
 `;
 }
 
-function getProductionHtaccessContent(): string {
+function getProductionHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${hashedAssetCacheRules}
@@ -596,6 +594,12 @@ export function getBlogVhostHeaderFragment(options: { env: CspEnv }, mode: CspMo
     ].join('\n');
 }
 
-export function getHtaccessContent(options: { env: HtaccessEnv }): string {
-    return options.env === 'staging' ? getStagingHtaccessContent() : getProductionHtaccessContent();
+// uncachedArchive defaults to the committed UNCACHED_ARCHIVE. It is overridable so the
+// tests can generate output with a version in flight - otherwise every assertion about the
+// in-flight rule runs against output where that rule is absent, and passes vacuously.
+export function getHtaccessContent(options: { env: HtaccessEnv; uncachedArchive?: string | null }): string {
+    const inFlight = getInFlightArchiveRule(
+        options.uncachedArchive === undefined ? UNCACHED_ARCHIVE : options.uncachedArchive
+    );
+    return options.env === 'staging' ? getStagingHtaccessContent(inFlight) : getProductionHtaccessContent(inFlight);
 }
