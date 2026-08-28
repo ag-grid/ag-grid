@@ -25,6 +25,7 @@ Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !(
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
 
 
+
 <IfModule mod_deflate.c>
     # Compress HTML, CSS, JavaScript, Text, XML and fonts
     AddOutputFilterByType DEFLATE application/javascript
@@ -2954,6 +2955,7 @@ AddCharset utf-8 .md
 
 # Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
 Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
+
 
 
 <IfModule mod_rewrite.c>

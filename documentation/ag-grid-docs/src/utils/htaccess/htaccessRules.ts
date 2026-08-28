@@ -21,6 +21,12 @@ export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
 // different output per phase.
 export const PRODUCTION_CSP_PHASE: 'report-only' | 'enforce' = 'enforce';
 
+// Archive versions under active release testing. These are redeployed repeatedly for days,
+// so they must stay fresh; released archives are immutable and deliberately are not listed.
+// Add a version when the archive is cut, remove it at GA - no archive rebuild needed either
+// way, since the rule lives in the root .htaccess rather than the archive's own copy.
+export const UNCACHED_ARCHIVES: readonly string[] = [];
+
 /**
  * Note: when changing this file please add/update the tests in
  * documentation/ag-grid-docs/testing/htaccess-harness
@@ -43,6 +49,28 @@ const hashedAssetCacheRules = `
 # always a different URL. Matched by hash shape, so anything unhashed is not cached.
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
 `;
+
+// In-flight release archives. Released archives keep their long heuristic cache, but one
+// under test is redeployed for days and fixes must show within minutes - heuristic freshness
+// is ~10% of age, so an hour after a deploy it is already stale for 6 minutes, and silently:
+// the tester holds that iteration's hashed assets too, so the page renders consistently old.
+// Emitted last so it overrides both the archive exclusion above and the hashed-asset rule.
+export function getInFlightArchiveRules(versions: readonly string[]): string {
+    if (!versions.length) {
+        return '';
+    }
+    // Single backslash in the emitted regex, so Apache reads a literal dot.
+    const rules = versions
+        .map((v) => v.replace(/\./g, '\\.'))
+        .map((v) => `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/${v}/#"`)
+        .join('\n');
+    return `
+# Release archives under test - always revalidate, overriding the rules above.
+${rules}
+`;
+}
+
+const inFlightArchiveRules = getInFlightArchiveRules(UNCACHED_ARCHIVES);
 
 const modDeflateRules = `
 <IfModule mod_deflate.c>
@@ -436,6 +464,7 @@ AddCharset utf-8 .md
 function getStagingHtaccessContent(): string {
     return `${baseRules}
 ${documentNoCacheRules}
+${inFlightArchiveRules}
 
 ${markdownNegotiationBlock}
 
@@ -457,6 +486,7 @@ function getProductionHtaccessContent(): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${hashedAssetCacheRules}
+${inFlightArchiveRules}
 ${modDeflateRules}
 ${getModRewriteRules()}
 

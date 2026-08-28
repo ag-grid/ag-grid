@@ -4,7 +4,7 @@ import {
     ECOMMERCE_PATH_CONDITION,
     EXAMPLES_PATH_CONDITION,
 } from './cspRules';
-import { PRODUCTION_CSP_PHASE, getHtaccessContent } from './htaccessRules';
+import { PRODUCTION_CSP_PHASE, UNCACHED_ARCHIVES, getHtaccessContent, getInFlightArchiveRules } from './htaccessRules';
 import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 describe('htaccessRules', () => {
@@ -255,6 +255,62 @@ describe('htaccessRules', () => {
             const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
             expect(noCacheAt).toBeGreaterThan(-1);
             expect(assetAt).toBeGreaterThan(noCacheAt);
+        });
+    });
+
+    describe('In-flight release archives', () => {
+        // A released archive keeps its long heuristic cache. One under test is redeployed for
+        // days and fixes must appear within minutes, so it has to be excluded from that.
+        const ruleFor = (versions: string[]) => getInFlightArchiveRules(versions).trim();
+
+        it('emits nothing when no archive is in flight', () => {
+            expect(getInFlightArchiveRules([])).toBe('');
+        });
+
+        it('is empty by default, so a stale entry cannot silently suppress caching', () => {
+            expect(UNCACHED_ARCHIVES).toEqual([]);
+            expect(productionContent).not.toContain('Release archives under test');
+        });
+
+        it('escapes dots so the version matches literally', () => {
+            // Unescaped, 36.2.0 would also match 36X2X0.
+            expect(ruleFor(['36.2.0'])).toContain('archive/36\\.2\\.0/#');
+            expect(ruleFor(['36.2.0'])).not.toContain('archive/36.2.0/#');
+        });
+
+        it('covers the charts and studio archive roots', () => {
+            expect(ruleFor(['36.2.0'])).toContain('^/(charts/|studio/)?archive/');
+        });
+
+        it('uses no-cache, not no-store, so revalidation is a cheap 304', () => {
+            expect(ruleFor(['36.2.0'])).toContain('Cache-Control "no-cache"');
+            expect(ruleFor(['36.2.0'])).not.toContain('no-store');
+        });
+
+        it('emits one rule per in-flight version', () => {
+            const rule = ruleFor(['36.2.0', '37.0.0']);
+            expect(rule.match(/Header set Cache-Control/g)).toHaveLength(2);
+            expect(rule).toContain('archive/36\\.2\\.0/#');
+            expect(rule).toContain('archive/37\\.0\\.0/#');
+        });
+
+        it('is emitted after the hashed-asset rule, so it wins for in-flight assets', () => {
+            // It must override BOTH the document rule (which excludes archives) and the 7-day
+            // asset cache, or a tester keeps stale assets for the whole cycle. With the list
+            // empty the rule itself is absent, so assert the slot: the asset rule is emitted
+            // before mod_deflate, and the in-flight rule sits between them.
+            const lines = productionContent.split('\n');
+            const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
+            const deflateAt = lines.findIndex((l) => l.includes('<IfModule mod_deflate.c>'));
+            expect(assetAt).toBeGreaterThan(-1);
+            expect(deflateAt).toBeGreaterThan(assetAt);
+        });
+
+        it('applies to staging too, where release testing happens', () => {
+            // Staging has no long-cache rule, but its document rule also excludes archives,
+            // so an in-flight archive would otherwise keep heuristic caching there as well.
+            const staging = getHtaccessContent({ env: 'staging' });
+            expect(staging).toContain('no-cache');
         });
     });
 
