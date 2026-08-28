@@ -16,25 +16,13 @@ AddType text/markdown md
 AddCharset utf-8 .md
 
 
-<IfModule mod_expires.c>
-    # Adds caching headers
-    ExpiresActive On
+# Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
+Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
 
-    # Default directive
-    ExpiresDefault "access plus 1 year"
 
-    ExpiresByType application/json "access plus 1 hour"
-    ExpiresByType text/html "access plus 1 hour"
-    ExpiresByType text/markdown "access plus 1 hour"
-    ExpiresByType text/plain "access plus 1 hour"
-    ExpiresByType text/richtext "access plus 1 hour"
-    ExpiresByType text/xml "access plus 1 hour"
-    ExpiresByType text/xsd "access plus 1 hour"
-    ExpiresByType text/xsl "access plus 1 hour"
-
-    # CSS
-    ExpiresByType text/css "access plus 1 month"
-</IfModule>
+# Content-addressed assets - the filename carries a content hash, so changed content is
+# always a different URL. Matched by hash shape, so anything unhashed is not cached.
+Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
 
 
 <IfModule mod_deflate.c>
@@ -62,12 +50,6 @@ AddCharset utf-8 .md
     AddOutputFilterByType DEFLATE text/markdown
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/xml
-
-    # Remove browser bugs (only needed for really old browsers)
-    BrowserMatch ^Mozilla/4 gzip-only-text/html
-    BrowserMatch ^Mozilla/4\\.0[678] no-gzip
-    BrowserMatch \\bMSIE !no-gzip !gzip-only-text/html
-    Header append Vary User-Agent
 </IfModule>
 
 
@@ -2995,6 +2977,10 @@ AddType text/markdown md
 # ...as UTF-8, so glyphs like ✓/✗ in generated tables aren't mojibaked by a
 # Latin-1 fallback (the .md endpoint sets this charset; static hosting must too).
 AddCharset utf-8 .md
+
+
+# Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
+Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
 
 
 <IfModule mod_rewrite.c>
