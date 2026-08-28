@@ -883,11 +883,13 @@ export class ColumnFilterService
 
     private createFilterUiForHandler(
         compDetails: UserCompDetails | null,
-        createFilterUi: ((update?: boolean) => AgPromise<FilterDisplayComp>) | null
+        createFilterUi: ((update?: boolean) => AgPromise<FilterDisplayComp>) | null,
+        refreshed?: boolean
     ): FilterUi<FilterDisplayComp, FilterDisplayParams> | null {
         return createFilterUi
             ? {
                   created: false,
+                  refreshed,
                   create: createFilterUi,
                   filterParams: compDetails!.params,
                   compDetails: compDetails!,
@@ -1222,7 +1224,8 @@ export class ColumnFilterService
             delete this.initialModel[colId];
             this.state.delete(colId);
             const filterUi = filterWrapper.filterUi;
-            const newFilterUi = this.createFilterUiForHandler(compDetails, createFilterUi as any);
+            // the state just deleted is baked into compDetails, so the replacement must re-derive
+            const newFilterUi = this.createFilterUiForHandler(compDetails, createFilterUi as any, true);
             filterWrapper.filterUi = newFilterUi;
             const eventSvc = this.eventSvc;
             // destroy the old one after creating the new one
@@ -1371,11 +1374,24 @@ export class ColumnFilterService
                 this.createFilterCompParams(column, isHandler, 'colDef') as IFilterParams
             );
 
+        // a cleared model makes the params derived above stale, so the ui must re-derive them
+        let modelCleared = false;
         if (wasHandler) {
             const handlerGenerator = handlerFunc?.handlerNameOrCallback ?? handlerFunc?.filterHandler;
             const existingModel = _getFilterModel(this.model, colId);
-            if (filterWrapper.handlerGenerator != handlerGenerator) {
-                // handler has changed
+            let recreateHandler = filterWrapper.handlerGenerator != handlerGenerator;
+            if (!recreateHandler) {
+                // `false` means the handler cannot take the new params
+                const handlerParams = this.createHandlerParams(column, compDetails?.params);
+                filterWrapper.handlerParams = handlerParams;
+                recreateHandler =
+                    filterWrapper.handler.refresh?.({
+                        ...handlerParams,
+                        source: 'colDef',
+                        model: existingModel,
+                    }) === false;
+            }
+            if (recreateHandler) {
                 const oldHandler = filterWrapper.handler;
                 const { handler, handlerParams } = this.createHandlerFromFunc(
                     column,
@@ -1387,6 +1403,9 @@ export class ColumnFilterService
                 filterWrapper.handlerGenerator = handlerGenerator!;
 
                 delete this.model[colId];
+                // the ui state describes the model that has just gone
+                this.state.delete(colId);
+                modelCleared = true;
                 handler.init?.({ ...handlerParams, source: 'init', model: null });
                 // destroy the old handler after creating and assigning the new one in case anything
                 // is listening to events on the handler and needs to resubscribe to the new one
@@ -1397,30 +1416,24 @@ export class ColumnFilterService
                         source,
                     });
                 }
-            } else {
-                const handlerParams = this.createHandlerParams(column, compDetails?.params);
-                // handler exists and is the same
-                filterWrapper.handlerParams = handlerParams;
-                filterWrapper.handler.refresh?.({
-                    ...handlerParams,
-                    source: 'colDef',
-                    model: existingModel,
-                });
             }
+        }
+
+        const filterUi = filterWrapper.filterUi;
+        if (wasHandler && filterUi && compDetails && !filterUi.created) {
+            // nothing has been built from the old col def yet, so swap the plan instead of destroying
+            filterWrapper.filterUi = this.createFilterUiForHandler(compDetails, createFilterUi as any, modelCleared);
+            return;
         }
 
         // Case when filter component changes
         // or when filter wrapper does not have promise to retrieve FilterComp, destroy
-        if (
-            this.areFilterCompsDifferent(filterWrapper.filterUi?.compDetails ?? null, compDetails) ||
-            !filterWrapper.filterUi ||
-            !compDetails
-        ) {
+        if (this.areFilterCompsDifferent(filterUi?.compDetails ?? null, compDetails) || !filterUi || !compDetails) {
             this.destroyFilterUi(filterWrapper, column, compDetails, createFilterUi);
             return;
         }
 
-        filterWrapper.filterUi.filterParams = newFilterParams;
+        filterUi.filterParams = newFilterParams;
 
         // Otherwise - Check for refresh method before destruction
         // If refresh() method is implemented - call it and destroy filter if it returns false
