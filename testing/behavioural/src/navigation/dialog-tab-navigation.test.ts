@@ -129,8 +129,8 @@ describe('Dialog tab navigation', () => {
         });
     }
 
-    test('skips a visible clear button when entering the dialog', async () => {
-        const { after, dialog } = await createFocusFixture();
+    test('tabs from the Columns Tool Panel search input into its visible clear button', async () => {
+        const { dialog } = await createFocusFixture();
         const user = userEvent.setup();
         const filterInput = dialog.querySelector<HTMLInputElement>('.ag-column-select-header-filter-wrapper input')!;
 
@@ -139,22 +139,12 @@ describe('Dialog tab navigation', () => {
         const clearButton = dialog.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
         expect(clearButton).not.toHaveClass('ag-hidden');
 
-        // demote every other control so the visible clear button (which follows the
-        // filter input in the DOM) is the boundary candidate on reverse entry
-        deactivateInnerTabGuards(dialog);
-        dialog
-            .querySelectorAll<HTMLElement>('input, select, button, textarea, [href], [tabindex]:not(.ag-tab-guard)')
-            .forEach((element) => {
-                if (element !== filterInput && element !== clearButton) {
-                    element.tabIndex = -1;
-                }
-            });
+        filterInput.focus();
+        await user.tab();
+        expect(document.activeElement).toBe(clearButton);
 
-        after.focus();
         await user.tab({ shift: true });
-
         expect(document.activeElement).toBe(filterInput);
-        expect(document.activeElement).not.toBe(clearButton);
     });
 
     test('falls back to managed focus when the dialog has no tabbable content', async () => {

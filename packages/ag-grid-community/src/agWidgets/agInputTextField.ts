@@ -155,7 +155,7 @@ export class AgInputTextField<
         const eClearButton = _createAgElement<HTMLButtonElement>({
             tag: 'button',
             cls: 'ag-input-field-clear-button',
-            attrs: { type: 'button', tabindex: '-1' },
+            attrs: { type: 'button' },
         });
 
         const clearIcon = this.beans.iconSvc.createIconNoSpan('cancel');
