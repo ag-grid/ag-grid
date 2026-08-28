@@ -289,20 +289,32 @@ describe('htaccessRules', () => {
 
         it('is emitted after the hashed-asset rule, so it wins for in-flight assets', () => {
             // It must override BOTH the document rule (which excludes archives) and the 7-day
-            // asset cache, or a tester keeps stale assets for the whole cycle. With nothing in
-            // flight the rule is absent, so assert the slot: the asset rule is emitted before
-            // mod_deflate, and the in-flight rule sits between them.
-            const lines = productionContent.split('\n');
+            // asset cache, or a tester keeps stale assets for the whole cycle. Generated with a
+            // version in flight so the archive rule is actually present to be positioned - with
+            // the committed empty value this assertion would hold even if the rule were deleted.
+            const lines = getHtaccessContent({ env: 'production', uncachedArchive: '36.2.0' }).split('\n');
             const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
+            const archiveAt = lines.findIndex((l) => l.includes('archive/36\\.2\\.0/#'));
             const deflateAt = lines.findIndex((l) => l.includes('<IfModule mod_deflate.c>'));
             expect(assetAt).toBeGreaterThan(-1);
-            expect(deflateAt).toBeGreaterThan(assetAt);
+            expect(archiveAt).toBeGreaterThan(assetAt);
+            expect(deflateAt).toBeGreaterThan(archiveAt);
         });
 
         it('applies to staging too, where release testing happens', () => {
-            // Staging has no long-cache rule, but its document rule also excludes archives,
-            // so an in-flight archive would otherwise keep heuristic caching there as well.
-            expect(getHtaccessContent({ env: 'staging' })).toContain('no-cache');
+            // Staging has no long-cache rule, but its document rule also excludes archives, so
+            // an in-flight archive would otherwise keep heuristic caching there as well. Assert
+            // the archive-specific expression: staging already contains "no-cache" via the
+            // document rule, so a bare substring check would pass without the wiring.
+            const staging = getHtaccessContent({ env: 'staging', uncachedArchive: '36.2.0' });
+            expect(staging).toContain('archive/36\\.2\\.0/#');
+            expect(staging).toContain('Release archive under test');
+        });
+
+        it('emits nothing in either env when nothing is in flight', () => {
+            (['production', 'staging'] as const).forEach((env) => {
+                expect(getHtaccessContent({ env, uncachedArchive: null })).not.toContain('Release archive under test');
+            });
         });
     });
 
