@@ -117,12 +117,12 @@
     "ag-grid-community": "36.1.0-beta.20260826.134"
   },
   "optionalDependencies": {
-    "ag-charts-community": "14.1.0-beta.20260823",
-    "ag-charts-enterprise": "14.1.0-beta.20260823"
+    "ag-charts-community": "14.1.0-beta.20260828",
+    "ag-charts-enterprise": "14.1.0-beta.20260828"
   },
   "devDependencies": {
-    "ag-charts-community": "14.1.0-beta.20260823",
-    "ag-charts-enterprise": "14.1.0-beta.20260823",
+    "ag-charts-community": "14.1.0-beta.20260828",
+    "ag-charts-enterprise": "14.1.0-beta.20260828",
     "canvas": "^3.2.3"
   }
 }
