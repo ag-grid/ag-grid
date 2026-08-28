@@ -61,6 +61,10 @@ const gridOptions: GridOptions = {
             athlete: 'Robert Clarke',
             age: undefined,
         },
+        {
+            athlete: 'Kirsten Flipkens',
+            age: '',
+        },
     ],
 };
 

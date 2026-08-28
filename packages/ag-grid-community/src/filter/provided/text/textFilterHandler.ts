@@ -4,7 +4,7 @@ import type { FilterOptionKey, ICombinedSimpleModel, TextFilterOptionKey, Tuple 
 import { isCombinedFilterModel } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
 import { SimpleFilterHandler } from '../simpleFilterHandler';
-import { isBlank } from '../simpleFilterUtils';
+import { _hasValue, _isBlank } from '../simpleFilterUtils';
 import type { ITextFilterParams, TextFilterModel, TextFormatter, TextMatcher } from './iTextFilter';
 import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
 import { TextFilterModelFormatter } from './textFilterModelFormatter';
@@ -116,9 +116,9 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
 
         const type = filterModel.type;
         if (type === 'blank') {
-            return isBlank(cellValue);
+            return _isBlank(cellValue);
         } else if (type === 'notBlank') {
-            return !isBlank(cellValue);
+            return _hasValue(cellValue);
         }
 
         if (this.isUnmatchable(type)) {

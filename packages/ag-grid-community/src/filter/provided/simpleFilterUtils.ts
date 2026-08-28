@@ -42,8 +42,19 @@ export function removeItems<T>(items: T[], startPosition: number, deleteCount?: 
     return deleteCount == null ? items.splice(startPosition) : items.splice(startPosition, deleteCount);
 }
 
-export function isBlank<V>(cellValue: V) {
-    return cellValue == null || (typeof cellValue === 'string' && cellValue.trim().length === 0);
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _isBlank<V>(cellValue: V): boolean {
+    if (typeof cellValue === 'string') {
+        // No code point in 33..159 is whitespace to `trim`, so one read settles the common case.
+        const first = cellValue.codePointAt(0) ?? 0;
+        return first > 32 && first < 160 ? false : !cellValue.trim();
+    }
+    return cellValue == null;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _hasValue<V>(cellValue: V): boolean {
+    return !_isBlank(cellValue);
 }
 
 export function getDefaultJoinOperator(defaultJoinOperator?: JoinOperator): JoinOperator {
