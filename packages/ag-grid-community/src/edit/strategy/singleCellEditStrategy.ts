@@ -8,6 +8,7 @@ import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from 
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
+import type { EditorValidationCache } from '../utils/editors';
 import { _setupEditor } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
@@ -103,13 +104,17 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         };
     }
 
-    public override stopCancelled(forceCancel: boolean): boolean {
-        super.stopCancelled(forceCancel);
+    public override stopCancelled(forceCancel: boolean, validationCache?: EditorValidationCache): boolean {
+        super.stopCancelled(forceCancel, validationCache);
         return this.clearPosition();
     }
 
-    public override stopCommitted(event: Event | null, commit: boolean): boolean {
-        super.stopCommitted(event, commit);
+    public override stopCommitted(
+        event: Event | null,
+        commit: boolean,
+        validationCache?: EditorValidationCache
+    ): boolean {
+        super.stopCommitted(event, commit, validationCache);
         return this.clearPosition();
     }
 
@@ -154,7 +159,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         backwards: boolean,
         event?: KeyboardEvent,
         source: 'api' | 'ui' = 'ui',
-        preventNavigation = false
+        preventNavigation = false,
+        validationCache?: EditorValidationCache
     ): boolean | null {
         const focusedCell = this.beans.focusSvc.getFocusedCell();
         if (focusedCell) {
@@ -188,7 +194,11 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             // has editable function (eg colDef.editable=func() ) and it depends on the
             // result of this cell, so need to save updates from the first edit, in case
             // the value is referenced in the function.
-            this.editSvc?.stopEditing(prevCell, { source: this.editSvc?.isBatchEditing() ? 'ui' : 'api', event });
+            this.editSvc?.stopEditing(
+                prevCell,
+                { source: this.editSvc?.isBatchEditing() ? 'ui' : 'api', event },
+                validationCache
+            );
         }
 
         try {
@@ -231,7 +241,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         let startEditingCalled = false;
         if (!rowsMatch && !preventNavigation) {
-            super.cleanupEditors(nextCell, true);
+            super.cleanupEditors(nextCell, true, validationCache);
 
             if (suppressStartEditOnTab) {
                 nextCell.focusCell({ forceBrowserFocus: true, sourceEvent: event });
@@ -266,7 +276,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
                 }
                 this.setFocusInOnEditor(nextCell);
 
-                this.cleanupEditors(nextCell);
+                this.cleanupEditors(nextCell, undefined, validationCache);
             }
         } else if (preventNavigation) {
             // Only one cell edits at a time here, so any blocked Tab — same row or not — would leave the

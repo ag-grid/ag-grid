@@ -4,6 +4,7 @@ import { _exists, _getValueUsingDotField, _isElementOverflowingCallback } from '
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import { _formatValidationMessages } from '../edit/utils/validationMessages';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
@@ -49,7 +50,7 @@ const getEditErrorsForPosition = (
 
     const errors = cellValidationErrors || rowValidationErrors;
 
-    return errors?.length ? errors.join(translate('tooltipValidationErrorSeparator', '. ')) : undefined;
+    return errors?.length ? _formatValidationMessages(errors, translate, 'inline') : undefined;
 };
 
 const getCellValueOverflowTarget = (ctrl: CellCtrl): HTMLElement | undefined => {

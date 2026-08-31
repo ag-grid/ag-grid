@@ -577,7 +577,8 @@ export interface GridOptions<TData = any> {
     suppressStartEditOnTab?: boolean;
 
     /**
-     * Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
+     * Validates the Full Row Edit. Return non-empty, user-facing error messages, or `null` when the row is valid.
+     * Only relevant when `editType="fullRow"`.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     getFullRowEditValidationErrors?: GetFullRowEditValidationErrors;

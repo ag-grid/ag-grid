@@ -48,7 +48,8 @@ export interface BaseCellEditor {
     getValidationElement?(tooltip: boolean): HTMLElement;
 
     /**
-     * Optional: The error messages associated with the Editor
+     * Optional: The error messages associated with the Editor.
+     * Each error should be a non-empty, user-facing message.
      */
     getValidationErrors?(): string[] | null;
 }
@@ -102,6 +103,7 @@ export interface ICellEditor<TValue = any> extends BaseCellEditor {
 export interface IErrorValidationParams<TData = any, TValue = any, TContext = any> {
     /** The value being validated. May be `null` or `undefined` — for example if the editor was cleared; the callback must handle this. */
     value: TValue | null | undefined;
+    /** Errors produced by the Provided Editor's built-in constraints, or `null` when there are none. Include these in the callback result to retain the built-in validation. */
     internalErrors: string[] | null;
     cellEditorParams: ICellEditorParams<TData, TValue, TContext>;
 }
@@ -143,8 +145,9 @@ export interface ICellEditorParamsShared<TData = any, TValue = any, TContext = a
     eGridCell: HTMLElement;
 
     /**
-     * Optional validation callback that will override the `getValidationErrors()` of Provided Editors. Use this to return your own custom errors.
-     * @returns An array of strings containing the editor error messages, or `null` if the editor is valid.
+     * Optional validation callback that will override the `getValidationErrors()` of Provided Editors.
+     * Use this to return your own custom errors.
+     * @returns An array of non-empty, user-facing error messages, or `null` if the editor is valid.
      */
     getValidationErrors?: (params: IErrorValidationParams<TData, TValue, TContext>) => string[] | null;
 

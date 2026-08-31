@@ -6,6 +6,7 @@ import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from 
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
+import type { EditorValidationCache } from '../utils/editors';
 import { _destroyEditor, _setupEditor, _sourceAndPendingDiffer } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
@@ -120,21 +121,25 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         };
     }
 
-    public override stopCancelled(forceCancel: boolean): boolean {
+    public override stopCancelled(forceCancel: boolean, validationCache?: EditorValidationCache): boolean {
         const { rowNode, model } = this;
         if (rowNode && !model.hasEdits()) {
             return false;
         }
 
-        super.stopCancelled(forceCancel);
+        super.stopCancelled(forceCancel, validationCache);
 
-        this.cleanupEditors({ rowNode }, true);
+        this.cleanupEditors({ rowNode }, true, validationCache);
         this.rowNode = undefined;
 
         return true;
     }
 
-    public override stopCommitted(event: Event | null, commit: boolean): boolean {
+    public override stopCommitted(
+        event: Event | null,
+        commit: boolean,
+        validationCache?: EditorValidationCache
+    ): boolean {
         const { rowNode, model, editSvc } = this;
         if (rowNode && !model.hasEdits()) {
             return false;
@@ -154,11 +159,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             }
         });
 
-        if (editSvc.checkNavWithValidation({ rowNode }) === 'block-stop') {
-            return false;
-        }
-
-        super.stopCommitted(event, commit);
+        super.stopCommitted(event, commit, validationCache);
 
         // Only dispatch rowValueChanged when data is actually being committed.
         // During batch row-to-row navigation, commit is false — values are pending, not persisted.
@@ -168,7 +169,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             }
         }
 
-        this.cleanupEditors({ rowNode }, true);
+        this.cleanupEditors({ rowNode }, true, validationCache);
         this.rowNode = undefined;
 
         return true;
@@ -217,13 +218,17 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
     }
 
-    public override cleanupEditors(position: EditRowPosition = {}, includeEditing?: boolean): void {
-        super.cleanupEditors(position, includeEditing);
+    public override cleanupEditors(
+        position: EditRowPosition = {},
+        includeEditing?: boolean,
+        validationCache?: EditorValidationCache
+    ): void {
+        super.cleanupEditors(position, includeEditing, validationCache);
 
         const { startedRows } = this;
         for (const rowNode of startedRows) {
             this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
-            this.destroyEditorsForRow(rowNode);
+            this.destroyEditorsForRow(rowNode, validationCache);
         }
         startedRows.clear();
     }
@@ -232,7 +237,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
      * Destroys all editors for a row that started full row editing, including editors
      * that are not represented in the edit model (e.g. empty/unedited editors).
      */
-    private destroyEditorsForRow(rowNode: IRowNode): void {
+    private destroyEditorsForRow(rowNode: IRowNode, validationCache?: EditorValidationCache): void {
         const rowCtrl = _getRowCtrl(this.beans, { rowNode });
         if (!rowCtrl) {
             return; // Row not rendered, no editors to destroy.
@@ -242,7 +247,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const destroyParams = {};
         for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
             if (cellCtrl.comp?.getCellEditor()) {
-                _destroyEditor(this.beans, cellCtrl, destroyParams, cellCtrl);
+                _destroyEditor(this.beans, cellCtrl, destroyParams, cellCtrl, validationCache);
             }
         }
     }
@@ -253,7 +258,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         backwards: boolean,
         event?: KeyboardEvent,
         source: 'api' | 'ui' = 'ui',
-        preventNavigation = false
+        preventNavigation = false,
+        validationCache?: EditorValidationCache
     ): boolean | null {
         const { beans, model, gos, editSvc } = this;
         const prevPos = prevCell.cellPosition;
@@ -283,6 +289,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return null;
         }
         if (nextCell == null) {
+            if (preventNavigation) {
+                editSvc.announceFullRowEditValidationErrors(prevCell.rowNode);
+                this.focusFirstInvalidCell(prevCell, event);
+                return true;
+            }
             return false;
         }
 
@@ -297,18 +308,28 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.setFocusOutOnEditor(prevCell);
         }
 
-        this.restoreEditors();
+        // Restored editors join this same pass; otherwise their attachment revalidates every live sibling.
+        validationCache = this.restoreEditors(validationCache);
 
         const suppressStartEditOnTab = gos.get('suppressStartEditOnTab');
 
+        // Keep target setup before the previous-row stop below: public event order and undo boundaries rely on
+        // the transient target editor existing first.
         if (nextEditable && !preventNavigation) {
             if (suppressStartEditOnTab) {
                 nextCell.focusCell({ forceBrowserFocus: true, sourceEvent: event });
             } else {
-                if (!nextCell.comp?.getCellEditor()) {
+                // Same-row restore may already be awaiting an async editor. Cross-row setup is intentionally
+                // repeated below to preserve the established transient start/stop event sequence.
+                if (
+                    !nextCell.comp?.getCellEditor() &&
+                    !(rowsMatch && editSvc.hasPendingEditorAttachValidation(nextCell))
+                ) {
                     // editor missing because it was outside the viewport during creating phase,
                     // create it now
-                    _setupEditor(beans, nextCell, { event, cellStartedEdit: true });
+                    validationCache = editSvc.withEditorAttachValidationCache(validationCache, nextCell, () =>
+                        _setupEditor(beans, nextCell, { event, cellStartedEdit: true })
+                    );
                 }
                 this.setFocusInOnEditor(nextCell);
                 nextCell.focusCell({ sourceEvent: event });
@@ -316,6 +337,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         } else if (preventNavigation && !rowsMatch) {
             // block mode: Tab past the row's last editable cell must not leak focus to another row —
             // pin the user to the first invalid cell they must correct (or cancel).
+            editSvc.announceFullRowEditValidationErrors(prevCell.rowNode);
             this.focusFirstInvalidCell(prevCell, event);
         } else {
             // Browser focus first: forceBrowserFocus would drag the caret back out of the editor.
@@ -326,12 +348,14 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         if (!rowsMatch && !preventNavigation) {
-            // force a commit before row editing stops so cellValueChanged fires before rowEditingStopped.
-            editSvc?.stopEditing({ rowNode: prevCell.rowNode }, { event, forceStop: true });
+            // Force a commit before row editing stops so cellValueChanged fires before rowEditingStopped.
+            // Reuse the validation snapshot captured before navigation: the transient target editor is not
+            // in that snapshot, but the previous row's editors must not be validated a second time.
+            editSvc.stopEditing({ rowNode: prevCell.rowNode }, { event, forceStop: true }, validationCache);
 
-            // if nothing was committed, editors may still be open; close them to finish the row edit.
-            if (editSvc?.isRowEditing(prevCell.rowNode, { withOpenEditor: true })) {
-                this.cleanupEditors(nextCell, true);
+            // If nothing was committed, editors may still be open; close them to finish the row edit.
+            if (editSvc.isRowEditing(prevCell.rowNode, { withOpenEditor: true })) {
+                this.cleanupEditors(nextCell, true, validationCache);
             }
 
             if (suppressStartEditOnTab) {
@@ -352,8 +376,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         return true;
     }
 
-    private restoreEditors(): void {
-        const { beans, model } = this;
+    private restoreEditors(validationCache?: EditorValidationCache): EditorValidationCache | undefined {
+        const { beans, editSvc, model } = this;
         // check all cells that should have an editor have one - in the case of small viewports,
         // editors might have been destroyed along with their corresponding cellCtrl
         model.getEditMap()?.forEach((rowEdits, rowNode) =>
@@ -368,10 +392,15 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 });
 
                 if (cellCtrl && !cellCtrl.comp?.getCellEditor()) {
-                    _setupEditor(beans, cellCtrl, { silent: true });
+                    // Keep one shared map so several delayed restorations can add their own identity safely.
+                    validationCache = editSvc.withEditorAttachValidationCache(validationCache, cellCtrl, () =>
+                        _setupEditor(beans, cellCtrl, { silent: true })
+                    );
                 }
             })
         );
+
+        return validationCache;
     }
 
     public override destroy(): void {

@@ -254,7 +254,8 @@ export class CellCtrl extends BeanStub {
         }
         this.editorTooltipFeature = this.beans.tooltipSvc?.setupCellEditorTooltip(this, editor);
 
-        this.editSvc?.populateModelValidationErrors();
+        // Cell identity lets a delayed framework editor consume only its own preflight validation snapshot.
+        this.editSvc?.populateModelValidationErrors(this);
     }
 
     public disableEditorTooltipFeature(): void {

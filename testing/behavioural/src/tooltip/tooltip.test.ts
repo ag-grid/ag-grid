@@ -18,6 +18,7 @@ import {
 } from 'ag-test-utils';
 
 import {
+    LocaleModule,
     RenderApiModule,
     TextEditorModule,
     TooltipModule,
@@ -39,7 +40,14 @@ import { BatchEditModule, FormulaModule } from 'ag-grid-enterprise';
 describe('Tooltips', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [TooltipModule, FormulaModule, RenderApiModule, TextEditorModule, BatchEditModule] as Module[],
+        modules: [
+            TooltipModule,
+            FormulaModule,
+            LocaleModule,
+            RenderApiModule,
+            TextEditorModule,
+            BatchEditModule,
+        ] as Module[],
     });
 
     beforeAll(() => setupAgTestIds());
@@ -531,6 +539,37 @@ describe('Tooltips', () => {
         await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'B'))));
         await waitForTooltips(1);
         expect(hasTooltipText('Row is not allowed')).toBe(true);
+    });
+
+    test('uses a non-terminal locale separator between row validation tooltip errors', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'A', editable: true },
+                { field: 'B', editable: false },
+            ],
+            rowData: [{ id: 'r1', A: 'a1', B: 'b1' }],
+            getRowId: (params) => String(params.data.id),
+            editType: 'fullRow',
+            localeText: { tooltipValidationErrorSeparator: ' / ' },
+            getFullRowEditValidationErrors: ({ editorsState }) =>
+                editorsState.some((state) => String(state.newValue).includes('bad'))
+                    ? ['First row error', 'Second row error']
+                    : [],
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-row-validation-separator', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        await userEvent.dblClick(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))));
+        await asyncSetTimeout(1);
+        await userEvent.keyboard('bad');
+        await asyncSetTimeout(1);
+
+        await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'B'))));
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('First row error / Second row error');
     });
 
     test('does not leave an open colDef tooltip showing a stale value', async () => {

@@ -154,18 +154,26 @@ function onEnterKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: Keyboa
         }
 
         // Enter commits, so validity must be current: checkNavWithValidation re-runs ALL validations first.
-        if (editSvc?.checkNavWithValidation(undefined, event) === 'block-stop') {
+        const validation = editSvc?.checkNavWithValidationAndCache(undefined, event);
+        if (validation?.result === 'block-stop') {
+            if (beans.gos.get('editType') === 'fullRow') {
+                editSvc?.announceFullRowEditValidationErrors(rowNode);
+            }
             return;
         }
 
         if (editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
-            editSvc?.stopEditing(cellCtrl, {
-                event,
-                source: 'edit',
-            });
+            editSvc?.stopEditing(
+                cellCtrl,
+                {
+                    event,
+                    source: 'edit',
+                },
+                validation?.validationCache
+            );
         } else if (rowEditing && !cellCtrl.isCellEditable()) {
             // must be on a read only cell
-            editSvc?.stopEditing({ rowNode }, { event, source: 'edit' });
+            editSvc?.stopEditing({ rowNode }, { event, source: 'edit' }, validation?.validationCache);
         } else {
             startEditingAction(cellCtrl);
         }
@@ -221,15 +229,11 @@ function onF2KeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardE
 function onEscapeKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
     const { editSvc } = beans;
 
-    if (editSvc?.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
-        // for escape we always revert, even if blocking
-        editSvc.revertSingleCellEdit(cellCtrl);
-    }
+    // The browser observes this before the deferred framework teardown below has a chance to run.
+    event.preventDefault();
 
-    // checkNavWithValidation stops and restarts the edit
-    // because React calls `setEditDetails` asynchronously
-    // by the time `stopEditing` is called, the new details
-    // have not been processed yet, so we call it async.
+    // Let the editor and popup finish handling Escape before their framework components are torn down.
+    // In particular, React applies edit-detail changes asynchronously, so keep cancellation on the next task.
     setTimeout(() => {
         editSvc?.stopEditing(cellCtrl, {
             event,
