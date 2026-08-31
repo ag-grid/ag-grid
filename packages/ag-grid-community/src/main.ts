@@ -947,6 +947,7 @@ export type {
     DoesExternalFilterPass,
     FillOperation,
     FillOperationParams,
+    FillOperationResult,
     FocusGridInnerElement,
     FocusGridInnerElementParams,
     FullRowEditValidationParams,
