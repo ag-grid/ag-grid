@@ -92,6 +92,15 @@ type StopContext = {
 
 type StopOutcome = { edits: EditMap; res: boolean };
 
+type StopValidationDecision = {
+    blockRejected: boolean;
+    skipAllCommits: boolean;
+};
+
+type StopValidationResult = StopValidationDecision & {
+    validationCache: EditorValidationCache | undefined;
+};
+
 // these are event sources for setDataValue that will not cause the editors to close
 const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk', 'rangeSvc']);
 
@@ -529,52 +538,89 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     private handleStopOrCancel(context: StopContext, preflightValidationCache?: EditorValidationCache): StopOutcome {
+        const { model } = this;
+        const { cancel, commit, edits, event, forceCancel, source, willCancel, willStop } = context;
+        const { blockRejected, skipAllCommits, validationCache } = this.resolveStopValidation(
+            context,
+            preflightValidationCache
+        );
+
+        // Batch cancel also skips the persist: per-cell Escape keeps the previous pending value, and
+        // forceCancel discards everything anyway.
+        const persist = (!this.batch || !willCancel) && !blockRejected;
+        _syncFromEditors(
+            this.beans,
+            { persist, isCancelling: willCancel || cancel, isStopping: willStop },
+            validationCache
+        );
+
+        const freshEdits = model.getEditMapCopy();
+        const shouldCommit = !willCancel && (!this.batch || commit);
+        const editsToDelete = shouldCommit ? this.processEdits(freshEdits, source, skipAllCommits) : [];
+
+        if (cancel) {
+            this.strategy?.stopCancelled(forceCancel, validationCache);
+        } else if (!blockRejected) {
+            this.strategy?.stopCommitted(event, commit, validationCache);
+        }
+
+        this.cleanupAfterStop(edits, freshEdits, editsToDelete);
+
+        return { res: willStop && !blockRejected, edits: freshEdits };
+    }
+
+    private resolveStopValidation(
+        context: StopContext,
+        preflightValidationCache?: EditorValidationCache
+    ): StopValidationResult {
         const { beans, model } = this;
-        const { cancel, commit, edits, event, position, source, willCancel, willStop } = context;
+        const { cancel, willCancel } = context;
 
         // A pull-only editor leaves the validation maps stale, and buffered input has to reach the value
         // before validity is read, or the stop validates the old value and commits the flushed one.
-        const applying = !willCancel && !cancel;
+        const isApplyingEdits = !willCancel && !cancel;
         let validationCache = preflightValidationCache;
-        if (applying) {
+        if (isApplyingEdits) {
             _flushEditors(beans);
             validationCache ??= _populateModelValidationErrors(beans);
         }
 
         // Grid-wide by design: cell validation only holds cells with an open editor, and a batch commit
         // must block on all of them. Read directly — a populate on cancel would refresh styles.
-        const invalid = model.hasValidationErrors();
+        const decision = this.applyInvalidEditPolicy(context, isApplyingEdits, model.hasValidationErrors());
+
+        return { ...decision, validationCache };
+    }
+
+    private applyInvalidEditPolicy(
+        context: StopContext,
+        isApplyingEdits: boolean,
+        hasValidationErrors: boolean
+    ): StopValidationDecision {
+        const { beans } = this;
+        const { commit, position, willStop } = context;
+
         // Revert mode must discard each invalid cell's in-flight attempt before the persist below
         // overwrites it (see revertInvalidEdits); block mode instead holds the whole commit.
-        const blockMode = this.cellEditingInvalidCommitBlocks();
-        const revertBatchCommit = invalid && !blockMode && this.batch && commit;
+        const blockInvalidCommits = this.cellEditingInvalidCommitBlocks();
+        const revertBatchCommit = hasValidationErrors && !blockInvalidCommits && this.batch && commit;
         if (revertBatchCommit) {
             this.revertInvalidEdits();
         }
 
         // A block-mode invalid commit is rejected (batch or not): persist nothing and report the stop as
         // not completed, so the held edit, its editor and the previous valid pending value all survive.
-        const blockRejected = invalid && blockMode && willStop && applying;
+        const blockRejected = hasValidationErrors && blockInvalidCommits && willStop && isApplyingEdits;
         this.stopBlockRejected = blockRejected;
         if (blockRejected && this.gos.get('editType') === 'fullRow') {
             _announceFullRowEditValidationErrors(beans, position?.rowNode ?? this.getOpenEditorRowNode());
         }
 
-        // Batch cancel also skips the persist: per-cell Escape keeps the previous pending value, and
-        // forceCancel discards everything anyway.
-        const persist = (!this.batch || !willCancel) && !blockRejected;
-        _syncFromEditors(beans, { persist, isCancelling: willCancel || cancel, isStopping: willStop }, validationCache);
+        return { blockRejected, skipAllCommits: hasValidationErrors && !revertBatchCommit };
+    }
 
-        const freshEdits = model.getEditMapCopy();
-        const shouldCommit = !willCancel && (!this.batch || commit);
-        const editsToDelete = shouldCommit ? this.processEdits(freshEdits, source, invalid && !revertBatchCommit) : [];
-
-        if (cancel) {
-            this.strategy?.stopCancelled(context.forceCancel, validationCache);
-        } else if (!blockRejected) {
-            this.strategy?.stopCommitted(event, commit, validationCache);
-        }
-
+    private cleanupAfterStop(editsBeforeStop: EditMap, freshEdits: EditMap, editsToDelete: EditPosition[]): void {
+        const { beans, model } = this;
         this.clearValidationIfNoOpenEditors();
 
         // clear any dangling edits, after editor destruction
@@ -582,16 +628,14 @@ export class EditService extends BeanStub implements NamedBean {
             model.clearEditValue(position);
         }
 
-        this.bulkRefreshMap(edits);
+        this.bulkRefreshMap(editsBeforeStop);
 
         // refresh previously edited cells
-        for (const pos of model.getEditPositions(freshEdits)) {
-            const cellCtrl = _getCellCtrl(beans, pos);
-            const valueChanged = _sourceAndPendingDiffer(pos);
+        for (const position of model.getEditPositions(freshEdits)) {
+            const cellCtrl = _getCellCtrl(beans, position);
+            const valueChanged = _sourceAndPendingDiffer(position);
             cellCtrl?.refreshCell({ force: true, suppressFlash: !valueChanged });
         }
-
-        return { res: willStop && !blockRejected, edits: freshEdits };
     }
 
     /** The row the user is currently editing supplies context for a global batch-validation summary. */
