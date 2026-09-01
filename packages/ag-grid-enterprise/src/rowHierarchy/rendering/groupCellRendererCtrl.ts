@@ -392,7 +392,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      * @returns whether this cell is expandable
      */
     private isExpandable(): boolean {
-        const { node, column, colDef } = this.params;
+        const { node, column, colDef, suppressExpansion } = this.params;
+
+        if (suppressExpansion) {
+            return false;
+        }
 
         // checking the node expandable checks pivot leafGroup, footer etc.
         if (!this.displayedNode.isExpandable()) {
