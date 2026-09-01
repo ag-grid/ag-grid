@@ -37,7 +37,7 @@ export const convertMarkdown = (content: string | undefined, framework: Framewor
         .replace(/`(.*?)`/g, '<code>$1</code>')
         .replace(
             /\[([^\]]+)\]\(([^)]+)\)/g,
-            (_, text, href) => `<a href="${urlWithPrefix({ url: href, framework })}">${text}</a>`
+            (_, text, href) => `<a tabindex="0" href="${urlWithPrefix({ url: href, framework })}">${text}</a>`
         )
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
@@ -106,7 +106,7 @@ export function getLinkedType(type: string | string[], framework: Framework) {
                     return url
                         ? {
                               toReplace: typeName,
-                              link: `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${typeName}</a>`,
+                              link: `<a tabindex="0" href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${typeName}</a>`,
                           }
                         : undefined;
                 })

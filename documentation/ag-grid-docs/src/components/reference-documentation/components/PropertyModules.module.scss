@@ -4,7 +4,8 @@
     font-family: var(--text-monospace-font-family);
     position: relative;
 
-    span {
+    span,
+    button {
         margin-top: 2px;
     }
 
@@ -32,6 +33,11 @@
 .moduleCount {
     --icon-color: var(--color-link);
 
+    // Undo the design system's <button> chrome; this is styled as an inline pill.
+    border: none;
+    box-shadow: none;
+    font-family: inherit;
+
     color: var(--color-link);
     cursor: pointer;
     font-size: var(--text-fs-sm);
@@ -45,6 +51,18 @@
     &:hover,
     &.moduleCountActive {
         background: var(--color-util-brand-100);
+    }
+
+    // The design system offsets icons inside a <button>; this one is sized here.
+    :global(.icon) {
+        position: static;
+        display: inline;
+        margin: 0 $spacing-size-2 0 0;
+    }
+
+    // Restores the ring lost with the resting box-shadow; the base rule has no outline.
+    &:focus-visible {
+        box-shadow: 0 0 0 $spacing-size-1 var(--color-button-primary-shadow-focus);
     }
 
     #{$selector-darkmode} & {
