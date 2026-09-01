@@ -49,6 +49,17 @@
         "cwd": "{projectRoot}"
       }
     },
+    "build-grid-options-types": {
+      "command": "tsx {projectRoot}/gridOptionsTypes/writeGridOptionsTypesFile.ts",
+      "dependsOn": ["ag-grid-community:build:types", "copySrcFilesForGeneration"],
+      "inputs": [
+        "{projectRoot}/gridOptionsTypes/**/*.ts",
+        "allOutputs",
+        { "externalDependencies": ["npm:typescript"] }
+      ],
+      "outputs": ["{workspaceRoot}/dist/plugins/ag-grid-generate-example-files"],
+      "cache": true
+    },
     "lint": {
       "command": "eslint",
       "options": {

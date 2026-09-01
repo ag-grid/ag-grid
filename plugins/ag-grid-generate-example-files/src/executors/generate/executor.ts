@@ -3,7 +3,7 @@ import { readFile, readJSONFile, writeFile } from 'ag-shared/plugin-utils';
 import fs from 'fs/promises';
 import path from 'path';
 
-import { getGridOptionsType } from '../../../gridOptionsTypes/buildGridOptionsType';
+import { readGridOptionsType } from '../../../gridOptionsTypes/gridOptionsTypesFile';
 import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
 import {
@@ -51,7 +51,7 @@ export type ExecutorOptions = {
 export default async function (
     options: ExecutorOptions,
     _ctx: ExecutorContext,
-    gridOptionsTypes = getGridOptionsType()
+    gridOptionsTypes = readGridOptionsType()
 ) {
     try {
         await generateFiles(options, gridOptionsTypes);
