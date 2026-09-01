@@ -144,6 +144,7 @@ test.agExample(import.meta, () => {
             await expectVisibleColumnValues(page, 'sport', (value) => expect(value).toContain('Swimming'));
         }
     );
+
     // AG-18364: the filter popup is shrink-to-fit around its text input, and an input's
     // max-content contribution includes its horizontal padding. The search-icon and clear-button
     // gutters are both `icon-size + spacing * 2`, so before the fix the popup width tracked

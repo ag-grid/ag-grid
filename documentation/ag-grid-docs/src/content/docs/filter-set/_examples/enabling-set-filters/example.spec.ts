@@ -39,6 +39,7 @@ test.agExample(import.meta, () => {
         await expect(countryCells.first()).toContainText('United States');
         await expect(countryCells.filter({ hasNotText: 'United States' })).toHaveCount(0);
     });
+
     // AG-18364: same regression, on the Set Filter popup (AC2). Its width is driven by the mini
     // filter input's gutters exactly as the Text Filter's is, so it must not track
     // `--ag-icon-size` either. The `.ag-set-filter-list { min-width: max(200px, 100%) }` floor
