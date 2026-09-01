@@ -1,9 +1,12 @@
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from 'ag-test-utils';
+import { assertSelectedRowsById } from 'ag-test-utils/test-utils-assertions';
 import { waitForEvent } from 'ag-test-utils/test-utils-events';
 
 import type { RowSelectedEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
+
+import { GridActions } from '../selection/utils';
 
 describe('ag-grid grouping selection', () => {
     const gridsManager = new TestGridsManager({
@@ -403,5 +406,154 @@ describe('ag-grid grouping selection', () => {
             └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             · └── LEAF id:3 country:"Italy" athlete:"Carlo"
         `);
+    });
+
+    test('SHIFT-click range excludes hidden descendants of a collapsed group and preserves the hidden anchor (groupSelects: "self")', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: 'a1', team: 'A', athlete: 'Alice' },
+            { id: 'a2', team: 'A', athlete: 'Bob' },
+            { id: 'a3', team: 'A', athlete: 'Carol' },
+            { id: 'b1', team: 'B', athlete: 'Dave' },
+            { id: 'b2', team: 'B', athlete: 'Erin' },
+            { id: 'c1', team: 'C', athlete: 'Frank' },
+            { id: 'c2', team: 'C', athlete: 'Grace' },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'team', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Team' },
+            animateRows: false,
+            rowSelection: { mode: 'multiRow' },
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+        const actions = new GridActions(api);
+
+        await waitForEvent('firstDataRendered', api);
+
+        // Rows displayed: 0 group-A, 1 a1, 2 a2, 3 a3, 4 group-B, 5 b1, 6 b2, 7 group-C, 8 c1, 9 c2
+        actions.toggleCheckboxByIndex(2);
+        assertSelectedRowsById(['a2'], api);
+
+        await actions.collapseGroupRowByIndex(0, { count: 1 });
+        // Rows displayed: 0 group-A (collapsed), 1 group-B, 2 b1, 3 b2, 4 group-C, 5 c1, 6 c2
+
+        actions.toggleCheckboxByIndex(5, { shiftKey: true });
+        assertSelectedRowsById(
+            ['row-group-team-A', 'a2', 'row-group-team-B', 'b1', 'b2', 'row-group-team-C', 'c1'],
+            api
+        );
+
+        actions.toggleCheckboxByIndex(2, { shiftKey: true, ctrlKey: true });
+        assertSelectedRowsById(['row-group-team-A', 'a2', 'row-group-team-B', 'b1'], api);
+    });
+
+    test('expanding a group between SHIFT-clicks re-derives the range rather than reusing a stale one (groupSelects: "self")', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: 'a1', team: 'A', athlete: 'Alice' },
+            { id: 'a2', team: 'A', athlete: 'Bob' },
+            { id: 'a3', team: 'A', athlete: 'Carol' },
+            { id: 'b1', team: 'B', athlete: 'Dave' },
+            { id: 'b2', team: 'B', athlete: 'Erin' },
+            { id: 'c1', team: 'C', athlete: 'Frank' },
+            { id: 'c2', team: 'C', athlete: 'Grace' },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'team', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Team' },
+            animateRows: false,
+            rowSelection: { mode: 'multiRow' },
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+        const actions = new GridActions(api);
+
+        await waitForEvent('firstDataRendered', api);
+
+        // Rows displayed: 0 group-A, 1 a1, 2 a2, 3 a3, 4 group-B, 5 b1, 6 b2, 7 group-C, 8 c1, 9 c2
+        actions.toggleCheckboxByIndex(1);
+        assertSelectedRowsById(['a1'], api);
+
+        await actions.collapseGroupRowByIndex(4, { count: 1 });
+        // Rows displayed: 0 group-A, 1 a1, 2 a2, 3 a3, 4 group-B (collapsed), 5 group-C, 6 c1, 7 c2
+
+        actions.toggleCheckboxByIndex(6, { shiftKey: true });
+        assertSelectedRowsById(['a1', 'a2', 'a3', 'row-group-team-B', 'row-group-team-C', 'c1'], api);
+
+        await actions.expandGroupRowByIndex(4, { count: 1 });
+        // Rows displayed: 0 group-A, 1 a1, 2 a2, 3 a3, 4 group-B, 5 b1, 6 b2, 7 group-C, 8 c1, 9 c2
+
+        actions.toggleCheckboxByIndex(8, { shiftKey: true });
+        assertSelectedRowsById(['a1', 'a2', 'a3', 'row-group-team-B', 'b1', 'b2', 'row-group-team-C', 'c1'], api);
+    });
+
+    test('SHIFT-click on the same anchor group row selects its leaf descendants (groupSelects: "descendants")', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: 'a1', team: 'A', athlete: 'Alice' },
+            { id: 'a2', team: 'A', athlete: 'Bob' },
+            { id: 'a3', team: 'A', athlete: 'Carol' },
+            { id: 'b1', team: 'B', athlete: 'Dave' },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'team', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Team' },
+            animateRows: false,
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+        const actions = new GridActions(api);
+
+        await waitForEvent('firstDataRendered', api);
+
+        // Rows displayed: 0 group-A, 1 a1, 2 a2, 3 a3, 4 group-B, 5 b1
+        actions.toggleCheckboxByIndex(0);
+        assertSelectedRowsById(['row-group-team-A', 'a1', 'a2', 'a3'], api);
+
+        actions.toggleCheckboxByIndex(0);
+        assertSelectedRowsById([], api);
+
+        actions.toggleCheckboxByIndex(0, { shiftKey: true });
+        assertSelectedRowsById(['row-group-team-A', 'a1', 'a2', 'a3'], api);
+    });
+
+    test('groupSelects: "descendants" ignores expansion state and still ranges over a collapsed group\'s full subtree', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: 'a1', team: 'A', athlete: 'Alice' },
+            { id: 'a2', team: 'A', athlete: 'Bob' },
+            { id: 'a3', team: 'A', athlete: 'Carol' },
+            { id: 'b1', team: 'B', athlete: 'Dave' },
+            { id: 'b2', team: 'B', athlete: 'Erin' },
+            { id: 'c1', team: 'C', athlete: 'Frank' },
+            { id: 'c2', team: 'C', athlete: 'Grace' },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'team', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Team' },
+            animateRows: false,
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+        const actions = new GridActions(api);
+
+        await waitForEvent('firstDataRendered', api);
+
+        // Rows displayed: 0 group-A, 1 a1, 2 a2, 3 a3, 4 group-B, 5 b1, 6 b2, 7 group-C, 8 c1, 9 c2
+        await actions.collapseGroupRowByIndex(4, { count: 1 });
+        // Rows displayed: 0 group-A, 1 a1, 2 a2, 3 a3, 4 group-B (collapsed), 5 group-C, 6 c1, 7 c2
+
+        actions.toggleCheckboxByIndex(1);
+        assertSelectedRowsById(['a1'], api);
+
+        actions.toggleCheckboxByIndex(6, { shiftKey: true });
+        assertSelectedRowsById(['row-group-team-A', 'a1', 'a2', 'a3', 'row-group-team-B', 'b1', 'b2', 'c1'], api);
     });
 });

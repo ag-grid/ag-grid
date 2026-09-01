@@ -27,6 +27,8 @@ Users can hold {% kbd "⇧ Shift" /%} and then click a checkbox to add a range o
 Ranges of rows can be selected by holding down {% kbd "⇧ Shift" /%} while clicking on checkboxes.
 This behaviour also applies when [Click Selection](#enable-click-selection--deselection) is enabled, and in [Group Selection](./grouping-row-selection).
 
+A range covers the rows currently displayed between the two clicks, so descendants hidden inside a collapsed group are not included. The exception is `groupSelects: 'descendants'`, where selecting a group always selects its whole subtree regardless of whether it is expanded.
+
 ## Removing Selection Checkboxes
 
 To prevent any row selection checkboxes from being rendered in rows, set `rowSelection.checkboxes` to `false`.
