@@ -80,11 +80,6 @@ jobs:
               continue-on-error: true
               with:
                   fetch-depth: 1
-                  # This job runs no repo code: all it needs from the tree is the
-                  # install-ag-dev-prompts composite action (plus the root
-                  # package.json it reads node-version from, which cone mode
-                  # includes for free). A sparse pattern also makes checkout
-                  # fetch with --filter=blob:none, skipping ~12.7k blobs.
                   sparse-checkout: external/ag-shared/github/actions
 
             - name: Install @ag-grid/dev-prompts
