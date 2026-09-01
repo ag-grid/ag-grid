@@ -279,6 +279,45 @@ describe('Advanced Filter - Autocomplete Interaction', () => {
                 └── LEAF id:5 athlete:"" age:null date:"2024-01-01" hasGold:true country:""
             `);
         });
+
+        test('suggests the shortest column starting with the search string, else the shortest containing it', async () => {
+            const api = gridsManager.createGrid('grid1', {
+                columnDefs: [
+                    { field: 'location', filter: true },
+                    { field: 'order', filter: true },
+                    { field: 'won', filter: true },
+                ],
+                rowData: [{ location: 'Rome', order: 1, won: 'yes' }],
+                enableAdvancedFilter: true,
+            });
+            await new GridColumns(api, `top suggestion rule setup`).checkColumns(`
+                CENTER
+                ├── location "Location" width:200
+                ├── order "Order" width:200
+                └── won "Won" width:200
+            `);
+            await asyncSetTimeout(0);
+            const input = getInput(getGridElement(api)! as HTMLElement);
+
+            // All three hold 'o'; only Order starts with it, so length does not decide.
+            typeInto(input, '[o');
+            await asyncSetTimeout(0);
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+            expect(input.value).toContain('[Order]');
+
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
+            nativeInputValueSetter.call(input, '');
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            await asyncSetTimeout(0);
+
+            // Location and Won hold 'on' and neither starts with it, so the shortest wins.
+            typeInto(input, '[on');
+            await asyncSetTimeout(0);
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+            expect(input.value).toContain('[Won]');
+        });
     });
 
     describe('Operator autocomplete', () => {

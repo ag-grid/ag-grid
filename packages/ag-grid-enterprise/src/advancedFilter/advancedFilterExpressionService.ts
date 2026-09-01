@@ -183,7 +183,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     private expressionJoinOperators: { AND: string; OR: string };
     private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams<any> } = Object.create(null);
     /** Keyed by data type as well as column: a model's `filterType` need not be the column's current one. */
-    private columnExpressionOperators: { [dataType: string]: WeakMap<AgColumn, ColumnOperators> } = Object.create(null);
+    private columnExpressionOperators = new WeakMap<AgColumn, { [dataType: string]: ColumnOperators }>();
 
     public postConstruct(): void {
         this.expressionJoinOperators = this.generateExpressionJoinOperators();
@@ -445,16 +445,16 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         if (!column) {
             return { operators: dataTypeOperators, activeOperators: dataTypeOperators.defaultOperators };
         }
-        const byDataType = this.columnExpressionOperators;
-        let forDataType = byDataType[baseCellDataType!];
-        if (!forDataType) {
-            forDataType = new WeakMap();
-            byDataType[baseCellDataType!] = forDataType;
+        const byColumn = this.columnExpressionOperators;
+        let byDataType = byColumn.get(column);
+        if (!byDataType) {
+            byDataType = Object.create(null) as { [dataType: string]: ColumnOperators };
+            byColumn.set(column, byDataType);
         }
-        let columnOperators = forDataType.get(column);
+        let columnOperators = byDataType[baseCellDataType!];
         if (!columnOperators) {
             columnOperators = this.createColumnOperators(dataTypeOperators, column);
-            forDataType.set(column, columnOperators);
+            byDataType[baseCellDataType!] = columnOperators;
         }
         return columnOperators;
     }
@@ -473,7 +473,13 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         const operators = customOptions.size
             ? createCustomOptionOperators(dataTypeOperators, customOptions, localeTextFunc)
             : dataTypeOperators;
-        const activeOperators = [...offered.keys()].filter((key) => _getOwn(operators.operators, key));
+        const operatorsByKey = operators.operators;
+        const activeOperators: string[] = [];
+        for (const key of offered.keys()) {
+            if (_getOwn(operatorsByKey, key)) {
+                activeOperators.push(key);
+            }
+        }
         return {
             operators,
             activeOperators: activeOperators.length ? activeOperators : dataTypeOperators.defaultOperators,
@@ -610,6 +616,6 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         this.columnAutocompleteEntries = null;
         this.columnNameToIdMap = Object.create(null);
         this.expressionEvaluatorParams = Object.create(null);
-        this.columnExpressionOperators = Object.create(null);
+        this.columnExpressionOperators = new WeakMap();
     }
 }
