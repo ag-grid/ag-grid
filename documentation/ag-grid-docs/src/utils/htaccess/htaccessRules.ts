@@ -44,10 +44,7 @@ const hashedAssetCacheRules = `
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
 `;
 
-// Archived Studio versions are not cached for now - simpler than tracking a third independent
-// version line, and they are a small fraction of archive traffic. Scoped to /studio/archive/
-// only: the live Studio site caches normally like the rest of the site. Emitted after the
-// hashed-asset rule so it covers archived Studio assets as well as their HTML.
+// Archived Studio versions are never cached; /studio/ itself caches normally.
 const studioArchiveNoCacheRules = `
 # Archived Studio versions: never cached. Does not apply to /studio/ itself.
 Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
@@ -58,12 +55,8 @@ Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#
 export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
 export const IN_FLIGHT_END = '# END in-flight release archives';
 
-// In-flight release archives. Released archives keep their long heuristic cache, but one under
-// test is redeployed for days and fixes must show within minutes - heuristic freshness is ~10%
-// of age, so an hour after a deploy it is already stale for 6 minutes, and silently: the tester
-// holds that iteration's hashed assets too, so the page renders consistently old. Grid and
-// Charts are versioned independently and released together, so both are matched by their own
-// version. Emitted last so it overrides the archive exclusion and the hashed-asset rule.
+// Archives under release testing must serve fresh, so they opt out of the caching released
+// archives get. Emitted last, so it overrides the archive exclusion and the hashed-asset rule.
 export function getInFlightArchiveRules(grid: string | null, charts: string | null): string {
     // Single backslash in the emitted regex, so Apache reads a literal dot.
     const escape = (v: string) => v.replace(/\./g, '\\.');
@@ -71,10 +64,7 @@ export function getInFlightArchiveRules(grid: string | null, charts: string | nu
         grid && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/archive/${escape(grid)}/#"`,
         charts && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/charts/archive/${escape(charts)}/#"`,
     ].filter(Boolean);
-    // The markers are emitted even when nothing is in flight, so the deployed root .htaccess
-    // can be patched in place between them - a release candidate does not redeploy the root
-    // file, and the charts archive's own .htaccess comes from the charts repo, so the root is
-    // the only place one edit can cover both products. See scripts/uncached-archives.mjs.
+    // Always emitted, so scripts/uncached-archives.mjs can patch the deployed file between them.
     return `
 ${IN_FLIGHT_BEGIN}${rules.length ? '\n' + rules.join('\n') : ''}
 ${IN_FLIGHT_END}
@@ -548,13 +538,8 @@ ${getCampaignsCspIfOverride({ env: 'production' }, 'enforce')}
 ${getScopedCspHtaccessBlock({ env: 'production' }, 'report-only')}`;
 }
 
-// A build always emits an EMPTY in-flight block. It has no way to know which archives are
-// under test - that state lives only in the deployed root .htaccess, where it is set and
-// cleared by scripts/uncached-archives.mjs. A deploy therefore resets the block, by design.
-//
-// The options exist only so the tests, and the throwaway .htaccess fixtures, can generate the
-// populated form - otherwise every assertion about the in-flight rules would run against
-// output where they are absent, and pass vacuously.
+// A build always emits an EMPTY in-flight block; the deployed root .htaccess owns that state.
+// The archive options exist only so the tests can generate the populated form.
 export function getHtaccessContent(options: {
     env: HtaccessEnv;
     uncachedGridArchive?: string | null;
