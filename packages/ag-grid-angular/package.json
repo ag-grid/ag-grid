@@ -39,7 +39,7 @@
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
+    "karma-jasmine-html-reporter": "~2.3.0",
     "ng-packagr": "^20.3.2",
     "typescript": "~5.8.3",
     "replace-in-file": "8.4.0",
