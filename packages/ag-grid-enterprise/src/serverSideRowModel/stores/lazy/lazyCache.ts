@@ -371,10 +371,12 @@ export class LazyCache extends BeanStub {
 
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void {
         this.numberOfRows = rowCount;
+        // The count came from the application, so it is authoritative however the previous one was
+        // arrived at. `isLastRowIndexKnown` is only set when supplied, per the documented contract.
+        this.isLastRowInferred = false;
 
         if (isLastRowIndexKnown != null) {
             this.isLastRowKnown = isLastRowIndexKnown;
-            this.isLastRowInferred = false;
 
             if (isLastRowIndexKnown === false) {
                 this.numberOfRows += 1;

@@ -148,4 +148,33 @@ describe('SSRM refreshServerSide row count (AG-17574)', () => {
             [0, 10],
         ]);
     });
+
+    test('a count set via api.setRowCount survives a non-purge refresh', async () => {
+        const served = { count: 10 };
+        const requests: number[][] = [];
+        const api = gridsManager.createGrid('myGrid', createGridOptions(served, 10, requests));
+
+        await waitForEvent('firstDataRendered', api);
+        await settle(api);
+
+        // Inferred from the short trailing block, so the store probed one block past the data.
+        expect(api.getDisplayedRowCount()).toBe(10);
+        expect(requests).toEqual([
+            [0, 10],
+            [10, 20],
+        ]);
+
+        // `setRowCount` with no `maxRowFound` sets only the count - but that count comes from the
+        // application, so it is authoritative and the refresh must neither drop it nor probe past it.
+        api.setRowCount(10);
+        await refreshAndSettle(api);
+
+        expect(api.getDisplayedRowCount()).toBe(10);
+        expect(api.isLastRowIndexKnown()).toBe(true);
+        expect(requests).toEqual([
+            [0, 10],
+            [10, 20],
+            [0, 10],
+        ]);
+    });
 });
