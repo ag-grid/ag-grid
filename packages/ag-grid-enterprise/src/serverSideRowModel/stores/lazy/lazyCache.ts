@@ -1043,6 +1043,12 @@ export class LazyCache extends BeanStub {
             this.numberOfRows = 1;
             this.isLastRowKnown = false;
             this.fireStoreUpdatedEvent();
+        } else if (this.isLastRowKnown) {
+            // A refreshed response may be longer than the one which inferred the last row, so the
+            // inferred knowledge is stale. Drop the flag - but keep `numberOfRows`, so the displayed
+            // count and scroll extent don't move before the new data arrives - and let
+            // `onLoadSuccess` re-derive the count from the refreshed blocks.
+            this.isLastRowKnown = false;
         }
     }
 
