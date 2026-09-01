@@ -172,6 +172,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           cache_mode: 'rw'
 
       - name: Prepare Snapshot Branch
@@ -256,6 +257,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           # ro consumers restore the node_modules cache warmed by `init` (which already ran
           # postinstall before saving), so no yarn execution is needed. no-install skips it,
           # removing the per-consumer registry install on a cache miss — the fan-out that
@@ -334,6 +336,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           yarn_postinstall: no-install
           cache_mode: ro
 
@@ -369,6 +372,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           yarn_postinstall: no-install
           cache_mode: ro
 
@@ -406,6 +410,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           yarn_postinstall: no-install
           cache_mode: ro
 
@@ -538,6 +543,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           yarn_postinstall: no-install
           cache_mode: ro
 
@@ -606,6 +612,7 @@ jobs:
         if: matrix.framework != 'none'
         uses: ./.github/actions/setup-nx
         with:
+          base_ref: ${{ github.event.pull_request.base.ref || 'latest' }}
           yarn_postinstall: no-install
           cache_mode: ro
 

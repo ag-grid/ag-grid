@@ -31,7 +31,7 @@ export const PRODUCTION_CSP_PHASE: 'report-only' | 'enforce' = 'enforce';
 // and cheaper to leave cached.
 const documentNoCacheRules = `
 # Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
-Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
+Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
 `;
 
 // Long-cache content-addressed assets. Matched on hash SHAPE rather than the /_astro/
@@ -43,6 +43,33 @@ const hashedAssetCacheRules = `
 # always a different URL. Matched by hash shape, so anything unhashed is not cached.
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
 `;
+
+// Archived Studio versions are never cached; /studio/ itself caches normally.
+const studioArchiveNoCacheRules = `
+# Archived Studio versions: never cached. Does not apply to /studio/ itself.
+Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
+`;
+
+// Delimiters for the in-place patchable block. Exported so the patch script and the tests
+// use the same literals rather than duplicating them.
+export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
+export const IN_FLIGHT_END = '# END in-flight release archives';
+
+// Archives under release testing must serve fresh, so they opt out of the caching released
+// archives get. Emitted last, so it overrides the archive exclusion and the hashed-asset rule.
+export function getInFlightArchiveRules(grid: string | null, charts: string | null): string {
+    // Single backslash in the emitted regex, so Apache reads a literal dot.
+    const escape = (v: string) => v.replace(/\./g, '\\.');
+    const rules = [
+        grid && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/archive/${escape(grid)}/#"`,
+        charts && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/charts/archive/${escape(charts)}/#"`,
+    ].filter(Boolean);
+    // Always emitted, so scripts/uncached-archives.mjs can patch the deployed file between them.
+    return `
+${IN_FLIGHT_BEGIN}${rules.length ? '\n' + rules.join('\n') : ''}
+${IN_FLIGHT_END}
+`;
+}
 
 const modDeflateRules = `
 <IfModule mod_deflate.c>
@@ -433,9 +460,11 @@ AddType text/markdown md
 AddCharset utf-8 .md
 `;
 
-function getStagingHtaccessContent(): string {
+function getStagingHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
+${studioArchiveNoCacheRules}
+${inFlightArchiveRules}
 
 ${markdownNegotiationBlock}
 
@@ -453,10 +482,12 @@ Options -Indexes
 `;
 }
 
-function getProductionHtaccessContent(): string {
+function getProductionHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${hashedAssetCacheRules}
+${studioArchiveNoCacheRules}
+${inFlightArchiveRules}
 ${modDeflateRules}
 ${getModRewriteRules()}
 
@@ -507,6 +538,16 @@ ${getCampaignsCspIfOverride({ env: 'production' }, 'enforce')}
 ${getScopedCspHtaccessBlock({ env: 'production' }, 'report-only')}`;
 }
 
-export function getHtaccessContent(options: { env: HtaccessEnv }): string {
-    return options.env === 'staging' ? getStagingHtaccessContent() : getProductionHtaccessContent();
+// A build always emits an EMPTY in-flight block; the deployed root .htaccess owns that state.
+// The archive options exist only so the tests can generate the populated form.
+export function getHtaccessContent(options: {
+    env: HtaccessEnv;
+    uncachedGridArchive?: string | null;
+    uncachedChartsArchive?: string | null;
+}): string {
+    const inFlight = getInFlightArchiveRules(
+        options.uncachedGridArchive ?? null,
+        options.uncachedChartsArchive ?? null
+    );
+    return options.env === 'staging' ? getStagingHtaccessContent(inFlight) : getProductionHtaccessContent(inFlight);
 }
