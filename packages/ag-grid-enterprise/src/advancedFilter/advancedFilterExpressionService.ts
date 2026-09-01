@@ -11,9 +11,8 @@ import type {
     JoinAdvancedFilterModel,
     NamedBean,
     ValueService,
-    _FilterLocaleTextKey,
 } from 'ag-grid-community';
-import { BeanStub, _classifyFilterOptions, _toFiniteNumber, _translateForFilter } from 'ag-grid-community';
+import { BeanStub, _classifyFilterOptions, _toFiniteNumber } from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -574,8 +573,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     public generateExpressionOperators(): FilterExpressionOperators {
         const translate = (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) =>
             this.translate(key, variableValues);
-        const translateFilter = (key: _FilterLocaleTextKey) => _translateForFilter(this, key);
-        const baseParams = { translate, translateFilter };
+        const baseParams = { translate };
         const dateOperatorsParams = {
             ...baseParams,
             equals: (v: Date, o: Date) => v.getTime() === o.getTime(),

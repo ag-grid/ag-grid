@@ -320,12 +320,12 @@ describe('Advanced Filter — built-in range and relative date operators', () =>
         test('a preset the list names applies, as does a standard operator beside it', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
 
-            // Written under the Date Filter's own name for it, which is what the dropdown offers.
-            await AdvancedFilterHarness.get(api).applyExpression('[Date] Today');
+            // Written under the Advanced Filter's own name for it, which is what the dropdown offers.
+            await AdvancedFilterHarness.get(api).applyExpression('[Date] is today');
             await asyncSetTimeout(0);
             await new FilterDom(api, 'preset operator applied').checkFilterDom(`
                 ADVANCED FILTER
-                input: "[Date] Today"
+                input: "[Date] is today"
                 valid: true
                 buttons: Apply ⊘ | Builder
                 model:
@@ -355,7 +355,7 @@ describe('Advanced Filter — built-in range and relative date operators', () =>
             const af = AdvancedFilterHarness.get(api);
 
             await af.type('[Date] ');
-            expect(af.autocompleteEntries()).toEqual(['Today', 'Yesterday', '=']);
+            expect(af.autocompleteEntries()).toEqual(['is today', 'is yesterday', '=']);
 
             await af.applyExpression('[Date] > "2024-03-01"');
             await asyncSetTimeout(0);
@@ -381,7 +381,7 @@ describe('Advanced Filter — built-in range and relative date operators', () =>
             enableAdvancedFilter: true,
         };
 
-        test('a hand-typed `inRange` is rejected — the name of the option is `between`', async () => {
+        test('a hand-typed `inRange` is rejected — the name of the option is `is between`', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
 
             await AdvancedFilterHarness.get(api).applyExpression('[Age] inRange 15');
@@ -575,7 +575,7 @@ describe('Advanced Filter — string filterOptions restrict the options', () => 
             '>=',
             '<',
             '<=',
-            'between',
+            'is between',
             'is blank',
             'is not blank',
         ]);

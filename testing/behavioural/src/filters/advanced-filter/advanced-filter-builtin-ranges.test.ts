@@ -40,6 +40,7 @@ function isoDaysFromToday(offset: number): string {
 
 const TODAY = isoDaysFromToday(0);
 const YESTERDAY = isoDaysFromToday(-1);
+const TOMORROW = isoDaysFromToday(1);
 const LONG_AGO = isoDaysFromToday(-400);
 
 const ROW_DATA: TestRow[] = [
@@ -49,7 +50,33 @@ const ROW_DATA: TestRow[] = [
     { id: 3, age: null, day: null },
 ];
 
-const SCALAR_OPERATORS = ['=', '!=', '>', '>=', '<', '<=', 'between', 'is blank', 'is not blank'];
+const SCALAR_OPERATORS = ['=', '!=', '>', '>=', '<', '<=', 'is between', 'is blank', 'is not blank'];
+
+/** Every relative date option, against the Advanced Filter's own label for it — not the Date Filter's. */
+const PRESET_LABELS: Record<string, string> = {
+    yesterday: 'is yesterday',
+    today: 'is today',
+    tomorrow: 'is tomorrow',
+    last7Days: 'is in last 7 days',
+    lastWeek: 'is in last week',
+    thisWeek: 'is in this week',
+    nextWeek: 'is in next week',
+    last30Days: 'is in last 30 days',
+    lastMonth: 'is in last month',
+    thisMonth: 'is in this month',
+    nextMonth: 'is in next month',
+    last90Days: 'is in last 90 days',
+    lastQuarter: 'is in last quarter',
+    thisQuarter: 'is in this quarter',
+    nextQuarter: 'is in next quarter',
+    lastYear: 'is in last year',
+    thisYear: 'is in this year',
+    yearToDate: 'is in year to date',
+    nextYear: 'is in next year',
+    last6Months: 'is in last 6 months',
+    last12Months: 'is in last 12 months',
+    last24Months: 'is in last 24 months',
+};
 
 function opts(dateFilterOptions?: string[]): GridOptions<TestRow> {
     return {
@@ -92,7 +119,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
-    describe('between', () => {
+    describe('is between', () => {
         test('is offered above `is blank` for a number and a date column alike', async () => {
             const api = await gridsManager.createGridAndWait('grid1', opts());
             const af = AdvancedFilterHarness.get(api);
@@ -108,12 +135,12 @@ describe('Advanced Filter - built-in range and relative date options', () => {
         test('a number pair is written unquoted, and both bounds are exclusive', async () => {
             const api = await gridsManager.createGridAndWait('grid1', opts());
 
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] between (21, 38)');
+            await AdvancedFilterHarness.get(api).applyExpression('[Age] is between (21, 38)');
             await asyncSetTimeout(0);
 
             await new FilterDom(api, 'number between').checkFilterDom(`
                 ADVANCED FILTER
-                input: "[Age] between (21, 38)"
+                input: "[Age] is between (21, 38)"
                 valid: true
                 buttons: Apply ⊘ | Builder
                 model:
@@ -131,7 +158,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
         test('a date pair is written quoted, and both bounds are exclusive', async () => {
             const api = await gridsManager.createGridAndWait('grid1', opts());
 
-            await AdvancedFilterHarness.get(api).applyExpression(`[Day] between ("${LONG_AGO}", "${TODAY}")`);
+            await AdvancedFilterHarness.get(api).applyExpression(`[Day] is between ("${LONG_AGO}", "${TODAY}")`);
             await asyncSetTimeout(0);
 
             expect(api.getAdvancedFilterModel()).toEqual({
@@ -148,7 +175,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
         test('a reversed pair is accepted and matches no row', async () => {
             const api = await gridsManager.createGridAndWait('grid1', opts());
 
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] between (38, 21)');
+            await AdvancedFilterHarness.get(api).applyExpression('[Age] is between (38, 21)');
             await asyncSetTimeout(0);
 
             expect(api.getAdvancedFilterModel()).toEqual({
@@ -172,7 +199,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
 
             await new FilterDom(api, 'half a range').checkFilterDom(`
                 ADVANCED FILTER
-                input: "[Age] between (21, )"
+                input: "[Age] is between (21, )"
                 valid: false — Expression has an error. Value is missing - (21, ).
                 buttons: Apply ⊘ | Builder
                 model: null
@@ -194,7 +221,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             expect(builder.valuePills(condition)).toHaveLength(1);
             expect(builder.valuePills(condition)[0].getAttribute('aria-label')).toBe('Value');
 
-            await builder.selectOperator(condition, 'between');
+            await builder.selectOperator(condition, 'is between');
             expect(builder.valuePills(condition)).toHaveLength(2);
             expect(builder.valuePills(condition).map((pill) => pill.getAttribute('aria-label'))).toEqual([
                 'Filter from value',
@@ -229,7 +256,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             api.onFilterChanged();
             await asyncSetTimeout(0);
 
-            expect(AdvancedFilterHarness.get(api).value).toBe('[Age] between (21, 38)');
+            expect(AdvancedFilterHarness.get(api).value).toBe('[Age] is between (21, 38)');
             expect(getDisplayedIds(api)).toEqual([1]);
 
             const builder = await AdvancedFilterBuilderHarness.open(api);
@@ -255,17 +282,81 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             const af = AdvancedFilterHarness.get(api);
 
             await af.type('[Day] ');
-            expect(af.autocompleteEntries()).toEqual(['Last 7 Days', 'Today', '=']);
+            expect(af.autocompleteEntries()).toEqual(['is in last 7 days', 'is today', '=']);
+        });
+
+        test('every one is written as its own phrase, and read back as the option key', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', opts(Object.keys(PRESET_LABELS)));
+            const af = AdvancedFilterHarness.get(api);
+
+            const written: string[] = [];
+            for (const key of Object.keys(PRESET_LABELS)) {
+                api.setAdvancedFilterModel({ filterType: 'dateString', colId: 'day', type: key });
+                api.onFilterChanged();
+                await asyncSetTimeout(0);
+                written.push(af.value);
+            }
+            expect(written).toEqual(Object.values(PRESET_LABELS).map((label) => `[Day] ${label}`));
+
+            // And back the other way: the phrase is what an expression spells, and it resolves to the key.
+            await af.applyExpression('[Day] is in year to date');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'dateString',
+                colId: 'day',
+                type: 'yearToDate',
+            });
+        });
+
+        // Each takes no value, so it can never be a bound of `is between`. A span of consecutive ones is
+        // written as a join of them instead, and stays relative where a pair of dates would not.
+        test('a span is written by joining them, since none can be a range bound', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...opts(['yesterday', 'today', 'tomorrow']),
+                rowData: [
+                    { id: 0, age: 21, day: YESTERDAY },
+                    { id: 1, age: 30, day: TODAY },
+                    { id: 2, age: 38, day: TOMORROW },
+                    { id: 3, age: 44, day: LONG_AGO },
+                ],
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            // Named where a value belongs, it is a date that does not parse rather than the range it names.
+            await af.applyExpression('[Day] is between ("is yesterday", "is tomorrow")');
+            await asyncSetTimeout(0);
+            await new FilterDom(api, 'a preset named as a bound').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Day] is between ("is yesterday", "is tomorrow")"
+                valid: false — Expression has an error. Value is not a valid date - "is yesterday".
+                buttons: Apply ⊘ | Builder
+                model: null
+            `);
+            expect(getDisplayedIds(api)).toEqual([0, 1, 2, 3]);
+
+            // Joined instead, the span stays relative where a pair of written dates would not.
+            await af.applyExpression('[Day] is yesterday OR [Day] is today OR [Day] is tomorrow');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'join',
+                type: 'OR',
+                conditions: [
+                    { filterType: 'dateString', colId: 'day', type: 'yesterday' },
+                    { filterType: 'dateString', colId: 'day', type: 'today' },
+                    { filterType: 'dateString', colId: 'day', type: 'tomorrow' },
+                ],
+            });
+            expect(getDisplayedIds(api)).toEqual([0, 1, 2]);
         });
 
         // The configuration the reporters filed against `inRange`, which threw before it was an operator.
-        test('the reported `inRange` configuration opens the dropdown and offers between', async () => {
+        test('the reported `inRange` configuration opens the dropdown and offers it', async () => {
             const api = await gridsManager.createGridAndWait('grid1', opts(['equals', 'inRange']));
             const af = AdvancedFilterHarness.get(api);
 
             await af.type('[Day] ');
             expect(af.isAutocompleteOpen()).toBe(true);
-            expect(af.autocompleteEntries()).toEqual(['=', 'between']);
+            expect(af.autocompleteEntries()).toEqual(['=', 'is between']);
         });
 
         // And the one filed against the relative options.
@@ -275,7 +366,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
 
             await af.type('[Day] ');
             expect(af.isAutocompleteOpen()).toBe(true);
-            expect(af.autocompleteEntries()).toEqual(['=', 'This Year', 'Last Year']);
+            expect(af.autocompleteEntries()).toEqual(['=', 'is in this year', 'is in last year']);
         });
 
         // The option is stored as its key and stays relative, so a model restored on another day means
@@ -283,12 +374,12 @@ describe('Advanced Filter - built-in range and relative date options', () => {
         test('one takes no value, and filters as the equivalent column filter does', async () => {
             const api = await gridsManager.createGridAndWait('grid1', opts(['today', 'last7Days']));
 
-            await AdvancedFilterHarness.get(api).applyExpression('[Day] Last 7 Days');
+            await AdvancedFilterHarness.get(api).applyExpression('[Day] is in last 7 days');
             await asyncSetTimeout(0);
 
             await new FilterDom(api, 'relative date applied').checkFilterDom(`
                 ADVANCED FILTER
-                input: "[Day] Last 7 Days"
+                input: "[Day] is in last 7 days"
                 valid: true
                 buttons: Apply ⊘ | Builder
                 model:
@@ -324,12 +415,12 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             api.onFilterChanged();
             await asyncSetTimeout(0);
 
-            expect(AdvancedFilterHarness.get(api).value).toBe('[Day] Today');
+            expect(AdvancedFilterHarness.get(api).value).toBe('[Day] is today');
             expect(getDisplayedIds(api)).toEqual([0]);
 
             const builder = await AdvancedFilterBuilderHarness.open(api);
             const [condition] = await builder.conditionItems();
-            expect(await builder.operatorOptions(condition)).toEqual(['Today', 'Last 7 Days']);
+            expect(await builder.operatorOptions(condition)).toEqual(['is today', 'is in last 7 days']);
             expect(builder.valuePills(condition)).toHaveLength(0);
         });
 
@@ -351,7 +442,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             const [condition] = await builder.conditionItems();
             expect(builder.valuePills(condition)).toHaveLength(2);
 
-            await builder.selectOperator(condition, 'Today');
+            await builder.selectOperator(condition, 'is today');
             expect(builder.valuePills(condition)).toHaveLength(0);
             await builder.apply();
             await asyncSetTimeout(0);
@@ -369,7 +460,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             await af.type('[Day] ');
             expect(af.autocompleteEntries()).toEqual(SCALAR_OPERATORS);
 
-            await af.applyExpression('[Day] Yesterday');
+            await af.applyExpression('[Day] is yesterday');
             await asyncSetTimeout(0);
 
             expect(api.getAdvancedFilterModel()).toEqual({
@@ -388,13 +479,13 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             await af.type('[Age] ');
             expect(af.autocompleteEntries()).toEqual(SCALAR_OPERATORS);
 
-            await af.applyExpression('[Age] Yesterday');
+            await af.applyExpression('[Age] is yesterday');
             await asyncSetTimeout(0);
 
             await new FilterDom(api, 'preset rejected on a number column').checkFilterDom(`
                 ADVANCED FILTER
-                input: "[Age] Yesterday"
-                valid: false — Expression has an error. Option not found - Yesterday.
+                input: "[Age] is yesterday"
+                valid: false — Expression has an error. Option not found - is yesterday.
                 buttons: Apply ⊘ | Builder
                 model: null
             `);
@@ -422,7 +513,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
 
             const builder = await AdvancedFilterBuilderHarness.open(api);
             const [condition] = await builder.conditionItems();
-            expect(await builder.operatorOptions(condition)).toEqual(['Today', '=']);
+            expect(await builder.operatorOptions(condition)).toEqual(['is today', '=']);
 
             await builder.selectColumn(condition, 'Other');
 
