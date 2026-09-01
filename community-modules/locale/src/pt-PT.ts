@@ -707,7 +707,7 @@ export const AG_GRID_LOCALE_PT = {
     ariaAdvancedFilterBuilderGroupItem: 'Grupo de Filtro',
     ariaAdvancedFilterBuilderColumn: 'Coluna',
     ariaAdvancedFilterBuilderOption: 'Opção',
-    ariaAdvancedFilterBuilderValueP: 'Valor',
+    ariaAdvancedFilterBuilderValue: 'Valor',
     ariaAdvancedFilterBuilderJoinOperator: 'Operador de Junção',
     ariaAdvancedFilterInput: 'Entrada de Filtro Avançado',
     ariaChecked: 'marcado',

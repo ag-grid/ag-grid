@@ -704,7 +704,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaAdvancedFilterBuilderGroupItem: 'Nhóm Lọc',
     ariaAdvancedFilterBuilderColumn: 'Cột',
     ariaAdvancedFilterBuilderOption: 'Tùy chọn',
-    ariaAdvancedFilterBuilderValueP: 'Giá trị',
+    ariaAdvancedFilterBuilderValue: 'Giá trị',
     ariaAdvancedFilterBuilderJoinOperator: 'Toán tử Kết nối',
     ariaAdvancedFilterInput: 'Đầu vào Bộ lọc Nâng cao',
     ariaChecked: 'đã đánh dấu',

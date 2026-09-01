@@ -702,7 +702,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaAdvancedFilterBuilderGroupItem: 'مجموعة الفلترة',
     ariaAdvancedFilterBuilderColumn: 'العمود',
     ariaAdvancedFilterBuilderOption: 'الخيار',
-    ariaAdvancedFilterBuilderValueP: 'القيمة',
+    ariaAdvancedFilterBuilderValue: 'القيمة',
     ariaAdvancedFilterBuilderJoinOperator: 'العملية الربط',
     ariaAdvancedFilterInput: 'إدخال الفلترة المتقدمة',
     ariaChecked: 'محدد',

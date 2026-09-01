@@ -704,7 +704,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',
     ariaAdvancedFilterBuilderColumn: 'Kolonne',
     ariaAdvancedFilterBuilderOption: 'Alternativ',
-    ariaAdvancedFilterBuilderValueP: 'Verdi',
+    ariaAdvancedFilterBuilderValue: 'Verdi',
     ariaAdvancedFilterBuilderJoinOperator: 'Koblingsoperator',
     ariaAdvancedFilterInput: 'Inndata for avansert filter',
     ariaChecked: 'avmerket',

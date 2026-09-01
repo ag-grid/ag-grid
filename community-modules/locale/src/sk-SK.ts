@@ -703,7 +703,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaAdvancedFilterBuilderGroupItem: 'Skupina Filtrov',
     ariaAdvancedFilterBuilderColumn: 'Stĺpec',
     ariaAdvancedFilterBuilderOption: 'Možnosť',
-    ariaAdvancedFilterBuilderValueP: 'Hodnota',
+    ariaAdvancedFilterBuilderValue: 'Hodnota',
     ariaAdvancedFilterBuilderJoinOperator: 'Spojovací Operátor',
     ariaAdvancedFilterInput: 'Vstup Pokročilého Filtra',
     ariaChecked: 'označené',

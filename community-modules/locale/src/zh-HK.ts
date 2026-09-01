@@ -702,7 +702,7 @@ export const AG_GRID_LOCALE_HK = {
     ariaAdvancedFilterBuilderGroupItem: '篩選組',
     ariaAdvancedFilterBuilderColumn: '列',
     ariaAdvancedFilterBuilderOption: '選項',
-    ariaAdvancedFilterBuilderValueP: '值',
+    ariaAdvancedFilterBuilderValue: '值',
     ariaAdvancedFilterBuilderJoinOperator: '連接運算符',
     ariaAdvancedFilterInput: '高級篩選器輸入',
     ariaChecked: '已選中',

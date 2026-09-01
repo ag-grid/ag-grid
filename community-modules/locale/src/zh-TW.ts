@@ -702,7 +702,7 @@ export const AG_GRID_LOCALE_TW = {
     ariaAdvancedFilterBuilderGroupItem: '篩選組',
     ariaAdvancedFilterBuilderColumn: '欄',
     ariaAdvancedFilterBuilderOption: '選項',
-    ariaAdvancedFilterBuilderValueP: '值',
+    ariaAdvancedFilterBuilderValue: '值',
     ariaAdvancedFilterBuilderJoinOperator: '連接運算子',
     ariaAdvancedFilterInput: '進階篩選輸入',
     ariaChecked: '已勾選',

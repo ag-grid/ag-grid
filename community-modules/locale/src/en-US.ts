@@ -708,7 +708,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaAdvancedFilterBuilderGroupItem: 'Filter Group',
     ariaAdvancedFilterBuilderColumn: 'Column',
     ariaAdvancedFilterBuilderOption: 'Option',
-    ariaAdvancedFilterBuilderValueP: 'Value',
+    ariaAdvancedFilterBuilderValue: 'Value',
     ariaAdvancedFilterBuilderJoinOperator: 'Join Operator',
     ariaAdvancedFilterInput: 'Advanced Filter Input',
     ariaChecked: 'checked',

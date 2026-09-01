@@ -702,7 +702,7 @@ export const AG_GRID_LOCALE_CN = {
     ariaAdvancedFilterBuilderGroupItem: '过滤组',
     ariaAdvancedFilterBuilderColumn: '列',
     ariaAdvancedFilterBuilderOption: '选项',
-    ariaAdvancedFilterBuilderValueP: '值',
+    ariaAdvancedFilterBuilderValue: '值',
     ariaAdvancedFilterBuilderJoinOperator: '连接运算符',
     ariaAdvancedFilterInput: '高级过滤器输入',
     ariaChecked: '已选中',

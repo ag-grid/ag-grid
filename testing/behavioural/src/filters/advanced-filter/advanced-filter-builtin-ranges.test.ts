@@ -9,7 +9,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ISimpleFilterModelPresetType } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     DateFilterModule,
@@ -53,7 +53,7 @@ const ROW_DATA: TestRow[] = [
 const SCALAR_OPERATORS = ['=', '!=', '>', '>=', '<', '<=', 'is between', 'is blank', 'is not blank'];
 
 /** Every relative date option, against the Advanced Filter's own label for it — not the Date Filter's. */
-const PRESET_LABELS: Record<string, string> = {
+const PRESET_LABELS: Record<ISimpleFilterModelPresetType, string> = {
     yesterday: 'is yesterday',
     today: 'is today',
     tomorrow: 'is tomorrow',

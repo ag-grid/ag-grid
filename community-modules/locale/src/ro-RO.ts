@@ -707,7 +707,7 @@ export const AG_GRID_LOCALE_RO = {
     ariaAdvancedFilterBuilderGroupItem: 'Grup de Filtre',
     ariaAdvancedFilterBuilderColumn: 'Coloană',
     ariaAdvancedFilterBuilderOption: 'Opțiune',
-    ariaAdvancedFilterBuilderValueP: 'Valoare',
+    ariaAdvancedFilterBuilderValue: 'Valoare',
     ariaAdvancedFilterBuilderJoinOperator: 'Operator de Îmbinare',
     ariaAdvancedFilterInput: 'Intrare Filtru Avansat',
     ariaChecked: 'bifat',

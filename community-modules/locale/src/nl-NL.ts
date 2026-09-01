@@ -705,7 +705,7 @@ export const AG_GRID_LOCALE_NL = {
     ariaAdvancedFilterBuilderGroupItem: 'Filter Groep',
     ariaAdvancedFilterBuilderColumn: 'Kolom',
     ariaAdvancedFilterBuilderOption: 'Optie',
-    ariaAdvancedFilterBuilderValueP: 'Waarde',
+    ariaAdvancedFilterBuilderValue: 'Waarde',
     ariaAdvancedFilterBuilderJoinOperator: 'Koppeloperator',
     ariaAdvancedFilterInput: 'Geavanceerde Filter Invoer',
     ariaChecked: 'geselecteerd',

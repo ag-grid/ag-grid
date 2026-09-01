@@ -703,7 +703,7 @@ export const AG_GRID_LOCALE_JP = {
     ariaAdvancedFilterBuilderGroupItem: 'フィルターグループ',
     ariaAdvancedFilterBuilderColumn: '列',
     ariaAdvancedFilterBuilderOption: 'オプション',
-    ariaAdvancedFilterBuilderValueP: '値',
+    ariaAdvancedFilterBuilderValue: '値',
     ariaAdvancedFilterBuilderJoinOperator: '結合演算子',
     ariaAdvancedFilterInput: '高度なフィルター入力',
     ariaChecked: 'チェック済み',

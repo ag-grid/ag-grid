@@ -709,7 +709,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaAdvancedFilterBuilderGroupItem: 'Ομάδα Φίλτρου',
     ariaAdvancedFilterBuilderColumn: 'Στήλη',
     ariaAdvancedFilterBuilderOption: 'Επιλογή',
-    ariaAdvancedFilterBuilderValueP: 'Τιμή',
+    ariaAdvancedFilterBuilderValue: 'Τιμή',
     ariaAdvancedFilterBuilderJoinOperator: 'Τελεστής Συνένωσης',
     ariaAdvancedFilterInput: 'Εισαγωγή Προχωρημένου Φίλτρου',
     ariaChecked: 'ελεγμένο',

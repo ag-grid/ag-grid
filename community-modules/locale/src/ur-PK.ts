@@ -703,7 +703,7 @@ export const AG_GRID_LOCALE_PK = {
     ariaAdvancedFilterBuilderGroupItem: 'فلٹر گروپ',
     ariaAdvancedFilterBuilderColumn: 'کالم',
     ariaAdvancedFilterBuilderOption: 'اختیار',
-    ariaAdvancedFilterBuilderValueP: 'قدر',
+    ariaAdvancedFilterBuilderValue: 'قدر',
     ariaAdvancedFilterBuilderJoinOperator: 'جوائن اپریٹر',
     ariaAdvancedFilterInput: 'ایڈوانسڈ فلٹر انپٹ',
     ariaChecked: 'چیکڈ',

@@ -704,7 +704,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaAdvancedFilterBuilderGroupItem: 'گروه فیلتر',
     ariaAdvancedFilterBuilderColumn: 'ستون',
     ariaAdvancedFilterBuilderOption: 'گزینه',
-    ariaAdvancedFilterBuilderValueP: 'ارزش',
+    ariaAdvancedFilterBuilderValue: 'ارزش',
     ariaAdvancedFilterBuilderJoinOperator: 'عملگر اتصال',
     ariaAdvancedFilterInput: 'ورودی فیلتر پیشرفته',
     ariaChecked: 'انتخاب شده',

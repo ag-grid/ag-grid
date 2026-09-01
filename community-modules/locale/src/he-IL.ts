@@ -702,7 +702,7 @@ export const AG_GRID_LOCALE_IL = {
     ariaAdvancedFilterBuilderGroupItem: 'קבוצת סינון',
     ariaAdvancedFilterBuilderColumn: 'עמודה',
     ariaAdvancedFilterBuilderOption: 'אפשרות',
-    ariaAdvancedFilterBuilderValueP: 'ערך',
+    ariaAdvancedFilterBuilderValue: 'ערך',
     ariaAdvancedFilterBuilderJoinOperator: 'מפעיל חיבור',
     ariaAdvancedFilterInput: 'קלט סינון מתקדם',
     ariaChecked: 'מסומן',

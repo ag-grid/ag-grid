@@ -708,7 +708,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaAdvancedFilterBuilderGroupItem: 'Szűrési csoport',
     ariaAdvancedFilterBuilderColumn: 'Oszlop',
     ariaAdvancedFilterBuilderOption: 'Opció',
-    ariaAdvancedFilterBuilderValueP: 'Érték',
+    ariaAdvancedFilterBuilderValue: 'Érték',
     ariaAdvancedFilterBuilderJoinOperator: 'Egyesítő operátor',
     ariaAdvancedFilterInput: 'Speciális szűrő bevitel',
     ariaChecked: 'kiválasztva',

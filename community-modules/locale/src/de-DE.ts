@@ -709,7 +709,7 @@ export const AG_GRID_LOCALE_DE = {
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',
     ariaAdvancedFilterBuilderColumn: 'Spalte',
     ariaAdvancedFilterBuilderOption: 'Option',
-    ariaAdvancedFilterBuilderValueP: 'Wert',
+    ariaAdvancedFilterBuilderValue: 'Wert',
     ariaAdvancedFilterBuilderJoinOperator: 'Verknüpfungsoperator',
     ariaAdvancedFilterInput: 'Erweiterter Filtereingang',
     ariaChecked: 'geprüft',

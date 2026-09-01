@@ -706,7 +706,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaAdvancedFilterBuilderGroupItem: 'Група фільтрів',
     ariaAdvancedFilterBuilderColumn: 'Колонка',
     ariaAdvancedFilterBuilderOption: 'Опція',
-    ariaAdvancedFilterBuilderValueP: 'Значення',
+    ariaAdvancedFilterBuilderValue: 'Значення',
     ariaAdvancedFilterBuilderJoinOperator: "Оператор з'єднання",
     ariaAdvancedFilterInput: 'Ввід розширеного фільтру',
     ariaChecked: 'відмічено',

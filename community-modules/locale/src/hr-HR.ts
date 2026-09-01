@@ -706,7 +706,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaAdvancedFilterBuilderGroupItem: 'Grupa filtera',
     ariaAdvancedFilterBuilderColumn: 'Stupac',
     ariaAdvancedFilterBuilderOption: 'Opcija',
-    ariaAdvancedFilterBuilderValueP: 'Vrijednost',
+    ariaAdvancedFilterBuilderValue: 'Vrijednost',
     ariaAdvancedFilterBuilderJoinOperator: 'Operator spajanja',
     ariaAdvancedFilterInput: 'Unos naprednog filtera',
     ariaChecked: 'označeno',

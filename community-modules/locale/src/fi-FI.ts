@@ -707,7 +707,7 @@ export const AG_GRID_LOCALE_FI = {
     ariaAdvancedFilterBuilderGroupItem: 'Suodatuksen ryhmä',
     ariaAdvancedFilterBuilderColumn: 'Sarake',
     ariaAdvancedFilterBuilderOption: 'Vaihtoehto',
-    ariaAdvancedFilterBuilderValueP: 'Arvo',
+    ariaAdvancedFilterBuilderValue: 'Arvo',
     ariaAdvancedFilterBuilderJoinOperator: 'Liitosoperaattori',
     ariaAdvancedFilterInput: 'Tarkennettu suodattimen syöte',
     ariaChecked: 'valittu',

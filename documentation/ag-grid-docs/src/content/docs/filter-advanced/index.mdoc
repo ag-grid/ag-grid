@@ -126,7 +126,7 @@ The available options are as follows:
 | does not contain | `notContains`        | `text`, `object`                                                                          |
 | equals           | `equals`             | `text`, `object`                                                                          |
 | =                | `equals`             | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| not equal        | `notEqual`           | `text`, `object`                                                                          |
+| does not equal   | `notEqual`           | `text`, `object`                                                                          |
 | !=               | `notEqual`           | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
 | begins with      | `startsWith`         | `text`, `object`                                                                          |
 | ends with        | `endsWith`           | `text`, `object`                                                                          |
@@ -158,7 +158,7 @@ These settings only apply when using the Client-Side Row Model. You need to impl
 
 ### Relative Date Options
 
-`date`, `dateString`, `dateTime` and `dateTimeString` columns also support the Date Filter's [built-in relative date options](./filter-date/#available-built-in-date-filter-options) — `is today`, `is in last year`, `is in last 90 days` and the rest. As in the Date Filter, none of them is offered by default: a column opts in by naming them in `filterOptions`.
+`date`, `dateString`, `dateTime` and `dateTimeString` columns also support the Date Filter's [built-in relative date options](./filter-date/#available-built-in-date-filter-options), under names of their own. As in the Date Filter, none of them is offered by default: a column opts in by naming them in `filterOptions`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

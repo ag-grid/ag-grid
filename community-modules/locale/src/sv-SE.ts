@@ -706,7 +706,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaAdvancedFilterBuilderGroupItem: 'Filtergrupp',
     ariaAdvancedFilterBuilderColumn: 'Kolumn',
     ariaAdvancedFilterBuilderOption: 'Alternativ',
-    ariaAdvancedFilterBuilderValueP: 'Värde',
+    ariaAdvancedFilterBuilderValue: 'Värde',
     ariaAdvancedFilterBuilderJoinOperator: 'Kombinationsoperator',
     ariaAdvancedFilterInput: 'Avancerad filterinmatning',
     ariaChecked: 'markerad',

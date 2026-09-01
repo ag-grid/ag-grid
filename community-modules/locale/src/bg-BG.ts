@@ -707,7 +707,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaAdvancedFilterBuilderGroupItem: 'Група за филтриране',
     ariaAdvancedFilterBuilderColumn: 'Колона',
     ariaAdvancedFilterBuilderOption: 'Опция',
-    ariaAdvancedFilterBuilderValueP: 'Стойност',
+    ariaAdvancedFilterBuilderValue: 'Стойност',
     ariaAdvancedFilterBuilderJoinOperator: 'Оператор за свързване',
     ariaAdvancedFilterInput: 'Вход за разширен филтър',
     ariaChecked: 'маркирано',

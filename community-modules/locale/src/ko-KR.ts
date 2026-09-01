@@ -703,7 +703,7 @@ export const AG_GRID_LOCALE_KR = {
     ariaAdvancedFilterBuilderGroupItem: '필터 그룹',
     ariaAdvancedFilterBuilderColumn: '열',
     ariaAdvancedFilterBuilderOption: '옵션',
-    ariaAdvancedFilterBuilderValueP: '값',
+    ariaAdvancedFilterBuilderValue: '값',
     ariaAdvancedFilterBuilderJoinOperator: '조합 연산자',
     ariaAdvancedFilterInput: '고급 필터 입력',
     ariaChecked: '선택됨',

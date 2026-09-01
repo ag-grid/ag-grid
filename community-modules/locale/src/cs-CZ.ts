@@ -704,7 +704,7 @@ export const AG_GRID_LOCALE_CZ = {
     ariaAdvancedFilterBuilderGroupItem: 'Skupina filtrů',
     ariaAdvancedFilterBuilderColumn: 'Sloupec',
     ariaAdvancedFilterBuilderOption: 'Možnost',
-    ariaAdvancedFilterBuilderValueP: 'Hodnota',
+    ariaAdvancedFilterBuilderValue: 'Hodnota',
     ariaAdvancedFilterBuilderJoinOperator: 'Spojovací operátor',
     ariaAdvancedFilterInput: 'Vstup pokročilého filtru',
     ariaChecked: 'zaškrtnuto',
