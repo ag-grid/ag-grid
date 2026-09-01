@@ -149,6 +149,56 @@ describe('SSRM refreshServerSide row count (AG-17574)', () => {
         ]);
     });
 
+    test('a short refresh response re-derives the count even when the previous count was supplied', async () => {
+        const served = { count: 10 };
+        const requests: number[][] = [];
+        let supplyRowCount = true;
+        const allRows = Array.from({ length: 100 }, (_, i) => ({ id: String(i), value: `Row ${i}` }));
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 10,
+            getRowId: (params) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params: IServerSideGetRowsParams) => {
+                    requests.push([params.request.startRow!, params.request.endRow!]);
+                    const available = allRows.slice(0, served.count);
+                    params.success({
+                        rowData: available.slice(params.request.startRow!, params.request.endRow!),
+                        rowCount: supplyRowCount ? served.count : undefined,
+                    });
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await settle(api);
+
+        // Authoritative: the datasource declared the extent.
+        expect(api.getDisplayedRowCount()).toBe(10);
+        expect(requests).toEqual([[0, 10]]);
+
+        // The backend has shrunk and stops declaring an extent. A short response is fresh evidence
+        // about the data, so it re-derives the count - as it always has, purge or not - and the
+        // count it produces is by definition inferred, not the authoritative one it replaced.
+        served.count = 3;
+        supplyRowCount = false;
+        await refreshAndSettle(api);
+
+        expect(api.getDisplayedRowCount()).toBe(3);
+        expect(api.isLastRowIndexKnown()).toBe(true);
+        expect(!!api.getRowNode('9')).toBe(false);
+
+        // ...which is what lets the next refresh grow the count back. Were the short response
+        // treated as authoritative, this would stay latched at 3 - the bug this ticket is about.
+        served.count = 10;
+        await refreshAndSettle(api);
+
+        expect(api.getDisplayedRowCount()).toBe(10);
+        expect(api.isLastRowIndexKnown()).toBe(true);
+        expect(!!api.getRowNode('9')).toBe(true);
+    });
+
     test('a count set via api.setRowCount survives a non-purge refresh', async () => {
         const served = { count: 10 };
         const requests: number[][] = [];
