@@ -21,14 +21,6 @@ export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
 // different output per phase.
 export const PRODUCTION_CSP_PHASE: 'report-only' | 'enforce' = 'enforce';
 
-// The archives under release testing, if any. Grid and Charts ship together, at their own
-// version numbers (Grid 36.x, Charts 14.x), so both are named. They are redeployed for days
-// during a cycle so they must stay fresh; released archives are immutable and are not listed.
-// Set both when the archives are cut, clear at GA (scripts/uncached-archives.mjs). No archive
-// rebuild either way: the rule lives in the root .htaccess, not the archive's own copy.
-export const UNCACHED_GRID_ARCHIVE: string | null = null;
-export const UNCACHED_CHARTS_ARCHIVE: string | null = null;
-
 /**
  * Note: when changing this file please add/update the tests in
  * documentation/ag-grid-docs/testing/htaccess-harness
@@ -61,6 +53,11 @@ const studioArchiveNoCacheRules = `
 Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
 `;
 
+// Delimiters for the in-place patchable block. Exported so the patch script and the tests
+// use the same literals rather than duplicating them.
+export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
+export const IN_FLIGHT_END = '# END in-flight release archives';
+
 // In-flight release archives. Released archives keep their long heuristic cache, but one under
 // test is redeployed for days and fixes must show within minutes - heuristic freshness is ~10%
 // of age, so an hour after a deploy it is already stale for 6 minutes, and silently: the tester
@@ -74,12 +71,13 @@ export function getInFlightArchiveRules(grid: string | null, charts: string | nu
         grid && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/archive/${escape(grid)}/#"`,
         charts && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/charts/archive/${escape(charts)}/#"`,
     ].filter(Boolean);
-    if (!rules.length) {
-        return '';
-    }
+    // The markers are emitted even when nothing is in flight, so the deployed root .htaccess
+    // can be patched in place between them - a release candidate does not redeploy the root
+    // file, and the charts archive's own .htaccess comes from the charts repo, so the root is
+    // the only place one edit can cover both products. See scripts/uncached-archives.mjs.
     return `
-# Release archives under test - always revalidate, overriding the rules above.
-${rules.join('\n')}
+${IN_FLIGHT_BEGIN}${rules.length ? '\n' + rules.join('\n') : ''}
+${IN_FLIGHT_END}
 `;
 }
 
@@ -550,17 +548,21 @@ ${getCampaignsCspIfOverride({ env: 'production' }, 'enforce')}
 ${getScopedCspHtaccessBlock({ env: 'production' }, 'report-only')}`;
 }
 
-// The archive versions default to the committed constants. They are overridable so the tests
-// can generate output with archives in flight - otherwise every assertion about the in-flight
-// rules runs against output where they are absent, and passes vacuously.
+// A build always emits an EMPTY in-flight block. It has no way to know which archives are
+// under test - that state lives only in the deployed root .htaccess, where it is set and
+// cleared by scripts/uncached-archives.mjs. A deploy therefore resets the block, by design.
+//
+// The options exist only so the tests, and the throwaway .htaccess fixtures, can generate the
+// populated form - otherwise every assertion about the in-flight rules would run against
+// output where they are absent, and pass vacuously.
 export function getHtaccessContent(options: {
     env: HtaccessEnv;
     uncachedGridArchive?: string | null;
     uncachedChartsArchive?: string | null;
 }): string {
     const inFlight = getInFlightArchiveRules(
-        options.uncachedGridArchive === undefined ? UNCACHED_GRID_ARCHIVE : options.uncachedGridArchive,
-        options.uncachedChartsArchive === undefined ? UNCACHED_CHARTS_ARCHIVE : options.uncachedChartsArchive
+        options.uncachedGridArchive ?? null,
+        options.uncachedChartsArchive ?? null
     );
     return options.env === 'staging' ? getStagingHtaccessContent(inFlight) : getProductionHtaccessContent(inFlight);
 }

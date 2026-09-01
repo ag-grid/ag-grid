@@ -1,3 +1,9 @@
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import {
     BRANCH_BUILDS_PATH_CONDITION,
     CAMPAIGNS_PATH_CONDITION,
@@ -5,9 +11,9 @@ import {
     EXAMPLES_PATH_CONDITION,
 } from './cspRules';
 import {
+    IN_FLIGHT_BEGIN,
+    IN_FLIGHT_END,
     PRODUCTION_CSP_PHASE,
-    UNCACHED_CHARTS_ARCHIVE,
-    UNCACHED_GRID_ARCHIVE,
     getHtaccessContent,
     getInFlightArchiveRules,
 } from './htaccessRules';
@@ -270,14 +276,50 @@ describe('htaccessRules', () => {
         const inFlight = (grid, charts) =>
             getHtaccessContent({ env: 'production', uncachedGridArchive: grid, uncachedChartsArchive: charts });
 
-        it('emits nothing when nothing is in flight', () => {
-            expect(getInFlightArchiveRules(null, null)).toBe('');
+        it('emits the marker block but no rules when nothing is in flight', () => {
+            // The markers are always present so the deployed root .htaccess can be patched in
+            // place between them; only the rules inside come and go.
+            const empty = getInFlightArchiveRules(null, null);
+            expect(empty).toContain(IN_FLIGHT_BEGIN);
+            expect(empty).toContain(IN_FLIGHT_END);
+            expect(empty).not.toContain('Cache-Control');
         });
 
-        it('is unset by default, so stale values cannot silently suppress caching', () => {
-            expect(UNCACHED_GRID_ARCHIVE).toBeNull();
-            expect(UNCACHED_CHARTS_ARCHIVE).toBeNull();
-            expect(productionContent).not.toContain('Release archives under test');
+        it('agrees with the patch script, which edits a built file rather than importing this', () => {
+            // The script carries its own copies of the markers and the rule text, because it
+            // runs against a .htaccess already on the web box. Patching a generated file must
+            // therefore land exactly what generating it with those versions would have.
+            const file = join(mkdtempSync(join(tmpdir(), 'htaccess-')), '.htaccess');
+            writeFileSync(file, inFlight(null, null));
+            execFileSync(
+                'node',
+                [
+                    fileURLToPath(new URL('../../../../../scripts/uncached-archives.mjs', import.meta.url)),
+                    file,
+                    'set',
+                    '36.2.0',
+                    '14.3.0',
+                ],
+                { encoding: 'utf8' }
+            );
+            expect(readFileSync(file, 'utf8')).toBe(inFlight('36.2.0', '14.3.0'));
+        });
+
+        it('keeps the markers when rules are present, so the block stays patchable', () => {
+            const rule = getInFlightArchiveRules('36.2.0', '14.3.0');
+            expect(rule.indexOf(IN_FLIGHT_BEGIN)).toBeLessThan(rule.indexOf('archive/36'));
+            expect(rule.indexOf(IN_FLIGHT_END)).toBeGreaterThan(rule.indexOf('charts/archive/14'));
+        });
+
+        it('a build never puts an archive in flight - the live file owns that state', () => {
+            // Nothing in source can populate the block: the versions only reach the generator
+            // through the test-only overrides, so a production deploy always resets it.
+            [productionContent, stagingContent].forEach((content) => {
+                expect(content).toContain(IN_FLIGHT_BEGIN);
+                expect(content).not.toContain('Release archives under test');
+                expect(content).not.toContain('m#^/archive/3');
+                expect(content).not.toContain('m#^/charts/archive/1');
+            });
         });
 
         it('matches grid and charts at their own version numbers', () => {

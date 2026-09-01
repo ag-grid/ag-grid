@@ -29,6 +29,9 @@ Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQ
 Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
 
 
+# BEGIN in-flight release archives - patched in place, do not edit by hand
+# END in-flight release archives
+
 
 <IfModule mod_deflate.c>
     # Compress HTML, CSS, JavaScript, Text, XML and fonts
@@ -2964,6 +2967,9 @@ Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !(
 # Archived Studio versions: never cached. Does not apply to /studio/ itself.
 Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
 
+
+# BEGIN in-flight release archives - patched in place, do not edit by hand
+# END in-flight release archives
 
 
 <IfModule mod_rewrite.c>
