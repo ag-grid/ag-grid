@@ -175,16 +175,18 @@ export class RowRangeSelectionContext {
             return { keep: [node], discard: [] };
         }
 
+        // OPTIMIZATION: `newRange` is what `getRange()` would recompute once `node` is the end,
+        // so reuse it rather than walking the row model again.
         if (newRange.find((newRangeNode) => newRangeNode.id === this.endId)) {
             // Range between root and given node contains the current "end"
             // so this is an extension of the current range direction
             this.setEndRange(node);
-            return { keep: this.getRange(), discard: [] };
+            return { keep: newRange, discard: [] };
         } else {
             // otherwise, this is an inversion
             const discard = this.getRange().slice();
             this.setEndRange(node);
-            return { keep: this.getRange(), discard };
+            return { keep: newRange, discard };
         }
     }
 
