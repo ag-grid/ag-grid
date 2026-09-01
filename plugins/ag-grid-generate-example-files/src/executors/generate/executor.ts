@@ -231,6 +231,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                     entryFile,
                     indexHtml,
                     isEnterprise,
+                    isDev,
                     bindings,
                     typedBindings,
                     componentScriptFiles,
@@ -257,7 +258,8 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 transformEntryFile,
                 isIntegratedCharts,
                 mainFileName,
-                folderPath
+                folderPath,
+                isDev
             );
         }
 
@@ -353,7 +355,8 @@ async function processProvidedFiles(
     transformEntryFile: TransformEntryFile,
     isIntegratedCharts: boolean,
     mainFileName: string,
-    folderPath: string
+    folderPath: string,
+    isDev: boolean
 ) {
     if (internalFramework === 'vanilla') {
         // NOTE: Vanilla provided examples, we need to include the entryfile
@@ -394,7 +397,8 @@ async function processProvidedFiles(
         if (provideFrameworkFiles[writeToFileName]?.length > 0 && !writeToFileName.endsWith('.css')) {
             provideFrameworkFiles[writeToFileName] = await formatFile(
                 internalFramework,
-                provideFrameworkFiles[writeToFileName]
+                provideFrameworkFiles[writeToFileName],
+                isDev
             );
         }
 

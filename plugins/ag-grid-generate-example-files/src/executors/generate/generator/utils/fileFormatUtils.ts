@@ -5,7 +5,17 @@ import { TYPESCRIPT_INTERNAL_FRAMEWORKS } from '../types';
 
 // extracted to a separate file as prettier does a dynamic import which jest doesn't like without the addition of
 // experimental flags
-export async function formatFile(internalFramework: InternalFramework, fileString: string): Promise<string> {
+export async function formatFile(
+    internalFramework: InternalFramework,
+    fileString: string,
+    skipFormatting = false
+): Promise<string> {
+    // Formatting is roughly half the cost of generating an example and only affects how the code
+    // reads in the docs example viewer, so dev builds skip it. Published output is still formatted.
+    if (skipFormatting) {
+        return fileString;
+    }
+
     // `babel-ts` prints identically to `typescript` but is markedly cheaper: it avoids loading
     // prettier's TypeScript plugin, which dominates the first format call in each worker.
     const parser =
