@@ -19,6 +19,8 @@ import { ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterp
  */
 
 const NEW_ROW_HEIGHT = 64;
+const SECOND_ROW_HEIGHT = 48;
+const ROOT_ONLY_ROW_HEIGHT = 100;
 
 /**
  * Simulates a theme size parameter change: the environment now measures `height` for the row-height
@@ -117,6 +119,22 @@ describe('theme row height in virtualised row models', () => {
 
             expect(modelUpdates).toBe(0);
             expectUniformRowLayout(api, NEW_ROW_HEIGHT);
+        });
+
+        test('leaf heights follow a theme change when getRowHeight only answers for the root', async () => {
+            const api = await createLoadedSsrmGrid({
+                // The dummy root sits at level -1 and carries no data, so a callback shaped like this
+                // pins the root's height while leaving every leaf on the theme-derived default.
+                getRowHeight: (params) => (params.node.level === -1 ? ROOT_ONLY_ROW_HEIGHT : undefined),
+            });
+
+            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), NEW_ROW_HEIGHT);
+            await asyncSetTimeout(0);
+            expectUniformRowLayout(api, NEW_ROW_HEIGHT);
+
+            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), SECOND_ROW_HEIGHT);
+            await asyncSetTimeout(0);
+            expectUniformRowLayout(api, SECOND_ROW_HEIGHT);
         });
 
         test('a theme change is ignored, without warning, while auto row height is active', async () => {

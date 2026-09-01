@@ -97,6 +97,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private started = false;
 
+    private lastDefaultRowHeight?: number;
+
     private managingPivotResultColumns = false;
 
     private pivotResultFields?: string[];
@@ -355,10 +357,13 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         if (!rootNode || beans.rowAutoHeight?.active) {
             return;
         }
-        // `resetRowHeights` walks every node, so skip the styles that leave the resolved height alone.
-        if (_getRowHeightForNode(beans, rootNode).height === rootNode.rowHeight) {
+        // `resetRowHeights` walks every node, so skip a change that leaves the height alone. The
+        // dummy root is not a displayed row, and resolving it would hand `getRowHeight` empty data.
+        const defaultRowHeight = beans.environment.getDefaultRowHeight();
+        if (defaultRowHeight === this.lastDefaultRowHeight) {
             return;
         }
+        this.lastDefaultRowHeight = defaultRowHeight;
         this.resetRowHeights();
     }
 
