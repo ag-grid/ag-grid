@@ -238,6 +238,8 @@
         "{workspaceRoot}/documentation/ag-grid-docs/public/example-runner/**",
         { "env": "AG_AI_API_URL" },
         { "env": "AG_AI_API_DEV_TOKEN" },
+        { "env": "AG_EXAMPLE_FORMAT" },
+        { "env": "DISABLE_EXAMPLE_GEN_COLLAPSE" },
         { "externalDependencies": ["npm:typescript"] }
       ],
       "outputs": ["{workspaceRoot}/dist/generated-examples/ag-grid-docs"],

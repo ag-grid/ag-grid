@@ -12,7 +12,9 @@ export async function formatFile(
 ): Promise<string> {
     // Formatting is roughly half the cost of generating an example and only affects how the code
     // reads in the docs example viewer, so dev builds skip it. Published output is still formatted.
-    if (skipFormatting) {
+    // Set AG_EXAMPLE_FORMAT=true to format dev output too, e.g. when comparing it against published
+    // output.
+    if (skipFormatting && process.env.AG_EXAMPLE_FORMAT !== 'true') {
         return fileString;
     }
 

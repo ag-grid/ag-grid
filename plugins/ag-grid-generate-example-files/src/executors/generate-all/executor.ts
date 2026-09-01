@@ -1,4 +1,5 @@
 import type { ExecutorContext } from '@nx/devkit';
+import { spawnSync } from 'child_process';
 import * as glob from 'glob';
 import * as os from 'os';
 import * as path from 'path';
@@ -55,8 +56,43 @@ export function findExampleEntryFiles(parentProject: string) {
         .sort();
 }
 
-export default async function (options: ExecutorOptions, _ctx: ExecutorContext) {
+/**
+ * Escape hatch for the single-task collapse. With `DISABLE_EXAMPLE_GEN_COLLAPSE=true` the examples
+ * are generated through the per-example Nx tasks instead, as they were before the collapse. Those
+ * targets are still defined (the watch loop uses them), so this path stays exercised rather than
+ * rotting. The env var is declared as an input on `generate-examples`, so flipping it invalidates
+ * the cache rather than silently reusing output produced by the other strategy.
+ */
+const GENERATED_EXAMPLE_TAG = 'type:generated-example';
+
+function generateViaPerExampleTasks(configurationName?: string) {
+    const args = ['nx', 'run-many', '-t', 'generate-example', `--projects=tag:${GENERATED_EXAMPLE_TAG}`];
+    if (configurationName) {
+        args.push('-c', configurationName);
+    }
+    console.info(`DISABLE_EXAMPLE_GEN_COLLAPSE is set - generating via per-example tasks: npx ${args.join(' ')}`);
+    const result = spawnSync('npx', args, { stdio: 'inherit', env: process.env });
+    if (result.status !== 0) {
+        return { success: false, terminalOutput: 'Per-example generation failed' };
+    }
+    // `run-many` exits 0 when the project filter matches nothing, so verify work actually happened
+    // rather than silently reporting success on an empty run.
+    const generated = glob.sync('dist/generated-examples/*/**/contents.json').length;
+    if (generated === 0) {
+        return {
+            success: false,
+            terminalOutput: `Per-example generation produced no output - did the '${GENERATED_EXAMPLE_TAG}' project filter match anything?`,
+        };
+    }
+    return { success: true, terminalOutput: `Generated ${generated} example files via per-example tasks` };
+}
+
+export default async function (options: ExecutorOptions, ctx: ExecutorContext) {
     const { mode, parentProject, outputBasePath, writeFiles = false } = options;
+
+    if (process.env.DISABLE_EXAMPLE_GEN_COLLAPSE === 'true') {
+        return generateViaPerExampleTasks(ctx?.configurationName);
+    }
 
     const entryFiles = findExampleEntryFiles(parentProject);
     if (entryFiles.length === 0) {
