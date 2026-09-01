@@ -73,74 +73,101 @@ fi
 MARKER="# BEGIN in-flight release archives"
 CACHED_ASSET_RULE="max-age=604800"
 WARNED=0
+PREPARED=()
 
-# patchRemote <remote .htaccess> <required|optional>
+function remoteExists {
+    ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "test -f $1"
+}
+
+# prepare <remote .htaccess> <required|optional>
+#
+# Fetches, classifies and patches a LOCAL copy. Nothing is written to the box here, so a
+# problem with the second or third file is found before the first one has been changed.
 #
 # required - the root file. Anything unexpected is fatal.
 # optional - an archive's own copy. Older archives have neither the marker block nor the
-#            hashed-asset rule, and need no patch: the root file already covers them. One
-#            that has the rule but no markers cannot be patched and is warned about, since
-#            its /_astro/ files will stay cached for the week the archive is under test.
-function patchRemote {
+#            hashed-asset rule, and need no patch: the root file already covers them.
+function prepare {
     local remote=$1
     local mode=$2
-    local local_copy staged backup
-
-    local_copy=$(mktemp)
-    staged="$remote.new-$$"
-    backup="$remote.bak-$(date +%Y%m%d%H%M%S)"
-
-    function failed {
-        echo "  $1";
-        echo "  $remote has NOT been changed.";
-        rm -f "$local_copy";
-        ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "rm -f $staged" 2>/dev/null;
-        exit 1;
-    }
+    local local_copy
 
     echo "$remote"
 
-    if ! scp -i $SSH_LOCATION -P $SSH_PORT $CURRENT_HOST:$remote "$local_copy" 2>/dev/null
+    if ! remoteExists "$remote"
     then
         if [[ "$mode" == "optional" ]]
         then
             echo "  no .htaccess here - nothing to patch";
-            rm -f "$local_copy";
             return 0;
         fi
-        failed "Could not fetch it.";
+        echo "  It does not exist. Nothing has been changed.";
+        exit 1;
+    fi
+
+    # It exists, so a failed fetch is a real failure - never a reason to skip silently.
+    local_copy=$(mktemp)
+    if ! scp -i $SSH_LOCATION -P $SSH_PORT $CURRENT_HOST:$remote "$local_copy"
+    then
+        echo "  Could not fetch it, though it exists. Nothing has been changed.";
+        rm -f "$local_copy";
+        exit 1;
     fi
 
     if ! grep -q "$MARKER" "$local_copy"
     then
         if [[ "$mode" == "optional" ]]
         then
-            if grep -q "$CACHED_ASSET_RULE" "$local_copy"
+            # Only worth saying during set: on clear, an unpatchable file is already in the
+            # state clear is trying to reach.
+            if [[ "$ACTION" == "set" ]] && grep -q "$CACHED_ASSET_RULE" "$local_copy"
             then
                 echo "  WARNING: it caches hashed assets but has no in-flight marker block, so it";
                 echo "  cannot be patched. Its /_astro/ files will stay cached while under test.";
                 WARNED=1;
             else
-                echo "  no marker block, and it does not cache hashed assets - the root file covers it";
+                echo "  no marker block - the root file covers it";
             fi
             rm -f "$local_copy";
             return 0;
         fi
+        echo "  No in-flight marker block. It predates this feature, or is not a generated .htaccess.";
+        echo "  Nothing has been changed.";
         rm -f "$local_copy";
-        failed "No in-flight marker block. It predates this feature, or is not a generated .htaccess.";
+        exit 1;
     fi
 
+    # Patch the local copy. A guarded clear refusing is caught here, before any remote write.
     # Drop the patcher's trailing "applied to <temp file>" - the remote path is printed above.
     node "$PATCHER" "$local_copy" "$ACTION" "$VERSION" "$CHARTS_VERSION" | grep -v "^applied to " | sed 's/^/  /'
     if [ "${PIPESTATUS[0]}" -ne 0 ]
     then
-        failed "Patching failed.";
+        echo "  Patching failed. Nothing has been changed.";
+        rm -f "$local_copy";
+        exit 1;
     fi
+
+    PREPARED+=("$remote|$local_copy")
+}
+
+# commit <remote .htaccess> <patched local copy>
+function commit {
+    local remote=$1
+    local local_copy=$2
+    local staged="$remote.new-$$"
+    local backup="$remote.bak-$(date +%Y%m%d%H%M%S)"
+
+    function commitFailed {
+        echo "  $1";
+        rm -f "$local_copy";
+        ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "rm -f $staged" 2>/dev/null;
+        exit 1;
+    }
 
     # Keep a timestamped copy on the box, so a bad patch is one cp away from being undone.
     if ! ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cp $remote $backup"
     then
-        failed "Could not back it up.";
+        commitFailed "Could not back up $remote.";
     fi
 
     # Upload beside it and rename over: scp writes in place, so an interrupted transfer
@@ -148,24 +175,30 @@ function patchRemote {
     # atomic, so a reader sees either the old file or the new one.
     if ! scp -i $SSH_LOCATION -P $SSH_PORT "$local_copy" $CURRENT_HOST:$staged
     then
-        failed "Could not upload the patched copy.";
+        commitFailed "Could not upload the patched $remote.";
     fi
     if ! ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "chmod 644 $staged && mv $staged $remote"
     then
-        failed "Could not move the patched copy into place.";
+        commitFailed "Could not move the patched $remote into place.";
     fi
     rm -f "$local_copy"
 
-    echo "  patched. Previous copy kept at $backup"
+    echo "$remote patched. Previous copy kept at $backup"
 }
 
 # The root file governs each archive's HTML and its non-hashed files, and is the only place
 # that covers a charts archive whose own copy comes from the charts repo.
-patchRemote "$GRID_ROOT_DIR/.htaccess" required
+prepare "$GRID_ROOT_DIR/.htaccess" required
 
 # Each archive's own copy, which overrides the root for anything it sets a value for.
-patchRemote "$GRID_ROOT_DIR/archive/$VERSION/.htaccess" optional
-patchRemote "$GRID_ROOT_DIR/charts/archive/$CHARTS_VERSION/.htaccess" optional
+prepare "$GRID_ROOT_DIR/archive/$VERSION/.htaccess" optional
+prepare "$GRID_ROOT_DIR/charts/archive/$CHARTS_VERSION/.htaccess" optional
+
+echo ""
+for entry in "${PREPARED[@]}"
+do
+    commit "${entry%%|*}" "${entry##*|}"
+done
 
 if [ "$WARNED" -eq 1 ]
 then
