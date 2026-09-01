@@ -41,22 +41,22 @@
 
 /* AG-18364: the filter popup is shrink-to-fit around its filter input, and an input's max-content
    contribution is its `size`-derived content width PLUS its horizontal padding. That input has
-   since gained two padding gutters - a leading one for the search icon and a trailing one for the
-   permanently reserved clear button - which widened the popup by
-   `2 * (icon-size + spacing * 2) - (spacing * 2.5 + 12px)`, i.e. 32px on Quartz. Giving the input
-   a definite width takes it out of that calculation; `flex: 1 1 auto` still grows it back to fill
-   the wrapper, so only the intrinsic contribution changes. Same idiom as the picker field below.
+   since gained two padding gutters - leading for the search icon, trailing for the permanently
+   reserved clear button - which widened the popup by
+   `2 * (icon-size + spacing * 2) - (spacing * 2.5 + 12px)`, i.e. 32px on Quartz. A definite width
+   takes the input out of that calculation; `flex: 1 1 auto` still grows it back to fill the
+   wrapper, so only the intrinsic contribution changes (same idiom as the picker field below).
 
-   The expression restores the width the popup used to have: a font-proportional content term plus
+   The expression restores the width the popup used to have - a font-proportional content term plus
    the absolute, spacing-derived gutter the input used to reserve (`spacing * 1.5 + 12px` leading,
-   `spacing` trailing). Both terms are needed - a purely font-relative width is ~10px too narrow on
-   the spacing:4 themes, and a fixed pixel width stops tracking `--ag-font-size`. 10.82em is the
+   `spacing` trailing). Both terms are needed: a purely font-relative width lands ~10px too narrow
+   on the spacing:4 themes, and a fixed pixel width stops tracking `--ag-font-size`. 10.82em is the
    size-20 content box plus its borders, i.e. 183.5px border-box at the default 14px font size.
 
-   The two classes matched are exactly the ones input-style-base.css reserves the gutters on, so
-   date inputs - which get neither affordance, and never widened - are left alone. The rule ties on
-   specificity with the `width: 100%` in ag-stack's shared _inputs.css and wins on source order:
-   shared CSS is injected before module CSS (see `_injectCoreAndModuleCSS`). */
+   The classes matched are the two input-style-base.css reserves those gutters on, so date inputs -
+   which get neither affordance, and never widened - are untouched. This ties on specificity with
+   the `width: 100%` in ag-stack's shared _inputs.css and wins on source order, shared CSS being
+   injected before module CSS (`_injectCoreAndModuleCSS`). */
 :where(.ag-menu:not(.ag-tabs) .ag-filter .ag-filter-body-wrapper) .ag-text-field-input,
 :where(.ag-menu:not(.ag-tabs) .ag-filter .ag-filter-body-wrapper) .ag-number-field-input {
     width: calc(10.82em + var(--ag-spacing) * 2.5 + 12px);

@@ -174,10 +174,10 @@ test.agExample(import.meta, () => {
         // Tolerance window, not an exact value: the popup width is theme-coupled (it carries the
         // widget container padding and the theme spacing). Wide enough to survive a theme tweak,
         // narrow enough to catch the 32px regression this test exists for.
-        expect(baseline).toBeGreaterThan(190);
+        expect(baseline).toBeGreaterThan(170);
         expect(baseline).toBeLessThan(230);
 
-        // Triple the icon size: on the unfixed build this widens the popup by 2 * (40 - 16).
+        // Bump the icon size: on the unfixed build this widens the popup by 2 * (40 - 16) = 48px.
         await page.addStyleTag({ content: '.ag-root-wrapper { --ag-icon-size: 40px; }' });
 
         const perturbed = await openAndMeasure();

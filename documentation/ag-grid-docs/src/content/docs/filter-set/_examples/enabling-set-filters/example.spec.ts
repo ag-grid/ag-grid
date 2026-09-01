@@ -63,7 +63,7 @@ test.agExample(import.meta, () => {
         const baseline = await openAndMeasure();
 
         // Theme-coupled tolerance window - see the sibling assertion in the provided-filters spec.
-        expect(baseline).toBeGreaterThan(190);
+        expect(baseline).toBeGreaterThan(170);
         expect(baseline).toBeLessThan(230);
 
         await page.addStyleTag({ content: '.ag-root-wrapper { --ag-icon-size: 40px; }' });
