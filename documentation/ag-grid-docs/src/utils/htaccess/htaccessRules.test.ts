@@ -273,7 +273,7 @@ describe('htaccessRules', () => {
     describe('In-flight release archives', () => {
         // Grid and Charts ship together at independent version numbers (Grid 36.x, Charts 14.x)
         // and are tested in the same window, so both must be named. Studio is never cached.
-        const inFlight = (grid, charts) =>
+        const inFlight = (grid: string | null, charts: string | null) =>
             getHtaccessContent({ env: 'production', uncachedGridArchive: grid, uncachedChartsArchive: charts });
 
         it('emits the marker block but no rules when nothing is in flight', () => {
