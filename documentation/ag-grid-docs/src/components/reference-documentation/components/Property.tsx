@@ -192,14 +192,30 @@ function getDetailsId(id: string) {
     return `${id}-details`;
 }
 
-function CollapsibleButton({ name, isExpanded, onClick }: { name: string; isExpanded?: boolean; onClick: () => void }) {
+function CollapsibleButton({
+    name,
+    isExpanded,
+    detailsId,
+    onClick,
+}: {
+    name: string;
+    isExpanded?: boolean;
+    detailsId: string;
+    onClick: () => void;
+}) {
     return (
         <button
+            type="button"
+            // Safari omits buttons from the tab order without an explicit tabindex.
+            tabIndex={0}
             className={classnames(styles.seeMore, 'button-tertiary', {
                 [styles.isExpanded]: isExpanded,
             })}
             onClick={onClick}
-            aria-label={`See more details about ${name}`}
+            aria-expanded={Boolean(isExpanded)}
+            // Only reference the panel while it exists — it is unmounted when collapsed.
+            aria-controls={isExpanded ? detailsId : undefined}
+            aria-label={`${isExpanded ? 'Hide' : 'See more'} details about ${name}`}
         >
             <Icon className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`} name="chevronDown" />
         </button>
@@ -280,11 +296,13 @@ export const Property: FunctionComponent<{
                                     <CollapsibleButton
                                         name={more?.name ?? name}
                                         isExpanded={isExpanded}
+                                        detailsId={getDetailsId(idName)}
                                         onClick={onCollapseClick}
                                     />
                                 )}
                                 {typeUrl ? (
                                     <a
+                                        tabIndex={0}
                                         className={styles.metaValue}
                                         href={typeUrl}
                                         target={typeUrl.startsWith('http') ? '_blank' : '_self'}
@@ -296,7 +314,7 @@ export const Property: FunctionComponent<{
                                     <span
                                         onClick={onCollapseClick}
                                         className={classnames(styles.metaValue, {
-                                            [styles.isExpandable]: detailsCode,
+                                            [styles.isClickable]: detailsCode,
                                         })}
                                     >
                                         {propertyType}
@@ -316,6 +334,7 @@ export const Property: FunctionComponent<{
                             {isInitial && (
                                 <div className={classnames(styles.metaItem, styles.initialItem)}>
                                     <a
+                                        tabIndex={0}
                                         className={classnames(styles.metaValue)}
                                         href={urlWithPrefix({
                                             url: config?.initialLink ?? './grid-interface/#initial-grid-options',
@@ -340,7 +359,11 @@ export const Property: FunctionComponent<{
                         <div className={styles.actions}>
                             {isObject && (
                                 <div>
-                                    See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
+                                    See{' '}
+                                    <a tabIndex={0} href={`#reference-${id}.${name}`}>
+                                        {name}
+                                    </a>{' '}
+                                    for more details.
                                 </div>
                             )}
 
@@ -358,6 +381,7 @@ export const Property: FunctionComponent<{
 
                             {more != null && more.url && !config.hideMore && (
                                 <a
+                                    tabIndex={0}
                                     className={styles.docLink}
                                     href={urlWithPrefix({
                                         url: more.url,
