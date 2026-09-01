@@ -143,6 +143,21 @@ const {
      * Studio robots.txt disallow json url to merge
      */
     STUDIO_ROBOTS_DISALLOW_JSON_URL,
+
+    /**
+     * Format generated example code in dev as production does
+     *
+     * Dev builds skip prettier because it is roughly half the cost of generating an example, so
+     * example code reads unformatted in the code viewer. Set to `true` to format it anyway.
+     */
+    AG_EXAMPLE_FORMAT,
+
+    /**
+     * Generate examples through the per-example Nx tasks instead of the single aggregate task
+     *
+     * Escape hatch for the generation collapse; the two strategies produce identical output.
+     */
+    DISABLE_EXAMPLE_GEN_COLLAPSE,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -166,6 +181,8 @@ console.log(
             CHARTS_ROBOTS_DISALLOW_JSON_URL,
             STUDIO_SITEMAP_INDEX_URL,
             STUDIO_ROBOTS_DISALLOW_JSON_URL,
+            AG_EXAMPLE_FORMAT,
+            DISABLE_EXAMPLE_GEN_COLLAPSE,
         },
         null,
         2
