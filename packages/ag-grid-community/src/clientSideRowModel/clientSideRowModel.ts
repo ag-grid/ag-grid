@@ -4,6 +4,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
+import { _nearestDisplayedRow } from '../entities/rowNodeUtils';
 import type { FilterChangedEvent } from '../events';
 import {
     _addRowHeightChangedListener,
@@ -879,13 +880,33 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return null;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] | null {
+        const groupsSelectChildren = _getGroupSelectsDescendants(this.gos);
+
+        // Under `groupSelects: 'descendants'` a group's whole subtree is the intended range, so
+        // expansion state is irrelevant and both endpoints and members are taken as-is.
+        const first = groupsSelectChildren ? firstInRange : _nearestDisplayedRow(firstInRange);
+        const last = groupsSelectChildren ? lastInRange : _nearestDisplayedRow(lastInRange);
+        if (!first || !last) {
+            return null;
+        }
+
         let started = false;
         let finished = false;
 
         const result: RowNode[] = [];
 
-        const groupsSelectChildren = _getGroupSelectsDescendants(this.gos);
+        const closeRange = (rowNode: RowNode): boolean => {
+            finished = true;
+
+            // if the final node was a group node, and we're doing groupSelectsChildren
+            // make the exception to select all of it's descendants too
+            if (groupsSelectChildren && rowNode.group) {
+                addAllLeafs(result, rowNode);
+                return true;
+            }
+            return false;
+        };
 
         this.forEachNodeAfterFilterAndSort((rowNode) => {
             // range has been closed, skip till end
@@ -894,34 +915,30 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (started) {
-                if (rowNode === lastInRange || rowNode === firstInRange) {
+                if (rowNode === last || rowNode === first) {
                     // check if this is the last node we're going to be adding
-                    finished = true;
-
-                    // if the final node was a group node, and we're doing groupSelectsChildren
-                    // make the exception to select all of it's descendants too
-                    if (groupsSelectChildren && rowNode.group) {
-                        addAllLeafs(result, rowNode);
+                    if (closeRange(rowNode)) {
                         return;
                     }
                 }
             }
 
             if (!started) {
-                if (rowNode !== lastInRange && rowNode !== firstInRange) {
+                if (rowNode !== last && rowNode !== first) {
                     // still haven't hit a boundary node, keep searching
                     return;
                 }
                 started = true;
 
                 // When the first and last node are the same we're already finished
-                if (lastInRange === firstInRange) {
-                    finished = true;
+                if (last === first && closeRange(rowNode)) {
+                    return;
                 }
             }
 
-            // only select leaf nodes if groupsSelectChildren
-            const includeThisNode = !rowNode.group || !groupsSelectChildren;
+            // only select leaf nodes if groupsSelectChildren, and only rows that are currently displayed otherwise
+            const includeThisNode =
+                (!rowNode.group || !groupsSelectChildren) && (groupsSelectChildren || rowNode.rowIndex != null);
             if (includeThisNode) {
                 result.push(rowNode);
             }
