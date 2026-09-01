@@ -65,7 +65,26 @@ export function findExampleEntryFiles(parentProject: string) {
  */
 const GENERATED_EXAMPLE_TAG = 'type:generated-example';
 
-function generateViaPerExampleTasks(configurationName?: string) {
+function generateViaPerExampleTasks(
+    configurationName: string | undefined,
+    expected: { exampleDir: string; outputPath: string }[]
+) {
+    // `run-many` exits 0 when its project filter matches nothing, so confirm the filter selects
+    // something before trusting a zero exit code. Checking the filter up front - rather than
+    // inspecting output afterwards - is what distinguishes "generated nothing" from "output was
+    // already on disk from an earlier run".
+    const matched = spawnSync('npx', ['nx', 'show', 'projects', `--projects=tag:${GENERATED_EXAMPLE_TAG}`], {
+        encoding: 'utf-8',
+        env: process.env,
+    });
+    const matchedCount = (matched.stdout ?? '').split('\n').filter(Boolean).length;
+    if (matched.status !== 0 || matchedCount === 0) {
+        return {
+            success: false,
+            terminalOutput: `No projects matched 'tag:${GENERATED_EXAMPLE_TAG}' - the per-example fallback would generate nothing.`,
+        };
+    }
+
     const args = ['nx', 'run-many', '-t', 'generate-example', `--projects=tag:${GENERATED_EXAMPLE_TAG}`];
     if (configurationName) {
         args.push('-c', configurationName);
@@ -75,28 +94,38 @@ function generateViaPerExampleTasks(configurationName?: string) {
     if (result.status !== 0) {
         return { success: false, terminalOutput: 'Per-example generation failed' };
     }
-    // `run-many` exits 0 when the project filter matches nothing, so verify work actually happened
-    // rather than silently reporting success on an empty run.
-    const generated = glob.sync('dist/generated-examples/*/**/contents.json').length;
-    if (generated === 0) {
+
+    // Then confirm every example this executor was asked to produce actually has output. Deliberately
+    // an existence check and not an mtime check: with the Nx daemon, outputs already matching the
+    // cache are left untouched, so a freshness test would fail a perfectly correct cache hit.
+    const missing = expected.filter(({ outputPath }) => glob.sync(`${outputPath}/*/contents.json`).length === 0);
+    if (missing.length > 0) {
+        const sample = missing
+            .slice(0, 5)
+            .map((m) => m.exampleDir)
+            .join(', ');
         return {
             success: false,
-            terminalOutput: `Per-example generation produced no output - did the '${GENERATED_EXAMPLE_TAG}' project filter match anything?`,
+            terminalOutput: `Per-example generation left ${missing.length} of ${expected.length} examples without output (e.g. ${sample})`,
         };
     }
-    return { success: true, terminalOutput: `Generated ${generated} example files via per-example tasks` };
+
+    return { success: true, terminalOutput: `Generated ${expected.length} examples via per-example tasks` };
 }
 
 export default async function (options: ExecutorOptions, ctx: ExecutorContext) {
     const { mode, parentProject, outputBasePath, writeFiles = false } = options;
 
-    if (process.env.DISABLE_EXAMPLE_GEN_COLLAPSE === 'true') {
-        return generateViaPerExampleTasks(ctx?.configurationName);
-    }
-
     const entryFiles = findExampleEntryFiles(parentProject);
     if (entryFiles.length === 0) {
         return { success: false, terminalOutput: `No examples found for '${parentProject}'` };
+    }
+
+    if (process.env.DISABLE_EXAMPLE_GEN_COLLAPSE === 'true') {
+        return generateViaPerExampleTasks(
+            ctx?.configurationName,
+            entryFiles.map((entryFilePath) => exampleOutputPath({ entryFilePath, parentProject, outputBasePath }))
+        );
     }
 
     const jobs: { taskName: string; options: GenerateOptions }[] = entryFiles.map((entryFilePath) => {
