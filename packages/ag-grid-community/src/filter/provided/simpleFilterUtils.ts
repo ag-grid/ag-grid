@@ -4,6 +4,7 @@ import type { Column } from '../../interfaces/iColumn';
 import type { FilterInputCallbackParams } from '../../interfaces/iFilter';
 import type { LogService } from '../../validation/logService';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
+import { PRESET_DATE_FILTER_TYPES } from './date/relativeDateRanges';
 import type { FilterOptionKey, IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
@@ -94,28 +95,7 @@ const zeroInputTypes: ReadonlySet<string> = new Set<ISimpleFilterModelType>([
     'empty',
     'notBlank',
     'blank',
-    'today',
-    'yesterday',
-    'tomorrow',
-    'thisWeek',
-    'lastWeek',
-    'nextWeek',
-    'thisMonth',
-    'lastMonth',
-    'nextMonth',
-    'thisQuarter',
-    'lastQuarter',
-    'nextQuarter',
-    'thisYear',
-    'lastYear',
-    'nextYear',
-    'yearToDate',
-    'last7Days',
-    'last30Days',
-    'last90Days',
-    'last6Months',
-    'last12Months',
-    'last24Months',
+    ...PRESET_DATE_FILTER_TYPES,
 ]);
 
 /** An entry missing any of these cannot be offered; they are listed so the warning can name the missing one. */

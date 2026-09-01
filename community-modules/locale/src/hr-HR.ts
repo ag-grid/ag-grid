@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_HR = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'između',
     advancedFilterTrue: 'je točno',
     advancedFilterFalse: 'je netočno',
     advancedFilterAnd: 'I',

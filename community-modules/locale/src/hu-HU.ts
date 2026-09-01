@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_HU = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'között',
     advancedFilterTrue: 'igaz',
     advancedFilterFalse: 'hamis',
     advancedFilterAnd: 'ÉS',

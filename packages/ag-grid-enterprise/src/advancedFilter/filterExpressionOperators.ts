@@ -1,7 +1,13 @@
 import { _getOwn } from 'ag-stack';
 
-import { _hasValue, _isBlank } from 'ag-grid-community';
-import type { BaseCellDataType, IRowNode } from 'ag-grid-community';
+import {
+    _PRESET_DATE_FILTER_RANGES,
+    _PRESET_DATE_FILTER_TYPES,
+    _RelativeDateRangeCache,
+    _hasValue,
+    _isBlank,
+} from 'ag-grid-community';
+import type { BaseCellDataType, IRowNode, _FilterLocaleTextKey } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
@@ -12,6 +18,8 @@ export interface FilterExpressionEvaluatorParams<ConvertedTValue, TValue = Conve
     includeBlanksInNotEqual?: boolean;
     includeBlanksInLessThan?: boolean;
     includeBlanksInGreaterThan?: boolean;
+    includeBlanksInRange?: boolean;
+    inRangeInclusive?: boolean;
     valueConverter: (value: TValue, node: IRowNode) => ConvertedTValue;
 }
 
@@ -33,6 +41,8 @@ export interface DataTypeFilterExpressionOperators<ConvertedTValue, TValue = Con
     operators: {
         [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue>;
     };
+    /** What a column narrowing nothing offers, where that is less than everything it can resolve. */
+    defaultOperators?: string[];
     getEntries(activeOperators?: string[]): AutocompleteEntry[];
 }
 
@@ -100,6 +110,8 @@ export function getEntries<ConvertedTValue, TValue = ConvertedTValue>(
 
 interface FilterExpressionOperatorsParams {
     translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => string;
+    /** The column filter's own name for an option, for the ones both filters share. */
+    translateFilter: (key: _FilterLocaleTextKey) => string;
 }
 
 export class TextFilterExpressionOperators<TValue = string> implements DataTypeFilterExpressionOperators<
@@ -187,6 +199,7 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
 
 interface ScalarFilterExpressionOperatorsParams<ConvertedTValue> extends FilterExpressionOperatorsParams {
     equals: (value: ConvertedTValue, operand: ConvertedTValue) => boolean;
+    relativeDates?: boolean;
 }
 
 export class ScalarFilterExpressionOperators<
@@ -194,6 +207,7 @@ export class ScalarFilterExpressionOperators<
     TValue = ConvertedTValue,
 > implements DataTypeFilterExpressionOperators<ConvertedTValue, TValue> {
     public operators: { [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue> };
+    public defaultOperators: string[] | undefined;
 
     constructor(private readonly params: ScalarFilterExpressionOperatorsParams<ConvertedTValue>) {
         this.initOperators();
@@ -204,7 +218,7 @@ export class ScalarFilterExpressionOperators<
     }
 
     private initOperators(): void {
-        const { translate, equals } = this.params;
+        const { translate, translateFilter, equals, relativeDates } = this.params;
         this.operators = {
             equals: {
                 displayValue: translate('advancedFilterEquals'),
@@ -285,6 +299,12 @@ export class ScalarFilterExpressionOperators<
                     ),
                 numOperands: 1,
             },
+            inRange: {
+                displayValue: translate('advancedFilterInRange'),
+                evaluator: (value, node, params, operand1, operand2) =>
+                    this.evaluateRangeExpression(value, node, params, operand1!, operand2!),
+                numOperands: 2,
+            },
             blank: {
                 displayValue: translate('advancedFilterBlank'),
                 evaluator: _isBlank,
@@ -296,6 +316,31 @@ export class ScalarFilterExpressionOperators<
                 numOperands: 0,
             },
         };
+        if (relativeDates) {
+            // Captured before the relative options join them: a date column offers one only where it asks for it.
+            this.defaultOperators = Object.keys(this.operators);
+            addRelativeDateOperators(this.operators, translateFilter);
+        }
+    }
+
+    /** Exclusive unless `inRangeInclusive`, as the column filter's own range comparison is. */
+    private evaluateRangeExpression(
+        value: TValue | null | undefined,
+        node: IRowNode,
+        params: FilterExpressionEvaluatorParams<ConvertedTValue, TValue>,
+        from: ConvertedTValue,
+        to: ConvertedTValue
+    ): boolean {
+        if (value == null || _isBlank(value)) {
+            return !!params.includeBlanksInRange;
+        }
+        const convertedValue = params.valueConverter(value, node);
+        if (convertedValue == null) {
+            return false;
+        }
+        return params.inRangeInclusive
+            ? convertedValue >= from && convertedValue <= to
+            : convertedValue > from && convertedValue < to;
     }
 
     private evaluateSingleOperandExpression(
@@ -319,6 +364,32 @@ export class ScalarFilterExpressionOperators<
             return !!isNegated;
         }
         return expression(convertedValue, operand);
+    }
+}
+
+/** One cache per data type, since a relative range depends on nothing but the clock. */
+function addRelativeDateOperators(
+    operators: { [operator: string]: FilterExpressionOperator<any> },
+    translateFilter: (key: _FilterLocaleTextKey) => string
+): void {
+    const cache = new _RelativeDateRangeCache();
+    for (let i = 0, len = _PRESET_DATE_FILTER_TYPES.length; i < len; ++i) {
+        const key = _PRESET_DATE_FILTER_TYPES[i];
+        const rangeFn = _PRESET_DATE_FILTER_RANGES[key];
+        operators[key] = {
+            displayValue: translateFilter(key),
+            evaluator: (value, node, params) => {
+                // A range has nothing to match a blank against, as the column filter has nothing either.
+                const convertedValue = value == null || _isBlank(value) ? null : params.valueConverter(value, node);
+                if (convertedValue == null) {
+                    return false;
+                }
+                const { fromTime, toTime } = cache.getRange(key, rangeFn);
+                const time = +convertedValue;
+                return time >= fromTime && time < toTime;
+            },
+            numOperands: 0,
+        };
     }
 }
 

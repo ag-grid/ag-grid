@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_NL = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'tussen',
     advancedFilterTrue: 'is-waar',
     advancedFilterFalse: 'is-niet-waar',
     advancedFilterAnd: 'EN',

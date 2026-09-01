@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_EG = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'بين',
     advancedFilterTrue: 'صحيح',
     advancedFilterFalse: 'خاطئ',
     advancedFilterAnd: 'و',

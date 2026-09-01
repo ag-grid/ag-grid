@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_SK = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'medzi',
     advancedFilterTrue: 'je pravdivé',
     advancedFilterFalse: 'je nepravdivé',
     advancedFilterAnd: 'A',

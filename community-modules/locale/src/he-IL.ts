@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_IL = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'בין',
     advancedFilterTrue: 'אמת',
     advancedFilterFalse: 'שקר',
     advancedFilterAnd: 'וגם',

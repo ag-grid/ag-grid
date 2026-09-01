@@ -85,6 +85,7 @@ const FILTER_LOCALE_TEXT = {
     maxValueValidation: (variableValues: string[]) => `Must be less than or equal to ${variableValues[0]}`,
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type FilterLocaleTextKey = keyof typeof FILTER_LOCALE_TEXT;
 
 /**

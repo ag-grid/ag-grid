@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_KR = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: '사이',
     advancedFilterTrue: '참임',
     advancedFilterFalse: '거짓임',
     advancedFilterAnd: 'AND',

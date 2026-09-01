@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_UA = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'між',
     advancedFilterTrue: 'є істинним',
     advancedFilterFalse: 'є хибним',
     advancedFilterAnd: 'І',

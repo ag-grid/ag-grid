@@ -27,6 +27,7 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'between',
     advancedFilterTrue: 'is true',
     advancedFilterFalse: 'is false',
     advancedFilterAnd: 'AND',

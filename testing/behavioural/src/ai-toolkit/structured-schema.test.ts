@@ -1357,6 +1357,23 @@ describe('getStructuredSchema - advanced filter', () => {
         expect(schema.$defs.joinAdvancedFilterModel).toBeDefined();
         expect(schema.$defs.advancedFilterModel).toBeDefined();
         expect(schema.$defs.advancedFilterModel.anyOf).toBeDefined();
+
+        // `inRange` is the only built-in taking two values, so it is the one def that must carry a
+        // `filterTo` slot; a def offering it beside the one-value options would ask for the wrong shape.
+        const numberDefs = Object.keys(schema.$defs).filter((key) => key.startsWith('numberAdvancedFilterModel'));
+        const rangeDef = numberDefs
+            .map((key) => schema.$defs[key])
+            .find((def) => def.properties.type.enum.includes('inRange'));
+        expect(rangeDef).toBeDefined();
+        expect(rangeDef.properties.type.enum).toEqual(['inRange']);
+        expect(Object.keys(rangeDef.properties)).toContain('filterTo');
+        for (const key of numberDefs) {
+            const def = schema.$defs[key];
+            if (def !== rangeDef) {
+                expect(def.properties.type.enum).not.toContain('inRange');
+                expect(Object.keys(def.properties)).not.toContain('filterTo');
+            }
+        }
         await new GridRows(
             api,
             `advanced filter _defs include data-type models, join model, and advancedFilterMo final state`

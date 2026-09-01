@@ -136,8 +136,13 @@ The available options are as follows:
 | >=               | `greaterThanOrEqual` | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
 | <                | `lessThan`           | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
 | <=               | `lessThanOrEqual`    | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| between          | `inRange`            | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
 | is true          | `true`               | `boolean`                                                                                 |
 | is false         | `false`              | `boolean`                                                                                 |
+
+`between` takes two values, written as a comma-separated pair: `[Age] between (21, 38)`. The range is exclusive of both ends unless `inRangeInclusive = true` is set, exactly as it is in the [Number Filter](./filter-number/) and the [Date Filter](./filter-date/).
+
+The Advanced Filter does not validate the order of the two values, where the column filters refuse to apply a range whose first value is not below its second. A reversed range is applied here and matches no row.
 
 For `text` and `object` Cell Data Types, `caseSensitive = true` can be set to enable case sensitivity.
 
@@ -147,8 +152,46 @@ For `number`, `date`, `dateString`, `dateTime` and `dateTimeString` Cell Data Ty
 - `includeBlanksInNotEqual = true`
 - `includeBlanksInLessThan = true`
 - `includeBlanksInGreaterThan = true`
+- `includeBlanksInRange = true`
 
 These settings only apply when using the Client-Side Row Model. You need to implement support for these in your server-side filtering logic when using the Server-Side Row Model.
+
+### Relative Date Options
+
+`date`, `dateString`, `dateTime` and `dateTimeString` columns also support the Date Filter's [built-in relative date options](./filter-date/#available-built-in-date-filter-options) — `Today`, `Last Year`, `Last 90 Days` and the rest. As in the Date Filter, none of them is offered by default: a column opts in by naming them in `filterOptions`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'date',
+            cellDataType: 'date',
+            filterParams: {
+                filterOptions: ['equals', 'thisYear', 'lastYear'],
+            },
+        },
+    ],
+}
+```
+
+They take no value, so an expression is the column and the option alone, and the filter model holds only the option key:
+
+```text
+[Date] Last Year
+```
+
+```js
+const advancedFilterModel = { filterType: 'date', colId: 'date', type: 'lastYear' };
+```
+
+The option stays relative to the current date rather than being resolved to fixed dates when it is applied, so a saved filter model means the same thing whenever it is restored. With the Server-Side Row Model the option key reaches the server with no values, as the Date Filter's does — see [Preset Date Range Filters](./server-side-model-filtering/#preset-date-range-filters).
+
+The following example demonstrates the built-in range and relative date options:
+
+- The **Age** column offers `between`, which it and every other Number column do by default.
+- The **Date** column narrows its options to `=`, `between`, `Last 7 Days`, `Last 30 Days`, `This Year`, `Last Year` and `Last 24 Months`.
+
+{% gridExampleRunner title="Built-in Range and Relative Date Options" name="built-in-filter-options" /%}
 
 ### Custom Filter Options
 
@@ -204,7 +247,7 @@ const advancedFilterModel = {
 
 A `displayKey` is resolved against the column being filtered, so different columns can reuse the same key. Reusing an Option Key from the table above replaces that built-in option for the column, the same as it does in the column filter.
 
-A column's list decides what the Advanced Filter suggests for it, not what it can read. An expression naming an option the list leaves out — one saved before the list was narrowed, for example — still applies, so changing `filterOptions` does not discard filters that have already been stored. Where a list names no option the Advanced Filter has, such as the relative date presets, the column keeps the standard options for its Cell Data Type.
+A column's list decides what the Advanced Filter suggests for it, not what it can read. An expression naming an option the list leaves out — one saved before the list was narrowed, for example — still applies, so changing `filterOptions` does not discard filters that have already been stored. Where a list names no option the Advanced Filter has, the column keeps the standard options for its Cell Data Type — which for a date column means the standard options rather than the relative date ones, since those are never standard.
 
 The following example demonstrates custom filter options taking different numbers of values:
 

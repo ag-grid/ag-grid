@@ -135,6 +135,7 @@ export const AG_GRID_LOCALE_HK = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: '介於',
     advancedFilterTrue: '為真',
     advancedFilterFalse: '為假',
     advancedFilterAnd: '和',

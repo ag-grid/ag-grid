@@ -22,7 +22,7 @@ import {
 } from 'ag-grid-community';
 import { AdvancedFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
-/** Regression baseline for Advanced Filter grid options and the operators not offered today. */
+/** Regression baseline for Advanced Filter grid options, and which operators a column offers. */
 
 // The suggestion list virtualises, so without a layout it renders one row and assertions read that truncation.
 beforeAll(() => installFilterLayoutMock());
@@ -277,7 +277,7 @@ describe('Advanced Filter — grid options', () => {
     });
 });
 
-describe('Advanced Filter — currently-unsupported operators (baseline)', () => {
+describe('Advanced Filter — built-in range and relative date operators', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             TextFilterModule,
@@ -291,8 +291,7 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
     afterEach(() => gridsManager.reset());
 
     describe('relative-date-preset column (filterOptions with preset keys)', () => {
-        // Preset keys are strings, so AF lists them as active operators and must reconcile each
-        // against the built-in AF operators (which exclude presets) without crashing.
+        // A preset is offered only where the column names it, so the list decides the whole dropdown.
         const OPTS: GridOptions = {
             columnDefs: [
                 {
@@ -313,27 +312,28 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
             await af.type('[Date] ');
             await asyncSetTimeout(0);
 
-            // Before the getEntries guard this threw (preset key not in the AF operator map) and the
-            // popup never opened.
+            // A key the column names but this filter has no operator for must be skipped rather than
+            // reaching the operator table, or the popup never opens at all.
             expect(af.isAutocompleteOpen()).toBe(true);
         });
 
-        test('a preset key is not an AF operator; a standard operator from the list still applies', async () => {
+        test('a preset the list names applies, as does a standard operator beside it', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
 
-            // `today` is a preset, not an AF operator → rejected today (AG-10029 will add it).
-            await AdvancedFilterHarness.get(api).applyExpression('[Date] today');
+            // Written under the Date Filter's own name for it, which is what the dropdown offers.
+            await AdvancedFilterHarness.get(api).applyExpression('[Date] Today');
             await asyncSetTimeout(0);
-            expect(api.getAdvancedFilterModel()).toBeNull();
-            await new FilterDom(api, 'preset operator rejected').checkFilterDom(`
+            await new FilterDom(api, 'preset operator applied').checkFilterDom(`
                 ADVANCED FILTER
-                input: "[Date] today"
-                valid: false — Expression has an error. Option not found - today.
+                input: "[Date] Today"
+                valid: true
                 buttons: Apply ⊘ | Builder
-                model: null
+                model:
+                  filterType: "dateString"
+                  colId: "date"
+                  type: "today"
             `);
 
-            // `equals` is in the list and is a real AF operator → applies.
             await AdvancedFilterHarness.get(api).applyExpression('[Date] = "2024-06-15"');
             await asyncSetTimeout(0);
             expect(api.getAdvancedFilterModel()).toEqual({
@@ -348,13 +348,14 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
             `);
         });
 
-        // A preset names no AF option, so only `equals` is suggested; the grammar is the data type's either way.
+        // The list is the whole dropdown, but the grammar is the data type's, so an operator typed
+        // rather than picked still reads.
         test('an operator absent from the preset list is not suggested, but still reads', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
             const af = AdvancedFilterHarness.get(api);
 
             await af.type('[Date] ');
-            expect(af.autocompleteEntries()).toEqual(['=']);
+            expect(af.autocompleteEntries()).toEqual(['Today', 'Yesterday', '=']);
 
             await af.applyExpression('[Date] > "2024-03-01"');
             await asyncSetTimeout(0);
@@ -373,14 +374,14 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
         });
     });
 
-    describe('inRange is not offered today', () => {
+    describe('an option is written under its name, not its key', () => {
         const OPTS: GridOptions = {
             columnDefs: [{ field: 'age', filter: 'agNumberColumnFilter' }],
             rowData: [{ age: 10 }, { age: 20 }, { age: 30 }],
             enableAdvancedFilter: true,
         };
 
-        test('a hand-typed inRange expression is rejected', async () => {
+        test('a hand-typed `inRange` is rejected — the name of the option is `between`', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
 
             await AdvancedFilterHarness.get(api).applyExpression('[Age] inRange 15');
@@ -546,7 +547,9 @@ describe('Advanced Filter — string filterOptions restrict the options', () => 
         `);
     });
 
-    // A list of only presets names nothing this filter offers, so the built-ins stand rather than nothing.
+    // `empty` is the column filter's placeholder entry and names no operator here, so a list of only it
+    // names nothing this filter can offer: narrowing to nothing would leave the column unusable, so the
+    // built-ins stand as they do for a list whose every entry was dropped.
     test('a list naming no Advanced Filter option leaves the built-ins standing', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
@@ -554,7 +557,7 @@ describe('Advanced Filter — string filterOptions restrict the options', () => 
                     field: 'date',
                     cellDataType: 'dateString',
                     filter: 'agDateColumnFilter',
-                    filterParams: { filterOptions: ['today', 'yesterday'] },
+                    filterParams: { filterOptions: ['empty'] },
                 },
             ],
             rowData: [{ date: '2024-01-01' }],
@@ -565,7 +568,17 @@ describe('Advanced Filter — string filterOptions restrict the options', () => 
         await af.type('[Date] ');
         await asyncSetTimeout(0);
         // Every built-in, since "standing" is the whole list rather than a survivor from it.
-        expect(af.autocompleteEntries()).toEqual(['=', '!=', '>', '>=', '<', '<=', 'is blank', 'is not blank']);
+        expect(af.autocompleteEntries()).toEqual([
+            '=',
+            '!=',
+            '>',
+            '>=',
+            '<',
+            '<=',
+            'between',
+            'is blank',
+            'is not blank',
+        ]);
 
         await af.applyExpression('[Date] = "2024-01-01"');
         await asyncSetTimeout(0);
