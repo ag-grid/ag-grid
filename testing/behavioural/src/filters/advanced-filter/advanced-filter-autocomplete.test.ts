@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
@@ -78,6 +79,15 @@ function pressKey(input: HTMLInputElement, key: string): void {
 /** Returns true if the autocomplete list popup is present in the DOM. */
 function isAutocompleteOpen(): boolean {
     return document.querySelector('.ag-autocomplete-list-popup') !== null;
+}
+
+/** Asserts which row the autocomplete list advertises as active; `null` for none. */
+function expectActiveOption(index: number | null): void {
+    const list = document.querySelector('.ag-autocomplete-list-popup .ag-virtual-list-container');
+    if (!list) {
+        throw new Error('Autocomplete list not found');
+    }
+    expect(list.getAttribute('aria-activedescendant')).toBe(index === null ? null : `${list.id}-option-${index}`);
 }
 
 /**
@@ -812,6 +822,37 @@ describe('Advanced Filter - Autocomplete Interaction', () => {
                     ├── LEAF id:4 athlete:"Li Wei" age:28 date:null hasGold:null country:null
                     └── LEAF id:5 athlete:"" age:null date:"2024-01-01" hasGold:true country:""
                 `);
+        });
+
+        test('retaining a non-first selection keeps it as the active descendant', async () => {
+            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `retaining a non-first selection setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── age "Age" width:200
+                ├── date "Date" width:200
+                ├── hasGold "Has Gold" width:200
+                └── country "Country" width:200
+            `);
+            await asyncSetTimeout(0);
+            const input = getInput(getGridElement(api)! as HTMLElement);
+
+            typeInto(input, '[');
+            await asyncSetTimeout(0);
+            expectActiveOption(0);
+
+            // Columns are listed alphabetically, so this moves onto Athlete — not the row a reset would pick.
+            pressKey(input, 'ArrowDown');
+            await asyncSetTimeout(0);
+            expectActiveOption(1);
+
+            // The trailing space matches no column, so the list keeps the last selection as its only row.
+            typeInto(input, '[Athlete ');
+            await waitFor(() => expectActiveOption(0));
+
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+            expect(input.value).toContain('[Athlete]');
         });
     });
 

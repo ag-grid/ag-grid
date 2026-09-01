@@ -210,7 +210,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         const selectedValue = this.selectedValue;
         if (!matches.length && selectedValue && forceLastSelection?.(selectedValue, searchString)) {
             matches = [selectedValue];
-            topIndex = -1;
+            topIndex = 0;
         }
 
         this.autocompleteEntries = matches;
