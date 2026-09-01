@@ -14,7 +14,8 @@ if [ "$#" -lt 3 ]
     echo "For example: ./scripts/deployments/prep_and_archive/patchUncachedArchives.sh 36.1.0 14.1.0 user@host clear"
     echo ""
     echo "Nothing has to clear this: a production docs deploy emits an empty in-flight block,"
-    echo "so going live restores normal caching on its own."
+    echo "so going live restores normal caching on its own. That cuts both ways - a docs deploy"
+    echo "mid-cycle drops the exemption too, so re-run this if one lands before GA."
     echo ""
     echo "Requires \$SSH_FILE, \$SSH_PORT and \$GRID_ROOT_DIR, as the other deploy scripts do."
     exit 1
@@ -87,7 +88,18 @@ then
     patchFailed "Could not fetch the live root .htaccess.";
 fi
 
-node "$PATCHER" "$LIVE_HTACCESS" "$ACTION" "$VERSION" "$CHARTS_VERSION" || patchFailed "Patching failed."
+BEFORE=$(cksum < "$LIVE_HTACCESS")
+OUTCOME=$(node "$PATCHER" "$LIVE_HTACCESS" "$ACTION" "$VERSION" "$CHARTS_VERSION") || patchFailed "Patching failed."
+
+# A clear that finds nothing of ours leaves the file untouched. Stop here rather than
+# uploading it back: the write cannot fail a release it was never going to change, and a
+# stale invocation cannot overwrite a newer state it never looked at.
+if [ "$(cksum < "$LIVE_HTACCESS")" = "$BEFORE" ]
+then
+    rm -f "$LIVE_HTACCESS";
+    echo "$GRID_ROOT_DIR/$REMOTE: $OUTCOME";
+    exit 0;
+fi
 
 # Keep a timestamped copy on the box, so a bad patch is one cp away from being undone without
 # needing this script or a deploy.
@@ -109,4 +121,4 @@ then
 fi
 rm -f "$LIVE_HTACCESS"
 
-echo "$GRID_ROOT_DIR/$REMOTE updated - previous copy at $BACKUP"
+echo "$GRID_ROOT_DIR/$REMOTE: $OUTCOME (previous copy at $BACKUP)"
