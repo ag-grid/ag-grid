@@ -6,7 +6,14 @@ import type {
     RowBounds,
     RowModelType,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _addGridCommonParams, _getRowHeightAsNumber, _getRowIdCallback } from 'ag-grid-community';
+import {
+    BeanStub,
+    RowNode,
+    _addGridCommonParams,
+    _addRowHeightChangedListener,
+    _getRowHeightAsNumber,
+    _getRowIdCallback,
+} from 'ag-grid-community';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -52,11 +59,18 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
         this.rowHeight = _getRowHeightAsNumber(beans);
         this.addManagedEventListeners({ viewportChanged: this.onViewportChanged.bind(this) });
+        _addRowHeightChangedListener(this, () => this.refreshRowHeight());
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
-        this.addManagedPropertyListener('rowHeight', () => {
-            this.rowHeight = _getRowHeightAsNumber(beans);
-            this.updateRowHeights();
-        });
+        this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeight());
+    }
+
+    private refreshRowHeight(): void {
+        const rowHeight = _getRowHeightAsNumber(this.beans);
+        if (rowHeight === this.rowHeight) {
+            return;
+        }
+        this.rowHeight = rowHeight;
+        this.updateRowHeights();
     }
 
     public start(): void {
@@ -222,11 +236,11 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         return 0;
     }
 
-    /** Viewport row model does not support dynamic row heights by design and while it is possible to implement this feature, it leads to view-model desync due to data being not isotropic in time */
+    /** Dynamic per-row heights are not supported by design: data is not isotropic in time, so the view model would desync. A uniform height change is applied via `updateRowHeights()`. */
     resetRowHeights() {
         // not supported
     }
-    /** Viewport row model does not support dynamic row heights by design and while it is possible to implement this feature, it leads to view-model desync due to data being not isotropic in time */
+    /** Dynamic per-row heights are not supported by design: data is not isotropic in time, so the view model would desync. A uniform height change is applied via `updateRowHeights()`. */
     onRowHeightChanged() {
         // not supported
     }
