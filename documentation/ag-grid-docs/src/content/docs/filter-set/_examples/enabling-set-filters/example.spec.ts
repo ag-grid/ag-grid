@@ -39,4 +39,36 @@ test.agExample(import.meta, () => {
         await expect(countryCells.first()).toContainText('United States');
         await expect(countryCells.filter({ hasNotText: 'United States' })).toHaveCount(0);
     });
+    // AG-18364: same regression, on the Set Filter popup (AC2). Its width is driven by the mini
+    // filter input's gutters exactly as the Text Filter's is, so it must not track
+    // `--ag-icon-size` either. The `.ag-set-filter-list { min-width: max(200px, 100%) }` floor
+    // sits below the resulting width, so it does not mask the assertion.
+    test.eachFramework('Set Filter popup width does not track the icon gutters', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const popup = page.locator('.ag-menu:not(.ag-tabs) .ag-filter').first();
+
+        const openAndMeasure = async (): Promise<number> => {
+            await agIdFor.floatingFilterButton('country').click();
+            await expect(popup).toBeVisible();
+            const box = await popup.boundingBox();
+            expect(box).not.toBeNull();
+            const width = box!.width;
+            await page.keyboard.press('Escape');
+            await expect(popup).toBeHidden();
+            return width;
+        };
+
+        const baseline = await openAndMeasure();
+
+        // Theme-coupled tolerance window - see the sibling assertion in the provided-filters spec.
+        expect(baseline).toBeGreaterThan(190);
+        expect(baseline).toBeLessThan(230);
+
+        await page.addStyleTag({ content: '.ag-root-wrapper { --ag-icon-size: 40px; }' });
+
+        const perturbed = await openAndMeasure();
+        expect(Math.abs(perturbed - baseline)).toBeLessThanOrEqual(1);
+    });
 });

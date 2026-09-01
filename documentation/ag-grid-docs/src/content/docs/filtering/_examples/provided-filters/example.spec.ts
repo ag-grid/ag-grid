@@ -144,4 +144,43 @@ test.agExample(import.meta, () => {
             await expectVisibleColumnValues(page, 'sport', (value) => expect(value).toContain('Swimming'));
         }
     );
+    // AG-18364: the filter popup is shrink-to-fit around its text input, and an input's
+    // max-content contribution includes its horizontal padding. The search-icon and clear-button
+    // gutters are both `icon-size + spacing * 2`, so before the fix the popup width tracked
+    // `--ag-icon-size` and had grown 32px wider than 36.1.0. The input now carries a definite
+    // width, so the gutters eat into the text area instead of widening the popup.
+    //
+    // Perturbing `--ag-icon-size` is the assertion that actually fails on the unfixed build
+    // (+48px at 40px icons); comparing an empty vs a filled input does not, because the gutters
+    // are reserved regardless of the value.
+    test.eachFramework('Text Filter popup width does not track the icon gutters', async ({ page, agIdFor }) => {
+        await ensureGridReady(page);
+
+        const popup = page.locator('.ag-menu:not(.ag-tabs) .ag-filter').first();
+
+        const openAndMeasure = async (): Promise<number> => {
+            await agIdFor.headerFilterButton('athlete').click();
+            await expect(popup).toBeVisible();
+            const box = await popup.boundingBox();
+            expect(box).not.toBeNull();
+            const width = box!.width;
+            await page.keyboard.press('Escape');
+            await expect(popup).toBeHidden();
+            return width;
+        };
+
+        const baseline = await openAndMeasure();
+
+        // Tolerance window, not an exact value: the popup width is theme-coupled (it carries the
+        // widget container padding and the theme spacing). Wide enough to survive a theme tweak,
+        // narrow enough to catch the 32px regression this test exists for.
+        expect(baseline).toBeGreaterThan(190);
+        expect(baseline).toBeLessThan(230);
+
+        // Triple the icon size: on the unfixed build this widens the popup by 2 * (40 - 16).
+        await page.addStyleTag({ content: '.ag-root-wrapper { --ag-icon-size: 40px; }' });
+
+        const perturbed = await openAndMeasure();
+        expect(Math.abs(perturbed - baseline)).toBeLessThanOrEqual(1);
+    });
 });

@@ -37,6 +37,26 @@
    content tries to size itself to the menu */
 :where(.ag-menu:not(.ag-tabs) .ag-filter) .ag-filter-body-wrapper {
     min-width: 180px;
+
+    /* AG-18364: the popup is shrink-to-fit around its filter input, and an input's max-content
+       contribution is its `size`-derived content width PLUS its horizontal padding. The input has
+       since gained two padding gutters - leading for the search icon, trailing for the
+       (permanently reserved) clear button - which widened the popup by
+       `2 * (icon-size + spacing * 2) - (spacing * 2.5 + 12px)`, i.e. 32px on Quartz. A definite
+       width removes the input from that calculation; `flex: 1 1 auto` still grows it back to fill
+       the wrapper, so only the intrinsic contribution changes. Same idiom as the picker field
+       below.
+
+       The expression restores the width the popup used to have: a font-proportional content term
+       plus the absolute, spacing-derived gutter the input used to reserve
+       (`spacing * 1.5 + 12px` leading, `spacing` trailing). Both terms are needed - a purely
+       font-relative width is ~10px too narrow on the spacing:4 themes, and a fixed pixel width
+       stops tracking `--ag-font-size`. 10.82em is the size-20 content box plus its borders
+       (183.5px border-box at the default 14px font size). Date inputs are excluded: they get no
+       search icon and no clear button, so they never widened. */
+    .ag-input-field-input:where(input:not([type]), input[type='text'], input[type='number'], input[type='tel']) {
+        width: calc(10.82em + var(--ag-spacing) * 2.5 + 12px);
+    }
 }
 
 .ag-filter-filter {
