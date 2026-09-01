@@ -4,8 +4,9 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
-import type { FilterChangedEvent, StylesChangedEvent } from '../events';
+import type { FilterChangedEvent } from '../events';
 import {
+    _addRowHeightChangedListener,
     _getClientSideLoadingRowCount,
     _getGroupSelectsDescendants,
     _getRowHeightAsNumber,
@@ -143,7 +144,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             columnPivotModeChanged: () => this.refreshModel({ step: 'group' }),
             filterChanged: this.onFilterChanged.bind(this),
             sortChanged: this.onSortChanged.bind(this),
-            stylesChanged: this.onGridStylesChanges.bind(this),
             gridReady: this.onGridReady.bind(this),
             rowExpansionStateChanged: this.onRowGroupOpened.bind(this),
         });
@@ -213,6 +213,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
+        _addRowHeightChangedListener(this, () => {
+            if (this.beans.rowAutoHeight?.active) {
+                return;
+            }
+            this.resetRowHeights();
+        });
         this.addManagedPropertyListener('loading', () => this.onLoadingRowsChanged());
     }
 
@@ -1361,12 +1367,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         return atLeastOne;
-    }
-
-    private onGridStylesChanges(e: StylesChangedEvent) {
-        if (e.rowHeightChanged && !this.beans.rowAutoHeight?.active) {
-            this.resetRowHeights();
-        }
     }
 
     private onGridReady(): void {

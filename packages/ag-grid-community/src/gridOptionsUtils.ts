@@ -1,6 +1,7 @@
 import { _doOnce, _missing } from 'ag-stack';
 
 import type { GridApi } from './api/gridApi';
+import type { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type {
     CheckboxLocation,
@@ -18,7 +19,7 @@ import type {
     SingleRowSelectionOptions,
 } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
-import type { ComponentStateChangedEvent, GridOptionsChangedEvent } from './events';
+import type { ComponentStateChangedEvent, GridOptionsChangedEvent, StylesChangedEvent } from './events';
 import { _getGlobalGridOption } from './globalGridOptions';
 import type { GridOptionOrDefault } from './gridOptionsDefault';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
@@ -170,6 +171,21 @@ function getMasterDetailRowHeight(gos: GridOptionsService): { height: number; es
     }
 
     return { height: 300, estimated: false };
+}
+
+/**
+ * Calls `onChange` when the grid styles change the uniform row height, e.g. a theme row-height parameter.
+ * Shared so that each row model registers the one listener it needs rather than restating the predicate.
+ */
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _addRowHeightChangedListener(bean: BeanStub, onChange: () => void): void {
+    bean.addManagedEventListeners({
+        stylesChanged: (e: StylesChangedEvent) => {
+            if (e.rowHeightChanged) {
+                onChange();
+            }
+        },
+    });
 }
 
 // we don't allow dynamic row height for virtual paging
