@@ -26,7 +26,6 @@ import type {
     SortModelItem,
     SortService,
     StoreRefreshAfterParams,
-    StylesChangedEvent,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -34,6 +33,7 @@ import {
     GROUP_TOTAL_ROW_ID_PREFIX,
     ROOT_NODE_ID,
     RowNode,
+    _addRowHeightChangedListener,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _getSortModel,
@@ -101,9 +101,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private pivotResultFields?: string[];
 
-    /** Last row height applied via `resetRowHeights`, used to skip no-op resets from `stylesChanged`. */
-    private lastAppliedRowHeight?: number;
-
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(): boolean {
         return false;
@@ -136,8 +133,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             columnPivotChanged: this.onPivotChanged.bind(this),
             columnRowGroupChanged: resetListener,
             columnPivotModeChanged: resetListener,
-            stylesChanged: this.onGridStylesChanges.bind(this),
         });
+        _addRowHeightChangedListener(this, () => this.onRowHeightStyleChanged());
 
         this.addManagedPropertyListeners(
             [
@@ -353,12 +350,13 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         pivotResultCols?.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
     }
 
-    private onGridStylesChanges(e: StylesChangedEvent): void {
-        if (!e.rowHeightChanged || this.beans.rowAutoHeight?.active) {
+    private onRowHeightStyleChanged(): void {
+        const { rootNode, beans } = this;
+        if (!rootNode || beans.rowAutoHeight?.active) {
             return;
         }
-        const rowHeight = _getRowHeightAsNumber(this.beans);
-        if (rowHeight === this.lastAppliedRowHeight) {
+        // `resetRowHeights` walks every node, so skip the styles that leave the resolved height alone.
+        if (_getRowHeightForNode(beans, rootNode).height === rootNode.rowHeight) {
             return;
         }
         this.resetRowHeights();
@@ -369,7 +367,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return;
         }
 
-        this.lastAppliedRowHeight = _getRowHeightAsNumber(this.beans);
         const atLeastOne = this.resetRowHeightsForAllRowNodes();
 
         const rootNodeHeight = _getRowHeightForNode(this.beans, this.rootNode);
@@ -402,7 +399,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
             if (rowNode.sibling) {
                 const siblingRowHeight = _getRowHeightForNode(this.beans, rowNode.sibling);
-                rowNode.sibling.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
+                detailNode?.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
             }
             atLeastOne = true;
         });

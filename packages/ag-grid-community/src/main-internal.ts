@@ -170,6 +170,7 @@ export { GridCtrl } from './gridComp/gridCtrl';
 export type { IGridComp } from './gridComp/gridCtrl';
 export {
     _addGridCommonParams,
+    _addRowHeightChangedListener,
     _canSkipShowingRowGroup,
     _combineAttributesAndGridOptions,
     _getCallbackForEvent,

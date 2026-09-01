@@ -3,8 +3,7 @@ import { _jsonEquals } from 'ag-stack';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { RowNode } from '../entities/rowNode';
-import type { StylesChangedEvent } from '../events';
-import { _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
+import { _addRowHeightChangedListener, _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
@@ -79,18 +78,12 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
             sortChanged: this.reset.bind(this),
             newColumnsLoaded: this.onColumnEverything.bind(this),
             storeUpdated: this.dispatchModelUpdatedEvent.bind(this),
-            stylesChanged: this.onGridStylesChanges.bind(this),
         });
+        _addRowHeightChangedListener(this, () => this.refreshRowHeight());
 
         this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gos.get('datasource')));
         this.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeight());
-    }
-
-    private onGridStylesChanges(e: StylesChangedEvent): void {
-        if (e.rowHeightChanged) {
-            this.refreshRowHeight();
-        }
     }
 
     private refreshRowHeight(): void {

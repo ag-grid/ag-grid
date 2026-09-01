@@ -5,9 +5,15 @@ import type {
     OverlayType,
     RowBounds,
     RowModelType,
-    StylesChangedEvent,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _addGridCommonParams, _getRowHeightAsNumber, _getRowIdCallback } from 'ag-grid-community';
+import {
+    BeanStub,
+    RowNode,
+    _addGridCommonParams,
+    _addRowHeightChangedListener,
+    _getRowHeightAsNumber,
+    _getRowIdCallback,
+} from 'ag-grid-community';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -52,18 +58,10 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         rootNode.level = -1;
 
         this.rowHeight = _getRowHeightAsNumber(beans);
-        this.addManagedEventListeners({
-            viewportChanged: this.onViewportChanged.bind(this),
-            stylesChanged: this.onGridStylesChanges.bind(this),
-        });
+        this.addManagedEventListeners({ viewportChanged: this.onViewportChanged.bind(this) });
+        _addRowHeightChangedListener(this, () => this.refreshRowHeight());
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeight());
-    }
-
-    private onGridStylesChanges(e: StylesChangedEvent): void {
-        if (e.rowHeightChanged) {
-            this.refreshRowHeight();
-        }
     }
 
     private refreshRowHeight(): void {
