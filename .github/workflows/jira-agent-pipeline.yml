@@ -132,7 +132,6 @@ jobs:
             - uses: actions/checkout@v7
               with:
                   fetch-depth: 1
-                  # See concurrency-key above: no repo code runs here either.
                   sparse-checkout: external/ag-shared/github/actions
 
             - name: Install @ag-grid/dev-prompts
