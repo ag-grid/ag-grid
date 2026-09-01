@@ -58,17 +58,23 @@ const versionIn = (prefix) => {
 const current = { grid: versionIn(GRID_PREFIX), charts: versionIn(CHARTS_PREFIX) };
 const show = (g, c) => (g || c ? `grid ${g ?? 'none'}, charts ${c ?? 'none'}` : 'nothing in flight');
 
-console.log(`current: ${show(current.grid, current.charts)}`);
 if (!action) {
+    console.log(show(current.grid, current.charts));
     process.exit(0);
 }
 
+// clear is a no-op, not a failure, when there is nothing of ours to clear. It runs from a
+// release step that must not fail the build for finding the block already in the state it
+// wants - and a cycle that has moved on to other versions is not this step's to end.
 if (action === 'clear' && (current.grid !== grid || current.charts !== charts)) {
-    console.error(
-        `\nREFUSING: ${show(current.grid, current.charts)} is in flight, not grid ${grid}, charts ${charts}.`
-    );
-    console.error('clear only ends the cycle it was given, so a stale GA step cannot end a newer one.');
-    process.exit(1);
+    if (!current.grid && !current.charts) {
+        console.log('nothing in flight - nothing to clear');
+    } else {
+        console.log(
+            `left alone: ${show(current.grid, current.charts)} is in flight, not grid ${grid}, charts ${charts}`
+        );
+    }
+    process.exit(0);
 }
 
 const after = action === 'set' ? [rule(GRID_PREFIX, grid), rule(CHARTS_PREFIX, charts)] : [];
@@ -78,21 +84,14 @@ const tail = source.slice(e);
 const next = head + (after.length ? '\n' + after.join('\n') : '') + '\n' + tail;
 
 if (next === source) {
-    console.log('\nAlready in that state - nothing to do.');
+    console.log(`already ${action === 'set' ? `set: grid ${grid}, charts ${charts}` : 'clear'}`);
     process.exit(0);
 }
 // next is built from source's own head and tail, so this guards the construction, not a diff.
 if (!next.startsWith(head) || !next.endsWith(tail)) {
-    console.error('\nREFUSING: the change would touch bytes outside the marker block.');
+    console.error('REFUSING: the change would touch bytes outside the marker block.');
     process.exit(1);
 }
 
-console.log('\nchanges, all inside the marker block:');
-before.filter((l) => !after.includes(l)).forEach((l) => console.log(`  - ${l}`));
-after.filter((l) => !before.includes(l)).forEach((l) => console.log(`  + ${l}`));
-console.log(
-    `\n${head.split('\n').length - 1} lines before the block and ${tail.split('\n').length - 1} after it are unchanged.`
-);
-
 writeFileSync(file, next);
-console.log(`\napplied to ${file}`);
+console.log(action === 'set' ? `set grid ${grid}, charts ${charts}` : `cleared grid ${grid}, charts ${charts}`);
