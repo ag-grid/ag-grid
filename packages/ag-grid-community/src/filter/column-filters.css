@@ -39,10 +39,10 @@
     min-width: 180px;
 }
 
-/* AG-18364: pin the input's intrinsic width so the icon/clear-button gutters can't widen the popup. */
+/* AG-18364: the icon/clear-button gutters are padding, and padding widens a shrink-to-fit popup - so pin the input to its pre-gutter width: a default `size="20"` content box (11.82em at the theme font) plus the theme's own input padding and border. */
 :where(.ag-menu:not(.ag-tabs) .ag-filter .ag-filter-body-wrapper) .ag-text-field-input,
 :where(.ag-menu:not(.ag-tabs) .ag-filter .ag-filter-body-wrapper) .ag-number-field-input {
-    width: calc(10.82em + var(--ag-spacing) * 2.5 + 12px);
+    width: calc(11.82em + var(--ag-input-padding-start) * 2 + 2px);
 }
 
 .ag-filter-filter {
