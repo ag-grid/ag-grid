@@ -82,8 +82,10 @@ const gridOptions: GridOptions = {
 
         const errors: string[] = [];
 
-        if (bmi < 10 || bmi > 80) {
-            errors.push(`BMI value of ${bmi.toFixed(2)} is not realistic. Please verify the input.`);
+        if (!Number.isFinite(bmi)) {
+            errors.push('BMI cannot be calculated. Enter valid Weight and Height values.');
+        } else if (bmi < 10 || bmi > 80) {
+            errors.push(`BMI is ${bmi.toFixed(2)}. It must be between 10 and 80. Check Weight and Height.`);
         }
 
         return errors.length ? errors : null;

@@ -705,7 +705,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
      */
     @Input({ transform: booleanAttribute }) public suppressStartEditOnTab: boolean | undefined = undefined;
-    /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
+    /** Validates the Full Row Edit. Return non-empty, user-facing error messages, or `null` when the row is valid.
+     * Only relevant when `editType="fullRow"`.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input() public getFullRowEditValidationErrors: GetFullRowEditValidationErrors | undefined = undefined;

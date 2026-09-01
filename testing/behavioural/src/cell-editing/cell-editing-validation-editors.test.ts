@@ -7,6 +7,7 @@ import {
     ClientSideRowModelModule,
     CustomEditorModule,
     DateEditorModule,
+    LocaleModule,
     NumberEditorModule,
     TextEditorModule,
     getGridElement,
@@ -29,7 +30,14 @@ function makeRowData(): PersonRow[] {
 describe('Cell editing validation — editor types and custom hooks', () => {
     const gridsManager = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [ClientSideRowModelModule, NumberEditorModule, TextEditorModule, DateEditorModule, CustomEditorModule],
+        modules: [
+            ClientSideRowModelModule,
+            NumberEditorModule,
+            TextEditorModule,
+            DateEditorModule,
+            CustomEditorModule,
+            LocaleModule,
+        ],
     });
 
     beforeAll(() => {
@@ -268,6 +276,33 @@ describe('Cell editing validation — editor types and custom hooks', () => {
                 ├── LEAF id:0 athlete:"Alice" age:50
                 └── LEAF id:1 athlete:"Bob" age:40
             `);
+        });
+
+        test('uses the locale validation separator for the native validity message', async () => {
+            const rowData = makeRowData();
+            const api = await gridsManager.createGridAndWait('number-custom-locale-separator', {
+                columnDefs: [
+                    { field: 'athlete' },
+                    {
+                        field: 'age',
+                        cellEditor: 'agNumberCellEditor',
+                        cellEditorParams: {
+                            getValidationErrors: () => ['First error', 'Second error'],
+                        },
+                    },
+                ],
+                rowData,
+                defaultColDef: { editable: true },
+                invalidEditValueMode: 'block',
+                localeText: { tooltipValidationErrorSeparator: ' / ' },
+            } satisfies GridOptions<PersonRow>);
+            const gridElement = getGridElement(api)! as HTMLElement;
+
+            const ageCell = cell(api, 0, 'age');
+            await userEvent.dblClick(ageCell);
+            const ageInput = await waitForInput(gridElement, ageCell);
+
+            expect(ageInput.validationMessage).toBe('First error / Second error');
         });
     });
 
