@@ -1,10 +1,22 @@
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import {
     BRANCH_BUILDS_PATH_CONDITION,
     CAMPAIGNS_PATH_CONDITION,
     ECOMMERCE_PATH_CONDITION,
     EXAMPLES_PATH_CONDITION,
 } from './cspRules';
-import { PRODUCTION_CSP_PHASE, getHtaccessContent } from './htaccessRules';
+import {
+    IN_FLIGHT_BEGIN,
+    IN_FLIGHT_END,
+    PRODUCTION_CSP_PHASE,
+    getHtaccessContent,
+    getInFlightArchiveRules,
+} from './htaccessRules';
 import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 describe('htaccessRules', () => {
@@ -255,6 +267,136 @@ describe('htaccessRules', () => {
             const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
             expect(noCacheAt).toBeGreaterThan(-1);
             expect(assetAt).toBeGreaterThan(noCacheAt);
+        });
+    });
+
+    describe('In-flight release archives', () => {
+        // Grid and Charts ship together at independent version numbers (Grid 36.x, Charts 14.x)
+        // and are tested in the same window, so both must be named. Studio is never cached.
+        const inFlight = (grid: string | null, charts: string | null) =>
+            getHtaccessContent({ env: 'production', uncachedGridArchive: grid, uncachedChartsArchive: charts });
+
+        it('emits the marker block but no rules when nothing is in flight', () => {
+            // The markers are always present so the deployed root .htaccess can be patched in
+            // place between them; only the rules inside come and go.
+            const empty = getInFlightArchiveRules(null, null);
+            expect(empty).toContain(IN_FLIGHT_BEGIN);
+            expect(empty).toContain(IN_FLIGHT_END);
+            expect(empty).not.toContain('Cache-Control');
+        });
+
+        it('agrees with the patch script, which edits a built file rather than importing this', () => {
+            // The script carries its own copies of the markers and the rule text, because it
+            // runs against a .htaccess already on the web box. Patching a generated file must
+            // therefore land exactly what generating it with those versions would have.
+            const file = join(mkdtempSync(join(tmpdir(), 'htaccess-')), '.htaccess');
+            writeFileSync(file, inFlight(null, null));
+            execFileSync(
+                'node',
+                [
+                    fileURLToPath(new URL('../../../../../scripts/uncached-archives.mjs', import.meta.url)),
+                    file,
+                    'set',
+                    '36.2.0',
+                    '14.3.0',
+                ],
+                { encoding: 'utf8' }
+            );
+            expect(readFileSync(file, 'utf8')).toBe(inFlight('36.2.0', '14.3.0'));
+        });
+
+        it('keeps the markers when rules are present, so the block stays patchable', () => {
+            const rule = getInFlightArchiveRules('36.2.0', '14.3.0');
+            expect(rule.indexOf(IN_FLIGHT_BEGIN)).toBeLessThan(rule.indexOf('archive/36'));
+            expect(rule.indexOf(IN_FLIGHT_END)).toBeGreaterThan(rule.indexOf('charts/archive/14'));
+        });
+
+        it('a build never puts an archive in flight - the live file owns that state', () => {
+            // Nothing in source can populate the block: the versions only reach the generator
+            // through the test-only overrides, so a production deploy always resets it.
+            [productionContent, stagingContent].forEach((content) => {
+                expect(content).toContain(IN_FLIGHT_BEGIN);
+                expect(content).not.toContain('Release archives under test');
+                expect(content).not.toContain('m#^/archive/3');
+                expect(content).not.toContain('m#^/charts/archive/1');
+            });
+        });
+
+        it('matches grid and charts at their own version numbers', () => {
+            const rule = getInFlightArchiveRules('36.2.0', '14.3.0');
+            expect(rule).toContain('m#^/archive/36\\.2\\.0/#');
+            expect(rule).toContain('m#^/charts/archive/14\\.3\\.0/#');
+        });
+
+        it('does not apply the grid version to the charts archive', () => {
+            // The bug this replaced: one version behind an optional (charts/)? prefix, so a grid
+            // version silently claimed to cover a charts archive that is numbered differently.
+            const rule = getInFlightArchiveRules('36.2.0', '14.3.0');
+            expect(rule).not.toContain('charts/archive/36\\.2\\.0');
+            expect(rule).not.toContain('(charts/|studio/)?');
+        });
+
+        it('emits only the product that is in flight', () => {
+            expect(getInFlightArchiveRules('36.2.0', null)).not.toContain('charts/archive');
+            expect(getInFlightArchiveRules(null, '14.3.0')).not.toContain('m#^/archive/');
+        });
+
+        it('escapes dots so versions match literally', () => {
+            expect(getInFlightArchiveRules('36.2.0', null)).not.toContain('archive/36.2.0/#');
+        });
+
+        it('uses no-cache, not no-store, so revalidation is a cheap 304', () => {
+            expect(getInFlightArchiveRules('36.2.0', '14.3.0')).not.toContain('no-store');
+        });
+
+        it('is emitted after the hashed-asset rule, so it wins for in-flight assets', () => {
+            const lines = inFlight('36.2.0', '14.3.0').split('\n');
+            const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
+            const gridAt = lines.findIndex((l) => l.includes('^/archive/36\\.2\\.0/#'));
+            const chartsAt = lines.findIndex((l) => l.includes('^/charts/archive/14\\.3\\.0/#'));
+            expect(assetAt).toBeGreaterThan(-1);
+            expect(gridAt).toBeGreaterThan(assetAt);
+            expect(chartsAt).toBeGreaterThan(assetAt);
+        });
+
+        it('applies to staging too, where release testing happens', () => {
+            const staging = getHtaccessContent({
+                env: 'staging',
+                uncachedGridArchive: '36.2.0',
+                uncachedChartsArchive: '14.3.0',
+            });
+            expect(staging).toContain('^/archive/36\\.2\\.0/#');
+            expect(staging).toContain('^/charts/archive/14\\.3\\.0/#');
+        });
+    });
+
+    describe('Archived Studio versions are never cached', () => {
+        it('does not apply to the live Studio site, which caches normally', () => {
+            // The rule is anchored to /studio/archive/ - /studio/ itself must keep the normal
+            // document rule and the long hashed-asset cache.
+            const line = productionContent.split('\n').find((l) => l.includes('/studio/archive/'));
+            expect(line).toContain('m#^/studio/archive/#');
+        });
+
+        it('blanket no-cache for /studio/archive/, in both envs', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                expect(content).toContain('m#^/studio/archive/#');
+            });
+        });
+
+        it('is emitted after the hashed-asset rule, so it covers studio assets too', () => {
+            const lines = productionContent.split('\n');
+            const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
+            const studioAt = lines.findIndex((l) => l.includes('m#^/studio/archive/#'));
+            expect(assetAt).toBeGreaterThan(-1);
+            expect(studioAt).toBeGreaterThan(assetAt);
+        });
+
+        it('is not carved out of the document no-cache rule', () => {
+            // Released grid/charts archives keep their heuristic window; studio must not.
+            const doc = productionContent.split('\n').find((l) => l.includes('CONTENT_TYPE'));
+            expect(doc).toContain('^/(charts/)?archive/[0-9]');
+            expect(doc).not.toContain('studio');
         });
     });
 
