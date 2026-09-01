@@ -85,6 +85,12 @@ export class LazyCache extends BeanStub {
      */
     private numberOfRows: number;
     private isLastRowKnown: boolean;
+    /**
+     * Whether the known last row was inferred from a short response, rather than supplied by the
+     * datasource (`response.rowCount`, a transaction row count, or `setRowCount`). Only an inferred
+     * extent is invalidated by a non-purge refresh - see `markNodesForRefresh`.
+     */
+    private isLastRowInferred: boolean;
 
     /**
      * The prefix to use for node ids, this is used to ensure that node ids are unique across stores
@@ -114,12 +120,14 @@ export class LazyCache extends BeanStub {
         store: LazyStore,
         numberOfRows: number,
         isLastRowKnown: boolean,
-        storeParams: ServerSideGroupLevelParams
+        storeParams: ServerSideGroupLevelParams,
+        isLastRowInferred = false
     ) {
         super();
         this.store = store;
         this.numberOfRows = numberOfRows;
         this.isLastRowKnown = isLastRowKnown;
+        this.isLastRowInferred = isLastRowInferred;
         this.storeParams = storeParams;
     }
 
@@ -366,6 +374,7 @@ export class LazyCache extends BeanStub {
 
         if (isLastRowIndexKnown != null) {
             this.isLastRowKnown = isLastRowIndexKnown;
+            this.isLastRowInferred = false;
 
             if (isLastRowIndexKnown === false) {
                 this.numberOfRows += 1;
@@ -914,10 +923,12 @@ export class LazyCache extends BeanStub {
             // if the rowCount has been provided, set the row count
             this.numberOfRows = response.rowCount;
             this.isLastRowKnown = true;
+            this.isLastRowInferred = false;
         } else if (numberOfRowsExpected > dataRowCount) {
             // infer the last row as the response came back short
             this.numberOfRows = firstRowIndex + dataRowCount;
             this.isLastRowKnown = true;
+            this.isLastRowInferred = true;
         } else if (!this.isLastRowKnown) {
             // add 1 for loading row, as we don't know the last row
             const lastInferredRow = firstRowIndex + dataRowCount + 1;
@@ -999,6 +1010,10 @@ export class LazyCache extends BeanStub {
         return this.isLastRowKnown;
     }
 
+    public isLastRowIndexInferred(): boolean {
+        return this.isLastRowInferred;
+    }
+
     public onLoadFailed(firstRowIndex: number, numberOfRowsExpected: number) {
         if (!this.live) {
             return;
@@ -1043,11 +1058,12 @@ export class LazyCache extends BeanStub {
             this.numberOfRows = 1;
             this.isLastRowKnown = false;
             this.fireStoreUpdatedEvent();
-        } else if (this.isLastRowKnown) {
+        } else if (this.isLastRowKnown && this.isLastRowInferred) {
             // A refreshed response may be longer than the one which inferred the last row, so the
             // inferred knowledge is stale. Drop the flag - but keep `numberOfRows`, so the displayed
             // count and scroll extent don't move before the new data arrives - and let
-            // `onLoadSuccess` re-derive the count from the refreshed blocks.
+            // `onLoadSuccess` re-derive the count from the refreshed blocks. A count supplied by the
+            // datasource is authoritative, so it is left alone.
             this.isLastRowKnown = false;
         }
     }
@@ -1296,6 +1312,7 @@ export class LazyCache extends BeanStub {
         if (isNewRowCountValid) {
             this.numberOfRows = newRowCount;
             this.isLastRowKnown = true;
+            this.isLastRowInferred = false;
         } else {
             this.numberOfRows -= deletedNodeCount;
         }

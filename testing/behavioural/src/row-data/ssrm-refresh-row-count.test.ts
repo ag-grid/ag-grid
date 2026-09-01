@@ -108,4 +108,44 @@ describe('SSRM refreshServerSide row count (AG-17574)', () => {
         expect(api.isLastRowIndexKnown()).toBe(true);
         expect(!!api.getRowNode('24')).toBe(true);
     });
+
+    test('an explicitly supplied row count survives a non-purge refresh', async () => {
+        const requests: number[][] = [];
+        let supplyRowCount = true;
+        const allRows = Array.from({ length: 10 }, (_, i) => ({ id: String(i), value: `Row ${i}` }));
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 10,
+            getRowId: (params) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params: IServerSideGetRowsParams) => {
+                    requests.push([params.request.startRow!, params.request.endRow!]);
+                    params.success({
+                        rowData: allRows.slice(params.request.startRow!, params.request.endRow!),
+                        rowCount: supplyRowCount ? allRows.length : undefined,
+                    });
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await settle(api);
+
+        expect(api.getDisplayedRowCount()).toBe(10);
+        expect(api.isLastRowIndexKnown()).toBe(true);
+        expect(requests).toEqual([[0, 10]]);
+
+        // The refresh responses omit `rowCount`, but the extent the datasource supplied is
+        // authoritative - so the refresh must neither report an unknown last row nor probe past it.
+        supplyRowCount = false;
+        await refreshAndSettle(api);
+
+        expect(api.getDisplayedRowCount()).toBe(10);
+        expect(api.isLastRowIndexKnown()).toBe(true);
+        expect(requests).toEqual([
+            [0, 10],
+            [0, 10],
+        ]);
+    });
 });

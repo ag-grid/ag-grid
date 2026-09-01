@@ -665,8 +665,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 // if last row index was known, add a row back for lazy loading.
                 const oldCount = this.cache.getRowCount();
                 const lastKnown = this.cache.isLastRowIndexKnown();
+                const lastInferred = this.cache.isLastRowIndexInferred();
                 this.destroyBean(this.cache);
-                this.cache = this.createManagedBean(new LazyCache(this, oldCount, lastKnown, this.storeParams));
+                this.cache = this.createManagedBean(
+                    new LazyCache(this, oldCount, lastKnown, this.storeParams, lastInferred)
+                );
                 return;
             }
 
