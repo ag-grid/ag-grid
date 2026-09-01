@@ -189,7 +189,7 @@ describe('Advanced Filter - custom filter options', () => {
                 '>=',
                 '<',
                 '<=',
-                'between',
+                'is between',
                 'is blank',
                 'is not blank',
             ]);

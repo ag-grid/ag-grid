@@ -142,7 +142,6 @@ export {
     _isGridSuppliedFilterOptions,
 } from './filter/filterDataTypeUtils';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
-export type { FilterLocaleTextKey as _FilterLocaleTextKey } from './filter/filterLocaleText';
 export {
     PRESET_DATE_FILTER_TYPES as _PRESET_DATE_FILTER_TYPES,
     RelativeDateRangeCache as _RelativeDateRangeCache,
