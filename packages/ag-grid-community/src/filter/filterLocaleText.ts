@@ -1,5 +1,5 @@
 import type { LocaleTextFunc } from 'ag-stack';
-import { _translate } from 'ag-stack';
+import { _hasOwn, _translate } from 'ag-stack';
 
 const FILTER_LOCALE_TEXT = {
     applyFilter: 'Apply',
@@ -77,16 +77,45 @@ const FILTER_LOCALE_TEXT = {
     filterSummaryTextQuote: (variableValues: string[]) => `"${variableValues[0]}"`,
     minDateValidation: (variableValues: string[]) => `Date must be after ${variableValues[0]}`,
     maxDateValidation: (variableValues: string[]) => `Date must be before ${variableValues[0]}`,
+    minDateInclusiveValidation: (variableValues: string[]) => `Date must be on or after ${variableValues[0]}`,
+    maxDateInclusiveValidation: (variableValues: string[]) => `Date must be on or before ${variableValues[0]}`,
     strictMinValueValidation: (variableValues: string[]) => `Must be greater than ${variableValues[0]}`,
     strictMaxValueValidation: (variableValues: string[]) => `Must be less than ${variableValues[0]}`,
+    minValueValidation: (variableValues: string[]) => `Must be greater than or equal to ${variableValues[0]}`,
+    maxValueValidation: (variableValues: string[]) => `Must be less than or equal to ${variableValues[0]}`,
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type FilterLocaleTextKey = keyof typeof FILTER_LOCALE_TEXT;
+
+/**
+ * An option key is a locale key only when the grid itself defines text for it, so an own-property test: `toString`
+ * and friends are legal option keys and reach `_translate` as a function, which throws.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function isFilterLocaleTextKey(key: string): key is FilterLocaleTextKey {
+    return _hasOwn(FILTER_LOCALE_TEXT, key);
+}
+
+/**
+ * A filter option key the grid does not define is its own default, so `getLocaleText` is never handed the
+ * `undefined` its `defaultValue: string` contract forbids.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function translateFilterOptionKey(
+    bean: { getLocaleTextFunc(): LocaleTextFunc },
+    key: string | null | undefined
+): string {
+    if (key == null) {
+        return ''; // no option, so nothing to localise
+    }
+    return isFilterLocaleTextKey(key) ? translateForFilter(bean, key) : bean.getLocaleTextFunc()(key, key);
+}
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function translateForFilter(
     bean: { getLocaleTextFunc(): LocaleTextFunc },
-    key: keyof typeof FILTER_LOCALE_TEXT,
+    key: FilterLocaleTextKey,
     variableValues?: string[]
 ): string {
     return _translate(bean, FILTER_LOCALE_TEXT, key, variableValues);

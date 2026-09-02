@@ -74,6 +74,7 @@ import type {
     IsServerSideGroup,
     IsServerSideGroupOpenByDefault,
     LoadingCellRendererSelectorFunc,
+    LoadingOptions,
     LocaleText,
     MenuItemDef,
     NavigateToNextCell,
@@ -518,7 +519,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `ColumnAutoSizeModule`
          */
-    autoSizeStrategy?: AutoSizeStrategy,
+    autoSizeStrategy?: AutoSizeStrategy<TData>,
     /** Set to `true` to animate changes to column width when auto-sizing the columns.
          * @default false
          */
@@ -534,7 +535,8 @@ export interface Props<TData> {
     /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
          */
     suppressStartEditOnTab?: boolean,
-    /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
+    /** Validates the Full Row Edit. Return non-empty, user-facing error messages, or `null` when the row is valid.
+         * Only relevant when `editType="fullRow"`.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
     getFullRowEditValidationErrors?: GetFullRowEditValidationErrors,
@@ -825,6 +827,15 @@ export interface Props<TData> {
          * @initial
          */
     tabIndex?: number,
+    /** Set to `true` to hide the clear button shown in supported input fields when they contain a value.
+         * @default false
+         */
+    suppressInputClearButton?: boolean,
+    /** Set to `true` to enable the browser's autocomplete/autofill behaviour for eligible grid input fields.
+         * Inputs that provide grid-owned suggestions, such as Rich Select and Advanced Filter inputs, keep browser autocomplete disabled.
+         * @default false
+         */
+    enableInputAutoComplete?: boolean,
     /** The number of rows rendered outside the viewable area the grid renders.
          * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.
          * @default 10
@@ -876,13 +887,14 @@ export interface Props<TData> {
          * @initial
          */
     debug?: boolean,
-    /** Show or hide the loading overlay.
+    /** Show or hide the loading UI.
          * - `true`: the loading overlay is shown.
          * - `false`: the loading overlay is hidden.
+         * - `LoadingOptions`: configure the loading UI.
          * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
          * @default undefined
          */
-    loading?: boolean,
+    loading?: boolean | LoadingOptions,
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
          *
          * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
@@ -1405,6 +1417,12 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     suppressGroupRowsSticky?: boolean,
+    /** Maximum share of the viewport height that each sticky row section (top or bottom) may occupy, as a number between 0 and 1.
+         * Rows that do not fit within the resulting height budget do not stick and scroll normally instead.
+         * @default 0.5
+         * @agModule `RowGroupingModule` / `TreeDataModule` / `ServerSideRowModelModule`
+         */
+    stickyRowsMaxViewportRatio?: number,
     /** Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
          * @agModule `RowGroupingModule`
          */
@@ -1673,7 +1691,7 @@ export interface Props<TData> {
          */
     suppressClearOnFillReduction?: boolean,
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-         * @default [null, 'asc', 'desc']
+         * @default ['asc', 'desc', null]
          * @deprecated v33 Use `defaultColDef.sortingOrder` instead
          */
     sortingOrder?: SortDirection[],
@@ -2293,6 +2311,8 @@ export function getProps() {
         context: undefined,
         alignedGrids: undefined,
         tabIndex: undefined,
+        suppressInputClearButton: undefined,
+        enableInputAutoComplete: undefined,
         rowBuffer: undefined,
         valueCache: undefined,
         valueCacheNeverExpires: undefined,
@@ -2400,6 +2420,7 @@ export function getProps() {
         rowGroupPanelSuppressSort: undefined,
         pivotPanelSuppressSort: undefined,
         suppressGroupRowsSticky: undefined,
+        stickyRowsMaxViewportRatio: undefined,
         groupHierarchyConfig: undefined,
         pinnedTopRowData: undefined,
         pinnedBottomRowData: undefined,

@@ -145,6 +145,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         columnPanelItemDragStart: ColumnPanelItemDragStartEvent<TData, TContext>;
         columnPanelItemDragEnd: ColumnPanelItemDragEndEvent<TData, TContext>;
         bodyHeightChanged: BodyHeightChangedEvent<TData, TContext>;
+        gridViewportWidthChanged: GridViewportWidthChangedEvent<TData, TContext>;
         columnContainerWidthChanged: ColumnContainerWidthChangedEvent<TData, TContext>;
         displayedColumnsWidthChanged: DisplayedColumnsWidthChangedEvent<TData, TContext>;
         scrollVisibilityChanged: ScrollVisibilityChangedEvent<TData, TContext>;
@@ -510,6 +511,11 @@ export interface ColumnHoverChangedEvent<TData = any, TContext = any> extends Ag
 > {} // not documented
 export interface BodyHeightChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'bodyHeightChanged',
+    TData,
+    TContext
+> {} // not documented
+export interface GridViewportWidthChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
+    'gridViewportWidthChanged',
     TData,
     TContext
 > {} // not documented
@@ -1378,7 +1384,7 @@ export interface CellEvent<T extends AgEventType, TData = any, TValue = any, TCo
 > {
     column: Column<TValue>;
     colDef: ColDef<TData, TValue>;
-    /** The value for the cell if available otherwise undefined. */
+    /** The value for the cell if available otherwise undefined. May be `null` or `undefined` — for example on group rows or when the `field` is absent from the row data; the handler must handle this. */
     value: TValue | null | undefined;
 }
 
@@ -1390,7 +1396,7 @@ interface CellWithDataEvent<T extends AgEventType, TData = any, TValue = any, TC
 > {
     column: Column<TValue>;
     colDef: ColDef<TData, TValue>;
-    /** The value for the cell */
+    /** The value for the cell. May be `null` or `undefined` — for example on group rows or when the `field` is absent from the row data; the handler must handle this. */
     value: TValue | null | undefined;
 }
 
@@ -1466,9 +1472,9 @@ export interface CellEditingStoppedEvent<TData = any, TValue = any, TContext = a
     TValue,
     TContext
 > {
-    /** The value of the cell before the edit. */
+    /** The value of the cell before the edit. May be `null` or `undefined` — for example on group rows or rows whose data has not loaded; the handler must handle this. */
     oldValue: TValue | null | undefined;
-    /** The value produced by the editor. This is the raw editor value, not resolved through the value getter. */
+    /** The value produced by the editor. This is the raw editor value, not resolved through the value getter. May be `null` or `undefined` if the editor was cleared; the handler must handle this. */
     newValue: TValue | null | undefined;
     /** Whether the value of the editor has changed. */
     valueChanged: boolean;
@@ -1480,11 +1486,11 @@ export interface CellValueChangedEvent<
     TContext = any,
     TRawValue = any,
 > extends CellWithDataEvent<'cellValueChanged', TData, TValue, TContext> {
-    /** The value of the cell before the edit. */
+    /** The value of the cell before the edit. May be `null` or `undefined` — for example on group rows or rows whose data has not loaded; the handler must handle this. */
     oldValue: TValue | null | undefined;
-    /** The new value of the cell after the edit, resolved through the value getter if one is configured. */
+    /** The new value of the cell after the edit, resolved through the value getter if one is configured. May be `null` or `undefined` if the edit clears the cell; the handler must handle this. */
     newValue: TValue | null | undefined;
-    /** The raw value from the edit, before any value getter is applied. */
+    /** The raw value from the edit, before any value getter is applied. May be `null` or `undefined` if the edit clears the cell; the handler must handle this. */
     newRawValue: TRawValue | null | undefined;
     /** The source of the value change, e.g. `'edit'`, `'paste'`, `'undo'`, `'redo'`, `'data'`. */
     source: string | undefined;
@@ -1496,9 +1502,9 @@ export interface CellEditValuesChangedEvent<TData = any, TValue = any, TContext 
     TValue,
     TContext
 > {
-    /** The value of the cell before the edit. */
+    /** The value of the cell before the edit. May be `null` or `undefined` — for example on group rows or rows whose data has not loaded; the handler must handle this. */
     oldValue: TValue | null | undefined;
-    /** The pending edit value. This is the raw value, not resolved through the value getter. */
+    /** The pending edit value. This is the raw value, not resolved through the value getter. May be `null` or `undefined` if the edit clears the cell; the handler must handle this. */
     newValue: TValue | null | undefined;
     /** The source of the value change, e.g. `'edit'`, `'paste'`, `'undo'`, `'redo'`, `'data'`. */
     source: string | undefined;
@@ -1510,9 +1516,9 @@ export interface CellEditRequestEvent<TData = any, TValue = any, TContext = any>
     TValue,
     TContext
 > {
-    /** The value of the cell before the edit. */
+    /** The value of the cell before the edit. May be `null` or `undefined` — for example on group rows or rows whose data has not loaded; the handler must handle this. */
     oldValue: TValue | null | undefined;
-    /** The requested edit value. This is the raw value, not resolved through the value getter. */
+    /** The requested edit value. This is the raw value, not resolved through the value getter. May be `null` or `undefined` if the edit clears the cell; the handler must handle this. */
     newValue: TValue | null | undefined;
     /** The source of the value change, e.g. `'edit'`, `'paste'`, `'undo'`, `'redo'`, `'data'`. */
     source: string | undefined;

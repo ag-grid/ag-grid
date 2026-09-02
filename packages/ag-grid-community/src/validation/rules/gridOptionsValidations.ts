@@ -569,6 +569,34 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        loading: {
+            validate({ loading, rowModelType }) {
+                if (loading == null || typeof loading === 'boolean') {
+                    return null;
+                }
+                if (typeof loading !== 'object' || Array.isArray(loading)) {
+                    return _createValidationWarning(321, {
+                        property: 'loading',
+                        expected: 'a boolean or an object',
+                    });
+                }
+                if (loading.type !== 'overlay' && loading.type !== 'rows') {
+                    return _createValidationWarning(320, {
+                        property: 'loading.type',
+                        allowed: ['overlay', 'rows'],
+                        value: loading.type,
+                    });
+                }
+                if (loading.type === 'rows' && rowModelType != null && rowModelType !== 'clientSide') {
+                    return '`loading.type="rows"` is only supported with the Client-Side Row Model.';
+                }
+                const rowCount = loading.rowCount;
+                if (rowCount != null && (!Number.isInteger(rowCount) || rowCount < 1)) {
+                    return 'loading.rowCount: value should be an integer greater than or equal to 1';
+                }
+                return null;
+            },
+        },
         notesDataSource: {
             validate: ({ getRowId }) => {
                 if (!getRowId) {
@@ -621,6 +649,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     return _createValidationWarning(325, { property: 'sortingOrder', value: sortingOrder });
                 }
                 return null;
+            },
+        },
+        stickyRowsMaxViewportRatio: {
+            validate({ stickyRowsMaxViewportRatio: ratio }) {
+                if (ratio == null || (typeof ratio === 'number' && ratio >= 0 && ratio <= 1)) {
+                    return null;
+                }
+                return 'stickyRowsMaxViewportRatio: value should be a number between 0 and 1';
             },
         },
         tooltipHideDelay: {
@@ -766,6 +802,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 }
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
+                }
+                if (autoSizeStrategy.shouldAutoSizeColumns !== undefined && !autoSizeStrategy.continuous) {
+                    return `The \`shouldAutoSizeColumns\` auto-size option only applies when \`continuous\` is true.`;
                 }
                 return null;
             },

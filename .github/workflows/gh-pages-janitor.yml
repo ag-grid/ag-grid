@@ -1,0 +1,50 @@
+name: gh-pages janitor
+
+# Thin caller — the sweep itself lives in external/ag-shared, shared with ag-charts and
+# ag-studio. Reclaims previews for closed PRs and source maps that are no longer published,
+# in one push (GitHub Pages rebuilds the whole site per push, and its branch builds are
+# single-flight, so one push per path would cost one cancelling build per path).
+
+on:
+  schedule:
+    # 03:17 UTC daily — off-peak, and off the hour to avoid the scheduler's rush.
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'List what would be removed without pushing.'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  # Serialise sweeps with each other only. Conflicts with per-PR publishers are resolved by the
+  # push-retry loop in gh-pages-commit.sh, not by a lock.
+  group: gh-pages-janitor
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    name: Sweep stale gh-pages content
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      # Needed for the local shared action below; it clones the publish branch itself.
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+
+      - name: Sweep
+        uses: ./external/ag-shared/github/actions/pr-preview-janitor
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Scheduled runs get the safe default; only a manual dispatch can turn this on.
+          dry_run: ${{ inputs.dry_run || false }}
+          # ag-grid does not pass include_source_maps to pr-preview-publish, and its UMD
+          # bundles build with sourcemap:false, so any map still on gh-pages is stale.
+          purge_source_maps: true

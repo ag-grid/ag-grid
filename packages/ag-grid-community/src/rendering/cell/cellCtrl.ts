@@ -25,6 +25,7 @@ import {
     _getCheckboxLocation,
     _getCheckboxes,
     _isCellSelectionEnabled,
+    _isClientSideLoadingRow,
     _setDomData,
 } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
@@ -177,9 +178,15 @@ export class CellCtrl extends BeanStub {
         this.instanceId = (colId + '-' + instanceIdSequence++) as CellCtrlInstanceId;
 
         this.createCellPosition();
-        this.updateAndFormatValue(false);
+        if (!this.isClientSideLoadingCell()) {
+            this.updateAndFormatValue(false);
+        }
         // must stay in the constructor, not setComp — see _setupCellPosition
         _setupCellPosition(beans, this);
+    }
+
+    private isClientSideLoadingCell(): boolean {
+        return _isClientSideLoadingRow(this.gos, this.rowNode);
     }
 
     private addFeatures(): void {
@@ -247,7 +254,8 @@ export class CellCtrl extends BeanStub {
         }
         this.editorTooltipFeature = this.beans.tooltipSvc?.setupCellEditorTooltip(this, editor);
 
-        this.editSvc?.populateModelValidationErrors();
+        // Cell identity lets a delayed framework editor consume only its own preflight validation snapshot.
+        this.editSvc?.populateModelValidationErrors(this);
     }
 
     public disableEditorTooltipFeature(): void {
@@ -269,8 +277,11 @@ export class CellCtrl extends BeanStub {
         compBean ??= this;
 
         this.addDomData(compBean);
-        this.addFeatures();
-        compBean.addDestroyFunc(() => this.removeFeatures());
+        const isClientSideLoadingCell = this.isClientSideLoadingCell();
+        if (!isClientSideLoadingCell) {
+            this.addFeatures();
+            compBean.addDestroyFunc(() => this.removeFeatures());
+        }
 
         this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
 
@@ -281,18 +292,24 @@ export class CellCtrl extends BeanStub {
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
-        this.setupControlComps();
+        if (!isClientSideLoadingCell) {
+            this.setupControlComps();
+        }
 
         this.setupAutoHeight(eCellWrapper, compBean);
 
         this.refreshFirstAndLastStyles();
-        this.checkFormulaError();
+        if (!isClientSideLoadingCell) {
+            this.checkFormulaError();
+        }
         this.refreshAriaRowIndex();
         this.refreshAriaColIndex();
 
         _initCellPosition(this.beans, this);
-        this.beans.cellStyles?.setupCellCustomStyle(this);
-        this.editSvc?.applyCellEditStyles(this);
+        if (!isClientSideLoadingCell) {
+            this.beans.cellStyles?.setupCellCustomStyle(this);
+            this.editSvc?.applyCellEditStyles(this);
+        }
         this.tooltipFeature?.refreshTooltip();
         this.rangeFeature?.setComp(comp);
         this.rowResizeFeature?.refreshRowResizer();
@@ -334,6 +351,10 @@ export class CellCtrl extends BeanStub {
     }
 
     private setupAutoHeight(eCellWrapper: HTMLElement | undefined, compBean: BeanStub): void {
+        if (this.isClientSideLoadingCell()) {
+            this.isAutoHeight = false;
+            return;
+        }
         this.isAutoHeight = this.beans.rowAutoHeight?.setupCellAutoHeight(this, eCellWrapper, compBean) ?? false;
     }
 
@@ -396,18 +417,18 @@ export class CellCtrl extends BeanStub {
         let compDetails: UserCompDetails | undefined;
 
         // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
-        const isSsrmLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
+        const isLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
         const colDef = column.colDef;
 
-        if (isSsrmLoading || this.isCellRenderer()) {
+        if (isLoading || this.isCellRenderer()) {
             const params = this.createCellRendererParams();
-            if (!isSsrmLoading || isRowNumberCol(column)) {
+            if (!isLoading || isRowNumberCol(column)) {
                 compDetails = _getCellRendererDetails(userCompFactory, colDef, params);
             } else {
                 compDetails = _getLoadingCellRendererDetails(userCompFactory, colDef, params);
             }
         }
-        if (!compDetails && !isSsrmLoading && beans.findSvc?.isMatch(rowNode, column)) {
+        if (!compDetails && !isLoading && beans.findSvc?.isMatch(rowNode, column)) {
             const params = this.createCellRendererParams();
             compDetails = _getCellRendererDetails(
                 userCompFactory,
@@ -574,6 +595,10 @@ export class CellCtrl extends BeanStub {
     }
 
     public refreshOrDestroyCell(params?: RefreshCellsParams): void {
+        if (this.isClientSideLoadingCell()) {
+            return;
+        }
+
         if (this.refreshShouldDestroy()) {
             this.rowCtrl?.recreateCell(this);
         } else {
@@ -597,6 +622,9 @@ export class CellCtrl extends BeanStub {
     // + rowCtrl: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
     public refreshCell(params?: RefreshCellsParams & { newData?: boolean }): void {
+        if (this.isClientSideLoadingCell()) {
+            return;
+        }
         const {
             beans: { cellFlashSvc, filterManager, cellStyles },
             column,
@@ -819,6 +847,9 @@ export class CellCtrl extends BeanStub {
         preventScrollOnBrowserFocus?: boolean;
         sourceEvent?: Event;
     }): void {
+        if (this.isClientSideLoadingCell()) {
+            return;
+        }
         const { forceBrowserFocus = false, preventScrollOnBrowserFocus = false, sourceEvent } = params || {};
         const allowedTarget = this.editSvc?.allowedFocusTargetOnValidation(this);
         // if allowedTarget is set, then edit mode is active (with potential validation failures) and we should check if we can service the focus request
@@ -1085,8 +1116,12 @@ export class CellCtrl extends BeanStub {
         super.destroy();
     }
 
-    public hasBrowserFocus(): boolean {
-        return this.eGui?.contains(_getActiveDomElement(this.beans)) ?? false;
+    // directOnly distinguishes focus on the cell element itself from focus on a focusable descendant
+    // (renderer child, inline editor): the default (contains) is true for both, directOnly only for the cell.
+    public hasBrowserFocus(directOnly?: boolean): boolean {
+        const activeEl = _getActiveDomElement(this.beans);
+        const eGui = this.eGui;
+        return directOnly ? eGui === activeEl : (eGui?.contains(activeEl) ?? false);
     }
 
     public createSelectionCheckbox(): CheckboxSelectionComponent | undefined {

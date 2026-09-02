@@ -11,6 +11,11 @@ on:
         description: 'URL to test against (leave blank to use the staging URL from baseUrlUtils.js)'
         required: false
         default: ''
+      csp_dry_run:
+        description: 'Log the CSP Slack message instead of posting it'
+        required: false
+        type: boolean
+        default: false
 
 env:
   CI: true
@@ -22,7 +27,8 @@ concurrency:
 
 permissions:
   contents: read
-  # read is sufficient: the only actions-scope consumer is `gh run list` below.
+  # read is sufficient: the actions-scope consumers are `gh run list` and the previous
+  # run's artifact download, both read-only.
   actions: read
 
 jobs:
@@ -40,7 +46,7 @@ jobs:
        github.event.workflow_run.head_repository.full_name == github.repository)
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # Check out the default-branch HEAD (github.sha). In a workflow_run
           # context this is the branch the run was triggered on; combined with the
@@ -51,7 +57,7 @@ jobs:
           fetch-depth: 1
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: '.nvmrc'
 
@@ -87,13 +93,26 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: page-verification-results
           path: |
             reports/
             documentation/ag-grid-docs/test-results/
           retention-days: 14
+
+      # Kept as its own artifact so the csp-report job can pull just this file from the
+      # previous run to compare against, rather than a bundle carrying every trace. A run
+      # against a hand-given URL is not uploaded: it would become the next run's baseline
+      # while describing a different site.
+      - name: Upload CSP report
+        if: always() && inputs.staging_url == ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: csp-violations
+          path: reports/ag-grid-csp-violations.json
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Check previous run status
         id: prev_run
@@ -131,3 +150,96 @@ jobs:
           CURRENT_COMMIT_SHA: ${{ github.sha }}
           PREV_COMMIT_SHA: ${{ steps.prev_run.outputs.sha }}
           IS_SUCCESS: ${{ steps.run_tests.outcome == 'success' }}
+
+  # CSP violations are reported, not gated: a hash in the site policy goes stale whenever a tag
+  # is edited in Google Tag Manager, which breaks no page but does need fixing. Keeping this out
+  # of the verification job means the team that owns the policy hears about it without the
+  # regular channel seeing a failure nobody there can act on.
+  csp-report:
+    runs-on: ubuntu-latest
+    name: CSP Report (non-gating)
+    needs: page-verification
+    # Report whatever the run observed, whether or not the page assertions passed. A skipped or
+    # cancelled verification job has nothing to report.
+    if: >
+      always() &&
+      needs.page-verification.result != 'skipped' &&
+      needs.page-verification.result != 'cancelled'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Download CSP report
+        # Tolerated: the suite can die before writing one, and that failure is the
+        # verification job's to report.
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: csp-violations
+          path: csp/current
+
+      - name: Download previous CSP report
+        # The baseline has to be a run that actually produced a report, so this walks back
+        # over recent successful runs rather than trusting the newest: a dispatch against a
+        # hand-given URL succeeds without uploading one, and a run predating this job has
+        # none at all. Once the artifact is known to exist, a failed download is a real
+        # error, so it fails this job rather than quietly reporting the site as all-new.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          # The workflow run is still in progress, so this cannot select the current run.
+          CANDIDATES=$(gh run list \
+            --workflow post-deploy-verification.yml \
+            --branch latest \
+            --status success \
+            --limit 10 \
+            --json databaseId \
+            --jq '.[].databaseId')
+
+          BASELINE=""
+          for ID in $CANDIDATES; do
+            if ! ARTIFACTS=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ID/artifacts" \
+              --jq '.artifacts[] | select(.expired == false) | .name'); then
+              echo "::warning title=CSP baseline::Could not list artifacts for run $ID; skipping it."
+              continue
+            fi
+            if grep -qx csp-violations <<<"$ARTIFACTS"; then
+              BASELINE=$ID
+              break
+            fi
+          done
+
+          if [ -z "$BASELINE" ]; then
+            echo "No recent successful run has a csp-violations artifact; treating this run as having no baseline."
+            exit 0
+          fi
+
+          gh run download "$BASELINE" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name csp-violations \
+            --dir csp/previous
+          echo "Comparing against run $BASELINE."
+
+      - name: Report CSP violations
+        env:
+          CSP_REPORT_FILE: csp/current/ag-grid-csp-violations.json
+          PREVIOUS_CSP_REPORT_FILE: csp/previous/ag-grid-csp-violations.json
+          PROJECT_TITLE: AG Grid
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          SLACK_CHANNEL: '#dev-ops-status'
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+          DRY_RUN: ${{ inputs.csp_dry_run || false }}
+          # A run that failed part way through sees fewer violations than the site has, which
+          # would otherwise read as a policy being fixed.
+          RUN_COMPLETE: ${{ needs.page-verification.result == 'success' }}
+        run: node ./external/ag-shared/scripts/slack/notify-csp-violations.mjs

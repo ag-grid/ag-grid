@@ -27,6 +27,19 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('2', 'athlete')).toContainText('Natalie Coughlin');
     });
 
+    test.eachFramework('should leave country values unchanged', async ({ agIdFor }) => {
+        const sourceCell = agIdFor.cell('0', 'country');
+        await sourceCell.click();
+
+        const fillHandle = agIdFor.fillHandle();
+        await expect(fillHandle).toBeVisible();
+        await dragFillHandleOverTo(fillHandle, agIdFor.cell('2', 'country'));
+
+        await expect(agIdFor.cell('0', 'country')).toContainText('United States');
+        await expect(agIdFor.cell('1', 'country')).toHaveText('');
+        await expect(agIdFor.cell('2', 'country')).toContainText('Australia');
+    });
+
     test.eachFramework('should display all expected header cells', async ({ agIdFor }) => {
         await expect(agIdFor.headerCell('athlete')).toBeVisible();
         await expect(agIdFor.headerCell('age')).toBeVisible();

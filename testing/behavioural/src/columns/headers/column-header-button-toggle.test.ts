@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 import { ColumnMenuModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 const OPEN_MENU_CLASS = 'ag-has-menu-open';
 

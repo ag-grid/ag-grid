@@ -23,6 +23,7 @@ import { _createCellEvent } from '../../rendering/cell/cellEvent';
 import type { EditModelService } from '../editModelService';
 import type { EditService } from '../editService';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
+import type { EditorValidationCache } from '../utils/editors';
 import {
     UNEDITED,
     _destroyEditor,
@@ -129,19 +130,20 @@ export abstract class BaseEditStrategy extends BeanStub {
         backwards: boolean,
         event?: KeyboardEvent,
         source?: EditSource,
-        preventNavigation?: boolean
+        preventNavigation?: boolean,
+        validationCache?: EditorValidationCache
     ): boolean | null;
 
-    public stopCancelled(forceCancel: boolean): boolean {
+    public stopCancelled(forceCancel: boolean, validationCache?: EditorValidationCache): boolean {
         const preserveBatch = this.editSvc.isBatchEditing() && !forceCancel;
         for (const cell of this.model.getEditPositions()) {
-            _destroyEditor(this.beans, cell, { cancel: true }, _getCellCtrl(this.beans, cell));
+            _destroyEditor(this.beans, cell, { cancel: true }, _getCellCtrl(this.beans, cell), validationCache);
             this.model.stop(cell, preserveBatch, true);
         }
         return true;
     }
 
-    public stopCommitted(event: Event | null, commit: boolean): boolean {
+    public stopCommitted(event: Event | null, commit: boolean, validationCache?: EditorValidationCache): boolean {
         const editingCells = this.model.getEditPositions();
         const results: EditValidationResult = { all: [], pass: [], fail: [] };
         for (const cell of editingCells) {
@@ -156,7 +158,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         const preserveBatch = this.editSvc.isBatchEditing() && !commit;
 
         for (const cell of actions.destroy) {
-            _destroyEditor(this.beans, cell, { event }, _getCellCtrl(this.beans, cell));
+            _destroyEditor(this.beans, cell, { event }, _getCellCtrl(this.beans, cell), validationCache);
             this.model.stop(cell, preserveBatch, false);
         }
 
@@ -171,8 +173,12 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     protected abstract processValidationResults(results: EditValidationResult): EditValidationAction;
 
-    public cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
-        _syncFromEditors(this.beans, { persist: false });
+    public cleanupEditors(
+        { rowNode }: EditRowPosition = {},
+        includeEditing?: boolean,
+        validationCache?: EditorValidationCache
+    ): void {
+        _syncFromEditors(this.beans, { persist: false }, validationCache);
 
         const positions = this.model.getEditPositions();
 
@@ -193,7 +199,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
 
         // clean up any dangling editors
-        _destroyEditors(this.beans, discard);
+        _destroyEditors(this.beans, discard, {}, validationCache);
 
         _purgeUnchangedEdits(this.beans, includeEditing);
     }

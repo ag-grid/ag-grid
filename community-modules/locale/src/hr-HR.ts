@@ -135,6 +135,29 @@ export const AG_GRID_LOCALE_HR = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'je između',
+    advancedFilterYesterday: 'je jučer',
+    advancedFilterToday: 'je danas',
+    advancedFilterTomorrow: 'je sutra',
+    advancedFilterLast7Days: 'je u zadnjih 7 dana',
+    advancedFilterLastWeek: 'je u prošlom tjednu',
+    advancedFilterThisWeek: 'je u ovom tjednu',
+    advancedFilterNextWeek: 'je u sljedećem tjednu',
+    advancedFilterLast30Days: 'je u zadnjih 30 dana',
+    advancedFilterLastMonth: 'je u prošlom mjesecu',
+    advancedFilterThisMonth: 'je u ovom mjesecu',
+    advancedFilterNextMonth: 'je u sljedećem mjesecu',
+    advancedFilterLast90Days: 'je u zadnjih 90 dana',
+    advancedFilterLastQuarter: 'je u prošlom tromjesečju',
+    advancedFilterThisQuarter: 'je u ovom tromjesečju',
+    advancedFilterNextQuarter: 'je u sljedećem tromjesečju',
+    advancedFilterLastYear: 'je u prošloj godini',
+    advancedFilterThisYear: 'je u ovoj godini',
+    advancedFilterYearToDate: 'je od početka godine do danas',
+    advancedFilterNextYear: 'je u sljedećoj godini',
+    advancedFilterLast6Months: 'je u zadnjih 6 mjeseci',
+    advancedFilterLast12Months: 'je u zadnjih 12 mjeseci',
+    advancedFilterLast24Months: 'je u zadnja 24 mjeseca',
     advancedFilterTrue: 'je točno',
     advancedFilterFalse: 'je netočno',
     advancedFilterAnd: 'I',
@@ -182,6 +205,8 @@ export const AG_GRID_LOCALE_HR = {
     // Editor Validation Errors
     minDateValidation: 'Datum mora biti nakon ${variable}',
     maxDateValidation: 'Datum mora biti prije ${variable}',
+    minDateInclusiveValidation: 'Datum mora biti ${variable} ili kasnije',
+    maxDateInclusiveValidation: 'Datum mora biti ${variable} ili ranije',
     maxLengthValidation: 'Mora imati ${variable} znakova ili manje.',
     minValueValidation: 'Mora biti veće ili jednako ${variable}',
     maxValueValidation: 'Mora biti manje ili jednako ${variable}',
@@ -681,7 +706,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaAdvancedFilterBuilderGroupItem: 'Grupa filtera',
     ariaAdvancedFilterBuilderColumn: 'Stupac',
     ariaAdvancedFilterBuilderOption: 'Opcija',
-    ariaAdvancedFilterBuilderValueP: 'Vrijednost',
+    ariaAdvancedFilterBuilderValue: 'Vrijednost',
     ariaAdvancedFilterBuilderJoinOperator: 'Operator spajanja',
     ariaAdvancedFilterInput: 'Unos naprednog filtera',
     ariaChecked: 'označeno',
@@ -697,6 +722,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaFilterColumnsInput: 'Unos za filtriranje stupaca',
     ariaFilterFromValue: 'Filtriraj od vrijednosti',
     ariaFilterInput: 'Unos filtera',
+    ariaLabelInputClear: 'Očisti',
     ariaFilterList: 'Popis filtera',
     ariaFilterToValue: 'Filtriraj do vrijednosti',
     ariaFilterValue: 'Vrijednost filtera',
@@ -763,6 +789,9 @@ export const AG_GRID_LOCALE_HR = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Validacija Uređivača ćelija',
+    ariaFullRowValidationError: 'Provjera cijelog retka: ${variable}',
+    ariaFullRowEditValidationFailed: 'Uređivanje retka nije moguće dovršiti. ${variable}',
+    ariaRowIndex: 'Redak ${variable}',
     ariaLabelLoadingContextMenu: 'Učitavanje kontekstnog izbornika',
 
     // aria labels for rich select
@@ -791,8 +820,8 @@ export const AG_GRID_LOCALE_HR = {
     ariaHasNote: 'Ova ćelija ima bilješku.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: '.',
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Tekst',

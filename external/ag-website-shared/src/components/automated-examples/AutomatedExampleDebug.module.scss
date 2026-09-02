@@ -67,7 +67,7 @@ $z-index-debug-panel: $z-index-debug-canvas + 200;
 
         button:not([class^='ag-']) {
             padding: $spacing-size-1;
-            line-height: var(--text-lh-ultra-tight);
+            line-height: var(--text-lh-ratio-ultra-tight);
         }
     }
 

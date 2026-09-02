@@ -1,5 +1,19 @@
-import type { GridApi } from 'ag-grid-community';
+import { fireEvent } from '@testing-library/dom';
 import {
+    ColumnFilterHarness,
+    FilterDom,
+    FloatingFilterHarness,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    setNativeInputValue,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
+
+import type { GridApi, SuppressHeaderKeyboardEventParams } from 'ag-grid-community';
+import {
+    BigIntFilterModule,
     ClientSideRowModelModule,
     DateFilterModule,
     NumberFilterModule,
@@ -9,59 +23,28 @@ import {
 } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
-import {
-    ColumnFilterHarness,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
-
 /**
  * Black-box coverage for editing/displaying floating filters (floatingFilter:true) across text,
  * number, date and set columns: typing updates model + rows, API writeback updates the display,
  * read-only filters (set, range) show a summary, and clearing. Driven via GridApi + real DOM only.
  */
 
-/** The `.ag-floating-filter-body` for a column's floating filter row. */
-function floatingBody(api: GridApi, colId: string): HTMLElement {
-    const gridDiv = getGridElement(api)! as HTMLElement;
-    // The body carries `ag-floating-filter-body`, or `ag-floating-filter-full-body` when the
-    // floating-filter button is suppressed and the whole cell is the filter body.
-    const body = gridDiv.querySelector<HTMLElement>(
-        `.ag-header-cell.ag-floating-filter[col-id="${colId}"] .ag-floating-filter-body, ` +
-            `.ag-header-cell.ag-floating-filter[col-id="${colId}"] .ag-floating-filter-full-body`
-    );
-    if (!body) {
-        throw new Error(`No floating filter body for "${colId}"`);
-    }
-    return body;
-}
+const floatingBody = (api: GridApi, colId: string): HTMLElement => FloatingFilterHarness.get(api, colId).body;
 
-/** The single visible (non-hidden) input inside a column's floating filter. */
-function floatingInput(api: GridApi, colId: string): HTMLInputElement {
-    const inputs = Array.from(floatingBody(api, colId).querySelectorAll<HTMLInputElement>('input')).filter(
-        (input) => !input.closest('.ag-hidden')
-    );
-    if (!inputs.length) {
-        throw new Error(`No visible floating filter input for "${colId}"`);
-    }
-    return inputs[0];
-}
+const floatingInput = (api: GridApi, colId: string): HTMLInputElement => FloatingFilterHarness.get(api, colId).input();
 
-/** Sets a native input's value and fires input+change so the widget's listeners run. */
-function typeInto(input: HTMLInputElement, value: string): void {
-    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
-    setter.call(input, value);
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-}
+const typeInto = setNativeInputValue;
 
 describe('Floating filter editing', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule, NumberFilterModule, DateFilterModule, SetFilterModule],
+        modules: [
+            ClientSideRowModelModule,
+            TextFilterModule,
+            NumberFilterModule,
+            BigIntFilterModule,
+            DateFilterModule,
+            SetFilterModule,
+        ],
     });
 
     beforeAll(() => {
@@ -416,7 +399,111 @@ describe('Floating filter editing', () => {
         `);
     });
 
-    // --- Set (read-only floating filter, enterprise) ---
+    // Every range is complete: a half-filled one applies nothing, so the outcome assertion would be vacuous.
+    test.each([
+        ['country', 'agTextColumnFilter', 1, { filterType: 'text', type: 'contains', filter: 'ita' }, false],
+        ['age', 'agNumberColumnFilter', 2, { filterType: 'number', type: 'inRange', filter: 20, filterTo: 35 }, true],
+        [
+            'date',
+            'agDateColumnFilter',
+            2,
+            { filterType: 'date', type: 'inRange', dateFrom: '2024-01-01', dateTo: '2024-03-01' },
+            true,
+        ],
+        ['big', 'agBigIntColumnFilter', 1, { filterType: 'bigint', type: 'equals', filter: '9' }, false],
+    ])('%s mounts %s inputs, read-only or not', async (colId, filter, expectedInputs, model, readOnlyWhenApplied) => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: colId, filter, filterParams: { debounceMs: 0 }, floatingFilter: true }],
+            rowData: [{ [colId]: '2024-01-01' }],
+        });
+        await asyncSetTimeout(0);
+
+        const floating = FloatingFilterHarness.get(api, colId);
+        expect(floating.allInputs()).toHaveLength(expectedInputs);
+        expect(floating.inputs()).toHaveLength(1);
+
+        await api.setColumnFilterModel(colId, model);
+        await api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // Whatever the model, exactly one input is on show and the element count never moves. Which one it is
+        // does move: a two-value option has no single editor, so the summary takes the slot.
+        expect(floating.allInputs()).toHaveLength(expectedInputs);
+        expect(floating.inputs()).toHaveLength(1);
+        expect(floating.input().disabled).toBe(readOnlyWhenApplied);
+        expect(floating.input().value).not.toBe('');
+    });
+
+    test('a key pressed in a floating filter the grid holds no header focus for is not suppressed', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agTextColumnFilter',
+                    floatingFilter: true,
+                    filterParams: { debounceMs: 0 },
+                    suppressHeaderKeyboardEvent: () => false,
+                },
+            ],
+            rowData: [{ country: 'Italy' }, { country: 'Spain' }],
+        });
+        await asyncSetTimeout(0);
+
+        // Nothing has registered header focus, so there is no cell to describe to `suppressHeaderKeyboardEvent`.
+        const floating = FloatingFilterHarness.get(api, 'country');
+        // Suppression is `stopPropagation`, so an ancestor listener is what observes it not happening.
+        let reachedGrid = false;
+        getGridElement(api)!.addEventListener('keydown', () => {
+            reachedGrid = true;
+        });
+        // A listener that throws still propagates, so the throw itself is what has to be asserted on.
+        const errors: string[] = [];
+        const onError = (event: ErrorEvent) => {
+            errors.push(event.message);
+        };
+        window.addEventListener('error', onError);
+        try {
+            fireEvent.keyDown(floating.input(), { key: 'Enter' });
+            await asyncSetTimeout(0);
+        } finally {
+            window.removeEventListener('error', onError);
+        }
+        expect(errors).toEqual([]);
+        expect(reachedGrid).toBe(true);
+
+        await floating.setValue('ita');
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'text', type: 'contains', filter: 'ita' });
+    });
+
+    test('suppressHeaderKeyboardEvent is still consulted for a floating filter the grid holds no focus for', async () => {
+        const seen: SuppressHeaderKeyboardEventParams[] = [];
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agTextColumnFilter',
+                    floatingFilter: true,
+                    filterParams: { debounceMs: 0 },
+                    suppressHeaderKeyboardEvent: (params) => {
+                        seen.push(params);
+                        return true;
+                    },
+                },
+            ],
+            rowData: [{ country: 'Italy' }, { country: 'Spain' }],
+        });
+        await asyncSetTimeout(0);
+
+        // Nothing has registered header focus, so the callback is described by the cell the key landed on
+        // rather than being skipped: a column that suppresses still gets its say.
+        fireEvent.keyDown(FloatingFilterHarness.get(api, 'country').input(), { key: 'Enter' });
+        await asyncSetTimeout(0);
+
+        expect(seen).toHaveLength(1);
+        expect(seen[0].headerRowIndex).toBe(1);
+        expect(seen[0].column).toBe(api.getColumn('country'));
+    });
 
     describe.each([false, true])('set (enableFilterHandlers: %s)', (enableFilterHandlers) => {
         test('read-only floating filter shows the selection summary and clears', async () => {

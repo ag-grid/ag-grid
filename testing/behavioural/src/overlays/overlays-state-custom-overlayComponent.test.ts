@@ -1,9 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, isAgHtmlElementVisible } from 'ag-test-utils';
 
 import type { OverlayType } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlayComponent', () => {
     const gridsManager = new TestGridsManager({

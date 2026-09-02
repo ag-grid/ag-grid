@@ -1,11 +1,10 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridRows, TestGridsManager, asyncSetTimeout, fakeElementAttribute, getAllRows } from 'ag-test-utils';
 
 import { getGridElement } from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, asyncSetTimeout, fakeElementAttribute, getAllRows } from '../../test-utils';
 
 /**
  * End-to-end behavioural coverage for the Rich Select cell editor (`agRichSelectCellEditor`).
@@ -13,7 +12,7 @@ import { GridRows, TestGridsManager, asyncSetTimeout, fakeElementAttribute, getA
  * These tests drive the real open -> render list -> search / keyboard-navigate -> commit path
  * through the public GridApi, verifying committed cell values and the rendered popup DOM.
  *
- * jsdom has no layout, so the VirtualList only renders rows once a non-zero `offsetHeight` is
+ * happy-dom has no layout, so the VirtualList only renders rows once a non-zero `offsetHeight` is
  * faked on its viewport (see `fakeElementAttribute`). Row clicks resolve the target from the
  * pointer `clientY` (not the event target), hence the `clientY` maths when committing by click.
  */
@@ -73,7 +72,7 @@ describe('Rich Select cell editor', () => {
     });
 
     beforeEach(() => {
-        // VirtualList skips rendering rows when the viewport height is 0 (no layout in jsdom).
+        // VirtualList skips rendering rows when the viewport height is 0 (no layout in happy-dom).
         fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
     });
 
@@ -158,6 +157,7 @@ describe('Rich Select cell editor', () => {
     test('allowTyping filters the list via the typed text', async () => {
         const api = await createGrid({
             columnDefs: [baseColDef({ values: ['Alpha', 'Beta', 'Gamma'], allowTyping: true, filterList: true })],
+            enableInputAutoComplete: true,
             rowData: [{ id: '0', a: 'Alpha' }],
             getRowId: (p) => p.data.id,
         });
@@ -166,6 +166,7 @@ describe('Rich Select cell editor', () => {
 
         const input = gridDiv.querySelector<HTMLInputElement>('.ag-rich-select-field-input input')!;
         expect(input).toBeTruthy();
+        expect(input.getAttribute('autocomplete')).toBe('off');
         input.focus();
         await userEvent.clear(input);
         await userEvent.type(input, 'Be');
@@ -298,6 +299,32 @@ describe('Rich Select cell editor', () => {
         );
     });
 
+    test('allowTyping with multiSelect does not add a second clear button', async () => {
+        const api = await createGrid({
+            columnDefs: [
+                {
+                    field: 'a',
+                    editable: true,
+                    cellDataType: false,
+                    cellEditor: 'agRichSelectCellEditor',
+                    cellEditorParams: {
+                        values: ['Alpha', 'Beta', 'Gamma'],
+                        allowTyping: true,
+                        multiSelect: true,
+                    },
+                },
+            ],
+            rowData: [{ id: '0', a: ['Alpha'] }],
+            getRowId: (p) => p.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await openEditor(api, gridDiv, 0, 'a');
+
+        const typingField = gridDiv.querySelector<HTMLElement>('.ag-rich-select-field-input')!;
+        expect(typingField.querySelector('.ag-input-field-clear-button')).toBeNull();
+        expect(gridDiv.querySelector('.ag-rich-select-deselect-button')).not.toBeNull();
+    });
+
     // 8. filterList + searchType 'match' filters on a leading-substring match.
     test('searchType "match" filters rows whose text contains the search string', async () => {
         const api = await createGrid({
@@ -331,7 +358,7 @@ describe('Rich Select cell editor', () => {
         const popup = await openEditor(api, gridDiv, 0, 'a');
 
         // With allowTyping:false the editor hides the text input via `setDisplayed(false)`,
-        // which adds `ag-hidden` to the input field element (jsdom has no layout to assert on).
+        // which adds `ag-hidden` to the input field element (happy-dom has no layout to assert on).
         const inputField = gridDiv.querySelector<HTMLElement>('.ag-rich-select-field-input');
         expect(inputField?.classList.contains('ag-hidden')).toBe(true);
 

@@ -178,7 +178,7 @@ export class RowNode<TData = any>
     /** The key for the group eg Ireland, UK, USA */
     public key: string | null = null;
 
-    /** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */
+    /** `true` if this row node is a loading placeholder. */
     public stub: boolean | undefined;
 
     /** Used by server side row model, true if this row node failed a load */
@@ -763,7 +763,9 @@ export class RowNode<TData = any>
     public isSelected(): boolean | undefined {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
         if (this.footer) {
-            return this.sibling.isSelected();
+            // destroying a footer severs the sibling link but leaves the footer flag set
+            const sibling = this.sibling;
+            return sibling ? sibling.isSelected() : false;
         }
         // similarly for manually pinned rows
         const pinnedSibling = this.rowPinned && this.pinnedSibling;

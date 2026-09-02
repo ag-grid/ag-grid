@@ -18,7 +18,6 @@ import { kbdShortcut } from '@ag-website-shared/markdoc/tags/kbdShortcut';
 import { majorTable } from '@ag-website-shared/markdoc/tags/majorTable';
 import { note } from '@ag-website-shared/markdoc/tags/note';
 import { numberHeading } from '@ag-website-shared/markdoc/tags/numberHeading';
-import { oneTrustCookies } from '@ag-website-shared/markdoc/tags/oneTrustCookies';
 import { openInCTA } from '@ag-website-shared/markdoc/tags/openInCTA';
 import { tabItem, tabs } from '@ag-website-shared/markdoc/tags/tabs';
 import { trialLicenceForm } from '@ag-website-shared/markdoc/tags/trialLicenceForm';
@@ -79,7 +78,6 @@ export default defineMarkdocConfig({
         kbd,
         kbdShortcut,
         link,
-        oneTrustCookies,
         tabs,
         tabItem,
         videoSection,

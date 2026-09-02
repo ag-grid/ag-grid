@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule, ValidationModule } from 'ag-grid-community';
@@ -10,8 +11,6 @@ import {
     RowGroupingModule,
     RowNumbersModule,
 } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from '../test-utils';
 
 // Behavioural spec for calculated-column DISPLAY ORDERING. The expectations encode the intended
 // behaviour of this branch's column model. Rules 3 and 4 intentionally diverge from the stale

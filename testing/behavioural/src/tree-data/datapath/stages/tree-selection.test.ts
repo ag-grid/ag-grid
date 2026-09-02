@@ -1,4 +1,15 @@
 import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    assertSelectedRowsById,
+    cachedJSONObjects,
+    isElementDisplayed,
+    waitForEvent,
+} from 'ag-test-utils';
+
+import {
     ClientSideRowModelModule,
     RowSelectionModule,
     TextFilterModule,
@@ -7,15 +18,6 @@ import {
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../../../selection/utils';
-import {
-    ALL_SEVERITIES,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    assertElementDisplayed,
-    assertSelectedRowElementsById,
-    cachedJSONObjects,
-} from '../../../test-utils';
 
 describe('ag-grid tree selection', () => {
     const gridsManager = new TestGridsManager({
@@ -183,10 +185,10 @@ describe('ag-grid tree selection', () => {
         expect(api.getRowNode('9')?.selectable).toBe(true);
 
         actions.toggleCheckboxById('2');
-        assertSelectedRowElementsById([], api);
+        assertSelectedRowsById([], api);
 
         actions.toggleCheckboxById('9');
-        assertSelectedRowElementsById(['9'], api);
+        assertSelectedRowsById(['9'], api);
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
@@ -237,7 +239,7 @@ describe('ag-grid tree selection', () => {
         expect(api.getRowNode('3')?.selectable).toBe(false);
 
         actions.toggleCheckboxById('2');
-        assertSelectedRowElementsById(['1', '2', '4'], api);
+        assertSelectedRowsById(['1', '2', '4'], api);
     });
 
     // Changing isRowSelectable at runtime must recompute group/filler selectability from the NEW leaf
@@ -519,7 +521,7 @@ describe('ag-grid tree selection', () => {
         const actions = new GridActions(api, '#myGrid');
 
         actions.toggleCheckboxById('2');
-        assertSelectedRowElementsById(['1', '2', '4'], api);
+        assertSelectedRowsById(['1', '2', '4'], api);
         expect(api.getRowNode('3')?.selectable).toBe(false);
     });
 
@@ -570,7 +572,7 @@ describe('ag-grid tree selection', () => {
             { id: '5', displayed: true },
         ];
         for (const { id, displayed } of expectations) {
-            expect(assertElementDisplayed(actions.getCheckboxById(id)!)).toBe(displayed);
+            expect(isElementDisplayed(actions.getCheckboxById(id)!)).toBe(displayed);
         }
     });
 
@@ -617,6 +619,49 @@ describe('ag-grid tree selection', () => {
             ROOT id:ROOT_NODE_ID
             └── X LEAF id:a ag-Grid-AutoColumn:"X" name:"Alpha"
         `);
+    });
+
+    test('SHIFT-click range over a collapsed group only selects displayed rows', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', name: 'A', orgHierarchy: ['A'] },
+            { id: '2', name: 'B', orgHierarchy: ['A', 'B'] },
+            { id: '4', name: 'D', orgHierarchy: ['A', 'B', 'D'] },
+            { id: '5', name: 'E', orgHierarchy: ['A', 'B', 'E'] },
+            { id: '3', name: 'C', orgHierarchy: ['A', 'C'] },
+            { id: '6', name: 'J', orgHierarchy: ['J'] },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'name' }],
+            autoGroupColumnDef: { headerName: 'Hierarchy' },
+            treeData: true,
+            animateRows: false,
+            rowSelection: { mode: 'multiRow' },
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+            getDataPath: (data: any) => data.orgHierarchy,
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        const actions = new GridActions(api, '#myGrid');
+
+        await new GridRows(api, 'expanded').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:1 ag-Grid-AutoColumn:"A" name:"A"
+            │ ├─┬ B GROUP id:2 ag-Grid-AutoColumn:"B" name:"B"
+            │ │ ├── D LEAF id:4 ag-Grid-AutoColumn:"D" name:"D"
+            │ │ └── E LEAF id:5 ag-Grid-AutoColumn:"E" name:"E"
+            │ └── C LEAF id:3 ag-Grid-AutoColumn:"C" name:"C"
+            └── J LEAF id:6 ag-Grid-AutoColumn:"J" name:"J"
+        `);
+
+        await actions.collapseGroupRowByIndex(1, { count: 1 });
+
+        actions.toggleCheckboxByIndex(0);
+        actions.toggleCheckboxByIndex(2, { shiftKey: true });
+
+        assertSelectedRowsById(['1', '2', '3'], api);
     });
 
     // A node whose tree key changes fires a data-change event; its selectable state must be recomputed so an

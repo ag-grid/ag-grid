@@ -193,6 +193,9 @@ while IFS=$'\t' read -r host path status loc; do
   case "$host" in
     apex)   hostarg=(-H "Host: ag-grid.com") ;;
     charts) hostarg=(-H "Host: charts.ag-grid.com") ;;
+    # SE-91: the blog migration map is host-scoped -- every rule is gated on
+    # Host: blog.ag-grid.com, so it cannot be exercised by a www or apex row.
+    blog)   hostarg=(-H "Host: blog.ag-grid.com") ;;
     *)      hostarg=(-H "Host: www.ag-grid.com") ;;
   esac
   read -r code redir < <(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" "${hostarg[@]}" "http://localhost:$PORT$path")

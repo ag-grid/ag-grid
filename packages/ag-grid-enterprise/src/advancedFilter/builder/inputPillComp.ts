@@ -72,6 +72,8 @@ export class InputPillComp extends Component<InputPillCompEvent> {
     private readonly eLabel: HTMLElement = RefPlaceholder;
 
     private eEditor: GridInputTextField | undefined;
+    /** What the editor opened with, so closing it untouched is not read back as an edit. */
+    private editorOpenedWith: string | undefined;
     private value: string;
     private displayValue: string;
 
@@ -128,11 +130,12 @@ export class InputPillComp extends Component<InputPillCompEvent> {
             return;
         }
         _setDisplayed(this.ePill, false);
-        this.eEditor = this.createEditorComp(this.params.type);
+        this.eEditor = this.createEditorComp();
         const { editValueFormatter } = this.params;
         // Edit the value as it is displayed, so a formatted operand does not flip back to the raw
         // model value when the editor opens.
-        this.eEditor.setValue(editValueFormatter?.(this.value) ?? this.value);
+        this.editorOpenedWith = editValueFormatter?.(this.value) ?? this.value;
+        this.eEditor.setValue(this.editorOpenedWith);
         const eEditorGui = this.eEditor.getGui();
         this.eEditor.addManagedElementListeners(eEditorGui, {
             keydown: (event: KeyboardEvent) => {
@@ -158,7 +161,9 @@ export class InputPillComp extends Component<InputPillCompEvent> {
     /**
      * Responsible for instantiating an InputField and calling some of the setup methods
      */
-    private createEditorComp(type: BaseCellDataType): GridInputTextField {
+    private createEditorComp(): GridInputTextField {
+        // An operand edited as displayed is text no typed input would keep, so it is edited as text.
+        const type = this.params.editValueFormatter ? 'text' : this.params.type;
         const [Comp, postConstruct] = inputComponentDescriptors[type];
         // eslint-disable-next-line sonarjs/new-operator-misuse -- false positive: Comp is a class constructor from inputComponentDescriptors
         const instance = this.createBean(new Comp());
@@ -208,6 +213,12 @@ export class InputPillComp extends Component<InputPillCompEvent> {
             return;
         }
         const value = this.eEditor.getValue() ?? '';
+        // Blurring an untouched editor is not an edit: re-reading its text would put the operand back
+        // through the column's parser, which need not return the value the text was rendered from.
+        if (value === this.editorOpenedWith) {
+            this.hideEditor(keepFocus);
+            return;
+        }
         this.dispatchLocalEvent<WithoutGridCommon<FieldValueEvent>>({
             type: 'fieldValueChanged',
             value,

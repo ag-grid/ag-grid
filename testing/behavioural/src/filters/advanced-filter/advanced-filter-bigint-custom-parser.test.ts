@@ -1,15 +1,16 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
-import { BigIntFilterModule, ClientSideRowModelModule, NumberFilterModule, getGridElement } from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
 import {
     AdvancedFilterBuilderHarness,
+    FilterDom,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { FilterInputCallbackParams, GridApi, GridOptions } from 'ag-grid-community';
+import { BigIntFilterModule, ClientSideRowModelModule, NumberFilterModule, getGridElement } from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 interface TestRow {
     value: bigint;
@@ -70,15 +71,6 @@ function applyExpression(gridDiv: HTMLElement, expression: string): void {
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 }
 
-/** Display text of a builder condition row's value pill. */
-function valuePillText(item: HTMLElement): string {
-    return (
-        item
-            .querySelector('.ag-advanced-filter-builder-value-pill .ag-advanced-filter-builder-pill-display')
-            ?.textContent?.trim() ?? ''
-    );
-}
-
 const withParser: GridOptions<TestRow>['columnDefs'] = [
     {
         field: 'value',
@@ -105,6 +97,53 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
     beforeAll(() => installFilterLayoutMock());
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
+
+    test('the parser and the formatter are given the api and the context', async () => {
+        const context = { tag: 'advanced-bigint' };
+        const parserSaw: FilterInputCallbackParams[] = [];
+        const formatterSaw: FilterInputCallbackParams[] = [];
+        const api = gridsManager.createGrid('grid1', {
+            context,
+            columnDefs: [
+                {
+                    field: 'value',
+                    cellDataType: 'bigint',
+                    filter: 'agBigIntColumnFilter',
+                    filterParams: {
+                        bigintParser: (text: string | null, common: FilterInputCallbackParams) => {
+                            parserSaw.push(common);
+                            return text == null ? null : parseBigInt(text);
+                        },
+                        bigintFormatter: (value: bigint | null, common: FilterInputCallbackParams) => {
+                            formatterSaw.push(common);
+                            return value == null ? null : formatBigInt(value);
+                        },
+                    },
+                },
+            ],
+            rowData: [{ value: 10n }, { value: 255n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        applyExpression(gridDiv, '[Value] = 0xFF');
+        await asyncSetTimeout(0);
+
+        // The operand is read on apply and written back when the expression is re-displayed.
+        api.setAdvancedFilterModel(api.getAdvancedFilterModel());
+        await asyncSetTimeout(0);
+
+        expect(parserSaw.length).toBeGreaterThan(0);
+        expect(formatterSaw.length).toBeGreaterThan(0);
+        for (const common of [...parserSaw, ...formatterSaw]) {
+            expect(common.api).toBe(api);
+            expect(common.context).toBe(context);
+            // The column too, so one callback on `defaultColDef` can tell which one it is working on.
+            expect(common.column.getColId()).toBe('value');
+            expect(common.colDef).toBe(common.column.getColDef());
+        }
+    });
 
     test('hex typed via text input matches and displays with formatter', async () => {
         const api = gridsManager.createGrid('grid1', {
@@ -133,6 +172,17 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         api.setAdvancedFilterModel(api.getAdvancedFilterModel());
         const svc = getService(api);
         expect(svc.getExpressionDisplayValue()).toBe('[Value] = 0xFF');
+        await new FilterDom(api, 'hex round-trips through the formatter', { mode: 'advanced-filter' }).checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Value] = 0xFF"
+            valid: true
+            buttons: Apply ⊘ | Builder
+            model:
+              filterType: "bigint"
+              colId: "value"
+              type: "equals"
+              filter: "255"
+        `);
     });
 
     test('no formatter falls back to decimal display and still matches', async () => {
@@ -161,6 +211,29 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         `);
         api.setAdvancedFilterModel(api.getAdvancedFilterModel());
         expect(getService(api).getExpressionDisplayValue()).toBe('[Value] = 255');
+
+        // With no formatter the operand is written as the canonical decimal and read back through the
+        // column's own parser, so re-applying what is displayed must not reinterpret it.
+        applyExpression(gridDiv, '[Value] = 255');
+        await asyncSetTimeout(0);
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'bigint',
+            colId: 'value',
+            type: 'equals',
+            filter: '255',
+        });
+
+        await new FilterDom(api, 'no formatter falls back to decimal', { mode: 'advanced-filter' }).checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Value] = 255"
+            valid: true
+            buttons: Apply ⊘ | Builder
+            model:
+              filterType: "bigint"
+              colId: "value"
+              type: "equals"
+              filter: "255"
+        `);
     });
 
     test('builder value pill formats the stored operand and parses custom bigint input', async () => {
@@ -177,7 +250,19 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         const [condition] = await builder.conditionItems();
 
         // The stored decimal model value is displayed through the column's bigintFormatter.
-        expect(valuePillText(condition)).toBe('0xFF');
+        expect(builder.valuePillText(condition)).toBe('0xFF');
+        await new FilterDom(api, 'builder pill shows the formatted operand', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Value = 0xFF
+              + add
+            buttons: Apply | Cancel
+            model:
+              filterType: "bigint"
+              colId: "value"
+              type: "equals"
+              filter: "255"
+        `);
 
         // `1000n` is only understood by the column's bigintParser (native BigInt rejects the suffix),
         // so a canonical decimal in the model proves the builder ran the edit through that parser.
@@ -213,12 +298,12 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         // The builder editor presents the stored operand through the formatter, not as the canonical
         // decimal it is stored as — assert that here, while the builder is still open, so a
         // regression showing `1000`/`255` in the editor cannot hide behind the applied expression.
-        expect(valuePillText(condition)).toBe('0x3E8');
+        expect(builder.valuePillText(condition)).toBe('0x3E8');
 
         await builder.setValue(condition, '255');
         // Re-query: committing the edit re-renders the condition row, detaching the earlier element.
         const [editedCondition] = await builder.conditionItems();
-        expect(valuePillText(editedCondition)).toBe('0xFF');
+        expect(builder.valuePillText(editedCondition)).toBe('0xFF');
 
         await builder.apply();
         await asyncSetTimeout(0);
@@ -249,7 +334,7 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
 
         const builder = await AdvancedFilterBuilderHarness.open(api);
         const [condition] = await builder.conditionItems();
-        expect(valuePillText(condition)).toBe('0x3E8');
+        expect(builder.valuePillText(condition)).toBe('0x3E8');
 
         // Editing must start from the value shown on the pill (the formatter's output, which the
         // column's parser accepts), not the canonical decimal the model stores.
@@ -280,8 +365,20 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
 
         const builder = await AdvancedFilterBuilderHarness.open(api);
         const [condition] = await builder.conditionItems();
-        expect(valuePillText(condition)).toBe('0xff');
+        expect(builder.valuePillText(condition)).toBe('0xff');
         expect((await builder.openValueEditor(condition)).value).toBe('0xff');
+        await new FilterDom(api, 'builder keeps the typed operand syntax', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Value = 0xff
+              + add
+            buttons: Apply | Cancel
+            model:
+              filterType: "bigint"
+              colId: "value"
+              type: "equals"
+              filter: "255"
+        `);
 
         // Applying from the builder round-trips the operand through the expression text, so the
         // typed syntax must survive a re-open too - and must still filter on the parsed value.
@@ -290,7 +387,7 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
         await builder.close();
 
         const reopened = await AdvancedFilterBuilderHarness.open(api);
-        expect(valuePillText((await reopened.conditionItems())[0])).toBe('0xff');
+        expect(reopened.valuePillText((await reopened.conditionItems())[0])).toBe('0xff');
         expect(api.getAdvancedFilterModel()).toEqual({
             filterType: 'bigint',
             colId: 'value',
@@ -323,7 +420,19 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
 
         const builder = await AdvancedFilterBuilderHarness.open(api);
         const [condition] = await builder.conditionItems();
-        expect(valuePillText(condition)).toBe('1000');
+        expect(builder.valuePillText(condition)).toBe('1000');
         expect((await builder.openValueEditor(condition)).value).toBe('1000');
+        await new FilterDom(api, 'builder decimal operand with no formatter', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Value = 1000
+              + add
+            buttons: Apply | Cancel
+            model:
+              filterType: "bigint"
+              colId: "value"
+              type: "equals"
+              filter: "1000"
+        `);
     });
 });

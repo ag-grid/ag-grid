@@ -1,25 +1,19 @@
 import { waitFor } from '@testing-library/dom';
-
-import type { AdvancedFilterModel, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
 import {
     AdvancedFilterBuilderHarness,
+    FilterDom,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
 
-/**
- * Regression baseline for the Advanced Filter Builder keyboard surface: the item-navigation feature
- * (Enter to focus into a row's pills, Escape to return focus to the row, focus highlight) and the
- * keyboard-accessible reorder via the Move Up/Down buttons (shown by `showMoveButtons`). Reordering
- * AND siblings does not change the result, so the observable behaviour is the model's condition order
- * and the builder tree — both asserted, alongside a GridRows check that the filter still applies.
- */
+import type { AdvancedFilterModel, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
+
+/** Regression baseline for the Builder keyboard surface: item navigation and Move Up/Down reorder. */
 interface Row {
     athlete: string;
     age: number;
@@ -57,15 +51,6 @@ function focusWrapper(item: HTMLElement): HTMLElement {
         throw new Error('builder item has no virtual-list focus wrapper');
     }
     return wrapper;
-}
-
-/** Display text of a condition row's column pill. */
-function columnPill(item: HTMLElement): string {
-    return (
-        item
-            .querySelector('.ag-advanced-filter-builder-column-pill .ag-advanced-filter-builder-pill-display')
-            ?.textContent?.trim() ?? ''
-    );
 }
 
 const HIGHLIGHT = 'ag-advanced-filter-builder-virtual-list-item-highlight';
@@ -119,11 +104,50 @@ describe('Advanced Filter — builder keyboard navigation & reorder', () => {
 
         const builder = await AdvancedFilterBuilderHarness.open(api);
         const conditions = await builder.conditionItems();
-        expect(columnPill(conditions[0])).toBe('Athlete');
-        expect(columnPill(conditions[1])).toBe('Age');
+        await new FilterDom(api, 'builder before keyboard move down', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Athlete contains "B"
+              Age > 26
+              + add
+            buttons: Apply | Cancel
+            model:
+              filterType: "join"
+              type: "AND"
+              conditions:
+                - filterType: "text"
+                  colId: "athlete"
+                  type: "contains"
+                  filter: "B"
+                - filterType: "number"
+                  colId: "age"
+                  type: "greaterThan"
+                  filter: 26
+        `);
 
         // Move the first (Athlete) condition down via the keyboard, then commit.
         await builder.moveWithKeyboard(conditions[0], 'down');
+        await new FilterDom(api, 'builder after keyboard move down, before apply', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Age > 26
+              Athlete contains "B"
+              + add
+            buttons: Apply | Cancel
+            model:
+              filterType: "join"
+              type: "AND"
+              conditions:
+                - filterType: "text"
+                  colId: "athlete"
+                  type: "contains"
+                  filter: "B"
+                - filterType: "number"
+                  colId: "age"
+                  type: "greaterThan"
+                  filter: 26
+        `);
+
         await builder.apply();
 
         // Order flips in the persisted model; AND is commutative so the rows are unchanged.
@@ -151,9 +175,50 @@ describe('Advanced Filter — builder keyboard navigation & reorder', () => {
 
         const builder = await AdvancedFilterBuilderHarness.open(api);
         const conditions = await builder.conditionItems();
+        await new FilterDom(api, 'builder before click move up', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Athlete contains "B"
+              Age > 26
+              + add
+            buttons: Apply | Cancel
+            model:
+              filterType: "join"
+              type: "AND"
+              conditions:
+                - filterType: "text"
+                  colId: "athlete"
+                  type: "contains"
+                  filter: "B"
+                - filterType: "number"
+                  colId: "age"
+                  type: "greaterThan"
+                  filter: 26
+        `);
 
         // Move the second (Age) condition up above the first.
         await builder.move(conditions[1], 'up');
+        await new FilterDom(api, 'builder after click move up, before apply', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Age > 26
+              Athlete contains "B"
+              + add
+            buttons: Apply | Cancel
+            model:
+              filterType: "join"
+              type: "AND"
+              conditions:
+                - filterType: "text"
+                  colId: "athlete"
+                  type: "contains"
+                  filter: "B"
+                - filterType: "number"
+                  colId: "age"
+                  type: "greaterThan"
+                  filter: 26
+        `);
+
         await builder.apply();
 
         await waitFor(() =>

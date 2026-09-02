@@ -55,10 +55,12 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
     /** ColDef provided for this column. */
     colDef: ColDef<TData, TValue>;
 
-    /** The value before the change. */
+    /** The value before the change. May be `null` or `undefined` — for example when the group has no aggregated
+     *  value yet; the callback must handle this. */
     oldValue: TValue | null | undefined;
 
-    /** The value after the change. */
+    /** The value after the change. May be `null` or `undefined` if the edit clears the value; the callback must
+     *  handle this. */
     newValue: TValue | null | undefined;
 
     /** The group row node being edited. */

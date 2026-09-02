@@ -18,6 +18,7 @@ import {
     getFilterModelForIndex,
     getMultiFilterDefs,
     getUpdatedMultiFilterModel,
+    multiFilterChildrenChanged,
     updateGetValue,
 } from './multiFilterUtil';
 
@@ -61,31 +62,48 @@ export class MultiFilterHandler
         this.resetActiveList(params.model);
     }
 
-    public refresh(params: FilterHandlerParams<any, any, IMultiFilterModel> & IMultiFilterParams): void {
-        this.params = params;
-        const { model, source, filterParams } = params;
-        const filters = filterParams?.filters;
-
-        this.handlerWrappers.forEach((wrapper, index) => {
-            if (wrapper) {
-                const updatedParams = this.updateHandlerParams(params, index, false, filters?.[index].filterParams);
-                wrapper.handlerParams = updatedParams;
-                wrapper.handler.refresh?.({
-                    ...updatedParams,
-                    model: getFilterModelForIndex(model, index),
-                    source,
-                });
+    public refresh(params: FilterHandlerParams<any, any, IMultiFilterModel, IMultiFilterParams>): boolean {
+        const { model, source } = params;
+        const isColDef = source === 'colDef';
+        if (isColDef) {
+            const newDefs = getMultiFilterDefs(params.filterParams);
+            if (multiFilterChildrenChanged(this.filterDefs, newDefs)) {
+                return false;
             }
-        });
-        if (params.source !== 'floating' && params.source !== 'ui') {
-            this.resetActiveList(params.model);
+            this.filterDefs = newDefs;
+        }
+        const { filterDefs, handlerWrappers } = this;
+        this.params = params;
+
+        // a child cannot be rebuilt on its own, so one refusing the new params recreates the whole handler
+        let childRefused = false;
+        for (let i = 0, len = handlerWrappers.length; i < len; ++i) {
+            const wrapper = handlerWrappers[i];
+            if (!wrapper) {
+                continue;
+            }
+            const updatedParams = this.updateHandlerParams(params, i, false, filterDefs[i].filterParams);
+            wrapper.handlerParams = updatedParams;
+            const refreshed = wrapper.handler.refresh?.({
+                ...updatedParams,
+                model: getFilterModelForIndex(model, i),
+                source,
+            });
+            childRefused ||= refreshed === false;
+        }
+        if (childRefused && isColDef) {
+            return false;
+        }
+        if (source !== 'floating' && source !== 'ui') {
+            this.resetActiveList(model);
         }
         // Floating filter changes bypass MultiFilterUi (whose onModelChange triggers sibling
         // notification for the 'ui' source). Cross-column onAnyFilterChanged notification skips
         // the active column, so siblings within this Multi Filter would otherwise never refresh.
-        if (params.additionalEventAttributes?.fromButtons || params.source === 'floating') {
+        if (params.additionalEventAttributes?.fromButtons || source === 'floating') {
             this.onAnyFilterChanged();
         }
+        return true;
     }
 
     private updateHandlerParams(

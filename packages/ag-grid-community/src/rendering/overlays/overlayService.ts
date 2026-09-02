@@ -1,16 +1,21 @@
-import { AgPromise } from 'ag-stack';
+import { AgPromise, FAST_TEST_TIMINGS } from 'ag-stack';
 
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { GridOptionsService } from '../../gridOptionsService';
-import { _addGridCommonParams, _isClientSideRowModel } from '../../gridOptionsUtils';
+import { _addGridCommonParams, _isClientSideLoadingRows, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _attemptToRestoreCellFocus } from '../../utils/gridFocus';
 import type { ComponentSelector } from '../../widgets/component';
 import type { IOverlayComp, OverlayType } from './overlayComponent';
 import { OverlayWrapperComponent, OverlayWrapperSelector } from './overlayWrapperComponent';
+
+/** A floor on how long the export overlay stays up, so a fast export doesn't flash it. Shortened rather
+ *  than removed under the test flag: a test still has to be able to observe the overlay before it goes,
+ *  and one `waitFor` poll on a saturated worker pool is already 50ms. */
+const MIN_EXPORT_OVERLAY_SHOW_TIME = FAST_TEST_TIMINGS ? 150 : 300;
 
 const overlayCompTypeOptionalMethods = ['refresh'];
 const overlayCompType = (name: string): ComponentType => ({ name, optionalMethods: overlayCompTypeOptionalMethods });
@@ -48,7 +53,7 @@ const LoadingOverlayDef: OverlayDef = {
     paramsKey: 'loadingOverlayComponentParams',
     isSuppressed: (gos: GridOptionsService) => {
         const isLoading = gos.get('loading');
-        return isLoading === false || (gos.get('suppressLoadingOverlay') === true && isLoading !== true);
+        return isLoading === false || (gos.get('suppressLoadingOverlay') === true && !isLoading);
     },
 } as const;
 
@@ -228,7 +233,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     public showLoadingOverlay(): void {
         this.showInitialOverlay = false;
         const gos = this.gos;
-        if (!this.eWrapper || gos.get('activeOverlay') || this.devErrorOverlayActive) {
+        if (!this.eWrapper || gos.get('activeOverlay') || this.devErrorOverlayActive || _isClientSideLoadingRows(gos)) {
             return;
         }
         if (this.isDisabled(LoadingOverlayDef)) {
@@ -292,9 +297,8 @@ export class OverlayService extends BeanStub implements NamedBean {
         try {
             heavyOperation();
         } finally {
-            // We apply a minimum show time of 300ms to avoid fast exports having a flicker of the overlay
             const elapsed = Date.now() - shownAt;
-            const remaining = Math.max(0, 300 - elapsed);
+            const remaining = Math.max(0, MIN_EXPORT_OVERLAY_SHOW_TIME - elapsed);
 
             const clearExportOverlay = () => {
                 this.exportsInProgress--;
@@ -437,7 +441,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (loadingDefined) {
             this.disableInitialOverlay();
             if (loading) {
-                return LoadingOverlayDef;
+                return _isClientSideLoadingRows(gos) ? null : LoadingOverlayDef;
             }
         } else if (this.showInitialOverlay) {
             const noColumnDefs = !gos.get('columnDefs') && !gos.get('autoGenerateColumnDefs');

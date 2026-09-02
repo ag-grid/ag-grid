@@ -2,10 +2,10 @@
  * Split from column-mutations.test.ts — see sibling files for related coverage.
  * Tests instantiate the full grid via TestGridsManager and exercise public APIs.
  */
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, RowAutoHeightModule, RowSelectionModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 describe('Column Mutations', () => {
     const gridsManager = new TestGridsManager({

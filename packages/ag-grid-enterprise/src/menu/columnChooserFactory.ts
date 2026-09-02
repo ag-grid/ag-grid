@@ -31,6 +31,9 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         const columnChooserParams = params ?? column?.colDef.columnChooserParams ?? {};
 
         const {
+            columnLabelRenderer,
+            columnLabelRendererParams,
+            columnLabelRendererSelector,
             contractColumnSelection,
             suppressColumnExpandAll,
             suppressColumnFilter,
@@ -52,6 +55,9 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
                 suppressColumnFilter: !!suppressColumnFilter,
                 suppressColumnSelectAll: !!suppressColumnSelectAll,
                 suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
+                columnLabelRenderer,
+                columnLabelRendererParams,
+                columnLabelRendererSelector,
                 onStateUpdated: () => {},
             }),
             'columnMenu',
@@ -94,7 +100,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
                 centered: true,
                 closable: true,
                 afterGuiAttached: () => {
-                    _findNextFocusableElement(beans, columnSelectPanel.getGui())?.focus({
+                    _findNextFocusableElement({ beans, rootNode: columnSelectPanel.getGui() })?.focus({
                         preventScroll: true,
                     });
                     this.dispatchVisibleChangedEvent(true, column);

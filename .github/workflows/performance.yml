@@ -64,7 +64,7 @@ jobs:
       allowed: ${{ steps.check.outputs.allowed }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1 # shallow copy
           sparse-checkout:
@@ -90,7 +90,7 @@ jobs:
     steps:
       - name: Notify start
         id: notify-start
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         continue-on-error: true
         if: ${{ env.PR_ID }}
         with:
@@ -124,7 +124,7 @@ jobs:
           fi
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
           ref: ${{ steps.get-branch.outputs.branch }}
@@ -135,7 +135,7 @@ jobs:
           git fetch origin --depth 1 tag latest-success
 
       - name: Notify Progress
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         continue-on-error: true
         if: ${{ steps.notify-start.outputs.result }}
         with:
@@ -154,7 +154,7 @@ jobs:
           cache_mode: rw
 
       - name: Notify Progress
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         continue-on-error: true
         if: ${{ steps.notify-start.outputs.result }}
         with:
@@ -174,7 +174,7 @@ jobs:
           npx nx run-many -t build --projects=ag-grid-{enterprise,community}
 
       - name: Notify Progress
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         continue-on-error: true
         if: ${{ steps.notify-start.outputs.result }}
         with:
@@ -194,7 +194,7 @@ jobs:
           npx playwright install --with-deps
 
       - name: Notify Progress
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         continue-on-error: true
         if: ${{ steps.notify-start.outputs.result }}
         with:
@@ -222,7 +222,7 @@ jobs:
 
       - name: Test Reporter
         id: ctrf
-        uses: ctrf-io/github-test-reporter@bb6b54d6514e0952c3eea739be0c641143d1f06c # v1.0.17
+        uses: ctrf-io/github-test-reporter@e500b992f936420eb633c91644cf10d4d71df700 # v1.1.0
         with:
           report-path: ${{ env.PW_REPORT_PATH }}
           summary-report: true
@@ -251,7 +251,7 @@ jobs:
           SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
 
       - name: Final Notify Progress
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         continue-on-error: true
         if: ${{ steps.notify-start.outputs.result }}
         env:

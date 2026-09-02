@@ -1,13 +1,3 @@
-import type { GridApi, GridOptions, IFilterOptionDef } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    NumberFilterModule,
-    TextFilterModule,
-    getGridElement,
-    setupAgTestIds,
-} from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
 import {
     AdvancedFilterHarness,
     ColumnFilterHarness,
@@ -17,7 +7,17 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi, GridOptions, IFilterOptionDef } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextFilterModule,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 /**
  * Regression baseline for Advanced Filter validation and for the custom `filterParams.filterOptions`
@@ -326,7 +326,7 @@ describe('Custom filterOptions (0/1/2-input) reuse surface', () => {
             operator: "Is even"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "even"
@@ -356,7 +356,7 @@ describe('Custom filterOptions (0/1/2-input) reuse surface', () => {
             input: "10"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "multipleOf"
@@ -389,7 +389,7 @@ describe('Custom filterOptions (0/1/2-input) reuse surface', () => {
             input [1]: "30"
             AND
             operator: "Equals"
-            input: ""
+            input: "" ⟨Filter...⟩
             model:
               filterType: "number"
               type: "strictlyBetween"

@@ -1,4 +1,12 @@
 import { waitFor } from '@testing-library/dom';
+import {
+    GridColumns,
+    GridRows,
+    RowDragDispatcher,
+    TestGridsManager,
+    asyncSetTimeout,
+    getRowHtmlElement,
+} from 'ag-test-utils';
 
 import {
     ClientSideRowModelModule,
@@ -10,15 +18,6 @@ import {
 } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import {
-    GridColumns,
-    GridRows,
-    RowDragDispatcher,
-    TestGridsManager,
-    asyncSetTimeout,
-    getRowHtmlElement,
-} from '../../test-utils';
 
 const createGridManager = () =>
     new TestGridsManager({

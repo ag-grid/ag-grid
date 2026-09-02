@@ -135,6 +135,29 @@ export const AG_GRID_LOCALE_NO = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'er mellom',
+    advancedFilterYesterday: 'er i går',
+    advancedFilterToday: 'er i dag',
+    advancedFilterTomorrow: 'er i morgen',
+    advancedFilterLast7Days: 'er i de siste 7 dagene',
+    advancedFilterLastWeek: 'er i forrige uke',
+    advancedFilterThisWeek: 'er i denne uken',
+    advancedFilterNextWeek: 'er i neste uke',
+    advancedFilterLast30Days: 'er i de siste 30 dagene',
+    advancedFilterLastMonth: 'er i forrige måned',
+    advancedFilterThisMonth: 'er i denne måneden',
+    advancedFilterNextMonth: 'er i neste måned',
+    advancedFilterLast90Days: 'er i de siste 90 dagene',
+    advancedFilterLastQuarter: 'er i forrige kvartal',
+    advancedFilterThisQuarter: 'er i dette kvartalet',
+    advancedFilterNextQuarter: 'er i neste kvartal',
+    advancedFilterLastYear: 'er i forrige år',
+    advancedFilterThisYear: 'er i dette året',
+    advancedFilterYearToDate: 'er i året til dags dato',
+    advancedFilterNextYear: 'er i neste år',
+    advancedFilterLast6Months: 'er i de siste 6 månedene',
+    advancedFilterLast12Months: 'er i de siste 12 månedene',
+    advancedFilterLast24Months: 'er i de siste 24 månedene',
     advancedFilterTrue: 'er-sann',
     advancedFilterFalse: 'er-falsk',
     advancedFilterAnd: 'OG',
@@ -182,6 +205,8 @@ export const AG_GRID_LOCALE_NO = {
     // Editor Validation Errors
     minDateValidation: 'Dato må være etter ${variable}',
     maxDateValidation: 'Dato må være før ${variable}',
+    minDateInclusiveValidation: 'Dato må være ${variable} eller senere',
+    maxDateInclusiveValidation: 'Dato må være ${variable} eller tidligere',
     maxLengthValidation: 'Må være ${variable} tegn eller færre.',
     minValueValidation: 'Må være større enn eller lik ${variable}',
     maxValueValidation: 'Må være mindre enn eller lik ${variable}',
@@ -679,7 +704,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',
     ariaAdvancedFilterBuilderColumn: 'Kolonne',
     ariaAdvancedFilterBuilderOption: 'Alternativ',
-    ariaAdvancedFilterBuilderValueP: 'Verdi',
+    ariaAdvancedFilterBuilderValue: 'Verdi',
     ariaAdvancedFilterBuilderJoinOperator: 'Koblingsoperator',
     ariaAdvancedFilterInput: 'Inndata for avansert filter',
     ariaChecked: 'avmerket',
@@ -695,6 +720,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaFilterColumnsInput: 'Filtrer kolonner inndata',
     ariaFilterFromValue: 'Filtrer fra verdi',
     ariaFilterInput: 'Filterinndata',
+    ariaLabelInputClear: 'Tøm',
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til verdi',
     ariaFilterValue: 'Filterverdi',
@@ -761,6 +787,9 @@ export const AG_GRID_LOCALE_NO = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Celle redigerer validering',
+    ariaFullRowValidationError: 'Validering av hele raden: ${variable}',
+    ariaFullRowEditValidationFailed: 'Kan ikke fullføre radredigeringen. ${variable}',
+    ariaRowIndex: 'Rad ${variable}',
     ariaLabelLoadingContextMenu: 'Laster inn kontekstmeny',
 
     // aria labels for rich select
@@ -789,7 +818,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaHasNote: 'Denne cellen har et notat.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
     decimalSeparator: ',',
 
     // Data types

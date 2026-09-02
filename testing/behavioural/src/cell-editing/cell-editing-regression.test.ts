@@ -1,5 +1,17 @@
 import { fireEvent, getByTestId, waitFor, within } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    fakeElementAttribute,
+    getAllRows,
+    getRowHtmlElement,
+    waitForInput,
+    waitForPopup,
+} from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import {
@@ -19,18 +31,6 @@ import {
     RichSelectModule,
     RowDragModule,
 } from 'ag-grid-enterprise';
-
-import {
-    EditEventTracker,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    fakeElementAttribute,
-    getAllRows,
-    getRowHtmlElement,
-    waitForInput,
-    waitForPopup,
-} from '../test-utils';
 
 describe('Cell Editing Regression', () => {
     const gridMgr = new TestGridsManager({
@@ -213,6 +213,42 @@ describe('Cell Editing Regression', () => {
             ├── LEAF id:0 make:"Toyota" model:"Celica"
             └── LEAF id:1 make:"Ford" model:"Mondeo"
         `);
+    });
+
+    test('tabbing out of the only editable cell moves focus to the adjacent cell', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a' },
+                { field: 'b', editable: (params) => params.node.rowIndex === 1 },
+                { field: 'c' },
+            ],
+            rowData: [
+                { a: 'a0', b: 'b0', c: 'c0' },
+                { a: 'a1', b: 'b1', c: 'c1' },
+            ],
+            // without a focusable header, the backwards search has no target left once it
+            // exhausts the cells, which is the state where focus used to be dropped entirely
+            suppressHeaderFocus: true,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        const editableCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('1', 'b')));
+
+        await userEvent.dblClick(editableCell);
+        await waitForInput(gridDiv, editableCell);
+        await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
+
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+        expect(getByTestId(gridDiv, agTestIdFor.cell('1', 'a'))).toHaveFocus();
+        expect(api.getFocusedCell()?.column.getColId()).toBe('a');
+
+        await userEvent.dblClick(editableCell);
+        await waitForInput(gridDiv, editableCell);
+        await userEvent.keyboard('{Tab}');
+
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+        expect(getByTestId(gridDiv, agTestIdFor.cell('1', 'c'))).toHaveFocus();
+        expect(api.getFocusedCell()?.column.getColId()).toBe('c');
     });
 
     test('full-row editing closes empty editors when tabbing to next row', async () => {
@@ -944,7 +980,7 @@ describe('Cell Editing Regression', () => {
                     await user.click(cell);
                     const target = getByTestId(gridDiv, agTestIdFor.cell('1', 'field'));
 
-                    // Use the grid's built-in selection API, because jsdom's events click event doesn't trigger mouseDown correctly
+                    // Use the grid's built-in selection API, because a synthesised click event doesn't trigger mouseDown correctly
                     api.setFocusedCell(0, 'field');
                     await user.keyboard('{Control>}c{/Control}');
 
@@ -981,12 +1017,15 @@ describe('Cell Editing Regression', () => {
 
                     await user.click(source);
                     api.setFocusedCell(0, 'field');
-                    api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['field'] });
 
                     await userEvent.keyboard('1');
                     const input = await waitForInput(gridDiv, source);
                     await userEvent.type(input, '5');
                     await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+                    // Range last: the click selects the cell it lands on and `addCellRange` appends, and
+                    // the press `userEvent.type` sends into the editor collapses it back to that cell.
+                    api.clearCellSelection();
+                    api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['field'] });
                     await userEvent.keyboard('{Control>}{Enter}{/Control}');
                     // Wait on the fill target (row 1), not the edited source row: row 0 already
                     // reads back "15" from the live editor before Ctrl+Enter is pressed.
@@ -1628,7 +1667,9 @@ describe('Cell Editing Regression', () => {
         expect(countryCell).toHaveTextContent('United States');
 
         await userEvent.click(countryCell);
-        // Create a cell range for the clicked cell (simulating proper cell selection)
+        // Create a cell range for the clicked cell (simulating proper cell selection). Cleared first
+        // because the click already selects that cell and `addCellRange` appends rather than replaces.
+        api.clearCellSelection();
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['country'] });
 
         // Verify we are not in edit mode

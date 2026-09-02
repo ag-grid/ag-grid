@@ -6,7 +6,7 @@
  *   - `autoSizeStrategy` grid option: `fitGridWidth`, `fitProvidedWidth`, `fitCellContents`.
  *   - `scaleUpToFitGridWidth` filter: displayed-pinned + suppressAutoSize + row-number cols excluded.
  *
- * jsdom returns 0 px for the fixed-position autosize dummy container — `autoWidthCalc` falls
+ * happy-dom returns 0 px for the fixed-position autosize dummy container — `autoWidthCalc` falls
  * back to each column's `minWidth`. That makes content-derived sizing testable: with explicit
  * `minWidth`, post-autosize widths are predictable.
  *
@@ -17,11 +17,12 @@
  *     `dblclick` on header-cell handles, covered by header-rendering tests elsewhere.
  *   - `sizeColumnsToFitGridBody` retry timeouts (100 ms / 500 ms) — would need fake timers.
  */
+import { _getScrollbarWidth } from 'ag-stack';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, mockGridLayout } from 'ag-test-utils';
+
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnAutoSizeModule } from 'ag-grid-community';
 import { RowNumbersModule, RowSelectionModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Column Autosize', () => {
     const gridsManager = new TestGridsManager({
@@ -228,28 +229,28 @@ describe('Column Autosize', () => {
     });
 
     describe('sizeColumnsToFit — params form', () => {
-        test('object params delegate to grid-body fit (no throw in jsdom)', async () => {
+        test('object params delegate to grid-body fit (no throw without layout)', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }],
             });
-            await new GridColumns(api, `object params delegate to grid-body fit (no throw in jsdom) setup`)
+            await new GridColumns(api, `object params delegate to grid-body fit (no throw without layout) setup`)
                 .checkColumns(`
                     CENTER
                     ├── a width:200
                     └── b width:200
                 `);
-            await new GridRows(api, `object params delegate to grid-body fit (no throw in jsdom) setup`).check(`
+            await new GridRows(api, `object params delegate to grid-body fit (no throw without layout) setup`).check(`
                 ROOT id:ROOT_NODE_ID
             `);
 
             api.sizeColumnsToFit({});
             await new GridColumns(
                 api,
-                `object params delegate to grid-body fit (no throw in jsdom) after sizeColumnsToFit`
+                `object params delegate to grid-body fit (no throw without layout) after sizeColumnsToFit`
             ).checkColumns(`
                 CENTER
-                ├── a width:200
-                └── b width:200
+                ├── a width:500
+                └── b width:500
             `);
             expect(api.getAllGridColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
         });
@@ -273,20 +274,22 @@ describe('Column Autosize', () => {
                 defaultMaxWidth: 600,
                 columnLimits: [{ key: 'a', minWidth: 150, maxWidth: 350 }],
             });
+            // `a` stops at its own 350 cap and `b` at the 600 default, so the pair lands under the grid
+            // width: proof the limits were applied, which the pre-fit widths could not show.
             await new GridColumns(
                 api,
                 `params with columnLimits + defaults reach the body-fit pipeline after sizeColumnsToFit`
             ).checkColumns(`
                 CENTER
-                ├── a width:200
-                └── b width:200
+                ├── a width:350
+                └── b width:600
             `);
             expect(api.getAllGridColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
         });
     });
 
     describe('autoSizeColumns — keys form', () => {
-        test('keys form runs to completion; falls back to minWidth in jsdom', async () => {
+        test('keys form runs to completion; falls back to minWidth without layout', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { colId: 'a', width: 200, minWidth: 80 },
@@ -298,7 +301,7 @@ describe('Column Autosize', () => {
             api.autoSizeColumns(['a', 'b'], true);
             await asyncSetTimeout(0);
 
-            // jsdom measures content as 0 → content-fit lands at each col's `minWidth`.
+            // happy-dom measures content as 0 → content-fit lands at each col's `minWidth`.
             expect(api.getColumn('a')!.getActualWidth()).toBe(80);
             expect(api.getColumn('b')!.getActualWidth()).toBe(120);
             // `c` not in keys → unchanged.
@@ -378,7 +381,7 @@ describe('Column Autosize', () => {
             );
             await asyncSetTimeout(0);
 
-            // Only `a` was autosized → shrunk to minWidth in jsdom.
+            // Only `a` was autosized → shrunk to minWidth without layout.
             expect(api.getColumn('a')!.getActualWidth()).toBe(100);
             expect(api.getColumn('b')!.getActualWidth()).toBe(333);
         });
@@ -551,9 +554,9 @@ describe('Column Autosize', () => {
             );
             await asyncSetTimeout(0);
 
-            // `a`: jsdom measures 0 → clamped up to per-col minWidth 175.
+            // `a`: happy-dom measures 0 → clamped up to per-col minWidth 175.
             expect(api.getColumn('a')!.getActualWidth()).toBe(175);
-            // `b`: jsdom measures 0 → falls to col's own minWidth 50 (per-col maxWidth ignored
+            // `b`: happy-dom measures 0 → falls to col's own minWidth 50 (per-col maxWidth ignored
             // because measured width < both per-col max and col minWidth).
             expect(api.getColumn('b')!.getActualWidth()).toBe(50);
         });
@@ -592,7 +595,7 @@ describe('Column Autosize', () => {
             `);
             await asyncSetTimeout(0);
 
-            // jsdom content-fit = 0 → clamped up to default minWidth 175.
+            // happy-dom content-fit = 0 → clamped up to default minWidth 175.
             expect(api.getColumn('a')!.getActualWidth()).toBe(175);
             expect(api.getColumn('b')!.getActualWidth()).toBe(175);
         });
@@ -871,7 +874,7 @@ describe('Column Autosize', () => {
             await asyncSetTimeout(0);
 
             // left/right pinned + suppressAutoSize: width preserved (excluded by both passes).
-            // center1's exact width depends on the in-jsdom scale-up math (which short-circuits
+            // center1's exact width depends on the zero-layout scale-up math (which short-circuits
             // when grid width = 0); the assertion that matters here is the filter exclusion.
             expect(api.getColumn('left1')!.getActualWidth()).toBe(100);
             expect(api.getColumn('right1')!.getActualWidth()).toBe(100);
@@ -1066,7 +1069,7 @@ describe('Column Autosize', () => {
             await asyncSetTimeout(0);
             await asyncSetTimeout(0);
 
-            // jsdom content-fit lands at each col's minWidth (200 default if not overridden).
+            // happy-dom content-fit lands at each col's minWidth (200 default if not overridden).
             // The exact width is environment-dependent; what matters is that the strategy ran
             // and produced consistent widths.
             expect(api.getColumn('a')).not.toBeNull();
@@ -1154,5 +1157,46 @@ describe('Column Autosize', () => {
                 api.getColumn('c')!.getActualWidth();
             expect(total).toBe(900);
         });
+    });
+
+    // Fitting subtracts the scrollbar width, which the grid gets by measuring a probe div that
+    // `mockGridLayout` recognises. Unrecognised, the width never resolves and the grid-body fit above
+    // silently leaves every column at its start width, so the signature is asserted directly here.
+    describe('scrollbar probe', () => {
+        test('the probe the grid builds measures conclusively, so the width is cached not re-measured', () => {
+            // Through the internal helper because the outcome has no public surface: the grid's own probe, not
+            // a copy of it, and a signature this mock stops recognising reads 0/0, which the helper reports as
+            // "DOM not ready" by caching nothing and re-measuring on every call. 0 here is the overlay-scrollbar
+            // answer the mock gives every suite.
+            expect(_getScrollbarWidth()).toBe(0);
+        });
+
+        test('an unmarked div keeps its unmocked dimensions, so nothing else is widened', () => {
+            const div = document.createElement('div');
+            div.style.width = div.style.height = '100px';
+            div.style.opacity = '0';
+            div.style.overflow = 'scroll';
+            div.style.position = 'absolute';
+            document.body.appendChild(div);
+            try {
+                expect(div.offsetWidth).toBe(0);
+                expect(div.clientWidth).toBe(0);
+            } finally {
+                div.remove();
+            }
+        });
+    });
+
+    // Suites set these in `beforeAll` and restore in `afterAll`, which one throwing skips. Building a
+    // manager is the file's own first act and the only per-file step that would survive `isolate: false`,
+    // so the defaults are restored there rather than inherited from whatever ran before.
+    test('constructing a grid manager restores the layout defaults', () => {
+        mockGridLayout.gridWidth = 123;
+        mockGridLayout.useRealOffsetDimensions = true;
+
+        new TestGridsManager({});
+
+        expect(mockGridLayout.gridWidth).toBe(1000);
+        expect(mockGridLayout.useRealOffsetDimensions).toBe(false);
     });
 });

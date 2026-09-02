@@ -1,6 +1,7 @@
 ---
 import { createHash } from 'node:crypto';
 import { Font } from 'astro:assets';
+import { ClientRouter, fade } from 'astro:transitions';
 import { DevTools } from '@ag-website-shared/components/dev-tools/DevTools';
 import { getEntry, type CollectionEntry } from 'astro:content';
 import dsStylesUrl from '@design-system/design-system.scss?url';
@@ -40,6 +41,7 @@ interface Props {
     pageStructuredData?: JsonLdObject[];
     /** URL of a markdown (`.md`) alternate for this page, advertised to LLMs/crawlers. */
     markdownUrl?: string;
+    noMainTransition?: boolean;
 }
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
@@ -83,6 +85,7 @@ const {
     overrideSocialImage,
     pageStructuredData,
     markdownUrl,
+    noMainTransition = false,
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -104,25 +107,38 @@ const sameAsUrls = includeStructuredData
     : [];
 const organizationLogoUrl = `${siteRoot}images/ag-logos/png-logos/AG-Grid-Logo_Light-Theme_476_140.png`;
 const licensePricingUrl = `${siteRoot}license-pricing/`;
-// AG Grid's Wikidata item, appended to the footer-derived social profiles so Google can tie
-// the site, the Wikidata entry and the Knowledge Graph panel to the same entity.
-const organizationSameAs = [...sameAsUrls, 'https://www.wikidata.org/wiki/Q128283374'];
+// Authoritative entries for the company, appended to the footer-derived social profiles so
+// Google can tie the site, the Wikidata entry and the Knowledge Graph panel to the same entity.
+// Only pages identifying the company itself belong here — the npm package identifies the
+// software, so it goes on the SoftwareApplication node instead.
+const organizationSameAs = [
+    ...sameAsUrls,
+    'https://www.crunchbase.com/organization/ag-grid',
+    'https://www.wikidata.org/wiki/Q128283374',
+];
+const softwareApplicationSameAs = ['https://www.npmjs.com/package/ag-grid-community'];
 const organizationDescription =
-    'AG Grid is the maker of the industry-leading JavaScript Data Grid, offering high-performance, feature-rich data grid components for React, Angular, Vue and JavaScript, available as a free open-source Community edition and a commercial Enterprise edition.';
+    'AG Grid is a JavaScript data grid and charting library for building enterprise web applications, developed by AG Grid Ltd. Its product family is AG Grid, AG Charts and AG Studio.';
 const organizationFounder = {
     name: 'Niall Crosby',
     sameAs: ['https://www.wikidata.org/wiki/Q114758691'],
 };
-const organizationLegalName = 'AG Grid Ltd.';
+const organizationLegalName = 'AG Grid Ltd';
 // ISO 8601 (YYYY-MM-DD) for schema.org — the company was founded on 19 July 2010.
 const organizationFoundingDate = '2010-07-19';
 const organizationAddress = {
-    streetAddress: '70 Wilson St',
+    streetAddress: '70 Wilson Street',
     addressLocality: 'London',
     postalCode: 'EC2A 2DB',
     // ISO 3166-1 alpha-2 country code, the form Google expects for addressCountry.
     addressCountry: 'GB',
 };
+// Registry numbers as shown in the footer, verified against Companies House. Naming the
+// issuing register in propertyID is what lets a consumer resolve each value to its source.
+const organizationIdentifiers = [
+    { propertyID: 'Companies House', value: '07318192' },
+    { propertyID: 'VAT', value: 'GB998360167' },
+];
 const structuredData: JsonLdObject[] = includeStructuredData
     ? [
           buildOrganization({
@@ -134,14 +150,21 @@ const structuredData: JsonLdObject[] = includeStructuredData
               legalName: organizationLegalName,
               foundingDate: organizationFoundingDate,
               address: organizationAddress,
+              identifiers: organizationIdentifiers,
               founder: organizationFounder,
               // Line up with the enquiry-type options on the contact page. Sales enquiries go
               // through the contact form; technical support is handled via the Zendesk portal.
               contactPoints: [
-                  { contactType: 'sales', url: `${siteRoot}contact/`, availableLanguage: 'English' },
+                  {
+                      contactType: 'sales',
+                      url: `${siteRoot}contact/`,
+                      areaServed: 'Worldwide',
+                      availableLanguage: 'English',
+                  },
                   {
                       contactType: 'technical support',
                       url: 'https://ag-grid.zendesk.com/',
+                      areaServed: 'Worldwide',
                       availableLanguage: 'English',
                   },
               ],
@@ -155,17 +178,13 @@ const structuredData: JsonLdObject[] = includeStructuredData
               canonicalUrlBase: metadata.canonicalUrlBase,
               name: 'AG Grid',
               version: agGridVersion.split('-')[0],
+              sameAs: softwareApplicationSameAs,
               offers: [
                   {
                       '@type': 'Offer',
                       name: 'AG Grid Community',
                       price: '0',
                       priceCurrency: 'USD',
-                      url: licensePricingUrl,
-                  },
-                  {
-                      '@type': 'Offer',
-                      name: 'AG Grid Enterprise',
                       url: licensePricingUrl,
                   },
               ],
@@ -206,6 +225,7 @@ const announcementBannerProps = {
         {(!isProduction || isArchive || hidePageFromSearchEngines) && <meta name="robots" content="noindex" />}
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
+        <ClientRouter />
         {!isStaging && <link rel="canonical" href={canonicalUrl} />}
         {markdownUrl && <link rel="alternate" type="text/markdown" href={markdownUrl} />}
         {
@@ -310,9 +330,21 @@ const announcementBannerProps = {
 
         <div id="mainContainer" class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
-            <main class:list={styles.pageMain}>
-                <slot />
-            </main>
+            {
+                noMainTransition ? (
+                    <main class:list={styles.pageMain}>
+                        <slot />
+                    </main>
+                ) : (
+                    <main
+                        class:list={styles.pageMain}
+                        transition:name="main"
+                        transition:animate={fade({ duration: '0.07s' })}
+                    >
+                        <slot />
+                    </main>
+                )
+            }
         </div>
 
         {
@@ -335,12 +367,17 @@ const announcementBannerProps = {
                 />
             )
         }
-
         {
-            /* SE-44: strip heading semantics from the GTM-injected OneTrust cookie banner/modal
-        so it doesn't pollute the document heading outline. Externalised to a 'self' script
-        (like gtm-init.js) to stay off the CSP hash list. No-ops when OneTrust is absent. */
+            /* Keep the AG libraries' runtime-injected <style> elements alive across a client-side
+        navigation. Externalised to a 'self' script to stay off the CSP hash list; see
+        public/scripts/persist-injected-styles.js for the mechanism. */
         }
-        <script is:inline src={urlWithBaseUrl('/scripts/neutralise-onetrust-headings.js')} defer></script>
+        <script is:inline src={urlWithBaseUrl('/scripts/persist-injected-styles.js')}></script>
+        {
+            /* Keep the GTM-injected cookie-consent banner's DOM and stylesheets alive across a
+        client-side navigation, so #manage_cookies still opens the preferences modal on every
+        page; see public/scripts/persist-cookie-consent.js for the mechanism. */
+        }
+        <script is:inline src={urlWithBaseUrl('/scripts/persist-cookie-consent.js')}></script>
     </body>
 </html>

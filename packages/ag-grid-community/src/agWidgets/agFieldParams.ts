@@ -27,7 +27,7 @@ export interface AgInputFieldParams<TComponentSelectorType extends string> exten
     inputWidth?: number | 'flex';
     template?: AgElementParams<TComponentSelectorType>;
     inputPlaceholder?: string;
-    autoComplete?: boolean;
+    autoComplete?: boolean | string;
     tabIndex?: number;
 }
 

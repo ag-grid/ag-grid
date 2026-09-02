@@ -4,17 +4,19 @@ import { AgInputTextFieldSelector } from '../../../agWidgets/agInputTextField';
 import type { AgColumn } from '../../../entities/agColumn';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
+import type { Column } from '../../../interfaces/iColumn';
 import type { ElementParams } from '../../../utils/element';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';
-import { getDebounceMs } from '../providedFilterUtils';
+import type { OptionsFactory } from '../optionsFactory';
+import { _isUseApplyButton, getDebounceMs } from '../providedFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import type { DateFilter } from './dateFilter';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
-import type { DateFilterModel, DateFilterParams } from './iDateFilter';
+import type { DateFilterModel, DateFilterParams, IDateFilterParams } from './iDateFilter';
 
 const DateFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -33,13 +35,20 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
     private readonly eReadOnlyText: GridInputTextField = RefPlaceholder;
     private readonly eDateWrapper: HTMLInputElement = RefPlaceholder;
 
-    protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
     private dateComp: DateCompWrapper;
     protected readonly filterType = 'date';
     protected readonly defaultOptions = DEFAULT_DATE_FILTER_OPTIONS;
 
     constructor() {
         super(DateFloatingFilterElement, [AgInputTextFieldSelector]);
+    }
+
+    protected createModelFormatter(
+        optionsFactory: OptionsFactory,
+        filterParams: IDateFilterParams,
+        column: Column
+    ): DateFilterModelFormatter {
+        return new DateFilterModelFormatter(optionsFactory, filterParams, column);
     }
 
     protected override setParams(params: IFloatingFilterParams<DateFilter>): void {
@@ -113,8 +122,18 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
     private getDateComponentParams(): IDateParams {
         const { filterParams } = this.params;
         const debounceMs = getDebounceMs(this.beans.log, filterParams as DateFilterParams, this.defaultDebounceMs);
+        const debouncedDateChanged = _debounce(this, this.onDateChanged.bind(this), debounceMs);
+        let debounceTimeout: number | undefined;
         return _addGridCommonParams(this.gos, {
-            onDateChanged: _debounce(this, this.onDateChanged.bind(this), debounceMs),
+            onDateChanged: () => {
+                debounceTimeout = debouncedDateChanged();
+            },
+            onDateCleared: _isUseApplyButton(filterParams as DateFilterParams)
+                ? undefined
+                : () => {
+                      clearTimeout(debounceTimeout);
+                      this.onDateChanged();
+                  },
             filterParams,
             location: 'floatingFilter',
         });

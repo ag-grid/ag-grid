@@ -187,6 +187,7 @@ const footer = defineCollection({
                     name: z.string(),
                     url: z.string(),
                     newTab: z.boolean().optional(),
+                    showCookiesPrefs: z.boolean().optional(),
                     iconName: z.string().optional(),
                 })
             ),
@@ -529,6 +530,11 @@ const homepage = defineCollection({
             seeDemosUrl: z.string(),
             githubText: z.string(),
             githubUrl: z.string(),
+            freeTrialText: z.string(),
+            // A './' path, resolved against the visitor's selected framework at render.
+            freeTrialUrl: z.string(),
+            buyNowText: z.string(),
+            buyNowUrl: z.string(),
         }),
         sections: z.array(
             z.object({
@@ -544,6 +550,16 @@ const homepage = defineCollection({
                 // per-section behaviour); framework CTAs instead pass the raw './' path through.
                 ctaUrlIsBaseUrl: z.boolean().optional(),
                 ctaId: z.string().optional(),
+                // An extra CTA rendered after the section's main CTA. `isFramework` resolves its
+                // './' url against the visitor's selected framework.
+                secondaryCta: z
+                    .object({
+                        title: z.string(),
+                        url: z.string(),
+                        id: z.string().optional(),
+                        isFramework: z.boolean().optional(),
+                    })
+                    .optional(),
                 isFramework: z.boolean().optional(),
                 showBackgroundGradient: z.boolean().optional(),
                 sectionClass: z.string().optional(),

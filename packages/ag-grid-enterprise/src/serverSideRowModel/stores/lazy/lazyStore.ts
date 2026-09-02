@@ -302,6 +302,24 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     /**
+     * The position of this store's group total row, or `undefined` when no total row should be shown.
+     *
+     * A store whose rows have loaded and are empty shows no total row, so that setting `groupTotalRow`
+     * does not change the row set of a group which has no children (AG-17363). Emptiness is read off
+     * the cache rather than `getRowCount()`, which is total-row inclusive and so would be circular.
+     */
+    private getGroupTotalRowPosition(): 'top' | 'bottom' | undefined {
+        // the root store's total row is the grand total row, which is handled separately
+        if (this.parentRowNode.level === -1) {
+            return undefined;
+        }
+        if (this.cache.isLastRowIndexKnown() && this.cache.getRowCount() === 0) {
+            return undefined;
+        }
+        return _getGroupTotalRowCallback(this.gos)({ node: this.parentRowNode }) || undefined;
+    }
+
+    /**
      * Recursively sets up the display indexes and top position of every node belonging to this store.
      *
      * Called after a row height changes, or a store updated event.
@@ -313,8 +331,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.displayIndexStart = displayIndexSeq.value;
         this.topPx = nextRowTop.value;
 
-        const footerNode =
-            this.parentRowNode.level > -1 && _getGroupTotalRowCallback(this.gos)({ node: this.parentRowNode });
+        const footerNode = this.getGroupTotalRowPosition();
         if (!footerNode && this.parentRowNode.level > -1) {
             _destroyRowNodeFooter(this.parentRowNode);
         }
@@ -425,8 +442,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         sequence = { value: 0 },
         includeFooterNodes = false
     ): void {
-        const footerNode =
-            this.parentRowNode.level > -1 && _getGroupTotalRowCallback(this.gos)({ node: this.parentRowNode });
+        const footerNode = this.getGroupTotalRowPosition();
         if (footerNode === 'top') {
             callback(this.parentRowNode.sibling, sequence.value++);
         }
@@ -665,8 +681,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 // if last row index was known, add a row back for lazy loading.
                 const oldCount = this.cache.getRowCount();
                 const lastKnown = this.cache.isLastRowIndexKnown();
+                const lastInferred = this.cache.isLastRowIndexInferred();
                 this.destroyBean(this.cache);
-                this.cache = this.createManagedBean(new LazyCache(this, oldCount, lastKnown, this.storeParams));
+                this.cache = this.createManagedBean(
+                    new LazyCache(this, oldCount, lastKnown, this.storeParams, lastInferred)
+                );
                 return;
             }
 

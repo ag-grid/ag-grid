@@ -13,7 +13,12 @@
  */
 import { createHash } from 'node:crypto';
 
-import { DARK_MODE_INIT_SCRIPT, KBD_PLATFORM_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
+import {
+    DARK_MODE_INIT_SCRIPT,
+    KBD_PLATFORM_INIT_SCRIPT,
+    PLAUSIBLE_INIT_SCRIPT,
+    PLAUSIBLE_PAGE_LOAD_SCRIPT,
+} from '../csp/inlineScripts';
 
 export type CspEnv = 'dev' | 'staging' | 'production';
 export type CspMode = 'report-only' | 'enforce';
@@ -29,8 +34,12 @@ export type CspMode = 'report-only' | 'enforce';
  *   for the separately-managed SPA served under /ecommerce/, whose index.html carries
  *   inline scripts we do not own and part of which evaluates strings as JavaScript
  *   at runtime — see ECOMMERCE_PATH_CONDITION.
+ * - 'blog': the self-hosted Ghost blog reverse-proxied under /blog/. Allows
+ *   'unsafe-inline' in script-src (the theme ships inline onclick= handlers, which
+ *   CSP cannot authorise by hash at all) plus the embed and Mailchimp origins its
+ *   posts use — see BLOG_PATH_CONDITION.
  */
-export type CspScope = 'site' | 'examples' | 'campaigns' | 'ecommerce';
+export type CspScope = 'site' | 'examples' | 'campaigns' | 'ecommerce' | 'blog';
 
 export interface CspOptions {
     env: CspEnv;
@@ -56,10 +65,9 @@ const UNSAFE_INLINE = "'unsafe-inline'";
 // (see CodeShiki.tsx). Browsers that predate this token fall back to requiring
 // 'unsafe-eval' for WASM.
 const WASM_UNSAFE_EVAL = "'wasm-unsafe-eval'";
-// Allowed only in the 'examples' scope: the standalone example-runner documents
-// load modules with legacy SystemJS (fetches source over XHR and evals it), and
-// the Angular (JIT compiler) and Vue (runtime template compiler) examples also
-// compile code in the browser. Archived doc versions ship the same runner.
+// Allowed only in the 'examples' scope: the Angular (JIT compiler) and Vue (runtime
+// template compiler) examples compile code in the browser. Archived doc versions
+// additionally load modules with legacy SystemJS, which evals fetched source.
 // Ordinary site pages do not need it — the theme builder's CSS parser used to,
 // but now unescapes string literals without eval (see unescapeStringLiteral).
 const UNSAFE_EVAL = "'unsafe-eval'";
@@ -110,27 +118,129 @@ const ASTRO_HYDRATION_SCRIPT_HASHES = [
     "'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='", // <astro-island> hydration runtime
 ];
 
-// SHA-256 of the inline ZoomInfo (WebSights) bootstrap that the shared Google Tag
-// Manager container injects as a Custom HTML tag once the visitor accepts functional
-// cookie consent. Unlike the scripts above, this one is authored in GTM, not this
-// repo — so the value is taken from the browser's CSP violation report, NOT by
-// hashing the GTM source (GTM normalises the injected bytes, so the source does not
-// reproduce this digest).
+// Inline scripts injected by third parties — the shared Google Tag Manager container and the
+// Enzuzo cookie banner — rather than rendered by this repo, authorised by hash so the site
+// scope can stay free of 'unsafe-inline'.
 //
-// FRAGILE — this pins ZoomInfo's exact bytes. If the ZoomInfo tag in GTM is edited,
-// or ZoomInfo regenerates its loader snippet, the hash stops matching and ZoomInfo
-// silently fails to load for consenting users. The GTM tag carries a note pointing
-// back here; if it changes, replace this with the new console-reported hash (here and
-// in the ag-studio / ag-charts CSPs — the GTM container is shared). AG-17134.
+// FRAGILE by nature: each pins another party's exact bytes, so editing the tag or snippet
+// stops it running, silently. To re-derive a digest take it from the browser's CSP violation
+// report, or hash the tag's `vtp_html` string in the gtm.js payload — GTM minifies the body,
+// so hashing what is typed into the GTM UI will not reproduce it. The GTM container is shared,
+// so a changed digest must be updated in the ag-charts and ag-studio CSPs too.
+//
+// A GTM tag is hashable only while it interpolates NO GTM variable: macro values are
+// substituted into the body before injection, so one `{{…}}` reference makes the bytes vary
+// per request and no single hash can cover them. In the container payload a hashable tag's
+// `vtp_html` is a plain JSON string, whereas an interpolating one is a
+// ["template", …, ["macro",N], …] composition — the tell that its hash cannot be pinned.
+
+// ZoomInfo (WebSights) bootstrap, injected once the visitor accepts functional cookie consent.
+// The GTM tag carries a note pointing back here. AG-17134.
 const GTM_ZOOMINFO_HASH = "'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='";
+
+// Hands the visitor's consent choice from the Enzuzo banner to GTM. Recorded as a source
+// string rather than an opaque digest because it is short enough to read, and cspRules.test.ts
+// asserts the string still hashes to the browser-reported value so the two cannot drift. It is
+// a verbatim copy of Enzuzo's bytes, NOT a source of truth like the DARK_MODE_INIT_SCRIPT
+// constants this repo actually renders.
+const ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT = 'if (window.enzuzoGtmConsent) { window.enzuzoGtmConsent(); }';
+
+// UTM attribution: a page-view tag stashing first/last-touch UTMs in localStorage, and an
+// all-pages tag that installs one `submit` listener and POSTs them to MAKE_WEBHOOK_HOST. Both
+// read location.search via URLSearchParams and reach the form through the submit event's
+// target, which is what keeps them free of the interpolation that would unpin these digests.
+const GTM_UTM_CAPTURE_HASH = "'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='";
+const GTM_UTM_WEBHOOK_HASH = "'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='";
+
+// An updated version of the GTM UTM-webhook tag above: the submit listener adds a third
+// `true` argument to addEventListener, switching it to the capturing phase — otherwise
+// byte-identical to GTM_UTM_WEBHOOK_HASH. Kept alongside it until the rollout is complete
+// and the old hash is confirmed unused. AG-3390.
+const GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH = "'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='";
+
+// Inline script used by the contact form.
+const CONTACT_FORM_SCRIPT_HASH = "'sha256-D3cdipua6lhS2IQ0W0AlSNVVsS+2b/sXycSE8m8PkxY='";
 
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
     hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
+    hashInlineScript(PLAUSIBLE_PAGE_LOAD_SCRIPT),
     hashInlineScript(KBD_PLATFORM_INIT_SCRIPT),
     ...ASTRO_HYDRATION_SCRIPT_HASHES,
     GTM_ZOOMINFO_HASH,
+    hashInlineScript(ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT),
+    GTM_UTM_CAPTURE_HASH,
+    GTM_UTM_WEBHOOK_HASH,
+    GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH,
+    CONTACT_FORM_SCRIPT_HASH,
 ];
+
+// Enzuzo, the cookie-consent banner that replaces OneTrust. Like OneTrust before it,
+// the loader is a tag in the shared Google Tag Manager container rather than markup in
+// this repo, so nothing here references these origins directly — the CSP is the only
+// place the site declares them.
+//
+//  - app.enzuzo.com serves the banner bundle (/scripts/cookiebar/<uuid>) and is also the
+//    banner's apiHost: once loaded it XHRs its config, the cookie list and consent
+//    analytics from /api/public/... on the same origin.
+//  - gvl.enzuzo.com serves the IAB TCF Global Vendor List, fetched only when TCF mode is
+//    switched on in the Enzuzo console. Allowed up front so enabling TCF later is a
+//    console-only change; the TCF library itself comes from cdn.jsdelivr.net, already
+//    allowed above.
+//
+// No script-src hash is needed: GTM injects the banner as an external <script src>, not
+// an inline snippet (contrast GTM_ZOOMINFO_HASH). The banner's CSS is injected as inline
+// <style>, which style-src 'unsafe-inline' already covers, and its logo image falls under
+// the permissive img-src.
+//
+// NB the banner has three `new Function` paths — templated banner text, "display fields",
+// and string-valued integration onConsent handlers — which throw under a policy without
+// 'unsafe-eval'. The first two are caught internally and degrade to empty output; the
+// third throws uncaught. We are not granting 'unsafe-eval' site-wide for a consent
+// banner, so keep the Enzuzo console configuration free of template placeholders and
+// string-bodied event handlers.
+
+// Packages whose npm build a browser cannot resolve natively come through esm.sh: React and
+// React DOM ship CJS only, and rxjs' ESM build imports its own internals without file
+// extensions. Both are dependencies of the framework examples, so an Angular example needs this
+// host as much as a React one does. Everything else the example runner loads comes from jsdelivr
+// or our own origin.
+const ESM_SH_HOST = 'https://esm.sh';
+
+const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
+const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
+
+// The LinkedIn Insight Tag (LinkedIn Ads conversion tracking and website demographics).
+// Like ZoomInfo and Enzuzo, it is a tag in the shared Google Tag Manager container rather
+// than markup in this repo, so nothing here references these origins directly — the CSP is
+// the only place the site declares them.
+//
+//  - snap.licdn.com serves the tag. /li.lms-analytics/insight.min.js is only a router: it
+//    injects insight.beta.min.js or insight.old.min.js from the same origin depending on the
+//    data-partner id. Both are external <script src>, so no script-src hash is needed
+//    (contrast GTM_ZOOMINFO_HASH).
+//  - px.ads.linkedin.com is the only origin either payload contacts. Its /collect and
+//    /insight_tag_errors.gif endpoints are image pixels, which the permissive img-src already
+//    covers, but the website-actions gateway (SEND_EVENT '/wa/', sent via sendBeacon) and
+//    /attribution_trigger (fetch) are governed by connect-src.
+//
+// Deliberately NOT allowed, despite all appearing on LinkedIn's published required-domains
+// list: px4.ads.linkedin.com, dc.ads.linkedin.com, p.adsymptotic.com, the linkedin.oribi.io
+// hosts and the legacy sjs.bizographics.com loader. Parsing every string literal in both
+// payloads turns up none of them — the only 'oribi' strings are a DOM event name and a
+// storage key, not hosts. Pixel hosts reached by server-side redirect stay covered by
+// img-src; add a script-src/connect-src entry only if a violation actually shows up.
+const LINKEDIN_SDK_HOST = 'https://snap.licdn.com';
+const LINKEDIN_BEACON_HOST = 'https://px.ads.linkedin.com';
+
+// The Make (formerly Integromat) webhook that receives UTM attribution, POSTed with fetch()
+// on form submit by the GTM tag behind GTM_UTM_WEBHOOK_HASH. Nothing here references the
+// origin directly, so — as with Enzuzo and LinkedIn — the CSP is the only place the site
+// declares it. connect-src only: the tag itself is covered by that hash, not by an origin.
+//
+// Regional host — Make gives each account a zone-specific webhook domain (eu2 here), so
+// this changes if the automation is recreated in another zone.
+const MAKE_WEBHOOK_HOST = 'https://hook.eu2.make.com';
 
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
 // demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
@@ -169,6 +279,18 @@ export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^(?:/archive/[^/]+)
 // /ecommerce/. AG-17134.
 export const ECOMMERCE_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/ecommerce/#';
 
+// The self-hosted Ghost blog, reverse-proxied to 127.0.0.1:2368 under /blog/.
+//
+// UNLIKE every other *_PATH_CONDITION here, this one is NOT used inside an <If>.
+// <If> sections are merged during request mapping, which a proxied request skips,
+// so an <If> block never fires on a proxied response. It must be emitted as a
+// mod_headers `expr=` condition instead, which is evaluated in that module's own
+// output filter. For the same reason the block belongs in the VHOST, not the
+// generated docroot .htaccess — a proxied request never reads that either.
+//
+// No JS PATH_REGEXP counterpart: the dev/preview middleware never serves /blog/.
+export const BLOG_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/blog/#';
+
 // Apache <If> expression matching the staging-only /branch-builds/ tree: a directory
 // of full per-branch documentation builds, preserved across deployments (backed up
 // and restored by scripts/deployments/*) rather than produced by this build. Each is
@@ -196,6 +318,31 @@ export const CAMPAIGNS_PATH_REGEXP = /^(?:\/archive\/[^/]+)?\/campaigns\//;
 // cross-subdomain references to the production host need an explicit allowance.
 // Harmless on production where 'self' already covers www.ag-grid.com.
 const AG_GRID_HOSTS = 'https://*.ag-grid.com';
+
+// Origins the Ghost blog's post content needs beyond the site policy
+const BLOG_SCRIPT_HOSTS = [
+    'https://platform.twitter.com', // embedded tweets (widgets.js)
+    'https://widget.spreaker.com', // podcast embeds
+    'https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js',
+];
+
+const BLOG_STYLE_HOSTS = ['https://cdn-images.mailchimp.com']; // Mailchimp embed stylesheet
+
+const BLOG_FRAME_HOSTS = [
+    // The apex, listed explicitly: CSP host wildcards do not match a bare domain, so
+    // AG_GRID_HOSTS does not cover it, and 'self' is www. 35 post embeds target it.
+    'https://ag-grid.com',
+    'https://stackblitz.com',
+    'https://codesandbox.io',
+    'https://embed.plnkr.co',
+    'https://*.github.io',
+    'https://platform.twitter.com',
+    'https://open.spotify.com',
+    'https://player.simplecast.com',
+    'https://widget.spreaker.com',
+    'https://whimsical.com', // draft posts only today
+    'https://snappify.com', // draft posts only today
+];
 
 // The trial-licence form posts to a different Cloud Function per environment
 // (see PUBLIC_TRIAL_LICENCE_FORM_URL in the .env.build.* files).
@@ -256,14 +403,16 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.googletagmanager.com',
             'https://www.google-analytics.com', // Universal Analytics analytics.js (GTM-injected after cookie consent)
             'https://cdn.jsdelivr.net',
+            ESM_SH_HOST, // example-runner: React's and rxjs' ES module builds
             'https://cdnjs.cloudflare.com',
             'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
             'https://*.zoominfo.com', // ZoomInfo FormComplete
+            LINKEDIN_SDK_HOST, // LinkedIn Insight Tag SDK (injected via GTM)
             'https://www.google.com', // reCAPTCHA
             'https://www.gstatic.com', // reCAPTCHA
             'https://apis.google.com', // Firebase Auth (ecommerce checkout): GAPI client loads the auth iframe
             'https://www.youtube.com', // YouTube iframe JS API (loads into the page)
-            'https://cdn.cookielaw.org', // OneTrust cookie-consent SDK (GTM-injected, prod-only)
+            ENZUZO_APP_HOST, // Enzuzo cookie-consent banner (GTM-injected)
             'blob:', // ZoomInfo zi-tag.js bootstraps a blob: URL script
             WASM_UNSAFE_EVAL,
             // 'unsafe-inline' (examples/campaigns/dev) or SHA-256 hashes (site) added per scope below.
@@ -304,13 +453,16 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://stats.g.doubleclick.net',
             'https://flagcdn.com',
             'https://www.googletagmanager.com',
-            'https://cdn.jsdelivr.net', // example-runner SystemJS fetches modules as text (XHR)
+            'https://cdn.jsdelivr.net', // example-runner: framework and library ES modules
+            ESM_SH_HOST, // example-runner: React's and rxjs' ES module builds
             'https://cdnjs.cloudflare.com', // example-runner legacy deps (XHR)
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
+            LINKEDIN_BEACON_HOST, // LinkedIn Insight Tag: website-actions beacon and attribution-trigger fetch
             'https://www.google.com', // reCAPTCHA (api2/clr XHR)
-            'https://cdn.cookielaw.org', // OneTrust config/JSON/asset XHR (GTM-injected, prod-only)
-            'https://*.onetrust.com', // OneTrust geolocation + consent-receipt endpoints
+            ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
+            ENZUZO_GVL_HOST, // Enzuzo-hosted IAB TCF Global Vendor List
+            MAKE_WEBHOOK_HOST, // UTM-attribution POST on form submit (injected via GTM)
             'https://www.googleapis.com', // Firebase Auth (ecommerce checkout): identitytoolkit REST
             'https://securetoken.googleapis.com', // Firebase Auth ID-token refresh
             trialFormOrigin,
@@ -355,6 +507,18 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
         // routes never reach the server, so 'unsafe-eval' cannot be path-scoped narrower
         // than the whole /ecommerce/ scope. See ECOMMERCE_PATH_CONDITION.
         directives['script-src'].push(UNSAFE_INLINE, UNSAFE_EVAL);
+    } else if (scope === 'blog') {
+        // Ghost theme output carries three inline onclick= handlers (the mobile-menu
+        // toggle in site-header.hbs and the two share-window handlers in post.hbs),
+        // which CSP cannot authorise by hash at all, plus six Handlebars-rendered
+        // inline <script>s — and post bodies can add more through the editor. So
+        // 'unsafe-inline' rather than hashes, and NO SITE_SCRIPT_HASHES: a hash makes
+        // the browser ignore 'unsafe-inline'. This branch sits inside the chain so it
+        // inherits the else that skips them. No 'unsafe-eval' — nothing on the blog
+        // evaluates strings as JavaScript.
+        directives['script-src'].push(UNSAFE_INLINE, ...BLOG_SCRIPT_HOSTS);
+        directives['style-src'].push(...BLOG_STYLE_HOSTS);
+        directives['frame-src'].push(AG_GRID_HOSTS, ...BLOG_FRAME_HOSTS);
     } else if (env === 'dev') {
         // Dev server (Vite/Astro) injects its own inline scripts for HMR/hydration
         // that the static build does not; keep 'unsafe-inline' locally rather than
@@ -446,8 +610,8 @@ export function getExamplesCspIfOverride(options: Omit<CspOptions, 'scope'>, mod
         EXAMPLES_PATH_CONDITION,
         [
             "# Example-runner documents and archived doc versions additionally need 'unsafe-eval'",
-            '# (SystemJS eval-loads modules; the Angular JIT and Vue runtime template compilers',
-            '# also compile in the browser).',
+            '# (the Angular JIT and Vue runtime template compilers compile in the browser;',
+            '# archived versions additionally eval-load modules with SystemJS).',
         ],
         { ...options, scope: 'examples' },
         mode
@@ -511,6 +675,42 @@ export function getBranchBuildsCspIfOverride(mode: CspMode): string {
         `<If "${BRANCH_BUILDS_PATH_CONDITION}">`,
         `    Header always unset ${headerName}`,
         '</If>',
+    ].join('\n');
+}
+
+/**
+ * The vhost override applying the 'blog' policy to the reverse-proxied Ghost blog
+ * matched by BLOG_PATH_CONDITION.
+ *
+ * Deliberately NOT an `<If>` block, and deliberately not part of
+ * getScopedCspHtaccessBlock. Two things make the blog unlike every other scope here:
+ *
+ *  - A proxied request never reads the docroot `.htaccess`. `ProxyPass /blog/` maps the
+ *    request to the proxy handler instead of the filesystem, so anything emitted into the
+ *    generated `.htaccess` simply does not apply to /blog/*. These lines belong in the
+ *    vhost.
+ *  - `<If>` does not fire on a proxied response. `<If>` sections are merged during request
+ *    mapping, which proxying skips, so the header would never appear. The mod_headers
+ *    `expr=` third argument is evaluated in that module's own output filter instead, which
+ *    does run for proxied responses.
+ *
+ * `always` is required so non-2xx Ghost responses (404s in particular) are covered too.
+ *
+ * The `unset` is not tidiness. Requests reaching the Mirror box traverse two Apache
+ * instances, and `always` writes to err_headers_out while the upstream instance's copy sits
+ * in headers_out — Apache emits both tables, so `set` alone appends a second header rather
+ * than replacing the first. Browsers enforce the intersection of multiple CSP headers, so
+ * two copies that ever diverge would silently narrow the policy to their overlap.
+ */
+export function getBlogCspExprOverride(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
+    const headerName = getCspHeaderName(mode);
+    const condition = `"expr=${BLOG_PATH_CONDITION}"`;
+    // No comment lines in the emitted output — the rationale above is for whoever reads this
+    // function, not for the Apache config, and getBlogVhostHeaderFragment already heads the
+    // block it goes into.
+    return [
+        `Header always unset ${headerName} ${condition}`,
+        `${getCspHtaccessLine({ ...options, scope: 'blog' }, mode)} ${condition}`,
     ].join('\n');
 }
 

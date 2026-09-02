@@ -162,6 +162,22 @@ const gridOptions = {
 
 {% apiDocumentation source="grid-options/properties.json" section="columnSizing" names=["autoSizeStrategy", "animateColumnResizing"] /%}
 
+By default the **Autosize This Column** and **Autosize All Columns** actions in the [Column Menu](./column-menu/) size to cell contents without the strategy's options. Set `applyToUiActions` to have them reuse the strategy instead, including `scaleUpToFitGridWidth`, `skipHeader` and any column limits.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoSizeStrategy: {
+        type: 'fitCellContents',
+        scaleUpToFitGridWidth: true,
+        applyToUiActions: true
+    }
+}
+```
+
+In the example below, narrow the columns and then run **Autosize All Columns** from the column menu. The columns scale back up to fill the grid, as the strategy specifies.
+
+{% gridExampleRunner title="Auto-Size Actions Respecting the Strategy" name="auto-size-ui-actions" /%}
+
 This can also be performed on demand via the following API methods:
 
 {% apiDocumentation source="grid-api/api.json" section="columnSizing" names=["autoSizeColumns", "autoSizeAllColumns"] /%}
@@ -177,6 +193,52 @@ Just like Excel, each column can also be auto-resized by double clicking the rig
 - Column Virtualisation is the technique the grid uses to render large amounts of columns without degrading performance by only rendering columns that are visible due to the horizontal scroll positions. For example, the grid can have 1,000 columns with only 10 rendered if the horizontal scroll is only showing 10 columns. To get around this, you can turn off column virtualisation by setting grid property `suppressColumnVirtualisation=true`. The choice is yours to decide whether you want column virtualisation working OR auto-size working using off-screen columns.
 - Note that [Pinned Columns](./column-pinning), the [Selection Column](./row-selection-multi-row/#customising-the-checkbox-column) and the [Row Numbers](./row-numbers) column will not be scaled up to fill any empty space when using `scaleUpToFitGridWidth`.
 
+{% /note %}
+
+## Continuous Auto-Sizing
+
+By default `autoSizeStrategy` is applied once, when the grid first renders. Set `continuous` to have the grid re-apply the configured strategy whenever the grid changes in a way that affects column widths.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoSizeStrategy: {
+        type: 'fitCellContents',
+        continuous: true,
+        shouldAutoSizeColumns: (params) => {
+            // skip re-sizing while the user is scrolling through the data
+            return params.reason !== 'viewportChanged';
+        }
+    }
+}
+```
+
+Every strategy re-runs when the displayed columns change and when the grid is resized. Beyond that the two kinds of strategy react to different things:
+
+- `fitCellContents` re-runs on any change to the row data, and on viewport changes, because both change what there is to measure — scrolling is what brings new cell content into view.
+- The width-distribution strategies, `fitGridWidth` and `fitProvidedWidth`, are arithmetic over the current column set, so scrolling cannot change their result. They re-run on new data, a page change, and a scrollbar appearing or disappearing — the changes to the width there is to share out.
+
+Triggers arriving in the same frame are coalesced into a single re-size.
+
+Provide `shouldAutoSizeColumns` to take control of each re-size. It is called first, with the eligible `columns` and a `reason` of `'dataChanged'`, `'columnsChanged'`, `'viewportChanged'` or `'gridSizeChanged'`. Return `false` to skip that re-size, leaving the widths untouched. The callback has no effect unless `continuous` is `true`.
+
+### Column Width Ownership
+
+Continuous sizing never changes the width of a column the user has sized themselves. A column becomes theirs through a header drag resize, a keyboard resize or a double-click auto-size, and through `applyColumnState` with an explicit `width`. Their width is then treated as fixed, so the width-distribution strategies hold the column out of the distribution and share the remaining space between the rest.
+
+`width` and `initialWidth` in a column definition are both only starting widths: the grid may re-size either of them. To hold a column at a fixed width, set `suppressAutoSize` for `fitCellContents` or `suppressSizeToFit` for the width-distribution strategies — those are the explicit opt-outs, and unlike a starting width they say so.
+
+Also excluded are [flex](#column-flex) columns and the special [Selection](./row-selection-multi-row/#customising-the-checkbox-column) and [Row Numbers](./row-numbers/) columns.
+
+When `scaleUpToFitGridWidth` is also set, only the eligible columns are scaled, and the grid allows horizontal overflow — a scrollbar — when the fixed widths alone cannot fit.
+
+In the example below the "Athlete" column sets `suppressAutoSize`, so it is left alone, while the remaining columns re-size themselves each time the data changes. Press the button to load longer values and watch the eligible columns grow.
+
+{% gridExampleRunner title="Continuous Auto-Sizing" name="continuous-auto-size" /%}
+
+{% note %}
+For `fitCellContents`, only the cells that are currently rendered can be measured, so with row or column virtualisation the columns may be sized progressively as you scroll and more content is rendered.
+
+Continuous `fitCellContents` is not supported by the [Viewport Row Model](./viewport/). The grid logs a warning and ignores the option there.
 {% /note %}
 
 ## Resize via Keyboard

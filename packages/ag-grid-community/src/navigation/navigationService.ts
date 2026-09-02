@@ -440,17 +440,16 @@ export class NavigationService extends BeanStub implements NamedBean {
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === pageBounds.getFirstRow();
             if (firstRow) {
                 if (gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(beans)) {
-                    _focusNextGridCoreContainer(beans, true, true);
+                    _focusNextGridCoreContainer(beans, true, 'force');
                 } else {
                     keyboardEvent.preventDefault();
                     focusSvc.focusPreviousFromFirstCell(keyboardEvent);
                 }
             }
         } else {
-            // if the case it's a popup editor, the focus is on the editor and not the previous cell.
-            // in order for the tab navigation to work, we need to focus the browser back onto the
-            // previous cell.
-            if (previous instanceof CellCtrl) {
+            // anchor container navigation on the cell when focus is in an editor or renderer child.
+            // re-focusing the cell itself would unnecessarily re-dispatch cellFocused.
+            if (previous instanceof CellCtrl && !previous.hasBrowserFocus(true)) {
                 previous.focusCell({ forceBrowserFocus: true });
             }
 
@@ -495,9 +494,15 @@ export class NavigationService extends BeanStub implements NamedBean {
         let res: boolean | null | undefined;
         const cellCtrl = previous instanceof CellCtrl ? previous : previous.getAllCellCtrls()?.[0];
 
-        if (editSvc?.isEditing()) {
+        const wasEditing = editSvc?.isEditing();
+        if (wasEditing) {
             res = editSvc?.moveToNextCell(cellCtrl, backwards, event, source);
-        } else {
+        }
+
+        // if the cell was editing and res is false, it could be because validation blocked the edit
+        // if that is not the case and we are no longer editing, this means the `moveToNextCell` couldn't find
+        // another editable cell, so we switch to `moveToNextCellNotEditing` to find the next cell to focus on.
+        if (!wasEditing || (res === false && !editSvc?.isEditing())) {
             res = this.moveToNextCellNotEditing(previous, backwards);
         }
 

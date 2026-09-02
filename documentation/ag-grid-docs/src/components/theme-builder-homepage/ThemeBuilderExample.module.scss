@@ -110,7 +110,7 @@
 
 .codeBlockWrapper {
     position: relative;
-    background-color: #111a4a;
+    background-color: var(--color-code-background);
     border-radius: 8px;
     padding: 16px;
     font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
@@ -126,29 +126,40 @@
     }
 
     code {
-        --color-code-function: var(--color-brand-200);
-
-        background-color: #111a4a !important;
         border: none;
         font-weight: 600 !important;
-
-        .line-numbers-rows {
-            border-right: none !important;
-        }
-
-        #{$selector-darkmode} & {
-            background-color: color-mix(in srgb, var(--color-white), var(--color-bg-primary) 90%) !important;
-        }
     }
 
     #{$selector-darkmode} & {
         background-color: color-mix(in srgb, var(--color-white), var(--color-bg-primary) 90%);
     }
 
+    // The panel keeps its own dark identity in light mode. Shiki's 'ag-docs' theme emits token
+    // colours as 'var(--color-code-*)', so redefining them here re-themes this panel alone.
+    html:not(#{$selector-darkmode}) & {
+        --color-code-background: #111a4a;
+        --color-fg-primary: rgb(255 255 255 / 90%);
+        --color-code-comment: rgb(255 255 255 / 42%);
+        --color-code-tag: rgb(255 255 255 / 90%);
+        --color-code-keyword: #f472b6;
+        --color-code-class-name: #f472b6;
+        --color-code-string: #7dd3fc;
+        --color-code-symbol: #7dd3fc;
+        --color-code-selector: #7dd3fc;
+        --color-code-function: var(--color-brand-200);
+        --color-code-property: #a2a6ba;
+        --color-code-punctuation: #81869f;
+        --color-code-deleted: #81869f;
+        --color-code-line-number: rgb(255 255 255 / 90%);
+        --color-code-line-number-opacity: 1;
+    }
+
     pre {
         height: 100%;
         margin: 26px 0 16px 0;
         border: none;
+        // The wrapper paints the panel, including the room the window controls sit in.
+        background-color: transparent;
     }
 }
 
@@ -164,34 +175,7 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.3);
-}
-
-.codeBlock {
-    background: #111a4a;
-    border: none;
-    color: var(--color-white);
-    margin: 0;
-    white-space: pre-wrap;
-    #{$selector-darkmode} & {
-        background-color: color-mix(in srgb, var(--color-white), var(--color-bg-primary) 90%);
-    }
-
-    padding: 0;
-    padding-top: 10px;
-}
-
-.lineNumbers {
-    color: rgba(255, 255, 255, 0.6);
-    margin-right: 16px;
-    text-align: right;
-    user-select: none;
-    margin-top: 35px;
-    font-size: 15px;
-}
-
-.commentLine {
-    opacity: 0.5;
+    background-color: color-mix(in srgb, var(--color-fg-primary) 30%, transparent);
 }
 
 .themeOptions {

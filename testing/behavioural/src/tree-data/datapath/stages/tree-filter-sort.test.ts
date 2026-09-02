@@ -1,6 +1,3 @@
-import { CellStyleModule, ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
-import { TreeDataModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -8,7 +5,10 @@ import {
     applyTransactionChecked,
     cachedJSONObjects,
     setRowDataChecked,
-} from '../../../test-utils';
+} from 'ag-test-utils';
+
+import { CellStyleModule, ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 describe('ag-grid tree filter sort', () => {
     const gridsManager = new TestGridsManager({

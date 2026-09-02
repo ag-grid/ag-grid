@@ -1,6 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import { Content as PrivacyPolicies } from '@ag-website-shared/content/policies/privacy.mdoc';
+import { POLICY_CONTENT, policyHeading } from '../policyContent';
 import styles from '../policyPage.module.scss';
 
 interface Props {
@@ -8,40 +9,26 @@ interface Props {
 }
 
 const { name } = Astro.props;
+// Heading, effective date and intro copy are shared with the /privacy.md twin so the two
+// cannot drift; the numbered policy body below comes from the same .mdoc the twin renders.
+const content = POLICY_CONTENT.privacy;
 ---
 
 <Layout
-    title={`${name}: Privacy Policy`}
-    description="We take your privacy very seriously at AG Grid. This page outlines our privacy policy which we have updated in light of GDPR."
+    title={`${name}: ${content.metaTitle}`}
+    description={content.description}
     showSearchBar={true}
     showDocsNav={false}
 >
     <div class:list={styles.policyPage}>
         <div class="layout-max-width-small">
-            <h1>AG Grid Privacy Policy</h1>
+            <h1>{policyHeading('privacy', name)}</h1>
             <hr />
 
             <header>
                 <div id="introduction" class={styles.introduction}>
-                    <h4>Effective Date: 6 July 2022</h4>
-                    <p>Welcome to AG Grid's Privacy Policy.</p>
-                    <p>
-                        <strong>Your privacy is important to us.</strong>
-                    </p>
-                    <p>
-                        At ag-grid, we are fully committed to protecting your personal data and complying with all data
-                        privacy laws.{' '}
-                    </p>
-                    <p>
-                        This policy serves as a guide and reference point for how we may collect and use personal
-                        information, and the rights and choices available to all our visitors and customers.
-                    </p>
-                    <p>
-                        We strongly recommend you read our policy and understand what we collect, how we collect it,
-                        what we do with it, how we protect it, and your rights regarding information, <strong
-                            >before</strong
-                        > you use or access any of our services.
-                    </p>
+                    {content.meta.map((line) => <h4 set:html={line} />)}
+                    {content.intro.map((line) => <p set:html={line} />)}
                 </div>
 
                 <nav>

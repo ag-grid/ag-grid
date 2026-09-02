@@ -4,7 +4,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { CellApiModule, ClientSideRowModelModule, RowApiModule, ValidationModule } from 'ag-grid-community';
 import { CalculatedColumnsModule, ColumnMenuModule, FormulaModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, IS_JSDOM, benchDefaults } from './bench-utils';
+import { BenchGridsManager, IS_HAPPY_DOM, benchDefaults } from './bench-utils';
 
 // Measures the live-preview keystroke flush WORK (rebuildCols + CSRM refreshModel + formula cache
 // wipe + viewport re-evaluation). requestAnimationFrame is overridden to fire synchronously so the
@@ -21,9 +21,9 @@ const modules = [
     ValidationModule,
 ];
 
-// Only jsdom needs this: it has no layout, so the dialog's centering reads a null offsetParent.
+// Only happy-dom needs this: it has no layout, so the dialog's centering reads a null offsetParent.
 // A real browser (`--browser`) has native offsetParent — overriding it there would corrupt layout.
-if (IS_JSDOM) {
+if (IS_HAPPY_DOM) {
     Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
         configurable: true,
         get(this: HTMLElement) {

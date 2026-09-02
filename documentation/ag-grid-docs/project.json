@@ -19,7 +19,7 @@
         "!{projectRoot}/vitest.config.ts",
         "{workspaceRoot}/external/ag-website-shared/**",
         "charts",
-        "{projectRoot}/.astro/cache/sitemap/**",
+        "{projectRoot}/.astro/cache/sitemap/sitemap-0.xml",
         { "env": "PUBLIC_PACKAGE_VERSION" }
       ],
       "cache": true,
@@ -64,18 +64,6 @@
       }
     },
     "dev": {
-      "dependsOn": [
-        "^build:types",
-        "^build:package",
-        "^build:copy-styles",
-        "generate-doc-references",
-        "generate-examples",
-        "^docs-resolved-interfaces",
-        "ag-grid-react:build",
-        "ag-grid-angular:build",
-        "ag-grid-vue3:build",
-        "build:copy-styles"
-      ],
       "command": "astro dev --port=${PORT} --host",
       "options": {
         "cwd": "{projectRoot}"
@@ -109,6 +97,12 @@
       "command": "tsx scripts/csp/preview-csp.ts --port=${PORT}",
       "options": {
         "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": { "args": "--env staging" },
+        "production": { "args": "--env production" },
+        "report-only": { "args": "--mode report-only" },
+        "staging-report-only": { "args": "--env staging --mode report-only" }
       }
     },
     "lint": {
@@ -194,18 +188,16 @@
     "test:interactive:setup:chromium": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npx playwright install --with-deps chromium"],
-        "parallel": false,
-        "cwd": "documentation/ag-grid-docs"
+        "commands": ["{workspaceRoot}/scripts/ci/install-playwright.sh full chromium"],
+        "parallel": false
       },
       "cache": true
     },
     "test:interactive:setup:all": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npx playwright install --with-deps chromium firefox webkit"],
-        "parallel": false,
-        "cwd": "documentation/ag-grid-docs"
+        "commands": ["{workspaceRoot}/scripts/ci/install-playwright.sh full chromium firefox webkit"],
+        "parallel": false
       },
       "cache": true
     },
@@ -232,16 +224,36 @@
       }
     },
     "generate-examples": {
-      "executor": "nx:noop",
-      "dependsOn": ["^generate-example"],
-      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
-      "outputs": [],
+      "executor": "ag-grid-generate-example-files:generate-all",
+      "dependsOn": [
+        { "projects": "ag-grid-generate-example-files", "target": "build" },
+        { "projects": "ag-grid-generate-example-files", "target": "copySrcFilesForGeneration" },
+        { "projects": "ag-grid-generate-example-files", "target": "build-grid-options-types" }
+      ],
+      "inputs": [
+        "{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*",
+        "!{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*.spec.*",
+        "!{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*.test.*",
+        "{workspaceRoot}/plugins/ag-grid-generate-example-files/{dist,src}/**/*",
+        { "dependentTasksOutputFiles": "**/gridOptionsTypes.json", "transitive": false },
+        "{workspaceRoot}/documentation/ag-grid-docs/public/example-runner/**",
+        { "env": "AG_AI_API_URL" },
+        { "env": "AG_AI_API_DEV_TOKEN" },
+        { "env": "AG_EXAMPLE_FORMAT" },
+        { "env": "DISABLE_EXAMPLE_GEN_COLLAPSE" },
+        { "externalDependencies": ["npm:typescript"] }
+      ],
+      "outputs": ["{workspaceRoot}/dist/generated-examples/ag-grid-docs"],
       "cache": true,
-      "batch": true,
+      "options": {
+        "mode": "dev",
+        "parentProject": "ag-grid-docs",
+        "outputBasePath": "dist/generated-examples"
+      },
       "configurations": {
-        "staging": {},
-        "archive": {},
-        "production": {}
+        "staging": { "mode": "prod" },
+        "archive": { "mode": "prod" },
+        "production": { "mode": "prod" }
       }
     },
     "generate-doc-references": {

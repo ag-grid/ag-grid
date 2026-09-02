@@ -235,6 +235,10 @@
     }
 }
 
+.titleTail {
+    white-space: nowrap;
+}
+
 .itemIcon:global(.icon),
 .externalIcon:global(.icon) {
     fill: var(--color-fg-secondary);

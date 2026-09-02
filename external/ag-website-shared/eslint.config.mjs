@@ -3,6 +3,8 @@ import pluginJs from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+import { noRawHistoryWrites } from './eslint.history-rules.mjs';
+
 export default [
     { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
     pluginJs.configs.recommended,
@@ -43,6 +45,13 @@ export default [
         ],
         rules: {
             'no-undef': 'off',
+        },
+    },
+    {
+        // The helper itself is the one place a raw write belongs.
+        ignores: ['src/utils/historyUrl.ts'],
+        rules: {
+            'no-restricted-syntax': ['error', ...noRawHistoryWrites],
         },
     },
 ];

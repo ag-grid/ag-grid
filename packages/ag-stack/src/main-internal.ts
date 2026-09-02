@@ -14,7 +14,8 @@ export type { BaseCssChangeKeys, CssVariable } from './core/baseEnvironment';
 export { BaseRegistry } from './core/baseRegistry';
 export { BaseEventService } from './events/baseEventService';
 export { LocalEventService } from './events/localEventService';
-export { AgManagedFocusFeature, FOCUS_MANAGED_CLASS } from './focus/agManagedFocusFeature';
+export { FAST_TEST_TIMINGS } from './fastTestTimings';
+export { AgManagedFocusFeature } from './focus/agManagedFocusFeature';
 export type { ManagedFocusCallbacks, StopPropagationCallbacks } from './focus/agManagedFocusFeature';
 export { AgTabGuardComp } from './focus/agTabGuardComp';
 export { AgTabGuardFeature } from './focus/agTabGuardFeature';
@@ -236,17 +237,28 @@ export {
 } from './utils/event';
 export type { TempEventHandler } from './utils/event';
 export {
+    FOCUS_MANAGED_CLASS,
     _findFocusableElements,
     _findNextFocusableElement,
     _findTabbableParent,
     _focusInto,
+    _focusIntoTabbableFirst,
     _isKeyboardMode,
     _registerKeyboardFocusEvents,
     _scrollHorizontallyToShow,
 } from './utils/focus';
 export { _batchCall, _debounce, _doOnce, _throttle, _waitUntil } from './utils/function';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
-export { _defaultComparator, _exists, _jsonEquals, _makeNull, _missing, _toStringOrNull } from './utils/generic';
+export {
+    _defaultComparator,
+    _exists,
+    _getOwn,
+    _hasOwn,
+    _jsonEquals,
+    _makeNull,
+    _missing,
+    _toStringOrNull,
+} from './utils/generic';
 export { _isEventFromPrintableCharacter } from './utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './utils/locale';
 export { _isPromise } from './utils/promise';

@@ -1,35 +1,39 @@
 ---
 import DemosLayout from '@components/demos/DemosLayout.astro';
 import DemoTabs from '@components/demos/DemosTabs.astro';
+import { VIDEO_TOUR_TEXT, VIDEO_TOUR_URL } from '@components/demos/demosData';
 import styles from '@pages-styles/example.module.scss';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { HR } from '@components/demos/examples/hr';
 import LogoMark from '@components/logo/LogoMark';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { demoContent } from '@utils/markdown-pages/buildDemoMarkdown';
+
+// Copy is shared with the /example-hr.md twin so the two cannot drift.
+const content = demoContent('hr');
 ---
 
-<DemosLayout title="Demo - HR Management" description="HR data example showing hierarchical employee data.">
+<DemosLayout title={content.metaTitle} description={content.metaDescription}>
     <div class={styles.topHeader}>
         <div>
             <div class={styles.headerTitle}>
-                <h1 class={styles.headerHeading}>HR</h1>
-                <a
-                    class="button-secondary"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://github.com/ag-grid/ag-grid-demos/tree/main/hr"
-                >
+                <h1 class={styles.headerHeading}>{content.heading}</h1>
+                <a class="button-secondary" target="_blank" rel="noopener noreferrer" href={content.githubUrl}>
                     <Icon name="github" svgClasses={styles.githubIcon} />
                     <span>See On GitHub</span>
+                </a>
+                <a class="button-secondary" href={VIDEO_TOUR_URL} target="_blank" rel="noopener noreferrer">
+                    <Icon alt={`Youtube logo`} name="youtube" svgClasses={styles.youtubeIcon} />
+                    <span>{VIDEO_TOUR_TEXT}</span>
                 </a>
                 <a class="button-secondary" href={urlWithBaseUrl('/contact/')}>
                     <span>Contact Us</span>
                 </a>
             </div>
-            <p>Example showing HR hierarchical employee data.</p>
+            <p>{content.bodyText}</p>
         </div>
 
-        <DemoTabs activeTab="crm" />
+        <DemoTabs activeTab={content.activeTab} />
     </div>
 
     <div class={styles.layout}>

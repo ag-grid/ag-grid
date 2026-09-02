@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Toolbar separator item', () => {
     const gridMgr = new TestGridsManager({

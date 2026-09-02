@@ -14,7 +14,9 @@ name: GitHub issue AI triage
 #   ag-dev-prompts → docs/github-triage-pipeline.md
 #
 # Triggers:
-#   issues (opened|labeled)            → triage    (the GitHub-native entry point)
+#   issues (opened|labeled)            → the `redispatch` job ONLY, which re-fires this
+#       workflow as a workflow_dispatch so the triage run carries a bot actor. The agent
+#       is never run on the `issues` event itself — see the `redispatch` job.
 #   repository_dispatch gh-triage-resume → preflight routes execute | resume
 #       (from the single AITGH `→ In Progress` JIRA automation rule:
 #        POST /repos/ag-grid/ag-grid/dispatches
@@ -39,17 +41,41 @@ name: GitHub issue AI triage
 #        rules.md, letting repro-rebuild run without ever needing browser-verify.
 #        POST /repos/ag-grid/ag-grid/dispatches
 #        {"event_type":"gh-triage-manual-repro-rebuild","client_payload":{"issue_key":"AITGH-XXX"}})
+#   repository_dispatch gh-triage-manual-triage → ALWAYS stage=triage — a fourth AITGH
+#       button, "Force Full Retriage". DESTRUCTIVE, unlike the three above: `triage`
+#       never rehydrates prior state (pre(triage) never calls pullState), so it
+#       overwrites ai_summary/ai_analysis/ai_suggested_action/ai_bug_draft from a
+#       clean re-read of the GitHub issue, discarding every human comment's
+#       influence, any browser-verify evidence, and any repro-rebuild TC1 swap
+#       already on the ticket. Reach for it only when the analysis is WRONG, not
+#       merely stale — "Resume Analysis" (gh-triage-manual-resume above) is the
+#       routine tool. Needs only `issue_key` in the payload: `pre(triage)` resolves
+#       the GH issue number from the mapping ticket's own `gh_issue_number` field
+#       whenever an issue key is passed (see ag-dev-prompts github-triage-pipeline
+#       action's CLAUDE.md § "A drag on a ticket whose triage left NOTHING routes
+#       triage, not resume"), so this needed zero action-side code changes.
+#       POST /repos/ag-grid/ag-grid/dispatches
+#       {"event_type":"gh-triage-manual-triage","client_payload":{"issue_key":"AITGH-XXX"}})
 #   workflow_dispatch                  → force a stage (dry-run / debugging)
 # ============================================================================
 
 on:
-    # Auto-triage of new triage-labelled issues — DISABLED for the initial manual
-    # dogfood (run via workflow_dispatch first). Uncomment to go live once the
-    # dispatch + drag paths are validated.
-    # issues:
-    #     types: [opened, labeled]
+    # Auto-triage of new `triage`-labelled issues — LIVE (this is the go-live switch;
+    # it was commented out for the manual dogfood phase).
+    #
+    # `labeled` is needed as well as `opened` because the `triage` label is
+    # very often added a moment after the issue is filed, not at creation.
+    #
+    # ⚠️ The `labeled` half fires on ANY label being added, so the `run` job's gate
+    # additionally requires the ADDED label to be `triage` specifically. Without
+    # that, stamping any other label (`AG-NNNNN`, `waiting-for-repro`, `invalid`)
+    # on one of the ~64 pre-existing open `triage` issues would fire a full triage
+    # on it — bypassing the batch-selection rule, and re-triaging an issue that may
+    # already carry a reviewed verdict (which the pipeline would overwrite).
+    issues:
+        types: [opened, labeled]
     repository_dispatch:
-        types: [gh-triage-resume, gh-triage-manual-resume, gh-triage-manual-browser-verify, gh-triage-manual-repro-rebuild]
+        types: [gh-triage-resume, gh-triage-manual-resume, gh-triage-manual-browser-verify, gh-triage-manual-repro-rebuild, gh-triage-manual-triage]
     workflow_dispatch:
         inputs:
             stage:
@@ -83,20 +109,149 @@ concurrency:
     cancel-in-progress: false
 
 env:
-    # Defaults to `latest`. A repository_dispatch (the JIRA `→ In Progress` drag)
-    # overrides via client_payload.channel; a workflow_dispatch via inputs.channel.
-    # During rollout/dogfood the JIRA rule sends "channel":"canary" so the drag runs
-    # the unpromoted action (canary dist-tag → `latest` only on promotion); drop the
-    # payload channel at activation so production drags run the promoted `latest`.
+    # Defaults to `latest`; a workflow_dispatch overrides via inputs.channel.
+    #
+    # For a repository_dispatch (the JIRA drag + the manual buttons) treat this as a
+    # FALLBACK only — the effective value comes from the `resolve-channel` job below,
+    # which reads the mapping ticket's own `channel-canary` pin so a ticket triaged on
+    # canary keeps resuming/executing on canary while production traffic runs latest.
+    # A workflow-level `env:` cannot reference a job output, which is why the jobs
+    # below read `needs.resolve-channel.outputs.channel` and fall back to this.
     DEV_PROMPTS_CHANNEL: ${{ github.event.client_payload.channel || inputs.channel || 'latest' }}
 
 jobs:
+    # -------------------------------------------------- redispatch
+    # The `issues` event does not run the triage itself: it re-fires this workflow as a
+    # `workflow_dispatch`, and that run carries a bot actor which the shared action
+    # allow-lists. Running the agent directly on the `issues` event does not work —
+    # do not collapse this back into a single run.
+    #
+    # Rationale and the required rollout order live in the private ag-dev-prompts repo,
+    # docs/github-triage-pipeline.md § "Why the auto-trigger self-dispatches".
+    # Mirrors the arrangement release-review.yml already uses.
+    #
+    # Deliberately not `|| true`: a failed dispatch means the issue is never triaged, so
+    # this job must go red rather than swallow it.
+    redispatch:
+        if: |
+            github.event_name == 'issues' &&
+            contains(github.event.issue.labels.*.name, 'triage') &&
+            github.event.issue.state == 'open' &&
+            (github.event.action == 'opened' || github.event.label.name == 'triage')
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            # Needed for `gh workflow run`. The job has no checkout and no agent, and the
+            # only issue-derived value it uses is the issue number.
+            actions: write
+        steps:
+            - name: Re-fire as workflow_dispatch (bot actor)
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GH_ISSUE: ${{ github.event.issue.number }}
+              run: |
+                  set -euo pipefail
+                  echo "issue #${GH_ISSUE} is triage-eligible — re-firing as workflow_dispatch so the run carries a bot actor"
+                  gh workflow run github-triage-pipeline.yml \
+                      --repo "${{ github.repository }}" \
+                      -f stage=triage \
+                      -f gh_issue="${GH_ISSUE}" \
+                      -f channel=latest
+
+    # -------------------------------------------------- resolve-channel
+    # Which @ag-grid/dev-prompts dist-tag should this dispatch run?
+    #
+    # The drag's payload comes from ONE Jira Automation rule, so it cannot carry a
+    # per-ticket channel — which meant production and canary dry-run traffic could
+    # not coexist on the board. Instead the pipeline stamps the channel it ran from
+    # onto the mapping ticket as a `channel-canary` label, and this job reads it back.
+    # Present ⇒ canary, absent ⇒ latest. See the github-triage-pipeline action's
+    # `core/channel-label.ts`.
+    #
+    # The guarantee is release-channel continuity, NOT build immutability: dist-tags
+    # move (canary on every publish, latest nightly), so a later drag runs newer code
+    # from the SAME channel. That is deliberate — a version pin would freeze a ticket
+    # triaged before a fix onto the broken code.
+    #
+    # Deliberately a raw REST GET rather than the pipeline bundle: this has to decide
+    # WHICH channel to install, so it cannot itself depend on an installed package.
+    # `labels` is a system field, so no field-id resolution is needed.
+    #
+    # MIGRATION: while the Jira rule still sends "channel":"canary" that payload wins,
+    # so behaviour is unchanged and the pin is inert. Removing the `channel` field from
+    # the rule body is the switch that hands control to the pin.
+    resolve-channel:
+        if: github.event_name == 'repository_dispatch' && github.event.client_payload.issue_key != ''
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions: {}
+        outputs:
+            channel: ${{ steps.r.outputs.channel }}
+        steps:
+            - id: r
+              shell: bash
+              env:
+                  # Via env, never string-interpolated into the script body.
+                  ISSUE_KEY: ${{ github.event.client_payload.issue_key }}
+                  PAYLOAD_CHANNEL: ${{ github.event.client_payload.channel }}
+                  JIRA_EMAIL: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  JIRA_API_TOKEN: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  JIRA_SITE_URL: ${{ vars.JIRA_SITE_URL }}
+              run: |
+                  set -uo pipefail
+
+                  emit() { echo "channel=$1" >> "$GITHUB_OUTPUT"; echo "resolved channel: $1 ($2)"; }
+
+                  # An explicit payload channel is an intentional override and wins.
+                  if [ -n "${PAYLOAD_CHANNEL:-}" ]; then
+                      emit "$PAYLOAD_CHANNEL" "explicit client_payload.channel"
+                      exit 0
+                  fi
+
+                  # A scoped Jira API token is rejected on the classic <site>.atlassian.net
+                  # host and only authenticates via the api.atlassian.com/ex/jira/{cloudId}
+                  # gateway (see the github-triage-pipeline action's executors/jira.ts) — so
+                  # resolve the cloudId first via the unauthenticated tenant_info lookup,
+                  # matching the pipeline's own resolveCloudId(). Hitting the site host
+                  # directly 404s here even with valid credentials.
+                  if ! cloud_id=$(curl -sS --fail --max-time 20 "$JIRA_SITE_URL/_edge/tenant_info" \
+                        | jq -r '.cloudId // empty') || [ -z "$cloud_id" ]; then
+                      echo "::warning title=channel-pin::could not resolve cloudId for $JIRA_SITE_URL — falling back to latest"
+                      emit latest "cloudId lookup failed"
+                      exit 0
+                  fi
+
+                  if ! labels=$(curl -sS --fail --max-time 20 \
+                        -u "$JIRA_EMAIL:$JIRA_API_TOKEN" \
+                        -H 'Accept: application/json' \
+                        "https://api.atlassian.com/ex/jira/$cloud_id/rest/api/3/issue/$ISSUE_KEY?fields=labels" \
+                        | jq -r '.fields.labels[]? // empty'); then
+                      # FAIL-SAFE to production. An unreadable ticket must not silently
+                      # route a production drag to canary; a dry run losing its pin is
+                      # the cheaper, visible failure.
+                      echo "::warning title=channel-pin::could not read labels for $ISSUE_KEY — falling back to latest"
+                      emit latest "label read failed"
+                      exit 0
+                  fi
+
+                  if printf '%s\n' "$labels" | grep -qx 'channel-canary'; then
+                      emit canary "channel-canary pin present"
+                  else
+                      emit latest "no pin"
+                  fi
+
     # -------------------------------------------------- preflight
     # Only on the JIRA `→ In Progress` drag. Mechanical (no agent): reads the
     # AITGH ticket's SUGGESTED-ACTION-READY marker + comments + bot-actor and
     # emits `stage` (execute | resume | '' for suppress).
     preflight:
-        if: github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-resume'
+        needs: [resolve-channel]
+        # `!cancelled()` because resolve-channel is SKIPPED for every non-dispatch
+        # event, and a skipped dependency would otherwise skip this job regardless of
+        # the condition below (which is already false in exactly those cases).
+        if: |
+            !cancelled() &&
+            github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-resume'
         runs-on: ubuntu-latest
         timeout-minutes: 5
         permissions:
@@ -106,13 +261,13 @@ jobs:
             stage: ${{ steps.pf.outputs.stage }}
             issue_key: ${{ steps.pf.outputs.issue_key }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
               uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
               with:
-                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
             - id: pf
               uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-resume-preflight
               with:
@@ -124,27 +279,39 @@ jobs:
 
     # -------------------------------------------------- run
     # The parameterised stage runner (triage / resume / execute / browser-verify /
-    # repro-rebuild). Runs on the issue event (triage), a forced dispatch, a
-    # non-empty preflight route, or one of the three manual-trigger button
-    # events (which — unlike gh-triage-resume — always resolve to ONE specific
-    # stage directly, no preflight/routing involved: the PM's button click IS
-    # the unambiguous intent signal).
+    # repro-rebuild). Runs on a dispatch (forced, or the auto-triage self-dispatch
+    # from `redispatch` above), a non-empty preflight route, or one of the four
+    # manual-trigger button events (which — unlike gh-triage-resume — always resolve
+    # to ONE specific stage directly, no preflight/routing involved: the PM's button
+    # click IS the unambiguous intent signal).
+    #
+    # ⚠️ There is deliberately NO `issues` branch here — the auto-triage path arrives as
+    # the `workflow_dispatch` that `redispatch` fires. Do not add one back; see the
+    # `redispatch` job above.
     run:
-        needs: [preflight]
+        needs: [preflight, resolve-channel]
         if: |
             !cancelled() &&
             (
-              (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'triage') && github.event.issue.state == 'open')
-              || github.event_name == 'workflow_dispatch'
+              github.event_name == 'workflow_dispatch'
               || (github.event_name == 'repository_dispatch' && needs.preflight.outputs.stage != '')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-resume')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-browser-verify')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-repro-rebuild')
-            )
+              || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-triage')
+            ) &&
+            needs.preflight.outputs.stage != 'execute' && inputs.stage != 'execute'
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            issues: write
+            # `issues: read`, NOT write — see the `execute` job below. Every GitHub
+            # WRITE in the pipeline lives in execute.ts; every other label call in the
+            # codebase is `jira.addLabel`, not `gh`. So the agent stages (triage /
+            # resume / the browser chain) never needed write, and holding it meant an
+            # agent reading attacker-authored issue text sat in a job that could write
+            # to GitHub. Same argument as #14834: an unused permission is not hardening
+            # work, it is a mistake.
+            issues: read
             packages: read
         outputs:
             # NEW — downstream chain jobs need the mapping-ticket key and the
@@ -152,14 +319,17 @@ jobs:
             # CLAUDE.md § "Auto-chaining browser-verify / repro-rebuild".
             issue_key: ${{ steps.pipeline.outputs.issue_key }}
             confirmed_bug: ${{ steps.pipeline.outputs.confirmed_bug }}
+            # NEW (2026-08-18) — confidence-refresh-chain's own gate. See the
+            # action's CLAUDE.md § "Confidence-gap auto-refresh".
+            confidence_gap: ${{ steps.pipeline.outputs.confidence_gap }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
               uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
               with:
-                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
             - id: pipeline
               uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
               with:
@@ -174,11 +344,66 @@ jobs:
                   # makes it structurally impossible for anything
                   # preflight-related to override or block a manual dispatch,
                   # regardless of preflight's own behaviour.
-                  stage: ${{ (github.event.action == 'gh-triage-manual-resume' && 'resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'repro-rebuild') || needs.preflight.outputs.stage || inputs.stage || 'triage' }}
+                  stage: ${{ (github.event.action == 'gh-triage-manual-resume' && 'resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'repro-rebuild') || (github.event.action == 'gh-triage-manual-triage' && 'triage') || needs.preflight.outputs.stage || inputs.stage || 'triage' }}
                   product: grid
+                  # NOTE: `allowed_non_write_users` is deliberately NOT passed, and must
+                  # stay unset — setting it re-breaks the auto-triage path. The actor is a
+                  # bot, allow-listed inside the composite action. See `redispatch` above.
+                  #
+                  # Provenance for the pin: `post` stamps this channel onto the
+                  # mapping ticket so `resolve-channel` can route the NEXT drag to the
+                  # same channel. Must match the channel actually installed above.
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
                   gh_issue: ${{ github.event.issue.number || github.event.client_payload.gh_issue || inputs.gh_issue }}
                   issue_key: ${{ needs.preflight.outputs.issue_key || github.event.client_payload.issue_key || inputs.issue_key }}
                   anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
+
+    # -------------------------------------------------- execute
+    # The ONLY job that may write to GitHub, and the only one that needs to.
+    #
+    # `execute` is MECHANICAL — no agent, no Anthropic key, no browser: it performs the
+    # approved action in deterministic TypeScript (mint the golden AG ticket, post the
+    # reply, apply the label, close the issue). It is split out of `run` purely so that
+    # `issues: write` stops being handed to jobs that run an AGENT over untrusted,
+    # reporter-authored text. Splitting the small mechanical job out is far cheaper than
+    # splitting the large agent job out, and leaves the chain jobs' `needs: [run]`
+    # wiring untouched.
+    #
+    # Reachable only via the two paths that can resolve stage=execute: the board drag
+    # routed here by preflight, and an explicit `workflow_dispatch stage=execute`.
+    execute:
+        needs: [preflight, resolve-channel]
+        if: |
+            !cancelled() &&
+            (
+              (github.event_name == 'repository_dispatch' && needs.preflight.outputs.stage == 'execute')
+              || (github.event_name == 'workflow_dispatch' && inputs.stage == 'execute')
+            )
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            issues: write # mint → reply → label → close, all mechanical
+            packages: read
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 1
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
+            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
+              with:
+                  stage: execute
+                  product: grid
+                  channel: ${{ needs.resolve-channel.outputs.channel || env.DEV_PROMPTS_CHANNEL }}
+                  gh_issue: ${{ github.event.client_payload.gh_issue || inputs.gh_issue }}
+                  issue_key: ${{ needs.preflight.outputs.issue_key || github.event.client_payload.issue_key || inputs.issue_key }}
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
@@ -200,22 +425,35 @@ jobs:
     # (B2) — security posture"). Do not treat this job as hardened.
     browser-verify-chain:
         needs: [run]
+        # The former `github.event_name == 'issues'` disjunct is removed, not just unused:
+        # auto-triage now arrives as a `workflow_dispatch stage=triage` (see `redispatch`),
+        # so `run` never executes on an `issues` event. Dead condition branches are not
+        # left in place here.
         if: |
             !cancelled() &&
             needs.run.outputs.confirmed_bug == 'true' &&
-            (
-              github.event_name == 'issues'
-              || (github.event_name == 'workflow_dispatch' && inputs.stage == 'triage')
-            )
+            github.event_name == 'workflow_dispatch' && inputs.stage == 'triage'
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            issues: write
+            # NO `issues: write` — deliberately narrower than the `run` job.
+            #
+            # These two stages navigate UNTRUSTED, reporter-authored repro pages, and
+            # they perform ZERO GitHub writes: every write they cause is the pipeline's
+            # own Jira write, authenticated by JIRA_API_TOKEN. Inheriting `issues: write`
+            # therefore handed an injectable agent a credential it never uses — and
+            # "the agent has no write tool" does not mean the token is out of reach,
+            # since it can read the environment and call the GitHub API directly.
+            # Raised twice as a P0 on ag-dev-prompts#840; the full browser-stage
+            # hardening stays deferred for the pilot, but an UNUSED permission is not
+            # hardening work, it is a mistake. See ag-dev-prompts
+            # docs/github-triage-deferred-hardening.md section 1.
+            issues: read
             packages: read
         outputs:
             reproduces: ${{ steps.pipeline.outputs.reproduces }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -248,10 +486,22 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            issues: write
+            # NO `issues: write` — deliberately narrower than the `run` job.
+            #
+            # These two stages navigate UNTRUSTED, reporter-authored repro pages, and
+            # they perform ZERO GitHub writes: every write they cause is the pipeline's
+            # own Jira write, authenticated by JIRA_API_TOKEN. Inheriting `issues: write`
+            # therefore handed an injectable agent a credential it never uses — and
+            # "the agent has no write tool" does not mean the token is out of reach,
+            # since it can read the environment and call the GitHub API directly.
+            # Raised twice as a P0 on ag-dev-prompts#840; the full browser-stage
+            # hardening stays deferred for the pilot, but an UNUSED permission is not
+            # hardening work, it is a mistake. See ag-dev-prompts
+            # docs/github-triage-deferred-hardening.md section 1.
+            issues: read
             packages: read
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -263,6 +513,67 @@ jobs:
                   stage: repro-rebuild
                   product: grid
                   issue_key: ${{ needs.run.outputs.issue_key }}
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
+
+    # -------------------------------------------------- confidence-refresh-chain (NEW, 2026-08-18)
+    # Auto-fires ONLY when the ORIGINAL triage recorded an eligible clean-pick
+    # whose OWN confidence was below the execute threshold (confidence_gap ==
+    # 'true') — never a decline, never an already-confident pick. Needs ALL
+    # three prior jobs so the evidence browser-verify-chain/repro-rebuild-chain
+    # gather (if either ran) is already on the ticket by the time this fires;
+    # confidence_gap itself comes from `run` alone, so this still fires even
+    # when browser-verify-chain/repro-rebuild-chain were skipped (e.g. the
+    # `workflow_dispatch stage=triage` gate on browser-verify-chain not met) —
+    # a re-triage informed only by what triage itself gathered is still a
+    # genuine second look, not a no-op.
+    #
+    # Rationale + the AITGH-32/37 finding this is built from (including why it
+    # is NOT a guaranteed confidence bump) are in the action's own CLAUDE.md
+    # § "Confidence-gap auto-refresh". Same job-graph chaining pattern as the
+    # two browser stages above — no new event type, no new execution path:
+    # `resume` still cannot execute on its own regardless of what triggered it.
+    #
+    # SECURITY NOTE: same posture as browser-verify-chain/repro-rebuild-chain —
+    # no dedicated minimal-permission job split yet. This job runs NO browser
+    # and touches no untrusted repro page directly, but it DOES run the same
+    # read-only triage/resume agent `run` does, so it inherits `run`'s own
+    # threat model (an agent reading attacker-authored issue/comment text),
+    # not the two browser stages' — hence `issues: read` (never write) here
+    # too, for the same "an unused permission is a mistake" reason as `run`.
+    confidence-refresh-chain:
+        needs: [run, browser-verify-chain, repro-rebuild-chain]
+        # Same removal of the dead `issues` disjunct as browser-verify-chain above. The
+        # stage restriction itself is still load-bearing (it stops an ordinary human
+        # resume auto-firing a duplicate resume) — only the unreachable half is gone.
+        if: |
+            !cancelled() &&
+            needs.run.outputs.confidence_gap == 'true' &&
+            github.event_name == 'workflow_dispatch' && inputs.stage == 'triage'
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            issues: read
+            packages: read
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 1
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
+              with:
+                  stage: resume
+                  trigger: confidence-refresh
+                  product: grid
+                  issue_key: ${{ needs.run.outputs.issue_key }}
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
                   anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}

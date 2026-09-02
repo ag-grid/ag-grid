@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from 'ag-test-utils';
 
 import type { IOverlayParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid export overlay', () => {
     const gridsManager = new TestGridsManager({
@@ -66,8 +65,9 @@ describe('ag-grid export overlay', () => {
         (global as any).MouseEvent = jest.fn(function (type: string, init?: any) {
             return new Event(type, { bubbles: init?.bubbles, cancelable: init?.cancelable });
         });
-        // Mock CompressionStream to a pass-through TransformStream (if available)
-        (window as any).CompressionStream = jest.fn((_format: string) => {
+        // Mock CompressionStream to a pass-through TransformStream (if available). A function expression,
+        // not an arrow: the grid calls `new CompressionStream(...)`, and a spy over an arrow throws.
+        (window as any).CompressionStream = jest.fn(function (_format: string) {
             if (typeof (global as any).TransformStream === 'function') {
                 return new (global as any).TransformStream({
                     transform(chunk: any, controller: any) {

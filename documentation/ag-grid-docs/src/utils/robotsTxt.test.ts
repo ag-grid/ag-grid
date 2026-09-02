@@ -1,4 +1,7 @@
-import { AI_CRAWLERS, productionRobotsTxt } from './robotsTxt';
+import { BUILD_USER_AGENT } from '@ag-website-shared/constants';
+import { vi } from 'vitest';
+
+import { AI_CRAWLERS, fetchRobotsDisallow, productionRobotsTxt } from './robotsTxt';
 
 // Representative Allow/Disallow paths, mirroring what the route feeds in production.
 const ALLOW_PATHS = ['/campaigns/bryntum-gantt/'];
@@ -91,5 +94,49 @@ describe('productionRobotsTxt — AI-crawler position (SE-78)', () => {
         expect(userAgentGroups).toHaveLength(2);
         expect(txt).toContain('Sitemap: ');
         expect(txt).toContain('sitemap-index.xml');
+    });
+});
+
+describe('fetchRobotsDisallow', () => {
+    const CHARTS_URL = 'https://www.ag-grid.com/charts/robots-disallow.json';
+    const STUDIO_URL = 'https://www.ag-grid.com/studio/robots-disallow.json';
+
+    const okResponse = (paths: string[]) => ({ ok: true, json: async () => paths });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+        vi.unstubAllGlobals();
+    });
+
+    test('identifies the build in the User-Agent', async () => {
+        const fetchMock = vi.fn().mockResolvedValue(okResponse([]));
+        vi.stubGlobal('fetch', fetchMock);
+
+        await fetchRobotsDisallow([CHARTS_URL]);
+
+        expect(fetchMock).toHaveBeenCalledWith(CHARTS_URL, { headers: { 'User-Agent': BUILD_USER_AGENT } });
+    });
+
+    test('flattens the disallow paths of every url into one list', async () => {
+        vi.stubGlobal(
+            'fetch',
+            vi.fn(async (url: string) =>
+                url === CHARTS_URL ? okResponse(['/charts/debug/']) : okResponse(['/studio/examples/'])
+            )
+        );
+
+        await expect(fetchRobotsDisallow([CHARTS_URL, STUDIO_URL])).resolves.toEqual([
+            '/charts/debug/',
+            '/studio/examples/',
+        ]);
+    });
+
+    test('rejects on a failed request rather than silently dropping its disallow paths', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, statusText: 'Service Unavailable' }));
+
+        await expect(fetchRobotsDisallow([CHARTS_URL])).rejects.toThrow(
+            `Failed to fetch ${CHARTS_URL}: Service Unavailable`
+        );
     });
 });

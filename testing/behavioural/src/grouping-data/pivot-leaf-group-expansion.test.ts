@@ -1,9 +1,10 @@
+import { GridRows, TestGridsManager, waitForNoLoadingRows } from 'ag-test-utils';
+
 import type { GridApi, IRowNode, RowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { createFakeServer, createServerSideDatasource } from '../columnToolPanel/deferredPivotModeFakeServer';
-import { GridRows, TestGridsManager, waitForNoLoadingRows } from '../test-utils';
 
 // In pivot mode the deepest row-group level is a leaf group: node.isExpandable() returns false and no
 // chevron is shown. The write paths (setExpanded / expandAll) must respect this too, so expansion behaves

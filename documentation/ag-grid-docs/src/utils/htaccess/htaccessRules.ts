@@ -1,6 +1,11 @@
+// Relative rather than aliased: this module is pulled in by the agHtaccessGen integration, which
+// astro.config.mjs bundles without tsconfig path resolution (as with plugins/agDevMarkdownNegotiation).
+import { markdownPathAlternation } from '../markdownPages';
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
-import type { CspEnv } from './cspRules';
+import type { CspEnv, CspMode } from './cspRules';
 import {
+    BLOG_PATH_CONDITION,
+    getBlogCspExprOverride,
     getBranchBuildsCspIfOverride,
     getCampaignsCspIfOverride,
     getCspHtaccessBlock,
@@ -18,31 +23,62 @@ export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
 // different output per phase.
 export const PRODUCTION_CSP_PHASE: 'report-only' | 'enforce' = 'enforce';
 
+// The two non-CSP security header values, shared by the generated .htaccess (main site) and
+// the blog vhost fragment (getBlogVhostHeaderFragment) so the two cannot drift. The blog is
+// reverse-proxied, so it never reads the generated .htaccess and needs its own copy of these
+// applied with mod_headers' expr= condition — see getBlogVhostHeaderFragment.
+export const REFERRER_POLICY_VALUE = 'strict-origin-when-cross-origin';
+export const PERMISSIONS_POLICY_VALUE = 'geolocation=(), microphone=(), camera=()';
+
 /**
  * Note: when changing this file please add/update the tests in
  * documentation/ag-grid-docs/testing/htaccess-harness
  */
-const modExpiresRules = `
-<IfModule mod_expires.c>
-    # Adds caching headers
-    ExpiresActive On
-
-    # Default directive
-    ExpiresDefault "access plus 1 year"
-
-    ExpiresByType application/json "access plus 1 hour"
-    ExpiresByType text/html "access plus 1 hour"
-    ExpiresByType text/markdown "access plus 1 hour"
-    ExpiresByType text/plain "access plus 1 hour"
-    ExpiresByType text/richtext "access plus 1 hour"
-    ExpiresByType text/xml "access plus 1 hour"
-    ExpiresByType text/xsd "access plus 1 hour"
-    ExpiresByType text/xsl "access plus 1 hour"
-
-    # CSS
-    ExpiresByType text/css "access plus 1 month"
-</IfModule>
+// Without Cache-Control, browsers heuristically cache for ~10% of a page's age - the
+// "had to hard-refresh" behaviour. no-cache (store, but always revalidate) removes it while
+// keeping back/forward navigation. Archived versions keep the heuristic window: immutable,
+// and cheaper to leave cached.
+const documentNoCacheRules = `
+# Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
+Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
 `;
+
+// Long-cache content-addressed assets. Matched on hash SHAPE rather than the /_astro/
+// directory so anything unhashed is never cached: a changed hash is a different URL, so a
+// fix can never be served stale. Replaces an inert mod_expires block - hence no <IfModule>
+// guard here, so a missing module fails loudly rather than silently.
+const hashedAssetCacheRules = `
+# Content-addressed assets - the filename carries a content hash, so changed content is
+# always a different URL. Matched by hash shape, so anything unhashed is not cached.
+Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
+`;
+
+// Archived Studio versions are never cached; /studio/ itself caches normally.
+const studioArchiveNoCacheRules = `
+# Archived Studio versions: never cached. Does not apply to /studio/ itself.
+Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
+`;
+
+// Delimiters for the in-place patchable block. Exported so the patch script and the tests
+// use the same literals rather than duplicating them.
+export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
+export const IN_FLIGHT_END = '# END in-flight release archives';
+
+// Archives under release testing must serve fresh, so they opt out of the caching released
+// archives get. Emitted last, so it overrides the archive exclusion and the hashed-asset rule.
+export function getInFlightArchiveRules(grid: string | null, charts: string | null): string {
+    // Single backslash in the emitted regex, so Apache reads a literal dot.
+    const escape = (v: string) => v.replace(/\./g, '\\.');
+    const rules = [
+        grid && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/archive/${escape(grid)}/#"`,
+        charts && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/charts/archive/${escape(charts)}/#"`,
+    ].filter(Boolean);
+    // Always emitted, so scripts/uncached-archives.mjs can patch the deployed file between them.
+    return `
+${IN_FLIGHT_BEGIN}${rules.length ? '\n' + rules.join('\n') : ''}
+${IN_FLIGHT_END}
+`;
+}
 
 const modDeflateRules = `
 <IfModule mod_deflate.c>
@@ -70,12 +106,6 @@ const modDeflateRules = `
     AddOutputFilterByType DEFLATE text/markdown
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/xml
-
-    # Remove browser bugs (only needed for really old browsers)
-    BrowserMatch ^Mozilla/4 gzip-only-text/html
-    BrowserMatch ^Mozilla/4\\.0[678] no-gzip
-    BrowserMatch \\bMSIE !no-gzip !gzip-only-text/html
-    Header append Vary User-Agent
 </IfModule>
 `;
 
@@ -83,10 +113,13 @@ const modDeflateRules = `
 // on `Accept: text/markdown`, shared by the production and staging .htaccess so the
 // rule can't drift between them. Indented 4 spaces for use inside a mod_rewrite block.
 // The negotiation is an internal rewrite (no redirect, URL unchanged), gated by an
-// on-disk check so a path without a .md is left untouched. %1 is the docs path
+// on-disk check so a path without a .md is left untouched. %1 is the page path
 // captured below, reused in both the -f test and the rewrite target.
+//
+// The path alternation is derived from GRID_MARKDOWN_PAGE_GROUPS — the same registry the
+// dev-server plugin uses — so the two can't disagree about what is negotiable.
 const markdownNegotiationRules = `    RewriteCond %{HTTP_ACCEPT} text/markdown
-    RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$
+    RewriteCond %{REQUEST_URI} ^/(${markdownPathAlternation()})/?$
     RewriteCond %{DOCUMENT_ROOT}/%1.md -f
     RewriteRule ^ /%1.md [L]
 
@@ -106,13 +139,14 @@ const markdownNegotiationBlock = `<IfModule mod_rewrite.c>
 ${markdownNegotiationRules}
 </IfModule>`;
 
-// SE-80: docs pages content-negotiate on the Accept header (see the markdown rewrite
+// SE-80: negotiated pages content-negotiate on the Accept header (see the markdown rewrite
 // above), so shared caches must key on it — otherwise they could serve the markdown
-// variant to a browser, or HTML to an agent. Scoped to the docs paths so the rest of
-// the site keeps its default (URL-only) cache key.
-const markdownVaryHeader = `# SE-80: docs pages content-negotiate on Accept (see the markdown rewrite), so shared
+// variant to a browser, or HTML to an agent. Scoped to the negotiated paths so the rest of
+// the site keeps its default (URL-only) cache key. Derived from the same registry as the
+// rewrite rule, so the two stay in lockstep.
+const markdownVaryHeader = `# SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/]+|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$# || %{REQUEST_URI} == '/'">
+<If "%{REQUEST_URI} =~ m#^/(?:${markdownPathAlternation()})/?$# || %{REQUEST_URI} == '/'">
     Header append Vary Accept
 </If>`;
 
@@ -207,6 +241,171 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
     RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
 
+    # blog.ag-grid.com -> www.ag-grid.com/blog/ (SE-86/SE-91). Host-scoped, so www and
+    # apex are unaffected. ORDER MATTERS: specific rules first, catch-all host swap last.
+    # Targets are final destinations, not intermediate slugs -- SE-86 requires one hop.
+    # The 410s are deliberate: those posts are gone, not moved. They swallow any sub-path and
+    # are [NC], because a 410 that only matches an enumerated suffix set is walkable: /feed/,
+    # /amp/amp/ and case variants otherwise fell through to the catch-all and www's own
+    # case-normalising redirect then served the live page, handing the spam links their equity.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?whats-new-in-ag-grid-v24(?:/.*)?$ - [R=410,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/react(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/react-data-grid/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/react(?:/amp|/page/[0-9]+)?/?$ https://www.ag-grid.com/blog/tag/react-data-grid/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?conferences-ag-grid-amsterdam-june-2022(?:/amp)?/?$ https://www.ag-grid.com/blog/js-nation-and-react-summit-june-2022-overview/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?getting-more-from-your-datagrid-introducing-adaptable(?:/amp)?/?$ https://www.ag-grid.com/blog/adaptable-tools-demo-and-interview/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?javascript-grid-comparison-column-pinning-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?whats-new-in-ag-studio-2(?:-0)?(?:/amp)?/?$ https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?whats-new-in-ag-studio-2-1(?:/amp)?/?$ https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-1-javascript-embedded-analytics/ [R=301,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?showcase(?:/amp)?/?$ https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?using-playwright-to-test-ag-grid-react-apps(?:/amp)?/?$ https://www.ag-grid.com/blog/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?using-ag-grid-with-react-and-next-js(?:/amp)?/?$ https://www.ag-grid.com/blog/using-ag-grid-with-next-js-to-build-a-react-table/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?condtional-formatting-for-cells-in-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/conditional-formatting-for-cells-in-ag-grid/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?angular-2-0-web-components-and-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/angular-data-grid/getting-started/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?integrated-charts-community-vs-enterprise(?:/amp)?/?$ https://www.ag-grid.com/blog/enhancing-ag-grid-enterprise-with-ag-charts-enterprise/ [R=301,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?vuestic-ui-app-with-ag-grid-tutorial(?:/amp)?/?$ https://epicmax.co/blog/vuestic-ui-with-ag-grid [R=301,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/2018/11/29/inside-fiber https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/ [R=301,NC,L]
+
+    # WordPress-era permalinks. Every /index.php/ and bare dated path in the archive was
+    # checked and its derived target status-verified: 15 resolve, 6 needed an explicit
+    # remap because the slug changed. The remaps MUST precede the generic dated rule.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/get-started-with-react-grid-in-5-minutes(?:/feed)?/?$ https://www.ag-grid.com/blog/react-get-started-with-react-grid-in-5-minutes/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/customise-react-grid(?:/feed)?/?$ https://www.ag-grid.com/blog/learn-to-customize-react-grid-in-less-than-10-minutes/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/customize-angular-grid(?:/feed)?/?$ https://www.ag-grid.com/blog/learn-to-customize-angular-grid-in-less-than-10-minutes/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/customize-javascript-grid(?:/feed)?/?$ https://www.ag-grid.com/blog/learn-to-customize-javascript-grid-in-less-than-10-minutes/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm(?:-in-react)?(?:/feed)?/?$ https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/ [R=301,NC,L]
+
+    # Generic dated permalink: the slug survived the WordPress -> Ghost move.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(?:index\\.php/)?[0-9]{4}/[0-9]{2}/[0-9]{2}/(.+?)(?:/feed)?/?$ https://www.ag-grid.com/blog/$1/ [R=301,NC,L]
+
+    # WordPress categories became Ghost tags. "react" was itself renamed, so it is
+    # mapped directly -- via /blog/tag/react/ it would take a second hop.
+    # Feed variants of the WordPress taxonomy URLs. These come FIRST: the generic rules
+    # below capture with (.+?), which swallows a trailing /feed and lands on
+    # /blog/<taxonomy>/<term>/feed/ -- a 404. Ghost serves /rss, so feeds map to /rss
+    # exactly as the non-index.php equivalents do. "react" is additionally a renamed tag.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/(?:category|tag)/react(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/react-data-grid/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/category/([^/]+)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/$1/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/((?:tag|author)/[^/]+)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/$1/rss/ [R=301,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/category/react/?$ https://www.ag-grid.com/blog/tag/react-data-grid/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/category/(.+?)/?$ https://www.ag-grid.com/blog/tag/$1/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/tag/react/?$ https://www.ag-grid.com/blog/tag/react-data-grid/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/(author|tag|page)/(.+?)(?:/feed)?/?$ https://www.ag-grid.com/blog/$1/$2/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?index\\.php/(?:comments/)?feed/?$ https://www.ag-grid.com/blog/rss/ [R=301,NC,L]
+
+    # Retired posts. Each served content once but has no surviving equivalent, so the
+    # catch-all would 301 into a 404 -- worse than a plain 404, because it asserts a
+    # destination exists. Decision 2026-08-21: declare them Gone.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?avoiding-react-18-double-mount(?:/.*)?$ - [R=410,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?email-sign-up(?:/.*)?$ - [R=410,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?5-tips-for-fixing-a-memory-leak-in-angular(?:/.*)?$ - [R=410,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?angular-nations-ag-grid-music-video(?:/.*)?$ - [R=410,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?deleting-selected-rows-and-cell-ranges-via-key-press(?:/.*)?$ - [R=410,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?untitled(?:/.*)?$ - [R=410,NC,L]
+
+    # WordPress/Ghost infrastructure endpoints with no equivalent. 410 rather than a
+    # 301 onto a /blog/ 404.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(?:index\\.php/)?wp-json(?:/.*)?$ - [R=410,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?wp-includes/.*$ - [R=410,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?wp-content/plugins/.*$ - [R=410,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?rsslatest\\.xml$ - [R=410,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?\\.well-known/nodeinfo/?$ - [R=410,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?\\.ghost/activitypub/.*$ - [R=410,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?ag-grid-vs-datatables(?:/.*)?$ - [R=410,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?private(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:angular-grid|angular-table)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/angular/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:angular-grid|angular-table)(?:/amp|/page/[0-9]+)?/?$ https://www.ag-grid.com/blog/tag/angular/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:react-grid|react-table)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/react-data-grid/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:react-grid|react-table)(?:/amp|/page/[0-9]+)?/?$ https://www.ag-grid.com/blog/tag/react-data-grid/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:vue-grid|vue-table)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/vuejs/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:vue-grid|vue-table)(?:/amp|/page/[0-9]+)?/?$ https://www.ag-grid.com/blog/tag/vuejs/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:enzyme|jest)(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/testing/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:enzyme|jest)(?:/amp|/page/[0-9]+)?/?$ https://www.ag-grid.com/blog/tag/testing/ [R=301,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?tag/(?:ag-grid|column-header|columns|data-grid|data-table|date|datepicker|detail|editing|export|filtering|formatting|graphql|localstorage|master|mongodb|multi-line|pdf|range-selection|range-selection-styles|redux|row-background-color|row-selection|row-styling|server-side-row-model|sorting|state|styling-table-rows|tabs|vuex|web-development)(?:/.*)?$ - [R=410,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(.+?)/amp/?$ https://www.ag-grid.com/blog/$1/ [R=301,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?content/(.*)$ https://www.ag-grid.com/blog/content/$1 [R=301,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(page/[0-9]+|(?:tag|author)/[^/]+/page/[0-9]+)/?$ https://www.ag-grid.com/blog/$1/ [R=301,NC,L]
+    # /feed is the WordPress-era spelling and Ghost answers it with its own 301 to /rss,
+    # so mapping feed -> feed cost a second hop. Send feed straight to rss.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?feed/?$ https://www.ag-grid.com/blog/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?((?:tag|author)/[^/]+)/feed/?$ https://www.ag-grid.com/blog/$1/rss/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(rss|(?:tag|author)/[^/]+/rss)/?$ https://www.ag-grid.com/blog/$1/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(sitemap[^/]*\\.xml)$ https://www.ag-grid.com/blog/$1 [R=301,NC,L]
+
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?(.*)$ https://www.ag-grid.com/blog/$1 [R=301,NC,L]
+
     # SE-80: content-negotiate docs pages to their per-page markdown variant when a
     # client asks for it via Accept: text/markdown (typically an AI agent — browsers
     # never send this, so HTML stays the default). The .md files are generated at
@@ -281,8 +480,11 @@ AddType text/markdown md
 AddCharset utf-8 .md
 `;
 
-function getStagingHtaccessContent(): string {
+function getStagingHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
+${documentNoCacheRules}
+${studioArchiveNoCacheRules}
+${inFlightArchiveRules}
 
 ${markdownNegotiationBlock}
 
@@ -300,17 +502,20 @@ Options -Indexes
 `;
 }
 
-function getProductionHtaccessContent(): string {
+function getProductionHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
-${modExpiresRules}
+${documentNoCacheRules}
+${hashedAssetCacheRules}
+${studioArchiveNoCacheRules}
+${inFlightArchiveRules}
 ${modDeflateRules}
 ${getModRewriteRules()}
 
 # X-Frame-Options intentionally omitted: it can't allow-list subdomains, so it blocks
 # blog.ag-grid.com (and other *.ag-grid.com) from embedding examples. Clickjacking
 # protection is handled by the CSP frame-ancestors directive instead (see cspRules.ts).
-Header always set Referrer-Policy "strict-origin-when-cross-origin"
-Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+Header always set Referrer-Policy "${REFERRER_POLICY_VALUE}"
+Header always set Permissions-Policy "${PERMISSIONS_POLICY_VALUE}"
 
 ${markdownVaryHeader}
 
@@ -353,6 +558,58 @@ ${getCampaignsCspIfOverride({ env: 'production' }, 'enforce')}
 ${getScopedCspHtaccessBlock({ env: 'production' }, 'report-only')}`;
 }
 
-export function getHtaccessContent(options: { env: HtaccessEnv }): string {
-    return options.env === 'staging' ? getStagingHtaccessContent() : getProductionHtaccessContent();
+/**
+ * Build the complete set of `/blog/` security headers for the Apache VHOST on the Ghost box.
+ *
+ * This is the counterpart to the generated `.htaccess` for a path the `.htaccess` cannot
+ * govern. `/blog/` is reverse-proxied to Ghost, so a request there is mapped to the proxy
+ * handler and never reads the docroot file, and `<If>` never fires on the response. Every
+ * line here therefore carries mod_headers' `expr=` condition instead, and belongs in the
+ * vhost rather than in getHtaccessContent's output.
+ *
+ * Deploy to the Ghost/primary box only. The Mirror box deliberately sets no /blog/ headers:
+ * it proxies to this box's Apache, so it inherits these, and setting its own would produce a
+ * second copy of each (see the `unset` note below).
+ *
+ * Every header is `unset` before being `set`. On the Mirror path a request traverses two
+ * Apache instances; `always` writes to err_headers_out while the upstream copy sits in
+ * headers_out, and Apache emits both tables — so `set` alone appends rather than replaces.
+ * Duplicate CSP headers are the dangerous case, because browsers enforce their intersection.
+ *
+ * X-Robots-Tag is unset with no matching `set`, deliberately. /blog/ carried
+ * "noindex, nofollow" while the migrated instance was staged alongside the live blog; that
+ * must be gone now the old URLs redirect here, since a page that is both redirected-to and
+ * noindexed is invisible to search. The bare `unset` is not redundant — it strips any copy
+ * arriving from the upstream Apache on the Mirror path.
+ */
+export function getBlogVhostHeaderFragment(options: { env: CspEnv }, mode: CspMode): string {
+    const condition = `"expr=${BLOG_PATH_CONDITION}"`;
+    return [
+        '# Security headers for /blog/ — GENERATED, do not hand-edit.',
+        '#   npx tsx documentation/ag-grid-docs/scripts/csp/generate-csp.ts --env=production --mode=enforce --format=vhost --scope=blog',
+        '# Paste inside the *:443 ag-grid.com <VirtualHost> on the Ghost box only.',
+        '',
+        '# /blog/ must NOT be noindexed: the old URLs 301 here. Unset with no matching set, which',
+        '# also strips any copy inherited from the upstream Apache on the Mirror path.',
+        `Header always unset X-Robots-Tag ${condition}`,
+        `Header always unset Referrer-Policy ${condition}`,
+        `Header always set Referrer-Policy "${REFERRER_POLICY_VALUE}" ${condition}`,
+        `Header always unset Permissions-Policy ${condition}`,
+        `Header always set Permissions-Policy "${PERMISSIONS_POLICY_VALUE}" ${condition}`,
+        getBlogCspExprOverride(options, mode),
+    ].join('\n');
+}
+
+// A build always emits an EMPTY in-flight block; the deployed root .htaccess owns that state.
+// The archive options exist only so the tests can generate the populated form.
+export function getHtaccessContent(options: {
+    env: HtaccessEnv;
+    uncachedGridArchive?: string | null;
+    uncachedChartsArchive?: string | null;
+}): string {
+    const inFlight = getInFlightArchiveRules(
+        options.uncachedGridArchive ?? null,
+        options.uncachedChartsArchive ?? null
+    );
+    return options.env === 'staging' ? getStagingHtaccessContent(inFlight) : getProductionHtaccessContent(inFlight);
 }

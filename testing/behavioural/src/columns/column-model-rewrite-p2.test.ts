@@ -1,8 +1,8 @@
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
  * Regression coverage for edge cases surfaced while reviewing the column-model rewrite (AG-17366).

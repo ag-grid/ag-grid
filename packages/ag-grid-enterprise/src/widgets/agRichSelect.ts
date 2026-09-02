@@ -185,13 +185,19 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.createListComponent();
         this.eDeselect.appendChild(_createIconNoSpan('richSelectRemove', this.beans)!);
 
-        const { allowTyping, placeholder, multiSelect, suppressDeselectAll, suppressMultiSelectPillRenderer } =
-            this.config;
+        const {
+            allowTyping,
+            placeholder,
+            multiSelect,
+            searchIcon,
+            suppressDeselectAll,
+            suppressMultiSelectPillRenderer,
+        } = this.config;
 
         this.eDeselect.classList.add('ag-hidden');
 
         if (allowTyping) {
-            this.eInput.setAutoComplete(false).setInputPlaceholder(placeholder);
+            this.eInput.setAutoComplete(false).setInputPlaceholder(placeholder).setSearchIcon(!!searchIcon);
             if (!multiSelect) {
                 this.eDisplayField.classList.add('ag-hidden');
             } else {

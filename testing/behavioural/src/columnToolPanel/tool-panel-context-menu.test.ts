@@ -1,11 +1,10 @@
 import { findByText, queryByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, ColumnEventType, GetColumnMenuItemsParams, GridApi, GridOptions } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('ToolPanelContextMenu', () => {
     const gridMgr = new TestGridsManager({
@@ -41,7 +40,7 @@ describe('ToolPanelContextMenu', () => {
      * focus-wrapper element — the element AG Grid registers the `contextmenu` listener on.
      * Virtual lists only render visible items, so if `getComponentAt` returns nothing we
      * materialise a comp via `createComponentFromItem` (same fallback used in
-     * deferred-pivot-mode.test.ts).
+     * deferredPivotModeHarness.ts).
      */
     async function getColumnEntry(toolPanel: any, gridDiv: HTMLElement, label: string): Promise<HTMLElement> {
         const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
@@ -63,7 +62,7 @@ describe('ToolPanelContextMenu', () => {
             return (renderedEl.closest('.ag-virtual-list-item') as HTMLElement | null) ?? renderedEl;
         }
 
-        // Fallback: virtual list didn't render the item (jsdom layout). Construct a column
+        // Fallback: virtual list didn't render the item (no layout engine). Construct a column
         // comp with a synthetic focus-wrapper attached to the grid so its event listeners
         // (incl. contextmenu) are registered on a live DOM node.
         const focusWrapper = document.createElement('div');

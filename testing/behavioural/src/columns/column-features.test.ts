@@ -11,6 +11,14 @@
  * - Column types
  */
 import { waitFor } from '@testing-library/dom';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    mockGridLayout,
+} from 'ag-test-utils';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import {
@@ -24,15 +32,6 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import {
-    ALL_SEVERITIES,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    mockGridLayout,
-} from '../test-utils';
 
 /** Reads the rendered height of the (single) column header row from the grid DOM. */
 function getHeaderRowHeight(api: GridApi): number {

@@ -1,7 +1,7 @@
+import { GridRows, TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, NumberFilterModule, setupAgTestIds } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager } from '../test-utils';
 
 describe('Filtering a pivot value column', () => {
     const gridsManager = new TestGridsManager({

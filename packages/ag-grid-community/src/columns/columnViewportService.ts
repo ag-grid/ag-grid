@@ -125,8 +125,8 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     }
 
     private isColumnVirtualisationSuppressed() {
-        // When running within jsdom the viewportRight is always 0, so we need to return true to allow
-        // tests to validate all the columns.
+        // Without a layout engine (headless tests) the viewportRight is always 0, so return true to
+        // allow tests to validate all the columns.
         return this.suppressColumnVirtualisation || this.viewportRight === 0;
     }
 

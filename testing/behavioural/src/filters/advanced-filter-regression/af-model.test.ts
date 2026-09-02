@@ -1,8 +1,8 @@
+import { AdvancedFilterHarness, FilterDom, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { AdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
-import { AdvancedFilterHarness, FilterDom, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 /**
  * Regression baseline for Advanced Filter model handling the tickets extend: model ↔ text symmetry

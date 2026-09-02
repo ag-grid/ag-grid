@@ -273,14 +273,6 @@
     .ag-filter-add-select {
         border: 0;
 
-        .ag-text-field-input {
-            @include ag.unthemed-rtl(
-                (
-                    padding-left: calc(var(--ag-grid-size) * 1.5 + 12px) !important,
-                )
-            );
-        }
-
         .ag-rich-select-value {
             padding: calc(((1.5 * var(--ag-font-size) + 4 * var(--ag-grid-size)) - var(--ag-input-height)) / 2)
                 var(--ag-grid-size);

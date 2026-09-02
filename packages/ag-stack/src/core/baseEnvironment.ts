@@ -97,13 +97,18 @@ export abstract class BaseEnvironment<
     }
 
     public getStyledRootClasses(
-        hasAncestorStyledRoot?: boolean
+        hasAncestorStyledRoot?: boolean,
+        legacyThemeClassesInherited?: boolean
     ): [inheritClass: string, applyClass: string, directionClass: string] {
         const { theme } = this;
-        const [inheritClass, applyClass] = theme ? theme._getCssClasses() : ['', this.useLegacyThemeClasses()];
+        const [inheritClass, applyClass] = theme
+            ? theme._getCssClasses()
+            : ['', this.useLegacyThemeClasses(legacyThemeClassesInherited)];
         const directionClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         // A grid nested within another grid's styled root inherits its theme, so its
         // own styled root must not re-apply the theme classes. Note it's intentional that
+        // useLegacyThemeClasses is called above even when its result is discarded: it also
+        // sets up the observer that fires theme change events when ancestor classes change.
         if (hasAncestorStyledRoot) {
             return ['', '', directionClass];
         }
@@ -111,9 +116,11 @@ export abstract class BaseEnvironment<
     }
 
     /**
-     * Get legacy theme classes, setting up a mutation observer to watch for changes on first call
+     * Get legacy theme classes, setting up a mutation observer to watch for changes on first call.
+     * When `legacyThemeClassesInherited` is set, returns '' instead of the classes while still
+     * walking the ancestors to set up the observer.
      */
-    private useLegacyThemeClasses(): string {
+    private useLegacyThemeClasses(legacyThemeClassesInherited?: boolean): string {
         const themeClasses = new Set<string>();
         // rebuild the observer set every time we call this function, to handle
         // edge cases where the grid is initialised outside the DOM or moved
@@ -137,7 +144,7 @@ export abstract class BaseEnvironment<
             }
             node = node.parentElement;
         }
-        return [...themeClasses].join(' ');
+        return legacyThemeClassesInherited ? '' : [...themeClasses].join(' ');
     }
 
     public onThemeChanged(handler: () => void): () => void {
@@ -169,9 +176,6 @@ export abstract class BaseEnvironment<
         }
         const measurement = this.measureSizeEl(variable);
         if (measurement === 'detached' || measurement === 'no-styles') {
-            if (variable.cacheDefault) {
-                this.lastKnownValues.set(variable, variable.defaultValue);
-            }
             return variable.defaultValue;
         }
         this.lastKnownValues.set(variable, measurement);
@@ -321,8 +325,18 @@ export abstract class BaseEnvironment<
 
     // overridden by studio
     protected initStyledRoot(): void {
+        // The grid's styled root is a descendant of any legacy theme element found by the
+        // ancestor walk, so unlike detached styled roots (popups etc.) it must not copy the
+        // theme classes onto itself.
+        const legacyThemeClassesInherited = true;
         this.addDestroyFunc(
-            _initStyledRootFromInnerOfThreeElements(this, this.eRootDiv, undefined, this.beans.hasAncestorStyledRoot)
+            _initStyledRootFromInnerOfThreeElements(
+                this,
+                this.eRootDiv,
+                undefined,
+                this.beans.hasAncestorStyledRoot,
+                legacyThemeClassesInherited
+            )
         );
     }
 }
@@ -333,7 +347,6 @@ export type CssVariable<TChangeKeys extends BaseCssChangeKeys> = {
     type: ParamType;
     defaultValue: number;
     noWarn?: boolean;
-    cacheDefault?: boolean;
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

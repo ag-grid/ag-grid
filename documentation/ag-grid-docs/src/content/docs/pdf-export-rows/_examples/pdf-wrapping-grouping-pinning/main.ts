@@ -129,19 +129,11 @@ function getPdfExportParams(): PdfExportParams {
     };
 }
 
-function updateDefaultPdfExportParams() {
-    gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
-}
-
 function onBtExport() {
-    updateDefaultPdfExportParams();
+    gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
     gridApi.exportDataAsPdf();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
-    updateDefaultPdfExportParams();
-    for (const id of ['includeTop', 'includeBottom', 'limitLines']) {
-        document.querySelector(`#${id}`)!.addEventListener('change', updateDefaultPdfExportParams);
-    }
 });

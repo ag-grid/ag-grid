@@ -1,6 +1,7 @@
+import type { IAutoCompleteComponentParams } from '../../interfaces/iAutoComplete';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 
-export interface ILargeTextEditorParams extends ICellEditorParams {
+export interface ILargeTextEditorParams extends ICellEditorParams, IAutoCompleteComponentParams {
     /**
      * Max number of characters to allow.
      * @default 200

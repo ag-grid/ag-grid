@@ -2,6 +2,14 @@
 
 .animatedWordsOuter {
     --word-height: 1.2em;
+    --word-duration: 340ms;
+
+    // The incoming word waits for the outgoing one to fade rather than crossing through it.
+    --word-handover-delay: 140ms;
+
+    // Not a full line: the line box is barely taller than the glyphs, so a word travelling
+    // that far would be sliced by `overflow: hidden` while still opaque.
+    --word-travel: 40%;
 
     display: inline-grid;
     height: var(--word-height);
@@ -26,22 +34,51 @@
 
 .animatedWord {
     display: inline-block;
-    animation: framework-word-in 0.25s cubic-bezier(0.6, 0.3, 0.5, 1.4);
+}
+
+.wordIn {
+    animation: framework-word-in var(--word-duration) cubic-bezier(0.16, 1, 0.3, 1) var(--word-handover-delay) both;
 
     @media (prefers-reduced-motion: reduce) {
         animation: none;
     }
 }
 
+.wordOut {
+    animation: framework-word-out var(--word-duration) cubic-bezier(0.4, 0, 1, 1) both;
+
+    // Without the animation to lift it away, it would sit on top of the current word.
+    @media (prefers-reduced-motion: reduce) {
+        display: none;
+    }
+}
+
 @keyframes framework-word-in {
     from {
-        transform: translateY(-100%);
+        transform: translateY(var(--word-travel));
         opacity: 0;
     }
 
     to {
         transform: translateY(0);
         opacity: 1;
+    }
+}
+
+@keyframes framework-word-out {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    // Gone before the incoming word becomes legible, though still drifting upwards.
+    55% {
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(calc(var(--word-travel) * -1));
+        opacity: 0;
     }
 }
 

@@ -26,7 +26,7 @@ Behavioural tests in `testing/behavioural/` are the primary test suite for AG Gr
 
 Search `testing/behavioural` for an existing harness before assuming a behaviour can't be black-box tested (e.g. `DragEventDispatcher` drives real header drags); extend the harness rather than dropping to a unit test.
 
-`./behave.sh` runs the merged unit suite in a single Vitest workspace (`vitest.workspace.ts`): the package (London-school) `*.test.ts` files **and** the behavioural (Chicago-school) suite together, no Nx required. `yarn nx test <package>` still runs one package's tests on its own (retained for retrocompat).
+`./behave.sh` runs the merged unit suite as one multi-project Vitest run (the project list in `vitest.workspace.ts`): the package (London-school) `*.test.ts` files **and** the behavioural (Chicago-school) suite together, no Nx required. `yarn nx test <package>` still runs one package's tests on its own (retained for retrocompat).
 
 ## Regression Tests: Cover Every Reproduction Path
 
@@ -39,6 +39,54 @@ When writing regression tests for a bug fix:
 - **Assert the observable end state for every path**, e.g. `getColumnOrder(...)`, not just that the operation didn't throw.
 
 Before finishing, re-read the ticket's "Steps to reproduce" and confirm each distinct trigger has a corresponding test. A fix verified through only one of several documented triggers is not fully verified.
+
+### See the test fail, for the reason you expect
+
+**Prefer red before green: write the failing test first, then make it pass, then refactor with the test holding
+the behaviour still.** Generically this is the better route, because it forces the discriminating input to be
+chosen while the fix does not yet exist to bias the choice — and the refactor step is where harness and snapshot
+tidying belongs, once there is a passing test to protect it.
+
+The invariant it serves is weaker than the ritual: *the test must be observed to fail for the expected reason at
+least once*. So when the fix already exists — ported, cherry-picked, or simply written before the test — reach
+red the other way round: apply the *test* before the patch and watch it fail, or revert the patch, confirm red,
+restore. An adopted fix arrives already-green, which removes the red step precisely when it is most needed.
+
+Either way it belongs **while choosing the fix**, not as a closing gate once everything is green: it is what
+tells you the fix is the right one, rather than merely that the suite passes. And watch *why* it fails — a test
+red for the wrong reason (typo'd selector, unregistered module, a `waitFor` that was already true) is as
+uninformative as one that never fails, and it will go green off the back of the wrong change.
+
+The trap either way is a test whose assertion holds for both the fixed and the unfixed code. It is green, it
+looks like a regression guard, and it proves nothing. Choose the input that *separates* the two behaviours.
+
+**Then refactor, on green — the third step is not optional.** Once a discriminating test passes, that is the
+moment to simplify the fix, extract or extend a harness, merge tests that share a setup, and add the
+`GridRows` / `GridColumns` / `FilterDom` snapshots. Doing any of it earlier means changing code with nothing
+holding the behaviour still; skipping it leaves the first thing that worked.
+
+The rule that keeps this honest: **the tests stay green and unchanged across a refactor.** If an assertion has
+to be edited for the suite to keep passing, that is a behaviour change wearing a refactor's clothes, and it owes
+its own red step. Two ways that bites in this suite specifically:
+
+- Merging tests onto one grid can silently weaken what they prove — state leaks between what were independent
+  cases. Run each merge; if a case only passes from a fresh grid, that is a finding about the code, and it keeps
+  its own grid with the reason in a comment.
+- Snapshot bodies are generated (`./behave.sh --update-grid-rows`), never hand-written. A hand-written snapshot
+  is an assertion invented from memory, and updating a *stale* one to match new output is the same mistake with
+  better camouflage: check the diff is the change you intended before accepting it.
+
+A worked example. `AbstractHeaderCellCtrl.shouldStopEventPropagation` crashed on an unguarded
+`focusSvc.focusedHeader!`. An early `return false` stops the crash — and also skips
+`suppressHeaderKeyboardEvent`, which is the only reason the method exists, so a column that wants to suppress
+silently cannot. The test shipped with it configured `suppressHeaderKeyboardEvent: () => false`, so the
+callback's `false` and the guard's early `false` were indistinguishable and it could never have failed. A
+callback returning `true` is the discriminating input, and it exposes both the missing behaviour and the
+correct fix: fall back to the cell's own `column` / `rowCtrl.rowIndex`, which is exactly what the focus service
+would have stored.
+
+Generalise from it: for any early return, name what the function does *after* that point that a caller depends
+on. If the skipped work is the function's purpose, the guard is the bug.
 
 ## Test Structure
 
@@ -67,9 +115,11 @@ packages/ag-grid-community/src/
 
 ## Running Tests
 
+**Background every one of these commands; never call one in the foreground.** `./behave.sh`, `./checks.sh`, `./benches.sh` and `./docs-e2e.sh` all take minutes, and a foreground call holds the session for the whole run — the user cannot interject and no other work happens. Start it with the agent harness's background mechanism (which wakes the agent when it ends) and carry on; do not `sleep` on it. Reading the result needs no preparation: the first line printed is the log path, `tmp/_<name>-output/<id>/output.log`, holding the full stdout and stderr; `./behave.sh` also writes `result.json` beside it. Grep the log *during* the run to abort early on the first failure instead of waiting out a run already known to be red. Under `CI` do the opposite and run in the foreground: backgrounding exists to keep an interactive session reachable, a workflow has nobody to block, and the scripts capture nothing there for the same reason.
+
 ### The merged unit suite (Vitest) — `./behave.sh`
 
-`./behave.sh` is the single command for the whole unit suite: the package unit tests (`ag-stack`, `ag-grid-community`, `ag-grid-enterprise`, `locale`) plus the behavioural suite, run together through the Vitest workspace from the repo root. Watch mode is disabled by default:
+`./behave.sh` is the single command for the whole unit suite: the package unit tests (`ag-stack`, `ag-grid-community`, `ag-grid-enterprise`, `locale`) plus the behavioural suite, run together as one multi-project Vitest run from the repo root. Watch mode is disabled by default:
 
 ```bash
 # Run the whole unit suite (package + behavioural)
@@ -91,13 +141,40 @@ packages/ag-grid-community/src/
 ./behave.sh --watch
 ```
 
+#### Bounding the output: `--bail 1` and `--no-diff`
+
+**`--bail 1` is the default for a fix-one-thing-at-a-time loop.** You only care about the first error, and stopping
+there skips the remaining tests *and* their reporting — seconds instead of a minute. Reach for it by habit, not only
+when a suite is badly broken.
+
+**`--no-diff` is for a suite that fails wholesale**, when you only need *which* tests fail. A red run reports for far
+longer than it runs — printing a grid DOM node has no practical bound, so a 10s suite takes minutes. Get the list
+first, then re-run one file with diffs on.
+
+```bash
+./behave.sh --bail 1 <path>           # stop at the first failure — the everyday default (--bail N for N)
+./behave.sh --no-diff <path>          # names + messages only (AG_NO_DIFF)
+./behave.sh --diff-lines 10 <path>    # cap each diff (AG_DIFF_LINES, default 80, 0 = unlimited)
+./behave.sh --stack-trace-len 20      # shorter stacks (AG_STACK_TRACE_LEN, default 40)
+```
+
+`--bail` combines with any reporter. With `--reporter=json --outputFile=…` the file is still written and valid, and
+the tests that never ran are reported as **`pending`** rather than omitted — so read `success`, not `numPassedTests`,
+which is only "as far as we got".
+
+> Keep `--stack-trace-len` at 20 or above: vitest finds a `toMatchInlineSnapshot` by walking the stack, so anything
+> shorter turns every inline snapshot into a false "Couldn't infer stack frame" failure.
+
+Colour (off for an agent or a pipe, on for a terminal and CI) and `DEBUG_PRINT_LIMIT` (1000, not testing-library's
+7000, so a failed query prints a slice rather than the whole grid) are set for you by `behave.sh`.
+
 > `./behave.sh` does not type-check (Vitest strips types via esbuild). Before committing, run `yarn nx run ag-behavioural-testing:build:test` to type-check.
 >
-> `./behave.sh` and `./benches.sh` resolve only from the repository root, so an agent whose shell has changed directory — earlier in the same command, or carried over from a previous one — will not find them. Prefix with `cd "$(git rev-parse --show-toplevel)" &&` rather than hardcoding a machine-specific path.
+> `./behave.sh` and `./benches.sh` resolve only from the repository root. From anywhere else call them by path (`../../behave.sh`) — not via `cd "$(git rev-parse --show-toplevel)" &&`, which every agent harness gates on the `cd`, the `&&` and the `$(…)`.
 >
-> Some suites take several minutes; `testing/behavioural/src/charts/format-panel-options.test.ts` alone runs ~2.5 minutes. Allow a timeout of at least five minutes, and wait for the run to finish and report its exit status — if the runner detaches the command, collect the result rather than treating silence as success.
+> A whole-suite run takes a few minutes. Allow a timeout of at least five minutes, and wait for the run to finish and report its exit status — if the runner detaches the command, collect the result rather than treating silence as success.
 >
-> The workspace membership and shared config live in `vitest.workspace.ts`, `vitest.config.ts`, and `vitest.shared.ts` at the repo root; each project keeps its own `vitest.config.ts`. Runner-global options (reporters, `onConsoleLog`, pool) must live in the **root** config — Vitest ignores them in a project config during a workspace run.
+> The project list and root config live in `vitest.workspace.ts` and `vitest.config.ts` at the repo root; the shared helpers, thresholds, setup file and slow-tests reporter live in `testing/shared/vitest/`; each project keeps its own `vitest.config.ts`. Runner-global options (reporters, `outputFile`, coverage) must live in the **root** config — Vitest ignores them in a project config. Project-scoped options (pool, environment, `setupFiles`) do NOT cascade from the root, so `unitProjectTestConfig` carries them instead.
 
 ### Benchmarks
 

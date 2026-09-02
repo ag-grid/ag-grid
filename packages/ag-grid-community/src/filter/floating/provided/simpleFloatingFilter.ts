@@ -1,12 +1,13 @@
 import type { AgColumn } from '../../../entities/agColumn';
 import type { FilterChangedEvent } from '../../../events';
+import type { Column } from '../../../interfaces/iColumn';
 import { Component } from '../../../widgets/component';
 import type { IProvidedFilterParams, ProvidedFilterModel } from '../../provided/iProvidedFilter';
 import type {
+    FilterOptionKey,
     ICombinedSimpleModel,
     ISimpleFilter,
     ISimpleFilterModel,
-    ISimpleFilterModelType,
     ISimpleFilterParams,
 } from '../../provided/iSimpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
@@ -36,10 +37,12 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
     protected abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date';
 
-    protected abstract readonly FilterModelFormatterClass: new (
+    /** Subclasses narrow `filterParams` to their own filter's params type. */
+    protected abstract createModelFormatter(
         optionsFactory: OptionsFactory,
-        filterParams: ISimpleFilterParams
-    ) => SimpleFilterModelFormatter<ISimpleFilterParams>;
+        filterParams: ISimpleFilterParams,
+        column: Column
+    ): SimpleFilterModelFormatter<ISimpleFilterParams>;
 
     protected setLastTypeFromModel(model: ProvidedFilterModel): void {
         // if no model provided by the parent filter use default
@@ -50,16 +53,17 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
         const isCombined = (model as any).operator;
 
-        let condition: ISimpleFilterModel;
+        let condition: ISimpleFilterModel | undefined;
 
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
-            condition = combinedModel.conditions[0];
+            condition = combinedModel.conditions?.[0];
         } else {
             condition = model as ISimpleFilterModel;
         }
 
-        this.lastType = condition.type;
+        // A combined model joining no conditions names no type, so the default stands as it does for no model.
+        this.lastType = condition ? condition.type : this.optionsFactory.defaultOption;
     }
 
     protected canWeEditAfterModelFromParentFilter(model: ProvidedFilterModel): boolean {
@@ -99,7 +103,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
         optionsFactory.init(this.beans.log, params.filterParams as ISimpleFilterParams, this.defaultOptions);
 
         this.filterModelFormatter = this.createManagedBean(
-            new this.FilterModelFormatterClass(optionsFactory, params.filterParams as ISimpleFilterParams)
+            this.createModelFormatter(optionsFactory, params.filterParams as ISimpleFilterParams, params.column)
         );
 
         this.setSimpleParams(params, false);
@@ -166,7 +170,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     }
 
     private isTypeEditable(type?: string | null): boolean {
-        return !!type && !this.readOnly && getNumberOfInputs(type as ISimpleFilterModelType, this.optionsFactory) === 1;
+        return !!type && !this.readOnly && getNumberOfInputs(type as FilterOptionKey, this.optionsFactory) === 1;
     }
 
     protected getAriaLabel(column: AgColumn): string {

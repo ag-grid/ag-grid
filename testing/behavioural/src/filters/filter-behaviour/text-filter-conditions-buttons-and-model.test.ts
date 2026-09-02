@@ -1,6 +1,4 @@
-import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-
+import { waitFor } from '@testing-library/dom';
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -10,7 +8,10 @@ import {
     firePointerLikeClick,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
 
 /** Clicks an apply-panel button by label (harness only exposes Apply/Clear; Reset needs this). */
 async function clickPanelButton(label: string): Promise<void> {
@@ -89,7 +90,7 @@ describe('Text Filter — buttons & model round-trip', () => {
         await new FilterDom(api, 'buttons after clear', { colId: 'name' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             buttons: Apply | Clear | Reset
             model:
               filterType: "text"
@@ -113,7 +114,7 @@ describe('Text Filter — buttons & model round-trip', () => {
         await new FilterDom(api, 'buttons after reset', { colId: 'name' }).checkFilterDom(`
             COLUMN FILTER
             operator: "Contains"
-            input: ""
+            input: "" ⟨Filter...⟩
             buttons: Apply | Clear | Reset
             model: null
         `);
@@ -207,4 +208,42 @@ describe('Text Filter — buttons & model round-trip', () => {
             └── LEAF id:2 name:"Charlie"
         `);
     });
+
+    // `OR` is the case that separates a model joining nothing from one matching nothing: `[].some()` is false.
+    test.each([
+        ['missing', 'AND', undefined],
+        ['empty', 'AND', []],
+        ['missing', 'OR', undefined],
+        ['empty', 'OR', []],
+    ] as const)(
+        'a combined %s-conditions %s model with a wrong filterType leaves every row through',
+        async (_name, operator, conditions) => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'name', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
+                rowData: [{ name: 'Alice' }, { name: 'Bob' }],
+            });
+
+            // Filtered first, so leaving every row through has to be this model's doing rather than the start state.
+            await api.setColumnFilterModel('name', { filterType: 'text', type: 'equals', filter: 'Alice' });
+            api.onFilterChanged();
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+
+            // Spread, so the missing case omits the key outright rather than setting it to `undefined`.
+            const combined = { filterType: 'number', operator, ...(conditions ? { conditions } : {}) };
+            // A wrong `filterType` is what makes the grid re-stamp the conditions.
+            await api.setColumnFilterModel('name', combined);
+            api.onFilterChanged();
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(2));
+
+            // Strict: a key the caller never supplied must not come back as `undefined`.
+            expect(api.getColumnFilterModel('name')).toStrictEqual({ ...combined, filterType: 'text' });
+            // A model that constrains nothing is still a model, so the column keeps advertising a filter.
+            expect(api.isColumnFilterPresent()).toBe(true);
+            await new GridRows(api, 'unfiltered').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"Alice"
+                └── LEAF id:1 name:"Bob"
+            `);
+        }
+    );
 });

@@ -33,6 +33,12 @@ const pageForAllFrameworks = (from: string, to: string): Redirect[] => [
 // no query string, so Apache preserves any inbound query). Destinations were derived by
 // replaying the current redirect rules to their fixpoint.
 export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
+    // The slash-less framework whats-new paths, which would otherwise pick up the
+    // add-trailing-slash 301 first and reach /whats-new/ in two hops.
+    { from: '/react-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
+    { from: '/vue-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
+    { from: '/angular-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
+    { from: '/javascript-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
     // Shadowed /{framework}-grid/<subpage>/ rules converted to single hop. The broad /{fw}-grid/
     // prefix rule (mod_alias, first-match) otherwise shadows these specifics: 128 took 2 hops and 14
     // landed on the wrong (404) page. As mod_rewrite, these run before mod_alias so each resolves in
@@ -282,7 +288,7 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     { from: '/features-overview', to: 'https://www.ag-grid.com/' },
     {
         from: '/nodejs-server-side-operations',
-        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-operations-nodejs/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
     },
     {
         from: '/documentation/javascript/integrated-charts-cross-filtering/',
@@ -398,9 +404,12 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
 export const SITE_301_REDIRECTS: Redirect[] = [
     // SE-30: legacy MCP announcement slug that 404s on www -> the blog post (same slug) where the
     // announcement actually lives, preserving the content for external links / historical index entries.
+    // SE-91: retargeted from blog.ag-grid.com to the self-hosted /blog/ path. Left pointing at the old
+    // host this becomes two hops after cutover -- www -> blog.ag-grid.com -> www/blog/ -- which fails
+    // SE-86's single-hop requirement. The slug is unchanged, so the destination is the same content.
     {
         from: '/introducing-the-ag-grid-model-context-protocol-mcp-server/',
-        to: 'https://blog.ag-grid.com/introducing-the-ag-grid-model-context-protocol-mcp-server/',
+        to: 'https://www.ag-grid.com/blog/introducing-the-ag-grid-model-context-protocol-mcp-server/',
     },
 
     // SE-60: legacy URLs returning 404 that are still internally linked.
@@ -865,19 +874,19 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/angular/server-side-model/', to: '/angular-data-grid/server-side-model/' },
     {
         from: '/documentation/angular/server-side-operations-graphql/',
-        to: '/angular-data-grid/server-side-operations-graphql/',
+        to: '/angular-data-grid/server-side-model/',
     },
     {
         from: '/documentation/angular/server-side-operations-nodejs/',
-        to: '/angular-data-grid/server-side-operations-nodejs/',
+        to: '/angular-data-grid/server-side-model/',
     },
     {
         from: '/documentation/angular/server-side-operations-oracle/',
-        to: '/angular-data-grid/server-side-operations-oracle/',
+        to: '/angular-data-grid/server-side-model/',
     },
     {
         from: '/documentation/angular/server-side-operations-spark/',
-        to: '/angular-data-grid/server-side-operations-spark/',
+        to: '/angular-data-grid/server-side-model/',
     },
     { from: '/documentation/angular/side-bar/', to: '/angular-data-grid/side-bar/' },
     { from: '/documentation/angular/status-bar/', to: '/angular-data-grid/status-bar/' },
@@ -1197,19 +1206,19 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/javascript/server-side-model/', to: '/javascript-data-grid/server-side-model/' },
     {
         from: '/documentation/javascript/server-side-operations-graphql/',
-        to: '/javascript-data-grid/server-side-operations-graphql/',
+        to: '/javascript-data-grid/server-side-model/',
     },
     {
         from: '/documentation/javascript/server-side-operations-nodejs/',
-        to: '/javascript-data-grid/server-side-operations-nodejs/',
+        to: '/javascript-data-grid/server-side-model/',
     },
     {
         from: '/documentation/javascript/server-side-operations-oracle/',
-        to: '/javascript-data-grid/server-side-operations-oracle/',
+        to: '/javascript-data-grid/server-side-model/',
     },
     {
         from: '/documentation/javascript/server-side-operations-spark/',
-        to: '/javascript-data-grid/server-side-operations-spark/',
+        to: '/javascript-data-grid/server-side-model/',
     },
     { from: '/documentation/javascript/side-bar/', to: '/javascript-data-grid/side-bar/' },
     { from: '/documentation/javascript/status-bar/', to: '/javascript-data-grid/status-bar/' },
@@ -1451,19 +1460,19 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/react/server-side-model/', to: '/react-data-grid/server-side-model/' },
     {
         from: '/documentation/react/server-side-operations-graphql/',
-        to: '/react-data-grid/server-side-operations-graphql/',
+        to: '/react-data-grid/server-side-model/',
     },
     {
         from: '/documentation/react/server-side-operations-nodejs/',
-        to: '/react-data-grid/server-side-operations-nodejs/',
+        to: '/react-data-grid/server-side-model/',
     },
     {
         from: '/documentation/react/server-side-operations-oracle/',
-        to: '/react-data-grid/server-side-operations-oracle/',
+        to: '/react-data-grid/server-side-model/',
     },
     {
         from: '/documentation/react/server-side-operations-spark/',
-        to: '/react-data-grid/server-side-operations-spark/',
+        to: '/react-data-grid/server-side-model/',
     },
     { from: '/documentation/react/side-bar/', to: '/react-data-grid/side-bar/' },
     { from: '/documentation/react/status-bar/', to: '/react-data-grid/status-bar/' },
@@ -1678,11 +1687,11 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/vue/server-side-model/', to: '/vue-data-grid/server-side-model/' },
     {
         from: '/documentation/vue/server-side-operations-graphql/',
-        to: '/vue-data-grid/server-side-operations-graphql/',
+        to: '/vue-data-grid/server-side-model/',
     },
-    { from: '/documentation/vue/server-side-operations-nodejs/', to: '/vue-data-grid/server-side-operations-nodejs/' },
-    { from: '/documentation/vue/server-side-operations-oracle/', to: '/vue-data-grid/server-side-operations-oracle/' },
-    { from: '/documentation/vue/server-side-operations-spark/', to: '/vue-data-grid/server-side-operations-spark/' },
+    { from: '/documentation/vue/server-side-operations-nodejs/', to: '/vue-data-grid/server-side-model/' },
+    { from: '/documentation/vue/server-side-operations-oracle/', to: '/vue-data-grid/server-side-model/' },
+    { from: '/documentation/vue/server-side-operations-spark/', to: '/vue-data-grid/server-side-model/' },
     { from: '/documentation/vue/side-bar/', to: '/vue-data-grid/side-bar/' },
     { from: '/documentation/vue/status-bar/', to: '/vue-data-grid/status-bar/' },
     { from: '/documentation/vue/supported-browsers/', to: '/vue-data-grid/supported-browsers/' },
@@ -1716,7 +1725,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
         from: '/git-color/',
         to: 'https://medium.com/ag-grid/git-on-the-command-line-improving-the-experience-5a604cb14cf6',
     },
-    { from: '/graphql-server-side-operations/', to: '/javascript-data-grid/server-side-operations-graphql/' },
+    { from: '/graphql-server-side-operations/', to: '/javascript-data-grid/server-side-model/' },
     {
         from: '/javascript-datagrid/',
         to: 'https://medium.com/ag-grid/8-reasons-to-choose-ag-grid-as-your-javascript-datagrid-eb4a767a351f',
@@ -2151,19 +2160,19 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid/server-side-model-updating/', to: '/javascript-data-grid/server-side-model-updating/' },
     {
         from: '/javascript-grid/server-side-operations-graphql/',
-        to: '/javascript-data-grid/server-side-operations-graphql/',
+        to: '/javascript-data-grid/server-side-model/',
     },
     {
         from: '/javascript-grid/server-side-operations-nodejs/',
-        to: '/javascript-data-grid/server-side-operations-nodejs/',
+        to: '/javascript-data-grid/server-side-model/',
     },
     {
         from: '/javascript-grid/server-side-operations-oracle/',
-        to: '/javascript-data-grid/server-side-operations-oracle/',
+        to: '/javascript-data-grid/server-side-model/',
     },
     {
         from: '/javascript-grid/server-side-operations-spark/',
-        to: '/javascript-data-grid/server-side-operations-spark/',
+        to: '/javascript-data-grid/server-side-model/',
     },
     { from: '/javascript-grid/side-bar/', to: '/javascript-data-grid/side-bar/' },
     { from: '/javascript-grid/status-bar/', to: '/javascript-data-grid/status-bar/' },
@@ -2390,10 +2399,10 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     },
     { from: '/angular-grid/server-side-model-tree-data/', to: '/angular-data-grid/server-side-model-tree-data/' },
     { from: '/angular-grid/server-side-model-updating/', to: '/angular-data-grid/server-side-model-updating/' },
-    { from: '/angular-grid/server-side-operations-graphql/', to: '/angular-data-grid/server-side-operations-graphql/' },
-    { from: '/angular-grid/server-side-operations-nodejs/', to: '/angular-data-grid/server-side-operations-nodejs/' },
-    { from: '/angular-grid/server-side-operations-oracle/', to: '/angular-data-grid/server-side-operations-oracle/' },
-    { from: '/angular-grid/server-side-operations-spark/', to: '/angular-data-grid/server-side-operations-spark/' },
+    { from: '/angular-grid/server-side-operations-graphql/', to: '/angular-data-grid/server-side-model/' },
+    { from: '/angular-grid/server-side-operations-nodejs/', to: '/angular-data-grid/server-side-model/' },
+    { from: '/angular-grid/server-side-operations-oracle/', to: '/angular-data-grid/server-side-model/' },
+    { from: '/angular-grid/server-side-operations-spark/', to: '/angular-data-grid/server-side-model/' },
     { from: '/angular-grid/side-bar/', to: '/angular-data-grid/side-bar/' },
     { from: '/angular-grid/status-bar/', to: '/angular-data-grid/status-bar/' },
     { from: '/angular-grid/supported-browsers/', to: '/angular-data-grid/supported-browsers/' },
@@ -2613,10 +2622,10 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     },
     { from: '/react-grid/server-side-model-tree-data/', to: '/react-data-grid/server-side-model-tree-data/' },
     { from: '/react-grid/server-side-model-updating/', to: '/react-data-grid/server-side-model-updating/' },
-    { from: '/react-grid/server-side-operations-graphql/', to: '/react-data-grid/server-side-operations-graphql/' },
-    { from: '/react-grid/server-side-operations-nodejs/', to: '/react-data-grid/server-side-operations-nodejs/' },
-    { from: '/react-grid/server-side-operations-oracle/', to: '/react-data-grid/server-side-operations-oracle/' },
-    { from: '/react-grid/server-side-operations-spark/', to: '/react-data-grid/server-side-operations-spark/' },
+    { from: '/react-grid/server-side-operations-graphql/', to: '/react-data-grid/server-side-model/' },
+    { from: '/react-grid/server-side-operations-nodejs/', to: '/react-data-grid/server-side-model/' },
+    { from: '/react-grid/server-side-operations-oracle/', to: '/react-data-grid/server-side-model/' },
+    { from: '/react-grid/server-side-operations-spark/', to: '/react-data-grid/server-side-model/' },
     { from: '/react-grid/side-bar/', to: '/react-data-grid/side-bar/' },
     { from: '/react-grid/status-bar/', to: '/react-data-grid/status-bar/' },
     { from: '/react-grid/supported-browsers/', to: '/react-data-grid/supported-browsers/' },
@@ -2824,10 +2833,10 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     },
     { from: '/vue-grid/server-side-model-tree-data/', to: '/vue-data-grid/server-side-model-tree-data/' },
     { from: '/vue-grid/server-side-model-updating/', to: '/vue-data-grid/server-side-model-updating/' },
-    { from: '/vue-grid/server-side-operations-graphql/', to: '/vue-data-grid/server-side-operations-graphql/' },
-    { from: '/vue-grid/server-side-operations-nodejs/', to: '/vue-data-grid/server-side-operations-nodejs/' },
-    { from: '/vue-grid/server-side-operations-oracle/', to: '/vue-data-grid/server-side-operations-oracle/' },
-    { from: '/vue-grid/server-side-operations-spark/', to: '/vue-data-grid/server-side-operations-spark/' },
+    { from: '/vue-grid/server-side-operations-graphql/', to: '/vue-data-grid/server-side-model/' },
+    { from: '/vue-grid/server-side-operations-nodejs/', to: '/vue-data-grid/server-side-model/' },
+    { from: '/vue-grid/server-side-operations-oracle/', to: '/vue-data-grid/server-side-model/' },
+    { from: '/vue-grid/server-side-operations-spark/', to: '/vue-data-grid/server-side-model/' },
     { from: '/vue-grid/side-bar/', to: '/vue-data-grid/side-bar/' },
     { from: '/vue-grid/status-bar/', to: '/vue-data-grid/status-bar/' },
     { from: '/vue-grid/supported-browsers/', to: '/vue-data-grid/supported-browsers/' },
@@ -2848,8 +2857,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-grid/view-refresh/', to: '/vue-data-grid/view-refresh/' },
     { from: '/vue-grid/viewport/', to: '/vue-data-grid/viewport/' },
     { from: '/vue3/', to: '/vue-data-grid/getting-started/' },
-    { from: '/nodejs-server-side-operations/', to: '/javascript-data-grid/server-side-operations-nodejs/' },
-    { from: '/oracle-server-side-operations/', to: '/javascript-data-grid/server-side-operations-oracle/' },
+    { from: '/nodejs-server-side-operations/', to: '/javascript-data-grid/server-side-model/' },
+    { from: '/oracle-server-side-operations/', to: '/javascript-data-grid/server-side-model/' },
     { from: '/quote/', to: '/ecommerce/#/ecommerce/quote-lookup' },
     { from: '/react-15/', to: '/react-data-grid/getting-started/' },
     {
@@ -2867,7 +2876,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
         from: '/review-of-angularjs-grids/',
         to: 'https://medium.com/ag-grid/from-hater-to-fan-how-i-fell-in-love-with-ag-grid-3cbc5976d5e3',
     },
-    { from: '/spark-server-side-operations/', to: '/javascript-data-grid/server-side-operations-spark/' },
+    { from: '/spark-server-side-operations/', to: '/javascript-data-grid/server-side-model/' },
     { from: '/support.php', to: '/' },
     {
         from: '/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/',
@@ -3115,11 +3124,14 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // SE-64: target the final (trailing-slashed) page directly to remove the extra hop
     { from: '/cookies.php', to: '/cookies/' },
     { from: '/privacy.php', to: '/privacy/' },
-    { from: '/about.php', to: '/about' },
+    { from: '/about.php', to: '/about/' },
     { from: '/license-pricing.php', to: '/license-pricing/' },
     { from: '/example.php', to: '/example/' },
     { from: '/ag-grid-jobs-board.php', to: '/ag-grid-jobs-board' },
 
+    // Targets are deliberately slash-less: `Redirect` prefix-matches and appends the remainder,
+    // so the slashed request lands on /whats-new/ exactly, while a slashed target yields
+    // /whats-new//. The slash-less request is handled by SITE_SINGLE_HOP_REWRITES above.
     { from: '/react-data-grid/whats-new', to: '/whats-new' },
     { from: '/vue-data-grid/whats-new', to: '/whats-new' },
     { from: '/angular-data-grid/whats-new', to: '/whats-new' },
@@ -3172,6 +3184,10 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     ...pageForAllFrameworks('tree-data-hierarchy', 'tree-data-paths'),
     ...pageForAllFrameworks('upgrading-to-ag-grid-32-2', 'upgrading-to-ag-grid-32-2-1'),
     ...pageForAllFrameworks('accented-sort', '#locale-specific-sort'),
+    ...pageForAllFrameworks('server-side-operations-nodejs', 'server-side-model'),
+    ...pageForAllFrameworks('server-side-operations-graphql', 'server-side-model'),
+    ...pageForAllFrameworks('server-side-operations-oracle', 'server-side-model'),
+    ...pageForAllFrameworks('server-side-operations-spark', 'server-side-model'),
 
     // ===== SE-61: legacy 404 redirects (non-/charts; /charts/* live in the ag-charts-website repo) =====
     // grid, documentation, examples, legacy entry points, gone (410) pages.
@@ -3314,6 +3330,9 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/community-forums/$', to: '/community/' },
     { fromPattern: '^/forum/.+', gone: true },
     { from: '/testimonials.php', gone: true },
+    // The trailing slash is required: Apache's `Redirect` prefix-matches, so without it this
+    // would also swallow the live /blog/whats-new-in-ag-grid-v24-part-2/.
+    { from: '/blog/whats-new-in-ag-grid-v24/', gone: true },
     { from: '/start-trial.php', to: '/license-pricing/' },
     { from: '/options/series/radial-column/', to: 'https://www.ag-grid.com/charts/options/series/radial-column/' },
     { from: '/options/series/area/', to: 'https://www.ag-grid.com/charts/options/series/area/' },

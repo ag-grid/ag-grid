@@ -1,6 +1,8 @@
 import { _parseBigIntOrNull } from 'ag-stack';
 
+import type { Column } from '../../../interfaces/iColumn';
 import type { Comparator } from '../iScalarFilter';
+import type { OptionsFactory } from '../optionsFactory';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { BigIntFilterModelFormatter } from './bigIntFilterModelFormatter';
@@ -9,19 +11,27 @@ import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
 
 export class BigIntFilterHandler extends ScalarFilterHandler<BigIntFilterModel, bigint, IBigIntFilterParams> {
     public readonly filterType = 'bigint' as const;
-    protected readonly FilterModelFormatterClass = BigIntFilterModelFormatter;
-
     constructor() {
         super(mapValuesFromBigIntFilterModel, DEFAULT_BIGINT_FILTER_OPTIONS);
     }
 
+    protected createModelFormatter(
+        optionsFactory: OptionsFactory,
+        filterParams: IBigIntFilterParams,
+        column: Column
+    ): BigIntFilterModelFormatter {
+        return new BigIntFilterModelFormatter(optionsFactory, filterParams, column);
+    }
+
     protected override comparator(): Comparator<bigint> {
         return (left: bigint, right: bigint): number => {
-            if (left === right) {
+            // The cell holds whatever the row data does — `10n`, `'10'` or `10` — and `10n === 10` is false.
+            const cellValue = _parseBigIntOrNull(right)!;
+            if (left === cellValue) {
                 return 0;
             }
 
-            return left < right ? 1 : -1;
+            return left < cellValue ? 1 : -1;
         };
     }
 

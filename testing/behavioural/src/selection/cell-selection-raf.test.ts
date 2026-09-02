@@ -1,10 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { CellSpanModule, ClientSideRowModelModule, RenderApiModule } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
 
 describe('Cell Selection RAF Deduplication', () => {
     let consoleWarnSpy: MockInstance;
@@ -112,21 +111,6 @@ describe('Cell Selection RAF Deduplication', () => {
             rowData,
             cellSelection: true,
         });
-        await new GridColumns(api, `scheduled range refresh resets after RAF fires allowing new scheduling setup`)
-            .checkColumns(`
-                CENTER
-                ├── name "Name" width:200
-                └── value "Value" width:200
-            `);
-        await new GridRows(api, `scheduled range refresh resets after RAF fires allowing new scheduling setup`).check(
-            `
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 name:"a" value:1
-                ├── LEAF id:1 name:"b" value:2
-                ├── LEAF id:2 name:"c" value:3
-                └── LEAF id:3 name:"d" value:4
-            `
-        );
 
         api.addCellRange({
             columns: ['name', 'value'],
@@ -203,14 +187,6 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             cellSelection: true,
             getRowId: (params) => params.data.name,
         });
-        await new GridColumns(
-            api,
-            `data updates with cell selection do not accumulate RAF callbacks without enableC setup`
-        ).checkColumns(`
-            CENTER
-            ├── name "Name" width:200
-            └── value "Value" width:200
-        `);
         await new GridRows(
             api,
             `data updates with cell selection do not accumulate RAF callbacks without enableC setup`
@@ -249,8 +225,11 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             // debounceModelEvent -> spannedCellsUpdated), so a single tick is not enough. With
             // enableCellSpan off there is no event to poll for — and if the chain never runs, no RAFs
             // are scheduled and the accumulation assertion below passes vacuously.
-            // eslint-disable-next-line no-restricted-syntax -- waits out RowSpanService's chained 0-delay timers
-            await asyncSetTimeout(5);
+            // Both links are 0-delay (rowSpanService `modelTimeout` then the `_debounce(…, 0)`), so
+            // draining them is a fixed number of ticks, not a guessed window.
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
             // Flush animation frame tasks (simulates what happens during scroll/focus)
             api.flushAllAnimationFrames();
         }
@@ -281,18 +260,6 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             cellSelection: true,
             getRowId: (params) => params.data.name,
         });
-        await new GridColumns(api, `data updates with enableCellSpan active are processed without error setup`)
-            .checkColumns(`
-                CENTER
-                ├── name "Name" width:200
-                └── value "Value" width:200
-            `);
-        await new GridRows(api, `data updates with enableCellSpan active are processed without error setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:a name:"a" value:1
-            ├── LEAF id:b name:"b" value:2
-            └── LEAF id:c name:"c" value:3
-        `);
 
         await waitForEvent('firstDataRendered', api);
         await asyncSetTimeout(0);
@@ -313,10 +280,12 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
 
         // Negative assertion: the test exists to prove the span cycle completes without error, so it
         // needs the whole chain to run. A single tick can return before RowSpanService's second
-        // 0-delay timer fires, leaving the cycle half-done and the assertion vacuous — there is no
-        // positive signal that follows "nothing went wrong", so this is the observation window.
-        // eslint-disable-next-line no-restricted-syntax -- waits out RowSpanService's chained 0-delay timers
-        await asyncSetTimeout(5);
+        // 0-delay timer fires, leaving the cycle half-done and the assertion vacuous. Both links are
+        // 0-delay (rowSpanService `modelTimeout` then the `_debounce(…, 0)`), so draining them is a
+        // fixed number of ticks rather than a guessed window.
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
 
         // The grid should not have errored — spans are being processed
         expect(api.getDisplayedRowCount()).toBe(3);

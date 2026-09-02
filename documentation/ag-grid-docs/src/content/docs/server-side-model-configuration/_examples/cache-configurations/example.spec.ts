@@ -22,28 +22,15 @@ test.agExample(import.meta, () => {
                 return indices.length ? Math.max(...indices) : -1;
             });
 
-        // The last row is unknown up-front, so the grid can only fetch one block at a time. Scroll to
-        // the bottom repeatedly, each time waiting until the deepest rendered row index actually
-        // advances (real data progress) before scrolling again — tolerating the occasional scroll
-        // that lands mid-load without failing.
-        for (let i = 0; i < 10 && (await deepestRenderedIndex()) < DEEP_INDEX; i++) {
-            const before = await deepestRenderedIndex();
+        // The last row is unknown up-front, so the grid can only fetch one block at a time and a
+        // single scroll reaches the end of what is loaded, not DEEP_INDEX. Scroll again on every
+        // attempt until the rows go deep enough, so a scroll that lands mid-load just costs a retry.
+        await expect(async () => {
             await page.locator('.ag-grid-viewport').evaluate((el) => {
                 el.scrollTop = el.scrollHeight;
             });
-            await page
-                .waitForFunction(
-                    (prev) => {
-                        const indices = Array.from(document.querySelectorAll('.ag-row'))
-                            .map((r) => Number(r.getAttribute('row-index')))
-                            .filter((idx) => Number.isFinite(idx));
-                        return indices.length > 0 && Math.max(...indices) > prev;
-                    },
-                    before,
-                    { timeout: 5000 }
-                )
-                .catch(() => {});
-        }
+            expect(await deepestRenderedIndex()).toBeGreaterThanOrEqual(DEEP_INDEX);
+        }).toPass();
 
         const renderedIndex = await page.evaluate((min) => {
             const deep = Array.from(document.querySelectorAll('.ag-row'))
@@ -52,7 +39,6 @@ test.agExample(import.meta, () => {
                 .sort((a, b) => a - b);
             return deep[0];
         }, DEEP_INDEX);
-        expect(renderedIndex).toBeGreaterThanOrEqual(DEEP_INDEX);
         // A block beyond the first was fetched on demand: the deep row carries its real id and data.
         await expect(dataRow(renderedIndex).locator('[col-id="id"]')).toContainText(String(renderedIndex));
         await expect(dataRow(renderedIndex).locator('[col-id="athlete"]')).not.toBeEmpty();

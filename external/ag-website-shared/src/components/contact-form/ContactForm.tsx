@@ -3,6 +3,7 @@ import {
     CONSENT_LABELS,
     DATA_PROCESSING_CONSENT_REQUIRED,
 } from '@ag-website-shared/components/consent-fields/consentMessages';
+import type { CaptchaTicker } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { CONSENT_FIELD_IDS, CONTACT_FORM_DATA, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
@@ -57,27 +58,42 @@ interface Props {
     submitLabel?: string;
 }
 
-function loadRecaptchaScript(): Promise<void> {
-    return new Promise((resolve, reject) => {
-        if ((window as any).grecaptcha) {
-            return resolve();
-        }
-        const id = 'grecaptcha-script';
-        const existing = document.getElementById(id) as HTMLScriptElement | null;
-        if (existing) {
-            existing.addEventListener('load', () => resolve(), { once: true });
-            existing.addEventListener('error', reject, { once: true });
+const RECAPTCHA_READY_CALLBACK = 'agOnRecaptchaReady';
+const RECAPTCHA_READY_PROMISE = 'agRecaptchaReady';
+
+/**
+ * Loads reCAPTCHA once per page, in explicit-render mode.
+ *
+ * `api.js` auto-renders every `.g-recaptcha` container exactly once, when it first executes.
+ * The Astro client router swaps pages without a reload, so `window.grecaptcha` outlives the
+ * container it rendered into and a later visit to this page is left with a fresh, empty one.
+ * Explicit mode hands rendering to the caller, which renders on each mount instead.
+ *
+ * The in-flight promise lives on `window` rather than in a module variable because what it
+ * guards is global: the injected script tag and the `grecaptcha` it defines. A second module
+ * instance has to join the load already under way instead of appending a duplicate script.
+ */
+function loadRecaptcha(): Promise<void> {
+    const globals = window as any;
+    globals[RECAPTCHA_READY_PROMISE] ??= new Promise<void>((resolve, reject) => {
+        if (globals.grecaptcha?.render != null) {
+            resolve();
             return;
         }
-        const s = document.createElement('script');
-        s.id = id;
-        s.src = RECAPTCHA_URL;
-        s.async = true;
-        s.defer = true;
-        s.onload = () => resolve();
-        s.onerror = reject;
-        document.head.appendChild(s);
+        globals[RECAPTCHA_READY_CALLBACK] = resolve;
+        const script = document.createElement('script');
+        script.id = 'grecaptcha-script';
+        script.src = `${RECAPTCHA_URL}?render=explicit&onload=${RECAPTCHA_READY_CALLBACK}`;
+        script.async = true;
+        script.defer = true;
+        script.onerror = (error) => {
+            // Drop the cached promise so a later mount retries the load.
+            globals[RECAPTCHA_READY_PROMISE] = undefined;
+            reject(error);
+        };
+        document.head.appendChild(script);
     });
+    return globals[RECAPTCHA_READY_PROMISE];
 }
 
 export const ContactForm: FunctionComponent<Props> = ({
@@ -86,6 +102,10 @@ export const ContactForm: FunctionComponent<Props> = ({
     submitLabel,
 }: Props) => {
     const formRef = useRef<HTMLFormElement>(null);
+    const captchaRef = useRef<HTMLDivElement>(null);
+    const captchaWidgetId = useRef<number | null>(null);
+    const captchaTimestamp = useRef('');
+    const reapplyCaptchaTimestamp = useRef<(() => void) | null>(null);
     const [isDebug, setIsDebug] = useState(isDev);
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
     const [isDisabled, setIsDisabled] = useState(false);
@@ -138,17 +158,39 @@ export const ContactForm: FunctionComponent<Props> = ({
             setReturnUrl(urlWithCurrentPath.toString());
         }
 
-        loadRecaptchaScript().then(() => {
-            initCaptcha();
+        let unmounted = false;
+        let captcha: CaptchaTicker | undefined;
+
+        loadRecaptcha().then(() => {
+            const container = captchaRef.current;
+            if (unmounted || container == null) {
+                return;
+            }
+            captchaWidgetId.current = (globalThis as any).grecaptcha.render(container, {
+                sitekey: captchaSiteKey,
+            });
+            captcha = initCaptcha(container, (ts) => {
+                captchaTimestamp.current = ts;
+            });
+            reapplyCaptchaTimestamp.current = captcha.reapply;
         });
+
+        return () => {
+            unmounted = true;
+            captcha?.stop();
+        };
     }, []);
 
     const onValidSubmit = useCallback(() => {
         setIsDisabled(true);
         setCaptchaError(false);
 
-        const captchaPassed = (globalThis as any).grecaptcha.getResponse();
+        // Widget ids increment across client-side navigations, and a bare `getResponse()` reads
+        // widget 0, which belongs to a container an earlier page swap already destroyed.
+        const widgetId = captchaWidgetId.current;
+        const captchaPassed = widgetId != null && (globalThis as any).grecaptcha.getResponse(widgetId);
         if (captchaPassed) {
+            reapplyCaptchaTimestamp.current?.();
             formRef.current?.submit();
         } else {
             setCaptchaError(true);
@@ -169,7 +211,7 @@ export const ContactForm: FunctionComponent<Props> = ({
             <input
                 type="hidden"
                 name="captcha_settings"
-                value={`{"keyname":"${captchaSettingsKeyName}","fallback":"true","orgId":"${orgId}","ts":""}`}
+                value={`{"keyname":"${captchaSettingsKeyName}","fallback":"true","orgId":"${orgId}","ts":"${captchaTimestamp.current}"}`}
             />
             <input type="hidden" name="oid" value={orgId} />
             <input type="hidden" name="retURL" value={returnUrl} />
@@ -313,7 +355,7 @@ export const ContactForm: FunctionComponent<Props> = ({
             </div>
 
             <div className={classnames('input-field', { 'input-error': captchaError })}>
-                <div className="g-recaptcha" data-sitekey={captchaSiteKey} />
+                <div ref={captchaRef} className="g-recaptcha" />
                 <div className={styles.errorContainer}>
                     {captchaError && <p className="error">Please click on the reCAPTCHA checkbox</p>}
                 </div>

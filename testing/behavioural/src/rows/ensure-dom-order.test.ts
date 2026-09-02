@@ -1,7 +1,7 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface OrderRow {
     id: string;

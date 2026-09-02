@@ -139,7 +139,6 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.createManagedBean(this.positionableFeature);
 
         this.refreshGui();
-        _setAriaLabel(this.ePillDropList, this.getAriaLabel());
 
         this.addManagedElementListeners(this.getFocusableElement(), {
             focusin: this.onFocusIn.bind(this),
@@ -181,13 +180,14 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private onKeyDown(e: KeyboardEvent) {
         const { key } = e;
-        const isVertical = !this.horizontal;
+        const { beans, horizontal, gos } = this;
+        const isVertical = !horizontal;
 
         let isNext = key === KeyCode.DOWN;
         let isPrevious = key === KeyCode.UP;
 
         if (!isVertical) {
-            const isRtl = this.gos.get('enableRtl');
+            const isRtl = gos.get('enableRtl');
             isNext = (!isRtl && key === KeyCode.RIGHT) || (isRtl && key === KeyCode.LEFT);
             isPrevious = (!isRtl && key === KeyCode.LEFT) || (isRtl && key === KeyCode.RIGHT);
         }
@@ -202,7 +202,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             this.moveFocusedItem(isPrevious);
         } else {
             const root = this.getFocusableElement();
-            const el = _findNextFocusableElement(this.beans, root, false, isPrevious);
+            const el = _findNextFocusableElement({ beans, rootNode: root, backwards: isPrevious });
 
             if (el) {
                 el.focus();
@@ -505,13 +505,14 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const resizeEnabled = this.resizeEnabled;
         const focusedIndex = this.getFocusedItem();
 
-        const { eGridDiv } = this.beans;
+        const beans = this.beans;
+        const { eGridDiv: rootNode } = beans;
         const isKeyboardMode = _isKeyboardMode();
         let alternateElement: HTMLElement | null = null;
         if (isKeyboardMode) {
             alternateElement =
-                _findNextFocusableElement(this.beans, eGridDiv) ??
-                _findNextFocusableElement(this.beans, eGridDiv, false, true);
+                _findNextFocusableElement({ beans, rootNode }) ??
+                _findNextFocusableElement({ beans, rootNode, backwards: true });
         }
 
         this.toggleResizable(false);
@@ -626,7 +627,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const { childPillComponents, ePillDropList } = this;
         const len = childPillComponents.length;
 
-        _setAriaRole(ePillDropList, len === 0 ? 'presentation' : 'listbox');
+        // A presentational element must not carry an accessible name.
+        const empty = len === 0;
+        _setAriaRole(ePillDropList, empty ? 'presentation' : 'listbox');
+        _setAriaLabel(ePillDropList, empty ? null : this.getAriaLabel());
 
         for (let i = 0; i < len; i++) {
             const comp = childPillComponents[i];

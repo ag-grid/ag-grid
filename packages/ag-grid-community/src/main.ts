@@ -11,7 +11,9 @@ export { isColumnGroup } from './entities/agColumnGroup';
 export { isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 
 export type {
+    AutoSizeColumnsTriggerParams,
     AutoSizeStrategy,
+    ContinuousAutoSizeOptions,
     IColumnLimit,
     ISizeAllColumnsToContentParams,
     ISizeColumnsToContentParams,
@@ -237,16 +239,23 @@ export type {
 export type { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
 export { isCombinedFilterModel } from './filter/provided/iSimpleFilter';
 export type {
+    CommonFilterOptionKey,
+    CustomFilterOptionKey,
+    DateFilterOptionKey,
+    FilterOptionKey,
     FilterPlaceholderFunction,
     ICombinedSimpleModel,
     IFilterOptionDef,
     IFilterPlaceholderFunctionParams,
     ISimpleFilter,
     ISimpleFilterModel,
+    ISimpleFilterModelPresetType,
     ISimpleFilterModelType,
     ISimpleFilterParams,
     JoinOperator,
+    ScalarFilterOptionKey,
     SimpleFilterParams,
+    TextFilterOptionKey,
 } from './filter/provided/iSimpleFilter';
 export type {
     INumberFilterParams,
@@ -273,6 +282,7 @@ export type {
     BooleanAdvancedFilterModelType,
     ColumnAdvancedFilterModel,
     DateAdvancedFilterModel,
+    DateAdvancedFilterModelType,
     DateStringAdvancedFilterModel,
     DateTimeAdvancedFilterModel,
     DateTimeStringAdvancedFilterModel,
@@ -317,6 +327,7 @@ export type {
     FilterHandlerParams,
     FilterHandlers,
     FilterHandlerSource,
+    FilterInputCallbackParams,
     FilterModel,
     FilterWrapperParams,
     IDoesFilterPassParams,
@@ -416,6 +427,16 @@ export type {
 } from './interfaces/iCellEditor';
 export type { ICellEditorRendererComp, ICellEditorRendererParams } from './interfaces/iCellEditorRenderer';
 export type {
+    ColumnSelectionLabelRendererFunc,
+    ColumnSelectionLabelRendererSelectorFunc,
+    ColumnSelectionLabelRendererSelectorResult,
+    ColumnSelectionPanelSource,
+    IColumnSelectionLabelRenderer,
+    IColumnSelectionLabelRendererComp,
+    IColumnSelectionLabelRendererParams,
+    IColumnSelectionPanelParams,
+} from './interfaces/iColumnSelectionPanel';
+export type {
     IRichCellEditorParams,
     IRichCellEditorRendererParams,
     RichCellEditorParams,
@@ -472,9 +493,12 @@ export type {
 export type {
     IToolbarItem,
     IToolbarItemComp,
+    IInputToolbarItemParams,
+    InputToolbarItemName,
     IToolbarItemParams,
     Toolbar,
     ToolbarBuiltInItemDef,
+    ToolbarInputBuiltInItemDef,
     ToolbarButtonItemDef,
     ToolbarCustomItemDef,
     ToolbarItemActionParams,
@@ -886,6 +910,7 @@ export type {
     IsServerSideGroup,
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
+    LoadingOptions,
     LocaleText,
     MasterSelectionMode,
     MultiRowSelectionOptions,
@@ -923,6 +948,7 @@ export type {
     DoesExternalFilterPass,
     FillOperation,
     FillOperationParams,
+    FillOperationResult,
     FocusGridInnerElement,
     FocusGridInnerElementParams,
     FullRowEditValidationParams,

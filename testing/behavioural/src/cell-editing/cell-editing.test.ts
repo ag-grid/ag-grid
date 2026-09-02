@@ -1,5 +1,15 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from 'ag-test-utils';
+import type { EditorFormControl } from 'ag-test-utils';
 
 import type { CellValueChangedEvent, ColDef, NewValueParams } from 'ag-grid-community';
 import {
@@ -15,17 +25,13 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 
-import {
-    EditEventTracker,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    waitForInput,
-} from '../test-utils';
-
 /** Asserts the value of a form control, handling number/date/checkbox inputs correctly. */
-function expectInputValue(input: HTMLInputElement, expected: unknown): void {
+function expectInputValue(input: EditorFormControl, expected: unknown): void {
+    // `agLargeTextCellEditor` is a textarea, which has plain text and none of the typed value accessors.
+    if (input instanceof HTMLTextAreaElement) {
+        expect(input.value).toBe(expected == null ? '' : String(expected));
+        return;
+    }
     const type = input.type;
     if (type === 'number' || type === 'range') {
         if (expected == null || (typeof expected === 'number' && isNaN(expected))) {
@@ -216,6 +222,37 @@ describe('Cell Editing Start', () => {
 
             expect(inputElement.selectionStart).toEqual(selectionStart);
             expect(inputElement.selectionEnd).toEqual(selectionEnd);
+        });
+    });
+
+    describe('Escape key', () => {
+        test('leaves the browser default intact when nothing is editing, prevents it while editing', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                defaultColDef: {
+                    editable: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'string1')));
+            await userEvent.click(cell);
+
+            // A host dialog wrapping the grid closes on Escape only if the grid leaves the key unhandled.
+            const idleEscape = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+            cell.dispatchEvent(idleEscape);
+            expect(idleEscape.defaultPrevented).toBe(false);
+            expect(api.getCellEditorInstances()).toHaveLength(0);
+
+            await userEvent.dblClick(cell);
+            const input = await waitForInput(gridDiv, cell);
+
+            const editingEscape = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+            input.dispatchEvent(editingEscape);
+            expect(editingEscape.defaultPrevented).toBe(true);
+
+            await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
         });
     });
 

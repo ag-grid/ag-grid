@@ -1,15 +1,8 @@
+import { ALL_SEVERITIES, GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-
-import {
-    ALL_SEVERITIES,
-    GridRows,
-    TestGridsManager,
-    applyTransactionChecked,
-    setRowDataChecked,
-} from '../../test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
 

@@ -151,8 +151,13 @@
         "^build:types",
         "^build:package",
         "^build:umd",
+        "^build:copy-styles",
+        "generate-doc-references",
         "generate-examples",
-        "generate-doc-references"
+        "ag-grid-react:build",
+        "ag-grid-angular:build",
+        "ag-grid-vue3:build",
+        "ag-grid-docs:build:copy-styles"
       ],
       "inputs": [],
       "outputs": [],
@@ -241,6 +246,13 @@
     "slack:user-config": {
       "cache": false,
       "command": "node --env-file-if-exists=.env.local ./external/ag-shared/scripts/slack/get-slack-user-config-command.mjs",
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "security:update": {
+      "cache": false,
+      "command": "npx tsx ./external/ag-shared/scripts/security/update-security-versions.ts",
       "options": {
         "cwd": "{workspaceRoot}"
       }

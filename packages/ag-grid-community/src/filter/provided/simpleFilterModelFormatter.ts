@@ -1,14 +1,11 @@
 import { BeanStub } from '../../context/beanStub';
+import type { Column } from '../../interfaces/iColumn';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
 import type { ProvidedFilterModel } from './iProvidedFilter';
-import type {
-    ICombinedSimpleModel,
-    ISimpleFilterModel,
-    ISimpleFilterModelType,
-    ISimpleFilterParams,
-} from './iSimpleFilter';
+import type { FilterOptionKey, ICombinedSimpleModel, ISimpleFilterModel, ISimpleFilterParams } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
+import { _getCustomOptionDisplayName, _getCustomOptionNumberOfInputs } from './simpleFilterUtils';
 
 export const SCALAR_FILTER_TYPE_KEYS = {
     equals: 'Equals',
@@ -42,9 +39,15 @@ export abstract class SimpleFilterModelFormatter<
     constructor(
         private optionsFactory: OptionsFactory,
         protected filterParams: TFilterParams,
-        protected readonly valueFormatter?: (value: TValue | null) => string | null
+        /** Named so a `numberFormatter` shared across columns can tell which one it is rendering. */
+        protected readonly column: Column
     ) {
         super();
+    }
+
+    /** Read per call, so a `colDef` refresh that replaces the formatter reaches the summary. */
+    protected getValueFormatter(): ((value: TValue | null) => string | null) | undefined {
+        return undefined;
     }
 
     // used by:
@@ -73,16 +76,16 @@ export abstract class SimpleFilterModelFormatter<
 
             // For custom filter options we display the Name of the filter instead
             // of displaying the `from` value, as it wouldn't be relevant
-            const { displayKey, displayName, numberOfInputs } = customOption || {};
-            if (displayKey && displayName && numberOfInputs === 0) {
-                return translate(displayKey, displayName);
+            const numberOfInputs = customOption ? _getCustomOptionNumberOfInputs(customOption) : undefined;
+            if (customOption && numberOfInputs === 0) {
+                return _getCustomOptionDisplayName(customOption, translate);
             }
             return this.conditionToString(
                 condition,
                 forToolPanel,
                 condition.type === 'inRange' || numberOfInputs === 2,
-                displayKey,
-                displayName
+                customOption?.displayKey,
+                customOption?.displayName
             );
         }
     }
@@ -103,7 +106,7 @@ export abstract class SimpleFilterModelFormatter<
     }
 
     protected conditionForToolPanel(
-        type: ISimpleFilterModelType | null | undefined,
+        type: FilterOptionKey | null | undefined,
         isRange: boolean,
         getFilter: () => string,
         getFilterTo: () => string,
@@ -129,13 +132,13 @@ export abstract class SimpleFilterModelFormatter<
         return null;
     }
 
-    protected getTypeKey(type: ISimpleFilterModelType | null | undefined): FilterLocaleTextKey | null {
+    protected getTypeKey(type: FilterOptionKey | null | undefined): FilterLocaleTextKey | null {
         const suffix = this.filterTypeKeys[type as keyof FilterTypeKeys];
         return suffix ? `filterSummary${suffix}` : null;
     }
 
     protected formatValue(value?: TValue | null): string {
-        const valueFormatter = this.valueFormatter;
+        const valueFormatter = this.getValueFormatter();
         return valueFormatter ? (valueFormatter(value ?? null) ?? '') : String(value);
     }
 }

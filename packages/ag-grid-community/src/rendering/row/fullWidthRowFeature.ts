@@ -405,7 +405,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         if (keyboardEvent.defaultPrevented || _isStopPropagationForAgGrid(keyboardEvent)) {
             return;
         }
-        const { rowCtrl } = this;
+        const { rowCtrl, beans } = this;
         const element = rowCtrl.getCurrentRowElement();
         const currentFullWidthContainer = element?.contains(keyboardEvent.target as HTMLElement) ? element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
@@ -420,7 +420,11 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         let nextEl: HTMLElement | null = null;
 
         if (!isFullWidthContainerFocused && !isDetailGridCellFocused) {
-            nextEl = _findNextFocusableElement(this.beans, currentFullWidthContainer!, false, keyboardEvent.shiftKey);
+            nextEl = _findNextFocusableElement({
+                beans,
+                rootNode: currentFullWidthContainer!,
+                backwards: keyboardEvent.shiftKey,
+            });
         }
 
         if (isFullWidthContainerFocused || !nextEl) {

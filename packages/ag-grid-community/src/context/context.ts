@@ -324,7 +324,6 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
     eRootDiv: HTMLElement;
-    withinStudio?: boolean;
     pivotResultCols?: IPivotResultColsService;
     autoColSvc?: IAutoColService;
     selectionColSvc?: SelectionColService;
@@ -476,4 +475,5 @@ type UntypedBeanNames =
     | 'testIdSvc'
     | 'toolbarMenuBuilder'
     | 'formula'
-    | 'showValuesAsSvc';
+    | 'showValuesAsSvc'
+    | 'studio';

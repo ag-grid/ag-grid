@@ -11,7 +11,9 @@ import {
     AgComponentStub,
     RefPlaceholder,
     _isComponent,
+    _removeAriaExpanded,
     _removeFromParent,
+    _setAriaControls,
     _setAriaExpanded,
     _setAriaRole,
     _setDisplayed,
@@ -412,6 +414,8 @@ export class AgGroupComponent<
         TPropertiesService,
         TComponentSelectorType
     > {
+        const containerId = `ag-${this.getCompId()}-group-container`;
+        this.eContainer.id = containerId;
         const titleBar = this.createManagedBean(
             new DefaultTitleBar<
                 TBeanCollection,
@@ -420,7 +424,7 @@ export class AgGroupComponent<
                 TCommon,
                 TPropertiesService,
                 TComponentSelectorType
-            >(this.params)
+            >(this.params, containerId)
         );
         this.eTitleBar = titleBar;
         titleBar.refreshOnExpand(this.expanded);
@@ -471,26 +475,28 @@ const TITLE_BAR_DISABLED_CLASS = 'ag-disabled-group-title-bar';
 function getDefaultTitleBarTemplate<TBeanCollection, TComponentSelectorType extends string>(
     params: AgGroupComponentParams<TBeanCollection>
 ): AgElementParams<TComponentSelectorType> {
-    const cssIdentifier = params.cssIdentifier ?? 'default';
+    const { cssIdentifier, suppressOpenCloseIcons } = params;
+    const normalisedCssIdentifier = cssIdentifier ?? 'default';
+    const interactiveRole = suppressOpenCloseIcons ? 'group' : 'button';
 
     return {
         tag: 'div',
-        cls: `ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable`,
-        role: params.suppressKeyboardNavigation ? 'presentation' : 'group',
+        cls: `ag-group-title-bar ag-${normalisedCssIdentifier}-group-title-bar ag-unselectable`,
+        role: params.suppressKeyboardNavigation ? 'presentation' : interactiveRole,
         children: [
             {
                 tag: 'span',
                 ref: 'eGroupOpenedIcon',
-                cls: `ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon`,
+                cls: `ag-group-title-bar-icon ag-${normalisedCssIdentifier}-group-title-bar-icon`,
                 role: 'presentation',
             },
             {
                 tag: 'span',
                 ref: 'eGroupClosedIcon',
-                cls: `ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon`,
+                cls: `ag-group-title-bar-icon ag-${normalisedCssIdentifier}-group-title-bar-icon`,
                 role: 'presentation',
             },
-            { tag: 'span', ref: 'eTitle', cls: `ag-group-title ag-${cssIdentifier}-group-title` },
+            { tag: 'span', ref: 'eTitle', cls: `ag-group-title ag-${normalisedCssIdentifier}-group-title` },
         ],
     };
 }
@@ -513,12 +519,17 @@ class DefaultTitleBar<
     private title: string | undefined;
     private suppressOpenCloseIcons: boolean = false;
     private readonly suppressKeyboardNavigation: boolean = false;
+    private expanded: boolean = true;
+    private disabled: boolean = false;
 
     private readonly eGroupOpenedIcon: HTMLElement = RefPlaceholder;
     private readonly eGroupClosedIcon: HTMLElement = RefPlaceholder;
     private readonly eTitle: HTMLElement = RefPlaceholder;
 
-    constructor(params: AgGroupComponentParams<TBeanCollection> = {}) {
+    constructor(
+        params: AgGroupComponentParams<TBeanCollection> = {},
+        private readonly containerId?: string
+    ) {
         super(getDefaultTitleBarTemplate(params));
 
         const { title, suppressOpenCloseIcons, suppressKeyboardNavigation } = params;
@@ -549,16 +560,25 @@ class DefaultTitleBar<
         this.addManagedElementListeners(this.getGui(), {
             click: () => this.dispatchExpandChanged(),
             keydown: (e: KeyboardEvent) => {
+                const { ENTER, SPACE, RIGHT, LEFT, UP, DOWN, PAGE_UP, PAGE_DOWN, PAGE_HOME, PAGE_END } = KeyCode;
                 switch (e.key) {
-                    case KeyCode.ENTER:
-                    case KeyCode.SPACE:
+                    case UP:
+                    case DOWN:
+                    case PAGE_UP:
+                    case PAGE_DOWN:
+                    case PAGE_HOME:
+                    case PAGE_END:
+                        e.preventDefault();
+                        return;
+                    case ENTER:
+                    case SPACE:
                         e.preventDefault();
                         this.dispatchExpandChanged();
                         break;
-                    case KeyCode.RIGHT:
-                    case KeyCode.LEFT:
+                    case RIGHT:
+                    case LEFT:
                         e.preventDefault();
-                        this.dispatchExpandChanged(e.key === KeyCode.RIGHT);
+                        this.dispatchExpandChanged(e.key === RIGHT);
                         break;
                 }
             },
@@ -566,14 +586,39 @@ class DefaultTitleBar<
     }
 
     public refreshOnExpand(expanded: boolean): void {
-        this.refreshAriaStatus(expanded);
+        this.expanded = expanded;
+        this.refreshAriaState();
         this.refreshOpenCloseIcons(expanded);
     }
 
-    private refreshAriaStatus(expanded: boolean): void {
-        if (!this.suppressOpenCloseIcons) {
-            _setAriaExpanded(this.getGui(), expanded);
+    private refreshAriaState(): void {
+        const eGui = this.getGui();
+        const interactive = this.title != null && !this.suppressKeyboardNavigation && !this.disabled;
+        // suppressed open/close icons means the group cannot collapse, so no disclosure button semantics
+        const collapsible = interactive && !this.suppressOpenCloseIcons;
+
+        let role = 'presentation';
+
+        if (collapsible) {
+            role = 'button';
+        } else if (interactive) {
+            role = 'group';
         }
+
+        _setAriaRole(eGui, role);
+
+        if (interactive) {
+            this.activateTabIndex([eGui]);
+        } else {
+            eGui.removeAttribute('tabindex');
+        }
+
+        if (collapsible) {
+            _setAriaExpanded(eGui, this.expanded);
+        } else {
+            _removeAriaExpanded(eGui);
+        }
+        _setAriaControls(eGui, collapsible ? this.containerId : null);
     }
 
     private refreshOpenCloseIcons(expanded: boolean): void {
@@ -607,8 +652,7 @@ class DefaultTitleBar<
             this.title = title;
         }
 
-        const disabled = eGui.classList.contains(TITLE_BAR_DISABLED_CLASS);
-        this.refreshDisabledStyles(disabled);
+        this.refreshAriaState();
 
         return this;
     }
@@ -626,25 +670,15 @@ class DefaultTitleBar<
             this.dispatchExpandChanged(true);
         }
 
+        this.refreshAriaState();
+
         return this;
     }
 
     public refreshDisabledStyles(disabled: boolean) {
-        const eGui = this.getGui();
-        if (disabled) {
-            eGui.classList.add(TITLE_BAR_DISABLED_CLASS);
-            eGui.removeAttribute('tabindex');
-            _setAriaRole(eGui, 'presentation');
-        } else {
-            eGui.classList.remove(TITLE_BAR_DISABLED_CLASS);
-            if (typeof this.title === 'string' && !this.suppressKeyboardNavigation) {
-                this.activateTabIndex([eGui]);
-                _setAriaRole(eGui, 'group');
-            } else {
-                eGui.removeAttribute('tabindex');
-                _setAriaRole(eGui, 'presentation');
-            }
-        }
+        this.disabled = disabled;
+        this.getGui().classList.toggle(TITLE_BAR_DISABLED_CLASS, disabled);
+        this.refreshAriaState();
     }
 }
 

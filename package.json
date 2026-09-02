@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "36.1.0-beta.20260805.1325",
+  "version": "36.1.0-beta.20260828.1541",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
@@ -54,9 +54,9 @@
     "@types/prompts": "^2.4.9",
     "@typescript-eslint/eslint-plugin": "8.59.0",
     "@typescript-eslint/parser": "8.59.0",
-    "@vitest/browser": "2.1.9",
-    "@vitest/coverage-v8": "2.1.9",
-    "@vitest/ui": "2.1.9",
+    "@vitest/browser-playwright": "4.1.11",
+    "@vitest/coverage-v8": "4.1.11",
+    "@vitest/ui": "4.1.11",
     "@vue/compiler-sfc": "3.5.33",
     "JSONStream": "1.3.5",
     "autoprefixer": "^10.5.0",
@@ -74,6 +74,7 @@
     "event-stream": "4.0.1",
     "glob": "^11.1.0",
     "globals": "^17.5.0",
+    "happy-dom": "20.11.2",
     "knip": "6.6.2",
     "node-fetch": "2.7.0",
     "nx": "20.8.4",
@@ -94,7 +95,7 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.58.2",
     "vite": "~5.4.19",
-    "vitest": "2.1.9"
+    "vitest": "4.1.11"
   },
   "workspaces": {
     "packages": [
@@ -111,6 +112,7 @@
       "plugins/ag-grid-generate-code-reference-files",
       "plugins/ag-grid-generate-example-files",
       "plugins/ag-grid-task-autogen",
+      "testing/ag-test-utils",
       "testing/behavioural",
       "testing/typedoc-links",
       "testing/module-size",
@@ -133,7 +135,9 @@
     ]
   },
   "resolutions": {
-    "**/baseline-browser-mapping": "2.10.21"
+    "**/baseline-browser-mapping": "2.10.21",
+    "rulesync/js-yaml": "^4.3.1",
+    "@nx/react/**/undici": "^7.29.0"
   },
   "packageManager": "yarn@1.22.21",
   "lavamoat": {
@@ -148,8 +152,7 @@
       "tsx>esbuild#0.27.7": true,
       "vite>esbuild#0.21.5": true,
       "vite>sass>@parcel/watcher#2.5.1": true,
-      "vitest>jsdom>canvas#3.2.3": true,
-      "@vitest/browser>msw#2.14.6": false
+      "vitest>jsdom>canvas#3.2.3": true
     }
   }
 }

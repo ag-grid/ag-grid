@@ -1,6 +1,7 @@
+import { GridColumns } from 'ag-test-utils';
+
 import type { GroupRowValueSetterParams } from 'ag-grid-community';
 
-import { GridColumns } from '../../../test-utils';
 import {
     GridRows,
     asyncSetTimeout,

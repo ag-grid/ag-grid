@@ -173,7 +173,7 @@ interface BaseRowNode<TData = any> {
     /** The parent node to this node, or empty if top level. */
     parent: IRowNode<TData> | null;
 
-    /** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */
+    /** `true` if this row node is a loading placeholder. */
     stub: boolean | undefined;
     /** Used by server side row model, `true` if this row node failed a load. */
     failedLoad: boolean | undefined;

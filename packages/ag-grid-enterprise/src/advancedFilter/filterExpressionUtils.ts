@@ -1,12 +1,53 @@
 import { _parseBigIntOrNull } from 'ag-stack';
 
-import type { AgColumn, ColumnModel, DataTypeService, IRowNode, ValueService } from 'ag-grid-community';
+import { _bindFilterCallback } from 'ag-grid-community';
+import type {
+    AgColumn,
+    ColumnAdvancedFilterModel,
+    ColumnModel,
+    DataTypeService,
+    GridOptionsService,
+    IBigIntFilterParams,
+    IRowNode,
+    NumberFilterParams,
+    ValueService,
+} from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from './filterExpressionOperators';
 
+/** The operand slots every `ColumnAdvancedFilterModel` member shares, which the union itself cannot express. */
+export interface ColumnFilterModelOperands {
+    filter?: string | number;
+    filterTo?: string | number;
+}
+
+/** The model names its two operands rather than listing them, so an operand index maps to a key. */
+export const OPERAND_KEYS = ['filter', 'filterTo'] as const;
+
+/** Judged on the display: what the column's formatter cannot write is not a value the model holds. */
+export function hasEveryOperand(
+    advFilterExpSvc: AdvancedFilterExpressionService,
+    model: ColumnAdvancedFilterModel,
+    numOperands: number
+): boolean {
+    for (let i = 0; i < numOperands; ++i) {
+        if (!advFilterExpSvc.formatOperand(model, (model as ColumnFilterModelOperands)[OPERAND_KEYS[i]], true)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** A condition the Builder is still assembling: each slot is absent until the user has chosen it. */
+export interface PartialColumnFilterModel extends ColumnFilterModelOperands {
+    colId?: string;
+    type?: string;
+}
+
 export interface FilterExpressionParserParams {
     expression: string;
+    gos: GridOptionsService;
     colModel: ColumnModel;
     dataTypeSvc?: DataTypeService;
     valueSvc: ValueService;
@@ -41,8 +82,46 @@ export type FilterExpressionFunction = (
     params: FilterExpressionFunctionParams
 ) => boolean;
 
-export function getBigIntParser(column: AgColumn | null | undefined): (value: string | null) => bigint | null {
-    return column?.colDef.filterParams?.bigintParser ?? _parseBigIntOrNull;
+type FilterOperandParser<V> = (value: string | null) => V | null;
+
+const bigIntParams = (column: AgColumn | null | undefined): IBigIntFilterParams | undefined =>
+    column?.colDef.filterParams;
+
+/** Read unpaired, unlike the number equivalent, so hex and the like can be typed with a parser alone. */
+export const getBigIntParser = (
+    column: AgColumn | null | undefined,
+    gos: GridOptionsService
+): FilterOperandParser<bigint> =>
+    _bindFilterCallback(bigIntParams(column)?.bigintParser, gos, column) ?? _parseBigIntOrNull;
+
+export const getBigIntFormatter = (column: AgColumn | null | undefined, gos: GridOptionsService) =>
+    _bindFilterCallback(bigIntParams(column)?.bigintFormatter, gos, column);
+
+/**
+ * The `filterParams` of a number column whose operands are written in its own syntax rather than as plain
+ * numbers. Both a `numberParser` and a `numberFormatter` are needed: an operand the column cannot write, it
+ * must not read, or a parser reading a syntax the plain number is not in would reinterpret what the grid stored.
+ */
+function customNumberOperandParams(column: AgColumn | null | undefined): NumberFilterParams | undefined {
+    const filterParams = column?.colDef.filterParams;
+    return filterParams?.numberParser != null && filterParams.numberFormatter != null ? filterParams : undefined;
+}
+
+/** `Number` reads blank text as zero, which is not a number anyone wrote. */
+const parseNumberOrNull = (value: string | null): number | null => (value?.trim() ? Number(value) : null);
+
+/** Plain-number reading stays the default: only a column that reads *and* writes its own syntax departs from it. */
+export const getNumberParser = (
+    column: AgColumn | null | undefined,
+    gos: GridOptionsService
+): FilterOperandParser<number> =>
+    _bindFilterCallback(customNumberOperandParams(column)?.numberParser, gos, column) ?? parseNumberOrNull;
+
+export const getNumberFormatter = (column: AgColumn | null | undefined, gos: GridOptionsService) =>
+    _bindFilterCallback(customNumberOperandParams(column)?.numberFormatter, gos, column);
+
+export function hasCustomNumberOperands(column: AgColumn | null | undefined): boolean {
+    return customNumberOperandParams(column) != null;
 }
 
 export function getSearchString(value: string, position: number, endPosition: number): string {
@@ -60,18 +139,27 @@ export function updateExpression(
     updatedValuePart: string,
     appendSpace?: boolean,
     appendQuote?: boolean,
-    empty?: boolean
+    empty?: boolean,
+    appendBracket?: boolean
 ): AutocompleteUpdate {
-    const secondPartStartPosition = endPosition + (!expression.length || empty ? 0 : 1);
+    let secondPartStartPosition = endPosition + (!expression.length || empty ? 0 : 1);
     let positionOffset = 0;
     if (appendSpace) {
-        if (expression[secondPartStartPosition] === ' ') {
-            // already a space, just move the position
+        const hasSpace = expression[secondPartStartPosition] === ' ';
+        if (hasSpace && !appendBracket && !appendQuote) {
+            // already a space and nothing to open after it, so just move the position
             positionOffset = 1;
         } else {
             updatedValuePart += ' ';
+            // A two-value option opens its bracket then the first quote, both past the space, so one there is rewritten.
+            if (appendBracket) {
+                updatedValuePart += '(';
+            }
             if (appendQuote) {
                 updatedValuePart += `"`;
+            }
+            if (hasSpace) {
+                secondPartStartPosition++;
             }
         }
     }

@@ -135,6 +135,29 @@ export const AG_GRID_LOCALE_EG = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'يقع بين',
+    advancedFilterYesterday: 'هو أمس',
+    advancedFilterToday: 'هو اليوم',
+    advancedFilterTomorrow: 'هو غدًا',
+    advancedFilterLast7Days: 'ضمن آخر 7 أيام',
+    advancedFilterLastWeek: 'ضمن الأسبوع الماضي',
+    advancedFilterThisWeek: 'ضمن هذا الأسبوع',
+    advancedFilterNextWeek: 'ضمن الأسبوع القادم',
+    advancedFilterLast30Days: 'ضمن آخر 30 يومًا',
+    advancedFilterLastMonth: 'ضمن الشهر الماضي',
+    advancedFilterThisMonth: 'ضمن هذا الشهر',
+    advancedFilterNextMonth: 'ضمن الشهر القادم',
+    advancedFilterLast90Days: 'ضمن آخر 90 يومًا',
+    advancedFilterLastQuarter: 'ضمن الربع الماضي',
+    advancedFilterThisQuarter: 'ضمن هذا الربع',
+    advancedFilterNextQuarter: 'ضمن الربع القادم',
+    advancedFilterLastYear: 'ضمن العام الماضي',
+    advancedFilterThisYear: 'ضمن هذا العام',
+    advancedFilterYearToDate: 'ضمن الفترة منذ بداية العام',
+    advancedFilterNextYear: 'ضمن العام القادم',
+    advancedFilterLast6Months: 'ضمن آخر 6 أشهر',
+    advancedFilterLast12Months: 'ضمن آخر 12 شهرًا',
+    advancedFilterLast24Months: 'ضمن آخر 24 شهرًا',
     advancedFilterTrue: 'صحيح',
     advancedFilterFalse: 'خاطئ',
     advancedFilterAnd: 'و',
@@ -182,6 +205,8 @@ export const AG_GRID_LOCALE_EG = {
     // Editor Validation Errors
     minDateValidation: 'التاريخ يجب أن يكون بعد ${variable}',
     maxDateValidation: 'التاريخ يجب أن يكون قبل ${variable}',
+    minDateInclusiveValidation: 'التاريخ يجب أن يكون في ${variable} أو بعده',
+    maxDateInclusiveValidation: 'التاريخ يجب أن يكون في ${variable} أو قبله',
     maxLengthValidation: 'يجب أن يكون ${variable} حرف أو أقل.',
     minValueValidation: 'يجب أن يكون أكبر من أو يساوي ${variable}',
     maxValueValidation: 'يجب أن يكون أقل من أو يساوي ${variable}',
@@ -677,7 +702,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaAdvancedFilterBuilderGroupItem: 'مجموعة الفلترة',
     ariaAdvancedFilterBuilderColumn: 'العمود',
     ariaAdvancedFilterBuilderOption: 'الخيار',
-    ariaAdvancedFilterBuilderValueP: 'القيمة',
+    ariaAdvancedFilterBuilderValue: 'القيمة',
     ariaAdvancedFilterBuilderJoinOperator: 'العملية الربط',
     ariaAdvancedFilterInput: 'إدخال الفلترة المتقدمة',
     ariaChecked: 'محدد',
@@ -693,6 +718,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaFilterColumnsInput: 'إدخال فلترة الأعمدة',
     ariaFilterFromValue: 'الفلترة من القيمة',
     ariaFilterInput: 'إدخال الفلترة',
+    ariaLabelInputClear: 'مسح',
     ariaFilterList: 'قائمة الفلترة',
     ariaFilterToValue: 'الفلترة إلى القيمة',
     ariaFilterValue: 'قيمة الفلترة',
@@ -759,6 +785,9 @@ export const AG_GRID_LOCALE_EG = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'تحقق من صحة محرر الخلية',
+    ariaFullRowValidationError: 'التحقق من الصف الكامل: ${variable}',
+    ariaFullRowEditValidationFailed: 'تعذر إكمال تحرير الصف. ${variable}',
+    ariaRowIndex: 'الصف ${variable}',
     ariaLabelLoadingContextMenu: 'تحميل قائمة السياق',
 
     // aria labels for rich select
@@ -787,7 +816,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaHasNote: 'تحتوي هذه الخلية على ملاحظة.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '،',
+    thousandSeparator: ',',
     decimalSeparator: '.',
 
     // Data types

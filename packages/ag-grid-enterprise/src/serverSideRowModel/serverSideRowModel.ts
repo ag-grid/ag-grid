@@ -33,6 +33,7 @@ import {
     GROUP_TOTAL_ROW_ID_PREFIX,
     ROOT_NODE_ID,
     RowNode,
+    _addRowHeightChangedListener,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _getSortModel,
@@ -96,6 +97,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private started = false;
 
+    private lastDefaultRowHeight?: number;
+
     private managingPivotResultColumns = false;
 
     private pivotResultFields?: string[];
@@ -133,6 +136,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             columnRowGroupChanged: resetListener,
             columnPivotModeChanged: resetListener,
         });
+        _addRowHeightChangedListener(this, () => this.onRowHeightStyleChanged());
 
         this.addManagedPropertyListeners(
             [
@@ -348,7 +352,26 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         pivotResultCols?.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
     }
 
+    private onRowHeightStyleChanged(): void {
+        const { rootNode, beans } = this;
+        if (!rootNode || beans.rowAutoHeight?.active) {
+            return;
+        }
+        // `resetRowHeights` walks every node, so skip a change that leaves the height alone. The
+        // dummy root is not a displayed row, and resolving it would hand `getRowHeight` empty data.
+        const defaultRowHeight = beans.environment.getDefaultRowHeight();
+        if (defaultRowHeight === this.lastDefaultRowHeight) {
+            return;
+        }
+        this.lastDefaultRowHeight = defaultRowHeight;
+        this.resetRowHeights();
+    }
+
     public resetRowHeights(): void {
+        if (!this.rootNode) {
+            return;
+        }
+
         const atLeastOne = this.resetRowHeightsForAllRowNodes();
 
         const rootNodeHeight = _getRowHeightForNode(this.beans, this.rootNode);

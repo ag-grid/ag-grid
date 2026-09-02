@@ -35,10 +35,12 @@ input[type='submit']#{$selector-exclude-grid-bryntum},
         border $transition-default-timing,
         box-shadow $transition-default-timing;
 
+    // No `color` here: it would apply to `.button-style-none` too, whose reset drops the
+    // fill this colour is meant to read against. Each variant that keeps a fill declares
+    // its own hover colour below, and links are covered by the `a.button*:hover` rules.
     &:hover,
     &.hover {
         background-color: var(--color-button-primary-bg-hover);
-        color: var(--color-button-primary-fg);
 
         &[aria-disabled] {
             background-color: var(--color-button-primary-bg);

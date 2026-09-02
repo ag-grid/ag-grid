@@ -1,3 +1,21 @@
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
+/**
+ * Own properties only, `__proto__` refused outright: a user-supplied key otherwise resolves off `Object.prototype`.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _hasOwn(obj: object, key: PropertyKey): boolean {
+    return key !== '__proto__' && hasOwnProperty.call(obj, key);
+}
+
+/**
+ * The value a lookup table holds under a user-supplied key, or `undefined` where it holds none.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getOwn<T>(table: { [key: string]: T } | null | undefined, key: string): T | undefined {
+    return table != null && _hasOwn(table, key) ? table[key] : undefined;
+}
+
 /**
  * If value is undefined, null or blank, returns null, otherwise returns the value
  * @param {T} value

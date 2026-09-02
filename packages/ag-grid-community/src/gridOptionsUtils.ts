@@ -1,6 +1,7 @@
 import { _doOnce, _missing } from 'ag-stack';
 
 import type { GridApi } from './api/gridApi';
+import type { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type {
     CheckboxLocation,
@@ -18,7 +19,7 @@ import type {
     SingleRowSelectionOptions,
 } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
-import type { ComponentStateChangedEvent, GridOptionsChangedEvent } from './events';
+import type { ComponentStateChangedEvent, GridOptionsChangedEvent, StylesChangedEvent } from './events';
 import { _getGlobalGridOption } from './globalGridOptions';
 import type { GridOptionOrDefault } from './gridOptionsDefault';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
@@ -49,6 +50,26 @@ export function _isClientSideRowModel(
     _rowModel?: IRowModel
 ): _rowModel is IClientSideRowModel {
     return isRowModelType(gos, 'clientSide');
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _isClientSideLoadingRows(gos: GridOptionsService): boolean {
+    const loading = gos.get('loading');
+    return _isClientSideRowModel(gos) && typeof loading === 'object' && loading.type === 'rows';
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _isClientSideLoadingRow(gos: GridOptionsService, rowNode: IRowNode): boolean {
+    return !!rowNode.stub && _isClientSideRowModel(gos);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _getClientSideLoadingRowCount(gos: GridOptionsService): number {
+    const loading = gos.get('loading');
+    if (typeof loading !== 'object' || loading.rowCount == null) {
+        return 10;
+    }
+    return Number.isInteger(loading.rowCount) && loading.rowCount > 0 ? loading.rowCount : 10;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -150,6 +171,21 @@ function getMasterDetailRowHeight(gos: GridOptionsService): { height: number; es
     }
 
     return { height: 300, estimated: false };
+}
+
+/**
+ * Calls `onChange` when the grid styles change the uniform row height, e.g. a theme row-height parameter.
+ * Shared so that each row model registers the one listener it needs rather than restating the predicate.
+ */
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _addRowHeightChangedListener(bean: BeanStub, onChange: () => void): void {
+    bean.addManagedEventListeners({
+        stylesChanged: (e: StylesChangedEvent) => {
+            if (e.rowHeightChanged) {
+                onChange();
+            }
+        },
+    });
 }
 
 // we don't allow dynamic row height for virtual paging
@@ -336,6 +372,15 @@ export function _canSkipShowingRowGroup(gos: GridOptionsService, node: RowNode):
         return true;
     }
     return false;
+}
+
+/**
+ * Returns true when a single-child group row is hidden from the UI (and from exports)
+ * due to `groupHideParentOfSingleChild` (or its deprecated equivalents).
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isHiddenSingleChildGroup(gos: GridOptionsService, node: RowNode): boolean {
+    return node.allChildrenCount === 1 && node.childrenAfterGroup?.length === 1 && _canSkipShowingRowGroup(gos, node);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

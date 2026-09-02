@@ -36,30 +36,20 @@ test.agExample(import.meta, () => {
             await yearPill.click();
             await expect(yearPill.locator('.ag-sort-descending-icon')).toBeVisible();
 
-            // Wait for the group positions to settle (2012 becomes leftmost) before reading the full order.
-            await page.waitForFunction(() => {
-                const cells = Array.from(
-                    document.querySelectorAll('.ag-header-group-cell[col-id^="pivotGroup_year_"]')
-                );
-                if (!cells.length) {
-                    return false;
-                }
-                const leftmost = cells.sort(
-                    (a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left
-                )[0];
-                return leftmost.getAttribute('col-id') === 'pivotGroup_year_2012_0';
-            });
-
-            // Descending pivotSort reverses the pivot column groups: 2012 is now leftmost, 2000 rightmost.
-            expect(await yearGroupOrder(page)).toEqual([
-                'pivotGroup_year_2012_0',
-                'pivotGroup_year_2010_0',
-                'pivotGroup_year_2008_0',
-                'pivotGroup_year_2006_0',
-                'pivotGroup_year_2004_0',
-                'pivotGroup_year_2002_0',
-                'pivotGroup_year_2000_0',
-            ]);
+            // Descending pivotSort reverses the pivot column groups: 2012 is now leftmost, 2000
+            // rightmost. Polled rather than read once: the groups move to their new offsets over
+            // several frames, so a single read can land on a part-way arrangement.
+            await expect(async () => {
+                expect(await yearGroupOrder(page)).toEqual([
+                    'pivotGroup_year_2012_0',
+                    'pivotGroup_year_2010_0',
+                    'pivotGroup_year_2008_0',
+                    'pivotGroup_year_2006_0',
+                    'pivotGroup_year_2004_0',
+                    'pivotGroup_year_2002_0',
+                    'pivotGroup_year_2000_0',
+                ]);
+            }).toPass();
         }
     );
 });

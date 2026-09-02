@@ -11,6 +11,7 @@ export const DarkModeToggle = () => {
             <button
                 className={classNames(styles.navLink, 'button-style-none')}
                 aria-label="Dark mode selector"
+                tabIndex={0}
                 onClick={() => setDarkmode(!darkmode)}
             >
                 <div className={classNames(styles.icon, styles.pseudoIcon)} />

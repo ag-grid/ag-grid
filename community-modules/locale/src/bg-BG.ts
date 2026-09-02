@@ -135,6 +135,29 @@ export const AG_GRID_LOCALE_BG = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'е между',
+    advancedFilterYesterday: 'е вчера',
+    advancedFilterToday: 'е днес',
+    advancedFilterTomorrow: 'е утре',
+    advancedFilterLast7Days: 'е в последните 7 дни',
+    advancedFilterLastWeek: 'е в миналата седмица',
+    advancedFilterThisWeek: 'е в тази седмица',
+    advancedFilterNextWeek: 'е в следващата седмица',
+    advancedFilterLast30Days: 'е в последните 30 дни',
+    advancedFilterLastMonth: 'е в миналия месец',
+    advancedFilterThisMonth: 'е в този месец',
+    advancedFilterNextMonth: 'е в следващия месец',
+    advancedFilterLast90Days: 'е в последните 90 дни',
+    advancedFilterLastQuarter: 'е в предходното тримесечие',
+    advancedFilterThisQuarter: 'е в това тримесечие',
+    advancedFilterNextQuarter: 'е в следващото тримесечие',
+    advancedFilterLastYear: 'е в миналата година',
+    advancedFilterThisYear: 'е в тази година',
+    advancedFilterYearToDate: 'е от началото на годината до днес',
+    advancedFilterNextYear: 'е в следващата година',
+    advancedFilterLast6Months: 'е в последните 6 месеца',
+    advancedFilterLast12Months: 'е в последните 12 месеца',
+    advancedFilterLast24Months: 'е в последните 24 месеца',
     advancedFilterTrue: 'е вярно',
     advancedFilterFalse: 'е невярно',
     advancedFilterAnd: 'И',
@@ -182,6 +205,8 @@ export const AG_GRID_LOCALE_BG = {
     // Editor Validation Errors
     minDateValidation: 'Датата трябва да е след ${variable}',
     maxDateValidation: 'Датата трябва да е преди ${variable}',
+    minDateInclusiveValidation: 'Датата трябва да е на или след ${variable}',
+    maxDateInclusiveValidation: 'Датата трябва да е на или преди ${variable}',
     maxLengthValidation: 'Трябва да бъде ${variable} символа или по-малко.',
     minValueValidation: 'Трябва да бъде по-голямо или равно на ${variable}',
     maxValueValidation: 'Трябва да бъде по-малко или равно на ${variable}',
@@ -682,7 +707,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaAdvancedFilterBuilderGroupItem: 'Група за филтриране',
     ariaAdvancedFilterBuilderColumn: 'Колона',
     ariaAdvancedFilterBuilderOption: 'Опция',
-    ariaAdvancedFilterBuilderValueP: 'Стойност',
+    ariaAdvancedFilterBuilderValue: 'Стойност',
     ariaAdvancedFilterBuilderJoinOperator: 'Оператор за свързване',
     ariaAdvancedFilterInput: 'Вход за разширен филтър',
     ariaChecked: 'маркирано',
@@ -698,6 +723,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaFilterColumnsInput: 'Вход за филтриране на колони',
     ariaFilterFromValue: 'Филтър от стойност',
     ariaFilterInput: 'Вход за филтър',
+    ariaLabelInputClear: 'Изчисти',
     ariaFilterList: 'Списък за филтриране',
     ariaFilterToValue: 'Филтър до стойност',
     ariaFilterValue: 'Стойност на филтъра',
@@ -765,6 +791,9 @@ export const AG_GRID_LOCALE_BG = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Валидиране на редактор на клетки',
+    ariaFullRowValidationError: 'Валидация на целия ред: ${variable}',
+    ariaFullRowEditValidationFailed: 'Редактирането на реда не може да бъде завършено. ${variable}',
+    ariaRowIndex: 'Ред ${variable}',
     ariaLabelLoadingContextMenu: 'Зареждане на контекстно меню',
 
     // aria labels for rich select
@@ -794,8 +823,8 @@ export const AG_GRID_LOCALE_BG = {
     ariaHasNote: 'Тази клетка има бележка.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Текст',

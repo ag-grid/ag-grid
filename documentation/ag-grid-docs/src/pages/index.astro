@@ -5,6 +5,7 @@ import styles from '@pages-styles/homepage.module.scss';
 import { Quotes } from '@components/quotes/Quotes';
 import { quotesData } from '@components/quotes/quotesData';
 import { LandingPageFWSelector } from '@ag-website-shared/components/landing-pages/LandingPageFWSelector';
+import { FrameworkCtaLink } from '@components/landing-pages/FrameworkCtaLink';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { Version } from '@ag-website-shared/components/whats-new/components/Version';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
@@ -163,6 +164,22 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
             </div>
 
             <div class={styles.heroLinks}>
+                <FrameworkCtaLink
+                    client:load
+                    id="hero-free-trial-cta"
+                    url={hero.freeTrialUrl}
+                    className={`button-tertiary ${styles.heroSectioncta1}`}
+                    withChevron
+                >
+                    {hero.freeTrialText}
+                </FrameworkCtaLink>
+
+                <a
+                    id="hero-buy-now-cta"
+                    class:list={['button-tertiary', styles.heroSectioncta1]}
+                    href={urlWithBaseUrl(hero.buyNowUrl)}>{hero.buyNowText} <Icon name="chevronRight" /></a
+                >
+
                 <a
                     id="demos-cta"
                     class:list={[

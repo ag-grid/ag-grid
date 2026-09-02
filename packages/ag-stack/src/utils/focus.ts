@@ -4,6 +4,9 @@ import { _getTabIndex } from './browser';
 import { _getActiveDomElement, _getDocument } from './document';
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, _isVisible } from './dom';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const FOCUS_MANAGED_CLASS = 'ag-focus-managed';
+
 let keyboardModeActive: boolean = false;
 let instanceCount: number = 0;
 
@@ -80,14 +83,13 @@ export function _findFocusableElements(
         .filter((node: HTMLElement) => {
             return _isVisible(node);
         }) as HTMLElement[];
-    const excludeNodes = Array.prototype.slice.apply(rootNode.querySelectorAll(excludeString)) as HTMLElement[];
+    const excludeNodes = new Set(rootNode.querySelectorAll(excludeString));
 
-    if (!excludeNodes.length) {
+    if (!excludeNodes.size) {
         return nodes;
     }
 
-    const diff = (a: HTMLElement[], b: HTMLElement[]) => a.filter((element) => b.indexOf(element) === -1);
-    return diff(nodes, excludeNodes);
+    return nodes.filter((element) => !excludeNodes.has(element));
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -112,24 +114,50 @@ export function _focusInto(
     return false;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _findNextFocusableElement(
-    beans: UtilBeanCollection,
-    rootNode: HTMLElement,
-    onlyManaged?: boolean | null,
-    backwards?: boolean
-): HTMLElement | null {
-    const focusable = _findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
-    const activeEl = _getActiveDomElement(beans) as HTMLElement;
-    let currentIndex: number;
+/**
+ * Focuses into `rootNode` the way native Tab would: tabbable elements win. Elements with a
+ * negative tabindex are only eligible when a managed-focus wrapper inside `rootNode` owns their
+ * keyboard handling — bare tabindex="-1" content would otherwise be a keyboard dead end.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, excludeTabGuards = false): boolean {
+    const candidates = _findFocusableElements(rootNode, excludeTabGuards ? '.ag-tab-guard' : null);
+    const tabbable = candidates.filter((element) => element.tabIndex >= 0);
+    const pool = tabbable.length
+        ? tabbable
+        : candidates.filter((element) => {
+              const managedRoot = element.closest(`.${FOCUS_MANAGED_CLASS}`);
+              return managedRoot !== null && rootNode.contains(managedRoot);
+          });
+    const toFocus = up ? _last(pool) : pool[0];
 
-    if (onlyManaged) {
-        currentIndex = focusable.findIndex((el) => el.contains(activeEl));
-    } else {
-        currentIndex = focusable.indexOf(activeEl);
+    if (toFocus) {
+        toFocus.focus({ preventScroll: true });
+        return true;
     }
 
-    const nextIndex = currentIndex + (backwards ? -1 : 1);
+    return false;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _findNextFocusableElement(params: {
+    beans: UtilBeanCollection;
+    rootNode: HTMLElement;
+    onlyManaged?: boolean | null;
+    onlyUnmanaged?: boolean;
+    backwards?: boolean;
+}): HTMLElement | null {
+    const { beans, rootNode, onlyManaged, onlyUnmanaged, backwards } = params;
+    const activeEl = _getActiveDomElement(beans) as HTMLElement;
+
+    let focusable = _findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
+    if (onlyUnmanaged) {
+        focusable = focusable.filter((el) => el === activeEl || _getTabIndex(el) !== '-1');
+    }
+
+    const activeIndex = onlyManaged ? focusable.findIndex((el) => el.contains(activeEl)) : focusable.indexOf(activeEl);
+
+    const nextIndex = activeIndex + (backwards ? -1 : 1);
 
     if (nextIndex < 0 || nextIndex >= focusable.length) {
         return null;

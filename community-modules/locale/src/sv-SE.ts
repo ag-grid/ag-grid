@@ -135,6 +135,29 @@ export const AG_GRID_LOCALE_SE = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'är mellan',
+    advancedFilterYesterday: 'är igår',
+    advancedFilterToday: 'är idag',
+    advancedFilterTomorrow: 'är imorgon',
+    advancedFilterLast7Days: 'är i de senaste 7 dagarna',
+    advancedFilterLastWeek: 'är i förra veckan',
+    advancedFilterThisWeek: 'är i denna vecka',
+    advancedFilterNextWeek: 'är i nästa vecka',
+    advancedFilterLast30Days: 'är i de senaste 30 dagarna',
+    advancedFilterLastMonth: 'är i förra månaden',
+    advancedFilterThisMonth: 'är i denna månad',
+    advancedFilterNextMonth: 'är i nästa månad',
+    advancedFilterLast90Days: 'är i de senaste 90 dagarna',
+    advancedFilterLastQuarter: 'är i förra kvartalet',
+    advancedFilterThisQuarter: 'är i detta kvartal',
+    advancedFilterNextQuarter: 'är i nästa kvartal',
+    advancedFilterLastYear: 'är i förra året',
+    advancedFilterThisYear: 'är i detta år',
+    advancedFilterYearToDate: 'är hittills i år',
+    advancedFilterNextYear: 'är i nästa år',
+    advancedFilterLast6Months: 'är i de senaste 6 månaderna',
+    advancedFilterLast12Months: 'är i de senaste 12 månaderna',
+    advancedFilterLast24Months: 'är i de senaste 24 månaderna',
     advancedFilterTrue: 'är-sann',
     advancedFilterFalse: 'är-falsk',
     advancedFilterAnd: 'OCH',
@@ -182,6 +205,8 @@ export const AG_GRID_LOCALE_SE = {
     // Editor Validation Errors
     minDateValidation: 'Datum måste vara efter ${variable}',
     maxDateValidation: 'Datum måste vara före ${variable}',
+    minDateInclusiveValidation: 'Datum måste vara ${variable} eller senare',
+    maxDateInclusiveValidation: 'Datum måste vara ${variable} eller tidigare',
     maxLengthValidation: 'Måste vara ${variable} tecken eller färre.',
     minValueValidation: 'Måste vara större än eller lika med ${variable}',
     maxValueValidation: 'Måste vara mindre än eller lika med ${variable}',
@@ -681,7 +706,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaAdvancedFilterBuilderGroupItem: 'Filtergrupp',
     ariaAdvancedFilterBuilderColumn: 'Kolumn',
     ariaAdvancedFilterBuilderOption: 'Alternativ',
-    ariaAdvancedFilterBuilderValueP: 'Värde',
+    ariaAdvancedFilterBuilderValue: 'Värde',
     ariaAdvancedFilterBuilderJoinOperator: 'Kombinationsoperator',
     ariaAdvancedFilterInput: 'Avancerad filterinmatning',
     ariaChecked: 'markerad',
@@ -697,6 +722,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaFilterColumnsInput: 'Filterkolumnsinmatning',
     ariaFilterFromValue: 'Filtrera från värde',
     ariaFilterInput: 'Filterinmatning',
+    ariaLabelInputClear: 'Rensa',
     ariaFilterList: 'Filterlista',
     ariaFilterToValue: 'Filtrera till värde',
     ariaFilterValue: 'Filtervärde',
@@ -764,6 +790,9 @@ export const AG_GRID_LOCALE_SE = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Celleditorvalidering',
+    ariaFullRowValidationError: 'Validering av hela raden: ${variable}',
+    ariaFullRowEditValidationFailed: 'Det går inte att slutföra radredigeringen. ${variable}',
+    ariaRowIndex: 'Rad ${variable}',
     ariaLabelLoadingContextMenu: 'Laddar kontextmeny',
 
     // aria labels for rich select
@@ -792,8 +821,8 @@ export const AG_GRID_LOCALE_SE = {
     ariaHasNote: 'Denna cell har en anteckning.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Text',

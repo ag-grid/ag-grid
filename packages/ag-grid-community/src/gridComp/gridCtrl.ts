@@ -2,6 +2,7 @@ import {
     Direction,
     _findTabbableParent,
     _focusInto,
+    _focusIntoTabbableFirst,
     _getActiveDomElement,
     _last,
     _observeIntersection,
@@ -22,6 +23,7 @@ import type { Component, ComponentSelector } from '../widgets/component';
 export interface IGridComp extends LayoutView {
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
+    focusNextElementOutsideContainer(up: boolean, eExcludeContainers: HTMLElement[]): boolean;
     getFocusableContainers(): FocusableContainer[];
     setCursor(value: string | null): void;
     setUserSelect(value: string | null): void;
@@ -37,7 +39,7 @@ export interface OptionalGridComponents {
 }
 
 const focusContainer = (comp: FocusableContainer, up?: boolean): boolean => {
-    return _runWithContainerFocusAllowed(comp, () => _focusInto(comp.getGui(), up, false, true));
+    return _runWithContainerFocusAllowed(comp, () => _focusIntoTabbableFirst(comp.getGui(), up, true));
 };
 
 const getGridContainerName = (container?: FocusableContainer): GridContainerName => {
@@ -278,6 +280,11 @@ export class GridCtrl extends BeanStub {
 
     public forceFocusOutOfContainer(up = false): void {
         this.view.forceFocusOutOfContainer(up);
+    }
+
+    public focusNextElementOutsideContainer(up = false): boolean {
+        const eExcludeContainers = [...this.additionalFocusableContainers].map((container) => container.getGui());
+        return this.view.focusNextElementOutsideContainer(up, eExcludeContainers);
     }
 
     public isFocusInsideGridBody(): boolean {

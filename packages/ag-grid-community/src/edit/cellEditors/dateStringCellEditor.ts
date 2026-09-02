@@ -41,7 +41,9 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         this.eEditor = eEditor;
         this.params = params;
 
-        const { min, max, step, colDef } = params;
+        const { browserAutoComplete, min, max, step, colDef } = params;
+
+        eEditor.setAutoComplete(browserAutoComplete);
 
         if (min != null) {
             eEditor.setMin(min);
@@ -63,49 +65,19 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
 
     public getValidationErrors(): string[] | null {
         const { eEditor, params } = this;
-        const raw = eEditor.getInputElement().value;
-        const value = this.formatDate(this.parseDate(raw ?? undefined));
-        const { min, max, getValidationErrors } = params;
-        let internalErrors: string[] | null = [];
+        const date = _parseDateTimeFromString(eEditor.getInputElement().value) ?? undefined;
+        const value = this.formatDate(date);
+        const internalErrors = this.getInternalValidationErrors(date);
 
-        if (value) {
-            const date = new Date(value);
-            const translate = this.getLocaleTextFunc();
-
-            if (min) {
-                const minDate = new Date(min);
-                if (date < minDate) {
-                    const minDateString = minDate.toLocaleDateString();
-                    internalErrors.push(
-                        translate('minDateValidation', `Date must be after ${minDateString}`, [minDateString])
-                    );
-                }
-            }
-
-            if (max) {
-                const maxDate = new Date(max);
-                if (date > maxDate) {
-                    const maxDateString = maxDate.toLocaleDateString();
-                    internalErrors.push(
-                        translate('maxDateValidation', `Date must be before ${maxDateString}`, [maxDateString])
-                    );
-                }
-            }
+        if (!params.getValidationErrors) {
+            return internalErrors;
         }
 
-        if (!internalErrors.length) {
-            internalErrors = null;
-        }
-
-        if (getValidationErrors) {
-            return getValidationErrors({
-                value: this.getValue(),
-                cellEditorParams: params,
-                internalErrors,
-            });
-        }
-
-        return internalErrors;
+        return params.getValidationErrors({
+            value: this.parseEditorValue(value),
+            cellEditorParams: params,
+            internalErrors,
+        });
     }
 
     public flushInput(): void {
@@ -113,10 +85,14 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 
     public getValue(): string | null | undefined {
-        const { params, eEditor } = this;
+        const value = this.formatDate(this.eEditor.getDate());
+        return this.parseEditorValue(value);
+    }
+
+    private parseEditorValue(value: string | undefined): string | null | undefined {
+        const { params } = this;
         // Key the cache on the formatted date string — the exact input to parseValue —
         // so the cache cannot diverge from what the parser would actually receive.
-        const value = this.formatDate(eEditor.getDate());
         if (Object.is(this.cachedRaw, value)) {
             return this.cachedParsed;
         }
@@ -133,6 +109,34 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
 
     public getStartValue(): string | null | undefined {
         return _serialiseDate(this.parseDate(this.params.value ?? undefined) ?? null, this.includeTime ?? false);
+    }
+
+    private getInternalValidationErrors(date: Date | undefined): string[] | null {
+        if (!date) {
+            return null;
+        }
+
+        const { min, max } = this.params;
+        const translate = this.getLocaleTextFunc();
+        const errors: string[] = [];
+
+        if (min) {
+            const minDate = min instanceof Date ? min : _parseDateTimeFromString(min);
+            if (minDate && date < minDate) {
+                const minDateString = minDate.toLocaleDateString();
+                errors.push(translate('minDateValidation', `Date must be after ${minDateString}`, [minDateString]));
+            }
+        }
+
+        if (max) {
+            const maxDate = max instanceof Date ? max : _parseDateTimeFromString(max);
+            if (maxDate && date > maxDate) {
+                const maxDateString = maxDate.toLocaleDateString();
+                errors.push(translate('maxDateValidation', `Date must be before ${maxDateString}`, [maxDateString]));
+            }
+        }
+
+        return errors.length ? errors : null;
     }
 
     private parseDate(value: string | undefined): Date | undefined {

@@ -1,11 +1,10 @@
 import { findByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridState } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
  * A column with neither `colId` nor `field` has no developer-provided identity, so the build names it by

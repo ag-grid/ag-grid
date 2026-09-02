@@ -1,7 +1,7 @@
+import { GridRows, TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager } from '../../test-utils';
 
 describe('ag-grid grouping hierarchical tree data with groupRows', () => {
     const gridsManager = new TestGridsManager({

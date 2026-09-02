@@ -135,6 +135,29 @@ export const AG_GRID_LOCALE_PL = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'jest pomiędzy',
+    advancedFilterYesterday: 'jest wczoraj',
+    advancedFilterToday: 'jest dziś',
+    advancedFilterTomorrow: 'jest jutro',
+    advancedFilterLast7Days: 'jest w ostatnich 7 dniach',
+    advancedFilterLastWeek: 'jest w ostatnim tygodniu',
+    advancedFilterThisWeek: 'jest w bieżącym tygodniu',
+    advancedFilterNextWeek: 'jest w następnym tygodniu',
+    advancedFilterLast30Days: 'jest w ostatnich 30 dniach',
+    advancedFilterLastMonth: 'jest w ostatnim miesiącu',
+    advancedFilterThisMonth: 'jest w bieżącym miesiącu',
+    advancedFilterNextMonth: 'jest w następnym miesiącu',
+    advancedFilterLast90Days: 'jest w ostatnich 90 dniach',
+    advancedFilterLastQuarter: 'jest w ostatnim kwartale',
+    advancedFilterThisQuarter: 'jest w bieżącym kwartale',
+    advancedFilterNextQuarter: 'jest w następnym kwartale',
+    advancedFilterLastYear: 'jest w ostatnim roku',
+    advancedFilterThisYear: 'jest w bieżącym roku',
+    advancedFilterYearToDate: 'jest od początku roku do dziś',
+    advancedFilterNextYear: 'jest w następnym roku',
+    advancedFilterLast6Months: 'jest w ostatnich 6 miesiącach',
+    advancedFilterLast12Months: 'jest w ostatnich 12 miesiącach',
+    advancedFilterLast24Months: 'jest w ostatnich 24 miesiącach',
     advancedFilterTrue: 'jest prawdą',
     advancedFilterFalse: 'jest fałszem',
     advancedFilterAnd: 'AND',
@@ -182,6 +205,8 @@ export const AG_GRID_LOCALE_PL = {
     // Editor Validation Errors
     minDateValidation: 'Data musi być po ${variable}',
     maxDateValidation: 'Data musi być przed ${variable}',
+    minDateInclusiveValidation: 'Data musi być ${variable} lub późniejsza',
+    maxDateInclusiveValidation: 'Data musi być ${variable} lub wcześniejsza',
     maxLengthValidation: 'Musi mieć ${variable} znaków lub mniej.',
     minValueValidation: 'Musi być większa lub równa ${variable}',
     maxValueValidation: 'Musi być mniejsza lub równa ${variable}',
@@ -682,7 +707,7 @@ export const AG_GRID_LOCALE_PL = {
     ariaAdvancedFilterBuilderGroupItem: 'Grupa Filtrów',
     ariaAdvancedFilterBuilderColumn: 'Kolumna',
     ariaAdvancedFilterBuilderOption: 'Opcja',
-    ariaAdvancedFilterBuilderValueP: 'Wartość',
+    ariaAdvancedFilterBuilderValue: 'Wartość',
     ariaAdvancedFilterBuilderJoinOperator: 'Operator Połączenia',
     ariaAdvancedFilterInput: 'Zaawansowane Wejście Filtra',
     ariaChecked: 'zaznaczone',
@@ -698,6 +723,7 @@ export const AG_GRID_LOCALE_PL = {
     ariaFilterColumnsInput: 'Wejście Filtrowania Kolumn',
     ariaFilterFromValue: 'Filtr od wartości',
     ariaFilterInput: 'Wejście Filtra',
+    ariaLabelInputClear: 'Wyczyść',
     ariaFilterList: 'Lista Filtrowania',
     ariaFilterToValue: 'Filtr do wartości',
     ariaFilterValue: 'Wartość Filtra',
@@ -765,6 +791,9 @@ export const AG_GRID_LOCALE_PL = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Walidacja edytora komórek',
+    ariaFullRowValidationError: 'Walidacja całego wiersza: ${variable}',
+    ariaFullRowEditValidationFailed: 'Nie można ukończyć edycji wiersza. ${variable}',
+    ariaRowIndex: 'Wiersz ${variable}',
     ariaLabelLoadingContextMenu: 'Ładowanie menu kontekstowego',
 
     // aria labels for rich select
@@ -793,8 +822,8 @@ export const AG_GRID_LOCALE_PL = {
     ariaHasNote: 'Ta komórka ma notatkę.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: ' ', // U+00A0 no-break space
+    decimalSeparator: ',',
 
     // Data types
     dataTypeText: 'Tekst',

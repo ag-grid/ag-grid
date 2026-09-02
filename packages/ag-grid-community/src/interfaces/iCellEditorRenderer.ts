@@ -6,7 +6,8 @@ export interface ICellEditorRendererParams<TValue = any, TData = any, TContext =
     TData,
     TContext
 > {
-    /** The value to be rendered by the renderer */
+    /** The value to be rendered by the renderer. May be `null` — for example on group rows or when the `field` is
+     *  absent from the row data; the renderer must handle this. */
     value: TValue[] | TValue | null;
     /** The value to be renderer by the renderer formatted by the editor */
     valueFormatted: string;

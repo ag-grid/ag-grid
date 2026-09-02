@@ -1,5 +1,7 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
+import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridOptions, ValueGetterParams } from 'ag-grid-community';
 import {
@@ -24,8 +26,6 @@ import {
     RenderApiModule,
     RowGroupingModule,
 } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 interface MedalRow {
     id: string;
@@ -266,9 +266,10 @@ describe('Batch editing documentation examples', () => {
             defaultColDef: { editable: true, flex: 1 },
         });
 
-        await asyncSetTimeout(1);
         const gridElement = getGridElement(api)! as HTMLElement;
         const getCell = (rowId: string, colId: string) => getByTestId(gridElement, agTestIdFor.cell(rowId, colId));
+        // TestIdService stamps data-testid in a debounced pass, so poll the lookup the test relies on.
+        await waitFor(() => getCell('0', 'a'));
         const user = userEvent.setup();
 
         api.startBatchEdit();
@@ -281,42 +282,43 @@ describe('Batch editing documentation examples', () => {
 
         // Tab to next cell - value should be preserved
         await user.keyboard('{Tab}');
-        await asyncSetTimeout(1);
 
-        expect(cellA0).toHaveTextContent('edited-a0');
-        expect(cellA0).toHaveClass('ag-cell-batch-edit');
+        await waitFor(() => {
+            expect(cellA0).toHaveTextContent('edited-a0');
+            expect(cellA0).toHaveClass('ag-cell-batch-edit');
+        });
 
         // Edit cell b0
         const cellB0 = getCell('0', 'b');
         expect(cellB0.querySelector('input')).toBeTruthy();
         await user.keyboard('edited-b0');
-        await asyncSetTimeout(1);
 
         // Tab to next cell
         await user.keyboard('{Tab}');
-        await asyncSetTimeout(1);
 
-        expect(cellA0).toHaveTextContent('edited-a0');
-        expect(cellB0).toHaveTextContent('edited-b0');
-        expect(cellA0).toHaveClass('ag-cell-batch-edit');
-        expect(cellB0).toHaveClass('ag-cell-batch-edit');
+        await waitFor(() => {
+            expect(cellA0).toHaveTextContent('edited-a0');
+            expect(cellB0).toHaveTextContent('edited-b0');
+            expect(cellA0).toHaveClass('ag-cell-batch-edit');
+            expect(cellB0).toHaveClass('ag-cell-batch-edit');
+        });
 
         // Edit cell c0
         const cellC0 = getCell('0', 'c');
         expect(cellC0.querySelector('input')).toBeTruthy();
         await user.keyboard('edited-c0');
-        await asyncSetTimeout(1);
 
         // Press Enter to close editor
         await user.keyboard('{Enter}');
-        await asyncSetTimeout(1);
 
-        expect(cellA0).toHaveTextContent('edited-a0');
-        expect(cellB0).toHaveTextContent('edited-b0');
-        expect(cellC0).toHaveTextContent('edited-c0');
-        expect(cellA0).toHaveClass('ag-cell-batch-edit');
-        expect(cellB0).toHaveClass('ag-cell-batch-edit');
-        expect(cellC0).toHaveClass('ag-cell-batch-edit');
+        await waitFor(() => {
+            expect(cellA0).toHaveTextContent('edited-a0');
+            expect(cellB0).toHaveTextContent('edited-b0');
+            expect(cellC0).toHaveTextContent('edited-c0');
+            expect(cellA0).toHaveClass('ag-cell-batch-edit');
+            expect(cellB0).toHaveClass('ag-cell-batch-edit');
+            expect(cellC0).toHaveClass('ag-cell-batch-edit');
+        });
 
         await new GridRows(api, 'three cells batch pending before commit').check(`
             ROOT id:ROOT_NODE_ID
@@ -332,12 +334,13 @@ describe('Batch editing documentation examples', () => {
 
         // Commit should apply all pending values
         api.commitBatchEdit();
-        await asyncSetTimeout(1);
 
-        expect(rowNode.data.a).toBe('edited-a0');
-        expect(rowNode.data.b).toBe('edited-b0');
-        expect(rowNode.data.c).toBe('edited-c0');
-        expect(cellA0).not.toHaveClass('ag-cell-batch-edit');
+        await waitFor(() => {
+            expect(rowNode.data.a).toBe('edited-a0');
+            expect(rowNode.data.b).toBe('edited-b0');
+            expect(rowNode.data.c).toBe('edited-c0');
+            expect(cellA0).not.toHaveClass('ag-cell-batch-edit');
+        });
         expect(cellB0).not.toHaveClass('ag-cell-batch-edit');
         expect(cellC0).not.toHaveClass('ag-cell-batch-edit');
     });

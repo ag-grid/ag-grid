@@ -19,6 +19,7 @@ export class ViewportSizeFeature extends BeanStub {
 
     private centerWidth: number;
     private bodyHeight: number;
+    private viewportWidth: number;
     private centerViewportResizeQueued = false;
     private viewportGeometryRefreshQueued = false;
     private scrollVisibilityRefreshQueued = false;
@@ -154,6 +155,7 @@ export class ViewportSizeFeature extends BeanStub {
 
         // fires event if height changes, used by PaginationService, HeightScalerService, RowRenderer
         this.checkBodyHeight();
+        this.checkViewportWidth();
 
         // check for virtual columns for ColumnController
         this.onHorizontalViewportChanged();
@@ -178,6 +180,22 @@ export class ViewportSizeFeature extends BeanStub {
             this.bodyHeight = bodyHeight;
             this.eventSvc.dispatchEvent({
                 type: 'bodyHeightChanged',
+            });
+        }
+    }
+
+    private checkViewportWidth(): void {
+        const gridBodyCtrl = this.gridBodyCtrl;
+        if (!gridBodyCtrl) {
+            return;
+        }
+
+        const viewportWidth = gridBodyCtrl.getHorizontalViewportWidth();
+
+        if (this.viewportWidth !== viewportWidth) {
+            this.viewportWidth = viewportWidth;
+            this.eventSvc.dispatchEvent({
+                type: 'gridViewportWidthChanged',
             });
         }
     }

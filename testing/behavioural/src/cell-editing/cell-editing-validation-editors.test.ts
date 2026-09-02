@@ -1,17 +1,18 @@
+import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridRows, TestGridsManager, waitForInput } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions, ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomEditorModule,
     DateEditorModule,
+    LocaleModule,
     NumberEditorModule,
     TextEditorModule,
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-
-import { GridRows, TestGridsManager, waitForInput } from '../test-utils';
 
 interface PersonRow {
     athlete: string;
@@ -29,7 +30,14 @@ function makeRowData(): PersonRow[] {
 describe('Cell editing validation — editor types and custom hooks', () => {
     const gridsManager = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [ClientSideRowModelModule, NumberEditorModule, TextEditorModule, DateEditorModule, CustomEditorModule],
+        modules: [
+            ClientSideRowModelModule,
+            NumberEditorModule,
+            TextEditorModule,
+            DateEditorModule,
+            CustomEditorModule,
+            LocaleModule,
+        ],
     });
 
     beforeAll(() => {
@@ -269,6 +277,33 @@ describe('Cell editing validation — editor types and custom hooks', () => {
                 └── LEAF id:1 athlete:"Bob" age:40
             `);
         });
+
+        test('uses the locale validation separator for the native validity message', async () => {
+            const rowData = makeRowData();
+            const api = await gridsManager.createGridAndWait('number-custom-locale-separator', {
+                columnDefs: [
+                    { field: 'athlete' },
+                    {
+                        field: 'age',
+                        cellEditor: 'agNumberCellEditor',
+                        cellEditorParams: {
+                            getValidationErrors: () => ['First error', 'Second error'],
+                        },
+                    },
+                ],
+                rowData,
+                defaultColDef: { editable: true },
+                invalidEditValueMode: 'block',
+                localeText: { tooltipValidationErrorSeparator: ' / ' },
+            } satisfies GridOptions<PersonRow>);
+            const gridElement = getGridElement(api)! as HTMLElement;
+
+            const ageCell = cell(api, 0, 'age');
+            await userEvent.dblClick(ageCell);
+            const ageInput = await waitForInput(gridElement, ageCell);
+
+            expect(ageInput.validationMessage).toBe('First error / Second error');
+        });
     });
 
     describe('Text editor — maxLength behaviour', () => {
@@ -411,7 +446,7 @@ describe('Cell editing validation — editor types and custom hooks', () => {
 
     describe('Date editor — custom getValidationErrors callback', () => {
         // Date min/max relies on the native date input reporting `valueAsDate`, which is not driven
-        // reliably by simulated typing under jsdom; a custom rule exercises the DateEditor path instead.
+        // reliably by simulated typing under happy-dom; a custom rule exercises the DateEditor path instead.
         const columnDefs: ColDef<PersonRow>[] = [
             { field: 'athlete' },
             {
@@ -492,6 +527,74 @@ describe('Cell editing validation — editor types and custom hooks', () => {
                 ├── LEAF id:0 athlete:"Alice" when:"2020-01-15"
                 └── LEAF id:1 athlete:"Bob" when:"2020-06-10"
             `);
+        });
+    });
+
+    describe('Date string editor — custom getValidationErrors callback', () => {
+        test('a required error clears and exposes the custom-formatted value after a complete date', async () => {
+            interface Row {
+                when?: string;
+            }
+
+            const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+            const validationValues: Array<string | null | undefined> = [];
+            const rowData: Row[] = [{}];
+            const api = await gridsManager.createGridAndWait('date-string-required', {
+                columnDefs: [
+                    {
+                        field: 'when',
+                        editable: true,
+                        cellDataType: 'customDateString',
+                        cellEditor: 'agDateStringCellEditor',
+                        cellEditorParams: {
+                            getValidationErrors: ({ value }: { value: string | null | undefined }) => {
+                                validationValues.push(value);
+                                return value == null || value === '' ? ['Required'] : null;
+                            },
+                        },
+                    },
+                ],
+                dataTypeDefinitions: {
+                    customDateString: {
+                        baseDataType: 'dateString',
+                        extendsDataType: 'dateString',
+                        valueParser: ({ newValue }) => (datePattern.test(newValue) ? newValue : null),
+                        dataTypeMatcher: (value) => typeof value === 'string' && datePattern.test(value),
+                        dateParser: (value) => {
+                            const match = value?.match(datePattern);
+                            return match
+                                ? new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]))
+                                : undefined;
+                        },
+                        dateFormatter: (value) =>
+                            value
+                                ? `${String(value.getDate()).padStart(2, '0')}/${String(value.getMonth() + 1).padStart(2, '0')}/${value.getFullYear()}`
+                                : undefined,
+                    },
+                },
+                rowData,
+                invalidEditValueMode: 'block',
+            } satisfies GridOptions<Row>);
+
+            api.startEditingCell({ rowIndex: 0, colKey: 'when' });
+            const whenCell = cell(api, 0, 'when');
+            const whenInput = await waitForInput(getGridElement(api)! as HTMLElement, whenCell);
+
+            // An incomplete native date has no value, so the required rule marks it invalid.
+            whenInput.value = '';
+            whenInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await waitFor(() => expect(whenInput.validationMessage).toBe('Required'));
+            expect(validationValues.at(-1)).toBeUndefined();
+
+            // The previous custom validity must not hide the newly completed date from the callback.
+            whenInput.value = '2012-12-12';
+            whenInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await waitFor(() => expect(validationValues.at(-1)).toBe('12/12/2012'));
+            expect(whenInput.validationMessage).toBe('');
+            expect(whenInput.getAttribute('aria-invalid')).toBe('false');
+
+            api.stopEditing();
+            expect(rowData[0].when).toBe('12/12/2012');
         });
     });
 

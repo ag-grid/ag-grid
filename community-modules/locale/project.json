@@ -102,6 +102,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist/umd",
+        "deleteOutputPath": false,
         "outputFileName": "@ag-grid-community/locale",
         "main": "{projectRoot}/dist/package/main.cjs.js",
         "tsConfig": "{projectRoot}/tsconfig.lib.json",

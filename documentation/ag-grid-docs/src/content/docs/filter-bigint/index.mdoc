@@ -44,9 +44,9 @@ The BigInt Filter accepts decimal integer syntax only:
 
 ## Custom Parsing
 
-To accept other formats, such as hexadecimal, provide a `bigintParser` that converts the entered text to a `bigint` (return `null` for values it cannot parse). Pair it with `allowedCharPattern` so the extra characters can be typed into the filter input. The parsed value is what gets applied to filtering, and the same parser is used by the [Advanced Filter](./filter-advanced/) for `bigint` operands.
+To accept other formats, such as hexadecimal, provide a `bigintParser` that converts the entered text to a `bigint` (return `null` for values it cannot parse). Pair it with `allowedCharPattern` so the extra characters can be typed into the filter input. The parsed value is what gets applied to filtering, and the same parser is used by the [Advanced Filter](./filter-advanced/) for `bigint` operands. Unless you also provide a `bigintFormatter`, have it accept a plain decimal too: without one, every input shows the stored value as a plain decimal and reads it back through this parser once edited.
 
-The filter model always stores the parsed value as a canonical decimal string, so provide a `bigintFormatter` — the inverse of the parser — to display stored values back in your own format. It is used by the [Floating Filter](./floating-filters/) and by the [Advanced Filter](./filter-advanced/) when displaying an operand, which means an entered value is echoed back in the formatter's format rather than exactly as typed.
+The filter model always stores the parsed value as a canonical decimal string, so provide a `bigintFormatter` — the inverse of the parser — to display stored values back in your own format. It is used by the filter inputs, by the [Floating Filter](./floating-filters/) and by the [Advanced Filter](./filter-advanced/) when displaying an operand, which means an entered value is echoed back in the formatter's format rather than exactly as typed.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -56,7 +56,7 @@ const gridOptions = {
             cellDataType: 'bigint',
             filter: 'agBigIntColumnFilter',
             filterParams: {
-                allowedCharPattern: '[\\dxXa-fA-F]',
+                allowedCharPattern: '\\dxXa-fA-F',
                 bigintParser: (text) => {
                     if (text == null || text.trim() === '') {
                         return null;
@@ -73,6 +73,8 @@ const gridOptions = {
     ],
 };
 ```
+
+The `bigintParser` and `bigintFormatter` are also passed the grid `api` and `context` as a second argument, along with the `column` and `colDef` they are working on. One callback set on `defaultColDef.filterParams` can therefore serve every column it applies to.
 
 ## BigInt Filter Model
 

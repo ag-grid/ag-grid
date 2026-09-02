@@ -1,10 +1,22 @@
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import {
     BRANCH_BUILDS_PATH_CONDITION,
     CAMPAIGNS_PATH_CONDITION,
     ECOMMERCE_PATH_CONDITION,
     EXAMPLES_PATH_CONDITION,
 } from './cspRules';
-import { PRODUCTION_CSP_PHASE, getHtaccessContent } from './htaccessRules';
+import {
+    IN_FLIGHT_BEGIN,
+    IN_FLIGHT_END,
+    PRODUCTION_CSP_PHASE,
+    getHtaccessContent,
+    getInFlightArchiveRules,
+} from './htaccessRules';
 import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 describe('htaccessRules', () => {
@@ -87,6 +99,304 @@ describe('htaccessRules', () => {
 
         it('should NOT include X-Frame-Options header directive (replaced by CSP frame-ancestors)', () => {
             expect(productionContent).not.toMatch(/Header\s+.*set\s+X-Frame-Options/);
+        });
+    });
+
+    describe('Caching phase 1: content-addressed asset headers', () => {
+        // Pulls the expr= regexes out of the GENERATED output rather than re-declaring them:
+        // a copy would let the rule and its test drift apart.
+        const getCacheRuleMatcher = (content: string) => {
+            const line = content.split('\n').find((l) => l.includes('max-age=604800'));
+            expect(line).toBeDefined();
+            const patterns = [...line!.matchAll(/m#([^#]+)#/g)].map(([, re]) => new RegExp(re));
+            expect(patterns).toHaveLength(2);
+            return (uri: string) => patterns.some((re) => re.test(uri));
+        };
+
+        it('should set Cache-Control on production', () => {
+            expect(productionContent).toContain('Header set Cache-Control');
+            expect(productionContent).toContain('max-age=604800');
+            expect(productionContent).toContain('s-maxage=31536000');
+        });
+
+        it('should NOT long-cache on staging, so testers never see a stale asset', () => {
+            // Staging carries the no-cache document rule but no max-age of any kind.
+            expect(stagingContent).not.toContain('max-age');
+        });
+
+        it('should NOT use immutable, which would make a mistake unfixable for a year', () => {
+            // Scoped to the Cache-Control line on purpose: the site has legitimate
+            // /immutable-data/ redirect URLs, so a site-wide assertion is a false positive.
+            const line = productionContent.split('\n').find((l) => l.includes('max-age=604800'));
+            expect(line).toBeDefined();
+            expect(line).not.toContain('immutable');
+        });
+
+        it('should have removed the inert mod_expires block', () => {
+            // Never took effect (module not loaded, <IfModule> skips silently), and its
+            // ExpiresDefault "access plus 1 year" would have fired if anyone enabled it.
+            expect(productionContent).not.toContain('mod_expires');
+            expect(productionContent).not.toContain('ExpiresActive');
+            expect(productionContent).not.toContain('ExpiresDefault');
+            expect(productionContent).not.toContain('ExpiresByType');
+        });
+
+        it('should not guard the rule with <IfModule>, so a missing module fails loudly', () => {
+            const lines = productionContent.split('\n');
+            const idx = lines.findIndex((l) => l.includes('max-age=604800'));
+            const preceding = lines.slice(0, idx).join('\n');
+            const openGuards = (preceding.match(/<IfModule/g) ?? []).length;
+            const closeGuards = (preceding.match(/<\/IfModule>/g) ?? []).length;
+            expect(openGuards).toBe(closeGuards);
+        });
+
+        describe('matches every content-hashed shape the build emits', () => {
+            const hashed = [
+                // name.HASH8.ext -- Vite's default, 126 of 128 live references
+                '/_astro/design-system.BcXAtF3c.css',
+                '/_astro/_pageName_.C5AIcGk_.css',
+                '/_astro/_pageName_.astro_astro_type_script_index_0_lang.D12oPI3R.js',
+                '/_astro/ag-grid-alpine-quartz-themes.tErC2lp7.png',
+                // fonts/HASH16.ext -- whole basename is a 16-char hex hash
+                '/_astro/fonts/2eb6e0e4fc33dd24.woff2',
+                // archive assets live at /archive/<v>/_astro/, so the pattern must be unanchored
+                '/archive/32.3.9/_astro/DocsExampleRunner.CiSTQ4_g.css',
+                '/charts/archive/11.0.0/_astro/example-finance.bBLOPnBQ.css',
+            ];
+
+            hashed.forEach((uri) => {
+                it(`caches ${uri}`, () => {
+                    expect(getCacheRuleMatcher(productionContent)(uri)).toBe(true);
+                });
+            });
+        });
+
+        describe('does not match anything mutable', () => {
+            // Everything here is a stable URL with mutable content. Caching any of it could
+            // hide a fix from users and testers, which phase 1 must not be able to do.
+            const mutable = [
+                '/react-data-grid/column-moving/',
+                '/archive/32.3.9/react-data-grid/getting-started/',
+                '/documentation-archive',
+                '/charts/documentation-archive/',
+                '/sitemap-index.xml',
+                '/llms.txt',
+                '/robots.txt',
+                '/images/logo.png',
+                '/theme-icons/alpine.svg',
+                '/example-assets/olympic-winners.json',
+                '/example/foo.js',
+                '/scripts/main.js',
+                '/favicon.ico',
+                // In _astro but NOT hash-shaped: matching on shape rather than directory is
+                // what makes an unhashed file added to the build later fall through safely.
+                '/_astro/unhashed-file.css',
+                '/_astro/name.SHORT.css',
+                '/_astro/name.TOOLONGHASH9.css',
+                '/_astro/fonts/notahexhash1234.woff2',
+            ];
+
+            mutable.forEach((uri) => {
+                it(`does not cache ${uri}`, () => {
+                    expect(getCacheRuleMatcher(productionContent)(uri)).toBe(false);
+                });
+            });
+        });
+    });
+
+    describe('Caching phase 2: Vary: User-Agent removed', () => {
+        it('should not send Vary: User-Agent, which forks a shared cache per UA string', () => {
+            // It was appended inside the mod_deflate block alongside BrowserMatch workarounds for
+            // Netscape 4 and IE6. Harmless to browsers (a given browser's UA is constant) but it
+            // would hold the CloudFront hit rate near zero, so it has to go before edge caching.
+            expect(productionContent).not.toMatch(/Vary\s+User-Agent/);
+            expect(stagingContent).not.toMatch(/Vary\s+User-Agent/);
+        });
+
+        it('should not carry the obsolete BrowserMatch gzip workarounds', () => {
+            expect(productionContent).not.toContain('BrowserMatch');
+        });
+
+        it('should keep Vary: Accept, which is a different mechanism (SE-80 markdown negotiation)', () => {
+            expect(productionContent).toContain('Header append Vary Accept');
+        });
+
+        it('should keep compressing the same content types', () => {
+            // Removing BrowserMatch must not disturb the DEFLATE filter list.
+            ['text/html', 'text/css', 'text/javascript', 'application/json', 'image/svg+xml'].forEach((type) => {
+                expect(productionContent).toContain(`AddOutputFilterByType DEFLATE ${type}`);
+            });
+        });
+    });
+
+    describe('Caching phase 2: no heuristic caching of current pages', () => {
+        // With Last-Modified but no Cache-Control, browsers invent a freshness lifetime of
+        // ~10% of the document's age, growing without bound since the last deploy. That is the
+        // stale-page-until-hard-refresh behaviour. no-cache removes it.
+        const getNoCacheRule = (content: string) => {
+            const line = content.split('\n').find((l) => l.includes('"no-cache"'));
+            expect(line).toBeDefined();
+            return line!;
+        };
+
+        it('should set no-cache on current pages, in both envs', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                expect(getNoCacheRule(content)).toContain('Cache-Control "no-cache"');
+            });
+        });
+
+        it('should scope it to HTML documents, not assets', () => {
+            expect(getNoCacheRule(productionContent)).toContain('%{CONTENT_TYPE} =~ m#^text/html#');
+        });
+
+        it('should exclude archived versions, which are immutable', () => {
+            const rule = getNoCacheRule(productionContent);
+            expect(rule).toContain('!(');
+            expect(rule).toContain('archive/[0-9]');
+        });
+
+        it('should use no-cache rather than no-store, to keep back/forward navigation', () => {
+            expect(productionContent).not.toContain('no-store');
+        });
+
+        it('should not override the hashed-asset long cache', () => {
+            // The two rules have disjoint conditions (text/html vs a hashed filename), but the
+            // asset rule is emitted after the document rule so it wins on any future overlap.
+            const lines = productionContent.split('\n');
+            const noCacheAt = lines.findIndex((l) => l.includes('"no-cache"'));
+            const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
+            expect(noCacheAt).toBeGreaterThan(-1);
+            expect(assetAt).toBeGreaterThan(noCacheAt);
+        });
+    });
+
+    describe('In-flight release archives', () => {
+        // Grid and Charts ship together at independent version numbers (Grid 36.x, Charts 14.x)
+        // and are tested in the same window, so both must be named. Studio is never cached.
+        const inFlight = (grid: string | null, charts: string | null) =>
+            getHtaccessContent({ env: 'production', uncachedGridArchive: grid, uncachedChartsArchive: charts });
+
+        it('emits the marker block but no rules when nothing is in flight', () => {
+            // The markers are always present so the deployed root .htaccess can be patched in
+            // place between them; only the rules inside come and go.
+            const empty = getInFlightArchiveRules(null, null);
+            expect(empty).toContain(IN_FLIGHT_BEGIN);
+            expect(empty).toContain(IN_FLIGHT_END);
+            expect(empty).not.toContain('Cache-Control');
+        });
+
+        it('agrees with the patch script, which edits a built file rather than importing this', () => {
+            // The script carries its own copies of the markers and the rule text, because it
+            // runs against a .htaccess already on the web box. Patching a generated file must
+            // therefore land exactly what generating it with those versions would have.
+            const file = join(mkdtempSync(join(tmpdir(), 'htaccess-')), '.htaccess');
+            writeFileSync(file, inFlight(null, null));
+            execFileSync(
+                'node',
+                [
+                    fileURLToPath(new URL('../../../../../scripts/uncached-archives.mjs', import.meta.url)),
+                    file,
+                    'set',
+                    '36.2.0',
+                    '14.3.0',
+                ],
+                { encoding: 'utf8' }
+            );
+            expect(readFileSync(file, 'utf8')).toBe(inFlight('36.2.0', '14.3.0'));
+        });
+
+        it('keeps the markers when rules are present, so the block stays patchable', () => {
+            const rule = getInFlightArchiveRules('36.2.0', '14.3.0');
+            expect(rule.indexOf(IN_FLIGHT_BEGIN)).toBeLessThan(rule.indexOf('archive/36'));
+            expect(rule.indexOf(IN_FLIGHT_END)).toBeGreaterThan(rule.indexOf('charts/archive/14'));
+        });
+
+        it('a build never puts an archive in flight - the live file owns that state', () => {
+            // Nothing in source can populate the block: the versions only reach the generator
+            // through the test-only overrides, so a production deploy always resets it.
+            [productionContent, stagingContent].forEach((content) => {
+                expect(content).toContain(IN_FLIGHT_BEGIN);
+                expect(content).not.toContain('Release archives under test');
+                expect(content).not.toContain('m#^/archive/3');
+                expect(content).not.toContain('m#^/charts/archive/1');
+            });
+        });
+
+        it('matches grid and charts at their own version numbers', () => {
+            const rule = getInFlightArchiveRules('36.2.0', '14.3.0');
+            expect(rule).toContain('m#^/archive/36\\.2\\.0/#');
+            expect(rule).toContain('m#^/charts/archive/14\\.3\\.0/#');
+        });
+
+        it('does not apply the grid version to the charts archive', () => {
+            // The bug this replaced: one version behind an optional (charts/)? prefix, so a grid
+            // version silently claimed to cover a charts archive that is numbered differently.
+            const rule = getInFlightArchiveRules('36.2.0', '14.3.0');
+            expect(rule).not.toContain('charts/archive/36\\.2\\.0');
+            expect(rule).not.toContain('(charts/|studio/)?');
+        });
+
+        it('emits only the product that is in flight', () => {
+            expect(getInFlightArchiveRules('36.2.0', null)).not.toContain('charts/archive');
+            expect(getInFlightArchiveRules(null, '14.3.0')).not.toContain('m#^/archive/');
+        });
+
+        it('escapes dots so versions match literally', () => {
+            expect(getInFlightArchiveRules('36.2.0', null)).not.toContain('archive/36.2.0/#');
+        });
+
+        it('uses no-cache, not no-store, so revalidation is a cheap 304', () => {
+            expect(getInFlightArchiveRules('36.2.0', '14.3.0')).not.toContain('no-store');
+        });
+
+        it('is emitted after the hashed-asset rule, so it wins for in-flight assets', () => {
+            const lines = inFlight('36.2.0', '14.3.0').split('\n');
+            const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
+            const gridAt = lines.findIndex((l) => l.includes('^/archive/36\\.2\\.0/#'));
+            const chartsAt = lines.findIndex((l) => l.includes('^/charts/archive/14\\.3\\.0/#'));
+            expect(assetAt).toBeGreaterThan(-1);
+            expect(gridAt).toBeGreaterThan(assetAt);
+            expect(chartsAt).toBeGreaterThan(assetAt);
+        });
+
+        it('applies to staging too, where release testing happens', () => {
+            const staging = getHtaccessContent({
+                env: 'staging',
+                uncachedGridArchive: '36.2.0',
+                uncachedChartsArchive: '14.3.0',
+            });
+            expect(staging).toContain('^/archive/36\\.2\\.0/#');
+            expect(staging).toContain('^/charts/archive/14\\.3\\.0/#');
+        });
+    });
+
+    describe('Archived Studio versions are never cached', () => {
+        it('does not apply to the live Studio site, which caches normally', () => {
+            // The rule is anchored to /studio/archive/ - /studio/ itself must keep the normal
+            // document rule and the long hashed-asset cache.
+            const line = productionContent.split('\n').find((l) => l.includes('/studio/archive/'));
+            expect(line).toContain('m#^/studio/archive/#');
+        });
+
+        it('blanket no-cache for /studio/archive/, in both envs', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                expect(content).toContain('m#^/studio/archive/#');
+            });
+        });
+
+        it('is emitted after the hashed-asset rule, so it covers studio assets too', () => {
+            const lines = productionContent.split('\n');
+            const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
+            const studioAt = lines.findIndex((l) => l.includes('m#^/studio/archive/#'));
+            expect(assetAt).toBeGreaterThan(-1);
+            expect(studioAt).toBeGreaterThan(assetAt);
+        });
+
+        it('is not carved out of the document no-cache rule', () => {
+            // Released grid/charts archives keep their heuristic window; studio must not.
+            const doc = productionContent.split('\n').find((l) => l.includes('CONTENT_TYPE'));
+            expect(doc).toContain('^/(charts/)?archive/[0-9]');
+            expect(doc).not.toContain('studio');
         });
     });
 
@@ -224,9 +534,11 @@ describe('htaccessRules', () => {
             expect(stagingContent).not.toContain('https://www.ag-grid.com/$1 [R=301,L]');
         });
 
-        it('should include mod_expires rules in production only', () => {
-            expect(productionContent).toContain('mod_expires.c');
-            expect(stagingContent).not.toContain('mod_expires.c');
+        it('should include the asset cache header in production only', () => {
+            // Replaces an assertion that the (inert, now removed) mod_expires block was
+            // present. Staging gets no max-age so testers never hit a stale asset.
+            expect(productionContent).toContain('max-age=604800');
+            expect(stagingContent).not.toContain('max-age');
         });
 
         it('should include CORS headers in production only', () => {
@@ -556,34 +868,87 @@ describe('htaccessRules', () => {
     });
 
     describe('SE-80: Accept: text/markdown content negotiation', () => {
-        const negotiationRules = [
-            'RewriteCond %{HTTP_ACCEPT} text/markdown',
-            // Captures a docs path or a top-level md page, reused (%1) in the -f test and rewrite target.
-            'RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$',
-            'RewriteCond %{DOCUMENT_ROOT}/%1.md -f',
-            'RewriteRule ^ /%1.md [L]',
+        // The negotiated path list is derived from GRID_MARKDOWN_PAGE_GROUPS, so asserting the
+        // literal regex here would just restate the registry. Instead, pull the generated
+        // pattern back out and check which URLs it actually matches — that catches a broken
+        // pattern, which a string comparison against a hand-copied regex never would.
+        const extractNegotiationPattern = (content: string) => {
+            const match = content.match(/RewriteCond %\{REQUEST_URI\} \^\/\((.+)\)\/\?\$/);
+            expect(match).not.toBeNull();
+            return new RegExp(`^/(${match![1]})/?$`);
+        };
+
+        const extractVaryPattern = (content: string) => {
+            const match = content.match(/<If "%\{REQUEST_URI\} =~ m#\^\/\(\?:(.+)\)\/\?\$#/);
+            expect(match).not.toBeNull();
+            return new RegExp(`^/(?:${match![1]})/?$`);
+        };
+
+        // One representative URL per group in the registry. Every URL in the sitemap must
+        // negotiate, so a group added without a matching pattern shows up here.
+        const negotiablePaths = [
+            '/react-data-grid/cell-editing/',
+            '/javascript-data-grid/getting-started/',
+            '/about/',
+            '/changelog/',
+            '/documentation-archive/',
+            '/example/',
+            '/license-pricing/',
+            '/pipeline/',
+            '/roadmap/',
+            '/whats-new/',
+            '/community/',
+            '/community/events/',
+            '/community/beyond-the-prompt/',
+            '/session/opening-keynote/',
+            '/campaigns/bryntum-gantt/',
+            '/landing-pages/react-data-grid/',
+            '/react-table/',
+            '/cookies/',
+            '/modern-slavery/',
+            '/privacy/',
+            '/example-finance/',
+            '/example-hr/',
+            '/example-inventory/',
+            '/contact/',
+            '/niall/',
+            '/licensing/',
+            '/reference/',
+            '/sitemap/',
+            '/theme-builder/',
         ];
 
-        // The homepage twin is a separate stanza: the root URL has no path segment to capture.
-        const homepageNegotiationRules = [
-            'RewriteCond %{REQUEST_URI} ^/$',
-            'RewriteCond %{DOCUMENT_ROOT}/index.md -f',
-            'RewriteRule ^ /index.md [L]',
+        // Paths that must NOT negotiate: they have no `.md` twin, and rewriting them would
+        // either 404 or (for the `.md` itself) loop into `.md.md`.
+        const nonNegotiablePaths = [
+            '/react-data-grid/cell-editing.md', // the twin itself — final segments exclude dots
+            '/react-data-grid/', // framework landing page, redirect stub
+            '/react-data-grid/errors/123/', // sitemap-excluded
+            '/data-grid/cell-editing/', // framework-agnostic redirect stub
+            '/contact/success/', // form result, sitemap-excluded
+            '/privacy/your-choice/', // opt-out confirmation, robots-disallowed and sitemap-excluded
+            '/examples/cell-editing/component-editor/reactFunctionalTs/',
+            '/debug/files/',
+            '/sitemap-0.xml',
+            '/sitemap-index.xml',
         ];
 
         it('serves the per-page .md variant when Accept: text/markdown, gated by an on-disk check', () => {
-            for (const rule of negotiationRules) {
-                expect(productionContent).toContain(rule);
-            }
+            expect(productionContent).toContain('RewriteCond %{HTTP_ACCEPT} text/markdown');
+            expect(productionContent).toContain('RewriteCond %{DOCUMENT_ROOT}/%1.md -f');
+            expect(productionContent).toContain('RewriteRule ^ /%1.md [L]');
         });
 
         it('applies the same negotiation rules on staging, in its own mod_rewrite block', () => {
             // Staging has no redirect rewrites, so negotiation gets a dedicated block.
             expect(stagingContent).toContain('mod_rewrite.c');
             expect(stagingContent).toContain('RewriteEngine On');
-            for (const rule of negotiationRules) {
-                expect(stagingContent).toContain(rule);
-            }
+            expect(stagingContent).toContain('RewriteCond %{HTTP_ACCEPT} text/markdown');
+            expect(stagingContent).toContain('RewriteRule ^ /%1.md [L]');
+            // Both envs must negotiate exactly the same set of paths.
+            expect(extractNegotiationPattern(stagingContent).source).toBe(
+                extractNegotiationPattern(productionContent).source
+            );
         });
 
         it('runs the negotiation before the trailing-slash 301 so the canonical URL negotiates in one hop', () => {
@@ -594,33 +959,52 @@ describe('htaccessRules', () => {
             expect(negotiationIndex).toBeLessThan(trailingSlashIndex);
         });
 
-        it('adds Vary: Accept for negotiated paths (both envs) so shared caches key on the negotiated representation', () => {
+        it('negotiates every page group in the registry, with and without a trailing slash', () => {
+            const pattern = extractNegotiationPattern(productionContent);
+            for (const path of negotiablePaths) {
+                expect(pattern.test(path), `${path} should negotiate`).toBe(true);
+                expect(pattern.test(path.replace(/\/$/, '')), `${path} (no trailing slash)`).toBe(true);
+            }
+        });
+
+        it('leaves pages without a .md twin untouched', () => {
+            const pattern = extractNegotiationPattern(productionContent);
+            for (const path of nonNegotiablePaths) {
+                expect(pattern.test(path), `${path} should not negotiate`).toBe(false);
+            }
+        });
+
+        it('captures the page path in %1 so the -f guard and rewrite target resolve to /<page>.md', () => {
+            const pattern = extractNegotiationPattern(productionContent);
+            // %1 is the first capture group, reused as `%1.md` in both the guard and the target.
+            expect('/community/events/'.match(pattern)?.[1]).toBe('community/events');
+            expect('/react-data-grid/cell-editing/'.match(pattern)?.[1]).toBe('react-data-grid/cell-editing');
+            expect('/license-pricing'.match(pattern)?.[1]).toBe('license-pricing');
+        });
+
+        it('adds Vary: Accept for exactly the negotiated paths (both envs) so shared caches key on the negotiated representation', () => {
             for (const content of [productionContent, stagingContent]) {
-                expect(content).toContain(
-                    `<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/]+|license-pricing|changelog|pipeline|about|community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?|documentation-archive|example)/?$# || %{REQUEST_URI} == '/'">`
-                );
                 expect(content).toContain('Header append Vary Accept');
-            }
-        });
-
-        it('negotiates the top-level standalone pages to their .md', () => {
-            // %1 captures each page name, so the -f guard and rewrite target resolve to /<page>.md.
-            for (const content of [productionContent, stagingContent]) {
-                expect(content).toContain('|license-pricing|changelog|pipeline|about|community');
-                expect(content).toContain('|documentation-archive|example)/?$');
-            }
-        });
-
-        it('negotiates the community subpages to their .md', () => {
-            // e.g. /community/events -> %1 = community/events -> /community/events.md
-            for (const content of [productionContent, stagingContent]) {
-                expect(content).toContain(
-                    'community(?:/(?:events|showcase|tools-extensions|media|beyond-the-prompt))?'
-                );
+                // The Vary scope must cover the negotiated set exactly — narrower and a cache
+                // could serve markdown to a browser; wider and unrelated pages lose cache keying.
+                const varyPattern = extractVaryPattern(content);
+                for (const path of negotiablePaths) {
+                    expect(varyPattern.test(path), `${path} should carry Vary: Accept`).toBe(true);
+                }
+                for (const path of nonNegotiablePaths) {
+                    expect(varyPattern.test(path), `${path} should not carry Vary: Accept`).toBe(false);
+                }
+                expect(content).toContain(`%{REQUEST_URI} == '/'`);
             }
         });
 
         it('negotiates the homepage (/) to /index.md via a dedicated stanza in both envs', () => {
+            // The homepage twin is a separate stanza: the root URL has no path segment to capture.
+            const homepageNegotiationRules = [
+                'RewriteCond %{REQUEST_URI} ^/$',
+                'RewriteCond %{DOCUMENT_ROOT}/index.md -f',
+                'RewriteRule ^ /index.md [L]',
+            ];
             for (const content of [productionContent, stagingContent]) {
                 for (const rule of homepageNegotiationRules) {
                     expect(content).toContain(rule);

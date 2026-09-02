@@ -1,43 +1,56 @@
-import { existsSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
+import type { ViteUserConfig } from 'vitest/config';
 
-import { dropCssParseErrors, loadSourceCodeAliases, sortAliases, vitestReporters } from '../../vitest.shared';
-import type { Alias } from '../../vitest.shared';
+import {
+    TEST_TIMEOUT_MS,
+    UNIT_TEST_ENVIRONMENT,
+    diffConfigFile,
+    packageSourceAliases,
+    sortAliases,
+    vitestReporters,
+} from '../shared/vitest/shared';
+import type { Alias } from '../shared/vitest/shared';
 
-// Pin the timezone so date tests behave the same on every machine, matching the packages/* vitest configs.
-process.env.TZ = 'UTC';
+// The timezone is pinned by the shared config imported above, which every unit project goes through.
 
 const thisDir = path.dirname(fileURLToPath(import.meta.url));
 
 /** Repo root — two levels up from testing/behavioural. Used to locate packages/ for source aliases. */
 const repoRoot = path.resolve(thisDir, '../..');
 
+// Set by bench-compare.mjs to another checkout's `packages/`, so one checkout's benches can measure
+// another's grid source. Its parent is that checkout's root, which holds the matching community-modules/.
+const benchPackages = process.env.AG_BENCH_PACKAGES;
+const benchRoot = benchPackages ? path.resolve(benchPackages, '..') : repoRoot;
+
 // Per-checkout dep cache: bench-compare points AG_BENCH_PACKAGES at base vs test, which changes the
 // source aliases. Sharing one cacheDir makes each side invalidate the other's optimized deps (Vite
 // re-optimizes on every side switch); a key per checkout keeps the two caches separate.
-const benchCacheKey = process.env.AG_BENCH_PACKAGES
-    ? path.basename(path.resolve(process.env.AG_BENCH_PACKAGES, '..'))
-    : 'self';
+const benchCacheKey = benchPackages ? path.basename(benchRoot) : 'self';
+
+// Flips the grid's FAST_TEST_TIMINGS flag to true for this suite: hard-coded UX delays (the 200ms tooltip
+// floor, drag hold intervals) are wall-clock a headless test would otherwise sit through. Matched on the
+// relative specifier every importer of the flag writes, so nothing else named the same can be caught.
+const fastTestTimingsAlias: Alias = {
+    find: /^(\.\.?\/)+fastTestTimings$/,
+    replacement: path.resolve(thisDir, '../ag-test-utils/src/fastTestTimings.ts'),
+};
 
 // Pin react/react-dom to the versions installed in testing/behavioural/node_modules,
 // preventing Vite from resolving them from the repo-root node_modules instead.
 const aliases: Alias[] = [
     { find: 'react', replacement: path.resolve(thisDir, 'node_modules/react') },
     { find: 'react-dom', replacement: path.resolve(thisDir, 'node_modules/react-dom') },
+    fastTestTimingsAlias,
 ];
 
-// Point package names at TypeScript source so tests run against uncompiled code.
-// AG_BENCH_PACKAGES overrides which checkout's `packages/` the grid imports resolve to — set by
-// bench-compare.mjs on each base/test run so one checkout's benches can measure another's grid source.
+// Point package names at TypeScript source so tests run against uncompiled code, both halves of one
+// source tree (never a mix of two checkouts): packages/ for the grid, community-modules/ for the locales,
+// whose published `exports` point at a dist/ no test run builds.
 if (process.env.TESTS_USE_ORIGINAL_SOURCE_CODE !== 'false') {
-    const packagesDir = process.env.AG_BENCH_PACKAGES
-        ? path.resolve(process.env.AG_BENCH_PACKAGES)
-        : path.resolve(repoRoot, 'packages');
-    if (existsSync(packagesDir)) {
-        await loadSourceCodeAliases(aliases, packagesDir);
-    }
+    aliases.push(...(await packageSourceAliases(benchRoot)));
 }
 
 sortAliases(aliases);
@@ -59,13 +72,17 @@ const cssInlinePlugin = {
 };
 
 // Benchmarks default to a real Chromium (via Playwright) so layout-dependent work is measured
-// against a real layout engine; `BENCH_NODE=1` (`./benches.sh --node`) opts back into node/jsdom.
-// Tests (mode 'test') always use jsdom — only benchmark runs go to the browser.
+// against a real layout engine; `BENCH_NODE=1` (`./benches.sh --node`) opts back into node/happy-dom.
+// Tests (mode 'test') always use happy-dom — only benchmark runs go to the browser.
 // `BENCH_BROWSER_HEADED=1` (`./benches.sh --headed`) opens a visible window to watch the run.
-export default defineConfig(({ mode }) => {
+export default defineConfig(async ({ mode }): Promise<ViteUserConfig> => {
     const isBench = mode === 'benchmark';
     const browserEnabled = isBench && !process.env.BENCH_NODE;
     const browserHeadless = !process.env.BENCH_BROWSER_HEADED;
+
+    // Imported here rather than at module scope: it pulls in playwright, which every `./behave.sh`
+    // run would otherwise load for a browser it never starts.
+    const browserProvider = browserEnabled ? (await import('@vitest/browser-playwright')).playwright : undefined;
 
     // `--profile` (BENCH_PROFILE, node-only — browser mode doesn't use the forks pool) emits a V8 CPU
     // profile from the forked child. `--expose-gc` is always on so the harness can reclaim grids.
@@ -76,15 +93,15 @@ export default defineConfig(({ mode }) => {
     }
 
     return {
-        esbuild: { target: 'esnext', jsx: 'automatic' },
-        resolve: { alias: aliases },
+        // No `esbuild`/`oxc` block: Vite 8 transforms with oxc, whose defaults are already `target: esnext`
+        // and `jsx: { runtime: 'automatic' }`, and an `esbuild` block alongside oxc is warned about and ignored.
+
+        // A benchmark measures the shipped grid, so it keeps the real delays; only tests get the fast ones.
+        resolve: { alias: isBench ? aliases.filter((alias) => alias !== fastTestTimingsAlias) : aliases },
         cacheDir: path.resolve(thisDir, 'node_modules', `.vite-bench-${benchCacheKey}`),
-        // Pre-bundle deps imported by the shared setup file so Vite doesn't discover them mid-run and
-        // reload (which corrupts an in-flight bench). jest-dom is pulled in by vitest.setup.ts.
-        optimizeDeps: { include: ['@testing-library/jest-dom/matchers'] },
         plugins: browserEnabled ? [cssInlinePlugin] : [],
         // Cross-origin isolation → `crossOriginIsolated`, dropping Chromium's `performance.now()` clamp
-        // from 100µs to 5µs (essential for fast micro-benches). Browser benches only; tests stay on jsdom.
+        // from 100µs to 5µs (essential for fast micro-benches). Browser benches only; tests stay on happy-dom.
         server: browserEnabled
             ? {
                   headers: {
@@ -96,13 +113,13 @@ export default defineConfig(({ mode }) => {
         test: {
             name: 'behavioural',
             globals: true,
-            environment: 'jsdom',
+            environment: UNIT_TEST_ENVIRONMENT,
+            // Benchmarks measure rather than assert, so only tests carry the cap.
+            testTimeout: isBench ? undefined : TEST_TIMEOUT_MS,
             setupFiles: [path.resolve(thisDir, 'vitest.setup.ts')],
+            diff: diffConfigFile,
             reporters: vitestReporters(),
             watch: false,
-            // Applies when this config runs standalone (benches.sh / direct); the workspace run uses the
-            // identical filter from the root config. Shared via dropCssParseErrors so both stay in sync.
-            onConsoleLog: dropCssParseErrors,
             // Benchmarks run in a single forked child (clean process isolation, no file parallelism)
             // so runs don't contend for cores or pay worker-migration noise. `--expose-gc` lives here
             // (not in the shell wrappers) so `./benches.sh`, raw `vitest bench` and `bench-compare`
@@ -110,7 +127,8 @@ export default defineConfig(({ mode }) => {
             // is present. Worker threads reject `--expose-gc`, hence forks. (Tests keep the defaults.)
             pool: isBench ? 'forks' : 'threads',
             fileParallelism: isBench ? false : undefined,
-            poolOptions: isBench ? { forks: { singleFork: true, execArgv: benchExecArgv } } : undefined,
+            maxWorkers: isBench ? 1 : undefined,
+            execArgv: isBench ? benchExecArgv : undefined,
             root: repoRoot,
             dir: path.resolve(thisDir, 'src'),
             include: ['**/*.test.ts', '**/*.test.tsx'],
@@ -118,8 +136,21 @@ export default defineConfig(({ mode }) => {
             css: browserEnabled,
             browser: {
                 enabled: browserEnabled,
-                provider: 'playwright',
-                name: 'chromium',
+                // expose-gc: window.gc for the harness to reclaim grids between benches. max-semi-space-size:
+                // bigger young gen → fewer scavenge-GC spikes mid-measurement (the main residual noise).
+                // vsync flags drop frame-rate jitter. NB: don't add a `--disable-features` — Chromium keeps
+                // only the last occurrence, clobbering Playwright's noise-reduction defaults.
+                provider: browserProvider?.({
+                    launchOptions: {
+                        args: [
+                            '--js-flags=--expose-gc --max-semi-space-size=256',
+                            '--enable-benchmarking',
+                            '--disable-frame-rate-limit',
+                            '--disable-gpu-vsync',
+                        ],
+                    },
+                }),
+                instances: [{ browser: 'chromium' }],
                 headless: browserHeadless,
                 // No in-browser overlay — `--headed` shows the grid full-window, and `--ui` serves the
                 // separate Vitest dashboard (the bench picker) at a localhost URL, not this overlay.
@@ -128,20 +159,6 @@ export default defineConfig(({ mode }) => {
                 // Large, fixed viewport so the grid (sized 100vw×100vh) renders a representative number
                 // of rows consistently across machines, and fills the window when headed.
                 viewport: { width: 1600, height: 1200 },
-                // expose-gc: window.gc for the harness to reclaim grids between benches. max-semi-space-size:
-                // bigger young gen → fewer scavenge-GC spikes mid-measurement (the main residual noise).
-                // vsync flags drop frame-rate jitter. NB: don't add a `--disable-features` — Chromium keeps
-                // only the last occurrence, clobbering Playwright's noise-reduction defaults.
-                providerOptions: {
-                    launch: {
-                        args: [
-                            '--js-flags=--expose-gc --max-semi-space-size=256',
-                            '--enable-benchmarking',
-                            '--disable-frame-rate-limit',
-                            '--disable-gpu-vsync',
-                        ],
-                    },
-                },
             },
         },
         clearScreen: false,

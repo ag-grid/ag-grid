@@ -1,10 +1,10 @@
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, mockGridLayout } from 'ag-test-utils';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { ClientSideRowModelModule, PinnedRowModule, enableDevValidations } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, enableDevValidations, getGridElement } from 'ag-grid-community';
 import type { ColDef, GridApi, IRowNode, RowPinnedType } from 'ag-grid-community';
 
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager } from '../test-utils';
 import { VERSION } from '../version';
 
 describe('Pinned rows', () => {
@@ -649,6 +649,30 @@ describe('Pinned rows', () => {
                 PINNED_BOTTOM id:b-2 athlete:"C" sport:"SC" age:3
             `);
         });
+    });
+
+    // A pinned row's `row-index` is prefixed (`t-0`/`b-0`), so a mocked layout that parses it whole hands
+    // back NaN and every coordinate a test derives from the row — hover, click, hit-test — is NaN too.
+    test('a pinned row measures to a usable rect in the mocked layout', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [{ athlete: 'body', sport: 'body', age: 0 }],
+            pinnedTopRowData: topData,
+            pinnedBottomRowData: bottomData,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        for (const location of ['top', 'bottom'] as const) {
+            const container = gridDiv.querySelector(`.ag-grid-pinned-${location}-rows-container`)!;
+            const row = container.querySelector('.ag-row-pinned')!;
+            const { top, height } = row.getBoundingClientRect();
+            // The sole pinned row sits at its container's top, wherever the container itself is.
+            expect({ location, top, height }).toEqual({
+                location,
+                top: container.getBoundingClientRect().top,
+                height: mockGridLayout.rowHeight,
+            });
+        }
     });
 });
 

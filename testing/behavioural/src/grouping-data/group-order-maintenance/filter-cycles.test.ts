@@ -1,7 +1,7 @@
+import { GridRows, TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../../test-utils';
 
 describe('group order maintenance / filter cycles', () => {
     const gridsManager = new TestGridsManager({

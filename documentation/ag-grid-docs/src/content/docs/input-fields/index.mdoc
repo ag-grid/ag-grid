@@ -1,0 +1,59 @@
+---
+title: "Input Fields"
+---
+
+The grid renders text input fields in many features: column filters, floating filters, the Set Filter Mini Filter,
+cell editors, tool panel search boxes and toolbar items. This page describes the behaviour these inputs share and how
+to configure it, globally or per input.
+
+## Clear Button
+
+Supported input fields show a clear button when they contain a value. Clicking it clears the input, keeps focus in the
+field, and applies the change immediately, for example, a filter input clears its filter without waiting for the
+typing debounce. When a filter has an Apply button, clearing updates the input but the filter model is only changed
+once **Apply** is clicked.
+
+Set `suppressInputClearButton` to `true` to hide the clear button across the grid:
+
+{% apiDocumentation source="grid-options/properties.json" section="miscellaneous" names=["suppressInputClearButton"] /%}
+
+Date inputs only show the clear button when a text input is used (`browserDatePicker` disabled); native browser date
+pickers provide their own clear affordance.
+
+## Browser Autocomplete
+
+Browser autocomplete/autofill is disabled for grid input fields by default. Set `enableInputAutoComplete` to `true` to
+enable it for eligible inputs:
+
+{% apiDocumentation source="grid-options/properties.json" section="miscellaneous" names=["enableInputAutoComplete"] /%}
+
+Inputs that provide grid-owned suggestions — the Rich Select editor with `allowTyping`, the Advanced Filter input, and
+the Calculated Columns expression editor — always keep browser autocomplete disabled so the browser UI cannot overlap
+their suggestion lists.
+
+### Overriding Autocomplete per Input
+
+Individual inputs can override the global behaviour with a `browserAutoComplete` parameter:
+
+| Input                                                               | Where to set `browserAutoComplete`                                                                                                      |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Provided cell editors (text, number, date, date string, large text) | `colDef.cellEditorParams`                                                                                                               |
+| Provided filter inputs (text, number, date, bigint)                 | `colDef.filterParams`                                                                                                                   |
+| Text / Number floating filters                                      | `colDef.floatingFilterComponentParams` (takes precedence over the `filterParams` value, which floating filter inputs otherwise inherit) |
+| Set Filter Mini Filter                                              | `colDef.filterParams`                                                                                                                   |
+| Columns / Filters Tool Panel search                                 | the tool panel's `toolPanelParams`                                                                                                      |
+| Find and Quick Filter toolbar items                                 | the item definition's `toolbarItemParams`                                                                                               |
+
+Possible values for `browserAutoComplete`:
+
+- `true` to allow the browser's default autocomplete/autofill behaviour.
+- `false` to disable the browser autocomplete/autofill behaviour by setting the `autocomplete` attribute to `off`.
+- A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value, e.g. `'email'` on a cell editor.
+
+A `browserAutoComplete` value always wins over `enableInputAutoComplete`, in both directions: with the option
+disabled, `browserAutoComplete: true` enables autofill for that input alone, and with the option enabled,
+`browserAutoComplete: false` disables it for that input alone. Omitting the parameter defers to the option.
+
+Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
+
+Custom components render their own inputs, so these options do not apply to them.

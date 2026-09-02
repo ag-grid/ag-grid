@@ -135,6 +135,29 @@ export const AG_GRID_LOCALE_IR = {
     advancedFilterGreaterThanOrEqual: '>=',
     advancedFilterLessThan: '<',
     advancedFilterLessThanOrEqual: '<=',
+    advancedFilterInRange: 'در بازه',
+    advancedFilterYesterday: 'دیروز است',
+    advancedFilterToday: 'امروز است',
+    advancedFilterTomorrow: 'فردا است',
+    advancedFilterLast7Days: 'در ۷ روز گذشته است',
+    advancedFilterLastWeek: 'در هفته گذشته است',
+    advancedFilterThisWeek: 'در این هفته است',
+    advancedFilterNextWeek: 'در هفته بعد است',
+    advancedFilterLast30Days: 'در ۳۰ روز گذشته است',
+    advancedFilterLastMonth: 'در ماه گذشته است',
+    advancedFilterThisMonth: 'در این ماه است',
+    advancedFilterNextMonth: 'در ماه بعد است',
+    advancedFilterLast90Days: 'در ۹۰ روز گذشته است',
+    advancedFilterLastQuarter: 'در سه‌ماهه گذشته است',
+    advancedFilterThisQuarter: 'در این سه‌ماهه است',
+    advancedFilterNextQuarter: 'در سه‌ماهه بعد است',
+    advancedFilterLastYear: 'در سال گذشته است',
+    advancedFilterThisYear: 'در امسال است',
+    advancedFilterYearToDate: 'از ابتدای سال تا امروز است',
+    advancedFilterNextYear: 'در سال بعد است',
+    advancedFilterLast6Months: 'در ۶ ماه گذشته است',
+    advancedFilterLast12Months: 'در ۱۲ ماه گذشته است',
+    advancedFilterLast24Months: 'در ۲۴ ماه گذشته است',
     advancedFilterTrue: 'درست است',
     advancedFilterFalse: 'نادرست است',
     advancedFilterAnd: 'و',
@@ -182,6 +205,8 @@ export const AG_GRID_LOCALE_IR = {
     // Editor Validation Errors
     minDateValidation: 'تاریخ باید بعد از ${variable} باشد',
     maxDateValidation: 'تاریخ باید قبل از ${variable} باشد',
+    minDateInclusiveValidation: 'تاریخ باید ${variable} یا بعد از آن باشد',
+    maxDateInclusiveValidation: 'تاریخ باید ${variable} یا قبل از آن باشد',
     maxLengthValidation: 'باید ${variable} کاراکتر یا کمتر باشد.',
     minValueValidation: 'باید بیشتر یا مساوی با ${variable} باشد',
     maxValueValidation: 'باید کمتر یا مساوی ${variable} باشد',
@@ -679,7 +704,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaAdvancedFilterBuilderGroupItem: 'گروه فیلتر',
     ariaAdvancedFilterBuilderColumn: 'ستون',
     ariaAdvancedFilterBuilderOption: 'گزینه',
-    ariaAdvancedFilterBuilderValueP: 'ارزش',
+    ariaAdvancedFilterBuilderValue: 'ارزش',
     ariaAdvancedFilterBuilderJoinOperator: 'عملگر اتصال',
     ariaAdvancedFilterInput: 'ورودی فیلتر پیشرفته',
     ariaChecked: 'انتخاب شده',
@@ -695,6 +720,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaFilterColumnsInput: 'ورودی فیلتر ستون‌ها',
     ariaFilterFromValue: 'فیلتر از مقدار',
     ariaFilterInput: 'ورودی فیلتر',
+    ariaLabelInputClear: 'پاک کردن',
     ariaFilterList: 'لیست فیلتر',
     ariaFilterToValue: 'فیلتر تا مقدار',
     ariaFilterValue: 'مقدار فیلتر',
@@ -762,6 +788,9 @@ export const AG_GRID_LOCALE_IR = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'اعتبارسنجی ویرایشگر سلول',
+    ariaFullRowValidationError: 'اعتبارسنجی کل سطر: ${variable}',
+    ariaFullRowEditValidationFailed: 'ویرایش سطر را نمی‌توان تکمیل کرد. ${variable}',
+    ariaRowIndex: 'سطر ${variable}',
     ariaLabelLoadingContextMenu: 'در حال بارگذاری فهرست زمینه',
 
     // aria labels for rich select
@@ -790,7 +819,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaHasNote: 'این سلول یک یادداشت دارد.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '،',
+    thousandSeparator: ',',
     decimalSeparator: '.',
 
     // Data types
