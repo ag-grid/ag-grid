@@ -1,8 +1,10 @@
 import astroPackageJson from 'astro/package.json';
 import { createHash } from 'node:crypto';
 
+import { aggregateCspViolations } from '../csp/cspViolationReport';
 import { DARK_MODE_INIT_SCRIPT, KBD_PLATFORM_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
 import {
+    ACCEPTED_CSP_VIOLATIONS,
     ASTRO_HYDRATION_HASHES_VERIFIED_FOR,
     BRANCH_BUILDS_PATH_CONDITION,
     CAMPAIGNS_PATH_CONDITION,
@@ -141,6 +143,28 @@ describe('cspRules', () => {
             // The banner's new Function paths degrade rather than justify re-opening eval
             // site-wide; see the note above ENZUZO_APP_HOST in cspRules.ts.
             expect(getCspDirectives({ env: 'production', scope: 'site' })['script-src']).not.toContain("'unsafe-eval'");
+        });
+
+        it('accepts the blocked eval from its cookiebar bundle, and only that', () => {
+            // The shape the post-deploy suite actually observes on staging, so the acceptance
+            // stops matching if Enzuzo moves the bundle or the browser reports it differently.
+            const observed = {
+                directive: 'script-src',
+                blockedUri: 'eval',
+                disposition: 'enforce' as const,
+                sourceFile: 'https://app.enzuzo.com/scripts/cookiebar/061e8460-91b3-11f1-98ff-978c2fcf2681',
+                pageUrl: 'https://grid-staging.ag-grid.com/',
+            };
+            const aggregate = (record: typeof observed) =>
+                aggregateCspViolations([{ record, testTitle: 'homepage loads' }], [], ACCEPTED_CSP_VIOLATIONS)[0];
+
+            expect(aggregate(observed).accepted).toEqual(expect.stringContaining('Enzuzo'));
+            // The consent-bridge hash going stale must still surface...
+            expect(aggregate({ ...observed, blockedUri: 'inline' })).not.toHaveProperty('accepted');
+            // ...as must an eval from anything other than the banner bundle.
+            expect(
+                aggregate({ ...observed, sourceFile: 'https://app.enzuzo.com/scripts/cookies/061e8460' })
+            ).not.toHaveProperty('accepted');
         });
 
         it('applies on every page, not just the ones that render a cookies table', () => {

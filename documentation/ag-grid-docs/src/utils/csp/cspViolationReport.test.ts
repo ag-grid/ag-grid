@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { CspHashHint, CspViolationRecord } from './cspViolationReport';
+import type { AcceptedCspViolation, CspHashHint, CspViolationRecord } from './cspViolationReport';
 import { aggregateCspViolations, cspDirectiveFamily, parseCspHashHint } from './cspViolationReport';
 
 // Abbreviated from real Chromium output; the full policy string is inlined by the browser and
@@ -185,6 +185,83 @@ describe('aggregateCspViolations', () => {
             ['enforce|script-src-elem|inline|sha256-first=', ['/']],
             ['enforce|script-src-elem|inline|sha256-second=', ['/react/ai/']],
         ]);
+    });
+
+    describe('accepted violations', () => {
+        const evalRecord: CspViolationRecord = {
+            directive: 'script-src',
+            blockedUri: 'eval',
+            disposition: 'enforce',
+            sourceFile: 'https://vendor.invalid/scripts/banner/abc',
+            pageUrl: PAGE,
+        };
+        const rule: AcceptedCspViolation = {
+            directive: 'script-src',
+            blockedUri: 'eval',
+            sourceFilePrefix: 'https://vendor.invalid/scripts/banner/',
+            reason: 'redundant fallback',
+        };
+
+        it('marks a matching violation with the reason and leaves it in the report', () => {
+            const violations = aggregateCspViolations(
+                [{ record: evalRecord, testTitle: 'homepage loads' }],
+                [],
+                [rule]
+            );
+
+            expect(violations).toHaveLength(1);
+            expect(violations[0].accepted).toBe('redundant fallback');
+            expect(violations[0].key).toBe('enforce|script-src|eval');
+        });
+
+        it('leaves the field off a violation no rule matches', () => {
+            const violations = aggregateCspViolations([{ record: evalRecord, testTitle: 'homepage loads' }], [], []);
+
+            expect(violations[0]).not.toHaveProperty('accepted');
+        });
+
+        it('does not accept the same eval from a script the rule does not name', () => {
+            const violations = aggregateCspViolations(
+                [
+                    { record: evalRecord, testTitle: 'homepage loads' },
+                    {
+                        record: { ...evalRecord, sourceFile: 'https://other.invalid/app.js', pageUrl: DOCS_PAGE },
+                        testTitle: 'docs data overview loads',
+                    },
+                ],
+                [],
+                [rule]
+            );
+
+            // One group (the key carries no source), and the stranger keeps it visible.
+            expect(violations).toHaveLength(1);
+            expect(violations[0]).not.toHaveProperty('accepted');
+        });
+
+        it('does not accept a different thing the named script is blocked from doing', () => {
+            const violations = aggregateCspViolations(
+                [
+                    {
+                        record: { ...evalRecord, directive: 'connect-src', blockedUri: 'https://vendor.invalid/api' },
+                        testTitle: 'homepage loads',
+                    },
+                ],
+                [],
+                [rule]
+            );
+
+            expect(violations[0]).not.toHaveProperty('accepted');
+        });
+
+        it('never accepts a violation with no source file to attribute it to', () => {
+            const violations = aggregateCspViolations(
+                [{ record: { ...evalRecord, sourceFile: undefined }, testTitle: 'homepage loads' }],
+                [],
+                [rule]
+            );
+
+            expect(violations[0]).not.toHaveProperty('accepted');
+        });
     });
 
     it('gathers one blocked script into a single entry across the pages that serve it', () => {
