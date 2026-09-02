@@ -38,6 +38,13 @@ const docs = defineCollection({
             .optional(),
 
         migrationVersion: z.string().optional(),
+
+        /**
+         * Override the `related:` links in the page's markdown twin, which are otherwise the
+         * page's nav neighbours (see `docsRelatedLinks.ts`). Each entry is either a docs page
+         * name, titled from the nav, or an explicit `{ title, url }` for anything else.
+         */
+        related: z.array(z.union([z.string(), z.object({ title: z.string(), url: z.string() })])).optional(),
     }),
 });
 

@@ -1,5 +1,6 @@
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { DISABLE_MARKDOWN_DOCS, SITE_URL } from '@constants';
+import { buildGridFrontmatter } from '@utils/markdown-pages/gridFrontmatter';
 import { STATIC_PAGE_CONTENT } from '@utils/markdown-pages/staticPageContent';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
@@ -17,12 +18,12 @@ export function GET() {
 
     const output =
         [
-            [
-                '---',
-                `title: ${JSON.stringify(content.title)}`,
-                `description: ${JSON.stringify(content.description)}`,
-                '---',
-            ].join('\n'),
+            buildGridFrontmatter({
+                pageUrl: '/theme-builder/',
+                siteRoot: SITE_URL,
+                title: content.title,
+                description: content.description,
+            }),
             `# ${content.heading}`,
             content.description,
             'Theme Builder is an interactive tool, so it has no text version. It runs in the browser at ' +

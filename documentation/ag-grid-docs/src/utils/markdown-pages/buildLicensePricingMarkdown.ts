@@ -8,6 +8,8 @@ import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { resolveSharedUrl } from '@ag-website-shared/utils/resolveSharedUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
+import { buildGridFrontmatter } from './gridFrontmatter';
+
 // The page is framework-agnostic; resolve its framework-prefixed doc links against a
 // single framework, matching AGENTS.md.ts / llms.txt.ts.
 const FRAMEWORK: Framework = 'javascript';
@@ -143,12 +145,13 @@ function renderTrial(siteRoot?: string): string {
  * (DEV_LICENSE_DATA + the two feature-matrix JSON files) and serialises it directly.
  */
 export function buildLicensePricingMarkdown({ siteRoot }: { siteRoot?: string } = {}): string {
-    const frontmatter = [
-        '---',
-        'title: "Licence & Pricing"',
-        'description: "AG Grid and AG Charts licence plans, prices, and a full Community vs Enterprise vs Bundle feature comparison."',
-        '---',
-    ].join('\n');
+    const frontmatter = buildGridFrontmatter({
+        pageUrl: '/license-pricing/',
+        siteRoot,
+        title: 'Licence & Pricing',
+        description:
+            'AG Grid and AG Charts licence plans, prices, and a full Community vs Enterprise vs Bundle feature comparison.',
+    });
 
     const document = [
         frontmatter,

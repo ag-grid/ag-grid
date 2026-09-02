@@ -1,5 +1,7 @@
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 
+import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from './markdownFrontmatter';
+
 export interface BuildFrameworkRedirectMarkdownOptions {
     title: string;
     description: string;
@@ -8,6 +10,8 @@ export interface BuildFrameworkRedirectMarkdownOptions {
     /** One entry per framework: its display name and the URL the page would redirect to. */
     destinations: Array<{ label: string; url: string }>;
     siteRoot?: string;
+    /** Site-wide frontmatter fields (product, related links, llms.txt) from the rendering site. */
+    siteFrontmatter?: SiteFrontmatterFields;
 }
 
 /**
@@ -25,9 +29,10 @@ export function buildFrameworkRedirectMarkdown({
     heading,
     destinations,
     siteRoot,
+    siteFrontmatter,
 }: BuildFrameworkRedirectMarkdownOptions): string {
     const document = [
-        ['---', `title: ${JSON.stringify(title)}`, `description: ${JSON.stringify(description)}`, '---'].join('\n'),
+        buildMarkdownFrontmatter({ ...siteFrontmatter, title, description }),
         `# ${heading}`,
         description,
         'This page redirects to the version for your framework. Pick one:',

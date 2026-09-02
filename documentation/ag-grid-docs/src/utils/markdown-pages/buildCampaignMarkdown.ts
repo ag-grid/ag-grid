@@ -6,6 +6,8 @@ import type {
 } from '@components/campaigns-components/bryntum/types';
 import { decorateBryntumHtml, resolveBryntumHref } from '@utils/bryntumCampaignAssets';
 
+import { buildGridFrontmatter } from './gridFrontmatter';
+
 /** The page's title/description fallbacks, shared so the twin's frontmatter matches its meta. */
 export function campaignMeta(content: BryntumCampaignContent) {
     return {
@@ -86,13 +88,21 @@ function sectionMarkdown(section: BryntumSection): string[] {
  * videos and logo walls have no markdown representation, so those sections contribute their
  * heading and supporting copy only.
  */
-export function buildCampaignMarkdown({ content }: { content: BryntumCampaignContent }): string {
+export function buildCampaignMarkdown({
+    content,
+    siteRoot,
+}: {
+    content: BryntumCampaignContent;
+    siteRoot?: string;
+}): string {
     const { title, description } = campaignMeta(content);
     // The hero is the page title; every other section keeps page order below it.
     const [hero, ...rest] = content.sections;
 
     const document: string[] = [
-        ['---', `title: ${JSON.stringify(title)}`, `description: ${JSON.stringify(description)}`, '---'].join('\n'),
+        // No pageUrl: the campaign pages are partner landing pages, not listed in the footer,
+        // so they carry no related links.
+        buildGridFrontmatter({ siteRoot, title, description }),
         `# ${hero?.heading ?? content.title}`,
     ];
 

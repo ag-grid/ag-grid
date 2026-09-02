@@ -6,6 +6,7 @@ import { urlWithPrefix } from '@utils/urlWithPrefix';
 import faqData from '../../content/faqs/homepage.json';
 import homepageData from '../../content/homepage/homepage.json';
 import versionsData from '../../content/versions/ag-grid-versions.json';
+import { buildGridFrontmatter } from './gridFrontmatter';
 
 // The page is framework-agnostic; resolve its framework-prefixed CTA links against a single
 // framework, matching the other markdown twins (license-pricing, AGENTS.md).
@@ -126,12 +127,13 @@ function sectionBlock(section: HomepageSection, siteRoot?: string): string {
 export function buildHomepageMarkdown({ siteRoot }: { siteRoot?: string } = {}): string {
     const { hero, sections } = homepageData;
 
-    const frontmatter = [
-        '---',
-        'title: "AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid"',
-        'description: "AG Grid is a feature-rich Data Grid for all major JavaScript frameworks, offering filtering, grouping, pivoting, and more. Free and open-source. Upgrade to Enterprise for advanced features."',
-        '---',
-    ].join('\n');
+    const frontmatter = buildGridFrontmatter({
+        pageUrl: '/',
+        siteRoot,
+        title: 'AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid',
+        description:
+            'AG Grid is a feature-rich Data Grid for all major JavaScript frameworks, offering filtering, grouping, pivoting, and more. Free and open-source. Upgrade to Enterprise for advanced features.',
+    });
 
     const heroLinks = [
         `[${hero.freeTrialText}](${toAbsoluteUrl(urlWithPrefix({ framework: FRAMEWORK, url: hero.freeTrialUrl }), siteRoot)})`,

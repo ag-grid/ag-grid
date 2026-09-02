@@ -3,6 +3,8 @@ import { type DemoName, demoContent } from '@components/demos/demoContent';
 import { VIDEO_TOUR_TEXT, VIDEO_TOUR_URL } from '@components/demos/demosData';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
+import { buildGridFrontmatter } from './gridFrontmatter';
+
 /**
  * Build the markdown twin of a standalone demo page (`/example-finance`, `/example-hr`,
  * `/example-inventory`). The demo itself is a live React grid with no markdown representation, so
@@ -13,12 +15,12 @@ export function buildDemoMarkdown({ demo, siteRoot }: { demo: DemoName; siteRoot
     const content = demoContent(demo);
 
     const document = [
-        [
-            '---',
-            `title: ${JSON.stringify(content.seoTitle)}`,
-            `description: ${JSON.stringify(content.seoDescription)}`,
-            '---',
-        ].join('\n'),
+        buildGridFrontmatter({
+            pageUrl: content.href,
+            siteRoot,
+            title: content.seoTitle,
+            description: content.seoDescription,
+        }),
         `# ${content.seoH1}`,
         content.intro,
         'This page hosts a live, interactive AG Grid demo. The full source is on GitHub.',
