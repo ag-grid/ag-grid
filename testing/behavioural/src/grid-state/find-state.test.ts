@@ -108,6 +108,35 @@ describe('StateService - Find State', () => {
             await waitFor(() => expect(api.getState().find).toEqual({ searchValue: 'c', activeMatch: 3 }));
         });
 
+        test('should restore an active match in the centre container past pinned top matches', async () => {
+            const api = await gridsManager.createGridAndWait('initial-active-match-pinned', {
+                columnDefs,
+                rowData,
+                pinnedTopRowData: [{ value: 'cog' }],
+                pinnedBottomRowData: [{ value: 'cab' }],
+                initialState: { find: { searchValue: 'c', activeMatch: 2 } },
+            });
+
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(5));
+            // match 1 is the pinned top 'cog', so match 2 is the first centre match, 'cat'
+            await waitFor(() => expect(api.findGetActiveMatch()?.numOverall).toBe(2));
+            expect(api.findGetActiveMatch()?.node.data.value).toBe('cat');
+        });
+
+        test('should restore an active match in the pinned bottom container', async () => {
+            const api = await gridsManager.createGridAndWait('initial-active-match-pinned-bottom', {
+                columnDefs,
+                rowData,
+                pinnedTopRowData: [{ value: 'cog' }],
+                pinnedBottomRowData: [{ value: 'cab' }],
+                initialState: { find: { searchValue: 'c', activeMatch: 5 } },
+            });
+
+            await waitFor(() => expect(api.findGetActiveMatch()?.numOverall).toBe(5));
+            expect(api.findGetActiveMatch()?.node.data.value).toBe('cab');
+            expect(api.findGetActiveMatch()?.node.rowPinned).toBe('bottom');
+        });
+
         test('should leave find alone when the initial state has no find section', async () => {
             const api = await createGrid('initial-no-find', {
                 findSearchValue: 'c',
