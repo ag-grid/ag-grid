@@ -61,7 +61,6 @@ import {
     _onCellWidthChanged,
     _setupCellPosition,
 } from './cellPositionFeature';
-import { _createCellEditorTooltipSource, _createCellTooltipSource } from './cellTooltip';
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -227,7 +226,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private enableTooltipFeature(): void {
-        this.tooltipFeature = this.beans.tooltipSvc?.createTooltip(_createCellTooltipSource(this.beans, this));
+        this.tooltipFeature = this.beans.tooltipSvc?.enableCellTooltipFeature(this);
     }
 
     private disableTooltipFeature() {
@@ -253,9 +252,7 @@ export class CellCtrl extends BeanStub {
         if (this.editorTooltipFeature) {
             this.disableEditorTooltipFeature();
         }
-        const tooltipSvc = this.beans.tooltipSvc;
-        const source = _createCellEditorTooltipSource(this.beans, this, editor);
-        this.editorTooltipFeature = source ? tooltipSvc?.registerTooltip(this, source) : undefined;
+        this.editorTooltipFeature = this.beans.tooltipSvc?.setupCellEditorTooltip(this, editor);
 
         // Cell identity lets a delayed framework editor consume only its own preflight validation snapshot.
         this.editSvc?.populateModelValidationErrors(this);

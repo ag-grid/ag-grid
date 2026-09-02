@@ -1,23 +1,19 @@
 import type { LocaleTextFunc } from 'ag-stack';
 import { _exists, _getLocaleTextFunc, _isElementOverflowingCallback } from 'ag-stack';
 
-import type { BeanCollection } from '../../context/context';
-import { _formatValidationMessages } from '../../edit/utils/validationMessages';
-import type { AgColumn } from '../../entities/agColumn';
-import type { ColDef } from '../../entities/colDef';
-import type { RowNode } from '../../entities/rowNode';
-import { _addGridCommonParams } from '../../gridOptionsUtils';
-import type { ICellEditor } from '../../interfaces/iCellEditor';
-import type { TooltipCallbackParams, TooltipLocation } from '../../tooltip/tooltipComponent';
-import type { TooltipSource } from '../../tooltip/tooltipFeature';
-import { _getCellTooltipComponentDefinition, _isShowTooltipWhenTruncated } from '../../tooltip/tooltipFeature';
-import {
-    _getLegacyTooltipFieldValue,
-    _isCellTooltipConfigured,
-    _resolveCellTooltipValue,
-} from '../../tooltip/tooltipValueUtils';
-import type { LegacyTooltipFieldResolution } from '../../tooltip/tooltipValueUtils';
-import type { CellCtrl } from './cellCtrl';
+import type { BeanCollection } from '../context/context';
+import { _formatValidationMessages } from '../edit/utils/validationMessages';
+import type { AgColumn } from '../entities/agColumn';
+import type { ColDef } from '../entities/colDef';
+import type { RowNode } from '../entities/rowNode';
+import { _addGridCommonParams } from '../gridOptionsUtils';
+import type { ICellEditor } from '../interfaces/iCellEditor';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { TooltipCallbackParams, TooltipLocation } from './tooltipComponent';
+import type { TooltipSource } from './tooltipFeature';
+import { _getCellTooltipComponentDefinition, _isShowTooltipWhenTruncated } from './tooltipFeature';
+import { _getLegacyTooltipFieldValue, _isCellTooltipConfigured, _resolveCellTooltipValue } from './tooltipValueUtils';
+import type { LegacyTooltipFieldResolution } from './tooltipValueUtils';
 
 type ResolvedCellTooltip = {
     value: any;

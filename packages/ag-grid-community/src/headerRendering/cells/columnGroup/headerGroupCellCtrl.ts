@@ -15,7 +15,7 @@ import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeaderEditCss';
-import { _createHeaderTooltipSource } from '../../../tooltip/headerTooltipSource';
+import type { ComponentTooltip } from '../../../tooltip/headerTooltipSource';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
@@ -63,9 +63,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private expandable: boolean;
     private displayName: string | null;
     private tooltipFeature: TooltipFeature | undefined;
+    /** Tooltip supplied by a custom header component via `setTooltip`. */
+    private componentTooltip: ComponentTooltip = {};
     private readonly headerCompGuard = new ComponentInstanceGuard();
-    private componentTooltipValue: string | undefined;
-    private componentTooltipShouldDisplay: (() => boolean) | undefined;
     private ariaAnnouncement?: string;
 
     public override wireComp(
@@ -325,38 +325,20 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     private setupTooltip(): void {
-        const { beans, column, eGui } = this;
-        const tooltipSvc = beans.tooltipSvc;
-        if (!tooltipSvc || !this.isAlive()) {
-            return;
-        }
-
-        const source = _createHeaderTooltipSource({
-            beans,
-            eGui,
-            location: 'headerGroup',
-            column,
-            getColDef: () => column.getColGroupDef(),
-            getComponentTooltip: () => ({
-                value: this.componentTooltipValue,
-                shouldDisplay: this.componentTooltipShouldDisplay,
-            }),
-            getDisplayName: () => beans.colNames.getDisplayNameForColumnGroup(column, 'header'),
-            overflowElementSelector: '.ag-header-group-text',
-            hasCustomHeader: () => !!column.getColGroupDef()?.headerGroupComponent,
-        });
-        this.tooltipFeature = tooltipSvc.registerTooltip(this, source, this.tooltipFeature);
+        this.tooltipFeature = this.beans.tooltipSvc?.setupHeaderGroupTooltip(
+            this,
+            this.tooltipFeature,
+            () => this.componentTooltip
+        );
     }
 
     private setComponentTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
-        this.componentTooltipValue = value;
-        this.componentTooltipShouldDisplay = shouldDisplayTooltip;
+        this.componentTooltip = { value, shouldDisplay: shouldDisplayTooltip };
         this.tooltipFeature?.refreshTooltip();
     }
 
     private clearComponentTooltip(): void {
-        this.componentTooltipValue = undefined;
-        this.componentTooltipShouldDisplay = undefined;
+        this.componentTooltip = {};
     }
 
     private setupExpandable(compBean: BeanStub): void {

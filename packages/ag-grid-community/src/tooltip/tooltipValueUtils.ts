@@ -1,5 +1,6 @@
 import { _exists, _getValueUsingDotField } from 'ag-stack';
 
+import type { AgColumn } from '../entities/agColumn';
 import type { AbstractColDef, ColDef } from '../entities/colDef';
 import type { TooltipCallbackParams, TooltipDefinition } from './tooltipComponent';
 
@@ -102,4 +103,13 @@ export function _getLegacyTooltipFieldValue(data: any, field: string, containsDo
         return undefined;
     }
     return containsDots ? _getValueUsingDotField(data, field) : (data as Record<string, unknown>)[field];
+}
+
+export function _initColTooltip(column: AgColumn): void {
+    const { colDef } = column;
+    column.tooltipEnabled =
+        colDef.tooltip !== false &&
+        (_isCellTooltipConfigured(colDef) ||
+            colDef.tooltipComponent != null ||
+            colDef.tooltipComponentSelector != null);
 }

@@ -19,7 +19,7 @@ import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
 import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeaderEditCss';
-import { _createHeaderTooltipSource } from '../../../tooltip/headerTooltipSource';
+import type { ComponentTooltip } from '../../../tooltip/headerTooltipSource';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils';
@@ -73,9 +73,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private userHeaderClasses: Set<string> | undefined;
     private readonly ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
     private tooltipFeature: TooltipFeature | undefined;
+    /** Tooltip supplied by a custom header component via `setTooltip`. */
+    private componentTooltip: ComponentTooltip = {};
     private readonly headerCompGuard = new ComponentInstanceGuard();
-    private componentTooltipValue: string | undefined;
-    private componentTooltipShouldDisplay: (() => boolean) | undefined;
 
     public override wireComp(
         comp: IHeaderCellComp,
@@ -365,39 +365,24 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private setupTooltip(): void {
-        const { beans, column, eGui } = this;
-        const tooltipSvc = beans.tooltipSvc;
-        if (!tooltipSvc || !this.isAlive()) {
-            return;
+        const feature = this.beans.tooltipSvc?.setupHeaderTooltip(
+            this,
+            this.tooltipFeature,
+            () => this.componentTooltip
+        );
+        this.tooltipFeature = feature;
+        if (feature) {
+            this.setRefreshFunction('tooltip', () => feature.refreshTooltip());
         }
-
-        const source = _createHeaderTooltipSource({
-            beans,
-            eGui,
-            location: 'header',
-            column,
-            getColDef: () => column.colDef,
-            getComponentTooltip: () => ({
-                value: this.componentTooltipValue,
-                shouldDisplay: this.componentTooltipShouldDisplay,
-            }),
-            getDisplayName: () => beans.colNames.getDisplayNameForColumn(column, 'header', true),
-            overflowElementSelector: '.ag-header-cell-text',
-            hasCustomHeader: () => !!column.colDef.headerComponent,
-        });
-        this.tooltipFeature = tooltipSvc.registerTooltip(this, source, this.tooltipFeature);
-        this.setRefreshFunction('tooltip', () => this.tooltipFeature?.refreshTooltip());
     }
 
     private setComponentTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
-        this.componentTooltipValue = value;
-        this.componentTooltipShouldDisplay = shouldDisplayTooltip;
+        this.componentTooltip = { value, shouldDisplay: shouldDisplayTooltip };
         this.tooltipFeature?.refreshTooltip();
     }
 
     private clearComponentTooltip(): void {
-        this.componentTooltipValue = undefined;
-        this.componentTooltipShouldDisplay = undefined;
+        this.componentTooltip = {};
     }
 
     private setupStylesFromColDef(): void {
