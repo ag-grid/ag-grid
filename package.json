@@ -135,7 +135,9 @@
     ]
   },
   "resolutions": {
-    "**/baseline-browser-mapping": "2.10.21"
+    "**/baseline-browser-mapping": "2.10.21",
+    "rulesync/js-yaml": "^4.3.1",
+    "@nx/react/**/undici": "^7.29.0"
   },
   "packageManager": "yarn@1.22.21",
   "lavamoat": {
