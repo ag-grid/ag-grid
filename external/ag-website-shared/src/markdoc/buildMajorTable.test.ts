@@ -46,7 +46,7 @@ describe('buildMajorTable', () => {
         const table = build({ major: 1, type: 'archive' });
         expect(table).toContain('| Version | Date | Type | Changelog | Documentation |');
         expect(table).toContain('[Changelog](https://www.ag-grid.com/studio/changelog/?fixVersion=1.1.1)');
-        expect(table).toContain('[1.1.1 Documentation](https://www.ag-grid.com/studio/archive/1.1.1)');
+        expect(table).toContain('[1.1.1 Documentation](https://www.ag-grid.com/studio/archive/1.1.1/)');
     });
 
     it('drops the changelog column when suppressChangelog is set', () => {

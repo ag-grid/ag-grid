@@ -563,7 +563,7 @@
                         {
                             "type": "item",
                             "title": "See Bryntum Gantt",
-                            "url": "https://www.ag-grid.com/campaigns/bryntum-gantt"
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-gantt/"
                         }
                     ]
                 },
@@ -574,7 +574,7 @@
                         {
                             "type": "item",
                             "title": "See Bryntum Calendar",
-                            "url": "https://www.ag-grid.com/campaigns/bryntum-calendar"
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-calendar/"
                         }
                     ]
                 },
@@ -585,7 +585,7 @@
                         {
                             "type": "item",
                             "title": "See Bryntum Scheduler",
-                            "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler"
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler/"
                         }
                     ]
                 },
@@ -596,7 +596,7 @@
                         {
                             "type": "item",
                             "title": "See Bryntum Scheduler Pro",
-                            "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler-pro"
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler-pro/"
                         }
                     ]
                 },
@@ -607,7 +607,7 @@
                         {
                             "type": "item",
                             "title": "See Bryntum Task Board",
-                            "url": "https://www.ag-grid.com/campaigns/bryntum-task-board"
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-task-board/"
                         }
                     ]
                 }

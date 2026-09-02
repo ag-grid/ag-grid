@@ -59,7 +59,7 @@ const formulaKey = (rowId: string, colId: string) => `${rowId}-${colId}`;
 // .. Note: formulas in the grid are normalised into the long-hand format as shown below. As such, when using
 //          an external data store, formulas will be stored in this long-hand format. Users can and should continue
 //          to use the short-hand format.
-//          See https://ag-grid.com/javascript-data-grid/formulas/#long-form-references for more.
+//          See https://www.ag-grid.com/javascript-data-grid/formulas/#long-form-references for more.
 const formulaStore = new Map<string, string>([
     [formulaKey('a_01', 'total'), '=REF(COLUMN("price"),ROW("a_01"))*REF(COLUMN("quantity"),ROW("a_01"))'],
     [formulaKey('o_02', 'total'), '=REF(COLUMN("price"),ROW("o_02"))*REF(COLUMN("quantity"),ROW("o_02"))'],

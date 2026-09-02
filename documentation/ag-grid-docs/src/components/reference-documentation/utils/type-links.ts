@@ -6,7 +6,7 @@ import type { PropertyType } from '../types';
 const TYPE_LINKS: Record<string, string> = {
     AgChartTheme: './integrated-charts-customisation/#custom-chart-themes',
     AgChartThemeName: './integrated-charts-customisation/#provided-themes',
-    AgChartThemeDefinition: 'https://www.ag-grid.com/charts/themes-api',
+    AgChartThemeDefinition: 'https://www.ag-grid.com/charts/themes-api/',
     AgChartThemeOverrides: 'https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-overrides',
     AgChartThemePalette: 'https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-palette',
     AgCartesianChartOptions: './integrated-charts-customisation/#overriding-themes',
@@ -29,7 +29,7 @@ const TYPE_LINKS: Record<string, string> = {
     ColGroupDef: './column-properties/#reference-columnGroups',
     AbstractColDef: './column-properties/',
     ColumnGroup: './column-object-group/',
-    ProvidedColumnGroup: './column-object-group#reference-ProvidedColumnGroup',
+    ProvidedColumnGroup: './column-object-group/#reference-ProvidedColumnGroup',
     Column: './column-object/',
     ColumnEventType: './column-events/',
     CreatePivotChartParams: './integrated-charts-api-pivot-chart/#pivot-chart-api',

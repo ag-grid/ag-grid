@@ -46,7 +46,9 @@ export const getDocumentationArchiveUrl = ({
         documentationArchiveLink = pathJoin(versionArchiveLink, '/documentation');
     }
 
-    return documentationArchiveLink;
+    // Archive pages are directory indexes, so the slash-less form only reaches them via a redirect.
+    // `pathJoin` drops any trailing slash the caller passed in, so it has to be put back here.
+    return documentationArchiveLink.includes('#') ? documentationArchiveLink : `${documentationArchiveLink}/`;
 };
 
 /**
