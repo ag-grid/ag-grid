@@ -1,9 +1,9 @@
-# AG Grid Module Size Validation
+# AG Grid Module Size Measurement
 
-This project is used to validate that the AG Grid modules do not grow unexpectedly.
+This project measures the self-size of each AG Grid module — the increase in bundle size that registering that module in a dummy app gives over the core of AG Grid alone.
 
 ```
-npm run test
+npm run module-combinations
 ```
 
-This will run the validation steps which will produce a results file that list the self size of a module. This is calculated as the increase in bundle size that adding that module into the dummy app gives over just the core of AG Grid.
+This writes `module-size-results.json`. The live signal is the Module Size Comparison report posted on every pull request, which runs the same measurement against the base branch and the PR and reports the difference.
