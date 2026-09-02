@@ -1,6 +1,56 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-ADMZIP-19276676:
+    - '@nx/react@* > @nx/module-federation@* > @module-federation/enhanced@* > @module-federation/dts-plugin@* > adm-zip@*':
+        reason: 'No published fix exists - Snyk reports fixedIn: [] for this advisory. Dev-only: reached solely through @nx/react > @nx/module-federation > @module-federation/dts-plugin, which is build tooling and is not shipped in any published AG Grid package. Expected to disappear with the nx 22.7.7+ upgrade tracked by SNYK-JS-NX-18593778. Time-boxed pending a published fix or that upgrade.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
+    - '@nx/react@* > @nx/module-federation@* > @module-federation/node@* > @module-federation/enhanced@* > @module-federation/cli@* > @module-federation/dts-plugin@* > adm-zip@*':
+        reason: 'No published fix exists - Snyk reports fixedIn: [] for this advisory. Dev-only: reached solely through @nx/react > @nx/module-federation > @module-federation/dts-plugin, which is build tooling and is not shipped in any published AG Grid package. Expected to disappear with the nx 22.7.7+ upgrade tracked by SNYK-JS-NX-18593778. Time-boxed pending a published fix or that upgrade.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
+  SNYK-JS-NX-18593778:
+    - 'nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
+    - '@nx/workspace@* > nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
+    - '@nx/js@* > @nx/workspace@* > nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
+    - '@nx/esbuild@* > @nx/js@* > @nx/workspace@* > nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
+    - '@nx/eslint@* > @nx/js@* > @nx/workspace@* > nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
+    - '@nx/eslint-plugin@* > @nx/js@* > @nx/workspace@* > nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
+    - '@nx/rollup@* > @nx/js@* > @nx/workspace@* > nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
+    - '@nx/web@* > @nx/js@* > @nx/workspace@* > nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
+    - '@nx/react@* > @nx/eslint@* > @nx/js@* > @nx/workspace@* > nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
+    - '@nx/react@* > @nx/module-federation@* > @nx/web@* > @nx/js@* > @nx/workspace@* > nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
   SNYK-JS-ESBUILD-17750822:
     - vite@5.4.21 > esbuild@0.21.5:
         reason: Used in build & dev - not included in final production build

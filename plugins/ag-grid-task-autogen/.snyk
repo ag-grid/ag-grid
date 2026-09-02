@@ -1,6 +1,11 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-NX-18593778:
+    - 'nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
   SNYK-JS-TMP-17315641:
     - nx@20.8.4 > tmp@0.2.5:
         reason: Used in build & dev - not included in final production build
