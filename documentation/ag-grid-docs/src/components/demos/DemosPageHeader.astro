@@ -1,0 +1,49 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import type { DemoPageContent } from '@components/demos/demoContent';
+import { VIDEO_TOUR_TEXT, VIDEO_TOUR_URL } from '@components/demos/demosData';
+import styles from '@pages-styles/example.module.scss';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import DemoTabs from './DemosTabs.astro';
+
+interface Props {
+    content: DemoPageContent;
+}
+
+// Every demo page renders the same H1, links and intro above its grid, so the markup lives here
+// rather than being repeated four times. The copy comes from the demo's frontmatter contract.
+// The heading, links and intro are separate rows because sharing one let a long heading push the
+// links onto a second line, placing them differently on each demo page.
+const { content } = Astro.props as Props;
+---
+
+<div class={styles.topHeader}>
+    <div class={styles.headerCopy}>
+        <h1 class={styles.headerHeading}>{content.seoH1}</h1>
+        <div class={styles.headerLinks}>
+            <a class="button-secondary" target="_blank" rel="noopener noreferrer" href={content.githubUrl}>
+                <Icon name="github" svgClasses={styles.githubIcon} />
+                <span>See On GitHub</span>
+            </a>
+            <a class="button-secondary" href={VIDEO_TOUR_URL} target="_blank" rel="noopener noreferrer">
+                <Icon alt={`Youtube logo`} name="youtube" svgClasses={styles.youtubeIcon} />
+                <span>{VIDEO_TOUR_TEXT}</span>
+            </a>
+            <a class="button-secondary" href={urlWithBaseUrl('/contact/')}>
+                <span>Contact Us</span>
+            </a>
+        </div>
+        <p class={styles.intro}>
+            {
+                content.introSegments.map(({ text, href }) =>
+                    // set:text rather than a child, so the anchor holds the framework's name
+                    // without the surrounding whitespace of the markup.
+                    href ? <a href={href} target="_blank" rel="noopener noreferrer" set:text={text} /> : text
+                )
+            }
+        </p>
+    </div>
+
+    <DemoTabs activeTab={content.activeTab} />
+</div>
