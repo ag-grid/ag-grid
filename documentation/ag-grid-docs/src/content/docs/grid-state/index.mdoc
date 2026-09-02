@@ -45,24 +45,30 @@ The following is captured in the grid state:
 
 - [Aggregation Functions](./aggregation/) (column state)
 - [Opened Column Groups](./column-groups/)
+- [Column Group Header Names](./column-headers/#editable-header-name) edited by end users
+- [Column Header Names](./column-headers/#editable-header-name) edited by end users (column state)
 - [Column Order](./column-moving/) (column state)
 - [Pinned Columns](./column-pinning/) (column state)
 - [Column Sizes](./column-sizing/) (column state)
 - [Hidden Columns](./column-properties/#reference-display-hide) (column state)
 - [Column Filter Model](./filtering/)
+- Column Filter State - the state of each [Column Filter](./filtering/) component, keyed by column, for filters that keep state beyond their model
 - [Advanced Filter Model](./filter-advanced/#filter-model--api)
+- [Selected Filters](./tool-panel-filters-new/#changing-selectable-filters) when using `agSelectableColumnFilter`
 - [Focused Cell](./keyboard-navigation/) ([Client-Side Row Model](./row-models/) only)
 - [Current Page](./row-pagination/)
 - [Pivot Mode and Columns](./pivoting/) (column state)
+- [Pivot Column Label Sort](./pivoting-column-groups/#sorting-pivot-columns)
 - [Cell Selection](./cell-selection/)
 - [Row Group Columns](./grouping/) (column state)
-- [Expanded Row Groups](./grouping-opening-groups/)
+- [Expanded Row Groups](./grouping-opening-groups/), including [Server-Side Row Model](./server-side-model-grouping/) expansion when `ssrmExpandAllAffectsAllRows` is used
 - [Row Selection](./row-selection/) (retrievable for all row models, but can only be set for [Client-Side Row Model](./row-models/) and [Server-Side Row Model](./row-models/))
 - [Pinned Rows](./row-pinning)
 - [Show Values As](./aggregation-show-values-as/) (column state)
-- [Side Bar](./side-bar/)
+- Scroll Position ([Client-Side Row Model](./row-models/) only)
+- [Side Bar](./side-bar/), including the state of each open tool panel
 - [Sort](./row-sorting/) (column state)
-- [Calculated Columns](./calculated-columns/) added or modified by end users
+- Columns the user created or removed at runtime, such as [Calculated Columns](./calculated-columns/), along with the column definition properties they changed
 
 {% note %}
 When restoring the current page using the [Server Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/),
