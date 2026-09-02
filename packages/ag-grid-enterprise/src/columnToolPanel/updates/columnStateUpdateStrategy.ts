@@ -52,6 +52,10 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         this.delegate('setRowGroupColumns', deferMode, columns, eventType);
     }
 
+    public removeRowGroupColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
+        this.delegate('removeRowGroupColumns', deferMode, columns, eventType);
+    }
+
     public getRowGroupColumns(deferMode: boolean): AgColumn[] {
         return this.delegate('getRowGroupColumns', deferMode);
     }
@@ -87,6 +91,10 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
 
     public setPivotColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
         this.delegate('setPivotColumns', deferMode, columns, eventType);
+    }
+
+    public removePivotColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void {
+        this.delegate('removePivotColumns', deferMode, columns, eventType);
     }
 
     public getPivotColumns(deferMode: boolean): AgColumn[] {

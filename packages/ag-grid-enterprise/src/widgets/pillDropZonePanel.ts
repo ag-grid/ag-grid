@@ -434,10 +434,24 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.state = 'notDragging';
     }
 
+    /**
+     * Drop the given items from the model. Overridden where re-deriving the whole list would not be equivalent
+     * to a removal — a row-group/pivot list re-seats a source col's hierarchy levels, so an omitted level
+     * would come straight back.
+     */
+    protected removeItemsFromModel(_itemsToRemove: TItem[], remainingItems: TItem[]): void {
+        this.updateItems(remainingItems);
+    }
+
     private removeItems(itemsToRemove: TItem[]): void {
         const newItemList = this.getExistingItems().filter((item) => !itemsToRemove.includes(item));
-        this.updateItems(newItemList);
-        this.refreshGui();
+        try {
+            this.removeItemsFromModel(itemsToRemove, newItemList);
+        } finally {
+            // The model change commits before it can throw (e.g. in a user callback driven by
+            // the resulting refresh), so the zone must be redrawn either way or it keeps a removed pill.
+            this.refreshGui();
+        }
     }
 
     private addItems(itemsToAdd: TItem[]): void {
