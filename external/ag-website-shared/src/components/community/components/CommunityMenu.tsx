@@ -1,4 +1,4 @@
-import { addTrailingSlash } from '@ag-website-shared/utils/addTrailingSlash';
+import { addTrailingSlashToPath } from '@ag-website-shared/utils/addTrailingSlashToPath';
 import { pathJoin } from '@utils/pathJoin';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
@@ -20,7 +20,7 @@ const CommunityMenu = ({ path, menu }: { path: string; menu: CommunityMenuItem[]
     return (
         <ul className={styles.communityMenu}>
             {menu.map((item) => {
-                const link = addTrailingSlash(urlWithBaseUrl(pathJoin('/community', item.path)));
+                const link = addTrailingSlashToPath(urlWithBaseUrl(pathJoin('/community', item.path)));
                 const isCurrentPage = curPage.replaceAll('/', '') === item.path.replaceAll('/', '');
 
                 return (
