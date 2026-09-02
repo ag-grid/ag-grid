@@ -3055,3 +3055,28 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'
 patch: {}
+
+# Snyk Code (SAST) exclusion.
+#
+# The `ignore:` entries above apply to dependency findings only - they are inert
+# for Snyk Code (verified empirically), so a rule-level ignore cannot be used here.
+# Snyk Code also reads only the scan-root policy file, so this block cannot live in
+# external/ag-shared/.snyk even though that directory is a subrepo shared with
+# ag-grid, ag-charts and ag-studio: the same block must be maintained in all three
+# repository roots.
+#
+# scripts/snyk-viewer/index.mjs is a manually-run, localhost-only (binds 127.0.0.1)
+# developer tool for viewing Snyk reports. It is never built, shipped or deployed.
+# Snyk Code reports 9 javascript/PT path-traversal findings in it whose stated cause
+# - "unsanitized input from the HTTP request body flows into fs.readFileSync" - is
+# false: every flagged sink is guarded by a resolve() + containment check + filename
+# check before the read or write. A correct realpath-based rewrite was implemented
+# and scanned, and it did not clear the findings, so no reasonable code change will.
+#
+# This excludes the whole file from Snyk Code, not just javascript/PT, so a genuine
+# future finding in it would also be hidden. Accepted because the tool is local-only
+# dev tooling. Revisit if it ever becomes something that runs outside a developer
+# machine.
+exclude:
+  code:
+    - external/ag-shared/scripts/snyk-viewer/index.mjs
