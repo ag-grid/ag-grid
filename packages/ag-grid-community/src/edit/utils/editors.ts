@@ -450,7 +450,8 @@ const getPopupEditValidation = (
         const editor = cellCtrl.comp?.getCellEditor();
         let validationCache: EditorValidationCache | undefined;
         if (editor && beans.editSvc!.hasValidationRules()) {
-            validationCache = new Map([[editor, [...(_unwrapUserComp(editor).getValidationErrors?.() ?? [])]]]);
+            validationCache = new Map();
+            cacheEditorValidation(validationCache, editor, _unwrapUserComp(editor));
         }
         return { revertBlockedInvalid: false, validationCache };
     }
@@ -532,6 +533,23 @@ export type EditorValidationCache = Map<ICellEditor, string[]>;
 
 type EditorValidationVisitor = (ctrl: CellCtrl, editor: ICellEditor, errorMessages: string[]) => void;
 
+/** Returns the editor's cached verdict, running its validator once and snapshotting the result on a miss. */
+const cacheEditorValidation = (
+    validationCache: EditorValidationCache,
+    cellEditorComp: ICellEditor,
+    editor: ICellEditor
+): string[] => {
+    // Keyed by editor instance — row/column is not enough: virtualisation can replace the editor at the
+    // same position mid-pass.
+    let errorMessages = validationCache.get(cellEditorComp);
+    if (errorMessages === undefined) {
+        // Snapshot the result: custom editors may reuse and mutate the same array between passes.
+        errorMessages = [...(editor.getValidationErrors?.() ?? [])];
+        validationCache.set(cellEditorComp, errorMessages);
+    }
+    return errorMessages;
+};
+
 /**
  * Runs each live editor validator once and snapshots the result against the editor instance that produced it.
  * The optional visitor lets a full validation pass update its models without a second controller scan.
@@ -548,13 +566,7 @@ const collectEditorValidation = (
         }
 
         const editor = _unwrapUserComp(cellEditorComp);
-        // Row/column is not enough: virtualisation can replace the editor at the same position mid-pass.
-        let errorMessages = validationCache.get(cellEditorComp);
-        if (errorMessages === undefined) {
-            // Snapshot the result: custom editors may reuse and mutate the same array between passes.
-            errorMessages = [...(editor.getValidationErrors?.() ?? [])];
-            validationCache.set(cellEditorComp, errorMessages);
-        }
+        const errorMessages = cacheEditorValidation(validationCache, cellEditorComp, editor);
         visitor?.(ctrl, editor, errorMessages);
     }
 
