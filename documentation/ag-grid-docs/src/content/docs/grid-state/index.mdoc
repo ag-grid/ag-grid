@@ -53,6 +53,7 @@ The following is captured in the grid state:
 - [Advanced Filter Model](./filter-advanced/#filter-model--api)
 - [Focused Cell](./keyboard-navigation/) ([Client-Side Row Model](./row-models/) only)
 - [Current Page](./row-pagination/)
+- [Find](./find/) search value and active match ([Client-Side Row Model](./row-models/) only)
 - [Pivot Mode and Columns](./pivoting/) (column state)
 - [Cell Selection](./cell-selection/)
 - [Row Group Columns](./grouping/) (column state)
@@ -80,6 +81,8 @@ If applying some but not all of the column state properties, then `initialState.
 `partialColumnState` controls _which_ column state sections you supply, not whether those sections may themselves be partial. Any section you include must match its documented shape.
 
 The state also contains the grid version number. When applying state with older version numbers, any old state properties will be automatically migrated to the current format.
+
+Restoring the `find` state writes the search value back into the `findSearchValue` grid option, so the restored state takes precedence over a value set in the grid options. It is applied before the `scroll` state, so a saved scroll position wins over the scroll to the active match.
 
 The grid state is designed to be serialisable, so any functions will be stripped out. For example, aggregation functions should be [Registered as Custom Functions](./aggregation-custom-functions/#registering-custom-functions) to work with state rather than being set as [Directly Applied Functions](./aggregation-custom-functions/#directly-applied-functions).
 
