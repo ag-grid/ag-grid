@@ -546,6 +546,53 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             `);
         });
 
+        // Edited in the Builder rather than loaded from an expression, so the model holds what the value pill
+        // wrote, on a column whose dates are not ISO. The reversed pair is still refused.
+        test('a range edited in the Builder is ordered on a column with a custom date format', async () => {
+            const DMY = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+            const pad = (part: number) => String(part).padStart(2, '0');
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'day', cellDataType: 'customDateString', filter: 'agDateColumnFilter' }],
+                rowData: [
+                    { id: 0, age: null, day: '05/05/2010' },
+                    { id: 1, age: null, day: '30/11/2024' },
+                ],
+                enableAdvancedFilter: true,
+                enableBrowserTooltips: true,
+                dataTypeDefinitions: {
+                    customDateString: {
+                        baseDataType: 'dateString',
+                        extendsDataType: 'dateString',
+                        dataTypeMatcher: (value) => typeof value === 'string' && DMY.test(value),
+                        valueParser: ({ newValue }) => (newValue != null && DMY.test(newValue) ? newValue : null),
+                        valueFormatter: ({ value }) => value ?? '',
+                        dateParser: (value) => {
+                            const match = value?.match(DMY);
+                            return match ? new Date(+match[3], +match[2] - 1, +match[1]) : undefined;
+                        },
+                        dateFormatter: (value) =>
+                            value == null
+                                ? undefined
+                                : `${pad(value.getDate())}/${pad(value.getMonth() + 1)}/${value.getFullYear()}`,
+                    },
+                },
+            });
+
+            await AdvancedFilterHarness.get(api).applyExpression('[Day] is between ("05/05/2010", "30/11/2024")');
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            const [condition] = await builder.conditionItems();
+            await builder.setValue(condition, '2005-01-01', 1);
+
+            // Both bounds still render in the column's own format, so the pair reached validation intact.
+            expect(builder.valuePills(condition).map((pill) => pill.textContent?.trim())).toEqual([
+                '"05/05/2010"',
+                '"01/01/2005"',
+            ]);
+            expect(builder.applyDisabled()).toBe(true);
+        });
+
         // The control: the same rebuild with the column still including its ends, so Apply is proven to open.
         test('a pair the column still accepts leaves Apply open from a row the list has not mounted', async () => {
             const api = await gridsManager.createGridAndWait('grid1', ageOpts(true));
