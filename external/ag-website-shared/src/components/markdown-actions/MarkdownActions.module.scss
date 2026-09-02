@@ -1,65 +1,60 @@
 @use 'design-system' as *;
 
-// Matches the height, spacing and border treatment of the shared Select trigger
-// (see Select.module.scss) so this sits alongside one as a single control group.
-// The segments carry their own corner radii rather than the container clipping
-// them, so the focus ring on the chevron is not cut off.
-$segment-radius: calc(var(--radius-sm) - 1px);
-
 .markdownActions {
     display: flex;
     align-items: stretch;
+}
+
+// Mirrors the shared Select trigger with `isLarge` (see Select.module.scss) so
+// this sits beside the framework selector as a matching control.
+.trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-size-4;
     height: 36px;
     border: 1px solid var(--color-input-border);
     border-radius: var(--radius-sm);
-    background-color: var(--color-bg-primary);
-    box-shadow: var(--shadow-xs);
-    transition: border $transition-default-timing;
-
-    &:hover {
-        border-color: var(--color-input-border-hover);
-
-        #{$selector-darkmode} & {
-            border-color: var(--color-brand-200);
-        }
-    }
-}
-
-@mixin segment {
-    border: none;
-    background-color: transparent;
-    box-shadow: none;
     color: var(--color-fg-primary);
+    background-color: var(--color-bg-primary);
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-regular);
+    white-space: nowrap;
 
     &:hover,
     &:active {
-        background-color: var(--color-bg-secondary);
         color: var(--color-fg-primary);
+        background-color: var(--color-bg-primary);
+        border: 1px solid var(--color-input-border-hover);
+
+        #{$selector-darkmode} & {
+            border: 1px solid var(--color-brand-200);
+        }
     }
 
     &:focus-visible {
         #{$selector-darkmode} & {
             box-shadow:
-                0 0 0 $spacing-size-1 color-mix(in srgb, var(--color-brand-200), var(--color-bg-primary) 60%),
+                0 0 0 4px color-mix(in srgb, var(--color-brand-200), var(--color-bg-primary) 60%),
                 var(--shadow-xs);
         }
     }
 }
 
-.primaryAction {
-    @include segment;
-
+.triggerLabel {
     display: flex;
     align-items: center;
-    padding: 0 $spacing-size-4;
-    border-radius: $segment-radius 0 0 $segment-radius;
-    font-size: var(--text-fs-base);
-    font-weight: var(--text-regular);
-    white-space: nowrap;
+    gap: $spacing-size-2;
 }
 
-// Stacks the live label over a hidden copy of the longest one, so the button
-// keeps its width when the label changes.
+.triggerIcon {
+    flex: none;
+    width: 16px;
+    height: 16px;
+}
+
+// Stacks the live label over hidden copies of every label, so the button
+// keeps its width when the copy feedback flashes.
 .labelStack {
     display: grid;
 
@@ -72,23 +67,6 @@ $segment-radius: calc(var(--radius-sm) - 1px);
     visibility: hidden;
 }
 
-.trigger {
-    @include segment;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 $spacing-size-3;
-    border-left: 1px solid var(--color-input-border);
-    border-radius: 0 $segment-radius $segment-radius 0;
-
-    // The open menu takes pointer events, so the segment stops matching :hover while
-    // it is the thing that opened it. Hold the tint until the menu closes.
-    &[data-state='open'] {
-        background-color: var(--color-bg-secondary);
-    }
-}
-
 .chevron {
     width: 16px;
     height: 16px;
@@ -96,7 +74,7 @@ $segment-radius: calc(var(--radius-sm) - 1px);
 }
 
 .content {
-    min-width: 180px;
+    min-width: 260px;
     overflow: hidden;
     padding: 6px;
     background-color: var(--color-bg-primary);
@@ -130,13 +108,10 @@ $segment-radius: calc(var(--radius-sm) - 1px);
 
 .item {
     display: flex;
-    align-items: center;
-    height: 32px;
-    padding: 0 12px;
+    align-items: flex-start;
+    gap: $spacing-size-2;
+    padding: $spacing-size-2 12px;
     border-radius: 3px;
-    font-size: var(--text-fs-base);
-    font-weight: var(--text-regular);
-    line-height: 1;
     color: var(--color-text-primary);
     white-space: nowrap;
     user-select: none;
@@ -152,6 +127,64 @@ $segment-radius: calc(var(--radius-sm) - 1px);
 
         #{$selector-darkmode} & {
             background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 20%);
+        }
+    }
+}
+
+.itemIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 16px;
+    // Spans exactly the label's line box so the icon centres on the title line.
+    height: calc(var(--text-fs-base) * var(--text-lh-base));
+
+    svg {
+        display: block;
+        width: 16px;
+        height: auto;
+    }
+}
+
+.itemText {
+    display: flex;
+    flex-direction: column;
+}
+
+// Declared, not inherited: the link item must not pick up the global
+// body-copy link colour/weight (see elements/_inline.scss).
+.itemLabel {
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-base);
+    // Kept at regular explicitly so the link item doesn't inherit the global semibold link weight.
+    font-weight: var(--text-regular);
+    color: var(--color-fg-primary);
+}
+
+.itemDescription {
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-regular);
+    color: var(--color-text-secondary);
+    opacity: 0.85;
+}
+
+// Screen-reader-only copy-feedback announcer; the visible flash is aria-hidden
+// so the trigger's accessible name stays stable.
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+// These glyphs hard-code black in the SVG; repaint them white in dark mode.
+.monochromeIcon {
+    #{$selector-darkmode} & {
+        path[fill='#000'] {
+            fill: var(--color-fg-white);
         }
     }
 }
