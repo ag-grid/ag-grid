@@ -486,6 +486,66 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             expect(builder.applyValidationMessage()).toBe('Not all conditions are complete.');
         });
 
+        // The Builder orders bounds by reading the model, so what the model stores decides whether a column
+        // that displays its dates as `dd/MM/yyyy` is ordered like any other. It stores the serialised form.
+        test('a column with a custom date format stores serialised bounds, and its range is ordered', async () => {
+            const DMY = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+            const pad = (part: number) => String(part).padStart(2, '0');
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'day', cellDataType: 'customDateString', filter: 'agDateColumnFilter' }],
+                rowData: [
+                    { id: 0, age: null, day: '05/05/2010' },
+                    { id: 1, age: null, day: '30/11/2024' },
+                ],
+                enableAdvancedFilter: true,
+                dataTypeDefinitions: {
+                    customDateString: {
+                        baseDataType: 'dateString',
+                        extendsDataType: 'dateString',
+                        dataTypeMatcher: (value) => typeof value === 'string' && DMY.test(value),
+                        valueParser: ({ newValue }) => (newValue != null && DMY.test(newValue) ? newValue : null),
+                        valueFormatter: ({ value }) => value ?? '',
+                        dateParser: (value) => {
+                            const match = value?.match(DMY);
+                            return match ? new Date(+match[3], +match[2] - 1, +match[1]) : undefined;
+                        },
+                        dateFormatter: (value) =>
+                            value == null
+                                ? undefined
+                                : `${pad(value.getDate())}/${pad(value.getMonth() + 1)}/${value.getFullYear()}`,
+                    },
+                },
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.applyExpression('[Day] is between ("05/05/2010", "30/11/2024")');
+            await asyncSetTimeout(0);
+            // Written in the column's syntax, stored serialised: this is why reading the model back with the
+            // shared date parser agrees with the expression parser reading the column's own text.
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'dateString',
+                colId: 'day',
+                type: 'inRange',
+                filter: '2010-05-05',
+                filterTo: '2024-11-30',
+            });
+
+            await af.applyExpression('[Day] is between ("30/11/2024", "05/05/2010")');
+            await asyncSetTimeout(0);
+            await new FilterDom(api, 'reversed custom-format date pair').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Day] is between ("30/11/2024", "05/05/2010")"
+                valid: false — Expression has an error. Date must be after 30/11/2024 - "05/05/2010".
+                buttons: Apply ⊘ | Builder
+                model:
+                  filterType: "dateString"
+                  colId: "day"
+                  type: "inRange"
+                  filter: "2010-05-05"
+                  filterTo: "2024-11-30"
+            `);
+        });
+
         // The control: the same rebuild with the column still including its ends, so Apply is proven to open.
         test('a pair the column still accepts leaves Apply open from a row the list has not mounted', async () => {
             const api = await gridsManager.createGridAndWait('grid1', ageOpts(true));
