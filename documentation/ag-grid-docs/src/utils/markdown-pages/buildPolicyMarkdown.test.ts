@@ -48,10 +48,11 @@ describe('buildPolicyMarkdown', () => {
     it('renders the numbered policy body from the .mdoc, including its section headings', async () => {
         const output = await build('privacy');
         expect(output).toContain('# AG Grid Privacy Policy');
-        expect(output).toContain('Effective Date: 6 July 2022');
+        expect(output).toContain('Last Updated: 2 September 2026');
         expect(output).toContain('**Your privacy is important to us.**');
         expect(output).toContain('Introduction');
         expect(output).toContain('Marketing Communications');
+        expect(output).toContain('Purposes Of Processing And Lawful Bases');
     });
 
     it('carries the modern slavery statement’s financial year and version block', async () => {
