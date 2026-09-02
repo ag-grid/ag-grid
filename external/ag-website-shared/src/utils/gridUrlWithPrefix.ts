@@ -1,5 +1,5 @@
 import type { Framework } from '@ag-grid-types';
-import { addTrailingSlashToPath } from '@ag-website-shared/utils/addTrailingSlashToPath';
+import { addTrailingSlashToPath } from '@ag-website-shared/utils/addTrailingSlash';
 import { GRID_URL } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
 

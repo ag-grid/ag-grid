@@ -1,5 +1,15 @@
 import { getFileExtension } from '@utils/client/getFileExtension';
 
+import { isExternalLink } from './isExternalLink';
+
+export function addTrailingSlash(url: string) {
+    const hasTrailingSlash = url.endsWith('/');
+    const hasAnchor = url.includes('#');
+    const externalLink = isExternalLink(url);
+
+    return hasAnchor || hasTrailingSlash || externalLink ? url : url + '/';
+}
+
 /**
  * Whether the pathname points at a file rather than a page.
  *

@@ -7,7 +7,9 @@ describe('getArchiveUrl', () => {
 });
 
 describe('getDocumentationArchiveUrl', () => {
-    // Archive pages are directory indexes, so a slash-less url only reaches them via a 301.
+    // Archive pages are directory indexes, so a slash-less url only reaches them via a 301. The bare
+    // version url (grid < 27.3.0, no `/documentation`) also proves the builder routes through
+    // `addTrailingSlashToPath`, whose file check must not mistake `26.0.0` for a file extension.
     test.each`
         version     | path                                              | expected
         ${'30.0.0'} | ${undefined}                                      | ${'https://www.ag-grid.com/archive/30.0.0/documentation/'}

@@ -1,5 +1,5 @@
 import type { Library } from '@ag-grid-types';
-import { addTrailingSlashToPath } from '@ag-website-shared/utils/addTrailingSlashToPath';
+import { addTrailingSlashToPath } from '@ag-website-shared/utils/addTrailingSlash';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { versionIsGreaterOrEqual } from '@ag-website-shared/utils/versionIsGreaterOrEqual';
 import { LEGACY_CHARTS_SITE_URL, PRODUCTION_CHARTS_SITE_URL, PRODUCTION_STUDIO_SITE_URL } from '@constants';
