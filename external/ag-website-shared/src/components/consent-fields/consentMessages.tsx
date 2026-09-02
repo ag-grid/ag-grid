@@ -7,7 +7,7 @@ import type { ReactElement } from 'react';
  */
 export const CONSENT_LABELS = {
     marketingEmail:
-        "I'd like to receive product updates, news and marketing communications from AG Grid and Bryntum by email. You can unsubscribe at any time.",
+        'Opt in to receive product updates, news, and marketing communications from AG Grid and Bryntum. Unsubscribe at any time.',
     emailTracking: 'I consent to tracking of email opens and clicks',
     /**
      * Temporary stand-in for IP geolocation: email tracking consent only applies to
