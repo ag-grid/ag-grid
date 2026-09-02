@@ -24,7 +24,7 @@ import agAutocompleteCSS from './agAutocomplete.css';
 import { AgAutocompleteRow } from './agAutocompleteRow';
 import type { AutocompleteEntry } from './autocompleteParams';
 
-type AutocompleteRowComponent = Component & {
+type AutocompleteRowComponent = Component<any> & {
     updateSelected(selected: boolean): void;
     setSearchString(searchString: string): void;
 };
