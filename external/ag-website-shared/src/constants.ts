@@ -94,7 +94,7 @@ export const SITEMAP_BUILD_DIR = '.astro/cache/sitemap-build';
  */
 export const BUILD_USER_AGENT = 'Mozilla/5.0 (compatible; ag-website-build)';
 
-export const PRIVACY_POLICY_URL = 'https://www.ag-grid.com/privacy';
+export const PRIVACY_POLICY_URL = 'https://www.ag-grid.com/privacy/';
 
 // Figma
 export const FIGMA_DESIGN_SYSTEM_URL = 'https://www.figma.com/community/file/1360600846643230092/ag-grid-design-system';

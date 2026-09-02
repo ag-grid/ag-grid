@@ -124,7 +124,7 @@ export const Pipeline: FunctionComponent<Props> = ({ library }) => {
                         The AG {libraryTitleCase} pipeline lists the feature requests and active bugs in our product
                         backlog. Use it to see the items scheduled for our next release or to look up the status of a
                         specific item. If you can't find the item you're looking for, check the{' '}
-                        <a href={urlWithBaseUrl('/changelog')}>Changelog</a> containing the list of completed items.
+                        <a href={urlWithBaseUrl('/changelog/')}>Changelog</a> containing the list of completed items.
                     </p>
                 </Alert>
             </section>

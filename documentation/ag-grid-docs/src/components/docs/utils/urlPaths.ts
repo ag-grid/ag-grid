@@ -31,9 +31,22 @@ export interface UrlParams {
 
 /**
  * Dynamic path where examples are
+ *
+ * NOTE: Slash-less, because this doubles as the base the example's file urls are appended to.
+ * Use `getExampleLinkUrl` when linking to the example page itself.
  */
 export const getExampleUrl = ({ internalFramework, pageName, exampleName }: UrlParams) => {
     return pathJoin(SITE_BASE_URL, 'examples', pageName, exampleName, internalFramework);
+};
+
+/**
+ * Link to the standalone example page
+ *
+ * The page is built as a directory index, so the trailing slash is what the server serves; without
+ * it the browser is sent through a redirect to reach the same page.
+ */
+export const getExampleLinkUrl = (params: UrlParams) => {
+    return getExampleUrl(params) + '/';
 };
 
 /**
@@ -45,7 +58,7 @@ export const getExampleRunnerExampleUrl = ({ internalFramework, pageName, exampl
         pageName,
         exampleName,
     });
-    return pathJoin(exampleUrl, 'example-runner');
+    return pathJoin(exampleUrl, 'example-runner') + '/';
 };
 
 /**
@@ -57,7 +70,7 @@ export const getExamplePlunkrUrl = ({ internalFramework, pageName, exampleName }
         pageName,
         exampleName,
     });
-    return pathJoin(exampleUrl, 'plunkr');
+    return pathJoin(exampleUrl, 'plunkr') + '/';
 };
 
 /**
@@ -69,7 +82,7 @@ export const getExampleCodeSandboxUrl = ({ internalFramework, pageName, exampleN
         pageName,
         exampleName,
     });
-    return pathJoin(exampleUrl, 'codesandbox');
+    return pathJoin(exampleUrl, 'codesandbox') + '/';
 };
 
 /**
