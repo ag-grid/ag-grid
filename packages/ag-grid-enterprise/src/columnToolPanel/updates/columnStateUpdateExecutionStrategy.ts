@@ -6,6 +6,7 @@ import type {
     ColAggFunc,
     ColumnEventType,
     ColumnState,
+    IColsService,
     IColumnStateUpdateStrategy,
     SortDef,
     SortDirection,
@@ -25,6 +26,7 @@ import type {
     CommitOperation,
     CommitOperations,
     DeferredState,
+    RoleColIdsDraft,
 } from './columnStateUpdateTypes';
 
 const noop = () => {};
@@ -33,6 +35,42 @@ type StrategyBeans = BeanCollection;
 function withoutColumns(columns: AgColumn[], toRemove: AgColumn[]): AgColumn[] {
     const removed = new Set(toRemove);
     return columns.filter((column) => !removed.has(column));
+}
+
+/** A fresh role draft (`rowGroup` / `pivot`) holding `columns`, plus the removals commit must re-apply.
+ *  `carriedRemovals` is the previous draft's removal set: consecutive pill removals accumulate, because
+ *  commit's single `setColumns(colIds)` re-seats every hierarchy virtual of the columns that remain. An
+ *  explicit `set` passes nothing, so a full-list set stays a pure function of its list — the same result
+ *  the immediate strategy gives. */
+function roleColIdsDraft(
+    columns: AgColumn[],
+    removedColumns: AgColumn[],
+    carriedRemovals: string[] | undefined,
+    eventType: ColumnEventType,
+    seq: number
+): RoleColIdsDraft {
+    const colIds = columns.map((column) => column.colId);
+    const removed = new Set(carriedRemovals);
+    for (const column of removedColumns) {
+        removed.add(column.colId);
+    }
+    for (const colId of colIds) {
+        removed.delete(colId); // re-added explicitly, so no longer a removal
+    }
+    return {
+        colIds,
+        removedColIds: removed.size > 0 ? Array.from(removed) : undefined,
+        eventType,
+        seq,
+    };
+}
+
+/** Replay a role draft onto its service. `setColumns` re-seats the remaining source columns' hierarchy
+ *  virtuals, so the explicit removals are deactivated after it — matching the immediate strategy, where
+ *  each removal goes straight to `removeColumns`. */
+function applyRoleColumns(svc: IColsService | undefined, operation: RoleColIdsDraft): void {
+    svc?.setColumns(operation.colIds, operation.eventType);
+    svc?.removeColumns(operation.removedColIds, operation.eventType);
 }
 
 /** Cycle: ascending -> descending -> `null` (no sort, natural order) -> ascending. `current` must already have
@@ -438,7 +476,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                 break;
             }
             case 'rowGroup': {
-                beans.rowGroupColsSvc?.setColumns(operation.colIds, operation.eventType);
+                applyRoleColumns(beans.rowGroupColsSvc, operation);
                 break;
             }
             case 'aggregation': {
@@ -447,7 +485,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             }
             case 'pivot': {
                 this.lastPivotColIds = operation.colIds;
-                beans.pivotColsSvc?.setColumns(operation.colIds, operation.eventType);
+                applyRoleColumns(beans.pivotColsSvc, operation);
                 break;
             }
             case 'pivotMode': {
@@ -556,18 +594,30 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     }
 
     public setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void {
-        clearDeferredFunctionPatches(this.state, 'rowGroup');
-        const seq = nextSeq(this.sequence);
-        this.sequence = seq;
-        this.state.rowGroup = {
-            colIds: columns.map((column) => column.colId),
-            eventType,
-            seq,
-        };
+        this.state.rowGroup = this.nextRoleDraft('rowGroup', columns, [], eventType);
     }
 
     public removeRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void {
-        this.setRowGroupColumns(withoutColumns(this.getRowGroupColumns(), columns), eventType);
+        this.state.rowGroup = this.nextRoleDraft(
+            'rowGroup',
+            withoutColumns(this.getRowGroupColumns(), columns),
+            columns,
+            eventType
+        );
+    }
+
+    /** Stage a role draft: clears the conflicting function patches, takes the next sequence number, and
+     *  carries any pending removals forward (see {@link roleColIdsDraft}). */
+    private nextRoleDraft(
+        role: 'rowGroup' | 'pivot',
+        columns: AgColumn[],
+        removedColumns: AgColumn[],
+        eventType: ColumnEventType
+    ): RoleColIdsDraft {
+        clearDeferredFunctionPatches(this.state, role);
+        const seq = nextSeq(this.sequence);
+        this.sequence = seq;
+        return roleColIdsDraft(columns, removedColumns, this.state[role]?.removedColIds, eventType, seq);
     }
 
     public setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void {
@@ -658,18 +708,16 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     }
 
     public setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
-        clearDeferredFunctionPatches(this.state, 'pivot');
-        const seq = nextSeq(this.sequence);
-        this.sequence = seq;
-        this.state.pivot = {
-            colIds: columns.map((column) => column.colId),
-            eventType,
-            seq,
-        };
+        this.state.pivot = this.nextRoleDraft('pivot', columns, [], eventType);
     }
 
     public removePivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
-        this.setPivotColumns(withoutColumns(this.getPivotColumns(), columns), eventType);
+        this.state.pivot = this.nextRoleDraft(
+            'pivot',
+            withoutColumns(this.getPivotColumns(), columns),
+            columns,
+            eventType
+        );
     }
 
     public setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void {
