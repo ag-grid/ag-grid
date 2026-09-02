@@ -1,4 +1,4 @@
-import demosJson from '../../content/demos/demos.json';
+import demosJson from '../../content/demos/demos.json' with { type: 'json' };
 import type { DemoTab } from './demosData';
 
 /**

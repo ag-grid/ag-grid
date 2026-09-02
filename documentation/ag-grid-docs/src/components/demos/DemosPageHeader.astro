@@ -13,13 +13,15 @@ interface Props {
 
 // Every demo page renders the same H1, links and intro above its grid, so the markup lives here
 // rather than being repeated four times. The copy comes from the demo's frontmatter contract.
+// The heading, links and intro are separate rows because sharing one let a long heading push the
+// links onto a second line, placing them differently on each demo page.
 const { content } = Astro.props as Props;
 ---
 
 <div class={styles.topHeader}>
-    <div>
-        <div class={styles.headerTitle}>
-            <h1 class={styles.headerHeading}>{content.seoH1}</h1>
+    <div class={styles.headerCopy}>
+        <h1 class={styles.headerHeading}>{content.seoH1}</h1>
+        <div class={styles.headerLinks}>
             <a class="button-secondary" target="_blank" rel="noopener noreferrer" href={content.githubUrl}>
                 <Icon name="github" svgClasses={styles.githubIcon} />
                 <span>See On GitHub</span>

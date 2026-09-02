@@ -27,6 +27,44 @@ test.describe('Demo page SEO copy', () => {
     }
 });
 
+// The header reserves a measured height (pages-styles/example.module.scss) so that longer copy on
+// one demo cannot shift the page; copy that outgrows the reserve would regress that silently.
+test.describe('Demo page header layout', () => {
+    const viewports = [
+        { width: 1920, height: 1080 },
+        { width: 1280, height: 900 },
+        { width: 430, height: 900 },
+    ];
+
+    for (const viewport of viewports) {
+        test(`every demo puts its header and links in the same place at ${viewport.width}x${viewport.height}`, async ({
+            page,
+        }) => {
+            const layouts: Record<string, unknown> = {};
+
+            for (const demo of demoNames) {
+                await page.setViewportSize(viewport);
+                await page.goto(demoContent(demo).href.replace(/^\//, ''));
+
+                const header = page.locator('[class*="topHeader"]');
+                await expect(header.getByRole('heading', { level: 1 })).toBeVisible();
+
+                const headerBox = await header.boundingBox();
+                const linksBox = await header.getByRole('link', { name: 'See On GitHub' }).boundingBox();
+                layouts[demo] = {
+                    headerHeight: headerBox?.height,
+                    // Relative to the header, not to the page scroll position.
+                    linksX: Math.round((linksBox?.x ?? 0) - (headerBox?.x ?? 0)),
+                    linksY: Math.round((linksBox?.y ?? 0) - (headerBox?.y ?? 0)),
+                };
+            }
+
+            const distinctLayouts = new Set(Object.values(layouts).map((layout) => JSON.stringify(layout)));
+            expect(distinctLayouts.size, `demo header layouts: ${JSON.stringify(layouts, null, 2)}`).toBe(1);
+        });
+    }
+});
+
 test.describe(`Demo Examples`, async () => {
     let errors: string[];
 

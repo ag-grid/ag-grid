@@ -2,6 +2,21 @@
 
 $nav-height: 200px;
 
+$copy-column-width: 68ch;
+$copy-column-stacks-below: 1440px;
+
+// Line counts are the measured worst case across the demos: copy that wraps past its reserve grows
+// the header again, so check a lengthened intro against the other demos.
+@mixin reserve-copy-height($heading-lines, $intro-lines) {
+    .headerHeading {
+        min-height: calc(#{$heading-lines} * 1em * var(--text-lh-2xl));
+    }
+
+    .intro {
+        min-height: calc(#{$intro-lines} * 1em * var(--text-lh-base));
+    }
+}
+
 .githubIcon,
 .youtubeIcon {
     padding: $spacing-size-1;
@@ -19,17 +34,44 @@ $nav-height: 200px;
     padding-bottom: 0;
     margin-bottom: 0;
     font-size: var(--text-fs-2xl);
+
+    // Keeps the longest heading within a line of the shortest, so less is reserved for the wrap.
+    @media screen and (max-width: 700px) {
+        font-size: var(--text-fs-xl);
+    }
 }
 
-.headerTitle {
+// Stacked rows at a fixed width, so neither a longer heading nor a longer intro can move anything
+// horizontally; the reserve absorbs what is left, their height.
+.headerCopy {
+    flex: 0 0 $copy-column-width;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-size-2;
+
+    @include reserve-copy-height(1, 3);
+
+    @media screen and (max-width: 700px) {
+        @include reserve-copy-height(2, 4);
+    }
+
+    @media screen and (max-width: 480px) {
+        @include reserve-copy-height(2, 6);
+    }
+
+    @media screen and (max-width: 360px) {
+        @include reserve-copy-height(2, 7);
+    }
+}
+
+.headerLinks {
     display: flex;
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
     gap: $spacing-size-3;
-    padding-bottom: $spacing-size-1;
-    container-type: normal;
-    container-name: header-title;
 }
 
 // The 1 to 2 sentence indexable intro under the H1 (SE-125). Capped so it wraps as readable
@@ -40,18 +82,13 @@ $nav-height: 200px;
 
 .topHeader {
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
     gap: $spacing-size-4 $spacing-size-12;
     width: 100%;
-    margin: 0 auto $spacing-size-3;
+    box-sizing: border-box;
+    margin: 0 auto;
     padding-top: $spacing-size-8;
-    container-type: inline-size;
-    container-name: top-header;
-
-    @media screen and (max-width: 700px) {
-        flex-direction: column;
-    }
+    padding-bottom: $spacing-size-3;
 
     @media screen and (max-width: 1900px) {
         padding-left: 24px;
@@ -63,20 +100,18 @@ $nav-height: 200px;
         max-width: var(--layout-max-width);
     }
 
-    @media screen and (min-width: 720px) {
-        > div:first-child {
-            width: auto;
-        }
-    }
-
-    @media screen and (max-width: 1000px) {
+    // Narrower than this, sharing the row squeezes the intro into a narrow column.
+    @media screen and (max-width: $copy-column-stacks-below) {
         flex-direction: column;
-        height: auto;
+
+        .headerCopy {
+            flex: 0 0 auto;
+            width: 100%;
+        }
     }
 
     p {
         color: var(--color-text-tertiary);
-        padding-top: $spacing-size-1;
     }
 
     button {
@@ -87,16 +122,17 @@ $nav-height: 200px;
     span {
         font-size: var(--text-fs-sm);
     }
-}
 
-.topHeaderTitle {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: $spacing-size-3;
+    @media screen and (max-height: 728px) {
+        padding-top: $spacing-size-4;
 
-    h1 {
-        line-height: var(--text-lh-1xl);
+        .headerHeading {
+            font-size: var(--text-fs-xl);
+        }
+
+        p {
+            font-size: var(--text-fs-sm);
+        }
     }
 }
 
@@ -131,7 +167,8 @@ $nav-height: 200px;
 }
 
 .layout {
-    --layout-top-header-height: 180px;
+    // Measured height of the header above, subtracted so the grid ends at the bottom of the screen.
+    --layout-top-header-height: 214px;
     --layout-grid-header-height: calc(var(--layout-site-header-height) + var(--layout-top-header-height));
     --layout-grid-margin: 0px;
 
@@ -146,24 +183,6 @@ $nav-height: 200px;
     }
 
     @media screen and (max-height: 728px) {
-        --layout-top-header-height: 125px;
-    }
-}
-
-.topHeader {
-    @media screen and (max-height: 728px) {
-        padding-top: $spacing-size-4;
-
-        .headerHeading {
-            font-size: var(--text-fs-xl);
-        }
-
-        p {
-            font-size: var(--text-fs-sm);
-        }
-
-        .tabWrapper {
-            height: 80px;
-        }
+        --layout-top-header-height: 177px;
     }
 }
