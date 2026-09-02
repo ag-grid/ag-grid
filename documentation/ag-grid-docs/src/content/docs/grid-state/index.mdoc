@@ -51,6 +51,7 @@ The following is captured in the grid state:
 - [Hidden Columns](./column-properties/#reference-display-hide) (column state)
 - [Column Filter Model](./filtering/)
 - [Advanced Filter Model](./filter-advanced/#filter-model--api)
+- [Quick Filter](./filter-quick/)
 - [Focused Cell](./keyboard-navigation/) ([Client-Side Row Model](./row-models/) only)
 - [Current Page](./row-pagination/)
 - [Pivot Mode and Columns](./pivoting/) (column state)
@@ -74,6 +75,8 @@ additional configuration is required:
 {% /note %}
 
 All state properties are optional, so a property can be excluded if you do not want to restore it.
+
+Restoring `filter.quickFilterText` writes the text back into the `quickFilterText` grid option, so the restored state takes precedence over a value set in the grid options.
 
 If applying some but not all of the column state properties, then `initialState.partialColumnState` must be set to `true`.
 
@@ -110,6 +113,8 @@ The best way to restore grid state is via initial state as described above. Howe
 {% gridExampleRunner title="Setting State" name="set-state"  exampleHeight=630 /%}
 
 It is possible to maintain the existing state for individual state contents by passing a second argument to `setState` that contains the top-level properties to ignore. E.g. `api.setState(state, ['filter'])` will maintain the existing filter state in the grid.
+
+Anything the provided state omits is reset rather than left as it is. For example, a `filter` section without `quickFilterText` clears the [Quick Filter](./filter-quick/), in the same way as the other `filter` fields.
 
 ## Converting Column State to Grid State
 

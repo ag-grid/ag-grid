@@ -33,6 +33,11 @@ export interface FilterState {
      * Currently selected filter when using new filter tool panel with `agSelectableColumnFilter`
      */
     selectableFilters?: SelectableFilterState;
+    /**
+     * Search text for Quick Filter, mirroring the `quickFilterText` grid option.
+     * Absent when the text is empty.
+     */
+    quickFilterText?: string;
 }
 
 export interface CellSelectionCellState {
