@@ -76,7 +76,7 @@ jobs:
             group: ${{ steps.key.outputs.group || steps.fallback.outputs.group }}
             issue_key: ${{ steps.key.outputs.issue_key }}
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               continue-on-error: true
               with:
                   fetch-depth: 1
@@ -129,7 +129,7 @@ jobs:
             # Per-effort agent wall clock, read from AI model effort.
             agent_timeout_minutes: ${{ steps.resume.outputs.agent_timeout_minutes }}
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
                   sparse-checkout: external/ag-shared/github/actions
@@ -193,13 +193,13 @@ jobs:
             statuses: read
             actions: read
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
 
             - name: Mint ag-dev-prompts read token
               id: prompts-token
-              uses: actions/create-github-app-token@v3
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
               with:
                   app-id: ${{ vars.JIRA_AGENT_APP_ID }}
                   private-key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
@@ -322,7 +322,7 @@ jobs:
             # Green CI held on open P0/P1 review findings; routed into agent-run.
             dispatch_pr_iterate: ${{ steps.handler.outputs.dispatch_pr_iterate }}
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
 
@@ -368,7 +368,7 @@ jobs:
             # The agent posts a marker comment on the PR (re-run idempotency).
             pull-requests: write
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
 
@@ -376,7 +376,7 @@ jobs:
             # action verifies. No repo build runs here.
             - name: Mint ag-dev-prompts read token
               id: prompts-token
-              uses: actions/create-github-app-token@v3
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
               with:
                   app-id: ${{ vars.JIRA_AGENT_APP_ID }}
                   private-key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
