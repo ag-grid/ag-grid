@@ -160,10 +160,21 @@ describe('example-runner.js injectImportMap', () => {
     test('fails visibly rather than falling back when the version is not a version', () => {
         const { head, body, options } = stubPage('?version=latest');
 
-        expect(() => loadClient().injectImportMap(options)).toThrowError(/not a valid \?version= value/);
+        let thrown: Error | undefined;
+        try {
+            loadClient().injectImportMap(options);
+        } catch (error) {
+            thrown = error as Error;
+        }
+
+        expect(thrown?.message).toMatch(/not a valid \?version= value/);
+        // The rejected value is reported in the Error, so it still reaches the console.
+        expect(thrown?.message).toContain('"latest"');
 
         expect(head).toHaveLength(0);
-        expect(body[0].textContent).toContain('latest');
+        // ...but never into the page: it is unsanitised input from the query string.
+        expect(body[0].textContent).toContain('?version= value is not valid');
+        expect(body[0].textContent).not.toContain('latest');
     });
 
     test('fails the same way for an empty version, rather than taking it as absent', () => {
