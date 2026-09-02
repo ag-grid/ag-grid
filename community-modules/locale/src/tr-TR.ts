@@ -791,6 +791,9 @@ export const AG_GRID_LOCALE_TR = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Hücre Düzenleyici Doğrulaması',
+    ariaFullRowValidationError: 'Tam satır doğrulaması: ${variable}',
+    ariaFullRowEditValidationFailed: 'Satır düzenlemesi tamamlanamıyor. ${variable}',
+    ariaRowIndex: 'Satır ${variable}',
     ariaLabelLoadingContextMenu: 'Bağlam Menüsü Yükleniyor',
 
     // aria labels for rich select

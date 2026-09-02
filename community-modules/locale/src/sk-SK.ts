@@ -787,6 +787,9 @@ export const AG_GRID_LOCALE_SK = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Validácia editora bunky',
+    ariaFullRowValidationError: 'Validácia celého riadka: ${variable}',
+    ariaFullRowEditValidationFailed: 'Úpravu riadka nie je možné dokončiť. ${variable}',
+    ariaRowIndex: 'Riadok ${variable}',
     ariaLabelLoadingContextMenu: 'Načítava sa kontextová ponuka',
 
     // aria labels for rich select

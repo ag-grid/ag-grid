@@ -796,6 +796,9 @@ export const AG_GRID_LOCALE_FR = {
 
     // Cell Editor
     ariaValidationErrorPrefix: "Validation de l'éditeur de cellule",
+    ariaFullRowValidationError: 'Validation de la ligne complète : ${variable}',
+    ariaFullRowEditValidationFailed: 'Impossible de terminer la modification de la ligne. ${variable}',
+    ariaRowIndex: 'Ligne ${variable}',
     ariaLabelLoadingContextMenu: 'Chargement du menu contextuel',
 
     // aria labels for rich select

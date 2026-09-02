@@ -229,6 +229,12 @@ function onF2KeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardE
 function onEscapeKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
     const { editSvc } = beans;
 
+    // With no edit session there is nothing to cancel, and the host page's own Escape handling
+    // (dialogs, drawers) must still see an unhandled key.
+    if (!editSvc?.isEditing()) {
+        return;
+    }
+
     // The browser observes this before the deferred framework teardown below has a chance to run.
     event.preventDefault();
 

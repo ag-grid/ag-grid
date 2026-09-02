@@ -787,6 +787,9 @@ export const AG_GRID_LOCALE_VN = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Xác nhận lỗi trình chỉnh sửa ô',
+    ariaFullRowValidationError: 'Xác thực toàn bộ hàng: ${variable}',
+    ariaFullRowEditValidationFailed: 'Không thể hoàn tất chỉnh sửa hàng. ${variable}',
+    ariaRowIndex: 'Hàng ${variable}',
     ariaLabelLoadingContextMenu: 'Đang tải Menu Ngữ cảnh',
 
     // aria labels for rich select

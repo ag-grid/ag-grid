@@ -785,6 +785,9 @@ export const AG_GRID_LOCALE_HK = {
 
     // Cell Editor
     ariaValidationErrorPrefix: '單元編輯器驗證',
+    ariaFullRowValidationError: '整行驗證：${variable}',
+    ariaFullRowEditValidationFailed: '無法完成行編輯。${variable}',
+    ariaRowIndex: '第 ${variable} 行',
     ariaLabelLoadingContextMenu: '加載上下文選單',
 
     // aria labels for rich select

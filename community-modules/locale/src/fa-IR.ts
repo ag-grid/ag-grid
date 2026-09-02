@@ -788,6 +788,9 @@ export const AG_GRID_LOCALE_IR = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'اعتبارسنجی ویرایشگر سلول',
+    ariaFullRowValidationError: 'اعتبارسنجی کل سطر: ${variable}',
+    ariaFullRowEditValidationFailed: 'ویرایش سطر را نمی‌توان تکمیل کرد. ${variable}',
+    ariaRowIndex: 'سطر ${variable}',
     ariaLabelLoadingContextMenu: 'در حال بارگذاری فهرست زمینه',
 
     // aria labels for rich select

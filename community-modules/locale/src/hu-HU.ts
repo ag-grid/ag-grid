@@ -793,6 +793,9 @@ export const AG_GRID_LOCALE_HU = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Cella szerkesztő érvényesítés',
+    ariaFullRowValidationError: 'Teljes sor érvényesítése: ${variable}',
+    ariaFullRowEditValidationFailed: 'A sor szerkesztése nem fejezhető be. ${variable}',
+    ariaRowIndex: '${variable}. sor',
     ariaLabelLoadingContextMenu: 'Kontextusmenü betöltése',
 
     // aria labels for rich select

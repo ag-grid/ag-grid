@@ -786,6 +786,9 @@ export const AG_GRID_LOCALE_JP = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'セルエディタの検証',
+    ariaFullRowValidationError: '行全体の検証: ${variable}',
+    ariaFullRowEditValidationFailed: '行の編集を完了できません。${variable}',
+    ariaRowIndex: '行 ${variable}',
     ariaLabelLoadingContextMenu: 'コンテキストメニューを読み込んでいます',
 
     // aria labels for rich select

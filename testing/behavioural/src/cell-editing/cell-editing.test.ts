@@ -225,6 +225,37 @@ describe('Cell Editing Start', () => {
         });
     });
 
+    describe('Escape key', () => {
+        test('leaves the browser default intact when nothing is editing, prevents it while editing', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                defaultColDef: {
+                    editable: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'string1')));
+            await userEvent.click(cell);
+
+            // A host dialog wrapping the grid closes on Escape only if the grid leaves the key unhandled.
+            const idleEscape = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+            cell.dispatchEvent(idleEscape);
+            expect(idleEscape.defaultPrevented).toBe(false);
+            expect(api.getCellEditorInstances()).toHaveLength(0);
+
+            await userEvent.dblClick(cell);
+            const input = await waitForInput(gridDiv, cell);
+
+            const editingEscape = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+            input.dispatchEvent(editingEscape);
+            expect(editingEscape.defaultPrevented).toBe(true);
+
+            await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
+        });
+    });
+
     describe('Backspace key', () => {
         // Backspace starts editing with an empty value
         // For non-popup editors, this also removes the renderer and hence clears the cell text.

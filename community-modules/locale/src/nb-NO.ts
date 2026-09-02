@@ -787,6 +787,9 @@ export const AG_GRID_LOCALE_NO = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Celle redigerer validering',
+    ariaFullRowValidationError: 'Validering av hele raden: ${variable}',
+    ariaFullRowEditValidationFailed: 'Kan ikke fullføre radredigeringen. ${variable}',
+    ariaRowIndex: 'Rad ${variable}',
     ariaLabelLoadingContextMenu: 'Laster inn kontekstmeny',
 
     // aria labels for rich select

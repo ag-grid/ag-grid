@@ -80,6 +80,8 @@ const CellEditorComponent: ComponentType<ICellEditorComp> = {
         'focusOut',
         'afterGuiAttached',
         'refresh',
+        'getValidationErrors',
+        'getValidationElement',
     ],
 };
 

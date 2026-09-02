@@ -789,6 +789,9 @@ export const AG_GRID_LOCALE_HR = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Validacija Uređivača ćelija',
+    ariaFullRowValidationError: 'Provjera cijelog retka: ${variable}',
+    ariaFullRowEditValidationFailed: 'Uređivanje retka nije moguće dovršiti. ${variable}',
+    ariaRowIndex: 'Redak ${variable}',
     ariaLabelLoadingContextMenu: 'Učitavanje kontekstnog izbornika',
 
     // aria labels for rich select
