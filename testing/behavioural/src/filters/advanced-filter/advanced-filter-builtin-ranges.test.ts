@@ -9,13 +9,20 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi, GridOptions, ISimpleFilterModelPresetType } from 'ag-grid-community';
+import type {
+    AdvancedFilterModel,
+    ColDef,
+    GridApi,
+    GridOptions,
+    ISimpleFilterModelPresetType,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     DateFilterModule,
     LocaleModule,
     NumberFilterModule,
     TextFilterModule,
+    TooltipModule,
     ValidationModule,
 } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
@@ -102,6 +109,41 @@ function getDisplayedIds(api: GridApi<TestRow>): number[] {
     return result;
 }
 
+/** Enough leading conditions that the range below them sits outside the Builder's rendered window. */
+const LEADING_CONDITIONS = 30;
+
+const ageOpts = (inRangeInclusive: boolean): GridOptions<TestRow> => ({
+    columnDefs: [{ field: 'age', filter: 'agNumberColumnFilter', filterParams: { inRangeInclusive } }],
+    rowData: ROW_DATA,
+    enableAdvancedFilter: true,
+});
+
+/** Every visible row valid whichever way the column reads its ends, and one pair of equal values below the fold. */
+function longModelEndingInRange(): AdvancedFilterModel {
+    return {
+        filterType: 'join',
+        type: 'AND',
+        conditions: [
+            ...Array.from(
+                { length: LEADING_CONDITIONS },
+                () => ({ filterType: 'number', colId: 'age', type: 'notBlank' }) as const
+            ),
+            { filterType: 'number', colId: 'age', type: 'inRange', filter: 30, filterTo: 30 },
+        ],
+    };
+}
+
+/**
+ * Applies a different filter, so the Builder's staged model is no longer the one already applied. It stays
+ * staged because `refresh()` discards what `setupFilterModel()` returns, which is what leaves the unmounted
+ * rows to `validateItems`; fix that and these two tests need rebuilding, not just re-expecting.
+ */
+async function rebuildBuilderList(api: GridApi<TestRow>): Promise<void> {
+    api.setAdvancedFilterModel({ filterType: 'number', colId: 'age', type: 'notBlank' });
+    api.onFilterChanged();
+    await asyncSetTimeout(0);
+}
+
 describe('Advanced Filter - built-in range and relative date options', () => {
     const gridsManager = new TestGridsManager({
         modules: [
@@ -109,6 +151,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             NumberFilterModule,
             DateFilterModule,
             LocaleModule,
+            TooltipModule,
             ValidationModule,
             AdvancedFilterModule,
             ClientSideRowModelModule,
@@ -171,21 +214,292 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             expect(getDisplayedIds(api)).toEqual([1]);
         });
 
-        // No ordering validation is required, so a reversed pair applies and simply matches nothing.
-        test('a reversed pair is accepted and matches no row', async () => {
+        // The bounds are ordered, as the column filter's own pair of inputs is, and in its own words. Both
+        // are exclusive by default, so a pair of one value is a range nothing can fall inside either.
+        test('a reversed pair and a pair of equal numbers are both rejected rather than matching nothing', async () => {
             const api = await gridsManager.createGridAndWait('grid1', opts());
+            const af = AdvancedFilterHarness.get(api);
 
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] is between (38, 21)');
+            await af.applyExpression('[Age] is between (38, 21)');
             await asyncSetTimeout(0);
+            await new FilterDom(api, 'reversed number pair').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Age] is between (38, 21)"
+                valid: false — Expression has an error. Must be greater than 38 - 21.
+                buttons: Apply ⊘ | Builder
+                model: null
+            `);
+            expect(getDisplayedIds(api)).toEqual([0, 1, 2, 3]);
 
+            await af.applyExpression('[Age] is between (30, 30)');
+            await asyncSetTimeout(0);
+            await new FilterDom(api, 'equal number pair').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Age] is between (30, 30)"
+                valid: false — Expression has an error. Must be greater than 30 - 30.
+                buttons: Apply ⊘ | Builder
+                model: null
+            `);
+            expect(getDisplayedIds(api)).toEqual([0, 1, 2, 3]);
+        });
+
+        // `inRangeInclusive` makes one value an exact match, so the same pair is a range with something in it.
+        test('a pair of equal numbers is accepted where the column includes its ends, a reversed one still not', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...opts(),
+                columnDefs: [
+                    { field: 'age', filter: 'agNumberColumnFilter', filterParams: { inRangeInclusive: true } },
+                ],
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.applyExpression('[Age] is between (30, 30)');
+            await asyncSetTimeout(0);
             expect(api.getAdvancedFilterModel()).toEqual({
                 filterType: 'number',
                 colId: 'age',
                 type: 'inRange',
-                filter: 38,
-                filterTo: 21,
+                filter: 30,
+                filterTo: 30,
             });
-            expect(getDisplayedIds(api)).toEqual([]);
+            expect(getDisplayedIds(api)).toEqual([1]);
+
+            // Rejected, so the filter already applied stands rather than being replaced by it.
+            await af.applyExpression('[Age] is between (38, 21)');
+            await asyncSetTimeout(0);
+            await new FilterDom(api, 'reversed inclusive pair').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Age] is between (38, 21)"
+                valid: false — Expression has an error. Must be greater than or equal to 38 - 21.
+                buttons: Apply ⊘ | Builder
+                model:
+                  filterType: "number"
+                  colId: "age"
+                  type: "inRange"
+                  filter: 30
+                  filterTo: 30
+            `);
+            expect(getDisplayedIds(api)).toEqual([1]);
+        });
+
+        // The date path orders `Date` objects rather than the text they were written as, and says so in the
+        // Date Filter's own words rather than the Number Filter's.
+        test('a reversed date pair is rejected', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...opts(),
+                rowData: [
+                    { id: 0, age: 21, day: '2010-05-05' },
+                    { id: 1, age: 30, day: '2024-11-30' },
+                ],
+            });
+
+            await AdvancedFilterHarness.get(api).applyExpression('[Day] is between ("2024-11-30", "2010-05-05")');
+            await asyncSetTimeout(0);
+
+            await new FilterDom(api, 'reversed date pair').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Day] is between ("2024-11-30", "2010-05-05")"
+                valid: false — Expression has an error. Date must be after 2024-11-30 - "2010-05-05".
+                buttons: Apply ⊘ | Builder
+                model: null
+            `);
+            expect(getDisplayedIds(api)).toEqual([0, 1]);
+        });
+
+        // Date and inclusive together: the one combination where both of the merged function's decisions
+        // fire at once, so it is the only place the inclusive date wording can be read off.
+        test('an equal date pair is an exact match where the column includes its ends, a reversed one still not', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...opts(),
+                columnDefs: [
+                    { field: 'age', filter: 'agNumberColumnFilter' },
+                    {
+                        field: 'day',
+                        cellDataType: 'dateString',
+                        filter: 'agDateColumnFilter',
+                        filterParams: { inRangeInclusive: true },
+                    },
+                ],
+                rowData: [
+                    { id: 0, age: 21, day: '2010-05-05' },
+                    { id: 1, age: 30, day: '2024-11-30' },
+                ],
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.applyExpression('[Day] is between ("2024-11-30", "2024-11-30")');
+            await asyncSetTimeout(0);
+            expect(getDisplayedIds(api)).toEqual([1]);
+
+            await af.applyExpression('[Day] is between ("2024-11-30", "2010-05-05")');
+            await asyncSetTimeout(0);
+            await new FilterDom(api, 'reversed inclusive date pair').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Day] is between ("2024-11-30", "2010-05-05")"
+                valid: false — Expression has an error. Date must be on or after 2024-11-30 - "2010-05-05".
+                buttons: Apply ⊘ | Builder
+                model:
+                  filterType: "dateString"
+                  colId: "day"
+                  type: "inRange"
+                  filter: "2024-11-30"
+                  filterTo: "2024-11-30"
+            `);
+            expect(getDisplayedIds(api)).toEqual([1]);
+        });
+
+        test('the Builder shuts Apply on a reversed pair, and opens it again once ordered', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', opts());
+            api.setAdvancedFilterModel({
+                filterType: 'number',
+                colId: 'age',
+                type: 'inRange',
+                filter: 21,
+                filterTo: 38,
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            const [condition] = await builder.conditionItems();
+            await builder.setValue(condition, '10', 1);
+
+            await new FilterDom(api, 'builder reversed pair', { mode: 'builder' }).checkFilterDom(`
+                BUILDER
+                AND
+                  Age is between 21 10 ✗
+                  + add
+                buttons: Apply ⊘ | Cancel
+                model:
+                  filterType: "number"
+                  colId: "age"
+                  type: "inRange"
+                  filter: 21
+                  filterTo: 38
+            `);
+            expect(builder.itemLabels()).toContain(
+                'Filter Condition [Age] is between (21, 10). Level 2. Must be greater than 21 Press ENTER to edit'
+            );
+
+            await builder.setValue(condition, '40', 1);
+            await new FilterDom(api, 'builder ordered pair', { mode: 'builder' }).checkFilterDom(`
+                BUILDER
+                AND
+                  Age is between 21 40
+                  + add
+                buttons: Apply | Cancel
+                model:
+                  filterType: "number"
+                  colId: "age"
+                  type: "inRange"
+                  filter: 21
+                  filterTo: 38
+            `);
+
+            await builder.apply();
+            await asyncSetTimeout(0);
+            expect(getDisplayedIds(api)).toEqual([1, 2]);
+        });
+
+        // A row the virtual list has not mounted has no component to validate it, so a column that stops
+        // including its ends must be caught by the Builder's own pass over every item.
+        test('a pair the column stops accepting shuts Apply from a row the list has not mounted', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', ageOpts(true));
+            api.setAdvancedFilterModel(longModelEndingInRange());
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            // The range row must not be among them, or its own component would validate it.
+            expect((await builder.conditionItems()).length).toBeLessThan(LEADING_CONDITIONS + 1);
+
+            api.setGridOption('columnDefs', ageOpts(false).columnDefs);
+            await rebuildBuilderList(api);
+
+            expect(builder.applyDisabled()).toBe(true);
+        });
+
+        // The pass over every item decides validity rather than only withdrawing it, so a condition whose
+        // column stops rejecting it recovers without the user scrolling it into view to be re-judged.
+        test('a pair the column accepts again reopens Apply from a row the list has not mounted', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', ageOpts(true));
+            api.setAdvancedFilterModel(longModelEndingInRange());
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            expect((await builder.conditionItems()).length).toBeLessThan(LEADING_CONDITIONS + 1);
+
+            api.setGridOption('columnDefs', ageOpts(false).columnDefs);
+            await rebuildBuilderList(api);
+            expect(builder.applyDisabled()).toBe(true);
+
+            api.setGridOption('columnDefs', ageOpts(true).columnDefs);
+            await rebuildBuilderList(api);
+            expect(builder.applyDisabled()).toBe(false);
+        });
+
+        // Apply names the offending condition rather than calling it unfinished, and stops naming it the
+        // moment the condition's column goes away, so a message cannot outlive what produced it.
+        test('Apply reports the out-of-order condition, and stops once its column is gone', async () => {
+            const ageAndDay = (inRangeInclusive: boolean): ColDef<TestRow>[] => [
+                { field: 'age', filter: 'agNumberColumnFilter', filterParams: { inRangeInclusive } },
+                { field: 'day', cellDataType: 'dateString', filter: 'agDateColumnFilter' },
+            ];
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: ageAndDay(true),
+                rowData: ROW_DATA,
+                enableAdvancedFilter: true,
+                enableBrowserTooltips: true,
+            });
+            // Seeded while the column still accepts an equal pair, since an invalid model never applies.
+            api.setAdvancedFilterModel({
+                filterType: 'join',
+                type: 'AND',
+                conditions: [
+                    ...Array.from(
+                        { length: LEADING_CONDITIONS },
+                        () => ({ filterType: 'dateString', colId: 'day', type: 'notBlank' }) as const
+                    ),
+                    { filterType: 'number', colId: 'age', type: 'inRange', filter: 30, filterTo: 30 },
+                ],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            // The range row must stay unmounted, or its own component would own the message instead.
+            expect((await builder.conditionItems()).length).toBeLessThan(LEADING_CONDITIONS + 1);
+
+            api.setGridOption('columnDefs', ageAndDay(false));
+            api.setAdvancedFilterModel({ filterType: 'dateString', colId: 'day', type: 'notBlank' });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            expect(builder.applyDisabled()).toBe(true);
+            expect(builder.applyValidationMessage()).toBe('Must be greater than 30');
+
+            api.setGridOption('columnDefs', [ageAndDay(false)[1]]);
+            api.setAdvancedFilterModel({ filterType: 'dateString', colId: 'day', type: 'blank' });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            expect(builder.applyDisabled()).toBe(true);
+            expect(builder.applyValidationMessage()).toBe('Not all conditions are complete.');
+        });
+
+        // The control: the same rebuild with the column still including its ends, so Apply is proven to open.
+        test('a pair the column still accepts leaves Apply open from a row the list has not mounted', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', ageOpts(true));
+            api.setAdvancedFilterModel(longModelEndingInRange());
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            expect((await builder.conditionItems()).length).toBeLessThan(LEADING_CONDITIONS + 1);
+
+            api.setGridOption('columnDefs', ageOpts(true).columnDefs);
+            await rebuildBuilderList(api);
+
+            expect(builder.applyDisabled()).toBe(false);
         });
 
         // `inRange` is the first built-in option taking two values, so a model carrying only one is a

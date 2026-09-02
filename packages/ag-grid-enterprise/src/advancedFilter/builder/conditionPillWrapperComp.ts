@@ -5,8 +5,10 @@ import { Component } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import type { FilterExpressionOperator } from '../filterExpressionOperators';
+import { OPERAND_COUNT } from '../filterExpressionOperators';
 import type { ColumnFilterModelOperands, PartialColumnFilterModel } from '../filterExpressionUtils';
-import { OPERAND_KEYS, getNumberParser, hasEveryOperand } from '../filterExpressionUtils';
+import { OPERAND_KEYS, getConditionValidationMessage, getNumberParser } from '../filterExpressionUtils';
 import type {
     AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
@@ -258,22 +260,24 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         this.validate();
     }
 
+    private getExpressionOperator(operator: string): FilterExpressionOperator<any> | undefined {
+        return this.advFilterExpSvc.getExpressionOperator(this.baseCellDataType, operator, this.column);
+    }
+
     private getNumOperands(operator: string): number {
-        return (
-            this.advFilterExpSvc.getExpressionOperator(this.baseCellDataType, operator, this.column)?.numOperands ?? 0
-        );
+        const expressionOperator = this.getExpressionOperator(operator);
+        return expressionOperator ? OPERAND_COUNT[expressionOperator.operands] : 0;
     }
 
     private validate(): void {
-        const filterModel = this.filterModel;
-        let validationMessage: string | null = null;
-        if (!filterModel.colId) {
-            validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationSelectColumn');
-        } else if (!filterModel.type) {
-            validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationSelectOption');
-        } else if (!hasEveryOperand(this.advFilterExpSvc, filterModel, this.numOperands)) {
-            validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationEnterValue');
-        }
+        const validationMessage = getConditionValidationMessage(
+            this.advFilterExpSvc,
+            this.gos,
+            this.filterModel,
+            this.column,
+            this.baseCellDataType,
+            this.getExpressionOperator(this.filterModel.type ?? '')
+        );
 
         this.item.valid = !validationMessage;
         if (validationMessage !== this.validationMessage) {

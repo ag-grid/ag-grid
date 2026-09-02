@@ -3,6 +3,7 @@ import { _getOwn } from 'ag-stack';
 import type { AgColumn, BaseCellDataType, BeanCollection } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../../advancedFilter/advancedFilterExpressionService';
+import { OPERAND_COUNT } from '../../advancedFilter/filterExpressionOperators';
 import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
 import type { JSONSchema } from '../schemaTypes';
@@ -26,7 +27,8 @@ function getColumnOperatorKeysByArity(
     const byArity = new Map<number, string[]>();
     for (let i = 0, len = entries.length; i < len; ++i) {
         const key = entries[i].key;
-        const numOperands = _getOwn(columnOperators!.operators.operators, key)?.numOperands ?? 0;
+        const operator = _getOwn(columnOperators!.operators.operators, key);
+        const numOperands = operator ? OPERAND_COUNT[operator.operands] : 0;
         const keys = byArity.get(numOperands);
         if (keys) {
             keys.push(key);

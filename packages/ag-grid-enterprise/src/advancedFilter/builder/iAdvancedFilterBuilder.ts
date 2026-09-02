@@ -19,6 +19,8 @@ export interface AdvancedFilterBuilderItem {
     level: number;
     parent?: JoinAdvancedFilterModel;
     valid: boolean;
+    /** Why this condition cannot be applied, for the Apply button to report when the row is not mounted. */
+    validationMessage?: string | null;
     showMove?: boolean;
 }
 

@@ -328,18 +328,27 @@ describe('Advanced Filter matches the column filter', () => {
             expect(await withAdvancedFilter(advancedModel, blanksDefs)).toEqual(blanksIds);
         });
 
-        // Ordering is unvalidated in the Advanced Filter, so a reversed date pair applies and matches
-        // nothing rather than being rejected. Dates compare as `Date` objects, not as numbers.
-        test('a reversed date range applies and matches no row', async () => {
-            expect(
-                await withAdvancedFilter({
-                    filterType: 'dateString',
-                    colId: 'date',
-                    type: 'inRange',
-                    filter: '2020-07-23',
-                    filterTo: '2008-08-24',
-                })
-            ).toEqual([]);
+        // The one place the two deliberately part company. The ordering rule lives in the column filter's
+        // input validation, so a model set through its API bypasses it and applies; the Advanced Filter has
+        // only the one route in and rejects there. Asserted rather than omitted, so a change to either side
+        // fails here instead of quietly restoring the divergence this file exists to catch.
+        test('a reversed date range is rejected by the Advanced Filter where the column filter model applies it', async () => {
+            const reversed = { type: 'inRange', filter: '2020-07-23', filterTo: '2008-08-24' };
+
+            const advanced = await withAdvancedFilter({ filterType: 'dateString', colId: 'date', ...reversed });
+            const column = await withColumnFilter('date', { filterType: 'date', ...reversed });
+
+            expect(advanced).toEqual([0, 1, 2, 3, 4, 5, 6]); // no filter applied at all
+            expect(column).toEqual([]); // applied, and nothing can fall inside it
+            expect(advanced).not.toEqual(column);
+        });
+
+        // Bigints are ordered as numbers, where the decimal text the model stores them as would put 9 above 10.
+        test('a bigint range is judged on the value, not on the text the model stores', async () => {
+            const model = { filterType: 'bigint' as const, colId: 'qty', type: 'inRange' as const };
+
+            expect(await withAdvancedFilter({ ...model, filter: '9', filterTo: '10' })).toEqual([]);
+            expect(await withAdvancedFilter({ ...model, filter: '10', filterTo: '9' })).toEqual([0, 1, 2, 3, 4, 5, 6]);
         });
     });
 });

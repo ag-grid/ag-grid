@@ -161,6 +161,11 @@ export class AdvancedFilterBuilderHarness {
         return this;
     }
 
+    /** Each rendered row's accessible name, which is where an invalid condition's own message is spoken. */
+    public itemLabels(): (string | null)[] {
+        return Array.from(document.querySelectorAll(VIRTUAL_LIST_ITEM)).map((item) => item.getAttribute('aria-label'));
+    }
+
     /** The value pills on `item` — a two-input filter option renders one per operand. */
     public valuePills(item: HTMLElement): HTMLElement[] {
         return Array.from(this.liveItem(item).querySelectorAll<HTMLElement>(VALUE_PILL));
@@ -256,6 +261,14 @@ export class AdvancedFilterBuilderHarness {
     /** Whether Apply is shut — the whole list's verdict, including rows the virtual list has not mounted. */
     public applyDisabled(): boolean {
         return this.applyButton().disabled;
+    }
+
+    /**
+     * Why Apply is shut, as the user reads it. Needs `enableBrowserTooltips: true`, which is what puts the
+     * message in the DOM rather than in a grid tooltip that has to be hovered into existence.
+     */
+    public applyValidationMessage(): string | null {
+        return this.applyButton().getAttribute('title');
     }
 
     private applyButton(): HTMLButtonElement {

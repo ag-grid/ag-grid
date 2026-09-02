@@ -4,6 +4,8 @@ import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from 'ag-grid-co
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
+import type { OperandsKind } from './filterExpressionOperators';
+import { OPERAND_COUNT } from './filterExpressionOperators';
 import type {
     AutocompleteUpdate,
     ColumnFilterModelOperands,
@@ -18,6 +20,7 @@ import {
     findStartPosition,
     getBigIntParser,
     getNumberParser,
+    getRangeOrderMessage,
     getSearchString,
     updateExpression,
 } from './filterExpressionUtils';
@@ -110,7 +113,7 @@ class ColumnParser implements Parser {
 class OperatorParser implements Parser {
     public valid = true;
     public endPosition: number | undefined;
-    public expectedNumOperands: number = 0;
+    public operands: OperandsKind = 'none';
     private operator: string = '';
     private parsedOperator: string;
     /** Last character of the resolved name; set once the region is settled. */
@@ -228,7 +231,7 @@ class OperatorParser implements Parser {
                 matchedOperator,
                 this.column
             )!;
-            this.expectedNumOperands = operator.numOperands;
+            this.operands = operator.operands;
             const operatorDisplayValue = operator.displayValue;
             const userValue = expression.slice(startPosition, matchEndPosition + 1);
             checkAndUpdateExpression(params, userValue, operatorDisplayValue, matchEndPosition);
@@ -620,7 +623,7 @@ export class ColFilterExpressionParser {
                             i,
                             this.columnParser.baseCellDataType,
                             this.columnParser.column,
-                            this.operatorParser.expectedNumOperands
+                            OPERAND_COUNT[this.operatorParser.operands]
                         );
                         parser = this.operandsParser;
                     }
@@ -660,7 +663,7 @@ export class ColFilterExpressionParser {
             translateKey = 'advancedFilterValidationMissingColumn';
         } else if (!this.operatorParser) {
             translateKey = 'advancedFilterValidationMissingOption';
-        } else if (this.operatorParser.expectedNumOperands && !this.operandsParser) {
+        } else if (this.operatorParser.operands !== 'none' && !this.operandsParser) {
             translateKey = 'advancedFilterValidationMissingValue';
         }
         if (translateKey) {
@@ -670,7 +673,29 @@ export class ColFilterExpressionParser {
                 endPosition,
             };
         }
-        return null;
+        return this.getRangeOrderError();
+    }
+
+    /** The two bounds of a range are ordered, as the pair of inputs the column filter shows for one is. */
+    private getRangeOrderError(): FilterExpressionValidationError | null {
+        const [from, to] = this.getOperandParsers();
+        if (this.operatorParser!.operands !== 'range' || !to) {
+            return null;
+        }
+        const message = getRangeOrderMessage(
+            this.params.advFilterExpSvc,
+            this.columnParser!.getColId(),
+            this.getOperandValue(from),
+            this.getOperandValue(to),
+            from.getRawValue()
+        );
+        return message
+            ? {
+                  message,
+                  startPosition: to.startPosition,
+                  endPosition: to.endPosition ?? this.params.expression.length - 1,
+              }
+            : null;
     }
 
     public getFunction(params: FilterExpressionFunctionParams): FilterExpressionFunction {
@@ -803,7 +828,7 @@ export class ColFilterExpressionParser {
 
     private isComplete(): boolean {
         const operatorParser = this.operatorParser;
-        return !!operatorParser && (!operatorParser.expectedNumOperands || !!this.operandsParser?.isComplete());
+        return !!operatorParser && (operatorParser.operands === 'none' || !!this.operandsParser?.isComplete());
     }
 
     private isColumnPosition(position: number): boolean {
@@ -884,7 +909,12 @@ export class ColFilterExpressionParser {
             return 1;
         }
         const column = this.columnParser?.column;
-        return this.params.advFilterExpSvc.getExpressionOperator(baseCellDataType, operator, column)?.numOperands ?? 0;
+        const expressionOperator = this.params.advFilterExpSvc.getExpressionOperator(
+            baseCellDataType,
+            operator,
+            column
+        );
+        return expressionOperator ? OPERAND_COUNT[expressionOperator.operands] : 0;
     }
 
     private doesOperandNeedQuotes(baseCellDataType?: BaseCellDataType): boolean {
