@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
-import type { GridApi } from 'ag-grid-community';
+import type { GridApi, Toolbar } from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule, QuickFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AllEnterpriseModule, ToolbarModule } from 'ag-grid-enterprise';
 
@@ -17,7 +17,7 @@ describe('Grid state - quick filter text', () => {
 
     const columnDefs = [{ field: 'name' }, { field: 'country' }];
 
-    const toolbar = { items: ['agQuickFilterToolbarItem'] } as const;
+    const toolbar: Toolbar = { items: ['agQuickFilterToolbarItem'] };
 
     const pivotGridMgr = new TestGridsManager({
         modules: [AllEnterpriseModule],
