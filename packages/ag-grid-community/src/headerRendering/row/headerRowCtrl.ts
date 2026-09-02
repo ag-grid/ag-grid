@@ -1,3 +1,5 @@
+import { _getInnerWidth } from 'ag-stack';
+
 import { setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
@@ -173,7 +175,7 @@ export class HeaderRowCtrl extends BeanStub {
         const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
         const contentWidth = gridBodyCtrl?.getHorizontalContentWidth() ?? visibleCols.totalWidth;
         const eGridViewport = gridBodyCtrl?.eGridViewport;
-        const viewportWidth = eGridViewport ? eGridViewport.getBoundingClientRect().width : 0;
+        const viewportWidth = eGridViewport ? _getInnerWidth(eGridViewport) : 0;
 
         return Math.max(contentWidth, viewportWidth);
     }
