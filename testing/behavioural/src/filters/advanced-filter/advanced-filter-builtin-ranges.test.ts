@@ -593,6 +593,57 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             expect(builder.applyDisabled()).toBe(true);
         });
 
+        // The third way a bound reaches the model: handed in by the API already written the column's way,
+        // rather than serialised by the expression parser or by a value pill.
+        test('a model whose bounds are in the column custom format is not silently accepted reversed', async () => {
+            const DMY = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+            const pad = (part: number) => String(part).padStart(2, '0');
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'day', cellDataType: 'customDateString', filter: 'agDateColumnFilter' }],
+                rowData: [
+                    { id: 0, age: null, day: '05/05/2010' },
+                    { id: 1, age: null, day: '30/11/2024' },
+                ],
+                enableAdvancedFilter: true,
+                enableBrowserTooltips: true,
+                dataTypeDefinitions: {
+                    customDateString: {
+                        baseDataType: 'dateString',
+                        extendsDataType: 'dateString',
+                        dataTypeMatcher: (value) => typeof value === 'string' && DMY.test(value),
+                        valueParser: ({ newValue }) => (newValue != null && DMY.test(newValue) ? newValue : null),
+                        valueFormatter: ({ value }) => value ?? '',
+                        dateParser: (value) => {
+                            const match = value?.match(DMY);
+                            return match ? new Date(+match[3], +match[2] - 1, +match[1]) : undefined;
+                        },
+                        dateFormatter: (value) =>
+                            value == null
+                                ? undefined
+                                : `${pad(value.getDate())}/${pad(value.getMonth() + 1)}/${value.getFullYear()}`,
+                    },
+                },
+            });
+
+            api.setAdvancedFilterModel({
+                filterType: 'dateString',
+                colId: 'day',
+                type: 'inRange',
+                filter: '30/11/2024',
+                filterTo: '05/05/2010',
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            // Refused outright, so no condition holding unserialised bounds ever reaches the Builder to be
+            // ordered: the date branch of the bound reader is only ever handed the serialised form.
+            expect(api.getAdvancedFilterModel()).toBeNull();
+            expect(getDisplayedIds(api)).toEqual([0, 1]);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            expect(await builder.conditionItems()).toEqual([]);
+        });
+
         // The control: the same rebuild with the column still including its ends, so Apply is proven to open.
         test('a pair the column still accepts leaves Apply open from a row the list has not mounted', async () => {
             const api = await gridsManager.createGridAndWait('grid1', ageOpts(true));

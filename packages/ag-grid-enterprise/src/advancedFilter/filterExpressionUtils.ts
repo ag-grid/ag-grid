@@ -99,8 +99,8 @@ export function getRangeOrderMessage(
 }
 
 /**
- * A stored bound as its evaluator orders it, read through the column's own parser as every other reader of
- * the model does. A number the model already holds is canonical; text is in whatever syntax the column reads.
+ * A stored bound as its evaluator orders it. A number the model holds is canonical and text is in the column's
+ * own syntax, but a date is always serialised, whatever format the column displays, so it needs no parser.
  */
 function getModelOperandBound(
     column: AgColumn | null | undefined,
