@@ -27,6 +27,16 @@ export interface FilterState {
     selectableFilters?: SelectableFilterState;
 }
 
+/**
+ * Find state. Works for Client-Side Row Model only.
+ */
+export interface FindState {
+    /** Current search value */
+    searchValue?: string;
+    /** The number of the active match within all the matches in the grid (starting from `1`) */
+    activeMatch?: number;
+}
+
 export interface CellSelectionCellState {
     id?: string;
     type?: CellRangeType;
@@ -239,6 +249,8 @@ export interface GridState {
     columnHeaderName?: ColumnHeaderNameState;
     /** Column Filters and Advanced Filter */
     filter?: FilterState;
+    /** Find search value and active match. Works for Client-Side Row Model only */
+    find?: FindState;
     /** Currently focused cell. Works for Client-Side Row Model only */
     focusedCell?: FocusedCellState;
     /** Current page */

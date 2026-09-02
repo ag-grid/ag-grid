@@ -19,6 +19,7 @@ import type {
     ColumnSizingState,
     ColumnVisibilityState,
     FilterState,
+    FindState,
     FocusedCellState,
     GridState,
     GridStateKey,
@@ -368,6 +369,7 @@ export class StateService extends BeanStub implements NamedBean {
         const {
             scroll: scrollState,
             cellSelection: cellSelectionState,
+            find: findState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
         } = state;
@@ -379,6 +381,11 @@ export class StateService extends BeanStub implements NamedBean {
         }
         if (shouldSetState('cellSelection', cellSelectionState)) {
             this.setCellSelectionState(cellSelectionState);
+        }
+        // Runs before the scroll restore: going to the active match scrolls to it, and the captured
+        // scroll position is the one the user was actually left on.
+        if (shouldSetState('find', findState)) {
+            this.setFindState(findState, source);
         }
         if (shouldSetState('scroll', scrollState)) {
             this.setScrollState(scrollState);
@@ -399,6 +406,7 @@ export class StateService extends BeanStub implements NamedBean {
         updateCachedState('rangeSelection', cellSelection);
         updateCachedState('cellSelection', cellSelection);
         updateCachedState('scroll', this.getScrollState());
+        updateCachedState('find', this.getFindState());
     }
 
     private setupStateOnFirstDataRendered(initialState: GridState): void {
@@ -417,6 +425,7 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
+            findChanged: () => updateCachedState('find', this.getFindState()),
         });
     }
 
@@ -799,6 +808,37 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         rangeSvc.setCellRanges(cellRanges);
+    }
+
+    private getFindState(): FindState | undefined {
+        const findSvc = this.beans.findSvc;
+        // Find only searches the Client-Side Row Model, so there is nothing to restore elsewhere. Without
+        // the module the option is inert, and writing it on restore reports a missing-module error.
+        if (!findSvc || !this.isClientSideRowModel) {
+            return undefined;
+        }
+        // The service holds a trimmed, case-converted form, so the option is the round-trippable value.
+        const searchValue = this.gos.get('findSearchValue') || undefined;
+        // The active match is meaningless without a search value, and is wiped whenever the value changes.
+        return searchValue ? { searchValue, activeMatch: findSvc.activeMatch?.numOverall } : undefined;
+    }
+
+    private setFindState(findState?: FindState, source: 'gridInitializing' | 'api' = 'api'): void {
+        const findSvc = this.beans.findSvc;
+        if (!findSvc || !this.isClientSideRowModel) {
+            return;
+        }
+        const { searchValue, activeMatch } = findState ?? {};
+        // An `api` restore resets what it omits, so a state without a search value clears Find.
+        const newSearchValue = source === 'api' ? (searchValue ?? '') : searchValue;
+        if (newSearchValue !== undefined) {
+            // The find service's own property listener is the apply path, and it recalculates the
+            // matches synchronously, so the active match below can be resolved straight after.
+            this.gos.updateGridOptions({ options: { findSearchValue: newSearchValue } });
+        }
+        if (activeMatch != null) {
+            findSvc.goTo(activeMatch);
+        }
     }
 
     private getScrollState(): ScrollState | undefined {

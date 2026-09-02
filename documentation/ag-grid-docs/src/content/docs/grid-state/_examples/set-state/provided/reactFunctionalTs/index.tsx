@@ -10,6 +10,7 @@ import type {
     GridState,
     RowSelectionOptions,
     StateUpdatedEvent,
+    Toolbar,
 } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -73,6 +74,7 @@ const GridExample = () => {
         }),
         []
     );
+    const toolbar = useMemo<Toolbar>(() => ({ items: ['agFindToolbarItem'] }), []);
     const [currentState, setCurrentState] = useState<GridState>();
     const [gridVisible, setGridVisible] = useState(true);
     const [savedState, setSavedState] = useState<GridState>();
@@ -140,6 +142,7 @@ const GridExample = () => {
                                 defaultColGroupDef={defaultColGroupDef}
                                 autoGroupColumnDef={autoGroupColumnDef}
                                 sideBar={true}
+                                toolbar={toolbar}
                                 pagination={true}
                                 rowSelection={rowSelection}
                                 cellSelection={true}

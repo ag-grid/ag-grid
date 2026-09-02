@@ -52,6 +52,12 @@
                 "include": []
             }
         },
+        "find": {
+            "more": {
+                "url": "./find/",
+                "name": "Find"
+            }
+        },
         "focusedCell": {
             "more": {
                 "url": "./keyboard-navigation/",
