@@ -789,6 +789,9 @@ export const AG_GRID_LOCALE_NL = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Celleditorvalidatie',
+    ariaFullRowValidationError: 'Validatie van volledige rij: ${variable}',
+    ariaFullRowEditValidationFailed: 'Kan het bewerken van de rij niet voltooien. ${variable}',
+    ariaRowIndex: 'Rij ${variable}',
     ariaLabelLoadingContextMenu: 'Contextmenu laden',
 
     // aria labels for rich select

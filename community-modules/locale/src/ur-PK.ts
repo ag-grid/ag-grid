@@ -786,6 +786,9 @@ export const AG_GRID_LOCALE_PK = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'سیل ایڈیٹر کی توثیق',
+    ariaFullRowValidationError: 'مکمل صف کی توثیق: ${variable}',
+    ariaFullRowEditValidationFailed: 'صف کی ترمیم مکمل نہیں ہو سکتی۔ ${variable}',
+    ariaRowIndex: 'صف ${variable}',
     ariaLabelLoadingContextMenu: 'کنٹیکسٹ مینو لوڈ ہو رہا ہے',
 
     // aria labels for rich select

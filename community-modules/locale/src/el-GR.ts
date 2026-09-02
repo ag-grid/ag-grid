@@ -792,6 +792,9 @@ export const AG_GRID_LOCALE_GR = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Επιβεβαίωση Επεξεργαστή Κελιού',
+    ariaFullRowValidationError: 'Επικύρωση ολόκληρης της γραμμής: ${variable}',
+    ariaFullRowEditValidationFailed: 'Δεν είναι δυνατή η ολοκλήρωση της επεξεργασίας γραμμής. ${variable}',
+    ariaRowIndex: 'Γραμμή ${variable}',
     ariaLabelLoadingContextMenu: 'Φόρτωση Μενού Περιβάλλοντος',
 
     // aria labels for rich select

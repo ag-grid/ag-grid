@@ -787,6 +787,9 @@ export const AG_GRID_LOCALE_CZ = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Ověření editoru buňky',
+    ariaFullRowValidationError: 'Validace celého řádku: ${variable}',
+    ariaFullRowEditValidationFailed: 'Úpravu řádku nelze dokončit. ${variable}',
+    ariaRowIndex: 'Řádek ${variable}',
     ariaLabelLoadingContextMenu: 'Načítání kontextové nabídky',
 
     // aria labels for rich select

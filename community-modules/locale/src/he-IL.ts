@@ -785,6 +785,9 @@ export const AG_GRID_LOCALE_IL = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'אימות עורך תא',
+    ariaFullRowValidationError: 'אימות שורה מלאה: ${variable}',
+    ariaFullRowEditValidationFailed: 'לא ניתן להשלים את עריכת השורה. ${variable}',
+    ariaRowIndex: 'שורה ${variable}',
     ariaLabelLoadingContextMenu: 'טוען תפריט קיצור דרך',
 
     // aria labels for rich select

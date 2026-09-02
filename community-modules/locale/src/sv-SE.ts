@@ -790,6 +790,9 @@ export const AG_GRID_LOCALE_SE = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Celleditorvalidering',
+    ariaFullRowValidationError: 'Validering av hela raden: ${variable}',
+    ariaFullRowEditValidationFailed: 'Det går inte att slutföra radredigeringen. ${variable}',
+    ariaRowIndex: 'Rad ${variable}',
     ariaLabelLoadingContextMenu: 'Laddar kontextmeny',
 
     // aria labels for rich select

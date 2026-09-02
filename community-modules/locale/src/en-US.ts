@@ -793,6 +793,9 @@ export const AG_GRID_LOCALE_EN = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Cell Editor Validation',
+    ariaFullRowValidationError: 'Full Row Validation: ${variable}',
+    ariaFullRowEditValidationFailed: 'Cannot complete row edit. ${variable}',
+    ariaRowIndex: 'Row ${variable}',
 
     // aria labels for async context menus
     ariaLabelLoadingContextMenu: 'Loading Context Menu',

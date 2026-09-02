@@ -785,6 +785,9 @@ export const AG_GRID_LOCALE_CN = {
 
     // Cell Editor
     ariaValidationErrorPrefix: '单元格编辑器验证',
+    ariaFullRowValidationError: '整行验证：${variable}',
+    ariaFullRowEditValidationFailed: '无法完成行编辑。${variable}',
+    ariaRowIndex: '第 ${variable} 行',
     ariaLabelLoadingContextMenu: '正在加载上下文菜单',
 
     // aria labels for rich select

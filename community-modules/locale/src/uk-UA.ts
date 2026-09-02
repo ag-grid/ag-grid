@@ -789,6 +789,9 @@ export const AG_GRID_LOCALE_UA = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Валідація редактора комірки',
+    ariaFullRowValidationError: 'Перевірка всього рядка: ${variable}',
+    ariaFullRowEditValidationFailed: 'Не вдалося завершити редагування рядка. ${variable}',
+    ariaRowIndex: 'Рядок ${variable}',
     ariaLabelLoadingContextMenu: 'Завантаження контекстного меню',
 
     // aria labels for rich select

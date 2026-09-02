@@ -790,6 +790,9 @@ export const AG_GRID_LOCALE_FI = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Solumuokkaimen vahvistus',
+    ariaFullRowValidationError: 'Koko rivin validointi: ${variable}',
+    ariaFullRowEditValidationFailed: 'Rivin muokkausta ei voi viimeistellä. ${variable}',
+    ariaRowIndex: 'Rivi ${variable}',
     ariaLabelLoadingContextMenu: 'Ladataan kontekstivalikkoa',
 
     // aria labels for rich select

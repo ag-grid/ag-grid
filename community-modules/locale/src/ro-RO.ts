@@ -791,6 +791,9 @@ export const AG_GRID_LOCALE_RO = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Validare editor de celule',
+    ariaFullRowValidationError: 'Validarea întregului rând: ${variable}',
+    ariaFullRowEditValidationFailed: 'Editarea rândului nu poate fi finalizată. ${variable}',
+    ariaRowIndex: 'Rândul ${variable}',
     ariaLabelLoadingContextMenu: 'Încărcare Meniu Contextual',
 
     // aria labels for rich select

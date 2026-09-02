@@ -62,6 +62,10 @@ export function _setupEditors(
     const { valueSvc, editSvc, editModelSvc } = beans;
     const { rowNode, column } = position ?? {};
 
+    // One pass shared across the row's attaches: each attach revalidates, so an unseeded k-th editor
+    // would re-run every validator before it.
+    const validationCache: EditorValidationCache = new Map();
+
     for (const cellPosition of editingCells) {
         const { rowNode: cellRowNode, column: cellColumn } = cellPosition;
         const curCellCtrl = _getCellCtrl(beans, cellPosition);
@@ -90,14 +94,16 @@ export function _setupEditors(
 
         const shouldStartEditing = cellStartedEdit && rowNode === curCellCtrl.rowNode && curCellCtrl.column === column;
 
-        _setupEditor(
-            beans,
-            { rowNode: rowNode!, column: curCellCtrl.column },
-            {
-                key: shouldStartEditing ? key : null,
-                event: shouldStartEditing ? event : null,
-                cellStartedEdit: shouldStartEditing && cellStartedEdit,
-            }
+        editSvc!.withEditorAttachValidationCache(validationCache, curCellCtrl, () =>
+            _setupEditor(
+                beans,
+                { rowNode: rowNode!, column: curCellCtrl.column },
+                {
+                    key: shouldStartEditing ? key : null,
+                    event: shouldStartEditing ? event : null,
+                    cellStartedEdit: shouldStartEditing && cellStartedEdit,
+                }
+            )
         );
     }
 }
@@ -431,15 +437,28 @@ export function _flushEditors(beans: BeanCollection): void {
  * Block mode can't hold an invalid editor whose popup is gone, so the caller must revert: an orphaned
  * editor would leave the cell uneditable.
  */
-const getPopupEditValidation = (beans: BeanCollection, cellCtrl: CellCtrl) => {
+const getPopupEditValidation = (
+    beans: BeanCollection,
+    cellCtrl: CellCtrl
+): { revertBlockedInvalid: boolean; validationCache?: EditorValidationCache } => {
     // Buffered input has to reach the value first, or it reads as the old valid one.
     _flushEditors(beans);
+
+    if (!beans.editSvc!.cellEditingInvalidCommitBlocks()) {
+        // Revert mode only closes this cell, so snapshot its verdict alone: a full populate would
+        // restyle and announce every open editor on a plain popup dismiss.
+        const editor = cellCtrl.comp?.getCellEditor();
+        let validationCache: EditorValidationCache | undefined;
+        if (editor && beans.editSvc!.hasValidationRules()) {
+            validationCache = new Map([[editor, [...(_unwrapUserComp(editor).getValidationErrors?.() ?? [])]]]);
+        }
+        return { revertBlockedInvalid: false, validationCache };
+    }
+
     const validationCache = _populateModelValidationErrors(beans);
     // Cell-scoped: a row-level error, or a sibling's, is not this value's fault, and reverting cannot fix it.
     return {
-        revertBlockedInvalid:
-            beans.editSvc!.cellEditingInvalidCommitBlocks() &&
-            !!beans.editModelSvc?.getCellValidationModel().hasCellValidation(cellCtrl),
+        revertBlockedInvalid: !!beans.editModelSvc?.getCellValidationModel().hasCellValidation(cellCtrl),
         validationCache,
     };
 };

@@ -786,6 +786,9 @@ export const AG_GRID_LOCALE_KR = {
 
     // Cell Editor
     ariaValidationErrorPrefix: '셀 편집기 유효성 검사',
+    ariaFullRowValidationError: '전체 행 유효성 검사: ${variable}',
+    ariaFullRowEditValidationFailed: '행 편집을 완료할 수 없습니다. ${variable}',
+    ariaRowIndex: '행 ${variable}',
     ariaLabelLoadingContextMenu: '로드 중인 컨텍스트 메뉴',
 
     // aria labels for rich select

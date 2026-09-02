@@ -196,6 +196,23 @@ describe('cell edit validation pass caching', () => {
         );
     });
 
+    test('full-row start validates each editor at most once across the attach passes', async () => {
+        const rowData = [{ value: 'first', other: 'second' }];
+        const api = await createGrid(rowData, {
+            columnDefs: [
+                { field: 'value', cellEditor: StatefulValidationEditor },
+                { field: 'other', cellEditor: StatefulValidationEditor },
+            ],
+        });
+
+        await startEditing(api);
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(2));
+
+        expect(StatefulValidationEditor.instances).toHaveLength(2);
+        expect(StatefulValidationEditor.instances.every(({ validationCalls }) => validationCalls <= 1)).toBe(true);
+        expect(StatefulValidationEditor.validationCalls).toBe(2);
+    });
+
     test('batch Enter reuses its preflight validation through staging and cleanup', async () => {
         const rowData = [{ value: 'source' }];
         const api = await createGrid(rowData);

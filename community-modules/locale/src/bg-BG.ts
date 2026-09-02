@@ -791,6 +791,9 @@ export const AG_GRID_LOCALE_BG = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Валидиране на редактор на клетки',
+    ariaFullRowValidationError: 'Валидация на целия ред: ${variable}',
+    ariaFullRowEditValidationFailed: 'Редактирането на реда не може да бъде завършено. ${variable}',
+    ariaRowIndex: 'Ред ${variable}',
     ariaLabelLoadingContextMenu: 'Зареждане на контекстно меню',
 
     // aria labels for rich select

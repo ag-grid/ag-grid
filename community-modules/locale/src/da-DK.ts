@@ -789,6 +789,9 @@ export const AG_GRID_LOCALE_DK = {
 
     // Cell Editor
     ariaValidationErrorPrefix: 'Celleditorvalidering',
+    ariaFullRowValidationError: 'Validering af hele rækken: ${variable}',
+    ariaFullRowEditValidationFailed: 'Rækkeredigeringen kan ikke fuldføres. ${variable}',
+    ariaRowIndex: 'Række ${variable}',
     ariaLabelLoadingContextMenu: 'Indlæser kontekstmenu',
 
     // aria labels for rich select
