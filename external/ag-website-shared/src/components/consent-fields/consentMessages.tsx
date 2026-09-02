@@ -5,7 +5,7 @@ import type { ReactElement } from 'react';
  * Consent copy shared by every web-to-lead form, so the wording stays identical
  * across the site. See AG-17996.
  */
-export const CONSENT_LABELS: Record<string, string> = {
+export const CONSENT_LABELS = {
     marketingEmail:
         "I'd like to receive product updates, news and marketing communications from AG Grid and Bryntum by email. You can unsubscribe at any time.",
     emailTracking: 'I consent to tracking of email opens and clicks',
@@ -14,7 +14,7 @@ export const CONSENT_LABELS: Record<string, string> = {
      * France and Italy, so visitors declare it themselves to reveal that checkbox.
      */
     franceOrItaly: 'I live in France or Italy',
-};
+} as const satisfies Record<string, string>;
 
 /** A statement, not a consent — must never be rendered as a checkbox. */
 export const PROCESSING_NOTICE: ReactElement = (
