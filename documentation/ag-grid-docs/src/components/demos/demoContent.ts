@@ -25,7 +25,7 @@ export interface DemoDefinition {
     seoTitle?: string;
     seoH1?: string;
     seoDescription?: string;
-    /** The 1 to 2 sentence indexable intro rendered under the H1. */
+    /** The indexable sentence describing the demo. The frameworks sentence is appended to it. */
     intro?: string;
     /** Root-relative path of the demo page, resolved with urlWithBaseUrl / toAbsoluteUrl. */
     href: string;
@@ -39,8 +39,18 @@ export type DemoName = keyof typeof demosJson;
 // still checked: a field missing from or misspelled in demos.json fails this cast.
 const demosData = demosJson as Record<DemoName, DemoDefinition>;
 
-/** Frameworks the demo source is published for, so the intro can say where the code is available. */
-const PUBLISHED_FRAMEWORKS = ['JavaScript', 'React', 'Angular', 'Vue'];
+/**
+ * Frameworks the demo source is published for, and their directory in the ag-grid-demos repository
+ * that the intro links to. The JavaScript demo is written in TypeScript, hence the one mismatch.
+ */
+const PUBLISHED_FRAMEWORK_DIRECTORIES = {
+    JavaScript: 'typescript',
+    React: 'react',
+    Angular: 'angular',
+    Vue: 'vue',
+} as const;
+type PublishedFramework = keyof typeof PUBLISHED_FRAMEWORK_DIRECTORIES;
+const PUBLISHED_FRAMEWORKS = Object.keys(PUBLISHED_FRAMEWORK_DIRECTORIES) as PublishedFramework[];
 const DEFAULT_FRAMEWORK = 'JavaScript';
 
 /** Google truncates a title past roughly this width, so a derived one stays inside it. */
@@ -115,17 +125,57 @@ function deriveDescription(definition: DemoDefinition): string {
     );
 }
 
-function deriveIntro(definition: DemoDefinition): string {
+function describeDemo(definition: DemoDefinition): string {
+    return `A ${lowerFirst(definition.useCase)} ${definition.pageType.toLowerCase()} example showing ${toFeatureProse(definition.features)}.`;
+}
+
+/** Where a framework's copy of this demo lives, falling back to the demo's own source root. */
+function frameworkSourceUrl(definition: DemoDefinition, framework: string): string {
+    const directory = PUBLISHED_FRAMEWORK_DIRECTORIES[framework as PublishedFramework];
+    return directory ? `${definition.githubUrl}/${directory}` : definition.githubUrl;
+}
+
+/** `a, b and c`, as segments, so each framework carries the link to its own source. */
+function toLinkedProseList(definition: DemoDefinition, frameworks: string[]): IntroSegment[] {
+    return frameworks.flatMap((framework, index) => {
+        const separator = index === 0 ? '' : index === frameworks.length - 1 ? ' and ' : ', ';
+        return [
+            ...(separator ? [{ text: separator }] : []),
+            { text: framework, href: frameworkSourceUrl(definition, framework) },
+        ];
+    });
+}
+
+/** The sentence naming where the demo runs and where each framework's source is published. */
+function deriveFrameworkAvailability(definition: DemoDefinition): IntroSegment[] {
     const framework = resolveFramework(definition);
     const alsoAvailable = PUBLISHED_FRAMEWORKS.filter((name) => name !== framework);
     return [
-        `A ${lowerFirst(definition.useCase)} ${definition.pageType.toLowerCase()} example showing ${toFeatureProse(definition.features)}.`,
-        `The demo runs in ${framework}, and the same example is available in ${toProseList(alsoAvailable)}.`,
-    ].join(' ');
+        { text: 'The demo runs in ' },
+        { text: framework, href: frameworkSourceUrl(definition, framework) },
+        { text: ', and the same example is available in ' },
+        ...toLinkedProseList(definition, alsoAvailable),
+        { text: '.' },
+    ];
+}
+
+function deriveIntroSegments(definition: DemoDefinition): IntroSegment[] {
+    return [{ text: `${definition.intro ?? describeDemo(definition)} ` }, ...deriveFrameworkAvailability(definition)];
+}
+
+/** The intro as plain text, for the meta description, the markdown twin and the page's tests. */
+function toPlainText(segments: IntroSegment[]): string {
+    return segments.map(({ text }) => text).join('');
 }
 
 function resolveFramework(definition: DemoDefinition): string {
     return definition.framework ?? DEFAULT_FRAMEWORK;
+}
+
+/** A run of the intro's text, carrying a link when it names a framework the demo is published in. */
+export interface IntroSegment {
+    text: string;
+    href?: string;
 }
 
 export interface DemoPageContent {
@@ -134,7 +184,10 @@ export interface DemoPageContent {
     seoH1: string;
     /** Meta description, and the source of the og:description / twitter:description. */
     seoDescription: string;
+    /** The intro as plain text, for the meta description and the page's markdown twin. */
     intro: string;
+    /** The same intro to render, split so each framework it names links to its own source. */
+    introSegments: IntroSegment[];
     /** The features shown, for the derived copy and the per-feature H2s (SE-125 follow-up). */
     features: string[];
     framework: string;
@@ -149,12 +202,14 @@ export interface DemoPageContent {
  */
 export function demoContent(demo: DemoName): DemoPageContent {
     const definition = demosData[demo];
+    const introSegments = deriveIntroSegments(definition);
 
     return {
         seoTitle: definition.seoTitle ?? deriveTitle(definition),
         seoH1: definition.seoH1 ?? deriveHeading(definition),
         seoDescription: definition.seoDescription ?? deriveDescription(definition),
-        intro: definition.intro ?? deriveIntro(definition),
+        intro: toPlainText(introSegments),
+        introSegments,
         features: definition.features,
         framework: resolveFramework(definition),
         href: definition.href,
@@ -170,7 +225,8 @@ export const demoContentInternals = {
     deriveTitle,
     deriveHeading,
     deriveDescription,
-    deriveIntro,
+    deriveIntro: (definition: DemoDefinition) => toPlainText(deriveIntroSegments(definition)),
+    deriveIntroSegments,
     MAX_TITLE_LENGTH,
     MAX_DESCRIPTION_LENGTH,
 };

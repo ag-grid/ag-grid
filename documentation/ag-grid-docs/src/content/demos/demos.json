@@ -7,7 +7,7 @@
         "seoTitle": "Data Grid Performance Example - 100k+ Rows Live | AG Grid",
         "seoH1": "High-Performance Data Grid Example",
         "seoDescription": "See AG Grid render 100,000+ rows and columns with instant scroll, sort and filter. Adjust rows and columns live to benchmark data grid performance.",
-        "intro": "Stress-test AG Grid with up to 100,000 rows and columns, changing the row and column counts live while scrolling, sorting and filtering stay instant. The demo runs in React, and the same example is available in JavaScript, Angular and Vue.",
+        "intro": "Stress-test AG Grid with up to 100,000 rows and columns, changing the row and column counts live while scrolling, sorting and filtering stay instant.",
         "href": "/example/",
         "githubUrl": "https://github.com/ag-grid/ag-grid-demos/tree/main/performance",
         "activeTab": "complete"
@@ -20,7 +20,7 @@
         "seoTitle": "Finance Dashboard Example - Live Data Grid & Sparklines | AG Grid",
         "seoH1": "Finance Dashboard Example",
         "seoDescription": "An interactive finance dashboard built with AG Grid: live-updating prices, integrated sparklines and high-frequency data. Explore the demo.",
-        "intro": "An interactive finance dashboard showing live-updating prices, integrated sparklines and high-frequency data in a single AG Grid. The demo runs in React, and the same example is available in JavaScript, Angular and Vue.",
+        "intro": "An interactive finance dashboard showing live-updating prices, integrated sparklines and high-frequency data in a single AG Grid.",
         "href": "/example-finance/",
         "githubUrl": "https://github.com/ag-grid/ag-grid-demos/tree/main/finance",
         "activeTab": "finance"
@@ -33,7 +33,7 @@
         "seoTitle": "HR Dashboard Example - Employee Data Grid | AG Grid",
         "seoH1": "HR Dashboard Example",
         "seoDescription": "An HR dashboard demo with hierarchical employee data, row grouping and tree data in AG Grid. See how to manage people and org data interactively.",
-        "intro": "An HR dashboard built on hierarchical employee data, using row grouping and tree data to explore an organisation from the top down. The demo runs in React, and the same example is available in JavaScript, Angular and Vue.",
+        "intro": "An HR dashboard built on hierarchical employee data, using row grouping and tree data to explore an organisation from the top down.",
         "href": "/example-hr/",
         "githubUrl": "https://github.com/ag-grid/ag-grid-demos/tree/main/hr",
         "activeTab": "crm"
@@ -46,7 +46,7 @@
         "seoTitle": "Inventory Management System Demo - Data Grid | AG Grid",
         "seoH1": "Inventory Management Dashboard Example",
         "seoDescription": "Track stock, edit cells inline and manage products in this AG Grid inventory management demo, built on a fast, sortable data grid.",
-        "intro": "An inventory management dashboard for tracking stock levels, editing cells inline and filtering products by status. The demo runs in React, and the same example is available in JavaScript, Angular and Vue.",
+        "intro": "An inventory management dashboard for tracking stock levels, editing cells inline and filtering products by status.",
         "href": "/example-inventory/",
         "githubUrl": "https://github.com/ag-grid/ag-grid-demos/tree/main/inventory",
         "activeTab": "inventory"

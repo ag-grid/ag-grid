@@ -22,6 +22,9 @@ export function buildExampleMarkdown({ siteRoot }: { siteRoot?: string } = {}): 
         .map((tab) => `- **${tab.label}** — [live demo](${toAbsoluteUrl(tab.href, siteRoot)}), [GitHub](${tab.github})`)
         .join('\n');
 
+    // The frameworks the intro names link to their own copy of the demo's source.
+    const introMarkdown = content.introSegments.map(({ text, href }) => (href ? `[${text}](${href})` : text)).join('');
+
     const resources = [
         `- [${VIDEO_TOUR_TEXT}](${VIDEO_TOUR_URL})`,
         `- [Contact Us](${toAbsoluteUrl('/contact/', siteRoot)})`,
@@ -30,7 +33,7 @@ export function buildExampleMarkdown({ siteRoot }: { siteRoot?: string } = {}): 
     const document = [
         frontmatter,
         `# ${content.seoH1}`,
-        content.intro,
+        introMarkdown,
         `## Demos\n\n${demos}`,
         `## Resources\n\n${resources}`,
     ].join('\n\n');

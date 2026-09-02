@@ -3,8 +3,15 @@ import { describe, expect, it } from 'vitest';
 import { type DemoDefinition, demoContent, demoContentInternals, demoNames } from './demoContent';
 import { demoTabs } from './demosData';
 
-const { deriveTitle, deriveHeading, deriveDescription, deriveIntro, MAX_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH } =
-    demoContentInternals;
+const {
+    deriveTitle,
+    deriveHeading,
+    deriveDescription,
+    deriveIntro,
+    deriveIntroSegments,
+    MAX_TITLE_LENGTH,
+    MAX_DESCRIPTION_LENGTH,
+} = demoContentInternals;
 
 /** A demo supplying only the descriptive half of the contract, so every `seo*` field is derived. */
 const UNDESCRIBED_DEMO: DemoDefinition = {
@@ -70,5 +77,19 @@ describe('derived seo fields', () => {
 
     it('defaults the framework to JavaScript', () => {
         expect(deriveIntro({ ...UNDESCRIBED_DEMO, framework: undefined })).toContain('The demo runs in JavaScript');
+    });
+
+    it("links every framework the intro names to that framework's copy of the demo", () => {
+        const links = deriveIntroSegments(UNDESCRIBED_DEMO)
+            .filter(({ href }) => href)
+            .map(({ text, href }) => [text, href]);
+
+        expect(links).toEqual([
+            ['React', `${UNDESCRIBED_DEMO.githubUrl}/react`],
+            // The JavaScript demo's source is the repository's TypeScript directory.
+            ['JavaScript', `${UNDESCRIBED_DEMO.githubUrl}/typescript`],
+            ['Angular', `${UNDESCRIBED_DEMO.githubUrl}/angular`],
+            ['Vue', `${UNDESCRIBED_DEMO.githubUrl}/vue`],
+        ]);
     });
 });

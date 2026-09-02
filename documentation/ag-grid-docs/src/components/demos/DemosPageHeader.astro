@@ -34,7 +34,15 @@ const { content } = Astro.props as Props;
                 <span>Contact Us</span>
             </a>
         </div>
-        <p class={styles.intro}>{content.intro}</p>
+        <p class={styles.intro}>
+            {
+                content.introSegments.map(({ text, href }) =>
+                    // set:text rather than a child, so the anchor holds the framework's name
+                    // without the surrounding whitespace of the markup.
+                    href ? <a href={href} target="_blank" rel="noopener noreferrer" set:text={text} /> : text
+                )
+            }
+        </p>
     </div>
 
     <DemoTabs activeTab={content.activeTab} />

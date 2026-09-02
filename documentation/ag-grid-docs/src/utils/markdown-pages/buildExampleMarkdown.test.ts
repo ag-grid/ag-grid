@@ -12,7 +12,16 @@ describe('buildExampleMarkdown', () => {
         expect(output).toContain(`title: ${JSON.stringify(performance.seoTitle)}`);
         expect(output).toContain(`description: ${JSON.stringify(performance.seoDescription)}`);
         expect(output).toContain(`\n# ${performance.seoH1}`);
-        expect(output).toContain(performance.intro);
+        expect(output).toContain(performance.introSegments[0].text.trim());
+    });
+
+    it("links the intro's frameworks to their own copy of the demo source", () => {
+        const linked = performance.introSegments.filter(({ href }) => href);
+
+        expect(linked).toHaveLength(4);
+        for (const { text, href } of linked) {
+            expect(output).toContain(`[${text}](${href})`);
+        }
     });
 
     it('lists the four demos, each with a live-demo and its own GitHub link', () => {

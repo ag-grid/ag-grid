@@ -22,7 +22,13 @@ test.describe('Demo page SEO copy', () => {
             );
             await expect(page.locator('head meta[property="og:title"]')).toHaveAttribute('content', content.seoTitle);
             await expect(page.getByRole('heading', { level: 1 })).toHaveText(content.seoH1);
-            await expect(page.getByText(content.intro)).toBeVisible();
+            const intro = page.locator('[class*="topHeader"] p');
+            await expect(intro).toHaveText(content.intro);
+
+            const renderedLinks = await intro
+                .getByRole('link')
+                .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+            expect(renderedLinks).toEqual(content.introSegments.filter(({ href }) => href).map(({ href }) => href));
         });
     }
 });
