@@ -5,68 +5,68 @@ ignore:
     - '@angular/core@19.2.15':
         reason: >-
             Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T12:00:05.784Z
   SNYK-JS-ANGULARCOMPILER-17356585:
     - '@angular/compiler@19.2.15':
         reason: >-
             Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:59:27.913Z
   SNYK-JS-ANGULARCOMMON-17356486:
     - '@angular/common@19.2.15':
         reason: >-
             Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:46:17.478Z
   SNYK-JS-ANGULARCOMMON-17353316:
     - '@angular/common@19.2.15':
         reason: >-
             Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:45:51.983Z
   SNYK-JS-ANGULARCOMMON-17356555:
     - '@angular/common@19.2.15':
         reason: >-
             Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T10:53:37.133Z
   SNYK-JS-ANGULARCORE-15353393:
     - "@angular/core@19.2.15":
         reason: Test dependency - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-02T12:21:25.919Z
   SNYK-JS-ANGULARCOMMON-14135651:
     - "@angular/common@19.2.15":
         reason: Only used for testing
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2025-12-01T09:55:00.007Z
   SNYK-JS-ANGULARCOMPILER-14157154:
     - "@angular/compiler@19.2.15":
         reason: Only used for testing
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2025-12-03T12:11:00.007Z
   SNYK-JS-ANGULARCOMPILER-14908872:
     - "@angular/compiler@19.2.15":
         reason: "@angular/compiler is only used during development so an attack would
           only affect developer machines"
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2025-01-12T10:10:00.000Z
   SNYK-JS-ANGULARCORE-14908871:
     - "@angular/core@19.2.15":
         reason: "@angular/core is not used for SVG elements"
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2025-01-12T10:10:00.000Z
   SNYK-JS-ANGULARCOMPILER-15610286:
     - "@angular/compiler@19.2.15":
         reason: Downstream dependency of angular - not included in final production
           build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
   SNYK-JS-ANGULARCORE-15610287:
     - "@angular/core@19.2.15":
         reason: Downstream dependency of angular - not included in final production
           build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
 patch: {}
