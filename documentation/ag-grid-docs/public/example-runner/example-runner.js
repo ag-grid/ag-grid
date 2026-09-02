@@ -61,14 +61,17 @@
 
         if (requestedVersion !== null) {
             if (!new RegExp(VERSION_PATTERN).test(requestedVersion)) {
-                const message = `Example not loaded: "${requestedVersion}" is not a valid ?${VERSION_PARAM}= value. Expected a framework version such as ${options.defaultVersion}.`;
-
+                // Deliberately not echoing the requested value into the page: it comes
+                // straight from the query string. It stays in the thrown Error, which
+                // reaches the console where a developer debugging the URL will see it.
                 const banner = document.createElement('div');
-                banner.textContent = message;
+                banner.textContent =
+                    `Example not loaded: the ?${VERSION_PARAM}= value is not valid. ` +
+                    `Expected a framework version such as ${options.defaultVersion}.`;
                 banner.setAttribute('style', 'padding: 1rem; font-family: monospace; color: #b00020;');
                 document.body.appendChild(banner);
 
-                throw new Error(message);
+                throw new Error(`Example not loaded: "${requestedVersion}" is not a valid ?${VERSION_PARAM}= value.`);
             }
             version = requestedVersion;
         }
