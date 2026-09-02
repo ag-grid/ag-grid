@@ -33,13 +33,8 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         const label = localeTextFunc('toolbarQuickFilter', 'Filter');
         const eGui = this.getGui();
         let quickFilterTextTimeout: number | undefined;
-        // Marks the option write as this input's own, so the resync below leaves the caret alone.
-        let writingBack = false;
-        const setQuickFilterText = (quickFilterText: string) => {
-            writingBack = true;
+        const setQuickFilterText = (quickFilterText: string) =>
             this.gos.updateGridOptions({ options: { quickFilterText } });
-            writingBack = false;
-        };
 
         this.eInputField = this.createManagedBean<GridInputTextField>(
             new AgInputTextField({
@@ -69,11 +64,10 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         });
 
         // An external write (`setGridOption`, a state restore) filters the rows, so the input must follow.
+        // A write from this input is a no-op here: the field already holds that value, so `setValue` bails out.
         this.addManagedPropertyListener('quickFilterText', ({ currentValue }) => {
-            if (!writingBack) {
-                clearTimeout(quickFilterTextTimeout);
-                this.eInputField.setValue(currentValue ?? '', true);
-            }
+            clearTimeout(quickFilterTextTimeout);
+            this.eInputField.setValue(currentValue ?? '', true);
         });
     }
 

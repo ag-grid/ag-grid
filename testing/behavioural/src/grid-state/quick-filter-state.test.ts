@@ -2,12 +2,12 @@ import { waitFor } from '@testing-library/dom';
 import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, GridStateModule, QuickFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule, QuickFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AllEnterpriseModule, ToolbarModule } from 'ag-grid-enterprise';
 
 describe('Grid state - quick filter text', () => {
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, GridStateModule, QuickFilterModule, ToolbarModule],
+        modules: [ClientSideRowModelModule, GridStateModule, QuickFilterModule, TextFilterModule, ToolbarModule],
     });
 
     const rowData = [
@@ -151,6 +151,26 @@ describe('Grid state - quick filter text', () => {
         await new GridRows(api, `setState without a filter section clears the text`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 name:"Alice" country:"Canada"
+            └── LEAF id:1 name:"Bob" country:"Ireland"
+        `);
+    });
+
+    test('setState with a filter section but no text clears the text', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-clear-partial-filter', {
+            columnDefs,
+            rowData,
+            toolbar,
+            quickFilterText: 'canada',
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        api.setState({ filter: { filterModel: { name: { filterType: 'text', type: 'contains', filter: 'o' } } } });
+
+        await waitFor(() => expect(api.getGridOption('quickFilterText')).toBe(''));
+        expect(api.getState().filter?.quickFilterText).toBeUndefined();
+        expect(getInput(api).value).toBe('');
+        await new GridRows(api, `setState with a filter section but no text clears the text`).check(`
+            ROOT id:ROOT_NODE_ID
             └── LEAF id:1 name:"Bob" country:"Ireland"
         `);
     });

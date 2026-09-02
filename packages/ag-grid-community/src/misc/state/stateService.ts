@@ -738,9 +738,11 @@ export class StateService extends BeanStub implements NamedBean {
             const advancedFilterSource: FilterChangedEventSourceType = isApi ? 'api' : 'advancedFilter';
             filterManager?.setAdvFilterModel(advancedFilterModel ?? null, advancedFilterSource);
         }
-        if (quickFilterText !== undefined && this.beans.quickFilter) {
+        // An `api` restore resets what it omits, so a `filter` section without the text clears the quick filter.
+        const newQuickFilterText = isApi ? (quickFilterText ?? '') : quickFilterText;
+        if (newQuickFilterText !== undefined && this.beans.quickFilter) {
             // The quick filter service's own property listener is the apply path.
-            this.gos.updateGridOptions({ options: { quickFilterText: quickFilterText ?? '' } });
+            this.gos.updateGridOptions({ options: { quickFilterText: newQuickFilterText } });
         }
     }
 
