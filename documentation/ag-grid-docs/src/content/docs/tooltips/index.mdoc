@@ -33,28 +33,6 @@ Cell and header tooltip callbacks receive the same parameters. `value` is the un
 
 {% interfaceDocumentation interfaceName="TooltipCallbackParams" /%}
 
-### Deprecated Tooltip Properties
-
-`tooltipField`, `tooltipValueGetter`, and `headerTooltipValueGetter` are deprecated as of v36.2. Their compatibility precedence is:
-
-- `tooltip` is authoritative whenever it is supplied. Otherwise, a non-empty `tooltipField` is used when row data is available; `tooltipValueGetter` remains the fallback when the field is empty or row data has not loaded.
-- `headerTooltipValueGetter` takes precedence over a string `headerTooltip`, with the string used when the getter returns `null` or `undefined`. The `true`, `false`, and callback forms of `headerTooltip` are authoritative and the legacy getter is ignored.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        // tooltipField: 'country'
-        { field: 'athlete', tooltip: (params) => params.data?.country },
-
-        // tooltipValueGetter: getStatusTooltip
-        { field: 'status', tooltip: getStatusTooltip },
-
-        // headerTooltipValueGetter: getHeaderTooltip
-        { field: 'total', headerTooltip: getHeaderTooltip },
-    ],
-};
-```
-
 ## Tooltips for Truncated Text
 
 It's possible to configure tooltips to show only when the items hovered are truncated by setting `tooltipShowMode = 'whenTruncated'`.
