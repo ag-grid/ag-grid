@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_JP = {
     // Filter Titles
     textFilter: 'テキストフィルター',
     numberFilter: '数値フィルター',
+    bigintFilter: 'BigInt フィルター',
     dateFilter: '日付フィルター',
     setFilter: 'セットフィルター',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_JP = {
     advancedFilterValidationInvalidOption: 'オプションが見つかりません',
     advancedFilterValidationMissingQuote: '値の終端の引用符が欠落しています',
     advancedFilterValidationNotANumber: '値が数値ではありません',
+    advancedFilterValidationNotABigInt: '値が BigInt ではありません',
     advancedFilterValidationInvalidDate: '値が有効な日付ではありません',
     advancedFilterValidationMissingCondition: '条件が欠落しています',
     advancedFilterValidationJoinOperatorMismatch: '条件内の結合演算子は同じである必要があります',

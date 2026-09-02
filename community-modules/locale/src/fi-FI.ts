@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_FI = {
     // Filter Titles
     textFilter: 'Tekstisuodatin',
     numberFilter: 'Numerosuodatin',
+    bigintFilter: 'BigInt-suodatin',
     dateFilter: 'Päivämääräsuodatin',
     setFilter: 'Joukko suodatin',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_FI = {
     advancedFilterValidationInvalidOption: 'Valintaa ei löydy',
     advancedFilterValidationMissingQuote: 'Arvosta puuttuu pääte lainausmerkki',
     advancedFilterValidationNotANumber: 'Arvo ei ole numero',
+    advancedFilterValidationNotABigInt: 'Arvo ei ole BigInt',
     advancedFilterValidationInvalidDate: 'Arvo ei ole kelvollinen päivämäärä',
     advancedFilterValidationMissingCondition: 'Ehto puuttuu',
     advancedFilterValidationJoinOperatorMismatch: 'Yhdisteoperaattoreiden täytyy olla samat ehdon sisällä',

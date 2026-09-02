@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_CN = {
     // Filter Titles
     textFilter: '文本过滤器',
     numberFilter: '数字过滤器',
+    bigintFilter: 'BigInt 过滤器',
     dateFilter: '日期过滤器',
     setFilter: '集合过滤器',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_CN = {
     advancedFilterValidationInvalidOption: '找不到选项',
     advancedFilterValidationMissingQuote: '值缺少结束引号',
     advancedFilterValidationNotANumber: '值不是一个数字',
+    advancedFilterValidationNotABigInt: '值不是 BigInt',
     advancedFilterValidationInvalidDate: '值不是一个有效日期',
     advancedFilterValidationMissingCondition: '缺少条件',
     advancedFilterValidationJoinOperatorMismatch: '一个条件内的连接操作符必须相同',

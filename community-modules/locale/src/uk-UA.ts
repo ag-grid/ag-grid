@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_UA = {
     // Filter Titles
     textFilter: 'Текстовий фільтр',
     numberFilter: 'Числовий фільтр',
+    bigintFilter: 'Фільтр BigInt',
     dateFilter: 'Фільтр за датою',
     setFilter: 'Фільтр за множиною',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_UA = {
     advancedFilterValidationInvalidOption: 'Варіант не знайдено',
     advancedFilterValidationMissingQuote: 'Значення без кінцевої лапки',
     advancedFilterValidationNotANumber: 'Значення не є числом',
+    advancedFilterValidationNotABigInt: 'Значення не є BigInt',
     advancedFilterValidationInvalidDate: 'Значення не є дійсною датою',
     advancedFilterValidationMissingCondition: 'Відсутня умова',
     advancedFilterValidationJoinOperatorMismatch: "Оператори об'єднання в межах умови мають бути однаковими",

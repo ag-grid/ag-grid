@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_BG = {
     // Filter Titles
     textFilter: 'Филтър за текст',
     numberFilter: 'Филтър за число',
+    bigintFilter: 'Филтър за BigInt',
     dateFilter: 'Филтър за дата',
     setFilter: 'Наборен филтър',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_BG = {
     advancedFilterValidationInvalidOption: 'Опцията не е намерена',
     advancedFilterValidationMissingQuote: 'Липсва крайна кавичка на стойността',
     advancedFilterValidationNotANumber: 'Стойността не е число',
+    advancedFilterValidationNotABigInt: 'Стойността не е BigInt',
     advancedFilterValidationInvalidDate: 'Стойността не е валидна дата',
     advancedFilterValidationMissingCondition: 'Липсва условие',
     advancedFilterValidationJoinOperatorMismatch: 'Операционните съединители в едно условие трябва да са еднакви',

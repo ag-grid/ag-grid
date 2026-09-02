@@ -1,5 +1,3 @@
-import { _parseBigIntOrNull } from 'ag-stack';
-
 import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
@@ -278,8 +276,9 @@ class OperandParser implements Parser {
                 this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotANumber');
             }
         },
-        bigint: () => {
-            if (_parseBigIntOrNull(this.modelValue) === null) {
+        // `1.5` is a number the parser still rejects, so this needs its own message, not the number one.
+        bigint: (modelValue) => {
+            if (modelValue == null) {
                 this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotABigInt');
             }
         },

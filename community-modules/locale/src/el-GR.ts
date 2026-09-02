@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_GR = {
     // Filter Titles
     textFilter: 'Φίλτρο Κειμένου',
     numberFilter: 'Φίλτρο Αριθμού',
+    bigintFilter: 'Φίλτρο BigInt',
     dateFilter: 'Φίλτρο Ημερομηνίας',
     setFilter: 'Φίλτρο Συνόλου',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_GR = {
     advancedFilterValidationInvalidOption: 'Η επιλογή δεν βρέθηκε',
     advancedFilterValidationMissingQuote: 'Η τιμή λείπει τελική εισαγωγική',
     advancedFilterValidationNotANumber: 'Η τιμή δεν είναι αριθμός',
+    advancedFilterValidationNotABigInt: 'Η τιμή δεν είναι BigInt',
     advancedFilterValidationInvalidDate: 'Η τιμή δεν είναι έγκυρη ημερομηνία',
     advancedFilterValidationMissingCondition: 'Η συνθήκη λείπει',
     advancedFilterValidationJoinOperatorMismatch: 'Οι τελεστές ένωσης εντός συνθήκης πρέπει να είναι οι ίδιοι',

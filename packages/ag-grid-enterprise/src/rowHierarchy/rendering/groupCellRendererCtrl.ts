@@ -173,8 +173,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const {
             params: { value, valueFormatted },
         } = this;
-        // if no formatted value and node key is '', then we replace this group with (Blanks)
-        // this does not propagate down for [showOpenedGroup]
+        // `(Blanks)` is substituted in `showRowGroupColValueSvc`, and does not propagate down for [showOpenedGroup].
         const innerCompDetails = this.getInnerCompDetails();
         this.comp.setInnerRenderer(innerCompDetails, valueFormatted ?? value ?? null);
     }

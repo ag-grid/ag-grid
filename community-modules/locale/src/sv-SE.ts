@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_SE = {
     // Filter Titles
     textFilter: 'Textfilter',
     numberFilter: 'Nummerfilter',
+    bigintFilter: 'BigInt-filter',
     dateFilter: 'Datumfilter',
     setFilter: 'Setfilter',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_SE = {
     advancedFilterValidationInvalidOption: 'Alternativ hittades inte',
     advancedFilterValidationMissingQuote: 'Värdet saknar slutcitat',
     advancedFilterValidationNotANumber: 'Värdet är inte ett nummer',
+    advancedFilterValidationNotABigInt: 'Värdet är inte ett BigInt',
     advancedFilterValidationInvalidDate: 'Värdet är inte ett giltigt datum',
     advancedFilterValidationMissingCondition: 'Villkor saknas',
     advancedFilterValidationJoinOperatorMismatch: 'Kombinatorer inom ett villkor måste vara desamma',

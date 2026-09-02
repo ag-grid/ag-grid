@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_HU = {
     // Filter Titles
     textFilter: 'Szövegszűrő',
     numberFilter: 'Szám szűrő',
+    bigintFilter: 'BigInt szűrő',
     dateFilter: 'Dátum szűrő',
     setFilter: 'Készlet szűrő',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_HU = {
     advancedFilterValidationInvalidOption: 'Opció nem található',
     advancedFilterValidationMissingQuote: 'Idézőjel hiányzik az érték végéről',
     advancedFilterValidationNotANumber: 'Érték nem szám',
+    advancedFilterValidationNotABigInt: 'Érték nem BigInt',
     advancedFilterValidationInvalidDate: 'Érték nem érvényes dátum',
     advancedFilterValidationMissingCondition: 'Feltétel hiányzik',
     advancedFilterValidationJoinOperatorMismatch: 'A feltételek összekapcsoló operátorai azonosak kell, hogy legyenek',

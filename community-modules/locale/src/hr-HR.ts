@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_HR = {
     // Filter Titles
     textFilter: 'Tekstualni filter',
     numberFilter: 'Numerički filter',
+    bigintFilter: 'BigInt filter',
     dateFilter: 'Filtar datuma',
     setFilter: 'Filtar skupa',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_HR = {
     advancedFilterValidationInvalidOption: 'Opcija nije pronađena',
     advancedFilterValidationMissingQuote: 'Vrijednosti nedostaje završna navodna oznaka',
     advancedFilterValidationNotANumber: 'Vrijednost nije broj',
+    advancedFilterValidationNotABigInt: 'Vrijednost nije BigInt',
     advancedFilterValidationInvalidDate: 'Vrijednost nije valjani datum',
     advancedFilterValidationMissingCondition: 'Nedostaje uvjet',
     advancedFilterValidationJoinOperatorMismatch: 'Spojni operatori unutar uvjeta moraju biti isti',

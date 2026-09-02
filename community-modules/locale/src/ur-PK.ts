@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_PK = {
     // Filter Titles
     textFilter: 'متن فلٹر',
     numberFilter: 'نمبر فلٹر',
+    bigintFilter: 'BigInt فلٹر',
     dateFilter: 'تاریخ فلٹر',
     setFilter: 'سیٹ فلٹر',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_PK = {
     advancedFilterValidationInvalidOption: 'آپشن نہیں ملا',
     advancedFilterValidationMissingQuote: 'قدر کے آخر میں اقتباس غائب ہے',
     advancedFilterValidationNotANumber: 'قدر ایک نمبر نہیں ہے',
+    advancedFilterValidationNotABigInt: 'قدر ایک BigInt نہیں ہے',
     advancedFilterValidationInvalidDate: 'قدر ایک جائز تاریخ نہیں ہے',
     advancedFilterValidationMissingCondition: 'شرط غائب ہے',
     advancedFilterValidationJoinOperatorMismatch: 'ایک شرط میں جوائن آپریٹرز ایک جیسے ہونے چاہیے',
