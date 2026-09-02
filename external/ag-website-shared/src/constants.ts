@@ -12,13 +12,11 @@ export const RECAPTCHA_URL = 'https://www.google.com/recaptcha/api.js';
  */
 export const CONSENT_FIELD_IDS = {
     default: {
-        dataProcessingConsentId: '00NS900000KbwBF',
         marketingEmailConsentId: '00NS900000KbwBI',
         emailTrackingConsentId: '00NS900000KbwBG',
         franceOrItalyId: '00NS900000KbwBH',
     },
     production: {
-        dataProcessingConsentId: '00NQ500000IfxTS',
         marketingEmailConsentId: '00NQ500000JApXt',
         emailTrackingConsentId: '00NQ500000JApXs',
         franceOrItalyId: '00NQ500000JD5zq',

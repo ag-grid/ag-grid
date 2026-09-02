@@ -1,8 +1,14 @@
 import { ConsentCheckbox } from '@ag-website-shared/components/consent-fields/ConsentCheckbox';
+<<<<<<< HEAD
 import {
     CONSENT_LABELS,
     DATA_PROCESSING_CONSENT_REQUIRED,
 } from '@ag-website-shared/components/consent-fields/consentMessages';
+=======
+import { ProcessingNotice } from '@ag-website-shared/components/consent-fields/ProcessingNotice';
+import { CONSENT_LABELS } from '@ag-website-shared/components/consent-fields/consentMessages';
+import type { CaptchaTicker } from '@ag-website-shared/components/contact-form/initCaptcha';
+>>>>>>> fdf48f00bd4 (AG-18371: Privacy policy copy updates (#15038))
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { CONSENT_FIELD_IDS, CONTACT_FORM_DATA, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
@@ -30,7 +36,7 @@ const {
     captchaSettingsKeyName,
 } = getIsProduction() ? contactFormData.production : contactFormData.default;
 
-const { dataProcessingConsentId, marketingEmailConsentId, emailTrackingConsentId, franceOrItalyId } = getIsProduction()
+const { marketingEmailConsentId, emailTrackingConsentId, franceOrItalyId } = getIsProduction()
     ? CONSENT_FIELD_IDS.production
     : CONSENT_FIELD_IDS.default;
 
@@ -281,16 +287,6 @@ export const ContactForm: FunctionComponent<Props> = ({
             )}
             <div className={styles.consents}>
                 <ConsentCheckbox
-                    id={dataProcessingConsentId}
-                    label={CONSENT_LABELS.dataProcessing}
-                    error={(errors as any)[dataProcessingConsentId]?.message as string}
-                    inputProps={{
-                        value: '1',
-                        ...register(dataProcessingConsentId, { required: DATA_PROCESSING_CONSENT_REQUIRED }),
-                    }}
-                />
-
-                <ConsentCheckbox
                     id={marketingEmailConsentId}
                     label={CONSENT_LABELS.marketingEmail}
                     inputProps={{ value: '1', ...register(marketingEmailConsentId) }}
@@ -323,6 +319,7 @@ export const ContactForm: FunctionComponent<Props> = ({
                     {captchaError && <p className="error">Please click on the reCAPTCHA checkbox</p>}
                 </div>
             </div>
+            <ProcessingNotice />
             <input
                 id="submit-contact-form"
                 className={classnames('button-primary', styles.submitButton, { disabled: isDisabled })}
