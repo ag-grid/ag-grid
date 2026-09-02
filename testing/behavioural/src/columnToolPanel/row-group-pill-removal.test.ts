@@ -82,7 +82,13 @@ describe('removing a row group via the drop-zone pill remove button', () => {
             await waitFor(() => expect(pillTexts(api)).toEqual(['Athlete']));
             expect(errors).toEqual([]);
 
-            clickRemove(api, 0);
+            try {
+                clickRemove(api, 0);
+            } catch (error) {
+                // happy-dom rethrows a listener's exception straight out of dispatchEvent, where jsdom
+                // reports it as a window 'error' event instead. Record it the same way either way.
+                errors.push((error as Error).message);
+            }
 
             // The formatter must actually have thrown, or the test would pass without exercising the fix.
             await waitFor(() => expect(errors).toContain("Cannot read properties of undefined (reading 'name')"));
