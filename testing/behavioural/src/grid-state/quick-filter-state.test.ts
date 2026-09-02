@@ -157,7 +157,7 @@ describe('Grid state - quick filter text', () => {
 
     test('setState with a filter section but no text clears the text', async () => {
         const api = gridMgr.createGrid('quick-filter-state-clear-partial-filter', {
-            columnDefs,
+            columnDefs: [{ field: 'name', filter: true }, { field: 'country' }],
             rowData,
             toolbar,
             quickFilterText: 'canada',
