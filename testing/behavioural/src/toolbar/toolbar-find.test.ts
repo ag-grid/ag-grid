@@ -1,4 +1,4 @@
-import { fireEvent } from '@testing-library/dom';
+import { fireEvent, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
@@ -126,6 +126,36 @@ describe('Toolbar find item', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice"
         `);
+    });
+
+    test('input follows an external findSearchValue change', async () => {
+        const api = gridMgr.createGrid('find-external-change', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }],
+            toolbar: {
+                items: ['agFindToolbarItem'],
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const input = gridDiv.querySelector<HTMLInputElement>('.ag-toolbar-input-field')!;
+        const matchCount = gridDiv.querySelector<HTMLLabelElement>('.ag-toolbar-find-match-count')!;
+        expect(input.value).toBe('');
+
+        api.setGridOption('findSearchValue', 'Alice');
+
+        await waitFor(() => {
+            expect(input.value).toBe('Alice');
+            expect(matchCount.textContent).toBe('0/1');
+        });
+
+        api.setGridOption('findSearchValue', undefined);
+
+        await waitFor(() => {
+            expect(input.value).toBe('');
+            expect(matchCount.textContent).toBe('');
+        });
     });
 
     test('match count is a label associated with the input', async () => {

@@ -52,6 +52,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 200,
     },
     sideBar: true,
+    toolbar: {
+        items: ['agFindToolbarItem'],
+    },
     pagination: true,
     rowSelection: { mode: 'multiRow' },
     cellSelection: true,

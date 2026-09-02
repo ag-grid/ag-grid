@@ -699,6 +699,7 @@ export type {
     ColumnVisibilityState,
     FilterState,
     FiltersToolPanelState,
+    FindState,
     FocusedCellState,
     GridState,
     GridStateKey,
