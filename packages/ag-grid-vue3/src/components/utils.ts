@@ -1270,7 +1270,7 @@ export interface Props<TData> {
          */
     masterDefaultExpanded?: number,
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
-         * Cell tooltip properties set here (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
+         * Cell tooltip properties set here (`tooltip`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     autoGroupColumnDef?: AutoGroupColumnDef<TData>,

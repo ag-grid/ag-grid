@@ -1,11 +1,6 @@
-import {
-    _findNextFocusableElement,
-    _getActiveDomElement,
-    _getValueUsingDotField,
-    _isBrowserSafari,
-    _isFocusableFormField,
-} from 'ag-stack';
+import { _findNextFocusableElement, _getActiveDomElement, _isBrowserSafari, _isFocusableFormField } from 'ag-stack';
 
+import { ComponentInstanceGuard } from '../../components/framework/componentInstanceGuard';
 import {
     _getFullWidthCellRendererDetails,
     _getFullWidthDetailCellRendererDetails,
@@ -14,6 +9,7 @@ import {
 } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
+import type { ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { CellFocusedEvent } from '../../events';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
@@ -23,7 +19,14 @@ import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { INotesFeature } from '../../interfaces/notes';
-import type { ITooltipCtrlParams, TooltipFeature } from '../../tooltip/tooltipFeature';
+import type { TooltipCallbackParams } from '../../tooltip/tooltipComponent';
+import type { TooltipFeature, TooltipSource, TooltipSourceParams } from '../../tooltip/tooltipFeature';
+import { _getCellTooltipComponentDefinition } from '../../tooltip/tooltipFeature';
+import {
+    _getLegacyTooltipFieldValue,
+    _isCellTooltipConfigured,
+    _resolveGroupTooltipValue,
+} from '../../tooltip/tooltipValueUtils';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import type { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
@@ -32,7 +35,8 @@ import type { FullWidthTarget, IRowModeFeature } from './iRowModeFeature';
 import type { RowCtrl } from './rowCtrl';
 
 export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
-    private tooltipFeature: TooltipFeature | undefined;
+    private readonly tooltipFeatures = new Map<HTMLElement, TooltipFeature>();
+    private readonly rendererGuards = new Map<HTMLElement, ComponentInstanceGuard>();
     private notesFeature: INotesFeature | undefined;
     private focusEventWhileNotReady: CellFocusedEvent | null = null;
 
@@ -47,18 +51,20 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
             return;
         }
 
+        this.pruneStaleTooltipElements();
+
         if (this.shouldCreateCellSections() && rowComp.showEmbeddedFullWidth) {
             this.rowCtrl.isEmbeddedFullWidth = true;
             this.rowCtrl.embeddedSectionHasContent = { left: true, center: true, right: true };
             rowComp.showEmbeddedFullWidth({
-                left: this.createFullWidthCompDetails(rowComp.getPinnedLeftRowElement() ?? eRow, 'left'),
-                center: this.createFullWidthCompDetails(rowComp.getScrollingRowElement() ?? eRow, null),
-                right: this.createFullWidthCompDetails(rowComp.getPinnedRightRowElement() ?? eRow, 'right'),
+                left: this.createFullWidthCompDetails(rowComp.getPinnedLeftRowElement() ?? eRow, 'left', true),
+                center: this.createFullWidthCompDetails(rowComp.getScrollingRowElement() ?? eRow, null, true),
+                right: this.createFullWidthCompDetails(rowComp.getPinnedRightRowElement() ?? eRow, 'right', true),
             });
             this.rowCtrl.refreshPinnedCellGroupWidths();
         } else {
             this.rowCtrl.isEmbeddedFullWidth = false;
-            const compDetails = this.createFullWidthCompDetails(eRow, null);
+            const compDetails = this.createFullWidthCompDetails(eRow, null, true);
             rowComp.showFullWidth(compDetails);
             this.rowCtrl.refreshPinnedCellGroupWidths();
         }
@@ -82,6 +88,8 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         if (!rowComp || !eRow) {
             return true;
         }
+
+        this.pruneStaleTooltipElements();
 
         if (this.shouldCreateCellSections() && rowComp.refreshEmbeddedFullWidth) {
             return rowComp.refreshEmbeddedFullWidth((pinned) => {
@@ -130,10 +138,11 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
 
     public onSpannedCellsUpdated(_pinned: ColumnPinnedType): void {}
 
-    public createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
+    public createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType, adopt = false): UserCompDetails {
         const { rowCtrl } = this;
         const { gos } = this;
         const { rowNode } = rowCtrl;
+        const rendererClaim = this.claimRenderer(eRow, adopt);
         const params = _addGridCommonParams<ICellRendererParams>(gos, {
             fullWidth: true,
             data: rowNode.data,
@@ -149,7 +158,9 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                 this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, rowDragEntireRow),
             setTooltip: (value, shouldDisplayTooltip) => {
                 gos.assertModuleRegistered('Tooltip', 3);
-                this.setupFullWidthRowTooltip(() => value, shouldDisplayTooltip);
+                if (this.isAlive() && rendererClaim.isCurrent()) {
+                    this.setRendererTooltip(eRow, rowNode, value, shouldDisplayTooltip);
+                }
             },
         } as WithoutGridCommon<ICellRendererParams>);
 
@@ -165,7 +176,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                 });
                 params.value = value;
                 params.valueFormatted = valueFormatted;
-                this.setupGroupRowsTooltip(rowNode);
+                this.setupGroupRowsTooltip(rowNode, eRow);
                 return _getFullWidthGroupCellRendererDetails(compFactory, params)!;
             }
             case 'FullWidthLoading':
@@ -183,88 +194,188 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
     }
 
     private setupFullWidthRowTooltip(
+        eGui: HTMLElement,
         getTooltipValue: () => any,
         shouldDisplayTooltip?: () => boolean,
-        getAdditionalParams?: () => ITooltipCtrlParams
+        getAdditionalParams?: () => TooltipSourceParams,
+        getTooltipComponentDefinition: () => ColDef | undefined = () => undefined
     ) {
-        if (!this.rowCtrl.getCurrentRowElement()) {
+        const tooltipSvc = this.beans.tooltipSvc;
+        if (!tooltipSvc || !this.rowCtrl.getCurrentRowElement()) {
             return;
         }
 
-        this.tooltipFeature = this.beans.tooltipSvc?.setupFullWidthRowTooltip(
-            this.tooltipFeature,
-            this.rowCtrl,
+        const source: TooltipSource = {
+            getGui: () => eGui,
+            getTooltipComponentDefinition,
             getTooltipValue,
+            getLocation: () => 'fullWidthRow',
             shouldDisplayTooltip,
-            getAdditionalParams
+            ...(getAdditionalParams ? { getAdditionalParams } : {}),
+        };
+        const feature = tooltipSvc.registerTooltip(this, source, this.tooltipFeatures.get(eGui));
+        if (feature) {
+            this.tooltipFeatures.set(eGui, feature);
+        } else {
+            this.tooltipFeatures.delete(eGui);
+        }
+    }
+
+    private setRendererTooltip(
+        eGui: HTMLElement,
+        rowNode: RowNode,
+        value: string,
+        shouldDisplayTooltip?: () => boolean
+    ): void {
+        const isGroupRow = this.rowCtrl.getRowType() === 'FullWidthGroup';
+        if (value == null) {
+            this.clearTooltip(eGui);
+            if (isGroupRow) {
+                this.setupGroupRowsTooltip(rowNode, eGui);
+            }
+            return;
+        }
+        // Renderer-supplied tooltips are not gated by `tooltip: false`, so pass the colDef ungated.
+        const groupCol = isGroupRow ? (rowNode.rowGroupColumn as AgColumn | undefined) : undefined;
+        const colDef = isGroupRow ? this.getGroupColDef(rowNode) : undefined;
+        this.setupFullWidthRowTooltip(
+            eGui,
+            () => value,
+            shouldDisplayTooltip,
+            () => ({
+                colDef,
+                column: groupCol,
+                rowIndex: rowNode.rowIndex ?? 0,
+                node: rowNode,
+                data: rowNode.data,
+            }),
+            () => colDef
         );
     }
 
-    /**
-     * Wires up the tooltip for a full-width group row (`groupDisplayType: 'groupRows'`), inheriting the
-     * tooltip configuration from the owning group column rather than from an individual cell.
-     *
-     * The tooltip source colDef is the row-group column's colDef for regular grouping, or the
-     * `autoGroupColumnDef` for tree data (where there is no `rowGroupColumn`). If that colDef declares no
-     * `tooltipValueGetter`, `tooltipField`, or `tooltipComponent`, no tooltip is set up.
-     *
-     * Resolution order, mirroring the standard cell tooltip path, with values lazily computed on hover:
-     * - `tooltipValueGetter` — invoked with the group's display value/formatted value and full row context.
-     * - `tooltipField` — read directly from `node.data`, honouring `suppressFieldDotNotation` for dotted fields.
-     * - otherwise — falls back to the group display value, also passed to any inherited `tooltipComponent`.
-     */
-    private setupGroupRowsTooltip(rowNode: RowNode): void {
-        const groupCol = rowNode.rowGroupColumn as AgColumn | undefined;
-        const { gos } = this;
+    private clearTooltip(eGui: HTMLElement): void {
+        const feature = this.tooltipFeatures.get(eGui);
+        if (feature) {
+            this.destroyBean(feature, this.beans.context);
+        }
+        this.tooltipFeatures.delete(eGui);
+    }
 
-        // Regular row grouping: read tooltip config from the row-group column's colDef.
-        // Tree data (no rowGroupColumn): fall back to the auto-group column def.
-        const colDef = groupCol?.colDef ?? gos.get('autoGroupColumnDef');
-        if (!colDef) {
+    /**
+     * `adopt` claims for a freshly mounted renderer, superseding earlier ones. A refresh claims
+     * provisionally: the surviving renderer's earlier params must keep working when it is kept in place.
+     */
+    private claimRenderer(eGui: HTMLElement, adopt: boolean) {
+        let guard = this.rendererGuards.get(eGui);
+        if (!guard) {
+            guard = new ComponentInstanceGuard();
+            this.rendererGuards.set(eGui, guard);
+        }
+        return adopt ? guard.claim() : guard.provisionalClaim();
+    }
+
+    /** Drop tooltip state keyed to elements the row no longer renders into (e.g. after a remount). */
+    private pruneStaleTooltipElements(): void {
+        const { tooltipFeatures, rendererGuards, rowCtrl } = this;
+        if (tooltipFeatures.size === 0 && rendererGuards.size === 0) {
             return;
         }
 
-        const { tooltipValueGetter, tooltipField, tooltipComponent } = colDef;
-        if (!tooltipValueGetter && !tooltipField && !tooltipComponent) {
+        const rowComp = rowCtrl.getCurrentRowComp();
+        const currentElements = new Set<HTMLElement | undefined>([
+            rowCtrl.getCurrentRowElement() ?? undefined,
+            rowComp?.getPinnedLeftRowElement(),
+            rowComp?.getScrollingRowElement(),
+            rowComp?.getPinnedRightRowElement(),
+        ]);
+
+        for (const [element, feature] of tooltipFeatures) {
+            if (!currentElements.has(element)) {
+                this.destroyBean(feature, this.beans.context);
+                tooltipFeatures.delete(element);
+            }
+        }
+        for (const [element, guard] of rendererGuards) {
+            if (!currentElements.has(element)) {
+                guard.invalidate();
+                rendererGuards.delete(element);
+            }
+        }
+    }
+
+    /**
+     * Regular row grouping: read tooltip config from the row-group column's colDef.
+     * Tree data (no rowGroupColumn): fall back to the auto-group column def.
+     */
+    private getGroupColDef(rowNode: RowNode): ColDef | undefined {
+        const groupCol = rowNode.rowGroupColumn as AgColumn | undefined;
+        return groupCol?.colDef ?? this.gos.get('autoGroupColumnDef');
+    }
+
+    /** Resolves a full-width group tooltip lazily from its owning group column or tree-data auto column. */
+    private setupGroupRowsTooltip(rowNode: RowNode, eGui: HTMLElement): void {
+        const groupCol = rowNode.rowGroupColumn as AgColumn | undefined;
+        const { gos } = this;
+
+        const colDef = this.getGroupColDef(rowNode);
+        if (!colDef) {
+            this.clearTooltip(eGui);
+            return;
+        }
+
+        const hasTooltipValue = _isCellTooltipConfigured(colDef);
+        const hasLegacyComponentOnlyTooltip =
+            colDef.tooltip !== false &&
+            !hasTooltipValue &&
+            !!(colDef.tooltipComponent || colDef.tooltipComponentSelector);
+        if (!hasTooltipValue && !hasLegacyComponentOnlyTooltip) {
+            this.clearTooltip(eGui);
             return;
         }
 
         const { valueSvc } = this.beans;
         gos.assertModuleRegistered('Tooltip', 3);
 
-        const getDisplay = () =>
-            valueSvc.getValueForDisplay({ node: rowNode, includeValueFormatted: true, from: 'edit' });
+        let latestValueFormatted: string | null | undefined;
+        const getDisplay = () => {
+            const display = valueSvc.getValueForDisplay({ node: rowNode, includeValueFormatted: true, from: 'edit' });
+            latestValueFormatted = display.valueFormatted;
+            return display;
+        };
 
         this.setupFullWidthRowTooltip(
+            eGui,
             () => {
                 const { value, valueFormatted } = getDisplay();
-                if (tooltipValueGetter) {
-                    return tooltipValueGetter(
-                        _addGridCommonParams(gos, {
-                            location: 'fullWidthRow',
-                            colDef,
-                            column: groupCol,
-                            rowIndex: rowNode.rowIndex ?? 0,
-                            node: rowNode,
-                            data: rowNode.data,
-                            value,
-                            valueFormatted: valueFormatted ?? undefined,
-                        })
-                    );
-                }
-                if (tooltipField) {
-                    const data = rowNode.data;
-                    if (!data) {
-                        // Regular row-grouping group nodes carry no `data`; fall back to the group
-                        // display value, matching the auto group column's `tooltipField` behaviour.
-                        return value;
-                    }
-                    const containsDots = groupCol
-                        ? groupCol.tooltipFieldContainsDots
-                        : !gos.get('suppressFieldDotNotation') && tooltipField.includes('.');
-                    return containsDots
-                        ? _getValueUsingDotField(data, tooltipField)
-                        : (data as Record<string, unknown>)[tooltipField];
+                const callbackParams = _addGridCommonParams<TooltipCallbackParams>(gos, {
+                    location: 'fullWidthRow' as const,
+                    colDef,
+                    column: groupCol,
+                    rowIndex: rowNode.rowIndex ?? 0,
+                    node: rowNode,
+                    data: rowNode.data,
+                    value,
+                    valueFormatted: valueFormatted ?? undefined,
+                });
+                if (hasTooltipValue) {
+                    return _resolveGroupTooltipValue(colDef, callbackParams, () => {
+                        const tooltipField = colDef.tooltipField;
+                        if (!tooltipField) {
+                            return { resolved: false };
+                        }
+                        const data = rowNode.data;
+                        if (!data) {
+                            // Regular row-grouping group nodes carry no `data`; use the group display value.
+                            return { resolved: true, value };
+                        }
+                        const containsDots = groupCol
+                            ? groupCol.tooltipFieldContainsDots
+                            : !gos.get('suppressFieldDotNotation') && tooltipField.includes('.');
+                        return {
+                            resolved: true,
+                            value: _getLegacyTooltipFieldValue(data, tooltipField, containsDots),
+                        };
+                    });
                 }
                 return value;
             },
@@ -275,8 +386,9 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                 rowIndex: rowNode.rowIndex ?? 0,
                 node: rowNode,
                 data: rowNode.data,
-                valueFormatted: getDisplay().valueFormatted ?? undefined,
-            })
+                valueFormatted: latestValueFormatted ?? undefined,
+            }),
+            () => _getCellTooltipComponentDefinition(colDef)
         );
     }
 
@@ -609,7 +721,14 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
 
     public override destroy(): void {
         const { context } = this.beans;
-        this.tooltipFeature = this.destroyBean(this.tooltipFeature, context);
+        for (const feature of this.tooltipFeatures.values()) {
+            this.destroyBean(feature, context);
+        }
+        this.tooltipFeatures.clear();
+        for (const guard of this.rendererGuards.values()) {
+            guard.invalidate();
+        }
+        this.rendererGuards.clear();
         this.notesFeature?.destroy();
         this.notesFeature = undefined;
         super.destroy();

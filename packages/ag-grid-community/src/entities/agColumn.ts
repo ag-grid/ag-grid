@@ -23,6 +23,7 @@ import type {
 import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
+import { _isCellTooltipConfigured } from '../tooltip/tooltipValueUtils';
 import { _mergedEqual } from '../utils/mergeDeep';
 import { _clamp } from '../utils/number';
 import type { AgColumnGroup } from './agColumnGroup';
@@ -359,7 +360,12 @@ export class AgColumn<TValue = any>
     }
 
     private initTooltip(): void {
-        this.beans.tooltipSvc?.initCol(this);
+        const colDef = this.colDef;
+        this.tooltipEnabled =
+            colDef.tooltip !== false &&
+            (_isCellTooltipConfigured(colDef) ||
+                colDef.tooltipComponent != null ||
+                colDef.tooltipComponentSelector != null);
     }
 
     /** Kept apart from `resetActualWidth`, which `sizeColumnsToFit` also uses and must not change ownership. */

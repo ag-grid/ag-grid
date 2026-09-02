@@ -145,6 +145,7 @@ import type { CellStyleService } from '../styling/cellStyleService';
 import type { RowStyleService } from '../styling/rowStyleService';
 import type { SyncService } from '../syncService';
 import type { TooltipService } from '../tooltip/tooltipService';
+import type { TooltipTouchCoordinator } from '../tooltip/tooltipTouchCoordinator';
 import type { UndoRedoService } from '../undoRedo/undoRedoService';
 import type { ErrorOverlayService } from '../validation/errorOverlay/errorOverlayService';
 import type { LogService } from '../validation/logService';
@@ -401,6 +402,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     cellFlashSvc?: CellFlashService;
     masterDetailSvc?: IMasterDetailService;
     tooltipSvc?: TooltipService;
+    tooltipTouchSvc?: TooltipTouchCoordinator;
     colGroupSvc: ColumnGroupService;
     userColumnSvc?: UserColumnService;
     rowAutoHeight?: RowAutoHeightService;

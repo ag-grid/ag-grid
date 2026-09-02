@@ -1,7 +1,7 @@
 import type { IComponent } from 'ag-stack';
 
 import type { IDragAndDropImageComponent, IDragAndDropImageParams } from '../../dragAndDrop/dragAndDropImageComponent';
-import type { ColDef } from '../../entities/colDef';
+import type { ColDef, ColGroupDef } from '../../entities/colDef';
 import type { IFloatingFilterComp, IFloatingFilterParams } from '../../filter/floating/floatingFilter';
 import type { ISimpleFilter } from '../../filter/provided/iSimpleFilter';
 import type {
@@ -278,9 +278,10 @@ export function _getDateCompDetails(
 
 export function _getTooltipCompDetails(
     userCompFactory: UserComponentFactory,
-    params: ITooltipParams
+    params: ITooltipParams,
+    def?: ColDef | ColGroupDef
 ): UserCompDetails<ITooltipComp> | undefined {
-    return userCompFactory.getCompDetails(params.colDef!, TooltipComponent, 'agTooltipComponent', params, true);
+    return userCompFactory.getCompDetails(def ?? {}, TooltipComponent, 'agTooltipComponent', params, true);
 }
 
 /**

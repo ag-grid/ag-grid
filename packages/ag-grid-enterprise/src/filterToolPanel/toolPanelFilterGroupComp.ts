@@ -4,11 +4,19 @@ import type {
     AgColumn,
     AgProvidedColumnGroup,
     FilterOpenedEvent,
-    ITooltipCtrl,
     IconName,
+    TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
-import { Component, _createIconNoSpan, _getShouldDisplayTooltip, isProvidedColumnGroup } from 'ag-grid-community';
+import {
+    Component,
+    _addGridCommonParams,
+    _createIconNoSpan,
+    _getHeaderTooltipComponentDefinition,
+    _getShouldDisplayTooltip,
+    _resolveHeaderTooltipValue,
+    isProvidedColumnGroup,
+} from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
 import type { GroupComponent, GroupComponentParams } from '../widgets/gridEnterpriseWidgetTypes';
@@ -62,19 +70,39 @@ export class ToolPanelFilterGroupComp extends Component {
         }
 
         const column = this.showingColumn ? (this.columnGroup as AgColumn) : undefined;
+        const getColDef = () => column?.colDef ?? (this.columnGroup as AgProvidedColumnGroup).getColGroupDef();
         this.tooltipFeature = this.createOptionalManagedBean(
-            this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                getGui: () => this.getGui(),
+            this.beans.tooltipSvc?.createTooltip({
+                getGui: () => filterGroupComp.getTitleBarGui(),
+                getTooltipComponentDefinition: () => _getHeaderTooltipComponentDefinition(getColDef()),
                 getLocation: () => 'filterToolPanelColumnGroup',
+                getTooltipValue: () => {
+                    const colDef = getColDef();
+                    const displayName = this.filterGroupName;
+                    return _resolveHeaderTooltipValue(
+                        colDef,
+                        _addGridCommonParams<TooltipCallbackParams>(gos, {
+                            location: 'filterToolPanelColumnGroup',
+                            colDef,
+                            column: this.columnGroup,
+                            value: displayName,
+                            valueFormatted: displayName,
+                        })
+                    );
+                },
                 shouldDisplayTooltip: _getShouldDisplayTooltip(
                     gos,
                     () => filterGroupComp.getGui().querySelector('.ag-group-title') as HTMLElement | undefined
                 ),
-                getAdditionalParams: () => ({
-                    colDef: column?.colDef,
-                    column,
-                }),
-            } as ITooltipCtrl)
+                getAdditionalParams: () => {
+                    const colDef = getColDef();
+                    return {
+                        ...(colDef ? { colDef } : {}),
+                        column: this.columnGroup,
+                        valueFormatted: this.filterGroupName,
+                    };
+                },
+            })
         );
 
         this.refreshFilterClass();
@@ -85,17 +113,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private setupTooltip(): void {
-        // we don't show tooltips for groups, as when the group expands, it's div contains the columns which also
-        // have tooltips, so the tooltips would clash. Eg mouse over group, tooltip shows, mouse over column, another
-        // tooltip shows but cos we didn't leave the group the group tooltip remains. this should be fixed in the future,
-        // maybe the group shouldn't contain the children form a DOM perspective.
-        if (!this.showingColumn) {
-            return;
-        }
-
-        const refresh = () => {
-            this.tooltipFeature?.setTooltipAndRefresh((this.columnGroup as AgColumn).colDef.headerTooltip);
-        };
+        const refresh = () => this.tooltipFeature?.refreshTooltip();
 
         refresh();
 
