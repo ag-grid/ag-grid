@@ -63,20 +63,21 @@ permissions:
 jobs:
   detect-changes:
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     name: Detect Changes
     outputs:
       run_code_ci: ${{ steps.decide.outputs.run_code_ci }}
       run_docs_ci: ${{ steps.decide.outputs.run_docs_ci }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
 
       - name: Detect file changes (PR only)
         id: filter
         if: github.event_name == 'pull_request'
-        uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3.0.3
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         with:
           filters: |
             code:
@@ -156,10 +157,11 @@ jobs:
       e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
       e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1 # shallow copy
 
@@ -226,6 +228,7 @@ jobs:
 
   test:
     runs-on: ubuntu-24.04
+    timeout-minutes: 45
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
@@ -240,10 +243,12 @@ jobs:
       fail-fast: false
     env:
       NX_PARALLEL: 1
+      # Vite 8 warns once per config that these are not loadable by its future `configLoader: 'native'`.
+      VITE_CONFIG_NATIVE_IGNORE_WARNING: true
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1 # shallow copy
 
@@ -270,7 +275,7 @@ jobs:
         # config emit reports/workspace.xml for this shard.
         if: matrix.shard != 0 && needs.init.outputs.unit_projects != ''
         id: test
-        run: npx vitest run ${{ needs.init.outputs.unit_projects }}
+        run: node_modules/.bin/vitest run ${{ needs.init.outputs.unit_projects }}
           --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
       - name: Type-check test files
         # `build:test` (tsc --noEmit on tsconfig.spec) was previously pulled in as the nx `test` target's
@@ -301,7 +306,7 @@ jobs:
         # Shards 1-3 emit reports/workspace.xml (a subset each); shard 0 emits the tooling projects' JUnit
         # XMLs. Artifact names are keyed by shard; the report job merges by basename across shard artifacts.
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: test-results-${{matrix.shard}}
           path: |
@@ -310,6 +315,7 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     name: e2e Tests
     needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
@@ -326,7 +332,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1 # shallow copy
 
@@ -344,7 +350,7 @@ jobs:
 
       - name: Persist test results
         if: always() && matrix.shard != 0
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: test-results-e2e-shard-${{matrix.shard}}
           path: |
@@ -352,6 +358,7 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     name: Lint & Format Check
     needs: [ detect-changes, init ]
     if: ${{ always() && needs.detect-changes.result == 'success' }}
@@ -361,7 +368,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1 # shallow copy
 
@@ -389,6 +396,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     name: Build
     needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
@@ -398,7 +406,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1 # shallow copy
 
@@ -423,7 +431,7 @@ jobs:
 
       - name: Upload UMD bundles for PR preview
         if: github.event_name == 'pull_request' && steps.build_umd.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: pr-preview-umd
           if-no-files-found: ignore
@@ -435,6 +443,7 @@ jobs:
 
   pr_preview:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     name: PR Preview (UMD)
     needs: [ build ]
     # Same-repo PRs only (fork PRs can't hold the write token) — see pr-review.yml.
@@ -459,13 +468,13 @@ jobs:
     steps:
       # Needed for the local shared action below; same-repo gate (job if) is the guard.
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
 
       - name: Download UMD artifact
         id: download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         continue-on-error: true
         with:
           name: pr-preview-umd
@@ -507,7 +516,7 @@ jobs:
 
       - name: Post sticky PR comment
         if: steps.stage.outputs.publish == 'true'
-        uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2.9.4
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         with:
           header: pr-preview-umd
           message: |
@@ -524,6 +533,7 @@ jobs:
 
   docs:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     name: Docs Build & Link Checker
     needs: [ detect-changes, init ]
     if: ${{ (needs.detect-changes.outputs.run_code_ci == 'true' ||
@@ -536,7 +546,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1 # shallow copy
 
@@ -580,7 +590,7 @@ jobs:
 
       - name: Persist test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: test-results-docs
           path: |
@@ -588,6 +598,7 @@ jobs:
 
   fw_pkg_test:
     runs-on: ubuntu-24.04
+    timeout-minutes: 90
     name: Framework Package Tests (${{ matrix.framework }})
     permissions:
       contents: write
@@ -603,7 +614,7 @@ jobs:
       - name: Checkout
         id: checkout
         if: matrix.framework != 'none'
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
 
@@ -632,6 +643,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     needs:
       [
         detect-changes,
@@ -653,7 +665,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
 
@@ -663,7 +675,7 @@ jobs:
       # skip the full setup-nx (node_modules restore + yarn install) and just provide
       # a node runtime — this is the main time sink for what is otherwise a fast job.
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: package.json
 
@@ -672,7 +684,7 @@ jobs:
           git fetch origin --depth 1 latest
           git fetch origin --depth 1 tag latest-success
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
           needs.e2e.result == 'success' || needs.e2e.result == 'failure'
         with:
@@ -699,7 +711,7 @@ jobs:
           done)
 
       - name: Test Report
-        uses: dorny/test-reporter@3eeb9fc888e82e8be2fb356bbeec2750231672bc # v1
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
           needs.e2e.result == 'success' || needs.e2e.result == 'failure'
         id: testReport
@@ -816,14 +828,15 @@ jobs:
   sonar_community:
     name: SonarQube Community
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
 
       - name: SonarQube Analysis Community
-        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        uses: SonarSource/sonarqube-scan-action@2500896589ef8f7247069a56136f8dc177c27ccf # v5.2.0
         env:
           SONAR_HOST_URL: https://sonarcloud.io
           SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
@@ -840,14 +853,15 @@ jobs:
   sonar_enterprise:
     name: SonarQube Enterprise
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
 
       - name: SonarQube Analysis Enterprise
-        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        uses: SonarSource/sonarqube-scan-action@2500896589ef8f7247069a56136f8dc177c27ccf # v5.2.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
           SONAR_HOST_URL: https://sonarcloud.io

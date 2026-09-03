@@ -26,6 +26,11 @@ export interface GeneratedContents {
     excluded?: boolean;
 }
 
+// Make sure to update the Nx plugin copy of this interface when making changes.
+export interface ExampleSubstitutions {
+    '${baseWWWUrl}': string;
+}
+
 export type InternalFramework = 'vanilla' | 'typescript' | 'reactFunctional' | 'reactFunctionalTs' | 'angular' | 'vue3';
 
 export const TYPESCRIPT_INTERNAL_FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'angular'];

@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager } from 'ag-test-utils';
 
 import type { IColumnSelectionLabelRendererComp, IColumnSelectionLabelRendererParams } from 'ag-grid-community';
 import { AgPromise, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 describe('column selection label renderer', () => {
     const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });

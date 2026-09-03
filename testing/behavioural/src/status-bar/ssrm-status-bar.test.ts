@@ -1,3 +1,5 @@
+import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
+
 import type {
     GridOptions,
     IServerSideDatasource,
@@ -8,8 +10,6 @@ import type {
 } from 'ag-grid-community';
 import { enableDevValidations, getGridElement } from 'ag-grid-community';
 import { ServerSideRowModelModule, StatusBarModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, TestGridsManager } from '../test-utils';
 
 // AG-16023: under SSRM, client-side-only status panels (total / filtered / total-and-filtered row counts) must be
 // dropped, while serverSide-supported panels (aggregation, selected row count) and custom panels are kept. Under the

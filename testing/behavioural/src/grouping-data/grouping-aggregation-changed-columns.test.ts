@@ -1,6 +1,3 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -8,7 +5,10 @@ import {
     applyTransactionChecked,
     cachedJSONObjects,
     executeTransactionsAsync,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping aggregation with aggregateOnlyChangedColumns', () => {
     const gridsManager = new TestGridsManager({

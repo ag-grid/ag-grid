@@ -5,6 +5,17 @@ import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import type { AgInputFieldParams } from './agFieldParams';
 
+const NON_AUTOCOMPLETE_INPUT_TYPES: ReadonlySet<string> = new Set([
+    'button',
+    'checkbox',
+    'file',
+    'hidden',
+    'radio',
+    'range',
+    'reset',
+    'submit',
+]);
+
 function buildTemplate<TComponentSelectorType extends string>(
     displayFieldTag: keyof HTMLElementTagNameMap
 ): AgElementParams<TComponentSelectorType> {
@@ -51,6 +62,7 @@ export abstract class AgAbstractInputField<
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     protected readonly eWrapper: HTMLElement = RefPlaceholder;
     protected readonly eInput: TElement = RefPlaceholder;
+    private autoCompleteOverride: boolean | string | undefined;
 
     constructor(
         config?: TConfig,
@@ -85,7 +97,10 @@ export abstract class AgAbstractInputField<
         }
         if (autoComplete != null) {
             this.setAutoComplete(autoComplete);
+        } else {
+            this.refreshAutoComplete();
         }
+        this.addManagedPropertyListener('enableInputAutoComplete', () => this.refreshAutoComplete());
 
         this.addInputListeners();
         this.activateTabIndex([eInput], tabIndex);
@@ -154,7 +169,35 @@ export abstract class AgAbstractInputField<
         return super.setDisabled(disabled);
     }
 
-    public setAutoComplete(value: boolean | string) {
+    public setAutoComplete(value?: boolean | string): this {
+        this.autoCompleteOverride = value;
+        if (value == null) {
+            this.refreshAutoComplete();
+        } else {
+            this.applyAutoComplete(value);
+        }
+        return this;
+    }
+
+    private refreshAutoComplete(): void {
+        if (this.autoCompleteOverride == null && this.isAutoCompleteCapableField()) {
+            this.applyAutoComplete(this.gos.get('enableInputAutoComplete') === true);
+        }
+    }
+
+    private isAutoCompleteCapableField(): boolean {
+        const { eInput } = this;
+        if (eInput.tagName === 'TEXTAREA') {
+            return true;
+        }
+        if (eInput.tagName !== 'INPUT') {
+            return false;
+        }
+        const { type } = eInput as HTMLInputElement;
+        return !NON_AUTOCOMPLETE_INPUT_TYPES.has(type);
+    }
+
+    private applyAutoComplete(value: boolean | string): void {
         if (value === true) {
             // Remove the autocomplete attribute if the value is explicitly set to true
             // to allow the default browser autocomplete/autofill behaviour.
@@ -166,6 +209,5 @@ export abstract class AgAbstractInputField<
             const autoCompleteValue = typeof value === 'string' ? value : 'off';
             _addOrRemoveAttribute(this.eInput, 'autocomplete', autoCompleteValue);
         }
-        return this;
     }
 }

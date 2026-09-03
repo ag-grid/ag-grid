@@ -915,6 +915,8 @@
             }
         },
         "tabIndex": {},
+        "suppressInputClearButton": {},
+        "enableInputAutoComplete": {},
         "rowBuffer": {
             "more": {
                 "name": "Row Buffer",
@@ -974,8 +976,11 @@
         },
         "loading": {
             "more": {
-                "name": "Loading Overlay",
+                "name": "Loading",
                 "url": "./overlays-provided/#loading"
+            },
+            "interfaceHierarchyOverrides": {
+                "include": ["LoadingOptions"]
             }
         },
         "overlayComponent": {

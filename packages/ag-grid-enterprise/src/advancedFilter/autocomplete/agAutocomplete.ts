@@ -66,7 +66,6 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
     private autocompleteListParams: AutocompleteListParams;
     private lastPosition: number = 0;
     private valid: boolean = true;
-    private validationMessage: string | null;
     private listAriaLabel: string;
     private listGenerator?: (value: string | null, position: number) => AutocompleteListParams;
     private validator?: (value: string | null) => string | null;
@@ -79,7 +78,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
 
     public postConstruct(): void {
         this.eAutocompleteInput.onValueChange((value) => this.onValueChanged(value));
-        this.eAutocompleteInput.getInputElement().setAttribute('autocomplete', 'off');
+        this.eAutocompleteInput.setAutoComplete(false);
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
 
@@ -248,7 +247,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         if (!this.validator) {
             return;
         }
-        const validationMessage = (this.validationMessage = this.validator(value));
+        const validationMessage = this.validator(value);
         this.eAutocompleteInput.getInputElement().setCustomValidity(validationMessage ?? '');
         this.valid = !validationMessage;
         this.dispatchLocalEvent<AutocompleteValidChangedEvent>({

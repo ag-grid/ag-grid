@@ -84,7 +84,11 @@
       "mcp__ide__getDiagnostics",
       "mcp__sequential-thinking__sequentialthinking"
     ],
-    "deny": []
+    "deny": [
+      "Read(.env.local)",
+      "Read(credentials/)",
+      "Read(credentials/**)"
+    ]
   },
   "hooks": {
     "PostToolUse": [

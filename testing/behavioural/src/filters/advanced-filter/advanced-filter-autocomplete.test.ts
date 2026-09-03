@@ -1,3 +1,6 @@
+import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -7,8 +10,6 @@ import {
     getGridElement,
 } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 // --- Shared test data ---
 
@@ -80,10 +81,19 @@ function isAutocompleteOpen(): boolean {
     return document.querySelector('.ag-autocomplete-list-popup') !== null;
 }
 
+/** Asserts which row the autocomplete list advertises as active; `null` for none. */
+function expectActiveOption(index: number | null): void {
+    const list = document.querySelector('.ag-autocomplete-list-popup .ag-virtual-list-container');
+    if (!list) {
+        throw new Error('Autocomplete list not found');
+    }
+    expect(list.getAttribute('aria-activedescendant')).toBe(index === null ? null : `${list.id}-option-${index}`);
+}
+
 /**
  * Selects from the autocomplete by pressing Enter.
  * The autocomplete's internal selection state works independently of VirtualList DOM rendering,
- * so this selects the first matching entry even though items may not be visible in jsdom.
+ * so this selects the first matching entry even though items may not be visible without layout.
  */
 function selectAutocomplete(input: HTMLInputElement): void {
     pressKey(input, 'Enter');
@@ -278,6 +288,45 @@ describe('Advanced Filter - Autocomplete Interaction', () => {
                 ├── LEAF id:4 athlete:"Li Wei" age:28 date:null hasGold:null country:null
                 └── LEAF id:5 athlete:"" age:null date:"2024-01-01" hasGold:true country:""
             `);
+        });
+
+        test('suggests the shortest column starting with the search string, else the shortest containing it', async () => {
+            const api = gridsManager.createGrid('grid1', {
+                columnDefs: [
+                    { field: 'location', filter: true },
+                    { field: 'order', filter: true },
+                    { field: 'won', filter: true },
+                ],
+                rowData: [{ location: 'Rome', order: 1, won: 'yes' }],
+                enableAdvancedFilter: true,
+            });
+            await new GridColumns(api, `top suggestion rule setup`).checkColumns(`
+                CENTER
+                ├── location "Location" width:200
+                ├── order "Order" width:200
+                └── won "Won" width:200
+            `);
+            await asyncSetTimeout(0);
+            const input = getInput(getGridElement(api)! as HTMLElement);
+
+            // All three hold 'o'; only Order starts with it, so length does not decide.
+            typeInto(input, '[o');
+            await asyncSetTimeout(0);
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+            expect(input.value).toContain('[Order]');
+
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
+            nativeInputValueSetter.call(input, '');
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            await asyncSetTimeout(0);
+
+            // Location and Won hold 'on' and neither starts with it, so the shortest wins.
+            typeInto(input, '[on');
+            await asyncSetTimeout(0);
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+            expect(input.value).toContain('[Won]');
         });
     });
 
@@ -773,6 +822,37 @@ describe('Advanced Filter - Autocomplete Interaction', () => {
                     ├── LEAF id:4 athlete:"Li Wei" age:28 date:null hasGold:null country:null
                     └── LEAF id:5 athlete:"" age:null date:"2024-01-01" hasGold:true country:""
                 `);
+        });
+
+        test('retaining a non-first selection keeps it as the active descendant', async () => {
+            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `retaining a non-first selection setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── age "Age" width:200
+                ├── date "Date" width:200
+                ├── hasGold "Has Gold" width:200
+                └── country "Country" width:200
+            `);
+            await asyncSetTimeout(0);
+            const input = getInput(getGridElement(api)! as HTMLElement);
+
+            typeInto(input, '[');
+            await asyncSetTimeout(0);
+            expectActiveOption(0);
+
+            // Columns are listed alphabetically, so this moves onto Athlete — not the row a reset would pick.
+            pressKey(input, 'ArrowDown');
+            await asyncSetTimeout(0);
+            expectActiveOption(1);
+
+            // The trailing space matches no column, so the list keeps the last selection as its only row.
+            typeInto(input, '[Athlete ');
+            await waitFor(() => expectActiveOption(0));
+
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+            expect(input.value).toContain('[Athlete]');
         });
     });
 

@@ -1,4 +1,4 @@
-import { _debounce, _setAriaInvalid, _setDisplayed } from 'ag-stack';
+import { FAST_TEST_TIMINGS, _debounce, _setAriaInvalid, _setDisplayed } from 'ag-stack';
 
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
@@ -20,6 +20,9 @@ const CLASS_INPUT_FIELD = '.ag-input-field-input';
  */
 export type ValidationReportMode = 'immediate' | 'debounce' | 'debounceIfChanged';
 
+/** Long enough that the native validation bubble isn't re-shown while the user is still typing a date. */
+const REPORT_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 500;
+
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
 export class DateCompWrapper {
@@ -27,7 +30,7 @@ export class DateCompWrapper {
     private tempValue: Date | null;
     private disabled: boolean | null;
     private alive = true;
-    private readonly debouncedReport = _debounce({ isAlive: () => this.alive }, reportValidity, 500);
+    private readonly debouncedReport = _debounce({ isAlive: () => this.alive }, reportValidity, REPORT_DEBOUNCE);
     private timeoutHandle: number | null = null;
     private lastValidityMessage: string | null = null;
 

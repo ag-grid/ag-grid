@@ -4,6 +4,8 @@ import { KeyCode, _getActiveDomElement, _isKeyboardMode, _setDisplayed } from 'a
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { isRowNumberCol } from '../../../columns/columnUtils';
 import { setupCompBean } from '../../../components/emptyBean';
+import type { ComponentInstanceClaim } from '../../../components/framework/componentInstanceGuard';
+import { ComponentInstanceGuard } from '../../../components/framework/componentInstanceGuard';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -17,6 +19,7 @@ import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
 import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeaderEditCss';
+import type { ComponentTooltip } from '../../../tooltip/headerTooltipSource';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils';
@@ -70,6 +73,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private userHeaderClasses: Set<string> | undefined;
     private readonly ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
     private tooltipFeature: TooltipFeature | undefined;
+    /** Tooltip supplied by a custom header component via `setTooltip`. */
+    private componentTooltip: ComponentTooltip = {};
+    private readonly headerCompGuard = new ComponentInstanceGuard();
 
     public override wireComp(
         comp: IHeaderCellComp,
@@ -170,6 +176,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
 
         compBean.addDestroyFunc(() => {
+            this.headerCompGuard.invalidate();
+            this.clearComponentTooltip();
             this.refreshFunctions = {};
             (this.selectAllFeature as any) = null;
             this.dragSourceElement = undefined;
@@ -204,17 +212,20 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private setCompDetails(compDetails: UserCompDetails): void {
+        // Adopting a new component supersedes every earlier claim; a kept component's claims stay live.
+        this.headerCompGuard.supersede();
         this.userCompDetails = compDetails;
         this.comp.setUserCompDetails(compDetails);
     }
 
     private lookupUserCompDetails(): UserCompDetails | undefined {
-        const params = this.createParams();
+        const componentClaim = this.headerCompGuard.provisionalClaim();
+        const params = this.createParams(componentClaim);
         const colDef = this.column.getColDef();
         return _getHeaderCompDetails(this.beans.userCompFactory, colDef, params)!;
     }
 
-    private createParams(): IHeaderParams {
+    private createParams(componentClaim: ComponentInstanceClaim): IHeaderParams {
         const { menuSvc, sortSvc, colFilter, gos } = this.beans;
         const params: IHeaderParams = _addGridCommonParams(gos, {
             column: this.column,
@@ -256,7 +267,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             eGridHeader: this.eGui,
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                 gos.assertModuleRegistered('Tooltip', 3);
-                this.setupTooltip(value, shouldDisplayTooltip);
+                if (componentClaim.isCurrent()) {
+                    this.setComponentTooltip(value, shouldDisplayTooltip);
+                }
             },
         });
 
@@ -351,13 +364,25 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setActiveHeader(false);
     }
 
-    private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
-        this.tooltipFeature = this.beans.tooltipSvc?.setupHeaderTooltip(
-            this.tooltipFeature,
+    private setupTooltip(): void {
+        const feature = this.beans.tooltipSvc?.setupHeaderTooltip(
             this,
-            value,
-            shouldDisplayTooltip
+            this.tooltipFeature,
+            () => this.componentTooltip
         );
+        this.tooltipFeature = feature;
+        if (feature) {
+            this.setRefreshFunction('tooltip', () => feature.refreshTooltip());
+        }
+    }
+
+    private setComponentTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
+        this.componentTooltip = { value, shouldDisplay: shouldDisplayTooltip };
+        this.tooltipFeature?.refreshTooltip();
+    }
+
+    private clearComponentTooltip(): void {
+        this.componentTooltip = {};
     }
 
     private setupStylesFromColDef(): void {
@@ -437,6 +462,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             // as part of appendHeaderComp
             this.setDragSource(this.dragSourceElement);
         } else {
+            this.clearComponentTooltip();
             this.setCompDetails(newCompDetails);
         }
     }

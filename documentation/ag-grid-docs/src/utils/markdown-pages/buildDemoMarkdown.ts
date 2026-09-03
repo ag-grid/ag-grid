@@ -1,14 +1,7 @@
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
+import { type DemoName, demoContent } from '@components/demos/demoContent';
+import { VIDEO_TOUR_TEXT, VIDEO_TOUR_URL } from '@components/demos/demosData';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-
-import demosData from '../../content/demos/demos.json';
-
-export type DemoName = keyof typeof demosData;
-
-/** The demo's page copy — shared with the `.astro` page so the two cannot drift. */
-export function demoContent(demo: DemoName) {
-    return demosData[demo];
-}
 
 /**
  * Build the markdown twin of a standalone demo page (`/example-finance`, `/example-hr`,
@@ -22,16 +15,17 @@ export function buildDemoMarkdown({ demo, siteRoot }: { demo: DemoName; siteRoot
     const document = [
         [
             '---',
-            `title: ${JSON.stringify(content.metaTitle)}`,
-            `description: ${JSON.stringify(content.metaDescription)}`,
+            `title: ${JSON.stringify(content.seoTitle)}`,
+            `description: ${JSON.stringify(content.seoDescription)}`,
             '---',
         ].join('\n'),
-        `# ${content.heading}`,
-        content.bodyText,
+        `# ${content.seoH1}`,
+        content.intro,
         'This page hosts a live, interactive AG Grid demo. The full source is on GitHub.',
         [
             `[See on GitHub](${content.githubUrl})`,
-            `[View the demo](${toAbsoluteUrl(urlWithBaseUrl(`/example-${demo}/`), siteRoot)})`,
+            `[View the demo](${toAbsoluteUrl(urlWithBaseUrl(content.href), siteRoot)})`,
+            `[${VIDEO_TOUR_TEXT}](${VIDEO_TOUR_URL})`,
             `[Contact us](${toAbsoluteUrl(urlWithBaseUrl('/contact/'), siteRoot)})`,
         ].join(' | '),
     ];

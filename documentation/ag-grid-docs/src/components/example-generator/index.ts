@@ -1,10 +1,12 @@
+import { SITE_BASE_URL } from '@constants';
 import { getIsDev } from '@utils/env';
 import { getExampleRootFileUrl } from '@utils/pages';
+import { pathJoin } from '@utils/pathJoin';
 import { existsSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import type { GeneratedContents, InternalFramework } from './types';
+import type { ExampleSubstitutions, GeneratedContents, InternalFramework } from './types';
 
 export type GeneratedExampleParams = ExampleParams & DocsExampleParams;
 
@@ -38,6 +40,32 @@ const getContentJsonPath = (params: GeneratedExampleParams) => {
     return path.join(folderPath, 'contents.json');
 };
 
+// Resolves to the absolute URL of the docs site serving the example, so examples can reference
+// site assets (e.g. fonts) by an absolute URL that also works once opened in Plunker/CodeSandbox.
+const DEFAULT_SUBSTITUTIONS: ExampleSubstitutions = {
+    '${baseWWWUrl}': pathJoin(import.meta.env?.PUBLIC_SITE_URL, SITE_BASE_URL),
+};
+
+const applySubstitutions = (content: GeneratedContents, substitutions: ExampleSubstitutions): GeneratedContents => {
+    Object.keys(substitutions).forEach((key) => {
+        const value = substitutions[key as keyof ExampleSubstitutions];
+
+        Object.keys(content.files).forEach((file) => {
+            let count = 0;
+            while (content.files[file].includes(key)) {
+                count++;
+                content.files[file] = content.files[file].replace(key, value);
+
+                if (count > 1000) {
+                    throw new Error('Substitution limit of 1000 reached, is this a bug?');
+                }
+            }
+        });
+    });
+
+    return content;
+};
+
 const cacheKeys: Record<string, object> = {};
 const cacheValues = new WeakMap<object, GeneratedContents>();
 
@@ -68,7 +96,7 @@ const readContentJson = async (params: GeneratedExampleParams) => {
         cacheValues.set(cacheKey, result);
     }
 
-    return result;
+    return applySubstitutions(result, DEFAULT_SUBSTITUTIONS);
 };
 
 export const hasGeneratedContents = async (params: GeneratedExampleParams) => {

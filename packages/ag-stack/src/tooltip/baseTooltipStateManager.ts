@@ -6,8 +6,10 @@ import type { IComponent } from '../interfaces/iComponent';
 import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { TooltipCtrl } from '../interfaces/iTooltip';
+import { _setAriaRole } from '../utils/aria';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _getActiveDomElement, _getDocument } from '../utils/document';
+import { _findFocusableElements } from '../utils/focus';
 import { _exists } from '../utils/generic';
 
 enum TooltipStates {
@@ -23,11 +25,13 @@ export enum TooltipTrigger {
 const SHOW_SWITCH_TOOLTIP_DIFF = 1000;
 const FADE_OUT_TOOLTIP_TIMEOUT = 1000;
 const INTERACTIVE_HIDE_DELAY = 100;
+interface SharedTooltipState {
+    lastHideTime?: number;
+    lockOwner?: object;
+}
 
-// different instances of tooltipFeature use this to see when the
-// last tooltip was hidden.
-let lastTooltipHideTime: number;
-let isLocked = false;
+const sharedStateByGrid = new WeakMap<object, SharedTooltipState>();
+let tooltipIdSequence = 0;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface BaseTooltipParams<TLocation extends string, TValue = any> {
@@ -64,7 +68,7 @@ export abstract class BaseTooltipStateManager<
 
     private state = TooltipStates.NOTHING;
 
-    private lastMouseEvent: MouseEvent | null;
+    private lastMouseEvent: MouseEvent | Touch | null;
 
     private tooltipComp: IComponent<TTooltipParams> | undefined;
     private tooltipPopupDestroyFunc: (() => void) | undefined;
@@ -82,9 +86,14 @@ export abstract class BaseTooltipStateManager<
 
     private onBodyScrollEventCallback: (() => null) | undefined;
     private onDocumentKeyDownCallback: (() => null) | undefined;
+    private onDocumentTouchStartCallback: (() => null) | undefined;
+    private sharedState!: SharedTooltipState;
+    private showEventDispatched = false;
+    private describedById: string | undefined;
+    private describedBySource: HTMLElement | undefined;
 
     constructor(
-        private readonly tooltipCtrl: TooltipCtrl<TLocation, TTooltipCtrlParams>,
+        protected readonly tooltipCtrl: TooltipCtrl<TLocation, TTooltipCtrlParams>,
         private readonly getTooltipValue: () => any
     ) {
         super();
@@ -99,7 +108,18 @@ export abstract class BaseTooltipStateManager<
 
     protected abstract clearEventHandlers(): void;
 
+    protected getPopupPositionParams(): unknown {
+        return undefined;
+    }
+
     public postConstruct(): void {
+        let sharedState = sharedStateByGrid.get(this.gos);
+        if (!sharedState) {
+            sharedState = {};
+            sharedStateByGrid.set(this.gos, sharedState);
+        }
+        this.sharedState = sharedState;
+
         if (this.gos.get('tooltipInteraction')) {
             this.interactionEnabled = true;
         }
@@ -123,6 +143,14 @@ export abstract class BaseTooltipStateManager<
             });
         }
 
+        if (this.interactionEnabled && this.tooltipTrigger !== TooltipTrigger.FOCUS) {
+            this.addManagedListeners(el, { focusout: this.onFocusOut.bind(this) });
+        }
+
+        if (this.interactionEnabled) {
+            this.addManagedListeners(el, { keydown: this.onInteractiveSourceKeyDown.bind(this) });
+        }
+
         this.addManagedListeners(el, { mousemove: this.onMouseMove.bind(this) });
 
         if (!this.interactionEnabled) {
@@ -133,24 +161,15 @@ export abstract class BaseTooltipStateManager<
         }
     }
 
-    private getGridOptionsTooltipDelay(
-        delayOption: 'tooltipShowDelay' | 'tooltipHideDelay' | 'tooltipSwitchShowDelay'
-    ): number {
-        const delay = this.gos.get(delayOption)!;
-        return Math.max(200, delay);
-    }
-
     private getTooltipDelay(type: 'Show' | 'Hide' | 'SwitchShow'): number {
-        return (
-            this.tooltipCtrl[`getTooltip${type}DelayOverride`]?.() ??
-            this.getGridOptionsTooltipDelay(`tooltip${type}Delay`)
-        );
+        const delay = this.tooltipCtrl[`getTooltip${type}DelayOverride`]?.() ?? this.gos.get(`tooltip${type}Delay`)!;
+        return Math.max(0, delay);
     }
 
     public override destroy(): void {
         // if this component gets destroyed while tooltip is showing, need to make sure
         // we don't end with no mouseLeave event resulting in zombie tooltip
-        this.setToDoNothing();
+        this.hideTooltip(true);
         super.destroy();
     }
 
@@ -178,11 +197,13 @@ export abstract class BaseTooltipStateManager<
             this.startHideTimeout();
         }
 
-        if (_isIOSUserAgent()) {
+        const fromTouch = (e as MouseEvent & { sourceCapabilities?: { firesTouchEvents?: boolean } }).sourceCapabilities
+            ?.firesTouchEvents;
+        if (_isIOSUserAgent() || fromTouch) {
             return;
         }
 
-        if (isLocked) {
+        if (this.isLocked()) {
             this.showTooltipTimeoutId = window.setTimeout(() => {
                 this.prepareToShowTooltip(e);
             }, INTERACTIVE_HIDE_DELAY);
@@ -247,19 +268,19 @@ export abstract class BaseTooltipStateManager<
         this.setToDoNothing();
     }
 
-    public prepareToShowTooltip(mouseEvent?: MouseEvent): void {
+    public prepareToShowTooltip(mouseEvent?: MouseEvent | Touch, showDelayOverride?: number): void {
         // every mouseenter should be following by a mouseleave, however for some unknown, it's possible for
         // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
         // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
         // state is != nothing, then we know mouseenter was already received.
-        if (this.state != TooltipStates.NOTHING || isLocked) {
+        if (this.state != TooltipStates.NOTHING || this.isLocked()) {
             return;
         }
 
         // if we are showing the tooltip because of focus, no delay at all
         // if another tooltip was hidden very recently, use the switch show delay instead of the normal delay
-        let delay = 0;
-        if (mouseEvent) {
+        let delay = showDelayOverride == null ? 0 : Math.max(0, showDelayOverride);
+        if (mouseEvent && showDelayOverride == null) {
             delay = this.isLastTooltipHiddenRecently()
                 ? this.getTooltipDelay('SwitchShow')
                 : this.getTooltipDelay('Show');
@@ -271,12 +292,17 @@ export abstract class BaseTooltipStateManager<
         this.state = TooltipStates.WAITING_TO_SHOW;
     }
 
+    protected canShowTooltip(): boolean {
+        const value = this.getTooltipValue();
+        return _exists(value) && (!this.tooltipCtrl.shouldDisplayTooltip || this.tooltipCtrl.shouldDisplayTooltip());
+    }
+
     private isLastTooltipHiddenRecently(): boolean {
         // return true if <1000ms since last time we hid a tooltip
         const now = Date.now();
-        const then = lastTooltipHideTime;
+        const then = this.sharedState.lastHideTime;
 
-        return now - then < SHOW_SWITCH_TOOLTIP_DIFF;
+        return then != null && now - then < SHOW_SWITCH_TOOLTIP_DIFF;
     }
 
     private setToDoNothing(fromHideTooltip?: boolean): void {
@@ -294,6 +320,11 @@ export abstract class BaseTooltipStateManager<
         if (this.onDocumentKeyDownCallback) {
             this.onDocumentKeyDownCallback();
             this.onDocumentKeyDownCallback = undefined;
+        }
+
+        if (this.onDocumentTouchStartCallback) {
+            this.onDocumentTouchStartCallback();
+            this.onDocumentTouchStartCallback = undefined;
         }
 
         this.clearTimeouts();
@@ -336,13 +367,16 @@ export abstract class BaseTooltipStateManager<
         // one, the instance may not be back yet
         if (this.tooltipComp) {
             this.destroyTooltipComp();
-            lastTooltipHideTime = Date.now();
+            this.sharedState.lastHideTime = Date.now();
         }
 
-        this.eventSvc.dispatchEvent({
-            type: 'tooltipHide',
-            parentGui: this.tooltipCtrl.getGui(),
-        });
+        if (this.showEventDispatched) {
+            this.showEventDispatched = false;
+            this.eventSvc.dispatchEvent({
+                type: 'tooltipHide',
+                parentGui: this.tooltipCtrl.getGui(),
+            });
+        }
 
         if (forceHide) {
             this.isInteractingWithTooltip = false;
@@ -376,11 +410,18 @@ export abstract class BaseTooltipStateManager<
             eGui.classList.add('ag-tooltip-interactive');
         }
 
+        if (!eGui.hasAttribute('role')) {
+            _setAriaRole(eGui, this.interactionEnabled ? 'dialog' : 'tooltip');
+        }
+        this.connectAriaDescription(eGui);
+
         const translate = this.getLocaleTextFunc();
 
         const addPopupRes = this.popupSvc?.addPopup({
             eChild: eGui,
-            ariaLabel: translate('ariaLabelTooltip', 'Tooltip'),
+            ...(this.interactionEnabled
+                ? { ariaLabel: translate('ariaLabelTooltip', 'Tooltip') }
+                : { ariaOwns: this.tooltipCtrl.getGui() }),
         });
         if (addPopupRes) {
             this.tooltipPopupDestroyFunc = addPopupRes.hideFunc;
@@ -389,7 +430,7 @@ export abstract class BaseTooltipStateManager<
         this.positionTooltip();
 
         if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
-            const listener = () => this.setToDoNothing();
+            const listener = () => this.hideTooltip(true);
             [this.onBodyScrollEventCallback] = this.addManagedEventListeners({
                 bodyScroll: listener,
             });
@@ -403,21 +444,28 @@ export abstract class BaseTooltipStateManager<
             });
 
             [this.onDocumentKeyDownCallback] = this.addManagedElementListeners(_getDocument(this.beans), {
-                keydown: (e) => {
-                    if (!eGui.contains(e?.target as HTMLElement)) {
-                        this.onKeyDown();
+                keydown: (event) => {
+                    if (event) {
+                        this.onDocumentKeyDown(event, eGui);
                     }
                 },
             });
 
-            if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
-                [this.tooltipFocusInListener, this.tooltipFocusOutListener] = this.addManagedElementListeners(eGui, {
-                    focusin: this.onTooltipFocusIn.bind(this),
-                    focusout: this.onTooltipFocusOut.bind(this),
-                });
-            }
+            [this.tooltipFocusInListener, this.tooltipFocusOutListener] = this.addManagedElementListeners(eGui, {
+                focusin: this.onTooltipFocusIn.bind(this),
+                focusout: this.onTooltipFocusOut.bind(this),
+            });
         }
 
+        [this.onDocumentTouchStartCallback] = this.addManagedElementListeners(_getDocument(this.beans), {
+            touchstart: (event) => {
+                if (event && !eGui.contains(event.target as Node)) {
+                    this.hideTooltip(true);
+                }
+            },
+        });
+
+        this.showEventDispatched = true;
         this.eventSvc.dispatchEvent({
             type: 'tooltipShow',
             tooltipGui: eGui,
@@ -425,6 +473,96 @@ export abstract class BaseTooltipStateManager<
         });
 
         this.startHideTimeout();
+    }
+
+    private connectAriaDescription(eGui: HTMLElement): void {
+        eGui.id ||= `ag-tooltip-${++tooltipIdSequence}`;
+        const id = eGui.id;
+        const source = this.tooltipCtrl.getGui();
+        const describedBy = source.getAttribute('aria-describedby')?.split(/\s+/).filter(Boolean) ?? [];
+        if (!describedBy.includes(id)) {
+            source.setAttribute('aria-describedby', [...describedBy, id].join(' '));
+        }
+        this.describedById = id;
+        this.describedBySource = source;
+    }
+
+    private disconnectAriaDescription(): void {
+        const id = this.describedById;
+        const source = this.describedBySource;
+        if (!id || !source) {
+            return;
+        }
+        this.describedById = undefined;
+        this.describedBySource = undefined;
+        const describedBy = source
+            .getAttribute('aria-describedby')
+            ?.split(/\s+/)
+            .filter((value) => value && value !== id);
+        if (describedBy?.length) {
+            source.setAttribute('aria-describedby', describedBy.join(' '));
+        } else {
+            source.removeAttribute('aria-describedby');
+        }
+    }
+
+    private onDocumentKeyDown(event: KeyboardEvent, eGui: HTMLElement): void {
+        const source = this.tooltipCtrl.getGui();
+        if (event.key === 'Escape') {
+            const eventTarget = event.target as Node;
+            const returnFocus = eGui.contains(eventTarget);
+            const consumeEvent = returnFocus || source.contains(eventTarget);
+            if (consumeEvent) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            if (returnFocus && source.isConnected) {
+                // Restore focus while this tooltip is still showing so the source's focusin handler
+                // cannot immediately open a replacement tooltip.
+                source.focus({ preventScroll: true });
+            }
+            this.hideTooltip(true);
+            return;
+        }
+
+        if (event.key === 'Tab' && source.contains(event.target as Node)) {
+            const focusableElements = _findFocusableElements(eGui);
+            const target = event.shiftKey ? focusableElements.at(-1) : focusableElements[0];
+            if (target) {
+                event.preventDefault();
+                this.isInteractingWithTooltip = true;
+                target.focus();
+                return;
+            }
+        }
+
+        if (!eGui.contains(event.target as Node)) {
+            this.onKeyDown();
+        }
+    }
+
+    private onInteractiveSourceKeyDown(event: KeyboardEvent): void {
+        if (this.state !== TooltipStates.SHOWING || !this.tooltipComp) {
+            return;
+        }
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+            this.hideTooltip(true);
+            return;
+        }
+        if (event.key !== 'Tab') {
+            return;
+        }
+
+        const focusableElements = _findFocusableElements(this.tooltipComp.getGui());
+        const target = event.shiftKey ? focusableElements.at(-1) : focusableElements[0];
+        if (target) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.isInteractingWithTooltip = true;
+            target.focus();
+        }
     }
 
     private onTooltipMouseEnter(): void {
@@ -453,10 +591,12 @@ export abstract class BaseTooltipStateManager<
 
     private onTooltipFocusOut(e: FocusEvent): void {
         const parentGui = this.tooltipCtrl.getGui();
+        const tooltipGui = this.tooltipComp?.getGui();
+        const relatedTarget = e.relatedTarget as Node | null;
 
         // focusout is dispatched when inner elements lose focus
         // so we need to verify if focus is contained within the tooltip
-        if (this.isTooltipFocused()) {
+        if (this.isTooltipFocused() || tooltipGui?.contains(relatedTarget)) {
             return;
         }
 
@@ -464,7 +604,7 @@ export abstract class BaseTooltipStateManager<
 
         // if we move the focus from the tooltip back to the original cell
         // the tooltip should remain open, but we need to restart the hide timeout counter
-        if (parentGui.contains(e.relatedTarget as Element)) {
+        if (parentGui.contains(relatedTarget)) {
             this.startHideTimeout();
         }
         // if the parent cell doesn't contain the focus, simply hide the tooltip
@@ -479,6 +619,7 @@ export abstract class BaseTooltipStateManager<
             ePopup: this.tooltipComp!.getGui(),
             nudgeY: 18,
             skipObserver: this.tooltipMouseTrack,
+            additionalParams: this.getPopupPositionParams(),
         };
 
         if (this.lastMouseEvent) {
@@ -498,8 +639,11 @@ export abstract class BaseTooltipStateManager<
     }
 
     private destroyTooltipComp(): void {
+        this.disconnectAriaDescription();
         // add class to fade out the tooltip
-        this.tooltipComp!.getGui().classList.add('ag-tooltip-hiding');
+        const eGui = this.tooltipComp!.getGui();
+        eGui.classList.remove('ag-tooltip-interactive');
+        eGui.classList.add('ag-tooltip-hiding');
 
         // make local copies of these variables, as we use them in the async function below,
         // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
@@ -508,7 +652,7 @@ export abstract class BaseTooltipStateManager<
         const delay = this.tooltipTrigger === TooltipTrigger.HOVER ? FADE_OUT_TOOLTIP_TIMEOUT : 0;
 
         window.setTimeout(() => {
-            tooltipPopupDestroyFunc!();
+            tooltipPopupDestroyFunc?.();
             this.destroyBean(tooltipComp);
         }, delay);
 
@@ -537,7 +681,7 @@ export abstract class BaseTooltipStateManager<
     }
 
     private lockService(): void {
-        isLocked = true;
+        this.sharedState.lockOwner = this;
         this.interactiveTooltipTimeoutId = window.setTimeout(() => {
             this.unlockService();
             this.setToDoNothing();
@@ -545,7 +689,9 @@ export abstract class BaseTooltipStateManager<
     }
 
     private unlockService(): void {
-        isLocked = false;
+        if (this.sharedState.lockOwner === this) {
+            this.sharedState.lockOwner = undefined;
+        }
         this.clearInteractiveTimeout();
     }
 
@@ -576,14 +722,18 @@ export abstract class BaseTooltipStateManager<
         }
         window.clearTimeout(this.interactiveTooltipTimeoutId);
         this.interactiveTooltipTimeoutId = undefined;
-        // lockService sets the shared lock and this timeout together, so clearing the timeout must
-        // also release the lock, otherwise it is left orphaned and blocks every subsequent tooltip.
-        isLocked = false;
+        if (this.sharedState.lockOwner === this) {
+            this.sharedState.lockOwner = undefined;
+        }
     }
 
     private clearTimeouts(): void {
         this.clearShowTimeout();
         this.clearHideTimeout();
         this.clearInteractiveTimeout();
+    }
+
+    private isLocked(): boolean {
+        return this.sharedState.lockOwner != null;
     }
 }

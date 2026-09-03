@@ -23,7 +23,7 @@ export class GridLicenseManager extends BeanStub implements NamedBean, IWatermar
 
     public validateLicense(): void {
         const beans = this.beans;
-        if (beans.withinStudio) {
+        if (beans.studio) {
             this.licenseManager = {
                 isDisplayWatermark: () => false,
                 getWatermarkMessage: () => '',

@@ -1,12 +1,12 @@
-import { _parseBigIntOrNull } from 'ag-stack';
-
+import type { Column } from '../../../interfaces/iColumn';
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
+import { installAllowedCharPattern } from '../allowedCharPattern';
 import type { OptionsFactory } from '../optionsFactory';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { BigIntFilterModelFormatter } from './bigIntFilterModelFormatter';
-import { getAllowedCharPattern } from './bigIntFilterUtils';
+import { getAllowedCharPattern, stringToBigInt } from './bigIntFilterUtils';
 import type {
     BigIntFilterModel,
     BigIntFilterParams,
@@ -22,9 +22,10 @@ export class BigIntFloatingFilter extends TextInputFloatingFilter<IBigIntFloatin
 
     protected createModelFormatter(
         optionsFactory: OptionsFactory,
-        filterParams: IBigIntFilterParams
+        filterParams: IBigIntFilterParams,
+        column: Column
     ): BigIntFilterModelFormatter {
-        return new BigIntFilterModelFormatter(optionsFactory, filterParams);
+        return new BigIntFilterModelFormatter(optionsFactory, filterParams, column);
     }
 
     protected override updateParams(params: IBigIntFloatingFilterParams): void {
@@ -39,21 +40,17 @@ export class BigIntFloatingFilter extends TextInputFloatingFilter<IBigIntFloatin
 
     protected createFloatingFilterInputService(params: IBigIntFloatingFilterParams): FloatingFilterInputService {
         const filterParams = params.filterParams as BigIntFilterParams;
-        this.allowedCharPattern = getAllowedCharPattern(filterParams);
+        const allowedCharPattern = getAllowedCharPattern(filterParams);
+        this.allowedCharPattern = allowedCharPattern;
         this.bigintParser = filterParams?.bigintParser;
 
-        const config = this.allowedCharPattern ? { allowedCharPattern: this.allowedCharPattern } : undefined;
-        return this.createManagedBean(new FloatingFilterTextInputService({ config }));
+        return this.createManagedBean(
+            new FloatingFilterTextInputService((el) => installAllowedCharPattern(el, allowedCharPattern, this.beans))
+        );
     }
 
     protected override convertValue<TValue>(value: string | null | undefined): TValue | null {
-        if (value == null || value === '') {
-            return null;
-        }
-
-        if (this.bigintParser) {
-            return this.bigintParser(value) as TValue | null;
-        }
-        return _parseBigIntOrNull(value) as TValue | null;
+        const { gos, params } = this;
+        return stringToBigInt(this.bigintParser, value, gos, params.column) as TValue | null;
     }
 }

@@ -1,5 +1,5 @@
 import parseSitemap from '@ag-website-shared/components/sitemap/utils/sitemaputils';
-import { SITEMAP_CACHE_DIR } from '@ag-website-shared/constants';
+import { SITEMAP_BUILD_DIR, SITEMAP_CACHE_DIR } from '@ag-website-shared/constants';
 import { getSitemapXml } from '@ag-website-shared/utils/getSitemapXml';
 import { DISABLE_MARKDOWN_DOCS, LIVE_SITEMAP_URL, PRODUCTION_GRID_SITE_URL } from '@constants';
 import { STATIC_PAGE_CONTENT } from '@utils/markdown-pages/staticPageContent';
@@ -13,7 +13,11 @@ export async function GET() {
     }
 
     const sitemapUrl = LIVE_SITEMAP_URL || `${PRODUCTION_GRID_SITE_URL}/sitemap-0.xml`;
-    const xmlSitemap = await getSitemapXml({ cacheDir: SITEMAP_CACHE_DIR, sitemapUrl });
+    const xmlSitemap = await getSitemapXml({
+        cacheDir: SITEMAP_CACHE_DIR,
+        sitemapUrl,
+        recordDir: SITEMAP_BUILD_DIR,
+    });
     const parsedSitemap = parseSitemap(xmlSitemap);
 
     const content = STATIC_PAGE_CONTENT.sitemap;

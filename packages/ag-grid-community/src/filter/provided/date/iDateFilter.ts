@@ -60,7 +60,7 @@ export type DateFilterParams<TData = any> = IDateFilterParams & IFilterParams<TD
  */
 
 export interface IDateFilterParams extends IScalarFilterParams {
-    /** Array of filter options to present to the user. */
+    /** Array of filter options to present to the user, and the options the Advanced Filter offers for the column. */
     filterOptions?: (IFilterOptionDef | DateFilterOptionKey)[];
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: DateFilterOptionKey | CustomFilterOptionKey;

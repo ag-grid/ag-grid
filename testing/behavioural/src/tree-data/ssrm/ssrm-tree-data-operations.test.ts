@@ -1,10 +1,11 @@
+import { GridRows, TestGridsManager } from 'ag-test-utils';
+import { asyncSetTimeout } from 'ag-test-utils/node-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type { GridOptions, IServerSideGetRowsParams, LoadSuccessParams } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../../test-utils';
-import { asyncSetTimeout } from '../../test-utils/node-utils';
-import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 import type { EmployeeRow } from './ssrmSmallTreeDataSet';
 import { createFakeServer, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
 

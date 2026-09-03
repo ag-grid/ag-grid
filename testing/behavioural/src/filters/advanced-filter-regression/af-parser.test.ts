@@ -1,8 +1,14 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
+import { AdvancedFilterHarness, FilterDom, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import { AdvancedFilterHarness, FilterDom, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    DateFilterModule,
+    LocaleModule,
+    NumberFilterModule,
+    TextFilterModule,
+} from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 /**
  * Regression baseline for the Advanced Filter operand parser plus parser edge cases the happy-path
@@ -191,26 +197,44 @@ describe('Advanced Filter — operand parser edge cases', () => {
             `);
         });
 
-        test('a quoted number is rejected on a number column', async () => {
+        // Quotes hold whatever the column's own parser reads, so a number may be written in them too.
+        test('a quoted number operand reads as the number it holds', async () => {
             const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
 
             await AdvancedFilterHarness.get(api).applyExpression('[Age] = "40"');
             await asyncSetTimeout(0);
-            expect(displayedAthletes(api)).toEqual(ALL);
+            expect(displayedAthletes(api)).toEqual(['José']);
             await new FilterDom(api, 'quoted number panel').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Age] = "40""
-                valid: false — Expression has an error. Value is not a number - "40".
+                valid: true
                 buttons: Apply ⊘ | Builder
-                model: null
+                model:
+                  filterType: "number"
+                  colId: "age"
+                  type: "equals"
+                  filter: 40
             `);
             await new GridRows(api, 'quoted-number rows').check(`
                 ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0 athlete:"Bolt" country:"Jamaica" age:25
-                ├── LEAF id:1 athlete:"O'Brien" country:"Ireland" age:30
-                ├── LEAF id:2 athlete:"José" country:"España" age:40
-                ├── LEAF id:3 athlete:'say "hi"' country:"United States" age:50
-                └── LEAF id:4 athlete:"123" country:"New Zealand" age:60
+                └── LEAF id:2 athlete:"José" country:"España" age:40
+            `);
+        });
+
+        // Quotes hold text, and blank text is not a number the user wrote, however `Number` reads it.
+        test('a blank quoted number operand is rejected', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+
+            await AdvancedFilterHarness.get(api).applyExpression('[Age] = " "');
+            await asyncSetTimeout(0);
+            expect(displayedAthletes(api)).toEqual(ALL);
+            expect(api.getAdvancedFilterModel()).toBe(null);
+            await new FilterDom(api, 'blank quoted number panel').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Age] = " ""
+                valid: false — Expression has an error. Value is not a number - " ".
+                buttons: Apply ⊘ | Builder
+                model: null
             `);
         });
 
@@ -409,6 +433,218 @@ describe('Advanced Filter — parser edge cases', () => {
         });
     });
 
+    describe('an operator name another one starts with', () => {
+        // Its own manager: `localeText` needs LocaleModule, and the names under test only exist through it.
+        const localeGridsManager = new TestGridsManager({
+            modules: [
+                TextFilterModule,
+                NumberFilterModule,
+                LocaleModule,
+                AdvancedFilterModule,
+                ClientSideRowModelModule,
+            ],
+        });
+
+        afterEach(() => localeGridsManager.reset());
+
+        function optionsWithNotContainsNamed(name: string): GridOptions<Row> {
+            return { ...OPTS, localeText: { advancedFilterNotContains: name } };
+        }
+
+        test('the longer name parses rather than the shorter one it starts with', async () => {
+            const api = await localeGridsManager.createGridAndWait(
+                'grid1',
+                optionsWithNotContainsNamed('contains not')
+            );
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.applyExpression('[Athlete] contains not "e"');
+            await asyncSetTimeout(0);
+
+            expect(af.value).toBe('[Athlete] contains not "e"');
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'text',
+                colId: 'athlete',
+                type: 'notContains',
+                filter: 'e',
+            });
+            await new GridRows(api, 'the longer operator name').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Bolt" age:25 big:"10000000000000000001n"
+                └── LEAF id:1 athlete:"Ng" age:40 big:"20000000000000000002n"
+            `);
+        });
+
+        test('the shorter name still parses on its own', async () => {
+            const api = await localeGridsManager.createGridAndWait(
+                'grid1',
+                optionsWithNotContainsNamed('contains not')
+            );
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.applyExpression('[Athlete] contains "e"');
+            await asyncSetTimeout(0);
+
+            expect(af.value).toBe('[Athlete] contains "e"');
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'text',
+                colId: 'athlete',
+                type: 'contains',
+                filter: 'e',
+            });
+            await new GridRows(api, 'the shorter operator name').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 athlete:"Wei" age:28 big:"10000000000000000001n"
+            `);
+        });
+
+        test('a model naming the longer option round-trips through the expression', async () => {
+            const api = await localeGridsManager.createGridAndWait(
+                'grid1',
+                optionsWithNotContainsNamed('contains not')
+            );
+
+            api.setAdvancedFilterModel({ filterType: 'text', colId: 'athlete', type: 'notContains', filter: 'e' });
+            await asyncSetTimeout(0);
+
+            expect(AdvancedFilterHarness.get(api).value).toBe('[Athlete] contains not "e"');
+            await new GridRows(api, 'a model naming the longer option').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Bolt" age:25 big:"10000000000000000001n"
+                └── LEAF id:1 athlete:"Ng" age:40 big:"20000000000000000002n"
+            `);
+        });
+
+        test('a longer name left incomplete falls back to the shorter match, and the rest is rejected', async () => {
+            const api = await localeGridsManager.createGridAndWait(
+                'grid1',
+                optionsWithNotContainsNamed('contains not really')
+            );
+
+            // Greedy but not destructive: only `contains` resolves, so `not` is its operand and `"e"` is left
+            // where a join operator belongs - the text is reported rather than silently swallowed by the scan.
+            await AdvancedFilterHarness.get(api).applyExpression('[Athlete] contains not "e"');
+            await asyncSetTimeout(0);
+
+            await new FilterDom(api, 'an incomplete longer name').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Athlete] contains not "e""
+                valid: false — Expression has an error. Join operator not found - "e".
+                buttons: Apply ⊘ | Builder
+                model: null
+            `);
+        });
+
+        test('an operand continuing the longer name falls back to the shorter one rather than failing', async () => {
+            const api = await localeGridsManager.createGridAndWait(
+                'grid1',
+                optionsWithNotContainsNamed('contains not')
+            );
+            const af = AdvancedFilterHarness.get(api);
+
+            // `notes` spells `not` and then keeps going, so the longer name is not what the text says.
+            await af.applyExpression('[Athlete] contains notes');
+            await asyncSetTimeout(0);
+
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'text',
+                colId: 'athlete',
+                type: 'contains',
+                filter: 'notes',
+            });
+            await new GridRows(api, 'an operand continuing the longer name').check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+        });
+
+        test('a name containing a closing bracket parses', async () => {
+            const api = await localeGridsManager.createGridAndWait(
+                'grid1',
+                optionsWithNotContainsNamed('not (contains)')
+            );
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.applyExpression('[Athlete] not (contains) "e"');
+            await asyncSetTimeout(0);
+
+            expect(af.value).toBe('[Athlete] not (contains) "e"');
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'text',
+                colId: 'athlete',
+                type: 'notContains',
+                filter: 'e',
+            });
+            await new GridRows(api, 'a bracketed operator name').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Bolt" age:25 big:"10000000000000000001n"
+                └── LEAF id:1 athlete:"Ng" age:40 big:"20000000000000000002n"
+            `);
+        });
+
+        test('a bracket closing the enclosing group is not taken as part of the name', async () => {
+            const api = await localeGridsManager.createGridAndWait(
+                'grid1',
+                optionsWithNotContainsNamed('not (contains)')
+            );
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.applyExpression('([Athlete] not (contains) "e") OR [Age] = 40');
+            await asyncSetTimeout(0);
+
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'join',
+                type: 'OR',
+                conditions: [
+                    { filterType: 'text', colId: 'athlete', type: 'notContains', filter: 'e' },
+                    { filterType: 'number', colId: 'age', type: 'equals', filter: 40 },
+                ],
+            });
+            await new GridRows(api, 'a bracketed name inside a group').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Bolt" age:25 big:"10000000000000000001n"
+                └── LEAF id:1 athlete:"Ng" age:40 big:"20000000000000000002n"
+            `);
+        });
+    });
+
+    describe('an operator name whose lowercase is longer than the name', () => {
+        const localeGridsManager = new TestGridsManager({
+            modules: [
+                TextFilterModule,
+                NumberFilterModule,
+                LocaleModule,
+                AdvancedFilterModule,
+                ClientSideRowModelModule,
+            ],
+        });
+
+        afterEach(() => localeGridsManager.reset());
+
+        // `İ` lowercases to two UTF-16 units, so the name is longer lowercased than as typed: a boundary
+        // taken from the lowercased form overruns the name and never matches what the text spells.
+        test('a name containing a dotted capital I parses', async () => {
+            const api = await localeGridsManager.createGridAndWait('grid1', {
+                ...OPTS,
+                localeText: { advancedFilterContains: 'İçerir' },
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.applyExpression('[Athlete] İçerir "e"');
+            await asyncSetTimeout(0);
+
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'text',
+                colId: 'athlete',
+                type: 'contains',
+                filter: 'e',
+            });
+            await new GridRows(api, 'a dotted capital I in the name').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 athlete:"Wei" age:28 big:"10000000000000000001n"
+            `);
+        });
+    });
+
     describe('bigint operand', () => {
         test('a bigint literal beyond Number.MAX_SAFE_INTEGER filters exactly', async () => {
             const api = await gridsManager.createGridAndWait('grid1', OPTS);
@@ -430,18 +666,18 @@ describe('Advanced Filter — parser edge cases', () => {
             `);
         });
 
-        test('a quoted bigint operand is rejected as not a bigint', async () => {
+        test('a quoted bigint operand reads as the bigint it holds', async () => {
             const api = await gridsManager.createGridAndWait('grid1', OPTS);
             const af = AdvancedFilterHarness.get(api);
 
             await af.type('[Big] = "10000000000000000001"');
             await asyncSetTimeout(0);
 
-            await new FilterDom(api, 'quoted bigint rejected').checkFilterDom(`
+            await new FilterDom(api, 'quoted bigint accepted').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Big] = "10000000000000000001""
-                valid: false — Expression has an error. Value is not a big integer - "10000000000000000001".
-                buttons: Apply ⊘ | Builder
+                valid: true
+                buttons: Apply | Builder
                 model: null
             `);
         });

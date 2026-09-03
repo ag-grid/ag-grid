@@ -413,7 +413,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             const removeFunc = item.removeEventListener.bind(item, 'expandedChanged', columnExpandedListener);
             this.destroyColumnItemFuncs.push(removeFunc);
         };
-        const colNames = this.beans.colNames;
+        const beans = this.beans;
 
         const recursivelyBuild = (
             tree: (AgColumn | AgProvidedColumnGroup)[],
@@ -445,9 +445,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const displayName = colNames.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel');
             const item: ColumnModelItem = new ColumnModelItem(
-                displayName,
+                beans,
                 columnGroup,
                 depth,
                 true,
@@ -467,9 +466,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const displayName = colNames.getDisplayNameForColumn(column, 'columnToolPanel');
-
-            parentList.push(new ColumnModelItem(displayName, column, depth));
+            parentList.push(new ColumnModelItem(beans, column, depth));
         };
 
         this.destroyColumnTree();

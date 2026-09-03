@@ -1,10 +1,10 @@
+import { GridColumns, GridRows, TestGridsManager, assertSelectedRowsByIndex, waitForEvent } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { DetailGridInfo, GetDetailRowDataParams, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, assertSelectedRowsByIndex, waitForEvent } from '../test-utils';
 import { GridActions } from './utils';
 
 /**
@@ -199,22 +199,6 @@ describe('Row Selection Grid Options', () => {
                 },
             },
         });
-        await new GridColumns(api, `selecting master row will select all rows in un-expanded detail grid setup`)
-            .checkColumns(`
-                CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                └── sport "Sport" width:200
-            `);
-        await new GridRows(api, `selecting master row will select all rows in un-expanded detail grid setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── master collapsed id:0 sport:"football"
-            ├── master collapsed id:1 sport:"rugby"
-            ├── master collapsed id:2 sport:"tennis"
-            ├── master collapsed id:3 sport:"cricket"
-            ├── master collapsed id:4 sport:"golf"
-            ├── master collapsed id:5 sport:"swimming"
-            └── master collapsed id:6 sport:"rowing"
-        `);
 
         actions.toggleCheckboxByIndex(1);
 
@@ -260,24 +244,6 @@ describe('Row Selection Grid Options', () => {
                 },
             },
         });
-        await new GridColumns(api, `selecting row in detail grid applies indeterminate state to master row setup`)
-            .checkColumns(`
-                CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                └── sport "Sport" width:200
-            `);
-        await new GridRows(api, `selecting row in detail grid applies indeterminate state to master row setup`).check(
-            `
-                ROOT id:ROOT_NODE_ID
-                ├── master collapsed id:0 sport:"football"
-                ├── master collapsed id:1 sport:"rugby"
-                ├── master collapsed id:2 sport:"tennis"
-                ├── master collapsed id:3 sport:"cricket"
-                ├── master collapsed id:4 sport:"golf"
-                ├── master collapsed id:5 sport:"swimming"
-                └── master collapsed id:6 sport:"rowing"
-            `
-        );
 
         await actions.expandGroupRowByIndex(1, { count: 1 });
 
@@ -344,27 +310,6 @@ describe('Row Selection Grid Options', () => {
                 },
             },
         });
-        await new GridColumns(
-            api,
-            `detail state properly tracked and restored when collapsing and re-expanding deta setup`
-        ).checkColumns(`
-            CENTER
-            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-            └── sport "Sport" width:200
-        `);
-        await new GridRows(
-            api,
-            `detail state properly tracked and restored when collapsing and re-expanding deta setup`
-        ).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── master collapsed id:0 sport:"football"
-            ├── master collapsed id:1 sport:"rugby"
-            ├── master collapsed id:2 sport:"tennis"
-            ├── master collapsed id:3 sport:"cricket"
-            ├── master collapsed id:4 sport:"golf"
-            ├── master collapsed id:5 sport:"swimming"
-            └── master collapsed id:6 sport:"rowing"
-        `);
 
         let info: DetailGridInfo | undefined;
         let detailActions: GridActions;

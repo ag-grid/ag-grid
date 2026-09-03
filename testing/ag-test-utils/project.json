@@ -1,0 +1,15 @@
+{
+  "name": "ag-test-utils",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/ag-test-utils/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    }
+  },
+  "tags": ["test"]
+}

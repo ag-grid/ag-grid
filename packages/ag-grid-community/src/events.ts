@@ -145,6 +145,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         columnPanelItemDragStart: ColumnPanelItemDragStartEvent<TData, TContext>;
         columnPanelItemDragEnd: ColumnPanelItemDragEndEvent<TData, TContext>;
         bodyHeightChanged: BodyHeightChangedEvent<TData, TContext>;
+        gridViewportWidthChanged: GridViewportWidthChangedEvent<TData, TContext>;
         columnContainerWidthChanged: ColumnContainerWidthChangedEvent<TData, TContext>;
         displayedColumnsWidthChanged: DisplayedColumnsWidthChangedEvent<TData, TContext>;
         scrollVisibilityChanged: ScrollVisibilityChangedEvent<TData, TContext>;
@@ -510,6 +511,11 @@ export interface ColumnHoverChangedEvent<TData = any, TContext = any> extends Ag
 > {} // not documented
 export interface BodyHeightChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'bodyHeightChanged',
+    TData,
+    TContext
+> {} // not documented
+export interface GridViewportWidthChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
+    'gridViewportWidthChanged',
     TData,
     TContext
 > {} // not documented

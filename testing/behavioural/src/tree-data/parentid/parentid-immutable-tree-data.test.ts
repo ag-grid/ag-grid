@@ -1,10 +1,9 @@
+import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid parentId immutable tree data', () => {
     const gridsManager = new TestGridsManager({

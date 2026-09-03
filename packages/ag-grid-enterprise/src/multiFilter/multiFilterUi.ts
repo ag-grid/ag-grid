@@ -77,8 +77,7 @@ export class MultiFilterUi
     public refresh(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): boolean {
         const { model, state, source } = params;
         if (source === 'colDef') {
-            // multi filter has never been reactive. Implementing this would require extracting
-            // even more logic from ColumnFilterService to determine if the filter has changed
+            // rebuilt wholesale rather than diffed, so a change to any child's params, title or display applies
             return false;
         }
         this.params = params;

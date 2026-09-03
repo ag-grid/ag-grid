@@ -73,7 +73,7 @@ describe('buildWhatsNewMarkdown', () => {
 
     it('links highlights into the docs and derives the release blog URL as the page does', () => {
         expect(output).toContain('https://www.ag-grid.com/javascript-data-grid/column-headers/#editable-header-name');
-        expect(output).toContain('https://blog.ag-grid.com/whats-new-in-ag-grid-36-1/');
+        expect(output).toContain('https://www.ag-grid.com/blog/whats-new-in-ag-grid-36-1/');
     });
 
     it('labels the release-notes link by release kind, as the page does', () => {

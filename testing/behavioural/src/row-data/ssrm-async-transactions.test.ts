@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+
 import type { GridOptions, ServerSideTransactionResult } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 /**
  * Characterization (golden-master) tests for AG Grid SSRM ASYNC transactions:

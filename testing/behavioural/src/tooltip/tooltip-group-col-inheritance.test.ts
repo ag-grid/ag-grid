@@ -1,11 +1,34 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    getVisibleTooltips as getTooltips,
+    waitForTooltips,
+} from 'ag-test-utils';
 
-import { GROUP_AUTO_COLUMN_ID, TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import type { GridOptions, ITooltipComp, ITooltipParams, Module } from 'ag-grid-community';
+import {
+    GROUP_AUTO_COLUMN_ID,
+    TooltipModule,
+    agTestIdFor,
+    enableDevValidations,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
+import type {
+    GridOptions,
+    ICellRendererComp,
+    ICellRendererParams,
+    ITooltipComp,
+    ITooltipParams,
+    Module,
+} from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from './legacyTooltipTestUtils';
 
 describe('Tooltip inheritance in group columns', () => {
     const gridMgr = new TestGridsManager({
@@ -14,16 +37,19 @@ describe('Tooltip inheritance in group columns', () => {
     });
 
     beforeAll(() => setupAgTestIds());
-    afterEach(() => gridMgr.reset());
+    beforeEach(() => enableDevValidations({ throwOn: ALL_SEVERITIES }));
+    afterEach(() => {
+        gridMgr.reset();
+        resetLegacyTooltipProperties();
+    });
 
-    const TOOLTIP_SHOW_DELAY = 200;
-
-    const getTooltips = () => Array.from(document.querySelectorAll<HTMLElement>('.ag-tooltip, .ag-tooltip-custom'));
-    const waitForTooltips = async (count: number) =>
-        await waitFor(() => expect(getTooltips().length).toBe(count), { timeout: 2000 });
+    // 0 means 0 here. Every assertion
+    // polls for the tooltip rather than sleeping past the delay.
+    const TOOLTIP_SHOW_DELAY = 0;
 
     // TC2 – single column grouping: group cell inherits tooltipValueGetter from underlying colDef
     test('group cell inherits tooltipValueGetter when grouped (singleColumn)', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [
                 {
@@ -36,6 +62,7 @@ describe('Tooltip inheritance in group columns', () => {
             ],
             rowData: [{ country: 'Australia', athlete: 'Alice' }],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-single', gridOptions);
@@ -56,7 +83,6 @@ describe('Tooltip inheritance in group columns', () => {
         );
 
         await userEvent.hover(groupCell);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Tooltip: Australia');
         await new GridRows(api, 'group cell inherits tooltipValueGetter (singleColumn) final state').check(`
@@ -68,6 +94,7 @@ describe('Tooltip inheritance in group columns', () => {
 
     // TC2 – multiple column grouping: group cell inherits tooltipValueGetter from underlying colDef
     test('group cell inherits tooltipValueGetter when grouped (multipleColumns)', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [
                 {
@@ -81,6 +108,7 @@ describe('Tooltip inheritance in group columns', () => {
             rowData: [{ country: 'Australia', athlete: 'Alice' }],
             groupDisplayType: 'multipleColumns',
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-multiple', gridOptions);
@@ -102,7 +130,6 @@ describe('Tooltip inheritance in group columns', () => {
         );
 
         await userEvent.hover(groupCell);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Country: Australia');
         await new GridRows(api, 'group cell inherits tooltipValueGetter (multipleColumns) final state').check(`
@@ -114,6 +141,7 @@ describe('Tooltip inheritance in group columns', () => {
 
     // TC2 – tooltipField is inherited (singleColumn)
     test('group cell inherits tooltipField from underlying colDef', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true, tooltipField: 'country' },
@@ -121,6 +149,7 @@ describe('Tooltip inheritance in group columns', () => {
             ],
             rowData: [{ country: 'Australia', athlete: 'Alice' }],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-field', gridOptions);
@@ -141,7 +170,6 @@ describe('Tooltip inheritance in group columns', () => {
         );
 
         await userEvent.hover(groupCell);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Australia');
         await new GridRows(api, 'group cell inherits tooltipField final state').check(`
@@ -161,6 +189,7 @@ describe('Tooltip inheritance in group columns', () => {
             rowData: [{ country: 'Australia', athlete: 'Alice' }],
             groupDisplayType: 'multipleColumns',
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-header', gridOptions);
@@ -180,7 +209,6 @@ describe('Tooltip inheritance in group columns', () => {
         const headerCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.headerCell(autoColId)));
 
         await userEvent.hover(headerCell);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Country header tooltip');
         await new GridRows(api, 'grouped header inherits headerTooltip (multipleColumns) final state').check(`
@@ -192,6 +220,7 @@ describe('Tooltip inheritance in group columns', () => {
 
     // TC5 – leaf rows in the group column use autoGroupColumnDef tooltip settings
     test('leaf rows use autoGroupColumnDef tooltipValueGetter', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: {
@@ -200,6 +229,7 @@ describe('Tooltip inheritance in group columns', () => {
             },
             rowData: [{ country: 'Australia', athlete: 'Alice' }],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-leaf', gridOptions);
@@ -220,7 +250,6 @@ describe('Tooltip inheritance in group columns', () => {
         const leafCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.autoGroupCell('0')));
 
         await userEvent.hover(leafCell);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Leaf: Alice');
         await new GridRows(api, 'leaf rows use autoGroupColumnDef tooltipValueGetter final state').check(`
@@ -232,6 +261,7 @@ describe('Tooltip inheritance in group columns', () => {
 
     // group rows always use underlying colDef tooltip even when autoGroupColumnDef also sets one
     test('group rows use underlying colDef tooltip, ignoring autoGroupColumnDef tooltipValueGetter', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [
                 {
@@ -247,6 +277,7 @@ describe('Tooltip inheritance in group columns', () => {
             },
             rowData: [{ country: 'Australia', athlete: 'Alice' }],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-override', gridOptions);
@@ -267,7 +298,6 @@ describe('Tooltip inheritance in group columns', () => {
         );
 
         await userEvent.hover(groupCell);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Inherited tooltip');
         await new GridRows(api, 'group rows use underlying colDef tooltip final state').check(`
@@ -297,7 +327,7 @@ describe('Tooltip inheritance in group columns', () => {
                     field: 'country',
                     rowGroup: true,
                     hide: true,
-                    tooltipValueGetter: (params) => params.value,
+                    tooltip: (params) => params.value,
                     tooltipComponentSelector: () => ({ component: CustomTooltip }),
                 },
                 { field: 'athlete' },
@@ -305,6 +335,7 @@ describe('Tooltip inheritance in group columns', () => {
             rowData: [{ country: 'Australia', athlete: 'Alice' }],
             groupDisplayType: 'multipleColumns',
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-selector-multiple', gridOptions);
@@ -327,7 +358,6 @@ describe('Tooltip inheritance in group columns', () => {
         );
 
         await userEvent.hover(groupCell);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(document.querySelector('.custom-selector-tooltip')).not.toBeNull();
         expect(getTooltips()[0]).toHaveTextContent('selector:Australia');
@@ -360,13 +390,14 @@ describe('Tooltip inheritance in group columns', () => {
                     field: 'country',
                     rowGroup: true,
                     hide: true,
-                    tooltipValueGetter: (params) => params.value,
+                    tooltip: (params) => params.value,
                     tooltipComponentSelector: () => ({ component: CustomTooltip }),
                 },
                 { field: 'athlete' },
             ],
             rowData: [{ country: 'Australia', athlete: 'Alice' }],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-selector-single', gridOptions);
@@ -389,7 +420,6 @@ describe('Tooltip inheritance in group columns', () => {
         );
 
         await userEvent.hover(groupCell);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(document.querySelector('.custom-selector-tooltip')).not.toBeNull();
         expect(getTooltips()[0]).toHaveTextContent('selector:Australia');
@@ -403,8 +433,131 @@ describe('Tooltip inheritance in group columns', () => {
         `);
     });
 
+    test('renderer tooltip keeps the source column component when tooltip is false (singleColumn)', async () => {
+        class RuntimeTooltipRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+
+            init(params: ICellRendererParams) {
+                this.eGui.textContent = String(params.value);
+                params.setTooltip('Renderer tooltip');
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+
+            refresh() {
+                return false;
+            }
+        }
+
+        class CustomTooltip implements ITooltipComp {
+            private readonly eGui = document.createElement('div');
+
+            init(params: ITooltipParams) {
+                this.eGui.className = 'runtime-group-tooltip';
+                this.eGui.textContent = `custom:${params.value}`;
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+        }
+
+        const api = await gridMgr.createGridAndWait('tooltip-group-runtime-single', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                    tooltip: false,
+                    tooltipComponent: CustomTooltip,
+                },
+                { field: 'athlete' },
+            ],
+            autoGroupColumnDef: { cellRenderer: RuntimeTooltipRenderer },
+            rowData: [{ country: 'Australia', athlete: 'Alice' }],
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const groupCell = await waitFor(() =>
+            getByTestId(gridDiv, agTestIdFor.autoGroupCell('row-group-country-Australia'))
+        );
+
+        await userEvent.hover(groupCell);
+        await waitForTooltips(1);
+        expect(document.querySelector('.runtime-group-tooltip')).not.toBeNull();
+        expect(getTooltips()[0]).toHaveTextContent('custom:Renderer tooltip');
+    });
+
+    test('full-width renderer tooltip keeps the source column component when tooltip is false (groupRows)', async () => {
+        class RuntimeTooltipRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+
+            init(params: ICellRendererParams) {
+                this.eGui.textContent = String(params.value);
+                params.setTooltip('Renderer tooltip');
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+
+            refresh() {
+                return false;
+            }
+        }
+
+        class CustomTooltip implements ITooltipComp {
+            private readonly eGui = document.createElement('div');
+
+            init(params: ITooltipParams) {
+                this.eGui.className = 'runtime-full-width-tooltip';
+                this.eGui.textContent = `custom:${params.value}`;
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+        }
+
+        let selectorParams: ITooltipParams | undefined;
+        const columnDef = {
+            field: 'country',
+            rowGroup: true,
+            hide: true,
+            tooltip: false,
+            tooltipComponentSelector: (params: ITooltipParams) => {
+                selectorParams = params;
+                return { component: CustomTooltip };
+            },
+        };
+
+        const api = await gridMgr.createGridAndWait('tooltip-group-runtime-full-width', {
+            columnDefs: [columnDef, { field: 'athlete' }],
+            groupDisplayType: 'groupRows',
+            groupRowRenderer: RuntimeTooltipRenderer,
+            rowData: [{ country: 'Australia', athlete: 'Alice' }],
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const groupRow = await waitFor(() => getByTestId(gridDiv, agTestIdFor.rowNode('row-group-country-Australia')));
+
+        await userEvent.hover(groupRow);
+        await waitForTooltips(1);
+        expect(document.querySelector('.runtime-full-width-tooltip')).not.toBeNull();
+        expect(getTooltips()[0]).toHaveTextContent('custom:Renderer tooltip');
+        expect(selectorParams?.colDef).toMatchObject({ field: 'country' });
+        expect(selectorParams?.column).toBe(api.getColumn('country'));
+        expect(selectorParams?.node?.key).toBe('Australia');
+        expect(selectorParams?.location).toBe('fullWidthRow');
+    });
+
     // TC3 – groupDisplayType: 'groupRows': full-width row inherits tooltipValueGetter from colDef
     test('full-width group row inherits tooltipValueGetter (groupRows)', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [
                 {
@@ -418,6 +571,7 @@ describe('Tooltip inheritance in group columns', () => {
             rowData: [{ country: 'Australia', athlete: 'Alice' }],
             groupDisplayType: 'groupRows',
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-rows-valuegetter', gridOptions);
@@ -435,7 +589,6 @@ describe('Tooltip inheritance in group columns', () => {
         const groupRow = await waitFor(() => getByTestId(gridDiv, agTestIdFor.rowNode('row-group-country-Australia')));
 
         await userEvent.hover(groupRow);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Tooltip: Australia');
         await new GridRows(api, 'full-width group row inherits tooltipValueGetter (groupRows) final state').check(`
@@ -445,9 +598,70 @@ describe('Tooltip inheritance in group columns', () => {
         `);
     });
 
+    // TC3 – groupDisplayType: 'groupRows': legacy precedence on group rows is tooltipValueGetter
+    // first, tooltipField second — the inverse of the cell precedence
+    test('full-width group row prefers tooltipValueGetter over tooltipField (groupRows)', async () => {
+        allowLegacyTooltipProperties();
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                    tooltipField: 'country',
+                    tooltipValueGetter: (params) => `Getter: ${params.value}`,
+                },
+                { field: 'athlete' },
+            ],
+            rowData: [{ country: 'Australia', athlete: 'Alice' }],
+            groupDisplayType: 'groupRows',
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('tooltip-group-rows-getter-precedence', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const groupRow = await waitFor(() => getByTestId(gridDiv, agTestIdFor.rowNode('row-group-country-Australia')));
+
+        await userEvent.hover(groupRow);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Getter: Australia');
+    });
+
+    // Single auto group column: the same legacy getter-first precedence applies to its dynamic tooltip
+    test('auto group column group row prefers tooltipValueGetter over tooltipField', async () => {
+        allowLegacyTooltipProperties();
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                    tooltipField: 'country',
+                    tooltipValueGetter: (params) => `Getter: ${params.value}`,
+                },
+                { field: 'athlete' },
+            ],
+            rowData: [{ country: 'Australia', athlete: 'Alice' }],
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('tooltip-auto-col-getter-precedence', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const groupCell = await waitFor(() =>
+            getByTestId(gridDiv, agTestIdFor.autoGroupCell('row-group-country-Australia'))
+        );
+
+        await userEvent.hover(groupCell);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Getter: Australia');
+    });
+
     // TC3 – groupDisplayType: 'groupRows': full-width row reads tooltipField from node.data,
     // not from the group display value — verified with tree data where the two differ
     test('full-width group row reads tooltipField from node.data, not display value (groupRows + tree data)', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             treeData: true,
             treeDataParentIdField: 'parentId',
@@ -464,6 +678,7 @@ describe('Tooltip inheritance in group columns', () => {
             ],
             groupDisplayType: 'groupRows',
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-rows-field', gridOptions);
@@ -477,7 +692,6 @@ describe('Tooltip inheritance in group columns', () => {
         const groupRow = await waitFor(() => getByTestId(gridDiv, agTestIdFor.rowNode('au')));
 
         await userEvent.hover(groupRow);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         // tooltip comes from data.description ('Commonwealth of Australia'), not from data.name ('Australia')
         expect(getTooltips()[0]).toHaveTextContent('Commonwealth of Australia');
@@ -491,6 +705,7 @@ describe('Tooltip inheritance in group columns', () => {
     // TC3 – groupDisplayType: 'groupRows' with regular row grouping: a group node carries no `node.data`,
     // so `tooltipField` must fall back to the group display value rather than producing no tooltip.
     test('full-width group row inherits tooltipField from underlying colDef (groupRows, regular grouping)', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [
                 {
@@ -507,6 +722,7 @@ describe('Tooltip inheritance in group columns', () => {
             groupDefaultExpanded: -1,
             groupDisplayType: 'groupRows',
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-rows-field-regular', gridOptions);
@@ -523,13 +739,13 @@ describe('Tooltip inheritance in group columns', () => {
         );
 
         await userEvent.hover(groupRow);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('United States');
     });
 
     // P1 fix: tooltipValueGetter receives params.value from the owning group column, not the outer group
     test('full-width group row tooltipValueGetter receives value from the owning column (groupRows + multiple groups)', async () => {
+        allowLegacyTooltipProperties();
         const countryTooltips: string[] = [];
         const yearTooltips: string[] = [];
         const gridOptions: GridOptions = {
@@ -557,6 +773,7 @@ describe('Tooltip inheritance in group columns', () => {
             rowData: [{ country: 'Australia', year: 2020, athlete: 'Alice' }],
             groupDisplayType: 'groupRows',
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-rows-multi-group', gridOptions);
@@ -568,7 +785,6 @@ describe('Tooltip inheritance in group columns', () => {
         );
 
         await userEvent.hover(yearRow);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         // The year group row must show the year value (2020), not the country value (Australia)
         expect(getTooltips()[0]).toHaveTextContent('year:2020');
@@ -604,6 +820,7 @@ describe('Tooltip inheritance in group columns', () => {
             rowData: [{ country: 'Australia', athlete: 'Alice' }],
             groupDisplayType: 'groupRows',
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-rows-component-only', gridOptions);
@@ -611,7 +828,6 @@ describe('Tooltip inheritance in group columns', () => {
         const groupRow = await waitFor(() => getByTestId(gridDiv, agTestIdFor.rowNode('row-group-country-Australia')));
 
         await userEvent.hover(groupRow);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(document.querySelector('.capture-tooltip')).not.toBeNull();
         // params.value must be the group display value, not undefined
@@ -650,6 +866,7 @@ describe('Tooltip inheritance in group columns', () => {
             rowData: [{ country: 'Australia', athlete: 'Alice' }],
             groupDisplayType: 'groupRows',
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-rows-value-formatted', gridOptions);
@@ -657,7 +874,6 @@ describe('Tooltip inheritance in group columns', () => {
         const groupRow = await waitFor(() => getByTestId(gridDiv, agTestIdFor.rowNode('row-group-country-Australia')));
 
         await userEvent.hover(groupRow);
-        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(document.querySelector('.capture-tooltip')).not.toBeNull();
         expect(capturedValueFormatted).toBe('formatted:Australia');

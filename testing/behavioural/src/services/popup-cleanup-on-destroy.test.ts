@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import { ColumnMenuModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 const columnDefs: ColDef[] = [{ field: 'a' }, { field: 'b' }];
 const rowData = [{ a: 1, b: 2 }];
@@ -11,7 +11,7 @@ describe('ag-grid popup cleanup on destroy', () => {
         modules: [ColumnMenuModule],
     });
 
-    // jsdom has no layout engine, so offsetParent and dimensions are all 0.
+    // happy-dom has no layout engine, so offsetParent and dimensions are all 0.
     // The column chooser dialog needs these to position itself.
     const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
 

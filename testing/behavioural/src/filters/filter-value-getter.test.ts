@@ -1,9 +1,11 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ValueGetterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    NumberFilterModule,
     QuickFilterModule,
     TextFilterModule,
     agTestIdFor,
@@ -12,8 +14,6 @@ import {
 } from 'ag-grid-community';
 import type { SetFilter } from 'ag-grid-enterprise';
 import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface Person {
     firstName: string;
@@ -552,6 +552,53 @@ describe('filterValueGetter', () => {
             expect(capturedValues.every((v) => typeof v === 'number')).toBe(true);
             // Each leaf row's raw sales value should appear (100, 200, 300, 400).
             expect(new Set(capturedValues)).toEqual(new Set([100, 200, 300, 400]));
+        });
+    });
+
+    // A `valueFormatter` changes what the column shows, not what it filters on; the getter is what closes
+    // the gap, for every option rather than just `equals`.
+    describe('number filter, filtering on the displayed value', () => {
+        const numberGridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, NumberFilterModule],
+        });
+
+        afterEach(() => numberGridsManager.reset());
+
+        test('substitutes the displayed value before the comparison, so every option follows', async () => {
+            const api = await numberGridsManager.createGridAndWait('grid', {
+                columnDefs: [
+                    {
+                        field: 'val',
+                        filter: 'agNumberColumnFilter',
+                        valueFormatter: ({ value }) => value.toFixed(1),
+                        filterValueGetter: ({ getValue }) => Number(Number(getValue('val')).toFixed(1)),
+                        filterParams: { debounceMs: 0 },
+                    },
+                ],
+                rowData: [{ val: 1.44 }, { val: 1.41 }, { val: 2.2 }],
+            });
+
+            // No cell holds 1.4; two display it, and it is the displayed value the filter is given.
+            await api.setColumnFilterModel('val', { filterType: 'number', type: 'equals', filter: 1.4 });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            await new GridRows(api, 'equals matched what the cells display').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 val:"1.4"
+                └── LEAF id:1 val:"1.4"
+            `);
+
+            // Discriminating: on the underlying values 1.44 and 1.41 both exceed 1.4, and on the displayed
+            // ones neither does. So an ordered option needs nothing beyond the substitution.
+            await api.setColumnFilterModel('val', { filterType: 'number', type: 'greaterThan', filter: 1.4 });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            await new GridRows(api, 'greaterThan matched what the cells display').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 val:2.2
+            `);
         });
     });
 });

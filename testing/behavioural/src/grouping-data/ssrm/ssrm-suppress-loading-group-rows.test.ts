@@ -1,10 +1,9 @@
+import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { IServerSideDatasource, RowGroupingDisplayType } from 'ag-grid-community';
 import { ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, TestGridsManager } from '../../test-utils';
 
 /**
  * Tests for suppressServerSideFullWidthLoadingRow combined with groupDisplayType and groupHideOpenParents.

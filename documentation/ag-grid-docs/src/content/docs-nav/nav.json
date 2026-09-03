@@ -87,17 +87,17 @@
                                 },
                                 {
                                     "title": "Playwright",
-                                    "url": "https://blog.ag-grid.com/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/",
+                                    "url": "https://www.ag-grid.com/blog/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/",
                                     "frameworks": ["react"]
                                 },
                                 {
                                     "title": "Cypress",
-                                    "url": "https://blog.ag-grid.com/end-to-end-testing-for-ag-grid-in-react-with-cypress/",
+                                    "url": "https://www.ag-grid.com/blog/end-to-end-testing-for-ag-grid-in-react-with-cypress/",
                                     "frameworks": ["react"]
                                 },
                                 {
                                     "title": "React Testing Library",
-                                    "url": "https://blog.ag-grid.com/unit-testing-ag-grid-react-tables-with-react-testing-library-and-vitest/",
+                                    "url": "https://www.ag-grid.com/blog/unit-testing-ag-grid-react-tables-with-react-testing-library-and-vitest/",
                                     "frameworks": ["react"]
                                 }
                             ]
@@ -541,7 +541,7 @@
                         {
                             "type": "item",
                             "title": "See AG Charts",
-                            "url": "https://www.ag-grid.com/charts"
+                            "url": "https://www.ag-grid.com/charts/"
                         }
                     ]
                 },
@@ -552,7 +552,7 @@
                         {
                             "type": "item",
                             "title": "See AG Studio",
-                            "url": "https://www.ag-grid.com/studio"
+                            "url": "https://www.ag-grid.com/studio/"
                         }
                     ]
                 },
@@ -716,6 +716,11 @@
                             "title": "Row Numbers",
                             "path": "row-numbers",
                             "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Loading Rows",
+                            "path": "loading-rows"
                         },
                         {
                             "type": "item",
@@ -1203,6 +1208,11 @@
                             "type": "item",
                             "title": "Touch",
                             "path": "touch"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Input Fields",
+                            "path": "input-fields"
                         },
                         {
                             "type": "item",
@@ -1704,8 +1714,7 @@
                                 {
                                     "type": "item",
                                     "title": "Loading Component",
-                                    "path": "component-loading-cell-renderer",
-                                    "isEnterprise": true
+                                    "path": "component-loading-cell-renderer"
                                 },
                                 {
                                     "type": "item",
@@ -1761,30 +1770,6 @@
                                     "type": "item",
                                     "title": "Master Detail",
                                     "path": "server-side-model-master-detail",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Example Node.js & MySQL",
-                                    "path": "server-side-operations-nodejs",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Example GraphQL & MySQL",
-                                    "path": "server-side-operations-graphql",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Example Java & Oracle",
-                                    "path": "server-side-operations-oracle",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Example Java & Apache",
-                                    "path": "server-side-operations-spark",
                                     "isEnterprise": true
                                 }
                             ]

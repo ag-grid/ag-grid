@@ -1,3 +1,4 @@
+import type { Column } from '../../../interfaces/iColumn';
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
@@ -12,9 +13,10 @@ export class TextFloatingFilter extends TextInputFloatingFilter<ITextFloatingFil
 
     protected createModelFormatter(
         optionsFactory: OptionsFactory,
-        filterParams: ITextFilterParams
+        filterParams: ITextFilterParams,
+        column: Column
     ): TextFilterModelFormatter {
-        return new TextFilterModelFormatter(optionsFactory, filterParams);
+        return new TextFilterModelFormatter(optionsFactory, filterParams, column);
     }
 
     protected createFloatingFilterInputService(): FloatingFilterInputService {

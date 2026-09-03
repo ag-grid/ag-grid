@@ -1,12 +1,18 @@
 import { waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import {
+    TestGridsManager,
+    asyncSetTimeout,
+    canvasPolyfill,
+    getVisibleTooltips as getTooltips,
+    waitForTooltips,
+} from 'ag-test-utils';
 
 import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout, canvasPolyfill } from '../test-utils';
 
 /**
  * A renamed header name is stored as an override on the column entity (and the group-id-keyed group
@@ -32,15 +38,12 @@ describe('Editable header name — tooltips', () => {
             columnDefs,
             rowData,
             defaultColDef: { flex: 1, minWidth: 100 },
-            tooltipShowDelay: 200,
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
             ...extraOptions,
         });
         return { api, gridDiv: getGridElement(api)! as HTMLElement };
     }
-
-    const getTooltips = () => Array.from(document.querySelectorAll<HTMLElement>('.ag-tooltip, .ag-tooltip-custom'));
-    const waitForTooltips = async (count: number) =>
-        await waitFor(() => expect(getTooltips().length).toBe(count), { timeout: 2000 });
 
     async function hoverHeader(): Promise<void> {
         const headerCell = await waitFor(
@@ -56,13 +59,13 @@ describe('Editable header name — tooltips', () => {
     }
 
     test('the header tooltip reflects the edited name after a rename', async () => {
-        // headerTooltipValueGetter reads valueFormatted, which the tooltip service resolves from the
+        // The header tooltip callback reads valueFormatted, which the tooltip service resolves from the
         // display name on each read, so a rename underneath the header must surface in the tooltip.
         const { api } = await createGrid([
             {
                 field: 'athlete',
                 headerNameEditable: true,
-                headerTooltipValueGetter: (params) => params.valueFormatted ?? '',
+                headerTooltip: (params) => params.valueFormatted ?? '',
             },
         ]);
 

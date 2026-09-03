@@ -19,6 +19,7 @@ import agSitemapLastmod from '../../external/ag-website-shared/plugins/agSitemap
 import agSourcemapCors from '../../external/ag-website-shared/plugins/agSourcemapCors';
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
+import agDemoTitleChecker from './plugins/agDemoTitleChecker';
 import agDevCsp from './plugins/agDevCsp';
 import agDevExampleAssetCors from './plugins/agDevExampleAssetCors';
 import agDevMarkdownNegotiation from './plugins/agDevMarkdownNegotiation';
@@ -134,9 +135,30 @@ const {
     STUDIO_SITEMAP_INDEX_URL,
 
     /**
+     * SE-85: Ghost's flat child sitemaps to merge, comma-separated. NOT its index — see
+     * getSitemapConfig; an index inside an index is invalid and crawlers ignore it.
+     */
+    BLOG_SITEMAP_URLS,
+
+    /**
      * Studio robots.txt disallow json url to merge
      */
     STUDIO_ROBOTS_DISALLOW_JSON_URL,
+
+    /**
+     * Format generated example code in dev as production does
+     *
+     * Dev builds skip prettier because it is roughly half the cost of generating an example, so
+     * example code reads unformatted in the code viewer. Set to `true` to format it anyway.
+     */
+    AG_EXAMPLE_FORMAT,
+
+    /**
+     * Generate examples through the per-example Nx tasks instead of the single aggregate task
+     *
+     * Escape hatch for the generation collapse; the two strategies produce identical output.
+     */
+    DISABLE_EXAMPLE_GEN_COLLAPSE,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -160,6 +182,8 @@ console.log(
             CHARTS_ROBOTS_DISALLOW_JSON_URL,
             STUDIO_SITEMAP_INDEX_URL,
             STUDIO_ROBOTS_DISALLOW_JSON_URL,
+            AG_EXAMPLE_FORMAT,
+            DISABLE_EXAMPLE_GEN_COLLAPSE,
         },
         null,
         2
@@ -182,20 +206,55 @@ const httpsEnabled = !['0', 'false'].includes(PUBLIC_HTTPS_SERVER);
 
 // https://astro.build/config
 export default defineConfig({
+    /**
+     * Site fonts, resolved from the installed `@fontsource-variable` packages rather than
+     * `fontProviders.google()`.
+     *
+     * The Google provider resolves a `fonts.gstatic.com` URL at build time and downloads it
+     * with no retry. Google periodically re-cuts those files without bumping the version in
+     * the URL, and stale CSS lingering on some edge nodes then hands out filenames gstatic
+     * has already deleted - a 404 that fails the whole docs build. Resolving from
+     * node_modules removes the build-time network call entirely and pins the files to the
+     * lockfile.
+     *
+     * Each family ships as one variable woff2, declared at the SAME discrete weights the
+     * Google provider declared (sans 400/500/700, mono 400/700) rather than at the file's
+     * full variable range. That is deliberate: CSS matches a requested weight to the nearest
+     * declared one, so the ~58 `font-weight: 600` call sites in the docs currently resolve to
+     * 700. Exposing the continuous range would let them resolve to a true 600 and lighten
+     * text across the site - a typography change, which does not belong in a build fix.
+     * Widening these to a range is a deliberate follow-up, not a free win.
+     *
+     * No `unicodeRange` here, unlike the faces the Google provider emitted. That descriptor
+     * exists to let a browser skip downloading a subset it has no characters for, which needs
+     * more than one subset to mean anything - there is a single latin file per family, it is
+     * preloaded from Layout.astro regardless, and its coverage is exactly the range fontsource
+     * declares for it. Anything outside that range falls back per glyph either way.
+     */
     fonts: [
         {
-            provider: fontProviders.google(),
+            provider: fontProviders.local(),
             name: 'IBM Plex Sans',
             cssVariable: '--font-ibm-plex-sans',
-            weights: ['400', '500', '700'],
-            styles: ['normal'],
+            options: {
+                variants: [400, 500, 700].map((weight) => ({
+                    weight,
+                    style: 'normal',
+                    src: ['@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2'],
+                })),
+            },
         },
         {
-            provider: fontProviders.google(),
+            provider: fontProviders.local(),
             name: 'JetBrains Mono',
             cssVariable: '--font-jetbrains-mono',
-            weights: ['400', '700'],
-            styles: ['normal'],
+            options: {
+                variants: [400, 700].map((weight) => ({
+                    weight,
+                    style: 'normal',
+                    src: ['@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2'],
+                })),
+            },
         },
     ],
     site: PUBLIC_SITE_URL,
@@ -279,6 +338,9 @@ export default defineConfig({
                       getSitemapConfig({
                           chartsSitemap: CHARTS_SITEMAP_INDEX_URL,
                           studioSitemap: STUDIO_SITEMAP_INDEX_URL,
+                          blogSitemaps: BLOG_SITEMAP_URLS?.split(',')
+                              .map((url) => url.trim())
+                              .filter(Boolean),
                       })
                   ),
                   agSitemapFilterNoindex({ enabled: PRODUCTION_SITE_URLS.includes(PUBLIC_SITE_URL) }),
@@ -296,6 +358,7 @@ export default defineConfig({
                   },
               ]),
         agHtaccessGen({ htaccessEnv: HTACCESS }),
+        agDemoTitleChecker(),
         agRedirectsChecker({
             skip: CHECK_REDIRECTS !== 'true',
         }),

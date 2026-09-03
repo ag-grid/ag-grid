@@ -10,13 +10,25 @@ import type {
     TooltipCtrl,
     WithoutCommon,
 } from 'ag-stack';
-import { AgBeanStub, _setAriaDisabled, _setAriaExpanded, _setAriaHasPopup, _setAriaRole } from 'ag-stack';
+import {
+    AgBeanStub,
+    FAST_TEST_TIMINGS,
+    _setAriaDisabled,
+    _setAriaExpanded,
+    _setAriaHasPopup,
+    _setAriaRole,
+} from 'ag-stack';
 
 import type { AgEvent, AgPromise, IComponent, IMenuConfigParams, IMenuItem, TapEvent } from 'ag-grid-community';
 import { KeyCode, TouchListener, _createElement } from 'ag-grid-community';
 
 import { AgMenuList } from './agMenuList';
 import { AgMenuPanel } from './agMenuPanel';
+
+/** Hovering a menu item activates it only after a pause, so a cursor crossing the menu doesn't flicker. */
+const ACTIVATION_DELAY = FAST_TEST_TIMINGS ? 0 : 80;
+/** A further pause before an active item opens its submenu, for the same reason. */
+const SUB_MENU_OPEN_DELAY = FAST_TEST_TIMINGS ? 0 : 300;
 
 export interface AgMenuItemLeafDef<TMenuActionParams extends TCommon, TCommon> {
     /** Name of the menu item. */
@@ -162,8 +174,6 @@ export class AgMenuItemComponent<
     TPropertiesService,
     AgMenuItemComponentEvent
 > {
-    private readonly ACTIVATION_DELAY = 80;
-
     private eGui: HTMLElement;
     private params: AgMenuItemDef<TMenuActionParams, TCommon>;
     private isAnotherSubMenuOpen: () => boolean;
@@ -423,7 +433,7 @@ export class AgMenuItemComponent<
                 if (this.isAlive() && this.isActive) {
                     this.openSubMenu();
                 }
-            }, 300);
+            }, SUB_MENU_OPEN_DELAY);
         }
 
         this.onItemActivated();
@@ -531,7 +541,7 @@ export class AgMenuItemComponent<
 
         if (this.isAnotherSubMenuOpen()) {
             // wait to see if the user enters the open sub-menu
-            this.activateTimeoutId = window.setTimeout(() => this.activate(true), this.ACTIVATION_DELAY);
+            this.activateTimeoutId = window.setTimeout(() => this.activate(true), ACTIVATION_DELAY);
         } else {
             // activate immediately
             this.activate(true);
@@ -543,7 +553,7 @@ export class AgMenuItemComponent<
 
         if (this.isSubMenuOpen()) {
             // wait to see if the user enters the sub-menu
-            this.deactivateTimeoutId = window.setTimeout(() => this.deactivate(), this.ACTIVATION_DELAY);
+            this.deactivateTimeoutId = window.setTimeout(() => this.deactivate(), ACTIVATION_DELAY);
         } else {
             // de-activate immediately
             this.deactivate();
@@ -647,6 +657,7 @@ export class AgMenuItemComponent<
             false,
             {
                 getGui: () => this.getGui(),
+                getTooltipComponentDefinition: () => undefined,
                 getTooltipValue: () => this.tooltip,
                 getLocation: () => 'menu',
                 shouldDisplayTooltip,

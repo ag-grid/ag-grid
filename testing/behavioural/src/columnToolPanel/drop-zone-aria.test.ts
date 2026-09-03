@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { ColumnsToolPanelModule, PivotModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 const COLUMN_DEFS = [
     { field: 'country', enableRowGroup: true, enablePivot: true },

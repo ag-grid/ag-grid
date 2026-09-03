@@ -1,8 +1,10 @@
 import astroPackageJson from 'astro/package.json';
 import { createHash } from 'node:crypto';
 
+import { aggregateCspViolations } from '../csp/cspViolationReport';
 import { DARK_MODE_INIT_SCRIPT, KBD_PLATFORM_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
 import {
+    ACCEPTED_CSP_VIOLATIONS,
     ASTRO_HYDRATION_HASHES_VERIFIED_FOR,
     BRANCH_BUILDS_PATH_CONDITION,
     CAMPAIGNS_PATH_CONDITION,
@@ -143,6 +145,28 @@ describe('cspRules', () => {
             expect(getCspDirectives({ env: 'production', scope: 'site' })['script-src']).not.toContain("'unsafe-eval'");
         });
 
+        it('accepts the blocked eval from its cookiebar bundle, and only that', () => {
+            // The shape the post-deploy suite actually observes on staging, so the acceptance
+            // stops matching if Enzuzo moves the bundle or the browser reports it differently.
+            const observed = {
+                directive: 'script-src',
+                blockedUri: 'eval',
+                disposition: 'enforce' as const,
+                sourceFile: 'https://app.enzuzo.com/scripts/cookiebar/061e8460-91b3-11f1-98ff-978c2fcf2681',
+                pageUrl: 'https://grid-staging.ag-grid.com/',
+            };
+            const aggregate = (record: typeof observed) =>
+                aggregateCspViolations([{ record, testTitle: 'homepage loads' }], [], ACCEPTED_CSP_VIOLATIONS)[0];
+
+            expect(aggregate(observed).accepted).toEqual(expect.stringContaining('Enzuzo'));
+            // The consent-bridge hash going stale must still surface...
+            expect(aggregate({ ...observed, blockedUri: 'inline' })).not.toHaveProperty('accepted');
+            // ...as must an eval from anything other than the banner bundle.
+            expect(
+                aggregate({ ...observed, sourceFile: 'https://app.enzuzo.com/scripts/cookies/061e8460' })
+            ).not.toHaveProperty('accepted');
+        });
+
         it('applies on every page, not just the ones that render a cookies table', () => {
             // The banner loads site-wide, including under /examples/ and /ecommerce/, so
             // the origins live in the base directives rather than a scope override.
@@ -246,13 +270,23 @@ describe('cspRules', () => {
         it('authorises both capture tags by hash in the site scope', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
             expect(site).toContain("'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='"); // page-view capture
-            expect(site).toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='"); // webhook POST
+            expect(site).toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='"); // webhook POST (live)
+        });
+
+        it('also authorises the updated capturing-phase webhook listener', () => {
+            // The submit listener now adds a third `true` argument to addEventListener
+            // (capturing phase) — otherwise byte-identical to the live tag above. Kept
+            // alongside it until the rollout is complete and the old hash is confirmed
+            // unused. AG-3390.
+            const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(site).toContain("'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='");
         });
 
         it('is site-scope only, since examples keeps unsafe-inline', () => {
             const examples = getCspDirectives({ env: 'production', scope: 'examples' })['script-src'];
             expect(examples).not.toContain("'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='");
             expect(examples).not.toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='");
+            expect(examples).not.toContain("'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='");
         });
     });
 

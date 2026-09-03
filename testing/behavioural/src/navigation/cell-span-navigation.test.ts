@@ -1,7 +1,8 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { CellSpanModule, ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
 
-import { TestGridsManager } from '../test-utils';
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
 
 interface RowData {

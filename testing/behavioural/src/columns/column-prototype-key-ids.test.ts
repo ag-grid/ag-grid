@@ -1,3 +1,4 @@
+import { TestGridsManager } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, ColGroupDef } from 'ag-grid-community';
@@ -9,8 +10,6 @@ import {
     ValidationModule,
 } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 // colIds / groupIds that collide with Object.prototype members. With a plain `{}` lookup Record
 // these break: `map['toString']` returns the inherited function, `map['__proto__'] = col` fails to

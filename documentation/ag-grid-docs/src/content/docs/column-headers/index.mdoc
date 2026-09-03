@@ -77,11 +77,11 @@ The example below has editable columns and column groups. Toggle **Deferred edit
 
 ## Tooltips
 
-Tooltips can be added to the Column Header by using either the `headerTooltipValueGetter`, or `headerTooltip` property of the `ColDef`.
+Tooltips can be added to Column Headers using the `headerTooltip` property of the `ColDef`. Set it to `true` to use the displayed header name, provide a string for fixed content, or provide a callback for dynamic content.
 
-{% apiDocumentation source="column-properties/properties.json" section="header" names=["headerTooltipValueGetter", "headerTooltip"] /%}
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["headerTooltip"] /%}
 
-The example below demonstrates using both `headerTooltipValueGetter` and `headerTooltip` properties to set tooltips in the grid columns.
+The example below demonstrates static and callback-based `headerTooltip` values.
 
 {% gridExampleRunner title="Header Tooltip" name="header-tooltip" /%}
 

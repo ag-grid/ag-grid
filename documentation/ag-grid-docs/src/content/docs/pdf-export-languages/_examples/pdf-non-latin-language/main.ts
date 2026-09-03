@@ -37,8 +37,10 @@ function onBtExport() {
     });
 }
 
+const fontBaseUrl = '${baseWWWUrl}/fonts/pdf-export/';
+
 async function loadFont(fileName: string): Promise<ArrayBuffer> {
-    const response = await fetch(`/fonts/pdf-export/${fileName}`);
+    const response = await fetch(fontBaseUrl + fileName);
     if (!response.ok) {
         throw new Error(`Unable to load ${fileName}`);
     }

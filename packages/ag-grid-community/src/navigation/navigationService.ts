@@ -494,9 +494,15 @@ export class NavigationService extends BeanStub implements NamedBean {
         let res: boolean | null | undefined;
         const cellCtrl = previous instanceof CellCtrl ? previous : previous.getAllCellCtrls()?.[0];
 
-        if (editSvc?.isEditing()) {
+        const wasEditing = editSvc?.isEditing();
+        if (wasEditing) {
             res = editSvc?.moveToNextCell(cellCtrl, backwards, event, source);
-        } else {
+        }
+
+        // if the cell was editing and res is false, it could be because validation blocked the edit
+        // if that is not the case and we are no longer editing, this means the `moveToNextCell` couldn't find
+        // another editable cell, so we switch to `moveToNextCellNotEditing` to find the next cell to focus on.
+        if (!wasEditing || (res === false && !editSvc?.isEditing())) {
             res = this.moveToNextCellNotEditing(previous, backwards);
         }
 

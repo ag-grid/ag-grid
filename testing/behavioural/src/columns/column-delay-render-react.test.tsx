@@ -1,4 +1,6 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
+import { asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import React from 'react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
@@ -6,8 +8,6 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnAutoSizeModule, GridStateModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-import { asyncSetTimeout, ignoreConsoleLicenseKeyError } from '../test-utils';
-import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
 import type { HideClassRecorder } from './column-delay-render-utils';
 import { isHidden, recordHideClassMutations } from './column-delay-render-utils';
 
@@ -32,8 +32,7 @@ describe('Column delay render (React)', () => {
 
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnAutoSizeModule, GridStateModule]);
-        ignoreConsoleLicenseKeyError();
-        // The hide/reveal cycle is driven by measured viewport width, which jsdom reports as 0. Unlike
+        // The hide/reveal cycle is driven by measured viewport width, which happy-dom reports as 0. Unlike
         // the vanilla tests there is no TestGridsManager to install the layout mock, so do it here.
         mockGridLayout.init();
         mockGridLayout.useRealOffsetDimensions = true;

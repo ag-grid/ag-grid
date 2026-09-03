@@ -152,6 +152,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
         return new FilterExpressionParser({
             expression,
+            gos: this.gos,
             colModel: this.colModel,
             dataTypeSvc: this.dataTypeSvc,
             valueSvc: this.valueSvc,

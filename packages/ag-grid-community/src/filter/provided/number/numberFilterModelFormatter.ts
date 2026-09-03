@@ -1,5 +1,5 @@
-import type { OptionsFactory } from '../optionsFactory';
 import { SCALAR_FILTER_TYPE_KEYS, SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
+import { _bindFilterCallback } from '../simpleFilterUtils';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
 
 export class NumberFilterModelFormatter extends SimpleFilterModelFormatter<
@@ -9,8 +9,8 @@ export class NumberFilterModelFormatter extends SimpleFilterModelFormatter<
 > {
     protected readonly filterTypeKeys = SCALAR_FILTER_TYPE_KEYS;
 
-    constructor(optionsFactory: OptionsFactory, filterParams: INumberFilterParams) {
-        super(optionsFactory, filterParams, filterParams.numberFormatter);
+    protected override getValueFormatter(): ((value: number | null) => string | null) | undefined {
+        return _bindFilterCallback(this.filterParams.numberFormatter, this.gos, this.column);
     }
 
     protected conditionToString(

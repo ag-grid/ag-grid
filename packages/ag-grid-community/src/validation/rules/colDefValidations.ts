@@ -33,6 +33,18 @@ const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> =
         version: '34.3',
         message: 'Use `colDef.groupHierarchy` instead.',
     },
+    headerTooltipValueGetter: {
+        version: '36.2',
+        message: 'Use `headerTooltip` with a callback instead.',
+    },
+    tooltipField: {
+        version: '36.2',
+        message: 'Use `tooltip` with a callback instead.',
+    },
+    tooltipValueGetter: {
+        version: '36.2',
+        message: 'Use `tooltip` with a callback instead.',
+    },
 });
 
 export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGroupDef> = {
@@ -113,6 +125,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     rowDrag: 'RowDrag',
     rowGroup: 'SharedRowGrouping',
     rowGroupIndex: 'SharedRowGrouping',
+    tooltip: 'Tooltip',
     tooltipField: 'Tooltip',
     tooltipValueGetter: 'Tooltip',
     tooltipComponentSelector: 'Tooltip',
@@ -425,6 +438,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     type: undefined,
     cellDataType: undefined,
     tooltipComponent: undefined,
+    tooltip: undefined,
     tooltipField: undefined,
     headerTooltip: undefined,
     headerTooltipValueGetter: undefined,

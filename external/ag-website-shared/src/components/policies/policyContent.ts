@@ -20,12 +20,6 @@ export interface PolicyContent {
     meta: string[];
     /** Introductory paragraphs, as inline HTML (`<strong>` only). */
     intro: string[];
-    /** Framing for a data-driven section rendered below the policy body (the cookie inventory). */
-    cookiesSection?: {
-        id: string;
-        heading: string;
-        note: string;
-    };
 }
 
 export const POLICY_CONTENT = {
@@ -34,31 +28,26 @@ export const POLICY_CONTENT = {
         metaTitle: 'Privacy Policy',
         description:
             'We take your privacy very seriously at AG Grid. This page outlines our privacy policy which we have updated in light of GDPR.',
-        meta: ['Effective Date: 6 July 2022'],
+        meta: ['Last Updated: 2 September 2026'],
         intro: [
-            "Welcome to AG Grid's Privacy Policy.",
+            'Welcome to the Privacy Policy of AG Grid Ltd (<strong>AG Grid</strong>).',
             '<strong>Your privacy is important to us.</strong>',
-            'At ag-grid, we are fully committed to protecting your personal data and complying with all data privacy laws.',
-            'This policy serves as a guide and reference point for how we may collect and use personal information, and the rights and choices available to all our visitors and customers.',
+            'At AG Grid, we are fully committed to protecting your personal data and complying with all data privacy laws.',
+            'This policy serves as a guide and reference point for how we may collect and use personal information, and the rights and choices available to all our website visitors and customers.',
             'We strongly recommend you read our policy and understand what we collect, how we collect it, what we do with it, how we protect it, and your rights regarding information, <strong>before</strong> you use or access any of our services.',
         ],
     },
+    /**
+     * The cookies page renders the Enzuzo policy embed, which supplies its own heading, body and
+     * cookie inventory (AG-18194) — so unlike the other policies, only the document metadata here
+     * reaches the page. `heading` is used by the `/cookies.md` twin.
+     */
     cookies: {
-        heading: 'Cookies Policy',
+        heading: '{name} Cookies Policy',
         metaTitle: 'Cookies Policy',
         description: 'This page outlines our policy in relation to the cookies that we collect on our website.',
-        meta: ['Effective Date: May 17, 2018'],
+        meta: [],
         intro: [],
-        /**
-         * The cookie inventory rendered below the policy body, from
-         * `@ag-website-shared/content/policies/cookies-data-*.json` (AG-18105). Shared so the
-         * `CookiesTable` section on the page and the `/cookies.md` twin carry the same framing.
-         */
-        cookiesSection: {
-            id: 'cookies-we-use',
-            heading: 'Cookies We Use',
-            note: 'The cookies listed below were last reviewed on 7 August 2026.',
-        },
     },
     'modern-slavery': {
         heading: '{name} Modern Slavery and Human Trafficking Statement',

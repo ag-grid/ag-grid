@@ -33,7 +33,7 @@ export const ReleasesSection: React.FC<ReleasesSectionProps> = ({
     subtitle = "Here's what you've missed since you've been gone",
     showViewAllButton = true,
     viewAllButtonText = 'View recent releases',
-    viewAllButtonUrl = '/whats-new',
+    viewAllButtonUrl = '/whats-new/',
 }) => {
     // Filter versions that have highlights and are not hidden
     const filteredVersions = versionsData
@@ -50,7 +50,7 @@ export const ReleasesSection: React.FC<ReleasesSectionProps> = ({
                 {filteredVersions.map((version) => (
                     <div key={version.version} className={styles.rtsReleaseCard}>
                         <a
-                            href={`https://blog.ag-grid.com/whats-new-in-ag-grid-${version.version}/${utm}`}
+                            href={`https://www.ag-grid.com/blog/whats-new-in-ag-grid-${version.version}/${utm}`}
                             target="_blank"
                             rel="noopener noreferrer"
                         >

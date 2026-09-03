@@ -12,13 +12,11 @@ export const RECAPTCHA_URL = 'https://www.google.com/recaptcha/api.js';
  */
 export const CONSENT_FIELD_IDS = {
     default: {
-        dataProcessingConsentId: '00NS900000KbwBF',
         marketingEmailConsentId: '00NS900000KbwBI',
         emailTrackingConsentId: '00NS900000KbwBG',
         franceOrItalyId: '00NS900000KbwBH',
     },
     production: {
-        dataProcessingConsentId: '00NQ500000IfxTS',
         marketingEmailConsentId: '00NQ500000JApXt',
         emailTrackingConsentId: '00NQ500000JApXs',
         franceOrItalyId: '00NQ500000JD5zq',
@@ -78,6 +76,22 @@ export const STUDIO_FORM_DATA = {
 // Relative to website folder
 export const SITEMAP_CACHE_DIR = '.astro/cache/sitemap';
 
+/**
+ * Scratch folder for the sitemap bookkeeping `buildWithSitemapCache` needs across the two builds it
+ * may run — currently the record of which sitemap the first build's sitemap pages rendered from.
+ *
+ * Deliberately outside `SITEMAP_CACHE_DIR`: the cached sitemap is a declared nx input for the docs
+ * `build` target (a change to it has to re-run the build), and this bookkeeping changes on every
+ * build without changing what the site renders, so it must not feed that hash.
+ */
+export const SITEMAP_BUILD_DIR = '.astro/cache/sitemap-build';
+
+/**
+ * `User-Agent` identifying build-time fetches against the live AG sites (sitemaps, robots disallow
+ * lists), which are not served to the default agent.
+ */
+export const BUILD_USER_AGENT = 'Mozilla/5.0 (compatible; ag-website-build)';
+
 export const PRIVACY_POLICY_URL = 'https://www.ag-grid.com/privacy';
 
 // Figma
@@ -88,3 +102,6 @@ export const YOUTUBE_LICENSE_PRICING_URL = 'https://www.youtube.com/watch?v=VPr_
 
 // Zendesk
 export const ZENDESK_URL = 'https://ag-grid.zendesk.com/hc/en-us';
+
+// Enzuzo consent-management platform: the AG Grid site's cookie policy UUID
+export const AG_GRID_ENZUZO_POLICY_ID = '061e8460-91b3-11f1-98ff-978c2fcf2681';

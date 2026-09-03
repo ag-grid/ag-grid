@@ -8,8 +8,8 @@ import type {
     ElementParams,
     GridCheckbox,
     GridDragSource,
-    ITooltipCtrl,
     LongTapEvent,
+    TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -18,9 +18,12 @@ import {
     DragSourceType,
     KeyCode,
     TouchListener,
+    _addGridCommonParams,
     _createIconNoSpan,
+    _getHeaderTooltipComponentDefinition,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
+    _resolveHeaderTooltipValue,
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
@@ -48,7 +51,6 @@ export class ToolPanelColumnComp extends Component {
     public readonly column: AgColumn;
     public readonly columnDepth: number;
     private eDragHandle: Element;
-    private displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
@@ -63,10 +65,13 @@ export class ToolPanelColumnComp extends Component {
         private readonly source: ColumnSelectionPanelSource
     ) {
         super();
-        const { column, depth, displayName } = modelItem;
+        const { column, depth } = modelItem;
         this.column = column;
         this.columnDepth = depth;
-        this.displayName = displayName;
+    }
+
+    private get displayName(): string | null {
+        return this.modelItem.displayName;
     }
 
     public postConstruct(): void {
@@ -105,14 +110,30 @@ export class ToolPanelColumnComp extends Component {
         this.getGui().style.setProperty('--ag-indentation-level', String(indent));
 
         this.tooltipFeature = this.createOptionalManagedBean(
-            beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            beans.tooltipSvc?.createTooltip({
                 getGui: () => this.focusWrapper,
+                getTooltipComponentDefinition: () => _getHeaderTooltipComponentDefinition(column.colDef),
                 getLocation: () => 'columnToolPanelColumn',
+                getTooltipValue: () => {
+                    const displayName = this.displayName;
+                    return _resolveHeaderTooltipValue(
+                        column.colDef,
+                        _addGridCommonParams<TooltipCallbackParams>(gos, {
+                            location: 'columnToolPanelColumn',
+                            colDef: column.colDef,
+                            column,
+                            value: displayName,
+                            valueFormatted: displayName,
+                        })
+                    );
+                },
                 shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
                 getAdditionalParams: () => ({
                     colDef: column.colDef,
+                    column,
+                    valueFormatted: this.displayName,
                 }),
-            } as ITooltipCtrl)
+            })
         );
 
         this.setupDragging();
@@ -160,7 +181,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private setupTooltip(): void {
-        const refresh = () => this.tooltipFeature?.setTooltipAndRefresh(this.column.colDef.headerTooltip);
+        const refresh = () => this.tooltipFeature?.refreshTooltip();
         refresh();
 
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
@@ -217,12 +238,10 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onColDefChanged(): void {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(this.column, 'columnToolPanel');
-        this.displayName = displayName;
         if (this.labelRendererFeature) {
             this.labelRendererFeature.refresh();
         } else {
-            this.eLabel.textContent = displayName;
+            this.eLabel.textContent = this.displayName;
         }
         this.refreshAriaLabel();
     }

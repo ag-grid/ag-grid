@@ -1,15 +1,14 @@
-import type { MockInstance } from 'vitest';
-
-import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
-import { TreeDataModule } from 'ag-grid-enterprise';
-
 import {
     ALL_SEVERITIES,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
     executeTransactionsAsync,
-} from '../../test-utils';
+} from 'ag-test-utils';
+import type { MockInstance } from 'vitest';
+
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 describe('ag-grid hierarchical tree data reset', () => {
     const gridsManager = new TestGridsManager({

@@ -1,4 +1,13 @@
 import { waitFor } from '@testing-library/dom';
+import {
+    ColumnFilterHarness,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
 
 import type { FilterChangedEvent, FilterModifiedEvent, GridApi, GridState } from 'ag-grid-community';
 import {
@@ -10,15 +19,6 @@ import {
 } from 'ag-grid-community';
 import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import {
-    ColumnFilterHarness,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
 import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
 
 interface Athlete {
@@ -469,5 +469,34 @@ describe('Filter State & Events', () => {
         await waitFor(() => expect(filter.setFilterItemLabels()).toEqual(LI_MATCHES));
         const noMatches = document.querySelector('.ag-filter-menu .ag-filter-no-matches');
         expect(noMatches?.classList.contains('ag-hidden')).toBe(true);
+    });
+
+    test('restored filter state survives a column definition change before the filter is opened', async () => {
+        // The model is what creates the filter wrapper, and so the colDefChanged listener, while closed.
+        const state = {
+            filter: {
+                filterModel: { athlete: { filterType: 'set', values: ['Alicia Coutts'] } },
+                columnFilterState: { athlete: { miniFilterValue: 'li' } },
+            },
+        } as GridState;
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete', filter: 'agSetColumnFilter' }],
+            rowData: ATHLETES,
+            initialState: state,
+        });
+        expect(api.getState().filter?.columnFilterState?.athlete).toEqual({ miniFilterValue: 'li' });
+
+        // The filter has never been opened, so its ui does not exist yet and an unrelated col def edit
+        // must not be treated as a reason to throw the restored state away.
+        api.setGridOption('columnDefs', [{ field: 'athlete', headerName: 'Renamed', filter: 'agSetColumnFilter' }]);
+        await asyncSetTimeout(0);
+
+        expect(api.getState().filter?.columnFilterState?.athlete).toEqual({ miniFilterValue: 'li' });
+        expect(api.getColumnFilterModel('athlete')).toEqual({ filterType: 'set', values: ['Alicia Coutts'] });
+
+        // and it still drives the mini filter when the filter is finally opened
+        const filter = await ColumnFilterHarness.open(api, 'athlete');
+        await waitFor(() => expect(filter.setFilterItemLabels()).toEqual(LI_MATCHES));
     });
 });

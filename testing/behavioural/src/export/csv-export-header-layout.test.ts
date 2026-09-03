@@ -1,6 +1,6 @@
-import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
+import { TestGridsManager } from 'ag-test-utils';
 
-import { TestGridsManager } from '../test-utils';
+import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 
 describe('CSV export header layout', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, CsvExportModule] });

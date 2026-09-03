@@ -20,6 +20,7 @@ export const TabNavItem = ({
                     onSelect(label);
                 }}
                 role="tab"
+                tabIndex={0}
                 disabled={selected}
             >
                 {label}

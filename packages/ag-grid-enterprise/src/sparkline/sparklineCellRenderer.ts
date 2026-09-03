@@ -67,7 +67,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     private updateSize(newWidth: number, newHeight: number, batch = true) {
         // account for cell padding
-        newWidth -= this.env.getCellPadding();
+        newWidth -= 2 * (this.env.getDefaultCellHorizontalPadding() - 1);
 
         if (newWidth !== this.cachedWidth || newHeight !== this.cachedHeight) {
             this.cachedWidth = newWidth;

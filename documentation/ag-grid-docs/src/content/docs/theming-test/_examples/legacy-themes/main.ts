@@ -27,6 +27,14 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs,
     theme: 'legacy',
+    // Mirrors the AG-18347 reporter's repro exactly, so this example is the surface that
+    // exercises the legacy-theme x toolbar intersection.
+    defaultColDef: {
+        filter: true,
+    },
+    toolbar: {
+        items: ['agQuickFilterToolbarItem'],
+    },
 };
 
 function useTheme(theme: string, isDark: boolean) {

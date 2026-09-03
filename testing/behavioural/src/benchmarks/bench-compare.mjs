@@ -31,7 +31,7 @@
  *                     process, or lengthen a noisy bench instead. Runs interleave with --runs > 1.
  *   --filter <glob>   Filter benchmark files (forwarded to vitest bench)
  *   --output <path>   Output directory for results (default: ./tmp)
- *   --node            Run benchmarks in node/jsdom instead of the default real Chromium (Playwright).
+ *   --node            Run benchmarks in node/happy-dom instead of the default real Chromium (Playwright).
  *                     Both sides must use the same engine — `compare` refuses a node-vs-browser mix.
  *
  * Files written to the output directory (a `--filter`ed run is incomplete, so its files gain a
@@ -47,7 +47,7 @@
  *
  * Examples:
  *   node bench-compare.mjs all                     # Measure base, then test, then compare
- *   node bench-compare.mjs all --node              # Same, in node/jsdom (faster, no layout)
+ *   node bench-compare.mjs all --node              # Same, in node/happy-dom (faster, no layout)
  *   node bench-compare.mjs base ~/other-grid       # Measure a custom base checkout
  *   node bench-compare.mjs all --runs 5 --filter "getvalue"
  */
@@ -86,7 +86,7 @@ Options:
   --runs <n>        Re-runs per side (default: 1; precision comes from each bench's sampling, not re-runs)
   --filter <glob>   Filter benchmark files
   --output <path>   Results directory (default: ./tmp)
-  --node            Run in node/jsdom instead of the default real Chromium (both sides must match)
+  --node            Run in node/happy-dom instead of the default real Chromium (both sides must match)
 
 Files written to the output directory (a --filter'ed run is incomplete, so its files gain a
 "-partial" suffix, e.g. bench-compare-result-partial.md; pass the same --filter to "compare"):
@@ -155,7 +155,7 @@ for (let i = 1; i < args.length; i++) {
 // the `compare` command to read the partial cohort back.
 const partialSuffix = filter ? '-partial' : '';
 
-// Benchmarks to exclude — these depend on jsdom/DOM rendering and produce
+// Benchmarks to exclude — these depend on DOM rendering and produce
 // unreliable results that vary between environments.
 const EXCLUDED_BENCH_FILES = ['modules.bench'];
 
@@ -548,7 +548,7 @@ if (command === 'base' || command === 'test') {
     if (filter) {
         console.log(`Filter:     ${filter}`);
     }
-    console.log(`Env:        ${node ? 'node/jsdom' : 'real Chromium (Playwright)'}`);
+    console.log(`Env:        ${node ? 'node/happy-dom' : 'real Chromium (Playwright)'}`);
     console.log('');
 
     if (!node) {
@@ -579,7 +579,7 @@ if (command === 'all') {
     console.log(`Base:       ${baseDir}`);
     console.log(`Test:       ${testDir}`);
     console.log(`Runs:       ${runs} per side`);
-    console.log(`Env:        ${node ? 'node/jsdom' : 'real Chromium (Playwright)'}`);
+    console.log(`Env:        ${node ? 'node/happy-dom' : 'real Chromium (Playwright)'}`);
     console.log('');
 
     if (!node) {
@@ -1144,7 +1144,7 @@ const sideLine = (label, meta) => {
 };
 const engineLine =
     reportEnv.engine === 'node'
-        ? `node ${reportEnv.node ?? '?'} + jsdom (no layout engine)`
+        ? `node ${reportEnv.node ?? '?'} + happy-dom (no layout engine)`
         : `real browser — Chromium ${reportEnv.chromium ?? '?'} (node ${reportEnv.node ?? '?'})`;
 md += `## Comparison\n\n`;
 md += `${sideLine('base', baseMeta)}\n`;

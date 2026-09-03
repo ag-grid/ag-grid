@@ -27,8 +27,6 @@ import type {
     GridOptionsWithDefaults,
     ICellRendererComp,
     IRichCellEditorRendererParams,
-    ITooltipCtrl,
-    Registry,
     RichSelectListRowSelectedEvent,
     RichSelectParams,
     TooltipFeature,
@@ -39,6 +37,7 @@ import type {
 import {
     AgInputTextFieldSelector,
     AgPickerField,
+    ComponentInstanceGuard,
     KeyCode,
     _addGridCommonParams,
     _clamp,
@@ -98,13 +97,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 > {
     private userCompFactory: UserComponentFactory;
     private ariaAnnounce?: IAriaAnnouncementService;
-    private registry: Registry;
     private onSearchCallbackDebounced?: (searchString: string) => void;
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
         this.ariaAnnounce = beans.ariaAnnounce;
-        this.registry = beans.registry;
     }
 
     private searchStrings?: string[];
@@ -127,6 +124,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private skipWrapperAnnouncement?: boolean = false;
     private tooltipFeature?: TooltipFeature;
     private shouldDisplayTooltip?: () => boolean;
+    private selectedValueRenderer?: ICellRendererComp;
+    private readonly selectedValueRendererGuard = new ComponentInstanceGuard();
     private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
 
     constructor(config?: RichSelectParams<TValue>) {
@@ -176,22 +175,30 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     public override postConstruct(): void {
         this.tooltipFeature = this.createOptionalManagedBean(
-            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.getGui(),
+                getTooltipComponentDefinition: () => undefined,
+                getLocation: () => 'richSelectValue',
                 shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
-            } as ITooltipCtrl)
+            })
         );
         super.postConstruct();
         this.createListComponent();
         this.eDeselect.appendChild(_createIconNoSpan('richSelectRemove', this.beans)!);
 
-        const { allowTyping, placeholder, multiSelect, suppressDeselectAll, suppressMultiSelectPillRenderer } =
-            this.config;
+        const {
+            allowTyping,
+            placeholder,
+            multiSelect,
+            searchIcon,
+            suppressDeselectAll,
+            suppressMultiSelectPillRenderer,
+        } = this.config;
 
         this.eDeselect.classList.add('ag-hidden');
 
         if (allowTyping) {
-            this.eInput.setAutoComplete(false).setInputPlaceholder(placeholder);
+            this.eInput.setAutoComplete(false).setInputPlaceholder(placeholder).setSearchIcon(!!searchIcon);
             if (!multiSelect) {
                 this.eDisplayField.classList.add('ag-hidden');
             } else {
@@ -276,6 +283,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         const valueFormatted = this.valueFormatter(value);
         const isTypingMultiSelect = !!(allowTyping && multiSelect);
+        const rendererClaim = this.selectedValueRendererGuard.claim();
+        this.destroySelectedValueRenderer();
+        this.shouldDisplayTooltip = undefined;
+        this.tooltipFeature?.setTooltipAndRefresh(null);
 
         if (allowTyping) {
             /**
@@ -319,8 +330,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                     },
                     setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                         gos.assertModuleRegistered('Tooltip', 3);
-                        this.shouldDisplayTooltip = shouldDisplayTooltip;
-                        this.tooltipFeature?.setTooltipAndRefresh(value);
+                        if (rendererClaim.isCurrent()) {
+                            this.shouldDisplayTooltip = shouldDisplayTooltip;
+                            this.tooltipFeature?.setTooltipAndRefresh(value);
+                        }
                     },
                 })
             );
@@ -334,9 +347,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (userCompDetailsPromise) {
             _clearElement(eDisplayField);
-            _bindCellRendererToHtmlElement(userCompDetailsPromise, eDisplayField);
-            userCompDetailsPromise.then((renderer) => {
-                this.addDestroyFunc(() => this.destroyBean(renderer));
+            _bindCellRendererToHtmlElement(userCompDetailsPromise, eDisplayField, (renderer) => {
+                if (!this.isAlive() || !rendererClaim.isCurrent()) {
+                    this.destroyBean(renderer);
+                    return false;
+                }
+                this.selectedValueRenderer = renderer;
+                return true;
             });
         } else {
             if (value != null) {
@@ -355,6 +372,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
             this.shouldDisplayTooltip = _isElementOverflowingCallback(() => this.eDisplayField);
             this.tooltipFeature?.setTooltipAndRefresh(valueFormatted ?? null);
+        }
+    }
+
+    private destroySelectedValueRenderer(): void {
+        if (this.selectedValueRenderer) {
+            this.selectedValueRenderer = this.destroyBean(this.selectedValueRenderer);
         }
     }
 
@@ -1304,6 +1327,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     public override destroy(): void {
+        this.selectedValueRendererGuard.invalidate();
+        this.destroySelectedValueRenderer();
         this.asyncRequests?.destroy();
         this.asyncRequests = undefined;
         this.hasPagedAsyncSource = false;
@@ -1326,10 +1351,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
  */
 export function _bindCellRendererToHtmlElement(
     cellRendererPromise: AgPromise<ICellRendererComp>,
-    eTarget: HTMLElement
+    eTarget: HTMLElement,
+    beforeAppend?: (cellRenderer: ICellRendererComp) => boolean
 ) {
     cellRendererPromise.then((cellRenderer) => {
-        const gui = cellRenderer!.getGui();
+        if (!cellRenderer || (beforeAppend && !beforeAppend(cellRenderer))) {
+            return;
+        }
+        const gui = cellRenderer.getGui();
 
         if (gui != null) {
             eTarget.appendChild(gui);

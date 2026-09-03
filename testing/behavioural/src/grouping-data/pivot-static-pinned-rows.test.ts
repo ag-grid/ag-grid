@@ -1,9 +1,9 @@
+import type { GridRowsOptions } from 'ag-test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('pivot mode with static pinned rows', () => {
     const gridsManager = new TestGridsManager({

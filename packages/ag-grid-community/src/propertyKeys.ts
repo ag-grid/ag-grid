@@ -192,6 +192,7 @@ export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'cellSelection',
     'sideBar',
     'rowNumbers',
+    'loading',
     'suppressGroupChangesColumnVisibility',
     'groupAggFiltering',
     'suppressStickyTotalRow',
@@ -202,6 +203,8 @@ export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysWithType<boolean>[] = [
 // Used in validations to check type of pure boolean inputs
 export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'loadThemeGoogleFonts',
+    'suppressInputClearButton',
+    'enableInputAutoComplete',
     'suppressMakeColumnVisibleAfterUnGroup',
     'suppressRowClickSelection',
     'suppressCellFocus',
@@ -343,7 +346,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'applyQuickFilterBeforePivotOrAgg',
     'suppressServerSideFullWidthLoadingRow',
     'suppressAdvancedFilterEval',
-    'loading',
     'maintainColumnOrder',
     'enableStrictPivotColumnOrder',
     'suppressSetFilterByDefault',

@@ -162,6 +162,7 @@ import type {
     IsServerSideGroup,
     IsServerSideGroupOpenByDefault,
     LoadingCellRendererSelectorFunc,
+    LoadingOptions,
     LocaleText,
     MenuItemDef,
     ModelUpdatedEvent,
@@ -688,7 +689,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `ColumnAutoSizeModule`
      */
-    @Input() public autoSizeStrategy: AutoSizeStrategy | undefined = undefined;
+    @Input() public autoSizeStrategy: AutoSizeStrategy<TData> | undefined = undefined;
     /** Set to `true` to animate changes to column width when auto-sizing the columns.
      * @default false
      */
@@ -704,7 +705,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
      */
     @Input({ transform: booleanAttribute }) public suppressStartEditOnTab: boolean | undefined = undefined;
-    /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
+    /** Validates the Full Row Edit. Return non-empty, user-facing error messages, or `null` when the row is valid.
+     * Only relevant when `editType="fullRow"`.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input() public getFullRowEditValidationErrors: GetFullRowEditValidationErrors | undefined = undefined;
@@ -1000,6 +1002,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public tabIndex: number | undefined = undefined;
+    /** Set to `true` to hide the clear button shown in supported input fields when they contain a value.
+     * @default false
+     */
+    @Input({ transform: booleanAttribute }) public suppressInputClearButton: boolean | undefined = undefined;
+    /** Set to `true` to enable the browser's autocomplete/autofill behaviour for eligible grid input fields.
+     * Inputs that provide grid-owned suggestions, such as Rich Select and Advanced Filter inputs, keep browser autocomplete disabled.
+     * @default false
+     */
+    @Input({ transform: booleanAttribute }) public enableInputAutoComplete: boolean | undefined = undefined;
     /** The number of rows rendered outside the viewable area the grid renders.
      * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.
      * @default 10
@@ -1051,13 +1062,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public debug: boolean | undefined = undefined;
-    /** Show or hide the loading overlay.
+    /** Show or hide the loading UI.
      * - `true`: the loading overlay is shown.
      * - `false`: the loading overlay is hidden.
+     * - `LoadingOptions`: configure the loading UI.
      * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
      * @default undefined
      */
-    @Input({ transform: booleanAttribute }) public loading: boolean | undefined = undefined;
+    @Input() public loading: boolean | LoadingOptions | undefined = undefined;
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      *
      * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
@@ -1434,7 +1446,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public masterDefaultExpanded: number | undefined = undefined;
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
-     * Cell tooltip properties set here (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
+     * Cell tooltip properties set here (`tooltip`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input() public autoGroupColumnDef: AutoGroupColumnDef<TData> | undefined = undefined;
@@ -1857,7 +1869,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public suppressClearOnFillReduction: boolean | undefined = undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-     * @default [null, 'asc', 'desc']
+     * @default ['asc', 'desc', null]
      * @deprecated v33 Use `defaultColDef.sortingOrder` instead
      */
     @Input() public sortingOrder: SortDirection[] | undefined = undefined;

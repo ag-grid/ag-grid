@@ -1,3 +1,12 @@
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
+
 import type { GridApi } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -7,15 +16,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
 
 /**
  * Black-box coverage for how column filters compose with OTHER grid features (sort, pagination, row

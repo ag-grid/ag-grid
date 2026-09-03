@@ -1,3 +1,4 @@
+import type { IAutoCompleteComponentParams } from '../../interfaces/iAutoComplete';
 import type { IFilterParams } from '../../interfaces/iFilter';
 import type { IFloatingFilterParent } from '../floating/floatingFilter';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from './iProvidedFilter';
@@ -10,7 +11,7 @@ export interface IFilterOptionDef {
     displayName: string;
     /** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */
     predicate?: (filterValues: any[], cellValue: any) => boolean;
-    /** Number of inputs to display for this option. Defaults to `1` if unspecified. */
+    /** Number of inputs for this option, and the values an Advanced Filter writes. Defaults to `1`, clamped to 0-2. */
     numberOfInputs?: 0 | 1 | 2;
 }
 
@@ -46,11 +47,8 @@ export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParam
 /**
  * Common parameters in `colDef.filterParams` used by all simple filters. Extended by the specific filter types.
  */
-export interface ISimpleFilterParams extends IProvidedFilterParams {
-    /**
-     * Array of filter options to present to the user.
-     * A key the filter cannot evaluate is reported when a value is tested against it under the built-in matching.
-     */
+export interface ISimpleFilterParams extends IProvidedFilterParams, IAutoCompleteComponentParams {
+    /** Array of filter options to present to the user, and the options the Advanced Filter offers for the column. */
     filterOptions?: (IFilterOptionDef | ISimpleFilterModelType)[];
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: ISimpleFilterModelType | CustomFilterOptionKey;
@@ -62,6 +60,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
     defaultJoinOperator?: JoinOperator;
     /**
      * Maximum number of conditions allowed in the filter.
+     * Must be at least one - anything smaller is treated as one.
      *
      * @default 2
      */
@@ -71,6 +70,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
      * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.
      * Conditions will be disabled until the previous conditions have been entered.
      * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored.
+     * Must be at least one - anything smaller is treated as one.
      *
      * @default 1
      */

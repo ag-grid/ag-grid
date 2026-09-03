@@ -21,7 +21,6 @@ knip.json
 jest.config.ts
 jest.setup.ts
 jest.setup.js
-jest.jsdom-env.cjs
 vitest.config.ts
 vitest.umd.config.ts
 vitest.setup.ts

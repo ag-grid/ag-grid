@@ -381,8 +381,8 @@ export const AG_GRID_ERRORS = {
     77: () => `Filter model is missing \`conditions\`` as const,
     78: () =>
         'Filter Model contains more conditions than `filterParams.maxNumConditions`. Additional conditions have been ignored.' as const,
-    79: () => '`filterParams.maxNumConditions` must be greater than or equal to zero.' as const,
-    80: () => '`filterParams.numAlwaysVisibleConditions` must be greater than or equal to zero.' as const,
+    79: () => '`filterParams.maxNumConditions` must be greater than or equal to one.' as const,
+    80: () => '`filterParams.numAlwaysVisibleConditions` must be greater than or equal to one.' as const,
     81: () =>
         '`filterParams.numAlwaysVisibleConditions` cannot be greater than `filterParams.maxNumConditions`.' as const,
     82: ({ param }: { param: any }) => `\`DateFilter\` \`${param}\` is not a number` as const,
@@ -433,7 +433,7 @@ export const AG_GRID_ERRORS = {
     98: () =>
         'popup cellEditor does not work with fullRowEdit - you cannot use them both - either turn off fullRowEdit, or stop using popup editors.' as const,
     99: () =>
-        'Since v32, `api.hideOverlay()` does not hide the loading overlay when `loading=true`. Set `loading=false` instead.' as const,
+        'Since v32, `api.hideOverlay()` does not hide the loading UI when the `loading` grid option is set. Set `loading=false` instead.' as const,
     // 100: ({ rowModelType }: { rowModelType: RowModelType }) =>
     //     `selectAll only available when rowModelType='clientSide', ie not ${rowModelType}` as const,
     101: ({
@@ -948,6 +948,13 @@ export const AG_GRID_ERRORS = {
         `\`${property}\` must be an array with at least one element, currently it is \`[${String(value)}]\``,
     326: ({ defaultOption }: { defaultOption: string }) =>
         `ignoring \`defaultOption\` \`${defaultOption}\` as it is not one of the filter's \`filterOptions\`` as const,
+    327: ({ pattern }: { pattern: string }) =>
+        `ignoring \`filterParams.allowedCharPattern\` \`${pattern}\` as it does not compile to a character pattern` as const,
+    328: ({ rowModel }: { rowModel: string }) =>
+        `continuous \`fitCellContents\` auto-sizing is not supported by the '${rowModel}' row model, so it has been ignored` as const,
+    329: ({ error }: { error: unknown }) => ['`shouldAutoSizeColumns` threw, so the auto-size was skipped:', error],
+    330: ({ fontFamily, registeredFamilies }: { fontFamily: string; registeredFamilies: string[] }) =>
+        `PDF font family "${fontFamily}" is not registered. Registered families: ${(registeredFamilies ?? []).join(', ')}.`,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -963,7 +970,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 326;
+export const MAX_ERROR_ID = 330;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

@@ -1,9 +1,9 @@
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
-import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
 
 /**
  * CHARACTERIZATION tests (golden-master) for AG Grid SSRM `refreshServerSide` purge semantics.

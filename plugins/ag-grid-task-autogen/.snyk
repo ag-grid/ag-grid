@@ -1,138 +1,143 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-NX-18593778:
+    - 'nx@*':
+        reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'
+        expires: '2027-03-02T00:00:00.000Z'
+        created: '2026-09-02T11:12:24.125Z'
   SNYK-JS-TMP-17315641:
     - nx@20.8.4 > tmp@0.2.5:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:04:22.522Z
     - '@nx/devkit@20.8.4 > tmp@0.2.5':
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:04:22.518Z
   SNYK-JS-AXIOS-17172681:
     - nx@20.8.4 > axios@1.15.2:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-05T10:19:36.277Z
   SNYK-JS-AXIOS-17111079:
     - nx@20.8.4 > axios@1.15.2:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-01T10:58:16.281Z
   SNYK-JS-AXIOS-17111062:
     - nx@20.8.4 > axios@1.15.2:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-01T10:58:09.471Z
   SNYK-JS-MINIMATCH-15309438:
     - npm-run-all@4.1.5 > minimatch@3.1.2:
         reason: Used in build & dev but not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-02-24T00:00:00.000Z
     - rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2:
         reason: Used in build & dev but not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-02-24T00:00:00.000Z
     - glob@11.1.0 > minimatch@10.1.1:
         reason: Used in build & dev but not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-02-24T00:00:00.000Z
     - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
     - '@nx/devkit@20.8.4 > minimatch@9.0.3':
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
     - nx@20.8.4 > minimatch@9.0.3:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
   SNYK-JS-BRACEEXPANSION-15789759:
     - '@nx/devkit@20.8.4 > minimatch@9.0.3 > brace-expansion@2.0.2':
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
     - nx@20.8.4 > minimatch@9.0.3 > brace-expansion@2.0.2:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
     - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.0.2':
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
   SNYK-JS-FOLLOWREDIRECTS-16032162:
     - nx@20.8.4 > axios@1.15.2 > follow-redirects@1.15.11:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
   SNYK-JS-JSYAML-13961110:
     - nx@20.8.4 > @yarnpkg/parsers@3.0.2 > js-yaml@3.14.1:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
     - nx@20.8.4 > front-matter@4.0.2 > js-yaml@3.14.1:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
   SNYK-JS-MINIMATCH-15353389:
     - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
     - '@nx/devkit@20.8.4 > minimatch@9.0.3':
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
     - nx@20.8.4 > minimatch@9.0.3:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
   SNYK-JS-MINIMATCH-15353387:
     - '@nx/devkit@20.8.4 > minimatch@9.0.3':
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
     - nx@20.8.4 > minimatch@9.0.3:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
   SNYK-JS-YAML-15765520:
     - nx@20.8.4 > yaml@2.8.1:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
   SNYK-JS-TMP-16881240:
     - '@nx/devkit@20.8.4 > tmp@0.2.5':
         reason: Build dependency - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
     - nx@20.8.4 > tmp@0.2.5:
         reason: Dev dependency - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
+        expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-BRACEEXPANSION-17706650:
     - '@nx/devkit@20.8.4 > minimatch@9.0.3 > brace-expansion@2.0.2':
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2026-10-23T00:00:00.000Z'
+        expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'
     - nx@20.8.4 > minimatch@9.0.3 > brace-expansion@2.0.2:
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2026-10-23T00:00:00.000Z'
+        expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'
     - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.0.2':
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2026-10-23T00:00:00.000Z'
+        expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'
   SNYK-JS-JSYAML-17900054:
     - nx@20.8.4 > @yarnpkg/parsers@3.0.2 > js-yaml@3.14.1:
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2026-10-23T00:00:00.000Z'
+        expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'
     - nx@20.8.4 > front-matter@4.0.2 > js-yaml@3.14.1:
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2026-10-23T00:00:00.000Z'
+        expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'
 patch: {}

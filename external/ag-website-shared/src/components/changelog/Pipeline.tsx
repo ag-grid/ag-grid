@@ -22,7 +22,7 @@ const getColDefs = (library: Library) => [
     IssueColDef,
     {
         field: 'summary',
-        tooltipField: 'summary',
+        tooltip: true,
         width: 300,
         minWidth: 200,
         flex: 1,
@@ -39,11 +39,11 @@ const getColDefs = (library: Library) => [
             if (hasFixVersion) {
                 const latestFixVersion = fixVersionsArr.length - 1;
                 const fixVersion = fixVersionsArr[latestFixVersion];
-                if (fixVersion.toUpperCase() === 'NEXT') {
+                if (!fixVersion || fixVersion.toUpperCase() === 'NEXT') {
                     return 'Scheduled';
                 } else {
                     const version = library in transformVersion ? transformVersion[library](fixVersion) : fixVersion;
-                    return `Scheduled for ${version}`;
+                    return version ? `Scheduled for ${version}` : 'Scheduled';
                 }
             }
             return 'Backlog';

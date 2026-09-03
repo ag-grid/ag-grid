@@ -21,7 +21,7 @@ export function _addFocusableContainerListener(beans: BeanCollection, comp: Comp
             // this generic fallback for the current event.
             if (!e.defaultPrevented && !_shouldSkipFocusableContainerListener(e) && e.key === KeyCode.TAB) {
                 const backwards = e.shiftKey;
-                if (!_findNextFocusableElement(beans, eGui, false, backwards)) {
+                if (!_findNextFocusableElement({ beans, rootNode: eGui, backwards })) {
                     if (_focusNextGridCoreContainer(beans, backwards)) {
                         e.preventDefault();
                     }

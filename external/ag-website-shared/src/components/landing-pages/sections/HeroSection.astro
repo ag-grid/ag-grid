@@ -38,7 +38,9 @@ const secondaryCtaAnalytics = `${pageContent.analyticsPrefix}-view-demos`;
 const productName = pageContent.productName ?? 'AG Grid';
 
 const getStartedUrl =
-    productName === 'AG Grid' ? `./${pageContent.docsPath}/getting-started/` : `./${pageContent.docsPath}/quick-start/`;
+    productName === 'AG Grid'
+        ? `../${pageContent.docsPath}/getting-started/`
+        : `./${pageContent.docsPath}/quick-start/`;
 
 // Whether to show customer logos (defaults to true)
 const showCustomerLogos = section.showCustomerLogos !== false;
@@ -52,7 +54,7 @@ const showCustomerLogos = section.showCustomerLogos !== false;
                 {
                     section.showVersionBadge && latestVersion && (
                         <a
-                            href={urlWithBaseUrl('./whats-new')}
+                            href={urlWithBaseUrl('./whats-new/')}
                             class:list={[
                                 styles.heroSectionVersionTagContainer,
                                 `plausible-event-name=${pageContent.analyticsPrefix}-whats-new`,

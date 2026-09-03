@@ -11,8 +11,8 @@ import type {
     GridCheckbox,
     GridDragSource,
     IAggFunc,
-    ITooltipCtrl,
     LongTapEvent,
+    TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -21,10 +21,13 @@ import {
     DragSourceType,
     KeyCode,
     TouchListener,
+    _addGridCommonParams,
     _createIcon,
     _createIconNoSpan,
+    _getHeaderTooltipComponentDefinition,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
+    _resolveHeaderTooltipValue,
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
@@ -68,7 +71,6 @@ export class ToolPanelColumnGroupComp extends Component {
     public readonly columnGroup: AgProvidedColumnGroup;
     public readonly columnDepth: number;
 
-    private displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
@@ -82,17 +84,20 @@ export class ToolPanelColumnGroupComp extends Component {
         private readonly source: ColumnSelectionPanelSource
     ) {
         super();
-        const { columnGroup, depth, displayName } = modelItem;
+        const { columnGroup, depth } = modelItem;
         this.columnGroup = columnGroup;
         this.columnDepth = depth;
-        this.displayName = displayName;
+    }
+
+    private get displayName(): string | null {
+        return this.modelItem.displayName;
     }
 
     public postConstruct(): void {
         this.setTemplate(ToolPanelColumnGroupElement, [AgCheckboxSelector]);
 
         const { beans, cbSelect, eLabel, columnDepth, modelItem, focusWrapper, columnGroup, params, source } = this;
-        const { registry, gos } = beans;
+        const { gos } = beans;
 
         const eDragHandle = _createIconNoSpan('columnDrag', beans)!;
         this.eDragHandle = eDragHandle;
@@ -124,11 +129,34 @@ export class ToolPanelColumnGroupComp extends Component {
         this.getGui().style.setProperty('--ag-indentation-level', String(columnDepth));
 
         this.tooltipFeature = this.createOptionalManagedBean(
-            registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.focusWrapper,
+                getTooltipComponentDefinition: () => _getHeaderTooltipComponentDefinition(columnGroup.getColGroupDef()),
                 getLocation: () => 'columnToolPanelColumnGroup',
+                getTooltipValue: () => {
+                    const colDef = columnGroup.getColGroupDef();
+                    const displayName = this.displayName;
+                    return _resolveHeaderTooltipValue(
+                        colDef,
+                        _addGridCommonParams<TooltipCallbackParams>(gos, {
+                            location: 'columnToolPanelColumnGroup',
+                            colDef,
+                            column: columnGroup,
+                            value: displayName,
+                            valueFormatted: displayName,
+                        })
+                    );
+                },
                 shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
-            } as ITooltipCtrl)
+                getAdditionalParams: () => {
+                    const colDef = columnGroup.getColGroupDef();
+                    return {
+                        ...(colDef ? { colDef } : {}),
+                        column: columnGroup,
+                        valueFormatted: this.displayName,
+                    };
+                },
+            })
         );
 
         this.addManagedEventListeners({ columnPivotModeChanged: this.onColumnStateChanged.bind(this) });
@@ -174,7 +202,7 @@ export class ToolPanelColumnGroupComp extends Component {
             return;
         }
 
-        const refresh = () => this.tooltipFeature?.setTooltipAndRefresh(colGroupDef.headerTooltip);
+        const refresh = () => this.tooltipFeature?.refreshTooltip();
 
         refresh();
 
@@ -359,11 +387,6 @@ export class ToolPanelColumnGroupComp extends Component {
         if (event.columnGroup && event.columnGroup.getGroupId() !== this.columnGroup.groupId) {
             return;
         }
-        this.displayName = this.beans.colNames.getDisplayNameForProvidedColumnGroup(
-            null,
-            this.columnGroup,
-            'columnToolPanel'
-        );
         if (this.labelRendererFeature) {
             this.labelRendererFeature.refresh();
         } else {

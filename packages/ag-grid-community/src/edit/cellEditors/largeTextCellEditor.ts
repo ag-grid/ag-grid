@@ -32,7 +32,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
 
     public initialiseEditor(params: ILargeTextEditorParams): void {
         const { eEditor } = this;
-        const { cellStartedEdit, eventKey, maxLength, cols, rows } = params;
+        const { browserAutoComplete, cellStartedEdit, eventKey, maxLength, cols, rows } = params;
         this.focusAfterAttached = cellStartedEdit;
 
         // disable initial tooltips added to the input field
@@ -40,6 +40,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         eEditor.getInputElement().setAttribute('title', '');
 
         eEditor
+            .setAutoComplete(browserAutoComplete)
             .setMaxLength(maxLength || 200)
             .setCols(cols || 60)
             .setRows(rows || 10);

@@ -1,4 +1,4 @@
-import { _getInnerWidth, _removeFromArray } from 'ag-stack';
+import { _getInnerWidth, _removeFromArray, _requestAnimationFrame } from 'ag-stack';
 
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import { getWidthOfColsInList, isSpecialCol } from '../columns/columnUtils';
@@ -8,10 +8,13 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
-import type { ColumnEventType } from '../events';
-import { _isClientSideRowModel } from '../gridOptionsUtils';
+import type { BodyScrollEvent, ColumnEventType, ModelUpdatedEvent } from '../events';
+import type { GridOptionsService } from '../gridOptionsService';
+import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type {
+    AutoSizeColumnsTriggerParams,
+    AutoSizeStrategy,
     IColumnLimit,
     ISizeColumnsToFitParams,
     SizeColumnsToContentColumnLimits,
@@ -36,6 +39,19 @@ interface AutoSizeColumnParams {
 /** Sources used by the built-in Column Menu and Context Menu auto-size actions. */
 const UI_MENU_SOURCES: ReadonlySet<ColumnEventType> = new Set(['columnMenu', 'contextMenu']);
 
+type AutoSizeReason = AutoSizeColumnsTriggerParams['reason'];
+
+/** Escalating waits for a continuous re-size that arrived before the grid had a width. */
+const CONTINUOUS_RETRY_DELAYS: readonly number[] = [0, 100, 500];
+
+/** Most to least significant; the reason reported when several triggers coalesce into one frame. */
+const CONTINUOUS_REASON_PRIORITY: readonly AutoSizeReason[] = [
+    'dataChanged',
+    'columnsChanged',
+    'gridSizeChanged',
+    'viewportChanged',
+];
+
 export class ColumnAutosizeService extends BeanStub implements NamedBean {
     beanName = 'colAutosize' as const;
 
@@ -44,6 +60,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     /** when we're waiting for cell data types to be inferred, we need to defer column resizing */
     public shouldQueueResizeOperations: boolean = false;
     private resizeOperationQueue: (() => void)[] = [];
+
+    private continuousStrategy: AutoSizeStrategy | null = null;
+    private continuousRunning = false;
+    private continuousFrameScheduled = false;
+    private pendingReasons: Set<AutoSizeReason> | null = null;
+    private continuousRetries = 0;
+    private continuousRetryScheduled = false;
 
     public postConstruct(): void {
         const { gos } = this;
@@ -60,6 +83,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 // render columns at default width, only to immediately resize them when rows are rendered.
                 const rowData = gos.get('rowData');
                 shouldHideColumns = rowData != null && rowData.length > 0 && _isClientSideRowModel(gos);
+            }
+            if (autoSizeStrategy.continuous) {
+                this.initContinuousAutoSize(autoSizeStrategy);
             }
             if (shouldHideColumns) {
                 this.beans.colDelayRenderSvc?.hideColumns(type);
@@ -97,18 +123,28 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public autoSizeCols(paramsInput: AutoSizeColumnParams): void {
-        const params = this.withUiActionStrategyParams(paramsInput);
-        const { eventSvc, colModel } = this.beans;
+        this.autoSizeColsAsync(this.withUiActionStrategyParams(paramsInput)).then((cols) =>
+            this.dispatchAutoSized(cols)
+        );
+    }
+
+    private dispatchAutoSized(columnsAutoSized: Set<AgColumn>): void {
+        dispatchColumnResizedEvent(this.beans.eventSvc, Array.from(columnsAutoSized), true, 'autosizeColumns');
+    }
+
+    /**
+     * Measures and applies widths, resolving with the columns that were sized. Continuous auto-sizing awaits
+     * this to track its running state, so the resolved promise must outlive every width write.
+     */
+    private autoSizeColsAsync(params: AutoSizeColumnParams): Promise<Set<AgColumn>> {
+        const { colModel } = this.beans;
 
         setWidthAnimation(this.beans, true);
 
-        this.innerAutoSizeCols(params).then((columnsAutoSized) => {
-            const dispatch = (cols: Set<AgColumn>) =>
-                dispatchColumnResizedEvent(eventSvc, Array.from(cols), true, 'autosizeColumns');
-
+        return this.innerAutoSizeCols(params).then((columnsAutoSized) => {
             if (!params.scaleUpToFitGridWidth) {
                 setWidthAnimation(this.beans, false);
-                return dispatch(columnsAutoSized);
+                return columnsAutoSized;
             }
 
             const availableGridWidth = getAvailableWidth(this.beans);
@@ -134,7 +170,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
             setWidthAnimation(this.beans, false);
 
-            dispatch(columnsAutoSized);
+            return columnsAutoSized;
         });
     }
 
@@ -200,6 +236,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
             while (changesThisTimeAround !== 0) {
                 changesThisTimeAround = 0;
+                // only a real width change may refresh, else the events it dispatches re-trigger
+                // continuous auto-sizing indefinitely
+                let widthsChanged = false;
 
                 const updatedColumns: AgColumn[] = [];
 
@@ -226,6 +265,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                         columnLimit.minWidth ??= defaultMinWidth;
                         columnLimit.maxWidth ??= defaultMaxWidth;
                         const newWidth = normaliseColumnWidth(column, preferredWidth, columnLimit);
+                        widthsChanged ||= newWidth !== column.getActualWidth();
                         column.setActualWidth(newWidth, source);
                         columnsAutoSized.add(column);
                         changesThisTimeAround++;
@@ -234,7 +274,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                     updatedColumns.push(column);
                 }
 
-                if (updatedColumns.length) {
+                if (updatedColumns.length && widthsChanged) {
                     // skipTreeBuild=true: autosize only changes widths, leaving liveCols/pins/visibility — and
                     // thus the section/group trees — unchanged.
                     visibleCols.refresh(source, true);
@@ -347,7 +387,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
-    public sizeColumnsToFitGridBody(params?: ISizeColumnsToFitParams, nextTimeout?: number): void {
+    public sizeColumnsToFitGridBody(
+        params?: ISizeColumnsToFitParams & { colKeys?: ColKey[] },
+        nextTimeout?: number
+    ): void {
         if (!this.isAlive()) {
             return;
         }
@@ -570,7 +613,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 return;
             }
             const type = autoSizeStrategy.type;
-            if (type === 'fitGridWidth') {
+            if (this.continuousStrategy) {
+                this.runContinuousNow('dataChanged');
+            } else if (type === 'fitGridWidth') {
                 const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = autoSizeStrategy;
                 const columnLimits = propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
                     key,
@@ -582,14 +627,15 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                     defaultMaxWidth,
                     columnLimits,
                 });
-            } else if (type === 'fitProvidedWidth') {
+            } else {
                 this.sizeColumnsToFit(autoSizeStrategy.width, 'sizeColumnsToFit');
             }
             colDelayRenderSvc?.revealColumns(type);
         });
     }
 
-    private onFirstDataRendered({ colIds: colKeys, ...params }: SizeColumnsToContentStrategy): void {
+    private onFirstDataRendered(strategy: SizeColumnsToContentStrategy): void {
+        const { colIds: colKeys, ...params } = strategy;
         // ensure render has finished
         setTimeout(() => {
             if (!this.isAlive()) {
@@ -597,13 +643,239 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }
             const source = 'autosizeColumns';
 
-            if (colKeys) {
+            if (this.continuousStrategy) {
+                this.runContinuousNow('dataChanged');
+            } else if (colKeys) {
                 this.autoSizeCols({ ...params, source, colKeys });
             } else {
                 this.autoSizeAllColumns({ ...params, source });
             }
             this.beans.colDelayRenderSvc?.revealColumns(params.type);
         });
+    }
+
+    /**
+     * Registers the triggers for continuous sizing. Every strategy responds to data, column and grid-size
+     * changes; only `fitCellContents` also responds to the viewport, since scrolling changes what can be
+     * measured but not the arithmetic of the width-distribution strategies.
+     */
+    private initContinuousAutoSize(strategy: AutoSizeStrategy): void {
+        const measuresContent = strategy.type === 'fitCellContents';
+        if (measuresContent && !isContinuousSupported(this.gos)) {
+            this.warn(328, { rowModel: this.gos.get('rowModelType') });
+            return;
+        }
+
+        this.continuousStrategy = strategy;
+
+        this.addManagedEventListeners({
+            // the one content-changed signal every row model dispatches: CSRM replacements and transactions,
+            // SSRM and infinite store loads, and pagination. It also covers sorting, filtering and expansion,
+            // which change what a cell renders — so the content strategy wants all of them, while the
+            // width-distribution strategies only care about genuinely new rows.
+            modelUpdated: (event: ModelUpdatedEvent) => {
+                if (measuresContent || event.newData || event.newPage || event.newPageSize) {
+                    this.scheduleContinuousAutoSize('dataChanged');
+                }
+            },
+            // neither an edit nor `rowNode.setData` need refresh the model, so they are not covered above
+            cellValueChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
+            displayedColumnsChanged: () => this.scheduleContinuousAutoSize('columnsChanged'),
+            newColumnsLoaded: () => this.scheduleContinuousAutoSize('columnsChanged'),
+            gridSizeChanged: () => this.scheduleContinuousAutoSize('gridSizeChanged'),
+            // a scrollbar appearing or disappearing changes the width there is to work with. A row count
+            // change is the usual cause, and a transaction reports neither `newData` nor `newPage`, so for
+            // the width-distribution strategies this is the only signal that one happened
+            scrollVisibilityChanged: () => this.scheduleContinuousAutoSize('gridSizeChanged'),
+        });
+
+        // `rowNode.setData`/`updateData` and pinned-row replacements report per row, not through the model
+        this.addManagedEventListeners({
+            rowNodeDataChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
+        });
+
+        if (!measuresContent) {
+            // the width-distribution strategies are arithmetic over the current column set, so what is
+            // scrolled into view cannot change their result
+            return;
+        }
+
+        this.addManagedEventListeners({
+            // horizontal virtualisation renders new columns, which are then measurable for the first time
+            virtualColumnsChanged: () => this.scheduleContinuousAutoSize('viewportChanged'),
+            viewportChanged: () => this.scheduleContinuousAutoSize('viewportChanged'),
+            bodyScroll: (event: BodyScrollEvent) => {
+                if (event.direction === 'horizontal') {
+                    this.scheduleContinuousAutoSize('viewportChanged');
+                }
+            },
+        });
+    }
+
+    /** Coalesces every trigger in the current frame into at most one evaluation. */
+    private scheduleContinuousAutoSize(reason: AutoSizeReason): void {
+        const pendingReasons = (this.pendingReasons ??= new Set());
+        pendingReasons.add(reason);
+
+        // a run in flight picks these up on completion, so no nested run may start
+        if (this.continuousRunning || this.continuousFrameScheduled) {
+            return;
+        }
+
+        this.continuousFrameScheduled = true;
+        _requestAnimationFrame(this.beans, () => {
+            this.continuousFrameScheduled = false;
+            if (this.isAlive()) {
+                this.runContinuousAutoSize();
+            }
+        });
+    }
+
+    private runContinuousAutoSize(): void {
+        if (!this.pendingReasons?.size) {
+            return;
+        }
+        const pendingReasons = this.pendingReasons;
+        this.pendingReasons = null;
+        this.runContinuousNow(CONTINUOUS_REASON_PRIORITY.find((candidate) => pendingReasons.has(candidate))!);
+    }
+
+    /**
+     * The one guarded path to a continuous re-size: the initial strategy pass uses it too, so the callback
+     * gets to veto that pass and it cannot overlap a trigger that has already started one.
+     */
+    private runContinuousNow(reason: AutoSizeReason): void {
+        const strategy = this.continuousStrategy;
+        if (!strategy || this.continuousRunning) {
+            return;
+        }
+
+        // an unlaid-out grid measures nothing and has no width to distribute. `fitProvidedWidth` depends on
+        // neither, so it still runs; the others retry on the same escalating schedule as the one-shot
+        // `fitGridWidth` pass, so a grid that is hidden when the trigger arrives is still sized once shown.
+        if (strategy.type !== 'fitProvidedWidth' && getAvailableWidth(this.beans) <= 0) {
+            this.retryContinuousWhenSized(reason);
+            return;
+        }
+        this.continuousRetries = 0;
+
+        const candidates = this.getAutoSizeCandidates(strategy);
+        if (!candidates.length) {
+            return;
+        }
+        const callback = strategy.shouldAutoSizeColumns;
+        if (callback) {
+            let shouldAutoSize: boolean;
+            try {
+                shouldAutoSize = callback(_addGridCommonParams(this.gos, { reason, columns: candidates }));
+            } catch (error) {
+                // dropped rather than retried, so a throwing callback cannot wedge the frame
+                this.warn(329, { error });
+                return;
+            }
+            if (!shouldAutoSize) {
+                return;
+            }
+        }
+
+        this.continuousRunning = true;
+        this.reapplyStrategy(strategy, candidates).then(
+            () => this.onContinuousAutoSizeComplete(),
+            () => this.onContinuousAutoSizeComplete()
+        );
+    }
+
+    /** Re-runs the configured strategy over `candidates`, leaving every other column at its current width. */
+    private reapplyStrategy(strategy: AutoSizeStrategy, candidates: AgColumn[]): Promise<unknown> {
+        const type = strategy.type;
+        if (type === 'fitCellContents') {
+            const { skipHeader, defaultMinWidth, defaultMaxWidth, columnLimits, scaleUpToFitGridWidth } = strategy;
+            return this.autoSizeColsAsync({
+                colKeys: candidates,
+                skipHeader,
+                defaultMinWidth,
+                defaultMaxWidth,
+                columnLimits,
+                scaleUpToFitGridWidth,
+                source: 'autosizeColumns',
+            }).then((cols) => this.dispatchAutoSized(cols));
+        }
+
+        if (type === 'fitProvidedWidth') {
+            this.sizeColumnsToFit(strategy.width, 'sizeColumnsToFit', false, { colKeys: candidates });
+        } else {
+            const { defaultMinWidth, defaultMaxWidth, columnLimits } = strategy;
+            this.sizeColumnsToFitGridBody({
+                defaultMinWidth,
+                defaultMaxWidth,
+                colKeys: candidates,
+                columnLimits: columnLimits?.map(({ colId, minWidth, maxWidth }) => ({
+                    key: colId,
+                    minWidth,
+                    maxWidth,
+                })),
+            });
+        }
+        return Promise.resolve();
+    }
+
+    /** Re-tries a re-size that found no width, on an escalating schedule, then gives up. */
+    private retryContinuousWhenSized(reason: AutoSizeReason): void {
+        const delay = CONTINUOUS_RETRY_DELAYS[this.continuousRetries];
+        // one chain at a time: a trigger arriving mid-wait is covered by the retry already pending
+        if (delay === undefined || this.continuousRetryScheduled) {
+            return;
+        }
+        this.continuousRetries++;
+        this.continuousRetryScheduled = true;
+        window.setTimeout(() => {
+            this.continuousRetryScheduled = false;
+            if (this.isAlive()) {
+                this.runContinuousNow(reason);
+            }
+        }, delay);
+    }
+
+    private onContinuousAutoSizeComplete(): void {
+        this.continuousRunning = false;
+        if (this.pendingReasons?.size && this.isAlive()) {
+            // re-enter through the scheduler rather than recursing, so the follow-up still gets its own frame
+            const reasons = this.pendingReasons;
+            this.pendingReasons = null;
+            for (const reason of reasons) {
+                this.scheduleContinuousAutoSize(reason);
+            }
+        }
+    }
+
+    /**
+     * The columns continuous sizing is allowed to change. Excludes columns whose width is owned by the
+     * developer or user, plus everything the measurement pipeline cannot or must not size.
+     */
+    private getAutoSizeCandidates(strategy: AutoSizeStrategy): AgColumn[] {
+        const { colModel, visibleCols } = this.beans;
+        const measuresContent = strategy.type === 'fitCellContents';
+        const colIds = measuresContent ? strategy.colIds : undefined;
+        const cols = colIds ? colIds.map((colId) => colModel.getCol(colId)) : visibleCols.allCols;
+
+        const candidates: AgColumn[] = [];
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const col = cols[i];
+            if (!col || col.isUserSized() || isSpecialCol(col)) {
+                continue;
+            }
+            // the two suppress flags govern different operations: measurement vs grid-width distribution
+            const colDef = col.colDef;
+            if (measuresContent ? colDef.suppressAutoSize : colDef.suppressSizeToFit) {
+                continue;
+            }
+            const flex = col.getFlex();
+            if (flex != null && flex > 0) {
+                continue;
+            }
+            candidates.push(col);
+        }
+        return candidates;
     }
 
     public processResizeOperations(): void {
@@ -620,6 +892,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public override destroy(): void {
+        this.continuousStrategy = null;
+        this.pendingReasons = null;
         this.resizeOperationQueue.length = 0;
         super.destroy();
     }
@@ -643,6 +917,11 @@ function normaliseColumnWidth(
     }
 
     return newWidth;
+}
+
+/** The Viewport Row Model never renders a measurable cell set, so content measurement cannot be repeated. */
+function isContinuousSupported(gos: GridOptionsService): boolean {
+    return gos.get('rowModelType') !== 'viewport';
 }
 
 function getAvailableWidth({ ctrlsSvc, scrollVisibleSvc }: BeanCollection): number {

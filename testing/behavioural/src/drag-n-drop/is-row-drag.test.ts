@@ -1,7 +1,3 @@
-import { ClientSideRowModelModule, RowDragModule, TextFilterModule } from 'ag-grid-community';
-import type { GridOptions } from 'ag-grid-community';
-import { PivotModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -9,7 +5,11 @@ import {
     applyTransactionChecked,
     isAgHtmlElementVisible,
     setRowDataChecked,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import { ClientSideRowModelModule, RowDragModule, TextFilterModule } from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
+import { PivotModule } from 'ag-grid-enterprise';
 
 type DragHandleState = {
     displayed: boolean;

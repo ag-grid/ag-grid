@@ -1,7 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED, RowNode } from '../entities/rowNode';
-import type { StylesChangedEvent } from '../events';
-import { _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
+import { _addRowHeightChangedListener, _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
@@ -27,7 +26,7 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.setPinnedRowData(gos.get('pinnedBottomRowData'), 'bottom');
         this.addManagedPropertyListener('pinnedTopRowData', (e) => this.setPinnedRowData(e.currentValue, 'top'));
         this.addManagedPropertyListener('pinnedBottomRowData', (e) => this.setPinnedRowData(e.currentValue, 'bottom'));
-        this.addManagedEventListeners({ stylesChanged: this.onGridStylesChanges.bind(this) });
+        _addRowHeightChangedListener(this, () => this.estimateRowHeights());
     }
 
     public reset(): void {
@@ -50,14 +49,12 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         // Not implemented for static pinned row model
     }
 
-    private onGridStylesChanges(e: StylesChangedEvent) {
-        if (e.rowHeightChanged) {
-            const estimateRowHeight = (rowNode: RowNode) => {
-                rowNode.setRowHeight(rowNode.rowHeight, true);
-            };
-            forEach(this.pinnedBottomRows, estimateRowHeight);
-            forEach(this.pinnedTopRows, estimateRowHeight);
-        }
+    private estimateRowHeights(): void {
+        const estimateRowHeight = (rowNode: RowNode) => {
+            rowNode.setRowHeight(rowNode.rowHeight, true);
+        };
+        forEach(this.pinnedBottomRows, estimateRowHeight);
+        forEach(this.pinnedTopRows, estimateRowHeight);
     }
 
     public ensureRowHeightsValid(): boolean {

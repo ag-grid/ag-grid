@@ -4,13 +4,14 @@ import { AgInputTextFieldSelector } from '../../../agWidgets/agInputTextField';
 import type { AgColumn } from '../../../entities/agColumn';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
+import type { Column } from '../../../interfaces/iColumn';
 import type { ElementParams } from '../../../utils/element';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
-import { getDebounceMs } from '../providedFilterUtils';
+import { _isUseApplyButton, getDebounceMs } from '../providedFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import type { DateFilter } from './dateFilter';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
@@ -44,9 +45,10 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
 
     protected createModelFormatter(
         optionsFactory: OptionsFactory,
-        filterParams: IDateFilterParams
+        filterParams: IDateFilterParams,
+        column: Column
     ): DateFilterModelFormatter {
-        return new DateFilterModelFormatter(optionsFactory, filterParams);
+        return new DateFilterModelFormatter(optionsFactory, filterParams, column);
     }
 
     protected override setParams(params: IFloatingFilterParams<DateFilter>): void {
@@ -120,8 +122,18 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
     private getDateComponentParams(): IDateParams {
         const { filterParams } = this.params;
         const debounceMs = getDebounceMs(this.beans.log, filterParams as DateFilterParams, this.defaultDebounceMs);
+        const debouncedDateChanged = _debounce(this, this.onDateChanged.bind(this), debounceMs);
+        let debounceTimeout: number | undefined;
         return _addGridCommonParams(this.gos, {
-            onDateChanged: _debounce(this, this.onDateChanged.bind(this), debounceMs),
+            onDateChanged: () => {
+                debounceTimeout = debouncedDateChanged();
+            },
+            onDateCleared: _isUseApplyButton(filterParams as DateFilterParams)
+                ? undefined
+                : () => {
+                      clearTimeout(debounceTimeout);
+                      this.onDateChanged();
+                  },
             filterParams,
             location: 'floatingFilter',
         });

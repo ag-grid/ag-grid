@@ -1,6 +1,7 @@
 .idea
 .vscode
 .junie
+.playwright-mcp
 
 vite.config.ts.timestamp-*.mjs
 vite.config.mts.timestamp-*.mjs

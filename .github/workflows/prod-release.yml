@@ -31,7 +31,7 @@ jobs:
     environment: production
     steps:
       - name: Authenticate with GitHub App
-        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
         with:
           app-id: ${{ env.DEPLOYMENT_APP_ID }}
@@ -39,7 +39,7 @@ jobs:
 
       - name: Checkout
         id: checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 1 # shallow copy
@@ -53,7 +53,7 @@ jobs:
           RELEASE_VERSION=$(echo $TAG_NAME | sed 's/release-//')
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: package.json
           registry-url: 'https://registry.npmjs.org'

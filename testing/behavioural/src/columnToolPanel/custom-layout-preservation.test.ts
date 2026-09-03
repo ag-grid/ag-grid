@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 describe('column tool panel custom layout preservation', () => {
     const gridMgr = new TestGridsManager({

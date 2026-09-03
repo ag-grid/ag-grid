@@ -341,7 +341,7 @@ export class AgTabGuardCtrl<
     }
 
     public getNextFocusableElement(backwards?: boolean): HTMLElement | null {
-        return _findNextFocusableElement(this.beans, this.eFocusableElement, false, backwards);
+        return _findNextFocusableElement({ beans: this.beans, rootNode: this.eFocusableElement, backwards });
     }
 
     public forceFocusOutOfContainer(up: boolean = false): void {

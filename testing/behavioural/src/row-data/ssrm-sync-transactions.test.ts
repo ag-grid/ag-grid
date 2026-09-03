@@ -1,9 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { ssrmExpandAndLoadAll, waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type { GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
-import { ssrmExpandAndLoadAll, waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
 
 /**
  * Characterization (golden-master) tests for AG Grid SSRM SYNCHRONOUS transactions:

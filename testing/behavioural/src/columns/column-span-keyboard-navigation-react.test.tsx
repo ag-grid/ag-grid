@@ -5,7 +5,6 @@ import { ClientSideRowModelModule, KeyCode, ModuleRegistry, ValidationModule } f
 
 import { renderNavGrid } from '../navigation/navigation-react-test-utils';
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from '../navigation/navigation-test-utils';
-import { ignoreConsoleLicenseKeyError } from '../test-utils';
 
 interface RowData {
     a: string;
@@ -28,7 +27,6 @@ function makeColumnDefs(): ColDef<RowData>[] {
 describe('Column Spanning Keyboard Navigation (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule]);
-        ignoreConsoleLicenseKeyError();
     });
 
     afterEach(() => {

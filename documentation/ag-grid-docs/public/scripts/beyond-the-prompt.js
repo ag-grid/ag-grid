@@ -193,7 +193,20 @@
             // href, so fall back to the current URL rather than pushing null
             // (which would corrupt the address bar and back/forward behaviour).
             const sessionUrl = link.getAttribute('href') || location.href;
-            history.pushState({ btpSession: videoId }, '', sessionUrl);
+            // Mirror what Astro's ClientRouter writes on its own pushes. It derives traversal
+            // direction from `state.index`, so the entry needs the router's other bookkeeping
+            // carried over and an index one past the current entry: leaving `index` off entirely
+            // turns its next push index into NaN, and reusing the current one makes a forward
+            // traversal into this entry compare equal and read as a "back". Scroll offsets ride
+            // along from the spread so returning here restores the position the modal opened at.
+            // This is a classic script served verbatim from public/, so the shared
+            // replaceHistoryUrl() helper is not importable here.
+            // eslint-disable-next-line no-restricted-syntax -- no module system in a public/ script
+            history.pushState(
+                { ...history.state, index: (history.state?.index ?? 0) + 1, btpSession: videoId },
+                '',
+                sessionUrl
+            );
         });
     }
     for (const closer of document.querySelectorAll('[data-session-modal-close]')) {

@@ -5,8 +5,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entities/rowNode';
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
-import type { StylesChangedEvent } from '../events';
-import { _getGrandTotalPinnedFloat, _getRowHeightForNode } from '../gridOptionsUtils';
+import { _addRowHeightChangedListener, _getGrandTotalPinnedFloat, _getRowHeightForNode } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
@@ -46,8 +45,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             this.dispatchRowPinnedEvents();
         };
 
+        _addRowHeightChangedListener(this, () => this.estimateRowHeights());
+
         this.addManagedEventListeners({
-            stylesChanged: this.onGridStylesChanges.bind(this),
             modelUpdated: ({ keepRenderedRows }) => {
                 this.tryToEmptyQueues();
                 this.pinGrandTotalRow();
@@ -377,12 +377,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         }
     }
 
-    private onGridStylesChanges(e: StylesChangedEvent) {
-        if (e.rowHeightChanged) {
-            this.forContainers((container) =>
-                container.forEach((rowNode) => rowNode.setRowHeight(rowNode.rowHeight, true))
-            );
-        }
+    private estimateRowHeights(): void {
+        this.forContainers((container) =>
+            container.forEach((rowNode) => rowNode.setRowHeight(rowNode.rowHeight, true))
+        );
     }
 
     private getContainer(floating: NonNullable<RowPinnedType>): PinnedRows {

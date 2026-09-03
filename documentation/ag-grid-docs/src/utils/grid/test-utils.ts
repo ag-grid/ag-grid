@@ -11,7 +11,6 @@ import {
     routePdfFontsFromDisk,
     warnOnNetworkAccess,
 } from './test/localSources';
-import { routeExampleModulesTranspiled } from './test/localTranspile';
 import { PendingRequests } from './test/pendingRequests';
 import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test/remoteGridapi';
 import { whileTheRequestMatters } from './test/routeGuard';
@@ -25,8 +24,9 @@ type PlaywrightFixtures = ExtractFixtures<typeof base>;
 
 type AgIdFor = ReturnType<typeof wrapAgTestIdFor<Locator>>;
 type LoadPageOptions = {
-    prod: boolean;
-    version: string;
+    prod?: boolean;
+    version?: string;
+    agThemeMode?: 'dark-blue' | 'light';
 };
 
 type RemoteGrid = ((page: Page, gridId?: string) => AsyncGridApi) & {
@@ -175,7 +175,6 @@ const excludeErrors = [
     'InstallTrigger is deprecated and will be removed in the future.',
     'onmozfullscreenchange is deprecated.',
     'onmozfullscreenerror is deprecated.',
-    // Emitted by systemjs@0.19.47 (loaded via the SystemJS plunker template); not under our control
     'Window.fullScreen attribute is deprecated and will be removed in the future.',
     'XML Parsing Error: not well-formed',
     'XML Parsing Error: syntax error',
@@ -290,6 +289,10 @@ async function loadPage(
         queryOptions.version = loadPageOptions.version;
     }
 
+    if (loadPageOptions?.agThemeMode) {
+        queryOptions.agThemeMode = loadPageOptions.agThemeMode;
+    }
+
     if (agModules && agModules.length > 0) {
         queryOptions.modules = agModules.join(',');
     }
@@ -362,7 +365,6 @@ export const extended = base.extend<TestFixtures>({
             // served `/example-assets/`.
             await routeExternalThroughMirror(page, siteOrigin);
             await routeExampleAssetsFromDisk(page);
-            await routeExampleModulesTranspiled(page, siteOrigin);
             await routePdfFontsFromDisk(page, siteOrigin);
             await use();
         },

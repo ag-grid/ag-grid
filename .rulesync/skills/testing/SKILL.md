@@ -26,7 +26,7 @@ Behavioural tests in `testing/behavioural/` are the primary test suite for AG Gr
 
 Search `testing/behavioural` for an existing harness before assuming a behaviour can't be black-box tested (e.g. `DragEventDispatcher` drives real header drags); extend the harness rather than dropping to a unit test.
 
-`./behave.sh` runs the merged unit suite in a single Vitest workspace (`vitest.workspace.ts`): the package (London-school) `*.test.ts` files **and** the behavioural (Chicago-school) suite together, no Nx required. `yarn nx test <package>` still runs one package's tests on its own (retained for retrocompat).
+`./behave.sh` runs the merged unit suite as one multi-project Vitest run (the project list in `vitest.workspace.ts`): the package (London-school) `*.test.ts` files **and** the behavioural (Chicago-school) suite together, no Nx required. `yarn nx test <package>` still runs one package's tests on its own (retained for retrocompat).
 
 ## Regression Tests: Cover Every Reproduction Path
 
@@ -115,9 +115,11 @@ packages/ag-grid-community/src/
 
 ## Running Tests
 
+**Background every one of these commands; never call one in the foreground.** `./behave.sh`, `./checks.sh`, `./benches.sh` and `./docs-e2e.sh` all take minutes, and a foreground call holds the session for the whole run — the user cannot interject and no other work happens. Start it with the agent harness's background mechanism (which wakes the agent when it ends) and carry on; do not `sleep` on it. Reading the result needs no preparation: the first line printed is the log path, `tmp/_<name>-output/<id>/output.log`, holding the full stdout and stderr; `./behave.sh` also writes `result.json` beside it. Grep the log *during* the run to abort early on the first failure instead of waiting out a run already known to be red. Under `CI` do the opposite and run in the foreground: backgrounding exists to keep an interactive session reachable, a workflow has nobody to block, and the scripts capture nothing there for the same reason.
+
 ### The merged unit suite (Vitest) — `./behave.sh`
 
-`./behave.sh` is the single command for the whole unit suite: the package unit tests (`ag-stack`, `ag-grid-community`, `ag-grid-enterprise`, `locale`) plus the behavioural suite, run together through the Vitest workspace from the repo root. Watch mode is disabled by default:
+`./behave.sh` is the single command for the whole unit suite: the package unit tests (`ag-stack`, `ag-grid-community`, `ag-grid-enterprise`, `locale`) plus the behavioural suite, run together as one multi-project Vitest run from the repo root. Watch mode is disabled by default:
 
 ```bash
 # Run the whole unit suite (package + behavioural)
@@ -170,9 +172,9 @@ Colour (off for an agent or a pipe, on for a terminal and CI) and `DEBUG_PRINT_L
 >
 > `./behave.sh` and `./benches.sh` resolve only from the repository root. From anywhere else call them by path (`../../behave.sh`) — not via `cd "$(git rev-parse --show-toplevel)" &&`, which every agent harness gates on the `cd`, the `&&` and the `$(…)`.
 >
-> Some suites take several minutes; `testing/behavioural/src/charts/format-panel-options.test.ts` alone runs ~2.5 minutes. Allow a timeout of at least five minutes, and wait for the run to finish and report its exit status — if the runner detaches the command, collect the result rather than treating silence as success.
+> A whole-suite run takes a few minutes. Allow a timeout of at least five minutes, and wait for the run to finish and report its exit status — if the runner detaches the command, collect the result rather than treating silence as success.
 >
-> The workspace membership and shared config live in `vitest.workspace.ts`, `vitest.config.ts`, and `vitest.shared.ts` at the repo root; each project keeps its own `vitest.config.ts`. Runner-global options (reporters, `onConsoleLog`, pool) must live in the **root** config — Vitest ignores them in a project config during a workspace run.
+> The project list and root config live in `vitest.workspace.ts` and `vitest.config.ts` at the repo root; the shared helpers, thresholds, setup file and slow-tests reporter live in `testing/shared/vitest/`; each project keeps its own `vitest.config.ts`. Runner-global options (reporters, `outputFile`, coverage) must live in the **root** config — Vitest ignores them in a project config. Project-scoped options (pool, environment, `setupFiles`) do NOT cascade from the root, so `unitProjectTestConfig` carries them instead.
 
 ### Benchmarks
 

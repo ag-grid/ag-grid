@@ -1,29 +1,38 @@
-import type { AdvancedFilterModel, ColumnAdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import type { AdvancedFilterModel, ColumnAdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
+import {
+    BigIntFilterModule,
+    ClientSideRowModelModule,
+    DateFilterModule,
+    NumberFilterModule,
+    TextFilterModule,
+} from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 interface TestRow {
     id: number;
     athlete: string | null;
-    age: number | null;
+    age: number | string | null;
     date: string | null;
+    qty: bigint | string | number | null;
 }
 
 const ROW_DATA: TestRow[] = [
-    { id: 0, athlete: 'Alpha', age: 1, date: '2008-08-24' },
-    { id: 1, athlete: 'alpha beta', age: 2, date: '   ' },
-    { id: 2, athlete: '', age: 3, date: null },
-    { id: 3, athlete: '   ', age: null, date: '2020-07-23' },
-    { id: 4, athlete: null, age: 0, date: 'not a date' },
-    { id: 5, athlete: 'Beta', age: -2, date: '2012-08-05' },
+    { id: 0, athlete: 'Alpha', age: 1, date: '2008-08-24', qty: 10n },
+    { id: 1, athlete: 'alpha beta', age: 2, date: '   ', qty: '10' },
+    { id: 2, athlete: '', age: 3, date: null, qty: 10 },
+    { id: 3, athlete: '   ', age: null, date: '2020-07-23', qty: null },
+    { id: 4, athlete: null, age: 0, date: 'not a date', qty: 'nope' },
+    { id: 5, athlete: 'Beta', age: -2, date: '2012-08-05', qty: -5n },
+    { id: 6, athlete: 'Gamma', age: '', date: '', qty: '' },
 ];
 
 const COLUMN_DEFS: GridOptions<TestRow>['columnDefs'] = [
     { field: 'athlete', filter: 'agTextColumnFilter' },
-    { field: 'age', filter: 'agNumberColumnFilter', filterParams: { includeBlanksInNotEqual: true } },
+    { field: 'age', filter: 'agNumberColumnFilter' },
     { field: 'date', cellDataType: 'dateString', filter: 'agDateColumnFilter' },
+    { field: 'qty', cellDataType: 'bigint', filter: 'agBigIntColumnFilter' },
 ];
 
 function getDisplayedIds(api: GridApi<TestRow>): number[] {
@@ -40,6 +49,7 @@ describe('Advanced Filter matches the column filter', () => {
             TextFilterModule,
             NumberFilterModule,
             DateFilterModule,
+            BigIntFilterModule,
             AdvancedFilterModule,
             ClientSideRowModelModule,
         ],
@@ -48,8 +58,8 @@ describe('Advanced Filter matches the column filter', () => {
     afterEach(() => gridsManager.reset());
 
     /** The rows a column filter shows for `model`, applied to a grid with no Advanced Filter. */
-    async function withColumnFilter(colId: string, model: object): Promise<number[]> {
-        const api = gridsManager.createGrid('columnFilterGrid', { columnDefs: COLUMN_DEFS, rowData: ROW_DATA });
+    async function withColumnFilter(colId: string, model: object, columnDefs = COLUMN_DEFS): Promise<number[]> {
+        const api = gridsManager.createGrid('columnFilterGrid', { columnDefs, rowData: ROW_DATA });
         await asyncSetTimeout(0);
         await api.setColumnFilterModel(colId, model);
         api.onFilterChanged();
@@ -60,9 +70,9 @@ describe('Advanced Filter matches the column filter', () => {
     }
 
     /** The rows the Advanced Filter shows for the equivalent condition. */
-    async function withAdvancedFilter(model: AdvancedFilterModel): Promise<number[]> {
+    async function withAdvancedFilter(model: AdvancedFilterModel, columnDefs = COLUMN_DEFS): Promise<number[]> {
         const api = gridsManager.createGrid('advancedFilterGrid', {
-            columnDefs: COLUMN_DEFS,
+            columnDefs,
             rowData: ROW_DATA,
             enableAdvancedFilter: true,
         });
@@ -89,12 +99,10 @@ describe('Advanced Filter matches the column filter', () => {
         { colId: 'athlete', filterType: 'text' as const, filter: 'alpha' },
         { colId: 'age', filterType: 'number' as const, filter: 2 },
     ])('$colId', ({ colId, filterType, filter }) => {
-        // A number column's `notEqual` is not at parity: the Advanced Filter admits blanks to it by
-        // `includeBlanksInEquals`, where the column filter reads `includeBlanksInNotEqual`.
         const valuedOptions =
             filterType === 'text'
                 ? ['contains', 'notContains', 'equals', 'notEqual', 'startsWith', 'endsWith']
-                : ['equals', 'greaterThan', 'greaterThanOrEqual', 'lessThan', 'lessThanOrEqual'];
+                : ['equals', 'notEqual', 'greaterThan', 'greaterThanOrEqual', 'lessThan', 'lessThanOrEqual'];
 
         test.each(valuedOptions)('`%s` filters the same rows', async (type) => {
             const columnFilterIds = await withColumnFilter(colId, { filterType, type, filter });
@@ -122,14 +130,216 @@ describe('Advanced Filter matches the column filter', () => {
         });
     });
 
-    // A whitespace date is rejected as an invalid date before either filter asks whether it is blank, so
-    // `isBlank`'s treatment of whitespace never reaches it. Pinned because it is the surprise.
-    test('a whitespace `dateString` is not blank to either', async () => {
-        const columnFilterIds = await withColumnFilter('date', { filterType: 'date', type: 'blank' });
-
-        expect(columnFilterIds).toEqual([2]);
-        expect(await withAdvancedFilter({ filterType: 'dateString', colId: 'date', type: 'blank' })).toEqual(
-            columnFilterIds
+    test('`includeBlanksInNotEqual` admits a blank to `notEqual` in both', async () => {
+        const defs = COLUMN_DEFS!.map((def) =>
+            (def as { field?: string }).field === 'age'
+                ? { ...def, filterParams: { includeBlanksInNotEqual: true } }
+                : def
         );
+        const columnFilterIds = await withColumnFilter(
+            'age',
+            { filterType: 'number', type: 'notEqual', filter: 2 },
+            defs
+        );
+
+        expect(columnFilterIds).toContain(3); // the row with a null age
+        expect(columnFilterIds).toContain(6); // and the row with an empty-string age
+        expect(
+            await withAdvancedFilter({ filterType: 'number', colId: 'age', type: 'notEqual', filter: 2 }, defs)
+        ).toEqual(columnFilterIds);
+    });
+
+    // Boolean has no column-filter counterpart to compare against — its options are `true`/`false`, not
+    // `blank` — so this is the Advanced Filter alone, pinning that it answers blank the way every other type does.
+    test('a boolean column answers blank for an empty or whitespace-only value', async () => {
+        const defs = [
+            { field: 'id' },
+            { field: 'active', cellDataType: 'boolean' as const, filter: 'agTextColumnFilter' },
+        ];
+        const rowData = [
+            { id: 0, active: true },
+            { id: 1, active: false },
+            { id: 2, active: null },
+            { id: 3, active: '' },
+            { id: 4, active: '   ' },
+        ];
+        const api = gridsManager.createGrid('booleanGrid', { columnDefs: defs, rowData, enableAdvancedFilter: true });
+        await asyncSetTimeout(0);
+
+        api.setAdvancedFilterModel({ filterType: 'boolean', colId: 'active', type: 'blank' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(getDisplayedIds(api as GridApi<TestRow>)).toEqual([2, 3, 4]);
+
+        api.setAdvancedFilterModel({ filterType: 'boolean', colId: 'active', type: 'notBlank' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(getDisplayedIds(api as GridApi<TestRow>)).toEqual([0, 1]);
+    });
+
+    // The column filter's `isValid(cellValue)` gate keeps an unreadable date out of the comparison; the
+    // Advanced Filter has no equivalent and converts before it compares.
+    test('an unreadable date compares rather than throwing, in both', async () => {
+        expect(await withColumnFilter('date', { filterType: 'date', type: 'equals', dateFrom: '2008-08-24' })).toEqual([
+            0,
+        ]);
+        expect(
+            await withAdvancedFilter({
+                filterType: 'dateString',
+                colId: 'date',
+                type: 'equals',
+                filter: '2008-08-24',
+            })
+        ).toEqual([0]);
+    });
+
+    // The negated half of the same gate, and the only case in which an unreadable value is a match.
+    test('an unreadable date is admitted to `notEqual`, in both', async () => {
+        const columnFilterIds = await withColumnFilter('date', {
+            filterType: 'date',
+            type: 'notEqual',
+            dateFrom: '2008-08-24',
+        });
+
+        expect(columnFilterIds).toContain(4); // 'not a date' is unreadable
+        expect(columnFilterIds).not.toContain(1); // whitespace is blank, not unreadable
+        expect(columnFilterIds).not.toContain(2); // and so are null
+        expect(columnFilterIds).not.toContain(6); // and the empty string
+        expect(
+            await withAdvancedFilter({
+                filterType: 'dateString',
+                colId: 'date',
+                type: 'notEqual',
+                filter: '2008-08-24',
+            })
+        ).toEqual(columnFilterIds);
+    });
+    // `inRange` takes two values rather than one, so it cannot ride on the shared table above.
+    describe('inRange', () => {
+        test('a number range filters the same rows, exclusive of both ends', async () => {
+            const model = { filterType: 'number' as const, type: 'inRange' as const, filter: -1, filterTo: 3 };
+            const columnFilterIds = await withColumnFilter('age', model);
+
+            expect(columnFilterIds).not.toContain(2); // age 3 is the excluded upper end
+            expectFiltered(columnFilterIds);
+            expect(await withAdvancedFilter({ ...model, colId: 'age' })).toEqual(columnFilterIds);
+        });
+
+        test('`inRangeInclusive` admits both ends in both', async () => {
+            const defs = COLUMN_DEFS!.map((def) =>
+                (def as { field?: string }).field === 'age' ? { ...def, filterParams: { inRangeInclusive: true } } : def
+            );
+            const model = { filterType: 'number' as const, type: 'inRange' as const, filter: -1, filterTo: 3 };
+            const columnFilterIds = await withColumnFilter('age', model, defs);
+
+            expect(columnFilterIds).toContain(2); // age 3 is now the included upper end
+            expectFiltered(columnFilterIds);
+            expect(await withAdvancedFilter({ ...model, colId: 'age' }, defs)).toEqual(columnFilterIds);
+        });
+
+        test('`includeBlanksInRange` admits a blank in both', async () => {
+            const defs = COLUMN_DEFS!.map((def) =>
+                (def as { field?: string }).field === 'age'
+                    ? { ...def, filterParams: { includeBlanksInRange: true } }
+                    : def
+            );
+            const model = { filterType: 'number' as const, type: 'inRange' as const, filter: -1, filterTo: 3 };
+            const columnFilterIds = await withColumnFilter('age', model, defs);
+
+            expect(columnFilterIds).toContain(3); // the row with a null age
+            expect(columnFilterIds).toContain(6); // and the row with an empty-string age
+            expectFiltered(columnFilterIds);
+            expect(await withAdvancedFilter({ ...model, colId: 'age' }, defs)).toEqual(columnFilterIds);
+        });
+
+        // `bigint` reaches `evaluateRangeExpression` through its own parser and converter, not the number one.
+        test('a bigint range filters the same rows', async () => {
+            const columnFilterIds = await withColumnFilter('qty', {
+                filterType: 'bigint',
+                type: 'inRange',
+                filter: '-6',
+                filterTo: '10',
+            });
+
+            expectFiltered(columnFilterIds);
+            expect(
+                await withAdvancedFilter({
+                    filterType: 'bigint',
+                    colId: 'qty',
+                    type: 'inRange',
+                    filter: '-6',
+                    filterTo: '10',
+                })
+            ).toEqual(columnFilterIds);
+        });
+
+        test('a date range filters the same rows', async () => {
+            const columnFilterIds = await withColumnFilter('date', {
+                filterType: 'date',
+                type: 'inRange',
+                dateFrom: '2008-01-01',
+                dateTo: '2013-01-01',
+            });
+
+            expect(columnFilterIds).not.toContain(3); // 2020 is outside the range
+            expectFiltered(columnFilterIds);
+            expect(
+                await withAdvancedFilter({
+                    filterType: 'dateString',
+                    colId: 'date',
+                    type: 'inRange',
+                    filter: '2008-01-01',
+                    filterTo: '2013-01-01',
+                })
+            ).toEqual(columnFilterIds);
+        });
+
+        // The two params were proven on `number` above; the date path converts through a different
+        // `valueConverter` before it reaches the same comparison.
+        test('`inRangeInclusive` and `includeBlanksInRange` behave the same on a date column', async () => {
+            const withDateParams = (filterParams: object) =>
+                COLUMN_DEFS!.map((def) =>
+                    (def as { field?: string }).field === 'date' ? { ...def, filterParams } : def
+                );
+            const model = {
+                filterType: 'date' as const,
+                type: 'inRange' as const,
+                dateFrom: '2008-08-24',
+                dateTo: '2020-07-23',
+            };
+            const advancedModel = {
+                filterType: 'dateString' as const,
+                colId: 'date',
+                type: 'inRange' as const,
+                filter: '2008-08-24',
+                filterTo: '2020-07-23',
+            };
+
+            const inclusiveDefs = withDateParams({ inRangeInclusive: true });
+            const inclusiveIds = await withColumnFilter('date', model, inclusiveDefs);
+            expect(inclusiveIds).toContain(0); // 2008-08-24 is now the included lower end
+            expectFiltered(inclusiveIds);
+            expect(await withAdvancedFilter(advancedModel, inclusiveDefs)).toEqual(inclusiveIds);
+
+            const blanksDefs = withDateParams({ includeBlanksInRange: true });
+            const blanksIds = await withColumnFilter('date', model, blanksDefs);
+            expect(blanksIds).toContain(2); // the row with a null date
+            expectFiltered(blanksIds);
+            expect(await withAdvancedFilter(advancedModel, blanksDefs)).toEqual(blanksIds);
+        });
+
+        // Ordering is unvalidated in the Advanced Filter, so a reversed date pair applies and matches
+        // nothing rather than being rejected. Dates compare as `Date` objects, not as numbers.
+        test('a reversed date range applies and matches no row', async () => {
+            expect(
+                await withAdvancedFilter({
+                    filterType: 'dateString',
+                    colId: 'date',
+                    type: 'inRange',
+                    filter: '2020-07-23',
+                    filterTo: '2008-08-24',
+                })
+            ).toEqual([]);
+        });
     });
 });

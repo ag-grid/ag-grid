@@ -4,8 +4,18 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
-import type { FilterChangedEvent, StylesChangedEvent } from '../events';
-import { _getGroupSelectsDescendants, _getRowHeightForNode, _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
+import { _nearestDisplayedRow } from '../entities/rowNodeUtils';
+import type { FilterChangedEvent } from '../events';
+import {
+    _addRowHeightChangedListener,
+    _getClientSideLoadingRowCount,
+    _getGroupSelectsDescendants,
+    _getRowHeightAsNumber,
+    _getRowHeightForNode,
+    _isAnimateRows,
+    _isClientSideLoadingRows,
+    _isDomLayout,
+} from '../gridOptionsUtils';
 import type {
     ClientSideRowModelStage,
     IClientSideRowModel,
@@ -48,6 +58,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     /** The rows mapped to rows to display, during the 'map' stage. */
     private rowsToDisplay: RowNode[] = [];
+
+    /** The rows currently exposed to rendering, which may be loading placeholders. */
+    private rowsToRender: RowNode[] = this.rowsToDisplay;
+
+    /** Display-only placeholders used while client-side data is loading. */
+    private loadingRows: RowNode[] | null = null;
 
     /** Row nodes used for formula calculations when formula feature is active. */
     private formulaRows: RowNode[] = [];
@@ -129,7 +145,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             columnPivotModeChanged: () => this.refreshModel({ step: 'group' }),
             filterChanged: this.onFilterChanged.bind(this),
             sortChanged: this.onSortChanged.bind(this),
-            stylesChanged: this.onGridStylesChanges.bind(this),
             gridReady: this.onGridReady.bind(this),
             rowExpansionStateChanged: this.onRowGroupOpened.bind(this),
         });
@@ -199,15 +214,73 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
+        _addRowHeightChangedListener(this, () => {
+            if (this.beans.rowAutoHeight?.active) {
+                return;
+            }
+            this.resetRowHeights();
+        });
+        this.addManagedPropertyListener('loading', () => this.onLoadingRowsChanged());
     }
 
     public start(): void {
+        this.updateLoadingRows();
         this.started = true;
         if (this.rowNodesCountReady) {
             this.refreshModel({ step: 'group', rowDataUpdated: true, newData: true });
         } else {
             this.setInitialData();
+            if (this.loadingRows && !this.rowNodesCountReady) {
+                this.refreshModel({ step: 'nothing' });
+            }
         }
+    }
+
+    private onLoadingRowsChanged(): void {
+        if (!this.updateLoadingRows() || !this.started) {
+            return;
+        }
+        this.refreshModel({ step: 'nothing', keepRenderedRows: false, animate: false });
+    }
+
+    private updateLoadingRows(): boolean {
+        const loadingRowsActive = _isClientSideLoadingRows(this.gos);
+        if (!loadingRowsActive) {
+            const loadingRows = this.loadingRows;
+            this.loadingRows = null;
+            this.rowsToRender = this.rowsToDisplay;
+            if (!loadingRows) {
+                return false;
+            }
+            for (const loadingRow of loadingRows) {
+                loadingRow._destroy(null);
+            }
+            return true;
+        }
+
+        const rowCount = _getClientSideLoadingRowCount(this.gos);
+        const loadingRowsChanged = this.loadingRows == null;
+        const loadingRows = this.loadingRows ?? (this.loadingRows = []);
+        this.rowsToRender = loadingRows;
+        let changed = loadingRowsChanged;
+        const loadingRowHeight = _getRowHeightAsNumber(this.beans);
+        while (loadingRows.length < rowCount) {
+            const node = new RowNode(this.beans);
+            node.parent = this.rootNode;
+            node.level = 0;
+            node.uiLevel = 0;
+            node.group = false;
+            node.stub = true;
+            node.selectable = false;
+            node.setRowHeight(loadingRowHeight);
+            loadingRows.push(node);
+            changed = true;
+        }
+        while (loadingRows.length > rowCount) {
+            loadingRows.pop()!._destroy(null);
+            changed = true;
+        }
+        return changed;
     }
 
     private setInitialData(): void {
@@ -281,7 +354,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (newRowData) {
             const immutable =
                 !extractData &&
-                !this.isEmpty() &&
+                !!this.rootNode?._leafs?.length &&
                 newRowData.length > 0 &&
                 gos.exists('getRowId') &&
                 // backward compatibility - for who want old behaviour of Row IDs but NOT Immutable Data.
@@ -374,7 +447,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private positionRows(positioned: RowNode[]): void {
-        const { beans, rowsToDisplay } = this;
+        const beans = this.beans;
+        const rowsToRender = this.rowsToRender;
         const defaultRowHeight = beans.environment.getDefaultRowHeight();
         let nextRowTop = 0;
 
@@ -382,8 +456,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // with these two layouts.
         const allowEstimate = _isDomLayout(this.gos, 'normal');
 
-        for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
-            const rowNode = rowsToDisplay[i];
+        for (let i = 0, len = rowsToRender.length; i < len; ++i) {
+            const rowNode = rowsToRender[i];
             positioned[i] = rowNode;
 
             if (rowNode.rowHeight == null) {
@@ -399,12 +473,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     /** Clears the tops of `stale` rows that are no longer displayed, then empties it. */
     private clearStaleRowTops(stale: RowNode[]): void {
-        const rowsToDisplay = this.rowsToDisplay;
+        const rowsToRender = this.rowsToRender;
         // Every displayed row holds its slot by now, so a row whose slot no longer holds it dropped out.
-        for (let i = 0, len = stale.length; i < len; ++i) {
-            const rowNode = stale[i];
+        for (const rowNode of stale) {
             const rowIndex = rowNode.rowIndex;
-            if ((rowIndex == null || rowsToDisplay[rowIndex] !== rowNode) && !rowNode.destroyed) {
+            if ((rowIndex == null || rowsToRender[rowIndex] !== rowNode) && !rowNode.destroyed) {
                 rowNode.clearRowTopAndRowIndex();
             }
         }
@@ -413,12 +486,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     /** Hands the rows an interrupted pass left in `stale` over to the buffer it now tracks, and empties it. */
     private retainStaleRows(stale: RowNode[]): void {
-        const { rowsToDisplay, positionedRows } = this;
+        const positionedRows = this.positionedRows;
+        const rowsToRender = this.rowsToRender;
         const reached = positionedRows.length; // How far `positionRows` got before the throw.
-        for (let i = 0, len = stale.length; i < len; ++i) {
-            const rowNode = stale[i];
+        for (const rowNode of stale) {
             const rowIndex = rowNode.rowIndex;
-            if (rowIndex == null || rowIndex >= reached || rowsToDisplay[rowIndex] !== rowNode) {
+            if (rowIndex == null || rowIndex >= reached || rowsToRender[rowIndex] !== rowNode) {
                 positionedRows.push(rowNode);
             }
         }
@@ -430,13 +503,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getRowCount(): number {
-        return this.rowsToDisplay.length;
+        return this.rowsToRender.length;
     }
 
     /**
      * Returns the number of rows with level === 1
      */
     public getTopLevelRowCount(): number {
+        if (this.loadingRows) {
+            return this.loadingRows.length;
+        }
         const { rootNode, rowsToDisplay } = this;
         if (!rootNode || !rowsToDisplay.length) {
             return 0;
@@ -458,6 +534,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * top level index is the index of rows with level === 1
      */
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
+        if (this.loadingRows) {
+            return topLevelIndex;
+        }
         const { beans, rootNode, rowsToDisplay } = this;
         const showingRootNode = !rootNode || !rowsToDisplay.length || rowsToDisplay[0] === rootNode;
 
@@ -492,6 +571,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * The opposite of `getTopLevelRowDisplayedIndex`
      */
     public getTopLevelIndexFromDisplayedIndex(displayedIndex: number): number {
+        if (this.loadingRows) {
+            return displayedIndex;
+        }
         const { rootNode, rowsToDisplay } = this;
         const showingRootNode = !rootNode || !rowsToDisplay.length || rowsToDisplay[0] === rootNode;
 
@@ -517,7 +599,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getRowBounds(index: number): RowBounds | null {
-        const rowNode = this.rowsToDisplay[index];
+        const rowNode = this.rowsToRender[index];
         return rowNode ? { rowTop: rowNode.rowTop!, rowHeight: rowNode.rowHeight! } : null;
     }
 
@@ -771,15 +853,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public isEmpty(): boolean {
-        return !this.rootNode?._leafs?.length || !this.beans.colModel?.ready;
+        return !this.loadingRows && (!this.rootNode?._leafs?.length || !this.beans.colModel?.ready);
     }
 
     public isRowsToRender(): boolean {
-        return this.rowsToDisplay.length > 0;
+        return this.rowsToRender.length > 0;
     }
 
     public getOverlayType(): OverlayType | null {
         const { beans, gos } = this;
+
+        if (this.loadingRows) {
+            return null;
+        }
 
         if (this.rootNode?._leafs?.length) {
             if (beans.filterManager?.isAnyFilterPresent() && this.getRowCount() === 0) {
@@ -794,13 +880,33 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return null;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] | null {
+        const groupsSelectChildren = _getGroupSelectsDescendants(this.gos);
+
+        // Under `groupSelects: 'descendants'` a group's whole subtree is the intended range, so
+        // expansion state is irrelevant and both endpoints and members are taken as-is.
+        const first = groupsSelectChildren ? firstInRange : _nearestDisplayedRow(firstInRange);
+        const last = groupsSelectChildren ? lastInRange : _nearestDisplayedRow(lastInRange);
+        if (!first || !last) {
+            return null;
+        }
+
         let started = false;
         let finished = false;
 
         const result: RowNode[] = [];
 
-        const groupsSelectChildren = _getGroupSelectsDescendants(this.gos);
+        const closeRange = (rowNode: RowNode): boolean => {
+            finished = true;
+
+            // if the final node was a group node, and we're doing groupSelectsChildren
+            // make the exception to select all of it's descendants too
+            if (groupsSelectChildren && rowNode.group) {
+                addAllLeafs(result, rowNode);
+                return true;
+            }
+            return false;
+        };
 
         this.forEachNodeAfterFilterAndSort((rowNode) => {
             // range has been closed, skip till end
@@ -809,34 +915,30 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (started) {
-                if (rowNode === lastInRange || rowNode === firstInRange) {
+                if (rowNode === last || rowNode === first) {
                     // check if this is the last node we're going to be adding
-                    finished = true;
-
-                    // if the final node was a group node, and we're doing groupSelectsChildren
-                    // make the exception to select all of it's descendants too
-                    if (groupsSelectChildren && rowNode.group) {
-                        addAllLeafs(result, rowNode);
+                    if (closeRange(rowNode)) {
                         return;
                     }
                 }
             }
 
             if (!started) {
-                if (rowNode !== lastInRange && rowNode !== firstInRange) {
+                if (rowNode !== last && rowNode !== first) {
                     // still haven't hit a boundary node, keep searching
                     return;
                 }
                 started = true;
 
                 // When the first and last node are the same we're already finished
-                if (lastInRange === firstInRange) {
-                    finished = true;
+                if (last === first && closeRange(rowNode)) {
+                    return;
                 }
             }
 
-            // only select leaf nodes if groupsSelectChildren
-            const includeThisNode = !rowNode.group || !groupsSelectChildren;
+            // only select leaf nodes if groupsSelectChildren, and only rows that are currently displayed otherwise
+            const includeThisNode =
+                (!rowNode.group || !groupsSelectChildren) && (groupsSelectChildren || rowNode.rowIndex != null);
             if (includeThisNode) {
                 result.push(rowNode);
             }
@@ -850,7 +952,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getRow(index: number): RowNode {
-        return this.rowsToDisplay[index];
+        return this.rowsToRender[index];
     }
 
     public getFormulaRow(index: number): RowNode {
@@ -858,27 +960,27 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        return this.rowsToDisplay.indexOf(rowNode) >= 0;
+        return this.rowsToRender.includes(rowNode);
     }
 
     public getRowIndexAtPixel(pixelToMatch: number): number {
-        const rowsToDisplay = this.rowsToDisplay;
-        const rowsToDisplayLen = rowsToDisplay.length;
-        if (this.isEmpty() || rowsToDisplayLen === 0) {
+        const rowsToRender = this.rowsToRender;
+        const rowsToRenderLen = rowsToRender.length;
+        if (this.isEmpty() || rowsToRenderLen === 0) {
             return -1;
         }
 
         // do binary search of tree
         // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
         let bottomPointer = 0;
-        let topPointer = rowsToDisplayLen - 1;
+        let topPointer = rowsToRenderLen - 1;
 
         // quick check, if the pixel is out of bounds, then return last row
         if (pixelToMatch <= 0) {
             // if pixel is less than or equal zero, it's always the first row
             return 0;
         }
-        const lastNode = rowsToDisplay[topPointer];
+        const lastNode = rowsToRender[topPointer];
         if (lastNode.rowTop! <= pixelToMatch) {
             return topPointer;
         }
@@ -888,7 +990,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         while (true) {
             const midPointer = Math.floor((bottomPointer + topPointer) / 2);
-            const currentRowNode = rowsToDisplay[midPointer];
+            const currentRowNode = rowsToRender[midPointer];
 
             if (this.isRowInPixel(currentRowNode, pixelToMatch)) {
                 return midPointer;
@@ -933,9 +1035,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public forEachDisplayedNode(callback: ForEachNodeCallback): void {
-        const rowsToDisplay = this.rowsToDisplay;
-        for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
-            callback(rowsToDisplay[i], i);
+        const rowsToRender = this.rowsToRender;
+        for (let i = 0, len = rowsToRender.length; i < len; ++i) {
+            callback(rowsToRender[i], i);
         }
     }
 
@@ -1212,25 +1314,28 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private doRowsToDisplay(): void {
         const { rootNode, beans } = this;
         const { formula, flattenStage } = beans;
+        let rowsToDisplay: RowNode[];
 
         if (formula?.active) {
             const unfilteredRows = rootNode?.childrenAfterSort ?? [];
             this.formulaRows = unfilteredRows;
-            this.rowsToDisplay = formulaRowsToDisplay(unfilteredRows);
-            return;
-        }
-
-        if (flattenStage) {
-            this.rowsToDisplay = flattenStage.execute();
+            rowsToDisplay = formulaRowsToDisplay(unfilteredRows);
+        } else if (flattenStage) {
+            rowsToDisplay = flattenStage.execute();
         } else {
-            const rowsToDisplay = rootNode?.childrenAfterSort ?? [];
+            rowsToDisplay = rootNode?.childrenAfterSort ?? [];
             for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
                 rowsToDisplay[i].setUiLevel(0);
             }
-            this.rowsToDisplay = rowsToDisplay;
         }
 
-        this.formulaRows = formula?.isEvaluationActive() ? this.rowsToDisplay : [];
+        this.rowsToDisplay = rowsToDisplay;
+        if (!formula?.active) {
+            this.formulaRows = formula?.isEvaluationActive() ? rowsToDisplay : [];
+        }
+        if (!this.loadingRows) {
+            this.rowsToRender = rowsToDisplay;
+        }
     }
 
     public onRowHeightChanged(): void {
@@ -1244,6 +1349,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         const atLeastOne = this.resetRowHeightsForAllRowNodes();
+        const loadingRowHeight = _getRowHeightAsNumber(this.beans);
+        const loadingRows = this.loadingRows;
+        if (loadingRows) {
+            for (const loadingRow of loadingRows) {
+                loadingRow.setRowHeight(loadingRowHeight);
+            }
+        }
 
         rootNode.setRowHeight(rootNode.rowHeight, true);
         const sibling = rootNode.sibling;
@@ -1251,7 +1363,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // when pivotMode but pivot not active, root node is displayed on its own
         // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
-        if (atLeastOne) {
+        if (atLeastOne || loadingRows) {
             this.onRowHeightChanged();
         }
     }
@@ -1274,12 +1386,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return atLeastOne;
     }
 
-    private onGridStylesChanges(e: StylesChangedEvent) {
-        if (e.rowHeightChanged && !this.beans.rowAutoHeight?.active) {
-            this.resetRowHeights();
-        }
-    }
-
     private onGridReady(): void {
         if (!this.started) {
             this.setInitialData(); // App can start using API to add transactions, so need to add data into the node manager if not started
@@ -1288,10 +1394,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public override destroy(): void {
         super.destroy();
+        const loadingRows = this.loadingRows;
+        if (loadingRows) {
+            for (const loadingRow of loadingRows) {
+                loadingRow._destroy(null);
+            }
+        }
+        this.loadingRows = null;
         this.nodeManager = this.destroyBean(this.nodeManager);
         this.started = false;
         this.rootNode = null;
         this.rowsToDisplay = [];
+        this.rowsToRender = [];
         this.positionedRows.length = 0;
         this.positionedRowsNext.length = 0;
         this.asyncTransactions = null;
