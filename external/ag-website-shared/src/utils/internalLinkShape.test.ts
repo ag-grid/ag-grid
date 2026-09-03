@@ -119,6 +119,32 @@ describe('getInternalLinkShapeIssues', () => {
         it('reports the host and the slash independently', () => {
             expect(types('https://ag-grid.com/charts')).toEqual(['redirecting-host', 'missing-trailing-slash']);
         });
+
+        describe('the pre-10.1 charts archive is served only from the legacy host', () => {
+            it.each([
+                'https://charts.ag-grid.com/archive/9.3.2/documentation/',
+                'https://charts.ag-grid.com/archive/10.0.2/documentation/',
+                'https://charts.ag-grid.com/archive/',
+            ])('%s is canonical', (href) => {
+                expect(types(href)).toEqual([]);
+            });
+
+            it('still asks the legacy archive for its trailing slash', () => {
+                expect(types('https://charts.ag-grid.com/archive/9.3.2/documentation')).toEqual([
+                    'missing-trailing-slash',
+                ]);
+            });
+
+            it('still flags every other path on the legacy host', () => {
+                expect(types('https://charts.ag-grid.com/')).toEqual(['redirecting-host']);
+                expect(types('https://charts.ag-grid.com/themes-api/')).toEqual(['redirecting-host']);
+            });
+
+            it('does not extend the exemption to the other legacy hosts', () => {
+                expect(types('https://studio.ag-grid.com/archive/1.0.0/')).toEqual(['redirecting-host']);
+                expect(types('https://ag-grid.com/archive/26.0.0/')).toEqual(['redirecting-host']);
+            });
+        });
     });
 
     describe('insecure scheme', () => {

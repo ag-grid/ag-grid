@@ -14,6 +14,18 @@ const CANONICAL_HOST = 'www.ag-grid.com';
 const REDIRECTING_HOSTS = ['ag-grid.com', 'charts.ag-grid.com', 'studio.ag-grid.com'];
 
 /**
+ * Paths that are still served directly from an otherwise-redirecting host. The pre-10.1 charts
+ * archive (`charts.ag-grid.com/archive/9.3.2/documentation/`) exists only there: the host root and
+ * every other path 301 to `www.ag-grid.com/charts/`, but the `www` form of those archives is a 404.
+ */
+const LEGACY_HOST_CANONICAL_PATHS: Record<string, RegExp[]> = {
+    'charts.ag-grid.com': [/^\/archive\//],
+};
+
+const isServedFromLegacyHost = (host: string, pathname: string) =>
+    LEGACY_HOST_CANONICAL_PATHS[host]?.some((pattern) => pattern.test(pathname)) ?? false;
+
+/**
  * A letters-only extension marks a file that takes no trailing slash. Digits are deliberately
  * excluded so a version directory such as `/archive/26.0.0` is not mistaken for a `.0` file.
  */
@@ -111,7 +123,7 @@ export function getInternalLinkShapeIssues(
     if (scheme === 'http' && host != null) {
         issues.push({ type: 'insecure-scheme', href, host });
     }
-    if (host != null && REDIRECTING_HOSTS.includes(host)) {
+    if (host != null && REDIRECTING_HOSTS.includes(host) && !isServedFromLegacyHost(host, pathname)) {
         issues.push({ type: 'redirecting-host', href, host });
     }
     if (pathname.includes('//')) {
