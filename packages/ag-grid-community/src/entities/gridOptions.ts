@@ -2496,13 +2496,6 @@ export interface GridOptions<TData = any> {
 
     /**
      * Provide a pure function that returns a string ID to uniquely identify a given row. This enables the grid to work optimally with data changes and updates.
-     *
-     * The grid mints its own IDs for built-in rows, so an ID of one of these forms cannot be told apart from them:
-     * - `ROOT_NODE_ID` — the invisible root node
-     * - the `'row-group-'` prefix — row group nodes; returning one is reported as an error
-     * - the `'rowGroupFooter_'` prefix — group total rows, and the grand total row as `GRAND_TOTAL_ROW_ID`
-     * - the `'detail_'` prefix — master detail rows
-     * - the `'t-'` and `'b-'` prefixes — manually pinned rows
      * @initial
      */
     getRowId?: GetRowIdFunc<TData>;
