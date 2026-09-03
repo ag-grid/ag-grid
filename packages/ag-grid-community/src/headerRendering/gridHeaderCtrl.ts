@@ -206,8 +206,7 @@ export class GridHeaderCtrl extends BeanStub {
 
         const { target } = (mouseEvent ?? touch)!;
 
-        // header cells register their own contextmenu listeners which bubble up to this one, so the
-        // grid-level menu must only open for targets outside a header cell.
+        // header cells' own contextmenu events bubble up to this listener and must not also open the grid-level menu
         if (target instanceof Element && !target.closest('.ag-header-cell, .ag-header-group-cell')) {
             menuSvc.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
         }
