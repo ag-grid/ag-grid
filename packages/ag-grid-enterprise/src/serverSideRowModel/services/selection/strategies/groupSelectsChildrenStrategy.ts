@@ -395,15 +395,8 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public getSelectedRows(): any[] {
-        const nodes = this.getSelectedNodes() ?? [];
-        const selectedRows: any[] = [];
-        for (let i = 0, len = nodes.length; i < len; ++i) {
-            const data = nodes[i].data;
-            if (data != null) {
-                selectedRows.push(data);
-            }
-        }
-        return selectedRows;
+        const selectedNodes = this.getSelectedNodes() ?? [];
+        return selectedNodes.map((node) => node.data).filter((data) => data != null);
     }
 
     public getSelectionCount(): number {
