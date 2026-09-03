@@ -40,7 +40,7 @@ export function _onCellMouseEvent(
 }
 
 function onCellClicked(beans: BeanCollection, cellCtrl: CellCtrl, event: MouseEvent): void {
-    // iPad doesn't have double click - so we need to mimic it to enable editing for iPad.
+    // iPad doesn't dispatch dblclick - mimic it from paired clicks to keep double-tap editing working
     if (beans.touchSvc?.handleCellDoubleClick(cellCtrl, event)) {
         return;
     }

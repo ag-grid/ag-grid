@@ -619,14 +619,6 @@ export type { IViewportDatasource, IViewportDatasourceParams } from './interface
 
 // widgets
 export type { PopupPositionParams } from './interfaces/iPopupPositionParams';
-export { TouchListener } from './widgets/touchListener';
-export type {
-    DoubleTapEvent,
-    LongTapEvent,
-    TapEvent,
-    TouchListenerEvent,
-    TouchListenerOptions,
-} from './widgets/touchListener';
 
 // SideBar
 export type { SideBarDef, ToolPanelDef } from './interfaces/iSideBar';
@@ -1049,7 +1041,6 @@ export type {
     IContextMenuService,
     MouseShowContextMenuParams,
     ShowContextMenuParams,
-    TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
 export type {
     BaseMenuItem,

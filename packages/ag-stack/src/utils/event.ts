@@ -54,13 +54,13 @@ function _createEventPath(event: { target: EventTarget }): EventTarget[] {
 }
 
 /**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  * Gets the path for a browser Event or from the target on an AG Grid Event
  * https://developer.mozilla.org/en-US/docs/Web/API/Event
  * @param {Event| { target: EventTarget }} event
  * @returns {EventTarget[]}
  */
-
-function _getEventPath(event: Event | { target: EventTarget }): EventTarget[] {
+export function _getEventPath(event: Event | { target: EventTarget }): EventTarget[] {
     // This can be called with either a browser event or an AG Grid Event that has a target property.
     const eventNoType = event as any;
 

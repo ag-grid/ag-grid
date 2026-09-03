@@ -220,7 +220,6 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
     }
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
-        this.beans.touchSvc?.setupForHeaderGroupElement(this, eElement, action);
         this.addManagedElementListeners(eElement, { click: action });
     }
 

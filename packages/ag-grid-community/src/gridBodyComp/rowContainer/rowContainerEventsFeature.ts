@@ -30,7 +30,7 @@ export class RowContainerEventsFeature extends BeanStub {
     public postConstruct(): void {
         this.addKeyboardListeners();
         this.addMouseListeners();
-        this.beans.touchSvc?.mockRowContextMenu(this);
+        this.beans.touchSvc?.setupRowContextMenu(this);
         this.editSvc = this.beans.editSvc;
     }
 
@@ -69,7 +69,7 @@ export class RowContainerEventsFeature extends BeanStub {
             if (cellCtrl?.column) {
                 cellCtrl.dispatchCellContextMenuEvent(mouseEvent);
             }
-            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(mouseEvent, undefined, rowCtrl, cellCtrl);
+            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(mouseEvent, rowCtrl, cellCtrl);
         } else {
             if (cellCtrl) {
                 cellCtrl.onMouseEvent(eventName, mouseEvent);

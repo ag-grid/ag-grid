@@ -39,7 +39,7 @@ export class GridHeaderCtrl extends BeanStub {
 
         const listener = this.onHeaderContextMenu.bind(this);
         this.addManagedElementListeners(this.eGui, { contextmenu: listener });
-        touchSvc?.mockHeaderContextMenu(this, listener);
+        touchSvc?.setupHeaderContextMenu(this, listener, (event) => this.isHeaderBackgroundTarget(event.target));
 
         ctrlsSvc.register('gridHeaderCtrl', this);
     }
@@ -198,16 +198,17 @@ export class GridHeaderCtrl extends BeanStub {
         }
     }
 
-    private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
+    private isHeaderBackgroundTarget(target: EventTarget | null): boolean {
         const { menuSvc, ctrlsSvc } = this.beans;
-        if ((!mouseEvent && !touchEvent) || !menuSvc?.isHeaderContextMenuEnabled()) {
-            return;
+        if (!menuSvc?.isHeaderContextMenuEnabled()) {
+            return false;
         }
+        return target === this.eGui || target === ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport;
+    }
 
-        const { target } = (mouseEvent ?? touch)!;
-
-        if (target === this.eGui || target === ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport) {
-            menuSvc.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
+    private onHeaderContextMenu(mouseEvent?: MouseEvent): void {
+        if (mouseEvent && this.isHeaderBackgroundTarget(mouseEvent.target)) {
+            this.beans.menuSvc?.showHeaderContextMenu(undefined, mouseEvent);
         }
     }
 }

@@ -355,15 +355,13 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
 
     public showMenuAfterContextMenuEvent(
         column: AgColumn | AgProvidedColumnGroup | undefined,
-        mouseEvent?: MouseEvent | null,
-        touchEvent?: TouchEvent | null
+        mouseEvent?: MouseEvent | null
     ): void {
         (this.beans.menuUtils as MenuUtils).onContextMenu({
             mouseEvent,
-            touchEvent,
             source: 'ui',
-            showMenuCallback: (eventOrTouch) => {
-                this.showMenuAfterMouseEvent(column, eventOrTouch, 'columnMenu');
+            showMenuCallback: (event) => {
+                this.showMenuAfterMouseEvent(column, event, 'columnMenu');
                 return true;
             },
         });

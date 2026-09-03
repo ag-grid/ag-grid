@@ -441,18 +441,13 @@ export abstract class AbstractHeaderCellCtrl<
         }
     }
 
-    protected handleContextMenuMouseEvent(
-        mouseEvent: MouseEvent | undefined,
-        touchEvent: TouchEvent | undefined,
-        column: AgColumn | AgProvidedColumnGroup
-    ): void {
-        const event = mouseEvent ?? touchEvent!;
+    protected handleContextMenuMouseEvent(mouseEvent: MouseEvent, column: AgColumn | AgProvidedColumnGroup): void {
         const { menuSvc, gos } = this.beans;
         if (gos.get('preventDefaultOnContextMenu')) {
-            event.preventDefault();
+            mouseEvent.preventDefault();
         }
         if (menuSvc?.isHeaderContextMenuEnabled(column)) {
-            menuSvc.showHeaderContextMenu(column, mouseEvent, touchEvent);
+            menuSvc.showHeaderContextMenu(column, mouseEvent);
         }
 
         this.dispatchColumnMouseEvent('columnHeaderContextMenu', column);

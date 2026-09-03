@@ -27,21 +27,15 @@ export class TooltipStateManager extends BaseTooltipStateManager<
     public override postConstruct(): void {
         super.postConstruct();
 
-        const unregister = this.beans.tooltipTouchSvc?.registerSource(
-            this.tooltipCtrl.getGui(),
-            () => this.canShowTooltip(),
-            (touchStart) => this.prepareToShowTooltip(touchStart, 0)
-        );
+        const unregister = this.beans.touchGesturesSvc?.registerLongPress({
+            element: this.tooltipCtrl.getGui(),
+            priority: 'fallback',
+            isEnabled: () => this.canShowTooltip(),
+            onLongPress: (event) => this.prepareToShowTooltip(event, 0),
+        });
         if (unregister) {
             this.addDestroyFunc(unregister);
         }
-    }
-
-    public override onMouseEnter(event: MouseEvent): void {
-        if (this.beans.tooltipTouchSvc?.isCompatibilityMouseEvent(this.tooltipCtrl.getGui())) {
-            return;
-        }
-        super.onMouseEnter(event);
     }
 
     protected override createTooltipComp(

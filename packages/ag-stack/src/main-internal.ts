@@ -227,6 +227,7 @@ export { _downloadFile } from './utils/download';
 export {
     _anchorElementToMouseMoveEvent,
     _areEventsNear,
+    _getEventPath,
     _getFirstActiveTouch,
     _isElementInEventPath,
     _isEventFromThisInstance,

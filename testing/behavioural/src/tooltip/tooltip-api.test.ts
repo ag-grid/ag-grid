@@ -18,29 +18,42 @@ import type {
 
 import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from './legacyTooltipTestUtils';
 
-function dispatchTouchEvent(
+interface TestPointer {
+    target: HTMLElement;
+    pointerId: number;
+    clientX: number;
+    clientY: number;
+}
+
+function dispatchPointerEvent(
     target: EventTarget,
-    type: 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel',
-    touch: Touch
+    type: 'pointerdown' | 'pointerup' | 'click' | 'pointerenter' | 'pointerleave',
+    pointer: TestPointer,
+    pointerType: 'mouse' | 'touch' = 'touch'
 ): void {
-    const event = new Event(type, { bubbles: true, cancelable: true }) as TouchEvent;
-    const isActive = type === 'touchstart' || type === 'touchmove';
+    const event = new Event(type, { bubbles: true, cancelable: true, composed: true }) as PointerEvent;
     Object.defineProperties(event, {
-        touches: { value: isActive ? [touch] : [] },
-        targetTouches: { value: isActive ? [touch] : [] },
-        changedTouches: { value: [touch] },
+        pointerId: { value: pointer.pointerId },
+        pointerType: { value: pointerType },
+        isPrimary: { value: true },
+        button: { value: 0 },
+        clientX: { value: pointer.clientX },
+        clientY: { value: pointer.clientY },
     });
     target.dispatchEvent(event);
 }
 
-function touchStart(element: HTMLElement, identifier = 1): Touch {
-    const touch = { identifier, target: element, clientX: 5, clientY: 5 } as unknown as Touch;
-    dispatchTouchEvent(element, 'touchstart', touch);
-    return touch;
+function touchStart(element: HTMLElement, pointerId = 1): TestPointer {
+    const pointer = { pointerId, target: element, clientX: 5, clientY: 5 };
+    dispatchPointerEvent(element, 'pointerdown', pointer);
+    return pointer;
 }
 
-function touchEnd(touch: Touch): void {
-    dispatchTouchEvent(document, 'touchend', touch);
+function touchEnd(pointer: TestPointer): void {
+    dispatchPointerEvent(document, 'pointerup', pointer);
+    // a touch pointer ceases to exist on lift, so browsers fire pointerleave before the click
+    dispatchPointerEvent(pointer.target, 'pointerleave', pointer);
+    dispatchPointerEvent(pointer.target, 'click', pointer);
 }
 
 describe('Unified tooltip API', () => {
@@ -418,6 +431,9 @@ describe('Unified tooltip API', () => {
         expect(getTooltips()[0]).toHaveTextContent('A');
         touchEnd(cellTouch);
 
+        // the tooltip must survive the lift: only tapping elsewhere dismisses it
+        expect(getTooltips()[0]).toHaveTextContent('A');
+
         const dismissTouch = touchStart(gridDiv, 2);
         await waitForTooltips(0);
         touchEnd(dismissTouch);
@@ -433,7 +449,7 @@ describe('Unified tooltip API', () => {
         expect(api.getColumn('athlete')?.getSort()).toBe('asc');
 
         await waitForTooltips(0);
-        header.dispatchEvent(new MouseEvent('mouseenter'));
+        dispatchPointerEvent(header, 'pointerenter', { target: header, pointerId: 5, clientX: 5, clientY: 5 });
         await asyncSetTimeout(0);
         expect(getTooltips()).toHaveLength(0);
     });

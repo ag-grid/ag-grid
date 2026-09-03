@@ -17,7 +17,10 @@ NOTE: This will not show if the current library version is the same as the migra
 
 ## Breaking Changes
 
-There are no breaking changes in AG Grid version {% migrationVersion() %}.
+The grid now handles touch input through Pointer Events, and the internal touch utilities are no longer exported:
+
+- The `TouchListener` class and its `TapEvent`, `DoubleTapEvent`, `LongTapEvent`, `TouchListenerEvent`, and `TouchListenerOptions` types are removed. Use Pointer Events directly; a component inside the grid can opt out of the grid's gestures by stopping propagation of `pointerdown`.
+- `TouchShowContextMenuParam` is removed and `EventShowContextMenuParams` always carries a `mouseEvent`. A `PointerEvent` may be passed wherever a `MouseEvent` is expected.
 
 ## Behaviour Changes
 

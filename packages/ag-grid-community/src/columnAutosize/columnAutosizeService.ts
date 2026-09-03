@@ -22,7 +22,6 @@ import type {
 } from '../interfaces/autoSize';
 import { MIN_CENTER_VIEWPORT_WIDTH } from '../pinnedColumns/pinnedColumnService';
 import { _clamp } from '../utils/number';
-import { TouchListener } from '../widgets/touchListener';
 
 interface AutoSizeColumnParams {
     colKeys: ColKey[];
@@ -344,12 +343,15 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         };
 
         element.addEventListener('dblclick', autoSizeColListener);
-        const touchListener = new TouchListener(element);
-        touchListener.addEventListener('doubleTap', autoSizeColListener);
+        // touch double taps do not synthesise dblclick on iOS
+        const unregisterDoubleTap = this.beans.touchGesturesSvc?.registerDoubleTap({
+            element,
+            onDoubleTap: autoSizeColListener,
+        });
 
         return () => {
             element.removeEventListener('dblclick', autoSizeColListener);
-            touchListener.destroy();
+            unregisterDoubleTap?.();
         };
     }
 

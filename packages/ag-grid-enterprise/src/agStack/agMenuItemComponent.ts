@@ -19,8 +19,8 @@ import {
     _setAriaRole,
 } from 'ag-stack';
 
-import type { AgEvent, AgPromise, IComponent, IMenuConfigParams, IMenuItem, TapEvent } from 'ag-grid-community';
-import { KeyCode, TouchListener, _createElement } from 'ag-grid-community';
+import type { AgEvent, AgPromise, IComponent, IMenuConfigParams, IMenuItem } from 'ag-grid-community';
+import { KeyCode, _createElement } from 'ag-grid-community';
 
 import { AgMenuList } from './agMenuList';
 import { AgMenuPanel } from './agMenuPanel';
@@ -234,9 +234,6 @@ export class AgMenuItemComponent<
     private addListeners(eGui: HTMLElement, params?: IMenuConfigParams): void {
         if (!params?.suppressClick) {
             this.addManagedElementListeners(eGui, { click: (e) => this.onItemSelected(e!) });
-            const touchListener = new TouchListener(eGui, true);
-            this.addManagedListeners(touchListener, { tap: (e: TapEvent) => this.onItemSelected(e.touchStart) });
-            this.addDestroyFunc(() => touchListener.destroy());
         }
         if (!params?.suppressKeyboardSelect) {
             this.addManagedElementListeners(eGui, {

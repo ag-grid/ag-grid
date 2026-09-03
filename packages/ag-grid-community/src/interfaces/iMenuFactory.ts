@@ -26,11 +26,7 @@ export interface IMenuFactory {
         onClosedCallback?: () => void,
         filtersOnly?: boolean
     ): void;
-    showMenuAfterContextMenuEvent(
-        column: MenuColumn,
-        mouseEvent?: MouseEvent | null,
-        touchEvent?: TouchEvent | null
-    ): void;
+    showMenuAfterContextMenuEvent(column: MenuColumn, mouseEvent?: MouseEvent | null): void;
     isMenuEnabled(column: AgColumn): boolean;
     hideActiveMenu(): void;
 }

@@ -434,7 +434,7 @@ export class GridBodyCtrl extends BeanStub {
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         const listener = this.onBodyViewportContextMenu.bind(this);
         this.addManagedElementListeners(eGridViewport, { contextmenu: listener });
-        touchSvc?.mockBodyContextMenu(this, listener);
+        touchSvc?.setupBodyContextMenu(this, listener, (event) => this.isEmptyViewportTarget(event.target));
 
         this.addManagedElementListeners(eGridViewport, {
             wheel: this.onBodyViewportWheel.bind(this, popupSvc),
@@ -456,28 +456,28 @@ export class GridBodyCtrl extends BeanStub {
         }
     }
 
-    private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
-        if (!mouseEvent && !touchEvent) {
-            return;
-        }
-
-        if (this.gos.get('preventDefaultOnContextMenu')) {
-            const event = (mouseEvent || touchEvent)!;
-            event.preventDefault();
-        }
-
-        const target = (mouseEvent || touch)?.target;
+    private isEmptyViewportTarget(target: EventTarget | null): boolean {
         const eTarget = target instanceof Element ? target : null;
         const isOnGridViewport =
             eTarget != null && (eTarget === this.eGridViewport || this.eGridViewport.contains(eTarget));
         const isOnRenderedRow = !!eTarget?.closest('.ag-row, .ag-header-row');
         const isOnPinnedTopSection = !!eTarget?.closest('.ag-grid-pinned-top-rows');
+        return isOnGridViewport && !isOnRenderedRow && !isOnPinnedTopSection;
+    }
 
-        if (isOnGridViewport && !isOnRenderedRow && !isOnPinnedTopSection) {
+    private onBodyViewportContextMenu(mouseEvent?: MouseEvent): void {
+        if (!mouseEvent) {
+            return;
+        }
+
+        if (this.gos.get('preventDefaultOnContextMenu')) {
+            mouseEvent.preventDefault();
+        }
+
+        if (this.isEmptyViewportTarget(mouseEvent.target)) {
             // show it
             this.beans.contextMenuSvc?.showContextMenu({
                 mouseEvent,
-                touchEvent: touchEvent!,
                 value: null,
                 anchorToElement: this.eGridBody,
                 source: 'ui',

@@ -7,43 +7,64 @@ import { ColumnMenuModule } from 'ag-grid-enterprise';
 
 const OPEN_MENU_CLASS = 'ag-has-menu-open';
 
-function mouseDown(element: HTMLElement, button: number = 0): MouseEvent {
-    const event = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button });
-    element.dispatchEvent(event);
+interface TestPointer {
+    target: HTMLElement;
+    pointerId: number;
+    clientX: number;
+    clientY: number;
+}
+
+function dispatchPointerEvent(
+    target: EventTarget,
+    type: 'pointerdown' | 'pointermove' | 'pointerup' | 'pointercancel' | 'click',
+    pointer: TestPointer,
+    pointerType: '' | 'mouse' | 'touch',
+    detail = 1,
+    button = 0
+): PointerEvent {
+    const event = new Event(type, { bubbles: true, cancelable: true, composed: true }) as PointerEvent;
+    Object.defineProperties(event, {
+        pointerId: { value: pointer.pointerId },
+        pointerType: { value: pointerType },
+        isPrimary: { value: true },
+        clientX: { value: pointer.clientX },
+        clientY: { value: pointer.clientY },
+        detail: { value: detail },
+        button: { value: button },
+    });
+    target.dispatchEvent(event);
+    return event;
+}
+
+function mousePointerDown(element: HTMLElement, button: number = 0): PointerEvent {
+    const pointer = { target: element, pointerId: 1, clientX: 5, clientY: 5 };
+    const event = dispatchPointerEvent(element, 'pointerdown', pointer, 'mouse', 1, button);
+    if (!event.defaultPrevented) {
+        element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button }));
+    }
     return event;
 }
 
 function mouseClick(element: HTMLElement, detail: number): void {
-    element.dispatchEvent(new MouseEvent('click', { bubbles: true, detail }));
+    const pointer = { target: element, pointerId: detail === 0 ? -1 : 1, clientX: 5, clientY: 5 };
+    dispatchPointerEvent(element, 'click', pointer, detail === 0 ? '' : 'mouse', detail);
 }
 
-function dispatchTouchEvent(
-    target: EventTarget,
-    type: 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel',
-    touch: Touch
-): void {
-    const event = new Event(type, { bubbles: true, cancelable: true }) as TouchEvent;
-    const isActive = type === 'touchstart' || type === 'touchmove';
-    Object.defineProperties(event, {
-        touches: { value: isActive ? [touch] : [] },
-        targetTouches: { value: isActive ? [touch] : [] },
-        changedTouches: { value: [touch] },
-    });
-    target.dispatchEvent(event);
+function touchStart(element: HTMLElement, pointerId = 1): TestPointer {
+    const pointer = { target: element, pointerId, clientX: 5, clientY: 5 };
+    dispatchPointerEvent(element, 'pointerdown', pointer, 'touch');
+    return pointer;
 }
 
-function touchStart(element: HTMLElement): Touch {
-    const touch = { identifier: 1, target: element, clientX: 5, clientY: 5 } as unknown as Touch;
-    dispatchTouchEvent(element, 'touchstart', touch);
-    return touch;
+function touchEnd(pointer: TestPointer, emitClick = true): void {
+    dispatchPointerEvent(document, 'pointerup', pointer, 'touch');
+    if (emitClick) {
+        dispatchPointerEvent(pointer.target, 'click', pointer, 'touch');
+    }
 }
 
-function touchEnd(touch: Touch): void {
-    dispatchTouchEvent(document, 'touchend', touch);
-}
-
-function touchCancel(touch: Touch): void {
-    dispatchTouchEvent(document, 'touchcancel', touch);
+function touchCancel(pointer: TestPointer): void {
+    dispatchPointerEvent(document, 'pointercancel', pointer, 'touch');
 }
 
 describe('column header popup toggle buttons (AG-16350)', () => {
@@ -71,7 +92,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
     ];
 
     test.each(buttonCases)(
-        '%s toggles on primary mousedown and ignores the following mouse click',
+        '%s toggles on primary pointerdown and ignores the following mouse click',
         async (_, selector, options) => {
             const visibilityEvents: boolean[] = [];
             const eGridDiv = await createGrid(`mouse-${selector}`, {
@@ -82,7 +103,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             });
             const button = eGridDiv.querySelector<HTMLElement>(selector)!;
 
-            const openEvent = mouseDown(button);
+            const openEvent = mousePointerDown(button);
             expect(openEvent.defaultPrevented).toBe(true);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
             expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(true);
@@ -94,7 +115,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
             expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(true);
 
-            const closeEvent = mouseDown(button);
+            const closeEvent = mousePointerDown(button);
             expect(closeEvent.defaultPrevented).toBe(false);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
             expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(false);
@@ -107,7 +128,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
     );
 
     test.each(buttonCases)(
-        '%s supports keyboard clicks and lets middle mousedown dismiss an open popup',
+        '%s supports keyboard clicks and lets middle pointerdown dismiss an open popup',
         async (_, selector, options) => {
             const eGridDiv = await createGrid(`keyboard-${selector}`, {
                 ...options,
@@ -116,15 +137,15 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             });
             const button = eGridDiv.querySelector<HTMLElement>(selector)!;
 
-            mouseDown(button, 1);
-            mouseDown(button, 2);
+            mousePointerDown(button, 1);
+            mousePointerDown(button, 2);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
 
             mouseClick(button, 0);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
             expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(true);
             await asyncSetTimeout(0);
-            mouseDown(button, 1);
+            mousePointerDown(button, 1);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
             expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(false);
 
@@ -149,7 +170,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             { key: 'Enter', ctrlKey: true },
         ],
     ] as [string, string, GridOptions, KeyboardEventInit][])(
-        '%s opened through its header shortcut closes on primary mousedown',
+        '%s opened through its header shortcut closes on primary pointerdown',
         async (_, selector, options, keyboardEvent) => {
             const eGridDiv = await createGrid(`shortcut-${selector}`, {
                 ...options,
@@ -166,7 +187,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
             expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(true);
 
-            mouseDown(button);
+            mousePointerDown(button);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
             expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(false);
         }
@@ -191,11 +212,44 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
             touchEnd(touch);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
-
-            mouseClick(button, 1);
-            expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
         }
     );
+
+    test('suppresses header long press when the new menu context menu is disabled', async () => {
+        const eGridDiv = await createGrid('suppressed-header-long-press', {
+            columnDefs: [
+                {
+                    field: 'athlete',
+                    suppressHeaderContextMenu: true,
+                    suppressHeaderMenuButton: true,
+                },
+            ],
+            rowData: [{ athlete: 'Michael Phelps' }],
+        });
+        const headerText = eGridDiv.querySelector<HTMLElement>('.ag-header-cell-text')!;
+
+        const touch = touchStart(headerText);
+        await asyncSetTimeout(0);
+        touchEnd(touch);
+
+        expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
+    });
+
+    test('keeps long press as the legacy menu access path when its context menu is disabled', async () => {
+        const eGridDiv = await createGrid('legacy-header-long-press', {
+            columnDefs: [{ field: 'athlete', sortable: true, suppressHeaderContextMenu: true }],
+            rowData: [{ athlete: 'Michael Phelps' }],
+            columnMenu: 'legacy',
+        });
+        const headerText = eGridDiv.querySelector<HTMLElement>('.ag-header-cell-text')!;
+
+        const touch = touchStart(headerText);
+        await waitFor(() => expect(document.querySelectorAll('.ag-popup')).toHaveLength(1));
+        touchEnd(touch);
+
+        expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
+        expect(gridsManager.getGrid(eGridDiv)?.getColumn('athlete')?.getSort()).toBeUndefined();
+    });
 
     test.each(['new', 'legacy'] as const)(
         'Escape restores focus to the floating-filter button with the %s column menu',
@@ -208,7 +262,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             });
             const button = eGridDiv.querySelector<HTMLElement>('.ag-floating-filter-button-button')!;
 
-            mouseDown(button);
+            mousePointerDown(button);
             expect(document.querySelector('.ag-popup')?.contains(document.activeElement)).toBe(true);
             // The popup registers its close-on-Escape document listener in a setTimeout(0), so the
             // Escape must be dispatched after that tick or it is ignored.
@@ -232,10 +286,10 @@ describe('column header popup toggle buttons (AG-16350)', () => {
         const button = eGridDiv.querySelector<HTMLElement>('.ag-header-cell-menu-button')!;
         const touchTarget = (button.firstElementChild as HTMLElement | null) ?? button;
         const touch = touchStart(touchTarget);
-        const movedTouch = { ...touch, clientX: 50, clientY: 50 } as Touch;
+        const movedTouch = { ...touch, clientX: 50, clientY: 50 };
 
-        dispatchTouchEvent(touchTarget, 'touchmove', movedTouch);
-        touchEnd(movedTouch);
+        dispatchPointerEvent(touchTarget, 'pointermove', movedTouch, 'touch');
+        touchEnd(movedTouch, false);
 
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
 
@@ -254,17 +308,17 @@ describe('column header popup toggle buttons (AG-16350)', () => {
         const menuButton = eGridDiv.querySelector<HTMLElement>('.ag-header-cell-menu-button')!;
         const filterButton = eGridDiv.querySelector<HTMLElement>('.ag-header-cell-filter-button')!;
 
-        mouseDown(menuButton);
+        mousePointerDown(menuButton);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
         expect(menuButton.classList.contains(OPEN_MENU_CLASS)).toBe(true);
         expect(filterButton.classList.contains(OPEN_MENU_CLASS)).toBe(false);
-        mouseDown(filterButton);
+        mousePointerDown(filterButton);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
         expect(menuButton.classList.contains(OPEN_MENU_CLASS)).toBe(false);
         expect(filterButton.classList.contains(OPEN_MENU_CLASS)).toBe(true);
         await asyncSetTimeout(0);
         expect(visibilityEvents).toEqual([true, false, true]);
-        mouseDown(filterButton);
+        mousePointerDown(filterButton);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
         expect(filterButton.classList.contains(OPEN_MENU_CLASS)).toBe(false);
     });
@@ -280,11 +334,11 @@ describe('column header popup toggle buttons (AG-16350)', () => {
         });
         const buttons = eGridDiv.querySelectorAll<HTMLElement>('.ag-header-cell-filter-button');
 
-        mouseDown(buttons[0]);
+        mousePointerDown(buttons[0]);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
-        mouseDown(buttons[1]);
+        mousePointerDown(buttons[1]);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
-        mouseDown(buttons[1]);
+        mousePointerDown(buttons[1]);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
     });
 
@@ -296,13 +350,13 @@ describe('column header popup toggle buttons (AG-16350)', () => {
         });
         const button = eGridDiv.querySelector<HTMLElement>('.ag-header-cell-menu-button')!;
 
-        mouseDown(button);
+        mousePointerDown(button);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
         // The popup registers its document mousedown listener in a setTimeout(0), so the right-click
         // must land after that tick for the close-then-reopen path to run.
         await asyncSetTimeout(0);
 
-        mouseDown(button, 2);
+        mousePointerDown(button, 2);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
 
         button.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, button: 2 }));
@@ -324,15 +378,15 @@ describe('column header popup toggle buttons (AG-16350)', () => {
         });
         const button = eGridDiv.querySelector<HTMLElement>('.ag-header-cell-menu-button')!;
 
-        expect(mouseDown(button).defaultPrevented).toBe(false);
+        expect(mousePointerDown(button).defaultPrevented).toBe(false);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
 
         includeMenuItem = true;
-        expect(mouseDown(button).defaultPrevented).toBe(true);
+        expect(mousePointerDown(button).defaultPrevented).toBe(true);
         expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
     });
 
-    test('destroying the header removes mouse and touch toggle listeners', async () => {
+    test('destroying the header removes pointer and click toggle listeners', async () => {
         const eGridDiv = await createGrid('listener-cleanup', {
             columnDefs: [{ field: 'athlete' }],
             rowData: [{ athlete: 'Michael Phelps' }],
@@ -341,7 +395,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
         const button = eGridDiv.querySelector<HTMLElement>('.ag-header-cell-menu-button')!;
 
         gridsManager.reset();
-        mouseDown(button);
+        mousePointerDown(button);
         const touch = touchStart(button);
         touchEnd(touch);
 

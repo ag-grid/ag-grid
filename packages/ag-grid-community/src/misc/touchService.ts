@@ -12,10 +12,8 @@ import type { AgColumnGroupHeader } from '../headerRendering/cells/columnGroup/a
 import type { GridHeaderCtrl } from '../headerRendering/gridHeaderCtrl';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _onCellDoubleClicked } from '../rendering/cell/cellMouseListenerFeature';
-import type { LongTapEvent, TapEvent } from '../widgets/touchListener';
-import { TouchListener } from '../widgets/touchListener';
 
-const _shouldOpenHeaderMenuOnLongTap = (
+const _shouldOpenHeaderMenuOnLongPress = (
     enableMenu: boolean,
     isHeaderContextMenuEnabled: boolean,
     isLegacyMenuEnabled: boolean
@@ -24,34 +22,35 @@ const _shouldOpenHeaderMenuOnLongTap = (
 export class TouchService extends BeanStub implements NamedBean {
     beanName = 'touchSvc' as const;
 
-    public mockBodyContextMenu(
+    /** `isTargetHandled` mirrors the listener's own target guard, so the long press is only claimed where the listener acts. */
+    public setupBodyContextMenu(
         ctrl: GridBodyCtrl,
-        listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
+        listener: (pointerEvent: MouseEvent) => void,
+        isTargetHandled: (event: PointerEvent) => boolean
     ): void {
-        this.mockContextMenu(ctrl, ctrl.eGridViewport, listener);
+        this.setupLongPressContextMenu(ctrl, ctrl.eGridViewport, listener, isTargetHandled);
     }
 
-    public mockHeaderContextMenu(
+    public setupHeaderContextMenu(
         ctrl: GridHeaderCtrl,
-        listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
+        listener: (pointerEvent: MouseEvent) => void,
+        isTargetHandled: (event: PointerEvent) => boolean
     ): void {
-        this.mockContextMenu(ctrl, ctrl.eGui, listener);
+        this.setupLongPressContextMenu(ctrl, ctrl.eGui, listener, isTargetHandled);
     }
 
-    public mockRowContextMenu(ctrl: RowContainerEventsFeature): void {
-        // we do NOT want this when not in iPad, otherwise we will be doing
-        if (!_isIOSUserAgent()) {
-            return;
-        }
-
-        const listener = (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => {
-            const { rowCtrl, cellCtrl } = ctrl.getControlsForEventTarget(touchEvent?.target ?? null);
+    public setupRowContextMenu(ctrl: RowContainerEventsFeature): void {
+        const listener = (pointerEvent: MouseEvent) => {
+            const { rowCtrl, cellCtrl } = ctrl.getControlsForEventTarget(pointerEvent.target);
             if (cellCtrl?.column) {
-                cellCtrl.dispatchCellContextMenuEvent(touchEvent ?? null);
+                cellCtrl.dispatchCellContextMenuEvent(pointerEvent);
             }
-            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(undefined, touchEvent, rowCtrl, cellCtrl);
+            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(pointerEvent, rowCtrl, cellCtrl);
         };
-        this.mockContextMenu(ctrl, ctrl.element, listener);
+        this.setupLongPressContextMenu(ctrl, ctrl.element, listener, (event) => {
+            const { rowCtrl, cellCtrl } = ctrl.getControlsForEventTarget(event.target);
+            return !!(rowCtrl || cellCtrl);
+        });
     }
 
     public handleCellDoubleClick(ctrl: CellCtrl, mouseEvent: MouseEvent): boolean {
@@ -76,43 +75,27 @@ export class TouchService extends BeanStub implements NamedBean {
     }
 
     public setupForHeader(comp: AgColumnHeader): void {
-        const { gos, sortSvc, menuSvc } = this.beans;
+        const { gos, menuSvc, touchGesturesSvc } = this.beans;
 
         if (gos.get('suppressTouch')) {
             return;
         }
-        const { params, eMenu, eFilterButton } = comp;
-
-        const touchListener = new TouchListener(comp.getGui(), true);
-        comp.addDestroyFunc(() => touchListener.destroy());
-
-        const suppressMenuHide = comp.shouldSuppressMenuHide();
+        const { params } = comp;
         const isHeaderContextMenuEnabled = !!menuSvc?.isHeaderContextMenuEnabled(params.column as AgColumn);
-        const shouldOpenMenuOnLongTap = _shouldOpenHeaderMenuOnLongTap(
+        const shouldOpenMenuOnLongPress = _shouldOpenHeaderMenuOnLongPress(
             params.enableMenu,
             isHeaderContextMenuEnabled,
             _isLegacyMenuEnabled(gos)
         );
 
-        const showMenuFn = (event: TapEvent | LongTapEvent) => params.showColumnMenuAfterMouseClick(event.touchStart);
-
-        if (shouldOpenMenuOnLongTap) {
-            comp.addManagedListeners(touchListener, { longTap: showMenuFn });
-        }
-
-        if (params.enableSorting) {
-            const tapListener = (event: TapEvent) => {
-                const target = event.touchStart.target as HTMLElement;
-                // When suppressMenuHide is true, a tap on the menu icon or filter button will bubble up
-                // to the header container, in that case we should not sort
-                if (suppressMenuHide && (eMenu?.contains(target) || eFilterButton?.contains(target))) {
-                    return;
-                }
-
-                sortSvc?.progressSort(params.column as AgColumn, false, 'uiColumnSorted');
-            };
-
-            comp.addManagedListeners(touchListener, { tap: tapListener });
+        if (shouldOpenMenuOnLongPress) {
+            const unregister = touchGesturesSvc?.registerLongPress({
+                element: comp.getGui(),
+                onLongPress: (event) => params.showColumnMenuAfterMouseClick(event),
+            });
+            if (unregister) {
+                comp.addDestroyFunc(unregister);
+            }
         }
     }
 
@@ -123,43 +106,33 @@ export class TouchService extends BeanStub implements NamedBean {
                 params.columnGroup.getProvidedColumnGroup() as AgProvidedColumnGroup
             )
         ) {
-            const touchListener = new TouchListener(params.eGridHeader, true);
-            const showMenuFn = (event: LongTapEvent) => params.showColumnMenuAfterMouseClick(event.touchStart);
-            comp.addManagedListeners(touchListener, { longTap: showMenuFn });
-            comp.addDestroyFunc(() => touchListener.destroy());
+            const unregister = this.beans.touchGesturesSvc?.registerLongPress({
+                element: params.eGridHeader,
+                onLongPress: (event) => params.showColumnMenuAfterMouseClick(event),
+            });
+            if (unregister) {
+                comp.addDestroyFunc(unregister);
+            }
         }
     }
 
-    public setupForHeaderGroupElement(
-        comp: AgColumnGroupHeader,
-        eElement: HTMLElement,
-        action: (event: MouseEvent) => void
-    ): void {
-        const touchListener = new TouchListener(eElement, true);
-
-        comp.addManagedListeners(touchListener, { tap: action });
-        comp.addDestroyFunc(() => touchListener.destroy());
-    }
-
-    private mockContextMenu(
+    private setupLongPressContextMenu(
         ctrl: BeanStub,
         element: HTMLElement,
-        listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
+        listener: (pointerEvent: MouseEvent) => void,
+        isTargetHandled: (event: PointerEvent) => boolean
     ): void {
-        // we do NOT want this when not in iPad
-        if (!_isIOSUserAgent()) {
-            return;
+        const unregister = this.beans.touchGesturesSvc?.registerLongPress({
+            element,
+            isEnabled: (event) =>
+                !!this.beans.contextMenuSvc &&
+                !this.gos.get('suppressContextMenu') &&
+                _isEventFromThisInstance(this.beans, event) &&
+                isTargetHandled(event),
+            onLongPress: listener,
+        });
+        if (unregister) {
+            ctrl.addDestroyFunc(unregister);
         }
-
-        const touchListener = new TouchListener(element);
-        const longTapListener = (event: LongTapEvent) => {
-            if (!_isEventFromThisInstance(this.beans, event.touchEvent)) {
-                return;
-            }
-            listener(undefined, event.touchStart, event.touchEvent);
-        };
-
-        ctrl.addManagedListeners(touchListener, { longTap: longTapListener });
-        ctrl.addDestroyFunc(() => touchListener.destroy());
     }
 }

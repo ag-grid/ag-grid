@@ -16,11 +16,9 @@ import type {
     IContextMenuService,
     IMenuActionParams,
     MenuItemDef,
-    MouseShowContextMenuParams,
     NamedBean,
     RowCtrl,
     RowNode,
-    TouchShowContextMenuParam,
     WithoutGridCommon,
 } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _attemptToRestoreCellFocus, _getGrandTotalRow } from 'ag-grid-community';
@@ -208,22 +206,20 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         }
 
         (this.beans.menuUtils as MenuUtils).onContextMenu({
-            mouseEvent: (params as MouseShowContextMenuParams).mouseEvent ?? null,
-            touchEvent: (params as TouchShowContextMenuParam).touchEvent ?? null,
-            showMenuCallback: (eventOrTouch) =>
-                this.menu.showMenu({ node: rowNode, column, value, noteParams }, eventOrTouch, anchorToElement),
+            mouseEvent: params.mouseEvent,
+            showMenuCallback: (event) =>
+                this.menu.showMenu({ node: rowNode, column, value, noteParams }, event, anchorToElement),
             source,
         });
     }
 
     public handleContextMenuMouseEvent(
-        mouseEvent: MouseEvent | undefined,
-        touchEvent: TouchEvent | undefined,
+        mouseEvent: MouseEvent,
         rowCtrl: RowCtrl | null,
         cellCtrl: CellCtrl | null
     ): void {
         // prio cell ctrl first, in case of spanned cell, then rowCtrl in case of full width row
-        const fullWidthInfo = rowCtrl?.findInfoForEvent(mouseEvent || touchEvent);
+        const fullWidthInfo = rowCtrl?.findInfoForEvent(mouseEvent);
         const rowNode = cellCtrl?.rowNode ?? rowCtrl?.rowNode ?? null;
         const column =
             cellCtrl?.column ??
@@ -250,14 +246,13 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         this.showContextMenu({
             mouseEvent,
-            touchEvent,
             rowNode,
             column,
             value,
             anchorToElement,
             noteParams,
             source: 'ui',
-        } as EventShowContextMenuParams);
+        });
     }
 
     private beforeMenuOpen(menuActionParams: WithoutGridCommon<IMenuActionParams>): void {

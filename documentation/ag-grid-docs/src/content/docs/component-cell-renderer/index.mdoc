@@ -323,7 +323,7 @@ By default when a cell is clicked on, the grid will perform actions including:
 
 - Starting editing, if [Editing](./cell-editing/) is enabled.
 
-This behaviour may not be desirable for custom cell components, e.g. if they contain interactive elements. In this situation, the grid can be prevented from handling the mouse event (`'click'`, `'dblclick'`, `'mousedown'` or `'touchstart'`), by passing the `suppressMouseEventHandling` callback to `cellRendererParams`.
+This behaviour may not be desirable for custom cell components, e.g. if they contain interactive elements. In this situation, the grid can be prevented from handling the pointer event (`'click'`, `'dblclick'` or `'pointerdown'`), by passing the `suppressMouseEventHandling` callback to `cellRendererParams`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

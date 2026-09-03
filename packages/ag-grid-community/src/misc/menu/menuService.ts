@@ -93,13 +93,9 @@ export class MenuService extends BeanStub implements NamedBean {
         return this.toggleMenu(getFilterMenuFactory(this.beans), params, params.containerType, true);
     }
 
-    public showHeaderContextMenu(
-        column: AgColumn | AgProvidedColumnGroup | undefined,
-        mouseEvent?: MouseEvent,
-        touchEvent?: TouchEvent
-    ): void {
+    public showHeaderContextMenu(column: AgColumn | AgProvidedColumnGroup | undefined, mouseEvent?: MouseEvent): void {
         this.setActiveButtonMenu();
-        this.activeMenuFactory?.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
+        this.activeMenuFactory?.showMenuAfterContextMenuEvent(column, mouseEvent);
     }
 
     public hidePopupMenu(): void {

@@ -7,7 +7,6 @@ import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { TooltipCtrl } from '../interfaces/iTooltip';
 import { _setAriaRole } from '../utils/aria';
-import { _isIOSUserAgent } from '../utils/browser';
 import { _getActiveDomElement, _getDocument } from '../utils/document';
 import { _findFocusableElements } from '../utils/focus';
 import { _exists } from '../utils/generic';
@@ -68,7 +67,7 @@ export abstract class BaseTooltipStateManager<
 
     private state = TooltipStates.NOTHING;
 
-    private lastMouseEvent: MouseEvent | Touch | null;
+    private lastMouseEvent: MouseEvent | null;
 
     private tooltipComp: IComponent<TTooltipParams> | undefined;
     private tooltipPopupDestroyFunc: (() => void) | undefined;
@@ -79,14 +78,14 @@ export abstract class BaseTooltipStateManager<
     private tooltipMouseTrack: boolean = false;
     private tooltipTrigger: TooltipTrigger;
 
-    private tooltipMouseEnterListener: (() => null) | null;
-    private tooltipMouseLeaveListener: (() => null) | null;
+    private tooltipPointerEnterListener: (() => null) | null;
+    private tooltipPointerLeaveListener: (() => null) | null;
     private tooltipFocusInListener: (() => null) | null;
     private tooltipFocusOutListener: (() => null) | null;
 
     private onBodyScrollEventCallback: (() => null) | undefined;
     private onDocumentKeyDownCallback: (() => null) | undefined;
-    private onDocumentTouchStartCallback: (() => null) | undefined;
+    private onDocumentPointerDownCallback: (() => null) | undefined;
     private sharedState!: SharedTooltipState;
     private showEventDispatched = false;
     private describedById: string | undefined;
@@ -131,8 +130,8 @@ export abstract class BaseTooltipStateManager<
 
         if (this.tooltipTrigger === TooltipTrigger.HOVER) {
             this.addManagedListeners(el, {
-                mouseenter: this.onMouseEnter.bind(this),
-                mouseleave: this.onMouseLeave.bind(this),
+                pointerenter: this.onPointerEnter.bind(this),
+                pointerleave: this.onPointerLeave.bind(this),
             });
         }
 
@@ -151,11 +150,11 @@ export abstract class BaseTooltipStateManager<
             this.addManagedListeners(el, { keydown: this.onInteractiveSourceKeyDown.bind(this) });
         }
 
-        this.addManagedListeners(el, { mousemove: this.onMouseMove.bind(this) });
+        this.addManagedListeners(el, { pointermove: this.onPointerMove.bind(this) });
 
         if (!this.interactionEnabled) {
             this.addManagedListeners(el, {
-                mousedown: this.onMouseDown.bind(this),
+                pointerdown: this.onPointerDown.bind(this),
                 keydown: this.onKeyDown.bind(this),
             });
         }
@@ -168,7 +167,7 @@ export abstract class BaseTooltipStateManager<
 
     public override destroy(): void {
         // if this component gets destroyed while tooltip is showing, need to make sure
-        // we don't end with no mouseLeave event resulting in zombie tooltip
+        // we don't end with no pointerleave event resulting in zombie tooltip
         this.hideTooltip(true);
         super.destroy();
     }
@@ -188,7 +187,7 @@ export abstract class BaseTooltipStateManager<
         return this.state === TooltipStates.SHOWING;
     }
 
-    public onMouseEnter(e: MouseEvent): void {
+    public onPointerEnter(e: PointerEvent): void {
         // if `interactiveTooltipTimeoutId` is set, it means that this cell has a tooltip
         // and we are in the process of moving the cursor from the tooltip back to the cell
         // so we need to unlock this service here.
@@ -197,9 +196,7 @@ export abstract class BaseTooltipStateManager<
             this.startHideTimeout();
         }
 
-        const fromTouch = (e as MouseEvent & { sourceCapabilities?: { firesTouchEvents?: boolean } }).sourceCapabilities
-            ?.firesTouchEvents;
-        if (_isIOSUserAgent() || fromTouch) {
+        if (e.pointerType === 'touch') {
             return;
         }
 
@@ -212,9 +209,9 @@ export abstract class BaseTooltipStateManager<
         }
     }
 
-    private onMouseMove(e: MouseEvent): void {
-        // there is a delay from the time we mouseOver a component and the time the
-        // tooltip is displayed, so we need to track mousemove to be able to correctly
+    private onPointerMove(e: PointerEvent): void {
+        // there is a delay from the time we hover over a component and the time the
+        // tooltip is displayed, so we need to track pointermove to be able to correctly
         // position the tooltip when showTooltip is called.
         if (this.lastMouseEvent) {
             this.lastMouseEvent = e;
@@ -225,11 +222,17 @@ export abstract class BaseTooltipStateManager<
         }
     }
 
-    private onMouseDown(): void {
+    private onPointerDown(): void {
         this.setToDoNothing();
     }
 
-    private onMouseLeave(): void {
+    private onPointerLeave(e: PointerEvent): void {
+        // a touch pointer ceases to exist on lift, firing pointerleave; a long-press tooltip must
+        // survive that (dismissal is the document pointerdown handler), so only react to hover pointers
+        if (e.pointerType === 'touch') {
+            return;
+        }
+
         // the lock lets the cursor travel from the cell onto its own tooltip, so only lock when a
         // tooltip is showing - locking with nothing to travel onto just blocks other cells' tooltips.
         if (this.interactionEnabled && this.state === TooltipStates.SHOWING) {
@@ -268,9 +271,9 @@ export abstract class BaseTooltipStateManager<
         this.setToDoNothing();
     }
 
-    public prepareToShowTooltip(mouseEvent?: MouseEvent | Touch, showDelayOverride?: number): void {
-        // every mouseenter should be following by a mouseleave, however for some unknown, it's possible for
-        // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
+    public prepareToShowTooltip(mouseEvent?: MouseEvent, showDelayOverride?: number): void {
+        // every pointerenter should be followed by a pointerleave, however it is possible for
+        // pointerenter to be called twice in a row when editing the cell. This was reported
         // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
         // state is != nothing, then we know mouseenter was already received.
         if (this.state != TooltipStates.NOTHING || this.isLocked()) {
@@ -322,9 +325,9 @@ export abstract class BaseTooltipStateManager<
             this.onDocumentKeyDownCallback = undefined;
         }
 
-        if (this.onDocumentTouchStartCallback) {
-            this.onDocumentTouchStartCallback();
-            this.onDocumentTouchStartCallback = undefined;
+        if (this.onDocumentPointerDownCallback) {
+            this.onDocumentPointerDownCallback();
+            this.onDocumentPointerDownCallback = undefined;
         }
 
         this.clearTimeouts();
@@ -438,10 +441,13 @@ export abstract class BaseTooltipStateManager<
         }
 
         if (this.interactionEnabled) {
-            [this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener] = this.addManagedElementListeners(eGui, {
-                mouseenter: this.onTooltipMouseEnter.bind(this),
-                mouseleave: this.onTooltipMouseLeave.bind(this),
-            });
+            [this.tooltipPointerEnterListener, this.tooltipPointerLeaveListener] = this.addManagedElementListeners(
+                eGui,
+                {
+                    pointerenter: this.onTooltipPointerEnter.bind(this),
+                    pointerleave: this.onTooltipPointerLeave.bind(this),
+                }
+            );
 
             [this.onDocumentKeyDownCallback] = this.addManagedElementListeners(_getDocument(this.beans), {
                 keydown: (event) => {
@@ -457,9 +463,9 @@ export abstract class BaseTooltipStateManager<
             });
         }
 
-        [this.onDocumentTouchStartCallback] = this.addManagedElementListeners(_getDocument(this.beans), {
-            touchstart: (event) => {
-                if (event && !eGui.contains(event.target as Node)) {
+        [this.onDocumentPointerDownCallback] = this.addManagedElementListeners(_getDocument(this.beans), {
+            pointerdown: (event) => {
+                if (event?.pointerType === 'touch' && !eGui.contains(event.target as Node)) {
                     this.hideTooltip(true);
                 }
             },
@@ -565,12 +571,12 @@ export abstract class BaseTooltipStateManager<
         }
     }
 
-    private onTooltipMouseEnter(): void {
+    private onTooltipPointerEnter(): void {
         this.isInteractingWithTooltip = true;
         this.unlockService();
     }
 
-    private onTooltipMouseLeave(): void {
+    private onTooltipPointerLeave(): void {
         if (this.isTooltipFocused()) {
             return;
         }
@@ -663,8 +669,8 @@ export abstract class BaseTooltipStateManager<
 
     private clearTooltipListeners(): void {
         for (const listener of [
-            this.tooltipMouseEnterListener,
-            this.tooltipMouseLeaveListener,
+            this.tooltipPointerEnterListener,
+            this.tooltipPointerLeaveListener,
             this.tooltipFocusInListener,
             this.tooltipFocusOutListener,
         ]) {
@@ -673,8 +679,8 @@ export abstract class BaseTooltipStateManager<
             }
         }
 
-        this.tooltipMouseEnterListener =
-            this.tooltipMouseLeaveListener =
+        this.tooltipPointerEnterListener =
+            this.tooltipPointerLeaveListener =
             this.tooltipFocusInListener =
             this.tooltipFocusOutListener =
                 null;

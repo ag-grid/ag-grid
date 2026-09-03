@@ -8,7 +8,6 @@ import type {
     ElementParams,
     GridCheckbox,
     GridDragSource,
-    LongTapEvent,
     TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
@@ -17,7 +16,6 @@ import {
     Component,
     DragSourceType,
     KeyCode,
-    TouchListener,
     _addGridCommonParams,
     _createIconNoSpan,
     _getHeaderTooltipComponentDefinition,
@@ -154,11 +152,13 @@ export class ToolPanelColumnComp extends Component {
             contextmenu: this.onContextMenu.bind(this),
         });
 
-        const touchListener = new TouchListener(focusWrapper);
-        this.addManagedListeners(touchListener, {
-            longTap: (e: LongTapEvent) => this.onContextMenu(e.touchStart),
+        const unregisterLongPress = this.beans.touchGesturesSvc?.registerLongPress({
+            element: focusWrapper,
+            onLongPress: (event) => this.onContextMenu(event),
         });
-        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
+        if (unregisterLongPress) {
+            this.addDestroyFunc(unregisterLongPress);
+        }
 
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
 
@@ -187,7 +187,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
     }
 
-    private onContextMenu(e: MouseEvent | Touch): void {
+    private onContextMenu(e: MouseEvent): void {
         const contextMenu = this.createBean(
             new ToolPanelContextMenu(this.column, e, this.focusWrapper, this.params, this.eventType, this.source)
         );

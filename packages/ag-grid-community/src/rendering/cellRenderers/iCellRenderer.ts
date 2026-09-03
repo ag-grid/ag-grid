@@ -94,7 +94,7 @@ export interface GetCellRendererInstancesParams<TData = any> extends GetCellsPar
 export interface EventCellRendererParams<TData = any, TValue = any, TContext = any> {
     /**
      * Return `true` to prevent the grid from handling the following mouse events:
-     * `'click'`, `'dblclick'`, `'mousedown'`, `'touchstart'`.
+     * `'click'`, `'dblclick'`, `'pointerdown'`.
      *
      * This will prevent actions performed via the mouse, such as focusing a cell,
      * selecting a row, starting a cell selection, or starting an edit.

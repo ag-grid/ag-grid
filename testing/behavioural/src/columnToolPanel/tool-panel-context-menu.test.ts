@@ -88,6 +88,26 @@ describe('ToolPanelContextMenu', () => {
         await asyncSetTimeout(0);
     }
 
+    function dispatchTouchPointer(target: EventTarget, type: 'pointerdown' | 'pointerup', pointerId = 1): void {
+        const event = new Event(type, { bubbles: true, cancelable: true, composed: true });
+        Object.defineProperties(event, {
+            pointerId: { value: pointerId },
+            pointerType: { value: 'touch' },
+            isPrimary: { value: true },
+            button: { value: 0 },
+            clientX: { value: 10 },
+            clientY: { value: 10 },
+        });
+        target.dispatchEvent(event);
+    }
+
+    async function openContextMenuWithLongPress(toolPanel: any, gridDiv: HTMLElement, label: string): Promise<void> {
+        const entry = await getColumnEntry(toolPanel, gridDiv, label);
+        dispatchTouchPointer(entry, 'pointerdown');
+        await asyncSetTimeout(0);
+        dispatchTouchPointer(document, 'pointerup');
+    }
+
     async function clickMenuItem(gridDiv: HTMLElement, label: string): Promise<void> {
         const menuItem = await findByText(gridDiv, label);
         await userEvent.click(menuItem);
@@ -139,6 +159,73 @@ describe('ToolPanelContextMenu', () => {
             await clickMenuItem(gridDiv, 'Group by Athlete');
 
             await waitFor(() => expect(getGroupedRowIds()).toStrictEqual(['athlete']));
+        });
+
+        test('long press opens the tool panel context menu', async () => {
+            await openContextMenuWithLongPress(toolPanel, gridDiv, 'Athlete');
+
+            expect(await findByText(gridDiv, 'Group by Athlete')).not.toBeNull();
+        });
+
+        test('the emulated click after a long press does not activate the menu item under the finger', async () => {
+            await openContextMenuWithLongPress(toolPanel, gridDiv, 'Athlete');
+            const menuItem = await findByText(gridDiv, 'Group by Athlete');
+
+            // browsers dispatch compatibility mouse events at the touch point on release,
+            // which after a long press is the menu that just opened underneath the finger
+            for (const type of ['mousedown', 'mouseup', 'click'] as const) {
+                menuItem.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true }));
+            }
+            await asyncSetTimeout(0);
+
+            expect(getGroupedRowIds()).toStrictEqual([]);
+            expect(queryByText(gridDiv, 'Group by Athlete')).not.toBeNull();
+        });
+
+        test('cell long press opens the context menu instead of the cell tooltip', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid-cell-long-press', {
+                columnDefs: [{ field: 'athlete', tooltip: true }],
+                rowData: rowDataFactory(),
+                tooltipShowDelay: 0,
+            });
+            const div = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => {
+                const el = div.querySelector('.ag-cell') as HTMLElement | null;
+                expect(el).not.toBeNull();
+                return el!;
+            });
+
+            dispatchTouchPointer(cell, 'pointerdown');
+            await asyncSetTimeout(0);
+
+            expect(await findByText(div, 'Copy')).not.toBeNull();
+            expect(document.querySelectorAll('.ag-tooltip')).toHaveLength(0);
+            dispatchTouchPointer(document, 'pointerup');
+        });
+
+        test('a native contextmenu during a touch press opens the grid context menu exactly once', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid-cell-native-contextmenu', {
+                columnDefs: [{ field: 'athlete', tooltip: true }],
+                rowData: rowDataFactory(),
+                tooltipShowDelay: 0,
+            });
+            const div = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => {
+                const el = div.querySelector('.ag-cell') as HTMLElement | null;
+                expect(el).not.toBeNull();
+                return el!;
+            });
+
+            dispatchTouchPointer(cell, 'pointerdown');
+            const contextMenuEvent = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
+            cell.dispatchEvent(contextMenuEvent);
+            await asyncSetTimeout(0);
+
+            expect(contextMenuEvent.defaultPrevented).toBe(true);
+            expect(await findByText(div, 'Copy')).not.toBeNull();
+            expect(document.querySelectorAll('.ag-menu')).toHaveLength(1);
+            expect(document.querySelectorAll('.ag-tooltip')).toHaveLength(0);
+            dispatchTouchPointer(document, 'pointerup');
         });
 
         test("stock actions invoked from the tool panel emit column events with source 'toolPanelUi'", async () => {

@@ -77,11 +77,10 @@ export class MenuUtils extends BeanStub implements NamedBean {
 
     public onContextMenu(params: {
         mouseEvent: MouseEvent | null | undefined;
-        touchEvent: TouchEvent | null | undefined;
-        showMenuCallback: (eventOrTouch: MouseEvent | Touch) => boolean;
+        showMenuCallback: (event: MouseEvent) => boolean;
         source: 'api' | 'ui';
     }): void {
-        const { mouseEvent, touchEvent, showMenuCallback, source } = params;
+        const { mouseEvent, showMenuCallback, source } = params;
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
         if (!this.gos.get('allowContextMenuWithControlKey')) {
@@ -101,13 +100,8 @@ export class MenuUtils extends BeanStub implements NamedBean {
             return;
         }
 
-        const eventOrTouch: MouseEvent | Touch = mouseEvent ?? touchEvent!.touches[0];
-        if (showMenuCallback(eventOrTouch)) {
-            const event = mouseEvent ?? touchEvent;
-
-            if (event?.cancelable) {
-                event.preventDefault();
-            }
+        if (mouseEvent && showMenuCallback(mouseEvent) && mouseEvent.cancelable) {
+            mouseEvent.preventDefault();
         }
     }
 

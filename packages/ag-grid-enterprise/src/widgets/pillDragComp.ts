@@ -13,7 +13,7 @@ import type {
     TooltipLocation,
     TooltipSourceParams,
 } from 'ag-grid-community';
-import { Component, KeyCode, TouchListener, _createIconNoSpan } from 'ag-grid-community';
+import { Component, KeyCode, _createIconNoSpan } from 'ag-grid-community';
 
 type PillDragCompEvent = 'columnRemove';
 
@@ -201,12 +201,6 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
                 mouseEvent.stopPropagation();
             },
         });
-
-        const touchListener = new TouchListener(this.eButton);
-        this.addManagedListeners(touchListener, {
-            tap: () => this.dispatchLocalEvent(agEvent),
-        });
-        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
 
     protected onKeyDown(e: KeyboardEvent): void {

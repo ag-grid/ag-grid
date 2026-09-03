@@ -301,7 +301,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const clickListener = () =>
             this.dispatchColumnMouseEvent('columnHeaderClicked', column.getProvidedColumnGroup());
         const contextMenuListener = (event: MouseEvent) =>
-            this.handleContextMenuMouseEvent(event, undefined, column.getProvidedColumnGroup());
+            this.handleContextMenuMouseEvent(event, column.getProvidedColumnGroup());
 
         compBean.addManagedListeners(this.eGui, {
             mouseenter: listener,

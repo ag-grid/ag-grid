@@ -11,7 +11,6 @@ import type {
     GridCheckbox,
     GridDragSource,
     IAggFunc,
-    LongTapEvent,
     TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
@@ -20,7 +19,6 @@ import {
     Component,
     DragSourceType,
     KeyCode,
-    TouchListener,
     _addGridCommonParams,
     _createIcon,
     _createIconNoSpan,
@@ -96,7 +94,18 @@ export class ToolPanelColumnGroupComp extends Component {
     public postConstruct(): void {
         this.setTemplate(ToolPanelColumnGroupElement, [AgCheckboxSelector]);
 
-        const { beans, cbSelect, eLabel, columnDepth, modelItem, focusWrapper, columnGroup, params, source } = this;
+        const {
+            beans,
+            cbSelect,
+            eLabel,
+            eColumnGroupIcons,
+            columnDepth,
+            modelItem,
+            focusWrapper,
+            columnGroup,
+            params,
+            source,
+        } = this;
         const { gos } = beans;
 
         const eDragHandle = _createIconNoSpan('columnDrag', beans)!;
@@ -166,11 +175,14 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedListeners(modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
         this.addManagedEventListeners({ columnHeaderNameChanged: this.onHeaderNameChanged.bind(this) });
 
-        const touchListener = new TouchListener(this.getGui(), false);
-        this.addManagedListeners(touchListener, {
-            longTap: (e: LongTapEvent) => this.onContextMenu(e.touchStart),
+        const unregisterLongPress = this.beans.touchGesturesSvc?.registerLongPress({
+            element: this.getGui(),
+            isEnabled: (event) => !eColumnGroupIcons.contains(event.target as Node),
+            onLongPress: (event) => this.onContextMenu(event),
         });
-        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
+        if (unregisterLongPress) {
+            this.addDestroyFunc(unregisterLongPress);
+        }
 
         this.addManagedListeners(focusWrapper, {
             keydown: this.handleKeyDown.bind(this),
@@ -228,7 +240,7 @@ export class ToolPanelColumnGroupComp extends Component {
         }
     }
 
-    private onContextMenu(e: MouseEvent | Touch): void {
+    private onContextMenu(e: MouseEvent): void {
         const contextMenu = this.createBean(
             new ToolPanelContextMenu(this.columnGroup, e, this.focusWrapper, this.params, this.eventType, this.source)
         );
@@ -330,17 +342,13 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private setupExpandContract(): void {
-        const { beans, eGroupClosedIcon, eGroupOpenedIcon, eColumnGroupIcons } = this;
+        const { beans, eGroupClosedIcon, eGroupOpenedIcon } = this;
         eGroupClosedIcon.appendChild(_createIcon('columnSelectClosed', beans, null));
         eGroupOpenedIcon.appendChild(_createIcon('columnSelectOpen', beans, null));
 
         const listener = this.onExpandOrContractClicked.bind(this);
         this.addManagedElementListeners(eGroupClosedIcon, { click: listener });
         this.addManagedElementListeners(eGroupOpenedIcon, { click: listener });
-
-        const touchListener = new TouchListener(eColumnGroupIcons, true);
-        this.addManagedListeners(touchListener, { tap: listener });
-        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
 
     private onLabelClicked(): void {

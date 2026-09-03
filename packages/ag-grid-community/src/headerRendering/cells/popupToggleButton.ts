@@ -1,28 +1,40 @@
 import type { BeanStub } from '../../context/beanStub';
 import type { PopupToggleResult } from '../../misc/menu/menuService';
-import { TouchListener } from '../../widgets/touchListener';
 
-type PopupToggleListenerOwner = Pick<BeanStub, 'addManagedElementListeners' | 'addDestroyFunc'>;
+type PopupToggleListenerOwner = Pick<BeanStub, 'addManagedElementListeners'>;
 
 export function _addPopupToggleButtonListeners(
     owner: PopupToggleListenerOwner,
     button: HTMLElement,
     togglePopup: () => PopupToggleResult
 ): void {
+    let handledMousePointerId: number | undefined;
+
     owner.addManagedElementListeners(button, {
-        mousedown: (event: MouseEvent) => {
-            if (event.button === 0 && togglePopup() === 'opened') {
+        pointerdown: (event: PointerEvent) => {
+            if (event.pointerType !== 'mouse' || event.button !== 0) {
+                handledMousePointerId = undefined;
+                return;
+            }
+
+            handledMousePointerId = event.pointerId;
+            if (togglePopup() === 'opened') {
                 event.preventDefault();
             }
         },
         click: (event: MouseEvent) => {
-            if (event.detail === 0) {
-                togglePopup();
+            const followsHandledMousePointer = handledMousePointerId != null && event.detail > 0;
+            handledMousePointerId = undefined;
+            if (followsHandledMousePointer) {
+                return;
+            }
+
+            togglePopup();
+        },
+        pointercancel: (event: PointerEvent) => {
+            if (event.pointerId === handledMousePointerId) {
+                handledMousePointerId = undefined;
             }
         },
     });
-
-    const touchListener = new TouchListener(button, true);
-    touchListener.addEventListener('tap', togglePopup);
-    owner.addDestroyFunc(() => touchListener.destroy());
 }

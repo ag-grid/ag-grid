@@ -9,12 +9,7 @@ export interface IContextMenuService {
     hideActiveMenu(): void;
     getContextMenuPosition(rowNode?: RowNode | null, column?: AgColumn | null): { x: number; y: number };
     showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void;
-    handleContextMenuMouseEvent(
-        mouseEvent: MouseEvent | undefined,
-        touchEvent: TouchEvent | undefined,
-        rowComp: RowCtrl | null,
-        cellCtrl: CellCtrl | null
-    ): void;
+    handleContextMenuMouseEvent(mouseEvent: MouseEvent, rowComp: RowCtrl | null, cellCtrl: CellCtrl | null): void;
 }
 
 export interface ShowContextMenuParams {
@@ -38,9 +33,4 @@ export interface MouseShowContextMenuParams {
     mouseEvent: MouseEvent;
 }
 
-export interface TouchShowContextMenuParam {
-    touchEvent: TouchEvent;
-}
-
-export type EventShowContextMenuParams = (MouseShowContextMenuParams | TouchShowContextMenuParam) &
-    ShowContextMenuParams;
+export type EventShowContextMenuParams = MouseShowContextMenuParams & ShowContextMenuParams;

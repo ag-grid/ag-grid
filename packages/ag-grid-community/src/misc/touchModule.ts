@@ -1,5 +1,6 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
+import { TouchGesturesService } from './touchGesturesService';
 import { TouchService } from './touchService';
 
 /**
@@ -8,5 +9,5 @@ import { TouchService } from './touchService';
 export const TouchModule: _ModuleWithoutApi = {
     moduleName: 'Touch',
     version: VERSION,
-    beans: [TouchService],
+    beans: [TouchGesturesService, TouchService],
 };
