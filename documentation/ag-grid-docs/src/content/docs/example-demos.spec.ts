@@ -33,8 +33,17 @@ test.describe('Demo page SEO copy', () => {
     }
 });
 
-// The header reserves a measured height (pages-styles/example.module.scss) so that longer copy on
-// one demo cannot shift the page; copy that outgrows the reserve would regress that silently.
+// The copy column reserves a measured height (pages-styles/example.module.scss) so that a longer
+// intro on one demo cannot shift the links or the page; copy that outgrows the reserve would
+// regress that silently.
+//
+// Two things legitimately differ per demo and per engine, so neither is compared here:
+//   - the H1's own height, because the longest demo heading wraps to a second line inside the
+//     fixed copy column while the others do not;
+//   - the whole header's height, because the demo tab strip beside the copy measures differently
+//     across rendering engines.
+// Everything below the heading is therefore measured relative to the heading's bottom edge, and
+// against the copy column rather than the header. That leaves exactly what the reserve owns.
 test.describe('Demo page header layout', () => {
     const viewports = [
         { width: 1920, height: 1080 },
@@ -43,7 +52,7 @@ test.describe('Demo page header layout', () => {
     ];
 
     for (const viewport of viewports) {
-        test(`every demo puts its header and links in the same place at ${viewport.width}x${viewport.height}`, async ({
+        test(`every demo places its header copy the same way at ${viewport.width}x${viewport.height}`, async ({
             page,
         }) => {
             const layouts: Record<string, unknown> = {};
@@ -52,16 +61,24 @@ test.describe('Demo page header layout', () => {
                 await page.setViewportSize(viewport);
                 await page.goto(demoContent(demo).href.replace(/^\//, ''));
 
-                const header = page.locator('[class*="topHeader"]');
-                await expect(header.getByRole('heading', { level: 1 })).toBeVisible();
+                const copy = page.locator('[class*="headerCopy"]');
+                const heading = copy.getByRole('heading', { level: 1 });
+                await expect(heading).toBeVisible();
 
-                const headerBox = await header.boundingBox();
-                const linksBox = await header.getByRole('link', { name: 'See On GitHub' }).boundingBox();
+                const copyBox = await copy.boundingBox();
+                const headingBox = await heading.boundingBox();
+                const linksBox = await copy.getByRole('link', { name: 'See On GitHub' }).boundingBox();
+
+                const headingBottom = (headingBox?.y ?? 0) + (headingBox?.height ?? 0);
                 layouts[demo] = {
-                    headerHeight: headerBox?.height,
-                    // Relative to the header, not to the page scroll position.
-                    linksX: Math.round((linksBox?.x ?? 0) - (headerBox?.x ?? 0)),
-                    linksY: Math.round((linksBox?.y ?? 0) - (headerBox?.y ?? 0)),
+                    // The links and the reserved intro below them, with the heading's own height
+                    // taken out — this is the height the reserve is responsible for.
+                    copyHeightBelowHeading: Math.round(
+                        (copyBox?.y ?? 0) + (copyBox?.height ?? 0) - headingBottom
+                    ),
+                    // Relative to the copy column, not to the page scroll position.
+                    linksX: Math.round((linksBox?.x ?? 0) - (copyBox?.x ?? 0)),
+                    linksYBelowHeading: Math.round((linksBox?.y ?? 0) - headingBottom),
                 };
             }
 
