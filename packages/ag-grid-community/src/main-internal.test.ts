@@ -286,7 +286,7 @@ function findSurplusAnnotations(srcDir: string, internalSymbols: SymbolInfo[]): 
             // `export { Foo } from './x'` has no name of its own; the forward check accepts an
             // annotation here, so the reverse check must too when a re-exported name is internal.
             if (ts.isExportDeclaration(node)) {
-                const elements =
+                const elements: readonly ts.ExportSpecifier[] =
                     node.exportClause && ts.isNamedExports(node.exportClause) ? node.exportClause.elements : [];
                 if (elements.some((element) => exportedNames.has((element.propertyName ?? element.name).text))) {
                     return;
