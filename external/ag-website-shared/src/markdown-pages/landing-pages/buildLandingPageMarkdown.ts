@@ -6,6 +6,8 @@ import type {
 import { htmlInlineToMarkdown } from '@ag-website-shared/markdoc/htmlInlineToMarkdown';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 
+import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from '../markdownFrontmatter';
+
 export interface LandingPageVersion {
     version: string;
     landingPageHighlight?: string;
@@ -31,6 +33,8 @@ export interface BuildLandingPageMarkdownOptions {
      * helper instead. Defaults to `resolveUrl` for sites without a framework dimension.
      */
     resolveFaqUrl?: (url: string) => string;
+    /** Site-wide frontmatter fields (product, related links, llms.txt) from the rendering site. */
+    siteFrontmatter?: SiteFrontmatterFields;
 }
 
 export type Resolve = (url: string) => string;
@@ -161,16 +165,16 @@ export function buildLandingPageMarkdown({
     siteRoot,
     resolveUrl,
     resolveFaqUrl = resolveUrl,
+    siteFrontmatter,
 }: BuildLandingPageMarkdownOptions): string {
     const hero = content.sections.find((section) => section.type === 'hero');
     const latestVersion = versions?.find((version) => version.landingPageHighlight);
 
-    const frontmatter = [
-        '---',
-        `title: ${JSON.stringify(content.meta.title)}`,
-        `description: ${JSON.stringify(content.meta.description)}`,
-        '---',
-    ].join('\n');
+    const frontmatter = buildMarkdownFrontmatter({
+        ...siteFrontmatter,
+        title: content.meta.title,
+        description: content.meta.description,
+    });
 
     const intro: string[] = [];
     if (hero) {

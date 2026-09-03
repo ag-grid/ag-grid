@@ -14,6 +14,6 @@ export interface JiraEntry {
     [key: string]: unknown;
 }
 
-export function changelogToMarkdown(entries: JiraEntry[], product?: string): string;
-export function pipelineToMarkdown(entries: JiraEntry[], product?: string): string;
+export function changelogToMarkdown(entries: JiraEntry[], product?: string, siteUrl?: string): string;
+export function pipelineToMarkdown(entries: JiraEntry[], product?: string, siteUrl?: string): string;
 export function htmlToText(html: string | null | undefined): string;

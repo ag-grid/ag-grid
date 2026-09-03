@@ -2,6 +2,8 @@ import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { demoContent } from '@components/demos/demoContent';
 import { VIDEO_TOUR_TEXT, VIDEO_TOUR_URL, demoTabs } from '@components/demos/demosData';
 
+import { buildGridFrontmatter } from './gridFrontmatter';
+
 /**
  * Build the markdown twin of the /example (demo) page. The page is almost entirely a live
  * interactive grid, so the twin carries the performance demo's copy — the same copy the page
@@ -11,12 +13,12 @@ import { VIDEO_TOUR_TEXT, VIDEO_TOUR_URL, demoTabs } from '@components/demos/dem
 export function buildExampleMarkdown({ siteRoot }: { siteRoot?: string } = {}): string {
     const content = demoContent('performance');
 
-    const frontmatter = [
-        '---',
-        `title: ${JSON.stringify(content.seoTitle)}`,
-        `description: ${JSON.stringify(content.seoDescription)}`,
-        '---',
-    ].join('\n');
+    const frontmatter = buildGridFrontmatter({
+        pageUrl: content.href,
+        siteRoot,
+        title: content.seoTitle,
+        description: content.seoDescription,
+    });
 
     const demos = demoTabs
         .map((tab) => `- **${tab.label}** — [live demo](${toAbsoluteUrl(tab.href, siteRoot)}), [GitHub](${tab.github})`)

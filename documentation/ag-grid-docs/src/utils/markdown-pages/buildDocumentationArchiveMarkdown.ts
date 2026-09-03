@@ -4,6 +4,7 @@ import { getChangelogUrl } from '@ag-website-shared/utils/getChangelogUrl';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 
 import versionsData from '../../content/versions/ag-grid-versions.json';
+import { buildGridFrontmatter } from './gridFrontmatter';
 
 const TABLE_HEADERS = ['Version', 'Date', 'Type', 'Documentation', 'Changelog'];
 
@@ -36,7 +37,7 @@ function majorTable(versions: VersionEntry[]): string {
  * changelog links for every past AG Grid release, grouped by major version (newest first).
  * Reads the same `versions` collection JSON the page renders, so the two cannot drift.
  */
-export function buildDocumentationArchiveMarkdown(_options: { siteRoot?: string } = {}): string {
+export function buildDocumentationArchiveMarkdown({ siteRoot }: { siteRoot?: string } = {}): string {
     const versions = versionsData as VersionEntry[];
 
     // Majors newest-first, mirroring documentation-archive.astro (the JSON is already sorted
@@ -45,12 +46,13 @@ export function buildDocumentationArchiveMarkdown(_options: { siteRoot?: string 
         .filter((entry) => parseVersion(entry.version).isMajor)
         .map((entry) => parseVersion(entry.version).major);
 
-    const frontmatter = [
-        '---',
-        'title: "AG Grid Documentation Archive"',
-        'description: "Browse archived documentation for previous AG Grid versions, from version 14 and onwards. View changelogs for every minor and major release."',
-        '---',
-    ].join('\n');
+    const frontmatter = buildGridFrontmatter({
+        pageUrl: '/documentation-archive/',
+        siteRoot,
+        title: 'AG Grid Documentation Archive',
+        description:
+            'Browse archived documentation for previous AG Grid versions, from version 14 and onwards. View changelogs for every minor and major release.',
+    });
 
     const sections = [frontmatter, '# Documentation Archive', 'Review documentation for previous AG Grid versions.'];
 

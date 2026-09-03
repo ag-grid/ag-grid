@@ -1,6 +1,7 @@
 import { htmlInlineToMarkdown, resolveContentLink } from '@ag-website-shared/markdoc/htmlInlineToMarkdown';
 
 import aboutData from '../../content/about/about.json';
+import { buildGridFrontmatter } from './gridFrontmatter';
 
 interface Principle {
     title: string;
@@ -80,12 +81,13 @@ function contactSection(siteRoot?: string): string {
 export function buildAboutMarkdown({ siteRoot }: { siteRoot?: string } = {}): string {
     const { prose } = aboutData;
 
-    const frontmatter = [
-        '---',
-        'title: "About AG Grid: Our Mission, Principles & Team"',
-        'description: "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are."',
-        '---',
-    ].join('\n');
+    const frontmatter = buildGridFrontmatter({
+        pageUrl: '/about/',
+        siteRoot,
+        title: 'About AG Grid: Our Mission, Principles & Team',
+        description:
+            'AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.',
+    });
 
     const memoriam = [
         `## ${prose.memoriam.heading}`,
