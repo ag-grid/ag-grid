@@ -15,7 +15,7 @@
 import { waitFor } from '@testing-library/dom';
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { AutoSizeColumnsTriggerParams, GridApi, GridOptions } from 'ag-grid-community';
+import type { AutoSizeColumnsTriggerParams, ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { AlignedGridsModule, ClientSideRowModelModule, ColumnAutoSizeModule } from 'ag-grid-community';
 
 /** The width every eligible column lands on once measured: `minWidth` beats the 20px happy-dom measurement. */
@@ -595,8 +595,8 @@ describe('Continuous Column Autosize', () => {
          * Two bidirectionally aligned grids, each continuously auto-sizing its own columns. A resize in
          * either grid is propagated to the other as an `alignedGridChanged` resize.
          */
-        const createAlignedGrids = (): { api1: GridApi; api2: GridApi } => {
-            const options = (): GridOptions => ({
+        const createAlignedGrids = (grid2Eligible: ColDef = {}): { api1: GridApi; api2: GridApi } => {
+            const options = (eligible: ColDef = {}): GridOptions => ({
                 columnDefs: [
                     {
                         colId: 'pinned',
@@ -611,13 +611,14 @@ describe('Continuous Column Autosize', () => {
                         initialWidth: START_WIDTH,
                         minWidth: MEASURED_WIDTH,
                         resizable: true,
+                        ...eligible,
                     },
                 ],
                 rowData: [{ pinned: 'a', eligible: 'b' }],
                 autoSizeStrategy: { type: 'fitCellContents', continuous: true, skipHeader: true },
             });
             const api1 = gridsManager.createGrid('grid1', options());
-            const api2 = gridsManager.createGrid('grid2', options());
+            const api2 = gridsManager.createGrid('grid2', options(grid2Eligible));
             api1.setGridOption('alignedGrids', [{ api: api2 }]);
             api2.setGridOption('alignedGrids', [{ api: api1 }]);
             return { api1, api2 };
@@ -662,6 +663,25 @@ describe('Continuous Column Autosize', () => {
             api2.setGridOption('rowData', LONGER_DATA);
 
             await expectWidth(api1, 'eligible', MEASURED_WIDTH);
+            await expectWidth(api2, 'eligible', MEASURED_WIDTH);
+        });
+
+        test('a width this grid rejects leaves the column eligible', async () => {
+            // grid2 caps the column below the width grid1 propagates, so `setColumnWidths` rejects the set
+            const REJECTED_WIDTH = 400;
+            const { api1, api2 } = createAlignedGrids({ maxWidth: 250 });
+            await expectWidth(api1, 'eligible', MEASURED_WIDTH);
+            await expectWidth(api2, 'eligible', MEASURED_WIDTH);
+
+            // an explicit state width takes ownership in grid1, so ownership is there to be propagated
+            api1.applyColumnState({ state: [{ colId: 'eligible', width: REJECTED_WIDTH }] });
+            await expectWidth(api1, 'eligible', REJECTED_WIDTH);
+            expect(widthOf(api2, 'eligible')).toBe(MEASURED_WIDTH);
+
+            // widen grid2 without owning it, so its return to 120 proves it is still being auto-sized
+            api2.setColumnWidths([{ key: 'eligible', newWidth: 240 }]);
+            api2.setGridOption('rowData', LONGER_DATA);
+
             await expectWidth(api2, 'eligible', MEASURED_WIDTH);
         });
     });
