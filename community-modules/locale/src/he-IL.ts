@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_IL = {
     advancedFilterValidationExtraEndBracket: 'יותר מדי סוגרי סיום',
     advancedFilterValidationMessage: 'יש שגיאה בביטוי. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'יש שגיאה בביטוי. ${variable} בסוף הביטוי.',
+    advancedFilterValidationMessageOnly: 'יש שגיאה בביטוי. ${variable}.',
     advancedFilterBuilderTitle: 'מסנן מתקדם',
     advancedFilterBuilderApply: 'החל',
     advancedFilterBuilderClear: 'נקה',

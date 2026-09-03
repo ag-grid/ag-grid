@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_NO = {
     advancedFilterValidationExtraEndBracket: 'For mange avsluttende parenteser',
     advancedFilterValidationMessage: 'Uttrykket har en feil. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Uttrykket har en feil. ${variable} på slutten av uttrykket.',
+    advancedFilterValidationMessageOnly: 'Uttrykket har en feil. ${variable}.',
     advancedFilterBuilderTitle: 'Avansert Filter',
     advancedFilterBuilderApply: 'Bruk',
     advancedFilterBuilderClear: 'Tøm',

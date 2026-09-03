@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_KR = {
     advancedFilterValidationExtraEndBracket: '종결 괄호가 너무 많습니다',
     advancedFilterValidationMessage: '식에 오류가 있습니다. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: '식에 오류가 있습니다. ${variable} 식의 끝에 있습니다.',
+    advancedFilterValidationMessageOnly: '식에 오류가 있습니다. ${variable}.',
     advancedFilterBuilderTitle: '고급 필터',
     advancedFilterBuilderApply: '적용',
     advancedFilterBuilderClear: '지우기',

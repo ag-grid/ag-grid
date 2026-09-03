@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_DE = {
     advancedFilterValidationExtraEndBracket: 'Zu viele Endklammern',
     advancedFilterValidationMessage: 'Ausdruck enthält einen Fehler. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Ausdruck enthält einen Fehler. ${variable} am Ende des Ausdrucks.',
+    advancedFilterValidationMessageOnly: 'Ausdruck enthält einen Fehler. ${variable}.',
     advancedFilterBuilderTitle: 'Erweiterter Filter',
     advancedFilterBuilderApply: 'Anwenden',
     advancedFilterBuilderClear: 'Löschen',

@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_BG = {
     advancedFilterValidationExtraEndBracket: 'Прекалено много крайни скоби',
     advancedFilterValidationMessage: 'Има грешка в израза. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Има грешка в израза. ${variable} в края на израза.',
+    advancedFilterValidationMessageOnly: 'Има грешка в израза. ${variable}.',
     advancedFilterBuilderTitle: 'Разширен филтър',
     advancedFilterBuilderApply: 'Приложи',
     advancedFilterBuilderClear: 'Изчисти',

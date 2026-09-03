@@ -145,6 +145,8 @@ export interface FilterExpressionValidationError {
     message: string;
     startPosition: number;
     endPosition: number;
+    /** The message names its own bound, so appending the offending text would read as a second unlabelled value. */
+    selfContained?: boolean;
 }
 
 export interface FilterExpressionFunctionParams {

@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_CZ = {
     advancedFilterValidationExtraEndBracket: 'Příliš mnoho koncových závorek',
     advancedFilterValidationMessage: 'Výraz obsahuje chybu. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Výraz obsahuje chybu. ${variable} na konci výrazu.',
+    advancedFilterValidationMessageOnly: 'Výraz obsahuje chybu. ${variable}.',
     advancedFilterBuilderTitle: 'Pokročilý filtr',
     advancedFilterBuilderApply: 'Použít',
     advancedFilterBuilderClear: 'Vymazat',

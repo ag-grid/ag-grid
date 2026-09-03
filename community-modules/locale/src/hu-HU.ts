@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_HU = {
     advancedFilterValidationExtraEndBracket: 'Túl sok zárózárójel',
     advancedFilterValidationMessage: 'A kifejezés hibát tartalmaz. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'A kifejezés hibát tartalmaz. ${variable} a kifejezés végén.',
+    advancedFilterValidationMessageOnly: 'A kifejezés hibát tartalmaz. ${variable}.',
     advancedFilterBuilderTitle: 'Speciális Szűrő',
     advancedFilterBuilderApply: 'Alkalmaz',
     advancedFilterBuilderClear: 'Törlés',

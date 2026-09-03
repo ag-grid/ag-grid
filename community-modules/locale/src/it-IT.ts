@@ -183,6 +183,7 @@ export const AG_GRID_LOCALE_IT = {
     advancedFilterValidationExtraEndBracket: 'Troppe parentesi di chiusura',
     advancedFilterValidationMessage: "L'espressione ha un errore. ${variable} - ${variable}.",
     advancedFilterValidationMessageAtEnd: "L'espressione ha un errore. ${variable} alla fine dell'espressione.",
+    advancedFilterValidationMessageOnly: "L'espressione ha un errore. ${variable}.",
     advancedFilterBuilderTitle: 'Filtro Avanzato',
     advancedFilterBuilderApply: 'Applica',
     advancedFilterBuilderClear: 'Cancella',

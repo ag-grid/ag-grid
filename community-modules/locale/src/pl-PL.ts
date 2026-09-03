@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_PL = {
     advancedFilterValidationExtraEndBracket: 'Za dużo końcowych nawiasów',
     advancedFilterValidationMessage: 'Wyrażenie zawiera błąd. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Wyrażenie zawiera błąd. ${variable} na końcu wyrażenia.',
+    advancedFilterValidationMessageOnly: 'Wyrażenie zawiera błąd. ${variable}.',
     advancedFilterBuilderTitle: 'Zaawansowany filtr',
     advancedFilterBuilderApply: 'Zastosuj',
     advancedFilterBuilderClear: 'Wyczyść',

@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_VN = {
     advancedFilterValidationExtraEndBracket: 'Quá nhiều dấu ngoặc kết thúc',
     advancedFilterValidationMessage: 'Biểu thức có lỗi. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Biểu thức có lỗi. ${variable} ở cuối biểu thức.',
+    advancedFilterValidationMessageOnly: 'Biểu thức có lỗi. ${variable}.',
     advancedFilterBuilderTitle: 'Bộ lọc Nâng cao',
     advancedFilterBuilderApply: 'Áp dụng',
     advancedFilterBuilderClear: 'Xóa',

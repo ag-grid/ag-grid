@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_TR = {
     advancedFilterValidationExtraEndBracket: 'Fazla kapanış parantezi',
     advancedFilterValidationMessage: 'İfade bir hata içeriyor. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'İfade bir hata içeriyor. ${variable} ifadenin sonunda.',
+    advancedFilterValidationMessageOnly: 'İfade bir hata içeriyor. ${variable}.',
     advancedFilterBuilderTitle: 'Gelişmiş Filtre',
     advancedFilterBuilderApply: 'Uygula',
     advancedFilterBuilderClear: 'Temizle',

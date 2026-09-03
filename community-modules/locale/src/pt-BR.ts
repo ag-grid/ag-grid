@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_BR = {
     advancedFilterValidationExtraEndBracket: 'Colchetes finais em excesso',
     advancedFilterValidationMessage: 'Expressão tem um erro. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Expressão tem um erro. ${variable} no final da expressão.',
+    advancedFilterValidationMessageOnly: 'Expressão tem um erro. ${variable}.',
     advancedFilterBuilderTitle: 'Filtro Avançado',
     advancedFilterBuilderApply: 'Aplicar',
     advancedFilterBuilderClear: 'Limpar',

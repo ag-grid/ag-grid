@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_CN = {
     advancedFilterValidationExtraEndBracket: '结束括号过多',
     advancedFilterValidationMessage: '表达式有错误。${variable} - ${variable}。',
     advancedFilterValidationMessageAtEnd: '表达式有错误。表达式末尾的${variable}。',
+    advancedFilterValidationMessageOnly: '表达式有错误。${variable}。',
     advancedFilterBuilderTitle: '高级筛选',
     advancedFilterBuilderApply: '应用',
     advancedFilterBuilderClear: '清除',

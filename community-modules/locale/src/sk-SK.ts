@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_SK = {
     advancedFilterValidationExtraEndBracket: 'Príliš veľa koncových zátvoriek',
     advancedFilterValidationMessage: 'Výraz obsahuje chybu. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Výraz obsahuje chybu. ${variable} na konci výrazu.',
+    advancedFilterValidationMessageOnly: 'Výraz obsahuje chybu. ${variable}.',
     advancedFilterBuilderTitle: 'Pokročilý filter',
     advancedFilterBuilderApply: 'Použiť',
     advancedFilterBuilderClear: 'Vymazať',

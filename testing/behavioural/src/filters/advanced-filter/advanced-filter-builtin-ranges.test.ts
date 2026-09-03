@@ -225,7 +225,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             await new FilterDom(api, 'reversed number pair').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Age] is between (38, 21)"
-                valid: false — Expression has an error. Must be greater than 38 - 21.
+                valid: false — Expression has an error. Must be greater than 38.
                 buttons: Apply ⊘ | Builder
                 model: null
             `);
@@ -236,7 +236,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             await new FilterDom(api, 'equal number pair').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Age] is between (30, 30)"
-                valid: false — Expression has an error. Must be greater than 30 - 30.
+                valid: false — Expression has an error. Must be greater than 30.
                 buttons: Apply ⊘ | Builder
                 model: null
             `);
@@ -270,7 +270,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             await new FilterDom(api, 'reversed inclusive pair').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Age] is between (38, 21)"
-                valid: false — Expression has an error. Must be greater than or equal to 38 - 21.
+                valid: false — Expression has an error. Must be greater than or equal to 38.
                 buttons: Apply ⊘ | Builder
                 model:
                   filterType: "number"
@@ -299,7 +299,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             await new FilterDom(api, 'reversed date pair').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Day] is between ("2024-11-30", "2010-05-05")"
-                valid: false — Expression has an error. Date must be after 2024-11-30 - "2010-05-05".
+                valid: false — Expression has an error. Date must be after 2024-11-30.
                 buttons: Apply ⊘ | Builder
                 model: null
             `);
@@ -336,7 +336,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             await new FilterDom(api, 'reversed inclusive date pair').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Day] is between ("2024-11-30", "2010-05-05")"
-                valid: false — Expression has an error. Date must be on or after 2024-11-30 - "2010-05-05".
+                valid: false — Expression has an error. Date must be on or after 2024-11-30.
                 buttons: Apply ⊘ | Builder
                 model:
                   filterType: "dateString"
@@ -535,7 +535,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             await new FilterDom(api, 'reversed custom-format date pair').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Day] is between ("30/11/2024", "05/05/2010")"
-                valid: false — Expression has an error. Date must be after 30/11/2024 - "05/05/2010".
+                valid: false — Expression has an error. Date must be after 30/11/2024.
                 buttons: Apply ⊘ | Builder
                 model:
                   filterType: "dateString"

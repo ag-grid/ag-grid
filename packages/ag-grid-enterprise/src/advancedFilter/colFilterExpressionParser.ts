@@ -694,6 +694,7 @@ export class ColFilterExpressionParser {
                   message,
                   startPosition: to.startPosition,
                   endPosition: to.endPosition ?? this.params.expression.length - 1,
+                  selfContained: true,
               }
             : null;
     }

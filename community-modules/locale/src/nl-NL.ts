@@ -182,6 +182,7 @@ export const AG_GRID_LOCALE_NL = {
     advancedFilterValidationExtraEndBracket: 'Te veel eindhaken',
     advancedFilterValidationMessage: 'Uitdrukking bevat een fout. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Uitdrukking bevat een fout. ${variable} aan het einde van de uitdrukking.',
+    advancedFilterValidationMessageOnly: 'Uitdrukking bevat een fout. ${variable}.',
     advancedFilterBuilderTitle: 'Geavanceerd filter',
     advancedFilterBuilderApply: 'Toepassen',
     advancedFilterBuilderClear: 'Wissen',
