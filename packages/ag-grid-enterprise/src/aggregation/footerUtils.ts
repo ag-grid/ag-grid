@@ -36,8 +36,6 @@ export function _destroyRowNodeFooter(rowNode: RowNode): void {
         return;
     }
 
-    // destroy before severing: `_destroy` no-ops on an already-destroyed node, so a severed-first
-    // footer would keep `displayed === true` and stay a candidate for sticky row positioning
     sibling._destroy(false);
     rowNode.sibling = undefined as any;
     sibling.sibling = undefined as any;

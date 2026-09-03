@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { ALL_SEVERITIES, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { ALL_SEVERITIES, TestGridsManager, clipboardUtils, waitForEvent } from 'ag-test-utils';
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GetRowIdParams, GridApi } from 'ag-grid-community';
@@ -8,17 +8,34 @@ import {
     GROUP_TOTAL_ROW_ID_PREFIX,
     RowSelectionModule,
     enableDevValidations,
+    setupAgTestIds,
 } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import {
+    ClipboardModule,
+    RowGroupingModule,
+    ServerSideRowModelApiModule,
+    ServerSideRowModelModule,
+} from 'ag-grid-enterprise';
 
 describe('SSRM selection with a destroyed footer row node', () => {
     const gridMgr = new TestGridsManager({
-        modules: [RowSelectionModule, ServerSideRowModelModule, ServerSideRowModelApiModule, RowGroupingModule],
+        modules: [
+            RowSelectionModule,
+            ServerSideRowModelModule,
+            ServerSideRowModelApiModule,
+            RowGroupingModule,
+            ClipboardModule,
+        ],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
     });
 
     beforeEach(() => {
         enableDevValidations({ throwOn: ALL_SEVERITIES });
         gridMgr.reset();
+        clipboardUtils.init();
     });
 
     afterEach(() => {
@@ -92,6 +109,34 @@ describe('SSRM selection with a destroyed footer row node', () => {
 
     test('DefaultStrategy (multiRow): selecting a destroyed grand total footer is a no-op, not a throw', async () => {
         await destroyedGrandTotalIsANoOp('multiRow');
+    });
+
+    // Selecting the grand total row selects the root node, so the clipboard's flash list holds a
+    // level -1 node whose sibling the destroy has since severed.
+    test('copying a selection made through a since-destroyed grand total footer copies the same rows as before the destroy', async () => {
+        const api = await createGrandTotalGrid('multiRow');
+
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+        // the data row is what carries the payload; the grand total row is what puts a level -1 node
+        // into the same flash list, and it is that node whose sibling the destroy severs
+        api.setNodesSelected({ nodes: [api.getRowNode('1')!, grandTotal], newValue: true, source: 'api' });
+        expect(
+            api
+                .getSelectedNodes()
+                .map((node) => node.level)
+                .sort()
+        ).toEqual([-1, 0]);
+
+        api.copySelectedRowsToClipboard();
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('1\t10'));
+
+        clipboardUtils.reset();
+        api.setGridOption('grandTotalRow', undefined);
+        await waitFor(() => expect(grandTotal.destroyed).toBe(true));
+        expect(api.getSelectedNodes().find((node) => node.level === -1)!.sibling).toBeUndefined();
+
+        api.copySelectedRowsToClipboard();
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('1\t10'));
     });
 
     test('GroupSelectsChildrenStrategy: selecting a destroyed group total footer is a no-op, not a throw', async () => {

@@ -70,6 +70,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
      */
     private getFirstPixelOfGroup(row: RowNode): number {
         if (row.footer) {
+            // a destroyed footer keeps `footer` set but loses the sibling that carries the group's bounds
             const sibling = row.sibling;
             return sibling ? sibling.rowTop! + sibling.rowHeight! - 1 : 0;
         }
@@ -507,6 +508,11 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
 
 function getServerSideLastPixelOfGroup(row: RowNode): number {
     if (row.isExpandable() || row.footer) {
+        // a destroyed footer keeps `footer` set but loses the sibling that carries the group's bounds
+        if (row.footer && !row.sibling) {
+            return Number.MAX_SAFE_INTEGER;
+        }
+
         if (row.master && row.detailNode) {
             return row.detailNode.rowTop! + row.detailNode.rowHeight!;
         }
@@ -515,7 +521,7 @@ function getServerSideLastPixelOfGroup(row: RowNode): number {
         if (noOrContiguousSiblings) {
             let storeBounds = row.childStore?.getStoreBounds();
             if (row.footer) {
-                storeBounds = row.sibling?.childStore?.getStoreBounds();
+                storeBounds = row.sibling.childStore?.getStoreBounds();
             }
             return (storeBounds?.heightPx ?? 0) + (storeBounds?.topPx ?? 0);
         }
@@ -532,9 +538,9 @@ function getServerSideLastPixelOfGroup(row: RowNode): number {
 
 function getClientSideLastPixelOfGroup(row: RowNode): number {
     if (row.isExpandable() || row.footer) {
-        // grand total row at top, nothing can push it out of sticky.
-        const grandTotalAtTop = row.footer && row.rowIndex === 0;
-        if (grandTotalAtTop) {
+        // grand total row at top, nothing can push it out of sticky. Nor can anything push out a destroyed
+        // footer, which keeps `footer` set but loses the sibling that carries the group's bounds.
+        if (row.footer && (row.rowIndex === 0 || !row.sibling)) {
             return Number.MAX_SAFE_INTEGER;
         }
 
@@ -543,8 +549,7 @@ function getClientSideLastPixelOfGroup(row: RowNode): number {
         // to find last px
         const noOrContiguousSiblings = !row.sibling || Math.abs(row.sibling.rowIndex! - row.rowIndex!) === 1;
         if (noOrContiguousSiblings) {
-            // an orphaned footer is its own last row, which is what the non-contiguous branch below returns
-            let lastAncestor = (row.footer ? row.sibling : row) ?? row;
+            let lastAncestor = row.footer ? row.sibling : row;
             while (lastAncestor.isExpandable() && lastAncestor.expanded) {
                 if (lastAncestor.master && lastAncestor.detailNode) {
                     lastAncestor = lastAncestor.detailNode;
