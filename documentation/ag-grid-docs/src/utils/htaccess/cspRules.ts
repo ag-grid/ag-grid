@@ -152,6 +152,10 @@ const GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH = "'sha256-1biJs72+znqmnYHTG0Ps3v04No
 // Inline script used by the contact form.
 const CONTACT_FORM_SCRIPT_HASH = "'sha256-D3cdipua6lhS2IQ0W0AlSNVVsS+2b/sXycSE8m8PkxY='";
 
+// GTM tag for internal promo tracking: fires a GA4 event. Authored in the shared GTM
+// container (not this repo); hash captured from the browser's CSP violation report.
+const GTM_PROMO_TRACKING_HASH = "'sha256-nC2/ZWBpMyJEdVw5YxKBKxSMNwMN/lOAPrHk4RcIBbc='";
+
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
     hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
@@ -163,6 +167,7 @@ const SITE_SCRIPT_HASHES = [
     GTM_UTM_WEBHOOK_HASH,
     GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH,
     CONTACT_FORM_SCRIPT_HASH,
+    GTM_PROMO_TRACKING_HASH,
 ];
 
 // Enzuzo, the cookie-consent banner that replaces OneTrust. Like OneTrust before it,
@@ -204,6 +209,15 @@ const ESM_SH_HOST = 'https://esm.sh';
 
 const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
 const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
+
+// Google Ads conversion tracking (GTM "Google tag" destination AW-873243008, added to the
+// shared GTM container alongside the existing GA4 tag). gtag.js's conversion/remarketing
+// beacon (`/pagead/conversion`, `/ccm/conversion`) tries these two hosts via fetch() before
+// falling back to an <img> pixel — confirmed live on staging: both throw and log a
+// connect-src violation, so the beacon was silently degrading to the less reliable image
+// fallback. www.google.com (already allowed above for reCAPTCHA) covers the third fallback
+// host gtag.js also tries for this same beacon.
+const GOOGLE_ADS_CONVERSION_HOSTS = ['https://www.googleadservices.com', 'https://pagead2.googlesyndication.com'];
 
 // The LinkedIn Insight Tag (LinkedIn Ads conversion tracking and website demographics).
 // Like ZoomInfo and Enzuzo, it is a tag in the shared Google Tag Manager container rather
@@ -419,6 +433,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             LINKEDIN_BEACON_HOST, // LinkedIn Insight Tag: website-actions beacon and attribution-trigger fetch
             'https://www.google.com', // reCAPTCHA (api2/clr XHR)
             'https://*.onetrust.com', // OneTrust geolocation + consent-receipt endpoints
+            ...GOOGLE_ADS_CONVERSION_HOSTS, // Google Ads (AW-873243008) conversion/remarketing beacon
             ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
             ENZUZO_GVL_HOST, // Enzuzo-hosted IAB TCF Global Vendor List
             MAKE_WEBHOOK_HOST, // UTM-attribution POST on form submit (injected via GTM)
