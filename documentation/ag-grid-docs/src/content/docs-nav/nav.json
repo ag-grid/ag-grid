@@ -1914,12 +1914,6 @@
                             "children": [
                                 {
                                     "type": "item",
-                                    "title": "API Reference",
-                                    "path": "pdf-export-api",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
                                     "title": "Styles",
                                     "path": "pdf-export-styles",
                                     "isEnterprise": true
@@ -1976,6 +1970,12 @@
                                     "type": "item",
                                     "title": "Page Setup",
                                     "path": "pdf-export-page-setup",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "API Reference",
+                                    "path": "pdf-export-api",
                                     "isEnterprise": true
                                 }
                             ]
