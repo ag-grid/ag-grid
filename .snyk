@@ -1832,3 +1832,5 @@ patch: {}
 # dev tooling. Revisit if it ever becomes something that runs outside a developer
 # machine.
 exclude:
+  code:
+    - external/ag-shared/scripts/snyk-viewer/index.mjs
