@@ -25,4 +25,21 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Escape');
         await expect(agIdFor.menu()).toHaveCount(0);
     });
+
+    test.eachFramework('opens the column menu from the empty header space', async ({ agIdFor, page }) => {
+        const headerRow = page.locator('.ag-header-row').first();
+        const rowBox = (await headerRow.boundingBox())!;
+        const lastHeaderBox = (await agIdFor.headerCell('country').boundingBox())!;
+        const lastHeaderRight = lastHeaderBox.x - rowBox.x + lastHeaderBox.width;
+
+        await headerRow.click({
+            button: 'right',
+            position: { x: (lastHeaderRight + rowBox.width) / 2, y: rowBox.height / 2 },
+        });
+
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Choose Columns' })).toBeVisible();
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Reset Columns' })).toBeVisible();
+        await page.keyboard.press('Escape');
+        await expect(agIdFor.menu()).toHaveCount(0);
+    });
 });
