@@ -31,12 +31,8 @@ export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection, id
 
 export function _destroyRowNodeFooter(rowNode: RowNode): void {
     const sibling = rowNode.sibling;
-    if (!sibling) {
-        return;
+    if (sibling) {
+        sibling._destroy(false);
+        rowNode.sibling = undefined as any; // the row drops its link, so a destroyed sibling keeps its primaryRow
     }
-
-    sibling._destroy(false);
-    // only the group drops its link: `group.sibling` means "my live footer", while a destroyed footer
-    // keeps pointing at its still-live group so `primaryRow` can resolve it
-    rowNode.sibling = undefined as any;
 }

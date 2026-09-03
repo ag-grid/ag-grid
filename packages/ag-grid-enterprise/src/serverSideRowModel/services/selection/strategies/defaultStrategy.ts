@@ -9,10 +9,7 @@ import { BeanStub, ROOT_NODE_ID, _isMultiRowSelection, _isUsingNewRowSelectionAP
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
-/**
- * The server-side root carries no id of its own, so the grand total row - which resolves to it - is keyed
- * under the well-known id the client-side root uses. Returns `undefined` for a row that cannot be keyed.
- */
+/** The server-side root carries no id of its own, so it is keyed under the one the client-side root uses. */
 const selectionKey = (node: RowNode): string | undefined => node.id ?? (node.level === -1 ? ROOT_NODE_ID : undefined);
 
 /** `selectAll` is a base state for rows, and the root is not a row, so it never covers the root. */
@@ -170,7 +167,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             return 0;
         }
 
-        // a range has to be anchored on a row the model can resolve, which the root is not
+        // the anchor is stored by row id, and the root has none
         const anchor = nodes.length === 1 && source === 'api' ? nodes[0].primaryRow : undefined;
         if (anchor?.id !== undefined) {
             this.selectionCtx.setRoot(anchor);

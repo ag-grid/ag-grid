@@ -269,10 +269,6 @@ export class RowNode<TData = any>
         this._expanded = value;
     }
 
-    /**
-     * On a group row, its live footer row node, `undefined` when it has none. On a footer row, the group
-     * row it belongs to, which is retained even after the footer has been destroyed.
-     */
     public sibling: RowNode;
 
     /** The height, in pixels, of this row */

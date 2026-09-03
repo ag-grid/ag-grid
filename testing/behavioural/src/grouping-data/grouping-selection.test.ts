@@ -5,6 +5,7 @@ import { waitForEvent } from 'ag-test-utils/test-utils-events';
 import type { RowSelectedEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    GRAND_TOTAL_ROW_ID,
     GROUP_TOTAL_ROW_ID_PREFIX,
     RowSelectionModule,
     TextFilterModule,
@@ -603,6 +604,37 @@ describe('ag-grid grouping selection', () => {
         api.setNodesSelected({ nodes: [irelandTotal], newValue: true, source: 'api' });
         expect(ireland.isSelected()).toBe(true);
         expect(irelandTotal.isSelected()).toBe(true);
+    });
+
+    test('the grand total row keeps its own selection when a descendant is deselected', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
+            { id: '2', country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            grandTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+        grandTotal.setSelected(true);
+        expect(api.getRowNode('1')!.isSelected()).toBe(true);
+        expect(grandTotal.isSelected()).toBe(true);
+
+        // the root is excluded from the recompute from children, so its own selection stands
+        api.setNodesSelected({ nodes: [api.getRowNode('2')!], newValue: false, source: 'api' });
+        expect(api.getRowNode('row-group-country-Ireland')!.isSelected()).toBeUndefined();
+        expect(grandTotal.isSelected()).toBe(true);
     });
 
     test('a group total row reports its group as partially selected rather than unselected', async () => {

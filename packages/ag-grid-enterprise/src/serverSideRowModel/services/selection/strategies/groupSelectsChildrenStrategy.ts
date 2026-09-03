@@ -187,8 +187,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         for (const rowNode of nodes) {
             const node = rowNode.primaryRow;
             if (node.level === -1) {
-                // the root has no route of its own, so selecting it means the whole tree, and it is keyed
-                // under the id it already answers to rather than tracked apart from the state
+                // the root has no route of its own, so selecting it means the whole tree
                 const toggledNodes = new Map<string, SelectionState>();
                 if (newValue) {
                     toggledNodes.set(ROOT_NODE_ID, { selectAllChildren: newValue, toggledNodes: new Map() });
@@ -205,7 +204,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
 
         this.removeRedundantState();
-        // a range has to be anchored on a row the model can resolve, which the root is not
+        // the anchor is stored by row id, and the root has none
         const anchor = nodes.length === 1 && source === 'api' ? nodes[0].primaryRow : undefined;
         if (anchor?.id !== undefined) {
             this.selectionCtx.setRoot(anchor);

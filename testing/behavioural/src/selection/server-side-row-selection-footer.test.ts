@@ -270,9 +270,7 @@ describe('SSRM selection with a destroyed footer row node', () => {
         const api = await createGrandTotalGrid('multiRow');
 
         api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true, source: 'api' });
-        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([
-            ROOT_NODE_ID,
-        ]);
+        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([ROOT_NODE_ID]);
 
         api.setGridOption('serverSideDatasource', {
             getRows(params) {
@@ -285,9 +283,7 @@ describe('SSRM selection with a destroyed footer row node', () => {
         });
         await waitForNoLoadingRows(api);
 
-        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([
-            ROOT_NODE_ID,
-        ]);
+        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([ROOT_NODE_ID]);
         await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(true));
     });
 
@@ -452,9 +448,7 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(clashRow.level).toBe(0);
 
         api.setNodesSelected({ nodes: [clashRow], newValue: true, source: 'api' });
-        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([
-            ROOT_NODE_ID,
-        ]);
+        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([ROOT_NODE_ID]);
 
         // an unrelated row is unaffected, and clearing the selection leaves nothing stuck behind
         api.setNodesSelected({ nodes: [api.getRowNode('b')!], newValue: true, source: 'api' });
