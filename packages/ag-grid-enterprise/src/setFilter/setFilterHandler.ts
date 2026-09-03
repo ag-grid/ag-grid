@@ -1,7 +1,8 @@
-import { _debounce, _last, _makeNull, _toStringOrNull } from 'ag-stack';
+import { _debounce, _last, _toStringOrNull } from 'ag-stack';
 
 import type {
     AgColumn,
+    BeanCollection,
     DoesFilterPassParams,
     FilterHandler,
     FilterHandlerParams,
@@ -18,10 +19,28 @@ import { BeanStub, _addGridCommonParams, _isClientSideRowModel } from 'ag-grid-c
 
 import { CsrmValuesExtractor } from './csrmValueExtractor';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
-import { processDataPath, translateForSetFilter } from './setFilterUtils';
+import {
+    processDataPath,
+    setFilterFormattedValue,
+    setFilterNullIfBlank,
+    translateForSetFilter,
+} from './setFilterUtils';
 import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
 
 type SetFilterHandlerEventType = 'anyFilterChanged' | 'dataChanged' | 'destroyed';
+
+function resolveKeyCreatorFlags(
+    beans: BeanCollection,
+    params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, any>>
+): { usingComplexObjects: boolean; userKeyCreator: boolean } {
+    const { colDef, filterParams } = params;
+    const keyCreator = filterParams.keyCreator ?? colDef.keyCreator;
+    const cellDataType = colDef.cellDataType;
+    // A data type installs its own formatter as the key creator, which says nothing about the values.
+    const gridSupplied =
+        typeof cellDataType === 'string' && keyCreator === beans.dataTypeSvc?.getFormatValue(cellDataType);
+    return { usingComplexObjects: !!keyCreator, userKeyCreator: !!keyCreator && !gridSupplied };
+}
 
 export class SetFilterHandler<TValue = string>
     extends BeanStub<SetFilterHandlerEventType>
@@ -66,7 +85,7 @@ export class SetFilterHandler<TValue = string>
         const valueModel = this.createManagedBean(
             new SetValueModel(csrmValuesExtractor, caseFormat, createKey, isTreeDataOrGrouping, {
                 handlerParams: params,
-                usingComplexObjects: !!(params.filterParams.keyCreator ?? params.colDef.keyCreator),
+                ...resolveKeyCreatorFlags(this.beans, params),
             })
         );
         this.addManagedListeners(valueModel, {
@@ -87,7 +106,7 @@ export class SetFilterHandler<TValue = string>
         this.updateParams(params);
         this.valueModel.refresh({
             handlerParams: params,
-            usingComplexObjects: !!(params.filterParams.keyCreator ?? params.colDef.keyCreator),
+            ...resolveKeyCreatorFlags(this.beans, params),
         });
 
         this.appliedModel.update(params.model);
@@ -148,12 +167,11 @@ export class SetFilterHandler<TValue = string>
             value = _last(value) as string;
         }
 
-        const formattedValue = this.beans.valueSvc.formatValue(
+        const formattedValue = setFilterFormattedValue(
+            this.beans,
             this.params.column as AgColumn,
-            null,
             value,
-            this.valueFormatter,
-            false
+            this.valueFormatter
         );
 
         return (
@@ -310,7 +328,7 @@ export class SetFilterHandler<TValue = string>
             const newValues: SetFilterModelValue = [];
             let updated = false;
             for (const unformattedKey of model.values) {
-                const formattedKey = this.caseFormat(_makeNull(unformattedKey));
+                const formattedKey = this.caseFormat(setFilterNullIfBlank(unformattedKey));
                 const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                 if (existingUnformattedKey !== undefined) {
                     newValues.push(existingUnformattedKey);
@@ -386,10 +404,10 @@ export class SetFilterHandler<TValue = string>
         if (keyCreator) {
             return (value, node = null) => {
                 const params = this.getKeyCreatorParams(value, node);
-                return _makeNull(keyCreator(params));
+                return setFilterNullIfBlank(keyCreator(params));
             };
         }
-        return (value) => _makeNull(_toStringOrNull(value));
+        return (value) => setFilterNullIfBlank(_toStringOrNull(value));
     }
 
     private getKeyCreatorParams(value: TValue | null | undefined, node: IRowNode | null = null): KeyCreatorParams {

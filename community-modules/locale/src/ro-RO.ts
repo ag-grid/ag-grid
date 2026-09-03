@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_RO = {
     // Filter Titles
     textFilter: 'Filtru text',
     numberFilter: 'Filtru număr',
+    bigintFilter: 'Filtru BigInt',
     dateFilter: 'Filtru dată',
     setFilter: 'Filtru set',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_RO = {
     advancedFilterValidationInvalidOption: 'Opțiune negăsită',
     advancedFilterValidationMissingQuote: 'Valoarea nu are o ghilimele de încheiere',
     advancedFilterValidationNotANumber: 'Valoarea nu este un număr',
+    advancedFilterValidationNotABigInt: 'Valoarea nu este un BigInt',
     advancedFilterValidationInvalidDate: 'Valoarea nu este o dată validă',
     advancedFilterValidationMissingCondition: 'Lipsă condiție',
     advancedFilterValidationJoinOperatorMismatch: 'Operatorii de unire din cadrul unei condiții trebuie să fie aceeași',

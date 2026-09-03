@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_EG = {
     // Filter Titles
     textFilter: 'فلتر النص',
     numberFilter: 'فلتر الأرقام',
+    bigintFilter: 'فلتر BigInt',
     dateFilter: 'فلتر التاريخ',
     setFilter: 'فلتر المجموعة',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_EG = {
     advancedFilterValidationInvalidOption: 'الخيار غير موجود',
     advancedFilterValidationMissingQuote: 'القيمة تفتقد علامة الاقتباس النهائية',
     advancedFilterValidationNotANumber: 'القيمة ليست رقماً',
+    advancedFilterValidationNotABigInt: 'القيمة ليست BigInt',
     advancedFilterValidationInvalidDate: 'القيمة ليست تاريخاً صحيحاً',
     advancedFilterValidationMissingCondition: 'الشرط مفقود',
     advancedFilterValidationJoinOperatorMismatch: 'يجب أن تكون عوامل الربط داخل الشرط نفسها',

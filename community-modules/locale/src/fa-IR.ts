@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_IR = {
     // Filter Titles
     textFilter: 'فیلتر متنی',
     numberFilter: 'فیلتر عددی',
+    bigintFilter: 'فیلتر BigInt',
     dateFilter: 'فیلتر تاریخ',
     setFilter: 'فیلتر مجموعه',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_IR = {
     advancedFilterValidationInvalidOption: 'گزینه یافت نشد',
     advancedFilterValidationMissingQuote: 'مقدار بدون نقل قول انتهایی است',
     advancedFilterValidationNotANumber: 'مقدار عددی نیست',
+    advancedFilterValidationNotABigInt: 'مقدار BigInt نیست',
     advancedFilterValidationInvalidDate: 'مقدار تاریخ معتبر نیست',
     advancedFilterValidationMissingCondition: 'شرط گمشده است',
     advancedFilterValidationJoinOperatorMismatch: 'اپراتورهای پیوسته در یک شرط باید یکسان باشند',

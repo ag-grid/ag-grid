@@ -1,4 +1,4 @@
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { AdvancedFilterModel, ColumnAdvancedFilterModel, GridApi } from 'ag-grid-community';
 import {
@@ -186,5 +186,55 @@ describe('Blank and unreadable values', () => {
         // Unlike a scalar, text keeps an empty string as a value: C and D are matchable, and reach `notEqual`.
         expect(await bothEngines('text', { type: 'contains', filter: 'abc' })).toEqual(shows('A'));
         expect(await bothEngines('text', { type: 'notEqual', filter: 'abc' })).toEqual(shows('B C D E'));
+    });
+
+    /**
+     * `number`, `bigint` and `date` call an empty or whitespace value invalid where `dateString`, `text`,
+     * `boolean` and `object` show nothing, so the three states are pinned per type.
+     */
+    test('each cell data type displays the three states as follows', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'num', cellDataType: 'number' },
+                { field: 'big', cellDataType: 'bigint' },
+                { field: 'dat', cellDataType: 'date' },
+                { field: 'dstr', cellDataType: 'dateString' },
+                { field: 'txt', cellDataType: 'text' },
+                { field: 'bool', cellDataType: 'boolean' },
+                { field: 'obj', cellDataType: 'object', valueFormatter: ({ value }) => String(value ?? '') },
+            ],
+            rowData: [
+                { num: '', big: '', dat: '', dstr: '', txt: '', bool: '', obj: '' },
+                { num: '   ', big: '   ', dat: '   ', dstr: '   ', txt: '   ', bool: '   ', obj: '   ' },
+                { num: null, big: null, dat: null, dstr: null, txt: null, bool: null, obj: null },
+            ],
+        });
+
+        await new GridRows(api, 'blank display per data type').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 num:"Invalid Number" big:"Invalid BigInt" dat:"Invalid Date" dstr:"" txt:"" bool:"" obj:""
+            ├── LEAF id:1 num:"Invalid Number" big:"Invalid BigInt" dat:"Invalid Date" dstr:"" txt:"   " bool:"   " obj:"   "
+            └── LEAF id:2 num:null big:null dat:null dstr:null txt:null bool:null obj:null
+        `);
+    });
+
+    // `dateTimeString` inherits `dateString`'s treatment: an unreadable value shows nothing, not a name.
+    test('a date-string cell shows nothing for a value the parser rejects', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'str', cellDataType: 'dateString' },
+                { field: 'strTime', cellDataType: 'dateTimeString' },
+            ],
+            rowData: [
+                { str: '2024-01-10', strTime: '2024-01-10 09:30:00' },
+                { str: 'not a date', strTime: 'not a date' },
+            ],
+        });
+
+        await new GridRows(api, 'date-string cell display').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 str:"2024-01-10" strTime:"2024-01-10 09:30:00"
+            └── LEAF id:1 str:"" strTime:""
+        `);
     });
 });

@@ -39,6 +39,7 @@ import {
 
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import type { SetFilterLocaleTextKey } from './localeText';
+import { setFilterFormattedValue } from './setFilterUtils';
 
 export interface SetFilterListItemSelectionChangedEvent<
     I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null,
@@ -446,7 +447,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     }
 
     private getFormattedValue(column: AgColumn, value: any) {
-        return this.beans.valueSvc.formatValue(column, null, value, this.valueFormatter, false);
+        return setFilterFormattedValue(this.beans, column, value, this.valueFormatter);
     }
 
     private renderCell(): void {

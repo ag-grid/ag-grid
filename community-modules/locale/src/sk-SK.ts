@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_SK = {
     // Filter Titles
     textFilter: 'Textový filter',
     numberFilter: 'Číselný filter',
+    bigintFilter: 'Filter BigInt',
     dateFilter: 'Dátumový filter',
     setFilter: 'Nastavený filter',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_SK = {
     advancedFilterValidationInvalidOption: 'Možnosť sa nenašla',
     advancedFilterValidationMissingQuote: 'Hodnota chýba koncová úvodzovka',
     advancedFilterValidationNotANumber: 'Hodnota nie je číslo',
+    advancedFilterValidationNotABigInt: 'Hodnota nie je BigInt',
     advancedFilterValidationInvalidDate: 'Hodnota nie je platný dátum',
     advancedFilterValidationMissingCondition: 'Chýba podmienka',
     advancedFilterValidationJoinOperatorMismatch: 'Spojovacie operátory v rámci podmienky musia byť rovnaké',

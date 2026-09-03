@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_TR = {
     // Filter Titles
     textFilter: 'Metin Filtresi',
     numberFilter: 'Sayı Filtresi',
+    bigintFilter: 'BigInt Filtresi',
     dateFilter: 'Tarih Filtresi',
     setFilter: 'Ayarlama Filtresi',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_TR = {
     advancedFilterValidationInvalidOption: 'Seçenek bulunamadı',
     advancedFilterValidationMissingQuote: 'Değerin kapanış tırnağı eksik',
     advancedFilterValidationNotANumber: 'Değer bir sayı değil',
+    advancedFilterValidationNotABigInt: 'Değer bir BigInt değil',
     advancedFilterValidationInvalidDate: 'Değer geçerli bir tarih değil',
     advancedFilterValidationMissingCondition: 'Koşul eksik',
     advancedFilterValidationJoinOperatorMismatch: 'Bir koşul içindeki birleştirici operatörlerin aynı olması gerekir',

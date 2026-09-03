@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_NL = {
     // Filter Titles
     textFilter: 'Tekstfilter',
     numberFilter: 'Getallenfilter',
+    bigintFilter: 'BigInt-filter',
     dateFilter: 'Datumfilter',
     setFilter: 'Setfilter',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_NL = {
     advancedFilterValidationInvalidOption: 'Optie niet gevonden',
     advancedFilterValidationMissingQuote: 'Waarde mist een aanhalingsteken aan het einde',
     advancedFilterValidationNotANumber: 'Waarde is geen getal',
+    advancedFilterValidationNotABigInt: 'Waarde is geen BigInt',
     advancedFilterValidationInvalidDate: 'Waarde is geen geldige datum',
     advancedFilterValidationMissingCondition: 'Voorwaarde ontbreekt',
     advancedFilterValidationJoinOperatorMismatch: 'Logische operatoren binnen een voorwaarde moeten gelijk zijn',

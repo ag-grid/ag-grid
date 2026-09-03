@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_VN = {
     // Filter Titles
     textFilter: 'Bộ lọc văn bản',
     numberFilter: 'Bộ lọc số',
+    bigintFilter: 'Bộ lọc BigInt',
     dateFilter: 'Bộ lọc ngày tháng',
     setFilter: 'Bộ lọc tập hợp',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_VN = {
     advancedFilterValidationInvalidOption: 'Không tìm thấy tùy chọn',
     advancedFilterValidationMissingQuote: 'Giá trị thiếu dấu ngoặc kép',
     advancedFilterValidationNotANumber: 'Giá trị không phải là một số',
+    advancedFilterValidationNotABigInt: 'Giá trị không phải là một BigInt',
     advancedFilterValidationInvalidDate: 'Giá trị không phải là ngày hợp lệ',
     advancedFilterValidationMissingCondition: 'Thiếu điều kiện',
     advancedFilterValidationJoinOperatorMismatch: 'Các toán tử kết nối trong một điều kiện phải giống nhau',

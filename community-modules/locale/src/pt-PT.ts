@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_PT = {
     // Filter Titles
     textFilter: 'Filtro de Texto',
     numberFilter: 'Filtro de Número',
+    bigintFilter: 'Filtro de BigInt',
     dateFilter: 'Filtro de Data',
     setFilter: 'Filtro de Conjunto',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_PT = {
     advancedFilterValidationInvalidOption: 'Opção não encontrada',
     advancedFilterValidationMissingQuote: 'Valor está sem a aspa final',
     advancedFilterValidationNotANumber: 'Valor não é um número',
+    advancedFilterValidationNotABigInt: 'Valor não é um BigInt',
     advancedFilterValidationInvalidDate: 'Valor não é uma data válida',
     advancedFilterValidationMissingCondition: 'Condição ausente',
     advancedFilterValidationJoinOperatorMismatch: 'Operadores de junção dentro de uma condição devem ser iguais',

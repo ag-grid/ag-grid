@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_KR = {
     // Filter Titles
     textFilter: '텍스트 필터',
     numberFilter: '숫자 필터',
+    bigintFilter: 'BigInt 필터',
     dateFilter: '날짜 필터',
     setFilter: '세트 필터',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_KR = {
     advancedFilterValidationInvalidOption: '옵션을 찾을 수 없습니다',
     advancedFilterValidationMissingQuote: '값에 끝나는 인용부호가 없습니다',
     advancedFilterValidationNotANumber: '값이 숫자가 아닙니다',
+    advancedFilterValidationNotABigInt: '값이 BigInt가 아닙니다',
     advancedFilterValidationInvalidDate: '값이 유효한 날짜가 아닙니다',
     advancedFilterValidationMissingCondition: '조건이 누락되었습니다',
     advancedFilterValidationJoinOperatorMismatch: '조건 내의 연결 연산자는 동일해야 합니다',

@@ -124,9 +124,9 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
                 return null;
             }
 
-            // if cell value is empty, populate with (Blanks)
+            // A cell formatter has no say over the group heading, and `refData` answers '' for the missing key.
             const formattedValue = valueSvc.formatValue(groupedCol, displayedNode, value);
-            if (formattedValue == null && displayedNode.key === '') {
+            if (displayedNode.key === '' && !formattedValue) {
                 const localeTextFunc = this.getLocaleTextFunc();
                 return localeTextFunc('blanks', '(Blanks)');
             }

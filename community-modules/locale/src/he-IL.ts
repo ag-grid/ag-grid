@@ -83,6 +83,7 @@ export const AG_GRID_LOCALE_IL = {
     // Filter Titles
     textFilter: 'מסנן טקסט',
     numberFilter: 'מסנן מספר',
+    bigintFilter: 'מסנן BigInt',
     dateFilter: 'מסנן תאריך',
     setFilter: 'מסנן סט',
 
@@ -174,6 +175,7 @@ export const AG_GRID_LOCALE_IL = {
     advancedFilterValidationInvalidOption: 'אפשרות לא נמצאה',
     advancedFilterValidationMissingQuote: 'לערך חסר ציטוט סיום',
     advancedFilterValidationNotANumber: 'הערך אינו מספר',
+    advancedFilterValidationNotABigInt: 'הערך אינו BigInt',
     advancedFilterValidationInvalidDate: 'הערך אינו תאריך חוקי',
     advancedFilterValidationMissingCondition: 'חסר תנאי',
     advancedFilterValidationJoinOperatorMismatch: 'המפעילים בתנאי חייבים להיות אותו דבר',

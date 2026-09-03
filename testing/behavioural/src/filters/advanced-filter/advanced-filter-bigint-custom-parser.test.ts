@@ -1,5 +1,6 @@
 import {
     AdvancedFilterBuilderHarness,
+    AdvancedFilterHarness,
     FilterDom,
     GridRows,
     TestGridsManager,
@@ -434,5 +435,35 @@ describe('Advanced Filter - bigint custom parser and formatter', () => {
               type: "equals"
               filter: "1000"
         `);
+    });
+
+    test('an operand the bigint parser rejects is reported as not a number', async () => {
+        // Rejects negatives while still reading a plain decimal, which `bigintParser` documents as required.
+        const unsignedOnly = (text: string | null) => {
+            const parsed = text == null ? null : parseBigInt(text);
+            return parsed == null || parsed < 0n ? null : parsed;
+        };
+        const api = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    headerName: 'Value',
+                    cellDataType: 'bigint',
+                    filter: 'agBigIntColumnFilter',
+                    filterParams: { allowedCharPattern: 'n0-9a-fA-FxX+\\-', bigintParser: unsignedOnly },
+                },
+            ],
+            rowData: [{ value: 10n }, { value: 255n }],
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        const af = AdvancedFilterHarness.get(api);
+
+        // The default parser reads `-5`, so only the column's own parser can reject it.
+        await af.applyExpression('[Value] = -5');
+        await asyncSetTimeout(0);
+
+        expect(af.input.validationMessage).toContain('Value is not a BigInt');
+        expect(api.getAdvancedFilterModel()).toBeNull();
     });
 });
