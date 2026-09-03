@@ -1020,7 +1020,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const { level, rowIndex: index, rowPinned, sibling } = rowNodes[i];
 
             // Account for the grand total row (sibling of root node)
-            const rowIndex = level === -1 ? sibling.rowIndex : index;
+            const rowIndex = level === -1 ? sibling?.rowIndex : index;
 
             if (rowIndex == null) {
                 continue;

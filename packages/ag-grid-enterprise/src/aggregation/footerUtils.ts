@@ -21,9 +21,8 @@ export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection, id
 
     footerNode.id = id ?? GROUP_TOTAL_ROW_ID_PREFIX + rowNode.id;
 
-    // get both header and footer to reference each other as siblings. this is never undone,
-    // only overwritten. so if a group is expanded, then contracted, it will have a ghost
-    // sibling - but that's fine, as we can ignore this if the header is contracted.
+    // if a group is expanded, then contracted, it will have a ghost sibling - but that's fine,
+    // as we can ignore this if the header is contracted.
     footerNode.sibling = rowNode;
     rowNode.sibling = footerNode;
 
@@ -32,11 +31,9 @@ export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection, id
 
 export function _destroyRowNodeFooter(rowNode: RowNode): void {
     const sibling = rowNode.sibling;
-    if (!sibling) {
-        return;
+    if (sibling) {
+        sibling._destroy(false);
+        // only the group's link is cleared, so a destroyed footer still resolves to its group
+        rowNode.sibling = undefined as any;
     }
-
-    sibling._destroy(false);
-    rowNode.sibling = undefined as any;
-    sibling.sibling = undefined as any;
 }
