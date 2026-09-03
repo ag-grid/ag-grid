@@ -6,15 +6,16 @@ import { PopupModule } from '../widgets/popupModule';
 import tooltipCSS from './tooltip.css';
 import { TooltipService } from './tooltipService';
 import { TooltipStateManager } from './tooltipStateManager';
+import { TooltipTouchCoordinator } from './tooltipTouchCoordinator';
 
 /**
  * @feature Tooltips
- * @colDef tooltipField, tooltipValueGetter, headerTooltip, tooltipComponentSelector
+ * @colDef tooltip, tooltipField, tooltipValueGetter, headerTooltip, headerTooltipValueGetter, tooltipComponentSelector
  */
 export const TooltipModule: _ModuleWithoutApi = {
     moduleName: 'Tooltip',
     version: VERSION,
-    beans: [TooltipService],
+    beans: [TooltipService, TooltipTouchCoordinator],
     dynamicBeans: {
         tooltipFeature: AgTooltipFeature as any,
         highlightTooltipFeature: AgHighlightTooltipFeature as any,

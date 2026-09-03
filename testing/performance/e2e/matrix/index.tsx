@@ -521,7 +521,7 @@ const desktopDefaultCols = [
                     filterList: true,
                     highlightMatch: true,
                 },
-                tooltipField: 'game.name',
+                tooltip: true,
                 cellClass: () => 'alphabet',
                 filterParams: {
                     filters: [

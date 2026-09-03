@@ -104,14 +104,9 @@
         "meta": {
             "displayName": "Columns: Tooltips"
         },
-        "tooltipField": {
-            "interfaceHierarchyOverrides": {
-                "exclude": ["NestedFieldPaths"]
-            }
-        },
-        "tooltipValueGetter": {
+        "tooltip": {
             "more": {
-                "name": "Tooltip Component",
+                "name": "Tooltips",
                 "url": "./tooltips"
             }
         },
@@ -148,7 +143,6 @@
         "headerValueGetter": {
             "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Gets the value for display in the header."
         },
-        "headerTooltipValueGetter": {},
         "headerTooltip": {},
         "headerStyle": {},
         "headerClass": {},
@@ -675,7 +669,6 @@
         },
         "headerName": {},
         "headerClass": {},
-        "headerTooltipValueGetter": {},
         "headerTooltip": {},
         "autoHeaderHeight": {
             "more": {

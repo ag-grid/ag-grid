@@ -22,7 +22,7 @@ const getColDefs = (library: Library) => [
     IssueColDef,
     {
         field: 'summary',
-        tooltipField: 'summary',
+        tooltip: true,
         width: 300,
         minWidth: 200,
         flex: 1,

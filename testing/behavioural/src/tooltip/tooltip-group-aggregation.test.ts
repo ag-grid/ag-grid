@@ -1,11 +1,13 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-import { TestGridsManager, getVisibleTooltips as getTooltips, waitForTooltips } from 'ag-test-utils';
+import { ALL_SEVERITIES, TestGridsManager, getVisibleTooltips as getTooltips, waitForTooltips } from 'ag-test-utils';
 
-import { TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { TooltipModule, agTestIdFor, enableDevValidations, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import type { GridApi, GridOptions, ITooltipComp, ITooltipParams, Module } from 'ag-grid-community';
 import { RowGroupingModule, ShowValuesAsModule, TreeDataModule } from 'ag-grid-enterprise';
+
+import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from './legacyTooltipTestUtils';
 
 describe('AG-5004: tooltip on aggregated group-row cells', () => {
     const gridMgr = new TestGridsManager({
@@ -14,9 +16,13 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
     });
 
     beforeAll(() => setupAgTestIds());
-    afterEach(() => gridMgr.reset());
+    beforeEach(() => enableDevValidations({ throwOn: ALL_SEVERITIES }));
+    afterEach(() => {
+        gridMgr.reset();
+        resetLegacyTooltipProperties();
+    });
 
-    // 0 means 0 here: FAST_TEST_TIMINGS lifts the grid's 200ms floor for this suite, so a hover costs
+    // 0 means 0 here, so a hover costs
     // nothing. Every assertion below polls for the outcome rather than sleeping past it.
     const TOOLTIP_SHOW_DELAY = 0;
 
@@ -50,7 +56,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
-                { field: 'value', aggFunc: 'sum', tooltipField: 'value' },
+                { field: 'value', aggFunc: 'sum', tooltip: true },
             ],
             rowData: [
                 { country: 'AU', value: 2 },
@@ -73,12 +79,12 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
                 {
                     colId: 'derived',
                     valueGetter: (params) => (params.node?.group ? -4 : params.data?.value),
-                    tooltipField: 'total',
+                    tooltip: true,
                 },
             ],
             rowData: [
-                { country: 'AU', value: 1, total: 10 },
-                { country: 'AU', value: 3, total: 20 },
+                { country: 'AU', value: 1 },
+                { country: 'AU', value: 3 },
             ],
             tooltipShowDelay: TOOLTIP_SHOW_DELAY,
             tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
@@ -92,7 +98,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
     // Tree data: the group node carries its own data record whose value differs from the aggregate.
     test('tree data: aggregated cell tooltips the aggregate, not the node data value', async () => {
         const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'value', aggFunc: 'sum', tooltipField: 'value' }],
+            columnDefs: [{ field: 'value', aggFunc: 'sum', tooltip: true }],
             treeData: true,
             getDataPath: (data) => data.path,
             rowData: [
@@ -111,6 +117,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
     // Pins the cross-field decision: an aggFunc column whose tooltipField points at a *different*
     // field still tooltips this cell's aggregate (via ctrl.value), matching autoColService.
     test('tree data: aggregated cell with a cross-field tooltipField tooltips the aggregate', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'value', aggFunc: 'sum', tooltipField: 'label' }],
             treeData: true,
@@ -131,6 +138,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
     // A non-aggregated tree-data column with a distinct tooltipField still reads the underlying
     // field on the group node — the changed branch must not hijack this case.
     test('tree data: non-aggregated column with a distinct tooltipField keeps the underlying value', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'name', tooltipField: 'description' }],
             treeData: true,
@@ -153,7 +161,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
-                { field: 'value', aggFunc: 'sum', tooltipField: 'value' },
+                { field: 'value', aggFunc: 'sum', tooltip: true },
             ],
             rowData: [
                 { country: 'AU', value: 2 },
@@ -178,6 +186,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
     // An expanded group with a footer sibling blanks its agg value in the header (displayIgnoresAggData),
     // so the changed branch must NOT hijack the tooltip — it falls back to the underlying tooltipField.
     test('tree data: expanded group with a footer keeps the underlying tooltipField (displayIgnoresAggData)', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'value', aggFunc: 'sum', tooltipField: 'label' }],
             treeData: true,
@@ -202,7 +211,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
-                { field: 'value', aggFunc: 'sum', tooltipField: 'value' },
+                { field: 'value', aggFunc: 'sum', tooltip: true },
             ],
             rowData: [
                 { country: 'AU', value: 2 },
@@ -243,7 +252,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
-                { field: 'value', aggFunc: 'sum', tooltipField: 'value', tooltipComponent: CustomTooltip },
+                { field: 'value', aggFunc: 'sum', tooltip: true, tooltipComponent: CustomTooltip },
             ],
             rowData: [
                 { country: 'AU', value: 2 },
@@ -265,6 +274,7 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
 
     // The changed branch only guards `tooltipField`; a group-row cell's `tooltipValueGetter` still wins.
     test('row grouping: tooltipValueGetter still resolves on an aggregated group-row cell', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -289,7 +299,8 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
 
     // showValuesAs transforms the displayed aggregate; the tooltip shows the underlying aggregated value
     // unformatted (6), not the transformed ratio (0.6) or the formatted cell text ("60.00%").
-    test('row grouping: showValuesAs aggregated cell tooltips the unformatted aggregate', async () => {
+    test('row grouping: legacy tooltipField with showValuesAs resolves the unformatted aggregate', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },

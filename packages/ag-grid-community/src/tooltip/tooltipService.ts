@@ -1,493 +1,96 @@
-import type { LocaleTextFunc } from 'ag-stack';
-import { _exists, _getValueUsingDotField, _isElementOverflowingCallback } from 'ag-stack';
+import type { HighlightTooltipEventType, IEventEmitter } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
-import { _formatValidationMessages } from '../edit/utils/validationMessages';
 import type { AgColumn } from '../entities/agColumn';
-import type { AgColumnGroup } from '../entities/agColumnGroup';
-import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { RowNode } from '../entities/rowNode';
-import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltipFeature';
-import { _isShowTooltipWhenTruncated } from './tooltipFeature';
+import { _createCellEditorTooltipSource, _createCellTooltipSource } from './cellTooltip';
+import { FullWidthRowTooltips } from './fullWidthRowTooltips';
+import type { ComponentTooltip } from './headerTooltipSource';
+import { _setupHeaderGroupTooltip, _setupHeaderTooltip } from './headerTooltipSource';
+import type { TooltipFeature, TooltipSource } from './tooltipFeature';
+import { _initColTooltip } from './tooltipValueUtils';
 
-type CellTooltipLocation = 'cell' | 'cellEditor' | 'cellFormula';
-
-type ResolvedCellTooltip = {
-    value: string | null | undefined;
-    location: CellTooltipLocation;
-    shouldDisplay?: () => boolean;
-};
-
-type LocalisableError = Error & {
-    getTranslatedMessage?: (translate: LocaleTextFunc) => string;
-};
-
-const getErrorTooltipMessage = (error: Error, translate: LocaleTextFunc): string => {
-    const localisable = error as LocalisableError;
-    if (typeof localisable.getTranslatedMessage === 'function') {
-        return localisable.getTranslatedMessage(translate);
-    }
-    return error.message;
-};
-
-const getEditErrorsForPosition = (
-    beans: BeanCollection,
-    cellCtrl: CellCtrl,
-    translate: LocaleTextFunc
-): string | undefined => {
-    const { editModelSvc } = beans;
-
-    const cellValidationErrors = editModelSvc?.getCellValidationModel()?.getCellValidation(cellCtrl)?.errorMessages;
-    const rowValidationErrors = editModelSvc?.getRowValidationModel().getRowValidation(cellCtrl)?.errorMessages;
-
-    const errors = cellValidationErrors || rowValidationErrors;
-
-    return errors?.length ? _formatValidationMessages(errors, translate, 'inline') : undefined;
-};
-
-const getCellValueOverflowTarget = (ctrl: CellCtrl): HTMLElement | undefined => {
-    const eCell = ctrl.eGui;
-    return eCell.children.length === 0 ? eCell : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
-};
-
-const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => boolean) | undefined => {
-    const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(beans.gos);
-
-    if (!isTooltipWhenTruncated) {
-        return undefined;
-    }
-
-    if (ctrl.isCellRenderer()) {
-        const colDef = ctrl.column.colDef;
-        // create rule for our internal group cell renderer
-        const isGroupCellRenderer = !!colDef.showRowGroup || colDef.cellRenderer === 'agGroupCellRenderer';
-        if (!isGroupCellRenderer) {
-            // A declared cellRendererSelector can return undefined and render plain text; only skip the
-            // overflow gate when a renderer was actually produced, so plain-text cells are still gated.
-            if (ctrl.hasActiveCellRenderer()) {
-                return undefined;
-            }
-            return _isElementOverflowingCallback(() => getCellValueOverflowTarget(ctrl));
-        }
-
-        return _isElementOverflowingCallback(() => {
-            const eCell = ctrl.eGui;
-            return (
-                (eCell.querySelector('.ag-group-value') as HTMLElement | undefined) ||
-                (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined) ||
-                eCell
-            );
-        });
-    }
-
-    return _isElementOverflowingCallback(() => getCellValueOverflowTarget(ctrl));
-};
-
-const buildShouldDisplayCellTooltip = (beans: BeanCollection, ctrl: CellCtrl): (() => boolean) => {
-    const { editSvc } = beans;
-    const { column } = ctrl;
-
-    return () => {
-        if (editSvc?.isEditing(ctrl, { withOpenEditor: true })) {
-            return false;
-        }
-        // resolved lazily: the truncation gate depends on whether the last render produced a renderer,
-        // which is only known once the cell has rendered (after this feature is built).
-        const isCellTruncated = getCellTruncationCheck(beans, ctrl);
-        if (!isCellTruncated) {
-            return true;
-        }
-        if (!column.isTooltipEnabled()) {
-            return false;
-        }
-        return isCellTruncated();
-    };
-};
-
-// tooltipField is a data-field lookup: layer a pending batch edit (keyed by the field's column) on
-// top, but never fall through to the column's value resolution, which would change field semantics.
-const resolveTooltipFieldValue = (
-    beans: BeanCollection,
-    column: AgColumn,
-    rowNode: RowNode,
-    data: any,
-    tooltipField: string
-): any => {
-    const tooltipColumn = beans.colModel.getCol(tooltipField);
-    if (tooltipColumn) {
-        const pending = beans.editSvc?.getPendingEditValue(rowNode, tooltipColumn, 'batch');
-        if (pending !== undefined) {
-            return pending;
-        }
-    }
-    if (column.tooltipFieldContainsDots) {
-        return _getValueUsingDotField(data, tooltipField);
-    }
-    return data[tooltipField];
-};
-
-// A group row whose cell value comes from aggregation (or a derived value on a data-less group node)
-// tooltips that aggregated value rather than the underlying tooltipField — mirrors
-// fullWidthRowFeature.setupGroupRowsTooltip / autoColService.
-const usesGroupRowAggregatedValue = (beans: BeanCollection, ctrl: CellCtrl): boolean => {
-    const { rowNode, column } = ctrl;
-    if (!rowNode.group) {
-        return false;
-    }
-    if (!rowNode.data) {
-        return true;
-    }
-    return !beans.valueSvc.displayIgnoresAggData(rowNode) && rowNode.aggData?.[column.colId] !== undefined;
-};
-
-const resolveCellTooltip = ({
-    beans,
-    ctrl,
-    shouldDisplayCellTooltip,
-    translate,
-}: {
-    beans: BeanCollection;
-    ctrl: CellCtrl;
-    shouldDisplayCellTooltip: () => boolean;
-    translate: LocaleTextFunc;
-}): ResolvedCellTooltip | null => {
-    const { editSvc, formula, gos } = beans;
-    const { column, rowNode } = ctrl;
-    const colDef = column.colDef;
-
-    // 1) formula error tooltip has highest priority.
-    const isCalculatedColumn = column.isCalculatedCol;
-    if ((column.allowFormula && formula?.active) || (isCalculatedColumn && formula)) {
-        const error = formula.getFormulaError(column, rowNode);
-        if (error) {
-            return {
-                value: getErrorTooltipMessage(error, translate),
-                location: 'cellFormula',
-                shouldDisplay: () => !!formula?.getFormulaError(column, rowNode),
-            };
-        }
-    }
-
-    // 2) edit-model validation errors take priority when not editing.
-    const isEditing = !!editSvc?.isEditing(ctrl);
-    if (!isEditing) {
-        const errorMessages = getEditErrorsForPosition(beans, ctrl, translate);
-        if (errorMessages) {
-            return {
-                value: errorMessages,
-                location: 'cellEditor',
-                shouldDisplay: () => !editSvc?.isEditing(ctrl) && !!getEditErrorsForPosition(beans, ctrl, translate),
-            };
-        }
-    }
-
-    // 3) explicit value from cellRenderer params (setTooltip) wins over colDef tooltips.
-    const rendererValue = ctrl.rendererTooltipValue;
-    if (rendererValue != null) {
-        return {
-            value: rendererValue,
-            location: 'cell',
-            shouldDisplay: ctrl.rendererTooltipShouldDisplay ?? shouldDisplayCellTooltip,
-        };
-    }
-
-    const data = rowNode.data;
-
-    // 4) column tooltip field/valueGetter is the final fallback.
-    if (colDef.tooltipField) {
-        if (usesGroupRowAggregatedValue(beans, ctrl)) {
-            // The aggregated value unformatted and before any showValuesAs transform, so it stays consistent
-            // with a leaf-row tooltipField, which shows the underlying data value rather than the cell text.
-            return {
-                value: beans.valueSvc.getValueForDisplay({
-                    column,
-                    node: rowNode,
-                    from: 'edit',
-                    transformValues: false,
-                }).value,
-                location: 'cell',
-                shouldDisplay: shouldDisplayCellTooltip,
-            };
-        }
-        if (_exists(data)) {
-            return {
-                value: resolveTooltipFieldValue(beans, column, rowNode, data, colDef.tooltipField),
-                location: 'cell',
-                shouldDisplay: shouldDisplayCellTooltip,
-            };
-        }
-    }
-
-    const valueGetter = colDef.tooltipValueGetter;
-
-    if (valueGetter) {
-        return {
-            value: valueGetter(
-                _addGridCommonParams(gos, {
-                    location: 'cell',
-                    colDef: column.colDef,
-                    column: column,
-                    rowIndex: ctrl.cellPosition.rowIndex,
-                    node: rowNode,
-                    data: rowNode.data,
-                    value: ctrl.value,
-                    valueFormatted: ctrl.valueFormatted,
-                })
-            ),
-            location: 'cell',
-            shouldDisplay: shouldDisplayCellTooltip,
-        };
-    }
-
-    return null;
-};
-
+/**
+ * Grid-level entry point for tooltip registration. Content and positioning rules belong to the source host;
+ * this service only owns the common feature lifecycle.
+ */
 export class TooltipService extends BeanStub implements NamedBean {
     beanName = 'tooltipSvc' as const;
 
-    /**
-     * Resolves the display name on each read so a refresh (e.g. after a header rename) reflects the current
-     * name, rather than serving the name captured when the tooltip was first set up.
-     */
-    private createHeaderTooltipValueGetter(
-        location: 'header' | 'headerGroup',
-        column: AgColumn | AgColumnGroup,
-        colDef: ColDef | ColGroupDef | null | undefined,
-        passedValue: string | undefined,
-        getDisplayName: () => string | null
-    ): () => string | null | undefined {
-        const gos = this.gos;
-        return () => {
-            if (passedValue != null) {
-                return passedValue;
-            }
-            const valueFormatted = getDisplayName();
-            return (
-                colDef?.headerTooltipValueGetter?.(
-                    _addGridCommonParams(gos, { location, colDef, column, value: valueFormatted, valueFormatted })
-                ) ?? colDef?.headerTooltip
-            );
-        };
-    }
-
-    public setupHeaderTooltip(
-        existingTooltipFeature: TooltipFeature | undefined,
-        ctrl: HeaderCellCtrl,
-        passedValue?: string,
-        shouldDisplayTooltip?: () => boolean
-    ): TooltipFeature | undefined {
-        if (existingTooltipFeature) {
-            ctrl.destroyBean(existingTooltipFeature);
-        }
-
-        if (!ctrl.isAlive()) {
-            return;
-        }
-
-        const gos = this.gos;
-        const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(gos);
-        const { column, eGui } = ctrl;
-        const colDef = column.colDef;
-
-        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colDef.headerComponent) {
-            shouldDisplayTooltip = _isElementOverflowingCallback(
-                () => eGui.querySelector('.ag-header-cell-text') as HTMLElement | undefined
-            );
-        }
-        const location = 'header';
-        const headerLocation = 'header';
-        const tooltipCtrl: ITooltipCtrl = {
-            getGui: () => eGui,
-            getLocation: () => location,
-            getTooltipValue: this.createHeaderTooltipValueGetter(location, column, colDef, passedValue, () =>
-                this.beans.colNames.getDisplayNameForColumn(column, headerLocation, true)
-            ),
-            shouldDisplayTooltip,
-            getAdditionalParams: () => ({
-                column,
-                colDef: column.colDef,
-            }),
-        };
-
-        let tooltipFeature = this.createTooltipFeature(tooltipCtrl);
-        if (tooltipFeature) {
-            tooltipFeature = ctrl.createBean(tooltipFeature);
-            ctrl.setRefreshFunction('tooltip', () => tooltipFeature!.refreshTooltip());
-        }
-        return tooltipFeature;
-    }
-
-    public setupHeaderGroupTooltip(
-        existingTooltipFeature: TooltipFeature | undefined,
-        ctrl: HeaderGroupCellCtrl,
-        passedValue?: string,
-        shouldDisplayTooltip?: () => boolean
-    ): TooltipFeature | undefined {
-        if (existingTooltipFeature) {
-            ctrl.destroyBean(existingTooltipFeature);
-        }
-        if (!ctrl.isAlive()) {
-            return;
-        }
-        const gos = this.gos;
-        const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(gos);
-        const { column, eGui } = ctrl;
-        const colDef = column.getColGroupDef();
-
-        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colDef?.headerGroupComponent) {
-            shouldDisplayTooltip = _isElementOverflowingCallback(
-                () => eGui.querySelector('.ag-header-group-text') as HTMLElement | undefined
-            );
-        }
-
-        const location = 'headerGroup';
-        const headerLocation = 'header';
-
-        const tooltipCtrl: ITooltipCtrl = {
-            getGui: () => eGui,
-            getLocation: () => location,
-            getTooltipValue: this.createHeaderTooltipValueGetter(location, column, colDef, passedValue, () =>
-                this.beans.colNames.getDisplayNameForColumnGroup(column, headerLocation)
-            ),
-            shouldDisplayTooltip,
-            getAdditionalParams: () => {
-                const additionalParams: ITooltipCtrlParams = {
-                    column,
-                };
-                if (colDef) {
-                    additionalParams.colDef = colDef;
-                }
-                return additionalParams;
-            },
-        };
-
-        const tooltipFeature = this.createTooltipFeature(tooltipCtrl);
-        return tooltipFeature ? ctrl.createBean(tooltipFeature) : tooltipFeature;
-    }
-
-    public enableCellTooltipFeature(ctrl: CellCtrl): TooltipFeature | undefined {
+    /** Creates an uninitialised feature for hosts whose element is attached later (ordinary cells). */
+    public createTooltip(source: TooltipSource): TooltipFeature | undefined {
         const { beans } = this;
-        const { column, rowNode } = ctrl;
-        const shouldDisplayCellTooltip = buildShouldDisplayCellTooltip(beans, ctrl);
-        const translate = this.getLocaleTextFunc();
-        let resolvedTooltip: ResolvedCellTooltip | null = null;
-
-        const resolveAndStore = () => {
-            resolvedTooltip = resolveCellTooltip({
-                beans,
-                ctrl,
-                shouldDisplayCellTooltip,
-                translate,
-            });
-            return resolvedTooltip;
-        };
-
-        const getTooltipValue = () => resolveAndStore()?.value;
-
-        const tooltipCtrl: ITooltipCtrl = {
-            getGui: () => ctrl.eGui,
-            getLocation: () => resolvedTooltip?.location ?? 'cell',
-            getTooltipValue,
-            shouldDisplayTooltip: () => {
-                const tooltip = resolvedTooltip ?? resolveAndStore();
-                if (!tooltip) {
-                    return false;
-                }
-                return tooltip.shouldDisplay ? tooltip.shouldDisplay() : true;
-            },
-            getAdditionalParams: () => ({
-                column,
-                colDef: column.colDef,
-                rowIndex: ctrl.cellPosition.rowIndex,
-                node: rowNode,
-                data: rowNode.data,
-                valueFormatted: ctrl.valueFormatted,
-            }),
-        };
-
-        return this.createTooltipFeature(tooltipCtrl, beans);
+        return beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, source, beans);
     }
 
-    public setupFullWidthRowTooltip(
-        existingTooltipFeature: TooltipFeature | undefined,
-        ctrl: RowCtrl,
-        getTooltipValue: () => any,
-        shouldDisplayTooltip?: () => boolean,
-        getAdditionalParams?: () => ITooltipCtrlParams
+    /** Creates a feature which can also be shown when its owner reports keyboard highlight changes. */
+    public createHighlightTooltip(
+        source: TooltipSource,
+        highlightTracker: IEventEmitter<HighlightTooltipEventType>
     ): TooltipFeature | undefined {
-        const tooltipParams: ITooltipCtrl = {
-            getGui: () => ctrl.getRowContentElement()!,
-            getTooltipValue,
-            getLocation: () => 'fullWidthRow',
-            shouldDisplayTooltip,
-            ...(getAdditionalParams ? { getAdditionalParams } : {}),
-        };
-
-        const beans = this.beans;
-        const context = beans.context;
-
-        if (existingTooltipFeature) {
-            ctrl.destroyBean(existingTooltipFeature, context);
-        }
-
-        const tooltipFeature = this.createTooltipFeature(tooltipParams, beans);
-        if (!tooltipFeature) {
-            return;
-        }
-
-        return ctrl.createBean(tooltipFeature, context);
-    }
-
-    public setupCellEditorTooltip(cellCtrl: CellCtrl, editor: ICellEditor) {
         const { beans } = this;
-        const { context } = beans;
-
-        const el = editor.getValidationElement?.(true) || (!editor.isPopup?.() && cellCtrl.eGui);
-
-        if (!el) {
-            return;
-        }
-
-        const tooltipParams: ITooltipCtrl = {
-            getGui: () => el,
-            getTooltipValue: () => getEditErrorsForPosition(beans, cellCtrl, this.getLocaleTextFunc()),
-            getLocation: () => 'cellEditor',
-            shouldDisplayTooltip: () => {
-                const { editModelSvc } = beans;
-                const rowValidationMap = editModelSvc?.getRowValidationModel()?.getRowValidationMap();
-                const cellValidationMap = editModelSvc?.getCellValidationModel()?.getCellValidationMap();
-
-                const hasRowValidationErrors = !!rowValidationMap && rowValidationMap.size > 0;
-                const hasCellValidationErrors = !!cellValidationMap && cellValidationMap.size > 0;
-
-                return hasRowValidationErrors || hasCellValidationErrors;
-            },
-        };
-
-        const tooltipFeature = this.createTooltipFeature(tooltipParams, beans);
-
-        if (!tooltipFeature) {
-            return;
-        }
-
-        return cellCtrl.createBean(tooltipFeature, context);
+        return beans.registry.createDynamicBean<TooltipFeature>(
+            'highlightTooltipFeature',
+            false,
+            source,
+            highlightTracker,
+            beans
+        );
     }
 
+    /** Replaces and initialises a tooltip owned by an already-attached host. */
+    public registerTooltip(
+        owner: BeanStub,
+        source: TooltipSource,
+        current?: TooltipFeature
+    ): TooltipFeature | undefined {
+        const { beans } = this;
+        owner.destroyBean(current, beans.context);
+        const feature = this.createTooltip(source);
+        return feature ? owner.createBean(feature, beans.context) : undefined;
+    }
+
+    /** Calls through to standalone method for treeshaking via the tooltipSvc */
     public initCol(column: AgColumn): void {
-        const { colDef } = column;
-        column.tooltipEnabled =
-            _exists(colDef.tooltipField) || _exists(colDef.tooltipValueGetter) || _exists(colDef.tooltipComponent);
+        _initColTooltip(column);
     }
 
-    private createTooltipFeature(tooltipCtrl: ITooltipCtrl, beans?: BeanCollection): TooltipFeature | undefined {
-        return this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, tooltipCtrl, beans);
+    /** Calls through to standalone method for treeshaking via the tooltipSvc */
+    public setupHeaderTooltip(
+        ctrl: HeaderCellCtrl,
+        current: TooltipFeature | undefined,
+        getComponentTooltip: () => ComponentTooltip
+    ): TooltipFeature | undefined {
+        return _setupHeaderTooltip(this.beans, ctrl, current, getComponentTooltip);
+    }
+
+    /** Calls through to standalone method for treeshaking via the tooltipSvc */
+    public setupHeaderGroupTooltip(
+        ctrl: HeaderGroupCellCtrl,
+        current: TooltipFeature | undefined,
+        getComponentTooltip: () => ComponentTooltip
+    ): TooltipFeature | undefined {
+        return _setupHeaderGroupTooltip(this.beans, ctrl, current, getComponentTooltip);
+    }
+
+    /** Calls through to standalone method for treeshaking via the tooltipSvc */
+    public enableCellTooltipFeature(ctrl: CellCtrl): TooltipFeature | undefined {
+        return this.createTooltip(_createCellTooltipSource(this.beans, ctrl));
+    }
+
+    /** Calls through to standalone method for treeshaking via the tooltipSvc */
+    public setupCellEditorTooltip(ctrl: CellCtrl, editor: ICellEditor): TooltipFeature | undefined {
+        const source = _createCellEditorTooltipSource(this.beans, ctrl, editor);
+        return source ? this.registerTooltip(ctrl, source) : undefined;
+    }
+
+    /** Owns all tooltip state for one full-width row, so the row feature itself stays tooltip-free. */
+    public createFullWidthRowTooltips(rowCtrl: RowCtrl): FullWidthRowTooltips {
+        return this.createBean(new FullWidthRowTooltips(rowCtrl));
     }
 }

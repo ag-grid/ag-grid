@@ -9,8 +9,9 @@ import type {
     DropTarget,
     ElementParams,
     GridDragSource,
-    ITooltipCtrl,
     TooltipFeature,
+    TooltipLocation,
+    TooltipSourceParams,
 } from 'ag-grid-community';
 import { Component, KeyCode, TouchListener, _createIconNoSpan } from 'ag-grid-community';
 
@@ -71,9 +72,13 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         eButton.appendChild(_createIconNoSpan('cancel', beans)!);
 
         this.tooltipFeature = this.createOptionalManagedBean(
-            beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            beans.tooltipSvc?.createTooltip({
                 getGui: () => this.getGui(),
-            } as ITooltipCtrl)
+                getTooltipComponentDefinition: () => this.getTooltipComponentDefinition(),
+                getTooltipValue: () => this.getTooltip(),
+                getLocation: () => this.getTooltipLocation(),
+                getAdditionalParams: () => this.getTooltipParams(),
+            })
         );
 
         this.setupComponents();
@@ -119,11 +124,23 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     }
 
     private setupTooltip(): void {
-        const refresh = () => this.tooltipFeature?.setTooltipAndRefresh(this.getTooltip());
+        const refresh = () => this.tooltipFeature?.refreshTooltip();
 
         refresh();
 
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
+    }
+
+    protected getTooltipLocation(): TooltipLocation {
+        return 'UNKNOWN';
+    }
+
+    protected getTooltipParams(): TooltipSourceParams {
+        return {};
+    }
+
+    protected getTooltipComponentDefinition(): TooltipSourceParams['colDef'] {
+        return undefined;
     }
 
     protected getDragSourceId(): string | undefined {

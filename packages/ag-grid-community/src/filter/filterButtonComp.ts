@@ -2,7 +2,7 @@ import type { AgEvent } from 'ag-stack';
 import { KeyCode, _clearElement, _setDisabled } from 'ag-stack';
 
 import type { FilterAction } from '../interfaces/iFilter';
-import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
+import type { TooltipFeature } from '../tooltip/tooltipFeature';
 import type { ElementParams } from '../utils/element';
 import { _createElement } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
@@ -119,12 +119,14 @@ export class FilterButtonComp extends Component<FilterAction> {
         const tooltip = this.validationTooltipFeature;
 
         if (eApplyButton && !tooltip) {
+            const initialApplyButton = eApplyButton;
             this.validationTooltipFeature = this.createOptionalManagedBean(
-                this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                    getGui: () => this.eApply,
-                    getLocation: () => 'advancedFilter',
+                this.beans.tooltipSvc?.createTooltip({
+                    getGui: () => this.eApply ?? initialApplyButton,
+                    getTooltipComponentDefinition: () => undefined,
+                    getLocation: () => 'filter',
                     getTooltipShowDelayOverride: () => 1000,
-                } as ITooltipCtrl)
+                })
             );
         } else if (!eApplyButton && tooltip) {
             this.validationTooltipFeature = this.destroyBean(tooltip);

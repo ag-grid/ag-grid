@@ -1,3 +1,4 @@
+import type { TooltipLocation } from '../tooltip/tooltipComponent';
 import type { BrandedType } from './brandedType';
 import type { EditingCellPosition } from './iCellEditor';
 import type { CellPosition } from './iCellPosition';
@@ -74,12 +75,14 @@ export interface PostProcessPopupParams<TData = any, TContext = any> extends AgG
     column?: Column | null;
     /** If popup is for a row, this gives the RowNode */
     rowNode?: IRowNode<TData> | null;
+    /** Tooltip location when `type` is `'tooltip'`. */
+    tooltipLocation?: TooltipLocation;
     /** The popup we are showing */
     ePopup: HTMLElement;
     /**
      * The different types are:
      * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor', 'chart',
-     * 'advancedFilterBuilder', 'colorPicker', 'columnChooser', 'subMenu'
+     * 'advancedFilterBuilder', 'colorPicker', 'columnChooser', 'subMenu', 'tooltip'
      */
     type: string;
     /** If the popup is as a result of a button click (eg menu button),

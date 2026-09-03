@@ -6,8 +6,6 @@ import type {
     FilterAction,
     FilterButtonComp,
     FilterManager,
-    ITooltipCtrl,
-    Registry,
     TooltipFeature,
 } from 'ag-grid-community';
 import { AgFilterButtonSelector, Component, _createIconNoSpan } from 'ag-grid-community';
@@ -66,13 +64,11 @@ export class AdvancedFilterComp extends Component {
     private advancedFilter: AdvancedFilterService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
     private filterManager?: FilterManager;
-    private registry: Registry;
 
     public wireBeans(beans: BeanCollection): void {
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
         this.advancedFilter = beans.advancedFilter as AdvancedFilterService;
         this.filterManager = beans.filterManager;
-        this.registry = beans.registry;
     }
 
     private readonly eAutocomplete: AgAutocomplete = RefPlaceholder;
@@ -92,11 +88,12 @@ export class AdvancedFilterComp extends Component {
 
     public postConstruct(): void {
         this.tooltipFeature = this.createOptionalManagedBean(
-            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.getGui(),
+                getTooltipComponentDefinition: () => undefined,
                 getTooltipShowDelayOverride: () => 1000,
                 getLocation: () => 'advancedFilter',
-            } as ITooltipCtrl)
+            })
         );
         this.eAutocomplete
             .setListGenerator((_value, position) => this.generateAutocompleteListParams(position))

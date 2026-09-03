@@ -24,14 +24,14 @@ const gridOptions: GridOptions<IOlympicData> = {
             rowGroup: true,
             hide: true,
             // shown on the full-width group row inherited from this colDef
-            tooltipValueGetter: (params) => `Country: ${params.value}`,
+            tooltip: (params) => `Country: ${params.value}`,
         },
         {
             field: 'year',
             rowGroup: true,
             hide: true,
             // shown on the full-width group row inherited from this colDef
-            tooltipValueGetter: (params) => `Year: ${params.value}`,
+            tooltip: (params) => `Year: ${params.value}`,
         },
         { field: 'athlete' },
         { field: 'sport' },

@@ -61,6 +61,7 @@ export type { VisibleColsService } from './columns/visibleColsService';
 export { EmptyBean as _EmptyBean } from './components/emptyBean';
 export { BaseComponentWrapper } from './components/framework/frameworkComponentWrapper';
 export type { FrameworkComponentWrapper, WrappableInterface } from './components/framework/frameworkComponentWrapper';
+export { ComponentInstanceGuard, type ComponentInstanceClaim } from './components/framework/componentInstanceGuard';
 export type { Registry } from './components/framework/registry';
 export { _unwrapUserComp } from './components/framework/unwrapUserComp';
 export type { UserComponentFactory } from './components/framework/userComponentFactory';
@@ -381,8 +382,23 @@ export {
     themeMaterialParams as _themeMaterialParams,
     themeQuartzParams as _themeQuartzParams,
 } from './theming/parts/theme/themes';
-export { _getShouldDisplayTooltip, _isShowTooltipWhenTruncated } from './tooltip/tooltipFeature';
-export type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltip/tooltipFeature';
+export {
+    _getCellTooltipComponentDefinition,
+    _getHeaderTooltipComponentDefinition,
+    _getShouldDisplayTooltip,
+    _isShowTooltipWhenTruncated,
+    type TooltipFeature,
+    type TooltipSource,
+    type TooltipSourceParams,
+} from './tooltip/tooltipFeature';
+export {
+    _getLegacyTooltipFieldValue,
+    _isCellTooltipConfigured,
+    _resolveCellTooltipValue,
+    _resolveGroupTooltipValue,
+    _resolveHeaderTooltipValue,
+    type LegacyTooltipFieldResolution,
+} from './tooltip/tooltipValueUtils';
 export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';
 export { _forEachChangedGroupDepthFirst } from './utils/changedPath';
 

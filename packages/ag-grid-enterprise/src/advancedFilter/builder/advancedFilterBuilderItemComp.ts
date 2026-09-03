@@ -16,8 +16,6 @@ import type {
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
     GridDragSource,
-    ITooltipCtrl,
-    Registry,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -97,12 +95,10 @@ const AdvancedFilterBuilderItemElement: ElementParams = {
 export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBuilderEvents> {
     private dragAndDrop: DragAndDropService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
-    private registry: Registry;
 
     public wireBeans(beans: BeanCollection): void {
         this.dragAndDrop = beans.dragAndDrop!;
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
-        this.registry = beans.registry;
     }
 
     private readonly eTreeLines: HTMLElement = RefPlaceholder;
@@ -246,12 +242,13 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     private setupValidation(): void {
         this.eValidation.appendChild(_createIconNoSpan('advancedFilterBuilderInvalid', this.beans)!);
         this.validationTooltipFeature = this.createOptionalManagedBean(
-            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.eValidation,
+                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'advancedFilter',
                 getTooltipValue: () => this.ePillWrapper.getValidationMessage(),
                 getTooltipShowDelayOverride: () => 1000,
-            } as ITooltipCtrl)
+            })
         );
         this.updateValidity();
     }
@@ -273,11 +270,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.eAddButton.appendChild(eAddButton.getGui());
 
         this.createOptionalManagedBean(
-            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.eAddButton,
+                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'advancedFilter',
                 getTooltipValue: () => this.advFilterExpSvc.translate('advancedFilterBuilderAddButtonTooltip'),
-            } as ITooltipCtrl)
+            })
         );
     }
 
@@ -295,11 +293,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         });
 
         this.createOptionalManagedBean(
-            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.eRemoveButton,
+                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'advancedFilter',
                 getTooltipValue: () => this.advFilterExpSvc.translate('advancedFilterBuilderRemoveButtonTooltip'),
-            } as ITooltipCtrl)
+            })
         );
         _setAriaLabel(this.eRemoveButton, this.advFilterExpSvc.translate('advancedFilterBuilderRemoveButtonTooltip'));
 
@@ -322,14 +321,15 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             });
 
             this.moveUpTooltipFeature = this.createOptionalManagedBean(
-                this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+                this.beans.tooltipSvc?.createTooltip({
                     getGui: () => this.eMoveUpButton,
+                    getTooltipComponentDefinition: () => undefined,
                     getLocation: () => 'advancedFilter',
                     getTooltipValue: () =>
                         this.moveUpDisabled
                             ? null
                             : this.advFilterExpSvc.translate('advancedFilterBuilderMoveUpButtonTooltip'),
-                } as ITooltipCtrl)
+                })
             );
             _setAriaLabel(
                 this.eMoveUpButton,
@@ -349,14 +349,15 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             });
 
             this.moveDownTooltipFeature = this.createOptionalManagedBean(
-                this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+                this.beans.tooltipSvc?.createTooltip({
                     getGui: () => this.eMoveDownButton,
+                    getTooltipComponentDefinition: () => undefined,
                     getLocation: () => 'advancedFilter',
                     getTooltipValue: () =>
                         this.moveDownDisabled
                             ? null
                             : this.advFilterExpSvc.translate('advancedFilterBuilderMoveDownButtonTooltip'),
-                } as ITooltipCtrl)
+                })
             );
             _setAriaLabel(
                 this.eMoveDownButton,
