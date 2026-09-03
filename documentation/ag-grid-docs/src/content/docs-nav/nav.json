@@ -1908,6 +1908,11 @@
                         },
                         {
                             "type": "item",
+                            "title": "Excel Import",
+                            "path": "excel-import"
+                        },
+                        {
+                            "type": "item",
                             "title": "PDF Export",
                             "path": "pdf-export",
                             "isEnterprise": true,
@@ -1995,11 +2000,6 @@
                             "type": "item",
                             "title": "Printing",
                             "path": "printing"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Import Excel",
-                            "path": "excel-import"
                         }
                     ]
                 },
