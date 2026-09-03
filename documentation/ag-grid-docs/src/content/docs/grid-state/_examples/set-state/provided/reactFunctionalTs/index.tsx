@@ -10,6 +10,7 @@ import type {
     GridState,
     RowSelectionOptions,
     StateUpdatedEvent,
+    Toolbar,
 } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -67,6 +68,7 @@ const GridExample = () => {
     const autoGroupColumnDef = useMemo<AutoGroupColumnDef>(() => {
         return { minWidth: 200 };
     }, []);
+    const toolbar = useMemo<Toolbar>(() => ({ items: ['agQuickFilterToolbarItem'] }), []);
     const rowSelection = useMemo<RowSelectionOptions>(
         () => ({
             mode: 'multiRow',
@@ -140,6 +142,7 @@ const GridExample = () => {
                                 defaultColGroupDef={defaultColGroupDef}
                                 autoGroupColumnDef={autoGroupColumnDef}
                                 sideBar={true}
+                                toolbar={toolbar}
                                 pagination={true}
                                 rowSelection={rowSelection}
                                 cellSelection={true}

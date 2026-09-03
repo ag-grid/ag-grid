@@ -8,9 +8,7 @@ import type {
 } from 'ag-grid-community';
 import { AgInputTextField, Component } from 'ag-grid-community';
 
-import { createToolbarInput } from './toolbarItemUtils';
-
-const INPUT_DEBOUNCE_MS = 300;
+import { INPUT_DEBOUNCE_MS, createToolbarInput } from './toolbarItemUtils';
 
 export class QuickFilterToolbarItem extends Component implements IToolbarItemComp {
     private eInputField!: GridInputTextField;
@@ -35,6 +33,8 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         const label = localeTextFunc('toolbarQuickFilter', 'Filter');
         const eGui = this.getGui();
         let quickFilterTextTimeout: number | undefined;
+        const setQuickFilterText = (quickFilterText: string) =>
+            this.gos.updateGridOptions({ options: { quickFilterText } });
 
         this.eInputField = this.createManagedBean<GridInputTextField>(
             new AgInputTextField({
@@ -42,7 +42,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
                 autoComplete: params.toolbarItemParams?.browserAutoComplete,
                 onValueClear: () => {
                     clearTimeout(quickFilterTextTimeout);
-                    this.gos.updateGridOptions({ options: { quickFilterText: '' } });
+                    setQuickFilterText('');
                 },
             })
         );
@@ -57,14 +57,17 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         this.eInput = eInput;
         eGui.appendChild(this.eInputField.getGui());
 
-        const updateQuickFilterText = _debounce(
-            this,
-            () => this.gos.updateGridOptions({ options: { quickFilterText: this.eInput.value } }),
-            INPUT_DEBOUNCE_MS
-        );
+        const updateQuickFilterText = _debounce(this, () => setQuickFilterText(this.eInput.value), INPUT_DEBOUNCE_MS);
 
         this.addManagedElementListeners(this.eInput, {
             input: () => (quickFilterTextTimeout = updateQuickFilterText()),
+        });
+
+        // An external write (`setGridOption`, a state restore) filters the rows, so the input must follow.
+        // A write from this input is a no-op here: the field already holds that value, so `setValue` bails out.
+        this.addManagedPropertyListener('quickFilterText', ({ currentValue }) => {
+            clearTimeout(quickFilterTextTimeout);
+            this.eInputField.setValue(currentValue ?? '', true);
         });
     }
 

@@ -358,6 +358,8 @@ export class StateService extends BeanStub implements NamedBean {
                 selectedFilterChanged: updateFilterState,
             });
         }
+        // A case-only edit (`abc` -> `ABC`) is equal once uppercased, so it dispatches no `filterChanged`.
+        this.addManagedPropertyListener('quickFilterText', updateFilterState);
     }
 
     private setFirstDataRenderedState(
@@ -704,19 +706,24 @@ export class StateService extends BeanStub implements NamedBean {
         const columnFilterState = filterManager?.getFilterState();
         const advancedFilterModel = filterManager?.getAdvFilterModel() ?? undefined;
         const selectableFilters = selectableFilter?.getState();
-        return filterModel || advancedFilterModel || columnFilterState || selectableFilters
-            ? { filterModel, columnFilterState, advancedFilterModel, selectableFilters }
+        // The service holds an uppercased, parsed form; the option is the round-trippable value. Without the
+        // module the option is inert, and writing it on restore reports a missing-module error.
+        const quickFilterText = this.beans.quickFilter ? this.gos.get('quickFilterText') || undefined : undefined;
+        return filterModel || advancedFilterModel || columnFilterState || selectableFilters || quickFilterText
+            ? { filterModel, columnFilterState, advancedFilterModel, selectableFilters, quickFilterText }
             : undefined;
     }
 
     private setFilterState(filterState?: FilterState, source: 'gridInitializing' | 'api' = 'api'): void {
         const { filterManager, selectableFilter } = this.beans;
-        const { filterModel, columnFilterState, advancedFilterModel, selectableFilters } = filterState ?? {
-            filterModel: null,
-            columnFilterState: null,
-            advancedFilterModel: null,
-            selectableFilters: null,
-        };
+        const { filterModel, columnFilterState, advancedFilterModel, selectableFilters, quickFilterText } =
+            filterState ?? {
+                filterModel: null,
+                columnFilterState: null,
+                advancedFilterModel: null,
+                selectableFilters: null,
+                quickFilterText: null,
+            };
         if (selectableFilters !== undefined) {
             selectableFilter?.setState(selectableFilters ?? undefined);
         }
@@ -730,6 +737,12 @@ export class StateService extends BeanStub implements NamedBean {
         if (advancedFilterModel !== undefined) {
             const advancedFilterSource: FilterChangedEventSourceType = isApi ? 'api' : 'advancedFilter';
             filterManager?.setAdvFilterModel(advancedFilterModel ?? null, advancedFilterSource);
+        }
+        // An `api` restore resets what it omits, so a `filter` section without the text clears the quick filter.
+        const newQuickFilterText = quickFilterText ?? (isApi ? '' : undefined);
+        if (newQuickFilterText !== undefined && this.beans.quickFilter) {
+            // The quick filter service's own property listener is the apply path.
+            this.gos.updateGridOptions({ options: { quickFilterText: newQuickFilterText } });
         }
     }
 
