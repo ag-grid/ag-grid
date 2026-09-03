@@ -598,5 +598,10 @@ describe('ag-grid grouping selection', () => {
         expect(ireland.isSelected()).toBe(false);
         expect(irelandTotal.isSelected()).toBe(false);
         assertSelectedRowsById([], api);
+
+        // selecting through the stale handle reaches the live group too, exactly as deselecting does
+        api.setNodesSelected({ nodes: [irelandTotal], newValue: true, source: 'api' });
+        expect(ireland.isSelected()).toBe(true);
+        expect(irelandTotal.isSelected()).toBe(true);
     });
 });

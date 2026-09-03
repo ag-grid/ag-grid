@@ -181,7 +181,8 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
     public isNodeSelected(node: RowNode): boolean | undefined {
         const isToggled = this.selectedState.toggledNodes.has(selectionKey(node)!);
-        return this.selectedState.selectAll ? !isToggled : isToggled;
+        // the root is not a row, so select-all does not reach it; only an explicit selection marks it
+        return this.selectedState.selectAll && node.level !== -1 ? !isToggled : isToggled;
     }
 
     public getSelectedNodes(nullWhenSelectAll = false, warnWhenSelectAll = true): RowNode<any>[] | null {
@@ -205,7 +206,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         const selectedRows: any[] = [];
         for (let i = 0, len = nodes.length; i < len; ++i) {
             const data = nodes[i].data;
-            if (data) {
+            if (data != null) {
                 selectedRows.push(data);
             }
         }

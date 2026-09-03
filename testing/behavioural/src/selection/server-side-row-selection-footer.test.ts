@@ -137,9 +137,79 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(grandTotal.isSelected()).toBe(true);
     });
 
+    // A purge recreates the row nodes through syncInRowNode, a second path into the strategy that the
+    // root is never passed through, so the selection keyed against it has to come back untouched.
+    test('the grand total row selection survives a purge refresh', async () => {
+        const api = await createGrandTotalGrid('multiRow');
+
+        api.setNodesSelected({
+            nodes: [api.getRowNode('1')!, api.getRowNode(GRAND_TOTAL_ROW_ID)!],
+            newValue: true,
+            source: 'api',
+        });
+        expect(api.getSelectedNodes().map((node) => node.level)).toEqual([0, -1]);
+
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+
+        // the handles are rebuilt by the purge, so read them again rather than reusing the old ones
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(true);
+        expect(api.getRowNode('1')!.isSelected()).toBe(true);
+        expect([...(api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes].sort()).toEqual(
+            [ROOT_NODE_ID, '1'].sort()
+        );
+    });
+
+    // ROOT_NODE_ID is the key the state carries for the root, so it has to survive a round trip back
+    // through setServerSideSelectionState the same way any other row id does.
+    test('the grand total row selection round-trips through the server-side selection state', async () => {
+        const api = await createGrandTotalGrid('multiRow');
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+
+        grandTotal.setSelected(true);
+        const state = api.getServerSideSelectionState()!;
+        expect((state as { toggledNodes: string[] }).toggledNodes).toEqual([ROOT_NODE_ID]);
+
+        api.deselectAll();
+        expect(grandTotal.isSelected()).toBe(false);
+
+        // a restore rebuilds the state, not the strategy's node map, so isSelected is what to assert here
+        api.setServerSideSelectionState(state);
+        expect(grandTotal.isSelected()).toBe(true);
+        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([ROOT_NODE_ID]);
+    });
+
+    // The export serialises the selected nodes directly under the server-side model, and the selected
+    // node is the root, which carries no values - so it has to fall back to the row the user sees.
+    test('copying a selected grand total row copies its values', async () => {
+        const api = await createGrandTotalGrid('multiRow');
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+
+        grandTotal.setSelected(true);
+        expect(api.getSelectedNodes().map((node) => node.level)).toEqual([-1]);
+
+        api.copySelectedRowsToClipboard();
+        await waitFor(() => expect(clipboardUtils.getText()).toBe(`${GRAND_TOTAL_ROW_ID}\t30`));
+    });
+
+    // The root is not a row, so select all must leave it alone, as it does client-side. Getting this
+    // wrong left the grand total row rendered as selected after deselectAll().
+    test('select all does not mark the grand total row', async () => {
+        const api = await createGrandTotalGrid('multiRow');
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+
+        api.selectAll();
+        expect(api.getRowNode('1')!.isSelected()).toBe(true);
+        expect(grandTotal.isSelected()).toBe(false);
+
+        api.deselectAll();
+        expect(grandTotal.isSelected()).toBe(false);
+        expect(api.getRowNode('1')!.isSelected()).toBe(false);
+    });
+
     // Selecting the grand total row selects the root, so the clipboard's flash list holds a level -1
     // node whose own sibling link the destroy severs.
-    test('copying a selection made through a since-destroyed grand total footer still copies the total', async () => {
+    test('copying a selection holding the grand total row drops it once the row is destroyed', async () => {
         const api = await createGrandTotalGrid('multiRow');
 
         const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
@@ -147,8 +217,9 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(api.getSelectedNodes().map((node) => node.level)).toEqual([0, -1]);
 
         api.copySelectedRowsToClipboard();
-        await waitFor(() => expect(clipboardUtils.getText()).toBe('1\t10'));
+        await waitFor(() => expect(clipboardUtils.getText()).toBe(`1\t10\r\n${GRAND_TOTAL_ROW_ID}\t30`));
 
+        // the root stays selected, but its footer is gone, so there is no row left to serialise for it
         clipboardUtils.reset();
         api.setGridOption('grandTotalRow', undefined);
         await waitFor(() => expect(grandTotal.destroyed).toBe(true));
@@ -218,6 +289,12 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(api.getRowNode('ie-1')!.isSelected()).toBe(true);
         expect(api.getRowNode('ie-2')!.isSelected()).toBe(true);
         expect(grandTotal.isSelected()).toBe(true);
+
+        // select all reaches the same rows, but the root is not one of them
+        api.deselectAll();
+        api.selectAll();
+        expect(api.getRowNode('ie-1')!.isSelected()).toBe(true);
+        expect(grandTotal.isSelected()).toBe(false);
     });
 
     test('GroupSelectsChildrenStrategy: selecting a destroyed group total footer is a no-op, not a throw', async () => {

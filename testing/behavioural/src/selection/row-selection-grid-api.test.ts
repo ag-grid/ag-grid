@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
     GridColumns,
@@ -1130,6 +1131,31 @@ describe('Row Selection Grid API', () => {
                 // This could just be a limitation of SSRM?
                 assertSelectedRowsById(expectedRowIds.slice(1), api);
             });
+        });
+    });
+
+    describe('getSelectedRows', () => {
+        // Row data is unconstrained, so a falsy row is a row like any other; only an absent one is skipped.
+        // The client-side model drops falsy entries when building nodes, so this is only reachable on SSRM.
+        test('returns a row whose data is falsy', async () => {
+            const [api] = createGrid({
+                columnDefs: [{ colId: 'value', valueGetter: (params) => params.data }],
+                rowModelType: 'serverSide',
+                rowSelection: { mode: 'multiRow' },
+                getRowId: ({ data }: GetRowIdParams) => `row-${data}`,
+                serverSideDatasource: {
+                    getRows(params) {
+                        setTimeout(() => params.success({ rowData: [0, 1], rowCount: 2 }), 0);
+                    },
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            await waitFor(() => expect(api.getRowNode('row-0')).toBeDefined());
+
+            api.setNodesSelected({ nodes: [api.getRowNode('row-0')!], newValue: true, source: 'api' });
+
+            expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['row-0']);
+            expect(api.getSelectedRows()).toEqual([0]);
         });
     });
 });

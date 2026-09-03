@@ -35,6 +35,8 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
+    /** The root is not part of the tree state, so its own selection is tracked apart from it, as client-side. */
+    private rootSelected = false;
 
     constructor(private readonly selectionCtx: RowRangeSelectionContext) {
         super();
@@ -132,6 +134,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
         try {
             this.selectedState = recursivelyDeserializeState(state, !!state.selectAllChildren);
+            this.rootSelected = false;
         } catch {
             // do nothing - error already logged
         }
@@ -187,6 +190,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             if (node.level === -1) {
                 // the root has no route of its own, so selecting it means the whole tree
                 this.selectedState = { selectAllChildren: newValue, toggledNodes: new Map() };
+                this.rootSelected = newValue;
                 updatedCount++;
             } else if (node.id !== undefined) {
                 this.recursivelySelectNode(this.getRouteToNode(node), this.selectedState, newValue);
@@ -206,8 +210,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
     public isNodeSelected(node: RowNode): boolean | undefined {
         if (node.level === -1) {
-            // only an explicit whole-tree selection marks the root; a partial one leaves it alone
-            return this.selectedState.selectAllChildren;
+            return this.rootSelected;
         }
         const path = this.getRouteToNode(node);
         return this.isNodePathSelected(path, this.selectedState);
@@ -388,6 +391,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
     private reset(selectAllChildren: boolean): void {
         this.selectedState = { selectAllChildren, toggledNodes: new Map() };
+        this.rootSelected = false;
     }
 
     public getSelectAllState(): boolean | null {

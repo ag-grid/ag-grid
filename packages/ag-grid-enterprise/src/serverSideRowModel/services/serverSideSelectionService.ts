@@ -181,23 +181,30 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     private shotgunResetNodeSelectionState(source?: SelectionEventSourceType) {
-        const syncNode = (node: RowNode) => {
+        this.beans.rowModel.forEachNode((node) => {
+            if (node.stub) {
+                return;
+            }
+
             const isNodeSelected = this.selectionStrategy.isNodeSelected(node);
             if (isNodeSelected !== node.isSelected()) {
                 this.selectRowNode(node, isNodeSelected, undefined, source);
             }
-        };
-
-        this.beans.rowModel.forEachNode((node) => {
-            if (!node.stub) {
-                syncNode(node);
-            }
         });
 
-        // forEachNode skips the root, whose selection the grand total row reports as its own
+        this.syncRootNode(source);
+    }
+
+    /** `forEachNode` skips the root, whose selection the grand total row reports as its own. */
+    private syncRootNode(source?: SelectionEventSourceType): void {
         const rootNode = this.beans.rowModel.rootNode;
-        if (rootNode) {
-            syncNode(rootNode);
+        if (!rootNode) {
+            return;
+        }
+
+        const isRootSelected = this.selectionStrategy.isNodeSelected(rootNode);
+        if (isRootSelected !== rootNode.isSelected()) {
+            this.selectRowNode(rootNode, isRootSelected, undefined, source);
         }
     }
 
@@ -272,6 +279,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             this.selectRowNode(node, true, undefined, params.source);
         });
 
+        this.syncRootNode(params.source);
         this.dispatchSelectionChanged(params.source);
     }
 
@@ -289,6 +297,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             this.selectRowNode(node, false, undefined, params.source);
         });
 
+        this.syncRootNode(params.source);
         this.dispatchSelectionChanged(params.source);
     }
 

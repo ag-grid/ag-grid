@@ -262,8 +262,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
                 const selectedNodes = this.beans.selectionSvc?.getSelectedNodes() ?? [];
                 this.replicateSortedOrder(selectedNodes);
-                // serialize each node
-                selectedNodes.forEach(processBodyRow);
+                // the grand total row is selected as the root, which carries no values of its own
+                selectedNodes.forEach((node) =>
+                    processBodyRow(node.level === -1 && node.sibling ? node.sibling : node)
+                );
             }
             // here is everything else - including standard row model and selected. we don't use
             // the selection model even when just using selected, so that the result is the order

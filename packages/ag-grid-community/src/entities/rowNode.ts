@@ -475,7 +475,7 @@ export class RowNode<TData = any>
         if (getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.
             // this is important for virtual pagination and viewport, where empty rows exist.
-            if (this.data) {
+            if (this.data != null) {
                 // we pass 'true' as we skip this level when generating keys,
                 // as we don't always have the key for this level (eg when updating
                 // data via transaction on SSRM, we are getting key to look up the
