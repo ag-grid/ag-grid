@@ -270,8 +270,8 @@ export class RowNode<TData = any>
     }
 
     /**
-     * On a group row, the footer row node for that group. On a footer row, the group row it belongs to.
-     * `undefined` when the group has no footer, and on either row once the footer has been destroyed.
+     * On a group row, its live footer row node, `undefined` when it has none. On a footer row, the group
+     * row it belongs to, which is retained even after the footer has been destroyed.
      */
     public sibling: RowNode;
 
@@ -766,9 +766,7 @@ export class RowNode<TData = any>
     public isSelected(): boolean | undefined {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
         if (this.footer) {
-            // destroying a footer severs the sibling link but leaves the footer flag set
-            const sibling = this.sibling;
-            return sibling ? sibling.isSelected() : false;
+            return this.sibling?.isSelected() ?? false;
         }
         // similarly for manually pinned rows
         const pinnedSibling = this.rowPinned && this.pinnedSibling;

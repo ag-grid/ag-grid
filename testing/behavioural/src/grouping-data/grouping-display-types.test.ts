@@ -168,7 +168,7 @@ describe('ag-grid grouping display types and footers', () => {
         `);
     });
 
-    test('isSelected() on a destroyed group total row node does not throw', async () => {
+    test('a destroyed group total row keeps its link to the group it belonged to', async () => {
         const rowData = cachedJSONObjects.array([
             { id: '1', country: 'Ireland', athlete: 'John Smith', sport: 'Sailing', gold: 1 },
             { id: '2', country: 'Ireland', athlete: 'Jane Doe', sport: 'Soccer', gold: 2 },
@@ -195,8 +195,6 @@ describe('ag-grid grouping display types and footers', () => {
         expect(irelandTotal.footer).toBe(true);
         expect(irelandTotal.isSelected()).toBeFalsy();
 
-        // Removing the total rows reaches _destroyRowNodeFooter, which severs both sibling links
-        // but leaves footer === true on the destroyed node.
         api.setGridOption('groupTotalRow', undefined);
 
         await new GridRows(api, 'after removing group total rows').check(`

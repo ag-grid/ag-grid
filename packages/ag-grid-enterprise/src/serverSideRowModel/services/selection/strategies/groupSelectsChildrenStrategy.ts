@@ -173,24 +173,42 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 this.error(130);
                 return 0;
             }
+            const node = nodes[0].primaryRow;
+            // selection is keyed by row id, and only the root is allowed to have none
+            if (node.id === undefined && node.level !== -1) {
+                return 0;
+            }
             this.deselectAllRowNodes();
         }
 
+        let updatedCount = 0;
         for (const rowNode of nodes) {
             const node = rowNode.primaryRow;
-            // the grand total row resolves to the root node, which has no id and is not selectable
-            if (node.id !== undefined) {
+            if (node.level === -1) {
+                // the root has no route of its own, so selecting it means the whole tree
+                this.selectedState = { selectAllChildren: newValue, toggledNodes: new Map() };
+                updatedCount++;
+            } else if (node.id !== undefined) {
                 this.recursivelySelectNode(this.getRouteToNode(node), this.selectedState, newValue);
+                updatedCount++;
             }
         }
+        if (updatedCount === 0) {
+            return 0;
+        }
+
         this.removeRedundantState();
         if (nodes.length === 1 && source === 'api') {
             this.selectionCtx.setRoot(nodes[0].primaryRow);
         }
-        return 1;
+        return updatedCount;
     }
 
     public isNodeSelected(node: RowNode): boolean | undefined {
+        if (node.level === -1) {
+            // only an explicit whole-tree selection marks the root; a partial one leaves it alone
+            return this.selectedState.selectAllChildren;
+        }
         const path = this.getRouteToNode(node);
         return this.isNodePathSelected(path, this.selectedState);
     }

@@ -441,8 +441,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         sequence = { value: 0 },
         includeFooterNodes = false
     ): void {
-        // the position is re-read here while the footer node is only created when display indexes are
-        // assigned, so both are required before visiting - as for the grand total row below
+        // the callback can answer before `setDisplayIndexes` has created the node, so both are required
         const groupTotalPosition = this.getGroupTotalRowPosition();
         const groupTotalNode = this.parentRowNode.sibling;
         if (groupTotalPosition === 'top' && groupTotalNode) {

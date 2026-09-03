@@ -471,9 +471,8 @@ describe('SSRM group total row callback disagreeing with the footer sibling', ()
         },
     });
 
-    // A function-valued `groupTotalRow` is re-evaluated on export, while the footer sibling row node is
-    // only created when display indexes are assigned. An app whose callback answer changes without a
-    // grid update leaves the two out of step — the export must skip the missing footer, not throw.
+    // a function-valued `groupTotalRow` is re-read on export while the footer node is only created when
+    // display indexes are assigned, so the two can disagree and the export must skip the missing footer
     async function exportSkipsFooterlessGroupTotalRow(position: 'top' | 'bottom'): Promise<void> {
         let footerPosition: 'top' | 'bottom' | undefined = undefined;
 
@@ -496,11 +495,12 @@ describe('SSRM group total row callback disagreeing with the footer sibling', ()
 
         footerPosition = position;
 
-        let csv: string | undefined;
-        expect(() => {
-            csv = api.getDataAsCsv({ suppressQuotes: true });
-        }).not.toThrow();
-        expect(csv).not.toContain('Total Ireland');
+        expect(unindentText(api.getDataAsCsv({ suppressQuotes: true }))).toEqual(unindentText`
+            Country,sum(Medals)
+             -> Ireland,
+            ,2
+            ,3
+        `);
     }
 
     test('export skips a top group total row with no footer sibling', async () => {

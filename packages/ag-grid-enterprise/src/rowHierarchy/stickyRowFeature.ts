@@ -69,8 +69,9 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
      * Get the first pixel of the group, this pixel is used to push the sticky node down out of the viewport
      */
     private getFirstPixelOfGroup(row: RowNode): number {
-        if (row.footer) {
-            return row.sibling.rowTop! + row.sibling.rowHeight! - 1;
+        const sibling = row.footer && row.sibling;
+        if (sibling) {
+            return sibling.rowTop! + sibling.rowHeight! - 1;
         }
 
         if (row.hasChildren()) {
@@ -514,7 +515,7 @@ function getServerSideLastPixelOfGroup(row: RowNode): number {
         if (noOrContiguousSiblings) {
             let storeBounds = row.childStore?.getStoreBounds();
             if (row.footer) {
-                storeBounds = row.sibling.childStore?.getStoreBounds();
+                storeBounds = row.sibling?.childStore?.getStoreBounds();
             }
             return (storeBounds?.heightPx ?? 0) + (storeBounds?.topPx ?? 0);
         }
@@ -532,7 +533,8 @@ function getServerSideLastPixelOfGroup(row: RowNode): number {
 function getClientSideLastPixelOfGroup(row: RowNode): number {
     if (row.isExpandable() || row.footer) {
         // grand total row at top, nothing can push it out of sticky.
-        if (row.footer && row.rowIndex === 0) {
+        const grandTotalAtTop = row.footer && row.rowIndex === 0;
+        if (grandTotalAtTop) {
             return Number.MAX_SAFE_INTEGER;
         }
 
@@ -541,7 +543,7 @@ function getClientSideLastPixelOfGroup(row: RowNode): number {
         // to find last px
         const noOrContiguousSiblings = !row.sibling || Math.abs(row.sibling.rowIndex! - row.rowIndex!) === 1;
         if (noOrContiguousSiblings) {
-            let lastAncestor = row.footer ? row.sibling : row;
+            let lastAncestor = (row.footer && row.sibling) || row;
             while (lastAncestor.isExpandable() && lastAncestor.expanded) {
                 if (lastAncestor.master && lastAncestor.detailNode) {
                     lastAncestor = lastAncestor.detailNode;

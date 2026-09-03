@@ -181,16 +181,24 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     private shotgunResetNodeSelectionState(source?: SelectionEventSourceType) {
-        this.beans.rowModel.forEachNode((node) => {
-            if (node.stub) {
-                return;
-            }
-
+        const syncNode = (node: RowNode) => {
             const isNodeSelected = this.selectionStrategy.isNodeSelected(node);
             if (isNodeSelected !== node.isSelected()) {
                 this.selectRowNode(node, isNodeSelected, undefined, source);
             }
+        };
+
+        this.beans.rowModel.forEachNode((node) => {
+            if (!node.stub) {
+                syncNode(node);
+            }
         });
+
+        // forEachNode skips the root, whose selection the grand total row reports as its own
+        const rootNode = this.beans.rowModel.rootNode;
+        if (rootNode) {
+            syncNode(rootNode);
+        }
     }
 
     public getSelectedNodes(): RowNode<any>[] {

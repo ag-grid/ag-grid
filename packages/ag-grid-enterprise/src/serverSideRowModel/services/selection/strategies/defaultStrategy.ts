@@ -5,9 +5,15 @@ import type {
     RowNode,
     RowRangeSelectionContext,
 } from 'ag-grid-community';
-import { BeanStub, _isMultiRowSelection, _isUsingNewRowSelectionAPI } from 'ag-grid-community';
+import { BeanStub, ROOT_NODE_ID, _isMultiRowSelection, _isUsingNewRowSelectionAPI } from 'ag-grid-community';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
+
+/**
+ * The server-side root carries no id of its own, so the grand total row - which resolves to it - is keyed
+ * under the well-known id the client-side root uses. Returns `undefined` for a row that cannot be keyed.
+ */
+const selectionKey = (node: RowNode): string | undefined => node.id ?? (node.level === -1 ? ROOT_NODE_ID : undefined);
 
 interface SelectedState {
     /** Base selection state for all nodes, whether they have been loaded or not */
@@ -113,15 +119,15 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 return 0;
             }
             const node = nodes[0].primaryRow;
-            // the grand total row resolves to the root node, which has no id and is not selectable
-            if (node.id === undefined) {
+            const key = selectionKey(node);
+            if (key === undefined) {
                 return 0;
             }
             if (newValue && node.selectable) {
-                this.selectedNodes = { [node.id!]: node };
+                this.selectedNodes = { [key]: node };
                 this.selectedState = {
                     selectAll: false,
-                    toggledNodes: new Set([node.id!]),
+                    toggledNodes: new Set([key]),
                 };
             } else {
                 this.selectedNodes = {};
@@ -133,26 +139,27 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             return 1;
         }
 
-        const updateNodeState = (node: RowNode, value = newValue) => {
+        const updateNodeState = (node: RowNode, key: string, value = newValue) => {
             if (value && node.selectable) {
-                this.selectedNodes[node.id!] = node;
+                this.selectedNodes[key] = node;
             } else {
-                delete this.selectedNodes[node.id!];
+                delete this.selectedNodes[key];
             }
 
             const doesNodeConform = value === this.selectedState.selectAll;
             if (doesNodeConform || !node.selectable) {
-                this.selectedState.toggledNodes.delete(node.id!);
+                this.selectedState.toggledNodes.delete(key);
             } else {
-                this.selectedState.toggledNodes.add(node.id!);
+                this.selectedState.toggledNodes.add(key);
             }
         };
 
         let updatedCount = 0;
         for (const rowNode of nodes) {
             const node = rowNode.primaryRow;
-            if (node.id !== undefined) {
-                updateNodeState(node);
+            const key = selectionKey(node);
+            if (key !== undefined) {
+                updateNodeState(node, key);
                 updatedCount++;
             }
         }
@@ -173,7 +180,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public isNodeSelected(node: RowNode): boolean | undefined {
-        const isToggled = this.selectedState.toggledNodes.has(node.id!);
+        const isToggled = this.selectedState.toggledNodes.has(selectionKey(node)!);
         return this.selectedState.selectAll ? !isToggled : isToggled;
     }
 
@@ -194,7 +201,15 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public getSelectedRows(): any[] {
-        return (this.getSelectedNodes() ?? []).map((node) => node.data);
+        const nodes = this.getSelectedNodes() ?? [];
+        const selectedRows: any[] = [];
+        for (let i = 0, len = nodes.length; i < len; ++i) {
+            const data = nodes[i].data;
+            if (data) {
+                selectedRows.push(data);
+            }
+        }
+        return selectedRows;
     }
 
     public getSelectionCount(): number {

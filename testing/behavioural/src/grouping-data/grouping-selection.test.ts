@@ -3,7 +3,12 @@ import { assertSelectedRowsById } from 'ag-test-utils/test-utils-assertions';
 import { waitForEvent } from 'ag-test-utils/test-utils-events';
 
 import type { RowSelectedEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GROUP_TOTAL_ROW_ID_PREFIX,
+    RowSelectionModule,
+    TextFilterModule,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../selection/utils';
@@ -555,5 +560,43 @@ describe('ag-grid grouping selection', () => {
 
         actions.toggleCheckboxByIndex(6, { shiftKey: true });
         assertSelectedRowsById(['row-group-team-A', 'a1', 'a2', 'a3', 'row-group-team-B', 'b1', 'b2', 'c1'], api);
+    });
+
+    test('a destroyed group total row still reports and forwards its group selection', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
+            { id: '2', country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
+            { id: '3', country: 'Italy', athlete: 'Mario Rossi', gold: 3 },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', groupSelects: 'self' },
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // captured before the destroy, which drops the group's own link to it
+        const irelandTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'row-group-country-Ireland')!;
+        const ireland = api.getRowNode('row-group-country-Ireland')!;
+
+        ireland.setSelected(true);
+        expect(irelandTotal.isSelected()).toBe(true);
+
+        api.setGridOption('groupTotalRow', undefined);
+        expect(irelandTotal.destroyed).toBe(true);
+        expect(irelandTotal.isSelected()).toBe(true);
+
+        api.setNodesSelected({ nodes: [irelandTotal], newValue: false, source: 'api' });
+        expect(ireland.isSelected()).toBe(false);
+        expect(irelandTotal.isSelected()).toBe(false);
+        assertSelectedRowsById([], api);
     });
 });

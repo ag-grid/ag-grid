@@ -21,9 +21,8 @@ export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection, id
 
     footerNode.id = id ?? GROUP_TOTAL_ROW_ID_PREFIX + rowNode.id;
 
-    // get both header and footer to reference each other as siblings. this is never undone,
-    // only overwritten. so if a group is expanded, then contracted, it will have a ghost
-    // sibling - but that's fine, as we can ignore this if the header is contracted.
+    // if a group is expanded, then contracted, it will have a ghost sibling - but that's fine,
+    // as we can ignore this if the header is contracted.
     footerNode.sibling = rowNode;
     rowNode.sibling = footerNode;
 
