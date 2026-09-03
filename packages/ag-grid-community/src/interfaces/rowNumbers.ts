@@ -17,6 +17,7 @@ export interface RowNumbersOptions extends Pick<
     | 'headerComponentParams'
     | 'suppressHeaderKeyboardEvent'
     | 'suppressNavigable'
+    | 'tooltip'
     | 'tooltipField'
     | 'tooltipValueGetter'
     | 'tooltipComponent'

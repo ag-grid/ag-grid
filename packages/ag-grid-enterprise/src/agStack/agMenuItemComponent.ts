@@ -657,6 +657,7 @@ export class AgMenuItemComponent<
             false,
             {
                 getGui: () => this.getGui(),
+                getTooltipComponentDefinition: () => undefined,
                 getTooltipValue: () => this.tooltip,
                 getLocation: () => 'menu',
                 shouldDisplayTooltip,

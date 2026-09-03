@@ -101,6 +101,8 @@ export class AgSelect<
                 {
                     shouldDisplayTooltip: _isElementOverflowingCallback(() => this.eDisplayField),
                     getGui: () => this.getGui(),
+                    getTooltipComponentDefinition: () => undefined,
+                    getLocation: () => 'select',
                 } as TooltipCtrl<string, any>
             )
         );

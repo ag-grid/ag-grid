@@ -14,21 +14,22 @@ import type {
     AgColumn,
     AgEvent,
     ColDef,
+    ComponentInstanceClaim,
     ElementParams,
     FilterDisplayParams,
     GridCheckbox,
     ICellRendererComp,
     ISetFilterCellRendererParams,
     ISetFilterParams,
-    ITooltipCtrl,
-    ITooltipCtrlParams,
     SetFilterModel,
     TooltipFeature,
+    TooltipSourceParams,
     ValueFormatterParams,
 } from 'ag-grid-community';
 import {
     AgCheckboxSelector,
     Component,
+    ComponentInstanceGuard,
     _addGridCommonParams,
     _createIcon,
     _getCellRendererDetails,
@@ -126,6 +127,9 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private destroyCellRendererComponent?: () => void;
     private tooltipFeature?: TooltipFeature;
     private shouldDisplayTooltip?: () => boolean;
+    private readonly rendererGuard = new ComponentInstanceGuard();
+    private rendererClaim?: ComponentInstanceClaim;
+    private pendingCellRendererClaim?: ComponentInstanceClaim;
     private formattedValue: string | null = null;
 
     constructor(params: SetFilterListItemParams<V>) {
@@ -147,13 +151,14 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
 
     public postConstruct(): void {
         this.tooltipFeature = this.createOptionalManagedBean(
-            this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.focusWrapper,
+                getTooltipComponentDefinition: () => this.params.colDef,
                 getLocation: () => 'setFilterValue',
                 shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
                 getAdditionalParams: () => {
                     const { colDef, column } = this.params;
-                    const additionalParams: ITooltipCtrlParams = {
+                    const additionalParams: TooltipSourceParams = {
                         colDef,
                         column: column as AgColumn,
                         valueFormatted: this.formattedValue ?? undefined,
@@ -163,7 +168,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
                     }
                     return additionalParams;
                 },
-            } as ITooltipCtrl)
+            })
         );
 
         this.addDestroyFunc(() => this.destroyCellRendererComponent?.());
@@ -338,15 +343,27 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             this.setSelected(isSelected, true);
         }
         this.setExpanded(isExpanded, true);
-        const { cellRendererComponent, cellRendererParams, beans, params } = this;
+        let rendererValue = this.cellRendererParams.value;
+        let formattedValue = this.formattedValue;
+        let renderWithoutRenderer = false;
         if (this.valueFunction) {
             // underlying value might have changed, so call again and re-render
             const value = this.valueFunction();
-            this.setTooltipAndCellRendererParams(value as any, value);
-            if (!cellRendererComponent) {
-                this.renderCellWithoutCellRenderer();
-            }
+            rendererValue = value as any;
+            formattedValue = value;
+            renderWithoutRenderer = !this.cellRendererComponent;
         }
+        const hasActiveRenderer = !!this.cellRendererComponent;
+        const hadPendingRenderer = this.pendingCellRendererClaim != null;
+        this.setTooltipAndCellRendererParams(rendererValue, formattedValue, !hasActiveRenderer);
+        if (hadPendingRenderer) {
+            this.renderCell();
+        }
+        if (renderWithoutRenderer) {
+            this.renderCellWithoutCellRenderer();
+        }
+
+        const { cellRendererComponent, cellRendererParams, beans, params } = this;
         if (cellRendererComponent) {
             // need to get correct params for refresh from comp details
             const compDetails = _getCellRendererDetails<
@@ -356,6 +373,9 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             const success = cellRendererComponent.refresh?.(compDetails?.params ?? cellRendererParams);
             if (!success) {
                 const oldComponent = cellRendererComponent;
+                this.cellRendererComponent = undefined;
+                this.destroyCellRendererComponent = undefined;
+                this.setTooltipAndCellRendererParams(rendererValue, formattedValue);
                 this.renderCell();
                 this.destroyBean(oldComponent);
             }
@@ -388,15 +408,27 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         this.renderCell();
     }
 
-    private setTooltipAndCellRendererParams(value: V | null | (() => string), formattedValue: string | null): void {
+    private setTooltipAndCellRendererParams(
+        value: V | null | (() => string),
+        formattedValue: string | null,
+        resetTooltip = true
+    ): void {
         const gos = this.gos;
-        if (this.params.showTooltips && (!_isShowTooltipWhenTruncated(gos) || !this.params.cellRenderer)) {
-            const newTooltipText = formattedValue != null ? formattedValue : _toStringOrNull(value);
-            this.shouldDisplayTooltip = _getShouldDisplayTooltip(
-                gos,
-                () => this.eCheckbox.getGui().querySelector('.ag-label') as HTMLElement | undefined
-            );
-            this.tooltipFeature?.setTooltipAndRefresh(newTooltipText);
+        const rendererClaim = this.rendererGuard.claim();
+        this.rendererClaim = rendererClaim;
+        this.formattedValue = formattedValue;
+        if (resetTooltip) {
+            if (this.params.showTooltips && (!_isShowTooltipWhenTruncated(gos) || !this.params.cellRenderer)) {
+                const newTooltipText = formattedValue != null ? formattedValue : _toStringOrNull(value);
+                this.shouldDisplayTooltip = _getShouldDisplayTooltip(
+                    gos,
+                    () => this.eCheckbox.getGui().querySelector('.ag-label') as HTMLElement | undefined
+                );
+                this.tooltipFeature?.setTooltipAndRefresh(newTooltipText);
+            } else {
+                this.shouldDisplayTooltip = undefined;
+                this.tooltipFeature?.setTooltipAndRefresh(null);
+            }
         }
 
         this.cellRendererParams = _addGridCommonParams(gos, {
@@ -406,8 +438,10 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             column: this.params.column,
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                 gos.assertModuleRegistered('Tooltip', 3);
-                this.shouldDisplayTooltip = shouldDisplayTooltip;
-                this.tooltipFeature?.setTooltipAndRefresh(value);
+                if (rendererClaim.isCurrent()) {
+                    this.shouldDisplayTooltip = shouldDisplayTooltip;
+                    this.tooltipFeature?.setTooltipAndRefresh(value);
+                }
             },
         });
     }
@@ -422,14 +456,24 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             ISetFilterCellRendererParams
         >(this.beans.userCompFactory, this.params, this.cellRendererParams);
         const cellRendererPromise = compDetails?.newAgStackInstance();
+        const rendererClaim = this.rendererClaim!;
 
         if (cellRendererPromise == null) {
+            this.pendingCellRendererClaim = undefined;
             this.renderCellWithoutCellRenderer();
             return;
         }
 
+        this.pendingCellRendererClaim = rendererClaim;
         cellRendererPromise.then((component) => {
+            if (this.pendingCellRendererClaim === rendererClaim) {
+                this.pendingCellRendererClaim = undefined;
+            }
             if (component) {
+                if (!this.isAlive() || !rendererClaim.isCurrent()) {
+                    this.destroyBean(component);
+                    return;
+                }
                 this.cellRendererComponent = component;
                 this.eCheckbox.setLabel(component.getGui());
                 this.destroyCellRendererComponent = () => this.destroyBean(component);
@@ -447,6 +491,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
 
         this.eCheckbox.setLabel(valueToRender);
         this.setupFixedAriaLabels(valueToRender);
+    }
+
+    public override destroy(): void {
+        this.rendererGuard.invalidate();
+        this.pendingCellRendererClaim = undefined;
+        super.destroy();
     }
 
     public getComponentHolder(): ColDef {

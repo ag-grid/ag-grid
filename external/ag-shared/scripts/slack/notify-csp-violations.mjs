@@ -13,9 +13,13 @@
  * would otherwise read as a policy being fixed. Set RUN_COMPLETE=false for such a run and it will
  * still report anything new, without claiming anything was resolved.
  *
+ * A violation the suite marked `accepted` — one the policy knowingly produces and will not be
+ * changed to fix, with the reason carried on the record — is neither counted nor diffed. It is
+ * listed in the step summary so the decision stays visible, and never posted to Slack.
+ *
  * Expects a report as written by the suite's CSP reporter:
  *   { baseUrl?: string, violations: [{ key, directive, blockedUri, disposition, suggestedHashes,
- *     sourceFiles, pages, tests }] }
+ *     sourceFiles, pages, tests, accepted? }] }
  *
  * Env: CSP_REPORT_FILE (required), PREVIOUS_CSP_REPORT_FILE, RUN_COMPLETE, SLACK_CHANNEL,
  * SLACK_BOT_OAUTH_TOKEN, PROJECT_TITLE, SITE_URL, RUN_URL, COMMIT_SHA, DRY_RUN,
@@ -54,7 +58,12 @@ const readReport = (file) => {
     }
 };
 
-const enforcedOf = (report) => (report?.violations ?? []).filter((violation) => violation.disposition === 'enforce');
+const isAccepted = (violation) => typeof violation.accepted === 'string';
+// Enforced and not accepted: what the owning team is being asked to act on.
+const enforcedOf = (report) =>
+    (report?.violations ?? []).filter((violation) => violation.disposition === 'enforce' && !isAccepted(violation));
+const acceptedOf = (report) =>
+    (report?.violations ?? []).filter((violation) => violation.disposition === 'enforce' && isAccepted(violation));
 
 const truncate = (text, limit = MAX_BLOCK_TEXT) => (text.length > limit ? `${text.slice(0, limit - 3)}...` : text);
 
@@ -88,7 +97,8 @@ if (!report) {
 
 const siteUrl = process.env.SITE_URL || report.baseUrl || '';
 const enforced = enforcedOf(report);
-const reportOnlyCount = (report.violations ?? []).length - enforced.length;
+const accepted = acceptedOf(report);
+const reportOnlyCount = (report.violations ?? []).length - enforced.length - accepted.length;
 
 const candidateBaseline = readReport(previousReportFile);
 // A manual run can target any URL, and its report is uploaded like any other, so the most recent
@@ -108,8 +118,11 @@ const resolved = isRunComplete ? enforcedOf(previousReport).filter((violation) =
 for (const violation of enforced) {
     console.log(`::warning title=CSP violation::${describe(violation)}`);
 }
+for (const violation of accepted) {
+    console.log(`::notice title=Accepted CSP violation::${describe(violation)} - ${violation.accepted}`);
+}
 console.log(
-    `${enforced.length} enforced violation(s), ${reportOnlyCount} report-only, ` +
+    `${enforced.length} enforced violation(s), ${accepted.length} accepted, ${reportOnlyCount} report-only, ` +
         `${added.length} new, ${resolved.length} resolved` +
         (previousReport ? '' : ' (no usable baseline to compare against)') +
         (isRunComplete ? '' : ' (incomplete run: not reporting anything as resolved)')
@@ -121,9 +134,19 @@ if (stepSummaryFile) {
               `### CSP violations on ${projectTitle} (${siteUrl})`,
               '',
               ...enforced.map((violation) => `- ${added.includes(violation) ? '**new** ' : ''}${describe(violation)}`),
-              ...(reportOnlyCount ? ['', `${reportOnlyCount} report-only violation(s) not listed.`] : []),
           ]
         : [`### No enforced CSP violations on ${projectTitle} (${siteUrl})`];
+    if (accepted.length) {
+        summary.push(
+            '',
+            `#### Accepted (${accepted.length})`,
+            '',
+            ...accepted.map((violation) => `- ${describe(violation)}<br>${violation.accepted}`)
+        );
+    }
+    if (reportOnlyCount) {
+        summary.push('', `${reportOnlyCount} report-only violation(s) not listed.`);
+    }
     fs.appendFileSync(stepSummaryFile, `${summary.join('\n')}\n`, 'utf8');
 }
 
@@ -165,6 +188,9 @@ if (resolved.length) {
             )
         )
     );
+}
+if (accepted.length) {
+    blocks.push(context(`${accepted.length} accepted violation(s) not listed; see the run summary.`));
 }
 blocks.push(
     context(

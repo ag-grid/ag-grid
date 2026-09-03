@@ -33,6 +33,8 @@ import {
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
+import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from '../tooltip/legacyTooltipTestUtils';
+
 /** Reads the rendered height of the (single) column header row from the grid DOM. */
 function getHeaderRowHeight(api: GridApi): number {
     const gridElement = TestGridsManager.getHTMLElement(api)!;
@@ -56,6 +58,7 @@ describe('Column Features', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        resetLegacyTooltipProperties();
     });
 
     describe('column spanning (colSpan)', () => {
@@ -752,6 +755,8 @@ describe('Column Features', () => {
 
     describe('Column public-interface getters', () => {
         test('reflect colDef-driven flags (resizable / sortable / minWidth / maxWidth / fieldDots / tooltip / dndSource / rowDrag / isCellCheckboxSelection)', async () => {
+            // Retains compatibility coverage for the legacy tooltip-field Column getters.
+            allowLegacyTooltipProperties();
             // Single fixture exercising the bulk of Column public-interface getters that flip from
             // colDef properties. Each assertion is independent — combined to avoid N grid setups.
             const api = gridsManager.createGrid('myGrid', {
