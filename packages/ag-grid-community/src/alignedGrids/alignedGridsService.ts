@@ -238,27 +238,32 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
             case 'columnResized': {
                 const resizedEvent = colEvent as ColumnResizedEvent;
 
-                const columnWidths: {
-                    [key: string]: {
-                        key: string | AgColumn;
-                        newWidth: number;
-                    };
-                } = {};
-                for (const column of masterColumns) {
-                    columnWidths[column.getId()] = { key: column.colId, newWidth: column.getActualWidth() };
-                }
                 // don't set flex columns width
-                for (const col of resizedEvent.flexColumns ?? []) {
-                    if (columnWidths[col.getId()]) {
-                        delete columnWidths[col.getId()];
+                const flexColIds = new Set((resizedEvent.flexColumns ?? []).map((col) => col.getColId()));
+                const columnWidths: { key: string; newWidth: number; userSized: boolean }[] = [];
+                for (const column of masterColumns) {
+                    const colId = column.getColId();
+                    if (!flexColIds.has(colId)) {
+                        columnWidths.push({
+                            key: colId,
+                            newWidth: column.getActualWidth(),
+                            userSized: column.isUserSized(),
+                        });
                     }
                 }
-                colResize?.setColumnWidths(
-                    Object.values(columnWidths),
-                    false,
-                    resizedEvent.finished,
-                    'alignedGridChanged'
-                );
+                colResize?.setColumnWidths(columnWidths, false, resizedEvent.finished, 'alignedGridChanged');
+
+                // aligned grids are one logical column set, so width ownership travels with the width:
+                // without it, continuous auto-sizing here would undo a user resize made in the master and,
+                // through the resize this grid fires back, undo it there as well. Only for the widths that
+                // landed — this grid's own min/max can reject them, and an unsynchronised column has to stay
+                // eligible for auto-sizing.
+                for (const { key, newWidth, userSized } of columnWidths) {
+                    const col = colModel.getNonPivotCol(key);
+                    if (col?.getActualWidth() === newWidth) {
+                        col.setUserSized(userSized);
+                    }
+                }
                 break;
             }
         }
