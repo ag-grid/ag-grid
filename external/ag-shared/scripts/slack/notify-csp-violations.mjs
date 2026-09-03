@@ -181,6 +181,9 @@ const baseMessage = {
     channel,
     username: 'ag-grid CI',
     icon_url: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png',
+    // The footer links to the site and the CI run; a preview card for either only adds noise.
+    unfurl_links: false,
+    unfurl_media: false,
 };
 
 // The channel post: headline and links only. Everything per-violation goes in the thread.
