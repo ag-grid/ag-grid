@@ -366,7 +366,6 @@ export class RowNode<TData = any>
      * Like {@link updateData}, but does NOT mirror the data onto `this.sibling`. Used for
      * row nodes whose sibling must not share data — e.g. the SSRM grand total node, whose
      * sibling is the root.
-     * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
      */
     public _updateDataNoSibling(data: TData): void {
         this.setDataCommon(data, 'updateNoSibling');

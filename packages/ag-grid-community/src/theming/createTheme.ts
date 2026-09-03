@@ -5,7 +5,6 @@ import { _errorWithoutAttribution, _logPreInitErr, _warnWithoutAttribution } fro
 import type { CoreParams } from './core/core-css';
 import { coreDefaults } from './core/core-css';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const gridThemeLogger: ThemeLogger = {
     warn: (...args) => {
         // temp typing needed here to link theme error type and grid error type
