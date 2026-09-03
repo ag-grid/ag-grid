@@ -184,6 +184,7 @@ export const AG_GRID_LOCALE_PK = {
     advancedFilterValidationExtraEndBracket: 'زیادہ اختتامی بریکٹس',
     advancedFilterValidationMessage: 'اظہار میں ایک نقص ہے. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'اظہار میں ایک نقص ہے. ${variable} اظہار کے آخر میں.',
+    advancedFilterValidationMessageOnly: 'اظہار میں ایک نقص ہے. ${variable}.',
     advancedFilterBuilderTitle: 'ایڈوانسڈ فلٹر',
     advancedFilterBuilderApply: 'لاگو کریں',
     advancedFilterBuilderClear: 'صاف کریں',

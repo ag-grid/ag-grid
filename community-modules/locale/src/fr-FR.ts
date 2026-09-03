@@ -185,6 +185,7 @@ export const AG_GRID_LOCALE_FR = {
     advancedFilterValidationExtraEndBracket: 'Trop de crochets de fin',
     advancedFilterValidationMessage: "L'expression contient une erreur. ${variable} - ${variable}.",
     advancedFilterValidationMessageAtEnd: "L'expression contient une erreur. ${variable} à la fin de l'expression.",
+    advancedFilterValidationMessageOnly: "L'expression contient une erreur. ${variable}.",
     advancedFilterBuilderTitle: 'Filtre Avancé',
     advancedFilterBuilderApply: 'Appliquer',
     advancedFilterBuilderClear: 'Effacer',

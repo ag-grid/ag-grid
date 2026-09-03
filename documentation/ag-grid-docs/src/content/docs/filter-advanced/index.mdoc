@@ -120,29 +120,29 @@ For all [Cell Data Types](./cell-data-types/), the available filter options can 
 
 The available options are as follows:
 
-| Option Name      | Option Key           | Cell Data Type                                                                            |
-| ---------------- | -------------------- | ----------------------------------------------------------------------------------------- |
-| contains         | `contains`           | `text`, `object`                                                                          |
-| does not contain | `notContains`        | `text`, `object`                                                                          |
-| equals           | `equals`             | `text`, `object`                                                                          |
-| =                | `equals`             | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| does not equal   | `notEqual`           | `text`, `object`                                                                          |
-| !=               | `notEqual`           | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| begins with      | `startsWith`         | `text`, `object`                                                                          |
-| ends with        | `endsWith`           | `text`, `object`                                                                          |
-| is blank         | `blank`              | `text`, `number`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
-| is not blank     | `notBlank`           | `text`, `number`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
-| >                | `greaterThan`        | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| >=               | `greaterThanOrEqual` | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| <                | `lessThan`           | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| <=               | `lessThanOrEqual`    | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| is between       | `inRange`            | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| is true          | `true`               | `boolean`                                                                                 |
-| is false         | `false`              | `boolean`                                                                                 |
+| Option Name      | Option Key           | Cell Data Type                                                                                      |
+| ---------------- | -------------------- | --------------------------------------------------------------------------------------------------- |
+| contains         | `contains`           | `text`, `object`                                                                                    |
+| does not contain | `notContains`        | `text`, `object`                                                                                    |
+| equals           | `equals`             | `text`, `object`                                                                                    |
+| =                | `equals`             | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| does not equal   | `notEqual`           | `text`, `object`                                                                                    |
+| !=               | `notEqual`           | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| begins with      | `startsWith`         | `text`, `object`                                                                                    |
+| ends with        | `endsWith`           | `text`, `object`                                                                                    |
+| is blank         | `blank`              | `text`, `number`, `bigint`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
+| is not blank     | `notBlank`           | `text`, `number`, `bigint`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
+| >                | `greaterThan`        | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| >=               | `greaterThanOrEqual` | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| <                | `lessThan`           | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| <=               | `lessThanOrEqual`    | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| is between       | `inRange`            | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| is true          | `true`               | `boolean`                                                                                           |
+| is false         | `false`              | `boolean`                                                                                           |
 
 `is between` takes two values, written as a comma-separated pair: `[Age] is between (21, 38)`. The range is exclusive of both ends unless `inRangeInclusive = true` is set, exactly as it is in the [Number Filter](./filter-number/) and the [Date Filter](./filter-date/).
 
-The Advanced Filter does not validate the order of the two values, where the column filters refuse to apply a range whose first value is not below its second. A reversed range is applied here and matches no row.
+The two values are validated against each other, as the column filters validate the pair of inputs they show for a range: the first must be below the second, or equal to it where `inRangeInclusive = true` is set. A range whose values are in the wrong order is invalid and is not applied.
 
 For `text` and `object` Cell Data Types, `caseSensitive = true` can be set to enable case sensitivity.
 
@@ -229,7 +229,7 @@ The following example demonstrates the built-in range and relative date options:
 
 ### Custom Filter Options
 
-`filterOptions` also accepts [Custom Filter Options](./filter-conditions/#custom-filter-options). The Advanced Filter evaluates the same `predicate` as the column filter, and supports options taking 0, 1 or 2 values. As with the settings above, the `predicate` runs only under the Client-Side Row Model: with the Server-Side Row Model the option reaches the server as its `displayKey` in the filter model, where the server-side filtering logic decides what it means.
+`filterOptions` also accepts [Custom Filter Options](./filter-conditions/#custom-filter-options). The Advanced Filter evaluates the same `predicate` as the column filter, and supports options taking 0, 1 or 2 values. An option taking two values has them validated against each other in the same way as `is between`, as the column filter validates the two inputs it shows for one. As with the settings above, the `predicate` runs only under the Client-Side Row Model: with the Server-Side Row Model the option reaches the server as its `displayKey` in the filter model, where the server-side filtering logic decides what it means.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

@@ -77,6 +77,7 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
         `Expression has an error. ${variableValues[0]} - ${variableValues[1]}.`,
     advancedFilterValidationMessageAtEnd: (variableValues: string[]) =>
         `Expression has an error. ${variableValues[0]} at end of expression.`,
+    advancedFilterValidationMessageOnly: (variableValues: string[]) => `Expression has an error. ${variableValues[0]}.`,
     advancedFilterBuilderTitle: 'Advanced Filter',
     advancedFilterBuilderApply: 'Apply',
     advancedFilterBuilderCancel: 'Cancel',

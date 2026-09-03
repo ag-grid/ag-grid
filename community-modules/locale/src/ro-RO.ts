@@ -184,6 +184,7 @@ export const AG_GRID_LOCALE_RO = {
     advancedFilterValidationExtraEndBracket: 'Prea multe paranteze de încheiere',
     advancedFilterValidationMessage: 'Expresia are o eroare. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Expresia are o eroare. ${variable} la sfârșitul expresiei.',
+    advancedFilterValidationMessageOnly: 'Expresia are o eroare. ${variable}.',
     advancedFilterBuilderTitle: 'Filtru Avansat',
     advancedFilterBuilderApply: 'Aplică',
     advancedFilterBuilderClear: 'Șterge',

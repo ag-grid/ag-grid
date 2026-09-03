@@ -26,6 +26,7 @@ import type {
 } from './filterExpressionOperators';
 import {
     BooleanFilterExpressionOperators,
+    OPERAND_COUNT,
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
@@ -283,7 +284,8 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     /** The whole operand region: one value, or the comma-separated bracketed pair an option taking two writes. */
     private getOperandDisplayValue(model: ColumnAdvancedFilterModel): string {
         const { filter, filterTo } = model as ColumnFilterModelOperands;
-        const numOperands = this.getModelOperator(model)?.numOperands;
+        const operator = this.getModelOperator(model);
+        const numOperands = operator ? OPERAND_COUNT[operator.operands] : undefined;
         // A slot the option does not take is not its value, and writing it spells an expression nothing parses.
         if (numOperands === 0) {
             return '';

@@ -1,4 +1,11 @@
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import {
+    AdvancedFilterHarness,
+    ColumnFilterHarness,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
 
 import type { AdvancedFilterModel, ColumnAdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -7,6 +14,7 @@ import {
     DateFilterModule,
     NumberFilterModule,
     TextFilterModule,
+    setupAgTestIds,
 } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
@@ -55,6 +63,11 @@ describe('Advanced Filter matches the column filter', () => {
         ],
     });
 
+    beforeAll(() => {
+        setupAgTestIds();
+        installFilterLayoutMock();
+    });
+    afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
     /** The rows a column filter shows for `model`, applied to a grid with no Advanced Filter. */
@@ -328,18 +341,57 @@ describe('Advanced Filter matches the column filter', () => {
             expect(await withAdvancedFilter(advancedModel, blanksDefs)).toEqual(blanksIds);
         });
 
-        // Ordering is unvalidated in the Advanced Filter, so a reversed date pair applies and matches
-        // nothing rather than being rejected. Dates compare as `Date` objects, not as numbers.
-        test('a reversed date range applies and matches no row', async () => {
-            expect(
-                await withAdvancedFilter({
-                    filterType: 'dateString',
-                    colId: 'date',
-                    type: 'inRange',
-                    filter: '2020-07-23',
-                    filterTo: '2008-08-24',
-                })
-            ).toEqual([]);
+        // The one place the two deliberately part company. The ordering rule lives in the column filter's
+        // input validation, so a model set through its API bypasses it and applies; the Advanced Filter has
+        // only the one route in and rejects there. Asserted rather than omitted, so a change to either side
+        // fails here instead of quietly restoring the divergence this file exists to catch.
+        test('a reversed date range is rejected by the Advanced Filter where the column filter model applies it', async () => {
+            const reversed = { type: 'inRange', filter: '2020-07-23', filterTo: '2008-08-24' };
+
+            const advanced = await withAdvancedFilter({ filterType: 'dateString', colId: 'date', ...reversed });
+            const column = await withColumnFilter('date', { filterType: 'date', ...reversed });
+
+            expect(advanced).toEqual([0, 1, 2, 3, 4, 5, 6]); // no filter applied at all
+            expect(column).toEqual([]); // applied, and nothing can fall inside it
+            expect(advanced).not.toEqual(column);
+        });
+
+        // There is no invalid-range wording in the grid: the rule belongs to the column filter, so the
+        // Advanced Filter reports it in the column filter's own words, naming the bound the value must clear.
+        test("a reversed range is reported in the column filter's own words", async () => {
+            const columnDefs: GridOptions<TestRow>['columnDefs'] = [
+                { field: 'age', filter: 'agNumberColumnFilter', filterParams: { filterOptions: ['inRange'] } },
+            ];
+
+            const columnApi = await gridsManager.createGridAndWait('columnFilterGrid', {
+                columnDefs,
+                rowData: ROW_DATA,
+            });
+            const filter = await ColumnFilterHarness.open(columnApi, 'age');
+            await filter.setNumber(38, 0);
+            await filter.setNumber(21, 1);
+            const columnMessage = filter.input('number', 1).validationMessage;
+
+            const advancedApi = gridsManager.createGrid('advancedFilterGrid', {
+                columnDefs,
+                rowData: ROW_DATA,
+                enableAdvancedFilter: true,
+            });
+            await asyncSetTimeout(0);
+            const advanced = AdvancedFilterHarness.get(advancedApi);
+            await advanced.applyExpression('[Age] is between (38, 21)');
+            await asyncSetTimeout(0);
+
+            expect(columnMessage).toBe('Must be greater than 38');
+            expect(advanced.input.validationMessage).toBe(`Expression has an error. ${columnMessage}.`);
+        });
+
+        // Bigints are ordered as numbers, where the decimal text the model stores them as would put 9 above 10.
+        test('a bigint range is judged on the value, not on the text the model stores', async () => {
+            const model = { filterType: 'bigint' as const, colId: 'qty', type: 'inRange' as const };
+
+            expect(await withAdvancedFilter({ ...model, filter: '9', filterTo: '10' })).toEqual([]);
+            expect(await withAdvancedFilter({ ...model, filter: '10', filterTo: '9' })).toEqual([0, 1, 2, 3, 4, 5, 6]);
         });
     });
 });

@@ -184,6 +184,7 @@ export const AG_GRID_LOCALE_JP = {
     advancedFilterValidationExtraEndBracket: '終端の括弧が多すぎます',
     advancedFilterValidationMessage: '式にエラーがあります。${variable} - ${variable}。',
     advancedFilterValidationMessageAtEnd: '式にエラーがあります。式の最後に${variable}。',
+    advancedFilterValidationMessageOnly: '式にエラーがあります。${variable}。',
     advancedFilterBuilderTitle: '高度なフィルター',
     advancedFilterBuilderApply: '適用',
     advancedFilterBuilderClear: 'クリア',

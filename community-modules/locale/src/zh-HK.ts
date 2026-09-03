@@ -184,6 +184,7 @@ export const AG_GRID_LOCALE_HK = {
     advancedFilterValidationExtraEndBracket: '結尾括號過多',
     advancedFilterValidationMessage: '表達式有錯誤。${variable} - ${variable}。',
     advancedFilterValidationMessageAtEnd: '表達式有錯誤。${variable} 在表達式的結尾。',
+    advancedFilterValidationMessageOnly: '表達式有錯誤。${variable}。',
     advancedFilterBuilderTitle: '高級過濾器',
     advancedFilterBuilderApply: '應用',
     advancedFilterBuilderClear: '清除',

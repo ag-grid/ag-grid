@@ -184,6 +184,7 @@ export const AG_GRID_LOCALE_HR = {
     advancedFilterValidationExtraEndBracket: 'Previše završnih zagrada',
     advancedFilterValidationMessage: 'Izraz ima grešku. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Izraz ima grešku. ${variable} na kraju izraza.',
+    advancedFilterValidationMessageOnly: 'Izraz ima grešku. ${variable}.',
     advancedFilterBuilderTitle: 'Napredni filter',
     advancedFilterBuilderApply: 'Primijeni',
     advancedFilterBuilderClear: 'Očisti',

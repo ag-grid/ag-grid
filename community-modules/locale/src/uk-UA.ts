@@ -184,6 +184,7 @@ export const AG_GRID_LOCALE_UA = {
     advancedFilterValidationExtraEndBracket: 'Забагато кінцевих дужок',
     advancedFilterValidationMessage: 'У виразі є помилка. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'У виразі є помилка. ${variable} в кінці виразу.',
+    advancedFilterValidationMessageOnly: 'У виразі є помилка. ${variable}.',
     advancedFilterBuilderTitle: 'Розширений фільтр',
     advancedFilterBuilderApply: 'Застосувати',
     advancedFilterBuilderClear: 'Очистити',

@@ -2,7 +2,7 @@ import { AgInputNumberField } from '../../../agWidgets/agInputNumberField';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { ICombinedSimpleModel } from '../iSimpleFilter';
-import { _bindFilterCallback, getValidityMessageKey } from '../simpleFilterUtils';
+import { _bindFilterCallback, _getValidityMessageKey } from '../simpleFilterUtils';
 import type { RenderChange } from '../textInputSimpleFilter';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
@@ -87,7 +87,7 @@ export class NumberFilter extends TextInputSimpleFilter<
         if (numberOfInputs >= 2) {
             const fromValue = this.readValue(from, true);
             const toValue = this.readValue(to, true);
-            const localeKey = getValidityMessageKey(fromValue, toValue, isFrom, this.params.inRangeInclusive);
+            const localeKey = _getValidityMessageKey(fromValue, toValue, isFrom, this.params.inRangeInclusive);
             validityMessage = localeKey ? this.translate(localeKey, [String(isFrom ? toValue : fromValue)]) : '';
         }
         (isFrom ? from : to).setCustomValidity(validityMessage); // Set validity error state for target input

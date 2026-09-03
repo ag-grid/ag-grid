@@ -184,6 +184,7 @@ export const AG_GRID_LOCALE_GR = {
     advancedFilterValidationExtraEndBracket: 'Περισσότερα από ένα τελικά στηρίγματα',
     advancedFilterValidationMessage: 'Η έκφραση έχει σφάλμα. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Η έκφραση έχει σφάλμα. ${variable} στο τέλος της έκφρασης.',
+    advancedFilterValidationMessageOnly: 'Η έκφραση έχει σφάλμα. ${variable}.',
     advancedFilterBuilderTitle: 'Προηγμένο Φίλτρο',
     advancedFilterBuilderApply: 'Εφαρμογή',
     advancedFilterBuilderClear: 'Καθαρισμός',

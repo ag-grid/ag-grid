@@ -89,6 +89,14 @@ const DATE_BETWEEN_EXCLUSIVE: IFilterOptionDef = {
     },
 };
 
+/** Reuses the range key, so the column's two-value option is this predicate and not an ordered pair of bounds. */
+const OUTSIDE: IFilterOptionDef = {
+    displayKey: 'inRange',
+    displayName: 'is outside',
+    numberOfInputs: 2,
+    predicate: ([from, to], cellValue) => cellValue != null && (cellValue > from || cellValue < to),
+};
+
 /** Reuses a built-in key, so it replaces `contains` for the column that declares it. */
 const CONTAINS_BACKWARDS: IFilterOptionDef = {
     displayKey: 'contains',
@@ -1384,6 +1392,42 @@ describe('Advanced Filter - custom filter options', () => {
 
             expect(filteredAthletes(advanced)).toEqual(['Bolt']);
             expect(filteredAthletes(column)).toEqual(filteredAthletes(advanced));
+        });
+
+        // Two values are bounds whoever declares them, so a custom option taking a pair is held to the same
+        // ordering rule as the built-in range, in the Advanced Filter as it already is in the column filter.
+        test('a replacement of the range option is asked to put its values in order, as in the column filter', async () => {
+            const columnDefs: GridOptions<TestRow>['columnDefs'] = [
+                { field: 'age', filter: 'agNumberColumnFilter', filterParams: { filterOptions: ['equals', OUTSIDE] } },
+            ];
+            const api = gridsManager.createGrid('grid1', { ...opts(), columnDefs });
+            await asyncSetTimeout(0);
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.applyExpression('[Age] is outside (21, 38)');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'number',
+                colId: 'age',
+                type: 'inRange',
+                filter: 21,
+                filterTo: 38,
+            });
+
+            await af.applyExpression('[Age] is outside (38, 21)');
+            await asyncSetTimeout(0);
+            await new FilterDom(api, 'a reversed custom pair').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Age] is outside (38, 21)"
+                valid: false — Expression has an error. Must be greater than 38.
+                buttons: Apply ⊘ | Builder
+                model:
+                  filterType: "number"
+                  colId: "age"
+                  type: "inRange"
+                  filter: 21
+                  filterTo: 38
+            `);
         });
     });
 

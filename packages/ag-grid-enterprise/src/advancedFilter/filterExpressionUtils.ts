@@ -1,8 +1,9 @@
-import { _parseBigIntOrNull } from 'ag-stack';
+import { _parseBigIntOrNull, _parseDateTimeFromString, _toStringOrNull } from 'ag-stack';
 
-import { _bindFilterCallback } from 'ag-grid-community';
+import { _bindFilterCallback, _getValidityMessageKey, _toFiniteNumber, _translateForFilter } from 'ag-grid-community';
 import type {
     AgColumn,
+    BaseCellDataType,
     ColumnAdvancedFilterModel,
     ColumnModel,
     DataTypeService,
@@ -15,6 +16,7 @@ import type {
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from './filterExpressionOperators';
+import { OPERAND_COUNT } from './filterExpressionOperators';
 
 /** The operand slots every `ColumnAdvancedFilterModel` member shares, which the union itself cannot express. */
 export interface ColumnFilterModelOperands {
@@ -26,17 +28,96 @@ export interface ColumnFilterModelOperands {
 export const OPERAND_KEYS = ['filter', 'filterTo'] as const;
 
 /** Judged on the display: what the column's formatter cannot write is not a value the model holds. */
-export function hasEveryOperand(
+function getFormattedOperands(
     advFilterExpSvc: AdvancedFilterExpressionService,
     model: ColumnAdvancedFilterModel,
     numOperands: number
-): boolean {
+): string[] | null {
+    const operands: string[] = [];
     for (let i = 0; i < numOperands; ++i) {
-        if (!advFilterExpSvc.formatOperand(model, (model as ColumnFilterModelOperands)[OPERAND_KEYS[i]], true)) {
-            return false;
+        const operand = advFilterExpSvc.formatOperand(
+            model,
+            (model as ColumnFilterModelOperands)[OPERAND_KEYS[i]],
+            true
+        );
+        if (!operand) {
+            return null;
         }
+        operands.push(operand);
     }
-    return true;
+    return operands;
+}
+
+/**
+ * Why a condition cannot be applied, or null when it can. Every place a Builder condition is judged asks
+ * this, so a row the virtual list has mounted and one it has not cannot reach different verdicts.
+ */
+export function getConditionValidationMessage(
+    advFilterExpSvc: AdvancedFilterExpressionService,
+    gos: GridOptionsService,
+    model: PartialColumnFilterModel,
+    column: AgColumn | null | undefined,
+    baseCellDataType: BaseCellDataType,
+    operator: FilterExpressionOperator<any> | undefined
+): string | null {
+    if (!model.colId) {
+        return advFilterExpSvc.translate('advancedFilterBuilderValidationSelectColumn');
+    }
+    if (!model.type) {
+        return advFilterExpSvc.translate('advancedFilterBuilderValidationSelectOption');
+    }
+    const columnModel = model as ColumnAdvancedFilterModel;
+    const operands = getFormattedOperands(advFilterExpSvc, columnModel, OPERAND_COUNT[operator?.operands ?? 'none']);
+    if (!operands) {
+        return advFilterExpSvc.translate('advancedFilterBuilderValidationEnterValue');
+    }
+    if (operator?.operands !== 'range') {
+        return null;
+    }
+    const readBound = (value: string | number | undefined) =>
+        getModelOperandBound(column, gos, baseCellDataType, value);
+    const { filter, filterTo } = model;
+    return getRangeOrderMessage(advFilterExpSvc, model.colId, readBound(filter), readBound(filterTo), operands[0]);
+}
+
+type RangeBound = number | bigint | Date | null;
+
+/**
+ * The column filter's own message for a range whose bounds are out of order, or null where they are in order.
+ * One definition of the rule and one of the wording, so the two filters cannot come to disagree on either.
+ */
+export function getRangeOrderMessage(
+    advFilterExpSvc: AdvancedFilterExpressionService,
+    colId: string,
+    from: RangeBound,
+    to: RangeBound,
+    fromDisplayValue: string
+): string | null {
+    const { inRangeInclusive } = advFilterExpSvc.getExpressionEvaluatorParams(colId);
+    const key = _getValidityMessageKey(from, to, false, inRangeInclusive);
+    return key ? _translateForFilter(advFilterExpSvc, key, [fromDisplayValue]) : null;
+}
+
+/**
+ * A stored bound as its evaluator orders it. A number the model holds is canonical and text is in the column's
+ * own syntax, but a date is always serialised, whatever format the column displays, so it needs no parser.
+ */
+function getModelOperandBound(
+    column: AgColumn | null | undefined,
+    gos: GridOptionsService,
+    baseCellDataType: BaseCellDataType,
+    value: string | number | undefined
+): RangeBound {
+    if (value == null) {
+        return null;
+    }
+    if (baseCellDataType === 'bigint') {
+        return getBigIntParser(column, gos)(_toStringOrNull(value));
+    }
+    if (baseCellDataType === 'number') {
+        return typeof value === 'number' ? _toFiniteNumber(value) : getNumberParser(column, gos)(value);
+    }
+    return _parseDateTimeFromString(_toStringOrNull(value));
 }
 
 /** A condition the Builder is still assembling: each slot is absent until the user has chosen it. */
@@ -64,6 +145,8 @@ export interface FilterExpressionValidationError {
     message: string;
     startPosition: number;
     endPosition: number;
+    /** The message names its own bound, so appending the offending text would read as a second unlabelled value. */
+    selfContained?: boolean;
 }
 
 export interface FilterExpressionFunctionParams {

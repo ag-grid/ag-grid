@@ -175,6 +175,7 @@ export const AG_GRID_LOCALE_EN = {
     advancedFilterValidationExtraEndBracket: 'Too many end brackets',
     advancedFilterValidationMessage: 'Expression has an error. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Expression has an error. ${variable} at end of expression.',
+    advancedFilterValidationMessageOnly: 'Expression has an error. ${variable}.',
     advancedFilterBuilderTitle: 'Advanced Filter',
     advancedFilterBuilderApply: 'Apply',
     advancedFilterBuilderClear: 'Clear',

@@ -158,6 +158,7 @@ export {
     _classifyFilterOptions,
     _getCustomOptionDisplayName,
     _getCustomOptionNumberOfInputs,
+    _getValidityMessageKey,
     _hasValue,
     _isBlank,
 } from './filter/provided/simpleFilterUtils';

@@ -184,6 +184,7 @@ export const AG_GRID_LOCALE_SE = {
     advancedFilterValidationExtraEndBracket: 'För många slutparenteser',
     advancedFilterValidationMessage: 'Uttrycket har ett fel. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Uttrycket har ett fel. ${variable} i slutet av uttrycket.',
+    advancedFilterValidationMessageOnly: 'Uttrycket har ett fel. ${variable}.',
     advancedFilterBuilderTitle: 'Avancerad Filter',
     advancedFilterBuilderApply: 'Tillämpa',
     advancedFilterBuilderClear: 'Rensa',

@@ -184,6 +184,7 @@ export const AG_GRID_LOCALE_EG = {
     advancedFilterValidationExtraEndBracket: 'أقواس ختامية كثيرة جداً',
     advancedFilterValidationMessage: 'التعبير يحتوي على خطأ. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'التعبير يحتوي على خطأ. ${variable} في نهاية التعبير.',
+    advancedFilterValidationMessageOnly: 'التعبير يحتوي على خطأ. ${variable}.',
     advancedFilterBuilderTitle: 'عامل تصفية متقدم',
     advancedFilterBuilderApply: 'تطبيق',
     advancedFilterBuilderClear: 'مسح',

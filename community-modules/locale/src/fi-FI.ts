@@ -184,6 +184,7 @@ export const AG_GRID_LOCALE_FI = {
     advancedFilterValidationExtraEndBracket: 'Liian monta päättävää suljetta',
     advancedFilterValidationMessage: 'Lausekkeessa on virhe. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Lausekkeessa on virhe. ${variable} lausekkeen lopussa.',
+    advancedFilterValidationMessageOnly: 'Lausekkeessa on virhe. ${variable}.',
     advancedFilterBuilderTitle: 'Tarkennettu suodatin',
     advancedFilterBuilderApply: 'Käytä',
     advancedFilterBuilderClear: 'Tyhjennä',

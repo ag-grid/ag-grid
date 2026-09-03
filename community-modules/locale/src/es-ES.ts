@@ -185,6 +185,7 @@ export const AG_GRID_LOCALE_ES = {
     advancedFilterValidationExtraEndBracket: 'Demasiados paréntesis de cierre',
     advancedFilterValidationMessage: 'La expresión contiene un error. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'La expresión contiene un error. ${variable} al final de la expresión.',
+    advancedFilterValidationMessageOnly: 'La expresión contiene un error. ${variable}.',
     advancedFilterBuilderTitle: 'Filtro Avanzado',
     advancedFilterBuilderApply: 'Aplicar',
     advancedFilterBuilderClear: 'Limpiar',
