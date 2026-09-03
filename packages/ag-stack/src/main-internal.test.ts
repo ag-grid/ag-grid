@@ -279,7 +279,9 @@ function findSurplusAnnotations(srcDir: string, internalSymbols: SymbolInfo[]): 
 
         // Start from the statements: a SourceFile's full-start is 0, so it would claim the file's
         // first leading comment and the dedupe would then discard the real declaration's visit.
-        sourceFile.statements.forEach(visit);
+        for (const statement of sourceFile.statements) {
+            visit(statement);
+        }
     }
 
     return violations;
