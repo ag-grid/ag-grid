@@ -604,4 +604,38 @@ describe('ag-grid grouping selection', () => {
         expect(ireland.isSelected()).toBe(true);
         expect(irelandTotal.isSelected()).toBe(true);
     });
+
+    test('a group total row reports its group as partially selected rather than unselected', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
+            { id: '2', country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        const ireland = api.getRowNode('row-group-country-Ireland')!;
+        const irelandTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'row-group-country-Ireland')!;
+
+        api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'api' });
+
+        // one of two leaves selected, so the group is indeterminate and its total row must say the same
+        expect(ireland.isSelected()).toBeUndefined();
+        expect(irelandTotal.isSelected()).toBeUndefined();
+
+        api.setNodesSelected({ nodes: [api.getRowNode('2')!], newValue: true, source: 'api' });
+        expect(ireland.isSelected()).toBe(true);
+        expect(irelandTotal.isSelected()).toBe(true);
+    });
 });

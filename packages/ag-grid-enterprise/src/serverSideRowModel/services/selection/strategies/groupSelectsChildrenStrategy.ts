@@ -11,7 +11,7 @@ import type {
     RowNode,
     RowRangeSelectionContext,
 } from 'ag-grid-community';
-import { BeanStub, _isMultiRowSelection } from 'ag-grid-community';
+import { BeanStub, ROOT_NODE_ID, _isMultiRowSelection } from 'ag-grid-community';
 
 import type { LazyStore } from '../../../stores/lazy/lazyStore';
 import type { ISelectionStrategy } from './iSelectionStrategy';
@@ -35,8 +35,6 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
-    /** The root is not part of the tree state, so its own selection is tracked apart from it, as client-side. */
-    private rootSelected = false;
 
     constructor(private readonly selectionCtx: RowRangeSelectionContext) {
         super();
@@ -119,8 +117,10 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 recursivelyDeserializeState(innerState, isThisNodeSelected),
             ]);
             const doesRedundantStateExist = convertedChildren?.some(
-                ([, innerState]) =>
-                    isThisNodeSelected === innerState.selectAllChildren && innerState.toggledNodes.size === 0
+                ([key, innerState]) =>
+                    key !== ROOT_NODE_ID &&
+                    isThisNodeSelected === innerState.selectAllChildren &&
+                    innerState.toggledNodes.size === 0
             );
             if (doesRedundantStateExist) {
                 this.error(247);
@@ -134,7 +134,6 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
         try {
             this.selectedState = recursivelyDeserializeState(state, !!state.selectAllChildren);
-            this.rootSelected = false;
         } catch {
             // do nothing - error already logged
         }
@@ -188,9 +187,13 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         for (const rowNode of nodes) {
             const node = rowNode.primaryRow;
             if (node.level === -1) {
-                // the root has no route of its own, so selecting it means the whole tree
-                this.selectedState = { selectAllChildren: newValue, toggledNodes: new Map() };
-                this.rootSelected = newValue;
+                // the root has no route of its own, so selecting it means the whole tree, and it is keyed
+                // under the id it already answers to rather than tracked apart from the state
+                const toggledNodes = new Map<string, SelectionState>();
+                if (newValue) {
+                    toggledNodes.set(ROOT_NODE_ID, { selectAllChildren: newValue, toggledNodes: new Map() });
+                }
+                this.selectedState = { selectAllChildren: newValue, toggledNodes };
                 updatedCount++;
             } else if (node.id !== undefined) {
                 this.recursivelySelectNode(this.getRouteToNode(node), this.selectedState, newValue);
@@ -202,15 +205,17 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
 
         this.removeRedundantState();
-        if (nodes.length === 1 && source === 'api') {
-            this.selectionCtx.setRoot(nodes[0].primaryRow);
+        // a range has to be anchored on a row the model can resolve, which the root is not
+        const anchor = nodes.length === 1 && source === 'api' ? nodes[0].primaryRow : undefined;
+        if (anchor?.id !== undefined) {
+            this.selectionCtx.setRoot(anchor);
         }
         return updatedCount;
     }
 
     public isNodeSelected(node: RowNode): boolean | undefined {
         if (node.level === -1) {
-            return this.rootSelected;
+            return this.selectedState.toggledNodes.has(ROOT_NODE_ID);
         }
         const path = this.getRouteToNode(node);
         return this.isNodePathSelected(path, this.selectedState);
@@ -263,7 +268,10 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             // clean up lowest level state first in order to calculate this levels state
             // from updated child state
             state.toggledNodes.forEach((value, key) => {
-                forEachNodeStateDepthFirst(value, key, state);
+                // the root is keyed among the children but is not one, so no child rule applies to it
+                if (key !== ROOT_NODE_ID) {
+                    forEachNodeStateDepthFirst(value, key, state);
+                }
             });
 
             if (thisKey) {
@@ -391,20 +399,15 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
     private reset(selectAllChildren: boolean): void {
         this.selectedState = { selectAllChildren, toggledNodes: new Map() };
-        this.rootSelected = false;
     }
 
     public getSelectAllState(): boolean | null {
-        if (this.selectedState.selectAllChildren) {
-            if (this.selectedState.toggledNodes.size > 0) {
-                return null;
-            }
-            return true;
-        }
-
-        if (this.selectedState.toggledNodes.size > 0) {
+        const { selectAllChildren, toggledNodes } = this.selectedState;
+        // the header checkbox reports on rows, and the root is not one, so its own state never sways it
+        const toggledRows = toggledNodes.size - (toggledNodes.has(ROOT_NODE_ID) ? 1 : 0);
+        if (toggledRows > 0) {
             return null;
         }
-        return false;
+        return selectAllChildren;
     }
 }

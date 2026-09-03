@@ -15,6 +15,9 @@ import type { ISelectionStrategy } from './iSelectionStrategy';
  */
 const selectionKey = (node: RowNode): string | undefined => node.id ?? (node.level === -1 ? ROOT_NODE_ID : undefined);
 
+/** `selectAll` is a base state for rows, and the root is not a row, so it never covers the root. */
+const isBaseSelected = (node: RowNode, selectAll: boolean): boolean => selectAll && node.level !== -1;
+
 interface SelectedState {
     /** Base selection state for all nodes, whether they have been loaded or not */
     selectAll: boolean;
@@ -146,7 +149,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 delete this.selectedNodes[key];
             }
 
-            const doesNodeConform = value === this.selectedState.selectAll;
+            const doesNodeConform = value === isBaseSelected(node, this.selectedState.selectAll);
             if (doesNodeConform || !node.selectable) {
                 this.selectedState.toggledNodes.delete(key);
             } else {
@@ -167,22 +170,24 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             return 0;
         }
 
-        if (nodes.length === 1 && source === 'api') {
-            this.selectionCtx.setRoot(nodes[0].primaryRow);
+        // a range has to be anchored on a row the model can resolve, which the root is not
+        const anchor = nodes.length === 1 && source === 'api' ? nodes[0].primaryRow : undefined;
+        if (anchor?.id !== undefined) {
+            this.selectionCtx.setRoot(anchor);
         }
         return updatedCount;
     }
 
     public processNewRow(node: RowNode<any>): void {
-        if (this.selectedNodes[node.id!]) {
-            this.selectedNodes[node.id!] = node;
+        const key = selectionKey(node);
+        if (key !== undefined && this.selectedNodes[key]) {
+            this.selectedNodes[key] = node;
         }
     }
 
     public isNodeSelected(node: RowNode): boolean | undefined {
         const isToggled = this.selectedState.toggledNodes.has(selectionKey(node)!);
-        // the root is not a row, so select-all does not reach it; only an explicit selection marks it
-        return this.selectedState.selectAll && node.level !== -1 ? !isToggled : isToggled;
+        return isBaseSelected(node, this.selectedState.selectAll) ? !isToggled : isToggled;
     }
 
     public getSelectedNodes(nullWhenSelectAll = false, warnWhenSelectAll = true): RowNode<any>[] | null {
@@ -240,16 +245,12 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public getSelectAllState(): boolean | null {
-        if (this.selectedState.selectAll) {
-            if (this.selectedState.toggledNodes.size > 0) {
-                return null;
-            }
-            return true;
-        }
-
-        if (this.selectedState.toggledNodes.size > 0) {
+        const { selectAll, toggledNodes } = this.selectedState;
+        // the header checkbox reports on rows, and the root is not one, so its own state never sways it
+        const toggledRows = toggledNodes.size - (toggledNodes.has(ROOT_NODE_ID) ? 1 : 0);
+        if (toggledRows > 0) {
             return null;
         }
-        return false;
+        return selectAll;
     }
 }

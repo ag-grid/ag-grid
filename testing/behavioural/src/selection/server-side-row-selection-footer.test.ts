@@ -56,13 +56,19 @@ describe('SSRM selection with a destroyed footer row node', () => {
         value: number;
     }
 
+    function headerState(gridId: string): { checked: boolean; indeterminate: boolean } {
+        const selector = `#${gridId} .ag-header-select-all .ag-checkbox-input-wrapper`;
+        const classList = document.querySelector(selector)!.classList;
+        return { checked: classList.contains('ag-checked'), indeterminate: classList.contains('ag-indeterminate') };
+    }
+
     const flatRows: FlatRow[] = [
         { id: '1', value: 10 },
         { id: '2', value: 20 },
     ];
 
     async function createGrandTotalGrid(mode: 'singleRow' | 'multiRow'): Promise<GridApi> {
-        const api = gridMgr.createGrid(null, {
+        const api = gridMgr.createGrid('myGrid', {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
             rowModelType: 'serverSide',
             rowSelection: { mode },
@@ -228,10 +234,104 @@ describe('SSRM selection with a destroyed footer row node', () => {
         await waitFor(() => expect(clipboardUtils.getText()).toBe('1\t10'));
     });
 
+    // The header checkbox reports on rows, and the root is not one, so its selection must not sway it.
+    test('selecting the grand total row leaves the header checkbox unchecked', async () => {
+        const api = await createGrandTotalGrid('multiRow');
+
+        expect(headerState('myGrid')).toEqual({ checked: false, indeterminate: false });
+
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true, source: 'api' });
+        await waitFor(() => expect(headerState('myGrid')).toEqual({ checked: false, indeterminate: false }));
+
+        // a row, by contrast, does make it indeterminate
+        api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'api' });
+        await waitFor(() => expect(headerState('myGrid')).toEqual({ checked: false, indeterminate: true }));
+    });
+
+    // `selectAll` is a base state for rows and never covers the root, so the predicate that reads a
+    // node's state and the one that writes it have to exempt the root alike or they disagree on it.
+    test('the grand total row can still be selected and deselected after select all', async () => {
+        const api = await createGrandTotalGrid('multiRow');
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+
+        api.selectAll();
+        expect(grandTotal.isSelected()).toBe(false);
+
+        api.setNodesSelected({ nodes: [grandTotal], newValue: true, source: 'api' });
+        expect(grandTotal.isSelected()).toBe(true);
+
+        api.setNodesSelected({ nodes: [grandTotal], newValue: false, source: 'api' });
+        expect(grandTotal.isSelected()).toBe(false);
+    });
+
+    // Resetting the root store allocates a new root node, and the grand total row reports the root's
+    // selection as its own, so the row and the serialised state would otherwise disagree.
+    test('the grand total row keeps its selection when the root store is reset', async () => {
+        const api = await createGrandTotalGrid('multiRow');
+
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true, source: 'api' });
+        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([
+            ROOT_NODE_ID,
+        ]);
+
+        api.setGridOption('serverSideDatasource', {
+            getRows(params) {
+                const rowData: any[] = [...flatRows];
+                if (params.needsGrandTotal) {
+                    rowData.push({ id: GRAND_TOTAL_ROW_ID, value: 30 });
+                }
+                setTimeout(() => params.success({ rowData, rowCount: flatRows.length }), 0);
+            },
+        });
+        await waitForNoLoadingRows(api);
+
+        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([
+            ROOT_NODE_ID,
+        ]);
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(true));
+    });
+
+    // The export sorts the selected nodes into display order, and the root cannot be sorted: it has no
+    // row index and sits at level -1, so it has to be resolved to its footer before the sort runs.
+    test('copying a selection exports the grand total row last however it was selected', async () => {
+        // non-numeric ids, so the selection keeps them in the order they were selected rather than
+        // enumerating the integer-like ones first
+        const rows = [
+            { id: 'a', value: 10 },
+            { id: 'b', value: 20 },
+        ];
+        const api = gridMgr.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'multiRow' },
+            grandTotalRow: 'bottom',
+            getRowId: (params: GetRowIdParams<FlatRow>) => params.data.id,
+            serverSideDatasource: {
+                getRows(params) {
+                    const rowData: any[] = [...rows];
+                    if (params.needsGrandTotal) {
+                        rowData.push({ id: GRAND_TOTAL_ROW_ID, value: 30 });
+                    }
+                    setTimeout(() => params.success({ rowData, rowCount: rows.length }), 0);
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        // the grand total first, so the selection holds the root ahead of a row it must be exported after
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+        api.setNodesSelected({ nodes: [grandTotal, api.getRowNode('a')!], newValue: true, source: 'api' });
+        expect(api.getSelectedNodes().map((node) => node.level)).toEqual([-1, 0]);
+
+        api.copySelectedRowsToClipboard();
+        await waitFor(() => expect(clipboardUtils.getText()).toBe(`a\t10\r\n${GRAND_TOTAL_ROW_ID}\t30`));
+    });
+
     // The grand total row resolves to the root, which has no route of its own, so selecting it means the
     // whole tree - as it does client-side under `groupSelects: 'descendants'`.
     test('GroupSelectsChildrenStrategy: selecting the grand total row selects the whole tree like CSRM', async () => {
-        const api = gridMgr.createGrid(null, {
+        const api = gridMgr.createGrid('myGroupGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
                 { field: 'value', aggFunc: 'sum' },
@@ -290,11 +390,145 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(api.getRowNode('ie-2')!.isSelected()).toBe(true);
         expect(grandTotal.isSelected()).toBe(true);
 
+        // the whole tree is selected, so the header is checked outright: the root's own key is not a row
+        expect(headerState('myGroupGrid')).toEqual({ checked: true, indeterminate: false });
+
+        // the root is keyed under ROOT_NODE_ID among the toggled nodes, so it survives a round trip
+        const withRoot = api.getServerSideSelectionState()!;
+        expect(JSON.stringify(withRoot)).toContain(ROOT_NODE_ID);
+
+        api.deselectAll();
+        expect(grandTotal.isSelected()).toBe(false);
+
+        api.setServerSideSelectionState(withRoot);
+        expect(grandTotal.isSelected()).toBe(true);
+        expect(api.getRowNode('ie-1')!.isSelected()).toBe(true);
+        expect(api.getRowNode('ie-2')!.isSelected()).toBe(true);
+
+        // deselecting a leaf leaves the tree partial, so the header reports neither all nor none
+        api.setNodesSelected({ nodes: [api.getRowNode('ie-2')!], newValue: false, source: 'api' });
+        const partial = api.getServerSideSelectionState()!;
+        expect(JSON.stringify(partial)).toContain(ROOT_NODE_ID);
+        api.deselectAll();
+        api.setServerSideSelectionState(partial);
+        expect(grandTotal.isSelected()).toBe(true);
+        expect(api.getRowNode('ie-2')!.isSelected()).toBe(false);
+
         // select all reaches the same rows, but the root is not one of them
         api.deselectAll();
         api.selectAll();
         expect(api.getRowNode('ie-1')!.isSelected()).toBe(true);
         expect(grandTotal.isSelected()).toBe(false);
+    });
+
+    // Nothing stops a data row carrying the id the root is keyed under, so the two share a selection
+    // slot. The outcome for that row is undefined, but the grid must stay operable either way.
+    test('a data row whose id is ROOT_NODE_ID leaves the selection operable', async () => {
+        const api = gridMgr.createGrid('myClashGrid', {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'multiRow' },
+            grandTotalRow: 'bottom',
+            getRowId: (params: GetRowIdParams<FlatRow>) => params.data.id,
+            serverSideDatasource: {
+                getRows(params) {
+                    const rowData: any[] = [
+                        { id: ROOT_NODE_ID, value: 10 },
+                        { id: 'b', value: 20 },
+                    ];
+                    if (params.needsGrandTotal) {
+                        rowData.push({ id: GRAND_TOTAL_ROW_ID, value: 30 });
+                    }
+                    setTimeout(() => params.success({ rowData, rowCount: 2 }), 0);
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        // a data row wins over the synthetic root, as it does client-side
+        const clashRow = api.getRowNode(ROOT_NODE_ID)!;
+        expect(clashRow.data).toEqual({ id: ROOT_NODE_ID, value: 10 });
+        expect(clashRow.level).toBe(0);
+
+        api.setNodesSelected({ nodes: [clashRow], newValue: true, source: 'api' });
+        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([
+            ROOT_NODE_ID,
+        ]);
+
+        // an unrelated row is unaffected, and clearing the selection leaves nothing stuck behind
+        api.setNodesSelected({ nodes: [api.getRowNode('b')!], newValue: true, source: 'api' });
+        expect(api.getRowNode('b')!.isSelected()).toBe(true);
+
+        api.deselectAll();
+        expect(api.getRowNode('b')!.isSelected()).toBe(false);
+        expect(clashRow.isSelected()).toBe(false);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
+        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([]);
+    });
+
+    // Same clash under the group strategy, where the root is keyed among the root's children and the
+    // redundancy pruning skips that key, so a real row carrying it is skipped too.
+    test('GroupSelectsChildrenStrategy: a group row whose id is ROOT_NODE_ID leaves the selection operable', async () => {
+        const api = gridMgr.createGrid('myClashGroupGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'value', aggFunc: 'sum' },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            grandTotalRow: 'bottom',
+            getRowId: (params: GetRowIdParams<any>) => params.data.id,
+            serverSideDatasource: {
+                getRows(params) {
+                    const groupKey = params.request.groupKeys[0];
+                    let rowData: any[];
+                    if (groupKey === undefined) {
+                        rowData = [
+                            { id: ROOT_NODE_ID, key: 'Ireland', country: 'Ireland', value: 30, group: true },
+                            { id: 'g-Italy', key: 'Italy', country: 'Italy', value: 5, group: true },
+                        ];
+                    } else if (groupKey === 'Ireland') {
+                        rowData = [
+                            { id: 'ie-1', country: 'Ireland', value: 10 },
+                            { id: 'ie-2', country: 'Ireland', value: 20 },
+                        ];
+                    } else {
+                        rowData = [{ id: 'it-1', country: 'Italy', value: 5 }];
+                    }
+                    const rowCount = rowData.length;
+                    if (groupKey === undefined && params.needsGrandTotal) {
+                        rowData = [...rowData, { id: GRAND_TOTAL_ROW_ID, value: 35 }];
+                    }
+                    setTimeout(() => params.success({ rowData, rowCount }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        // the group row wins over the synthetic root, as it does client-side
+        const clashGroup = api.getRowNode(ROOT_NODE_ID)!;
+        expect(clashGroup.level).toBe(0);
+        expect(clashGroup.group).toBe(true);
+
+        // an unrelated group still selects its own subtree and nothing else
+        api.getRowNode('g-Italy')!.setExpanded(true);
+        await waitForNoLoadingRows(api);
+        api.setNodesSelected({ nodes: [api.getRowNode('g-Italy')!], newValue: true, source: 'api' });
+        expect(api.getRowNode('it-1')!.isSelected()).toBe(true);
+
+        // selecting the clashing group shares a slot with the root, which is undefined but must not break
+        api.setNodesSelected({ nodes: [clashGroup!], newValue: true, source: 'api' });
+        expect(typeof api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).not.toBe('object');
+
+        api.deselectAll();
+        expect(api.getRowNode('it-1')!.isSelected()).toBe(false);
+        expect(clashGroup!.isSelected()).toBe(false);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
+        expect(api.getServerSideSelectionState()).toEqual({ nodeId: undefined, selectAllChildren: false });
     });
 
     test('GroupSelectsChildrenStrategy: selecting a destroyed group total footer is a no-op, not a throw', async () => {
